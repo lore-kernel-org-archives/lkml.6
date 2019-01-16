@@ -6,221 +6,141 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 302C9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C8EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 056122082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E146D2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:24:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391649AbfAPJYT (ORCPT
+        id S2391652AbfAPJYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 04:24:19 -0500
-Received: from mga18.intel.com ([134.134.136.126]:10239 "EHLO mga18.intel.com"
+        Wed, 16 Jan 2019 04:24:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42826 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728760AbfAPJYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 04:24:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 01:21:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,485,1539673200"; 
-   d="scan'208";a="135054094"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Jan 2019 01:21:15 -0800
-Received: from [10.125.252.200] (abudanko-mobl.ccr.corp.intel.com [10.125.252.200])
-        by linux.intel.com (Postfix) with ESMTP id 918015800C6;
-        Wed, 16 Jan 2019 01:21:13 -0800 (PST)
-Subject: [PATCH v4 1/4] perf record: allocate affinity masks
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <77852017-b6ee-4fe1-4f3d-63827d78078f@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <f36acc9c-6afb-7096-40fa-22045f28fb90@linux.intel.com>
-Date:   Wed, 16 Jan 2019 12:21:12 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1730575AbfAPJYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 04:24:53 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 32778BDD0;
+        Wed, 16 Jan 2019 09:24:52 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1DBD961090;
+        Wed, 16 Jan 2019 09:24:52 +0000 (UTC)
+Received: from zmail25.collab.prod.int.phx2.redhat.com (zmail25.collab.prod.int.phx2.redhat.com [10.5.83.31])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id E2F4B1803396;
+        Wed, 16 Jan 2019 09:24:51 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 04:24:51 -0500 (EST)
+From:   Frediano Ziglio <fziglio@redhat.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>
+Message-ID: <636470684.58090538.1547630691403.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190116083521.22673-2-kraxel@redhat.com>
+References: <20190116083521.22673-1-kraxel@redhat.com> <20190116083521.22673-2-kraxel@redhat.com>
+Subject: Re: [Spice-devel] [PATCH 1/3] drm/qxl: add mode/framebuffer check
+ functions
 MIME-Version: 1.0
-In-Reply-To: <77852017-b6ee-4fe1-4f3d-63827d78078f@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.33.32.17, 10.4.195.23]
+Thread-Topic: drm/qxl: add mode/framebuffer check functions
+Thread-Index: VEZ7rzz3Wgc94Qph+OmMvmvbQh/xhw==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 16 Jan 2019 09:24:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> 
+> Add a helper functions to check video modes.  Also add a helper to check
+> framebuffer buffer objects, using the former for consistency.  That way
+> we should not fail in qxl_primary_atomic_check() because video modes
+> which are too big will not be added to the mode list in the first place.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/qxl/qxl_display.c | 37 +++++++++++++++++++------------------
+>  1 file changed, 19 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/qxl/qxl_display.c
+> b/drivers/gpu/drm/qxl/qxl_display.c
+> index 1f8fddcc34..07a37d52c4 100644
+> --- a/drivers/gpu/drm/qxl/qxl_display.c
+> +++ b/drivers/gpu/drm/qxl/qxl_display.c
+> @@ -191,6 +191,21 @@ void qxl_display_read_client_monitors_config(struct
+> qxl_device *qdev)
+>  	}
+>  }
+>  
+> +static int qxl_check_mode(struct qxl_device *qdev,
+> +			  unsigned int width,
+> +			  unsigned int height)
+> +{
+> +	if (width * height * 4 > qdev->vram_size)
 
-Allocate affinity option and masks for mmap data buffers and
-record thread as well as initialize allocated objects.
+Is someone checking for integer overflows already?
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v3:
-- converted PERF_AFFINITY_EOF to PERF_AFFINITY_MAX
-Changes in v2:
-- made debug affinity mode message user friendly
-- converted affinity mode defines to enum values
----
- tools/perf/builtin-record.c | 13 ++++++++++++-
- tools/perf/perf.h           |  8 ++++++++
- tools/perf/util/evlist.c    |  6 +++---
- tools/perf/util/evlist.h    |  2 +-
- tools/perf/util/mmap.c      |  2 ++
- tools/perf/util/mmap.h      |  3 ++-
- 6 files changed, 28 insertions(+), 6 deletions(-)
+> +		return -ENOMEM;
+> +	return 0;
+> +}
+> +
+> +static int qxl_check_framebuffer(struct qxl_device *qdev,
+> +				 struct qxl_bo *bo)
+> +{
+> +	return qxl_check_mode(qdev, bo->surf.width, bo->surf.height);
+> +}
+> +
+>  static int qxl_add_monitors_config_modes(struct drm_connector *connector,
+>                                           unsigned *pwidth,
+>                                           unsigned *pheight)
+> @@ -466,12 +481,7 @@ static int qxl_primary_atomic_check(struct drm_plane
+> *plane,
+>  
+>  	bo = gem_to_qxl_bo(state->fb->obj[0]);
+>  
+> -	if (bo->surf.stride * bo->surf.height > qdev->vram_size) {
+> -		DRM_ERROR("Mode doesn't fit in vram size (vgamem)");
+> -		return -EINVAL;
+> -	}
+> -
+> -	return 0;
+> +	return qxl_check_framebuffer(qdev, bo);
+>  }
+>  
+>  static int qxl_primary_apply_cursor(struct drm_plane *plane)
+> @@ -941,20 +951,11 @@ static enum drm_mode_status qxl_conn_mode_valid(struct
+> drm_connector *connector,
+>  {
+>  	struct drm_device *ddev = connector->dev;
+>  	struct qxl_device *qdev = ddev->dev_private;
+> -	int i;
+>  
+> -	/* TODO: is this called for user defined modes? (xrandr --add-mode)
+> -	 * TODO: check that the mode fits in the framebuffer */
+> +	if (qxl_check_mode(qdev, mode->hdisplay, mode->vdisplay) != 0)
+> +		return MODE_BAD;
+>  
+> -	if (qdev->monitors_config_width == mode->hdisplay &&
+> -	    qdev->monitors_config_height == mode->vdisplay)
+> -		return MODE_OK;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(common_modes); i++) {
+> -		if (common_modes[i].w == mode->hdisplay && common_modes[i].h ==
+> mode->vdisplay)
+> -			return MODE_OK;
+> -	}
+> -	return MODE_BAD;
+> +	return MODE_OK;
+>  }
+>  
+>  static struct drm_encoder *qxl_best_encoder(struct drm_connector *connector)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 882285fb9f64..e5a108b11d46 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -81,12 +81,17 @@ struct record {
- 	bool			timestamp_boundary;
- 	struct switch_output	switch_output;
- 	unsigned long long	samples;
-+	cpu_set_t		affinity_mask;
- };
- 
- static volatile int auxtrace_record__snapshot_started;
- static DEFINE_TRIGGER(auxtrace_snapshot_trigger);
- static DEFINE_TRIGGER(switch_output_trigger);
- 
-+static const char *affinity_tags[PERF_AFFINITY_MAX] = {
-+	"SYS", "NODE", "CPU"
-+};
-+
- static bool switch_output_signal(struct record *rec)
- {
- 	return rec->switch_output.signal &&
-@@ -533,7 +538,8 @@ static int record__mmap_evlist(struct record *rec,
- 
- 	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
- 				 opts->auxtrace_mmap_pages,
--				 opts->auxtrace_snapshot_mode, opts->nr_cblocks) < 0) {
-+				 opts->auxtrace_snapshot_mode,
-+				 opts->nr_cblocks, opts->affinity) < 0) {
- 		if (errno == EPERM) {
- 			pr_err("Permission error mapping pages.\n"
- 			       "Consider increasing "
-@@ -1980,6 +1986,9 @@ int cmd_record(int argc, const char **argv)
- # undef REASON
- #endif
- 
-+	CPU_ZERO(&rec->affinity_mask);
-+	rec->opts.affinity = PERF_AFFINITY_SYS;
-+
- 	rec->evlist = perf_evlist__new();
- 	if (rec->evlist == NULL)
- 		return -ENOMEM;
-@@ -2143,6 +2152,8 @@ int cmd_record(int argc, const char **argv)
- 	if (verbose > 0)
- 		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
- 
-+	pr_debug("affinity: %s\n", affinity_tags[rec->opts.affinity]);
-+
- 	err = __cmd_record(&record, argc, argv);
- out:
- 	perf_evlist__delete(rec->evlist);
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 388c6dd128b8..36d5cfe6362f 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -83,6 +83,14 @@ struct record_opts {
- 	clockid_t    clockid;
- 	u64          clockid_res_ns;
- 	int	     nr_cblocks;
-+	int	     affinity;
-+};
-+
-+enum perf_affinity {
-+	PERF_AFFINITY_SYS = 0,
-+	PERF_AFFINITY_NODE,
-+	PERF_AFFINITY_CPU,
-+	PERF_AFFINITY_MAX
- };
- 
- struct option;
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 8c902276d4b4..08cedb643ea6 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1022,7 +1022,7 @@ int perf_evlist__parse_mmap_pages(const struct option *opt, const char *str,
-  */
- int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 			 unsigned int auxtrace_pages,
--			 bool auxtrace_overwrite, int nr_cblocks)
-+			 bool auxtrace_overwrite, int nr_cblocks, int affinity)
- {
- 	struct perf_evsel *evsel;
- 	const struct cpu_map *cpus = evlist->cpus;
-@@ -1032,7 +1032,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 	 * Its value is decided by evsel's write_backward.
- 	 * So &mp should not be passed through const pointer.
- 	 */
--	struct mmap_params mp = { .nr_cblocks = nr_cblocks };
-+	struct mmap_params mp = { .nr_cblocks = nr_cblocks, .affinity = affinity };
- 
- 	if (!evlist->mmap)
- 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
-@@ -1064,7 +1064,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 
- int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
- {
--	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0);
-+	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0, PERF_AFFINITY_SYS);
- }
- 
- int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 868294491194..72728d7f4432 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -162,7 +162,7 @@ unsigned long perf_event_mlock_kb_in_pages(void);
- 
- int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 			 unsigned int auxtrace_pages,
--			 bool auxtrace_overwrite, int nr_cblocks);
-+			 bool auxtrace_overwrite, int nr_cblocks, int affinity);
- int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages);
- void perf_evlist__munmap(struct perf_evlist *evlist);
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 8fc39311a30d..e68ba754a8e2 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -343,6 +343,8 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
- 	map->fd = fd;
- 	map->cpu = cpu;
- 
-+	CPU_ZERO(&map->affinity_mask);
-+
- 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
- 				&mp->auxtrace_mp, map->base, fd))
- 		return -1;
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index aeb6942fdb00..e566c19b242b 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -38,6 +38,7 @@ struct perf_mmap {
- 		int		 nr_cblocks;
- 	} aio;
- #endif
-+	cpu_set_t	affinity_mask;
- };
- 
- /*
-@@ -69,7 +70,7 @@ enum bkw_mmap_state {
- };
- 
- struct mmap_params {
--	int			    prot, mask, nr_cblocks;
-+	int			    prot, mask, nr_cblocks, affinity;
- 	struct auxtrace_mmap_params auxtrace_mp;
- };
-
+Frediano
