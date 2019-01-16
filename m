@@ -2,98 +2,132 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E913C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F46C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0814620578
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:26:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F1F2206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394331AbfAPR0j (ORCPT
+        id S1727122AbfAPR25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:26:39 -0500
-Received: from shell.v3.sk ([90.176.6.54]:57499 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728076AbfAPR0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:26:38 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B08C1558DE;
-        Wed, 16 Jan 2019 18:26:35 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 3Bajl05IjrRu; Wed, 16 Jan 2019 18:26:33 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 1A18F558E1;
-        Wed, 16 Jan 2019 18:26:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 5gN-fzHBQehy; Wed, 16 Jan 2019 18:26:32 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 615BA558DE;
-        Wed, 16 Jan 2019 18:26:32 +0100 (CET)
-Message-ID: <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk>
-Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Wed, 16 Jan 2019 18:26:31 +0100
-In-Reply-To: <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
-References: <20190116093505.1920945-1-lkundrak@v3.sk>
-         <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 16 Jan 2019 12:28:57 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33677 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbfAPR24 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:28:56 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gjozi-00057w-8r; Wed, 16 Jan 2019 18:28:50 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gjozh-00069W-Fn; Wed, 16 Jan 2019 18:28:49 +0100
+Date:   Wed, 16 Jan 2019 18:28:49 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Yash Shah <yash.shah@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sachin Ghadi <sachin.ghadi@sifive.com>
+Subject: Re: [PATCH 2/2] pwm: sifive: Add a driver for SiFive SoC PWM
+Message-ID: <20190116172849.h5qdfa5wc3vaprbn@pengutronix.de>
+References: <1547194964-16718-1-git-send-email-yash.shah@sifive.com>
+ <1547194964-16718-3-git-send-email-yash.shah@sifive.com>
+ <20190115220046.etgbno6ymsux75dk@pengutronix.de>
+ <CAJ2_jOEuU_=bpbVmdsq7FFEKEm_wHza-h7Hu8QmZ3BgsGgi-ng@mail.gmail.com>
+ <20190116164640.mi3zjbhbhc6k5v7p@pengutronix.de>
+ <alpine.DEB.2.21.9999.1901160909540.19681@viisi.sifive.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.9999.1901160909540.19681@viisi.sifive.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-16 at 08:37 -0800, Stephen Boyd wrote:
-> Quoting Lubomir Rintel (2019-01-16 01:35:05)
-> > There could be vital functionality running on the SP PJ1 core it can not be
-> > restarted just by turning the clock back on.
-> > 
-> > On the OLPC laptop, the keyboard controller code runs there. It
-> > wouldn't be possible to load the driver for it as a module if the clock
-> > is disabled on boot.
-> > 
-> > Cc: stable@vger.kernel.org # v4.18+
-> > Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > ---
-> >  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-> > index f2a1c9bbaa63..3e33f1295f59 100644
-> > --- a/drivers/clk/mmp/clk-of-mmp2.c
-> > +++ b/drivers/clk/mmp/clk-of-mmp2.c
-> > @@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
-> >         {MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
-> >         {MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
-> >         {MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
-> > -       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
-> > +       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
+On Wed, Jan 16, 2019 at 09:18:45AM -0800, Paul Walmsley wrote:
+> On Wed, 16 Jan 2019, Uwe Kleine-König wrote:
 > 
-> Is it a critical clk that should never be turned off?
+> > On Wed, Jan 16, 2019 at 04:40:42PM +0530, Yash Shah wrote:
+> > > On Wed, Jan 16, 2019 at 3:30 AM Uwe Kleine-König
+> > > <u.kleine-koenig@pengutronix.de> wrote:
+> > > > On Fri, Jan 11, 2019 at 01:52:44PM +0530, Yash Shah wrote:
+> > > > > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> > > > > index a8f47df..3bcaf6a 100644
+> > > > > --- a/drivers/pwm/Kconfig
+> > > > > +++ b/drivers/pwm/Kconfig
+> > > > > @@ -380,6 +380,16 @@ config PWM_SAMSUNG
+> > > > >         To compile this driver as a module, choose M here: the module
+> > > > >         will be called pwm-samsung.
+> > > > >
+> > > > > +config PWM_SIFIVE
+> > > > > +     tristate "SiFive PWM support"
+> > > > > +     depends on OF
+> > > > > +     depends on COMMON_CLK
+> > > >
+> > > > I'd say add:
+> > > >
+> > > >         depends on MACH_SIFIVE || COMPILE_TEST
+> > > >
+> > > > (I guess "MACH_SIFIVE" is wrong, but I assume you get what I mean.)
+> > > 
+> > > As of now, MACH_SIFIVE/ARCH_SIFIVE isn't available.
+> > > @Paul, Do you have any comments on this?
+> > 
+> > If this is not going to be available at least protect it by
+> > 
+> > 	depends RISCV || COMPILE_TEST
+> 
+> There's nothing RISC-V or SiFive SoC-specific about this driver or IP 
+> block.  The HDL for this IP block is open-source and posted on Github.  
+> The IP block and driver would work unchanged on an ARM or MIPS SoC, and in 
+> fact, SiFive does design ARM-based SoCs as well.  Likewise, any other SoC 
+> vendor could take the HDL for this IP block from the git tree and 
+> implement it on their own SoC.
+> 
+> More generally: it's a basic principle of Linux device drivers that they 
+> should be buildable for any architecture.  The idea here is to prevent 
+> developers from burying architecture or SoC-specific hacks into the 
+> driver.  So there shouldn't be any architecture or SoC-specific code in 
+> any device driver, unless it's abstracted in some way - ideally through a 
+> common framework.
+> 
+> So from this point of view, neither "depends MACH_SIFIVE" nor "depends 
+> RISCV" would be appropriate.  Similarly, the equivalents for other 
+> architectures (e.g. "ARCH_ARM") or SoC manufacturers (e.g., 
+> "MACH_SAMSUNG") wouldn't be appropriate for any generic IP block device 
+> driver like this one.
 
-I don't think it is. It is entirely plausible to have no use for the
-"security processor", and in that case it's just okay to keep the clock
-disabled.
+The dependency serves two purposes:
 
-> If so, mark it as
-> CLK_IS_CRITICAL. Either way, please add a comment in the code about why
-> CLK_IGNORE_UNUSED or CLK_IS_CRITICAL is used.
+ a) ensure that the build requirements are fulfilled.
+ b) restrict configuration to actually existing machines
 
-Okay.
+When considering b) it doesn't make sense to enable the driver for (say)
+a machine that is powered by an ARM SoC by TI. If you still want to
+compile test the sifive driver for ARM, enable COMPILE_TEST. That's what
+this symbol is there for.
 
-Thanks,
-Lubo
+Best regards
+Uwe
 
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
