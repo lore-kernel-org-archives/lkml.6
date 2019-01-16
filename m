@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8683AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 180D7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3F0206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:58:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34D420859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389103AbfAPL6t (ORCPT
+        id S2389397AbfAPL72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:58:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52395 "EHLO
+        Wed, 16 Jan 2019 06:59:28 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39235 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732007AbfAPL6s (ORCPT
+        with ESMTP id S1732396AbfAPL72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:58:48 -0500
+        Wed, 16 Jan 2019 06:59:28 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0GBwZ3t252939
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0GBxDad252994
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 16 Jan 2019 03:58:35 -0800
+        Wed, 16 Jan 2019 03:59:13 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0GBwZtH252936;
-        Wed, 16 Jan 2019 03:58:35 -0800
-Date:   Wed, 16 Jan 2019 03:58:35 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0GBxDYT252991;
+        Wed, 16 Jan 2019 03:59:13 -0800
+Date:   Wed, 16 Jan 2019 03:59:13 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-c1d4e4192aa4e7408a81c32a77e7c867a07f8aa2@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org, bp@suse.de, x86@kernel.org,
-        thomas.lendacky@amd.com, peterz@infradead.org, tglx@linutronix.de,
-        luto@amacapital.net, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, luto@amacapital.net,
-          jpoimboe@redhat.com, thomas.lendacky@amd.com, x86@kernel.org,
-          bp@suse.de, tglx@linutronix.de, peterz@infradead.org,
-          mingo@kernel.org, hpa@zytor.com
-In-Reply-To: <20181211222326.14581-3-bp@alien8.de>
-References: <20181211222326.14581-3-bp@alien8.de>
+Message-ID: <tip-71a93c26930471e976dd184ef91931b2a5393afc@git.kernel.org>
+Cc:     x86@kernel.org, luto@amacapital.net, peterz@infradead.org,
+        bp@suse.de, hpa@zytor.com, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+        mingo@kernel.org, tglx@linutronix.de
+Reply-To: mingo@kernel.org, tglx@linutronix.de, thomas.lendacky@amd.com,
+          linux-kernel@vger.kernel.org, jpoimboe@redhat.com, hpa@zytor.com,
+          bp@suse.de, peterz@infradead.org, luto@amacapital.net,
+          x86@kernel.org
+In-Reply-To: <20181211222326.14581-4-bp@alien8.de>
+References: <20181211222326.14581-4-bp@alien8.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/alternatives] x86/alternatives: Print containing function
-Git-Commit-ID: c1d4e4192aa4e7408a81c32a77e7c867a07f8aa2
+Subject: [tip:x86/alternatives] x86/alternatives: Add an ALTERNATIVE_3()
+ macro
+Git-Commit-ID: 71a93c26930471e976dd184ef91931b2a5393afc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,27 +59,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c1d4e4192aa4e7408a81c32a77e7c867a07f8aa2
-Gitweb:     https://git.kernel.org/tip/c1d4e4192aa4e7408a81c32a77e7c867a07f8aa2
+Commit-ID:  71a93c26930471e976dd184ef91931b2a5393afc
+Gitweb:     https://git.kernel.org/tip/71a93c26930471e976dd184ef91931b2a5393afc
 Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Mon, 10 Dec 2018 12:30:30 +0100
+AuthorDate: Mon, 10 Dec 2018 16:17:23 +0100
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Wed, 16 Jan 2019 12:41:57 +0100
+CommitDate: Wed, 16 Jan 2019 12:42:50 +0100
 
-x86/alternatives: Print containing function
+x86/alternatives: Add an ALTERNATIVE_3() macro
 
-... in the "debug-alternative" output so that one can find her way
-easier when staring at the vmlinux disassembly.
-
-For example:
-
-  apply_alternatives: feat: 3*32+18, old: (read_tsc+0x0/0x10 (ffffffff8101d1c0) len: 5), repl: (ffffffff824e6d33, len: 5)
-  					   ^^^^^^^^^^^^^^^^^
-  ffffffff8101d1c0: old_insn: 0f 31 90 90 90
-  ffffffff824e6d33: rpl_insn: 0f ae e8 0f 31
-  ffffffff8101d1c0: final_insn: 0f ae e8 0f 31
-
-No functional changes.
+Similar to ALTERNATIVE_2(), ALTERNATIVE_3() selects between 3 possible
+variants. Will be used for adding RDTSCP to the rdtsc_ordered()
+alternatives.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Cc: Andy Lutomirski <luto@amacapital.net>
@@ -87,25 +79,49 @@ Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: X86 ML <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181211222326.14581-3-bp@alien8.de
+Link: https://lkml.kernel.org/r/20181211222326.14581-4-bp@alien8.de
 ---
- arch/x86/kernel/alternative.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/alternative.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index ebeac487a20c..d458c7973c56 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -393,10 +393,10 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 			continue;
- 		}
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 373e2baca6ce..4c74073a19cc 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -122,6 +122,16 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 		"(" alt_max_short(alt_rlen(num1), alt_rlen(num2)) " - (" alt_slen ")), 0x90\n"	\
+ 	alt_end_marker ":\n"
  
--		DPRINTK("feat: %d*32+%d, old: (%px len: %d), repl: (%px, len: %d), pad: %d",
-+		DPRINTK("feat: %d*32+%d, old: (%pS (%px) len: %d), repl: (%px, len: %d), pad: %d",
- 			a->cpuid >> 5,
- 			a->cpuid & 0x1f,
--			instr, a->instrlen,
-+			instr, instr, a->instrlen,
- 			replacement, a->replacementlen, a->padlen);
++#define OLDINSTR_3(oldinsn, n1, n2, n3)								\
++	"# ALT: oldinstr3\n"									\
++	"661:\n\t" oldinsn "\n662:\n"								\
++	"# ALT: padding3\n"									\
++	".skip -((" alt_max_short(alt_max_short(alt_rlen(n1), alt_rlen(n2)), alt_rlen(n3))	\
++		" - (" alt_slen ")) > 0) * "							\
++		"(" alt_max_short(alt_max_short(alt_rlen(n1), alt_rlen(n2)), alt_rlen(n3))	\
++		" - (" alt_slen ")), 0x90\n"							\
++	alt_end_marker ":\n"
++
+ #define ALTINSTR_ENTRY(feature, num)					      \
+ 	" .long 661b - .\n"				/* label           */ \
+ 	" .long " b_replacement(num)"f - .\n"		/* new instruction */ \
+@@ -155,6 +165,19 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 	ALTINSTR_REPLACEMENT(newinstr2, feature2, 2)			\
+ 	".popsection\n"
  
- 		DUMP_BYTES(instr, a->instrlen, "%px: old_insn: ", instr);
++#define ALTERNATIVE_3(oldinsn, newinsn1, feat1, newinsn2, feat2, newinsn3, feat3) \
++	OLDINSTR_3(oldinsn, 1, 2, 3)						\
++	".pushsection .altinstructions,\"a\"\n"					\
++	ALTINSTR_ENTRY(feat1, 1)						\
++	ALTINSTR_ENTRY(feat2, 2)						\
++	ALTINSTR_ENTRY(feat3, 3)						\
++	".popsection\n"								\
++	".pushsection .altinstr_replacement, \"ax\"\n"				\
++	ALTINSTR_REPLACEMENT(newinsn1, feat1, 1)				\
++	ALTINSTR_REPLACEMENT(newinsn2, feat2, 2)				\
++	ALTINSTR_REPLACEMENT(newinsn3, feat3, 3)				\
++	".popsection\n"
++
+ /*
+  * Alternative instructions for different CPU types or capabilities.
+  *
