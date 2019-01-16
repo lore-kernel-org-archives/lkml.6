@@ -2,211 +2,120 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF7AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4276C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55CE320578
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714BB206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:58:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bRESLH+b"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U51SY9VY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392746AbfAPLzW (ORCPT
+        id S2392763AbfAPL6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:55:22 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34276 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392734AbfAPLzV (ORCPT
+        Wed, 16 Jan 2019 06:58:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48054 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389674AbfAPL6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:55:21 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so4683680lfc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 03:55:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jwcmr7tsbGyOY4a7KiqVysSFN0z4UVQU8iYX8cx12Uo=;
-        b=bRESLH+b+YAabd4a3ccLhbGpFk10+g5ODRd2wgKCpuel+UXB49anjNR1emgFw5tlow
-         Z76fHDctSvvp30heMXE9IfLljTru+xnIIZo9zBxRPTUp7/xgjOdJrYWeUBkcFuc0VQTU
-         H52kcY8O631Dgl64asg4tBIprs3pHe0t4DZ/4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jwcmr7tsbGyOY4a7KiqVysSFN0z4UVQU8iYX8cx12Uo=;
-        b=CgHkRYB40pl5lSgpsWkGQL1vCKJkR7SU8qqbiiEEkAy8VekiS7L8Um0NPRNnP+Pa8U
-         9B+NjPzr9Op/K8m0huHVT4WE3muIfpu3IkeKJ2ygHDO6+20v8VVWyFi69RnwYGdTjMgy
-         /0ZvOBSyTfhgbDN0PKUHcad+1giKiS0OfKkXtBK7iHCnwJx9eTTNOhrFoTX7/+nZOpKz
-         8q6PrJCk1m2mZUlhoEL+tuE0qe/dFlqbMRyL5lMOtaBVYuWtbCB3c8PDHXGH6kbvISpR
-         OPgSvyCZWIxtzZD3QnK9tIZaJQeOjmgDkShuHW1B0OXF7oM284gTD7oyZG4oKgqRYz3H
-         uL0Q==
-X-Gm-Message-State: AJcUukcBOrQtJ6KEsnXRuKqPIATPMAOAnUjRv9ZqVPwKRwdOnCL6K3hV
-        J1D0JdX8Gk2rsRUgL+1qn5U0MAvTHoHK1hBc/yofFg==
-X-Google-Smtp-Source: ALg8bN49BWPaD2dREcgtP6/zLnc9QTwYFIAV/PLz7AFd4MSOiRM4iIfGsFEz0sfcBS5/Gme1Pmx9ZwyyZ0mo6tmK0hY=
-X-Received: by 2002:a19:9a8c:: with SMTP id c134mr6415331lfe.152.1547639719412;
- Wed, 16 Jan 2019 03:55:19 -0800 (PST)
+        Wed, 16 Jan 2019 06:58:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=twvx+i3VJasHKOAlDd6wUICLAgBYIqXBA5mHOf1vCSg=; b=U51SY9VYxd+xmLQIiTp0xP2WB
+        0u5dCgBXZ0eB9V7pJ/BByHQrS8mrQ/AREw9Jip5UIEyXvTq6mEAxoVVOBs1WjloP7WOLAgEqfi4V7
+        6ID/7+7gRGBAoj8G2F32N4Q214q0fDUnDlqAVbRGG+rGJpD/vMM4DyvuGYwm9mY7zSwSA9q/DBidt
+        C7Doy8BaozfvziuwcMvJgTvJYRzKoVf7L3Ktv8a8KeeXJUPWze99eN9aA+VQnQpUBKd/ubas8DtiJ
+        J53vDVD/xa4mwM1T/4qrOfjtQpa9zsJPq4dEGaKdaougpJ0vkYoI40iMSgmRDIYst+gzH86esteFo
+        vKNp020DA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gjjpT-0006lP-53; Wed, 16 Jan 2019 11:57:55 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5554F20276AAC; Wed, 16 Jan 2019 12:57:52 +0100 (CET)
+Date:   Wed, 16 Jan 2019 12:57:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Plain accesses and data races in the Linux Kernel Memory Model
+Message-ID: <20190116115752.GB10803@hirez.programming.kicks-ass.net>
+References: <20190115142545.GA9255@andrea>
+ <Pine.LNX.4.44L0.1901151003470.1408-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-References: <20190115154846.928796000@linuxfoundation.org>
-In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 16 Jan 2019 17:25:09 +0530
-Message-ID: <CA+G9fYtsYMt0R8XL3MazYzgmwYYhReRJHfqtXHgY96jHzFrPvA@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/51] 4.4.171-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1901151003470.1408-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Jan 2019 at 22:07, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.4.171 release.
-> There are 51 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu Jan 17 15:48:21 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.171-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Jan 15, 2019 at 10:19:10AM -0500, Alan Stern wrote:
+> On Tue, 15 Jan 2019, Andrea Parri wrote:
+> 
+> > Unless I'm mis-reading/-applying this definition, this will flag the
+> > following test (a variation on your "race.litmus") with "data-race":
+> > 
+> > C no-race
+> > 
+> > {}
+> > 
+> > P0(int *x, spinlock_t *s)
+> > {
+> > 	spin_lock(s);
+> >         WRITE_ONCE(*x, 1);	/* A */
+> > 	spin_unlock(s);	/* B */
+> > }
+> > 
+> > P1(int *x, spinlock_t *s)
+> > {
+> >         int r1;
+> > 
+> > 	spin_lock(s); /* C */
+> >         r1 = *x;	/* D */
+> > 	spin_unlock(s);
+> > }
+> > 
+> > exists (1:r1=1)
+> > 
+> > Broadly speaking, this is due to the fact that the modified "happens-
+> > before" axiom does not forbid the execution with the (MP-) cycle
+> > 
+> > 	A ->po-rel B ->rfe C ->acq-po D ->fre A
+> > 
+> > and then to the link "D ->race-from-r A" here defined.
+> 
+> Yes, that cycle certainly should be forbidden.  On the other hand, we
+> don't want to insist that C happens before D, given that D may not
+> happen at all.
+> 
+> This is a real problem.  Can we solve it by adding a modified
+> "happens-before" which says essentially that _if_ D is preserved _then_
+> C happens before D?  But then what about cycles involving more than one
+> possibly preserved access?  Or maybe a relation which says that D
+> cannot execute before C (so if D executes at all, it has to come after
+> C)?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+The latter; there is a compiler barrier implied at the end of
+spin_lock() such that anything later (in PO) must indeed be later.
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.171-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: cc14a9e207362757ecd2254de04a816657b58904
-git describe: v4.4.170-52-gcc14a9e20736
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.170-52-gcc14a9e20736
-
-No regressions (compared to build v4.4.170)
-
-No fixes (compared to build v4.4.170)
-
-Ran 17023 total tests in the following environments and test suites.
-
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.171-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.171-rc1-hikey-20190115-352
-git commit: 82b93f4bdd350fa372bb7104304aeb5c977bb31f
-git describe: 4.4.171-rc1-hikey-20190115-352
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.171-rc1-hikey-20190115-352
-
-No regressions (compared to build 4.4.170-rc2-hikey-20190111-350)
-
-No fixes (compared to build 4.4.170-rc2-hikey-20190111-350)
-
-Ran 2756 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+> Now you see why this stuff is so difficult...  At the moment, I don't
+> know how to fix this.
