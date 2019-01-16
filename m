@@ -2,213 +2,222 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69754C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7EDC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4242220859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D9472086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547661426;
+	bh=LqNnElH0GNood3aNFKq5Q8oAXnnzecCJ6fo9bR6y1X0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Pac6aGRqIMOjvuhV2McbZn70W3VQXQxsGJ8n6qmPGdfDnRJbPBHGkpGZcalE71IUk
+	 i+aoGRmeF6PCdia9ZaOlLQ9gH5Kf9ZmfxcDZPhuYRBDcludUsifldWP2jHLwPF1TRE
+	 qW4Uyu4ET2w9CrpFencR6aEX59HJ1zUZgv2Zg+60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbfAPRz1 (ORCPT
+        id S1727951AbfAPR5E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:55:27 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54096 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727804AbfAPRz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:55:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFB4380D;
-        Wed, 16 Jan 2019 09:55:25 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 851C23F763;
-        Wed, 16 Jan 2019 09:55:24 -0800 (PST)
-Subject: Re: [RFC PATCH] i2c: imx: dma map the i2c data i/o register
-To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        linux-i2c@vger.kernel.org, linux-imx@nxp.com,
-        iommu@lists.linux-foundation.org, kernel@pengutronix.de,
-        wsa@the-dreams.de
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190116161713.12748-1-laurentiu.tudor@nxp.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <7f9a9486-250d-cc92-1ce5-b5c1afc96f2d@arm.com>
-Date:   Wed, 16 Jan 2019 17:55:19 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 12:57:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727629AbfAPR5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:57:03 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9178520859;
+        Wed, 16 Jan 2019 17:57:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547661422;
+        bh=LqNnElH0GNood3aNFKq5Q8oAXnnzecCJ6fo9bR6y1X0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=19M8g7T1HetZE2UvNfLZzB+A2K8vuqOGRPbIp4WtdkyOlG8JR7x6o4qgyxf3cuUK+
+         wm8zADG47yWS9ZJ6NfYzF+vQvEuv8Mi2qUZFuTtYJ0H7rD1jBc66sW6rd9O32tg6vh
+         /29FN18t0w8azFTrmSWnc9x6ewaY9WjdL0mjNk8k=
+Date:   Wed, 16 Jan 2019 09:57:01 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        broonie@kernel.org, ard.biesheuvel@linaro.org,
+        jonathan.cameron@huawei.com
+Subject: Re: [PATCH 2/5] crypto: ccm - use template array registering API to
+ simplify the code
+Message-ID: <20190116175700.GC152952@gmail.com>
+References: <1547607034-40948-1-git-send-email-wangxiongfeng2@huawei.com>
+ <1547607034-40948-3-git-send-email-wangxiongfeng2@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190116161713.12748-1-laurentiu.tudor@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547607034-40948-3-git-send-email-wangxiongfeng2@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/01/2019 16:17, Laurentiu Tudor wrote:
-> This is an attempt to fix an iommu exception when doing dma to the
-> i2c controller with EDMA. Without these mappings the smmu raises a
-> context fault [1] exactly with the address of the i2c data i/o reg.
-> This was seen on an NXP LS1043A chip while working on enabling SMMU.
-
-Rather than gradually adding much the same code to potentially every 
-possible client driver, can it not be implemented once in the edma 
-driver as was done for pl330 and rcar-dmac? That also sidesteps any of 
-the nastiness of smuggling a dma_addr_t via a phys_addr_t variable.
-
-Robin.
-
-> [1] arm-smmu 9000000.iommu: Unhandled context fault: fsr=0x402,
->      iova=0x02180004, fsynr=0x150021, cb=7
+On Wed, Jan 16, 2019 at 10:50:31AM +0800, Xiongfeng Wang wrote:
+> Use crypto template array registering API to simplify the code.
 > 
-> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
 > ---
->   drivers/i2c/busses/i2c-imx.c | 57 +++++++++++++++++++++++++++++-------
->   1 file changed, 47 insertions(+), 10 deletions(-)
+>  crypto/ccm.c | 81 +++++++++++++++++++-----------------------------------------
+>  1 file changed, 26 insertions(+), 55 deletions(-)
 > 
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index 4e34b1572756..07cc8f4b45b9 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -202,6 +202,9 @@ struct imx_i2c_struct {
->   	struct pinctrl_state *pinctrl_pins_gpio;
->   
->   	struct imx_i2c_dma	*dma;
-> +
-> +	dma_addr_t		dma_tx_addr;
-> +	dma_addr_t		dma_rx_addr;
->   };
->   
->   static const struct imx_i2c_hwdata imx1_i2c_hwdata = {
-> @@ -274,17 +277,20 @@ static inline unsigned char imx_i2c_read_reg(struct imx_i2c_struct *i2c_imx,
->   
->   /* Functions for DMA support */
->   static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
-> -			       dma_addr_t phy_addr)
-> +			       phys_addr_t phy_addr)
->   {
->   	struct imx_i2c_dma *dma;
->   	struct dma_slave_config dma_sconfig;
->   	struct device *dev = &i2c_imx->adapter.dev;
->   	int ret;
-> +	phys_addr_t i2dr_pa;
->   
->   	dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
->   	if (!dma)
->   		return -ENOMEM;
->   
-> +	i2dr_pa = phy_addr + (IMX_I2C_I2DR << i2c_imx->hwdata->regshift);
-> +
->   	dma->chan_tx = dma_request_chan(dev, "tx");
->   	if (IS_ERR(dma->chan_tx)) {
->   		ret = PTR_ERR(dma->chan_tx);
-> @@ -293,15 +299,25 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->   		goto fail_al;
->   	}
->   
-> -	dma_sconfig.dst_addr = phy_addr +
-> -				(IMX_I2C_I2DR << i2c_imx->hwdata->regshift);
-> +	i2c_imx->dma_tx_addr = dma_map_resource(dma->chan_tx->device->dev,
-> +						i2dr_pa,
-> +						DMA_SLAVE_BUSWIDTH_1_BYTE,
-> +						DMA_MEM_TO_DEV, 0);
-> +	ret = dma_mapping_error(dma->chan_tx->device->dev,
-> +				i2c_imx->dma_tx_addr);
-> +	if (ret) {
-> +		dev_err(dev, "can't dma map tx destination (%d)\n", ret);
-> +		goto fail_tx;
-> +	}
-> +
-> +	dma_sconfig.dst_addr = i2c_imx->dma_tx_addr;
->   	dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
->   	dma_sconfig.dst_maxburst = 1;
->   	dma_sconfig.direction = DMA_MEM_TO_DEV;
->   	ret = dmaengine_slave_config(dma->chan_tx, &dma_sconfig);
->   	if (ret < 0) {
->   		dev_err(dev, "can't configure tx channel (%d)\n", ret);
-> -		goto fail_tx;
-> +		goto fail_tx_dma;
->   	}
->   
->   	dma->chan_rx = dma_request_chan(dev, "rx");
-> @@ -309,18 +325,28 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->   		ret = PTR_ERR(dma->chan_rx);
->   		if (ret != -ENODEV && ret != -EPROBE_DEFER)
->   			dev_err(dev, "can't request DMA rx channel (%d)\n", ret);
-> -		goto fail_tx;
-> +		goto fail_tx_dma;
->   	}
->   
-> -	dma_sconfig.src_addr = phy_addr +
-> -				(IMX_I2C_I2DR << i2c_imx->hwdata->regshift);
-> +	i2c_imx->dma_rx_addr = dma_map_resource(dma->chan_rx->device->dev,
-> +						i2dr_pa,
-> +						DMA_SLAVE_BUSWIDTH_1_BYTE,
-> +						DMA_DEV_TO_MEM, 0);
-> +	ret = dma_mapping_error(dma->chan_rx->device->dev,
-> +				i2c_imx->dma_rx_addr);
-> +	if (ret) {
-> +		dev_err(dev, "can't dma map rx source (%d)\n", ret);
-> +		goto fail_rx;
-> +	}
-> +
-> +	dma_sconfig.src_addr = i2c_imx->dma_rx_addr;
->   	dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
->   	dma_sconfig.src_maxburst = 1;
->   	dma_sconfig.direction = DMA_DEV_TO_MEM;
->   	ret = dmaengine_slave_config(dma->chan_rx, &dma_sconfig);
->   	if (ret < 0) {
->   		dev_err(dev, "can't configure rx channel (%d)\n", ret);
-> -		goto fail_rx;
-> +		goto fail_rx_dma;
->   	}
->   
->   	i2c_imx->dma = dma;
-> @@ -330,8 +356,14 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->   
->   	return 0;
->   
-> +fail_rx_dma:
-> +	dma_unmap_resource(dma->chan_rx->device->dev, i2c_imx->dma_rx_addr,
-> +			   DMA_SLAVE_BUSWIDTH_1_BYTE, DMA_DEV_TO_MEM, 0);
->   fail_rx:
->   	dma_release_channel(dma->chan_rx);
-> +fail_tx_dma:
-> +	dma_unmap_resource(dma->chan_tx->device->dev, i2c_imx->dma_tx_addr,
-> +			   DMA_SLAVE_BUSWIDTH_1_BYTE, DMA_MEM_TO_DEV, 0);
->   fail_tx:
->   	dma_release_channel(dma->chan_tx);
->   fail_al:
-> @@ -1057,7 +1089,7 @@ static int i2c_imx_probe(struct platform_device *pdev)
->   	struct imxi2c_platform_data *pdata = dev_get_platdata(&pdev->dev);
->   	void __iomem *base;
->   	int irq, ret;
-> -	dma_addr_t phy_addr;
-> +	phys_addr_t phy_addr;
->   
->   	dev_dbg(&pdev->dev, "<%s>\n", __func__);
->   
-> @@ -1072,7 +1104,7 @@ static int i2c_imx_probe(struct platform_device *pdev)
->   	if (IS_ERR(base))
->   		return PTR_ERR(base);
->   
-> -	phy_addr = (dma_addr_t)res->start;
-> +	phy_addr = res->start;
->   	i2c_imx = devm_kzalloc(&pdev->dev, sizeof(*i2c_imx), GFP_KERNEL);
->   	if (!i2c_imx)
->   		return -ENOMEM;
-> @@ -1220,6 +1252,11 @@ static int i2c_imx_remove(struct platform_device *pdev)
->   	pm_runtime_put_noidle(&pdev->dev);
->   	pm_runtime_disable(&pdev->dev);
->   
-> +	dma_unmap_resource(&pdev->dev, i2c_imx->dma_tx_addr,
-> +			   DMA_SLAVE_BUSWIDTH_1_BYTE, DMA_MEM_TO_DEV, 0);
-> +	dma_unmap_resource(&pdev->dev, i2c_imx->dma_rx_addr,
-> +			   DMA_SLAVE_BUSWIDTH_1_BYTE, DMA_DEV_TO_MEM, 0);
-> +
->   	return 0;
->   }
->   
+> diff --git a/crypto/ccm.c b/crypto/ccm.c
+> index b242fd0..8949aa2 100644
+> --- a/crypto/ccm.c
+> +++ b/crypto/ccm.c
+> @@ -589,12 +589,6 @@ static int crypto_ccm_create(struct crypto_template *tmpl, struct rtattr **tb)
+>  					mac_name);
+>  }
+>  
+> -static struct crypto_template crypto_ccm_tmpl = {
+> -	.name = "ccm",
+> -	.create = crypto_ccm_create,
+> -	.module = THIS_MODULE,
+> -};
+> -
+>  static int crypto_ccm_base_create(struct crypto_template *tmpl,
+>  				  struct rtattr **tb)
+>  {
+> @@ -618,12 +612,6 @@ static int crypto_ccm_base_create(struct crypto_template *tmpl,
+>  					cipher_name);
+>  }
+>  
+> -static struct crypto_template crypto_ccm_base_tmpl = {
+> -	.name = "ccm_base",
+> -	.create = crypto_ccm_base_create,
+> -	.module = THIS_MODULE,
+> -};
+> -
+>  static int crypto_rfc4309_setkey(struct crypto_aead *parent, const u8 *key,
+>  				 unsigned int keylen)
+>  {
+> @@ -854,12 +842,6 @@ static int crypto_rfc4309_create(struct crypto_template *tmpl,
+>  	goto out;
+>  }
+>  
+> -static struct crypto_template crypto_rfc4309_tmpl = {
+> -	.name = "rfc4309",
+> -	.create = crypto_rfc4309_create,
+> -	.module = THIS_MODULE,
+> -};
+> -
+>  static int crypto_cbcmac_digest_setkey(struct crypto_shash *parent,
+>  				     const u8 *inkey, unsigned int keylen)
+>  {
+> @@ -999,51 +981,40 @@ static int cbcmac_create(struct crypto_template *tmpl, struct rtattr **tb)
+>  	return err;
+>  }
+>  
+> -static struct crypto_template crypto_cbcmac_tmpl = {
+> -	.name = "cbcmac",
+> -	.create = cbcmac_create,
+> -	.free = shash_free_instance,
+> -	.module = THIS_MODULE,
+> +static struct crypto_template crypto_ccm_tmpl[] = {
+
+Add an 's':  'crypto_ccm_tmpls'.  Likewise everywhere else in this patch series
+where you're defining an array of crypto_templates.
+
+> +	{
+> +		.name = "cbcmac",
+> +		.create = cbcmac_create,
+> +		.free = shash_free_instance,
+> +		.module = THIS_MODULE,
+> +	},
+> +	{
+
+In a list of struct definitions, the { should be on the same line as the
+previous '},'.  Likewise everywhere else in this patch series where you're
+defining an array of crypto_templates.
+
+> +		.name = "ccm_base",
+> +		.create = crypto_ccm_base_create,
+> +		.module = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "ccm",
+> +		.create = crypto_ccm_create,
+> +		.module = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "rfc4309",
+> +		.create = crypto_rfc4309_create,
+> +		.module = THIS_MODULE,
+> +	},
+>  };
+>  
+>  static int __init crypto_ccm_module_init(void)
+>  {
+> -	int err;
+> -
+> -	err = crypto_register_template(&crypto_cbcmac_tmpl);
+> -	if (err)
+> -		goto out;
+> -
+> -	err = crypto_register_template(&crypto_ccm_base_tmpl);
+> -	if (err)
+> -		goto out_undo_cbcmac;
+> -
+> -	err = crypto_register_template(&crypto_ccm_tmpl);
+> -	if (err)
+> -		goto out_undo_base;
+> -
+> -	err = crypto_register_template(&crypto_rfc4309_tmpl);
+> -	if (err)
+> -		goto out_undo_ccm;
+> -
+> -out:
+> -	return err;
+> -
+> -out_undo_ccm:
+> -	crypto_unregister_template(&crypto_ccm_tmpl);
+> -out_undo_base:
+> -	crypto_unregister_template(&crypto_ccm_base_tmpl);
+> -out_undo_cbcmac:
+> -	crypto_register_template(&crypto_cbcmac_tmpl);
+> -	goto out;
+> +	return crypto_register_templates(crypto_ccm_tmpl,
+> +			ARRAY_SIZE(crypto_ccm_tmpl));
+>  }
+
+Please fix the indentation here, so the continuation line is aligned.
+
+	return crypto_register_templates(crypto_ccm_tmpl,
+					 ARRAY_SIZE(crypto_ccm_tmpl));
+
+Likewise everywhere else in the patch series where you're registering or
+unregistering templates.
+
+>  
+>  static void __exit crypto_ccm_module_exit(void)
+>  {
+> -	crypto_unregister_template(&crypto_rfc4309_tmpl);
+> -	crypto_unregister_template(&crypto_ccm_tmpl);
+> -	crypto_unregister_template(&crypto_ccm_base_tmpl);
+> -	crypto_unregister_template(&crypto_cbcmac_tmpl);
+> +	crypto_unregister_templates(crypto_ccm_tmpl,
+> +			ARRAY_SIZE(crypto_ccm_tmpl));
+>  }
+
+Same here.
+
+	crypto_unregister_templates(crypto_ccm_tmpl,
+				    ARRAY_SIZE(crypto_ccm_tmpl));
+
+>  
+>  module_init(crypto_ccm_module_init);
+> -- 
+> 1.7.12.4
 > 
+
+Thanks,
+
+- Eric
