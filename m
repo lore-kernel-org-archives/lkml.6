@@ -2,242 +2,184 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0435C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01701C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B910206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:49:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="ANOQJpvR"
+	by mail.kernel.org (Postfix) with ESMTP id CDB65206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:49:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387811AbfAPWts (ORCPT
+        id S2387759AbfAPWtm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:49:48 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55338 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387594AbfAPWtr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:49:47 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y139so3772134wmc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 14:49:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GQI34HYSDlcOKo2rNhdfwxoNvK4NkpQ1xY8ORCaanrM=;
-        b=ANOQJpvRGOi1zzANwFuZM16MBFnumG/0JGD8+3gRvHh+iBEucpUjYYlrTjT4MnROvE
-         cxD3zbT9BQgrLkKD2qCy+ENQUTldUUpExEy47/k2zffroElQBC2yNBEwRF55ntkTA0nM
-         HrL6jmr7UQTqdJimK81VuG94qhy2N3UMrcngzAGh7/vX2lgQwU+tu7SlUzeNVc4716uU
-         N70Lx111kEZI/zjxbfo/yzUVbZ/RF9JX70ZIgPXpZu3ZNZ51nj/Fo/fZZSYUpaXgWeV+
-         JkbO+GvSZLWpILNf0mwFdchbT7HxW3YpaQ8nx91EaQnkZDf6lxE4LbRCcmVzqQCJ0s9+
-         4XRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GQI34HYSDlcOKo2rNhdfwxoNvK4NkpQ1xY8ORCaanrM=;
-        b=d+TehVvxAKuG+To+Gu/6NfdwezVn5uRtHK1HtvNz13acxt1Bq6WUQTYxFm/P76OUXL
-         Tmteac7l1rsQ8BFcmM8yGat86hn1ewmsoerF+x5xmXrdTeWAGy4dWpJej3LseekRoBgn
-         dL4+6EtN+t+N3JTEqCb3V7TCzo9fVPLw12tBe2s2UHGxEaG9KXoFetFqXfdV1+zhFfQ/
-         FOT0nUZ4FIs6fJ0u8my5TrdEeDHnnB+RE74NeHXwaeUr5KSPNXffOWLZ6VJSdB+ApKM8
-         5rX5+VLhKvjbIEHa2OqJBFYF3jJK09HDfF56j/DuKFzTij60Zw0vISO/mccB6oXvu8yv
-         YNgw==
-X-Gm-Message-State: AJcUukfSYsv+YRVXLSvPmxbDlGav61Qfxwa5QY/aEouVrXxK2P+kcVUd
-        soQWq6XTnzFcLlCwtlbTiqzuGg==
-X-Google-Smtp-Source: ALg8bN4Lb3xjugZtbs+Edrh173zGOZ8UEb3vLuT5GFfKxxmbCBd100EwIWwpzblAAsr0UQW9l7EPvQ==
-X-Received: by 2002:a1c:aad2:: with SMTP id t201mr9054492wme.148.1547678984557;
-        Wed, 16 Jan 2019 14:49:44 -0800 (PST)
-Received: from brauner.io ([154.119.55.246])
-        by smtp.gmail.com with ESMTPSA id t5sm24291830wmg.43.2019.01.16.14.49.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 14:49:44 -0800 (PST)
-Date:   Wed, 16 Jan 2019 23:49:38 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        maco@android.com, arve@android.com, joel@joelfernandes.org,
-        shuah@kernel.org, tkjos@google.com
-Subject: Re: [PATCH v1] selftests: add binderfs selftests
-Message-ID: <20190116224936.xixnlqvhawtnvlio@brauner.io>
-References: <20190116222745.26217-1-christian@brauner.io>
- <20190116224050.GA21920@kroah.com>
+        Wed, 16 Jan 2019 17:49:42 -0500
+Received: from mga02.intel.com ([134.134.136.20]:57469 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387599AbfAPWtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 17:49:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 14:49:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="117288411"
+Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 14:49:08 -0800
+From:   "Chang S. Bae" <chang.seok.bae@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 13/13] x86/fsgsbase/64: Add documentation for FSGSBASE
+Date:   Wed, 16 Jan 2019 14:48:49 -0800
+Message-Id: <20190116224849.8617-14-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190116224849.8617-1-chang.seok.bae@intel.com>
+References: <20190116224849.8617-1-chang.seok.bae@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190116224050.GA21920@kroah.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 11:40:50PM +0100, Greg KH wrote:
-> On Wed, Jan 16, 2019 at 11:27:45PM +0100, Christian Brauner wrote:
-> > This adds the promised selftest for binderfs. It will verify the following
-> > things:
-> > - binderfs mounting works
-> > - binder device allocation works
-> > - performing a binder ioctl() request through a binderfs device works
-> > - binder device removal works
-> > - binder-control removal fails
-> > - binderfs unmounting works
-> > 
-> > Cc: Todd Kjos <tkjos@google.com>
-> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > ---
-> > /* Changelog */
-> > 
-> > v1:
-> > - check for ENODEV on mount failure to detect whether binderfs is
-> >   available
-> >   If it is not, skip the test and exit with success.
-> > ---
-> >  tools/testing/selftests/Makefile              |   1 +
-> >  .../selftests/filesystems/binderfs/.gitignore |   1 +
-> >  .../selftests/filesystems/binderfs/Makefile   |   6 +
-> >  .../filesystems/binderfs/binderfs_test.c      | 126 ++++++++++++++++++
-> >  .../selftests/filesystems/binderfs/config     |   3 +
-> >  5 files changed, 137 insertions(+)
-> >  create mode 100644 tools/testing/selftests/filesystems/binderfs/.gitignore
-> >  create mode 100644 tools/testing/selftests/filesystems/binderfs/Makefile
-> >  create mode 100644 tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-> >  create mode 100644 tools/testing/selftests/filesystems/binderfs/config
-> > 
-> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> > index 1a2bd15c5b6e..400ee81a3043 100644
-> > --- a/tools/testing/selftests/Makefile
-> > +++ b/tools/testing/selftests/Makefile
-> > @@ -10,6 +10,7 @@ TARGETS += drivers/dma-buf
-> >  TARGETS += efivarfs
-> >  TARGETS += exec
-> >  TARGETS += filesystems
-> > +TARGETS += filesystems/binderfs
-> >  TARGETS += firmware
-> >  TARGETS += ftrace
-> >  TARGETS += futex
-> > diff --git a/tools/testing/selftests/filesystems/binderfs/.gitignore b/tools/testing/selftests/filesystems/binderfs/.gitignore
-> > new file mode 100644
-> > index 000000000000..8a5d9bf63dd4
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/filesystems/binderfs/.gitignore
-> > @@ -0,0 +1 @@
-> > +binderfs_test
-> > diff --git a/tools/testing/selftests/filesystems/binderfs/Makefile b/tools/testing/selftests/filesystems/binderfs/Makefile
-> > new file mode 100644
-> > index 000000000000..58cb659b56b4
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/filesystems/binderfs/Makefile
-> > @@ -0,0 +1,6 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +CFLAGS += -I../../../../../usr/include/
-> > +TEST_GEN_PROGS := binderfs_test
-> > +
-> > +include ../../lib.mk
-> > diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-> > new file mode 100644
-> > index 000000000000..34361efcb9c8
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-> > @@ -0,0 +1,126 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +#define _GNU_SOURCE
-> > +#include <errno.h>
-> > +#include <fcntl.h>
-> > +#include <sched.h>
-> > +#include <stdio.h>
-> > +#include <stdlib.h>
-> > +#include <string.h>
-> > +#include <sys/ioctl.h>
-> > +#include <sys/mount.h>
-> > +#include <sys/stat.h>
-> > +#include <sys/types.h>
-> > +#include <unistd.h>
-> > +#include <linux/android/binder.h>
-> > +#include <linux/android/binderfs.h>
-> > +#include "../../kselftest.h"
-> > +
-> > +int main(int argc, char *argv[])
-> > +{
-> > +	int fd, ret, saved_errno;
-> > +	size_t len;
-> > +	struct binderfs_device device = { 0 };
-> > +	struct binder_version version = { 0 };
-> > +
-> > +	ret = unshare(CLONE_NEWNS);
-> > +	if (ret < 0)
-> > +		ksft_exit_fail_msg("%s - Failed to unshare mount namespace\n",
-> > +				   strerror(errno));
-> > +
-> > +	ret = mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
-> > +	if (ret < 0)
-> > +		ksft_exit_fail_msg("%s - Failed to mount / as private\n",
-> > +				   strerror(errno));
-> > +
-> > +	ret = mkdir("/dev/binderfs", 0755);
-> > +	if (ret < 0 && errno != EEXIST)
-> > +		ksft_exit_fail_msg(
-> > +			"%s - Failed to create binderfs mountpoint\n",
-> > +			strerror(errno));
-> > +
-> > +	ret = mount(NULL, "/dev/binderfs", "binder", 0, 0);
-> > +	if (ret < 0) {
-> > +		if (errno != ENODEV)
-> > +			ksft_exit_fail_msg("%s - Failed to mount binderfs\n",
-> > +					   strerror(errno));
-> > +
-> > +		ksft_test_result_skip(
-> > +			"The Android binderfs filesystem is not available\n");
-> > +		ksft_exit_pass();
-> 
-> Do you have to clean up your new directory you created and the mount?
-> Or does exiting the code here somehow undo the unshare/mount/mkdir steps
-> above??
-> 
-> Same type of question for the failure paths of the mkdir and mount calls.
+From: Andi Kleen <ak@linux.intel.com>
 
-All mounts performed after a new mount namespace without propagation is
-setup for a process will die when all references to the mount namespace
-are dropped which in this case happens when the process dies.
+v2: Minor updates to documentation requested in review.
+v3: Update for new gcc and various improvements.
 
-> 
-> > +	}
-> > +
-> > +	/* binderfs mount test passed */
-> > +	ksft_inc_pass_cnt();
-> > +
-> > +	memcpy(device.name, "my-binder", strlen("my-binder"));
-> > +
-> > +	fd = open("/dev/binderfs/binder-control", O_RDONLY | O_CLOEXEC);
-> > +	if (fd < 0)
-> > +		ksft_exit_fail_msg(
-> > +			"%s - Failed to open binder-control device\n",
-> > +			strerror(errno));
-> 
-> No cleanup?  Same for other calls to ksft_exit_fail_msg() later in this
-> file.
+[ chang: Fix some typo. Fix the example code. ]
 
-Same comment as above. :)
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+---
+ Documentation/x86/fsgs.txt | 104 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 104 insertions(+)
+ create mode 100644 Documentation/x86/fsgs.txt
 
-The thing we might want to cleanup is the mountpoint itself
-"/dev/binderfs".
+diff --git a/Documentation/x86/fsgs.txt b/Documentation/x86/fsgs.txt
+new file mode 100644
+index 000000000000..7a973a5c1767
+--- /dev/null
++++ b/Documentation/x86/fsgs.txt
+@@ -0,0 +1,104 @@
++
++Using FS and GS prefixes on 64bit x86 linux
++
++The x86 architecture supports segment prefixes per instruction to add an
++offset to an address.  On 64bit x86, these are mostly nops, except for FS
++and GS.
++
++This offers an efficient way to reference a global pointer.
++
++The compiler has to generate special code to use these base registers,
++or they can be accessed with inline assembler.
++
++	mov %gs:offset,%reg
++	mov %fs:offset,%reg
++
++On 64bit code, FS is used to address the thread local segment (TLS), declared using
++__thread.  The compiler then automatically generates the correct prefixes and
++relocations to access these values.
++
++FS is normally managed by the runtime code or the threading library
++Overwriting it can break a lot of things (including syscalls and gdb),
++but it can make sense to save/restore it for threading purposes.
++
++GS is freely available, but may need special (compiler or inline assembler)
++code to use.
++
++Traditionally 64bit FS and GS could be set by the arch_prctl system call
++
++	arch_prctl(ARCH_SET_GS, value)
++	arch_prctl(ARCH_SET_FS, value)
++
++[There was also an older method using modify_ldt(), inherited from 32bit,
++but this is not discussed here.]
++
++However using a syscall is problematic for user space threading libraries
++that want to context switch in user space. The whole point of them
++is avoiding the overhead of a syscall. It's also cleaner for compilers
++wanting to use the extra register to use instructions to write
++it, or read it directly to compute addresses and offsets.
++
++Newer Intel CPUs (Ivy Bridge and later) added new instructions to directly
++access these registers quickly from user context
++
++	RDFSBASE %reg	read the FS base	(or _readfsbase_u64)
++	RDGSBASE %reg	read the GS base	(or _readgsbase_u64)
++
++	WRFSBASE %reg	write the FS base	(or _writefsbase_u64)
++	WRGSBASE %reg	write the GS base	(or _writegsbase_u64)
++
++If you use the intrinsics include <immintrin.h> and set the -mfsgsbase option.
++
++The instructions are supported by the CPU when the "fsgsbase" string is shown in
++/proc/cpuinfo (or directly retrieved through the CPUID instruction,
++7:0 (ebx), word 9, bit 0)
++
++The instructions are only available to 64bit binaries.
++
++In addition the kernel needs to explicitly enable these instructions, as it
++may otherwise not correctly context switch the state. Newer Linux
++kernels enable this. When the kernel did not enable the instruction
++they will fault with an #UD exception.
++
++An FSGSBASE enabled kernel can be detected by checking the AT_HWCAP2
++bitmask in the aux vector. When the HWCAP2_FSGSBASE bit is set the
++kernel supports FSGSBASE.
++
++	#include <sys/auxv.h>
++	#include <elf.h>
++
++	/* Will be eventually in asm/hwcap.h */
++	#define HWCAP2_FSGSBASE        (1 << 1)
++
++        unsigned val = getauxval(AT_HWCAP2);
++        if (val & HWCAP2_FSGSBASE) {
++                asm("wrgsbase %0" :: "r" (ptr));
++        }
++
++No extra CPUID check needed as the kernel will not set this bit if the CPU
++does not support it.
++
++gcc 6 will have special support to directly access data relative
++to fs/gs using the __seg_fs and __seg_gs address space pointer
++modifiers.
++
++#ifndef __SEG_GS
++#error "Need gcc 6 or later"
++#endif
++
++struct gsdata {
++	int a;
++	int b;
++} gsdata = { 1, 2 };
++
++int __seg_gs *valp = 0;		/* offset relative to GS */
++
++	/* Check if kernel supports FSGSBASE as above */
++
++	/* Set up new GS */
++	asm("wrgsbase %0" :: "r" (&gsdata));
++
++	/* Now the global pointer can be used normally */
++	printf("gsdata.a = %d\n", *valp);
++
++Andi Kleen
+-- 
+2.19.1
 
-> 
-> thanks,
-> 
-> greg "error handling is hard!" k-h
-
-That's fair. With patches purely for testing I always have to force
-myself to pay close attention because I implicitly and very much
-**falsely** keep thinking that the test is less important than the
-actual code. And I'm always a little ashamed of that. :)
-
-Thanks!
-Christian
