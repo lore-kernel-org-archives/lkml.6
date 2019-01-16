@@ -2,200 +2,124 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00174C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B69CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B337520859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:21:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="llJ4KHdI"
+	by mail.kernel.org (Postfix) with ESMTP id 2C26A20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfAPAVL (ORCPT
+        id S1726906AbfAPAXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 19:21:11 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51282 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbfAPAVL (ORCPT
+        Tue, 15 Jan 2019 19:23:17 -0500
+Received: from mail.windriver.com ([147.11.1.11]:61767 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbfAPAXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 19:21:11 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0G0L2gH120865;
-        Tue, 15 Jan 2019 18:21:02 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547598062;
-        bh=96YnxJH5gLYsDwPKudfM5GZQ9dX2slcPiSf1QaO604o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=llJ4KHdIa/MyPoCtBuEg8d8ZlEzMJXvzAaRdKctBgfBIPOnyX7AIEKCYym9OcmmA3
-         9b9p2tXzrGCPeSlV2whYQ+tVIvPYxqA//MwBhnwbxoEIylEb8DOZRzeqhguOj0RpSV
-         g8q2u6zEOxTr7TV1Ppn/1hseoyb8MzrQbRteSLVA=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0G0L2R8029676
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Jan 2019 18:21:02 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 15
- Jan 2019 18:21:02 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 15 Jan 2019 18:21:02 -0600
-Received: from [172.22.73.223] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0G0L2j8027651;
-        Tue, 15 Jan 2019 18:21:02 -0600
-Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED
- driver
-To:     Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <dachaac@gmail.com>,
-        <robh+dt@kernel.org>
-References: <20190114211723.11186-1-dmurphy@ti.com>
- <20190114211723.11186-2-dmurphy@ti.com>
- <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com> <20190115222223.GA17363@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
-Date:   Tue, 15 Jan 2019 18:20:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 19:23:16 -0500
+Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x0G0N3Y7014804
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 15 Jan 2019 16:23:03 -0800 (PST)
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 15 Jan 2019 16:22:57 -0800
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ 42BF42E0922; Tue, 15 Jan 2019 19:22:57 -0500 (EST)
+Date:   Tue, 15 Jan 2019 19:22:57 -0500
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sinan Kaya <okaya@kernel.org>
+Subject: Re: linux-next: Fixes tags need some work in the pm tree
+Message-ID: <20190116002257.GE26416@windriver.com>
+References: <20190116075540.78cff44e@canb.auug.org.au>
+ <2774660.l3LIlnjlhl@aspire.rjw.lan>
+ <20190116094305.0f66356a@canb.auug.org.au>
+ <8346227.VjU8HeZdOJ@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20190115222223.GA17363@amd>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8346227.VjU8HeZdOJ@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+[Re: linux-next: Fixes tags need some work in the pm tree] On 16/01/2019 (Wed 00:06) Rafael J. Wysocki wrote:
 
-Pavel Thanks for the review it is always good to have your comments.
-
-On 1/15/19 4:22 PM, Pavel Machek wrote:
-> Hi!
+> On Tuesday, January 15, 2019 11:43:05 PM CET Stephen Rothwell wrote:
+> > Hi Rafael,
+> > 
+> > On Tue, 15 Jan 2019 23:13:16 +0100 "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+> > >
+> > > On Tuesday, January 15, 2019 9:55:40 PM CET Stephen Rothwell wrote:
+> > > > [I am experimenting with checking the Fixes tags in commits in linux-next.
+> > > > Please let me know if you think I am being too strict.]
+> > > > 
+> > > > Hi Rafael,
+> > > > 
+> > > > Commits
+> > > > 
+> > > >   62b33d57c534 ("drivers: thermal: int340x_thermal: Make PCI dependency explicit")
+> > > >   cd793ab22a93 ("x86/intel/lpss: Make PCI dependency explicit")
+> > > >   42ac19e7b81e ("ACPI: EC: Look for ECDT EC after calling acpi_load_tables()")
+> > > >   6c29b81b5695 ("platform/x86: apple-gmux: Make PCI dependency explicit")
+> > > >   34783dc0182a ("platform/x86: intel_pmc: Make PCI dependency explicit")
+> > > >   704658d1d3ae ("platform/x86: intel_ips: make PCI dependency explicit")
+> > > >   5df37f3a1aa9 ("vga-switcheroo: make PCI dependency explicit")
+> > > >   da1df6ee4296 ("ata: pata_acpi: Make PCI dependency explicit")
+> > > >   ce97a22a596b ("ACPI / LPSS: Make PCI dependency explicit")
+> > > > 
+> > > > Have malformed Fixes tags:
+> > > > 
+> > > > There should be double quotes around the commit subject.  
+> > > 
+> > > Well, where does this requirement come from?
+> > > 
+> > > It hasn't been there before AFAICS.
+> > 
+> > Documentation/process/submitting-patches.rst has the following, but I
+> > am sure people are happy to discuss changes and it does say "For
+> > example", so maybe I am being to strict?
 > 
->>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
->>> +XX - Do not care ignored by the driver
->>> +RR - is the 8 bit Red LED value
->>> +GG - is the 8 bit Green LED value
->>> +BB - is the 8 bit Blue LED value
->>> +
->>> +Example:
->>> +LED module output 4 of the LP5024 will be a yellow color:
->>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
->>> +
->>> +LED module output 4 of the LP5024 will be dimmed 50%:
->>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
->>> +
->>> +LED banked RGBs of the LP5036 will be a white color:
->>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
->>
->> This part with example cans remain in Documentation/leds if you
->>> like.
-> 
-> Does it actually work like that on hardware?
+> If that's the source of it, then it's rather weak IMO.
 
-What?
+Rafael, allow me to rewind a bit, and add context you would not have...
 
-> 
-> Is it supposed to support "normal" RGB colors as seen on monitors?
+A quick on-the-fly script shows we have a lot of "Fixes:" tags that
+either have bad (rebased/gone) commit IDs and/or non-standard
+formatting.
 
-Monitors are not an application for this part.
+The biggest issue is having commits in mainline that reference a commit
+ID in a Fixes: tag that doesn't exist - for one reason or another.  Once
+that is in mainline, we can't correct it.  It is there forever.
 
-Data sheet indicates these are the target applications
+Doing a sanity check for that in linux-next seems like a good place to
+check for this and prevent it.  And if we sanity check for one thing, we
+can sanity check for other common issues.  Hence the less important
+formatting checks.
 
-LED Lighting, Indicator Lights, and Fun Lights for:
-Smart Speaker
-Smart Home Appliances
-Video Doorbell
-Electric Smart Lock
-Smoke Detector
-Set-Top Box
-Smart Router
-Handheld Devices
+> Formal requirements should be documented as such and I would expect that
+> to happen through the usual process: patch submission, review, acceptance etc.
 
-ie Echo, Ring
+I'd rather not misinterpret this as a formal requirement.  We just want
+to catch bad SHA IDs in Fixes: and also help our friends doing the
+linux-stable releases so they can parse those Fixes: fields more easily
+and reliably.
 
-> 
-> Because 100% PWM on all channels does not result in white on hardware
-> I have.
-> 
+I'd like to think we all can support the work the linux-stable people do
+and stand behind doing whatever we can to help them.  At the same time,
+people (maintainers and submitters) have the choice to ignore the
+e-mails that suggest "Fixes:" changes, if they feel they are invalid.
+And suggestions for improvements in parsing etc etc are always welcome.
 
-I don't know I am usually blinded by the light and have no diffuser over
-the LEDs to disperse the light so when I look I see all 3 colors.
-
->>> +	} else {
->>> +		led_offset = (led->led_number * 3);
->>> +		red_reg = priv->mix_out0_reg + led_offset;
->>> +		green_reg = priv->mix_out0_reg + led_offset + 1;
->>> +		blue_reg = priv->mix_out0_reg + led_offset + 2;
->>> +	}
->>> +
->>> +	red_val = (mix_value & 0xff0000) >> 16;
->>> +	green_val = (mix_value & 0xff00) >> 8;
->>> +	blue_val = (mix_value & 0xff);
->>
->> I've been rather thinking about space separated list of decimal
->> "red green blue" values, but maybe this way it will be less
->> controversial. Let's if there will be other opinions.
-> 
-> We support maximum brightness > 255, so space separated is certainly
-> better option than this.
-> 
-
-I was using the HSL picker URL that Jacek sent to me that gave me that idea
-And there were comments about presenting a single file to control the color.
-But that was probably lost in the noise of the email chain.
-
-https://lore.kernel.org/patchwork/patch/1026514/
-
-"Apart of that, I've been also mulling over if we shouldn't go for single
-"color" sysfs file for setting r,g,b components at one go."
-
-http://hslpicker.com/#e6e200
-
-> But...
-> 
-> I believe we should have a reasonable design before we do something
-> like this. There's no guarantee someone will not use lp50xx with just
-> the white LEDs for example. How will this work? Plus existing hardware
-> already uses three separate LEDs for RGB LED. Why not provide same
-> interface?
-> 
-
-Which existing hardware?  Are they using this part?
-
-<rant>
-Why are we delaying getting the RGB framework or HSV in?
-I would rather design against something you want instead of having
-everyone complain about every implementation I post.
-</rant>
-
-It is not a normal RGB driver.  The device collates the individual RGB
-clusters into a single brightness register and you can modify the intensity of the individual
-LEDs via other registers.  If brightness is 0 then the cluster is OFF regardless of the color
-set in the individual registers.
-
-And the RGB clusters can be banked into a single RGB cluster group to
-present a single register to control numerous RGB LED clusters.
-
-> (Oh and don't try to say "sysfs is slow", without numbers).
-
-Never said sysfs was slow.
-
-Dan
-> 
-> Thanks,
-> 									Pavel
-> 
-
-
--- 
-------------------
-Dan Murphy
+Thanks,
+Paul.
+--
