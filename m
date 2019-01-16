@@ -2,227 +2,153 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8786C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E80EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 849B820651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC75820651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="PvbGYbSw"
+	dkim=fail reason="unknown key hash" (0-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="eLvAt7Bq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394401AbfAPQ5W (ORCPT
+        id S2394407AbfAPQ7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:57:22 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46390 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731103AbfAPQ5W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:57:22 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so3261852ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:57:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=/b0v7wMED6S2JCUnbVx3eM4FOrf0dlwvVWgbT1szyBA=;
-        b=PvbGYbSwU5VdLGgnibAq7RKMg9J41210TUPrwOauOUc7dJ7z0xKrIB2DzuoNRxidvo
-         im7tN5kzkTH4fsvT0g8w1O9E1BbArtZTxHiH5K8Dx0pAR1GgNMkiCB2gS3c0tk2LCock
-         4d7Z4n4qLpfupn2ErH9GVPbYxbcrEjyuiJtlDUC4O5r9NJUeLNfyb4PTQHtGhFIXDqPz
-         J+hV5zVdTbXVpkG0IHXTUVCiUXvg+yupVEJp7yG6+55/g0qoBxJ5GFha90qeIPgczZ99
-         mXmKvH2z3SpN0R7o94mN3o2yt1fgM7V+5fWpJYIMcxX2PinUR/claUNFCjZgkMRIeIg1
-         sF4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=/b0v7wMED6S2JCUnbVx3eM4FOrf0dlwvVWgbT1szyBA=;
-        b=RSyUiSroeBTN8SoCiGRqr8Ugr06O/BYBwke/H+x8gqWi1lkxZh6iEivRq06Au+QOs8
-         5CWMopAOZiadJGbHkaxMLK1C7YkJ0k5VdrLGR7wGfVcCMRZZacY6deurqub6T/JL+SNg
-         SI1wbxVDT6FaC4uR1UTQVIHlkfizQ48zIW7r1wY5FOiB1AUMiT4gRXofFFzYqRFpu6pf
-         Yw1Q8WLA3XrGMzqjMMFlvSF2AiVCi6AGm/VbSZ1/5hkMI0Q7vdmocGDMQiUsKM876VAd
-         LLyTrY1lRDbROKrBybbsciK3oZrxkfWEp/K4eEzGvbhLSqskhW1EEAdYPS7ZamAB3Xy5
-         35aw==
-X-Gm-Message-State: AJcUukcVW1dvwm1RO4/PY1hrQgrZdcWPXo2W5bDWF5PGje1/Gv1ckggd
-        1mZod41DIiE5Tge++IEXu8v59w==
-X-Google-Smtp-Source: ALg8bN6ZSbTqndK9gqTYv4XyitS/ORXT1eZkWJvhcqju1csw3TGNeimlJd7WTMjaHH5RDUJcdwFhvQ==
-X-Received: by 2002:a17:902:622:: with SMTP id 31mr10594571plg.171.1547657841177;
-        Wed, 16 Jan 2019 08:57:21 -0800 (PST)
-Received: from [25.170.158.113] ([172.56.31.87])
-        by smtp.gmail.com with ESMTPSA id p6sm10199431pfn.53.2019.01.16.08.57.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 08:57:20 -0800 (PST)
-Date:   Wed, 16 Jan 2019 18:57:10 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190116164219.GD5446@kroah.com>
-References: <20190116131903.8515-1-christian@brauner.io> <20190116155450.GA3508@kroah.com> <EB0D154D-A8CD-4CDB-B66F-C20945722AE2@brauner.io> <20190116164219.GD5446@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] selftests: add binderfs selftests
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     tkjos@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
-        arve@android.com, maco@android.com, tkjos@google.com
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <CA19B5F8-FEE9-4159-BA01-9C51B4DF97FA@brauner.io>
+        Wed, 16 Jan 2019 11:59:30 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:17345 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728812AbfAPQ7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 11:59:30 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43ftjB4Kcjz9vBmN;
+        Wed, 16 Jan 2019 17:59:26 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=eLvAt7Bq; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 1y33t7ubUemJ; Wed, 16 Jan 2019 17:59:26 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43ftjB3GBBz9vBmJ;
+        Wed, 16 Jan 2019 17:59:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1547657966; bh=VClA1koYN/8UB1kz/FeELweQ5cMzF1pBl+1hJ48rHrs=;
+        h=From:Subject:To:Cc:Date:From;
+        b=eLvAt7BqtYsxN7kNzsTn3yCzQeJgXW/pvrjCRLWQQ+Rx6by4eR4OaEJxaMf4xrbET
+         FQPUhr3MjsHuIZLRxf2Pz0xRhQ1V3U3082He6sRkmK9YzwfMpNOArgKFNnb2OSCtzl
+         KimuUtlrI8GCG37yM7y6uPutILgDbNlGXG28AO5Q=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0E9D68B84C;
+        Wed, 16 Jan 2019 17:59:28 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 2W1rUcGyGM6V; Wed, 16 Jan 2019 17:59:27 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C98BD8B848;
+        Wed, 16 Jan 2019 17:59:27 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 6A6F37187C; Wed, 16 Jan 2019 16:59:27 +0000 (UTC)
+Message-Id: <39fb6c5a191025378676492e140dc012915ecaeb.1547652372.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 1/2] mm: add probe_user_read()
+To:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Date:   Wed, 16 Jan 2019 16:59:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On January 16, 2019 6:42:20 PM GMT+02:00, Greg KH <gregkh@linuxfoundation=
-=2Eorg> wrote:
->On Wed, Jan 16, 2019 at 06:21:12PM +0200, Christian Brauner wrote:
->> On January 16, 2019 5:54:50 PM GMT+02:00, Greg KH
-><gregkh@linuxfoundation=2Eorg> wrote:
->> >On Wed, Jan 16, 2019 at 02:19:03PM +0100, Christian Brauner wrote:
->> >> This adds the promised selftest for binderfs=2E It will verify the
->> >following
->> >> things:
->> >> - binderfs mounting works
->> >> - binder device allocation works
->> >> - performing a binder ioctl() request through a binderfs device
->works
->> >> - binder device removal works
->> >> - binder-control removal fails
->> >> - binderfs unmounting works
->> >>=20
->> >> Cc: Todd Kjos <tkjos@google=2Ecom>
->> >> Signed-off-by: Christian Brauner <christian=2Ebrauner@ubuntu=2Ecom>
->> >> ---
->> >>  tools/testing/selftests/Makefile              |   1 +
->> >>  =2E=2E=2E/selftests/filesystems/binderfs/=2Egitignore |   1 +
->> >>  =2E=2E=2E/selftests/filesystems/binderfs/Makefile   |   6 +
->> >>  =2E=2E=2E/filesystems/binderfs/binderfs_test=2Ec      | 120
->> >++++++++++++++++++
->> >>  =2E=2E=2E/selftests/filesystems/binderfs/config     |   3 +
->> >>  5 files changed, 131 insertions(+)
->> >>  create mode 100644
->> >tools/testing/selftests/filesystems/binderfs/=2Egitignore
->> >>  create mode 100644
->> >tools/testing/selftests/filesystems/binderfs/Makefile
->> >>  create mode 100644
->> >tools/testing/selftests/filesystems/binderfs/binderfs_test=2Ec
->> >>  create mode 100644
->> >tools/testing/selftests/filesystems/binderfs/config
->> >>=20
->> >> diff --git a/tools/testing/selftests/Makefile
->> >b/tools/testing/selftests/Makefile
->> >> index 1a2bd15c5b6e=2E=2E400ee81a3043 100644
->> >> --- a/tools/testing/selftests/Makefile
->> >> +++ b/tools/testing/selftests/Makefile
->> >> @@ -10,6 +10,7 @@ TARGETS +=3D drivers/dma-buf
->> >>  TARGETS +=3D efivarfs
->> >>  TARGETS +=3D exec
->> >>  TARGETS +=3D filesystems
->> >> +TARGETS +=3D filesystems/binderfs
->> >>  TARGETS +=3D firmware
->> >>  TARGETS +=3D ftrace
->> >>  TARGETS +=3D futex
->> >> diff --git
->a/tools/testing/selftests/filesystems/binderfs/=2Egitignore
->> >b/tools/testing/selftests/filesystems/binderfs/=2Egitignore
->> >> new file mode 100644
->> >> index 000000000000=2E=2E8a5d9bf63dd4
->> >> --- /dev/null
->> >> +++ b/tools/testing/selftests/filesystems/binderfs/=2Egitignore
->> >> @@ -0,0 +1 @@
->> >> +binderfs_test
->> >> diff --git a/tools/testing/selftests/filesystems/binderfs/Makefile
->> >b/tools/testing/selftests/filesystems/binderfs/Makefile
->> >> new file mode 100644
->> >> index 000000000000=2E=2E58cb659b56b4
->> >> --- /dev/null
->> >> +++ b/tools/testing/selftests/filesystems/binderfs/Makefile
->> >> @@ -0,0 +1,6 @@
->> >> +# SPDX-License-Identifier: GPL-2=2E0
->> >> +
->> >> +CFLAGS +=3D -I=2E=2E/=2E=2E/=2E=2E/=2E=2E/=2E=2E/usr/include/
->> >> +TEST_GEN_PROGS :=3D binderfs_test
->> >> +
->> >> +include =2E=2E/=2E=2E/lib=2Emk
->> >> diff --git
->> >a/tools/testing/selftests/filesystems/binderfs/binderfs_test=2Ec
->> >b/tools/testing/selftests/filesystems/binderfs/binderfs_test=2Ec
->> >> new file mode 100644
->> >> index 000000000000=2E=2Eca4d9b616e84
->> >> --- /dev/null
->> >> +++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test=2Ec
->> >> @@ -0,0 +1,120 @@
->> >> +// SPDX-License-Identifier: GPL-2=2E0
->> >> +
->> >> +#define _GNU_SOURCE
->> >> +#include <errno=2Eh>
->> >> +#include <fcntl=2Eh>
->> >> +#include <sched=2Eh>
->> >> +#include <stdio=2Eh>
->> >> +#include <stdlib=2Eh>
->> >> +#include <string=2Eh>
->> >> +#include <sys/ioctl=2Eh>
->> >> +#include <sys/mount=2Eh>
->> >> +#include <sys/stat=2Eh>
->> >> +#include <sys/types=2Eh>
->> >> +#include <unistd=2Eh>
->> >> +#include <linux/android/binder=2Eh>
->> >> +#include <linux/android/binderfs=2Eh>
->> >> +#include "=2E=2E/=2E=2E/kselftest=2Eh"
->> >> +
->> >> +int main(int argc, char *argv[])
->> >> +{
->> >> +	int fd, ret, saved_errno;
->> >> +	size_t len;
->> >> +	struct binderfs_device device =3D { 0 };
->> >> +	struct binder_version version =3D { 0 };
->> >> +
->> >> +	ret =3D unshare(CLONE_NEWNS);
->> >> +	if (ret < 0)
->> >> +		ksft_exit_fail_msg("%s - Failed to unshare mount namespace\n",
->> >> +				   strerror(errno));
->> >> +
->> >> +	ret =3D mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
->> >> +	if (ret < 0)
->> >> +		ksft_exit_fail_msg("%s - Failed to mount / as private\n",
->> >> +				   strerror(errno));
->> >> +
->> >> +	ret =3D mkdir("/dev/binderfs", 0755);
->> >> +	if (ret < 0 && errno !=3D EEXIST)
->> >> +		ksft_exit_fail_msg(
->> >> +			"%s - Failed to create binderfs mountpoint\n",
->> >> +			strerror(errno));
->> >> +
->> >> +	ret =3D mount(NULL, "/dev/binderfs", "binder", 0, 0);
->> >> +	if (ret < 0)
->> >> +		ksft_exit_fail_msg("%s - Failed to mount binderfs\n",
->> >> +				   strerror(errno));
->> >
->> >Can you check first to see if the kernel under test really even has
->> >binderfs in it?  If not, you need to just
->>=20
->> Hm, I thought that's what the "config" file was for?
->> E=2Eg=2E a conditional compile or is this just a hint to the
->> user what's needed to run the test?
->
->I do not know=2E  What happens if you try to run this test on a kernel
->without that config option?  Does it not work as the framework
->correctly
->detects this?
+In powerpc code, there are several places implementing safe
+access to user data. This is sometimes implemented using
+probe_kernel_address() with additional access_ok() verification,
+sometimes with get_user() enclosed in a pagefault_disable()/enable()
+pair, etc. :
+    show_user_instructions()
+    bad_stack_expansion()
+    p9_hmi_special_emu()
+    fsl_pci_mcheck_exception()
+    read_user_stack_64()
+    read_user_stack_32() on PPC64
+    read_user_stack_32() on PPC32
+    power_pmu_bhrb_to()
 
-I did test and it worked fine but let me check by setting up a clean vm an=
-d retry=2E
+In the same spirit as probe_kernel_read(), this patch adds
+probe_user_read().
 
->
->And new kernel self tests should cc: the ksefltest mailing list and the
->maintainer of that subsystem so that they can review the test for
->things
->like this=2E
+probe_user_read() does the same as probe_kernel_read() but
+first checks that it is really a user address.
 
-Thanks, missed them in my Cc list=2E
+The patch defines this function as a static inline so the "size"
+variable can be examined for const-ness by the check_object_size()
+in __copy_from_user_inatomic()
 
-Christian
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v3: Moved 'Returns:" comment after description.
+     Explained in the commit log why the function is defined static inline
+
+ v2: Added "Returns:" comment and removed probe_user_address()
+
+ include/linux/uaccess.h | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 37b226e8df13..ef99edd63da3 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -263,6 +263,40 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
+ #define probe_kernel_address(addr, retval)		\
+ 	probe_kernel_read(&retval, addr, sizeof(retval))
+ 
++/**
++ * probe_user_read(): safely attempt to read from a user location
++ * @dst: pointer to the buffer that shall take the data
++ * @src: address to read from
++ * @size: size of the data chunk
++ *
++ * Safely read from address @src to the buffer at @dst.  If a kernel fault
++ * happens, handle that and return -EFAULT.
++ *
++ * We ensure that the copy_from_user is executed in atomic context so that
++ * do_page_fault() doesn't attempt to take mmap_sem.  This makes
++ * probe_user_read() suitable for use within regions where the caller
++ * already holds mmap_sem, or other locks which nest inside mmap_sem.
++ *
++ * Returns: 0 on success, -EFAULT on error.
++ */
++
++#ifndef probe_user_read
++static __always_inline long probe_user_read(void *dst, const void __user *src,
++					    size_t size)
++{
++	long ret;
++
++	if (!access_ok(src, size))
++		return -EFAULT;
++
++	pagefault_disable();
++	ret = __copy_from_user_inatomic(dst, src, size);
++	pagefault_enable();
++
++	return ret ? -EFAULT : 0;
++}
++#endif
++
+ #ifndef user_access_begin
+ #define user_access_begin(ptr,len) access_ok(ptr, len)
+ #define user_access_end() do { } while (0)
+-- 
+2.13.3
 
