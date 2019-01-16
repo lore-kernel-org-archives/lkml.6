@@ -2,60 +2,306 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7FCC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3B7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 345C120652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E83D20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:51:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="nhYp9JtD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731593AbfAPVtV (ORCPT
+        id S1731655AbfAPVvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:49:21 -0500
-Received: from mga09.intel.com ([134.134.136.24]:30556 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730479AbfAPVtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:49:20 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:49:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="115223041"
-Received: from lhaqq1-mobl2.amr.corp.intel.com (HELO localhost) ([10.249.254.231])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Jan 2019 13:49:16 -0800
-Date:   Wed, 16 Jan 2019 23:49:14 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] tpm: ppi: Possibly show command parameter if TPM PPI
- 1.3 is used
-Message-ID: <20190116214914.GF25803@linux.intel.com>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <20190109221103.1897677-5-stefanb@linux.vnet.ibm.com>
+        Wed, 16 Jan 2019 16:51:14 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41345 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730479AbfAPVvO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:51:14 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j21so4475883oii.8
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 13:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kw7JbI3Xgqn93oQvnbMD0ZqFezzNCRUL2XbO7gXNx6E=;
+        b=nhYp9JtDG3YXeIyNXilzl9w2KaNMOr5iflUo+0GmeC4eoPGL425FI2S1mwaRIoXE/o
+         xu/ub/UaT9/+lv6wqPjqwXtliBGK/uIZhE26w6p579UaOavFaJGibG5gSL0NBkMBaF+8
+         Pi242OViyTYMmhUtqnqHz44/2rbQgepeWvatIiHCqyU5FKSSun0dj2rsNZ1vgwyLgmbL
+         eYi7cmNpCqPIpGH7X9mqW+6App1YEi9SLgBzYFevK+0uWLDO3dudoPfdVR5Jn31MfSVU
+         9sOy8eXSVVgOcXyGg5Iz1kuOiM5CUTfc/SIHUgcEm11gwmK/O5q+EfgFHhUiAhQiZEov
+         XvAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kw7JbI3Xgqn93oQvnbMD0ZqFezzNCRUL2XbO7gXNx6E=;
+        b=BES2l61JNURwDzYKkVvRxBQg59pJQrEM2W2YCUXp+j/Wf6qcv4uwJue932+RgYwSLb
+         Y4T+XblOBcsRU3Ayxrfrejlw9UnQ0d7kMAcZiDIhdhtb+ihTlXZ3CzFTsU7kJ6N/O4mU
+         +af+pNuTAxAOrK6slx4NeRm9JZV1ayE8FhXGJQ0nig96VurwSC1jaUjEsY+vQmdVAGV0
+         GT+/6BV50VegjImzn7hiJ2zH2eGnSLM2p+9oWxvdZE/8dEBLVxonNSNpY/cMvH4OCJ0g
+         CH3wNVn/ZjLcJ2kPc31jDc7w6qIrCjSUoOWFWGJtQqlUUDMpaTGSlBFVWs0Q8jmHr33D
+         jCZA==
+X-Gm-Message-State: AJcUukfVea+4jxkXcyNXdZFG7fBpWwa/4S/RePV18geUkoa4VQktbZOe
+        lC3Hp+qDHUxS/rm0NFT55SSQhT6St6/QRJ+0Rj72g9XhIDw=
+X-Google-Smtp-Source: ALg8bN5yA0Zw7915fk1fTg22AvNzuaZPOxGYGmrGVLMenMtlvqDnBz4+ZHHiXjzb6FRM/jgj73g2ZJWcR9urTTgcaEE=
+X-Received: by 2002:aca:d78b:: with SMTP id o133mr1302044oig.232.1547674272632;
+ Wed, 16 Jan 2019 13:31:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109221103.1897677-5-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190116181859.D1504459@viggo.jf.intel.com> <20190116181905.12E102B4@viggo.jf.intel.com>
+In-Reply-To: <20190116181905.12E102B4@viggo.jf.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 16 Jan 2019 13:31:01 -0800
+Message-ID: <CAPcyv4j4_Wr2O9CBHNNVgB8ebOGu=-w5paqbBwVEn5dyXHLyKA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dax: "Hotplug" persistent memory for use like normal RAM
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Dave Hansen <dave@sr71.net>, Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 05:11:02PM -0500, Stefan Berger wrote:
-> +			if (tpm_ppi_req_has_parameter(req))
-> +				size = scnprintf(buf, PAGE_SIZE,
-> +						"%llu %llu\n",
-> +					req,
-> +					obj->package.elements[2].integer.value);
+On Wed, Jan 16, 2019 at 10:25 AM Dave Hansen
+<dave.hansen@linux.intel.com> wrote:
+>
+>
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+>
+> Currently, a persistent memory region is "owned" by a device driver,
+> either the "Direct DAX" or "Filesystem DAX" drivers.  These drivers
+> allow applications to explicitly use persistent memory, generally
+> by being modified to use special, new libraries.
+>
+> However, this limits persistent memory use to applications which
+> *have* been modified.  To make it more broadly usable, this driver
+> "hotplugs" memory into the kernel, to be managed ad used just like
+> normal RAM would be.
+>
+> To make this work, management software must remove the device from
+> being controlled by the "Device DAX" infrastructure:
+>
+>         echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
+>         echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
+>
+> and then bind it to this new driver:
+>
+>         echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
+>         echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
+>
+> After this, there will be a number of new memory sections visible
+> in sysfs that can be onlined, or that may get onlined by existing
+> udev-initiated memory hotplug rules.
+>
+> Note: this inherits any existing NUMA information for the newly-
+> added memory from the persistent memory device that came from the
+> firmware.  On Intel platforms, the firmware has guarantees that
+> require each socket's persistent memory to be in a separate
+> memory-only NUMA node.  That means that this patch is not expected
+> to create NUMA nodes, but will simply hotplug memory into existing
+> nodes.
+>
+> There is currently some metadata at the beginning of pmem regions.
+> The section-size memory hotplug restrictions, plus this small
+> reserved area can cause the "loss" of a section or two of capacity.
+> This should be fixable in follow-on patches.  But, as a first step,
+> losing 256MB of memory (worst case) out of hundreds of gigabytes
+> is a good tradeoff vs. the required code to fix this up precisely.
+>
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: linux-nvdimm@lists.01.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: Fengguang Wu <fengguang.wu@intel.com>
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+> Cc: Takashi Iwai <tiwai@suse.de>
+> ---
+>
+>  b/drivers/dax/Kconfig  |    5 ++
+>  b/drivers/dax/Makefile |    1
+>  b/drivers/dax/kmem.c   |   93 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 99 insertions(+)
+>
+> diff -puN drivers/dax/Kconfig~dax-kmem-try-4 drivers/dax/Kconfig
+> --- a/drivers/dax/Kconfig~dax-kmem-try-4        2019-01-08 09:54:44.051694874 -0800
+> +++ b/drivers/dax/Kconfig       2019-01-08 09:54:44.056694874 -0800
+> @@ -32,6 +32,11 @@ config DEV_DAX_PMEM
+>
+>           Say M if unsure
+>
+> +config DEV_DAX_KMEM
+> +       def_bool y
+> +       depends on DEV_DAX_PMEM   # Needs DEV_DAX_PMEM infrastructure
+> +       depends on MEMORY_HOTPLUG # for add_memory() and friends
+> +
 
-The alignment here is somewhat broken.
+I think this should be:
 
-/Jarkko
+config DEV_DAX_KMEM
+       tristate "<kmem title>"
+       depends on DEV_DAX
+       default DEV_DAX
+       depends on MEMORY_HOTPLUG # for add_memory() and friends
+       help
+           <kmem description>
+
+...because the DEV_DAX_KMEM implementation with the device-DAX reworks
+is independent of pmem. It just so happens that pmem is the only
+source for device-DAX instances, but that need not always be the case
+and kmem is device-DAX origin generic.
+
+>  config DEV_DAX_PMEM_COMPAT
+>         tristate "PMEM DAX: support the deprecated /sys/class/dax interface"
+>         depends on DEV_DAX_PMEM
+> diff -puN /dev/null drivers/dax/kmem.c
+> --- /dev/null   2018-12-03 08:41:47.355756491 -0800
+> +++ b/drivers/dax/kmem.c        2019-01-08 09:54:44.056694874 -0800
+> @@ -0,0 +1,93 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright(c) 2016-2018 Intel Corporation. All rights reserved. */
+> +#include <linux/memremap.h>
+> +#include <linux/pagemap.h>
+> +#include <linux/memory.h>
+> +#include <linux/module.h>
+> +#include <linux/device.h>
+> +#include <linux/pfn_t.h>
+> +#include <linux/slab.h>
+> +#include <linux/dax.h>
+> +#include <linux/fs.h>
+> +#include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include "dax-private.h"
+> +#include "bus.h"
+> +
+> +int dev_dax_kmem_probe(struct device *dev)
+> +{
+> +       struct dev_dax *dev_dax = to_dev_dax(dev);
+> +       struct resource *res = &dev_dax->region->res;
+> +       resource_size_t kmem_start;
+> +       resource_size_t kmem_size;
+> +       struct resource *new_res;
+> +       int numa_node;
+> +       int rc;
+> +
+> +       /* Hotplug starting at the beginning of the next block: */
+> +       kmem_start = ALIGN(res->start, memory_block_size_bytes());
+> +
+> +       kmem_size = resource_size(res);
+> +       /* Adjust the size down to compensate for moving up kmem_start: */
+> +        kmem_size -= kmem_start - res->start;
+> +       /* Align the size down to cover only complete blocks: */
+> +       kmem_size &= ~(memory_block_size_bytes() - 1);
+> +
+> +       new_res = devm_request_mem_region(dev, kmem_start, kmem_size,
+> +                                         dev_name(dev));
+> +
+> +       if (!new_res) {
+> +               printk("could not reserve region %016llx -> %016llx\n",
+> +                               kmem_start, kmem_start+kmem_size);
+
+dev_err() please.
+
+> +               return -EBUSY;
+> +       }
+> +
+> +       /*
+> +        * Set flags appropriate for System RAM.  Leave ..._BUSY clear
+> +        * so that add_memory() can add a child resource.
+> +        */
+> +       new_res->flags = IORESOURCE_SYSTEM_RAM;
+> +       new_res->name = dev_name(dev);
+> +
+> +       numa_node = dev_dax->target_node;
+> +       if (numa_node < 0) {
+> +               pr_warn_once("bad numa_node: %d, forcing to 0\n", numa_node);
+
+I think this should be dev_info(dev, "no numa_node, defaulting to
+0\n"), or dev_dbg():
+
+1/ so we can backtrack which device is missing numa information
+2/ NUMA_NO_NODE may be a common occurrence so it's not really a "warn"
+level concern afaics.
+3/ no real need for _once I don't see this as a log spam risk.
+
+> +               numa_node = 0;
+> +       }
+> +
+> +       rc = add_memory(numa_node, new_res->start, resource_size(new_res));
+> +       if (rc)
+> +               return rc;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_dax_kmem_probe);
+
+No need to export this afaics.
+
+> +
+> +static int dev_dax_kmem_remove(struct device *dev)
+> +{
+> +       /* Assume that hot-remove will fail for now */
+> +       return -EBUSY;
+> +}
+> +
+> +static struct dax_device_driver device_dax_kmem_driver = {
+> +       .drv = {
+> +               .probe = dev_dax_kmem_probe,
+> +               .remove = dev_dax_kmem_remove,
+> +       },
+> +};
+> +
+> +static int __init dax_kmem_init(void)
+> +{
+> +       return dax_driver_register(&device_dax_kmem_driver);
+> +}
+> +
+> +static void __exit dax_kmem_exit(void)
+> +{
+> +       dax_driver_unregister(&device_dax_kmem_driver);
+> +}
+> +
+> +MODULE_AUTHOR("Intel Corporation");
+> +MODULE_LICENSE("GPL v2");
+> +module_init(dax_kmem_init);
+> +module_exit(dax_kmem_exit);
+> +MODULE_ALIAS_DAX_DEVICE(0);
+> diff -puN drivers/dax/Makefile~dax-kmem-try-4 drivers/dax/Makefile
+> --- a/drivers/dax/Makefile~dax-kmem-try-4       2019-01-08 09:54:44.053694874 -0800
+> +++ b/drivers/dax/Makefile      2019-01-08 09:54:44.056694874 -0800
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_DAX) += dax.o
+>  obj-$(CONFIG_DEV_DAX) += device_dax.o
+> +obj-$(CONFIG_DEV_DAX_KMEM) += kmem.o
+>
+>  dax-y := super.o
+>  dax-y += bus.o
+> _
