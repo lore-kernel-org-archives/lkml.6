@@ -2,297 +2,172 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67819C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A2CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24FBB2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547670191;
-	bh=6PqeFg2h3mQ32mZ6AxAtvae43XfVC4/nqfs9r/iT3lc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=dnrLH/4kyv1HOUXHIikUxLYJzfBDqoRbvrxhUcpyku6eX+She50uOCmvztwnxcJ2p
-	 Lim3kQXNhdAzKn6Ls92WMWMm6/CbhpKJ2TFAOG/sb2IPvLqiXX6px4mmGWpwn6gaRW
-	 4B7FZCrtExzQQHbaVyZFoBkMg7o0UgJvW030hFLQ=
+	by mail.kernel.org (Postfix) with ESMTP id 3A11C20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:26:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="Usit9sEY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732605AbfAPUXJ (ORCPT
+        id S1732563AbfAPU0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 15:23:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38546 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727511AbfAPUXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 15:23:08 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AC756ADD7;
-        Wed, 16 Jan 2019 20:23:05 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 21:23:04 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-In-Reply-To: <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
-References: <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com> <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com> <20190110122442.GA21216@nautica>
- <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com> <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com> <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
- <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com> <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com> <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm>
- <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 16 Jan 2019 15:26:12 -0500
+Received: from mout.web.de ([217.72.192.78]:55649 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731741AbfAPU0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 15:26:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1547670365;
+        bh=tUxduNu2TvteLg8eXOnadxdcWVrfypdoGQzRYSBQ9eI=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=Usit9sEYWELIU8pRW6NkCIOkq1218c61LbIDI34LPxIeF6TXrUz4mA582sRI3dXsA
+         TLVq12nerOcj6OFwdc1x0YY01invfVkrbSM/IiEqEFYuAoIJpxBt5eXSLlA2CY9el/
+         a52DVgk3G7Kygl/iEMbcUF4nGyxA+lKfCUjJMd2E=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.10] ([95.157.57.47]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MD87M-1gTOgy3Vmu-00Ga7o; Wed, 16
+ Jan 2019 21:26:04 +0100
+Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
+        linux-wireless@vger.kernel.org
+Cc:     Ricardo Salveti <rsalveti@rsalveti.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20190116113723.15668-1-ulf.hansson@linaro.org>
+From:   Jan Kiszka <jan.kiszka@web.de>
+Message-ID: <258ecb6b-c2b2-c8b8-9804-4df69002d9f5@web.de>
+Date:   Wed, 16 Jan 2019 21:26:02 +0100
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1678380546-457690195-1547670185=:6626"
+In-Reply-To: <20190116113723.15668-1-ulf.hansson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LPRScK4fBJSOzSfF0RqYFID+4EGpqFlfyJj+/44Wp5ZLwVVZ2Hq
+ eJZ+fhFB7XOy+DYYxFT8O/HvgqKoFIHWWmpDMPuHgdtbJqLy1FlZD3macGy/4y1N816vBtj
+ REdzFf8XETkQZBZ5C469Hp90EgM5WEAqMIWAwWl9egjWxPgpl78d/I/l3C8upo/hm4jjPD+
+ zpIaghdmbCD3Qjlx6OLIA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rkie1JSVNX4=:jDqkJvqbiJr0krqS9XzTMO
+ 9w9lnw3qAD9ebThlWFf9hRXHRGD9qJCH4mnUMrDhnGVoYfAz+in4gDtHfGMX9JzDycUKnQtvb
+ swWAu7GtQh9XGBMql9LHPOxaFBwRZCtV1jOacp9VvzJM9eYx/EcTbPMz+qTpKe8kgt1KXFVvp
+ qGFMlW9wDdLDHBV8BsAgJrdq9/92DgfqHax62o+dWbNvNBgq9PHQ5fefxvPIBWkUkVbNqDgk0
+ C6ywVBZvobgNlraK0UVfUDqu7gkK8qc4IYCqYbnxfZlew4KOPCTJSKpkBFMTTW2TG8LeJDc48
+ xpUysEQq8VghxZR+RQcUQENUlD3/6jr17iTAN6JOhUYk5jKMAXsfMylymD4ZdKQr0ERxEtULK
+ AUfL4OTxDyQTtrNidUgSROAhGN6UfPWyQgYcGRm1CipjoJgHLylpferC/klfgZY07alBH6/Co
+ q5vQOHOHWyMhixjhQOfGQSYJicizM3ImzKg39JRgc5J26cvlnfy2Vfp/qAn/Xcr/h4Xpf1eBo
+ 8FTUBFs30Y/7d8jclYGCp56dk9wqWuS5NPr1f6ovceqANjvZuI7hXv9YNBH2Zv9zk7Nx2thCG
+ EK99RQDDzRrSL6zlfETbtNgGhFOEVpoGBFWPU1dzvxUtKNxqrYTa9RcwzG0fPDlziyd/fuWH1
+ lnUCCAxYzwtoHZq6kKUExTV8C28YAYr+LK8Exk3ClcRZ+x3IWJqJQv58LrxBSBbxIaxW5Bxfv
+ smPIkrGxzGZ9wctqPQcLZG88Wb8uLJIY+H2OL8skgIvicRU1iqlMfjCVXyHlqnaCUpl4ijEqD
+ M0RwIsKzk3ATwn3UEaYYgvau2WC2V+g+AuWp8/tWXtNxJmbBJ47uRD3vivVCo77gJTH1vc+kv
+ 0f/Z7CPDht5QO3phIFQ++py0wm2/5n/w8Oxm64/I1MZsatVa0ehiAWJPQJth0CYpavIaYVRec
+ rD2RhswxC3w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 16.01.19 12:37, Ulf Hansson wrote:
+> During "wlan-up", we are programming the FW into the WiFi-chip. However,
+> re-programming the FW doesn't work, unless a power cycle of the WiFi-chi=
+p
+> is made in-between the programmings.
+>
+> To conform to this requirement and to fix the regression in a simple way=
+,
+> let's start by allowing that the SDIO card (WiFi-chip) may stay powered =
+on
+> (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with =
+the
+> current code is to treat this scenario as an error, but unfortunate this
+> doesn't work as expected, so let's fix this.
+>
+> The other part is to guarantee that a power cycle of the SDIO card has b=
+een
+> completed when wl12xx_sdio_power_on() returns, as to allow the FW
+> programming to succeed. However, relying solely on runtime PM to deal wi=
+th
+> this isn't sufficient. For example, userspace may prevent runtime suspen=
+d
+> via sysfs for the device that represents the SDIO card, leading to that =
+the
+> mmc core also keeps it powered on. For this reason, let's instead do a
+> brute force power cycle in wl12xx_sdio_power_on().
+>
+> Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling"=
+)
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>
+> Changes in v2:
+> 	- Keep the SDIO host claimed when calling mmc_hw_reset().
+> 	- Add a fixes tag.
+> ---
+>   drivers/net/wireless/ti/wlcore/sdio.c | 15 +++++++--------
+>   1 file changed, 7 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireles=
+s/ti/wlcore/sdio.c
+> index bd10165d7eec..4d4b07701149 100644
+> --- a/drivers/net/wireless/ti/wlcore/sdio.c
+> +++ b/drivers/net/wireless/ti/wlcore/sdio.c
+> @@ -164,6 +164,12 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_=
+glue *glue)
+>   	}
+>
+>   	sdio_claim_host(func);
+> +	/*
+> +	 * To guarantee that the SDIO card is power cycled, as required to mak=
+e
+> +	 * the FW programming to succeed, let's do a brute force HW reset.
+> +	 */
+> +	mmc_hw_reset(card->host);
+> +
+>   	sdio_enable_func(func);
+>   	sdio_release_host(func);
+>
+> @@ -174,20 +180,13 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdi=
+o_glue *glue)
+>   {
+>   	struct sdio_func *func =3D dev_to_sdio_func(glue->dev);
+>   	struct mmc_card *card =3D func->card;
+> -	int error;
+>
+>   	sdio_claim_host(func);
+>   	sdio_disable_func(func);
+>   	sdio_release_host(func);
+>
+>   	/* Let runtime PM know the card is powered off */
+> -	error =3D pm_runtime_put(&card->dev);
+> -	if (error < 0 && error !=3D -EBUSY) {
+> -		dev_err(&card->dev, "%s failed: %i\n", __func__, error);
+> -
+> -		return error;
+> -	}
+> -
+> +	pm_runtime_put(&card->dev);
+>   	return 0;
+>   }
+>
+>
 
---1678380546-457690195-1547670185=:6626
-Content-Type: text/plain; charset=US-ASCII
+Just tested on both HiKey (620) and Ultra96 but it fails to fix the issue =
+on
+both. I'm getting
 
-On Thu, 17 Jan 2019, Linus Torvalds wrote:
+wl1271_sdio: probe of mmc2:0001:1 failed with error -16
 
-> > So that seems to deal with mincore() in a reasonable way indeed.
-> >
-> > It doesn't unfortunately really solve the preadv2(RWF_NOWAIT), nor does it
-> > provide any good answer what to do about it, does it?
-> 
-> As I suggested earlier in the thread, the fix for RWF_NOWAIT might be
-> to just move the test down to after readahead.
+during boot again, and the interface is not available.
 
-So I've done some basic smoke testing (~2 hours of LTP+xfstests) on the 
-kernel with the three topmost patches from
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/jikos/jikos.git/log/?h=pagecache-sidechannel
-
-applied (also attaching to this mail), and no obvious breakage popped up.
-
-So if noone sees any principal problem there, I'll happily submit it with 
-proper attribution etc.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
---1678380546-457690195-1547670185=:6626
-Content-Type: text/x-patch; name=0001-Revert-Change-mincore-to-count-mapped-pages-rather-t.patch
-Content-Transfer-Encoding: BASE64
-Content-ID: <nycvar.YFH.7.76.1901162123040.6626@cbobk.fhfr.pm>
-Content-Description: 
-Content-Disposition: attachment; filename=0001-Revert-Change-mincore-to-count-mapped-pages-rather-t.patch
-
-RnJvbSBjYmY5MzgxZWVkNjc2NmNmZjViMDVmOWQ5NDhjMWQyMjVjYjNkNzhi
-IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSmlyaSBLb3NpbmEg
-PGprb3NpbmFAc3VzZS5jej4NCkRhdGU6IFdlZCwgMTYgSmFuIDIwMTkgMjA6
-NTE6MzEgKzAxMDANClN1YmplY3Q6IFtQQVRDSCAxLzNdIFJldmVydCAiQ2hh
-bmdlIG1pbmNvcmUoKSB0byBjb3VudCAibWFwcGVkIiBwYWdlcyByYXRoZXIN
-CiB0aGFuICJjYWNoZWQiIHBhZ2VzIg0KDQpUaGlzIHJldmVydHMgY29tbWl0
-IDU3NDgyM2JmYWI4MmQ5ZDhmYTQ3ZjQyMjc3ODA0M2ZiYjRiNGY1MGUuDQoN
-CkFub3RoZXIgYXByb2FjaCAoY2hlY2tpbmcgZmlsZSBhY2Nlc3MgcGVybWlz
-c2lvbnMgaW4gb3JkZXIgdG8gZGVjaWRlDQp3aGF0IG1pbmNvcmUoKSBzaG91
-bGQgcmV0dXJuIGluIG9yZGVyIG5vdCB0byBsZWFrIGRhdGEpIHdpbGwgYmUg
-aW1wbGVtZW50ZWQNCmluc3RlYWQuDQoNClNpZ25lZC1vZmYtYnk6IEppcmkg
-S29zaW5hIDxqa29zaW5hQHN1c2UuY3o+DQotLS0NCiBtbS9taW5jb3JlLmMg
-fCA5NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKystLS0tLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgODEgaW5z
-ZXJ0aW9ucygrKSwgMTMgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9t
-bS9taW5jb3JlLmMgYi9tbS9taW5jb3JlLmMNCmluZGV4IGYwZjkxNDYxYTlm
-NC4uMjE4MDk5YjVlZDMxIDEwMDY0NA0KLS0tIGEvbW0vbWluY29yZS5jDQor
-KysgYi9tbS9taW5jb3JlLmMNCkBAIC00MiwxNCArNDIsNzIgQEAgc3RhdGlj
-IGludCBtaW5jb3JlX2h1Z2V0bGIocHRlX3QgKnB0ZSwgdW5zaWduZWQgbG9u
-ZyBobWFzaywgdW5zaWduZWQgbG9uZyBhZGRyLA0KIAlyZXR1cm4gMDsNCiB9
-DQogDQotc3RhdGljIGludCBtaW5jb3JlX3VubWFwcGVkX3JhbmdlKHVuc2ln
-bmVkIGxvbmcgYWRkciwgdW5zaWduZWQgbG9uZyBlbmQsDQotCQkJCSAgIHN0
-cnVjdCBtbV93YWxrICp3YWxrKQ0KKy8qDQorICogTGF0ZXIgd2UgY2FuIGdl
-dCBtb3JlIHBpY2t5IGFib3V0IHdoYXQgImluIGNvcmUiIG1lYW5zIHByZWNp
-c2VseS4NCisgKiBGb3Igbm93LCBzaW1wbHkgY2hlY2sgdG8gc2VlIGlmIHRo
-ZSBwYWdlIGlzIGluIHRoZSBwYWdlIGNhY2hlLA0KKyAqIGFuZCBpcyB1cCB0
-byBkYXRlOyBpLmUuIHRoYXQgbm8gcGFnZS1pbiBvcGVyYXRpb24gd291bGQg
-YmUgcmVxdWlyZWQNCisgKiBhdCB0aGlzIHRpbWUgaWYgYW4gYXBwbGljYXRp
-b24gd2VyZSB0byBtYXAgYW5kIGFjY2VzcyB0aGlzIHBhZ2UuDQorICovDQor
-c3RhdGljIHVuc2lnbmVkIGNoYXIgbWluY29yZV9wYWdlKHN0cnVjdCBhZGRy
-ZXNzX3NwYWNlICptYXBwaW5nLCBwZ29mZl90IHBnb2ZmKQ0KK3sNCisJdW5z
-aWduZWQgY2hhciBwcmVzZW50ID0gMDsNCisJc3RydWN0IHBhZ2UgKnBhZ2U7
-DQorDQorCS8qDQorCSAqIFdoZW4gdG1wZnMgc3dhcHMgb3V0IGEgcGFnZSBm
-cm9tIGEgZmlsZSwgYW55IHByb2Nlc3MgbWFwcGluZyB0aGF0DQorCSAqIGZp
-bGUgd2lsbCBub3QgZ2V0IGEgc3dwX2VudHJ5X3QgaW4gaXRzIHB0ZSwgYnV0
-IHJhdGhlciBpdCBpcyBsaWtlDQorCSAqIGFueSBvdGhlciBmaWxlIG1hcHBp
-bmcgKGllLiBtYXJrZWQgIXByZXNlbnQgYW5kIGZhdWx0ZWQgaW4gd2l0aA0K
-KwkgKiB0bXBmcydzIC5mYXVsdCkuIFNvIHN3YXBwZWQgb3V0IHRtcGZzIG1h
-cHBpbmdzIGFyZSB0ZXN0ZWQgaGVyZS4NCisJICovDQorI2lmZGVmIENPTkZJ
-R19TV0FQDQorCWlmIChzaG1lbV9tYXBwaW5nKG1hcHBpbmcpKSB7DQorCQlw
-YWdlID0gZmluZF9nZXRfZW50cnkobWFwcGluZywgcGdvZmYpOw0KKwkJLyoN
-CisJCSAqIHNobWVtL3RtcGZzIG1heSByZXR1cm4gc3dhcDogYWNjb3VudCBm
-b3Igc3dhcGNhY2hlDQorCQkgKiBwYWdlIHRvby4NCisJCSAqLw0KKwkJaWYg
-KHhhX2lzX3ZhbHVlKHBhZ2UpKSB7DQorCQkJc3dwX2VudHJ5X3Qgc3dwID0g
-cmFkaXhfdG9fc3dwX2VudHJ5KHBhZ2UpOw0KKwkJCXBhZ2UgPSBmaW5kX2dl
-dF9wYWdlKHN3YXBfYWRkcmVzc19zcGFjZShzd3ApLA0KKwkJCQkJICAgICBz
-d3Bfb2Zmc2V0KHN3cCkpOw0KKwkJfQ0KKwl9IGVsc2UNCisJCXBhZ2UgPSBm
-aW5kX2dldF9wYWdlKG1hcHBpbmcsIHBnb2ZmKTsNCisjZWxzZQ0KKwlwYWdl
-ID0gZmluZF9nZXRfcGFnZShtYXBwaW5nLCBwZ29mZik7DQorI2VuZGlmDQor
-CWlmIChwYWdlKSB7DQorCQlwcmVzZW50ID0gUGFnZVVwdG9kYXRlKHBhZ2Up
-Ow0KKwkJcHV0X3BhZ2UocGFnZSk7DQorCX0NCisNCisJcmV0dXJuIHByZXNl
-bnQ7DQorfQ0KKw0KK3N0YXRpYyBpbnQgX19taW5jb3JlX3VubWFwcGVkX3Jh
-bmdlKHVuc2lnbmVkIGxvbmcgYWRkciwgdW5zaWduZWQgbG9uZyBlbmQsDQor
-CQkJCXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hLCB1bnNpZ25lZCBjaGFy
-ICp2ZWMpDQogew0KLQl1bnNpZ25lZCBjaGFyICp2ZWMgPSB3YWxrLT5wcml2
-YXRlOw0KIAl1bnNpZ25lZCBsb25nIG5yID0gKGVuZCAtIGFkZHIpID4+IFBB
-R0VfU0hJRlQ7DQorCWludCBpOw0KIA0KLQltZW1zZXQodmVjLCAwLCBucik7
-DQotCXdhbGstPnByaXZhdGUgKz0gbnI7DQorCWlmICh2bWEtPnZtX2ZpbGUp
-IHsNCisJCXBnb2ZmX3QgcGdvZmY7DQorDQorCQlwZ29mZiA9IGxpbmVhcl9w
-YWdlX2luZGV4KHZtYSwgYWRkcik7DQorCQlmb3IgKGkgPSAwOyBpIDwgbnI7
-IGkrKywgcGdvZmYrKykNCisJCQl2ZWNbaV0gPSBtaW5jb3JlX3BhZ2Uodm1h
-LT52bV9maWxlLT5mX21hcHBpbmcsIHBnb2ZmKTsNCisJfSBlbHNlIHsNCisJ
-CWZvciAoaSA9IDA7IGkgPCBucjsgaSsrKQ0KKwkJCXZlY1tpXSA9IDA7DQor
-CX0NCisJcmV0dXJuIG5yOw0KK30NCisNCitzdGF0aWMgaW50IG1pbmNvcmVf
-dW5tYXBwZWRfcmFuZ2UodW5zaWduZWQgbG9uZyBhZGRyLCB1bnNpZ25lZCBs
-b25nIGVuZCwNCisJCQkJICAgc3RydWN0IG1tX3dhbGsgKndhbGspDQorew0K
-Kwl3YWxrLT5wcml2YXRlICs9IF9fbWluY29yZV91bm1hcHBlZF9yYW5nZShh
-ZGRyLCBlbmQsDQorCQkJCQkJICB3YWxrLT52bWEsIHdhbGstPnByaXZhdGUp
-Ow0KIAlyZXR1cm4gMDsNCiB9DQogDQpAQCAtNjksOSArMTI3LDggQEAgc3Rh
-dGljIGludCBtaW5jb3JlX3B0ZV9yYW5nZShwbWRfdCAqcG1kLCB1bnNpZ25l
-ZCBsb25nIGFkZHIsIHVuc2lnbmVkIGxvbmcgZW5kLA0KIAkJZ290byBvdXQ7
-DQogCX0NCiANCi0JLyogV2UnbGwgY29uc2lkZXIgYSBUSFAgcGFnZSB1bmRl
-ciBjb25zdHJ1Y3Rpb24gdG8gYmUgdGhlcmUgKi8NCiAJaWYgKHBtZF90cmFu
-c191bnN0YWJsZShwbWQpKSB7DQotCQltZW1zZXQodmVjLCAxLCBucik7DQor
-CQlfX21pbmNvcmVfdW5tYXBwZWRfcmFuZ2UoYWRkciwgZW5kLCB2bWEsIHZl
-Yyk7DQogCQlnb3RvIG91dDsNCiAJfQ0KIA0KQEAgLTgwLDE3ICsxMzcsMjgg
-QEAgc3RhdGljIGludCBtaW5jb3JlX3B0ZV9yYW5nZShwbWRfdCAqcG1kLCB1
-bnNpZ25lZCBsb25nIGFkZHIsIHVuc2lnbmVkIGxvbmcgZW5kLA0KIAkJcHRl
-X3QgcHRlID0gKnB0ZXA7DQogDQogCQlpZiAocHRlX25vbmUocHRlKSkNCi0J
-CQkqdmVjID0gMDsNCisJCQlfX21pbmNvcmVfdW5tYXBwZWRfcmFuZ2UoYWRk
-ciwgYWRkciArIFBBR0VfU0laRSwNCisJCQkJCQkgdm1hLCB2ZWMpOw0KIAkJ
-ZWxzZSBpZiAocHRlX3ByZXNlbnQocHRlKSkNCiAJCQkqdmVjID0gMTsNCiAJ
-CWVsc2UgeyAvKiBwdGUgaXMgYSBzd2FwIGVudHJ5ICovDQogCQkJc3dwX2Vu
-dHJ5X3QgZW50cnkgPSBwdGVfdG9fc3dwX2VudHJ5KHB0ZSk7DQogDQotCQkJ
-LyoNCi0JCQkgKiBtaWdyYXRpb24gb3IgaHdwb2lzb24gZW50cmllcyBhcmUg
-YWx3YXlzDQotCQkJICogdXB0b2RhdGUNCi0JCQkgKi8NCi0JCQkqdmVjID0g
-ISFub25fc3dhcF9lbnRyeShlbnRyeSk7DQorCQkJaWYgKG5vbl9zd2FwX2Vu
-dHJ5KGVudHJ5KSkgew0KKwkJCQkvKg0KKwkJCQkgKiBtaWdyYXRpb24gb3Ig
-aHdwb2lzb24gZW50cmllcyBhcmUgYWx3YXlzDQorCQkJCSAqIHVwdG9kYXRl
-DQorCQkJCSAqLw0KKwkJCQkqdmVjID0gMTsNCisJCQl9IGVsc2Ugew0KKyNp
-ZmRlZiBDT05GSUdfU1dBUA0KKwkJCQkqdmVjID0gbWluY29yZV9wYWdlKHN3
-YXBfYWRkcmVzc19zcGFjZShlbnRyeSksDQorCQkJCQkJICAgIHN3cF9vZmZz
-ZXQoZW50cnkpKTsNCisjZWxzZQ0KKwkJCQlXQVJOX09OKDEpOw0KKwkJCQkq
-dmVjID0gMTsNCisjZW5kaWYNCisJCQl9DQogCQl9DQogCQl2ZWMrKzsNCiAJ
-fQ0KLS0gDQoyLjEyLjMNCg0K
-
---1678380546-457690195-1547670185=:6626
-Content-Type: text/x-patch; name=0002-mm-mincore-make-mincore-more-conservative.patch
-Content-Transfer-Encoding: BASE64
-Content-ID: <nycvar.YFH.7.76.1901162123041.6626@cbobk.fhfr.pm>
-Content-Description: 
-Content-Disposition: attachment; filename=0002-mm-mincore-make-mincore-more-conservative.patch
-
-RnJvbSBjYTAyYTAyNmY0MGRmYWViYzI5YzI5ZWRkOWM5OTJhMGZmMTAwNzVl
-IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSmlyaSBLb3NpbmEg
-PGprb3NpbmFAc3VzZS5jej4NCkRhdGU6IFdlZCwgMTYgSmFuIDIwMTkgMjA6
-NTM6MTcgKzAxMDANClN1YmplY3Q6IFtQQVRDSCAyLzNdIG1tL21pbmNvcmU6
-IG1ha2UgbWluY29yZSgpIG1vcmUgY29uc2VydmF0aXZlDQoNClRoZSBzZW1h
-bnRpY3Mgb2Ygd2hhdCBtaW5jb3JlKCkgY29uc2lkZXJzIHRvIGJlIHJlc2lk
-ZW50IGlzIG5vdCBjb21wbGV0ZWx5DQpjbGVhcmFyLCBidXQgTGludXggaGFz
-IGFsd2F5cyAoc2luY2UgMi4zLjUyLCB3aGljaCBpcyB3aGVuIG1pbmNvcmUo
-KSB3YXMNCmluaXRpYWxseSBkb25lKSB0cmVhdGVkIGl0IGFzICJwYWdlIGlz
-IGF2YWlsYWJsZSBpbiBwYWdlIGNhY2hlIi4NCg0KVGhhdCdzIHBvdGVudGlh
-bGx5IGEgcHJvYmxlbSwgYXMgdGhhdCBbaW5dZGlyZWN0bHkgZXhwb3NlcyBt
-ZXRhLWluZm9ybWF0aW9uDQphYm91dCBwYWdlY2FjaGUgLyBtZW1vcnkgbWFw
-cGluZyBzdGF0ZSBldmVuIGFib3V0IG1lbW9yeSBub3Qgc3RyaWN0bHkgYmVs
-b25naW5nDQp0byB0aGUgcHJvY2VzcyBleGVjdXRpbmcgdGhlIHN5c2NhbGws
-IG9wZW5pbmcgcG9zc2liaWxpdGllcyBmb3Igc2lkZWNoYW5uZWwNCmF0dGFj
-a3MuDQoNCkNoYW5nZSB0aGUgc2VtYW50aWNzIG9mIG1pbmNvcmUoKSBzbyB0
-aGF0IGl0IG9ubHkgcmV2ZWFscyBwYWdlY2FjaGUgaW5mb3JtYXRpb24NCmZv
-ciBub24tYW5vbnltb3VzIG1hcHBpbmdzIHRoYXQgYmVsb2cgdG8gZmlsZXMg
-dGhhdCB0aGUgY2FsbGluZyBwcm9jZXNzIGNvdWxkDQooaWYgaXQgdHJpZWQg
-dG8pIHN1Y2Nlc3NmdWxseSBvcGVuIGZvciB3cml0aW5nLg0KDQpPcmlnaW5h
-bGx5LWJ5OiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+DQpPcmlnaW5hbGx5LWJ5OiBEb21pbmlxdWUgTWFydGluZXQg
-PGFzbWFkZXVzQGNvZGV3cmVjay5vcmc+DQpTaWduZWQtb2ZmLWJ5OiBKaXJp
-IEtvc2luYSA8amtvc2luYUBzdXNlLmN6Pg0KLS0tDQogbW0vbWluY29yZS5j
-IHwgMTQgKysrKysrKysrKysrKy0NCiAxIGZpbGUgY2hhbmdlZCwgMTMgaW5z
-ZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvbW0v
-bWluY29yZS5jIGIvbW0vbWluY29yZS5jDQppbmRleCAyMTgwOTliNWVkMzEu
-LjExZWQ3MDY0ZjRlYiAxMDA2NDQNCi0tLSBhL21tL21pbmNvcmUuYw0KKysr
-IGIvbW0vbWluY29yZS5jDQpAQCAtMTY5LDYgKzE2OSwxMyBAQCBzdGF0aWMg
-aW50IG1pbmNvcmVfcHRlX3JhbmdlKHBtZF90ICpwbWQsIHVuc2lnbmVkIGxv
-bmcgYWRkciwgdW5zaWduZWQgbG9uZyBlbmQsDQogCXJldHVybiAwOw0KIH0N
-CiANCitzdGF0aWMgaW5saW5lIGJvb2wgY2FuX2RvX21pbmNvcmUoc3RydWN0
-IHZtX2FyZWFfc3RydWN0ICp2bWEpDQorew0KKwlyZXR1cm4gdm1hX2lzX2Fu
-b255bW91cyh2bWEpDQorCQl8fCAodm1hLT52bV9maWxlICYmICh2bWEtPnZt
-X2ZpbGUtPmZfbW9kZSAmIEZNT0RFX1dSSVRFKSkNCisJCXx8IGlub2RlX3Bl
-cm1pc3Npb24oZmlsZV9pbm9kZSh2bWEtPnZtX2ZpbGUpLCBNQVlfV1JJVEUp
-ID09IDA7DQorfQ0KKw0KIC8qDQogICogRG8gYSBjaHVuayBvZiAic3lzX21p
-bmNvcmUoKSIuIFdlJ3ZlIGFscmVhZHkgY2hlY2tlZA0KICAqIGFsbCB0aGUg
-YXJndW1lbnRzLCB3ZSBob2xkIHRoZSBtbWFwIHNlbWFwaG9yZTogd2Ugc2hv
-dWxkDQpAQCAtMTg5LDggKzE5NiwxMyBAQCBzdGF0aWMgbG9uZyBkb19taW5j
-b3JlKHVuc2lnbmVkIGxvbmcgYWRkciwgdW5zaWduZWQgbG9uZyBwYWdlcywg
-dW5zaWduZWQgY2hhciAqdg0KIAl2bWEgPSBmaW5kX3ZtYShjdXJyZW50LT5t
-bSwgYWRkcik7DQogCWlmICghdm1hIHx8IGFkZHIgPCB2bWEtPnZtX3N0YXJ0
-KQ0KIAkJcmV0dXJuIC1FTk9NRU07DQotCW1pbmNvcmVfd2Fsay5tbSA9IHZt
-YS0+dm1fbW07DQogCWVuZCA9IG1pbih2bWEtPnZtX2VuZCwgYWRkciArIChw
-YWdlcyA8PCBQQUdFX1NISUZUKSk7DQorCWlmICghY2FuX2RvX21pbmNvcmUo
-dm1hKSkgew0KKwkJdW5zaWduZWQgbG9uZyBwYWdlcyA9IChlbmQgLSBhZGRy
-KSA+PiBQQUdFX1NISUZUOw0KKwkJbWVtc2V0KHZlYywgMSwgcGFnZXMpOw0K
-KwkJcmV0dXJuIHBhZ2VzOw0KKwl9DQorCW1pbmNvcmVfd2Fsay5tbSA9IHZt
-YS0+dm1fbW07DQogCWVyciA9IHdhbGtfcGFnZV9yYW5nZShhZGRyLCBlbmQs
-ICZtaW5jb3JlX3dhbGspOw0KIAlpZiAoZXJyIDwgMCkNCiAJCXJldHVybiBl
-cnI7DQotLSANCjIuMTIuMw0KDQo=
-
---1678380546-457690195-1547670185=:6626
-Content-Type: text/x-patch; name=0003-mm-filemap-initiate-readahead-even-if-IOCB_NOWAIT-is.patch
-Content-Transfer-Encoding: BASE64
-Content-ID: <nycvar.YFH.7.76.1901162123042.6626@cbobk.fhfr.pm>
-Content-Description: 
-Content-Disposition: attachment; filename=0003-mm-filemap-initiate-readahead-even-if-IOCB_NOWAIT-is.patch
-
-RnJvbSBlNzc2NWYzMTdhZmIxOTNhZGI0YmEwMGQ4MTI1MTY4NjE5MWNiZjRi
-IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSmlyaSBLb3NpbmEg
-PGprb3NpbmFAc3VzZS5jej4NCkRhdGU6IFdlZCwgMTYgSmFuIDIwMTkgMjE6
-MDY6NTggKzAxMDANClN1YmplY3Q6IFtQQVRDSCAzLzNdIG1tL2ZpbGVtYXA6
-IGluaXRpYXRlIHJlYWRhaGVhZCBldmVuIGlmIElPQ0JfTk9XQUlUIGlzIHNl
-dA0KIGZvciB0aGUgSS9PDQoNCnByZWFkdjIoUldGX05PV0FJVCkgY2FuIGJl
-IHVzZWQgdG8gb3BlbiBhIHNpZGUtY2hhbm5lbCB0byBwYWdlY2FjaGUgY29u
-dGVudHMsIGFzDQppdCByZXZlYWxzIG1ldGFkYXRhIGFib3V0IHJlc2lkZW5j
-eSBvZiBwYWdlcyBpbiBwYWdlY2FjaGUuDQoNCklmIHByZWFkdjIoUldGX05P
-V0FJVCkgcmV0dXJucyBpbW1lZGlhdGVseSwgaXQgcHJvdmlkZXMgYSBjbGVh
-ciAicGFnZSBub3QNCnJlc2lkZW50IiBpbmZvcm1hdGlvbiwgYW5kIHZpY2Ug
-dmVyc2EuDQoNCkNsb3NlIHRoYXQgc2lkZWNoYW5uZWwgYnkgYWx3YXlzIGlu
-aXRpYXRpbmcgcmVhZGFoZWFkIG9uIHRoZSBjYWNoZSBpZiB3ZQ0KZW5jb3Vu
-dGVyIGEgY2FjaGUgbWlzcyBmb3IgcHJlYWR2MihSV0ZfTk9XQUlUKTsgd2l0
-aCB0aGF0IGluIHBsYWNlLCBwcm9iaW5nDQp0aGUgcGFnZWNhY2hlIHJlc2lk
-ZW5jeSBpdHNlbGYgd2lsbCBhY3R1YWxseSBwb3B1bGF0ZSB0aGUgY2FjaGUs
-IG1ha2luZyB0aGUNCnNpZGVjaGFubmVsIHVzZWxlc3MuDQoNCk9yaWdpbmFs
-bHktYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0
-aW9uLm9yZz4NClNpZ25lZC1vZmYtYnk6IEppcmkgS29zaW5hIDxqa29zaW5h
-QHN1c2UuY3o+DQotLS0NCiBtbS9maWxlbWFwLmMgfCAyIC0tDQogMSBmaWxl
-IGNoYW5nZWQsIDIgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9tbS9m
-aWxlbWFwLmMgYi9tbS9maWxlbWFwLmMNCmluZGV4IDlmNWUzMjNlODgzZS4u
-N2JjZGQzNmU2MjlkIDEwMDY0NA0KLS0tIGEvbW0vZmlsZW1hcC5jDQorKysg
-Yi9tbS9maWxlbWFwLmMNCkBAIC0yMDc1LDggKzIwNzUsNiBAQCBzdGF0aWMg
-c3NpemVfdCBnZW5lcmljX2ZpbGVfYnVmZmVyZWRfcmVhZChzdHJ1Y3Qga2lv
-Y2IgKmlvY2IsDQogDQogCQlwYWdlID0gZmluZF9nZXRfcGFnZShtYXBwaW5n
-LCBpbmRleCk7DQogCQlpZiAoIXBhZ2UpIHsNCi0JCQlpZiAoaW9jYi0+a2lf
-ZmxhZ3MgJiBJT0NCX05PV0FJVCkNCi0JCQkJZ290byB3b3VsZF9ibG9jazsN
-CiAJCQlwYWdlX2NhY2hlX3N5bmNfcmVhZGFoZWFkKG1hcHBpbmcsDQogCQkJ
-CQlyYSwgZmlscCwNCiAJCQkJCWluZGV4LCBsYXN0X2luZGV4IC0gaW5kZXgp
-Ow0KLS0gDQoyLjEyLjMNCg0K
-
---1678380546-457690195-1547670185=:6626--
+Jan
