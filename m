@@ -2,252 +2,94 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F376C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3906BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 590AB20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F098820652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:02:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Inc4/WPo"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="efzePBnm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfAPU75 (ORCPT
+        id S1726984AbfAPVCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 15:59:57 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35726 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfAPU75 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 15:59:57 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so8607225wrb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 12:59:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WDEx8TNch+LJ5foQu6Yv32rFHNNxnxHO68LnOI+cDNo=;
-        b=Inc4/WPoTTBL7b2xSVme8hY2bf3bhDanLNRvju6J8Ut6EHhsamk285rYMtDOjBIVF7
-         g773Tp8GrvtEisVxUMUKV2SSeNnjdnDHeu9sPE/72aV227p/vnhZFxUm0Kg0MVsTVoBE
-         gGTbmYM4nEheBpZXgh1VtshZl5Itzp4+fP03riXgsPExNKXrO6ZzHvMEZWalG9dE+8DF
-         g5cP8D5Xscfj7hHn+qvRZzCEdO2RuqDKPFvGG/1PTn8JCaKsDqrZoBxcojNciyC+wid1
-         m4ccQ+K/aOeNZ7tKwIYaqLUlkKSzNKQYPTm8kgJVn+iHBpexWnX36E/3Lg0KqQGKP7F3
-         PI1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WDEx8TNch+LJ5foQu6Yv32rFHNNxnxHO68LnOI+cDNo=;
-        b=njXT9NZAdXb6ShBGC3dhK1Im+t8ZL/m5sKLZNYf5omccOD9sUgfyYmOjFqymcsjKzv
-         SbJwEArAWTQlLt5Jm6b19TVwYwlkb1LoPlssqNaABtXC+cLx9sH/Mdxe2jttDE6Sr0ZI
-         v6i5Suww5SnB+iCrY/BTcZ0ibDvH+Zmmm0UgT8AeltOnmOmR7gKXn/AGz6z4vwEznwJ8
-         rzih7INnaTE3LapiisuR2f20/sp8eh8ZxYlAaO5DlCYHAm+u0MIIyCdY6bg2691yB59N
-         xxgheNxmNsZLMmlPXVsLXI5xCwOUiR2eL3TIPGYTfDJluf56qq6Qu85vTqzGs+Uv/lCH
-         hthQ==
-X-Gm-Message-State: AJcUukcqrEozv8xX4om4UA7Y6UAOk1jNk7srn8WX7hUeGdPIf20yWTQQ
-        IDWCevcIT2n2g3CXAKbYgnYdGJsAuLNf56me2/JSqw==
-X-Google-Smtp-Source: ALg8bN4CmR0TeyY4WXwy3IXpftQ0PfFk8jul5cqJgsSoby9ZHOpINNU7RgEyT7OD7GOklbZasYr5P+52TNPJVER6Bjk=
-X-Received: by 2002:adf:dc4e:: with SMTP id m14mr9332499wrj.107.1547672394612;
- Wed, 16 Jan 2019 12:59:54 -0800 (PST)
+        Wed, 16 Jan 2019 16:02:51 -0500
+Received: from ozlabs.org ([203.11.71.1]:46473 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726803AbfAPVCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:02:51 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43g0601sc2z9sBn;
+        Thu, 17 Jan 2019 08:02:48 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547672569;
+        bh=hsJFeKdDfCcpMoIi7Hu48f0qx6pxmwDJJ0/ccV1Am20=;
+        h=Date:From:To:Cc:Subject:From;
+        b=efzePBnm6ilns/BpkvQpURKdM4V3OgWY1rEB7XjMp18AXmOuUo8UWyOkB/OIw+V80
+         1KtaPebv3vhGXwNC+2rpeLe4ZyDsp/wPcarvLYbz9EWncx5b+g8YMHQaUFtLG8eFU9
+         E/0AsV7/6azvoteNOjiBtNfcjreMkS31h97D9TSYqt4ien8vcDrcL4JuS5llH514gY
+         LBL5FO0UJb55nAvRNL4WwnX+ELHQEx4ESvsdzWEbhmHwGgfu3ea9J5LOPyz4X7VzLk
+         vItfx9TzUToogE/ZHaX68b6OTPJe5xlGRE3NX2Cdlq7VrIlmS/AZYH1zMRROTcfP8k
+         58Z3MroA8ottQ==
+Date:   Thu, 17 Jan 2019 08:02:48 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: Fixes tag needs some work in the v4l-dvb tree
+Message-ID: <20190117080248.6f26b8fc@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190116193501.1910-1-hannes@cmpxchg.org>
-In-Reply-To: <20190116193501.1910-1-hannes@cmpxchg.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 16 Jan 2019 12:59:43 -0800
-Message-ID: <CAJuCfpHA4Qfu=vFJg-bNSJtvrng3Swe4YJo9J31bHx9Bmm+kuQ@mail.gmail.com>
-Subject: Re: [PATCH] psi: fix aggregation idle shut-off
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/_B7K4PT4YEFOcVN4J6y=5Xy"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johannes,
-Thanks for fixing this. I'll test this approach and report back the
-results within a day or two.
+--Sig_/_B7K4PT4YEFOcVN4J6y=5Xy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 16, 2019 at 11:35 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> psi has provisions to shut off the periodic aggregation worker when
-> there is a period of no task activity - and thus no data that needs
-> aggregating. However, while developing psi monitoring, Suren noticed
-> that the aggregation clock currently won't stay shut off for good.
->
-> Debugging this revealed a flaw in the idle design: an aggregation run
-> will see no task activity and decide to go to sleep; shortly
-> thereafter, the kworker thread that executed the aggregation will go
-> idle and cause a scheduling change, during which the psi callback will
-> kick the !pending worker again. This will ping-pong forever, and is
-> equivalent to having no shut-off logic at all (but with more code!)
->
-> Fix this by exempting aggregation workers from psi's clock waking
-> logic when the state change is them going to sleep. To do this, tag
+[I am experimenting with checking the Fixes tags in commits in linux-next.
+Please let me know if you think I am being too strict.]
 
-The above sentence seems to be misspelled somehow.
+Hi Mauro,
 
-> workers with the last work function they executed, and if in psi we
-> see a worker going to sleep after aggregating psi data, we will not
-> reschedule the aggregation work item.
->
-> What if the worker is also executing other items before or after?
->
-> Any psi state times that were incurred by work items preceding the
-> aggregation work will have been collected from the per-cpu buckets
-> during the aggregation itself. If there are work items following the
-> aggregation work, the worker's last_func tag will be overwritten and
-> the aggregator will be kept alive to process this genuine new activity.
->
-> If the aggregation work is the last thing the worker does, and we
-> decide to go idle, the brief period of non-idle time incurred between
-> the aggregation run and the kworker's dequeue will be stranded in the
-> per-cpu buckets until the clock is woken by later activity. But that
-> should not be a problem. The buckets can hold 4s worth of time, and
-> future activity will wake the clock with a 2s delay, giving us 2s
-> worth of data we can leave behind when disabling aggregation. If it
-> takes a worker more than two seconds to go idle after it finishes its
-> last work item, we likely have bigger problems in the system, and
-> won't notice one sample that was averaged with a bogus per-CPU weight.
->
-> Fixes: eb414681d5a0 ("psi: pressure stall information for CPU, memory, and IO")
-> Reported-by: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> ---
->  kernel/sched/psi.c          | 21 +++++++++++++++++----
->  kernel/workqueue.c          | 23 +++++++++++++++++++++++
->  kernel/workqueue_internal.h |  6 +++++-
->  3 files changed, 45 insertions(+), 5 deletions(-)
->
-> Sending this for 5.0. I don't think CC stable is warranted on this.
->
-> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> index fe24de3fbc93..c3484785b179 100644
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -124,6 +124,7 @@
->   * sampling of the aggregate task states would be.
->   */
->
-> +#include "../workqueue_internal.h"
->  #include <linux/sched/loadavg.h>
->  #include <linux/seq_file.h>
->  #include <linux/proc_fs.h>
-> @@ -480,9 +481,6 @@ static void psi_group_change(struct psi_group *group, int cpu,
->                         groupc->tasks[t]++;
->
->         write_seqcount_end(&groupc->seq);
-> -
-> -       if (!delayed_work_pending(&group->clock_work))
-> -               schedule_delayed_work(&group->clock_work, PSI_FREQ);
->  }
->
->  static struct psi_group *iterate_groups(struct task_struct *task, void **iter)
-> @@ -513,6 +511,7 @@ void psi_task_change(struct task_struct *task, int clear, int set)
->  {
->         int cpu = task_cpu(task);
->         struct psi_group *group;
-> +       bool wake_clock = true;
->         void *iter = NULL;
->
->         if (!task->pid)
-> @@ -530,8 +529,22 @@ void psi_task_change(struct task_struct *task, int clear, int set)
->         task->psi_flags &= ~clear;
->         task->psi_flags |= set;
->
-> -       while ((group = iterate_groups(task, &iter)))
-> +       /*
-> +        * Periodic aggregation shuts off if there is a period of no
-> +        * task changes, so we wake it back up if necessary. However,
-> +        * don't do this if the task change is the aggregation worker
-> +        * itself going to sleep, or we'll ping-pong forever.
-> +        */
-> +       if (unlikely((clear & TSK_RUNNING) &&
-> +                    (task->flags & PF_WQ_WORKER) &&
-> +                    wq_worker_last_func(task) == psi_update_work))
-> +               wake_clock = false;
-> +
-> +       while ((group = iterate_groups(task, &iter))) {
->                 psi_group_change(group, cpu, clear, set);
-> +               if (wake_clock && !delayed_work_pending(&group->clock_work))
-> +                       schedule_delayed_work(&group->clock_work, PSI_FREQ);
-> +       }
->  }
->
->  void psi_memstall_tick(struct task_struct *task, int cpu)
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index 392be4b252f6..fc5d23d752a5 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -909,6 +909,26 @@ struct task_struct *wq_worker_sleeping(struct task_struct *task)
->         return to_wakeup ? to_wakeup->task : NULL;
->  }
->
-> +/**
-> + * wq_worker_last_func - retrieve worker's last work function
-> + *
-> + * Determine the last function a worker executed. This is called from
-> + * the scheduler to get a worker's last known identity.
-> + *
-> + * CONTEXT:
-> + * spin_lock_irq(rq->lock)
-> + *
-> + * Return:
-> + * The last work function %current executed as a worker, NULL if it
-> + * hasn't executed any work yet.
-> + */
-> +work_func_t wq_worker_last_func(struct task_struct *task)
-> +{
-> +       struct worker *worker = kthread_data(task);
-> +
-> +       return worker->last_func;
-> +}
-> +
->  /**
->   * worker_set_flags - set worker flags and adjust nr_running accordingly
->   * @worker: self
-> @@ -2184,6 +2204,9 @@ __acquires(&pool->lock)
->         if (unlikely(cpu_intensive))
->                 worker_clr_flags(worker, WORKER_CPU_INTENSIVE);
->
-> +       /* tag the worker for identification in schedule() */
-> +       worker->last_func = worker->current_func;
-> +
->         /* we're done with it, release */
->         hash_del(&worker->hentry);
->         worker->current_work = NULL;
-> diff --git a/kernel/workqueue_internal.h b/kernel/workqueue_internal.h
-> index 66fbb5a9e633..cb68b03ca89a 100644
-> --- a/kernel/workqueue_internal.h
-> +++ b/kernel/workqueue_internal.h
-> @@ -53,6 +53,9 @@ struct worker {
->
->         /* used only by rescuers to point to the target workqueue */
->         struct workqueue_struct *rescue_wq;     /* I: the workqueue to rescue */
-> +
-> +       /* used by the scheduler to determine a worker's last known identity */
-> +       work_func_t             last_func;
->  };
->
->  /**
-> @@ -67,9 +70,10 @@ static inline struct worker *current_wq_worker(void)
->
->  /*
->   * Scheduler hooks for concurrency managed workqueue.  Only to be used from
-> - * sched/core.c and workqueue.c.
-> + * sched/ and workqueue.c.
->   */
->  void wq_worker_waking_up(struct task_struct *task, int cpu);
->  struct task_struct *wq_worker_sleeping(struct task_struct *task);
-> +work_func_t wq_worker_last_func(struct task_struct *task);
->
->  #endif /* _KERNEL_WORKQUEUE_INTERNAL_H */
-> --
-> 2.20.1
->
+Commit
+
+  961304d17a61 ("media: dt-bindings: media: i2c: Fix i2c address for OV5645=
+ camera sensor")
+
+has a malformed Fixes tag.
+
+The subject in the Fixes tag is usually surrounded by (" and ").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/_B7K4PT4YEFOcVN4J6y=5Xy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/m/gACgkQAVBC80lX
+0Gw7lAf+L1EVf1ZqsEhsfzzNyjD0kxf/zFmqGC/S3+YrjwUOA498RvswZdM39veC
+pwxL5M9ZrzOEUqamf5mxqpAoqBz+Gy8jevv7QnLbmSAZ2DZGCAZbScGyoge2M26O
+KRa4AnHL9e9hBRJl63F6He9RAdbJAaT4aKwFtw/pu+nSV48B4kTlWZzRZoraMDiz
+Qv7Aic87G/k/a8X67jsI9KqVOi3mpOVkDpo/sgW97aY0OANz+FCPZst/GOpsk7ic
+F4uBomatvO5PlSFzrM1rq9q7Ahquef79JmDZwHsG4vp/mgL8sRclsGcc6Vc/hzH2
+0AXeAiUDhMJIE8zm1ZlaKZG+MXTSlg==
+=7daM
+-----END PGP SIGNATURE-----
+
+--Sig_/_B7K4PT4YEFOcVN4J6y=5Xy--
