@@ -2,110 +2,224 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC987C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 924C3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0A8E2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F0E520840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:58:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jYTAD8m1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388529AbfAPHxn (ORCPT
+        id S2388536AbfAPH6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 02:53:43 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:55863 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388167AbfAPHxm (ORCPT
+        Wed, 16 Jan 2019 02:58:25 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:44272 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388167AbfAPH6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 02:53:42 -0500
-X-UUID: 0c8637e80d2a4949a3074d5d4ff0879f-20190116
-X-UUID: 0c8637e80d2a4949a3074d5d4ff0879f-20190116
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 481533881; Wed, 16 Jan 2019 15:53:33 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
- (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 16 Jan
- 2019 15:53:31 +0800
-Received: from mszsdaap41.mediatek.inc (10.16.6.141) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 16 Jan 2019 15:53:30 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Jitao Shi <jitao.shi@mediatek.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <sj.huang@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <ck.hu@mediatek.com>
-Subject: [PATCH] pwm: Add MediaTek MT8183 display PWM driver support
-Date:   Wed, 16 Jan 2019 15:52:52 +0800
-Message-ID: <20190116075252.24124-1-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.12.5
+        Wed, 16 Jan 2019 02:58:24 -0500
+Received: by mail-ua1-f66.google.com with SMTP id d19so1847860uaq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 23:58:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f+PBc3wsOLctO6i6bccsq2QFl7l9psdui1/+ZOVxUEM=;
+        b=jYTAD8m1/DkSLKYtrAzSwVvdl9mfCR8qA8ML+IIJwSd7DI0OCWjV05urTPESb2X6E/
+         ZNrqD47CbCCwqOEPPKmk9qw9NfQ8K80zPdOG3JVX/k4JlemeQjTddLS6hzPLfX762hBY
+         /tsdG6HOhUsVtJjXyXm+DMJWtOQr3lw1VE8yY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f+PBc3wsOLctO6i6bccsq2QFl7l9psdui1/+ZOVxUEM=;
+        b=uiZZZGMdj3kaaTIimi3vr9Qj+O4F4fhoH9vzmiaxGPH6rtdpiAE+Q0sx2bsbUQnc+q
+         PkLkGqQYi3GE48IPJTfCsvTik68SqgyKdjO6m0UX0Yj9oyQAHk7CVwthEIYZwoxp1LrR
+         lEyKz2LllpgzYHPNw6oija6uOpCCiOeFauWv0nPZ49SwigbTkqcrKsoq6olEzURK5XeC
+         tiQDYaJa8MEi58AuIDyCICD50VdDAwwDj+U1plXo+D0QxkAhRbJaFj/r5T/+earvSjkE
+         MFjFYxkruuxDpH0WsTptqqyPvSrL/zlg3CmR7SbM+IZSQAyx+hrs509+3842BjIOtyim
+         clcA==
+X-Gm-Message-State: AJcUukeXvjFNaIrR77zNPiqIIXPGnw+H4Q+l0WCPHJ1KKrqIvO0Vj86L
+        13ff4MABJCzbIyT5jJtyZqiiG9iMUheFt9621pf7uA==
+X-Google-Smtp-Source: ALg8bN4rtG8ud2W0ismXvPf+MRmbFTrLr5uztZNN+2jHC2FBHHEEK3jGixQC6GPkhL4qkleNuQsOfAUH1TcASTHfsQM=
+X-Received: by 2002:ab0:526:: with SMTP id 35mr3213259uax.25.1547625503417;
+ Tue, 15 Jan 2019 23:58:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
+ <20181129174700.16585-4-ulf.hansson@linaro.org> <119031115.C8gHTGbYmQ@aspire.rjw.lan>
+In-Reply-To: <119031115.C8gHTGbYmQ@aspire.rjw.lan>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 16 Jan 2019 08:57:46 +0100
+Message-ID: <CAPDyKFqQQnMKFNpGyi_dkP_Rm8qo-1WjPfVkp2unOxyXRa2wbA@mail.gmail.com>
+Subject: Re: [PATCH v10 03/27] timer: Export next wakeup time of a CPU
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the mtk_pwm_data struction to define different registers
-and add MT8183 specific register operations, such as MT8183
-have commit register, needs to enable double buffer
-before writing register, and needs to select commit mode
-and use PWM_PERIOD/PWM_HIGH_WIDTH.
+On Fri, 11 Jan 2019 at 12:07, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Thursday, November 29, 2018 6:46:36 PM CET Ulf Hansson wrote:
+> > From: Lina Iyer <lina.iyer@linaro.org>
+> >
+> > Knowing the sleep duration of CPUs, is known to be needed while selecting
+> > the most energy efficient idle state for a CPU or a group of CPUs.
+> >
+> > However, to be able to compute the sleep duration, we need to know at what
+> > time the next expected wakeup is for the CPU. Therefore, let's export this
+> > information via a new function, tick_nohz_get_next_wakeup(). Following
+> > changes make use of it.
+> >
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Cc: Lina Iyer <ilina@codeaurora.org>
+> > Cc: Frederic Weisbecker <fweisbec@gmail.com>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+> > Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >
+> > Changes in v10:
+> >       - Updated function header of tick_nohz_get_next_wakeup().
+> >
+> > ---
+> >  include/linux/tick.h     |  8 ++++++++
+> >  kernel/time/tick-sched.c | 13 +++++++++++++
+> >  2 files changed, 21 insertions(+)
+> >
+> > diff --git a/include/linux/tick.h b/include/linux/tick.h
+> > index 55388ab45fd4..e48f6b26b425 100644
+> > --- a/include/linux/tick.h
+> > +++ b/include/linux/tick.h
+> > @@ -125,6 +125,7 @@ extern bool tick_nohz_idle_got_tick(void);
+> >  extern ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next);
+> >  extern unsigned long tick_nohz_get_idle_calls(void);
+> >  extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
+> > +extern ktime_t tick_nohz_get_next_wakeup(int cpu);
+> >  extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
+> >  extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
+> >
+> > @@ -151,6 +152,13 @@ static inline ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+> >       *delta_next = TICK_NSEC;
+> >       return *delta_next;
+> >  }
+> > +
+> > +static inline ktime_t tick_nohz_get_next_wakeup(int cpu)
+> > +{
+> > +     /* Next wake up is the tick period, assume it starts now */
+> > +     return ktime_add(ktime_get(), TICK_NSEC);
+> > +}
+> > +
+> >  static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
+> >  static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
+> >
+> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> > index 69e673b88474..7a9166506503 100644
+> > --- a/kernel/time/tick-sched.c
+> > +++ b/kernel/time/tick-sched.c
+> > @@ -1089,6 +1089,19 @@ unsigned long tick_nohz_get_idle_calls(void)
+> >       return ts->idle_calls;
+> >  }
+> >
+> > +/**
+> > + * tick_nohz_get_next_wakeup - return the next wake up of the CPU
+> > + * @cpu: the particular CPU to get next wake up for
+> > + *
+> > + * Called for idle CPUs only.
+> > + */
+> > +ktime_t tick_nohz_get_next_wakeup(int cpu)
+> > +{
+> > +     struct clock_event_device *dev = per_cpu(tick_cpu_device.evtdev, cpu);
+> > +
+> > +     return dev->next_event;
+> > +}
+> > +
+> >  static void tick_nohz_account_idle_ticks(struct tick_sched *ts)
+> >  {
+> >  #ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+> >
+>
+> Well, I have concerns regarding this one.
+>
+> I don't believe it is valid to call this new function for non-idle CPUs and
+> the kerneldoc kind of says so, but the next patch doesn't actually prevent
+> it from being called for a non-idle CPU (at the time it is called in there
+> the target CPU may not be idle any more AFAICS).
 
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
----
- drivers/pwm/pwm-mtk-disp.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+You are correct, but let me clarify things.
 
-diff --git a/drivers/pwm/pwm-mtk-disp.c b/drivers/pwm/pwm-mtk-disp.c
-index 893940d45f0d..15803c71fe80 100644
---- a/drivers/pwm/pwm-mtk-disp.c
-+++ b/drivers/pwm/pwm-mtk-disp.c
-@@ -277,10 +277,21 @@ static const struct mtk_pwm_data mt8173_pwm_data = {
- 	.commit_mask = 0x1,
- };
- 
-+static const struct mtk_pwm_data mt8183_pwm_data = {
-+	.enable_mask = BIT(0),
-+	.con0 = 0x18,
-+	.con0_sel = 0x0,
-+	.con1 = 0x1c,
-+	.has_commit = false,
-+	.bls_debug = 0x80,
-+	.bls_debug_mask = 0x3,
-+};
-+
- static const struct of_device_id mtk_disp_pwm_of_match[] = {
- 	{ .compatible = "mediatek,mt2701-disp-pwm", .data = &mt2701_pwm_data},
- 	{ .compatible = "mediatek,mt6595-disp-pwm", .data = &mt8173_pwm_data},
- 	{ .compatible = "mediatek,mt8173-disp-pwm", .data = &mt8173_pwm_data},
-+	{ .compatible = "mediatek,mt8183-disp-pwm", .data = &mt8183_pwm_data},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, mtk_disp_pwm_of_match);
--- 
-2.12.5
+We are calling this new API from the new genpd governor, which may
+have a cpumask indicating there is more than one CPU attached to its
+PM domain+sub-PM domains. In other words, we may call the API for
+another CPU than the one we are executing on.
 
+When the new genpd governor is called, all CPUs in the cpumask of the
+genpd in question, are already runtime suspended and will remain so
+throughout the decisions made by the governor.
+
+However, because of the race condition, which needs to be manged by
+the genpd backend driver and its corresponding FW, one of the CPU in
+the genpd cpumask could potentially wake up from idle when the genpd
+governor runs. However, as a part of exiting from idle, that CPU needs
+to wait for the call to pm_runtime_get_sync() to return before
+completing the exit patch of idle. This also means waiting for the
+genpd governor to finish.
+
+The point is, no matter what decision the governor takes under these
+circumstances, the genpd backend driver and its FW must manage this
+race condition during the last man standing. For PSCI OSI mode, it
+means that if a cluster idle state is suggested by Linux during these
+circumstances, it must be prevented and aborted.
+
+>
+> In principle, the cpuidle core can store this value, say in struct
+> cpuidle_device of the given CPU, and expose a helper to access it from
+> genpd, but that would be extra overhead totally unnecessary on everthing
+> that doesn't use genpd for cpuidle.
+>
+> So maybe the driver could store it in its ->enter callback?  After all,
+> the driver knows that genpd is going to be used later.
+
+This would work, but it wouldn't really change much when it comes to
+the race condition described above. Of course it would turn the code
+into being more cpuidle specific, which seems reasonable to me.
+
+Anyway, if I understand your suggestion, in principle it means
+changing $subject patch in such way that the API should not take "int
+cpu" as an in-parameter, but instead only use __this_cpu() to read out
+the next event for current idle CPU.
+
+Additionally, we need another new cpuidle API, which genpd can call to
+retrieve a new per CPU "next event data" stored by the cpuidle driver
+from its ->enter() callback. Is this a correct interpretation of your
+suggestion?
+
+Kind regards
+Uffe
