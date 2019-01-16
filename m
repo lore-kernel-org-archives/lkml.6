@@ -6,65 +6,115 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E12C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A88C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC196206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CC99206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389880AbfAPL3A (ORCPT
+        id S2389909AbfAPL3d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:29:00 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:58914 "EHLO inva021.nxp.com"
+        Wed, 16 Jan 2019 06:29:33 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:59456 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730420AbfAPL3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:29:00 -0500
+        id S1730420AbfAPL3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:29:32 -0500
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 487B320001D;
-        Wed, 16 Jan 2019 12:28:58 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 847BB2000BB;
+        Wed, 16 Jan 2019 12:29:30 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BCEB200018;
-        Wed, 16 Jan 2019 12:28:58 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 77A3C200046;
+        Wed, 16 Jan 2019 12:29:30 +0100 (CET)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 9555D2060F;
-        Wed, 16 Jan 2019 12:28:57 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id DAC532060F;
+        Wed, 16 Jan 2019 12:29:29 +0100 (CET)
 From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
 To:     linux-i2c@vger.kernel.org, linux-imx@nxp.com, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, wsa@the-dreams.de
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         fabio.estevam@nxp.com, leoyang.li@nxp.com,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v2 1/2] i2c: imx: fix dma_request_chan error handling
-Date:   Wed, 16 Jan 2019 13:28:54 +0200
-Message-Id: <20190116112855.13824-1-laurentiu.tudor@nxp.com>
+Subject: [PATCH v2 2/2] i2c: imx: defer probing on dma channel request
+Date:   Wed, 16 Jan 2019 13:28:55 +0200
+Message-Id: <20190116112855.13824-2-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190116112855.13824-1-laurentiu.tudor@nxp.com>
+References: <20190116112855.13824-1-laurentiu.tudor@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the correct error pointer when extracting the error code.
+If the dma controller is not yet probed, defer i2c probe.
+The error path in probe was slightly modified (no functional change)
+to avoid triggering this WARN_ON():
+"cg-pll0-div1 already disabled
+WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:828 clk_core_disable+0xa8/0xb0"
 
-Fixes: ea1e5f176e97 ("i2c: imx: notify about real errors on dma i2c_imx_dma_request")
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- drivers/i2c/busses/i2c-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+ - rebased on latest i2c tree
+ - fix small error introduced by a previous commit (first patch)
+
+ drivers/i2c/busses/i2c-imx.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-index 09b124547669..42fed40198a0 100644
+index 42fed40198a0..4e34b1572756 100644
 --- a/drivers/i2c/busses/i2c-imx.c
 +++ b/drivers/i2c/busses/i2c-imx.c
-@@ -287,7 +287,7 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+@@ -1111,7 +1111,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 				pdev->name, i2c_imx);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "can't claim irq %d\n", irq);
+-		goto clk_disable;
++		clk_disable_unprepare(i2c_imx->clk);
++		return ret;
+ 	}
  
- 	dma->chan_tx = dma_request_chan(dev, "tx");
- 	if (IS_ERR(dma->chan_tx)) {
--		ret = PTR_ERR(dma->chan_rx);
-+		ret = PTR_ERR(dma->chan_tx);
- 		if (ret != -ENODEV && ret != -EPROBE_DEFER)
- 			dev_err(dev, "can't request DMA tx channel (%d)\n", ret);
- 		goto fail_al;
+ 	/* Init queue */
+@@ -1161,19 +1162,25 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+ 	pm_runtime_put_autosuspend(&pdev->dev);
+ 
++	/* Init DMA config if supported */
++	ret = i2c_imx_dma_request(i2c_imx, phy_addr);
++	if (ret) {
++		if (ret != -EPROBE_DEFER)
++			dev_info(&pdev->dev, "can't use DMA, using PIO instead.\n");
++		else
++			goto del_adapter;
++	}
++
+ 	dev_dbg(&i2c_imx->adapter.dev, "claimed irq %d\n", irq);
+ 	dev_dbg(&i2c_imx->adapter.dev, "device resources: %pR\n", res);
+ 	dev_dbg(&i2c_imx->adapter.dev, "adapter name: \"%s\"\n",
+ 		i2c_imx->adapter.name);
+ 
+-	/* Init DMA config if supported */
+-	ret = i2c_imx_dma_request(i2c_imx, phy_addr);
+-	if (ret < 0)
+-		goto clk_notifier_unregister;
+-
+ 	dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter registered\n");
+ 	return 0;   /* Return OK */
+ 
++del_adapter:
++	i2c_del_adapter(&i2c_imx->adapter);
+ clk_notifier_unregister:
+ 	clk_notifier_unregister(i2c_imx->clk, &i2c_imx->clk_change_nb);
+ rpm_disable:
+@@ -1182,8 +1189,6 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ 
+-clk_disable:
+-	clk_disable_unprepare(i2c_imx->clk);
+ 	return ret;
+ }
+ 
 -- 
 2.17.1
 
