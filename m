@@ -2,66 +2,75 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A5AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF42C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9AC20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:15:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2vP9VbAc"
+	by mail.kernel.org (Postfix) with ESMTP id E82F620675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:17:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732990AbfAPWPI (ORCPT
+        id S1733010AbfAPWRh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:15:08 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:45895 "EHLO vps0.lunn.ch"
+        Wed, 16 Jan 2019 17:17:37 -0500
+Received: from mga05.intel.com ([192.55.52.43]:31825 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732540AbfAPWPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:15:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=bR5RZbwLk5HW0kBwtAVbgiXHHXAJhfO4QSLDYgpU2/s=;
-        b=2vP9VbAcPhHZjE7DxO4KgoWWy92/hoY+LQiEeeW9MevvC3ReZaclfM2yFbQAG+G0LDUqNAOuqhkGUv1pT0BdT7r8YhHX1a+sV7ofi3DFa9NUorCEyUQn/ZphN6TSTcvjI0Tp1/NpiTRtYqIbxqzBQS4BO8xFzKkVNnD0prL/Poc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gjtSe-0002el-DW; Wed, 16 Jan 2019 23:15:00 +0100
-Date:   Wed, 16 Jan 2019 23:15:00 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Hauke Mehrtens <hauke@hauke-m.de>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/3] net: dsa: lantiq_gswip: fix use-after-free on failed
- probe
-Message-ID: <20190116221500.GO29244@lunn.ch>
-References: <20190116102335.30433-1-johan@kernel.org>
- <20190116102335.30433-2-johan@kernel.org>
- <20190116150009.GE25731@lunn.ch>
- <1e158c63-c578-1eb3-916e-d6d5a477270e@hauke-m.de>
+        id S1729384AbfAPWRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 17:17:36 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 14:17:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="117282574"
+Received: from lhaqq1-mobl2.amr.corp.intel.com (HELO localhost) ([10.249.254.231])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 14:17:31 -0800
+Date:   Thu, 17 Jan 2019 00:17:29 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jia Zhang <zhang.jia@linux.alibaba.com>, nayna@linux.ibm.com
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, tweek@google.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] tpm/eventlog/tpm1: Fix off-by-1 when reading
+ binary_bios_measurements
+Message-ID: <20190116221729.GI25803@linux.intel.com>
+References: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
+ <1547197173-52826-3-git-send-email-zhang.jia@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e158c63-c578-1eb3-916e-d6d5a477270e@hauke-m.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1547197173-52826-3-git-send-email-zhang.jia@linux.alibaba.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > This is correct. But it would be nice if somebody in the future could
-> > move the disabling of the switch to the inverse of the gswip_setup()
-> > function to make the code symmetrical.
+On Fri, Jan 11, 2019 at 04:59:33PM +0800, Jia Zhang wrote:
+> It is unable to read the entry when it is the only one in
+> binary_bios_measurements:
 > 
-> Should we add an uninit callback?
+> 00000000  00 00 00 00 08 00 00 00  c4 2f ed ad 26 82 00 cb
+> 00000010  1d 15 f9 78 41 c3 44 e7  9d ae 33 20 00 00 00 00
+> 00000020
+> 
+> This is obviously a firmware problem on my linux machine:
+> 
+> 	Manufacturer: Inspur
+> 	Product Name: SA5212M4
+> 	Version: 01
+> 
+> However, binary_bios_measurements should return it any way,
+> rather than nothing, after all its content is completely
+> valid.
+> 
+> Fixes: 55a82ab("tpm: add bios measurement log")
+> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
 
-Yes, that would be good.
+LGTM, Nayna?
 
-It looks like lan9303-core.c could use it as well for
-lan9303_disable_processing(chip);
-
-Thanks
-	Andrew
+/Jarkko
