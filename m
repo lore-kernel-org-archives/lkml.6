@@ -2,324 +2,171 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DE5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686FEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204D020651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:00:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37EDE20675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394437AbfAPRAm convert rfc822-to-8bit (ORCPT
+        id S2394469AbfAPRBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:00:42 -0500
-Received: from mailoutvs42.siol.net ([185.57.226.233]:54275 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728812AbfAPRAm (ORCPT
+        Wed, 16 Jan 2019 12:01:05 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:57263 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394450AbfAPRBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:00:42 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id CB5705246D6;
-        Wed, 16 Jan 2019 18:00:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Vrgaw7krOcRA; Wed, 16 Jan 2019 18:00:36 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 14C38524756;
-        Wed, 16 Jan 2019 18:00:36 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 42B5252470C;
-        Wed, 16 Jan 2019 18:00:33 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Priit Laes <plaes@plaes.org>
-Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
-        architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 02/28] clk: sunxi-ng: Adjust MP clock parent rate when allowed
-Date:   Wed, 16 Jan 2019 18:00:32 +0100
-Message-ID: <11550554.k1qAFTnke5@jernej-laptop>
-In-Reply-To: <20190116120958.gvxr6tpstvhjpe5a@plaes.org>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net> <2085880.8AFF3nNMGQ@jernej-laptop> <20190116120958.gvxr6tpstvhjpe5a@plaes.org>
+        Wed, 16 Jan 2019 12:01:04 -0500
+Received: by mail-io1-f69.google.com with SMTP id x2so5076767ioa.23
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:01:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=j72ycQqqpQWeoDPFMSeuxvMKgynfwd/HLK27q13GE/s=;
+        b=BoI/qrGP+Mo9pMxcpoZUTSCW7ipA8IDUMNuBvfIjeU34LFVDmgjYg+QQYi5oBKxC7L
+         GDBeA1KeH8gPpirMz0l122uZqPD1EDSDR8/jLmOSWF+BiF3JXIythZXJgWE8tnIMrBeT
+         UDVZbLn8OLT9vA8QzGbI+w+Yfa/hNJChuQl8ZPGeEXZPWSj9wHxR1tGUa2KQFtvMUsZy
+         sCdWyEUPJr892OpPe5SBYSEADQdOq6EfAuPyWrMxPgGf0FYuUGCLTWPRHBK1r5gMXt/9
+         0pLHucxbNdZS2LaaTOE+uYGxPbKh5H464z5gTfxC1ITACOIa1iPQeBjJ76uZ0lZypOpq
+         TUdw==
+X-Gm-Message-State: AJcUukcNIyauOx0IKHgICc3lm1TCPG4O4v13J+8y/D7qKTMaex38DjfE
+        1h32PmETEYudDx30g/PCuLt2t263AX+oX2NXkqD9yU/5W+hq
+X-Google-Smtp-Source: ALg8bN6QsgW+WWHH5YL9Yo0GumqRt0bpyZTLxs47YueCngx2+isbLUTLXrR69x5Yb/iF7bQE6y7U6ZVBQeT0LUrigCNTB5sRnvBA
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a24:6212:: with SMTP id d18mr5795891itc.29.1547658063304;
+ Wed, 16 Jan 2019 09:01:03 -0800 (PST)
+Date:   Wed, 16 Jan 2019 09:01:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001908be057f963938@google.com>
+Subject: INFO: rcu detected stall in tipc_disc_timeout
+From:   syzbot <syzbot+9f5271e1f46f2954d29c@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sreda, 16. januar 2019 ob 13:09:58 CET je Priit Laes napisal(a):
-> On Thu, Jan 10, 2019 at 06:10:59PM +0100, Jernej Škrabec wrote:
-> > Dne četrtek, 10. januar 2019 ob 10:15:48 CET je Priit Laes napisal(a):
-> > > On Sun, Nov 04, 2018 at 07:26:39PM +0100, Jernej Skrabec wrote:
-> > > > Currently MP clocks don't consider adjusting parent rate even if they
-> > > > are allowed to do so. Such behaviour considerably lowers amount of
-> > > > possible rates, which is very inconvenient when such clock is used for
-> > > > pixel clock, for example.
-> > > > 
-> > > > In order to improve the situation, adjusting parent rate is considered
-> > > > when allowed.
-> > > > 
-> > > > This code is inspired by clk_divider_bestdiv() function, which does
-> > > > basically the same thing for different clock type.
-> > > 
-> > > This patch seems to break the eMMC support on Olinuxino-Lime2-eMMC
-> > > boards:
-> > > 
-> > > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
-> > > EXT4-fs (mmcblk1p4): write access will be enabled during recovery
-> > > sunxi-mmc 1c11000.mmc: data error, sending stop command
-> > > sunxi-mmc 1c11000.mmc: send stop command failed
-> > 
-> > I'm not familiar with A20. What is interesting is that emmc clocks don't
-> > have CLK_SET_RATE_PARENT flag set, so you shouldn't see any difference.
-> > 
-> > Can you post content of clk_summary with and without this patch?
-> 
-> In both cases I booted from FEL with rootfs on sdcard and tried to mount
-> partition from eMMC to /mnt. With your patch, last step it fails.
-> 
-> pre-patch working:
-> pll-ddr-other[768MHz] -> mmc2[512MHz]. (For some reason ahb-mmc2 is off?)
-> 
-> post-patch not working:
-> pll-periph[600MHz] ->  mmc2[500Mhz], (ahb-mmc2 is enabled)
-> 
-> Also, attached the logs.
+Hello,
 
-Thanks. Just one more request. Can you enable debug messages in mmc driver? 
-I'm interested in output of this line:
+syzbot found the following crash on:
 
-dev_dbg(mmc_dev(mmc), "setting clk to %d, rounded %ld\n",
-		clock, rate);
+HEAD commit:    80b3671e9377 ip6_gre: update version related info when cha..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=151e546b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8a4dffabfb4e36f9
+dashboard link: https://syzkaller.appspot.com/bug?extid=9f5271e1f46f2954d29c
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Just wondering what it should be.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Best regards,
-Jernej
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9f5271e1f46f2954d29c@syzkaller.appspotmail.com
 
-> 
-> > Best regards,
-> > Jernej
-> > 
-> > > $ git bisect log
-> > > git bisect start
-> > > # good: [3df407b2a5346db1c48809706ece7a8616c79e0b] mmc:
-> > > dw_mmc-bluefield:
-> > > simplify the probe() function git bisect good
-> > > 3df407b2a5346db1c48809706ece7a8616c79e0b
-> > > # bad: [00d59fde8532b2d42e80909d2e58678755e04da9] Merge tag 'mmc-v4.21'
-> > > of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc git bisect bad
-> > > 00d59fde8532b2d42e80909d2e58678755e04da9
-> > > # good: [01e421feec0817bb3141eaae4c517410d193d440] Merge branch 'fixes'
-> > > into next git bisect good 01e421feec0817bb3141eaae4c517410d193d440
-> > > # bad: [1eefdec18eded41833401cfd64749643ff72e7da] Merge branch
-> > > 'locking-core-for-linus' of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip git bisect bad
-> > > 1eefdec18eded41833401cfd64749643ff72e7da
-> > > # good: [eaa76499711535fd64d747cc4ef0d78ab0fd41c6] Merge tag
-> > > 'mtd/for-4.21'
-> > > of git://git.infradead.org/linux-mtd git bisect good
-> > > eaa76499711535fd64d747cc4ef0d78ab0fd41c6
-> > > # good: [4e4390ad067a61ce4e7607bd0df31f19a4caa36a] Merge tag
-> > > 'leds-for-4.21-rc1' of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds
-> > > git
-> > > bisect good 4e4390ad067a61ce4e7607bd0df31f19a4caa36a
-> > > # bad: [c2f1f3e0e17d94ab0c66d83e669492cb9e9a3698] Merge
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next git
-> > > bisect
-> > > bad c2f1f3e0e17d94ab0c66d83e669492cb9e9a3698
-> > > # bad: [e4b99d415c3908581d4703203e1e805f043a3e71] Merge branch
-> > > 'irq-core-for-linus' of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip git bisect bad
-> > > e4b99d415c3908581d4703203e1e805f043a3e71
-> > > # bad: [ffe05540d18013db62c43627836a3638e9a2c7aa] Merge branches
-> > > 'clk-renesas', 'clk-allwinner', 'clk-tegra', 'clk-meson' and
-> > > 'clk-rockchip'
-> > > into clk-next git bisect bad ffe05540d18013db62c43627836a3638e9a2c7aa
-> > > # good: [1a501c8defe950571316d5ddd917bf44f5ed7bd4] Merge branches
-> > > 'clk-managed-registration', 'clk-spdx', 'clk-remove-basic' and
-> > > 'clk-ops-const' into clk-next git bisect good
-> > > 1a501c8defe950571316d5ddd917bf44f5ed7bd4
-> > > # good: [e74581b79ddd9b49b8c61e2791fc4dffc0245afb] Merge tag
-> > > 'meson-clk-4.21-2' of https://github.com/BayLibre/clk-meson into
-> > > clk-meson
-> > > git bisect good e74581b79ddd9b49b8c61e2791fc4dffc0245afb
-> > > # good: [60baf75e3f5b76043c25328ac0c5320aaef5ea41] Merge tag
-> > > 'clk-renesas-for-v4.21-tag2' of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into
-> > > clk-renesas git bisect good 60baf75e3f5b76043c25328ac0c5320aaef5ea41
-> > > # bad: [a41f85b6017ee20952a60e4330bcae2527fe2c2a] Merge tag
-> > > 'sunxi-clk-for-4.21' of
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into
-> > > clk-allwinner git bisect bad a41f85b6017ee20952a60e4330bcae2527fe2c2a
-> > > # bad: [ee678706e46d0d185c27cc214ad97828e0643159] clk: sunxi-ng: a64:
-> > > Fix
-> > > gate bit of DSI DPHY git bisect bad
-> > > ee678706e46d0d185c27cc214ad97828e0643159
-> > > # bad: [65b6657672388b72822e0367f06d41c1e3ffb5bb] clk: sunxi-ng: Use u64
-> > > for calculation of NM rate git bisect bad
-> > > 65b6657672388b72822e0367f06d41c1e3ffb5bb
-> > > # good: [db7548934603d9eda12649dff97ea5c29884405d] clk: sunxi-ng:
-> > > sun50i:
-> > > h6: Fix MMC clock mux width git bisect good
-> > > db7548934603d9eda12649dff97ea5c29884405d
-> > > # bad: [3f790433c3cb27ecaf2ca0e07ac25964e4fd9f15] clk: sunxi-ng: Adjust
-> > > MP
-> > > clock parent rate when allowed git bisect bad
-> > > 3f790433c3cb27ecaf2ca0e07ac25964e4fd9f15
-> > > # first bad commit: [3f790433c3cb27ecaf2ca0e07ac25964e4fd9f15] clk:
-> > > sunxi-ng: Adjust MP clock parent rate when allowed
-> > > 
-> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > ---
-> > > > 
-> > > >  drivers/clk/sunxi-ng/ccu_mp.c | 64
-> > > >  +++++++++++++++++++++++++++++++++--
-> > > >  1 file changed, 62 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c
-> > > > b/drivers/clk/sunxi-ng/ccu_mp.c
-> > > > index 5d0af4051737..0357349eb767 100644
-> > > > --- a/drivers/clk/sunxi-ng/ccu_mp.c
-> > > > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
-> > > > @@ -40,6 +40,61 @@ static void ccu_mp_find_best(unsigned long parent,
-> > > > unsigned long rate,>
-> > > > 
-> > > >  	*p = best_p;
-> > > >  
-> > > >  }
-> > > > 
-> > > > +static unsigned long ccu_mp_find_best_with_parent_adj(struct clk_hw
-> > > > *hw,
-> > > > +
-> > 
-> > unsigned long *parent,
-> > 
-> > > > +
-> > 
-> > unsigned long rate,
-> > 
-> > > > +
-> > 
-> > unsigned int max_m,
-> > 
-> > > > +
-> > 
-> > unsigned int max_p)
-> > 
-> > > > +{
-> > > > +	unsigned long parent_rate_saved;
-> > > > +	unsigned long parent_rate, now;
-> > > > +	unsigned long best_rate = 0;
-> > > > +	unsigned int _m, _p, div;
-> > > > +	unsigned long maxdiv;
-> > > > +
-> > > > +	parent_rate_saved = *parent;
-> > > > +
-> > > > +	/*
-> > > > +	 * The maximum divider we can use without overflowing
-> > > > +	 * unsigned long in rate * m * p below
-> > > > +	 */
-> > > > +	maxdiv = max_m * max_p;
-> > > > +	maxdiv = min(ULONG_MAX / rate, maxdiv);
-> > > > +
-> > > > +	for (_p = 1; _p <= max_p; _p <<= 1) {
-> > > > +		for (_m = 1; _m <= max_m; _m++) {
-> > > > +			div = _m * _p;
-> > > > +
-> > > > +			if (div > maxdiv)
-> > > > +				break;
-> > > > +
-> > > > +			if (rate * div == parent_rate_saved) {
-> > > > +				/*
-> > > > +				 * It's the most ideal case if
-> > 
-> > the requested
-> > 
-> > > > +				 * rate can be divided from
-> > 
-> > parent clock without
-> > 
-> > > > +				 * needing to change parent 
-rate,
-> > 
-> > so return the
-> > 
-> > > > +				 * divider immediately.
-> > > > +				 */
-> > > > +				*parent = parent_rate_saved;
-> > > > +				return rate;
-> > > > +			}
-> > > > +
-> > > > +			parent_rate = clk_hw_round_rate(hw, rate *
-> > 
-> > div);
-> > 
-> > > > +			now = parent_rate / div;
-> > > > +
-> > > > +			if (now <= rate && now > best_rate) {
-> > > > +				best_rate = now;
-> > > > +				*parent = parent_rate;
-> > > > +
-> > > > +				if (now == rate)
-> > > > +					return rate;
-> > > > +			}
-> > > > +		}
-> > > > +	}
-> > > > +
-> > > > +	return best_rate;
-> > > > +}
-> > > > +
-> > > > 
-> > > >  static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
-> > > >  
-> > > >  				       struct clk_hw *hw,
-> > > >  				       unsigned long
-> > 
-> > *parent_rate,
-> > 
-> > > > @@ -56,8 +111,13 @@ static unsigned long ccu_mp_round_rate(struct
-> > > > ccu_mux_internal *mux,>
-> > > > 
-> > > >  	max_m = cmp->m.max ?: 1 << cmp->m.width;
-> > > >  	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
-> > > > 
-> > > > -	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
-> > > > -	rate = *parent_rate / p / m;
-> > > > +	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-> > > > +		ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m,
-> > 
-> > &p);
-> > 
-> > > > +		rate = *parent_rate / p / m;
-> > > > +	} else {
-> > > > +		rate = ccu_mp_find_best_with_parent_adj(hw, 
-parent_rate,
-> > 
-> > rate,
-> > 
-> > > > +
-> > 
-> > max_m, max_p);
-> > 
-> > > > +	}
-> > > > 
-> > > >  	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> > > >  	
-> > > >  		rate /= cmp->fixed_post_div;
+Enabling of bearer <udp:syz0> rejected, already enabled
+Enabling of bearer <udp:syz0> rejected, already enabled
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	1-....: (1 GPs behind) idle=776/1/0x4000000000000004  
+softirq=84430/84432 fqs=5221
+rcu: 	 (t=10500 jiffies g=117297 q=5397)
+NMI backtrace for cpu 1
+CPU: 1 PID: 7906 Comm: syz-fuzzer Not tainted 5.0.0-rc2+ #21
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+  rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree.c:1211
+  print_cpu_stall.cold+0x227/0x40c kernel/rcu/tree.c:1348
+  check_cpu_stall kernel/rcu/tree.c:1422 [inline]
+  rcu_pending kernel/rcu/tree.c:3018 [inline]
+  rcu_check_callbacks+0xb32/0x1380 kernel/rcu/tree.c:2521
+  update_process_times+0x32/0x80 kernel/time/timer.c:1635
+  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
+  tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
+  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+  __hrtimer_run_queues+0x3a7/0x1050 kernel/time/hrtimer.c:1451
+  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
+  smp_apic_timer_interrupt+0x18d/0x760 arch/x86/kernel/apic/apic.c:1060
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+RIP: 0010:kasan_check_read+0x8/0x20 mm/kasan/common.c:100
+Code: 73 58 89 c2 48 c7 c7 70 a5 3c 89 f7 da e8 04 77 a2 ff e9 c4 f5 ff ff  
+90 90 90 90 90 90 90 90 90 90 90 55 89 f6 31 d2 48 89 e5 <48> 8b 4d 08 e8  
+ff 23 00 00 5d c3 0f 1f 00 66 2e 0f 1f 84 00 00 00
+RSP: 0000:ffff8880ae706c30 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000000 RBX: ffff8880ae706de8 RCX: 0000000000000004
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffe8ffffd6d738
+RBP: ffff8880ae706c30 R08: 1ffffd1ffffadae7 R09: fffff91ffffadae8
+R10: fffff91ffffadae7 R11: ffffe8ffffd6d73b R12: ffffed1015ce0dab
+R13: ffffe8ffffd6d738 R14: 0000000000000003 R15: 00000000000000fc
+  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+  virt_spin_lock arch/x86/include/asm/qspinlock.h:83 [inline]
+  native_queued_spin_lock_slowpath+0xfe/0x1290 kernel/locking/qspinlock.c:337
+  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:653 [inline]
+  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:50 [inline]
+  queued_spin_lock include/asm-generic/qspinlock.h:90 [inline]
+  do_raw_spin_lock+0x2af/0x360 kernel/locking/spinlock_debug.c:113
+  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
+  _raw_spin_lock+0x37/0x40 kernel/locking/spinlock.c:144
+  spin_lock include/linux/spinlock.h:329 [inline]
+  nf_ct_add_to_unconfirmed_list net/netfilter/nf_conntrack_core.c:462  
+[inline]
+  init_conntrack.isra.0+0xa5c/0x1380 net/netfilter/nf_conntrack_core.c:1421
+  resolve_normal_ct net/netfilter/nf_conntrack_core.c:1463 [inline]
+  nf_conntrack_in+0xb95/0x1250 net/netfilter/nf_conntrack_core.c:1569
+  ipv4_conntrack_local+0x169/0x210 net/netfilter/nf_conntrack_proto.c:444
+  nf_hook_entry_hookfn include/linux/netfilter.h:119 [inline]
+  nf_hook_slow+0xbf/0x1f0 net/netfilter/core.c:511
+  nf_hook include/linux/netfilter.h:244 [inline]
+  __ip_local_out+0x542/0xa90 net/ipv4/ip_output.c:113
+  ip_local_out+0x2d/0x1b0 net/ipv4/ip_output.c:122
+  iptunnel_xmit+0x58e/0x980 net/ipv4/ip_tunnel_core.c:91
+  udp_tunnel_xmit_skb+0x236/0x310 net/ipv4/udp_tunnel.c:200
+  tipc_udp_xmit.isra.0+0xa9c/0xe40 net/tipc/udp_media.c:181
+  tipc_udp_send_msg+0x5b2/0x6e0 net/tipc/udp_media.c:235
+  tipc_bearer_xmit_skb+0x172/0x360 net/tipc/bearer.c:503
+  tipc_disc_timeout+0xb43/0x1070 net/tipc/discover.c:332
+  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+  expire_timers kernel/time/timer.c:1362 [inline]
+  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0033:0x41de97
+Code: 4c 89 d1 45 89 c2 48 39 cf 0f 83 51 01 00 00 48 85 ff 0f 84 40 01 00  
+00 41 83 fa 03 0f 83 2b 01 00 00 45 8d 42 01 44 0f b6 0b <49> 89 ca 44 89  
+c1 41 d3 e9 48 83 ff 08 74 0b 41 0f ba e1 04 0f 83
+RSP: 002b:000000c420031e80 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 000000c420000000 RBX: 000000c41feb6fb9 RCX: 0000000000000040
+RDX: 000000c42cbb0000 RSI: 000000c4229208c0 RDI: 0000000000000000
+RBP: 000000c420031f18 R08: 0000000000000000 R09: 00000000000000df
+R10: 0000000000000000 R11: 000000c4229208c0 R12: 000000c42a412930
+R13: 0000000000000200 R14: ffffffffffffffff R15: 0000000000000200
 
 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
