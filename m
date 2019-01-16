@@ -6,56 +6,59 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B822FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE606C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83C3420873
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE5A20873
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547665424;
-	bh=nUSJQJtO9BLTvh1v50utYt+wrQTcDtXAy5C1rF6BNFk=;
+	s=default; t=1547665525;
+	bh=5olV6zpSzh9GNHl6Mc46BztOq/FXTTdaN6TPBFOQYI4=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Gg1P4j4bJdkJ9Syjppeg8irBzGw0NHwh+jSqe4clO/sIoL8R7FFxkWC9Q8FD+TVhH
-	 UPsIFJWzMFgpSr4B2I0PFA5VfsciPqnVJmKPJI+UZq9YcqQ5Ccx8liPQd+KzNM6OkL
-	 ILjwQLedVqNhnC9dcgSgQYijRe+3xir7UhfhwJ5U=
+	b=MOBdhCUVa4DQP4D7Ri3cQUoPh7HVk0KXXjVBtlvtqSZD81Tr+7PrnrTFk3XKh5FK7
+	 fe/0SXMnWqLvFleoNMJJ+yBzB6cLSSWwcXGLHJyWtlt9xjQJp2ig52ouXSAFLXS79s
+	 S2PyIByR9FifMleTL8abpLTOKzyC2sLDUgXESXTo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbfAPTDm (ORCPT
+        id S1730041AbfAPTFX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:03:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38672 "EHLO mail.kernel.org"
+        Wed, 16 Jan 2019 14:05:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729330AbfAPTDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:03:42 -0500
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        id S1729330AbfAPTFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 14:05:23 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 870412087E;
-        Wed, 16 Jan 2019 19:03:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81A2E2087E;
+        Wed, 16 Jan 2019 19:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547665421;
-        bh=nUSJQJtO9BLTvh1v50utYt+wrQTcDtXAy5C1rF6BNFk=;
+        s=default; t=1547665522;
+        bh=5olV6zpSzh9GNHl6Mc46BztOq/FXTTdaN6TPBFOQYI4=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CIETWKn6wjYiswQSfH9MfMxjdRaGJOBARrVFaP619j+pEgFw+lp1ZDEk42i7MKopO
-         Po5xTlFnd05iLGy//ZSPcXHCewu7NP6f+d+uZD4V5ZPXl/owKPj7fey3buMOxNJ6+K
-         AkfU6H/I6tuikY3G9HIadBOPVIImXiSQmvUAa5gc=
-Received: by mail-qt1-f174.google.com with SMTP id y20so8403402qtm.13;
-        Wed, 16 Jan 2019 11:03:41 -0800 (PST)
-X-Gm-Message-State: AJcUukcG/Jy4uQ+F0zIWYu6WL2A97maTfH3zQk4XLc6X+fYRkJAvQH7L
-        t5fyut1IDyqs60VFGWmY1Kz8ispD7A7VkbrHjw==
-X-Google-Smtp-Source: ALg8bN4J04h9zk26LvZ6vG2ifxe9omR6/KMO1JZVN9PxrFa1dJ6rkTKx2PB8OtwaAxD75R+pUnbL7k9JiFEfRolv1Uk=
-X-Received: by 2002:aed:3ecf:: with SMTP id o15mr8436396qtf.26.1547665420796;
- Wed, 16 Jan 2019 11:03:40 -0800 (PST)
+        b=ni84c3LK2Ll4JX7SSOII9IzjQ2HXs0yXSpRhlxE1ccpgGQhz/Plr3ezxFxDuTvMV/
+         JaWF8oZyQTIAI+EGaDJ/by6SN1ya7ebUs307bzxaWssKcj+q+GyjXV7X6ATIE0LlZa
+         rcsqcyW8kQRYu5d1YHNyQnsFxweh6F/1gFBflmrY=
+Received: by mail-qt1-f170.google.com with SMTP id y20so8411277qtm.13;
+        Wed, 16 Jan 2019 11:05:22 -0800 (PST)
+X-Gm-Message-State: AJcUukf0FAou+tor0f4tCmwRFtfMtc735GUaTFwiBGoqFAEUW8+q+Ylu
+        nJO/UQqKbj6dHGs14ARqwsNo55cW0u6KhUCo3Q==
+X-Google-Smtp-Source: ALg8bN7x0PUNJi6aq5r075dFNIchbq9tvoq5SX5dzf2ErkP0fH1eink68f7p77/k3hdYt9ZcZXdiBZjePbu5T84lZys=
+X-Received: by 2002:ac8:1712:: with SMTP id w18mr8272262qtj.76.1547665521715;
+ Wed, 16 Jan 2019 11:05:21 -0800 (PST)
 MIME-Version: 1.0
-References: <1547372691-28324-1-git-send-email-Julia.Lawall@lip6.fr> <1547372691-28324-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1547372691-28324-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1546949500-30044-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <1546949500-30044-1-git-send-email-krzk@kernel.org>
 From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 16 Jan 2019 13:03:29 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+H_0=mQ3hMg2BWKMZfPo+is53zvx6kpSHUMfKpSW=zJw@mail.gmail.com>
-Message-ID: <CAL_Jsq+H_0=mQ3hMg2BWKMZfPo+is53zvx6kpSHUMfKpSW=zJw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] OF: properties: add missing of_node_put
-To:     Julia Lawall <Julia.Lawall@lip6.fr>
-Cc:     kernel-janitors@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
+Date:   Wed, 16 Jan 2019 13:05:10 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK=hE4T4YOsbvYFAwrVed8fECtAPhiHp7Z8PhD1XyQ3jQ@mail.gmail.com>
+Message-ID: <CAL_JsqK=hE4T4YOsbvYFAwrVed8fECtAPhiHp7Z8PhD1XyQ3jQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: soc: qcom: Fix trivial language typos
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Kosina <trivial@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         devicetree@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -64,36 +67,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 13, 2019 at 4:21 AM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+On Tue, Jan 8, 2019 at 6:11 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> Add an of_node_put when the result of of_graph_get_remote_port_parent is
-> not available.
+> Fix few trivial language typos in bindings.
 >
-> The semantic match that finds this problem is as follows
-> (http://coccinelle.lip6.fr):
->
-> // <smpl>
-> @r exists@
-> local idexpression e;
-> expression x;
-> @@
-> e = of_graph_get_remote_port_parent(...);
-> ... when != x = e
->     when != true e == NULL
->     when != of_node_put(e)
->     when != of_fwnode_handle(e)
-> (
-> return e;
-> |
-> *return ...;
-> )
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/of/property.c |    1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 2 +-
+>  Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.txt | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
 
 Applied, thanks.
 
