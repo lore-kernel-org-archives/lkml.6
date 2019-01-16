@@ -2,136 +2,123 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D6EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528B2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD2320859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547650689;
-	bh=nt0t9pYYsdnSuuPbQv9J52WaQ4atxiCDmVt76SSqRfE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=NkC4VDVldVNRZOlGccbf4iRzg+4tQEoPeMkFDqPLIhDNSByxrDbPHBYO1ct8awgKs
-	 nJSl7llPsAhGKB2Qpa0nALodxw8tmi2RYvh1qdAM8wx0oVKlD+zDXFZ4DfNw2wEmAu
-	 JRm3KvKRHiPTQkoUheC6Nn36hsQnKRRqKX93s/A0=
+	by mail.kernel.org (Postfix) with ESMTP id 28F0920657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404770AbfAPO6H (ORCPT
+        id S2391115AbfAPO7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:58:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54960 "EHLO mail.kernel.org"
+        Wed, 16 Jan 2019 09:59:10 -0500
+Received: from muru.com ([72.249.23.125]:33832 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729392AbfAPO6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:58:07 -0500
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A91820657;
-        Wed, 16 Jan 2019 14:58:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547650686;
-        bh=nt0t9pYYsdnSuuPbQv9J52WaQ4atxiCDmVt76SSqRfE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=w4Gj/294M9xsXIyGGPb6u6u2bJKtX8cZPwwEEKmrd17Es66QdsgWd7/g1emDN1Q8q
-         qNKCzwpIZTdMtSB+LPadUh4eTayc4MB2G59TmneGms+gTa2H2Nca3JcFrVnP1EjmgE
-         sHFEVb9aMYpfYEitbi/co8OYfV6PJPKIrG5Vnvic=
-Received: by mail-qt1-f181.google.com with SMTP id t33so7425249qtt.4;
-        Wed, 16 Jan 2019 06:58:06 -0800 (PST)
-X-Gm-Message-State: AJcUukcz3eiGHuBgKFCXO6U9ehl8qBxHUrL7Kot8ou0w5mbTPIzFRdT5
-        fvJNCknlx5rnQTj9RqVPiXctFK7Esu/FL8YTpQ==
-X-Google-Smtp-Source: ALg8bN5/JPYhJySu8yj+5+78GK5ulWxogQKP9CP+KUx7IZPKBDkRJqkdxOSoKlnmasroQ3tGSb2ajhyDrHSVYk2220o=
-X-Received: by 2002:a0c:9e05:: with SMTP id p5mr7196569qve.246.1547650685554;
- Wed, 16 Jan 2019 06:58:05 -0800 (PST)
+        id S1728675AbfAPO7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 09:59:09 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 9938C8030;
+        Wed, 16 Jan 2019 14:59:14 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 06:59:04 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
+Message-ID: <20190116145904.GM5544@atomide.com>
+References: <20181217004450.GW6707@atomide.com>
+ <20181227101647.GA32260@amd>
+ <20181228193105.GW6707@atomide.com>
+ <20190116135829.GA10426@amd>
 MIME-Version: 1.0
-References: <1546952716-2743-1-git-send-email-viorel.suman@nxp.com>
- <1546952716-2743-5-git-send-email-viorel.suman@nxp.com> <20190115205755.GA4022@bogus>
- <CAEnQRZBn7nM-KrGSvnzPWuU=a+jyRxfEKhZSsDD4wTqr6spkwg@mail.gmail.com>
-In-Reply-To: <CAEnQRZBn7nM-KrGSvnzPWuU=a+jyRxfEKhZSsDD4wTqr6spkwg@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 16 Jan 2019 08:57:53 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKzmqubd8BVPdju2hLwZNMsen-1+uuHT+S-yirXaSNyHw@mail.gmail.com>
-Message-ID: <CAL_JsqKzmqubd8BVPdju2hLwZNMsen-1+uuHT+S-yirXaSNyHw@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2 4/4] ASoC: add imx-audmix DT binding documentation
-To:     Daniel Baluta <daniel.baluta@gmail.com>
-Cc:     Viorel Suman <viorel.suman@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Cosmin Samoila <cosmin.samoila@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Viorel Suman <viorel.suman@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116135829.GA10426@amd>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 2:22 AM Daniel Baluta <daniel.baluta@gmail.com> wrote:
->
-> On Tue, Jan 15, 2019 at 10:58 PM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Tue, Jan 08, 2019 at 01:05:51PM +0000, Viorel Suman wrote:
-> > > Add the DT binding documentation for Audio Mixer
-> > > machine driver.
-> > >
-> > > Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> > > ---
-> > >  .../devicetree/bindings/sound/imx-audmix.txt       | 24 ++++++++++++++++++++++
-> > >  1 file changed, 24 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/sound/imx-audmix.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/sound/imx-audmix.txt b/Documentation/devicetree/bindings/sound/imx-audmix.txt
-> > > new file mode 100644
-> > > index 0000000..6ac1230
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/sound/imx-audmix.txt
-> > > @@ -0,0 +1,24 @@
-> > > +NXP Audio Mixer (AUDMIX) machine driver.
-> > > +
-> > > +Required properties:
-> > > +===================================
-> > > +  - compatible               : Compatible list, contains "fsl,imx-audmix"
-> > > +
-> > > +  - model            : Short audio card description.
-> > > +
-> > > +  - dais             : Must contain a list of phandles to AUDMIX connected
-> > > +                       DAIs. The current implementation requires two phandles
-> > > +                       to SAI interfaces to be provided, the first SAI in the
-> > > +                       list being used to route the AUDMIX output.
-> > > +
-> > > +  - audmix-controller        : Must contain the phandle to the AUDMIX device node.
-> >
-> > I don't think you need 2 nodes for this as this one is just a virtual
-> > device. Just add the dais property to the audmix node.
->
-> Hi Rob,
->
-> Thanks for the suggestion. We want to understand better the reasoning
-> behind this.
->
-> Is it because dais are physically connected to AUDMIX node?
->
-> In ALSA we usually add all the components inside the
-> associated machine driver virtual node.
+* Pavel Machek <pavel@ucw.cz> [190116 13:58]:
+> Hi!
+> 
+> > * Pavel Machek <pavel@ucw.cz> [181227 10:17]:
+> > > Ok, I really need SMS messages, too.
+> > > 
+> > > Fortunately, they are on /dev/motmdm9, in PDU format. Quite
+> > > logical. And you probably need to acknowledge them, using PDU,
+> > > too... (because otherwise you'll just get the same SMS over and over
+> > > and over). Which is also logical, but hard to do from shell/python.
+> > 
+> > Yeah so I found that Ruby pdu_tools module allows decoding PDUs
+> > properly while I did not have much luck with other tools.
+> > 
+> > So I wrote a hasty script to read SMS, copy it to a Maildir and
+> > then ack it:
+> > 
+> > https://github.com/tmlind/droid4-sms-tools
+> 
+> I could not get that one to work.
+> 
+> /var/lib/gems/2.3.0/gems/phone-1.2.3/lib/support.rb:47:in
+> `class_eval': /var/lib/gems/2.3.0/gems/phone-1.2.3/lib/support.rb:47:
+> `@@{' is not allowed as a class variable name (SyntaxError)
+> /var/lib/gems/2.3.0/gems/phone-1.2.3/lib/support.rb:47: syntax error,
+> unexpected end-of-input
+>           unless defined? @@{:default=>true}
+> 	                              ^
+> from /var/lib/gems/2.3.0/gems/phone-1.2.3/lib/support.rb:47:in `block in cattr_accessor'
 
-Yes, but in those cases, there's a bunch of components (DAIs, DMA,
-DSP, amp, codecs, etc.) with no main device. That doesn't really
-appear to be the case here (or your example was incomplete).
+Hmm yeah looking at my notes I also had some issues and did something like
+this to install git version of phone gem:
 
-It's simply that we try to avoid such virtual devices unless
-absolutely necessary.
+$ git clone git://github.com/carr/phone
+$ cd phone
+$ sed -i 's/beta//' lib/phone/version.rb
+$ cd phone
+$ sed -i 's/1.3.0.beta1/1.2.9/' lib/phone/version.rb
+$ gem build phone.gemspec
+$ sudo gem uninstall phone
+$ sudo gem uninstall bigdecimal -v 1.4.2        # 1.3.4 works
+$ sudo gem install phone-1.2.9.gem
 
-Rob
+> And I wanted to ask -- did you figure out how to acknowledge the
+> SMSs? +CGNNA does not seem to do the job:
+> 
+> 07912470338016...
+> AT+CGNMA=1
+> +CGNMA:ERROR=9
+
+Yeah the scripts in droid4-sms-tools git repo work for me for sending
+and receiving. They do not work with cdma currently as the format is
+different.
+
+Maybe you've managed to change the mode of the modem to queue the
+messages with the at commands to the usb port?
+
+You are reading and writing to /dev/motmdm9 for incoming sms right?
+
+> > My logs show that Android uses two different commands for ack.
+> > Either AT+GCNMA=1 or AT+CNMA=0,0 gets used depending on something
+> > that I have no idea of.. Maybe the network connected?
+
+I think AT+GCNMA=1 works 3g and AT+CNMA=0,0 with cdma. Or it could be
+that one of them is just a delayed ack, I don't know.
+
+Regards,
+
+Tony
