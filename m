@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D961EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6179C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AEC420657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B624620657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bz6AnpAO"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V10Xf+8K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405209AbfAPQLS (ORCPT
+        id S2405226AbfAPQLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:11:18 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51407 "EHLO
+        Wed, 16 Jan 2019 11:11:21 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55590 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbfAPQLN (ORCPT
+        with ESMTP id S2405202AbfAPQLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:11:13 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b11so2594684wmj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:11:12 -0800 (PST)
+        Wed, 16 Jan 2019 11:11:17 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y139so2553938wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:11:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Zq2oMbbyivDSUeOMLU6UgVaZMPHzfeEtdH+iJhaQzFI=;
-        b=Bz6AnpAOC1LWp7HIBwDPW+c8rI8rUIahEAzNe0cf4f9UbL5QjWiz+9EPB6M8Nomzlh
-         oaHmJRLfPCL9PHQSBM4L1e4f9TLFbjrjJ5tOTWBpDhIWOBhONvm1Y4f1pdYJZBm1cCCg
-         KNQiq/we5MfhtJ2paVJvkrEDQx1ztjjFkjxHg=
+        bh=Dv+pY3mbEG8oP8SFilyrA7S//jhmEn3muBmKLb21XKY=;
+        b=V10Xf+8KYu71ENB3vcyeUopKffaiT51jsBZls2odIK7kw5Y8dIv56eEAIIzjrybAG9
+         vOgyOzqCglBya7XcA5m26ckA+YRM8MIN8UR9CLyKXGpXBh5uk+7p6kHk9YnaSWxWkhgL
+         lJQBJasKTLzQilSE9BGczPMWfLMcj/TDvjvnM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Zq2oMbbyivDSUeOMLU6UgVaZMPHzfeEtdH+iJhaQzFI=;
-        b=VpPEGIPMIPews+WkQslil10/mhMwLj/MQLmKbu5p/8PMLWqYWydW90pmerakJQpaaK
-         /YQyZFDotSIsJtKQ7pnfyn8s2l9XNJzb0105CjlDVGDGxmm6/f194Pl8hsNhtflwroTf
-         TpoH41rONPlZYBpiz3E7k213VALuHQhtWOOCMCCnMP9m1OlMrANvRHi5SrvNcXSH9S+E
-         RVpqFipUIkwZZ+hSFIfNBsWTdSN7wFVtFLD8SPvhYFjM7OcSRK0AbGcjTXGnE+J4MFzR
-         Ht3MXlwGwORJcqRG6An+LSQsXYhosQEfjk577pl1+llrHQVuBkNswRWmhWa/TNRHsdoV
-         I7lw==
-X-Gm-Message-State: AJcUukdlYqBIodtmA3pOKwt3rRMUBKyh+Xw8u0APexnBn6SO2FQDWkh0
-        6WRdCODsFMZZIrlt8/fbmJecEw==
-X-Google-Smtp-Source: ALg8bN4Cf46ZL1gy7/zlADr5kz6Lry7MyVxWtkfDt83Hljxxs3bH3mOcohe+U1Tkugq4psB8bi4ACw==
-X-Received: by 2002:a1c:d1cd:: with SMTP id i196mr7978630wmg.107.1547655071506;
-        Wed, 16 Jan 2019 08:11:11 -0800 (PST)
+        bh=Dv+pY3mbEG8oP8SFilyrA7S//jhmEn3muBmKLb21XKY=;
+        b=QdPKII8sruX+xE+s6SRX0KO35k9cfx/AdlVFY7fP1p5+eBHAUcZJW+Evn6oD1FSCvg
+         JFmRjRo4lQrowzZAv+SIt5LoIRK3Two7d5QjucFQwJDCL4Gl1K0p/fXx5IKRBQBolStK
+         CylzArWtj6cnS01RB4R601k/FmgAYYH06iUHK66F25C7I+oorXE7UEXn8ow+ZqJMXYZb
+         s6xgEZJ1/7MUDDYRx0UqumMgNlERxA8fOl2LV2uyrK3Be7+klnW4sNQm3JbHG66+gt1D
+         Iyy5/BexbqPiwDKv4Oa5LINepSG6Iy4hzUMDocu/gNsn2iyhpzsR1+XOiCBRcsLFyCSo
+         3h1A==
+X-Gm-Message-State: AJcUuke7wHnLC6d4TaBvK3/Vkvu9sn4KnZim/yZ/KUlVF00/p0iHTnFM
+        /yAiymx7EOVg/g6zk2nnfHloNg==
+X-Google-Smtp-Source: ALg8bN4cYcmgoilU0xqMkpeUodS5QeOWtixKPD21xBXPjFmrKmTuguVUJIRPKzsEq4RBDMmUC1ncHQ==
+X-Received: by 2002:a1c:a8d2:: with SMTP id r201mr7887736wme.81.1547655076200;
+        Wed, 16 Jan 2019 08:11:16 -0800 (PST)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id a17sm78193407wrs.58.2019.01.16.08.11.09
+        by smtp.googlemail.com with ESMTPSA id a17sm78193407wrs.58.2019.01.16.08.11.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Jan 2019 08:11:10 -0800 (PST)
+        Wed, 16 Jan 2019 08:11:15 -0800 (PST)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de,
@@ -69,9 +69,9 @@ Cc:     andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-mediatek@lists.infradead.org, georgi.djakov@linaro.org
-Subject: [PATCH v13 2/8] dt-bindings: Introduce interconnect binding
-Date:   Wed, 16 Jan 2019 18:10:57 +0200
-Message-Id: <20190116161103.6937-3-georgi.djakov@linaro.org>
+Subject: [PATCH v13 4/8] interconnect: Add debugfs support
+Date:   Wed, 16 Jan 2019 18:10:59 +0200
+Message-Id: <20190116161103.6937-5-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190116161103.6937-1-georgi.djakov@linaro.org>
 References: <20190116161103.6937-1-georgi.djakov@linaro.org>
@@ -82,82 +82,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This binding is intended to represent the relations between interconnect
-controllers (providers) and consumer device nodes. It will allow creating
-links between consumers and interconnect paths (exposed by interconnect
-providers).
+Add a functionality to provide information about the current constraints
+per each node and provider.
 
 Reviewed-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- .../bindings/interconnect/interconnect.txt    | 60 +++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
+ drivers/interconnect/core.c | 70 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-new file mode 100644
-index 000000000000..5a3c575b387a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-@@ -0,0 +1,60 @@
-+Interconnect Provider Device Tree Bindings
-+=========================================
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index a8c2bd35197f..8091d998549a 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -6,6 +6,7 @@
+  * Author: Georgi Djakov <georgi.djakov@linaro.org>
+  */
+ 
++#include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/idr.h>
+ #include <linux/init.h>
+@@ -21,6 +22,7 @@
+ static DEFINE_IDR(icc_idr);
+ static LIST_HEAD(icc_providers);
+ static DEFINE_MUTEX(icc_lock);
++static struct dentry *icc_debugfs_dir;
+ 
+ /**
+  * struct icc_req - constraints that are attached to each node
+@@ -48,6 +50,59 @@ struct icc_path {
+ 	struct icc_req reqs[];
+ };
+ 
++static void icc_summary_show_one(struct seq_file *s, struct icc_node *n)
++{
++	if (!n)
++		return;
 +
-+The purpose of this document is to define a common set of generic interconnect
-+providers/consumers properties.
++	seq_printf(s, "%-30s %12u %12u\n",
++		   n->name, n->avg_bw, n->peak_bw);
++}
 +
++static int icc_summary_show(struct seq_file *s, void *data)
++{
++	struct icc_provider *provider;
 +
-+= interconnect providers =
++	seq_puts(s, " node                                   avg         peak\n");
++	seq_puts(s, "--------------------------------------------------------\n");
 +
-+The interconnect provider binding is intended to represent the interconnect
-+controllers in the system. Each provider registers a set of interconnect
-+nodes, which expose the interconnect related capabilities of the interconnect
-+to consumer drivers. These capabilities can be throughput, latency, priority
-+etc. The consumer drivers set constraints on interconnect path (or endpoints)
-+depending on the use case. Interconnect providers can also be interconnect
-+consumers, such as in the case where two network-on-chip fabrics interface
-+directly.
++	mutex_lock(&icc_lock);
 +
-+Required properties:
-+- compatible : contains the interconnect provider compatible string
-+- #interconnect-cells : number of cells in a interconnect specifier needed to
-+			encode the interconnect node id
++	list_for_each_entry(provider, &icc_providers, provider_list) {
++		struct icc_node *n;
 +
-+Example:
++		list_for_each_entry(n, &provider->nodes, node_list) {
++			struct icc_req *r;
 +
-+		snoc: interconnect@580000 {
-+			compatible = "qcom,msm8916-snoc";
-+			#interconnect-cells = <1>;
-+			reg = <0x580000 0x14000>;
-+			clock-names = "bus_clk", "bus_a_clk";
-+			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
-+				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
-+		};
++			icc_summary_show_one(s, n);
++			hlist_for_each_entry(r, &n->req_list, req_node) {
++				if (!r->dev)
++					continue;
 +
++				seq_printf(s, "    %-26s %12u %12u\n",
++					   dev_name(r->dev), r->avg_bw,
++					   r->peak_bw);
++			}
++		}
++	}
 +
-+= interconnect consumers =
++	mutex_unlock(&icc_lock);
 +
-+The interconnect consumers are device nodes which dynamically express their
-+bandwidth requirements along interconnect paths they are connected to. There
-+can be multiple interconnect providers on a SoC and the consumer may consume
-+multiple paths from different providers depending on use case and the
-+components it has to interact with.
++	return 0;
++}
 +
-+Required properties:
-+interconnects : Pairs of phandles and interconnect provider specifier to denote
-+	        the edge source and destination ports of the interconnect path.
++static int icc_summary_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, icc_summary_show, inode->i_private);
++}
 +
-+Optional properties:
-+interconnect-names : List of interconnect path name strings sorted in the same
-+		     order as the interconnects property. Consumers drivers will use
-+		     interconnect-names to match interconnect paths with interconnect
-+		     specifier pairs.
++static const struct file_operations icc_summary_fops = {
++	.open		= icc_summary_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
 +
-+Example:
+ static struct icc_node *node_find(const int id)
+ {
+ 	return idr_find(&icc_idr, id);
+@@ -711,6 +766,21 @@ int icc_provider_del(struct icc_provider *provider)
+ }
+ EXPORT_SYMBOL_GPL(icc_provider_del);
+ 
++static int __init icc_init(void)
++{
++	icc_debugfs_dir = debugfs_create_dir("interconnect", NULL);
++	debugfs_create_file("interconnect_summary", 0444,
++			    icc_debugfs_dir, NULL, &icc_summary_fops);
++	return 0;
++}
 +
-+	sdhci@7864000 {
-+		...
-+		interconnects = <&pnoc MASTER_SDCC_1 &bimc SLAVE_EBI_CH0>;
-+		interconnect-names = "sdhc-mem";
-+	};
++static void __exit icc_exit(void)
++{
++	debugfs_remove_recursive(icc_debugfs_dir);
++}
++module_init(icc_init);
++module_exit(icc_exit);
++
+ MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
+ MODULE_DESCRIPTION("Interconnect Driver Core");
+ MODULE_LICENSE("GPL v2");
