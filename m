@@ -2,170 +2,159 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E623BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F48C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCC920651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1163206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393074AbfAPNQl (ORCPT
+        id S2393072AbfAPNQs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:16:41 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:45867 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393049AbfAPNQl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:16:41 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MLi4W-1h1QSx1A0W-00Hc1d; Wed, 16 Jan 2019 14:16:35 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     linux-s390@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org
-Subject: [PATCH 2/5] ipc: introduce ksys_ipc()/compat_ksys_ipc() for s390
-Date:   Wed, 16 Jan 2019 14:15:20 +0100
-Message-Id: <20190116131527.2071570-3-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190116131527.2071570-1-arnd@arndb.de>
-References: <20190116131527.2071570-1-arnd@arndb.de>
+        Wed, 16 Jan 2019 08:16:48 -0500
+Received: from mout.gmx.net ([212.227.15.18]:41403 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390503AbfAPNQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:16:47 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx003
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MhAVV-1gwllR2jyb-00MO6N; Wed, 16
+ Jan 2019 14:16:40 +0100
+Date:   Wed, 16 Jan 2019 14:16:37 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for
+ STRICT_KERNEL_RWX
+Message-ID: <20190116131637.GF22334@latitude>
+References: <cover.1547132681.git.christophe.leroy@c-s.fr>
+ <20190113181621.GA22334@latitude>
+ <714e78ba-1e92-a856-3dd6-a1fb96ad3785@c-s.fr>
+ <20190113210227.GB22334@latitude>
+ <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr>
+ <20190115003353.GD22334@latitude>
+ <b37e3635-9c69-0cfc-1283-25459b394033@c-s.fr>
+ <20190116003535.GE22334@latitude>
+ <f434aafc-7e5f-dfa2-4cfa-03119c27463a@c-s.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UPQV1rarTnBHBg01oEuiIWdstTYyflK3S5ifB3xyWAly94nEH9G
- Sb5P1MnawgJO2BU+o9QVohn6ce0wmWAmigZAEtv+ETN769Ul6u5882NGYWNq+uj9yByCOBZ
- 2EdAlDq7TmzrYEWPz9mCLW04pIahu6md5Q8azS/iQ84yrWVpRK+mIPoR4fUcHF/zR5slL7P
- LX79nIk+3wW1zN1zU1P+g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fCwgsdJipLU=:au9Pyv2jGgUmor+0ymZ+dk
- Lwzi5rYUp2D+6Y+BeDF0mB4PG7OEQb95gSL5P4qrOaRa6Mzmmy/07ILqyfkrUeOsKtpp7U3xS
- CWCef5VDccDrWEaW2iOJXQuvHz0VYQboWRAbXBJZIMIvLq0kTHpLaHoWZAkDblAS5k7KrS9lG
- o28DybRmvqr37Uh4jjDQFD05ieBkBrCe/JqAX6kWNvZGg1jsnbtj0/mYRBp3QT7MgpsUacYNR
- nAAqtELphoTnKlduIZIG4jsYFe7kBVTiADtfjarkkWQnXyXT/qkpt/HjEfih+83589h3H42T/
- 2bq325yFvnSFcQ05HM4CdZk+HWg0rno6HFWSfqkbaNcF/ueCKFse3kibP62UJOnesXW3lAI//
- t4Kc6dHToHlfIJgax1Ed8cWYbdseHj7+Wn+JskBuVOPICJ6SXtJnz5TeCPJ/Sskkh3nErHeq+
- 0pXQLHT9BQyQErRMnxgem2RkbbzghHhpuvjC3A6mBz/IreClbPQmWCPaGcENe+YM27rYSmDnS
- M7/tgzMtpredgA2+V0BrD3SXUGrfznqrEcv9Fb0GyKt6kyT2bwXZfwy7edDvzavcIY4f45DC9
- wOFGnDh6XNGjvtO4SwtR0SCrdS16FopJ+q+//OqcwbW25RTZN/YY4kLSPUgBLGujzkcQvwRIA
- MlfuidEQHb0IH1fH3hZd2o32OpeYD7FynTEUBErAgrAunozlmwlfU3DFgOJiGIh0Q/wHq65IU
- PYWD6AxUEb0U0yUTCXRnF60tjsaekkmTrbNpcg==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="O98KdSgI27dgYlM5"
+Content-Disposition: inline
+In-Reply-To: <f434aafc-7e5f-dfa2-4cfa-03119c27463a@c-s.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:fpG6AMWNkQdp2tjrCTsVorVYxqLjUeGTOfvO1EVLuFud+eT92zH
+ +ryYU2l50qvRNFVxElXvN6Nf+MnuZOsEObeBshLRl8qv4brQdJDWhM/WxNwK3SX8AZYChWy
+ JR1MRyhcwGLV3r6JSvBZfWv5VIIhr1eabdq7v4WzWmASa3au7BeMpha5uiNc4FM+jTKRiC8
+ WePrunfkF70BvPmC+zkXA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BXedORg982o=:3kMQxHeF0iEcjem1LPBHWC
+ tluDmUH/0TarG9abyClSy5YTP/qW67ycpyyc+TQnQ+KBDUZjQA0DM8Xf/QiQO7hH07y2hw4BB
+ xOcL8DiaNWt6Z98jNpLHeOgGXR/BvNxltOMF/9D3wdu5MYHu0YXgRzIdsV/8DzZqN4xb7zgyD
+ sVlFYvjRafFhdZ1x9Bs6lIZHbAibNj1sZzdCPz97djeDzhbmBKOKKk30uXFs9wxMvIB/nxxMO
+ 0QOrqXK+9k3NvclgXoQhYQhvE73ugFpFVzTxSYMq4zKnuGcc0Hc5pxZHP4Ose1q/FvKUAHFB3
+ XZhSGr0Yb1iI6xfXgI3mCOCqPNnQlY/FK2seuB0eom8AblLMObCSh1ceygGvgSzKXFleqsFgL
+ 05inGdLeTj3/7ANgleflQH32h87cp5we7ViuBlAsABDPFEqZbm/geAFDpkCysBtLd6RV3PgQB
+ 0CgsMofNXieqo07rX74meFmxnYKRHyORkOv3MbLZt8uFzDa5UqoF4htjuM3MqqV3Lm03AXU6E
+ mZWA1OF4Tsm3//fOdN4qOw10BYO/I7e9h6NmpWnEpw26cPwwnow9JldmNPvxQj1NPLzmKgB8z
+ sjj3FJjncmvRDswzNG/ZblHUvjOwyC/r/hcheGE0/LtOiTmJtX8hm+sZk47EN+wMcW4Z741ce
+ KH98/5uJAI38KRKpAw2JOsgmZcW/Sor9R0xmXqi+40V///e/vDUSJ5KZkJvzKucGqaf7n1HeI
+ M3O5pp9DLY9ZxlDRjuHLx0KKbiKp73C8fFbuT65sUepmqb8lHjz2xKOdBKCMlX+Cv49GZnsdK
+ aYDIBYFraWHJXZTxRqlUp4lZTu0zT4+2XlWzlZkq7VenGVZzq1r2AvuWE/vEUR6gnXzeZ/F5O
+ BFbg1vwXppw4H/J4PS90kdU8dESkH77YFQ742lb7bAoFbEDAX2hNbft6Ukft46FTS30mX/kyw
+ P4UI2r6+xVA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sys_ipc() and compat_ksys_ipc() functions are meant to only
-be used from the system call table, not called by another function.
 
-Introduce ksys_*() interfaces for this purpose, as we have done
-for many other system calls.
+--O98KdSgI27dgYlM5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/s390/kernel/compat_linux.c |  2 +-
- arch/s390/kernel/sys_s390.c     |  2 +-
- include/linux/syscalls.h        |  4 ++++
- ipc/syscall.c                   | 20 ++++++++++++++++----
- 4 files changed, 22 insertions(+), 6 deletions(-)
+On Wed, Jan 16, 2019 at 07:55:29AM +0100, Christophe Leroy wrote:
+> Le 16/01/2019 =C3=A0 01:35, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=A0:
+> > Thinning the kernel down a bit actually makes it boot again. Ooops...!
+> > Maybe enabling CONFIG_STRICT_KERNEL_RWX has made it just large enough to
+> > fail the hash table allocation, but there may have been other factors
+> > involved (I'm not sure exactly).  Sorry for the confusion!
+>=20
+> Ok, that must be the reason. Thanks for testing.
+>=20
+> What about the following modification which maps a second 256Mb BAT, does=
+ it
+> helps ?
+>=20
+>=20
+>=20
+> diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
+> index c2f564690778..ea574596de37 100644
+> --- a/arch/powerpc/kernel/head_32.S
+> +++ b/arch/powerpc/kernel/head_32.S
+> @@ -1160,6 +1160,14 @@ initial_bats:
+>  	mtspr	SPRN_DBAT0U,r11		/* bit in upper BAT register */
+>  	mtspr	SPRN_IBAT0L,r8
+>  	mtspr	SPRN_IBAT0U,r11
+> +#ifdef CONFIG_WII
+> +	addis	r11,r11,0x10000000@h
+> +	addis	r8,r8,0x10000000@h
+> +	mtspr	SPRN_DBAT2L,r8
+> +	mtspr	SPRN_DBAT2U,r11
+> +	mtspr	SPRN_IBAT2L,r8
+> +	mtspr	SPRN_IBAT2U,r11
+> +#endif
+>  	isync
+>  	blr
+>=20
+> diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
+> index 3f4193201ee7..a334fd5210a8 100644
+> --- a/arch/powerpc/mm/ppc_mmu_32.c
+> +++ b/arch/powerpc/mm/ppc_mmu_32.c
+> @@ -259,6 +259,8 @@ void setup_initial_memory_limit(phys_addr_t
+> first_memblock_base,
+>  	/* 601 can only access 16MB at the moment */
+>  	if (PVR_VER(mfspr(SPRN_PVR)) =3D=3D 1)
+>  		memblock_set_current_limit(min_t(u64, first_memblock_size, 0x01000000)=
+);
+> +	else if (IS_ENABLED(CONFIG_WII))
+> +		memblock_set_current_limit(min_t(u64, first_memblock_size, 0x20000000)=
+);
+>  	else /* Anything else has 256M mapped */
+>  		memblock_set_current_limit(min_t(u64, first_memblock_size, 0x10000000)=
+);
+>  }
 
-diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
-index 8ac38d51ed7d..a47f6d3c6d5b 100644
---- a/arch/s390/kernel/compat_linux.c
-+++ b/arch/s390/kernel/compat_linux.c
-@@ -296,7 +296,7 @@ COMPAT_SYSCALL_DEFINE5(s390_ipc, uint, call, int, first, compat_ulong_t, second,
- {
- 	if (call >> 16)		/* hack for backward compatibility */
- 		return -EINVAL;
--	return compat_sys_ipc(call, first, second, third, ptr, third);
-+	return compat_ksys_ipc(call, first, second, third, ptr, third);
- }
- #endif
- 
-diff --git a/arch/s390/kernel/sys_s390.c b/arch/s390/kernel/sys_s390.c
-index 560bdaf8a74f..6aa8fe00b39e 100644
---- a/arch/s390/kernel/sys_s390.c
-+++ b/arch/s390/kernel/sys_s390.c
-@@ -74,7 +74,7 @@ SYSCALL_DEFINE5(s390_ipc, uint, call, int, first, unsigned long, second,
- 	 * Therefore we can call the generic variant by simply passing the
- 	 * third parameter also as fifth parameter.
- 	 */
--	return sys_ipc(call, first, second, third, ptr, third);
-+	return ksys_ipc(call, first, second, third, ptr, third);
- }
- 
- SYSCALL_DEFINE1(s390_personality, unsigned int, personality)
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 257cccba3062..fb63045a0fb6 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1185,6 +1185,10 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
- 			      unsigned long prot, unsigned long flags,
- 			      unsigned long fd, unsigned long pgoff);
- ssize_t ksys_readahead(int fd, loff_t offset, size_t count);
-+int ksys_ipc(unsigned int call, int first, unsigned long second,
-+	unsigned long third, void __user * ptr, long fifth);
-+int compat_ksys_ipc(u32 call, int first, int second,
-+	u32 third, u32 ptr, u32 fifth);
- 
- /*
-  * The following kernel syscall equivalents are just wrappers to fs-internal
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index 1ac06e3983c0..3cf8ad703a4d 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -17,8 +17,8 @@
- #include <linux/shm.h>
- #include <linux/uaccess.h>
- 
--SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
--		unsigned long, third, void __user *, ptr, long, fifth)
-+int ksys_ipc(unsigned int call, int first, unsigned long second,
-+	unsigned long third, void __user * ptr, long fifth)
- {
- 	int version, ret;
- 
-@@ -106,6 +106,12 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 		return -ENOSYS;
- 	}
- }
-+
-+SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
-+		unsigned long, third, void __user *, ptr, long, fifth)
-+{
-+	return ksys_ipc(call, first, second, third, ptr, fifth);
-+}
- #endif
- 
- #ifdef CONFIG_COMPAT
-@@ -121,8 +127,8 @@ struct compat_ipc_kludge {
- };
- 
- #ifdef CONFIG_ARCH_WANT_OLD_COMPAT_IPC
--COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
--	u32, third, compat_uptr_t, ptr, u32, fifth)
-+int compat_ksys_ipc(u32 call, int first, int second,
-+	u32 third, compat_uptr_t ptr, u32 fifth)
- {
- 	int version;
- 	u32 pad;
-@@ -195,5 +201,11 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 
- 	return -ENOSYS;
- }
-+
-+COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
-+	u32, third, compat_uptr_t, ptr, u32, fifth)
-+{
-+	return compat_ksys_ipc(call, first, second, third, ptr, fifth);
-+}
- #endif
- #endif
--- 
-2.20.0
+I haven't tested it, but this patch won't be enough, because we're only
+looking at the first memblock, and the additional memory in the Wii
+(MEM2) is the second memblock.
 
+
+Jonathan
+
+--O98KdSgI27dgYlM5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlw/LqwACgkQCDBEmo7z
+X9tVhQ/+K0qBCdq2jx8ptrEmd9ekgPcZH7I9etDfa9QBmeHTqxy3nBA+e3opOgCo
+ulvADJFZpUByjsfQgFap1TRdM+2l9wNaBuNHSm6A4dSlB7oaIYHyFxLGWFCItgTY
+gBcCJvl2HbN/orFfrWqAGBB19AUQrjh6zGZfTP2My/n2ga6TrbwoZuyqhqt6DGpc
+cWmKzIdNX4PUfedG9+TDK+2SlZHpfp1GrP5EIWuwPEQxg5IgwqEfTKtSdh6OdWkE
+IdDT/mWxYIJWVgCSGSbliU8aJTCbqU7lZwLIJYie05Zrc6r6yZkzEw0IVBHg5nwe
+h1EM0KlaNzrcKORammbczZPFhcrwt5XoZKqQtupdPlb1iB2BZqcEPuBqXkbJHv23
+98FzRq9Vmr96Tvvnp/3fmGhSV7PFRbVoL673zaLyQ4q+CvNfsTMHH1Me6zos/E/V
+HioulcBSJUKQf6xBAjuk6WdcP68cu2/Hsn82WEDoJSGn7t6MEtdyU9w0cI9PxUAE
+3oL2xpm/IlyK+Aiw/9FT5dom9ZEmriyCvtVxB5/Ds4xu6xSyKhmroK1Huyp5+XQ3
+wdGw24Vf8qKrowz0G8TGx8A7UUUR9ndpAo9fTRuySiwU5eylrwQ3oasNG1ovST+C
+YcXzooVUrllHLBx9psbZaicJir9wfPMDWqz9rqj1vrT54X37Y9k=
+=bYLA
+-----END PGP SIGNATURE-----
+
+--O98KdSgI27dgYlM5--
