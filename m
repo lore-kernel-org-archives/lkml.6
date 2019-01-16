@@ -2,74 +2,114 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF6EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9507EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30CBA20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:44:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZsTTXhAu"
+	by mail.kernel.org (Postfix) with ESMTP id 6DDDA206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404999AbfAPPon (ORCPT
+        id S2405009AbfAPPqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 10:44:43 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:45383 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728777AbfAPPon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 10:44:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=Zc8Ub3ApSTPyG+9Bl4BPfynnA5U5HNdRYwwgarLP/VY=;
-        b=ZsTTXhAupcl8K7uW8VPMv3iBqX6vSD5XsV6/i4mFUzMmuNdIeLRh2VxvQF94b8nrVzTEKhBdJGRDb7LQR/gyrTpk6P+QolhdDiE/AV+UmDKTRxxi2coR9++OGKkQX7bgWgoXcWS2QJwV2V5wpBh7Xy86K+dDuapUEu2nHxSHrV0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gjnMt-0007oz-Ls; Wed, 16 Jan 2019 16:44:39 +0100
-Date:   Wed, 16 Jan 2019 16:44:39 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH] net: phy: mdio_bus: add missing device_del() in
- mdiobus_register() error handling
-Message-ID: <20190116154439.GA29244@lunn.ch>
-References: <20190116095358.28354-1-thomas.petazzoni@bootlin.com>
- <20190116144829.GC25731@lunn.ch>
- <20190116161855.1d01e083@windsurf>
+        Wed, 16 Jan 2019 10:46:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57794 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728761AbfAPPqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 10:46:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A3D41AE56;
+        Wed, 16 Jan 2019 15:45:59 +0000 (UTC)
+Subject: Re: [PATCH 12/25] mm, compaction: Keep migration source private to a
+ single compaction instance
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <20190104125011.16071-1-mgorman@techsingularity.net>
+ <20190104125011.16071-13-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <0d02b611-85a7-b161-1310-883c4b1594f8@suse.cz>
+Date:   Wed, 16 Jan 2019 16:45:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116161855.1d01e083@windsurf>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190104125011.16071-13-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 04:18:55PM +0100, Thomas Petazzoni wrote:
-> Hello,
+On 1/4/19 1:49 PM, Mel Gorman wrote:
+> Due to either a fast search of the free list or a linear scan, it is
+> possible for multiple compaction instances to pick the same pageblock
+> for migration.  This is lucky for one scanner and increased scanning for
+> all the others. It also allows a race between requests on which first
+> allocates the resulting free block.
 > 
-> On Wed, 16 Jan 2019 15:48:29 +0100, Andrew Lunn wrote:
-> 
-> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> > 
-> > However, i wounder if it makes sense to add a label before the
-> > existing device_del() at the end of the function, and convert this,
-> > and the case above into a goto? That might scale better, avoiding the
-> > same issue in the future?
-> 
-> That's another option indeed.
-> 
-> Hmm, now that I looked at it, I think we should use device_unregister()
-> instead. device_unregister() does both device_del() and put_device().
+> This patch tests and updates the pageblock skip for the migration scanner
+> carefully. When isolating a block, it will check and skip if the block is
+> already in use. Once the zone lock is acquired, it will be rechecked so
+> that only one scanner can set the pageblock skip for exclusive use. Any
+> scanner contending will continue with a linear scan. The skip bit is
+> still set if no pages can be isolated in a range.
 
-Hi Thomas
+Also the skip bit will remain set even if pages *could* be isolated,
+AFAICS there's no clearing after a block was finished with
+nr_isolated>0. Is it intended? Note even previously it wasn't ideal,
+because when pageblock was visited multiple times due to
+COMPACT_CLUSTER_MAX, it would be marked with skip bit if the last visit
+failed to isolate, even if the previous visits didn't.
 
-device_unregister() does seem symmetrical with device_register() which
-is what we are trying to undo.
+> While this may result
+> in redundant scanning, it avoids unnecessarily acquiring the zone lock
+> when there are no suitable migration sources.
 
-   Andrew
+
+
+> 1-socket thpscale
+>                                         4.20.0                 4.20.0
+>                                  findmig-v2r15          isolmig-v2r15
+> Amean     fault-both-1         0.00 (   0.00%)        0.00 *   0.00%*
+> Amean     fault-both-3      3505.69 (   0.00%)     3066.68 *  12.52%*
+> Amean     fault-both-5      5794.13 (   0.00%)     4298.49 *  25.81%*
+> Amean     fault-both-7      7663.09 (   0.00%)     5986.99 *  21.87%*
+> Amean     fault-both-12    10983.36 (   0.00%)     9324.85 (  15.10%)
+> Amean     fault-both-18    13602.71 (   0.00%)    13350.05 (   1.86%)
+> Amean     fault-both-24    16145.77 (   0.00%)    13491.77 *  16.44%*
+> Amean     fault-both-30    19753.82 (   0.00%)    15630.86 *  20.87%*
+> Amean     fault-both-32    20616.16 (   0.00%)    17428.50 *  15.46%*
+> 
+> This is the first patch that shows a significant reduction in latency as
+> multiple compaction scanners do not operate on the same blocks. There is
+> a small increase in the success rate
+> 
+>                                4.20.0-rc6             4.20.0-rc6
+>                              findmig-v1r4           isolmig-v1r4
+> Percentage huge-3        90.58 (   0.00%)       95.84 (   5.81%)
+> Percentage huge-5        91.34 (   0.00%)       94.19 (   3.12%)
+> Percentage huge-7        92.21 (   0.00%)       93.78 (   1.71%)
+> Percentage huge-12       92.48 (   0.00%)       94.33 (   2.00%)
+> Percentage huge-18       91.65 (   0.00%)       94.15 (   2.72%)
+> Percentage huge-24       90.23 (   0.00%)       94.23 (   4.43%)
+> Percentage huge-30       90.17 (   0.00%)       95.17 (   5.54%)
+> Percentage huge-32       89.72 (   0.00%)       93.59 (   4.32%)
+> 
+> Compaction migrate scanned    54168306    25516488
+> Compaction free scanned      800530954    87603321
+> 
+> Migration scan rates are reduced by 52%.
+
+Wonder how much of that is due to not clearing as pointed out above.
+Also interesting how free scanned was reduced so disproportionally.
+
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
