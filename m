@@ -2,72 +2,90 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391A8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E771C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF6B20675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:39:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09C0D20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbfAPRjm (ORCPT
+        id S1727487AbfAPRkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:39:42 -0500
-Received: from smtprelay0063.hostedemail.com ([216.40.44.63]:59573 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726077AbfAPRjl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:39:41 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id CC82C1E2530;
-        Wed, 16 Jan 2019 17:39:40 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: hat12_3738f11029831
-X-Filterd-Recvd-Size: 1613
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 16 Jan 2019 17:39:39 +0000 (UTC)
-Message-ID: <8b1f7aac7a3b5261f42979f6ed53713264557bf4.camel@perches.com>
-Subject: Re: [PATCH 2/8] vop: Cast pointers to uintptr_t
-From:   Joe Perches <joe@perches.com>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
-        gregkh@linuxfoundation.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>
-Date:   Wed, 16 Jan 2019 09:39:37 -0800
-In-Reply-To: <20190116163253.23780-3-vincent.whitchurch@axis.com>
-References: <20190116163253.23780-1-vincent.whitchurch@axis.com>
-         <20190116163253.23780-3-vincent.whitchurch@axis.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 16 Jan 2019 12:40:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50672 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727464AbfAPRkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:40:08 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5D624C002960;
+        Wed, 16 Jan 2019 17:40:07 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.162])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DDE551C959;
+        Wed, 16 Jan 2019 17:40:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 16 Jan 2019 18:40:07 +0100 (CET)
+Date:   Wed, 16 Jan 2019 18:40:04 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: yama: unsafe usage of ptrace_relation->tracer
+Message-ID: <20190116174003.GB20060@redhat.com>
+References: <20181022134634.GA7358@redhat.com>
+ <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
+ <20181025111355.GA3725@redhat.com>
+ <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
+ <20181025121709.GD3725@redhat.com>
+ <20181025130129.GE3725@redhat.com>
+ <CAGXu5jJDkt0vR28Rzhi2gmb=9S7BwWkiMuVrN98AOABgngYY4A@mail.gmail.com>
+ <20181029122356.GA29883@redhat.com>
+ <20181029150546.GA30959@redhat.com>
+ <0fc3493d-a50e-f386-20a8-28d348c19544@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0fc3493d-a50e-f386-20a8-28d348c19544@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 16 Jan 2019 17:40:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-16 at 17:32 +0100, Vincent Whitchurch wrote:
-> Fix these on 32-bit:
-> 
->  vop_vringh.c:711:13: error: cast from pointer to integer of different
->  size [-Werror=pointer-to-int-cast]
-[]
-> diff --git a/drivers/misc/mic/vop/vop_main.c b/drivers/misc/mic/vop/vop_main.c
-[]
-> @@ -497,7 +497,7 @@ static int _vop_add_device(struct mic_device_desc __iomem *d,
->  	vdev->desc = d;
->  	vdev->dc = (void __iomem *)d + _vop_aligned_desc_size(d);
->  	vdev->dnode = dnode;
-> -	vdev->vdev.priv = (void *)(u64)dnode;
-> +	vdev->vdev.priv = (void *)(uintptr_t)dnode;
+On 01/10, Tetsuo Handa wrote:
+>
+> syzbot is hitting this problem as of linux-next-20190110.
+> When a patch will be proposed?
 
-trivia:
+Well. I have already suggested the patch below several times. It won't fix all
+problems in this code (I forgot the details but iirc ptracer_exception_found()
+is broken too, task_is_descendant() should be cleanuped, may be something else),
+but probably this trivial fix makes sense for the start?
 
-unsigned long is more commonly used in the kernel for
-these casts.
+Oleg.
 
+
+--- x/security/yama/yama_lsm.c
++++ x/security/yama/yama_lsm.c
+@@ -368,7 +368,8 @@ static int yama_ptrace_access_check(stru
+ 			break;
+ 		case YAMA_SCOPE_RELATIONAL:
+ 			rcu_read_lock();
+-			if (!task_is_descendant(current, child) &&
++			if (!pid_alive(child) ||
++			    !task_is_descendant(current, child) &&
+ 			    !ptracer_exception_found(current, child) &&
+ 			    !ns_capable(__task_cred(child)->user_ns, CAP_SYS_PTRACE))
+ 				rc = -EPERM;
 
