@@ -2,144 +2,195 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB6CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E567CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA1C62082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:47:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hTUPsbML"
+	by mail.kernel.org (Postfix) with ESMTP id B6E062082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388486AbfAPHrx (ORCPT
+        id S2388491AbfAPHuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 02:47:53 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37622 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbfAPHrx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 02:47:53 -0500
-Received: by mail-io1-f66.google.com with SMTP id g8so4196726iok.4
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 23:47:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7mEUMRRlUi2pZohKna/C1HxAnZ2ybcIeGI4SY2Mk+gA=;
-        b=hTUPsbML0ukR5dIPafvw+6K+BfPvAKpEWrvgfRl6Lv870z/Ju5YHi5xcC6mdqXGkqP
-         mLMkeGbBxGmdT945de0fjJl+JkigUNS1x5aeMax2W9M3IydKLQNL+gPiyiRTW0NfVFxU
-         31ZxDvVHJN9HWl+9iBqxcTAbPrdL2b40qzM74=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7mEUMRRlUi2pZohKna/C1HxAnZ2ybcIeGI4SY2Mk+gA=;
-        b=MERRQkoAG5+7PMQzZfiMU+qzJ6PiAEmI3MxoN6QObkUt3ajb8Cgm17vvpenQEPPsAm
-         x6FkvApo4BFyo9rSSayHsh3VAz3xm190jcUEI56In5+FWhzysN9yYZYK2B5jXpPg8QfB
-         qbyhJBFpnzqFqReAHH0CairB4s67MqGMXKTLTSUFZh4QdIW/zX6RsevhF5z+6WAmEcwM
-         qM6Peq5hsFeJ1tMMx3w0MwtsMrmsSPnaGlz87J4ec8pKT6Z7LNj2y6Es/4MLUHh+x8rT
-         wp1MsneYq73DrpfxAHdrFnXzAVE2eunwsxfw1+wSjQbOcCJQIs5r6kPbh4N3DvwcEky3
-         wG9Q==
-X-Gm-Message-State: AJcUukd53+xxM+4NgT6ekrNBOkvaGqEUePdGkDrva/Z4qClmUc853cdU
-        zbzkfkWZjs21q8NrjGTU+xHkKWLz4ajTjb+6nxK2cw==
-X-Google-Smtp-Source: ALg8bN4LIbm3/m7VL/ZdwolPRIEFlWj8fWTKy1FlTUUjIbFOzDbYjm2Pl4gUs8LVt9PKPzqz4Ra3FcA7u16SZXw7mwA=
-X-Received: by 2002:a5e:c206:: with SMTP id v6mr4432621iop.60.1547624872328;
- Tue, 15 Jan 2019 23:47:52 -0800 (PST)
+        Wed, 16 Jan 2019 02:50:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48638 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727667AbfAPHuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 02:50:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 10E3EAFA0;
+        Wed, 16 Jan 2019 07:50:15 +0000 (UTC)
+Subject: Re: [PATCH v3] xen: Fix x86 sched_clock() interface for xen
+To:     Hans van Kranenburg <hans@knorrie.org>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        stable@vger.kernel.org
+References: <20190114124413.3742-1-jgross@suse.com>
+ <ebfc24e3-21a0-6cc6-ae68-5c13c1e66b9a@knorrie.org>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <4808225b-e413-2ec1-77a1-15999c18583f@suse.com>
+Date:   Wed, 16 Jan 2019 08:50:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190110072841.3283-1-ard.biesheuvel@linaro.org>
- <5d8135de-80fe-9c0e-2206-ecb809f64cdb@daenzer.net> <CAKv+Gu_X-DH6GZ0k8RYuL18rxTwBpb5=Qp9VCZfn_kh+9b3Zkg@mail.gmail.com>
- <55facfb9-92af-86b8-40e9-d63b887b5592@amd.com> <CAKv+Gu_JyO2KNtdN1-_TcoL_kqs0yswdwBrpAXA6-jyWuDrj+g@mail.gmail.com>
- <9f956898-7973-98ee-6bf1-e1d445e9d365@amd.com> <20190114191350.GA29600@fuggles.cambridge.arm.com>
- <a6d9d0ad-d1c0-9e60-17c6-a42f7bde258c@amd.com> <20190114193548.GB29600@fuggles.cambridge.arm.com>
- <87a7k2yx66.fsf@concordia.ellerman.id.au> <ed2dd9042d1afede4843d7fd3728a4d701a19fdd.camel@kernel.crashing.org>
- <9dc27cbf-e109-0c32-fc92-6fce1b224cda@amd.com>
-In-Reply-To: <9dc27cbf-e109-0c32-fc92-6fce1b224cda@amd.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 16 Jan 2019 08:47:41 +0100
-Message-ID: <CAKv+Gu8_0HjPsT2ne-uCtxRt=2CE_tLGY6wo9xafC5SmJOGRKA@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm/ttm: force cached mappings for system RAM on ARM
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Carsten Haitzler <Carsten.Haitzler@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?Q?Bernhard_Rosenkr=C3=A4nzer?= 
-        <Bernhard.Rosenkranzer@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ebfc24e3-21a0-6cc6-ae68-5c13c1e66b9a@knorrie.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019 at 08:36, Koenig, Christian
-<Christian.Koenig@amd.com> wrote:
->
-> Am 16.01.19 um 01:33 schrieb Benjamin Herrenschmidt:
-> > On Tue, 2019-01-15 at 22:31 +1100, Michael Ellerman wrote:
-> >>>> As far as I know Power doesn't really supports un-cached memory at all,
-> >>>> except for a very very old and odd configuration with AGP.
-> >>> Hopefully Michael/Ben can elaborate here, but I was under the (possibly
-> >>> mistaken) impression that mismatched attributes could cause a machine-check
-> >>> on Power.
-> >> That's what I've always been told, but I can't actually find where it's
-> >> documented, I'll keep searching.
-> >>
-> >> But you're right that mixing cached / uncached is not really supported,
-> >> and probably results in a machine check or worse.
-> >   .. or worse :) It could checkstop.
->
-> Not sure if that would be so bad, it would at least give us a clear
-> indicator that something is wrong instead of silently corrupting data.
->
-> > It's also my understanding that on ARM v7 and above, it's technically
-> > forbidden to map the same physical page with both cached and non-cached
-> > mappings, since the cached one could prefetch (or speculatively load),
-> > thus creating collisions and inconsistencies. Am I wrong here ?
->
-> No, but you answer the wrong question.
->
-> See we don't want to have different mappings of cached and non-cached on
-> the CPU, but rather want to know if a snooped DMA from the PCIe counts
-> as cached access as well.
->
-> As far as I know on x86 it doesn't, so when you have an un-cached page
-> you can still access it with a snooping DMA read/write operation and
-> don't cause trouble.
->
+On 16/01/2019 01:24, Hans van Kranenburg wrote:
+> Hi,
+> 
+> On 1/14/19 1:44 PM, Juergen Gross wrote:
+>> Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
+>> sched_clock() interface") broke Xen guest time handling across
+>> migration:
+>>
+>> [  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
+>> [  187.251137] OOM killer disabled.
+>> [  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+>> [  187.252299] suspending xenstore...
+>> [  187.266987] xen:grant_table: Grant tables using version 1 layout
+>> [18446743811.706476] OOM killer enabled.
+>> [18446743811.706478] Restarting tasks ... done.
+>> [18446743811.720505] Setting capacity to 16777216
+>>
+>> Fix that by setting xen_sched_clock_offset at resume time to ensure a
+>> monotonic clock value.
+>>
+>> [...]
+> 
+> With v3 of the patch, I see the time jump in one log line happen, but
+> only when using PVH.
+> 
+> [   49.486453] Freezing user space processes ... (elapsed 0.002 seconds)
+> done.
+> [   49.488743] OOM killer disabled.
+> [   49.488764] Freezing remaining freezable tasks ... (elapsed 0.001
+> seconds) done.
+> [   49.491117] suspending xenstore...
+> [2000731.388722] xen:events: Xen HVM callback vector for event delivery
+> is enabled
+> [   49.491750] xen:grant_table: Grant tables using version 1 layout
+> [   49.810722] OOM killer enabled.
+> [   49.810744] Restarting tasks ... done.
+> [   49.856263] Setting capacity to 6291456
+> [   50.006002] Setting capacity to 10485760
+> 
+> If I start as PV, it never seems to happen.
+> 
+> Up to you to decide how important this is. :)
 
-I think it is the other way around. The question is, on an otherwise
-cache coherent device, whether the NoSnoop attribute set by the GPU
-propagates all the way to the bus so that it bypasses the caches.
+We could do something like below. Boris?
 
-On x86, we can tolerate if this is not the case, since uncached memory
-accesses by the CPU snoop the caches as well.
 
-On other architectures, uncached accesses go straight to main memory,
-so if the device wrote anything to the caches we won't see it.
+Juergen
+---
+diff --git a/arch/x86/xen/suspend_hvm.c b/arch/x86/xen/suspend_hvm.c
+index e666b614cf6d..088f3a6b4be9 100644
+--- a/arch/x86/xen/suspend_hvm.c
++++ b/arch/x86/xen/suspend_hvm.c
+@@ -13,6 +13,6 @@ void xen_hvm_post_suspend(int suspend_cancelled)
+                xen_hvm_init_shared_info();
+                xen_vcpu_restore();
+        }
+-       xen_callback_vector();
++       xen_callback_vector(true);
+        xen_unplug_emulated_devices();
+ }
+diff --git a/arch/x86/xen/xen-ops.h b/arch/x86/xen/xen-ops.h
+index 0e60bd918695..ba293fda3265 100644
+--- a/arch/x86/xen/xen-ops.h
++++ b/arch/x86/xen/xen-ops.h
+@@ -55,7 +55,7 @@ void xen_enable_sysenter(void);
+ void xen_enable_syscall(void);
+ void xen_vcpu_restore(void);
 
-So to use this optimization, you have to either be 100% sure that
-NoSnoop is implemented correctly, or have a x86 CPU.
+-void xen_callback_vector(void);
++void xen_callback_vector(bool silent);
+ void xen_hvm_init_shared_info(void);
+ void xen_unplug_emulated_devices(void);
 
-> > The old hack of using non-cached mapping to avoid snoop cost in AGP and
-> > others is just that ... an ugly and horrible hacks that should have
-> > never eventuated, when the search for performance pushes HW people into
-> > utter insanity :)
->
-> Well I agree that un-cached system memory makes things much more
-> complicated for a questionable gain.
->
-> But fact is we now have to deal with the mess, so no point in
-> complaining about it to much :)
->
+diff --git a/drivers/xen/events/events_base.c
+b/drivers/xen/events/events_base.c
+index 93194f3e7540..8d8d50bea215 100644
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -1637,7 +1637,7 @@ EXPORT_SYMBOL_GPL(xen_set_callback_via);
+ /* Vector callbacks are better than PCI interrupts to receive event
+  * channel notifications because we can receive vector callbacks on any
+  * vcpu and we don't need PCI support or APIC interactions. */
+-void xen_callback_vector(void)
++void xen_callback_vector(bool silent)
+ {
+        int rc;
+        uint64_t callback_via;
+@@ -1650,13 +1650,14 @@ void xen_callback_vector(void)
+                        xen_have_vector_callback = 0;
+                        return;
+                }
+-               pr_info("Xen HVM callback vector for event delivery is
+enabled\n");
++               if (!silent)
++                       pr_info("Xen HVM callback vector for event
+delivery is enabled\n");
+                alloc_intr_gate(HYPERVISOR_CALLBACK_VECTOR,
+                                xen_hvm_callback_vector);
+        }
+ }
+ #else
+-void xen_callback_vector(void) {}
++void xen_callback_vector(bool silent) {}
+ #endif
 
-Indeed. I wonder if we should just disable it altogether unless CONFIG_X86=y
+ #undef MODULE_PARAM_PREFIX
+@@ -1692,7 +1693,7 @@ void __init xen_init_IRQ(void)
+                        pci_xen_initial_domain();
+        }
+        if (xen_feature(XENFEAT_hvm_callback_vector))
+-               xen_callback_vector();
++               xen_callback_vector(false);
+
+        if (xen_hvm_domain()) {
+                native_init_IRQ();
