@@ -6,106 +6,108 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21DBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DA1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E81D2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B886B20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547645482;
-	bh=+j/NMzhkMTSKtfvjPkmFokoaalfkyDTKrxhLoZ5kujc=;
+	s=default; t=1547645589;
+	bh=8YEi/W/vKbCbALVxDScSaeYWnokXcLrc88lSkpckP7E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2AoLycQKrQryndJllttCZQwxyeekHyYr+JR5vcnDIH6B83jYVDm2krz65fyNMFG/w
-	 lPdihFtSVyk4DART60AALIYe46H2pjBqM1EFtEjfGRDujNiO/O0/GVwqrHSpl5sMVe
-	 jVevXK6Bg2EKg0FQZt73hPcyBZqJuiQxz2p8UgTc=
+	b=xkyDdrgb8+My8S6SmlHGJ68OFmm+Kh7q1CmY4t65I5O4tAR6Ye9jOzaGbRbNqMNYU
+	 ksKdyG/7BOnO1XdoojRlD2pWJhDxARcH54ACu1KrpxBq+JFoy9bsHxsgf/Q5nHT50s
+	 bOYKd0LMOafSl4VladmjbpXziDMaCtyP6BReLGkc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393191AbfAPNbV (ORCPT
+        id S2393195AbfAPNdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:31:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732780AbfAPNbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:31:20 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA6D120675;
-        Wed, 16 Jan 2019 13:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547645480;
-        bh=+j/NMzhkMTSKtfvjPkmFokoaalfkyDTKrxhLoZ5kujc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rIGCVRmbEXBUPdnD+T1hsAi0DjBXrKHQB1rT+iA2n4SSQO1wGWfvThrI+Hu1IvA/e
-         TbcVkrDp3ABnGNH1qlByxqi8Jo2hDwa5HvyZRtbKZWK5QptymJ9jllljCYahSAsuMT
-         BBpERIW3L37fVFaISiQTe4nOGHsqp5B+eE68lOMo=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 5AF3341AB5; Wed, 16 Jan 2019 10:31:17 -0300 (-03)
-Date:   Wed, 16 Jan 2019 10:31:17 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Nick Clifton <nickc@redhat.com>
-Cc:     Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@lge.com
-Subject: Re: [RFC] perf tools: Filter out hidden symbols from labels
-Message-ID: <20190116133117.GA2243@kernel.org>
-References: <20190115135354.11572-1-jolsa@kernel.org>
- <960f0b83-a623-67a6-ab55-d56139d10ba2@redhat.com>
- <20190115163540.GA20159@kernel.org>
- <20190116043735.GA31070@sejong>
- <35bf274a-f91e-1b4f-398a-dbe6f4105dfd@redhat.com>
+        Wed, 16 Jan 2019 08:33:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48934 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732780AbfAPNdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:33:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7292FAF8A;
+        Wed, 16 Jan 2019 13:33:05 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 14:33:02 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-riscv@lists.infradead.org,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, mpe@ellerman.id.au, tglx@linutronix.de,
+        mingo@redhat.com, dave.hansen@linux.intel.com,
+        peterz@infradead.org, christoffer.dall@arm.com,
+        marc.zyngier@arm.com, kirill@shutemov.name,
+        rppt@linux.vnet.ibm.com, ard.biesheuvel@linaro.org,
+        mark.rutland@arm.com, steve.capper@arm.com, james.morse@arm.com,
+        robin.murphy@arm.com, aneesh.kumar@linux.ibm.com, vbabka@suse.cz,
+        shakeelb@google.com, rientjes@google.com, palmer@sifive.com,
+        greentime@andestech.com
+Subject: Re: [PATCH V2] mm: Introduce GFP_PGTABLE
+Message-ID: <20190116133302.GN24149@dhcp22.suse.cz>
+References: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
+ <20190116065703.GE24149@dhcp22.suse.cz>
+ <20190116123018.GF6310@bombadil.infradead.org>
+ <07d6a264-dccd-78ab-e8a9-2410bbef7b97@arm.com>
+ <20190116131827.GH6310@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <35bf274a-f91e-1b4f-398a-dbe6f4105dfd@redhat.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <20190116131827.GH6310@bombadil.infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Jan 16, 2019 at 11:38:30AM +0000, Nick Clifton escreveu:
-> Hi Guys,
+On Wed 16-01-19 05:18:27, Matthew Wilcox wrote:
+> On Wed, Jan 16, 2019 at 06:42:22PM +0530, Anshuman Khandual wrote:
+> > On 01/16/2019 06:00 PM, Matthew Wilcox wrote:
+> > > On Wed, Jan 16, 2019 at 07:57:03AM +0100, Michal Hocko wrote:
+> > >> On Wed 16-01-19 11:51:32, Anshuman Khandual wrote:
+> > >>> All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
+> > >>> __GFP_ZERO) and using it for allocating page table pages. This causes some
+> > >>> code duplication which can be easily avoided. GFP_KERNEL allocated and
+> > >>> cleared out pages (__GFP_ZERO) are required for page tables on any given
+> > >>> architecture. This creates a new generic GFP flag flag which can be used
+> > >>> for any page table page allocation. Does not cause any functional change.
+> > >>>
+> > >>> GFP_PGTABLE is being added into include/asm-generic/pgtable.h which is the
+> > >>> generic page tabe header just to prevent it's potential misuse as a general
+> > >>> allocation flag if included in include/linux/gfp.h.
+> > >>
+> > >> I haven't reviewed the patch yet but I am wondering whether this is
+> > >> really worth it without going all the way down to unify the common code
+> > >> and remove much more code duplication. Or is this not possible for some
+> > >> reason?
+> > > 
+> > > Exactly what I suggested doing in response to v1.
+> > > 
+> > > Also, the approach taken here is crazy.  x86 has a feature that no other
+> > > architecture has bothered to implement yet -- accounting page tables
+> > > to the process.  Yet instead of spreading that goodness to all other
+> > > architectures, Anshuman has gone to more effort to avoid doing that.
+> > 
+> > The basic objective for this patch is to create a common minimum allocation
+> > flag that can be used by architectures but that still allows archs to add
+> > on additional constraints if they see fit. This patch does not intend to
+> > change functionality for any arch.
 > 
+> I disagree with your objective.  Making more code common is a great idea,
+> but this patch is too unambitious.  We should be heading towards one or
+> two page table allocation functions instead of having every architecture do
+> its own thing.
 > 
-> >> Humm, it would be nice for perf annotate to show those options when one
-> >> navigates the annotation,
-> 
-> Usually the command line options can also be found in the debug info for
-> the executable.  Assuming it has not been stripped, of course.
-> 
-> One of the advantages of the annobin strategy of using ELF notes is that
-> these are not stripped from executables...
-> 
-> Unfortunately the annobin notes will probably not be very helpful as they
-> only record a minor subset of the typical gcc command line options.
-> (Specifically: -O, -g, -D_FORTIFY_SOURCE, -D_GLIBCXX_ASSERTIONS, 
-> -fcf-protection, -fpic (and variants), -fshort-enum, -fstack-clash-protection,
-> -fstack-protector, -mstackrealign, -fexceptions).
+> So start there.  Move the x86 function into common code and convert one
+> other architecture to use it too.
 
-Humm, is -fno-omit-frame-pointer there by any chance? :-)
- 
-> >> Is there any library that gets those
-> >> annotations and put them in some linked list that we could use in
-> >> tools/perf/?
-> 
-> Sorry - no such library exists.
+Agreed!
 
-No problem...
- 
-> > If it's just an ELF note, we could parse it directly.
-
-As we already parse some of the ELF notes, like the buildid, so just one
-more to read and make available in the TUI somehow, should be handy.
-
-> > https://developers.redhat.com/blog/2018/02/20/annobin-storing-information-binaries/
-> 
-> Exactly - and what a great blog author that person is ... :-)
-
-:-)
-
-- Arnaldo
+-- 
+Michal Hocko
+SUSE Labs
