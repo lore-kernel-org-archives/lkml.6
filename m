@@ -2,94 +2,91 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADE9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D2EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68B50206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:25:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBN0GgKf"
+	by mail.kernel.org (Postfix) with ESMTP id 6D05820859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbfAPDZ1 (ORCPT
+        id S1731243AbfAPD1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 22:25:27 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37771 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731039AbfAPDZ1 (ORCPT
+        Tue, 15 Jan 2019 22:27:51 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:1511 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731019AbfAPD1v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 22:25:27 -0500
-Received: by mail-ot1-f66.google.com with SMTP id s13so4929798otq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 19:25:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=iug1m1r6FrUl2yxO8k9WIkcW6n+pohJCiwrmF0qZVtM=;
-        b=CBN0GgKf4JJ/EH+RUx//FkuFtzn3LwaRlVAxjapwnAkyOK83pbbu7ZJ5kxdvSbduN6
-         ZcH/SsyioMr3bT7f5a8Qb6rkGTB/oyJFt9Nw6BvUEVv7zhFpSDy2ox8+39mScKvueyiB
-         p7NT2QsqUFjp2zwOK50V+Y/MEs+fBiTNs8qD7Aprm8llcr+GJ43nk0YrEutYzNM095Q3
-         RN0nThXGU4F7prVhoSemQ344JCr5IW5WITNU+lklKdvz5esi3L8n/RSJAzR/OggnIcZa
-         D0LplrMZY3KZDQtEdQqHxniGHaTt7ED71eHY1lCi0LgocCFH6SX4mEm6D7DolEpByDS9
-         YBcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=iug1m1r6FrUl2yxO8k9WIkcW6n+pohJCiwrmF0qZVtM=;
-        b=eo4vXVVhDxZ98Vs/01Ay1sZxb7FcsqdDcEIQgPkrSwyrvj3M8mg8q6Xzd0B9Opur8z
-         +H5DJrZWmKy3qyvxLLqnbQ/8bbY741l3UIxdzPTdvZSrUc+jK+huoIwnLNWIVKUL4pc3
-         WM7EEnWBGtIrfsIjohtsOCarS5bXrgkFXzembAyWbldWJEzoJjWeFhXWr1OCRhVfSBLu
-         k1Ub1BWEoHMSWn477+1EZDI1GglW8FRCCsiQx2JnallcZW3qmWcJ7idja9FDKoPHc43O
-         mPOPficTdtBQO+cHszAioP6zWfBZlGtZmiq3WIiyGRjFcNq16dVGC3147itlN5EF1dvi
-         j+RQ==
-X-Gm-Message-State: AJcUukfU3GT8q9ltIOhgdwu1JlAfGr7QC4mMt+pHdSVDpytVEaCkoNDy
-        /qOImp1/DmM6Z4ORcmCKrn9u18CIcoIN+GCtEZaE07NIEgE=
-X-Google-Smtp-Source: ALg8bN5CJxxm8u1MZUanAopcwuzZRE200s9ZMbfQ1rvBqmjloqYwBSlnFVJRTD9Py5SiX8GHyL1Rr/yEUDhvLuVpGV4=
-X-Received: by 2002:aca:408b:: with SMTP id n133mr3282269oia.44.1547609126403;
- Tue, 15 Jan 2019 19:25:26 -0800 (PST)
+        Tue, 15 Jan 2019 22:27:51 -0500
+X-IronPort-AV: E=Sophos;i="5.56,484,1539619200"; 
+   d="scan'208";a="52109427"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 16 Jan 2019 11:27:49 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 297EF4BAD9C3;
+        Wed, 16 Jan 2019 11:27:47 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 16 Jan 2019 11:27:53 +0800
+Date:   Wed, 16 Jan 2019 11:26:52 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <lv.zheng@intel.com>, <linux-kernel@vger.kernel.org>,
+        <x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <hpa@zytor.com>, <keescook@chromium.org>, <bhe@redhat.com>,
+        <msys.mizuma@gmail.com>, <indou.takao@jp.fujitsu.com>,
+        <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v15 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find
+ RSDP from EFI table
+Message-ID: <20190116032652.GC30900@localhost.localdomain>
+References: <20190107032243.25324-4-fanc.fnst@cn.fujitsu.com>
+ <20190110211523.GG17621@zn.tnic>
+ <20190111012353.GD2216@localhost.localdomain>
+ <20190111103225.GA4729@zn.tnic>
+ <20190113094704.GC13263@localhost.localdomain>
+ <20190113110544.GA7398@zn.tnic>
+ <20190114012641.GA30900@localhost.localdomain>
+ <20190114090756.GA2773@zn.tnic>
+ <20190115072121.GB30900@localhost.localdomain>
+ <20190115095502.GA6596@zn.tnic>
 MIME-Version: 1.0
-From:   Kassey <kassey1216@gmail.com>
-Date:   Wed, 16 Jan 2019 11:25:15 +0800
-Message-ID: <CAKwPUowmzZ2BNi-RmJm3=ENrZ5sxPf1SeT+b9A9iHHSCUQQAUw@mail.gmail.com>
-Subject: arm64: copy_from_user access the last page of ddr has problem on 4.14 kernel
-To:     linux-kernel@vger.kernel.org, willy@infradead.org,
-        will.deacon@arm.com
-Cc:     kassey@126.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190115095502.GA6596@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 297EF4BAD9C3.AEB44
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Will and team:
+On Tue, Jan 15, 2019 at 10:55:02AM +0100, Borislav Petkov wrote:
+>On Tue, Jan 15, 2019 at 03:21:21PM +0800, Chao Fan wrote:
+>> In my understanding after looking into the commit message the comments.
+>> I thinks yes. For 32-bit OS:
+>
+>And when does your "32-bit OS" define ACPI_ASL_COMPILER ?
 
-   we met a issue when copy_from_user to access the last page of DDR
-on 4.14 kenrel, below is the detail steps,
-   can you help to suggest if there is know fix or debug something ?
+Ah, I got it. You are right. Linux will never define this tag. It's
+only used by other tools. I misunderstood include/acpi/platform/acenv.h
+I learn much about Kernel compilation. Thanks for that.
+I will change as you suggested.
 
-1. we mmap ( in userspace)  a region of  phy address that is not
-continous  but include the last page of ddr
+Thanks,
+Chao Fan
 
-  for example our ddr end is 0x200000000
-  the last page is fall in below addr:
-  0x1fffff000  to  0x200000000
-
-2. we using copy_from_user to copy these mmap address to kernel buffer
-
-3. and we find everytime when trying to copy_from_user  the last page
-in phy of ddr,
-    the dst kernel buffer is looks overwrite by some same patten start
-with "mmap" in this last page ,but the src in the last page of ddr is
-still correct.
-
-is there any know issue for copy_from_user to accces the last page of
-phy ddr mmaped by userspace  ?
+>
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
 
 
-
--- 
-Best regards
-Kassey
