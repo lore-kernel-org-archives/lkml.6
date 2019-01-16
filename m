@@ -2,103 +2,173 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F26C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D2EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BEC120675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:33:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0211A20675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:34:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YTZLoqYY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393625AbfAPOd2 (ORCPT
+        id S2393564AbfAPOeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:33:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40794 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2393612AbfAPOd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:33:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6221BAFC0;
-        Wed, 16 Jan 2019 14:33:26 +0000 (UTC)
-Subject: Re: [PATCH v3] xen: Fix x86 sched_clock() interface for xen
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Hans van Kranenburg <hans@knorrie.org>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, sstabellini@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        stable@vger.kernel.org
-References: <20190114124413.3742-1-jgross@suse.com>
- <ebfc24e3-21a0-6cc6-ae68-5c13c1e66b9a@knorrie.org>
- <4808225b-e413-2ec1-77a1-15999c18583f@suse.com>
- <20190116131703.GB2793@localhost.localdomain>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <efaf168e-feca-2c09-96e1-3f58be9853bf@suse.com>
-Date:   Wed, 16 Jan 2019 15:33:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 16 Jan 2019 09:34:18 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:55518 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387533AbfAPOeS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 09:34:18 -0500
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x0GEXnu0020594;
+        Wed, 16 Jan 2019 23:33:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x0GEXnu0020594
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547649230;
+        bh=i9n+Tvoysx7stDI34FUWayfXq+ikii7FW3AXihr/w1c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YTZLoqYYYPcxmhJ13NdNWYY1iR/3VayGGNuPzcTeAwH7ZtZ4NGl18B0t3D45vVDoh
+         CHW1zLJO0aR+EY6XFuj6EttDVH1wrAjfX5RoJUMH2TVsyshM2LvFL0nFcCVzMKPp7G
+         xzjEOkKK76+u58SXDumZ/B2cpjREuYojdA0OejIEx1RdfuUJNYob+P4HTcg8Jb001W
+         VZvvZCJSaUwQsO5TQRX3eAOrqy4qh/b94fBRd/mt1plM7EQXL/35aY/g7DSK0nUlsZ
+         xLeC6vr2f5F7vObCGSLnUhfjxEIkbE2aR2uM9RevPMrua0g0lA0PT4eMbo4wcXpTxb
+         isQ6VxBm9o1NA==
+X-Nifty-SrcIP: [209.85.222.48]
+Received: by mail-ua1-f48.google.com with SMTP id d19so2202550uaq.11;
+        Wed, 16 Jan 2019 06:33:49 -0800 (PST)
+X-Gm-Message-State: AJcUukd0b66miUCWFTv7HbRPWd4svyR+JNfnUOuNcqBU1huMJvd/Lqps
+        Z5m3qy6GqmDwtnQKsmKz8xpdrsS6yqW+gGYKOQs=
+X-Google-Smtp-Source: ALg8bN7yIQbpDZn2pw/UohLfON8FFbJkfF52MDLuTmYWkf3yaSVOFCgm6Gx0R2pZ322s1cBvdRUTkynH76aIhzoAk7I=
+X-Received: by 2002:a9f:3f41:: with SMTP id i1mr3502757uaj.42.1547649228316;
+ Wed, 16 Jan 2019 06:33:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190116131703.GB2793@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+References: <1546657311-24661-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1546657311-24661-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 16 Jan 2019 23:33:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAReq2wmuOOV3f2VxOsZpmatJXqPoDz4htoiVYq-oM8QsQ@mail.gmail.com>
+Message-ID: <CAK7LNAReq2wmuOOV3f2VxOsZpmatJXqPoDz4htoiVYq-oM8QsQ@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: rename generated .*conf-cfg to *conf-cfg
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/01/2019 14:17, Boris Ostrovsky wrote:
-> On Wed, Jan 16, 2019 at 08:50:13AM +0100, Juergen Gross wrote:
-> 
->> @@ -1650,13 +1650,14 @@ void xen_callback_vector(void)
->>                         xen_have_vector_callback = 0;
->>                         return;
->>                 }
->> -               pr_info("Xen HVM callback vector for event delivery is
->> enabled\n");
->> +               if (!silent)
->> +                       pr_info("Xen HVM callback vector for event
->> delivery is enabled\n");
-> 
-> How about replacing pr_info() with pr_info_once()?
+On Sat, Jan 5, 2019 at 12:02 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Remove the dot-prefixing since it is just a matter of the
+> .gitignore file.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-What a nice and simple idea!
+Applied to linux-kbuild/fixes.
 
-Extra patch or V4?
+>
+>  scripts/kconfig/.gitignore |  1 +
+>  scripts/kconfig/Makefile   | 36 ++++++++++++++++++------------------
+>  2 files changed, 19 insertions(+), 18 deletions(-)
+>
+> diff --git a/scripts/kconfig/.gitignore b/scripts/kconfig/.gitignore
+> index 0aabc1d..b5bf92f 100644
+> --- a/scripts/kconfig/.gitignore
+> +++ b/scripts/kconfig/.gitignore
+> @@ -2,6 +2,7 @@
+>  # Generated files
+>  #
+>  *.moc
+> +*conf-cfg
+>
+>  #
+>  # configuration programs
+> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+> index 679e62e..c05ab00 100644
+> --- a/scripts/kconfig/Makefile
+> +++ b/scripts/kconfig/Makefile
+> @@ -157,53 +157,53 @@ conf-objs := conf.o $(common-objs)
+>  hostprogs-y    += nconf
+>  nconf-objs     := nconf.o nconf.gui.o $(common-objs)
+>
+> -HOSTLDLIBS_nconf       = $(shell . $(obj)/.nconf-cfg && echo $$libs)
+> -HOSTCFLAGS_nconf.o     = $(shell . $(obj)/.nconf-cfg && echo $$cflags)
+> -HOSTCFLAGS_nconf.gui.o = $(shell . $(obj)/.nconf-cfg && echo $$cflags)
+> +HOSTLDLIBS_nconf       = $(shell . $(obj)/nconf-cfg && echo $$libs)
+> +HOSTCFLAGS_nconf.o     = $(shell . $(obj)/nconf-cfg && echo $$cflags)
+> +HOSTCFLAGS_nconf.gui.o = $(shell . $(obj)/nconf-cfg && echo $$cflags)
+>
+> -$(obj)/nconf.o $(obj)/nconf.gui.o: $(obj)/.nconf-cfg
+> +$(obj)/nconf.o $(obj)/nconf.gui.o: $(obj)/nconf-cfg
+>
+>  # mconf: Used for the menuconfig target based on lxdialog
+>  hostprogs-y    += mconf
+>  lxdialog       := checklist.o inputbox.o menubox.o textbox.o util.o yesno.o
+>  mconf-objs     := mconf.o $(addprefix lxdialog/, $(lxdialog)) $(common-objs)
+>
+> -HOSTLDLIBS_mconf = $(shell . $(obj)/.mconf-cfg && echo $$libs)
+> +HOSTLDLIBS_mconf = $(shell . $(obj)/mconf-cfg && echo $$libs)
+>  $(foreach f, mconf.o $(lxdialog), \
+> -  $(eval HOSTCFLAGS_$f = $$(shell . $(obj)/.mconf-cfg && echo $$$$cflags)))
+> +  $(eval HOSTCFLAGS_$f = $$(shell . $(obj)/mconf-cfg && echo $$$$cflags)))
+>
+> -$(obj)/mconf.o: $(obj)/.mconf-cfg
+> -$(addprefix $(obj)/lxdialog/, $(lxdialog)): $(obj)/.mconf-cfg
+> +$(obj)/mconf.o: $(obj)/mconf-cfg
+> +$(addprefix $(obj)/lxdialog/, $(lxdialog)): $(obj)/mconf-cfg
+>
+>  # qconf: Used for the xconfig target based on Qt
+>  hostprogs-y    += qconf
+>  qconf-cxxobjs  := qconf.o
+>  qconf-objs     := images.o $(common-objs)
+>
+> -HOSTLDLIBS_qconf       = $(shell . $(obj)/.qconf-cfg && echo $$libs)
+> -HOSTCXXFLAGS_qconf.o   = $(shell . $(obj)/.qconf-cfg && echo $$cflags)
+> +HOSTLDLIBS_qconf       = $(shell . $(obj)/qconf-cfg && echo $$libs)
+> +HOSTCXXFLAGS_qconf.o   = $(shell . $(obj)/qconf-cfg && echo $$cflags)
+>
+> -$(obj)/qconf.o: $(obj)/.qconf-cfg $(obj)/qconf.moc
+> +$(obj)/qconf.o: $(obj)/qconf-cfg $(obj)/qconf.moc
+>
+>  quiet_cmd_moc = MOC     $@
+> -      cmd_moc = $(shell . $(obj)/.qconf-cfg && echo $$moc) -i $< -o $@
+> +      cmd_moc = $(shell . $(obj)/qconf-cfg && echo $$moc) -i $< -o $@
+>
+> -$(obj)/%.moc: $(src)/%.h $(obj)/.qconf-cfg
+> +$(obj)/%.moc: $(src)/%.h $(obj)/qconf-cfg
+>         $(call cmd,moc)
+>
+>  # gconf: Used for the gconfig target based on GTK+
+>  hostprogs-y    += gconf
+>  gconf-objs     := gconf.o images.o $(common-objs)
+>
+> -HOSTLDLIBS_gconf    = $(shell . $(obj)/.gconf-cfg && echo $$libs)
+> -HOSTCFLAGS_gconf.o  = $(shell . $(obj)/.gconf-cfg && echo $$cflags)
+> +HOSTLDLIBS_gconf    = $(shell . $(obj)/gconf-cfg && echo $$libs)
+> +HOSTCFLAGS_gconf.o  = $(shell . $(obj)/gconf-cfg && echo $$cflags)
+>
+> -$(obj)/gconf.o: $(obj)/.gconf-cfg
+> +$(obj)/gconf.o: $(obj)/gconf-cfg
+>
+>  # check if necessary packages are available, and configure build flags
+>  filechk_conf_cfg = $(CONFIG_SHELL) $<
+>
+> -$(obj)/.%conf-cfg: $(src)/%conf-cfg.sh FORCE
+> +$(obj)/%conf-cfg: $(src)/%conf-cfg.sh FORCE
+>         $(call filechk,conf_cfg)
+>
+> -clean-files += .*conf-cfg
+> +clean-files += conf-cfg
+> --
+> 2.7.4
+>
 
 
-Juergen
+-- 
+Best Regards
+Masahiro Yamada
