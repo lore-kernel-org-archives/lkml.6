@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C66FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCACC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A9E220657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7275920657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="D2HngC2Q"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="x2fCsLrP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392604AbfAPLtC (ORCPT
+        id S2392628AbfAPLtI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:49:02 -0500
-Received: from mail-eopbgr70084.outbound.protection.outlook.com ([40.107.7.84]:57311
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        Wed, 16 Jan 2019 06:49:08 -0500
+Received: from mail-eopbgr30071.outbound.protection.outlook.com ([40.107.3.71]:27264
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2392576AbfAPLs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:48:58 -0500
+        id S2392534AbfAPLtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:49:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a7WyWumENxP9DXD8D4lRu3D43zctHGm88Lpz1BgD+ec=;
- b=D2HngC2QOh+JOtyMvDTaBH7qOp0HQf0LHlS4tUgRqHRlpXDWu0uZMKcJ+iZYZQBg1bOHdRMn1J749vUuzxtEizlpFZA6bU9D8bxCnnEi5wXqvcEqawZhpauP4HdkGUOqE9Mx46qylHGtO0zQ/84ugwDGhFEqNiuwZkxdcD2M7ws=
+ bh=UiDWC4QVf/ivpXJVFdoQTXI5VmYNSCbnRYKnu77U/yw=;
+ b=x2fCsLrPvFWmM9mf7C8Lt4nYllz+7TuCEXsJhjnfR6xqNTtzPD0rNcOJs1G0rRtGRqj5pLasD7y/JjvxAeZaAU2XBKRfy72jGQOfKa/InFn1DOCzwC8RQjDe+xGhaCk6XqbDIyJX8u+PPMsclTcCuUBQf6MprevhH/JVMvvs4I4=
 Received: from AM6PR04MB4007.eurprd04.prod.outlook.com (52.135.161.10) by
  AM6PR04MB6101.eurprd04.prod.outlook.com (20.179.5.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -49,11 +49,12 @@ CC:     Robert Chiras <robert.chiras@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 08/11] drm/mxsfb: Update mxsfb to support LCD reset
-Thread-Topic: [PATCH 08/11] drm/mxsfb: Update mxsfb to support LCD reset
-Thread-Index: AQHUrZFv48Auw077sk6vzcIatxbIbw==
+Subject: [PATCH 09/11] drm/mxsfb: Move pm_runtime_enable at the end of probe
+Thread-Topic: [PATCH 09/11] drm/mxsfb: Move pm_runtime_enable at the end of
+ probe
+Thread-Index: AQHUrZFwDWaLp30y80KyD0bavPpg1A==
 Date:   Wed, 16 Jan 2019 11:48:46 +0000
-Message-ID: <1547639306-19151-9-git-send-email-robert.chiras@nxp.com>
+Message-ID: <1547639306-19151-10-git-send-email-robert.chiras@nxp.com>
 References: <1547639306-19151-1-git-send-email-robert.chiras@nxp.com>
 In-Reply-To: <1547639306-19151-1-git-send-email-robert.chiras@nxp.com>
 Accept-Language: en-US
@@ -69,26 +70,26 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.7.4
 x-originating-ip: [95.76.156.53]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB6101;6:35X29FfwIJogQtHYnG5MSHfGAGRVq2wgpT5WIdt/YxzMNF2r6iTMo7YdLN9xXHwUA08VC4N9UOPC1BmWtX2LWRP65k11VN7+x6RQfc+Y5iGcr9pCrbj9iQReQedsi21FN7Lj9m4xQdg2AkLjmGYNev6v9oLrFT+7w95evnz0YUUIh2S9J3P+tCkTzN8JMHxzO9YneoGISltLAzLCoMksUZzV5ZEqCZt7AMUc99MWeGk/2KDqEe6/b1AdbCmp2ykLGTymC3ANLbBa3z4djegS3RtbhY5O29Zo1YT+IIg6wAN9sfFvFVJ2HRtXYhdgJoaHLOEYMf1G+qJts7pr3yPDwhcXtiz23G4GFf96XFBKzgS5wcwn/sx1xvsfs5FurbMxIuGTkefyHEe+H0wsFz/KgEB5mbV/Ro89O4lC/ulhVmQnfIGd942fBLyp8DL7I1yzbk0+6B/z7clzpo/O51VgNQ==;5:qiCfKu3Z0i6Z/2CsXfXP/5F2UqWfdJXagMB1TSi2LEUE3mbeX5hpbU/UpZJDDLV29iEVFEma5zh2YDdR+OX+y17TK9U7YaC5vGjcNnX/LCVonJHzRdQm0kYsIJkV6FqJ6w36jCx8kUWMbqehqeLDhXta9OKkLFW7faCKZBNs5YP6ZMxrK9P//OCDZGsIpWrxYiszLlfbYB8RW4+oC1zsqg==;7:7NeDf0Ph2AjtnlYzFJ6ZLb2vkcnBfNvYvcxd3aecaQW71SL3SCfbd3qJGpeVbVKME0vgBPBC0YwFPLw/0E/N1R0CDOWJeB1Dj31NtxOs3YhfYcsVXyPdJZVuapiL7NdpFWrSggfZUkQU60Oh4W/ccw==
-x-ms-office365-filtering-correlation-id: 3fe4455e-9285-4b3b-962e-08d67ba8923b
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB6101;6:BUvTocEot2vELhLhGXzEZr6mLf5IJtH7YLXk8mBmFY/gCr1qYpOr2ryRIFD4SLS2VmECXgGSZgaKjLOe2Ezw1vkryD0u8fcLvHyjdQsED/dklbVnmlDyaj/A6o2duTk1c3JvleEFRFbD/g/Bd/zJQFKUrb7x7Skh88bx+LpTElIAHRPuhwHqP42sg5o3/JJ/JOE5rebVQNLTHQcr2nn9JTWTB2NiZJFkAI9gduj4kgCQOVpgabUF1pczyOz+UwGA1ADwYZGyZyO6PeF1XZ1pohfMnJgpFELRzmGZ8eco/ivLPp/ScOAPZkJpQjx/ulaMqAfKRMWRZDscZi3UJA80DbxPnNDwMFCC8AHwAJ6wJmVqwNdidUZfDpzsM9fKDuwU79IGRt5MbXXlpEwHcadBddzWJMRC8w84gcQCid7tiiT0yNNufWPHVU13LcC0n+8zRkrr11M7zgfTWJl1n08IMg==;5:YaZUWoADgq+yeucoMmALSq5q5DntA9kMh1UlPCplvRr8rsOfYcuZXBl5kt8Tvd/RYoJxI/TYhItXXGpsone38fJ9g8y8E605Jqd02DJLmSxfNNA8BuR7u8qvObyMM6MQdkOOVsTvYCpJN+5y/FgRkQiFHBWaUi1U4T9M8Ceze5cHFe9vdjRBaT6pgBLDErkID5thZt4Q/bQMDOtmaTq44w==;7:v+XNF+N90qUaUVjpF/iwv1uNlGqQADjpsjInNEcgtL20Yb/kSmOlXH49P1MEBN9dTiFWtpkkcvTHYEKmvsU4KGVYeRAB58+Kqd28U4plAw1Z3qlw/cPJlgIotutIg7EFOSDx/JhfP7pDPoKoWcw2RA==
+x-ms-office365-filtering-correlation-id: d636452e-4330-4256-9461-08d67ba892cb
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB6101;
 x-ms-traffictypediagnostic: AM6PR04MB6101:
-x-microsoft-antispam-prvs: <AM6PR04MB61017B1480AB2C1C5BAE57A0E3820@AM6PR04MB6101.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM6PR04MB61012D67D1E99B7996B67AEBE3820@AM6PR04MB6101.eurprd04.prod.outlook.com>
 x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(366004)(376002)(396003)(199004)(189003)(316002)(81156014)(110136005)(102836004)(81166006)(476003)(26005)(2616005)(186003)(8676002)(7736002)(66066001)(3846002)(50226002)(105586002)(305945005)(6486002)(8936002)(99286004)(54906003)(6436002)(106356001)(6116002)(86362001)(2906002)(44832011)(14454004)(478600001)(486006)(71200400001)(68736007)(97736004)(5660300001)(53936002)(76176011)(36756003)(256004)(446003)(14444005)(11346002)(25786009)(386003)(6506007)(6512007)(52116002)(4326008)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6101;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(366004)(376002)(396003)(199004)(189003)(316002)(81156014)(110136005)(102836004)(81166006)(476003)(26005)(2616005)(186003)(8676002)(7736002)(66066001)(3846002)(50226002)(105586002)(305945005)(6486002)(8936002)(99286004)(54906003)(6436002)(106356001)(6116002)(86362001)(2906002)(44832011)(14454004)(478600001)(486006)(71200400001)(68736007)(97736004)(5660300001)(53936002)(76176011)(36756003)(5024004)(256004)(446003)(11346002)(25786009)(386003)(6506007)(6512007)(52116002)(4326008)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6101;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: DkjRm5I6hUrnIqkNJMpAp860sPqfISCEmngJ0amKA9ZdD6xexGTAewJnPXx3j1FB8u3uut5ne55OSFrjJR56Pr0XhhDIbyY8SKmETMS+O33FQeXcRDJXiecJBqWQh9RvGcFuruO0N3lW5KfLzA6/beGJFq/Mc70sBmqjPIBNOLItjLanFJLOZfQ7wrlirWqfvXQfnwVAddNokGC2BTQW7G6i5CsR++Lo9f3FpJQv8DzWFp4zUig8gJ+bRM0rqqfoBzfBA2qaFF/w1fqcGZUj6jRr0oygO3nUlUOL+SShUCH9fl88ZPO6olAuYf24JOlG06h6YaSW1wz6zMPsbew0TFSBtTzCIoZZOIsYXbepKH+0ojD9C79OhoKaP4QtBB+0KJkAwvbGx1subjzej9E1SQNPiXk4e4npFHeEhajEQog=
+x-microsoft-antispam-message-info: Mo0Gk3SNJ1vtUe2/77RgCb9e6nahVK4G7g1LZvLTV+/WiLJGj26WRIFUABucPhWz7m4IvPPmjXIPYOrBKED7AXFCKdRYU8iESS8OOG7ko7ovfvkXHJihizLdIqi9Vu/l77YxyrboaHdzs5fVdYkgjUII6WqugVdj5HaXPDU43NbH6BmsNMfE591edwdqbWDsjEfJ96yBv4Vzg/VBNZ8nC6Sag0B3xKBxkB6YC38JsbOB5KqRD1A5+HWW5BmVOH2UJVeKzDq+re15Hn4Q9kv0/hUGsg6GmdD/wk+H2o3mowwQfLHcUDL6ROOMceQ/1xNUoao+h7KfaDnXY4EjIdgNYOT4GFr+K8aBaVTY6sqdEJQmpyKC8xFGLSNTwIgRNTOnrwFPwkxggp/501oxZoLPtG39Fj7HQGsAbo6vQB1cu8o=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fe4455e-9285-4b3b-962e-08d67ba8923b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 11:48:45.1590
+X-MS-Exchange-CrossTenant-Network-Message-Id: d636452e-4330-4256-9461-08d67ba892cb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 11:48:46.1027
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -98,64 +99,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The eLCDIF controller has control pin for the external LCD reset pin.
-Add support for it and assert this pin in enable and de-assert it in
-disable.
+Move the pm_runtime_enable call at the end of probbe, since it was made too
+early, causing issues to DRM enable routines.
 
 Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
 ---
- drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 10 ++++++++--
- drivers/gpu/drm/mxsfb/mxsfb_regs.h |  1 +
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxs=
-fb_crtc.c
-index b1d0267..35d6f10 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-@@ -230,9 +230,12 @@ static void mxsfb_enable_controller(struct mxsfb_drm_p=
-rivate *mxsfb)
- 		clk_prepare_enable(mxsfb->clk_disp_axi);
- 	clk_prepare_enable(mxsfb->clk);
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsf=
+b_drv.c
+index 3032007..9247c76 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+@@ -301,12 +301,10 @@ static int mxsfb_load(struct drm_device *drm, unsigne=
+d long flags)
+ 	if (ret)
+ 		return ret;
 =20
--	if (mxsfb->devdata->ipversion >=3D 4)
-+	if (mxsfb->devdata->ipversion >=3D 4) {
- 		writel(CTRL2_OUTSTANDING_REQS(REQ_16),
- 			mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
-+		/* Assert LCD Reset bit */
-+		writel(CTRL2_LCD_RESET, mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
-+	}
+-	pm_runtime_enable(drm->dev);
+-
+ 	ret =3D drm_vblank_init(drm, MAX_CRTCS);
+ 	if (ret < 0) {
+ 		dev_err(drm->dev, "Failed to initialise vblank\n");
+-		goto err_vblank;
++		return ret;
+ 	}
 =20
- 	/* If it was disabled, re-enable the mode again */
- 	writel(CTRL_DOTCLK_MODE, mxsfb->base + LCDC_CTRL + REG_SET);
-@@ -250,9 +253,12 @@ static void mxsfb_disable_controller(struct mxsfb_drm_=
-private *mxsfb)
- {
- 	u32 reg;
+ 	/* Modeset init */
+@@ -315,7 +313,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
+long flags)
+ 	ret =3D mxsfb_create_output(drm);
+ 	if (ret < 0) {
+ 		dev_err(drm->dev, "Failed to create outputs\n");
+-		goto err_vblank;
++		return ret;
+ 	}
 =20
--	if (mxsfb->devdata->ipversion >=3D 4)
-+	if (mxsfb->devdata->ipversion >=3D 4) {
- 		writel(CTRL2_OUTSTANDING_REQS(0x7),
- 			mxsfb->base + LCDC_V4_CTRL2 + REG_CLR);
-+		/* De-assert LCD Reset bit */
-+		writel(CTRL2_LCD_RESET, mxsfb->base + LCDC_V4_CTRL2 + REG_CLR);
-+	}
+ 	ret =3D drm_simple_display_pipe_init(drm, &mxsfb->pipe, &mxsfb_funcs,
+@@ -323,7 +321,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
+long flags)
+ 			mxsfb->connector);
+ 	if (ret < 0) {
+ 		dev_err(drm->dev, "Cannot setup simple display pipe\n");
+-		goto err_vblank;
++		return ret;
+ 	}
 =20
- 	writel(CTRL_RUN, mxsfb->base + LCDC_CTRL + REG_CLR);
+ 	drm_crtc_vblank_off(&mxsfb->pipe.crtc);
+@@ -340,14 +338,14 @@ static int mxsfb_load(struct drm_device *drm, unsigne=
+d long flags)
+ 		ret =3D drm_panel_attach(mxsfb->panel, mxsfb->connector);
+ 		if (ret) {
+ 			dev_err(drm->dev, "Cannot connect panel\n");
+-			goto err_vblank;
++			return ret;
+ 		}
+ 	} else if (mxsfb->bridge) {
+ 		ret =3D drm_simple_display_pipe_attach_bridge(&mxsfb->pipe,
+ 				mxsfb->bridge);
+ 		if (ret) {
+ 			dev_err(drm->dev, "Cannot connect bridge\n");
+-			goto err_vblank;
++			return ret;
+ 		}
+ 	}
 =20
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_regs.h b/drivers/gpu/drm/mxsfb/mxs=
-fb_regs.h
-index 4904fdd..1d85750 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_regs.h
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_regs.h
-@@ -95,6 +95,7 @@
- #define CTRL2_OUTSTANDING_REQS(x)	REG_PUT((x), 23, 21)
- #define CTRL2_ODD_LINE_PATTERN(x)	REG_PUT((x), 18, 16)
- #define CTRL2_EVEN_LINE_PATTERN(x)	REG_PUT((x), 14, 12)
-+#define CTRL2_LCD_RESET			BIT(0)
+@@ -367,9 +365,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
+long flags)
 =20
- #define TRANSFER_COUNT_SET_VCOUNT(x)	(((x) & 0xffff) << 16)
- #define TRANSFER_COUNT_GET_VCOUNT(x)	(((x) >> 16) & 0xffff)
+ 	drm_mode_config_reset(drm);
+=20
+-	pm_runtime_get_sync(drm->dev);
+ 	ret =3D drm_irq_install(drm, platform_get_irq(pdev, 0));
+-	pm_runtime_put_sync(drm->dev);
+=20
+ 	if (ret < 0) {
+ 		dev_err(drm->dev, "Failed to install IRQ handler\n");
+@@ -391,14 +387,14 @@ static int mxsfb_load(struct drm_device *drm, unsigne=
+d long flags)
+=20
+ 	drm_helper_hpd_irq_event(drm);
+=20
++	pm_runtime_enable(drm->dev);
++
+ 	return 0;
+=20
+ err_cma:
+ 	drm_irq_uninstall(drm);
+ err_irq:
+ 	drm_panel_detach(mxsfb->panel);
+-err_vblank:
+-	pm_runtime_disable(drm->dev);
+=20
+ 	return ret;
+ }
 --=20
 2.7.4
 
