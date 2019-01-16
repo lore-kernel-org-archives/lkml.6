@@ -2,96 +2,89 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02561C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5670C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF1A720866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:43:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0CB420866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:55:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rUwEsTBD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfAPUnu (ORCPT
+        id S1726956AbfAPUzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 15:43:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46056 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 15:55:12 -0500
+Received: from ozlabs.org ([203.11.71.1]:55269 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbfAPUnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 15:43:50 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726783AbfAPUzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 15:55:11 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3C2949F73B;
-        Wed, 16 Jan 2019 20:43:50 +0000 (UTC)
-Received: from [10.36.116.103] (ovpn-116-103.ams2.redhat.com [10.36.116.103])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0A12519C7E;
-        Wed, 16 Jan 2019 20:43:42 +0000 (UTC)
-Subject: Re: [PATCH] iommu/intel-iommu: fix memory leak in
- intel_iommu_put_resv_regions()
-To:     Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Joerg Roedel <jroedel@suse.de>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>
-References: <20190116191144.15652-1-gerald.schaefer@de.ibm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <ce818491-4b9c-a5d8-7ad6-707aa25445ed@redhat.com>
-Date:   Wed, 16 Jan 2019 21:43:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by ozlabs.org (Postfix) with ESMTPSA id 43fzx90xw0z9sDP;
+        Thu, 17 Jan 2019 07:55:09 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547672109;
+        bh=kjuoGIwHolbisRWPYTlcBT6S+ZmPpzdrxBSZ0hx+4Hk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=rUwEsTBDaxvBbRbQZB/1cvASOy8VNnVY1wuk6A00MOi8NiH4lc9MA5/tegNTXI6Wi
+         TmFMlcO6XRquWQjL9vEhb6U640wDxFTG9LBfcr+4CGg6+gVbE/H3scob5ZD2/yIHlo
+         q7JiyU7TYfExl53ZuwW5N13dzADilRRLW1RGR5aah3vl/hzSY196IcHp4dM0aZIvLP
+         PF2UB3IIdlI4wM0kECxB3wHJfoTsnMQVtNe3AxF5TsM/mRS3z+8+ExNxiWGl/svj36
+         y4USHgUJFdTSY9pMWMtNhI7OF+3RWkq9y1whzzt9ynwP1wJdC+OZC40WOYnvjGOH94
+         7Pwvrh7k+E8UQ==
+Date:   Thu, 17 Jan 2019 07:54:59 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Shawn Guo <shawn.guo@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: linux-next: Fixes tag needs some work in the imx-mxs tree
+Message-ID: <20190117075459.50e6a22f@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190116191144.15652-1-gerald.schaefer@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Jan 2019 20:43:50 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WPSaKkiaC0N+lZDb.IwvpAI"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gerald,
+--Sig_/WPSaKkiaC0N+lZDb.IwvpAI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 1/16/19 8:11 PM, Gerald Schaefer wrote:
-> Commit 9d3a4de4cb8d ("iommu: Disambiguate MSI region types") changed
-> the reserved region type in intel_iommu_get_resv_regions() from
-> IOMMU_RESV_RESERVED to IOMMU_RESV_MSI, but it forgot to also change
-> the type in intel_iommu_put_resv_regions().
-> 
-> This leads to a memory leak, because now the check in
-> intel_iommu_put_resv_regions() for IOMMU_RESV_RESERVED will never
-> be true, and no allocated regions will be freed.
-> 
-> Fix this by changing the region type in intel_iommu_put_resv_regions()
-> to IOMMU_RESV_MSI, matching the type of the allocated regions.
-> 
-> Fixes: 9d3a4de4cb8d ("iommu: Disambiguate MSI region types")
-> Cc: <stable@vger.kernel.org> # v4.11+
-> Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Hi Shawn,
 
-Thanks
+Commit
 
-Eric
+  fde7ed930ca2 ("arm64: dts: imx8qxp: Fix MU4_INT number")
 
-> ---
->  drivers/iommu/intel-iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 048b5ab36a02..b83e0f2025bb 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -5295,7 +5295,7 @@ static void intel_iommu_put_resv_regions(struct device *dev,
->  	struct iommu_resv_region *entry, *next;
->  
->  	list_for_each_entry_safe(entry, next, head, list) {
-> -		if (entry->type == IOMMU_RESV_RESERVED)
-> +		if (entry->type == IOMMU_RESV_MSI)
->  			kfree(entry);
->  	}
->  }
-> 
+has a malformed Fixes tag.
+
+The SHA1 should be at least 12 digits long.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WPSaKkiaC0N+lZDb.IwvpAI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/miMACgkQAVBC80lX
+0GybRQf/evqxS0ALcGxM8VXXFAQZhDPTAj+6rLi7TJ1sHKqDpWDm81zURJLR+Ru6
+iqCHAOZdkD6VbgEWZQZxz681fPZQcR2E/N9nOOsrRpmLTIX7Mf1QDDe7B5BgiIcP
+mU/fT4nTa3yWR19nLSpG8XDb9ZJe4owWmvAGrCaSxNS0r7ZquT+nzHrKUY81welE
+aUfG7HWxp2rBb8ssCuK6GgLNkfHcRNYFEk2jzbRc3bmzXsoYvaDdz7kG7q9/rBmy
+l0CHZMY86t1RWBNnsE2Synb+dDT7mglrinLdzStSPYKgXFBFS3TXTUOuPaZu94q+
+Wogi88nkiES2efaaJYVAeXLiivJ7EA==
+=sCtf
+-----END PGP SIGNATURE-----
+
+--Sig_/WPSaKkiaC0N+lZDb.IwvpAI--
