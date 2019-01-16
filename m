@@ -2,271 +2,110 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE7BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84916C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B4620866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 565CB20866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbfAPBm4 (ORCPT
+        id S1727749AbfAPBuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 20:42:56 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17146 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726123AbfAPBmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 20:42:55 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E3D65DE723593FAE90E3;
-        Wed, 16 Jan 2019 09:42:52 +0800 (CST)
-Received: from localhost.localdomain (10.175.34.53) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 16 Jan 2019 09:42:46 +0800
-From:   Xue Chaojing <xuechaojing@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <xuechaojing@huawei.com>,
-        <netdev@vger.kernel.org>, <wulike1@huawei.com>,
-        <chiqijun@huawei.com>, <fy.wang@huawei.com>, <tony.qu@huawei.com>,
-        <luoshaokai@huawei.com>
-Subject: [PATCH 1/1] net-next/hinic: replace disable_irq_nosync/enable_irq
-Date:   Tue, 15 Jan 2019 17:48:52 +0000
-Message-ID: <20190115174852.22839-1-xuechaojing@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 15 Jan 2019 20:50:06 -0500
+Received: from gateway20.websitewelcome.com ([192.185.69.18]:29985 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726123AbfAPBuF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 20:50:05 -0500
+X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Jan 2019 20:50:05 EST
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id F2372400C40ED
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 19:04:58 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id jZdagALPg2PzOjZdagmxYz; Tue, 15 Jan 2019 19:04:58 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=58750 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gjZda-003gJx-8F; Tue, 15 Jan 2019 19:04:58 -0600
+Date:   Tue, 15 Jan 2019 19:04:56 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: hns: Use struct_size() in devm_kzalloc()
+Message-ID: <20190116010456.GA29582@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gjZda-003gJx-8F
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:58750
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to avoid frequent system interrupts when sending and
-receiving packets. we replace disable_irq_nosync/enable_irq
-with hinic_set_msix_state(), hinic_set_msix_state is used to
-access memory mapped hinic devices.
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+struct foo {
+    int stuff;
+    struct boo entry[];
+};
+
+instance = devm_kzalloc(dev, sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- .../net/ethernet/huawei/hinic/hinic_hw_dev.c  | 13 +++++++++
- .../net/ethernet/huawei/hinic/hinic_hw_dev.h  |  3 ++
- .../net/ethernet/huawei/hinic/hinic_hw_if.c   | 28 +++++++++++++++++++
- .../net/ethernet/huawei/hinic/hinic_hw_if.h   | 14 ++++++++++
- drivers/net/ethernet/huawei/hinic/hinic_rx.c  | 11 ++++++--
- drivers/net/ethernet/huawei/hinic/hinic_tx.c  |  8 ++++--
- 6 files changed, 73 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
-index 6b19607a4caa..3875f39f43bb 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
-@@ -1008,3 +1008,16 @@ int hinic_hwdev_hw_ci_addr_set(struct hinic_hwdev *hwdev, struct hinic_sq *sq,
- 				 &hw_ci, sizeof(hw_ci), NULL,
- 				 NULL, HINIC_MGMT_MSG_SYNC);
- }
-+
-+/**
-+ * hinic_hwdev_set_msix_state- set msix state
-+ * @hwdev: the NIC HW device
-+ * @msix_index: IRQ corresponding index number
-+ * @flag: msix state
-+ *
-+ **/
-+void hinic_hwdev_set_msix_state(struct hinic_hwdev *hwdev, u16 msix_index,
-+				enum hinic_msix_state flag)
-+{
-+	hinic_set_msix_state(hwdev->hwif, msix_index, flag);
-+}
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-index d1a7d2522d82..c9e621e19dd0 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-@@ -240,4 +240,7 @@ int hinic_hwdev_msix_set(struct hinic_hwdev *hwdev, u16 msix_index,
- int hinic_hwdev_hw_ci_addr_set(struct hinic_hwdev *hwdev, struct hinic_sq *sq,
- 			       u8 pending_limit, u8 coalesc_timer);
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
+index 5d64519b9b1d..6bf346c11b25 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
+@@ -788,8 +788,9 @@ int hns_rcb_common_get_cfg(struct dsaf_device *dsaf_dev,
+ 	int ring_num = hns_rcb_get_ring_num(dsaf_dev);
  
-+void hinic_hwdev_set_msix_state(struct hinic_hwdev *hwdev, u16 msix_index,
-+				enum hinic_msix_state flag);
-+
- #endif
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_if.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_if.c
-index 823a17061a97..9b160f076904 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_if.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_if.c
-@@ -168,6 +168,22 @@ void hinic_db_state_set(struct hinic_hwif *hwif,
- 	hinic_hwif_write_reg(hwif, HINIC_CSR_FUNC_ATTR4_ADDR, attr4);
- }
- 
-+void hinic_set_msix_state(struct hinic_hwif *hwif, u16 msix_idx,
-+			  enum hinic_msix_state flag)
-+{
-+	u32 offset = msix_idx * HINIC_PCI_MSIX_ENTRY_SIZE +
-+			HINIC_PCI_MSIX_ENTRY_VECTOR_CTRL;
-+	u32 mask_bits;
-+
-+	mask_bits = readl(hwif->intr_regs_base + offset);
-+	mask_bits &= ~HINIC_PCI_MSIX_ENTRY_CTRL_MASKBIT;
-+
-+	if (flag)
-+		mask_bits |= HINIC_PCI_MSIX_ENTRY_CTRL_MASKBIT;
-+
-+	writel(mask_bits, hwif->intr_regs_base + offset);
-+}
-+
- /**
-  * hwif_ready - test if the HW is ready for use
-  * @hwif: the HW interface of a pci function device
-@@ -321,6 +337,13 @@ int hinic_init_hwif(struct hinic_hwif *hwif, struct pci_dev *pdev)
+ 	rcb_common =
+-		devm_kzalloc(dsaf_dev->dev, sizeof(*rcb_common) +
+-			ring_num * sizeof(struct ring_pair_cb), GFP_KERNEL);
++		devm_kzalloc(dsaf_dev->dev,
++			     struct_size(rcb_common, ring_pair_cb, ring_num),
++			     GFP_KERNEL);
+ 	if (!rcb_common) {
+ 		dev_err(dsaf_dev->dev, "rcb common devm_kzalloc fail!\n");
  		return -ENOMEM;
- 	}
- 
-+	hwif->intr_regs_base = pci_ioremap_bar(pdev, HINIC_PCI_INTR_REGS_BAR);
-+	if (!hwif->intr_regs_base) {
-+		dev_err(&pdev->dev, "Failed to map configuration regs\n");
-+		err = -ENOMEM;
-+		goto err_map_intr_bar;
-+	}
-+
- 	err = hwif_ready(hwif);
- 	if (err) {
- 		dev_err(&pdev->dev, "HW interface is not ready\n");
-@@ -337,7 +360,11 @@ int hinic_init_hwif(struct hinic_hwif *hwif, struct pci_dev *pdev)
- 	return 0;
- 
- err_hwif_ready:
-+	iounmap(hwif->intr_regs_base);
-+
-+err_map_intr_bar:
- 	iounmap(hwif->cfg_regs_bar);
-+
- 	return err;
- }
- 
-@@ -347,5 +374,6 @@ int hinic_init_hwif(struct hinic_hwif *hwif, struct pci_dev *pdev)
-  **/
- void hinic_free_hwif(struct hinic_hwif *hwif)
- {
-+	iounmap(hwif->intr_regs_base);
- 	iounmap(hwif->cfg_regs_bar);
- }
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_if.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_if.h
-index 5b4760c0e9f5..22ec7f73e0a6 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_if.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_if.h
-@@ -152,6 +152,7 @@
- #define HINIC_IS_PPF(hwif)              (HINIC_FUNC_TYPE(hwif) == HINIC_PPF)
- 
- #define HINIC_PCI_CFG_REGS_BAR          0
-+#define HINIC_PCI_INTR_REGS_BAR         2
- #define HINIC_PCI_DB_BAR                4
- 
- #define HINIC_PCIE_ST_DISABLE           0
-@@ -164,6 +165,10 @@
- #define HINIC_EQ_MSIX_LLI_CREDIT_LIMIT_DEFAULT  0       /* Disabled */
- #define HINIC_EQ_MSIX_RESEND_TIMER_DEFAULT      7       /* max */
- 
-+#define HINIC_PCI_MSIX_ENTRY_SIZE               16
-+#define HINIC_PCI_MSIX_ENTRY_VECTOR_CTRL        12
-+#define HINIC_PCI_MSIX_ENTRY_CTRL_MASKBIT       1
-+
- enum hinic_pcie_nosnoop {
- 	HINIC_PCIE_SNOOP        = 0,
- 	HINIC_PCIE_NO_SNOOP     = 1,
-@@ -207,6 +212,11 @@ enum hinic_db_state {
- 	HINIC_DB_DISABLE = 1,
- };
- 
-+enum hinic_msix_state {
-+	HINIC_MSIX_ENABLE,
-+	HINIC_MSIX_DISABLE,
-+};
-+
- struct hinic_func_attr {
- 	u16                     func_idx;
- 	u8                      pf_idx;
-@@ -226,6 +236,7 @@ struct hinic_func_attr {
- struct hinic_hwif {
- 	struct pci_dev          *pdev;
- 	void __iomem            *cfg_regs_bar;
-+	void __iomem		*intr_regs_base;
- 
- 	struct hinic_func_attr  attr;
- };
-@@ -251,6 +262,9 @@ int hinic_msix_attr_get(struct hinic_hwif *hwif, u16 msix_index,
- 			u8 *lli_timer, u8 *lli_credit_limit,
- 			u8 *resend_timer);
- 
-+void hinic_set_msix_state(struct hinic_hwif *hwif, u16 msix_idx,
-+			  enum hinic_msix_state flag);
-+
- int hinic_msix_attr_cnt_clear(struct hinic_hwif *hwif, u16 msix_index);
- 
- void hinic_set_pf_action(struct hinic_hwif *hwif, enum hinic_pf_action action);
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.c b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-index 0098b206e7e9..b6d218768ec1 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-@@ -381,6 +381,7 @@ static int rxq_recv(struct hinic_rxq *rxq, int budget)
- static int rx_poll(struct napi_struct *napi, int budget)
- {
- 	struct hinic_rxq *rxq = container_of(napi, struct hinic_rxq, napi);
-+	struct hinic_dev *nic_dev = netdev_priv(rxq->netdev);
- 	struct hinic_rq *rq = rxq->rq;
- 	int pkts;
- 
-@@ -389,7 +390,10 @@ static int rx_poll(struct napi_struct *napi, int budget)
- 		return budget;
- 
- 	napi_complete(napi);
--	enable_irq(rq->irq);
-+	hinic_hwdev_set_msix_state(nic_dev->hwdev,
-+				   rq->msix_entry,
-+				   HINIC_MSIX_ENABLE);
-+
- 	return pkts;
- }
- 
-@@ -414,7 +418,10 @@ static irqreturn_t rx_irq(int irq, void *data)
- 	struct hinic_dev *nic_dev;
- 
- 	/* Disable the interrupt until napi will be completed */
--	disable_irq_nosync(rq->irq);
-+	nic_dev = netdev_priv(rxq->netdev);
-+	hinic_hwdev_set_msix_state(nic_dev->hwdev,
-+				   rq->msix_entry,
-+				   HINIC_MSIX_DISABLE);
- 
- 	nic_dev = netdev_priv(rxq->netdev);
- 	hinic_hwdev_msix_cnt_set(nic_dev->hwdev, rq->msix_entry);
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-index 11e73e67358d..e17bf33eba0c 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-@@ -655,7 +655,9 @@ static int free_tx_poll(struct napi_struct *napi, int budget)
- 
- 	if (pkts < budget) {
- 		napi_complete(napi);
--		enable_irq(sq->irq);
-+		hinic_hwdev_set_msix_state(nic_dev->hwdev,
-+					   sq->msix_entry,
-+					   HINIC_MSIX_ENABLE);
- 		return pkts;
- 	}
- 
-@@ -682,7 +684,9 @@ static irqreturn_t tx_irq(int irq, void *data)
- 	nic_dev = netdev_priv(txq->netdev);
- 
- 	/* Disable the interrupt until napi will be completed */
--	disable_irq_nosync(txq->sq->irq);
-+	hinic_hwdev_set_msix_state(nic_dev->hwdev,
-+				   txq->sq->msix_entry,
-+				   HINIC_MSIX_DISABLE);
- 
- 	hinic_hwdev_msix_cnt_set(nic_dev->hwdev, txq->sq->msix_entry);
- 
 -- 
-2.17.1
+2.20.1
 
