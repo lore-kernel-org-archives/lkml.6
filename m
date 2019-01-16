@@ -5,103 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86114C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9296BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36ADC20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67C7520652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:56:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731815AbfAPVyn (ORCPT
+        id S1731907AbfAPV4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:54:43 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45907 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731095AbfAPVyn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:54:43 -0500
-Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gjt8r-0000Um-Ia; Wed, 16 Jan 2019 22:54:33 +0100
-Date:   Wed, 16 Jan 2019 22:54:25 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v2] x86/pgtable: Always inline p4d_index
-In-Reply-To: <20190116134158.344-1-natechancellor@gmail.com>
-Message-ID: <alpine.DEB.2.21.1901161848560.1642@nanos.tec.linutronix.de>
-References: <20181210234538.5405-1-natechancellor@gmail.com> <20190116134158.344-1-natechancellor@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 16 Jan 2019 16:56:20 -0500
+Received: from ms.lwn.net ([45.79.88.28]:52604 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730505AbfAPV4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:56:20 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 4AB3A2DD;
+        Wed, 16 Jan 2019 21:56:19 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 14:56:18 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [patch 0/2] LICENSES: Fix fallout from recent SPDX conversions
+Message-ID: <20190116145618.6b8e8a81@lwn.net>
+In-Reply-To: <20190116102651.489113812@linutronix.de>
+References: <20190116102651.489113812@linutronix.de>
+Organization: LWN.net
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019, Nathan Chancellor wrote:
+On Wed, 16 Jan 2019 11:26:51 +0100
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> When building an allyesconfig build with Clang, the kernel fails to link
-> arch/x86/platform/efi/efi_64.o because of a failed BUILD_BUG_ON:
+> Recent SPDX conversions introduced new wreckage:
 > 
-> ld: arch/x86/platform/efi/efi_64.o: in function `efi_sync_low_kernel_mappings':
-> (.text+0x8e5): undefined reference to `__compiletime_assert_277'
+>  arch/sh/lib/ashiftrt.S: 1:42 Invalid Exception ID: GCC-exception-2.0
+>  ...
+>  arch/sh/include/mach-ecovec24/mach/partner-jet-setup.txt: 1:38 Invalid token: "
+>  ,,,
 > 
-> Since there are several BUILD_BUG_ONs in efi_64.c, I isolated it down to
-> the following:
+> The first group is due to using an exception identifier without adding the
+> exception text to the LICENSES directory.
 > 
->     BUILD_BUG_ON(p4d_index(EFI_VA_END) != p4d_index(MODULES_END));
+> The second one is due to the magic conment format in the SuperH bootcode
+> files.
 > 
-> After some research, it turns out that there is a new config option
-> called NO_AUTO_INLINE, which adds '-fno-inline-functions' to
-> KBUILD_CFLAGS so that the compiler does not auto inline small functions,
-> which causes this BUILD_BUG_ON to fail because p4d_index is no longer an
-> integer constant expression.
-
-There is no tree where this config option exists.
-
-> According to the help text of the config, functions explicitly marked
-> inline should still be inlined. As it turns out, GCC and Clang both
-> support '-fno-inline-functions' but Clang only inlines functions when
-> they are marked with an always inline annotation[1].
+> At least the first one could have been caught by checkpatch.pl:
 > 
-> Since it's expected that p4d_index should always be inlined so that its
-> value can be evaluated at build time, mark it as __always_inline.
+> WARNING: 'SPDX-License-Identifier: GPL-2.0+ WITH GCC-exception-2.0' is not supported in LICENSES/...
+> #38: FILE: arch/sh/lib/ashiftrt.S:1:
+> +/* SPDX-License-Identifier: GPL-2.0+ WITH GCC-exception-2.0
+> 
+> ....
+> 
+> The following series addresses both issues.
 
-Sorry no, that's just papering over the problem.
+I've applied both to the docs tree, thanks.
 
-The point is that NO_AUTO_INLINE is/was meant to prevent the compiler from
-automatically inlining functions, which are NOT marked inline in any form
-in order to expand the traceability.
-
-With GCC this makes sense, because it still inlines functions which are
-solely marked inline and even if it decides not to inline them it will
-evaluate them if they expand to a build time constant expression.
-
-Now Clang decided to give -fno-inline-functions a different meaning,
-i.e. the same as GCC has for -fno-inline, which prevents inlining for
-everything except functions which are marked __always_inline.
-
-So just "fixing" the build wreckage by duct taping one single instance of
-inline functions is really a bad idea. The resulting kernel will be
-bloatware because all regular inlines and we have tons of them will turn
-into function calls even if the function overhead is larger than the
-resulting inline code. Not to talk about the performance impact.
-
-Anyway, as this option is found to be nowhere there is no point to apply
-this patch.
-
-Thanks,
-
-	tglx
-
-
-
-
+jon
