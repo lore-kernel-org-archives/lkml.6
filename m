@@ -2,78 +2,102 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27562C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E328FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAAAC206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE57C206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:49:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CJQKbZj0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q8aTffd2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731443AbfAPTtT (ORCPT
+        id S1731688AbfAPTtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:49:19 -0500
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:33478 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730875AbfAPTtS (ORCPT
+        Wed, 16 Jan 2019 14:49:49 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38645 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731527AbfAPTts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:49:18 -0500
-Received: by mail-ot1-f44.google.com with SMTP id i20so8919276otl.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:49:18 -0800 (PST)
+        Wed, 16 Jan 2019 14:49:48 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m22so3354212wml.3;
+        Wed, 16 Jan 2019 11:49:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=IUCNzigZOFXUUU8wyt5pYGcNKd4MxLFlEFqjqfIThn0=;
-        b=CJQKbZj09KZJnkLm9eoc+mWal1WvsadcRNHLArL5EMt2q9XH+0g0YJC1DfihzuIogz
-         wyj56oSyq7mcjM4HidjoyPFuREet19gQWrYEOhC9aZuSku7Jc8gyrZN9UNFfCPjinwgC
-         MUgHe1+7yT8OP7QZNMMYFvUSX/5mCgLKcPhy4=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S+tBm27s7+dBmnZQf9n3TlcEVO1seLIX/LcV8pv6cJo=;
+        b=q8aTffd2xkSrZg9cIezp9DK0uIzWXXjVqsGQ+T4xjhMPRKRN1iEbtC1UEah6+SPRkb
+         IihnyaXitzLjY8EKpRGNlAir0Dc4MCJC4WaODjC9VNZ1J7tSFqQD4WO5lqZtaSP3fW5o
+         qbLNc6S+VQatY95KaZ7UUrgYr54zABqy3l2x8Yeend83H71k13W/xOr21GDjbnr8rh0W
+         dtzC1woOczxDtGwQt9r47EriFStg+D3Fr+ElHHt6vYBIkLtTaE6jklKNI1BGIF1Dx6QA
+         JVTv0GF3oCdNDWGI5FfNhGE26YEgqt0npXwrXtYH3W1ioNkhsIlkQ5tGQoXCh74ufuAa
+         uyHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=IUCNzigZOFXUUU8wyt5pYGcNKd4MxLFlEFqjqfIThn0=;
-        b=gwlJd5x21AE6NgpcYnXc7qKgJb+iwas91ePZwbSwvZMR69Q95JHJOONH8hYnYamsr3
-         HuMFTVopkYQDYtfzPTxzc3aKO/4uGOfKY66ty3lg6yuUTvsCMkHqwISqnIr/HFjaFmiJ
-         9qu9IDdH+6RSIz5IqqIana+dkOkFMu4+77s1Kw3F5ON3TMEDarH902XqsfWKaWocslvT
-         /mVnxofdDKOx1tk79oXBeDtSGgORgczfj6vyo5VnhB1r7ZJlEHqm5j3lsQ21jEfftzHd
-         FYX9ALGypgu3fwp7nLxxNYfjDkuarky+EOgyOl6+BKnLuwO9H9ptM1Gm27c75G9t3gRN
-         E85g==
-X-Gm-Message-State: AJcUukdm8haeX9QrwZnI7IURVKBYqWLGuM6/d49CungmtVqb+I6JTQxP
-        RS06V2ERc9v0FSjjbBaublRkMH3ZimMAi/OnVC7KCW8u
-X-Google-Smtp-Source: ALg8bN5pgrzklDEploFEabURHT9/6loL38Ew/cnwLesxvQ0d9Xb60ljnzM/KYzNueyxvszOtzmJsgaIj75CVUtNAld0=
-X-Received: by 2002:a9d:2387:: with SMTP id t7mr6253605otb.68.1547668157969;
- Wed, 16 Jan 2019 11:49:17 -0800 (PST)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=S+tBm27s7+dBmnZQf9n3TlcEVO1seLIX/LcV8pv6cJo=;
+        b=P2tewzNZSTHwcrnMgvvhySL9UwWXxhWYAkuxhb2awJY4An259pJsnud6eGRj3jhAdy
+         Nh1lRzAJnij21Ny4SjQVzdpmkYQoDH2doBnMHjpyltjMGdEOzCytZB0Rmtpa/Is3EyIe
+         2CIfEkXBi3jnnqhg0t1ns9Vm5JdHXc+g05gzndCwgrp7kH+TqOe5UPtIqx1aW0E+bk4r
+         sYYi9eoBg+XqGtPAlJniIc6OtuTICG+3TE7qkCrEzeb1QYyrJTOUqNXC/ti9uL1CZq8P
+         OxP5nPu1GSGjmg3jkUMCyg7csl3DOtF/meovFfeqTUUnvUEE4S9LQ6uPX1L3zrz3mAa0
+         llkA==
+X-Gm-Message-State: AJcUukeilOEfFVp8YwKSl7/HjMqVMRJrAnXq/mwGpmpHQJDGmyja2Kal
+        nHpO7b/B4KL1LnXz7iSi3FHQ51Fn
+X-Google-Smtp-Source: ALg8bN5WNfs5fzkfHyGAclp05Rqx3VsddL4ps14+o4yKJhXU3MrBG2wm3sWF7cgRbdLYSZntegia2g==
+X-Received: by 2002:a1c:7719:: with SMTP id t25mr9387451wmi.7.1547668186297;
+        Wed, 16 Jan 2019 11:49:46 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id j8sm60840483wrt.40.2019.01.16.11.49.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 11:49:45 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 200E911423A3; Wed, 16 Jan 2019 20:49:44 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Mathieu Malaterre <malat@debian.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] davicom: Annotate implicit fall through in dm9000_set_io
+Date:   Wed, 16 Jan 2019 20:49:25 +0100
+Message-Id: <20190116194925.2181-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-From:   Maxim Uvarov <maxim.uvarov@linaro.org>
-Date:   Wed, 16 Jan 2019 22:49:07 +0300
-Message-ID: <CAD8XO3aVboq5okUNXNMkO9yV2GgbGxPz0ZefesgwO_PkDD22uA@mail.gmail.com>
-Subject: license for samples in Linux kernel
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello community,
+There is a plan to build the kernel with -Wimplicit-fallthrough and
+this place in the code produced a warning (W=1).
 
-I would like to touch such delicate question as GPL license for
-/samples maintained inside linux kernel. Samples are usually exist for
-quick bootstrap your application. I.e. people just start with
-copy-pasting samples, see that they work then do something on top of
-it. Here is problem with quick integration new features from samples
-to non GPL code. For example let's take eBPF/AF_XDP samples and
-tcpdump application which is BSD licensed. Theoretically samples
-should help to use new kernel features but in practise it can create
-legal precedent that GPL code was merged to BSD project or some other
-non GPL project. Which is might happen if we assume that project
-maintainers are not aware that code was copy-pasted. I'm sorry if this
-topic was already discussed. But if it is not it might be good to
-think about it. My proposal is to remove GPL restriction from samples
-and publish them as public domain.
+This commit removes the following warning:
 
-Thank you,
-Maxim.
+  include/linux/device.h:1480:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  drivers/net/ethernet/davicom/dm9000.c:397:3: note: in expansion of macro 'dev_dbg'
+  drivers/net/ethernet/davicom/dm9000.c:398:2: note: here
+
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ drivers/net/ethernet/davicom/dm9000.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
+index 0a82fcf16d35..c2586f44c29d 100644
+--- a/drivers/net/ethernet/davicom/dm9000.c
++++ b/drivers/net/ethernet/davicom/dm9000.c
+@@ -395,6 +395,7 @@ static void dm9000_set_io(struct board_info *db, int byte_width)
+ 
+ 	case 3:
+ 		dev_dbg(db->dev, ": 3 byte IO, falling back to 16bit\n");
++		/* fall through */
+ 	case 2:
+ 		db->dumpblk = dm9000_dumpblk_16bit;
+ 		db->outblk  = dm9000_outblk_16bit;
+-- 
+2.19.2
+
