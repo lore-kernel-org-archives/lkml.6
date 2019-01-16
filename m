@@ -2,347 +2,137 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7596C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2145EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925462082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:44:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VFl25ER1"
+	by mail.kernel.org (Postfix) with ESMTP id EA57820859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbfAPAop (ORCPT
+        id S1727134AbfAPAyk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 19:44:45 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13887 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727017AbfAPAop (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 19:44:45 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c3e7e6b0001>; Tue, 15 Jan 2019 16:44:27 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 15 Jan 2019 16:44:42 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 15 Jan 2019 16:44:42 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 16 Jan
- 2019 00:44:42 +0000
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
-        <rcampbell@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
- <20190112020228.GA5059@redhat.com>
- <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz> <20190114172124.GA3702@redhat.com>
- <20190115080759.GC29524@quack2.suse.cz> <20190115171557.GB3696@redhat.com>
- <752839e6-6cb3-a6aa-94cb-63d3d4265934@nvidia.com>
- <20190115221205.GD3696@redhat.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <99110c19-3168-f6a9-fbde-0a0e57f67279@nvidia.com>
-Date:   Tue, 15 Jan 2019 16:44:41 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 19:54:40 -0500
+Received: from mga01.intel.com ([192.55.52.88]:54542 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727062AbfAPAyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 19:54:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2019 16:54:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,484,1539673200"; 
+   d="scan'208";a="126360118"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.14])
+  by orsmga002.jf.intel.com with ESMTP; 15 Jan 2019 16:54:38 -0800
+Date:   Tue, 15 Jan 2019 16:54:38 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Qian Cai <cai@lca.pw>, Paolo Bonzini <pbonzini@redhat.com>,
+        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kvm: add proper frame pointer logic for vmx
+Message-ID: <20190116005438.GA10795@linux.intel.com>
+References: <20190115064459.70513-1-cai@lca.pw>
+ <a6477022-bbc0-fc00-2c8e-75007b468d3f@lca.pw>
+ <5109b3c2-cac0-aa19-9cc7-801340afe198@redhat.com>
+ <7d6ae0bc-b7c7-63ea-ae94-4437a29a31b1@lca.pw>
+ <20190115190617.GD21622@linux.intel.com>
+ <20190115223849.apk6tcbl7f7kd5d4@treble>
 MIME-Version: 1.0
-In-Reply-To: <20190115221205.GD3696@redhat.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547599467; bh=EBsIyufukS8xf4IW03O1jaBj01hrHS9LnbIc19sfp3M=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=VFl25ER1ahDYHXEqGShHfWtV7Ef23yg2WmLLQTUzKfejYxH381s38N8PRi5IRUAIb
-         2SiKRAJqOwqMcHNHJBQqAIVhfpYtUXvurpyTmF1E/W31uLW09oSZwl/g/R+INt1jdZ
-         uRsIwcfkOXX9QM5Wj0GT+J22iVx/iX+wS0xs7A7aDutzvtEGQ/DMuov1TlQ0GZnDD2
-         MPGTUvLY2WCflHpJeev2pVNAwXWq0Ou7Q0FSXGH1UEvjkcETzqW31kvFtw3Oj3o/MY
-         7Qh6hSPmjFzTXxGQRAoJJAMa02IWt0jTBxE/7QRkCiodcVKSsPgMf5Vpys4+t4CZAt
-         wpbYJ9Pcyp32A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115223849.apk6tcbl7f7kd5d4@treble>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/15/19 2:12 PM, Jerome Glisse wrote:
-> On Tue, Jan 15, 2019 at 01:56:51PM -0800, John Hubbard wrote:
->> On 1/15/19 9:15 AM, Jerome Glisse wrote:
->>> On Tue, Jan 15, 2019 at 09:07:59AM +0100, Jan Kara wrote:
->>>> On Mon 14-01-19 12:21:25, Jerome Glisse wrote:
->>>>> On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
->>>>>> On Fri 11-01-19 19:06:08, John Hubbard wrote:
->>>>>>> On 1/11/19 6:46 PM, Jerome Glisse wrote:
->>>>>>>> On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
->>>>>>>> [...]
->>>>>>>>
->>>>>>>>>>> The other idea that you and Dan (and maybe others) pointed out was a debug
->>>>>>>>>>> option, which we'll certainly need in order to safely convert all the call
->>>>>>>>>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
->>>>>>>>>>> and put_user_page() can verify that the right call was made.)  That will be
->>>>>>>>>>> a separate patchset, as you recommended.
->>>>>>>>>>>
->>>>>>>>>>> I'll even go as far as recommending the page lock itself. I realize that this 
->>>>>>>>>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
->>>>>>>>>>> that this (below) has similar overhead to the notes above--but is *much* easier
->>>>>>>>>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
->>>>>>>>>>> then I'd recommend using another page bit to do the same thing.)
->>>>>>>>>>
->>>>>>>>>> Please page lock is pointless and it will not work for GUP fast. The above
->>>>>>>>>> scheme do work and is fine. I spend the day again thinking about all memory
->>>>>>>>>> ordering and i do not see any issues.
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> Why is it that page lock cannot be used for gup fast, btw?
->>>>>>>>
->>>>>>>> Well it can not happen within the preempt disable section. But after
->>>>>>>> as a post pass before GUP_fast return and after reenabling preempt then
->>>>>>>> it is fine like it would be for regular GUP. But locking page for GUP
->>>>>>>> is also likely to slow down some workload (with direct-IO).
->>>>>>>>
->>>>>>>
->>>>>>> Right, and so to crux of the matter: taking an uncontended page lock
->>>>>>> involves pretty much the same set of operations that your approach does.
->>>>>>> (If gup ends up contended with the page lock for other reasons than these
->>>>>>> paths, that seems surprising.) I'd expect very similar performance.
->>>>>>>
->>>>>>> But the page lock approach leads to really dramatically simpler code (and
->>>>>>> code reviews, let's not forget). Any objection to my going that
->>>>>>> direction, and keeping this idea as a Plan B? I think the next step will
->>>>>>> be, once again, to gather some performance metrics, so maybe that will
->>>>>>> help us decide.
->>>>>>
->>>>>> FWIW I agree that using page lock for protecting page pinning (and thus
->>>>>> avoid races with page_mkclean()) looks simpler to me as well and I'm not
->>>>>> convinced there will be measurable difference to the more complex scheme
->>>>>> with barriers Jerome suggests unless that page lock contended. Jerome is
->>>>>> right that you cannot just do lock_page() in gup_fast() path. There you
->>>>>> have to do trylock_page() and if that fails just bail out to the slow gup
->>>>>> path.
->>>>>>
->>>>>> Regarding places other than page_mkclean() that need to check pinned state:
->>>>>> Definitely page migration will want to check whether the page is pinned or
->>>>>> not so that it can deal differently with short-term page references vs
->>>>>> longer-term pins.
->>>>>>
->>>>>> Also there is one more idea I had how to record number of pins in the page:
->>>>>>
->>>>>> #define PAGE_PIN_BIAS	1024
->>>>>>
->>>>>> get_page_pin()
->>>>>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
->>>>>>
->>>>>> put_page_pin();
->>>>>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
->>>>>>
->>>>>> page_pinned(page)
->>>>>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
->>>>>>
->>>>>> This is pretty trivial scheme. It still gives us 22-bits for page pins
->>>>>> which should be plenty (but we should check for that and bail with error if
->>>>>> it would overflow). Also there will be no false negatives and false
->>>>>> positives only if there are more than 1024 non-page-table references to the
->>>>>> page which I expect to be rare (we might want to also subtract
->>>>>> hpage_nr_pages() for radix tree references to avoid excessive false
->>>>>> positives for huge pages although at this point I don't think they would
->>>>>> matter). Thoughts?
->>>>>
->>>>> Racing PUP are as likely to cause issues:
->>>>>
->>>>> CPU0                        | CPU1       | CPU2
->>>>>                             |            |
->>>>>                             | PUP()      |
->>>>>     page_pinned(page)       |            |
->>>>>       (page_count(page) -   |            |
->>>>>        page_mapcount(page)) |            |
->>>>>                             |            | GUP()
->>>>>
->>>>> So here the refcount snap-shot does not include the second GUP and
->>>>> we can have a false negative ie the page_pinned() will return false
->>>>> because of the PUP happening just before on CPU1 despite the racing
->>>>> GUP on CPU2 just after.
->>>>>
->>>>> I believe only either lock or memory ordering with barrier can
->>>>> guarantee that we do not miss GUP ie no false negative. Still the
->>>>> bias idea might be usefull as with it we should not need a flag.
->>>>
->>>> Right. We need similar synchronization (i.e., page lock or careful checks
->>>> with memory barriers) if we want to get a reliable page pin information.
->>>>
->>>>> So to make the above safe it would still need the page write back
->>>>> double check that i described so that GUP back-off if it raced with
->>>>> page_mkclean,clear_page_dirty_for_io and the fs write page call back
->>>>> which call test_set_page_writeback() (yes it is very unlikely but
->>>>> might still happen).
->>>>
->>>> Agreed. So with page lock it would actually look like:
->>>>
->>>> get_page_pin()
->>>> 	lock_page(page);
->>>> 	wait_for_stable_page();
->>>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
->>>> 	unlock_page(page);
->>>>
->>>> And if we perform page_pinned() check under page lock, then if
->>>> page_pinned() returned false, we are sure page is not and will not be
->>>> pinned until we drop the page lock (and also until page writeback is
->>>> completed if needed).
->>>>
->>
->> OK. Avoiding a new page flag, *and* avoiding the _mapcount auditing and
->> compensation steps, is a pretty major selling point. And if we do the above
->> locking, that does look correct to me. I wasn't able to visualize the
->> locking you had in mind, until just now (above), but now it is clear, 
->> thanks for spelling it out.
->>
->>>
->>> So i still can't see anything wrong with that idea, i had similar
->>> one in the past and diss-missed and i can't remember why :( But
->>> thinking over and over i do not see any issue beside refcount wrap
->>> around. Which is something that can happens today thought i don't
->>> think it can be use in an evil way and we can catch it and be
->>> loud about it.
->>>
->>> So i think the following would be bullet proof:
->>>
->>>
->>> get_page_pin()
->>>     atomic_add(&page->_refcount, PAGE_PIN_BIAS);
->>>     smp_wmb();
->>>     if (PageWriteback(page)) {
->>>         // back off
->>>         atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
->>>         // re-enable preempt if in fast
->>>         wait_on_page_writeback(page);
->>>         goto retry;
->>>     }
->>>
->>> put_page_pin();
->>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
->>>
->>> page_pinned(page)
->>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
->>>
->>> test_set_page_writeback()
->>>     ...
->>>     wb = TestSetPageWriteback(page)
->>
->> Minor point, but using PageWriteback for synchronization may rule out using
->> wait_for_stable_page(), because wait_for_stable_page() might not actually 
->> wait_on_page_writeback. Jan pointed out in the other thread, that we should
->> prefer wait_for_stable_page(). 
+On Tue, Jan 15, 2019 at 04:38:49PM -0600, Josh Poimboeuf wrote:
+> On Tue, Jan 15, 2019 at 11:06:17AM -0800, Sean Christopherson wrote:
+> > > I can see there are five options to solve it.
+> > > 
+> > > 1) always inline vmx_vcpu_run()
+> > > 2) always noinline vmx_vcpu_run()
+> > > 3) add -fdiable-ipa-fnsplit option to Makefile for vmx.o
+> > > 4) let STACK_FRAME_NON_STANDARD support part.* syntax.
+> > > 5) trim-down vmx_vcpu_run() even more to not causing splitting by GCC.
+> > > 
+> > > Option 1) and 2) seems give away the decision for user with
+> > > CONFIG_CC_OPTIMIZE_FOR_(PERFORMANCE/SIZE).
+> > > 
+> > > Option 3) prevents other functions there for splitting for optimization.
+> > > 
+> > > Option 4) and 5) seems tricky to implement.
+> > > 
+> > > I am not more leaning to 3) as only other fuction will miss splitting is
+> > > vmx_segment_access_rights().
+> > 
+> > Option 4) is the most correct, but "tricky" is an understatement.  Unless
+> > Josh is willing to pick up the task it'll likely have to wait.
+> > 
+> > There's actually a few more options:
+> > 
+> >  6) Replace "pop %rbp" in the vmx_vmenter() asm blob with an open-coded
+> >     equivalent, e.g. "mov [%rsp], %rbp; add $8, %rsp".  This runs an end-
+> >     around on objtool since objtool explicitly keys off "pop %rbp" and NOT
+> >     "mov ..., %rbp" (which is probably an objtool checking flaw?").
+> > 
+> >  7) Move the vmx_vmenter() asm blob and a few other lines of code into a
+> >     separate helper, e.g. __vmx_vcpu_run(), and mark that as having a
+> >     non-standard stack frame.
 > 
-> Yes, but wait_for_stable_page() has no page flag so nothing we can
-> synchronize against. So my advice would be:
->     if (PageWriteback(page)) {
->         wait_for_stable_page(page);
->         if (PageWriteback(page))
->             wait_for_write_back(page);
->     }
-> 
-> wait_for_stable_page() can optimize out the wait_for_write_back()
-> if it is safe to do so. So we can improve the above slightly too.
-> 
->>
->>>     smp_mb();
->>>     if (page_pinned(page)) {
->>>         // report page as pinned to caller of test_set_page_writeback()
->>>     }
->>>     ...
->>>
->>> This is text book memory barrier. Either get_page_pin() see racing
->>> test_set_page_writeback() or test_set_page_writeback() see racing GUP
->>>
->>>
->>
->> This approach is probably workable, but again, it's more complex and comes
->> without any lockdep support. Maybe it's faster, maybe not. Therefore, I want 
->> to use it as either "do this after everything is up and running and stable", 
->> or else as Plan B, if there is some performance implication from the page lock.
->>
->> Simple and correct first, then performance optimization, *if* necessary.
-> 
-> I do not like taking page lock while they are no good reasons to do so.
+> Do you mean moving the asm blob to a .S file instead of inline asm?  If
+> so, I think that's definitely a good idea.  It would be a nice cleanup,
+> regardless of the objtool false positive.
 
-There actually are very good reasons to do so! These include:
+No, just moving the inline asm to a separate function.  Moving the entire
+inline asm blob is annoying because it references a large number of struct
+offsets and doesn't solve the fundamental problem (more on this later).
 
-1) Simpler code that is less likely to have subtle bugs in the initial 
-   implementations.
+The VMLAUNCH and VMRESUME invocations themselves, i.e. the really nasty
+bits, have already been moved to a .S file (by the commit that exposed
+this warning).  That approach eliminates the worst of the conflicts with
+compiler optimizations without having to deal with exposing the struct
+offsets to asm.
 
-2) Pre-existing, known locking constructs that include instrumentation and
-   visibility.
+> That would allow vmx_vcpu_run() to be a "normal" C function which
+> objtool can validate (and also create ORC data for).  It would also
+> prevent future nasty GCC optimizations (which was why the __noclone was
+> needed in the first place).
 
-3) ...and all of the other goodness that comes from smaller and simpler code.
+Moving the inline asm to a separate function (on top of having a separate
+.S file for VMLAUNCH/VMRESUME) accomplishes sort of the same thing, i.e.
+vmx_vcpu_run() gets to be a normal function.  It's not as bulletproof
+from a tooling perspective, but odds are pretty good that all usage of
+STACK_FRAME_NON_STANDARD will break if the compiler manages to muck up
+the inline asm wrapper function.
 
-I'm not saying that those reasons necessarily prevail here, but it's not
-fair to say "there are no good reasons". Less code is still worth something,
-even in the kernel.
+And having a dedicated function for VMLAUNCH/VMRESUME is actually nice
+from a stack trace perspective.  The transition to/from the guest is by
+far the most likely source of faults, i.e. a stack trace that originates
+in vmx_vmenter() all but guarantees that a fault occurred on VM-Enter or
+immediately after VM-Exit.
 
-> The above is textbook memory barrier as explain in Documentations/
-> Forcing page lock for GUP will inevitably slow down some workload and
+> And also, I *think* objtool would no longer warn in that case, because
+> there would no longer be any calls in the function after popping %rbp.
+> Though if I'm wrong about that, I'd be glad to help fix the warning one
+> way or another.
 
-Such as?
+In the vmx_vcpu_run() case, warning on calls after "pop %rbp" is actually
+a false positive.  The POP restores the host's RBP, i.e. the stack frame,
+meaning all calls after the POP are ok.  The window where stack traces
+will go awry is between loading RBP with the guest's value and the POP to
+restore the host's stack frame, i.e. in this case "mov <guest_rbp>, %rbp"
+should trigger a warning irrespective of any calls.
 
-Here's the thing: if a workload is taking the page lock for some
-reason, and also competing with GUP, that's actually something that I worry
-about: what is changing in page state, while we're setting up GUP? Either
-we audit for that, or we let runtime locking rules (taking the page lock)
-keep us out of trouble in the first place.
-
-In other words, if there is a performance hit, it might very likely be
-due to a required synchronization that is taking place.
-
-> report for such can takes time to trickle down to mailing list and it
-> can takes time for people to actualy figure out that this are the GUP
-> changes that introduce such regression.
-> 
-> So if we could minimize performance regression with something like
-> memory barrier we should definitly do that.
-
-We do not yet know that the more complex memory barrier approach is actually
-faster. That's worth repeating.
-
-> 
-> Also i do not think that page lock has lock dep (as it is not using
-> any of the usual locking function) but that's just my memory of that
-> code.
-> 
-
-Lock page is pretty thoroughly instrumented. It uses wait_on_page_bit_common(),
-which in turn uses spin locks and more.
-
-The more I think about this, the more I want actual performance data to 
-justify anything involving the more complicated custom locking. So I think
-it's best to build the page lock based version, do some benchmarks, and see
-where we stand.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+I'm not saying it's actually worth updating objtool, rather that "fixing"
+the KVM issue by moving the inline asm to a dedicated .S file doesn't
+solve the fundamental problem that VM-Enter/VM-Exit needs to temporarily
+corrupt RBP.
