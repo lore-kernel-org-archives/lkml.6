@@ -2,126 +2,108 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE988C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0933C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DA42082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EEC62082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:28:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Q+xfrl/C"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fseoQLOv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388675AbfAPI1k (ORCPT
+        id S2388685AbfAPI2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:27:40 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34484 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388644AbfAPI1k (ORCPT
+        Wed, 16 Jan 2019 03:28:02 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46437 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388644AbfAPI2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 03:27:40 -0500
-Received: by mail-ot1-f68.google.com with SMTP id t5so824055otk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 00:27:39 -0800 (PST)
+        Wed, 16 Jan 2019 03:28:02 -0500
+Received: by mail-wr1-f66.google.com with SMTP id l9so5798118wrt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 00:28:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=CvTpH+csN9DqGl2AzefMvzmxWEH9AM8kFMvWr30SQkg=;
-        b=Q+xfrl/Csl5/C3SvvbmiXfuVCzMg7WgeoMzI1QyEHBFQ4YiQHjoc7k2FizfQ7hVqy2
-         mJ4DmRoSN1rVe5x++ZK5HIQyMsettB27vPRvLUkqgEY9PI843O2S4+IsGII5tVj6m89R
-         6eDemZSk3Nn+f6aTmdhRBi+KXh+OK1kpwKEkO+S9rVv/nMKskaMPIB3P3tYOkZFgwJ0j
-         cIjkkYSvN67y8qeQjjdXpxLjC1rcG7/TYe6SAwFY36jXFzT4tKb240f/E0BbJxa2BvPH
-         uzCUPk5YFt2CRbr4+02q5WYGkv3ecdAgMFbvF0U0ALHasRp2Cm1E4/1nvdcpPKWau/tB
-         BRTw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=qGf/4RtJ+w1K6Ynya8U+qD51awGcq+cek4wXVDUVu0I=;
+        b=fseoQLOv2AramW2V6tnpGIUtwhXVZOOIRyFdcxUeSFzXM8RbDXOj82Igq0DXmy6pgu
+         jZ1HAA5SqcOU7tDENphLSAjrm0GD1RQPzpPspvJHp60/9u5e8B3kAw9Mm8i08tXCeoes
+         3pdwEAsu1HLVDrqip0Jq2Mad/r5Nx+Jc/Ocnk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CvTpH+csN9DqGl2AzefMvzmxWEH9AM8kFMvWr30SQkg=;
-        b=fNj096auflbG0tJaqBOCGKp1DyWKgWGCDQjH/OGNNGXq3g8CLn1bL3Lwpw8gzPDJhQ
-         jD1joXU78MwI4cRNIjKCqWy+LyckvhgIGNxXbzh6aE9UzMTUlym8QPXtGHS8UL+iS6oM
-         VNx4e9lciq9gJ+6yw7VDR9d85h2MhLzenASlEcAbDa4fgbIYePprNhyifmrNNI16rcDR
-         DkF6gVuBVmwMK4HPtXRLV2hUdZONM0FyT2tfT8uDqK+J2An9gETf2nU3kAWN9C1k47vh
-         L9Uw5XCLPyFXJ3T3kQTuxEHHKzJ8mtHwULOCmrBjamrmG2Sdtk7hpTeFyg44FbZEGjQa
-         1dDw==
-X-Gm-Message-State: AJcUukemlHYncJ6yY7CKtjB+jYb0Vyknf9ZvJVzovjFqxDxlHiZMCTqF
-        r74obgDTI+zfPiRxNNdlXY2yLlHjti2lcQM3izL5kA==
-X-Google-Smtp-Source: ALg8bN7590Awde7Gc8fNKatQTRKO+PWrz+HvtVl0vHbMzTZ92j2OH3zVhA6KVbAm8jehfa0/yXCp3W2N8AsD7ZBBV2A=
-X-Received: by 2002:a9d:70d5:: with SMTP id w21mr4600874otj.301.1547627259383;
- Wed, 16 Jan 2019 00:27:39 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=qGf/4RtJ+w1K6Ynya8U+qD51awGcq+cek4wXVDUVu0I=;
+        b=iGyBqw1/XNy8JdylYZkAp3mmVr+MlcUilt6ZtJJTCsIp8SuAjVkVOLDEdekJyj1DIo
+         9smu04oALIlUsA34mi0lrUFGb22goslrgzCNg1FuYfvYePv8V91HY564cjlh/fEVguAO
+         gO7Vc47Kb6O50+nuSUovzzWuNHRoaIriY9zkkoyHAIsAjwo41zHrtnW/1FwiZgufI7aW
+         kfZ/kf7us2PHxHVefGiiz0Lmv0LKvltSPQ/qF8qsIHYj4SaUFlxV2XkQ8rWTJrgBgjCA
+         Pl9T07BqZuIErTKPY2LjqSGY6UyDyMpBFLWJl1KnIQUFC3SItEjVejWQ1kgFInCrJItq
+         mYJw==
+X-Gm-Message-State: AJcUukdjMMATlb444Foxb+3AJ6c5uCyvv4OVt7yWw8doCr+4C6kTqu0d
+        t6htM7nt+n2Kjv2MoXjhNLA/Ww==
+X-Google-Smtp-Source: ALg8bN7/LO4ytklWKby8tqnkHSkAYMLCjYaZqnza9awwOw2G4gXp7WnJKBD972I74641E6mSHgV5Wg==
+X-Received: by 2002:adf:f605:: with SMTP id t5mr6046715wrp.229.1547627280549;
+        Wed, 16 Jan 2019 00:28:00 -0800 (PST)
+Received: from dell ([2.27.35.149])
+        by smtp.gmail.com with ESMTPSA id o64sm31572522wmo.47.2019.01.16.00.27.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 00:27:59 -0800 (PST)
+Date:   Wed, 16 Jan 2019 08:27:58 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
+        Enric Balletbo Serra <eballetbo@gmail.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC v2 6/6] cros_ec: differentiate SCP from EC by feature bit.
+Message-ID: <20190116082758.GB23399@dell>
+References: <20190108052606.59426-1-pihsun@chromium.org>
+ <20190108052606.59426-7-pihsun@chromium.org>
 MIME-Version: 1.0
-References: <24594f8799f6aabdeaad3935fe36d832fb465148.1547615070.git.baolin.wang@linaro.org>
-In-Reply-To: <24594f8799f6aabdeaad3935fe36d832fb465148.1547615070.git.baolin.wang@linaro.org>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 16 Jan 2019 09:27:28 +0100
-Message-ID: <CAMpxmJWamqR23xsWQZgkPO7sOEWrvKER4niG2brndCZGpsZChw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: sprd: Fix the incorrect data register
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>, neo.hou@unisoc.com,
-        Mark Brown <broonie@kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108052606.59426-7-pihsun@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 16 sty 2019 o 06:06 Baolin Wang <baolin.wang@linaro.org> napisa=
-=C5=82(a):
->
-> From: Neo Hou <neo.hou@unisoc.com>
->
-> Since differnt type EICs have its own data register to read, thus fix the
-> incorrect data register.
->
-> Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Neo Hou <neo.hou@unisoc.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+On Tue, 08 Jan 2019, Pi-Hsun Shih wrote:
+
+> Since a SCP and EC would both exist on a system, and use the cros_ec_dev
+> driver, we need to differentiate between them for the userspace, or they
+> would both be registered at /dev/cros_ec, causing a conflict.
+> 
+> Cc: Enric Balletbo Serra <eballetbo@gmail.com>
+> Cc: Guenter Roeck <groeck@chromium.org>
+> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 > ---
 > Changes from v1:
->  - Add fix tag and CC stable.
+>  - New patch extracted from Patch 5.
 > ---
->  drivers/gpio/gpio-eic-sprd.c |   13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-> index e0d6a0a..257df59 100644
-> --- a/drivers/gpio/gpio-eic-sprd.c
-> +++ b/drivers/gpio/gpio-eic-sprd.c
-> @@ -180,7 +180,18 @@ static void sprd_eic_free(struct gpio_chip *chip, un=
-signed int offset)
->
->  static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
->  {
-> -       return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-> +       struct sprd_eic *sprd_eic =3D gpiochip_get_data(chip);
-> +
-> +       switch (sprd_eic->type) {
-> +       case SPRD_EIC_DEBOUNCE:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-> +       case SPRD_EIC_ASYNC:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_ASYNC_DATA);
-> +       case SPRD_EIC_SYNC:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_SYNC_DATA);
-> +       default:
-> +               return -ENOTSUPP;
-> +       }
->  }
->
->  static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int=
- offset)
-> --
-> 1.7.9.5
->
+>  drivers/mfd/cros_ec_dev.c            | 9 +++++++++
+>  include/linux/mfd/cros_ec.h          | 1 +
+>  include/linux/mfd/cros_ec_commands.h | 2 ++
+>  3 files changed, 12 insertions(+)
 
-Both applied for fixes, thanks!
+The (other) Chromium guys are usually pretty active and are more
+familiar with this hardware and group of (MFD/Platform) drivers than I
+am.  Thus I'm waiting for one of them to provide their thoughts before
+applying this.
 
-Bartosz
+Just make sure you Cc:ed enough of them!
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
