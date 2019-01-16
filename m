@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D95C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE87C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9E520859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28C2D20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:01:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403791AbfAPJBp (ORCPT
+        id S2391583AbfAPJBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 04:01:45 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49472 "EHLO huawei.com"
+        Wed, 16 Jan 2019 04:01:40 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2173 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391585AbfAPJBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 04:01:41 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1BD86CDD009F8DBFF527;
-        Wed, 16 Jan 2019 17:01:39 +0800 (CST)
+        id S1729385AbfAPJBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 04:01:37 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0F3E2FF9C56D09FE851F;
+        Wed, 16 Jan 2019 17:01:34 +0800 (CST)
 Received: from 138.huawei.com (10.175.124.28) by smtp.huawei.com (10.3.19.206)
- with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 16 Jan 2019 17:01:29
+ with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 16 Jan 2019 17:01:24
  +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Chao Yu <yuchao0@huawei.com>,
@@ -34,9 +34,9 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 5/5] staging: erofs: drop the extern prefix for function definitions
-Date:   Wed, 16 Jan 2019 16:59:56 +0800
-Message-ID: <20190116085956.21004-5-gaoxiang25@huawei.com>
+Subject: [PATCH 2/5] staging: erofs: localize erofs_workgroup_get
+Date:   Wed, 16 Jan 2019 16:59:53 +0800
+Message-ID: <20190116085956.21004-2-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20190116085956.21004-1-gaoxiang25@huawei.com>
 References: <20190116085956.21004-1-gaoxiang25@huawei.com>
@@ -49,147 +49,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix all `CHECK: extern prototypes should be avoided in .h files'
-reported by checkpatch.pl.
+Staticize erofs_workgroup_get since no external user
+out of utils.c directly calls erofs_workgroup_get.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/staging/erofs/internal.h  | 47 +++++++++++++++++----------------------
- drivers/staging/erofs/unzip_vle.h | 24 ++++++++++----------
- 2 files changed, 33 insertions(+), 38 deletions(-)
+ drivers/staging/erofs/internal.h | 21 ---------------------
+ drivers/staging/erofs/utils.c    | 19 +++++++++++++++++++
+ 2 files changed, 19 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 304c79d253ae..3a27c255950b 100644
+index 80cc09ea787d..967ec1a56726 100644
 --- a/drivers/staging/erofs/internal.h
 +++ b/drivers/staging/erofs/internal.h
-@@ -252,23 +252,20 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
+@@ -252,28 +252,7 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
  }
  #endif
  
--extern int erofs_workgroup_put(struct erofs_workgroup *grp);
--extern struct erofs_workgroup *erofs_find_workgroup(
--	struct super_block *sb, pgoff_t index, bool *tag);
+-static inline int erofs_workgroup_get(struct erofs_workgroup *grp, int *ocnt)
+-{
+-	int o;
 -
--extern int erofs_register_workgroup(struct super_block *sb,
--	struct erofs_workgroup *grp, bool tag);
+-repeat:
+-	o = erofs_wait_on_workgroup_freezed(grp);
 -
--extern unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
--	unsigned long nr_shrink, bool cleanup);
+-	if (unlikely(o <= 0))
+-		return -1;
 -
--extern void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
-+int erofs_workgroup_put(struct erofs_workgroup *grp);
-+struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
-+					     pgoff_t index, bool *tag);
-+int erofs_register_workgroup(struct super_block *sb,
-+			     struct erofs_workgroup *grp, bool tag);
-+unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
-+				       unsigned long nr_shrink, bool cleanup);
-+void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
- 
- #ifdef EROFS_FS_HAS_MANAGED_CACHE
--extern int erofs_try_to_free_all_cached_pages(struct erofs_sb_info *sbi,
--	struct erofs_workgroup *egrp);
--extern int erofs_try_to_free_cached_page(struct address_space *mapping,
--	struct page *page);
-+int erofs_try_to_free_all_cached_pages(struct erofs_sb_info *sbi,
-+				       struct erofs_workgroup *egrp);
-+int erofs_try_to_free_cached_page(struct address_space *mapping,
-+				  struct page *page);
- 
- #define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
- #else
-@@ -495,8 +492,8 @@ static inline void __submit_bio(struct bio *bio, unsigned op, unsigned op_flags)
- #define EROFS_IO_MAX_RETRIES_NOFAIL	CONFIG_EROFS_FS_IO_MAX_RETRIES
- #endif
- 
--extern struct page *__erofs_get_meta_page(struct super_block *sb,
--	erofs_blk_t blkaddr, bool prio, bool nofail);
-+struct page *__erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr,
-+				   bool prio, bool nofail);
- 
- static inline struct page *erofs_get_meta_page(struct super_block *sb,
- 	erofs_blk_t blkaddr, bool prio)
-@@ -510,7 +507,7 @@ static inline struct page *erofs_get_meta_page_nofail(struct super_block *sb,
- 	return __erofs_get_meta_page(sb, blkaddr, prio, true);
- }
- 
--extern int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
-+int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
- 
- static inline struct page *
- erofs_get_inline_page(struct inode *inode,
-@@ -530,9 +527,6 @@ static inline unsigned long erofs_inode_hash(erofs_nid_t nid)
- #endif
- }
- 
--extern struct inode *erofs_iget(struct super_block *sb,
--	erofs_nid_t nid, bool dir);
+-	if (unlikely(atomic_cmpxchg(&grp->refcount, o, o + 1) != o))
+-		goto repeat;
 -
- extern const struct inode_operations erofs_generic_iops;
- extern const struct inode_operations erofs_symlink_iops;
- extern const struct inode_operations erofs_fast_symlink_iops;
-@@ -547,6 +541,8 @@ static inline bool is_inode_fast_symlink(struct inode *inode)
- 	return inode->i_op == &erofs_fast_symlink_iops;
- }
+-	*ocnt = o;
+-	return 0;
+-}
+-
+-#define __erofs_workgroup_get(grp)	atomic_inc(&(grp)->refcount)
+-#define __erofs_workgroup_put(grp)	atomic_dec(&(grp)->refcount)
+-
+ extern int erofs_workgroup_put(struct erofs_workgroup *grp);
+-
+ extern struct erofs_workgroup *erofs_find_workgroup(
+ 	struct super_block *sb, pgoff_t index, bool *tag);
  
-+struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid, bool dir);
+diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
+index aed211cd5875..d24945aab133 100644
+--- a/drivers/staging/erofs/utils.c
++++ b/drivers/staging/erofs/utils.c
+@@ -31,6 +31,25 @@ struct page *erofs_allocpage(struct list_head *pool, gfp_t gfp)
+ static atomic_long_t erofs_global_shrink_cnt;
+ 
+ #ifdef CONFIG_EROFS_FS_ZIP
++#define __erofs_workgroup_get(grp)	atomic_inc(&(grp)->refcount)
++#define __erofs_workgroup_put(grp)	atomic_dec(&(grp)->refcount)
 +
- /* namei.c */
- extern const struct inode_operations erofs_dir_iops;
- 
-@@ -584,13 +580,12 @@ static inline void erofs_vunmap(const void *mem, unsigned int count)
- }
- 
- /* utils.c */
--extern struct page *erofs_allocpage(struct list_head *pool, gfp_t gfp);
--
--extern void erofs_register_super(struct super_block *sb);
--extern void erofs_unregister_super(struct super_block *sb);
--
- extern struct shrinker erofs_shrinker_info;
- 
-+struct page *erofs_allocpage(struct list_head *pool, gfp_t gfp);
-+void erofs_register_super(struct super_block *sb);
-+void erofs_unregister_super(struct super_block *sb);
++static int erofs_workgroup_get(struct erofs_workgroup *grp, int *ocnt)
++{
++	int o;
 +
- #ifndef lru_to_page
- #define lru_to_page(head) (list_entry((head)->prev, struct page, lru))
- #endif
-diff --git a/drivers/staging/erofs/unzip_vle.h b/drivers/staging/erofs/unzip_vle.h
-index 5a4e1b62c0d1..9dafa8dc712c 100644
---- a/drivers/staging/erofs/unzip_vle.h
-+++ b/drivers/staging/erofs/unzip_vle.h
-@@ -212,18 +212,18 @@ static inline void z_erofs_onlinepage_endio(struct page *page)
- #define Z_EROFS_VLE_VMAP_GLOBAL_PAGES	2048
++repeat:
++	o = erofs_wait_on_workgroup_freezed(grp);
++
++	if (unlikely(o <= 0))
++		return -1;
++
++	if (unlikely(atomic_cmpxchg(&grp->refcount, o, o + 1) != o))
++		goto repeat;
++
++	*ocnt = o;
++	return 0;
++}
  
- /* unzip_vle_lz4.c */
--extern int z_erofs_vle_plain_copy(struct page **compressed_pages,
--	unsigned clusterpages, struct page **pages,
--	unsigned nr_pages, unsigned short pageofs);
--
--extern int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
--	unsigned clusterpages, struct page **pages,
--	unsigned outlen, unsigned short pageofs,
--	void (*endio)(struct page *));
--
--extern int z_erofs_vle_unzip_vmap(struct page **compressed_pages,
--	unsigned clusterpages, void *vaddr, unsigned llen,
--	unsigned short pageofs, bool overlapped);
-+int z_erofs_vle_plain_copy(struct page **compressed_pages,
-+			   unsigned int clusterpages, struct page **pages,
-+			   unsigned int nr_pages, unsigned short pageofs);
-+int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
-+				  unsigned int clusterpages,
-+				  struct page **pages, unsigned int outlen,
-+				  unsigned short pageofs,
-+				  void (*endio)(struct page *));
-+int z_erofs_vle_unzip_vmap(struct page **compressed_pages,
-+			   unsigned int clusterpages,
-+			   void *vaddr, unsigned int llen,
-+			   unsigned short pageofs, bool overlapped);
- 
- #endif
- 
+ struct erofs_workgroup *erofs_find_workgroup(
+ 	struct super_block *sb, pgoff_t index, bool *tag)
 -- 
 2.14.4
 
