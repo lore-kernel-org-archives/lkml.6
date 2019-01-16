@@ -2,135 +2,419 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BIGNUM_EMAILS,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C41C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDF5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A5420866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3374F20883
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbfAPBwF (ORCPT
+        id S1727843AbfAPB4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 20:52:05 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17150 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726123AbfAPBwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 20:52:05 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B5B3FFD5D08F10C4A792;
-        Wed, 16 Jan 2019 09:52:03 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 16 Jan 2019 09:51:57 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <kt0755@gmail.com>, <dan.carpenter@oracle.com>,
-        <ebiggers@google.com>, Chao Yu <yuchao0@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to initialize variable to avoid UBSAN/smatch warning
-Date:   Wed, 16 Jan 2019 09:51:28 +0800
-Message-ID: <20190116015128.112292-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Tue, 15 Jan 2019 20:56:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726123AbfAPB4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 20:56:17 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AE71A6446C;
+        Wed, 16 Jan 2019 01:56:16 +0000 (UTC)
+Received: from redhat.com (ovpn-120-58.rdu2.redhat.com [10.10.120.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4ABC65DEE1;
+        Wed, 16 Jan 2019 01:56:13 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 20:56:11 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190116015610.GH3696@redhat.com>
+References: <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz>
+ <20190114172124.GA3702@redhat.com>
+ <20190115080759.GC29524@quack2.suse.cz>
+ <20190115171557.GB3696@redhat.com>
+ <752839e6-6cb3-a6aa-94cb-63d3d4265934@nvidia.com>
+ <20190115221205.GD3696@redhat.com>
+ <99110c19-3168-f6a9-fbde-0a0e57f67279@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <99110c19-3168-f6a9-fbde-0a0e57f67279@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Jan 2019 01:56:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Dan Carpenter as below:
+On Tue, Jan 15, 2019 at 04:44:41PM -0800, John Hubbard wrote:
+> On 1/15/19 2:12 PM, Jerome Glisse wrote:
+> > On Tue, Jan 15, 2019 at 01:56:51PM -0800, John Hubbard wrote:
+> >> On 1/15/19 9:15 AM, Jerome Glisse wrote:
+> >>> On Tue, Jan 15, 2019 at 09:07:59AM +0100, Jan Kara wrote:
+> >>>> On Mon 14-01-19 12:21:25, Jerome Glisse wrote:
+> >>>>> On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
+> >>>>>> On Fri 11-01-19 19:06:08, John Hubbard wrote:
+> >>>>>>> On 1/11/19 6:46 PM, Jerome Glisse wrote:
+> >>>>>>>> On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
+> >>>>>>>> [...]
+> >>>>>>>>
+> >>>>>>>>>>> The other idea that you and Dan (and maybe others) pointed out was a debug
+> >>>>>>>>>>> option, which we'll certainly need in order to safely convert all the call
+> >>>>>>>>>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
+> >>>>>>>>>>> and put_user_page() can verify that the right call was made.)  That will be
+> >>>>>>>>>>> a separate patchset, as you recommended.
+> >>>>>>>>>>>
+> >>>>>>>>>>> I'll even go as far as recommending the page lock itself. I realize that this 
+> >>>>>>>>>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
+> >>>>>>>>>>> that this (below) has similar overhead to the notes above--but is *much* easier
+> >>>>>>>>>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
+> >>>>>>>>>>> then I'd recommend using another page bit to do the same thing.)
+> >>>>>>>>>>
+> >>>>>>>>>> Please page lock is pointless and it will not work for GUP fast. The above
+> >>>>>>>>>> scheme do work and is fine. I spend the day again thinking about all memory
+> >>>>>>>>>> ordering and i do not see any issues.
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Why is it that page lock cannot be used for gup fast, btw?
+> >>>>>>>>
+> >>>>>>>> Well it can not happen within the preempt disable section. But after
+> >>>>>>>> as a post pass before GUP_fast return and after reenabling preempt then
+> >>>>>>>> it is fine like it would be for regular GUP. But locking page for GUP
+> >>>>>>>> is also likely to slow down some workload (with direct-IO).
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> Right, and so to crux of the matter: taking an uncontended page lock
+> >>>>>>> involves pretty much the same set of operations that your approach does.
+> >>>>>>> (If gup ends up contended with the page lock for other reasons than these
+> >>>>>>> paths, that seems surprising.) I'd expect very similar performance.
+> >>>>>>>
+> >>>>>>> But the page lock approach leads to really dramatically simpler code (and
+> >>>>>>> code reviews, let's not forget). Any objection to my going that
+> >>>>>>> direction, and keeping this idea as a Plan B? I think the next step will
+> >>>>>>> be, once again, to gather some performance metrics, so maybe that will
+> >>>>>>> help us decide.
+> >>>>>>
+> >>>>>> FWIW I agree that using page lock for protecting page pinning (and thus
+> >>>>>> avoid races with page_mkclean()) looks simpler to me as well and I'm not
+> >>>>>> convinced there will be measurable difference to the more complex scheme
+> >>>>>> with barriers Jerome suggests unless that page lock contended. Jerome is
+> >>>>>> right that you cannot just do lock_page() in gup_fast() path. There you
+> >>>>>> have to do trylock_page() and if that fails just bail out to the slow gup
+> >>>>>> path.
+> >>>>>>
+> >>>>>> Regarding places other than page_mkclean() that need to check pinned state:
+> >>>>>> Definitely page migration will want to check whether the page is pinned or
+> >>>>>> not so that it can deal differently with short-term page references vs
+> >>>>>> longer-term pins.
+> >>>>>>
+> >>>>>> Also there is one more idea I had how to record number of pins in the page:
+> >>>>>>
+> >>>>>> #define PAGE_PIN_BIAS	1024
+> >>>>>>
+> >>>>>> get_page_pin()
+> >>>>>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> >>>>>>
+> >>>>>> put_page_pin();
+> >>>>>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> >>>>>>
+> >>>>>> page_pinned(page)
+> >>>>>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+> >>>>>>
+> >>>>>> This is pretty trivial scheme. It still gives us 22-bits for page pins
+> >>>>>> which should be plenty (but we should check for that and bail with error if
+> >>>>>> it would overflow). Also there will be no false negatives and false
+> >>>>>> positives only if there are more than 1024 non-page-table references to the
+> >>>>>> page which I expect to be rare (we might want to also subtract
+> >>>>>> hpage_nr_pages() for radix tree references to avoid excessive false
+> >>>>>> positives for huge pages although at this point I don't think they would
+> >>>>>> matter). Thoughts?
+> >>>>>
+> >>>>> Racing PUP are as likely to cause issues:
+> >>>>>
+> >>>>> CPU0                        | CPU1       | CPU2
+> >>>>>                             |            |
+> >>>>>                             | PUP()      |
+> >>>>>     page_pinned(page)       |            |
+> >>>>>       (page_count(page) -   |            |
+> >>>>>        page_mapcount(page)) |            |
+> >>>>>                             |            | GUP()
+> >>>>>
+> >>>>> So here the refcount snap-shot does not include the second GUP and
+> >>>>> we can have a false negative ie the page_pinned() will return false
+> >>>>> because of the PUP happening just before on CPU1 despite the racing
+> >>>>> GUP on CPU2 just after.
+> >>>>>
+> >>>>> I believe only either lock or memory ordering with barrier can
+> >>>>> guarantee that we do not miss GUP ie no false negative. Still the
+> >>>>> bias idea might be usefull as with it we should not need a flag.
+> >>>>
+> >>>> Right. We need similar synchronization (i.e., page lock or careful checks
+> >>>> with memory barriers) if we want to get a reliable page pin information.
+> >>>>
+> >>>>> So to make the above safe it would still need the page write back
+> >>>>> double check that i described so that GUP back-off if it raced with
+> >>>>> page_mkclean,clear_page_dirty_for_io and the fs write page call back
+> >>>>> which call test_set_page_writeback() (yes it is very unlikely but
+> >>>>> might still happen).
+> >>>>
+> >>>> Agreed. So with page lock it would actually look like:
+> >>>>
+> >>>> get_page_pin()
+> >>>> 	lock_page(page);
+> >>>> 	wait_for_stable_page();
+> >>>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> >>>> 	unlock_page(page);
+> >>>>
+> >>>> And if we perform page_pinned() check under page lock, then if
+> >>>> page_pinned() returned false, we are sure page is not and will not be
+> >>>> pinned until we drop the page lock (and also until page writeback is
+> >>>> completed if needed).
+> >>>>
+> >>
+> >> OK. Avoiding a new page flag, *and* avoiding the _mapcount auditing and
+> >> compensation steps, is a pretty major selling point. And if we do the above
+> >> locking, that does look correct to me. I wasn't able to visualize the
+> >> locking you had in mind, until just now (above), but now it is clear, 
+> >> thanks for spelling it out.
+> >>
+> >>>
+> >>> So i still can't see anything wrong with that idea, i had similar
+> >>> one in the past and diss-missed and i can't remember why :( But
+> >>> thinking over and over i do not see any issue beside refcount wrap
+> >>> around. Which is something that can happens today thought i don't
+> >>> think it can be use in an evil way and we can catch it and be
+> >>> loud about it.
+> >>>
+> >>> So i think the following would be bullet proof:
+> >>>
+> >>>
+> >>> get_page_pin()
+> >>>     atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> >>>     smp_wmb();
+> >>>     if (PageWriteback(page)) {
+> >>>         // back off
+> >>>         atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> >>>         // re-enable preempt if in fast
+> >>>         wait_on_page_writeback(page);
+> >>>         goto retry;
+> >>>     }
+> >>>
+> >>> put_page_pin();
+> >>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> >>>
+> >>> page_pinned(page)
+> >>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+> >>>
+> >>> test_set_page_writeback()
+> >>>     ...
+> >>>     wb = TestSetPageWriteback(page)
+> >>
+> >> Minor point, but using PageWriteback for synchronization may rule out using
+> >> wait_for_stable_page(), because wait_for_stable_page() might not actually 
+> >> wait_on_page_writeback. Jan pointed out in the other thread, that we should
+> >> prefer wait_for_stable_page(). 
+> > 
+> > Yes, but wait_for_stable_page() has no page flag so nothing we can
+> > synchronize against. So my advice would be:
+> >     if (PageWriteback(page)) {
+> >         wait_for_stable_page(page);
+> >         if (PageWriteback(page))
+> >             wait_for_write_back(page);
+> >     }
+> > 
+> > wait_for_stable_page() can optimize out the wait_for_write_back()
+> > if it is safe to do so. So we can improve the above slightly too.
+> > 
+> >>
+> >>>     smp_mb();
+> >>>     if (page_pinned(page)) {
+> >>>         // report page as pinned to caller of test_set_page_writeback()
+> >>>     }
+> >>>     ...
+> >>>
+> >>> This is text book memory barrier. Either get_page_pin() see racing
+> >>> test_set_page_writeback() or test_set_page_writeback() see racing GUP
+> >>>
+> >>>
+> >>
+> >> This approach is probably workable, but again, it's more complex and comes
+> >> without any lockdep support. Maybe it's faster, maybe not. Therefore, I want 
+> >> to use it as either "do this after everything is up and running and stable", 
+> >> or else as Plan B, if there is some performance implication from the page lock.
+> >>
+> >> Simple and correct first, then performance optimization, *if* necessary.
+> > 
+> > I do not like taking page lock while they are no good reasons to do so.
+> 
+> There actually are very good reasons to do so! These include:
+> 
+> 1) Simpler code that is less likely to have subtle bugs in the initial 
+>    implementations.
 
-The patch df634f444ee9: "f2fs: use rb_*_cached friends" from Oct 4,
-2018, leads to the following static checker warning:
+It is not simpler, memory barrier is 1 line of code ...
 
-	fs/f2fs/extent_cache.c:606 f2fs_update_extent_tree_range()
-	error: uninitialized symbol 'leftmost'.
+> 
+> 2) Pre-existing, known locking constructs that include instrumentation and
+>    visibility.
 
-And also Eric Biggers, and Kyungtae Kim reported, there is an UBSAN
-warning described as below:
+Like i said i don't think page lock benefit from those at it is
+very struct page specific. I need to check what is available but
+you definitly do not get all the bell and whistle you get with
+regular lock.
 
-We report a bug in linux-4.20.2: "UBSAN: Undefined behaviour in
-fs/f2fs/extent_cache.c"
+> 
+> 3) ...and all of the other goodness that comes from smaller and simpler code.
+> 
+> I'm not saying that those reasons necessarily prevail here, but it's not
+> fair to say "there are no good reasons". Less code is still worth something,
+> even in the kernel.
 
-kernel config: https://kt0755.github.io/etc/config_v4.20_stable
-repro: https://kt0755.github.io/etc/repro.4a3e7.c (f2fs is mounted on
-/mnt/f2fs/)
+Again memory barrier is just one line of code, i do not see lock as
+something simpler than that.
 
-This arose in f2fs_update_extent_tree_range (fs/f2fs/extent_cache.c:605).
-It seems that, for some reason, its last argument became "24"
-although that was supposed to be bool type.
+> 
+> > The above is textbook memory barrier as explain in Documentations/
+> > Forcing page lock for GUP will inevitably slow down some workload and
+> 
+> Such as?
+> 
+> Here's the thing: if a workload is taking the page lock for some
+> reason, and also competing with GUP, that's actually something that I worry
+> about: what is changing in page state, while we're setting up GUP? Either
+> we audit for that, or we let runtime locking rules (taking the page lock)
+> keep us out of trouble in the first place.
+> 
+> In other words, if there is a performance hit, it might very likely be
+> due to a required synchronization that is taking place.
 
-=========================================
-UBSAN: Undefined behaviour in fs/f2fs/extent_cache.c:605:4
-load of value 24 is not a valid value for type '_Bool'
-CPU: 0 PID: 6774 Comm: syz-executor5 Not tainted 4.20.2 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xb1/0x118 lib/dump_stack.c:113
- ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
- __ubsan_handle_load_invalid_value+0x17a/0x1be lib/ubsan.c:457
- f2fs_update_extent_tree_range+0x1d4a/0x1d50 fs/f2fs/extent_cache.c:605
- f2fs_update_extent_cache+0x2b6/0x350 fs/f2fs/extent_cache.c:804
- f2fs_update_data_blkaddr+0x61/0x70 fs/f2fs/data.c:656
- f2fs_outplace_write_data+0x1d6/0x4b0 fs/f2fs/segment.c:3140
- f2fs_convert_inline_page+0x86d/0x2060 fs/f2fs/inline.c:163
- f2fs_convert_inline_inode+0x6b5/0xad0 fs/f2fs/inline.c:208
- f2fs_preallocate_blocks+0x78b/0xb00 fs/f2fs/data.c:982
- f2fs_file_write_iter+0x31b/0xf40 fs/f2fs/file.c:3062
- call_write_iter include/linux/fs.h:1857 [inline]
- new_sync_write fs/read_write.c:474 [inline]
- __vfs_write+0x538/0x6e0 fs/read_write.c:487
- vfs_write+0x1b3/0x520 fs/read_write.c:549
- ksys_write+0xde/0x1c0 fs/read_write.c:598
- __do_sys_write fs/read_write.c:610 [inline]
- __se_sys_write fs/read_write.c:607 [inline]
- __x64_sys_write+0x7e/0xc0 fs/read_write.c:607
- do_syscall_64+0xbe/0x4f0 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4497b9
-Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f1ea15edc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f1ea15ee6cc RCX: 00000000004497b9
-RDX: 0000000000001000 RSI: 0000000020000140 RDI: 0000000000000013
-RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 000000000000bb50 R14: 00000000006f4bf0 R15: 00007f1ea15ee700
-=========================================
+You need to take the page lock for several thing, top of my mind: insert a
+mapping, migrate, truncate, swapping, reverse map, mlock, cgroup, madvise,
+... so if GUP now also need it then you force synchronization with all
+that for direct-IO.
 
-As I checked, this uninitialized variable won't cause extent cache
-corruption, but in order to avoid such kind of warning of both UBSAN
-and smatch, fix to initialize related variable.
+You do not need to synchronize with most of the above as they do not care
+about GUP. In fact only write back path need synchronization i can not
+think of anything else that would need to synchronize with GUP.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reported-by: Eric Biggers <ebiggers@google.com>
-Reported-by: Kyungtae Kim <kt0755@gmail.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/extent_cache.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > report for such can takes time to trickle down to mailing list and it
+> > can takes time for people to actualy figure out that this are the GUP
+> > changes that introduce such regression.
+> > 
+> > So if we could minimize performance regression with something like
+> > memory barrier we should definitly do that.
+> 
+> We do not yet know that the more complex memory barrier approach is actually
+> faster. That's worth repeating.
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 1cb0fcc67d2d..caf77fe8ac07 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -506,7 +506,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 	unsigned int end = fofs + len;
- 	unsigned int pos = (unsigned int)fofs;
- 	bool updated = false;
--	bool leftmost;
-+	bool leftmost = false;
- 
- 	if (!et)
- 		return;
--- 
-2.18.0.rc1
+I would be surprise if a memory barrier was slower than a lock. Lock
+can contends, memory barrier do not contend. Lock require atomic
+operation and thus implied barrier so lock should translate into some-
+thing slower than a memory barrier alone.
 
+
+> > Also i do not think that page lock has lock dep (as it is not using
+> > any of the usual locking function) but that's just my memory of that
+> > code.
+> > 
+> 
+> Lock page is pretty thoroughly instrumented. It uses wait_on_page_bit_common(),
+> which in turn uses spin locks and more.
+
+It does not gives you all the bell and whistle you get with spinlock
+debug. The spinlock taken in wait_on_page_bit_common() is for the
+waitqueue the page belongs to so you only get debuging on that not
+on the individual page lock bit. So i do not think there is anything
+that would help debugging page lock like double unlock or dead lock.
+
+
+> The more I think about this, the more I want actual performance data to 
+> justify anything involving the more complicated custom locking. So I think
+> it's best to build the page lock based version, do some benchmarks, and see
+> where we stand.
+
+This is not custom locking, we do employ memory barrier in several
+places already. Memory barrier is something quite common in the kernel
+and we should favor it when there is no need for a lock.
+
+Memory barrier never contend so you know you will never have lock
+contention ... so memory barrier can only be faster than anything
+with lock. The contrary would surprise me.
+
+Using lock and believing it will be as fast as memory barrier is
+is hopping that you will never contend on that lock. So i would
+rather get proof that GUP will never contend on page lock.
+
+
+To make it clear.
+
+Lock code:
+    GUP()
+        ...
+        lock_page(page);
+        if (PageWriteback(page)) {
+            unlock_page(page);
+            wait_stable_page(page);
+            goto retry;
+        }
+        atomic_add(page->refcount, PAGE_PIN_BIAS);
+        unlock_page(page);
+
+    test_set_page_writeback()
+        bool pinned = false;
+        ...
+        pinned = page_is_pin(page); // could be after TestSetPageWriteback
+        TestSetPageWriteback(page);
+        ...
+        return pinned;
+
+Memory barrier:
+    GUP()
+        ...
+        atomic_add(page->refcount, PAGE_PIN_BIAS);
+        smp_mb();
+        if (PageWriteback(page)) {
+            atomic_add(page->refcount, -PAGE_PIN_BIAS);
+            wait_stable_page(page);
+            goto retry;
+        }
+
+    test_set_page_writeback()
+        bool pinned = false;
+        ...
+        TestSetPageWriteback(page);
+        smp_wmb();
+        pinned = page_is_pin(page);
+        ...
+        return pinned;
+
+
+One is not more complex than the other. One can contend, the other
+will _never_ contend.
+
+Cheers,
+Jérôme
