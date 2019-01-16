@@ -2,95 +2,91 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F55BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62729C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ECC520675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:29:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="liDWXINg"
+	by mail.kernel.org (Postfix) with ESMTP id 31E5820675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbfAPV31 (ORCPT
+        id S1730227AbfAPV3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:29:27 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43105 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728230AbfAPV30 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:29:26 -0500
-Received: by mail-pf1-f195.google.com with SMTP id w73so3668357pfk.10
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 13:29:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:user-agent
-         :in-reply-to:references:cc:to:message-id:from:date;
-        bh=EH7F+dVcJha4LEKxS3/EvAsrocfL7SIXMCxxyiJdoRk=;
-        b=liDWXINg0EpU9NRy7J3GYh/yGTRiPYoEUeKP7LrPGlYpp9ySi/AIwD2XfLbbTc6RSk
-         5sJ3ay4tPUEutdbQYM7ZdVE1/HiwlKlHJ1MmdcVC0Sed3a3PyC5CPzViqR2kwjiWboNw
-         U7ezaojZ480O+4BBou9SGHbJsff4W2TmiA/To=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
-        bh=EH7F+dVcJha4LEKxS3/EvAsrocfL7SIXMCxxyiJdoRk=;
-        b=Wg6Fned5+kq8H/PfCwci4DB/7qudsPOUsyBDTNyY4wBidwpEej0m4QmkqalT9SI/pm
-         goQgWR7MTrUDQL7nnftk7O8kjZ6wjFmTKYNAxGEaw4vJIBxmfcEhGD4BbW9CxKhXM7cf
-         COEJT4A420NGzdVyjeRALARIHeZWZ6/doynEcc4qG60cRWPaPvtpxP4A7ZvwxIGqreaQ
-         LQOX8US9Zua/iVEB3/moxumc43MDGrTYb4wcvp3CFaO4FA+c29KaUqn1qGcxKlipMsDl
-         K1xgoVnFY7QqaXJeBs3KdW5f3BKKYPIijmkQkoneC87pTuLuFhpCRKs/r3+2CHjcevaz
-         kw7g==
-X-Gm-Message-State: AJcUukc53SBYybltOtxy3xBb1MQdwJIon7DvHPHrKp3yB5O5rZz4O044
-        5z4fS4WmNG0RG+EA/h3qEPzorw==
-X-Google-Smtp-Source: ALg8bN561A5Bk4WZHHX8/BKss0LRMBpODvsOZtSTFJWVp8qfohz8sPohlvcgwkoq0t2/FKDn1ga4Bg==
-X-Received: by 2002:a63:e302:: with SMTP id f2mr10904195pgh.320.1547674166258;
-        Wed, 16 Jan 2019 13:29:26 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id u69sm10345551pfj.116.2019.01.16.13.29.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 13:29:25 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 16 Jan 2019 16:29:31 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46533 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730120AbfAPV32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:29:28 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 05F3B207AC; Wed, 16 Jan 2019 22:29:26 +0100 (CET)
+Received: from localhost (lfbn-lyo-1-59-119.w86-202.abo.wanadoo.fr [86.202.150.119])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CFEB0206A6;
+        Wed, 16 Jan 2019 22:29:25 +0100 (CET)
+Date:   Wed, 16 Jan 2019 22:29:26 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     ben.dooks@codethink.co.uk, linux-amlogic@lists.infradead.org,
+        linux-rtc@vger.kernel.org, a.zummo@towertech.it,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ccaione@baylibre.com
+Subject: Re: [PATCH v5 2/2] rtc: support for the Amlogic Meson RTC
+Message-ID: <20190116212926.GG2627@piout.net>
+References: <20181202220847.24364-1-martin.blumenstingl@googlemail.com>
+ <20181202220847.24364-3-martin.blumenstingl@googlemail.com>
+ <85aa8e12-0bca-6432-e1a8-0faceff1dd5e@codethink.co.uk>
+ <CAFBinCBDUxTc+ofCYm-zEeiFdU90U6DQOkX4B659q=MvRK64fg@mail.gmail.com>
+ <CAFBinCAY7+-zA5-hY6oXmFz2i8aj9wFJsb-HBbKt_Swn9BtMMg@mail.gmail.com>
+ <CAFBinCCKeb+wGJ4h_PfsT-Ms8AtLmNSwStTpeMqA3shkySjGkg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 2/8] dt-bindings: phy: qcom-ufs: Add resets property
-User-Agent: alot/0.8
-In-Reply-To: <20190111230129.127037-3-evgreen@chromium.org>
-References: <20190111230129.127037-1-evgreen@chromium.org> <20190111230129.127037-3-evgreen@chromium.org>
-Cc:     Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-To:     Andy Gross <andy.gross@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-Message-ID: <154767416474.169631.9323736638860679135@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-Date:   Wed, 16 Jan 2019 13:29:24 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFBinCCKeb+wGJ4h_PfsT-Ms8AtLmNSwStTpeMqA3shkySjGkg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2019-01-11 15:01:23)
-> diff --git a/Documentation/devicetree/bindings/ufs/ufs-qcom.txt b/Documen=
-tation/devicetree/bindings/ufs/ufs-qcom.txt
-> index 21d9a93db2e97..985f5e99ab332 100644
-> --- a/Documentation/devicetree/bindings/ufs/ufs-qcom.txt
-> +++ b/Documentation/devicetree/bindings/ufs/ufs-qcom.txt
-> @@ -29,6 +29,7 @@ Optional properties:
->  - vdda-pll-max-microamp : specifies max. load that can be drawn from pll=
- supply
->  - vddp-ref-clk-supply   : phandle to UFS device ref_clk pad power supply
->  - vddp-ref-clk-max-microamp : specifies max. load that can be drawn from=
- this supply
-> +- resets : specifies the PHY reset in the UFS controller
+On 12/01/2019 13:52:00+0100, Martin Blumenstingl wrote:
+> Hi Ben,
+> 
+> On Tue, Dec 18, 2018 at 12:48 AM Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com> wrote:
+> >
+> > Hi Ben,
+> >
+> > On Wed, Dec 5, 2018 at 11:15 PM Martin Blumenstingl
+> > <martin.blumenstingl@googlemail.com> wrote:
+> > [...]
+> > > > > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> > > > > [resurrected Ben's patches after 2 years]
+> > > > > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > > >
+> > > > Just checking if the change of author is deliberate?
+> > > > not sure how to do >1 author on patches like this.
+> > > I changed the author on purpose after seeing how much I changed
+> > > (compared to your v4). this is also why I added you to the CC list
+> > > however, I left in your copyright (just like you kept Carlo's
+> > > copyright note) and MODULE_AUTHOR
+> > please let me know:
+> > 1. whether you want to be the author of the patch or if you're fine
+> > with my name in there
+> > 2. if you are fine with both of us being listed as Signed-off-by or if
+> > you want me to switch to Co-authored-by
+> > 3. about any other concerns you have
+> >
+> > I would like to update this patch next weekend so it can be reviewed
+> > (and merged once all is fine) for v4.22
+> gentle ping on this one now that the holiday season is over.
+> 
 
-Nitpick: Can you also add it to the example?
+I would think you can resend as they are. Or, you could resend v4 from
+Ben and then a patch with your modifications.
 
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
