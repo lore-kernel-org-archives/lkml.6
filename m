@@ -2,79 +2,69 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E2CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E12C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E965E206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC196206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389850AbfAPL2D (ORCPT
+        id S2389880AbfAPL3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:28:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60716 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 06:29:00 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:58914 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389759AbfAPL2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:28:02 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 533962DB737;
-        Wed, 16 Jan 2019 11:28:02 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-186.ams2.redhat.com [10.36.117.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BBBAB1048102;
-        Wed, 16 Jan 2019 11:28:01 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id F2EF716E03; Wed, 16 Jan 2019 12:28:00 +0100 (CET)
-Date:   Wed, 16 Jan 2019 12:28:00 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Frediano Ziglio <fziglio@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@redhat.com>
-Subject: Re: [Spice-devel] [PATCH 1/3] drm/qxl: add mode/framebuffer check
- functions
-Message-ID: <20190116112800.v73xmxedt4b3gktj@sirius.home.kraxel.org>
-References: <20190116083521.22673-1-kraxel@redhat.com>
- <20190116083521.22673-2-kraxel@redhat.com>
- <636470684.58090538.1547630691403.JavaMail.zimbra@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <636470684.58090538.1547630691403.JavaMail.zimbra@redhat.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 16 Jan 2019 11:28:02 +0000 (UTC)
+        id S1730420AbfAPL3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:29:00 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 487B320001D;
+        Wed, 16 Jan 2019 12:28:58 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BCEB200018;
+        Wed, 16 Jan 2019 12:28:58 +0100 (CET)
+Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 9555D2060F;
+        Wed, 16 Jan 2019 12:28:57 +0100 (CET)
+From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
+To:     linux-i2c@vger.kernel.org, linux-imx@nxp.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, wsa@the-dreams.de
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        fabio.estevam@nxp.com, leoyang.li@nxp.com,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: [PATCH v2 1/2] i2c: imx: fix dma_request_chan error handling
+Date:   Wed, 16 Jan 2019 13:28:54 +0200
+Message-Id: <20190116112855.13824-1-laurentiu.tudor@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +static int qxl_check_mode(struct qxl_device *qdev,
-> > +			  unsigned int width,
-> > +			  unsigned int height)
-> > +{
-> > +	if (width * height * 4 > qdev->vram_size)
-> 
-> Is someone checking for integer overflows already?
+Use the correct error pointer when extracting the error code.
 
-Need to have a look.  This is just ...
+Fixes: ea1e5f176e97 ("i2c: imx: notify about real errors on dma i2c_imx_dma_request")
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+---
+ drivers/i2c/busses/i2c-imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > -	if (bo->surf.stride * bo->surf.height > qdev->vram_size) {
-> > -		DRM_ERROR("Mode doesn't fit in vram size (vgamem)");
-> > -		return -EINVAL;
-> > -	}
-
-... that check moved into the new function.
-
-cheers,
-  Gerd
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 09b124547669..42fed40198a0 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -287,7 +287,7 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 
+ 	dma->chan_tx = dma_request_chan(dev, "tx");
+ 	if (IS_ERR(dma->chan_tx)) {
+-		ret = PTR_ERR(dma->chan_rx);
++		ret = PTR_ERR(dma->chan_tx);
+ 		if (ret != -ENODEV && ret != -EPROBE_DEFER)
+ 			dev_err(dev, "can't request DMA tx channel (%d)\n", ret);
+ 		goto fail_al;
+-- 
+2.17.1
 
