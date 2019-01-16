@@ -2,109 +2,190 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FF3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF080C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52DDC20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:03:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B448D2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:04:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GMZNpsia"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TF2ylQHQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732038AbfAPKDW (ORCPT
+        id S1731743AbfAPKEF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:03:22 -0500
-Received: from mail-eopbgr150045.outbound.protection.outlook.com ([40.107.15.45]:55661
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728780AbfAPKDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:03:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yDa/a6TZbD6vH9SUZ8t2aFiVRhRGEJC/h0YqP9ItD44=;
- b=GMZNpsiagZN1+qnWhw+j+DIQxs/Uy5O/rx1Dt8dwCE59LH2Zxt9fEIP7mqG8JLP1f0qizeLlOJqtfOFDtepT54p97Xb0JLPvk3gsbCvsjIwUS6t8DWM/TTXQ8lZU7Dieot4bwjflCQuCMoEIcAQW/5MpT/4JT14p0ahsSogHUos=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4066.eurprd04.prod.outlook.com (52.134.125.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.24; Wed, 16 Jan 2019 10:03:14 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 10:03:14 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: RE: [PATCH v3] arm64: defconfig: Add i.MX8MQ boot necessary configs
-Thread-Topic: [PATCH v3] arm64: defconfig: Add i.MX8MQ boot necessary configs
-Thread-Index: AQHUrX+6iNHNEsNwY0OPyE6azmOAN6WxpjpA
-Date:   Wed, 16 Jan 2019 10:03:14 +0000
-Message-ID: <AM0PR04MB4211D63E8CEAEB8EF1D9664D80820@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1547631712-24544-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1547631712-24544-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4066;6:2EDKdkbYiWWUOwm53erAWWE4S6fRqf6GgSnSSnihqLl/KXyZ10KHB9OIotXrfX8T3cGqbakkwvYIxxpBxJpU4LphxmKxIicSkuc2UhxOeKQ9LTzmN1wD6HqxggjilxSFUYuO9qH4XzKWmsCN2qsVxzRAWuPLfOHoBP6hHbb9EexeI5eCnwwOI79sY2t/W/bY6TMr8gv80qNdr9fziES5hreYnDgiC5Mg3knGyJo+aHM9ttwlW4Kwj+wHB3QY1kjqhOsafoIXV1ZZ8M13yO19YP2uXT1x9JAASt0ozAhacgYg40NzTl8j8ckoS9aCusksQkAPdQaDXM7D+eAeN846NjU1cPzVOjz0M8QeFrTdD6uwnn2XH2lWKohcyTnmkhNRyGcajHltY2MQFM5zrSY2Yf12a1ReqLHj74f8UU3VHgfwAY+Utp9pU5N5IlmzN44mu+cFzV3FclgtmMKdf3rcUA==;5:hPfw4y4i4fJNdfsnBmMHDajK3pPWbK8q9DtjLXOkDcCfGzAozUH4PjX9kXjgoNizC4BQwAta+PPSs+fL9z49sR+yz4V4ENghPFA0JCVbOLbtGk5EwH+IvO914QiveI71+jKLyvnq71oC8ctfXB236hwUsCRDHlK5QOGJVah94mo7YCtl8wGPIu0SJ5hem4pbJqnYD3LZT5QYx4VXYbpVtQ==;7:Qfso2opAkQpNcElYgqetiO9L7GDDKDo+/kfA0IKvoyv68XVL9tP8xHt6iHn9auhanGt4HOnieN3bz9vytQFos5V5bGfDR3xHaibYLJJBRTo6NYgbRQaSdxfBB/AKMA7dSeFrY40TZLuPoGM/385OtA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 1919586a-2c98-425a-3d4a-08d67b99d48d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4066;
-x-ms-traffictypediagnostic: AM0PR04MB4066:
-x-microsoft-antispam-prvs: <AM0PR04MB40668D8784F36F34A08CF1C580820@AM0PR04MB4066.eurprd04.prod.outlook.com>
-x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(39860400002)(396003)(136003)(189003)(199004)(97736004)(74316002)(99286004)(53546011)(6506007)(26005)(186003)(6116002)(102836004)(3846002)(5660300001)(55016002)(76176011)(229853002)(71200400001)(71190400001)(6436002)(8936002)(2906002)(25786009)(476003)(305945005)(7736002)(11346002)(86362001)(446003)(105586002)(14454004)(81156014)(6246003)(8676002)(66066001)(68736007)(33656002)(81166006)(53936002)(110136005)(316002)(4326008)(478600001)(256004)(54906003)(106356001)(4744005)(486006)(2501003)(44832011)(9686003)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4066;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: //t3Z5GkL3j/Vz1HVCr1xh7wUMWa0LL+HOhTmtZYy5JhJga6ShzyIICWrOPEkMa6B+XljKvmo96Hybp6+gykoSXgaFcA640Y4PvIIxqGRWZCi5eEXF2Le3U6VX/xxZaygtDTdeFB+MbCUnbeE65ahlingKeDQlmZhV17re9MSbg1qwN9t0bWJ1ZdAIenOwMsTOwICClySr2Ey/HOydFpPY2VhGPcoMEZU5f0DxrBLSwy/fqA0PJkGA0qZMbvlnvTMXHOdNK2t+5AMZ1EilVAopRIuk2+C1P+0Elg2N1GIsVR+NT56hSZ2tDMxxSeUqzR5lKXmNpk5lrZoIwI+60lNF1tedLDyVhtVuB/D6ZI4UpgFdeCKhPSUSJZTxY7S5yDVm5VrbKjmLiaT+uYsKe4LZk8gWUtTSem0luFr8eQxnI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 16 Jan 2019 05:04:05 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54913 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728780AbfAPKEE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 05:04:04 -0500
+Received: by mail-it1-f196.google.com with SMTP id i145so2089476ita.4
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 02:04:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1rZmRkYrQKk3sCyEFFu33/UQOzqgS6+8CGeODCvYF/s=;
+        b=TF2ylQHQEd5iJSoMu3xW3NRRnQg0nLYymB0YSGlvJyLWjfZEN+1R0SvUAjR3hr3gov
+         LE3Bys85UGMon+7lUvmZdB4Zy3zB+9SjOk7TNeynbZX9KgegPPTlSKEJqGFU4eNJBF+E
+         0ND+IccUodxtSVBIrEQGYOW+x96X97fHNmyidOlv2zX5EpV5ZdOYtNYmhdHXrmJb0fyk
+         iCG4MFql60DSCyCy3ylU1QIrIgfd9DZ9gLwxwh1qEwmpricyEPND87Pk3d3N1Y82cB6f
+         mgX3egvRkAQiTqalnc/71+66GrUv9OKvfNVfl7rPqYCPrDSicoMogDMj+b+UN6sVOoez
+         xMpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1rZmRkYrQKk3sCyEFFu33/UQOzqgS6+8CGeODCvYF/s=;
+        b=dmoWjqn4Sjk7AhrV8csyaRlA38IwWORt76GhBzVTWBRjDBCNaJr8s/Ji5K+JHjAS0g
+         O0v2b1rtQFhSKi9hXVnSA8NEKMIOkPiS4NDz6uGyVE+opbT7KQ+Vo4Ql9si7v8iw+Ssl
+         5X1AQm6WAfn5yOcAtQRs5OA6ny3TFEulPwttBagkP2vua8RN91uRmJmh4OGc4PZ3H/OA
+         reDq43UJdNQbCGYhgQKKBDwPVrYKqdVIsOf8LCy/RDh5kmvWq/qkyd48ObJCfH1JD9wu
+         w2uie1eQponytSjqjFTvWErU2sf10SjmMWECL0MT+7VQAwWeVsq4Z9OkjKRW9nynhVfv
+         /Oig==
+X-Gm-Message-State: AJcUukfcv8hpzbvNjAFR2P6coNPjvPPsEEXTZ/s+pWFido9sS3zxCHKT
+        7sYVEjEZODbK4K30bjDXLNaIYppXZ590QcdErpbLOA==
+X-Google-Smtp-Source: ALg8bN6OfhZJYhHBs6jSF+6r2V38ZHVwZbvkgMhXsfwfH93O7RWmpMbG6jFEQjktwPrJ6siIxoaEwAd7AdV06eEQVpU=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr5175695itb.12.1547633043176;
+ Wed, 16 Jan 2019 02:04:03 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1919586a-2c98-425a-3d4a-08d67b99d48d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 10:03:14.4221
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4066
+References: <cover.1547289808.git.christophe.leroy@c-s.fr> <0c854dd6b110ac2b81ef1681f6e097f59f84af8b.1547289808.git.christophe.leroy@c-s.fr>
+ <CACT4Y+aEsLWqhJmXETNsGtKdbfHDFL1NF8ofv3KwvQPraXdFyw@mail.gmail.com>
+ <801c7d58-417d-1e65-68a0-b8cf02f9f956@c-s.fr> <CACT4Y+ZdA-w5OeebZg3PYPB+BX5wDxw_DxNe2==VJfbpy2eJ7A@mail.gmail.com>
+ <330696c0-90c6-27de-5eb3-4da2159fdfbc@virtuozzo.com> <CACT4Y+ajgTdDyFFWCp0oRSPKZh9ercDpq3pAq2-ZSx7ouAvZYQ@mail.gmail.com>
+ <301f5826-64ab-1cf4-7e7e-cd026de77bca@c-s.fr>
+In-Reply-To: <301f5826-64ab-1cf4-7e7e-cd026de77bca@c-s.fr>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 16 Jan 2019 11:03:51 +0100
+Message-ID: <CACT4Y+aPsrfaY94tiYGwAUifeLJK3gobMk2Cq=6s_29RWvFZ3g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] powerpc/mm: prepare kernel for KAsan on PPC32
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Alexander Potapenko <glider@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Abel Vesa
-> Sent: Wednesday, January 16, 2019 5:42 PM
-> Subject: [PATCH v3] arm64: defconfig: Add i.MX8MQ boot necessary configs
->=20
-> Enable all the i.MX8MQ configs necessary to boot.
->=20
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+On Tue, Jan 15, 2019 at 6:25 PM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+>
+> Le 15/01/2019 =C3=A0 18:10, Dmitry Vyukov a =C3=A9crit :
+> > On Tue, Jan 15, 2019 at 6:06 PM Andrey Ryabinin <aryabinin@virtuozzo.co=
+m> wrote:
+> >>
+> >> On 1/15/19 2:14 PM, Dmitry Vyukov wrote:
+> >>> On Tue, Jan 15, 2019 at 8:27 AM Christophe Leroy
+> >>> <christophe.leroy@c-s.fr> wrote:
+> >>>> On 01/14/2019 09:34 AM, Dmitry Vyukov wrote:
+> >>>>> On Sat, Jan 12, 2019 at 12:16 PM Christophe Leroy
+> >>>>> <christophe.leroy@c-s.fr> wrote:
+> >>>>> &gt;
+> >>>>> &gt; In kernel/cputable.c, explicitly use memcpy() in order
+> >>>>> &gt; to allow GCC to replace it with __memcpy() when KASAN is
+> >>>>> &gt; selected.
+> >>>>> &gt;
+> >>>>> &gt; Since commit 400c47d81ca38 ("powerpc32: memset: only use dcbz =
+once cache is
+> >>>>> &gt; enabled"), memset() can be used before activation of the cache=
+,
+> >>>>> &gt; so no need to use memset_io() for zeroing the BSS.
+> >>>>> &gt;
+> >>>>> &gt; Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> >>>>> &gt; ---
+> >>>>> &gt;  arch/powerpc/kernel/cputable.c | 4 ++--
+> >>>>> &gt;  arch/powerpc/kernel/setup_32.c | 6 ++----
+> >>>>> &gt;  2 files changed, 4 insertions(+), 6 deletions(-)
+> >>>>> &gt;
+> >>>>> &gt; diff --git a/arch/powerpc/kernel/cputable.c
+> >>>>> b/arch/powerpc/kernel/cputable.c
+> >>>>> &gt; index 1eab54bc6ee9..84814c8d1bcb 100644
+> >>>>> &gt; --- a/arch/powerpc/kernel/cputable.c
+> >>>>> &gt; +++ b/arch/powerpc/kernel/cputable.c
+> >>>>> &gt; @@ -2147,7 +2147,7 @@ void __init set_cur_cpu_spec(struct cpu_=
+spec *s)
+> >>>>> &gt;         struct cpu_spec *t =3D &amp;the_cpu_spec;
+> >>>>> &gt;
+> >>>>> &gt;         t =3D PTRRELOC(t);
+> >>>>> &gt; -       *t =3D *s;
+> >>>>> &gt; +       memcpy(t, s, sizeof(*t));
+> >>>>>
+> >>>>> Hi Christophe,
+> >>>>>
+> >>>>> I understand why you are doing this, but this looks a bit fragile a=
+nd
+> >>>>> non-scalable. This may not work with the next version of compiler,
+> >>>>> just different than yours version of compiler, clang, etc.
+> >>>>
+> >>>> My felling would be that this change makes it more solid.
+> >>>>
+> >>>> My understanding is that when you do *t =3D *s, the compiler can use
+> >>>> whatever way it wants to do the copy.
+> >>>> When you do memcpy(), you ensure it will do it that way and not anot=
+her
+> >>>> way, don't you ?
+> >>>
+> >>> It makes this single line more deterministic wrt code-gen (though,
+> >>> strictly saying compiler can turn memcpy back into inlines
+> >>> instructions, it knows memcpy semantics anyway).
+> >>> But the problem I meant is that the set of places that are subject to
+> >>> this problem is not deterministic. So if we go with this solution,
+> >>> after this change it's in the status "works on your machine" and we
+> >>> either need to commit to not using struct copies and zeroing
+> >>> throughout kernel code or potentially have a long tail of other
+> >>> similar cases, and since they can be triggered by another compiler
+> >>> version, we may need to backport these changes to previous releases
+> >>> too. Whereas if we would go with compiler flags, it would prevent the
+> >>> problem in all current and future places and with other past/future
+> >>> versions of compilers.
+> >>>
+> >>
+> >> The patch will work for any compiler. The point of this patch is to ma=
+ke
+> >> memcpy() visible to the preprocessor which will replace it with __memc=
+py().
+> >
+> > For this single line, yes. But it does not mean that KASAN will work.
+> >
+> >> After preprocessor's work, compiler will see just __memcpy() call here=
+.
+>
+> This problem can affect any arch I believe. Maybe the 'solution' would
+> be to run a generic script similar to
+> arch/powerpc/kernel/prom_init_check.sh on all objects compiled with
+> KASAN_SANITIZE_object.o :=3D n don't include any reference to memcpy()
+> memset() or memmove() ?
 
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Regards
-Dong Aisheng
+We do this when building user-space sanitizers runtime. There all code
+always runs with sanitizer enabled, but at the same time must not be
+instrumented. So we committed to changing all possible memcpy/memset
+injection points and have a script that checks that we indeed have no
+such calls at any paths. There problem is a bit simpler as we don't
+have gazillion combinations of configs and the runtime is usually
+self-hosted (as it is bundled with compiler), so we know what compiler
+is used to build it. And that all is checked on CI.
+I don't know how much work it is to do the same for kernel, though.
+Adding -ffreestanding, if worked, looked like a cheap option to
+achieve the same.
+
+Another option is to insert checks into KASAN's memcpy/memset that at
+least some early init has completed. If early init hasn't finished
+yet, then they could skip all additional work besides just doing
+memcpy/memset. We can't afford this for memory access instrumentation
+for performance reasons, but it should be bearable for memcpy/memset.
