@@ -2,67 +2,96 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49323C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A549DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2269220651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B70F20651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405383AbfAPQTO (ORCPT
+        id S2405351AbfAPQU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:19:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41574 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 11:20:57 -0500
+Received: from shell.v3.sk ([90.176.6.54]:57295 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730514AbfAPQTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:19:14 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0AC2F8E584;
-        Wed, 16 Jan 2019 16:19:14 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-244.rdu2.redhat.com [10.10.120.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 66B9A600C8;
-        Wed, 16 Jan 2019 16:19:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190106133608.820-3-vt@altlinux.org>
-References: <20190106133608.820-3-vt@altlinux.org> <20190106133608.820-1-vt@altlinux.org>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/4] akcipher: Introduce verify2 for public key algorithms
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <21753.1547655551.1@warthog.procyon.org.uk>
-Date:   Wed, 16 Jan 2019 16:19:11 +0000
-Message-ID: <21754.1547655551@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 16 Jan 2019 16:19:14 +0000 (UTC)
+        id S1728673AbfAPQU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 11:20:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5E4AD5463E;
+        Wed, 16 Jan 2019 17:20:54 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id N7cuLZZXUFEn; Wed, 16 Jan 2019 17:20:52 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 1A764546E7;
+        Wed, 16 Jan 2019 17:20:52 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id m436mE0HnzWB; Wed, 16 Jan 2019 17:20:51 +0100 (CET)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2FFF65463E;
+        Wed, 16 Jan 2019 17:20:51 +0100 (CET)
+Message-ID: <a82a40694727e90b851789d5a0a8334fd526c4c7.camel@v3.sk>
+Subject: Re: [PATCH] libertas: remove ifdef OLPC noise
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 16 Jan 2019 17:20:50 +0100
+In-Reply-To: <87zhs04mhr.fsf@codeaurora.org>
+References: <20190116151618.1972197-1-lkundrak@v3.sk>
+         <87zhs04mhr.fsf@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Chikunov <vt@altlinux.org> wrote:
+On Wed, 2019-01-16 at 18:04 +0200, Kalle Valo wrote:
+> Lubomir Rintel <lkundrak@v3.sk> writes:
+> 
+> > <asm/olpc.h> provides machine_is_olpc() stub for CONFIG_OLPC=n,
+> > compiler should just optimize the unneeded bits away.
+> > 
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > ---
+> >  drivers/net/wireless/marvell/libertas/if_usb.c | 10 ----------
+> >  1 file changed, 10 deletions(-)
+> > 
+> > diff --git a/drivers/net/wireless/marvell/libertas/if_usb.c b/drivers/net/wireless/marvell/libertas/if_usb.c
+> > index 220dcdee8d2b..7b61c599948e 100644
+> > --- a/drivers/net/wireless/marvell/libertas/if_usb.c
+> > +++ b/drivers/net/wireless/marvell/libertas/if_usb.c
+> > @@ -12,9 +12,7 @@
+> >  #include <linux/usb.h>
+> >  #include <linux/olpc-ec.h>
+> >  
+> > -#ifdef CONFIG_OLPC
+> >  #include <asm/olpc.h>
+> > -#endif
+> 
+> Using asm directory looked odd to me so I did some investigation:
+> 
+> $ find -name olpc.h
+> ./arch/x86/include/asm/olpc.h
+> 
+> Did you build this on something else than x86? For example, will the
+> compiler find olpc.h when building for arm?
 
-> Current akcipher .verify() just decrypts signature to uncover message
-> hash, which is then verified in upper level public_key_verify_signature
-> by memcmp with the expected signature value, which is never passed into
-> verify().
+Uh, no. You're right, this indeed breaks on non-x86.
 
-I think it would be better to make ->verify() take the data hash we've been
-given rather than returning the expected hash for the caller to compare.  That
-way the callers don't have to do two different things, depending on how the
-crypto algo works.
+Perhaps olpc-ec.h should provide something that could tell whether the
+EC is available that could be used instead of machine_is_olpc(), or the
+olpc.h moved outside arch/x86.
 
-David
+For now, please just ignore the patch..
+
+Lubo
+
