@@ -2,91 +2,102 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D2EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF38C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D05820859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A723120866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:31:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbfAPD1v (ORCPT
+        id S1731350AbfAPDbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 22:27:51 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:1511 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731019AbfAPD1v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 22:27:51 -0500
-X-IronPort-AV: E=Sophos;i="5.56,484,1539619200"; 
-   d="scan'208";a="52109427"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 16 Jan 2019 11:27:49 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 297EF4BAD9C3;
-        Wed, 16 Jan 2019 11:27:47 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 16 Jan 2019 11:27:53 +0800
-Date:   Wed, 16 Jan 2019 11:26:52 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <lv.zheng@intel.com>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <keescook@chromium.org>, <bhe@redhat.com>,
-        <msys.mizuma@gmail.com>, <indou.takao@jp.fujitsu.com>,
-        <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v15 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find
- RSDP from EFI table
-Message-ID: <20190116032652.GC30900@localhost.localdomain>
-References: <20190107032243.25324-4-fanc.fnst@cn.fujitsu.com>
- <20190110211523.GG17621@zn.tnic>
- <20190111012353.GD2216@localhost.localdomain>
- <20190111103225.GA4729@zn.tnic>
- <20190113094704.GC13263@localhost.localdomain>
- <20190113110544.GA7398@zn.tnic>
- <20190114012641.GA30900@localhost.localdomain>
- <20190114090756.GA2773@zn.tnic>
- <20190115072121.GB30900@localhost.localdomain>
- <20190115095502.GA6596@zn.tnic>
+        Tue, 15 Jan 2019 22:31:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730639AbfAPDbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 22:31:31 -0500
+Received: from vmware.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDD63204FD;
+        Wed, 16 Jan 2019 03:31:28 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 22:31:26 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel.opensrc@gmail.com, joelaf@google.com,
+        mathieu.desnoyers@efficios.com, baohong.liu@intel.com,
+        rajvi.jingar@intel.com, julia@ni.com, fengguang.wu@intel.com,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH 0/6] tracing: trace event error_log and inter-event
+ bugfixes
+Message-ID: <20190115223126.366d854c@vmware.local.home>
+In-Reply-To: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190115095502.GA6596@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 297EF4BAD9C3.AEB44
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 10:55:02AM +0100, Borislav Petkov wrote:
->On Tue, Jan 15, 2019 at 03:21:21PM +0800, Chao Fan wrote:
->> In my understanding after looking into the commit message the comments.
->> I thinks yes. For 32-bit OS:
->
->And when does your "32-bit OS" define ACPI_ASL_COMPILER ?
 
-Ah, I got it. You are right. Linux will never define this tag. It's
-only used by other tools. I misunderstood include/acpi/platform/acenv.h
-I learn much about Kernel compilation. Thanks for that.
-I will change as you suggested.
+Hi Tom,
 
-Thanks,
-Chao Fan
+This thread sorta died and appears to be forgotten. Is there follow up
+patches on this?
 
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
+Thanks!
 
+-- Steve
+
+
+On Thu, 12 Apr 2018 10:13:15 -0500
+Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+
+> Hi Steve,
+> 
+> Here are a few patches that should be applied on top of the
+> 'Inter-event (e.g. latency) support v9' patchset.
+> 
+> The first fixes another problem I noticed when printing flags.
+> 
+> The rest implement the tracing/events/error_log suggested by Masami,
+> and update the inter-event code to use it (and remove the old hist
+> file error mechanism).
+> 
+> Thanks,
+> 
+> Tom
+> 
+> The following changes since commit 404bb11b24fb9a592023c077b878d30ad6da4322:
+> 
+>   tracing: Enforce passing in filter=NULL to create_filter() (2018-04-11 11:18:42 -0400)
+> 
+> are available in the git repository at:
+> 
+>   https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/inter-event-update2
+>   https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/inter-event-update2
+> 
+> Tom Zanussi (6):
+>   tracing: Restore proper field flag printing when displaying triggers
+>   tracing: Add trace event error log
+>   tracing: Save the last hist command's associated event name
+>   tracing: Use trace event error_log with hist triggers
+>   tracing: Add field parsing trace event errors for hist triggers
+>   selftests: ftrace: Fix extended error support testcase
+> 
+>  kernel/trace/trace.h                               |   3 +
+>  kernel/trace/trace_events.c                        | 172 +++++++++++++++++++
+>  kernel/trace/trace_events_hist.c                   | 188 +++++++++++----------
+>  .../inter-event/trigger-extended-error-support.tc  |   2 +-
+>  4 files changed, 274 insertions(+), 91 deletions(-)
+> 
 
