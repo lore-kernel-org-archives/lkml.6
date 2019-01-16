@@ -2,83 +2,115 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3812C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AB2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B51B620657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:44:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="d5XGLfV9"
+	by mail.kernel.org (Postfix) with ESMTP id B2C9A20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393723AbfAPOoq (ORCPT
+        id S2393739AbfAPOpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:44:46 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37995 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387478AbfAPOop (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:44:45 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m22so2277411wml.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 06:44:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TJ3fqhzvw0NG+qK9w9dlAeOge3lEpv9oklZXQcHZojI=;
-        b=d5XGLfV9wqnpP41WIbnGIB+dusXC27oxLE5eLn0ASHlwqyyJulXtW3svXk1aYJCTq4
-         D83IX8f+LDj7V8kA+PEdijubCajyH4rK7UABZMS6sK2VcorGptwFs4Oki5rm+hr0hGcX
-         enxlBKcC/c5AWbkSDbSNDeBGlM1M3tTYzW0ajpXoy3PTRhxM0XQnviNmdB1IDGXNYP+a
-         pDithYJOkgiN7FrmJC4xSUq521MSfJH9BzUvXzFMcFwEhFNtV6U8jRwwN34lQqMzHGv4
-         h6+lfPdzRIo9QfeOkVEV+FdKfCe/3xZC2EEj/a38476yb/ngo/vkjs3wTY26uqCjIRXJ
-         RnMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TJ3fqhzvw0NG+qK9w9dlAeOge3lEpv9oklZXQcHZojI=;
-        b=VbAIFlsRZyRAw/lpHcER9SN1fbT05wYyEyFL/iZQ1JOOkG6qlmX2qlvllNJBwOajYr
-         LX58mR83BaCmigxTuOrqnhzmLBK0XKbKxoeIcpaPQDl9vz0wSNcDuxkJWIY9vRD6ILXv
-         PIeW5XLGv/XEyOvwU7MwDq/WlmqXTETQ6xQiApyi65izwf89XafaB//HM3qf29SrX76B
-         6oPVVNTrKWnoSSY2gRX39ZLdulwyDZvF2KZkF5i+efEM6qfGxOcrWNjOtRisn0tkyTXg
-         XZRxckD76vLzxhMLsSsK9Rt9j8GFvdy9B4kTs2YYAZ7un7KPdOo4r1YYg/3y0xti0dzJ
-         mknQ==
-X-Gm-Message-State: AJcUukdY526r7NIbQej+4CFfgEY6EVr17OK87vA8xJqSFAV7ityciQs5
-        t0r3TzeH6XktFh+ZXvYhVF0Rug==
-X-Google-Smtp-Source: ALg8bN4BPbl2w6rrSP8iWWwILAxu+HWXlw5iabvu0U7KRg4+iVXNhfq+NNVgE5dX/Vukd2ZSeCfVkg==
-X-Received: by 2002:a1c:8c05:: with SMTP id o5mr7405898wmd.29.1547649884201;
-        Wed, 16 Jan 2019 06:44:44 -0800 (PST)
-Received: from localhost (ip-89-177-6-176.net.upcbroadband.cz. [89.177.6.176])
-        by smtp.gmail.com with ESMTPSA id a12sm74084051wrm.45.2019.01.16.06.44.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 06:44:43 -0800 (PST)
-Date:   Wed, 16 Jan 2019 15:36:13 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Cc:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        netdev@vger.kernel.org, linux-lpwan@lists.infradead.org,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 5/5] net: lorawan: Split skb definitions into another
- header
-Message-ID: <20190116143613.GI5265@nanopsycho>
-References: <20190116142048.19446-1-starnight@g.ncu.edu.tw>
- <20190116142458.19542-5-starnight@g.ncu.edu.tw>
+        Wed, 16 Jan 2019 09:45:01 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37990 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387478AbfAPOpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 09:45:01 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D8051284502F73FCD192;
+        Wed, 16 Jan 2019 22:44:56 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Wed, 16 Jan 2019
+ 22:44:48 +0800
+Subject: Re: [PATCH] scsi: isci: initialize shost fully before calling
+ scsi_add_host()
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <20190108205043.3122-1-logang@deltatee.com>
+ <20190109184105.GB22070@lst.de>
+ <8d96b40d-fc83-9218-9479-3de423594ddb@huawei.com>
+ <yq1lg3qy578.fsf@oracle.com>
+ <0ffaf166-c7e5-b135-fdc5-bcac24148e62@huawei.com>
+ <yq1sgxts46u.fsf@oracle.com>
+CC:     Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        <linux-scsi@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
+        chenxiang <chenxiang66@hisilicon.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <f393a8f4-aff9-2117-d7a1-26abd72e22b4@huawei.com>
+Date:   Wed, 16 Jan 2019 14:44:41 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116142458.19542-5-starnight@g.ncu.edu.tw>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <yq1sgxts46u.fsf@oracle.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wed, Jan 16, 2019 at 03:25:02PM CET, starnight@g.ncu.edu.tw wrote:
->Split LoRaWAN related skb definitions from lora/lorawan_netdev.h into
->another header lora/lorawan_skb.h.
+On 16/01/2019 02:54, Martin K. Petersen wrote:
+>
+> Hi John,
+>
 
-What is the motivation for this change?
+Hi Martin,
+
+>>> So in this case I think that accessor functions are actually better
+>>> because they allow us to print a big fat warning when you twiddle
+>>> something you shouldn't post-initialization. So that's something I think
+>>> we could--and should--improve.
+>>>
+>> Sure, this is an alternative, but I would rather make it obvious when
+>> these parameters should be set so that this would not be required.
+>
+> I would like to have a mechanism in place that warns if you twiddle
+> things that break assumptions made at host registration time.
+
+Yes, something more robust would be good.
+
+That's not
+> a scenario the old registration interface was designed to handle.
+>
+> I am not sure I agree with your assertion that setting these masks in
+> the struct prior to scsi_add_host() makes this ordering requirement much
+> more obvious.
+It is not like you are passing in a list of parameters and
+> then receiving a separately instantiated immutable scsi_host object. You
+> are performing an operation on something you already have and own.
+>
+> That's why I commented that the current intersection between
+> compile-time static host template, dynamically discovered
+> pre-registration scsi_host parameters, and the registered runtime
+> scsi_host struct is somewhat messy.
+>
+> Btw. I have no attachment to the prot wrappers whatsoever. The reason
+> they exist is that the SCSI integrity support was optional. And
+> therefore we had stub functions so things could be compiled without any
+> of the integrity fields being present in the various SCSI structs.
+
+I never noticed stubs for setting/getting 
+Scsi_host.prot_{capabilities,guard_type}
+
+So I
+> don't have any problem killing the wrappers except they may actually be
+> handy for regressions like this one where you could #error if the driver
+> writer violates the ordering requirement.
+>
+
+We set many Scsi_host parameters without such safeguarding, and I don't 
+know what's special about these protection-related members.
+
+Thanks,
+John
+
+
