@@ -2,90 +2,88 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF1DAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33013C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F92220840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9B8320840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:36:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="VtqPVdoH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731349AbfAPTf4 (ORCPT
+        id S1731391AbfAPTgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:35:56 -0500
-Received: from mga17.intel.com ([192.55.52.151]:45473 "EHLO mga17.intel.com"
+        Wed, 16 Jan 2019 14:36:12 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47290 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730757AbfAPTfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:35:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 11:35:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="126578277"
-Received: from tkevorki-mobl4.amr.corp.intel.com (HELO [10.254.178.90]) ([10.254.178.90])
-  by orsmga002.jf.intel.com with ESMTP; 16 Jan 2019 11:35:51 -0800
-Subject: Re: [PATCH 6/8] ASoC: intel: skylake: change snprintf to scnprintf
- for possible overflow
-To:     Kees Cook <keescook@chromium.org>, Willy Tarreau <w@1wt.eu>
-Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
-References: <20190112152844.26550-1-w@1wt.eu>
- <20190112152844.26550-6-w@1wt.eu>
- <CAGXu5j+LvQsLSO+TtVr5hrUTYHA0Hqrc=pxPMv++erySJ8pV7g@mail.gmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <ce0fca46-ff5e-beb3-5318-3a7c1e6da0e8@linux.intel.com>
-Date:   Wed, 16 Jan 2019 13:35:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1729326AbfAPTgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 14:36:12 -0500
+Received: from zn.tnic (p200300EC2BC98A00CC5DAB5F6CE50A3B.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:8a00:cc5d:ab5f:6ce5:a3b])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1AD251EC0842;
+        Wed, 16 Jan 2019 20:36:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547667370;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=freker2xeydPEgartPfZuvsLaLqyXV0J4pURt/MXxYg=;
+        b=VtqPVdoHFqAL18W5VIeFb0EtM9QblyqF0NIEESF04F2ItIXP9gWy2X+DlEFMf2vmUMzwOr
+        HydtoMXE9L9bWC3nHdaP0wtyfpIwR63O3/egmcZKnHAnBE5bMpzg2BSOeYnXAu8IsfxQUv
+        gTtRcWxB3Hw7A81pgMw+LotKzQRREBw=
+Date:   Wed, 16 Jan 2019 20:36:03 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
+ copy_fpstate_to_sigframe()
+Message-ID: <20190116193603.GK15409@zn.tnic>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-6-bigeasy@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+LvQsLSO+TtVr5hrUTYHA0Hqrc=pxPMv++erySJ8pV7g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190109114744.10936-6-bigeasy@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 09, 2019 at 12:47:27PM +0100, Sebastian Andrzej Siewior wrote:
+> Since ->initialized is always true for user tasks and kernel threads
+> don't get this far,
 
->> diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
->> index 5d7ac2ee7a3c..bb28db734fb7 100644
->> --- a/sound/soc/intel/skylake/skl-debug.c
->> +++ b/sound/soc/intel/skylake/skl-debug.c
->> @@ -43,7 +43,7 @@ static ssize_t skl_print_pins(struct skl_module_pin *m_pin, char *buf,
->>          ssize_t ret = 0;
->>
->>          for (i = 0; i < max_pin; i++)
->> -               ret += snprintf(buf + size, MOD_BUF - size,
->> +               ret += scnprintf(buf + size, MOD_BUF - size,
->>                                  "%s %d\n\tModule %d\n\tInstance %d\n\t"
->>                                  "In-used %s\n\tType %s\n"
->>                                  "\tState %d\n\tIndex %d\n",
->>
-> While working on a Coccinelle script to find more cases of this, I
-> noticed that this code is buggy: it keeps overwriting the same
-> position in the buf string: "buf + size" and don't take "ret" into
-> account at all. This needs to be:
->
-> ret += scnprintf(buf + size + ret, MOD_BUF - size - ret,
+Yeah, this is commit message is too laconic. Don'g get this far "where"?
 
-Thanks for the sighting. Indeed this looks like a bug, all other calls 
-to snprintf use "ret" to modify the destination/length.
+> we always save the registers directly to userspace.
 
-The only explanation I have for it not being noticed earlier is that 
-it's possibly not used - a 5mn test on 2 machines show the loop is 
-actually not run (max_pin == 0).
+We don't save registers to userspace - please write stuff out.
 
-It'll take me a bit of time to figure out what exactly this routine is 
-supposed to do, maybe we should do the cross-tree change first?
+So from looking at what you're removing I can barely rhyme up what
+you're doing but this needs a lot more explanation why it is OK to
+remove the else case. Hell, why was the thing added in the first place
+if ->initialized is always true?
 
--Pierre
+And why is it ok to save registers directly to the user task's buffers?
 
+So please be more verbose even at the risk of explaning the obvious.
+This is the FPU code, remember? :)
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
