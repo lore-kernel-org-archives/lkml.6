@@ -2,117 +2,111 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A48C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13008C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA48D2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:41:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="d1aVn+yx"
+	by mail.kernel.org (Postfix) with ESMTP id CDB3F20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:41:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389397AbfAPIlU (ORCPT
+        id S2389533AbfAPIl1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:41:20 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51009 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732624AbfAPIlU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 03:41:20 -0500
-Received: by mail-wm1-f66.google.com with SMTP id n190so1048532wmd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 00:41:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=b2LuXdXxQcuKvwCS+44bPlMgNx8NsNIh48/lWI4p120=;
-        b=d1aVn+yxVUY4XUkMpjFyB7K0U4rnONpHYd3Kz11h9reic7cfIXhGfPm83tmdrR6f0I
-         mEtXNeg4juCdqyVZbucs9Wd27bKknDmf9rEDaRQtqiEsY1T+7Tsoml+u6NSRCABY3kV0
-         ET889DX5mkbExtqSfG3+bnisJuOhtOUaECN3aQU9PeaM36QwDRQbrlsEkkW3cW5KRZ/c
-         TfOPwt0+eqhonVvvTPavsj9hb553oShrIdijIGKHWwNtTsCG7Rdo1U++fe3WPRGILzU0
-         oVvOx7O1f4kqozwkCoXgH2qHebkm0DrChuCZehV/TL80rqpOzh4lMms1jNQaUVs0131e
-         r7TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b2LuXdXxQcuKvwCS+44bPlMgNx8NsNIh48/lWI4p120=;
-        b=hon9tanBb009GGEEX+l0Kv/JSUz3e+VTzNk/V5tcvK5ms24dDgSzSKfx1ksJ+vCkrR
-         ODoOPGOS/0eOXQutYIyeN/nkHmbMBvZLm6H1G2BcrdFuJukVpFnDRuq3mTIXzCwlHy1W
-         UCQLCLHiy9lGm7DwCvvQWyrsnfCEhW0SPjhnaCQFKWtFNwMsnl4MWUXnrQI//s/RkZX3
-         swHNswGBO49BqXGDNDx9kAjAsw3LSzOUbhlj2wO5hTHnHagQA3ildRweafCUDHxsVbCI
-         3buhPcYzNWZ8Yjd3hR3YWRGsrf46TNuxBhwyfqvXoWRo1DeT7POhXdgvSh0p7EPhWyim
-         x5PA==
-X-Gm-Message-State: AJcUukeytuKpGAGpsTutbbV0Bdoew4yq9TbkrNx2XCZFSi9sHoH/+KbO
-        6SnMjjpo4HNL+JmPAF5py0nPoQ==
-X-Google-Smtp-Source: ALg8bN674HNiJJ/2BEtoj/Q5L93tvMuOpcPZrBe/5Pk+E7S4h7RShVjwxVZ7wXe4zDkZWhw+1wYSyA==
-X-Received: by 2002:a1c:4c0c:: with SMTP id z12mr6145358wmf.17.1547628077974;
-        Wed, 16 Jan 2019 00:41:17 -0800 (PST)
-Received: from brauner.io ([154.119.33.254])
-        by smtp.gmail.com with ESMTPSA id p10sm22873323wrt.25.2019.01.16.00.41.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 00:41:17 -0800 (PST)
-Date:   Wed, 16 Jan 2019 09:41:10 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, joel@joelfernandes.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next v2] binderfs: fix error return code in
- binderfs_fill_super()
-Message-ID: <20190116084108.lubcpqaflkzmwfvp@brauner.io>
-References: <1547607664-5612-1-git-send-email-weiyongjun1@huawei.com>
- <1547627642-96450-1-git-send-email-weiyongjun1@huawei.com>
+        Wed, 16 Jan 2019 03:41:27 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:35603 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729292AbfAPIl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 03:41:26 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id C7570FB04;
+        Wed, 16 Jan 2019 09:41:23 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qnWayuKMLxYH; Wed, 16 Jan 2019 09:41:22 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 451EB475EF; Wed, 16 Jan 2019 09:41:22 +0100 (CET)
+Date:   Wed, 16 Jan 2019 09:41:22 +0100
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: imx8mq: Number clocks consecutively
+Message-ID: <20190116084122.GA19712@bogon.m.sigxcpu.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1547627642-96450-1-git-send-email-weiyongjun1@huawei.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 08:34:02AM +0000, Wei Yongjun wrote:
-> Fix to return a negative error code -ENOMEM from the new_inode() and
-> d_make_root() error handling cases instead of 0, as done elsewhere in
-> this function.
-> 
-> Fixes: 3ad20fe393b3 ("binder: implement binderfs")
+This fixes a duplicate use of 232 and numbers the clocks without holes.
 
-This should be:
+Fixes: 1cf3817bf1f5 ("dt-bindings: Add binding for i.MX8MQ CCM")
 
-Fixes: 849d540ddfcd ("binderfs: implement "max" mount option")
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
+---
+ include/dt-bindings/clock/imx8mq-clock.h | 26 ++++++++++++------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-If you have added that feel free to also add my Reviewed-by.
-
-Thanks!
-Christian
-
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-> v1 -> v2: move 'ret = -ENOMEM' out of if
-> ---
->  drivers/android/binderfs.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-> index 9518e2e..e4ff4c3 100644
-> --- a/drivers/android/binderfs.c
-> +++ b/drivers/android/binderfs.c
-> @@ -518,6 +518,7 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
->  
->  	sb->s_fs_info = info;
->  
-> +	ret = -ENOMEM;
->  	inode = new_inode(sb);
->  	if (!inode)
->  		goto err_without_dentry;
-> 
-> 
-> 
+diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
+index b53be41929be..04f7ac345984 100644
+--- a/include/dt-bindings/clock/imx8mq-clock.h
++++ b/include/dt-bindings/clock/imx8mq-clock.h
+@@ -350,7 +350,7 @@
+ #define IMX8MQ_CLK_VPU_G2_ROOT			241
+ 
+ /* SCCG PLL GATE */
+-#define IMX8MQ_SYS1_PLL_OUT			232
++#define IMX8MQ_SYS1_PLL_OUT			242
+ #define IMX8MQ_SYS2_PLL_OUT			243
+ #define IMX8MQ_SYS3_PLL_OUT			244
+ #define IMX8MQ_DRAM_PLL_OUT			245
+@@ -372,24 +372,24 @@
+ /* txesc clock */
+ #define IMX8MQ_CLK_DSI_IPG_DIV                  256
+ 
+-#define IMX8MQ_CLK_TMU_ROOT			265
++#define IMX8MQ_CLK_TMU_ROOT			257
+ 
+ /* Display root clocks */
+-#define IMX8MQ_CLK_DISP_AXI_ROOT		266
+-#define IMX8MQ_CLK_DISP_APB_ROOT		267
+-#define IMX8MQ_CLK_DISP_RTRM_ROOT		268
++#define IMX8MQ_CLK_DISP_AXI_ROOT		258
++#define IMX8MQ_CLK_DISP_APB_ROOT		259
++#define IMX8MQ_CLK_DISP_RTRM_ROOT		260
+ 
+-#define IMX8MQ_CLK_OCOTP_ROOT			269
++#define IMX8MQ_CLK_OCOTP_ROOT			261
+ 
+-#define IMX8MQ_CLK_DRAM_ALT_ROOT		270
+-#define IMX8MQ_CLK_DRAM_CORE			271
++#define IMX8MQ_CLK_DRAM_ALT_ROOT		262
++#define IMX8MQ_CLK_DRAM_CORE			263
+ 
+-#define IMX8MQ_CLK_MU_ROOT			272
+-#define IMX8MQ_VIDEO2_PLL_OUT			273
++#define IMX8MQ_CLK_MU_ROOT			264
++#define IMX8MQ_VIDEO2_PLL_OUT			265
+ 
+-#define IMX8MQ_CLK_CLKO2			274
++#define IMX8MQ_CLK_CLKO2			266
+ 
+-#define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	275
++#define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	267
+ 
+-#define IMX8MQ_CLK_END				276
++#define IMX8MQ_CLK_END				268
+ #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
+-- 
+2.20.1
