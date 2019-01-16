@@ -2,145 +2,68 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4135C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EC8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7878E20578
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:24:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="pYcm+5gD"
+	by mail.kernel.org (Postfix) with ESMTP id EDE4820578
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:25:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391436AbfAPRYl (ORCPT
+        id S2394231AbfAPRZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:24:41 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45931 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387882AbfAPRYj (ORCPT
+        Wed, 16 Jan 2019 12:25:37 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48218 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728841AbfAPRZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:24:39 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so3356041pfd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:24:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=53gplsLprQpA+D4at2sEDjQat4FsTNpx+lEgkZg6Hko=;
-        b=pYcm+5gDO//dME8UYshYttaRSQbppOmTnxOtK3irYkbYq4HF6N30GVBGvACX8uQzm3
-         RRCF9H+Ix0roK7DxoD+3LgYpWl2+9L1IWt65bd1SkiWZcVKWXh3OL7O2EndEq5i/REmn
-         h2/QZ/jQDFgafaNFt24hb7+X5JxAuiE0EQl0fn9VvS3zSNtnVytUUGxlq/JXYejZNsgf
-         1hVjv7D2CdU6NMoKss7DdBP5iHevRZpzl36NrPC5H8mKwNcsgbz+GK6y2fGMZMpch9Dd
-         KL8jBL8auVJQR4Ome4TP/NB810uOMkM4K9SnOO5BKhK5ChjivI3rWhg80733Xf31tcQO
-         5dnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=53gplsLprQpA+D4at2sEDjQat4FsTNpx+lEgkZg6Hko=;
-        b=S4c05s+S8LD9jmaH8IQYiVpmg2ET7fizxEvM+lGGAAnywEPW4XepKO27GNxukNi6c0
-         wUtdRglqUOINxw0Lh+J1Elubvmm6yJvy0JArP0uAqlp3folviNS7l316gAeElwC9s/yA
-         9VPWaKQzHjxdteRVtpidOdDMdcK6pwvkHSz4RFGLZmITMqDDRSsbm0UPj+klf/+im0kq
-         HtXQaTNXGZQLDS2dQcY7QVkcPifNRamdpTULT8mF5DgTydEVWVjqQE4ecnRq2cQu2zhu
-         aPgUvaypVS/usbf5jtwVyreRCE6fDdtBOxJfOzDf4vIt04nI4Q7uk9u5Qg6Ucna4d0Rv
-         geGQ==
-X-Gm-Message-State: AJcUukc9XEzEveqHbmB0SUt8sfKhI7RGtn56t3PxA9N020T6b3VP/l9P
-        SuBMDUi4X/ZesgMAhbujvUBMRQ==
-X-Google-Smtp-Source: ALg8bN7FMHzRduq1WQKGloDGGfpV0q+BO/y29rrincS29v3s3lJCeS4w3qV23j3XpJbe01pcWPcZ4w==
-X-Received: by 2002:a62:1b50:: with SMTP id b77mr10920234pfb.36.1547659477846;
-        Wed, 16 Jan 2019 09:24:37 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id e23sm9459511pfh.68.2019.01.16.09.24.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 09:24:36 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gjovc-0001KE-2A; Wed, 16 Jan 2019 10:24:36 -0700
-Date:   Wed, 16 Jan 2019 10:24:36 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     "hch@lst.de" <hch@lst.de>
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "syeh@vmware.com" <syeh@vmware.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "imre.deak@intel.com" <imre.deak@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Message-ID: <20190116172436.GM22045@ziepe.ca>
-References: <20190104223531.GA1705@ziepe.ca>
- <20190110234218.GM6890@ziepe.ca>
- <20190114094856.GB29604@lst.de>
- <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
- <20190115212501.GE22045@ziepe.ca>
- <20190116161134.GA29041@lst.de>
+        Wed, 16 Jan 2019 12:25:37 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gjowX-00067c-EM; Wed, 16 Jan 2019 17:25:33 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] libertas: fix indentation issue
+Date:   Wed, 16 Jan 2019 17:25:33 +0000
+Message-Id: <20190116172533.22972-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116161134.GA29041@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 05:11:34PM +0100, hch@lst.de wrote:
-> On Tue, Jan 15, 2019 at 02:25:01PM -0700, Jason Gunthorpe wrote:
-> > RDMA needs something similar as well, in this case drivers take a
-> > struct page * from get_user_pages() and need to have the DMA map fail
-> > if the platform can't DMA map in a way that does not require any
-> > additional DMA API calls to ensure coherence. (think Userspace RDMA
-> > MR's)
-> 
-> Any time you dma map pages you need to do further DMA API calls to
-> ensure coherent, that is the way it is implemented.  These calls
-> just happen to be no-ops sometimes.
-> 
-> > Today we just do the normal DMA map and when it randomly doesn't work
-> > and corrupts data tell those people their platforms don't support RDMA
-> > - it would be nice to have a safer API base solution..
-> 
-> Now that all these drivers are consolidated in rdma-core you can fix
-> the code to actually do the right thing.  It isn't that userspace DMA
-> coherent is any harder than in-kernel DMA coherenence.  It just is
-> that no one bothered to do it properly.
+From: Colin Ian King <colin.king@canonical.com>
 
-If I recall we actually can't.. libverbs presents an API to the user
-that does not consider this possibility. 
+There is a statement that is incorrectly indented, fix it.
 
-ie consider post_recv - the driver has no idea what user buffers
-received data and can't possibly flush them transparently. The user
-would have to call some special DMA syncing API, which we don't have.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/marvell/libertas_tf/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It is the same reason the kernel API makes the ULP handle dma sync,
-not the driver.
+diff --git a/drivers/net/wireless/marvell/libertas_tf/main.c b/drivers/net/wireless/marvell/libertas_tf/main.c
+index 1d45da187b9b..a7cb7d06e5e6 100644
+--- a/drivers/net/wireless/marvell/libertas_tf/main.c
++++ b/drivers/net/wireless/marvell/libertas_tf/main.c
+@@ -676,7 +676,7 @@ int lbtf_remove_card(struct lbtf_private *priv)
+ 	ieee80211_unregister_hw(hw);
+ 	ieee80211_free_hw(hw);
+ 
+-    lbtf_deb_leave(LBTF_DEB_MAIN);
++	lbtf_deb_leave(LBTF_DEB_MAIN);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(lbtf_remove_card);
+-- 
+2.19.1
 
-The fact is there is 0 industry interest in using RDMA on platforms
-that can't do HW DMA cache coherency - the kernel syscalls required to
-do the cache flushing on the IO path would just destroy performance to
-the point of making RDMA pointless. Better to use netdev on those
-platforms.
-
-VFIO is in a similar boat. Their user API can't handle cache syncing
-either, so they would use the same API too.
-
-.. and the GPU-compute systems (ie OpenCL/CUDA) are like verbs, they
-were never designed with incoherent DMA in mind, and don't have the
-API design to support it.
-
-The reality is that *all* the subsytems doing DMA kernel bypass are
-ignoring the DMA mapping rules, I think we should support this better,
-and just accept that user space DMA will not be using syncing. Block
-access in cases when this is required, otherwise let it work as is
-today.
-
-Jason
