@@ -2,116 +2,126 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856E9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8ACC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576BA20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7559F20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:46:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjmdDGh2"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="STVkav8D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbfAPSpb (ORCPT
+        id S1729437AbfAPSqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:45:31 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44320 "EHLO
+        Wed, 16 Jan 2019 13:46:34 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41880 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729022AbfAPSpb (ORCPT
+        with ESMTP id S1729022AbfAPSqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:45:31 -0500
-Received: by mail-pg1-f195.google.com with SMTP id t13so3192702pgr.11;
-        Wed, 16 Jan 2019 10:45:30 -0800 (PST)
+        Wed, 16 Jan 2019 13:46:34 -0500
+Received: by mail-pg1-f195.google.com with SMTP id m1so3199708pgq.8
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:46:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=GIqHD+5i6aiV0G0NAFyRGh7lKTGvUOXmhbisqg7OY0s=;
-        b=NjmdDGh2z+MzXKdZ3H9zrBrVll7rNDty+vIJojCc0Ryc/MtCnQtQJfSVYScvEr43fB
-         1ZzmEKTWQ8QHblcYSjvdzJrY7reBauMVyHGx1HBwKAYW6Tnl41JwsmkbjB4G/GDoyjTt
-         NmUnasfImDQcadV0ACE27a4i64wcYDzLokIaqG0IYRL996/9lvdWtt5X3n0L30acqt39
-         n8OjZdzTtAXWGbaDjYSVZ1CJt0iRgG6b9U1MxO5a+iUp5fqOOKE1NasXrkrNKnvWlbaq
-         uOeyS3qV+ijPFSseKUoAvbAU5812CX+nHf4sQIr/akQfznSmNR9vtISmGMzqk/Dc+SFn
-         cIDQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RnFz/AG+HRuZACi2rZk82YB8mLxedD5PZQoVniGXyfQ=;
+        b=STVkav8DfilZnOzHiehqxmSejo1v0eOj0mNIY35HUu5gLp0znTn/MZKXBN+xvoj6sU
+         ZT7r7GPo5/yS+Co1J6S2YZrgPd+RY0qyI4/mWhG/R/idJX1Q/B6FCW0xyjklHJfQ1oQf
+         35/WwMB1WQlTIStVt44NjsDpsCj0de2H2ffuc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=GIqHD+5i6aiV0G0NAFyRGh7lKTGvUOXmhbisqg7OY0s=;
-        b=TmR6uZqPtfXNWFhjvvcChB12RgM+pXczkriAwLp607CKTkEUpGZ8mp1hleh3OE/5gh
-         9kslpMvT7fKBsmFgSK+LLVuSFLsiGmWlXFROsV515gdbrsdCp6ZhMdcnYYq7DmddW0/s
-         LNTadBySI1ZHCYnb2xGGpI6h9VWgb5B2cD5xvrfGm4VGkmU6RwQbWOoa7DDGWLGAuBCN
-         90sg/4zfsFQOr1OnsGSiHx0Z5gW4FOV03qrhHMRsP2BxCpRSLQp9UIwrnLkGWL21ORQq
-         kxsFsr+qo0siUEpTi7V+uGd9hQ2GncsVJtEcL6mZtf1cAU/5KICG/z675bDeLU/T2nWE
-         IZPQ==
-X-Gm-Message-State: AJcUukf2X3wqFZuSmZUC9pFWollRgCpZY2mvolhSH9ot5cGpq6e4/o7y
-        BGWg+DpvqDJGKcb6iG6iEeAwiwd2
-X-Google-Smtp-Source: ALg8bN71Qywd/z2X1CjMuc2KeN6KYpOos041iwSY0XNpoXt/edguqMPNQ/iJL2hQO3M4u+SLTaHPbg==
-X-Received: by 2002:a63:e20a:: with SMTP id q10mr9913430pgh.206.1547664330200;
-        Wed, 16 Jan 2019 10:45:30 -0800 (PST)
-Received: from jordon-HP-15-Notebook-PC ([49.207.55.114])
-        by smtp.gmail.com with ESMTPSA id g3sm13351073pfe.37.2019.01.16.10.45.27
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Jan 2019 10:45:28 -0800 (PST)
-Date:   Thu, 17 Jan 2019 00:19:33 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     mchehab@kernel.org, brian.warner@samsung.com
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        brajeswar.linux@gmail.com, sabyasachi.linux@gmail.com
-Subject: [PATCH] media/v4l2-core/videobuf-vmalloc.c: Remove dead code
-Message-ID: <20190116184933.GA4562@jordon-HP-15-Notebook-PC>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RnFz/AG+HRuZACi2rZk82YB8mLxedD5PZQoVniGXyfQ=;
+        b=pJLGeC11NPpOvMlZ/Linw1EuXHwElPZxvRlkiz+HGtX3YnmaIXDlVl9K2lsvsUxHL+
+         RW686LYwx0ezcPjTPGfCf6W0V+A4Co2kCcevQ2cBo4sc+340PX1XR4Ines+LnwAXG/7g
+         LTg3yFqqh5wkYLobJr6J2Mpy/cLlrzn7g36qfjNbuVOAsXVxLp2zl/F2lm+xuxkNJrHS
+         Z4FQMU1svFVkzAj4OYG/ePZZdpIIlKq6jiQ1Sxyn4lQBBKTnDbKEyLOexhqUwSrqHvd+
+         E//fmbZVKZdmPq59yIUo8116XcE0tTlF8bCVhC0+WlBYeepN9z6p7zfibF8aY0bViRx6
+         b7Eg==
+X-Gm-Message-State: AJcUukfCp463oQz9pPBjzWafA44QfEJt8f8C5egaMHfZDo4LZAZhMzf/
+        vdJJLGNOuoqSoDQD8lEEf59YkA==
+X-Google-Smtp-Source: ALg8bN6sk5vEhpdPSkL5GIHaDDxV74Y2fGlWV8HtFkHeIwjDzuKGA9g7AvvUpzvHS4DHPKc1nEBELg==
+X-Received: by 2002:a63:f444:: with SMTP id p4mr10122599pgk.124.1547664392958;
+        Wed, 16 Jan 2019 10:46:32 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id k186sm8138902pge.13.2019.01.16.10.46.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 10:46:32 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Rob Clark <robdclark@gmail.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        David Airlie <airlied@linux.ie>,
+        freedreno@lists.freedesktop.org,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v2 1/2] drm/msm: Fix A6XX support for opp-level
+Date:   Wed, 16 Jan 2019 10:46:21 -0800
+Message-Id: <20190116184623.77136-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This code is commented since version 3.7. If there is no plan to
-use it in future, we can remove this dead code.
+The bindings for Qualcomm opp levels changed after being Acked but
+before landing.  Thus the code in the GPU driver that was relying on
+the old bindings is now broken.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Let's change the code to match the new bindings by adjusting the old
+string 'qcom,level' to the new string 'opp-level'.  See the patch
+("dt-bindings: opp: Introduce opp-level bindings").
+
+NOTE: we will do additional cleanup to totally remove the string from
+the code and use the new dev_pm_opp_get_level() but we'll do it in a
+future patch.  This will facilitate getting the important code fix in
+sooner without having to deal with cross-maintainer dependencies.
+
+This patch needs to land before the patch ("arm64: dts: sdm845: Add
+gpu and gmu device nodes") since if a tree contains the device tree
+patch but not this one you'll get a crash at bootup.
+
+Fixes: 4b565ca5a2cb ("drm/msm: Add A6XX device support")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- drivers/media/v4l2-core/videobuf-vmalloc.c | 20 --------------------
- 1 file changed, 20 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/videobuf-vmalloc.c b/drivers/media/v4l2-core/videobuf-vmalloc.c
-index 45fe781..293213a 100644
---- a/drivers/media/v4l2-core/videobuf-vmalloc.c
-+++ b/drivers/media/v4l2-core/videobuf-vmalloc.c
-@@ -196,26 +196,6 @@ static int __videobuf_iolock(struct videobuf_queue *q,
- 		}
- 		dprintk(1, "vmalloc is at addr %p (%d pages)\n",
- 			mem->vaddr, pages);
--
--#if 0
--		int rc;
--		/* Kernel userptr is used also by read() method. In this case,
--		   there's no need to remap, since data will be copied to user
--		 */
--		if (!vb->baddr)
--			return 0;
--
--		/* FIXME: to properly support USERPTR, remap should occur.
--		   The code below won't work, since mem->vma = NULL
--		 */
--		/* Try to remap memory */
--		rc = remap_vmalloc_range(mem->vma, (void *)vb->baddr, 0);
--		if (rc < 0) {
--			printk(KERN_ERR "mmap: remap failed with error %d", rc);
--			return -ENOMEM;
--		}
--#endif
--
- 		break;
- 	case V4L2_MEMORY_OVERLAY:
- 	default:
+Changes in v2:
+- Split into two patches to facilitate landing.
+
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 5beb83d1cf87..ce1b3cc4bf6d 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -944,7 +944,7 @@ static u32 a6xx_gmu_get_arc_level(struct device *dev, unsigned long freq)
+ 	np = dev_pm_opp_get_of_node(opp);
+ 
+ 	if (np) {
+-		of_property_read_u32(np, "qcom,level", &val);
++		of_property_read_u32(np, "opp-level", &val);
+ 		of_node_put(np);
+ 	}
+ 
 -- 
-1.9.1
+2.20.1.97.g81188d93c3-goog
 
