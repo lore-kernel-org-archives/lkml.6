@@ -2,120 +2,149 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79604C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8C6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4710C20675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:11:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAQg3wWI"
+	by mail.kernel.org (Postfix) with ESMTP id 8F97A20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728063AbfAPVLp (ORCPT
+        id S1728320AbfAPVLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:11:45 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38464 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbfAPVLp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:11:45 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so6701834lja.5;
-        Wed, 16 Jan 2019 13:11:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mZC/R8I02rqLCUVmu/Wi64L1mcvQxP71e+q0r7wmFss=;
-        b=NAQg3wWIq+52aPeHZCAO8VsN9ZCQJnLSamPyV10aZTXLvoEAJJ2VsWl/7zTpU/8vWZ
-         qmsAp+e7JqzR6arfg/Yof+4JVLmpkCRnVZNw196a7kanTfkTbI5a/XeFR5v6s7bU0xVf
-         x2Hs4c/v6EmOrmTkrFDt/CGaikJOo9+SOXkMAn5jIjgGFhmWMCIKVFAli9Cq4Uxcal8c
-         RiJohvfepnhiEj6X2uZYjXqz8R42sUzhvXz7noHaC+XKWH9pehlI91TSpvlrpwylKYqE
-         pZKU1re53q8MpPu54McCkJ7iTwMBpoLmdXRYvwOixdJhNCGinv2eZcv0TK4CcVXdBgzG
-         orCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mZC/R8I02rqLCUVmu/Wi64L1mcvQxP71e+q0r7wmFss=;
-        b=gHWLS0CGA0JKdnh3HgcPj6C/iXcb5PfZXNj3jYlA22qIeljB+EyK/6N1dxSUxKAT7D
-         sd3Uey0o4pDH3fGoe6Whb2RTItr3lAvAN/vh+SQphUyH0Ysbcy1JgmgMXtJ6g3xi/WBg
-         AeTBU8GMeRYJYSRVoeerbBuWKvh/IfQoRfT55Se8dPCSI2HT9WQvoFWklBW5loITyUUJ
-         D9DZmKFdDOa+xVOK4//27tVQRj04GyaeUuvy1oMAYU5dnYgtABLkZrJuuX/A3PKeFEhx
-         1MnsJdeqp8u64ZwdJsFWL69ymXlNiSZt1m29bBL17Rjm14UoIK6fmGmL6R4o4V0gXXoY
-         l91g==
-X-Gm-Message-State: AJcUukesuHld8d3ASGK6MuGCNbx0v589anA6IGrzM0Cu5fAiT0ZhceNY
-        TU0xkqKjUDcSQGPTY6FTVPw=
-X-Google-Smtp-Source: ALg8bN58rQr8MjHbIKHJf+YJqFD/Ai9cXHn5DcRaMq+07eICYl/wtyuNRo1tXTVBtdnD42eNeawgaA==
-X-Received: by 2002:a2e:84ca:: with SMTP id q10-v6mr7821129ljh.65.1547673102633;
-        Wed, 16 Jan 2019 13:11:42 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:6c79:3c25:1ea9:fa4b])
-        by smtp.googlemail.com with ESMTPSA id a20-v6sm1221524ljf.28.2019.01.16.13.11.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 13:11:41 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     dmitry.torokhov@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH] input: misc: pwm-vibra: Prevent unbalanced regulator
-Date:   Wed, 16 Jan 2019 22:11:31 +0100
-Message-Id: <20190116211131.18809-1-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 16 Jan 2019 16:11:50 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46261 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726924AbfAPVLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:11:49 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 758D7207B0; Wed, 16 Jan 2019 22:11:47 +0100 (CET)
+Received: from localhost (lfbn-lyo-1-59-119.w86-202.abo.wanadoo.fr [86.202.150.119])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4BAEE207AC;
+        Wed, 16 Jan 2019 22:11:47 +0100 (CET)
+Date:   Wed, 16 Jan 2019 22:11:47 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Urs =?iso-8859-1?Q?F=E4ssler?= <urs.fassler@bbv.ch>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] rtc: pcf85063: set xtal load capacitance from DT
+Message-ID: <20190116211147.GF2627@piout.net>
+References: <20190108185414.26922-1-sam@ravnborg.org>
+ <20190108185414.26922-6-sam@ravnborg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108185414.26922-6-sam@ravnborg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Bakker <xc-racer2@live.ca>
+On 08/01/2019 19:54:14+0100, Sam Ravnborg wrote:
+> Add support for specifying the xtal load capacitance in the DT node.
+> The pcf85063 supports xtal load capacitance of 7pF or 12.5pF.
+> If the rtc has the wrong configuration the time will
+> drift several hours/week.
+> 
+> The driver use the default value 7pF.
+> 
+> The DT may specify either 7000fF or 12500fF.
+> (The DT uses femto Farad to avoid decimal numbers).
+> Other values are warned and the driver uses the default value.
+> 
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Urs F‰ssler <urs.fassler@bbv.ch>
+> ---
+>  drivers/rtc/rtc-pcf85063.c | 39 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+> 
+> diff --git a/drivers/rtc/rtc-pcf85063.c b/drivers/rtc/rtc-pcf85063.c
+> index 283c2335b01b..0c0b6030627e 100644
+> --- a/drivers/rtc/rtc-pcf85063.c
+> +++ b/drivers/rtc/rtc-pcf85063.c
+> @@ -27,6 +27,7 @@
+>  */
+>  
+>  #define PCF85063_REG_CTRL1		0x00 /* status */
+> +#define PCF85063_REG_CTRL1_CAP_SEL	BIT(0)
+>  #define PCF85063_REG_CTRL1_STOP		BIT(5)
+>  #define PCF85063_REG_CTRL2		0x01
+>  
+> @@ -180,6 +181,39 @@ static const struct rtc_class_ops pcf85063_rtc_ops = {
+>  	.set_time	= pcf85063_rtc_set_time
+>  };
+>  
+> +static int pcf85063_load_capacitance(struct i2c_client *client)
+> +{
+> +	u32 load;
+> +	int rc;
+> +	u8 reg;
+> +
+> +	rc = i2c_smbus_read_byte_data(client, PCF85063_REG_CTRL1);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	reg = rc;
+> +	load = 7000;
+> +	of_property_read_u32(client->dev.of_node, "quartz-load-femtofarads",
+> +			     &load);
+> +
+> +	switch (load) {
+> +	default:
+> +		dev_warn(&client->dev, "Unknown quartz-load-femtofarads value: %d. Assuming 7000",
+> +			load);
 
-pwm_vibrator_stop disables the regulator, but it can be called from
-multiple places, even when the regulator is already disabled. Fix this
-by using regulator_is_enabled check when starting and stopping device.
+Alignment is not correct
 
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-Signed-off-by: Pawe≈Ç Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- drivers/input/misc/pwm-vibra.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+> +		/* fall through */
+> +	case 7000:
+> +		reg &= ~PCF85063_REG_CTRL1_CAP_SEL;
+> +		break;
+> +	case 12500:
+> +		reg |= PCF85063_REG_CTRL1_CAP_SEL;
+> +		break;
+> +	}
+> +
+> +	rc = i2c_smbus_write_byte_data(client, PCF85063_REG_CTRL1, reg);
+> +
+> +	return rc;
+> +}
+> +
+>  static int pcf85063_probe(struct i2c_client *client,
+>  				const struct i2c_device_id *id)
+>  {
+> @@ -197,6 +231,11 @@ static int pcf85063_probe(struct i2c_client *client,
+>  		return err;
+>  	}
+>  
+> +	err = pcf85063_load_capacitance(client);
+> +	if (err < 0)
+> +		dev_warn(&client->dev, "failed to set xtal load capacitance: %d",
+> +		         err);
 
-diff --git a/drivers/input/misc/pwm-vibra.c b/drivers/input/misc/pwm-vibra.c
-index 55da191ae550..66677ee770ca 100644
---- a/drivers/input/misc/pwm-vibra.c
-+++ b/drivers/input/misc/pwm-vibra.c
-@@ -42,10 +42,12 @@ static int pwm_vibrator_start(struct pwm_vibrator *vibrator)
- 	struct pwm_state state;
- 	int err;
- 
--	err = regulator_enable(vibrator->vcc);
--	if (err) {
--		dev_err(pdev, "failed to enable regulator: %d", err);
--		return err;
-+	if (!regulator_is_enabled(vibrator->vcc)) {
-+		err = regulator_enable(vibrator->vcc);
-+		if (err) {
-+			dev_err(pdev, "failed to enable regulator: %d", err);
-+			return err;
-+		}
- 	}
- 
- 	pwm_get_state(vibrator->pwm, &state);
-@@ -76,7 +78,8 @@ static int pwm_vibrator_start(struct pwm_vibrator *vibrator)
- 
- static void pwm_vibrator_stop(struct pwm_vibrator *vibrator)
- {
--	regulator_disable(vibrator->vcc);
-+	if (regulator_is_enabled(vibrator->vcc))
-+		regulator_disable(vibrator->vcc);
- 
- 	if (vibrator->pwm_dir)
- 		pwm_disable(vibrator->pwm_dir);
+This should be using more tabs.
+
+As you can see, I don't have much to add and I'm quite pleased with the
+series.
+
+As Rob pointed out, quartz-load-femtofarads should be added in rtc.txt
+
 -- 
-2.17.1
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
