@@ -2,140 +2,142 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C4BC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3153C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B7A206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8684D206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392984AbfAPNIV (ORCPT
+        id S2390382AbfAPNKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:08:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44362 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 08:10:30 -0500
+Received: from mga05.intel.com ([192.55.52.43]:44856 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390247AbfAPNIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:08:20 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6D50F81F0F;
-        Wed, 16 Jan 2019 13:08:19 +0000 (UTC)
-Received: from redhat.com (ovpn-122-22.rdu2.redhat.com [10.10.122.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5AA835C22D;
-        Wed, 16 Jan 2019 13:08:16 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 08:08:14 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190116130813.GA3617@redhat.com>
-References: <20190111165141.GB3190@redhat.com>
- <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
- <20190112020228.GA5059@redhat.com>
- <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz>
- <20190114172124.GA3702@redhat.com>
- <20190115080759.GC29524@quack2.suse.cz>
- <20190116113819.GD26069@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190116113819.GD26069@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 16 Jan 2019 13:08:20 +0000 (UTC)
+        id S2390143AbfAPNKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:10:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 05:10:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,486,1539673200"; 
+   d="scan'208";a="126489253"
+Received: from mint-dev.iind.intel.com ([10.223.25.164])
+  by orsmga002.jf.intel.com with ESMTP; 16 Jan 2019 05:10:27 -0800
+From:   Ramalingam C <ramalingam.c@intel.com>
+To:     intel-gfx-trybot@lists.freedesktop.org
+Cc:     Ramalingam C <ramalingam.c@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v10 03/40] component: alloc component_match without any comp to match
+Date:   Wed, 16 Jan 2019 18:34:52 +0530
+Message-Id: <1547643929-4679-3-git-send-email-ramalingam.c@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547643929-4679-1-git-send-email-ramalingam.c@intel.com>
+References: <1547643929-4679-1-git-send-email-ramalingam.c@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 12:38:19PM +0100, Jan Kara wrote:
-> On Tue 15-01-19 09:07:59, Jan Kara wrote:
-> > Agreed. So with page lock it would actually look like:
-> > 
-> > get_page_pin()
-> > 	lock_page(page);
-> > 	wait_for_stable_page();
-> > 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> > 	unlock_page(page);
-> > 
-> > And if we perform page_pinned() check under page lock, then if
-> > page_pinned() returned false, we are sure page is not and will not be
-> > pinned until we drop the page lock (and also until page writeback is
-> > completed if needed).
-> 
-> After some more though, why do we even need wait_for_stable_page() and
-> lock_page() in get_page_pin()?
-> 
-> During writepage page_mkclean() will write protect all page tables. So
-> there can be no new writeable GUP pins until we unlock the page as all such
-> GUPs will have to first go through fault and ->page_mkwrite() handler. And
-> that will wait on page lock and do wait_for_stable_page() for us anyway.
-> Am I just confused?
+If all the components associated to a component master is not added
+to the component framework due to the HW capability or Kconfig
+selection, component_match will be NULL at
+component_master_add_with_match().
 
-Yeah with page lock it should synchronize on the pte but you still
-need to check for writeback iirc the page is unlocked after file
-system has queue up the write and thus the page can be unlock with
-write back pending (and PageWriteback() == trye) and i am not sure
-that in that states we can safely let anyone write to that page. I
-am assuming that in some case the block device also expect stable
-page content (RAID stuff).
+To avoid this, component_match_alloc() is added to the framework,
+to allcoate the struct component_match with zero associated components.
+Hence component master can be added with a component_match with zero
+associated components.
 
-So the PageWriteback() test is not only for racing page_mkclean()/
-test_set_page_writeback() and GUP but also for pending write back.
+This helps the component master bind call to get triggered,
+even if no component is registered for that particular master.
 
+This is meant for big PCI device drivers where small/optional
+features are external components, and based on usecases different
+combination of components are build as entire driver.
 
-> That actually touches on another question I wanted to get opinions on. GUP
-> can be for read and GUP can be for write (that is one of GUP flags).
-> Filesystems with page cache generally have issues only with GUP for write
-> as it can currently corrupt data, unexpectedly dirty page etc.. DAX & memory
-> hotplug have issues with both (DAX cannot truncate page pinned in any way,
-> memory hotplug will just loop in kernel until the page gets unpinned). So
-> we probably want to track both types of GUP pins and page-cache based
-> filesystems will take the hit even if they don't have to for read-pins?
+In such PCI device driver Load, if we use the component master for
+waiting for few  components(features) availability, only if they are
+supported by the underlying HW, then we need to allocate memory for
+component_match using the API introduced in this change before
+the call to component_master_add_with_match.
 
-Yes the distinction between read and write would be nice. With the map
-count solution you can only increment the mapcount for GUP(write=true).
-With pin bias the issue is that a big number of read pin can trigger
-false positive ie you would do:
-    GUP(vaddr, write)
-        ...
-        if (write)
-            atomic_add(page->refcount, PAGE_PIN_BIAS)
-        else
-            atomic_inc(page->refcount)
+Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
+Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
+ include/linux/component.h |  2 ++
+ 2 files changed, 32 insertions(+)
 
-    PUP(page, write)
-        if (write)
-            atomic_add(page->refcount, -PAGE_PIN_BIAS)
-        else
-            atomic_dec(page->refcount)
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index ddcea8739c12..1b8bb07c0ec7 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -302,6 +302,36 @@ static int component_match_realloc(struct device *dev,
+ }
+ 
+ /*
++ * Allocate the match without any component_match_array elements.
++ *
++ * This function is useful when the component master might end up
++ * registering itself without any matching components.
++ */
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr)
++{
++	struct component_match *match = *matchptr;
++
++	if (IS_ERR(match))
++		return;
++
++	if (match)
++		return;
++
++	match = devres_alloc(devm_component_match_release,
++			     sizeof(*match), GFP_KERNEL);
++	if (!match) {
++		*matchptr = ERR_PTR(-ENOMEM);
++		return;
++	}
++
++	devres_add(master, match);
++
++	*matchptr = match;
++}
++EXPORT_SYMBOL(component_match_alloc);
++
++/*
+  * Add a component to be matched, with a release function.
+  *
+  * The match array is first created or extended if necessary.
+diff --git a/include/linux/component.h b/include/linux/component.h
+index e71fbbbc74e2..3f6b420a58f8 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
+ 	struct component_match **matchptr,
+ 	void (*release)(struct device *, void *),
+ 	int (*compare)(struct device *, void *), void *compare_data);
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr);
+ 
+ static inline void component_match_add(struct device *master,
+ 	struct component_match **matchptr,
+-- 
+2.7.4
 
-I am guessing false positive because of too many read GUP is ok as
-it should be unlikely and when it happens then we take the hit.
-
-Cheers,
-Jérôme
