@@ -2,125 +2,123 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB2AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85A0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7970F206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 705F3206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:52:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="llEKrwug"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oSSqC/YF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731847AbfAPTvr (ORCPT
+        id S1731889AbfAPTwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:51:47 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39327 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731691AbfAPTvr (ORCPT
+        Wed, 16 Jan 2019 14:52:14 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42863 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731691AbfAPTwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:51:47 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y8so3327438wmi.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:51:46 -0800 (PST)
+        Wed, 16 Jan 2019 14:52:13 -0500
+Received: by mail-vs1-f66.google.com with SMTP id b74so4697787vsd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:52:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9SfLHsFdGJBWSULrI/JrLIMXZuHcal7zVDCKaPfdAxM=;
-        b=llEKrwugZp6FUFyPmd45CYzhmvyPO4a7wxEVsWDdUGd/Bo6Vl6YS/mY/Wi8ztUfmYx
-         n8JmJ1Sb3SC6zeR+vIiHF1IHulhqNPf6IYpwzmWc5Nk/aTXk0EI/nhuUIxC0bJnP9mxj
-         vFUMuUL1f25DDaiWLG1qO2cJ3XTYYJZHtJpvzIiCNgPdfaEEJfneR9pZ5ZzMEyuWj4Gs
-         NYjEm7DJbt4yk9zjdDgRoP63IvWEWsvjJSunkC2WPcfENmuE1nj5TcDVIeL3j2YLCaZh
-         QMOy55LbXP0+wQoYMsaLX3+dXHWoCHRsgoOAfRfFRZo4xqMdM0YaTjfmANraN8Cncbs4
-         yKxA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y0opV3Y2wiIVBThPYKggJycuAfqtYtufOBgcluFNRZs=;
+        b=oSSqC/YF4vwIKZlk0yBv+mMI84xqkr4GAtagv9UetDhzZWO4Mge1ZwA4n+iWIG4JDN
+         uu4IPwRxy8mZhqgRzlo9lmq7+8aJU0M/9DoIyah4puESMRROkgUDAzwWHL2Ls0MbclJC
+         BwH2ceY+Hkb8p7zSKszGjOiCDT7bW5v1tcLvg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=9SfLHsFdGJBWSULrI/JrLIMXZuHcal7zVDCKaPfdAxM=;
-        b=GncCdkuKkTh9BJYvrdq1b6j8ZVZJ9kzy4Ivlk02DrbDk5xFUEq36rHHpI3lznv65oV
-         49t+ME5E8IyASLJ3lPiUHO/3U/QF6QOL1h55wO81WG4pORMiX3OU88dygu95Q5eaizVV
-         SOTKC6bdocUR8cp9T2c4ebDBEF61u9jlU0tfD1Z9ZrKqbcGvvOzfWrrcBh50es3WqdLt
-         sxwxoghih2TpUDEnIbJRAyWcHpwheMnwKrDwYEqFPzdAwppwmcq1kfEjeV6Dygnbr8MR
-         MY5mw6OOKyb06Vzg6XIdBdQL5KCmW4pfMSQ9QrgdBh7UWR29IzfvhBtWGEsm57N9LyIc
-         K3LA==
-X-Gm-Message-State: AJcUukfeiixtBw7KoH0ehXB6uA0IcYx2Du5yY8fDeh0ON29iOtkddsi3
-        6uNSGRyU3RaQ2yVnRBBBIAo=
-X-Google-Smtp-Source: ALg8bN4rkaXwUisbCE5/5dZajKtebFcyV1VJLZfMy1mDxfRGCno1mCl1XNeGC/yd8FlGtke0iX7TEA==
-X-Received: by 2002:a1c:f916:: with SMTP id x22mr9198412wmh.87.1547668305893;
-        Wed, 16 Jan 2019 11:51:45 -0800 (PST)
-Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
-        by smtp.gmail.com with ESMTPSA id v6sm34247343wrd.88.2019.01.16.11.51.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 11:51:45 -0800 (PST)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id CA5C711423A3; Wed, 16 Jan 2019 20:51:38 +0100 (CET)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Boris Brezillon <bbrezillon@kernel.org>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mtd: Annotate implicit fall through in nand_scan_tail
-Date:   Wed, 16 Jan 2019 20:50:04 +0100
-Message-Id: <20190116195004.2499-2-malat@debian.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190116195004.2499-1-malat@debian.org>
-References: <20190116195004.2499-1-malat@debian.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y0opV3Y2wiIVBThPYKggJycuAfqtYtufOBgcluFNRZs=;
+        b=lmVBYCm98pZQVySz1ZFpW09HNqaYHiJOqrs0GKsuk5WzHpMk94Amco208lW+f26koz
+         KOD7AOo6m7wFhaO43+NJb+YD+Nz3irszOI79VBhfwA2Xgh6BdmionZCciNTCEf/MDMhN
+         BWM7t1hD97hdER0lf7lFbGjINKwjE0c9RRfygvxC79aN0RBz4KnSy0PtYBmlIj6DOtDn
+         3X1VeklUnODEv4v/OG/2zNMh+kvsNOYgEezFTX2jhqCvmHGGnXXgIaQBmB/z4WBavcnQ
+         0zZW+7Bwqp3A3uPaJzZE/Xzg+cJMcIuCSNf8z92xK07+aGoMYS9CJt3fQzNy3TTN7v7K
+         owxg==
+X-Gm-Message-State: AJcUukfpqJQpauZ7Ujvxhnq0VBLUVVDKHt4MdZEfKw1hhJI2Xadg7yAW
+        Tr7dDWsePcbxIwrM5jBw6rRp9wg3Sso=
+X-Google-Smtp-Source: ALg8bN6SWDCwCbYhNWM1FA9Zy40D7WYyreLxd2f/jJEyA0g3qbYaOXCS898TQ+68tpjwHUcJ2/7dLg==
+X-Received: by 2002:a67:485:: with SMTP id 127mr4596623vse.54.1547668332008;
+        Wed, 16 Jan 2019 11:52:12 -0800 (PST)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id m89sm3620842vsh.22.2019.01.16.11.52.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 11:52:10 -0800 (PST)
+Received: by mail-vk1-f170.google.com with SMTP id d201so1728023vka.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:52:10 -0800 (PST)
+X-Received: by 2002:a1f:e7c5:: with SMTP id e188mr4134454vkh.92.1547668329785;
+ Wed, 16 Jan 2019 11:52:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190112152844.26550-1-w@1wt.eu> <20190112152844.26550-6-w@1wt.eu>
+ <CAGXu5j+LvQsLSO+TtVr5hrUTYHA0Hqrc=pxPMv++erySJ8pV7g@mail.gmail.com> <ce0fca46-ff5e-beb3-5318-3a7c1e6da0e8@linux.intel.com>
+In-Reply-To: <ce0fca46-ff5e-beb3-5318-3a7c1e6da0e8@linux.intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 16 Jan 2019 11:51:58 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jK90twOG1=iO7_YQVMhFqDYQZ90CSWX=fkKWR56h6Y4Cw@mail.gmail.com>
+Message-ID: <CAGXu5jK90twOG1=iO7_YQVMhFqDYQZ90CSWX=fkKWR56h6Y4Cw@mail.gmail.com>
+Subject: Re: [PATCH 6/8] ASoC: intel: skylake: change snprintf to scnprintf
+ for possible overflow
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Willy Tarreau <w@1wt.eu>, Silvio Cesare <silvio.cesare@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a plan to build the kernel with -Wimplicit-fallthrough and
-these places in the code produced warnings (W=1).
+On Wed, Jan 16, 2019 at 11:35 AM Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com> wrote:
+>
+>
+> >> diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
+> >> index 5d7ac2ee7a3c..bb28db734fb7 100644
+> >> --- a/sound/soc/intel/skylake/skl-debug.c
+> >> +++ b/sound/soc/intel/skylake/skl-debug.c
+> >> @@ -43,7 +43,7 @@ static ssize_t skl_print_pins(struct skl_module_pin *m_pin, char *buf,
+> >>          ssize_t ret = 0;
+> >>
+> >>          for (i = 0; i < max_pin; i++)
+> >> -               ret += snprintf(buf + size, MOD_BUF - size,
+> >> +               ret += scnprintf(buf + size, MOD_BUF - size,
+> >>                                  "%s %d\n\tModule %d\n\tInstance %d\n\t"
+> >>                                  "In-used %s\n\tType %s\n"
+> >>                                  "\tState %d\n\tIndex %d\n",
+> >>
+> > While working on a Coccinelle script to find more cases of this, I
+> > noticed that this code is buggy: it keeps overwriting the same
+> > position in the buf string: "buf + size" and don't take "ret" into
+> > account at all. This needs to be:
+> >
+> > ret += scnprintf(buf + size + ret, MOD_BUF - size - ret,
+>
+> Thanks for the sighting. Indeed this looks like a bug, all other calls
+> to snprintf use "ret" to modify the destination/length.
+>
+> The only explanation I have for it not being noticed earlier is that
+> it's possibly not used - a 5mn test on 2 machines show the loop is
+> actually not run (max_pin == 0).
+>
+> It'll take me a bit of time to figure out what exactly this routine is
+> supposed to do, maybe we should do the cross-tree change first?
 
-This commit removes the following warnings:
+Sounds good to me. These patches are direct at maintainers, so please
+apply at will. :)
 
-  drivers/mtd/nand/raw/nand_base.c:5556:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  drivers/mtd/nand/raw/nand_base.c:5575:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  drivers/mtd/nand/raw/nand_base.c:5613:13: warning: this statement may fall through [-Wimplicit-fallthrough=]
+Thanks!
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- drivers/mtd/nand/raw/nand_base.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index cca4b24d2ffa..da344c276088 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5555,6 +5555,7 @@ static int nand_scan_tail(struct nand_chip *chip)
- 		}
- 		if (!ecc->read_page)
- 			ecc->read_page = nand_read_page_hwecc_oob_first;
-+		/* fall through */
- 
- 	case NAND_ECC_HW:
- 		/* Use standard hwecc read page function? */
-@@ -5574,6 +5575,7 @@ static int nand_scan_tail(struct nand_chip *chip)
- 			ecc->read_subpage = nand_read_subpage;
- 		if (!ecc->write_subpage && ecc->hwctl && ecc->calculate)
- 			ecc->write_subpage = nand_write_subpage_hwecc;
-+		/* fall through */
- 
- 	case NAND_ECC_HW_SYNDROME:
- 		if ((!ecc->calculate || !ecc->correct || !ecc->hwctl) &&
-@@ -5611,6 +5613,7 @@ static int nand_scan_tail(struct nand_chip *chip)
- 			ecc->size, mtd->writesize);
- 		ecc->mode = NAND_ECC_SOFT;
- 		ecc->algo = NAND_ECC_HAMMING;
-+		/* fall through */
- 
- 	case NAND_ECC_SOFT:
- 		ret = nand_set_ecc_soft_ops(chip);
 -- 
-2.19.2
-
+Kees Cook
