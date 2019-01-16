@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 251ACC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8D5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C643420657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:33:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D7D620657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:33:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405752AbfAPQdJ (ORCPT
+        id S2405764AbfAPQdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:33:09 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:42719 "EHLO
+        Wed, 16 Jan 2019 11:33:13 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:42727 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405731AbfAPQdG (ORCPT
+        with ESMTP id S2405737AbfAPQdI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:33:06 -0500
+        Wed, 16 Jan 2019 11:33:08 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id ED59718511;
-        Wed, 16 Jan 2019 17:33:04 +0100 (CET)
+        by bastet.se.axis.com (Postfix) with ESMTP id 1CE3C18545;
+        Wed, 16 Jan 2019 17:33:06 +0100 (CET)
 X-Axis-User: NO
 X-Axis-NonUser: YES
 X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
 Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
         by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id KJ6wtmplNcG0; Wed, 16 Jan 2019 17:33:00 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 4CD4F1855C;
+        with LMTP id G-dxQAzS-C0d; Wed, 16 Jan 2019 17:33:00 +0100 (CET)
+Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
+        by bastet.se.axis.com (Postfix) with ESMTPS id 480211855B;
         Wed, 16 Jan 2019 17:32:58 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C0B51E06E;
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2922E1A058;
         Wed, 16 Jan 2019 17:32:58 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D4701E076;
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C3E61A07F;
         Wed, 16 Jan 2019 17:32:58 +0100 (CET)
 Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
+        by boulder02.se.axis.com (Postfix) with ESMTP;
         Wed, 16 Jan 2019 17:32:58 +0100 (CET)
 Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by seth.se.axis.com (Postfix) with ESMTP id 0BDC72FB6;
+        by seth.se.axis.com (Postfix) with ESMTP id 0EB342FB9;
         Wed, 16 Jan 2019 17:32:58 +0100 (CET)
 Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id 0A49A80B46; Wed, 16 Jan 2019 17:32:58 +0100 (CET)
+        id 0CFAD80B47; Wed, 16 Jan 2019 17:32:58 +0100 (CET)
 From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
 To:     sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
         gregkh@linuxfoundation.org, arnd@arndb.de
 Cc:     linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH 7/8] vop: Use consistent DMA
-Date:   Wed, 16 Jan 2019 17:32:52 +0100
-Message-Id: <20190116163253.23780-8-vincent.whitchurch@axis.com>
+Subject: [PATCH 8/8] vop: Add loopback
+Date:   Wed, 16 Jan 2019 17:32:53 +0100
+Message-Id: <20190116163253.23780-9-vincent.whitchurch@axis.com>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190116163253.23780-1-vincent.whitchurch@axis.com>
 References: <20190116163253.23780-1-vincent.whitchurch@axis.com>
@@ -64,346 +64,445 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vop code maps buffers using the streaming DMA API but never syncs
-them so it doesn't work on systems without cache coherence.  The vrings
-want consistent mappings, and not streaming mappings so use that API to
-allocate and map buffers.
+Add a loopback driver to allow testing and evaluation of the VOP
+framework without special hardware.  The host and the guest will run
+under the same kernel.
 
 Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 ---
- drivers/misc/mic/bus/vop_bus.h    |   2 +
- drivers/misc/mic/host/mic_boot.c  |  46 +++++++++++++
- drivers/misc/mic/vop/vop_main.c   |  23 ++-----
- drivers/misc/mic/vop/vop_vringh.c | 111 ++++++++++++++++--------------
- 4 files changed, 114 insertions(+), 68 deletions(-)
+ drivers/misc/mic/Kconfig            |  10 +
+ drivers/misc/mic/vop/Makefile       |   2 +
+ drivers/misc/mic/vop/vop_loopback.c | 390 ++++++++++++++++++++++++++++
+ 3 files changed, 402 insertions(+)
+ create mode 100644 drivers/misc/mic/vop/vop_loopback.c
 
-diff --git a/drivers/misc/mic/bus/vop_bus.h b/drivers/misc/mic/bus/vop_bus.h
-index fff7a865d721..a2db11bea277 100644
---- a/drivers/misc/mic/bus/vop_bus.h
-+++ b/drivers/misc/mic/bus/vop_bus.h
-@@ -86,6 +86,7 @@ struct vop_driver {
-  *                 node to add/remove/configure virtio devices.
-  * @get_dp: Get access to the virtio device page used by the self
-  *          node to add/remove/configure virtio devices.
-+ * @get_dp_dma: Get DMA address of the virtio device page.
-  * @send_intr: Send an interrupt to the peer node on a specified doorbell.
-  * @ioremap: Map a buffer with the specified DMA address and length.
-  * @iounmap: Unmap a buffer previously mapped.
-@@ -103,6 +104,7 @@ struct vop_hw_ops {
- 	void (*ack_interrupt)(struct vop_device *vpdev, int num);
- 	void __iomem * (*get_remote_dp)(struct vop_device *vpdev);
- 	void * (*get_dp)(struct vop_device *vpdev);
-+	dma_addr_t (*get_dp_dma)(struct vop_device *vpdev);
- 	void (*send_intr)(struct vop_device *vpdev, int db);
- 	void __iomem * (*ioremap)(struct vop_device *vpdev,
- 				  dma_addr_t pa, size_t len);
-diff --git a/drivers/misc/mic/host/mic_boot.c b/drivers/misc/mic/host/mic_boot.c
-index 6479435ac96b..1dcd25917eca 100644
---- a/drivers/misc/mic/host/mic_boot.c
-+++ b/drivers/misc/mic/host/mic_boot.c
-@@ -55,9 +55,47 @@ static void _mic_dma_unmap_page(struct device *dev, dma_addr_t dma_addr,
- 	mic_unmap_single(mdev, dma_addr, size);
- }
+diff --git a/drivers/misc/mic/Kconfig b/drivers/misc/mic/Kconfig
+index 319ee3c90a26..b181cf20d40f 100644
+--- a/drivers/misc/mic/Kconfig
++++ b/drivers/misc/mic/Kconfig
+@@ -149,6 +149,16 @@ config VOP
+ 	  OS and tools for MIC to use with this driver are available from
+ 	  <http://software.intel.com/en-us/mic-developer>.
  
-+static int _mic_dma_mmap(struct device *dev, struct vm_area_struct *vma,
++config VOP_LOOPBACK
++	tristate "VOP loopback driver"
++	depends on VOP
++	help
++	  This enables a loopback driver to test and evaluate the VOP
++	  infrastructure without actual PCIe hardware.  The host and the guest
++	  sides run under the same kernel.
++
++	  If unsure, say N.
++
+ if VOP
+ source "drivers/vhost/Kconfig.vringh"
+ endif
+diff --git a/drivers/misc/mic/vop/Makefile b/drivers/misc/mic/vop/Makefile
+index 78819c8999f1..a6ead25c4418 100644
+--- a/drivers/misc/mic/vop/Makefile
++++ b/drivers/misc/mic/vop/Makefile
+@@ -7,3 +7,5 @@ obj-m := vop.o
+ vop-objs += vop_main.o
+ vop-objs += vop_debugfs.o
+ vop-objs += vop_vringh.o
++
++obj-$(CONFIG_VOP_LOOPBACK) += vop_loopback.o
+diff --git a/drivers/misc/mic/vop/vop_loopback.c b/drivers/misc/mic/vop/vop_loopback.c
+new file mode 100644
+index 000000000000..6e3d24f166cf
+--- /dev/null
++++ b/drivers/misc/mic/vop/vop_loopback.c
+@@ -0,0 +1,390 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019 Axis Communications AB
++ */
++
++#include <linux/platform_device.h>
++#include <linux/dma-direction.h>
++#include <linux/dma-mapping.h>
++#include <linux/mic_common.h>
++#include <linux/of_device.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/mutex.h>
++#include <linux/slab.h>
++#include <linux/list.h>
++#include <linux/io.h>
++
++#include "../bus/vop_bus.h"
++
++struct mic_irq {
++	struct list_head list;
++	int irq;
++	irqreturn_t (*func)(int irq, void *data);
++	void *data;
++};
++
++struct vop_loopback_end {
++	struct vop_loopback *loopback;
++	const char *name;
++	struct vop_device *vop;
++	struct list_head irqs;
++	struct mutex mutex;
++	struct work_struct work;
++};
++
++struct vop_loopback {
++	struct device *dev;
++	void *dp;
++	struct vop_loopback_end host;
++	struct vop_loopback_end guest;
++};
++
++static inline struct vop_loopback *vop_to_loopback(struct device *dev)
++{
++	return dev_get_drvdata(dev->parent);
++}
++
++static dma_addr_t
++vop_loopback_dma_map_page(struct device *dev, struct page *page,
++		  unsigned long offset, size_t size,
++		  enum dma_data_direction dir, unsigned long attrs)
++{
++	return page_to_phys(page) + offset;
++}
++
++static void vop_loopback_dma_unmap_page(struct device *dev, dma_addr_t dma_addr,
++				size_t size, enum dma_data_direction dir,
++				unsigned long attrs)
++{
++}
++
++static int vop_loopback_dma_mmap(struct device *dev, struct vm_area_struct *vma,
 +		 void *cpu_addr, dma_addr_t dma_addr, size_t size,
 +		 unsigned long attrs)
 +{
 +	return remap_pfn_range(vma, vma->vm_start,
-+			       virt_to_pfn(cpu_addr), size,
++			       PHYS_PFN(dma_addr), size,
 +			       vma->vm_page_prot);
 +}
 +
-+static void *_mic_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
-+		    gfp_t gfp, unsigned long attrs)
++static void *vop_loopback_dma_alloc(struct device *dev, size_t size,
++				    dma_addr_t *handle, gfp_t gfp,
++				    unsigned long attrs)
 +{
-+	void *cpu_addr = (void *) __get_free_pages(gfp, get_order(size));
-+	dma_addr_t dma_addr;
++	void *p = (void *) __get_free_pages(gfp, get_order(size));
 +
-+	if (!cpu_addr)
-+		return NULL;
++	if (p)
++		*handle = virt_to_phys(p);
 +
-+	*handle = dma_map_single(dev, p, size, attrs);
-+	if (dma_mapping_error(dev, *handle)) {
-+		free_pages((unsigned long) (uintptr_t) cpu_addr,
-+			   get_order(size));
-+		return NULL;
-+	}
-+
-+	return cpu_addr;
++	return p;
 +}
 +
-+static void _mic_dma_free(struct device *dev, size_t size, void *cpu_addr,
-+		  dma_addr_t handle, unsigned long attrs)
++static void vop_loopback_dma_free(struct device *dev, size_t size,
++				  void *cpu_addr, dma_addr_t handle,
++				  unsigned long attrs)
 +{
-+	dma_unmap_single(dev, cpu_addr, handle, attrs);
 +	free_pages((unsigned long) (uintptr_t) cpu_addr, get_order(size));
 +}
 +
- static const struct dma_map_ops _mic_dma_ops = {
- 	.map_page = _mic_dma_map_page,
- 	.unmap_page = _mic_dma_unmap_page,
-+	.mmap = _mic_dma_mmap,
-+	.alloc = _mic_dma_alloc,
-+	.free = _mic_dma_free,
- };
- 
- static struct mic_irq *
-@@ -100,6 +138,13 @@ static void *__mic_get_dp(struct vop_device *vpdev)
- 	return mdev->dp;
- }
- 
-+static void *__mic_get_dp_dma(struct vop_device *vpdev)
-+{
-+	struct mic_device *mdev = vpdev_to_mdev(&vpdev->dev);
++static const struct dma_map_ops vop_loopback_dma_ops = {
++	.map_page = vop_loopback_dma_map_page,
++	.unmap_page = vop_loopback_dma_unmap_page,
++	.mmap = vop_loopback_dma_mmap,
++	.alloc = vop_loopback_dma_alloc,
++	.free = vop_loopback_dma_free,
++};
 +
-+	return mdev->dp_dma_addr;
++
++static void vop_loopback_ack_interrupt(struct vop_device *vop, int num)
++{
 +}
 +
- static void __iomem *__mic_get_remote_dp(struct vop_device *vpdev)
- {
- 	return NULL;
-@@ -131,6 +176,7 @@ static struct vop_hw_ops vop_hw_ops = {
- 	.ack_interrupt = __mic_ack_interrupt,
- 	.next_db = __mic_next_db,
- 	.get_dp = __mic_get_dp,
-+	.get_dp_dma = __mic_get_dp_dma,
- 	.get_remote_dp = __mic_get_remote_dp,
- 	.send_intr = __mic_send_intr,
- 	.ioremap = __mic_ioremap,
-diff --git a/drivers/misc/mic/vop/vop_main.c b/drivers/misc/mic/vop/vop_main.c
-index dd49169ef53d..6d4a4e8993bb 100644
---- a/drivers/misc/mic/vop/vop_main.c
-+++ b/drivers/misc/mic/vop/vop_main.c
-@@ -264,9 +264,8 @@ static void vop_del_vq(struct virtqueue *vq, int n)
- 	struct vring *vr = (struct vring *)(vq + 1);
- 	struct vop_device *vpdev = vdev->vpdev;
- 
--	dma_unmap_single(&vpdev->dev, vdev->used[n],
--			 vdev->used_size[n], DMA_BIDIRECTIONAL);
--	free_pages((unsigned long)vr->used, get_order(vdev->used_size[n]));
-+	dma_free_wc(&vpdev->dev, vdev->used_size[n], vr->used, vdev->used[n]);
++static int vop_loopback_next_db(struct vop_device *vop)
++{
++	return 0;
++}
 +
- 	vring_del_virtqueue(vq);
- 	vpdev->hw_ops->iounmap(vpdev, vdev->vr[n]);
- 	vdev->vr[n] = NULL;
-@@ -346,23 +345,16 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
- 	vdev->used_size[index] = PAGE_ALIGN(sizeof(__u16) * 3 +
- 					     sizeof(struct vring_used_elem) *
- 					     le16_to_cpu(config.num));
--	used = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
--					get_order(vdev->used_size[index]));
-+	used = dma_alloc_wc(&vpdev->dev, vdev->used_size[index],
-+			    &vdev->used[index], GFP_KERNEL | __GFP_ZERO);
++static void *vop_loopback_get_dp(struct vop_device *vop)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
 +
- 	if (!used) {
- 		err = -ENOMEM;
- 		dev_err(_vop_dev(vdev), "%s %d err %d\n",
- 			__func__, __LINE__, err);
- 		goto del_vq;
- 	}
--	vdev->used[index] = dma_map_single(&vpdev->dev, used,
--					    vdev->used_size[index],
--					    DMA_BIDIRECTIONAL);
--	if (dma_mapping_error(&vpdev->dev, vdev->used[index])) {
--		err = -ENOMEM;
--		dev_err(_vop_dev(vdev), "%s %d err %d\n",
--			__func__, __LINE__, err);
--		goto free_used;
--	}
++	return loopback->dp;
++}
 +
- 	writeq(vdev->used[index], &vqconfig->used_address);
- 	/*
- 	 * To reassign the used ring here we are directly accessing
-@@ -376,9 +368,6 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
- 
- 	vq->priv = vdev;
- 	return vq;
--free_used:
--	free_pages((unsigned long)used,
--		   get_order(vdev->used_size[index]));
- del_vq:
- 	vring_del_virtqueue(vq);
- unmap:
-diff --git a/drivers/misc/mic/vop/vop_vringh.c b/drivers/misc/mic/vop/vop_vringh.c
-index 18d6ecff1834..4b8ab0d319b0 100644
---- a/drivers/misc/mic/vop/vop_vringh.c
-+++ b/drivers/misc/mic/vop/vop_vringh.c
-@@ -310,9 +310,8 @@ static int vop_virtio_add_device(struct vop_vdev *vdev,
- 		mutex_init(&vvr->vr_mutex);
- 		vr_size = PAGE_ALIGN(vring_size(num, MIC_VIRTIO_RING_ALIGN) +
- 			sizeof(struct _mic_vring_info));
--		vr->va = (void *)
--			__get_free_pages(GFP_KERNEL | __GFP_ZERO,
--					 get_order(vr_size));
-+		vr->va = dma_alloc_wc(&vpdev->dev, vr_size, &vr_addr,
-+				      GFP_KERNEL | __GFP_ZERO);
- 		if (!vr->va) {
- 			ret = -ENOMEM;
- 			dev_err(vop_dev(vdev), "%s %d err %d\n",
-@@ -322,15 +321,6 @@ static int vop_virtio_add_device(struct vop_vdev *vdev,
- 		vr->len = vr_size;
- 		vr->info = vr->va + vring_size(num, MIC_VIRTIO_RING_ALIGN);
- 		vr->info->magic = cpu_to_le32(MIC_MAGIC + vdev->virtio_id + i);
--		vr_addr = dma_map_single(&vpdev->dev, vr->va, vr_size,
--					 DMA_BIDIRECTIONAL);
--		if (dma_mapping_error(&vpdev->dev, vr_addr)) {
--			free_pages((unsigned long)vr->va, get_order(vr_size));
--			ret = -ENOMEM;
--			dev_err(vop_dev(vdev), "%s %d err %d\n",
--				__func__, __LINE__, ret);
--			goto err;
--		}
- 		vqconfig[i].address = cpu_to_le64(vr_addr);
- 
- 		vring_init(&vr->vr, num, vr->va, MIC_VIRTIO_RING_ALIGN);
-@@ -394,10 +384,8 @@ static int vop_virtio_add_device(struct vop_vdev *vdev,
- 	for (j = 0; j < i; j++) {
- 		struct vop_vringh *vvr = &vdev->vvr[j];
- 
--		dma_unmap_single(&vpdev->dev, le64_to_cpu(vqconfig[j].address),
--				 vvr->vring.len, DMA_BIDIRECTIONAL);
--		free_pages((unsigned long)vvr->vring.va,
--			   get_order(vvr->vring.len));
-+		dma_free_wc(&vpdev->dev, vvr->vring.len, vvr->vring.va,
-+			    le64_to_cpu(vqconfig[j].address));
- 	}
- 	return ret;
- }
-@@ -452,10 +440,8 @@ static void vop_virtio_del_device(struct vop_vdev *vdev)
- 			   get_order(VOP_INT_DMA_BUF_SIZE));
- 		vringh_kiov_cleanup(&vvr->riov);
- 		vringh_kiov_cleanup(&vvr->wiov);
--		dma_unmap_single(&vpdev->dev, le64_to_cpu(vqconfig[i].address),
--				 vvr->vring.len, DMA_BIDIRECTIONAL);
--		free_pages((unsigned long)vvr->vring.va,
--			   get_order(vvr->vring.len));
-+		dma_free_wc(&vpdev->dev, vvr->vring.len, vvr->vring.va,
-+			    le64_to_cpu(vqconfig[i].address));
- 	}
- 	/*
- 	 * Order the type update with previous stores. This write barrier
-@@ -1046,49 +1032,44 @@ static __poll_t vop_poll(struct file *f, poll_table *wait)
- }
- 
- static inline int
--vop_query_offset(struct vop_vdev *vdev, unsigned long offset,
--		 unsigned long *size, unsigned long *pa)
-+vop_query_offset(struct vop_vdev *vdev, unsigned long offset)
- {
--	struct vop_device *vpdev = vdev->vpdev;
- 	unsigned long start = MIC_DP_SIZE;
- 	int i;
- 
--	/*
--	 * MMAP interface is as follows:
--	 * offset				region
--	 * 0x0					virtio device_page
--	 * 0x1000				first vring
--	 * 0x1000 + size of 1st vring		second vring
--	 * ....
--	 */
--	if (!offset) {
--		*pa = virt_to_phys(vpdev->hw_ops->get_dp(vpdev));
--		*size = MIC_DP_SIZE;
--		return 0;
--	}
--
- 	for (i = 0; i < vdev->dd->num_vq; i++) {
- 		struct vop_vringh *vvr = &vdev->vvr[i];
- 
--		if (offset == start) {
--			*pa = virt_to_phys(vvr->vring.va);
--			*size = vvr->vring.len;
--			return 0;
--		}
-+		if (offset == start)
-+			return i;
++static dma_addr_t vop_loopback_get_dp_dma(struct vop_device *vop)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
 +
- 		start += vvr->vring.len;
- 	}
++	return virt_to_phys(loopback->dp);
++}
 +
- 	return -1;
- }
- 
- /*
-  * Maps the device page and virtio rings to user space for readonly access.
-+ *
-+ * MMAP interface is as follows:
-+ * offset				region
-+ * 0x0					virtio device_page
-+ * 0x1000				first vring
-+ * 0x1000 + size of 1st vring		second vring
-+ * ....
-  */
- static int vop_mmap(struct file *f, struct vm_area_struct *vma)
- {
- 	struct vop_vdev *vdev = f->private_data;
-+	struct vop_device *vpdev = vdev->vpdev;
-+	struct mic_vqconfig *vqconfig = mic_vq_config(vdev->dd);
- 	unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
--	unsigned long pa, size = vma->vm_end - vma->vm_start, size_rem = size;
--	int i, err;
-+	unsigned long size_rem = vma->vm_end - vma->vm_start;
-+	unsigned long saved_pgoff = vma->vm_pgoff;
-+	unsigned long saved_start = vma->vm_start;
-+	unsigned long saved_end = vma->vm_end;
-+	int err;
- 
- 	err = vop_vdev_inited(vdev);
- 	if (err)
-@@ -1098,16 +1079,44 @@ static int vop_mmap(struct file *f, struct vm_area_struct *vma)
- 		goto ret;
- 	}
- 	while (size_rem) {
--		i = vop_query_offset(vdev, offset, &size, &pa);
--		if (i < 0) {
--			err = -EINVAL;
--			goto ret;
-+		unsigned long size;
-+		dma_addr_t dma_addr;
-+		void *cpu_addr;
++static void __iomem *vop_loopback_get_remote_dp(struct vop_device *vop)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
 +
-+		if (!offset) {
-+			cpu_addr = vpdev->hw_ops->get_dp(vpdev);
-+			dma_addr = vpdev->hw_ops->get_dp_dma(vpdev);
-+			size = MIC_DP_SIZE;
-+		} else {
-+			struct vop_vringh *vvr;
-+			int i;
++	return (void __iomem *) loopback->dp;
++}
 +
-+			i = vop_query_offset(vdev, offset);
-+			if (i < 0) {
-+				err = -EINVAL;
-+				goto ret;
-+			}
++static struct mic_irq *
++vop_loopback_request_irq(struct vop_loopback_end *end,
++		  irqreturn_t (*func)(int irq, void *data),
++		  void *data, int intr_src)
++{
++	struct mic_irq *mic_irq;
 +
-+			vvr = &vdev->vvr[i];
-+			cpu_addr = vvr->vring.va;
-+			dma_addr = vqconfig[i].address;
-+			size = vvr->vring.len;
- 		}
--		err = remap_pfn_range(vma, vma->vm_start + offset,
--				      pa >> PAGE_SHIFT, size,
--				      vma->vm_page_prot);
++	mic_irq = kzalloc(sizeof(*mic_irq), GFP_KERNEL);
++	if (!mic_irq)
++		return ERR_PTR(-ENOMEM);
 +
-+		/* dma_mmap() wants to think it's mapping the entire vma */
-+		vma->vm_start += offset;
-+		vma->vm_end = vma->vm_start + PAGE_ALIGN(size);
-+		vma->vm_pgoff = 0;
++	mic_irq->irq = intr_src;
++	mic_irq->func = func;
++	mic_irq->data = data;
 +
-+		err = dma_mmap_wc(&vpdev->dev, vma, cpu_addr, dma_addr, size);
++	mutex_lock(&end->mutex);
++	list_add(&mic_irq->list, &end->irqs);
++	mutex_unlock(&end->mutex);
 +
-+		vma->vm_start = saved_start;
-+		vma->vm_end = saved_end;
-+		vma->vm_pgoff = saved_pgoff;
++	return mic_irq;
++}
 +
- 		if (err)
- 			goto ret;
++static struct mic_irq *
++vop_loopback_request_irq_host(struct vop_device *vop,
++		       irqreturn_t (*func)(int irq, void *data),
++		       const char *name, void *data, int intr_src)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
 +
- 		size_rem -= size;
- 		offset += size;
- 	}
++	return vop_loopback_request_irq(&loopback->host, func, data, intr_src);
++}
++
++static struct mic_irq *
++vop_loopback_request_irq_guest(struct vop_device *vop,
++		       irqreturn_t (*func)(int irq, void *data),
++		       const char *name, void *data, int intr_src)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
++
++	return vop_loopback_request_irq(&loopback->guest, func, data, intr_src);
++}
++
++static void vop_loopback_free_irq(struct vop_loopback_end *end,
++			   struct mic_irq *cookie)
++{
++	mutex_lock(&end->mutex);
++	list_del(&cookie->list);
++	mutex_unlock(&end->mutex);
++
++	kfree(cookie);
++}
++
++static void vop_loopback_free_irq_host(struct vop_device *vop,
++				struct mic_irq *cookie, void *data)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
++
++	vop_loopback_free_irq(&loopback->host, cookie);
++}
++
++static void vop_loopback_free_irq_guest(struct vop_device *vop,
++				struct mic_irq *cookie, void *data)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
++
++	vop_loopback_free_irq(&loopback->guest, cookie);
++}
++
++static void vop_loopback_send_intr_host(struct vop_device *vop, int db)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
++
++	schedule_work(&loopback->guest.work);
++}
++
++static void vop_loopback_send_intr_guest(struct vop_device *vop, int db)
++{
++	struct vop_loopback *loopback = vop_to_loopback(&vop->dev);
++
++	schedule_work(&loopback->host.work);
++}
++
++static void __iomem *vop_loopback_ioremap(struct vop_device *vop,
++				   dma_addr_t pa, size_t len)
++{
++	return (void __iomem *) memremap(pa, len, MEMREMAP_WB);
++}
++
++static void vop_loopback_iounmap(struct vop_device *vop, void __iomem *va)
++{
++	memunmap((void __force *) va);
++}
++
++static struct vop_hw_ops vop_loopback_host_ops = {
++	.request_irq = vop_loopback_request_irq_host,
++	.free_irq = vop_loopback_free_irq_host,
++	.ack_interrupt = vop_loopback_ack_interrupt,
++	.next_db = vop_loopback_next_db,
++	.get_dp = vop_loopback_get_dp,
++	.get_dp_dma = vop_loopback_get_dp_dma,
++	.get_remote_dp = vop_loopback_get_remote_dp,
++	.send_intr = vop_loopback_send_intr_host,
++	.ioremap = vop_loopback_ioremap,
++	.iounmap = vop_loopback_iounmap,
++};
++
++static struct vop_hw_ops vop_loopback_guest_ops = {
++	.request_irq = vop_loopback_request_irq_guest,
++	.free_irq = vop_loopback_free_irq_guest,
++	.ack_interrupt = vop_loopback_ack_interrupt,
++	.next_db = vop_loopback_next_db,
++	.get_dp = vop_loopback_get_dp,
++	.get_remote_dp = vop_loopback_get_remote_dp,
++	.send_intr = vop_loopback_send_intr_guest,
++	.ioremap = vop_loopback_ioremap,
++	.iounmap = vop_loopback_iounmap,
++};
++
++static void vop_loopback_irq(struct work_struct *work)
++{
++	struct vop_loopback_end *end = container_of(work, struct vop_loopback_end, work);
++	struct vop_loopback *loopback = end->loopback;
++	struct mic_irq *mic_irq;
++
++	dev_dbg(loopback->dev, "%s irq\n", end->name);
++
++	mutex_lock(&end->mutex);
++	list_for_each_entry(mic_irq, &end->irqs, list) {
++		irqreturn_t ret;
++
++		dev_dbg(loopback->dev, "calling %pS\n", mic_irq->func);
++		ret = mic_irq->func(mic_irq->irq, mic_irq->data);
++		dev_dbg(loopback->dev, "%pS ret %d\n", mic_irq->func, ret);
++	}
++	mutex_unlock(&end->mutex);
++}
++
++static void vop_loopback_bootparam_init(struct vop_loopback *loopback)
++{
++	struct mic_bootparam *bootparam = loopback->dp;
++
++	bootparam->magic = cpu_to_le32(MIC_MAGIC);
++	bootparam->h2c_config_db = -1;
++	bootparam->node_id = 1;
++	bootparam->scif_host_dma_addr = 0x0;
++	bootparam->scif_card_dma_addr = 0x0;
++	bootparam->c2h_scif_db = -1;
++	bootparam->h2c_scif_db = -1;
++}
++
++static void vop_loopback_end_init(struct vop_loopback *loopback,
++				  struct vop_loopback_end *end,
++				  const char *name)
++{
++	end->loopback = loopback;
++	end->name = name;
++
++	INIT_WORK(&end->work, vop_loopback_irq);
++
++	INIT_LIST_HEAD(&end->irqs);
++	mutex_init(&end->mutex);
++}
++
++static int vop_loopback_probe(struct platform_device *pdev)
++{
++	struct vop_loopback *loopback;
++	int ret;
++
++	loopback = devm_kzalloc(&pdev->dev, sizeof(*loopback), GFP_KERNEL);
++	if (!loopback)
++		return -ENOMEM;
++
++	loopback->dp = (void *) devm_get_free_pages(&pdev->dev,
++				GFP_KERNEL | __GFP_ZERO,
++				get_order(MIC_DP_SIZE));
++	if (!loopback->dp)
++		return -ENOMEM;
++
++	loopback->dev = &pdev->dev;
++
++	vop_loopback_end_init(loopback, &loopback->host, "host");
++	vop_loopback_end_init(loopback, &loopback->guest, "guest");
++	vop_loopback_bootparam_init(loopback);
++
++	platform_set_drvdata(pdev, loopback);
++
++	loopback->host.vop = vop_register_device(&pdev->dev, VOP_DEV_TRNSP,
++						 &vop_loopback_dma_ops,
++						 &vop_loopback_host_ops, 1,
++						 NULL, NULL);
++	if (IS_ERR(loopback->host.vop))
++		return PTR_ERR(loopback->host.vop);
++
++	loopback->guest.vop = vop_register_device(&pdev->dev, VOP_DEV_TRNSP,
++						  &vop_loopback_dma_ops,
++						  &vop_loopback_guest_ops,
++						  0, NULL, NULL);
++	if (IS_ERR(loopback->guest.vop)) {
++		ret = PTR_ERR(loopback->guest.vop);
++		goto err_unregister_host;
++	}
++
++	schedule_work(&loopback->guest.work);
++
++	return 0;
++
++err_unregister_host:
++	vop_unregister_device(loopback->host.vop);
++	return ret;
++}
++
++static int vop_loopback_remove(struct platform_device *pdev)
++{
++	struct vop_loopback *loopback = platform_get_drvdata(pdev);
++
++	vop_unregister_device(loopback->guest.vop);
++	vop_unregister_device(loopback->host.vop);
++
++	return 0;
++}
++
++static struct platform_driver vop_loopback = {
++	.probe = vop_loopback_probe,
++	.remove = vop_loopback_remove,
++	.driver = {
++		.name = "vop-loopback",
++	},
++};
++
++static struct platform_device *loopback_dev;
++
++static int __init vop_loopback_init(void)
++{
++	int ret;
++
++	loopback_dev = platform_device_register_simple("vop-loopback", 0,
++						       NULL, 0);
++	if (IS_ERR(loopback_dev))
++		return PTR_ERR(loopback_dev);
++
++	ret = platform_driver_register(&vop_loopback);
++	if (ret)
++		goto err_remove_dev;
++
++	return 0;
++
++err_remove_dev:
++	platform_device_unregister(loopback_dev);
++	return ret;
++}
++
++static void __exit vop_loopback_exit(void)
++{
++	platform_driver_unregister(&vop_loopback);
++	platform_device_unregister(loopback_dev);
++}
++
++module_init(vop_loopback_init);
++module_exit(vop_loopback_exit);
++
++MODULE_LICENSE("GPL v2");
 -- 
 2.20.0
 
