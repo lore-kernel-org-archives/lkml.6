@@ -2,102 +2,122 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5404EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F18BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C814206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C5FD206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:52:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Sa7uSJYv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392226AbfAPKvy (ORCPT
+        id S2392228AbfAPKwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:51:54 -0500
-Received: from smtp64.iad3a.emailsrvr.com ([173.203.187.64]:58793 "EHLO
-        smtp64.iad3a.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389044AbfAPKvx (ORCPT
+        Wed, 16 Jan 2019 05:52:33 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:39698 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731772AbfAPKwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:51:53 -0500
-X-Greylist: delayed 459 seconds by postgrey-1.27 at vger.kernel.org; Wed, 16 Jan 2019 05:51:52 EST
-Received: from smtp33.relay.iad3a.emailsrvr.com (localhost [127.0.0.1])
-        by smtp33.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTP id 5E696543C
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:44:14 -0500 (EST)
-Received: from smtp65.iad3a.emailsrvr.com (relay.iad3a.rsapps.net [172.27.255.110])
-        by smtp33.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTPS id 56FDB540A
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:44:14 -0500 (EST)
-Received: from smtp1.relay.iad3a.emailsrvr.com (localhost [127.0.0.1])
-        by smtp1.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTP id BA5D55B10
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:44:13 -0500 (EST)
-Received: from smtp97.iad3a.emailsrvr.com (relay.iad3a.rsapps.net [172.27.255.110])
-        by smtp1.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTPS id B297C5A79
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:44:13 -0500 (EST)
-Received: from smtp5.relay.iad3a.emailsrvr.com (localhost [127.0.0.1])
-        by smtp5.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTP id 2701925732;
-        Wed, 16 Jan 2019 05:44:13 -0500 (EST)
-X-Auth-ID: siepeng@mev.co.uk
-Received: by smtp5.relay.iad3a.emailsrvr.com (Authenticated sender: siepeng-AT-mev.co.uk) with ESMTPSA id 87BB5257CA;
-        Wed, 16 Jan 2019 05:44:12 -0500 (EST)
-X-Sender-Id: siepeng@mev.co.uk
-Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Wed, 16 Jan 2019 05:44:13 -0500
-Subject: Re: [PATCH] staging: comedi: Removed not necessary braces for single
- block
-To:     Jitendra Khasdev <jkhasdev@gmail.com>,
-        hsweeten@visionengravers.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20190115153656.10913-1-jkhasdev@gmail.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <8c44b247-e44d-aaff-e0af-544b2c4eb4c0@mev.co.uk>
-Date:   Wed, 16 Jan 2019 10:44:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 16 Jan 2019 05:52:33 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0GAqNu8046317;
+        Wed, 16 Jan 2019 04:52:23 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547635943;
+        bh=Mlm37ln3TJslVWZf4kJfX6ItmvNfSxYsEENt3smz5lA=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=Sa7uSJYvL1PEhfvKsnGSr/+Q9BED40JJHxixLkAOO3RUKLDlh+OS1sexlJgNvjLZT
+         b4z5mb6OjdfHI5tM7lWpZ+lYZ6zYjqAEQ8VSm1iNLY9CTzeE9ZSGemPKJB5dy+8B1Q
+         1vPDqh2qISzqjis0XrShjtnQMGwZ0RBcn+LXKquY=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0GAqNa2040642
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 04:52:23 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
+ Jan 2019 04:52:23 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 16 Jan 2019 04:52:23 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0GAqKEo003210;
+        Wed, 16 Jan 2019 04:52:21 -0600
+Subject: Re: [PATCH 1/3] arm64: dts: ti: am654: Add Main System Control Module
+ node
+To:     Nishanth Menon <nm@ti.com>
+References: <1547200861-17795-1-git-send-email-rogerq@ti.com>
+ <1547200861-17795-2-git-send-email-rogerq@ti.com>
+ <20190115143355.immsdfkyulx5j6o7@kahuna>
+CC:     <t-kristo@ti.com>, <nsekhar@ti.com>, <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jyri Sarha <jsarha@ti.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C3F0CE4.9010504@ti.com>
+Date:   Wed, 16 Jan 2019 12:52:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20190115153656.10913-1-jkhasdev@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <20190115143355.immsdfkyulx5j6o7@kahuna>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/01/2019 15:36, Jitendra Khasdev wrote:
-> This patch is used to remove not necessary braces for single if block.
+On 15/01/19 16:33, Nishanth Menon wrote:
+> On 12:00-20190111, Roger Quadros wrote:
+>> From: Jyri Sarha <jsarha@ti.com>
+>>
+>> Main System control module support is added to the device tree to allow
+>> driver to access to their control module registers.
+>>
+>> Signed-off-by: Jyri Sarha <jsarha@ti.com>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> ---
+>>  arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+>> index 272cf8f..8b55108 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+>> @@ -191,4 +191,12 @@
+>>  		#address-cells = <1>;
+>>  		#size-cells = <0>;
+>>  	};
+>> +
+>> +	scm_conf: scm_conf@100000 {
+>> +		compatible = "syscon", "simple-mfd";
+>> +		reg = <0 0x00100000 0 0x1c000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x0 0x00100000 0x1c000>;
 > 
-> Signed-off-by: Jitendra Khasdev <jkhasdev@gmail.com>
-> ---
->   drivers/staging/comedi/comedi_fops.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> Who handles the MMR region unlock?
+
+u-boot.
+
 > 
-> diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-> index 5d2fcbfe02af..38980fad8be4 100644
-> --- a/drivers/staging/comedi/comedi_fops.c
-> +++ b/drivers/staging/comedi/comedi_fops.c
-> @@ -1605,9 +1605,9 @@ static int do_insn_ioctl(struct comedi_device *dev,
->   	unsigned int n_data = MIN_SAMPLES;
->   	int ret = 0;
->   
-> -	if (copy_from_user(&insn, arg, sizeof(insn))) {
-> +	if (copy_from_user(&insn, arg, sizeof(insn)))
->   		return -EFAULT;
-> -	}
-> +
->   
->   	n_data = max(n_data, insn.n);
->   
+>> +	};
+>>  };
+>> -- 
+>> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+>> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>>
 > 
 
-The patch looks fine. Thanks for the fix!
-
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+cheers,
+-roger
 
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
