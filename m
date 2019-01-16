@@ -2,145 +2,164 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CCEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C95BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D3812082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:47:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="unknown key hash" (0-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="h6bDEpcf"
+	by mail.kernel.org (Postfix) with ESMTP id D55C02082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:47:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393488AbfAPNrY (ORCPT
+        id S2393503AbfAPNrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:47:24 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:24172 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393282AbfAPNrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:47:22 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43fpRW16Rdz9vBL9;
-        Wed, 16 Jan 2019 14:47:19 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=h6bDEpcf; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id vTxn3aznp6JG; Wed, 16 Jan 2019 14:47:19 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43fpRV6xvbz9vBL5;
-        Wed, 16 Jan 2019 14:47:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1547646439; bh=lH8phfL2dc2xvrucZHWB7D4b5ZzaHKfGAG4MvWdpo94=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=h6bDEpcfHoPi7+K8iDB5P2D8Msf7Cxay7+XiKbclC3/MBH8MSFbPurZAHmoagmvkW
-         Ef/q/jgPKVOgfJwRlPktA6kj61l8TiftNxvgf/CRtWQBZcf2d0rDXPE2LDLtrhQ72n
-         qx3IFMrMR7vXjtN8R9DD2KfjwhDzpyEy2mqQ6kN8=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4DB7F8B84D;
-        Wed, 16 Jan 2019 14:47:20 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id QK8m5vIbXNH2; Wed, 16 Jan 2019 14:47:20 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4435E8B830;
-        Wed, 16 Jan 2019 14:47:17 +0100 (CET)
-Subject: Re: [PATCH V2] mm: Introduce GFP_PGTABLE
-To:     Matthew Wilcox <willy@infradead.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     mark.rutland@arm.com, linux-sh@vger.kernel.org,
-        peterz@infradead.org, catalin.marinas@arm.com,
-        dave.hansen@linux.intel.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux@armlinux.org.uk, mingo@redhat.com, vbabka@suse.cz,
-        rientjes@google.com, palmer@sifive.com, greentime@andestech.com,
-        marc.zyngier@arm.com, rppt@linux.vnet.ibm.com, shakeelb@google.com,
-        kirill@shutemov.name, tglx@linutronix.de,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, ard.biesheuvel@linaro.org,
-        robin.murphy@arm.com, steve.capper@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        aneesh.kumar@linux.ibm.com, akpm@linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
- <20190116065703.GE24149@dhcp22.suse.cz>
- <20190116123018.GF6310@bombadil.infradead.org>
- <07d6a264-dccd-78ab-e8a9-2410bbef7b97@arm.com>
- <20190116131827.GH6310@bombadil.infradead.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <521d8511-4c87-49c6-de03-67a71d5bacca@c-s.fr>
-Date:   Wed, 16 Jan 2019 14:47:16 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190116131827.GH6310@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        Wed, 16 Jan 2019 08:47:36 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41264 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404510AbfAPNpi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:45:38 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GDejJe110823
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:45:38 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q25b3s7vf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:45:37 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 16 Jan 2019 13:45:34 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 16 Jan 2019 13:45:21 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GDjKH033685522
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 13:45:20 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D72442049;
+        Wed, 16 Jan 2019 13:45:20 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6586442042;
+        Wed, 16 Jan 2019 13:45:16 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.226])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 16 Jan 2019 13:45:16 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 16 Jan 2019 15:45:15 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH 11/21] memblock: make memblock_find_in_range_node() and choose_memblock_flags() static
+Date:   Wed, 16 Jan 2019 15:44:11 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
+References: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19011613-0020-0000-0000-0000030747C6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011613-0021-0000-0000-000021586463
+Message-Id: <1547646261-32535-12-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=708 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901160114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+These functions are not used outside memblock. Make them static.
 
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ include/linux/memblock.h | 4 ----
+ mm/memblock.c            | 4 ++--
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-Le 16/01/2019 à 14:18, Matthew Wilcox a écrit :
-> On Wed, Jan 16, 2019 at 06:42:22PM +0530, Anshuman Khandual wrote:
->> On 01/16/2019 06:00 PM, Matthew Wilcox wrote:
->>> On Wed, Jan 16, 2019 at 07:57:03AM +0100, Michal Hocko wrote:
->>>> On Wed 16-01-19 11:51:32, Anshuman Khandual wrote:
->>>>> All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
->>>>> __GFP_ZERO) and using it for allocating page table pages. This causes some
->>>>> code duplication which can be easily avoided. GFP_KERNEL allocated and
->>>>> cleared out pages (__GFP_ZERO) are required for page tables on any given
->>>>> architecture. This creates a new generic GFP flag flag which can be used
->>>>> for any page table page allocation. Does not cause any functional change.
->>>>>
->>>>> GFP_PGTABLE is being added into include/asm-generic/pgtable.h which is the
->>>>> generic page tabe header just to prevent it's potential misuse as a general
->>>>> allocation flag if included in include/linux/gfp.h.
->>>>
->>>> I haven't reviewed the patch yet but I am wondering whether this is
->>>> really worth it without going all the way down to unify the common code
->>>> and remove much more code duplication. Or is this not possible for some
->>>> reason?
->>>
->>> Exactly what I suggested doing in response to v1.
->>>
->>> Also, the approach taken here is crazy.  x86 has a feature that no other
->>> architecture has bothered to implement yet -- accounting page tables
->>> to the process.  Yet instead of spreading that goodness to all other
->>> architectures, Anshuman has gone to more effort to avoid doing that.
->>
->> The basic objective for this patch is to create a common minimum allocation
->> flag that can be used by architectures but that still allows archs to add
->> on additional constraints if they see fit. This patch does not intend to
->> change functionality for any arch.
-> 
-> I disagree with your objective.  Making more code common is a great idea,
-> but this patch is too unambitious.  We should be heading towards one or
-> two page table allocation functions instead of having every architecture do
-> its own thing.
-> 
-> So start there.  Move the x86 function into common code and convert one
-> other architecture to use it too.
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index cf4cd9c..f5a83a1 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -111,9 +111,6 @@ void memblock_discard(void);
+ #define memblock_dbg(fmt, ...) \
+ 	if (memblock_debug) printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+ 
+-phys_addr_t memblock_find_in_range_node(phys_addr_t size, phys_addr_t align,
+-					phys_addr_t start, phys_addr_t end,
+-					int nid, enum memblock_flags flags);
+ phys_addr_t memblock_find_in_range(phys_addr_t start, phys_addr_t end,
+ 				   phys_addr_t size, phys_addr_t align);
+ void memblock_allow_resize(void);
+@@ -130,7 +127,6 @@ int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
+ int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+ int memblock_mark_nomap(phys_addr_t base, phys_addr_t size);
+ int memblock_clear_nomap(phys_addr_t base, phys_addr_t size);
+-enum memblock_flags choose_memblock_flags(void);
+ 
+ unsigned long memblock_free_all(void);
+ void reset_node_managed_pages(pg_data_t *pgdat);
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 739f769..03b3929 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -125,7 +125,7 @@ static int memblock_can_resize __initdata_memblock;
+ static int memblock_memory_in_slab __initdata_memblock = 0;
+ static int memblock_reserved_in_slab __initdata_memblock = 0;
+ 
+-enum memblock_flags __init_memblock choose_memblock_flags(void)
++static enum memblock_flags __init_memblock choose_memblock_flags(void)
+ {
+ 	return system_has_some_mirror ? MEMBLOCK_MIRROR : MEMBLOCK_NONE;
+ }
+@@ -254,7 +254,7 @@ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
+  * Return:
+  * Found address on success, 0 on failure.
+  */
+-phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
++static phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t start,
+ 					phys_addr_t end, int nid,
+ 					enum memblock_flags flags)
+-- 
+2.7.4
 
-Are we talking about pte_alloc_one_kernel() and pte_alloc_one() ?
-
-I'm not sure x86 function is the best common one, as it seems to 
-allocate a multiple of PAGE_SIZE only.
-
-Some arches like powerpc use pagetables which are smaller than a page, 
-for instance powerpc 8xx uses 4k pagetables even with 16k pages, which 
-means a single page can be used by 4 pagetables.
-
-Therefore, I would suggest to start with powerpc functions.
-
-Christophe
