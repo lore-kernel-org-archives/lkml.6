@@ -2,128 +2,133 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 687BAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3981EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3085A20675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547658720;
-	bh=Xv8tQ1PzEMDcd51TfoFUCHKVA/Gh9Mkxv0Bcdlx8Nag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OGjk0kj5M8VbHkH7+5u/4bxV66tOfxUU5CUi/5ejBFMSAOCFIMGp/A8yvsE6bGzpA
-	 L80XdRBIYaFFfntaJXBtagAn5LQmXBSPUOd+mZimjvKJZeBSNVaDSap19cPSum0EZh
-	 dxUIgCstr1w5cfit0+AgzcD9VK0mxmuW35oiOcQI=
+	by mail.kernel.org (Postfix) with ESMTP id 062B3206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="izsIo0mf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405851AbfAPRL6 (ORCPT
+        id S2405861AbfAPRMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:11:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728496AbfAPRL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:11:58 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FD8420651;
-        Wed, 16 Jan 2019 17:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547658716;
-        bh=Xv8tQ1PzEMDcd51TfoFUCHKVA/Gh9Mkxv0Bcdlx8Nag=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QTtUbb8eab0Hyx3NI85qhj3MQb1jviOzqT8T/mRCrbJJuS+A7sp5AmdfGMF4Y17Nt
-         G1RbLuudw6O2op/OT8xf3huvs+JUUaK5ZGF1J1Wk4rvmGLdsjTqehsWvIl8MHRzMoa
-         kThlJ+GaEm4SG9zJ5iPRuGeNL5XYO9Byr+hGBgEQ=
-Date:   Wed, 16 Jan 2019 18:11:53 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.14 00/27] 4.14.94-stable review
-Message-ID: <20190116171153.GA10164@kroah.com>
-References: <20190115154901.189747728@linuxfoundation.org>
- <794339d5-a1f8-7ae1-8c8c-fbef141cc81d@nvidia.com>
- <20190116160252.GB4594@kroah.com>
- <26826b67-6a6b-dc79-84de-4ce48212203e@nvidia.com>
+        Wed, 16 Jan 2019 12:12:18 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:40620 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbfAPRMR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:12:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=i0R9Pyl8Fwj4O6eHKdmuHQPN6jDUZhDFCD/Kk+G3QhY=; b=izsIo0mfQF0FRN0ByWmjIJsDN3
+        rBP6gEFpTO04ImKLTwiuuawjSCzMLPzxV4NTCXcwDsu7igDCpswnqasTgZXFUCfJ4oymfkixcojRp
+        m7WEdGRhB9DeAUq1zqhYC++ABWw49z4Fl4XENxER/a1ULzdzlhxNeQawRYuZVQANaTcxNl4brIfCM
+        yZODGXM5IOD3uU9R3oOrBMtkxHyYaex727uqp6haIpavzztNXAUT24WXUn2ZMaM6+F4I1tcbuBOen
+        Ep9Jdqw59orXCJFDPqR6MG3ItCsOBU+fo9rSTH8pTGHL+ja01HvkjCMJmLYLXxprCfOdXOf0RZ+GM
+        RRF4oh6Q==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gjoje-0002cn-65; Wed, 16 Jan 2019 17:12:14 +0000
+Subject: Re: [PATCH v2] x86/pgtable: Always inline p4d_index
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+References: <20181210234538.5405-1-natechancellor@gmail.com>
+ <20190116134158.344-1-natechancellor@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a6cbf31b-b0f8-5787-61be-86b22b6b8d98@infradead.org>
+Date:   Wed, 16 Jan 2019 09:12:12 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26826b67-6a6b-dc79-84de-4ce48212203e@nvidia.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190116134158.344-1-natechancellor@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 04:56:08PM +0000, Jon Hunter wrote:
+On 1/16/19 5:41 AM, Nathan Chancellor wrote:
+> When building an allyesconfig build with Clang, the kernel fails to link
+> arch/x86/platform/efi/efi_64.o because of a failed BUILD_BUG_ON:
 > 
-> On 16/01/2019 16:02, Greg Kroah-Hartman wrote:
-> > On Wed, Jan 16, 2019 at 09:25:12AM +0000, Jon Hunter wrote:
-> >>
-> >> On 15/01/2019 16:35, Greg Kroah-Hartman wrote:
-> >>> This is the start of the stable review cycle for the 4.14.94 release.
-> >>> There are 27 patches in this series, all will be posted as a response
-> >>> to this one.  If anyone has any issues with these being applied, please
-> >>> let me know.
-> >>>
-> >>> Responses should be made by Thu Jan 17 15:48:28 UTC 2019.
-> >>> Anything received after that time might be too late.
-> >>>
-> >>> The whole patch series can be found in one patch at:
-> >>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.94-rc1.gz
-> >>> or in the git tree and branch at:
-> >>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> >>> and the diffstat can be found below.
-> >>>
-> >>> thanks,
-> >>>
-> >>> greg k-h
-> >> All tests are passing for Tegra ...
-> >>
-> >> Test results for stable-v4.14:
-> >>     8 builds:	8 pass, 0 fail
-> >>     16 boots:	16 pass, 0 fail
-> >>     14 tests:	14 pass, 0 fail
-> >>
-> >> Linux version:	4.14.94-rc1-gec31b1a
-> >> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-> >>                 tegra210-p2371-2180, tegra30-cardhu-a04
-> > 
-> > Thanks for testing two of these.
-> > 
-> > How about 4.19 and 4.20?  Does modern kernels work on this hardware as
-> > well?  :)
+> ld: arch/x86/platform/efi/efi_64.o: in function `efi_sync_low_kernel_mappings':
+> (.text+0x8e5): undefined reference to `__compiletime_assert_277'
 > 
-> We are not that advanced yet ;-)
-
-So not everything for those platforms is upstream?  :(
-
-> Only joking, absolutely and in fact we have more devices/boards
-> supported in newer kernels so it would make sense. We are also testing
-> mainline and -next.
+> Since there are several BUILD_BUG_ONs in efi_64.c, I isolated it down to
+> the following:
 > 
-> Unfortunately, it is a bit of a process to add new branches at the
-> moment simply because we are piggy backing on existing infrastructure
-> for testing that I personally do not own and so it needs to be approved.
-> However, nonetheless it is doable.
+>     BUILD_BUG_ON(p4d_index(EFI_VA_END) != p4d_index(MODULES_END));
 > 
-> We were talking about adding v4.19 and then v4.20 popped up. I am not
-> sure if you have any ideas yet about the EOL for v4.20? I was just
-> wondering if we should prioritise v4.20 now over v4.19?
+> After some research, it turns out that there is a new config option
+> called NO_AUTO_INLINE, which adds '-fno-inline-functions' to
+> KBUILD_CFLAGS so that the compiler does not auto inline small functions,
+> which causes this BUILD_BUG_ON to fail because p4d_index is no longer an
+> integer constant expression.
+> 
+> According to the help text of the config, functions explicitly marked
+> inline should still be inlined. As it turns out, GCC and Clang both
+> support '-fno-inline-functions' but Clang only inlines functions when
+> they are marked with an always inline annotation[1].
+> 
+> Since it's expected that p4d_index should always be inlined so that its
+> value can be evaluated at build time, mark it as __always_inline.
+> 
+> [1]: https://github.com/llvm/llvm-project/blob/84cecfcb3db7/clang/lib/Frontend/CompilerInvocation.cpp#L638-L657
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/256
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-I was just curious, if everything was upstream (like the boards that
-linaro tests for), then running 4.19 should be just the same as 4.20.
-But if you have big out-of-tree patchsets, that's a totally different
-story.
+Hi,
+I see the same build error when using gcc 4.8.5 (SUSE Linux).
+This patch fixes that build error.
 
-thanks,
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-greg k-h
+Thanks.
+
+> ---
+> 
+> v1 -> v2:
+> 
+> * Add Nick's Reviewed-by tag.
+> 
+> * Update the GitHub URL to use the official LLVM repository and pin to a
+>   SHA so that it is always valid, as suggested by Nick.
+> 
+>  arch/x86/include/asm/pgtable.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index 40616e805292..f78e53382498 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -918,7 +918,7 @@ static inline int p4d_bad(p4d_t p4d)
+>  }
+>  #endif  /* CONFIG_PGTABLE_LEVELS > 3 */
+>  
+> -static inline unsigned long p4d_index(unsigned long address)
+> +static __always_inline unsigned long p4d_index(unsigned long address)
+>  {
+>  	return (address >> P4D_SHIFT) & (PTRS_PER_P4D - 1);
+>  }
+> 
+
+
+-- 
+~Randy
