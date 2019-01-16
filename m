@@ -2,140 +2,143 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB2AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A74C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0156B206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2C81206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:37:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DqdSNsfG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389992AbfAPLhQ (ORCPT
+        id S2390033AbfAPLhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:37:16 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51411 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389465AbfAPLhQ (ORCPT
+        Wed, 16 Jan 2019 06:37:37 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39024 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731984AbfAPLhg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:37:16 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0GBb26A246312
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 16 Jan 2019 03:37:02 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0GBb2vZ246308;
-        Wed, 16 Jan 2019 03:37:02 -0800
-Date:   Wed, 16 Jan 2019 03:37:02 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-e6d7bc0bdf4155e896c48cf6f8fb7ef76b504058@git.kernel.org>
-Cc:     bp@suse.de, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          bp@suse.de, tglx@linutronix.de
-In-Reply-To: <20190109181531.27513-1-bp@alien8.de>
-References: <20190109181531.27513-1-bp@alien8.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/build] x86/build: Use the single-argument OUTPUT_FORMAT()
- linker script command
-Git-Commit-ID: e6d7bc0bdf4155e896c48cf6f8fb7ef76b504058
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 16 Jan 2019 06:37:36 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t9-v6so5152549ljh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 03:37:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=G4uWfUBdfRWJ7ooa2ukqyMzWYVfm+tWSAZRULgvNQ08=;
+        b=DqdSNsfGTw5APfw140m3LimoqimPBt+dTkOxqu/2bQyXk7S9f23O7PxiN3oFynlZKr
+         SASxPUZ8sG4xbfOK9h8FHLlWWFpRIZSahu+mE0EseqtvBLV4sdCnBwOS8M3gko6ngb7C
+         i176BhDXn0+wm8tZGD3yN7Qp96KnQZ3Sv/tjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=G4uWfUBdfRWJ7ooa2ukqyMzWYVfm+tWSAZRULgvNQ08=;
+        b=LG8ibGRXVwX8DpqX2a4U6n/bYirOLNT9CSDN8Jda0XhZjg2iT8A2LG/DFnhtKrUMr9
+         EKLGpD09wXIFwd9JRCxwDU88xP/0adLP7pHsCuTMGhrTPM43aiJKEnUmAAdO3/kroYn3
+         /CQtK7sTuRXoaLgOnY3tkoIZmZrbVbnYBwpnfFyR8ZDc1ZhVMjiePGmB0Y+HV6U0AUIk
+         3TMkjpZ2CPLlooWbyubU4yP1/S7fFxUw0G0iT8FEpZNMpXgY56uD2jbPkoYanGFe13rR
+         Wu176vndiqFeWkKYWQwPagx3eCBTN5Z4IA3xKVEHKArB1k4AYGrtjT9W1aOk+bULK+p+
+         D2rw==
+X-Gm-Message-State: AJcUukcHiKSu/vqzBwa6MSrlJE1C9IixBGogiAc+YQsnkQbJl2cqKDNA
+        toacCbmJgA0whU9P/WD0C2AYMA==
+X-Google-Smtp-Source: ALg8bN4GExvNSUhrn1ThdHo4TWGq9deM7EiNDhwBHUXk+6BhziaXs9EaV54O4+YG3vKLHV5hZLkJyg==
+X-Received: by 2002:a2e:6503:: with SMTP id z3-v6mr6194730ljb.153.1547638653812;
+        Wed, 16 Jan 2019 03:37:33 -0800 (PST)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id f11sm1144237lfi.12.2019.01.16.03.37.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 03:37:33 -0800 (PST)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
+        linux-wireless@vger.kernel.org
+Cc:     Ricardo Salveti <rsalveti@rsalveti.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Jan Kiszka <jan.kiszka@web.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
+Date:   Wed, 16 Jan 2019 12:37:23 +0100
+Message-Id: <20190116113723.15668-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e6d7bc0bdf4155e896c48cf6f8fb7ef76b504058
-Gitweb:     https://git.kernel.org/tip/e6d7bc0bdf4155e896c48cf6f8fb7ef76b504058
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Wed, 9 Jan 2019 17:32:10 +0100
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Wed, 16 Jan 2019 12:21:53 +0100
+During "wlan-up", we are programming the FW into the WiFi-chip. However,
+re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
+is made in-between the programmings.
 
-x86/build: Use the single-argument OUTPUT_FORMAT() linker script command
+To conform to this requirement and to fix the regression in a simple way,
+let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
+(runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
+current code is to treat this scenario as an error, but unfortunate this
+doesn't work as expected, so let's fix this.
 
-The various x86 linker scripts use the three-argument linker script
-command variant OUTPUT_FORMAT(DEFAULT, BIG, LITTLE) which specifies
-three object file formats when the -EL and -EB linker command line
-options are used. When -EB is specified, OUTPUT_FORMAT issues the BIG
-object file format, when -EL, LITTLE, respectively, and when neither is
-specified, DEFAULT.
+The other part is to guarantee that a power cycle of the SDIO card has been
+completed when wl12xx_sdio_power_on() returns, as to allow the FW
+programming to succeed. However, relying solely on runtime PM to deal with
+this isn't sufficient. For example, userspace may prevent runtime suspend
+via sysfs for the device that represents the SDIO card, leading to that the
+mmc core also keeps it powered on. For this reason, let's instead do a
+brute force power cycle in wl12xx_sdio_power_on().
 
-However, those -E[LB] options are not used by arch/x86/ so switch to the
-simple OUTPUT_FORMAT(BFDNAME) macro variant.
-
-No functional changes.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Link: https://lkml.kernel.org/r/20190109181531.27513-1-bp@alien8.de
+Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/x86/boot/compressed/vmlinux.lds.S | 2 +-
- arch/x86/boot/setup.ld                 | 2 +-
- arch/x86/kernel/vmlinux.lds.S          | 2 +-
- arch/x86/realmode/rm/realmode.lds.S    | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
-index f491bbde8493..508cfa6828c5 100644
---- a/arch/x86/boot/compressed/vmlinux.lds.S
-+++ b/arch/x86/boot/compressed/vmlinux.lds.S
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <asm-generic/vmlinux.lds.h>
+Changes in v2:
+	- Keep the SDIO host claimed when calling mmc_hw_reset().
+	- Add a fixes tag.
+---
+ drivers/net/wireless/ti/wlcore/sdio.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
+index bd10165d7eec..4d4b07701149 100644
+--- a/drivers/net/wireless/ti/wlcore/sdio.c
++++ b/drivers/net/wireless/ti/wlcore/sdio.c
+@@ -164,6 +164,12 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
+ 	}
  
--OUTPUT_FORMAT(CONFIG_OUTPUT_FORMAT, CONFIG_OUTPUT_FORMAT, CONFIG_OUTPUT_FORMAT)
-+OUTPUT_FORMAT(CONFIG_OUTPUT_FORMAT)
+ 	sdio_claim_host(func);
++	/*
++	 * To guarantee that the SDIO card is power cycled, as required to make
++	 * the FW programming to succeed, let's do a brute force HW reset.
++	 */
++	mmc_hw_reset(card->host);
++
+ 	sdio_enable_func(func);
+ 	sdio_release_host(func);
  
- #undef i386
+@@ -174,20 +180,13 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
+ {
+ 	struct sdio_func *func = dev_to_sdio_func(glue->dev);
+ 	struct mmc_card *card = func->card;
+-	int error;
  
-diff --git a/arch/x86/boot/setup.ld b/arch/x86/boot/setup.ld
-index 96a6c7563538..0149e41d42c2 100644
---- a/arch/x86/boot/setup.ld
-+++ b/arch/x86/boot/setup.ld
-@@ -3,7 +3,7 @@
-  *
-  * Linker script for the i386 setup code
-  */
--OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
-+OUTPUT_FORMAT("elf32-i386")
- OUTPUT_ARCH(i386)
- ENTRY(_start)
+ 	sdio_claim_host(func);
+ 	sdio_disable_func(func);
+ 	sdio_release_host(func);
  
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index ee3b5c7d662e..bad8c51fee6e 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -31,7 +31,7 @@
+ 	/* Let runtime PM know the card is powered off */
+-	error = pm_runtime_put(&card->dev);
+-	if (error < 0 && error != -EBUSY) {
+-		dev_err(&card->dev, "%s failed: %i\n", __func__, error);
+-
+-		return error;
+-	}
+-
++	pm_runtime_put(&card->dev);
+ 	return 0;
+ }
  
- #undef i386     /* in case the preprocessor is a 32bit one */
- 
--OUTPUT_FORMAT(CONFIG_OUTPUT_FORMAT, CONFIG_OUTPUT_FORMAT, CONFIG_OUTPUT_FORMAT)
-+OUTPUT_FORMAT(CONFIG_OUTPUT_FORMAT)
- 
- #ifdef CONFIG_X86_32
- OUTPUT_ARCH(i386)
-diff --git a/arch/x86/realmode/rm/realmode.lds.S b/arch/x86/realmode/rm/realmode.lds.S
-index df8e11e26bc3..3bb980800c58 100644
---- a/arch/x86/realmode/rm/realmode.lds.S
-+++ b/arch/x86/realmode/rm/realmode.lds.S
-@@ -9,7 +9,7 @@
- 
- #undef i386
- 
--OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
-+OUTPUT_FORMAT("elf32-i386")
- OUTPUT_ARCH(i386)
- 
- SECTIONS
+-- 
+2.17.1
+
