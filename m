@@ -2,194 +2,157 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D554EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD032C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F7D620657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B17B20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:22:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="kCAugDlV"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bNIX15QM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391942AbfAPMUe (ORCPT
+        id S2392057AbfAPMWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 07:20:34 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:59354 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389150AbfAPMUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 07:20:33 -0500
-Received: from zn.tnic (p200300EC2BC98A0074F02E32486DBF81.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:8a00:74f0:2e32:486d:bf81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 37C9C1EC0ABA;
-        Wed, 16 Jan 2019 13:20:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547641232;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=cRNn1EsAJFtFq0jPgg6N6KWD9+QTcEv6hbSx8sVhXkc=;
-        b=kCAugDlVs4imY6BEWURybBltHcofX7bNEx/Ud6/mnCAN+Gkrjmk1PrZctXskG1X5pVeGWw
-        1FsPtojO31aH8Uml1J14wR74y8YfZ94oH8XTCobxkVs87dsP//ldilr7Nrm/7XfzBXV5b8
-        /fiYROCrMYYnLi8qhpdC4qPq/BEiSCM=
-Date:   Wed, 16 Jan 2019 13:20:26 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     kan.liang@linux.intel.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, mingo@redhat.com, ak@linux.intel.com,
-        eranian@google.com
-Subject: Re: [PATCH V5 1/4] x86/cpufeature: Add facility to check for min
- microcode revisions
-Message-ID: <20190116122026.GF15409@zn.tnic>
-References: <1546900465-5121-1-git-send-email-kan.liang@linux.intel.com>
+        Wed, 16 Jan 2019 07:22:39 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38586 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390019AbfAPMWj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 07:22:39 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v13so6695301wrw.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 04:22:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7GctlGV8jUJf3eugRW/XtYy29XucT+mtv06KetmoIDs=;
+        b=bNIX15QMJ3TonchKeP4Oh1h3mxJpTC3AHkJdHuwXeeFjqLYGwFk2ETOk2Mwy+rf9+j
+         2wQqmoDYsjdaNkbI1ZMjobJtI4rZJ5XFs5ZoCTk1BzEGyLeqJGgIbU1bbAAidF/9Bf++
+         eZNFLQgimlavbWkoUHadUfq0mXQC8zaK4NBBU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7GctlGV8jUJf3eugRW/XtYy29XucT+mtv06KetmoIDs=;
+        b=G7JGgqJx/CeOVJbe8qC8jKSuyrFSWzJQKrJIIvWV7OpsL/SS+XeRkN05YP9MD7tSXW
+         m+DIBm/TXBj7TBw8J2DedRQ3g9v3Y9VwY11rGfoz47WJHSY0rAW4XI7/a6tb7jXJcsM6
+         DM07tDIfFd6dMcKG2iiKokdVepK81YLKO7PSEqEBrsuL5y4DOpTZDSw86Y2QuRyVNAjP
+         mRDe0mFnCA20e3r5Nz6uchXUowQ6oAMtKz0GKVSWLKAIwqb5c3yxpLe6sk1P5jb+A8ra
+         mVvx7PF1CYcJrczFuFoRssAz9ji0nlW/jUH0NEXuS3Nd1v+yEm00T4a9qjttmuOzKHxD
+         /ebg==
+X-Gm-Message-State: AJcUukcyDs+mBK/bbWAQZYMGomMBlrOEcYKy8LGn+adDlH4+KUU5/gS8
+        B4hJfymOahbvjgUd/UIOQm9W6A==
+X-Google-Smtp-Source: ALg8bN6VNOGIeAogkAPaj5CdVMgUNJR34s01Tff3Df7CVHQNDyuz2taROL9A5zvpkoOENA1LnuePzw==
+X-Received: by 2002:adf:fd50:: with SMTP id h16mr7894474wrs.231.1547641357306;
+        Wed, 16 Jan 2019 04:22:37 -0800 (PST)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id x81sm36261009wmg.17.2019.01.16.04.22.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 04:22:36 -0800 (PST)
+Subject: Re: [PATCH v11] cpuidle: New timer events oriented governor for
+ tickless systems
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc:     Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>, "Chen, Hu" <hu1.chen@intel.com>,
+        Quentin Perret <quentin.perret@arm.com>
+References: <3625809.WY5lk7ujeb@aspire.rjw.lan>
+ <2138748.C3tVedyW9D@aspire.rjw.lan>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <7ce53e4d-69ca-f7a5-5880-21999d926d3d@linaro.org>
+Date:   Wed, 16 Jan 2019 13:22:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <2138748.C3tVedyW9D@aspire.rjw.lan>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1546900465-5121-1-git-send-email-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 02:34:22PM -0800, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
+On 16/01/2019 13:03, Rafael J. Wysocki wrote:
+> On Friday, January 4, 2019 12:30:47 PM CET Rafael J. Wysocki wrote:
+>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> The venerable menu governor does some things that are quite
+>> questionable in my view.
+>>
+>> First, it includes timer wakeups in the pattern detection data and
+>> mixes them up with wakeups from other sources which in some cases
+>> causes it to expect what essentially would be a timer wakeup in a
+>> time frame in which no timer wakeups are possible (because it knows
+>> the time until the next timer event and that is later than the
+>> expected wakeup time).
+>>
+>> Second, it uses the extra exit latency limit based on the predicted
+>> idle duration and depending on the number of tasks waiting on I/O,
+>> even though those tasks may run on a different CPU when they are
+>> woken up.  Moreover, the time ranges used by it for the sleep length
+>> correction factors depend on whether or not there are tasks waiting
+>> on I/O, which again doesn't imply anything in particular, and they
+>> are not correlated to the list of available idle states in any way
+>> whatever.
+>>
+>> Also, the pattern detection code in menu may end up considering
+>> values that are too large to matter at all, in which cases running
+>> it is a waste of time.
+>>
+>> A major rework of the menu governor would be required to address
+>> these issues and the performance of at least some workloads (tuned
+>> specifically to the current behavior of the menu governor) is likely
+>> to suffer from that.  It is thus better to introduce an entirely new
+>> governor without them and let everybody use the governor that works
+>> better with their actual workloads.
+>>
+>> The new governor introduced here, the timer events oriented (TEO)
+>> governor, uses the same basic strategy as menu: it always tries to
+>> find the deepest idle state that can be used in the given conditions.
+>> However, it applies a different approach to that problem.
+>>
+>> First, it doesn't use "correction factors" for the time till the
+>> closest timer, but instead it tries to correlate the measured idle
+>> duration values with the available idle states and use that
+>> information to pick up the idle state that is most likely to "match"
+>> the upcoming CPU idle interval.
+>>
+>> Second, it doesn't take the number of "I/O waiters" into account at
+>> all and the pattern detection code in it avoids taking timer wakeups
+>> into account.  It also only uses idle duration values less than the
+>> current time till the closest timer (with the tick excluded) for that
+>> purpose.
 > 
-> For bug workarounds or checks it is useful to check for specific
-> microcode revisions.
-> 
-> Add a new generic function to match the CPU with stepping.
-> Add the other function to check the min microcode revisions for
-> the matched CPU.
-> A new table format is introduced to facilitate the quirk to
-> fill the related information.
-> 
-> This does not change the existing x86_cpu_id because it's an ABI
-> shared with modules, and also has quite different requirements,
-> as in no wildcards, but everything has to be matched exactly.
-> 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Based-on-code-from: Andi Kleen <ak@linux.intel.com>
+> Given the lack of negative feedback and my confidence in this, I'm
+> queuing it up for 5.1.
 
-The proper tag is: Originally-by
+Yeah, this governor was not proposed in the better moment for review for
+me :/
 
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
-> 
-> Changes since V4:
-> - Rename to x86_cpu_check and INTEL_CHECK_UCODE
-> - Split x86_min_microcode() into two functions. One is a generic
->   CPU match function with stepping. The other is to check the min
->   microcode revisions.
-> 
-> The previous discussion can be found here.
-> https://lkml.org/lkml/2018/10/10/740
-> 
->  arch/x86/include/asm/cpu_device_id.h | 28 ++++++++++++++++++++++++++++
->  arch/x86/kernel/cpu/match.c          | 31 +++++++++++++++++++++++++++++++
->  2 files changed, 59 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
-> index baeba05..43f19af 100644
-> --- a/arch/x86/include/asm/cpu_device_id.h
-> +++ b/arch/x86/include/asm/cpu_device_id.h
-> @@ -11,4 +11,32 @@
->  
->  extern const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match);
->  
-> +/*
-> + * Match specific microcode revisions.
-> + *
-> + * vendor/family/model/stepping must be all set.
-> + *
-> + * only checks against the boot cpu.  When mixed-stepping configs are
+I agree writing a new governor is certainly simpler than revisiting the
+menu governor again. That is the advantage of the governors, we can add
+more of them suiting the needs.
 
-s/cpu/CPU/g
+If you are confident and Doug bench-marked it showing better results
+than the menu governor on x86, I don't see any reason to not merge it.
 
-> + * valid for a CPU model, add a quirk for every valid stepping and
-> + * do the fine-tuning in the quirk handler.
-> + */
-> +
-> +struct x86_cpu_check {
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-That's not a "check". If anything, it is a descriptor of sorts. I.e.,
-x86_cpu_desc or so.
-
-> +	u8	vendor;
-> +	u8	family;
-> +	u8	model;
-> +	u8	stepping;
-> +	u32	microcode_rev;
-
-Name those the same way as the corresponding members in struct
-cpuinfo_x86 are named, so that there's no confusion about what is what.
-
-> +};
-> +
-> +#define INTEL_CHECK_UCODE(mod, step, rev) {			\
-
-INTEL_CPU_DESC
-
-or so.
-
-> +	.vendor = X86_VENDOR_INTEL,				\
-> +	.family = 6,						\
-> +	.model = mod,						\
-> +	.stepping = step,					\
-> +	.microcode_rev = rev,					\
-> +}
-> +
-> +extern bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_check *table);
-> +
->  #endif
-> diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
-> index 3fed388..408bed37 100644
-> --- a/arch/x86/kernel/cpu/match.c
-> +++ b/arch/x86/kernel/cpu/match.c
-> @@ -48,3 +48,34 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
->  	return NULL;
->  }
->  EXPORT_SYMBOL(x86_match_cpu);
-> +
-> +static const struct x86_cpu_check *
-> +x86_match_cpu_with_stepping(const struct x86_cpu_check *match)
-> +{
-> +	struct cpuinfo_x86 *c = &boot_cpu_data;
-> +	const struct x86_cpu_check *m;
-> +
-> +	for (m = match; m->family | m->model; m++) {
-> +		if (c->x86_vendor != m->vendor)
-> +			continue;
-> +		if (c->x86 != m->family)
-> +			continue;
-> +		if (c->x86_model != m->model)
-> +			continue;
-> +		if (c->x86_stepping != m->stepping)
-> +			continue;
-> +		return m;
-> +	}
-> +	return NULL;
-> +}
-> +
-> +bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_check *table)
-> +{
-> +	const struct x86_cpu_check *res = x86_match_cpu_with_stepping(table);
-> +
-> +	if (!res || res->microcode_rev > boot_cpu_data.microcode)
-> +		return false;
-> +
-> +	return true;
-> +}
-> +EXPORT_SYMBOL(x86_cpu_has_min_microcode_rev);
-
-EXPORT_SYMBOL_GPL.
 
 -- 
-Regards/Gruss,
-    Boris.
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
