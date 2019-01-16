@@ -2,160 +2,81 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88125C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7167BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6015D20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C21720866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547621589;
+	bh=VmzHOjXjE90OxgcUeoYe1kh49fS9ESRaiLk0XbwWhfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wvXP7aztih3lsqzlj+ltRQfgmkk12e6NVc94gqgb1eYc1mcS72Ef8qKS4tgNLipRv
+	 lUZ5qezoMdGA5ADs9owP12VlkwrN/wM21WpcVTDHxxs7RcMCbiaqjgraUiUp3b7ALl
+	 A6HcDziuWap59vpTKTKEMJw6CYQT7P7ppbsNjK6o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388213AbfAPGvh (ORCPT
+        id S2388242AbfAPGxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 01:51:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50982 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 01:53:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388157AbfAPGvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 01:51:37 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730085AbfAPGxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 01:53:07 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 64FFA58E46;
-        Wed, 16 Jan 2019 06:51:36 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-86.pek2.redhat.com [10.72.12.86])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AACF55D961;
-        Wed, 16 Jan 2019 06:51:30 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 14:51:26 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Kairui Song <kasong@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, Baoquan He <bhe@redhat.com>,
-        kexec@lists.infradead.org, akpm@linux-foundation.org,
-        robert.moore@intel.com, erik.schmauss@intel.com,
-        rafael.j.wysocki@intel.com, Len Brown <lenb@kernel.org>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v2 2/2] x86, kexec_file_load: make it work with
- efi=noruntime or efi=old_map
-Message-ID: <20190116065126.GC6468@dhcp-128-65.nay.redhat.com>
-References: <20190115095834.22617-1-kasong@redhat.com>
- <20190115095834.22617-3-kasong@redhat.com>
- <20190115231005.GF6596@zn.tnic>
- <20190116033243.GB9649@dhcp-128-65.nay.redhat.com>
- <CACPcB9fWoV=b3DwhmBAAgqDHc0x=PfSyEuqnZcAQjM=LLLkAQw@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FCAB20859;
+        Wed, 16 Jan 2019 06:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547621586;
+        bh=VmzHOjXjE90OxgcUeoYe1kh49fS9ESRaiLk0XbwWhfI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jhCFUc8p/9kNjAjxkO59OLIN6Sg6NMRJuo9L4R1AssxKASNCYJYGyBALu+IV8VGDs
+         gpuc+V/dZq+0tmTdpGAzxtA/zBkuMKU7t7Nvu6YOz9YDoSSUW6q/ssdpRM0+5nKHh0
+         /mNmuF9eXu3C0SVrcm4PlB003LxHdcanPXeJ6mrI=
+Date:   Wed, 16 Jan 2019 07:53:04 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org,
+        tkjos@android.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arve@android.com,
+        joel@joelfernandes.org, maco@android.com
+Subject: Re: [PATCH -next] binderfs: fix error return code in
+ binderfs_fill_super()
+Message-ID: <20190116065304.GA26290@kroah.com>
+References: <1547607664-5612-1-git-send-email-weiyongjun1@huawei.com>
+ <20190116062546.ufoeresnwz3wyxiu@brauner.io>
+ <20190116062825.thzsb5edkihepgm4@brauner.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACPcB9fWoV=b3DwhmBAAgqDHc0x=PfSyEuqnZcAQjM=LLLkAQw@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Jan 2019 06:51:36 +0000 (UTC)
+In-Reply-To: <20190116062825.thzsb5edkihepgm4@brauner.io>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/16/19 at 01:09pm, Kairui Song wrote:
-> On Wed, Jan 16, 2019 at 11:32 AM Dave Young <dyoung@redhat.com> wrote:
-> >
-> > On 01/16/19 at 12:10am, Borislav Petkov wrote:
-> > > On Tue, Jan 15, 2019 at 05:58:34PM +0800, Kairui Song wrote:
-> > > > When efi=noruntime or efi=oldmap is used, EFI services won't be available
-> > > > in the second kernel, therefore the second kernel will not be able to get
-> > > > the ACPI RSDP address from firmware by calling EFI services and won't
-> > > > boot. Previously we are expecting the user to set the acpi_rsdp=<addr>
-> > > > on kernel command line for second kernel as there was no way to pass RSDP
-> > > > address to second kernel.
-> > > >
-> > > > After commit e6e094e053af ('x86/acpi, x86/boot: Take RSDP address from
-> > > > boot params if available'), now it's possible to set an acpi_rsdp_addr
-> > > > parameter in the boot_params passed to second kernel, this commit make
-> > > > use of it, detect and set the RSDP address when it's required for second
-> > > > kernel to boot.
-> > > >
-> > > > Tested with an EFI enabled KVM VM with efi=noruntime.
-> > > >
-> > > > Suggested-by: Dave Young <dyoung@redhat.com>
-> > > > Signed-off-by: Kairui Song <kasong@redhat.com>
-> > > > ---
-> > > >  arch/x86/kernel/kexec-bzimage64.c | 21 +++++++++++++++++++++
-> > > >  drivers/acpi/acpica/tbxfroot.c    |  3 +--
-> > > >  include/acpi/acpixf.h             |  2 +-
-> > > >  3 files changed, 23 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> > > > index 53917a3ebf94..0a90dcbd041f 100644
-> > > > --- a/arch/x86/kernel/kexec-bzimage64.c
-> > > > +++ b/arch/x86/kernel/kexec-bzimage64.c
-> > > > @@ -20,6 +20,7 @@
-> > > >  #include <linux/mm.h>
-> > > >  #include <linux/efi.h>
-> > > >  #include <linux/verification.h>
-> > > > +#include <linux/acpi.h>
-> > > >
-> > > >  #include <asm/bootparam.h>
-> > > >  #include <asm/setup.h>
-> > > > @@ -255,8 +256,28 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
-> > > >     /* Setup EFI state */
-> > > >     setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
-> > > >                     efi_setup_data_offset);
-> > > > +
-> > > > +#ifdef CONFIG_ACPI
-> > > > +   /* Setup ACPI RSDP pointer in case EFI is not available in second kernel */
-> > > > +   if (!acpi_disabled && (!efi_enabled(EFI_RUNTIME_SERVICES) || efi_enabled(EFI_OLD_MEMMAP))) {
-> > > > +           /* Copied from acpi_os_get_root_pointer accordingly */
-> > > > +           params->acpi_rsdp_addr = boot_params.acpi_rsdp_addr;
-> > > > +           if (!params->acpi_rsdp_addr) {
-> > > > +                   if (efi_enabled(EFI_CONFIG_TABLES)) {
-> > > > +                           if (efi.acpi20 != EFI_INVALID_TABLE_ADDR)
-> > > > +                                   params->acpi_rsdp_addr = efi.acpi20;
-> > > > +                           else if (efi.acpi != EFI_INVALID_TABLE_ADDR)
-> > > > +                                   params->acpi_rsdp_addr = efi.acpi;
-> > > > +                   } else if (IS_ENABLED(CONFIG_ACPI_LEGACY_TABLES_LOOKUP)) {
-> > > > +                           acpi_find_root_pointer(&params->acpi_rsdp_addr);
-> > > > +                   }
-> > > > +           }
-> > > > +           if (!params->acpi_rsdp_addr)
-> > > > +                   pr_warn("RSDP is not available for second kernel\n");
-> > > > +   }
-> > > >  #endif
-> > >
-> > > Amazing the amount of ACPI RDSP parsing and fiddling patches flying
-> > > around these days...
-> > >
-> > > In any case, this needs to be synchronized with:
-> > >
-> > > https://lkml.kernel.org/r/20190107032243.25324-1-fanc.fnst@cn.fujitsu.com
-> > >
-> > > and checked whether the above can be used instead of sprinkling of ACPI
-> > > parsing code left and right.
-> >
-> > Both Baoquan and Chao are cced for comments.
-> > The above KASLR patches seems some early code to parsing acpi, but I think in this
-> > patch just call acpi function to get the root pointer no need to add the
-> > duplicate logic of if/else/else if.
-> >
-> > Kairui,  do you have any reason for the checking?  Is there some simple
-> > acpi function to just return the root pointer?
+On Wed, Jan 16, 2019 at 07:28:26AM +0100, Christian Brauner wrote:
+> On Wed, Jan 16, 2019 at 07:25:46AM +0100, Christian Brauner wrote:
+> > On Wed, Jan 16, 2019 at 03:01:04AM +0000, Wei Yongjun wrote:
+> > > Fix to return a negative error code -ENOMEM from the new_inode() and
+> > > d_make_root() error handling cases instead of 0, as done elsewhere in
+> > > this function.
+> > > 
+> > > Fixes: 3ad20fe393b3 ("binder: implement binderfs")
 > 
-> Hi, I'm afraid that would require moving multiple structure and
-> function out of .init,
-> acpi_os_get_root_pointer is an ideal function to do the job, but it's
-> in .init and (on x86) it will call x86_init.acpi.get_root_pointer (by
-> calling acpi_arch_get_root_pointer) which will also be freed after
-> init, unless I change the x86_init, move they out of .init which is
-> not a good idea.
-> 
-> Maybe I could split acpi_os_get_root_pointer into two, one gets freed
-> after init, one for later use. But the "acpi_rsdp_addr" trick only
-> works for x86, and this would change more common acpi driver code so
-> not sure if a good idea.
+> This Fixes tag is technically wrong since this codepath was introduced
+> by a commit that is still sitting in Greg's char-misc-linus branch. Not
+> sure how to handle that though. Might just leave it.
 
-Can the acpi root pointer be saved after initialized? If that is good
-then a new function to get it would be easier. But need opinion from
-acpi people.
+Use the git commit id of the patch in that branch, it is not going to
+change as I do not rebase that branch.
 
-Thanks
-Dave
+thanks,
+
+greg k-h
