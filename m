@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53967C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CF0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 308892086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:25:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A13EA20868
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:26:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbfAPSZy (ORCPT
+        id S1728695AbfAPS0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:25:54 -0500
-Received: from mga14.intel.com ([192.55.52.115]:10058 "EHLO mga14.intel.com"
+        Wed, 16 Jan 2019 13:26:01 -0500
+Received: from mga03.intel.com ([134.134.136.65]:37407 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728597AbfAPSZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:25:42 -0500
+        id S1728578AbfAPSZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 13:25:41 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 10:25:42 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 10:25:40 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="292082790"
+   d="scan'208";a="119025562"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 10:25:41 -0800
-Subject: [PATCH 3/4] dax/kmem: let walk_system_ram_range() search child resources
+  by orsmga003.jf.intel.com with ESMTP; 16 Jan 2019 10:25:40 -0800
+Subject: [PATCH 2/4] mm/memory-hotplug: allow memory resources to be children
 To:     dave@sr71.net
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
@@ -39,10 +39,10 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         bp@suse.de, bhelgaas@google.com, baiyaowei@cmss.chinamobile.com,
         tiwai@suse.de
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Wed, 16 Jan 2019 10:19:04 -0800
+Date:   Wed, 16 Jan 2019 10:19:02 -0800
 References: <20190116181859.D1504459@viggo.jf.intel.com>
 In-Reply-To: <20190116181859.D1504459@viggo.jf.intel.com>
-Message-Id: <20190116181904.D24AF5FE@viggo.jf.intel.com>
+Message-Id: <20190116181902.670EEBC3@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,21 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-In the process of onlining memory, we use walk_system_ram_range()
-to find the actual RAM areas inside of the area being onlined.
+The mm/resource.c code is used to manage the physical address
+space.  We can view the current resource configuration in
+/proc/iomem.  An example of this is at the bottom of this
+description.
 
-However, it currently only finds memory resources which are
-"top-level" iomem_resources.  Children are not currently
-searched which causes it to skip System RAM in areas like this
-(in the format of /proc/iomem):
+The nvdimm subsystem "owns" the physical address resources which
+map to persistent memory and has resources inserted for them as
+"Persistent Memory".  We want to use this persistent memory, but
+as volatile memory, just like RAM.  The best way to do this is
+to leave the existing resource in place, but add a "System RAM"
+resource underneath it. This clearly communicates the ownership
+relationship of this memory.
 
-a0000000-bfffffff : Persistent Memory (legacy)
-  a0000000-afffffff : System RAM
+The request_resource_conflict() API only deals with the
+top-level resources.  Replace it with __request_region() which
+will search for !IORESOURCE_BUSY areas lower in the resource
+tree than the top level.
 
-Changing the true->false here allows children to be searched
-as well.  We need this because we add a new "System RAM"
-resource underneath the "persistent memory" resource when
-we use persistent memory in a volatile mode.
+We also rework the old error message a bit since we do not get
+the conflicting entry back: only an indication that we *had* a
+conflict.
+
+We *could* also simply truncate the existing top-level
+"Persistent Memory" resource and take over the released address
+space.  But, this means that if we ever decide to hot-unplug the
+"RAM" and give it back, we need to recreate the original setup,
+which may mean going back to the BIOS tables.
+
+This should have no real effect on the existing collision
+detection because the areas that truly conflict should be marked
+IORESOURCE_BUSY.
+
+00000000-00000fff : Reserved
+00001000-0009fbff : System RAM
+0009fc00-0009ffff : Reserved
+000a0000-000bffff : PCI Bus 0000:00
+000c0000-000c97ff : Video ROM
+000c9800-000ca5ff : Adapter ROM
+000f0000-000fffff : Reserved
+  000f0000-000fffff : System ROM
+00100000-9fffffff : System RAM
+  01000000-01e071d0 : Kernel code
+  01e071d1-027dfdff : Kernel data
+  02dc6000-0305dfff : Kernel bss
+a0000000-afffffff : Persistent Memory (legacy)
+  a0000000-a7ffffff : System RAM
+b0000000-bffdffff : System RAM
+bffe0000-bfffffff : Reserved
+c0000000-febfffff : PCI Bus 0000:00
 
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Jiang <dave.jiang@intel.com>
@@ -83,29 +117,49 @@ Cc: Fengguang Wu <fengguang.wu@intel.com>
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 ---
 
- b/kernel/resource.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ b/mm/memory_hotplug.c |   31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
 
-diff -puN kernel/resource.c~mm-walk_system_ram_range-search-child-resources kernel/resource.c
---- a/kernel/resource.c~mm-walk_system_ram_range-search-child-resources	2018-12-20 11:48:42.824771932 -0800
-+++ b/kernel/resource.c	2018-12-20 11:48:42.827771932 -0800
-@@ -445,6 +445,9 @@ int walk_mem_res(u64 start, u64 end, voi
-  * This function calls the @func callback against all memory ranges of type
-  * System RAM which are marked as IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY.
-  * It is to be used only for System RAM.
-+ *
-+ * This will find System RAM ranges that are children of top-level resources
-+ * in addition to top-level System RAM resources.
-  */
- int walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
- 			  void *arg, int (*func)(unsigned long, unsigned long, void *))
-@@ -460,7 +463,7 @@ int walk_system_ram_range(unsigned long
- 	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
- 	while (start < end &&
- 	       !find_next_iomem_res(start, end, flags, IORES_DESC_NONE,
--				    true, &res)) {
-+				    false, &res)) {
- 		pfn = (res.start + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 		end_pfn = (res.end + 1) >> PAGE_SHIFT;
- 		if (end_pfn > pfn)
+diff -puN mm/memory_hotplug.c~mm-memory-hotplug-allow-memory-resource-to-be-child mm/memory_hotplug.c
+--- a/mm/memory_hotplug.c~mm-memory-hotplug-allow-memory-resource-to-be-child	2018-12-20 11:48:42.317771933 -0800
++++ b/mm/memory_hotplug.c	2018-12-20 11:48:42.322771933 -0800
+@@ -98,24 +98,21 @@ void mem_hotplug_done(void)
+ /* add this memory to iomem resource */
+ static struct resource *register_memory_resource(u64 start, u64 size)
+ {
+-	struct resource *res, *conflict;
+-	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
+-	if (!res)
+-		return ERR_PTR(-ENOMEM);
++	struct resource *res;
++	unsigned long flags =  IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
++	char *resource_name = "System RAM";
+ 
+-	res->name = "System RAM";
+-	res->start = start;
+-	res->end = start + size - 1;
+-	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+-	conflict =  request_resource_conflict(&iomem_resource, res);
+-	if (conflict) {
+-		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
+-			pr_debug("Device unaddressable memory block "
+-				 "memory hotplug at %#010llx !\n",
+-				 (unsigned long long)start);
+-		}
+-		pr_debug("System RAM resource %pR cannot be added\n", res);
+-		kfree(res);
++	/*
++	 * Request ownership of the new memory range.  This might be
++	 * a child of an existing resource that was present but
++	 * not marked as busy.
++	 */
++	res = __request_region(&iomem_resource, start, size,
++			       resource_name, flags);
++
++	if (!res) {
++		pr_debug("Unable to reserve System RAM region: %016llx->%016llx\n",
++				start, start + size);
+ 		return ERR_PTR(-EEXIST);
+ 	}
+ 	return res;
 _
