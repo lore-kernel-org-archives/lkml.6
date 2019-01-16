@@ -2,189 +2,202 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1AECC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EADFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A83C620675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F301020675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547680320;
+	bh=2Dsey0qkU0vvhYJKjx3nXwShMbJ5YRSVJdVt6JPRQ5M=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=nKDiKah4yQFovFu1Qmb5JhPZdaskyk7vFgZ81jzG68qgR6pbYvUxYnOj8P0xeqWTP
+	 4jvMND+aNB4kVcr+TSbgtvjs9FBu1gCkb9+zsz7nL7xX99Dd7eZ9la6E1XiM/Giphh
+	 SJelOCS16DNTfUL0F6AEHUsihOdL2wXWNQlXPtQg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388226AbfAPXKc (ORCPT
+        id S2388254AbfAPXL6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 18:10:32 -0500
-Received: from mga03.intel.com ([134.134.136.65]:62330 "EHLO mga03.intel.com"
+        Wed, 16 Jan 2019 18:11:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729145AbfAPXKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 18:10:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 15:10:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="311045123"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Jan 2019 15:10:29 -0800
-Subject: [PATCH v8 3/3] mm: Maintain randomization of page free lists
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, keith.busch@intel.com
-Date:   Wed, 16 Jan 2019 14:57:52 -0800
-Message-ID: <154767947255.1983228.16850950514476882424.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154767945660.1983228.12167020940431682725.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154767945660.1983228.12167020940431682725.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1728953AbfAPXL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 18:11:58 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80CA920675;
+        Wed, 16 Jan 2019 23:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547680317;
+        bh=2Dsey0qkU0vvhYJKjx3nXwShMbJ5YRSVJdVt6JPRQ5M=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SSAppR7lZoV+AX1PGRJ0DkUkpXXb0eGL+5FZxpy94NFte+nfFiutq0dZuhCyhZZuF
+         CN/FtzTXTSKyCEDHWtRaOhvSc9126u38yUbWipSmN8itgNMRVi0vLdEIpm6g9v/W5k
+         z+1FLQKbFH1a6CM3XHADrgwvzYz5lpppvpdUHHTA=
+Subject: Re: [PATCH v1] selftests: add binderfs selftests
+To:     Christian Brauner <christian@brauner.io>,
+        gregkh@linuxfoundation.org, tkjos@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
+        tkjos@google.com, shuah <shuah@kernel.org>
+References: <20190116222745.26217-1-christian@brauner.io>
+From:   shuah <shuah@kernel.org>
+Message-ID: <e9f13d9b-69bf-bb01-d48a-52af77d76db4@kernel.org>
+Date:   Wed, 16 Jan 2019 16:11:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190116222745.26217-1-christian@brauner.io>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When freeing a page with an order >= shuffle_page_order randomly select
-the front or back of the list for insertion.
+Hi Christian,
 
-While the mm tries to defragment physical pages into huge pages this can
-tend to make the page allocator more predictable over time. Inject the
-front-back randomness to preserve the initial randomness established by
-shuffle_free_memory() when the kernel was booted.
+On 1/16/19 3:27 PM, Christian Brauner wrote:
+> This adds the promised selftest for binderfs. It will verify the following
+> things:
+> - binderfs mounting works
+> - binder device allocation works
+> - performing a binder ioctl() request through a binderfs device works
+> - binder device removal works
+> - binder-control removal fails
+> - binderfs unmounting works
+> 
 
-The overhead of this manipulation is constrained by only being applied
-for MAX_ORDER sized pages by default.
+Thanks for the patch. A few comments below.
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/mmzone.h  |   10 ++++++++++
- include/linux/shuffle.h |   12 ++++++++++++
- mm/page_alloc.c         |   11 +++++++++--
- mm/shuffle.c            |   16 ++++++++++++++++
- 4 files changed, 47 insertions(+), 2 deletions(-)
+> Cc: Todd Kjos <tkjos@google.com>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+> /* Changelog */
+> 
+> v1:
+> - check for ENODEV on mount failure to detect whether binderfs is
+>    available
+>    If it is not, skip the test and exit with success.
+> ---
+>   tools/testing/selftests/Makefile              |   1 +
+>   .../selftests/filesystems/binderfs/.gitignore |   1 +
+>   .../selftests/filesystems/binderfs/Makefile   |   6 +
+>   .../filesystems/binderfs/binderfs_test.c      | 126 ++++++++++++++++++
+>   .../selftests/filesystems/binderfs/config     |   3 +
+>   5 files changed, 137 insertions(+)
+>   create mode 100644 tools/testing/selftests/filesystems/binderfs/.gitignore
+>   create mode 100644 tools/testing/selftests/filesystems/binderfs/Makefile
+>   create mode 100644 tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+>   create mode 100644 tools/testing/selftests/filesystems/binderfs/config
+> 
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index 1a2bd15c5b6e..400ee81a3043 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -10,6 +10,7 @@ TARGETS += drivers/dma-buf
+>   TARGETS += efivarfs
+>   TARGETS += exec
+>   TARGETS += filesystems
+> +TARGETS += filesystems/binderfs
+>   TARGETS += firmware
+>   TARGETS += ftrace
+>   TARGETS += futex
+> diff --git a/tools/testing/selftests/filesystems/binderfs/.gitignore b/tools/testing/selftests/filesystems/binderfs/.gitignore
+> new file mode 100644
+> index 000000000000..8a5d9bf63dd4
+> --- /dev/null
+> +++ b/tools/testing/selftests/filesystems/binderfs/.gitignore
+> @@ -0,0 +1 @@
+> +binderfs_test
+> diff --git a/tools/testing/selftests/filesystems/binderfs/Makefile b/tools/testing/selftests/filesystems/binderfs/Makefile
+> new file mode 100644
+> index 000000000000..58cb659b56b4
+> --- /dev/null
+> +++ b/tools/testing/selftests/filesystems/binderfs/Makefile
+> @@ -0,0 +1,6 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +CFLAGS += -I../../../../../usr/include/
+> +TEST_GEN_PROGS := binderfs_test
+> +
+> +include ../../lib.mk
+> diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> new file mode 100644
+> index 000000000000..34361efcb9c8
+> --- /dev/null
+> +++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> @@ -0,0 +1,126 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#define _GNU_SOURCE
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <sched.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/mount.h>
+> +#include <sys/stat.h>
+> +#include <sys/types.h>
+> +#include <unistd.h>
+> +#include <linux/android/binder.h>
+> +#include <linux/android/binderfs.h>
+> +#include "../../kselftest.h"
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	int fd, ret, saved_errno;
+> +	size_t len;
+> +	struct binderfs_device device = { 0 };
+> +	struct binder_version version = { 0 };
+> +
+> +	ret = unshare(CLONE_NEWNS);
+> +	if (ret < 0)
+> +		ksft_exit_fail_msg("%s - Failed to unshare mount namespace\n",
+> +				   strerror(errno));
+> +
+> +	ret = mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
+> +	if (ret < 0)
+> +		ksft_exit_fail_msg("%s - Failed to mount / as private\n",
+> +				   strerror(errno));
+> +
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index b78a45e0b11c..c15f7f703be0 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -98,6 +98,8 @@ extern int page_group_by_mobility_disabled;
- struct free_area {
- 	struct list_head	free_list[MIGRATE_TYPES];
- 	unsigned long		nr_free;
-+	u64			rand;
-+	u8			rand_bits;
- };
- 
- /* Used for pages not on another list */
-@@ -116,6 +118,14 @@ static inline void add_to_free_area_tail(struct page *page, struct free_area *ar
- 	area->nr_free++;
- }
- 
-+#ifdef CONFIG_SHUFFLE_PAGE_ALLOCATOR
-+/* Used to preserve page allocation order entropy */
-+void add_to_free_area_random(struct page *page, struct free_area *area,
-+		int migratetype);
-+#else
-+#define add_to_free_area_random add_to_free_area
-+#endif
-+
- /* Used for pages which are on another list */
- static inline void move_to_free_area(struct page *page, struct free_area *area,
- 			     int migratetype)
-diff --git a/include/linux/shuffle.h b/include/linux/shuffle.h
-index d109161f4a62..85b7f5f32867 100644
---- a/include/linux/shuffle.h
-+++ b/include/linux/shuffle.h
-@@ -30,6 +30,13 @@ static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
- 		return;
- 	__shuffle_zone(z, start_pfn, end_pfn);
- }
-+
-+static inline bool is_shuffle_order(int order)
-+{
-+	if (!static_branch_unlikely(&page_alloc_shuffle_key))
-+                return false;
-+	return order >= CONFIG_SHUFFLE_PAGE_ORDER;
-+}
- #else
- static inline void shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
- 		unsigned long end_pfn)
-@@ -44,5 +51,10 @@ static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
- static inline void page_alloc_shuffle(enum mm_shuffle_ctl ctl)
- {
- }
-+
-+static inline bool is_shuffle_order(int order)
-+{
-+	return false;
-+}
- #endif
- #endif /* _MM_SHUFFLE_H */
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 0b4791a2dd43..f3a859b66d70 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -43,6 +43,7 @@
- #include <linux/mempolicy.h>
- #include <linux/memremap.h>
- #include <linux/stop_machine.h>
-+#include <linux/random.h>
- #include <linux/sort.h>
- #include <linux/pfn.h>
- #include <linux/backing-dev.h>
-@@ -889,7 +890,8 @@ static inline void __free_one_page(struct page *page,
- 	 * so it's less likely to be used soon and more likely to be merged
- 	 * as a higher order page
- 	 */
--	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)) {
-+	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)
-+			&& !is_shuffle_order(order)) {
- 		struct page *higher_page, *higher_buddy;
- 		combined_pfn = buddy_pfn & pfn;
- 		higher_page = page + (combined_pfn - pfn);
-@@ -903,7 +905,12 @@ static inline void __free_one_page(struct page *page,
- 		}
- 	}
- 
--	add_to_free_area(page, &zone->free_area[order], migratetype);
-+	if (is_shuffle_order(order))
-+		add_to_free_area_random(page, &zone->free_area[order],
-+				migratetype);
-+	else
-+		add_to_free_area(page, &zone->free_area[order], migratetype);
-+
- }
- 
- /*
-diff --git a/mm/shuffle.c b/mm/shuffle.c
-index 5d39e8cb50f7..c09d5e56f5c4 100644
---- a/mm/shuffle.c
-+++ b/mm/shuffle.c
-@@ -213,3 +213,19 @@ void __meminit __shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
- 	for (z = pgdat->node_zones; z < pgdat->node_zones + MAX_NR_ZONES; z++)
- 		shuffle_zone(z, start_pfn, end_pfn);
- }
-+
-+void add_to_free_area_random(struct page *page, struct free_area *area,
-+		int migratetype)
-+{
-+	if (area->rand_bits == 0) {
-+		area->rand_bits = 64;
-+		area->rand = get_random_u64();
-+	}
-+
-+	if (area->rand & 1)
-+		add_to_free_area(page, area, migratetype);
-+	else
-+		add_to_free_area_tail(page, area, migratetype);
-+	area->rand_bits--;
-+	area->rand >>= 1;
-+}
+If this test requires user to be root, please add check for root uid and
+do a skip the test with kselftest skip code.
+
+> +	ret = mkdir("/dev/binderfs", 0755);
+> +	if (ret < 0 && errno != EEXIST)
+> +		ksft_exit_fail_msg(
+> +			"%s - Failed to create binderfs mountpoint\n",
+> +			strerror(errno));
+> +
+> +	ret = mount(NULL, "/dev/binderfs", "binder", 0, 0);
+> +	if (ret < 0) {
+> +		if (errno != ENODEV)
+> +			ksft_exit_fail_msg("%s - Failed to mount binderfs\n",
+> +					   strerror(errno));
+> +
+> +		ksft_test_result_skip(
+> +			"The Android binderfs filesystem is not available\n")
+
+Use ksft_exit_skip() instead of ksft_test_result_skip()
+
+> +		ksft_exit_pass();
+
+ksft_exit_pass() would result in false pass cases. Skip is the correct
+exit code.
+
+Think about other exit paths to see if skip is more appropriate.
+
+thanks,
+-- Shuah
+
 
