@@ -2,113 +2,102 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D39C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5404EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BE3420873
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C814206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:51:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392213AbfAPKvZ (ORCPT
+        id S2392226AbfAPKvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:51:25 -0500
-Received: from mx1.emlix.com ([46.4.235.150]:50086 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389044AbfAPKvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:51:24 -0500
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id E062425EF98;
-        Wed, 16 Jan 2019 11:51:21 +0100 (CET)
-From:   Philipp Puschmann <philipp.puschmann@emlix.com>
-To:     gregkh@linuxfoundation.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, Peter.Chen@nxp.com,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, philipp.puschmann@emlix.com
-Subject: [PATCH v2,2/2] usb: chipidea: imx: set power polarity
-Date:   Wed, 16 Jan 2019 11:51:03 +0100
-Message-Id: <20190116105103.28842-2-philipp.puschmann@emlix.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190116105103.28842-1-philipp.puschmann@emlix.com>
-References: <20190115123113.20577-1-philipp.puschmann@emlix.com>
- <20190116105103.28842-1-philipp.puschmann@emlix.com>
+        Wed, 16 Jan 2019 05:51:54 -0500
+Received: from smtp64.iad3a.emailsrvr.com ([173.203.187.64]:58793 "EHLO
+        smtp64.iad3a.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389044AbfAPKvx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 05:51:53 -0500
+X-Greylist: delayed 459 seconds by postgrey-1.27 at vger.kernel.org; Wed, 16 Jan 2019 05:51:52 EST
+Received: from smtp33.relay.iad3a.emailsrvr.com (localhost [127.0.0.1])
+        by smtp33.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTP id 5E696543C
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:44:14 -0500 (EST)
+Received: from smtp65.iad3a.emailsrvr.com (relay.iad3a.rsapps.net [172.27.255.110])
+        by smtp33.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTPS id 56FDB540A
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:44:14 -0500 (EST)
+Received: from smtp1.relay.iad3a.emailsrvr.com (localhost [127.0.0.1])
+        by smtp1.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTP id BA5D55B10
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:44:13 -0500 (EST)
+Received: from smtp97.iad3a.emailsrvr.com (relay.iad3a.rsapps.net [172.27.255.110])
+        by smtp1.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTPS id B297C5A79
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:44:13 -0500 (EST)
+Received: from smtp5.relay.iad3a.emailsrvr.com (localhost [127.0.0.1])
+        by smtp5.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTP id 2701925732;
+        Wed, 16 Jan 2019 05:44:13 -0500 (EST)
+X-Auth-ID: siepeng@mev.co.uk
+Received: by smtp5.relay.iad3a.emailsrvr.com (Authenticated sender: siepeng-AT-mev.co.uk) with ESMTPSA id 87BB5257CA;
+        Wed, 16 Jan 2019 05:44:12 -0500 (EST)
+X-Sender-Id: siepeng@mev.co.uk
+Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Wed, 16 Jan 2019 05:44:13 -0500
+Subject: Re: [PATCH] staging: comedi: Removed not necessary braces for single
+ block
+To:     Jitendra Khasdev <jkhasdev@gmail.com>,
+        hsweeten@visionengravers.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20190115153656.10913-1-jkhasdev@gmail.com>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <8c44b247-e44d-aaff-e0af-544b2c4eb4c0@mev.co.uk>
+Date:   Wed, 16 Jan 2019 10:44:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115153656.10913-1-jkhasdev@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to set the power line polarity for i.MX6q/dl.
+On 15/01/2019 15:36, Jitendra Khasdev wrote:
+> This patch is used to remove not necessary braces for single if block.
+> 
+> Signed-off-by: Jitendra Khasdev <jkhasdev@gmail.com>
+> ---
+>   drivers/staging/comedi/comedi_fops.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
+> index 5d2fcbfe02af..38980fad8be4 100644
+> --- a/drivers/staging/comedi/comedi_fops.c
+> +++ b/drivers/staging/comedi/comedi_fops.c
+> @@ -1605,9 +1605,9 @@ static int do_insn_ioctl(struct comedi_device *dev,
+>   	unsigned int n_data = MIN_SAMPLES;
+>   	int ret = 0;
+>   
+> -	if (copy_from_user(&insn, arg, sizeof(insn))) {
+> +	if (copy_from_user(&insn, arg, sizeof(insn)))
+>   		return -EFAULT;
+> -	}
+> +
+>   
+>   	n_data = max(n_data, insn.n);
+>   
+> 
 
-To let the USB controller control the power it may be necessary to configure
-the polarity of the power line. So far the polarity was configured
-by Bootloader or alternatively the power line was muxed as gpio and
-driven by a regulator.
+The patch looks fine. Thanks for the fix!
 
-Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
----
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
-V2: fixed wrong variable name ...
-
----
- drivers/usb/chipidea/ci_hdrc_imx.c | 3 +++
- drivers/usb/chipidea/ci_hdrc_imx.h | 1 +
- drivers/usb/chipidea/usbmisc_imx.c | 4 ++++
- 3 files changed, 8 insertions(+)
-
-diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
-index e81de9ca8729..32dc120680fa 100644
---- a/drivers/usb/chipidea/ci_hdrc_imx.c
-+++ b/drivers/usb/chipidea/ci_hdrc_imx.c
-@@ -152,6 +152,9 @@ static struct imx_usbmisc_data *usbmisc_get_init_data(struct device *dev)
- 		dev_warn(dev, "No over current polarity defined\n");
- 	}
- 
-+	if (of_find_property(np, "power-active-high", NULL))
-+		data->pwr_pol = 1;
-+
- 	if (of_find_property(np, "external-vbus-divider", NULL))
- 		data->evdo = 1;
- 
-diff --git a/drivers/usb/chipidea/ci_hdrc_imx.h b/drivers/usb/chipidea/ci_hdrc_imx.h
-index 7cc53e2ce564..c842e03f8767 100644
---- a/drivers/usb/chipidea/ci_hdrc_imx.h
-+++ b/drivers/usb/chipidea/ci_hdrc_imx.h
-@@ -18,6 +18,7 @@ struct imx_usbmisc_data {
- 	/* true if dt specifies polarity */
- 	unsigned int oc_pol_configured:1;
- 
-+	unsigned int pwr_pol:1; /* power polarity */
- 	unsigned int evdo:1; /* set external vbus divider option */
- 	unsigned int ulpi:1; /* connected to an ULPI phy */
- 	unsigned int hsic:1; /* HSIC controlller */
-diff --git a/drivers/usb/chipidea/usbmisc_imx.c b/drivers/usb/chipidea/usbmisc_imx.c
-index 097ffbca0bd9..64a7c7ff4b35 100644
---- a/drivers/usb/chipidea/usbmisc_imx.c
-+++ b/drivers/usb/chipidea/usbmisc_imx.c
-@@ -63,6 +63,7 @@
- #define MX6_BM_NON_BURST_SETTING	BIT(1)
- #define MX6_BM_OVER_CUR_DIS		BIT(7)
- #define MX6_BM_OVER_CUR_POLARITY	BIT(8)
-+#define MX6_BM_PWR_POLARITY		BIT(9)
- #define MX6_BM_WAKEUP_ENABLE		BIT(10)
- #define MX6_BM_UTMI_ON_CLOCK		BIT(13)
- #define MX6_BM_ID_WAKEUP		BIT(16)
-@@ -383,6 +384,9 @@ static int usbmisc_imx6q_init(struct imx_usbmisc_data *data)
- 		else if (data->oc_pol_configured)
- 			reg &= ~MX6_BM_OVER_CUR_POLARITY;
- 	}
-+	/* If the polarity is not set keep it as setup by the bootlader */
-+	if (data->pwr_pol == 1)
-+		reg |= MX6_BM_PWR_POLARITY;
- 	writel(reg, usbmisc->base + data->index * 4);
- 
- 	/* SoC non-burst setting */
 -- 
-2.20.1
-
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
