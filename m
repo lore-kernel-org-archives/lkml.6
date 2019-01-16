@@ -2,104 +2,172 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F3FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13571C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 104D1205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:17:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB616205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:17:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tAhnC7FK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393993AbfAPPRb (ORCPT
+        id S2404827AbfAPPRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 10:17:31 -0500
-Received: from shell.v3.sk ([90.176.6.54]:57068 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387431AbfAPPR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 10:17:28 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 43CB3540A9;
-        Wed, 16 Jan 2019 16:17:26 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id cjR6TINRMZv7; Wed, 16 Jan 2019 16:17:24 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 140EF54103;
-        Wed, 16 Jan 2019 16:17:24 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id u2DKbvkraSoo; Wed, 16 Jan 2019 16:17:23 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 93383540A9;
-        Wed, 16 Jan 2019 16:17:23 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] mfd: cs5535-mfd: remove ifdef OLPC noise
-Date:   Wed, 16 Jan 2019 16:17:10 +0100
-Message-Id: <20190116151709.1972303-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.20.1
+        Wed, 16 Jan 2019 10:17:38 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:58298 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387431AbfAPPRf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 10:17:35 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0GFCSJj092300;
+        Wed, 16 Jan 2019 15:16:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type; s=corp-2018-07-02;
+ bh=8yj/4/aghz4QecdYtLWPQfCofhrkxP7T4OtHIbXDJr4=;
+ b=tAhnC7FKawKDD9pWW+dKq9RkAZf42wS2PFpTRkAAzpkfH342qwFqYBUy5wcdTluPTGa0
+ 0PYKk7QnJI1VZszLd/vZjvOpCAzZyKzrErwNHFRuGwG0iMDyuIbjoRtJgnYpOyDznIb/
+ L8Xeu7QJl454eeKi3p6qbttfiSiIqNYn6ZfD5QvBQcbi8mVsUJ4f42Xzf4tW3ZYpqIzJ
+ WrNgohXBuvg3M0PXRAYM5kHrdcAc81Bf2RSIVEDHy3XVsD7lOV03vKp5xiucQp7vRe+q
+ noV3wGYQv9XDQzHfpCp0Lsjh7bJl2PbNLfIZxuyhSV6letoCFHbYxZ/ANX4Xa4LQqZEc Bw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2pybkcjg03-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Jan 2019 15:16:55 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0GFGr7N012830
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Jan 2019 15:16:53 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0GFGpXD000320;
+        Wed, 16 Jan 2019 15:16:51 GMT
+Received: from [192.168.1.44] (/24.9.64.241)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Jan 2019 07:16:50 -0800
+Subject: Re: [RFC PATCH v7 00/16] Add support for eXclusive Page Frame
+ Ownership
+To:     Julian Stecklina <jsteckli@amazon.de>
+Cc:     juergh@gmail.com, tycho@tycho.ws, ak@linux.intel.com,
+        torvalds@linux-foundation.org, liran.alon@oracle.com,
+        keescook@google.com, konrad.wilk@oracle.com,
+        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
+        tyhicks@canonical.com, dwmw@amazon.co.uk,
+        andrew.cooper3@citrix.com, jcm@redhat.com,
+        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
+        joao.m.martins@oracle.com, jmattson@google.com,
+        pradeep.vincent@oracle.com, john.haxby@oracle.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
+        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1547153058.git.khalid.aziz@oracle.com>
+ <ciirm8o98gzm4z.fsf@u54ee758033e858cfa736.ant.amazon.com>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <2e274b82-75a7-63b9-d7db-b81132114089@oracle.com>
+Date:   Wed, 16 Jan 2019 08:16:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ciirm8o98gzm4z.fsf@u54ee758033e858cfa736.ant.amazon.com>
+Content-Type: multipart/mixed;
+ boundary="------------1F66028AF58B3FA1222C73F6"
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9138 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901160125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<asm/olpc.h> provides machine_is_olpc() stub for CONFIG_OLPC=3Dn,
-compiler should just optimize the unneeded bits away.
+This is a multi-part message in MIME format.
+--------------1F66028AF58B3FA1222C73F6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/mfd/cs5535-mfd.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+On 1/16/19 7:56 AM, Julian Stecklina wrote:
+> Khalid Aziz <khalid.aziz@oracle.com> writes:
+>=20
+>> I am continuing to build on the work Juerg, Tycho and Julian have done=
 
-diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
-index f9d277ff4aaf..2e77b6147baa 100644
---- a/drivers/mfd/cs5535-mfd.c
-+++ b/drivers/mfd/cs5535-mfd.c
-@@ -112,22 +112,10 @@ static struct mfd_cell cs5535_mfd_cells[] =3D {
- 	},
- };
-=20
--#ifdef CONFIG_OLPC
--static void cs5535_clone_olpc_cells(void)
--{
--	static const char *acpi_clones[] =3D {
--		"olpc-xo1-pm-acpi",
--		"olpc-xo1-sci-acpi"
--	};
--
--	if (!machine_is_olpc())
--		return;
--
--	mfd_clone_cell("cs5535-acpi", acpi_clones, ARRAY_SIZE(acpi_clones));
--}
--#else
--static void cs5535_clone_olpc_cells(void) { }
--#endif
-+static const char *olpc_acpi_clones[] =3D {
-+	"olpc-xo1-pm-acpi",
-+	"olpc-xo1-sci-acpi"
-+};
-=20
- static int cs5535_mfd_probe(struct pci_dev *pdev,
- 		const struct pci_device_id *id)
-@@ -157,7 +145,9 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
- 		dev_err(&pdev->dev, "MFD add devices failed: %d\n", err);
- 		goto err_disable;
- 	}
--	cs5535_clone_olpc_cells();
-+
-+	if (machine_is_olpc())
-+		mfd_clone_cell("cs5535-acpi", olpc_acpi_clones, ARRAY_SIZE(olpc_acpi_c=
-lones));
-=20
- 	dev_info(&pdev->dev, "%zu devices registered.\n",
- 			ARRAY_SIZE(cs5535_mfd_cells));
---=20
-2.20.1
+>> on XPFO.
+>=20
+> Awesome!
+>=20
+>> A rogue process can launch a ret2dir attack only from a CPU that has
+>> dual mapping for its pages in physmap in its TLB. We can hence defer
+>> TLB flush on a CPU until a process that would have caused a TLB flush
+>> is scheduled on that CPU.
+>=20
+> Assuming the attacker already has the ability to execute arbitrary code=
 
+> in userspace, they can just create a second process and thus avoid the
+> TLB flush. Am I getting this wrong?
+
+No, you got it right. The patch I wrote closes the security hole when
+attack is launched from the same process but still leaves a window open
+when attack is launched from another process. I am working on figuring
+out how to close that hole while keeping the performance the same as it
+is now. Synchronous TLB flush across all cores is the most secure but
+performance impact is horrendous.
+
+--
+Khalid
+
+
+--------------1F66028AF58B3FA1222C73F6
+Content-Type: application/pgp-keys;
+ name="pEpkey.asc"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="pEpkey.asc"
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
++Wrj8Rwom6h21PXZRKnlkis7ibQfE+TxqOI7vg=3D=3D
+=3DnPqY
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------1F66028AF58B3FA1222C73F6--
