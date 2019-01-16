@@ -2,113 +2,101 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA487C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FBFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A214620840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4FD020675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:02:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IxVErPDA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731523AbfAPXBm (ORCPT
+        id S1729113AbfAPXCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 18:01:42 -0500
-Received: from mga01.intel.com ([192.55.52.88]:40769 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730097AbfAPXBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 18:01:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 15:01:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="128371313"
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga001.jf.intel.com with ESMTP; 16 Jan 2019 15:01:39 -0800
-Subject: Re: [PATCH 2/4] mm/memory-hotplug: allow memory resources to be
- children
-To:     Jerome Glisse <jglisse@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     dave@sr71.net, dan.j.williams@intel.com, dave.jiang@intel.com,
-        zwisler@kernel.org, vishal.l.verma@intel.com,
-        thomas.lendacky@amd.com, akpm@linux-foundation.org,
-        mhocko@suse.com, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        ying.huang@intel.com, fengguang.wu@intel.com, bp@suse.de,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de
-References: <20190116181859.D1504459@viggo.jf.intel.com>
- <20190116181902.670EEBC3@viggo.jf.intel.com>
- <20190116191635.GD3617@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <2b52778d-f120-eec7-3e7a-3a9c182170f0@intel.com>
-Date:   Wed, 16 Jan 2019 15:01:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 18:02:42 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40807 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbfAPXCl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 18:02:41 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u18so3728142plq.7
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 15:02:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:user-agent
+         :in-reply-to:references:cc:to:message-id:from:date;
+        bh=u/Qmfy0uSg9phq/QiqFcUGs4W8KS3Yos6m3ESK+a6cA=;
+        b=IxVErPDA72L5TQWkuh9ICSKvf/4nk2zdFFLeQDpDChwHmLyX6662N2DQ9cXbyN76rR
+         X4zKTp4sx+SYbdv4oBCAfVdYElJGnMMYFHoXOhGX6HF8usMxpl+i4i277Adl6tM14aXB
+         ksu5Y94+XKZ5AHlu91hxUv2vx5KxSgW8CuhAI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
+        bh=u/Qmfy0uSg9phq/QiqFcUGs4W8KS3Yos6m3ESK+a6cA=;
+        b=dGp25qe/f1yzg02rv2hORrAPH++vPcwHNKQpAU3yfjl9cfPguybN2jYbP9RXvgSTtG
+         pNPKfyR4ncceNFuM/9+qCuiigtkCwuH+jGJt0TAdOTZYh1ombngQ6hhTfYxh6VwK71v0
+         cjyszTDdTjm8m3RLZEGkI7+T7tfuN8ce+sfvmj1mtoCxIVEnNIqwQqzFMqRjCem61N7x
+         WYh7Uox6nSHwAcEQXLrmxCkt/yy4+m8kSdHGnrZCO9GWbTH7NuaXVJNBaDsu+OZDrpzA
+         cs1Qs4LdNxbjTCJDzlxz9rNppDhklTKnLSNctKvM7OtIZItYR8tB81KncSxcN75y90ys
+         gG/A==
+X-Gm-Message-State: AJcUukd/jsKn2yqKDL/4m0xcJ+SsLUAB2jZQYbxGRm5ltya10eIoiIKY
+        jIOGLrBbvoKDHq7P5H0hgFhcdA==
+X-Google-Smtp-Source: ALg8bN6pjAZ37OGjKtrbS3yO2YFLvmFPZHpPqe3DaRjyaZUzF6PpprXw6IGM9dthFTt7/unWWtiFeg==
+X-Received: by 2002:a17:902:1127:: with SMTP id d36mr11989847pla.299.1547679760995;
+        Wed, 16 Jan 2019 15:02:40 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id l3sm11311750pga.92.2019.01.16.15.02.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 15:02:40 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190116191635.GD3617@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3] arm64: dts: qcom: sdm845: Expand soc bus address range
+User-Agent: alot/0.8
+In-Reply-To: <154767899836.169631.10485468432153568181@swboyd.mtv.corp.google.com>
+References: <20190116071939.23136-1-bjorn.andersson@linaro.org> <154767410807.169631.11634052870112778681@swboyd.mtv.corp.google.com> <20190116221003.GW9278@minitux> <154767899836.169631.10485468432153568181@swboyd.mtv.corp.google.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Message-ID: <154767975942.169631.1254649555789319450@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Wed, 16 Jan 2019 15:02:39 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/19 11:16 AM, Jerome Glisse wrote:
->> We also rework the old error message a bit since we do not get
->> the conflicting entry back: only an indication that we *had* a
->> conflict.
-> We should keep the device private check (moving it in __request_region)
-> as device private can try to register un-use physical address (un-use
-> at time of device private registration) that latter can block valid
-> physical address the error message you are removing report such event.
+Quoting Stephen Boyd (2019-01-16 14:49:58)
+> > >=20
+> > > Do we need #size-cells =3D <2>? Maybe it could be #size-cells =3D <1>=
+ and we
+> > > can avoid having to specify a second size entry that's always going to
+> > > be 0 because we don't have devices with huge IO regions in the SoC. Or
+> > > does it need to be 2 for the large size of the size element of
+> > > dma-ranges and ranges here? Looking at the code I think we can rely on
+> > > the size-cells of the parent node so I think it will work with size o=
+f 1
+> > > here.
+> > >=20
+> >=20
+> > The "length" part of dma-ranges is described using #size-cells number of
+> > cells, so with 1 there's no way we can describe this being 36 bits.
+>=20
+> Yes, but doesn't the #size-cells of the parent node (i.e. root node in
+> this case) dictate the number of cells of the "length" part of the
+> dma-ranges property here? I hope that we don't need to push down the
+> larger size of 2 just for this reason, but I admit I haven't run the
+> code to understand this all properly.
+>=20
 
-If a resource can't support having a child, shouldn't it just be marked
-IORESOURCE_BUSY, rather than trying to somehow special-case
-IORES_DESC_DEVICE_PRIVATE_MEMORY behavior?
+Ok, nevermind. I read the code more and looked at the spec and I'm just
+talking nonsense on this point.
+
