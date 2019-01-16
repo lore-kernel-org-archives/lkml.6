@@ -2,487 +2,225 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA7DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A06C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47CB9206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547676654;
-	bh=WblcDIBDpk7Vw3y+mIyhARMUIuxWCXdieS7jCGJXrhM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=gw2BPRtv/vCvhTFT1HghNwqhligDHQ1ZEsVwlxO/Ds3zQ1KoW4JGqclTF5285IauN
-	 Fxe87h0DOBtgHWlEnRVJf5x3BzvHNMqmczgbqQZmLlUXAI97cAnr7sPVwH4lFyHnVV
-	 H94R5r9rCJDx3YjOiiqHYJMPqgWxRiRrVLMCubgM=
+	by mail.kernel.org (Postfix) with ESMTP id BDE0320675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:12:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="H6ng2Jx7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732895AbfAPWKw (ORCPT
+        id S1732936AbfAPWMb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:10:52 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39489 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730269AbfAPWKw (ORCPT
+        Wed, 16 Jan 2019 17:12:31 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33129 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730269AbfAPWMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:10:52 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i6so4539091oia.6;
-        Wed, 16 Jan 2019 14:10:50 -0800 (PST)
+        Wed, 16 Jan 2019 17:12:31 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c14so8833693wrr.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 14:12:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5N6KpHR2dc17xPQXp/nlwnCS7l/ZYcyhqvBXytTiQD0=;
+        b=H6ng2Jx7X1izvjyyHzZ4A5fnrs6N0UbH+Xmu/6Cz9b4mwb5WT8Bza/DRFBBga1Dgmj
+         qCCRJo0oFrAVRMwSwfDp/sDIL0IkT035vgFLhJu2WblQGjWM6J63Rjc5SYp94ExtezOR
+         xJUzGQ3z3rxbV6Bh/aLV/BXUX5V1dGeADXe4OfvQ4nqpEXL40Eh1KSnVJRoEbNhLloZU
+         uZC720iqt0a7wIAcxc78pYCLsaml86/IO/Sq9X/PzckVFHfnNkFT3ugYaOIgAzgNQ2TZ
+         8jjEZSgXBnqJ53FBu4MVEiJ00HHZxdbPNS/tnvtO3sSHaT+q4C3ZA42+0Yq1OUwsnPRq
+         tCAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gXuM+t/BcKEs9MJ/ix6GjpRP844k1PNzSZ+cx5qQ6Ts=;
-        b=sEgfXrTEetEFo3GffkMi9+V/vEGk8G35R1bgGyUIH9QKzG0HxjQnFHGr9YxPpVZZrY
-         3vR107XolgEaW/tUSXPvXc4YUsbYivVM1viNBIgOulLP60TJ1K1tyRN4WqArS2HL3uBn
-         5HyJLEhZ29oX7dT9suzBvZCgyBi+AoNJFOnXTFgd8ybC+vx5mV85a80j1uIFMPnwsnY8
-         csC2qBfNii/lSV5ra2Xt4cMafIgQsDh21+Khq6NbR8uOOLCpae818EZt/6xea4d3xGdK
-         ePuF25FiVNzjvKHnMo/WtNAIR0q5eGoLh5/YcF3m3GodH/U7oXkZ2NKtPWBl+8FYDRH1
-         z4fg==
-X-Gm-Message-State: AJcUukdg9ud2XCOmNUuZ1BJAh8nt2POAAlB4Tw8b2c59doezaI/F96rr
-        2781tA9r5XdkRUNHOgNhTvuulG8fGPGjTdbk0+4=
-X-Google-Smtp-Source: ALg8bN5JNeDUou9dbHUJ05l/+KLku8BjGbV+DOyDrJkrdkc6tiiY7JIKPmc50AgwquaCPKdvoP68vfxRhxJ+eTeax8U=
-X-Received: by 2002:a54:4d01:: with SMTP id v1mr5883561oix.246.1547676648909;
- Wed, 16 Jan 2019 14:10:48 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5N6KpHR2dc17xPQXp/nlwnCS7l/ZYcyhqvBXytTiQD0=;
+        b=gIb9r4QYgeqUyN3kYz2uXmbFQVeTSKGEvqAw9+3kofdEGN/47eC+VLuAKMdop7hHsl
+         87uHqPxAgjr/mjLdegEsqIjZWvuyEqIrgqQ2G5A/LC22HQdoHeEOhchAJlkncLQS4HpO
+         5U0N7sJAgQhp6LFcpNhU4FONjOSTUq64XbJ8VwzzHfjiESWCXzbMnaqGabve2eDG6cPH
+         xTOCMAI1+mKVSSq8ucR0kTDMckIK2MteaO0wkEJt1lP5iYU2cwA9wiuh39s76mBg6x0e
+         pRvEGs5y0WOYlGJFzO4G6yEkehY/BVuWnuzgA9nvFsI/QLi08U3cjZjGPMHSIuOoZhM0
+         cF4g==
+X-Gm-Message-State: AJcUukfs7Sohq4dKUc5OJlvv2H8tS2O3hddD/vnOzWV8mshqTP1NQB/0
+        YcBPBUxFFMBad8DGUT4s+y3Y9g==
+X-Google-Smtp-Source: ALg8bN5XXoK18EoqfmmZUVZYYnnpKCpuoglDTlcO6CE/FKRB5mFzWHjogxrf/7BVcr7J295vkC0QpQ==
+X-Received: by 2002:adf:ee07:: with SMTP id y7mr9592360wrn.187.1547676748884;
+        Wed, 16 Jan 2019 14:12:28 -0800 (PST)
+Received: from brauner.io ([154.119.55.246])
+        by smtp.gmail.com with ESMTPSA id c14sm28620696wme.13.2019.01.16.14.12.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 14:12:28 -0800 (PST)
+Date:   Wed, 16 Jan 2019 23:12:23 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        arve@android.com, maco@android.com, tkjos@google.com
+Subject: Re: [PATCH] selftests: add binderfs selftests
+Message-ID: <20190116221221.m74xdxnzcjzfufny@brauner.io>
+References: <20190116131903.8515-1-christian@brauner.io>
+ <20190116155450.GA3508@kroah.com>
+ <EB0D154D-A8CD-4CDB-B66F-C20945722AE2@brauner.io>
+ <20190116164219.GD5446@kroah.com>
+ <CA19B5F8-FEE9-4159-BA01-9C51B4DF97FA@brauner.io>
 MIME-Version: 1.0
-References: <6027163.jfBZkT499p@aspire.rjw.lan>
-In-Reply-To: <6027163.jfBZkT499p@aspire.rjw.lan>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 16 Jan 2019 23:10:37 +0100
-Message-ID: <CAJZ5v0hhZN_HYyQBaKSquWCH6yeC35XSCqpFDLPGrF5cDaMy6g@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: driver-api: PM: Add cpuidle document
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Documentation <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA19B5F8-FEE9-4159-BA01-9C51B4DF97FA@brauner.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 11:54 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Replace the remaining documents under Documentation/cpuidle/
-> with one more complete governor and driver API document for cpuidle
-> under Documentation/driver-api/pm/.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Jan 16, 2019 at 06:57:10PM +0200, Christian Brauner wrote:
+> On January 16, 2019 6:42:20 PM GMT+02:00, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >On Wed, Jan 16, 2019 at 06:21:12PM +0200, Christian Brauner wrote:
+> >> On January 16, 2019 5:54:50 PM GMT+02:00, Greg KH
+> ><gregkh@linuxfoundation.org> wrote:
+> >> >On Wed, Jan 16, 2019 at 02:19:03PM +0100, Christian Brauner wrote:
+> >> >> This adds the promised selftest for binderfs. It will verify the
+> >> >following
+> >> >> things:
+> >> >> - binderfs mounting works
+> >> >> - binder device allocation works
+> >> >> - performing a binder ioctl() request through a binderfs device
+> >works
+> >> >> - binder device removal works
+> >> >> - binder-control removal fails
+> >> >> - binderfs unmounting works
+> >> >> 
+> >> >> Cc: Todd Kjos <tkjos@google.com>
+> >> >> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> >> >> ---
+> >> >>  tools/testing/selftests/Makefile              |   1 +
+> >> >>  .../selftests/filesystems/binderfs/.gitignore |   1 +
+> >> >>  .../selftests/filesystems/binderfs/Makefile   |   6 +
+> >> >>  .../filesystems/binderfs/binderfs_test.c      | 120
+> >> >++++++++++++++++++
+> >> >>  .../selftests/filesystems/binderfs/config     |   3 +
+> >> >>  5 files changed, 131 insertions(+)
+> >> >>  create mode 100644
+> >> >tools/testing/selftests/filesystems/binderfs/.gitignore
+> >> >>  create mode 100644
+> >> >tools/testing/selftests/filesystems/binderfs/Makefile
+> >> >>  create mode 100644
+> >> >tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> >> >>  create mode 100644
+> >> >tools/testing/selftests/filesystems/binderfs/config
+> >> >> 
+> >> >> diff --git a/tools/testing/selftests/Makefile
+> >> >b/tools/testing/selftests/Makefile
+> >> >> index 1a2bd15c5b6e..400ee81a3043 100644
+> >> >> --- a/tools/testing/selftests/Makefile
+> >> >> +++ b/tools/testing/selftests/Makefile
+> >> >> @@ -10,6 +10,7 @@ TARGETS += drivers/dma-buf
+> >> >>  TARGETS += efivarfs
+> >> >>  TARGETS += exec
+> >> >>  TARGETS += filesystems
+> >> >> +TARGETS += filesystems/binderfs
+> >> >>  TARGETS += firmware
+> >> >>  TARGETS += ftrace
+> >> >>  TARGETS += futex
+> >> >> diff --git
+> >a/tools/testing/selftests/filesystems/binderfs/.gitignore
+> >> >b/tools/testing/selftests/filesystems/binderfs/.gitignore
+> >> >> new file mode 100644
+> >> >> index 000000000000..8a5d9bf63dd4
+> >> >> --- /dev/null
+> >> >> +++ b/tools/testing/selftests/filesystems/binderfs/.gitignore
+> >> >> @@ -0,0 +1 @@
+> >> >> +binderfs_test
+> >> >> diff --git a/tools/testing/selftests/filesystems/binderfs/Makefile
+> >> >b/tools/testing/selftests/filesystems/binderfs/Makefile
+> >> >> new file mode 100644
+> >> >> index 000000000000..58cb659b56b4
+> >> >> --- /dev/null
+> >> >> +++ b/tools/testing/selftests/filesystems/binderfs/Makefile
+> >> >> @@ -0,0 +1,6 @@
+> >> >> +# SPDX-License-Identifier: GPL-2.0
+> >> >> +
+> >> >> +CFLAGS += -I../../../../../usr/include/
+> >> >> +TEST_GEN_PROGS := binderfs_test
+> >> >> +
+> >> >> +include ../../lib.mk
+> >> >> diff --git
+> >> >a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> >> >b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> >> >> new file mode 100644
+> >> >> index 000000000000..ca4d9b616e84
+> >> >> --- /dev/null
+> >> >> +++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+> >> >> @@ -0,0 +1,120 @@
+> >> >> +// SPDX-License-Identifier: GPL-2.0
+> >> >> +
+> >> >> +#define _GNU_SOURCE
+> >> >> +#include <errno.h>
+> >> >> +#include <fcntl.h>
+> >> >> +#include <sched.h>
+> >> >> +#include <stdio.h>
+> >> >> +#include <stdlib.h>
+> >> >> +#include <string.h>
+> >> >> +#include <sys/ioctl.h>
+> >> >> +#include <sys/mount.h>
+> >> >> +#include <sys/stat.h>
+> >> >> +#include <sys/types.h>
+> >> >> +#include <unistd.h>
+> >> >> +#include <linux/android/binder.h>
+> >> >> +#include <linux/android/binderfs.h>
+> >> >> +#include "../../kselftest.h"
+> >> >> +
+> >> >> +int main(int argc, char *argv[])
+> >> >> +{
+> >> >> +	int fd, ret, saved_errno;
+> >> >> +	size_t len;
+> >> >> +	struct binderfs_device device = { 0 };
+> >> >> +	struct binder_version version = { 0 };
+> >> >> +
+> >> >> +	ret = unshare(CLONE_NEWNS);
+> >> >> +	if (ret < 0)
+> >> >> +		ksft_exit_fail_msg("%s - Failed to unshare mount namespace\n",
+> >> >> +				   strerror(errno));
+> >> >> +
+> >> >> +	ret = mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
+> >> >> +	if (ret < 0)
+> >> >> +		ksft_exit_fail_msg("%s - Failed to mount / as private\n",
+> >> >> +				   strerror(errno));
+> >> >> +
+> >> >> +	ret = mkdir("/dev/binderfs", 0755);
+> >> >> +	if (ret < 0 && errno != EEXIST)
+> >> >> +		ksft_exit_fail_msg(
+> >> >> +			"%s - Failed to create binderfs mountpoint\n",
+> >> >> +			strerror(errno));
+> >> >> +
+> >> >> +	ret = mount(NULL, "/dev/binderfs", "binder", 0, 0);
+> >> >> +	if (ret < 0)
+> >> >> +		ksft_exit_fail_msg("%s - Failed to mount binderfs\n",
+> >> >> +				   strerror(errno));
+> >> >
+> >> >Can you check first to see if the kernel under test really even has
+> >> >binderfs in it?  If not, you need to just
+> >> 
+> >> Hm, I thought that's what the "config" file was for?
+> >> E.g. a conditional compile or is this just a hint to the
+> >> user what's needed to run the test?
+> >
+> >I do not know.  What happens if you try to run this test on a kernel
+> >without that config option?  Does it not work as the framework
+> >correctly
+> >detects this?
+> 
+> I did test and it worked fine but let me check by setting up a clean vm and retry.
 
-In the face of the lack of any feedback I'm assuming that this is fine
-by everyone.
+The compile always happens and always succeeds but the test will fail if
+run on a kernel that does not have binderfs. So the mount() call should
+check for ret == ENODEV and then exit with skip.
 
-> ---
->
-> On top of https://patchwork.kernel.org/patch/10747185/
->
-> ---
->  Documentation/cpuidle/driver.txt        |   37 ----
->  Documentation/cpuidle/governor.txt      |   28 ---
->  Documentation/driver-api/pm/cpuidle.rst |  282 ++++++++++++++++++++++++++++++++
->  Documentation/driver-api/pm/index.rst   |    7
->  MAINTAINERS                             |    1
->  5 files changed, 287 insertions(+), 68 deletions(-)
->
-> Index: linux-pm/Documentation/driver-api/pm/index.rst
-> ===================================================================
-> --- linux-pm.orig/Documentation/driver-api/pm/index.rst
-> +++ linux-pm/Documentation/driver-api/pm/index.rst
-> @@ -1,9 +1,10 @@
-> -=======================
-> -Device Power Management
-> -=======================
-> +===============================
-> +CPU and Device Power Management
-> +===============================
->
->  .. toctree::
->
-> +   cpuidle
->     devices
->     notifiers
->     types
-> Index: linux-pm/Documentation/driver-api/pm/cpuidle.rst
-> ===================================================================
-> --- /dev/null
-> +++ linux-pm/Documentation/driver-api/pm/cpuidle.rst
-> @@ -0,0 +1,282 @@
-> +.. |struct cpuidle_governor| replace:: :c:type:`struct cpuidle_governor <cpuidle_governor>`
-> +.. |struct cpuidle_device| replace:: :c:type:`struct cpuidle_device <cpuidle_device>`
-> +.. |struct cpuidle_driver| replace:: :c:type:`struct cpuidle_driver <cpuidle_driver>`
-> +.. |struct cpuidle_state| replace:: :c:type:`struct cpuidle_state <cpuidle_state>`
-> +
-> +========================
-> +CPU Idle Time Management
-> +========================
-> +
-> +::
-> +
-> + Copyright (c) 2019 Intel Corp., Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> +
-> +
-> +CPU Idle Time Management Subsystem
-> +==================================
-> +
-> +Every time one of the logical CPUs in the system (the entities that appear to
-> +fetch and execute instructions: hardware threads, if present, or processor
-> +cores) is idle after an interrupt or equivalent wakeup event, which means that
-> +there are no tasks to run on it except for the special "idle" task associated
-> +with it, there is an opportunity to save energy for the processor that it
-> +belongs to.  That can be done by making the idle logical CPU stop fetching
-> +instructions from memory and putting some of the processor's functional units
-> +depended on by it into an idle state in which they will draw less power.
-> +
-> +However, there may be multiple different idle states that can be used in such a
-> +situation in principle, so it may be necessary to find the most suitable one
-> +(from the kernel perspective) and ask the processor to use (or "enter") that
-> +particular idle state.  That is the role of the CPU idle time management
-> +subsystem in the kernel, called ``CPUIdle``.
-> +
-> +The design of ``CPUIdle`` is modular and based on the code duplication avoidance
-> +principle, so the generic code that in principle need not depend on the hardware
-> +or platform design details in it is separate from the code that interacts with
-> +the hardware.  It generally is divided into three categories of functional
-> +units: *governors* responsible for selecting idle states to ask the processor
-> +to enter, *drivers* that pass the governors' decisions on to the hardware and
-> +the *core* providing a common framework for them.
-> +
-> +
-> +CPU Idle Time Governors
-> +=======================
-> +
-> +A CPU idle time (``CPUIdle``) governor is a bundle of policy code invoked when
-> +one of the logical CPUs in the system turns out to be idle.  Its role is to
-> +select an idle state to ask the processor to enter in order to save some energy.
-> +
-> +``CPUIdle`` governors are generic and each of them can be used on any hardware
-> +platform that the Linux kernel can run on.  For this reason, data structures
-> +operated on by them cannot depend on any hardware architecture or platform
-> +design details as well.
-> +
-> +The governor itself is represented by a |struct cpuidle_governor| object
-> +containing four callback pointers, :c:member:`enable`, :c:member:`disable`,
-> +:c:member:`select`, :c:member:`reflect`, a :c:member:`rating` field described
-> +below, and a name (string) used for identifying it.
-> +
-> +For the governor to be available at all, that object needs to be registered
-> +with the ``CPUIdle`` core by calling :c:func:`cpuidle_register_governor()` with
-> +a pointer to it passed as the argument.  If successful, that causes the core to
-> +add the governor to the global list of available governors and, if it is the
-> +only one in the list (that is, the list was empty before) or the value of its
-> +:c:member:`rating` field is greater than the value of that field for the
-> +governor currently in use, or the name of the new governor was passed to the
-> +kernel as the value of the ``cpuidle.governor=`` command line parameter, the new
-> +governor will be used from that point on (there can be only one ``CPUIdle``
-> +governor in use at a time).  Also, if ``cpuidle_sysfs_switch`` is passed to the
-> +kernel in the command line, user space can choose the ``CPUIdle`` governor to
-> +use at run time via ``sysfs``.
-> +
-> +Once registered, ``CPUIdle`` governors cannot be unregistered, so it is not
-> +practical to put them into loadable kernel modules.
-> +
-> +The interface between ``CPUIdle`` governors and the core consists of four
-> +callbacks:
-> +
-> +:c:member:`enable`
-> +       ::
-> +
-> +         int (*enable) (struct cpuidle_driver *drv, struct cpuidle_device *dev);
-> +
-> +       The role of this callback is to prepare the governor for handling the
-> +       (logical) CPU represented by the |struct cpuidle_device| object pointed
-> +       to by the ``dev`` argument.  The |struct cpuidle_driver| object pointed
-> +       to by the ``drv`` argument represents the ``CPUIdle`` driver to be used
-> +       with that CPU (among other things, it should contain the list of
-> +       |struct cpuidle_state| objects representing idle states that the
-> +       processor holding the given CPU can be asked to enter).
-> +
-> +       It may fail, in which case it is expected to return a negative error
-> +       code, and that causes the kernel to run the architecture-specific
-> +       default code for idle CPUs on the CPU in question instead of ``CPUIdle``
-> +       until the ``->enable()`` governor callback is invoked for that CPU
-> +       again.
-> +
-> +:c:member:`disable`
-> +       ::
-> +
-> +         void (*disable) (struct cpuidle_driver *drv, struct cpuidle_device *dev);
-> +
-> +       Called to make the governor stop handling the (logical) CPU represented
-> +       by the |struct cpuidle_device| object pointed to by the ``dev``
-> +       argument.
-> +
-> +       It is expected to reverse any changes made by the ``->enable()``
-> +       callback when it was last invoked for the target CPU, free all memory
-> +       allocated by that callback and so on.
-> +
-> +:c:member:`select`
-> +       ::
-> +
-> +         int (*select) (struct cpuidle_driver *drv, struct cpuidle_device *dev,
-> +                        bool *stop_tick);
-> +
-> +       Called to select an idle state for the processor holding the (logical)
-> +       CPU represented by the |struct cpuidle_device| object pointed to by the
-> +       ``dev`` argument.
-> +
-> +       The list of idle states to take into consideration is represented by the
-> +       :c:member:`states` array of |struct cpuidle_state| objects held by the
-> +       |struct cpuidle_driver| object pointed to by the ``drv`` argument (which
-> +       represents the ``CPUIdle`` driver to be used with the CPU at hand).  The
-> +       value returned by this callback is interpreted as an index into that
-> +       array (unless it is a negative error code).
-> +
-> +       The ``stop_tick`` argument is used to indicate whether or not to stop
-> +       the scheduler tick before asking the processor to enter the selected
-> +       idle state.  When the ``bool`` variable pointed to by it (which is set
-> +       to ``true`` before invoking this callback) is cleared to ``false``, the
-> +       processor will be asked to enter the selected idle state without
-> +       stopping the scheduler tick on the given CPU (if the tick has been
-> +       stopped on that CPU already, however, it will not be restarted before
-> +       asking the processor to enter the idle state).
-> +
-> +       This callback is mandatory (i.e. the :c:member:`select` callback pointer
-> +       in |struct cpuidle_governor| must not be ``NULL`` for the registration
-> +       of the governor to succeed).
-> +
-> +:c:member:`reflect`
-> +       ::
-> +
-> +         void (*reflect) (struct cpuidle_device *dev, int index);
-> +
-> +       Called to allow the governor to evaluate the accuracy of the idle state
-> +       selection made by the ``->select()`` callback (when it was invoked last
-> +       time) and possibly use the result of that to improve the accuracy of
-> +       idle state selections in the future.
-> +
-> +In addition, ``CPUIdle`` governors are required to take power management
-> +quality of service (PM QoS) constraints on the processor wakeup latency into
-> +account when selecting idle states.  In order to obtain the current effective
-> +PM QoS wakeup latency constraint for a given CPU, a ``CPUIdle`` governor is
-> +expected to pass the number of the CPU to
-> +:c:func:`cpuidle_governor_latency_req()`.  Then, the governor's ``->select()``
-> +callback must not return the index of an indle state whose
-> +:c:member:`exit_latency` value is greater than the number returned by that
-> +function.
-> +
-> +
-> +CPU Idle Time Management Drivers
-> +================================
-> +
-> +CPU idle time management (``CPUIdle``) drivers provide an interface between the
-> +other parts of ``CPUIdle`` and the hardware.
-> +
-> +First of all, a ``CPUIdle`` driver has to populate the :c:member:`states` array
-> +of |struct cpuidle_state| objects included in the |struct cpuidle_driver| object
-> +representing it.  Going forward this array will represent the list of available
-> +idle states that the processor hardware can be asked to enter shared by all of
-> +the logical CPUs handled by the given driver.
-> +
-> +The entries in the :c:member:`states` array are expected to be sorted by the
-> +value of the :c:member:`target_residency` field in |struct cpuidle_state| in
-> +the ascending order (that is, index 0 should correspond to the idle state with
-> +the minimum value of :c:member:`target_residency`).  [Since the
-> +:c:member:`target_residency` value is expected to reflect the "depth" of the
-> +idle state represented by the |struct cpuidle_state| object holding it, this
-> +sorting order should be the same as the ascending sorting order by the idle
-> +state "depth".]
-> +
-> +Three fields in |struct cpuidle_state| are used by the existing ``CPUIdle``
-> +governors for computations related to idle state selection:
-> +
-> +:c:member:`target_residency`
-> +       Minimum time to spend in this idle state including the time needed to
-> +       enter it (which may be substantial) to save more energy than could
-> +       be saved by staying in a shallower idle state for the same amount of
-> +       time, in microseconds.
-> +
-> +:c:member:`exit_latency`
-> +       Maximum time it will take a CPU asking the processor to enter this idle
-> +       state to start executing the first instruction after a wakeup from it,
-> +       in microseconds.
-> +
-> +:c:member:`flags`
-> +       Flags representing idle state properties.  Currently, governors only use
-> +       the ``CPUIDLE_FLAG_POLLING`` flag which is set if the given object
-> +       does not represent a real idle state, but an interface to a software
-> +       "loop" that can be used in order to avoid asking the processor to enter
-> +       any idle state at all.  [There are other flags used by the ``CPUIdle``
-> +       core in special situations.]
-> +
-> +The :c:member:`enter` callback pointer in |struct cpuidle_state|, which must not
-> +be ``NULL``, points to the routine to execute in order to ask the processor to
-> +enter this particular idle state:
-> +
-> +::
-> +
-> +  void (*enter) (struct cpuidle_device *dev, struct cpuidle_driver *drv,
-> +                 int index);
-> +
-> +The first two arguments of it point to the |struct cpuidle_device| object
-> +representing the logical CPU running this callback and the
-> +|struct cpuidle_driver| object representing the driver itself, respectively,
-> +and the last one is an index of the |struct cpuidle_state| entry in the driver's
-> +:c:member:`states` array representing the idle state to ask the processor to
-> +enter.
-> +
-> +The analogous ``->enter_s2idle()`` callback in |struct cpuidle_state| is used
-> +only for implementing the suspend-to-idle system-wide power management feature.
-> +The difference between in and ``->enter()`` is that it must not re-enable
-> +interrupts at any point (even temporarily) or attempt to change the states of
-> +clock event devices, which the ``->enter()`` callback may do sometimes.
-> +
-> +Once the :c:member:`states` array has been populated, the number of valid
-> +entries in it has to be stored in the :c:member:`state_count` field of the
-> +|struct cpuidle_driver| object representing the driver.  Moreover, if any
-> +entries in the :c:member:`states` array represent "coupled" idle states (that
-> +is, idle states that can only be asked for if multiple related logical CPUs are
-> +idle), the :c:member:`safe_state_index` field in |struct cpuidle_driver| needs
-> +to be the index of an idle state that is not "coupled" (that is, one that can be
-> +asked for if only one logical CPU is idle).
-> +
-> +In addition to that, if the given ``CPUIdle`` driver is only going to handle a
-> +subset of logical CPUs in the system, the :c:member:`cpumask` field in its
-> +|struct cpuidle_driver| object must point to the set (mask) of CPUs that will be
-> +handled by it.
-> +
-> +A ``CPUIdle`` driver can only be used after it has been registered.  If there
-> +are no "coupled" idle state entries in the driver's :c:member:`states` array,
-> +that can be accomplished by passing the driver's |struct cpuidle_driver| object
-> +to :c:func:`cpuidle_register_driver()`.  Otherwise, :c:func:`cpuidle_register()`
-> +should be used for this purpose.
-> +
-> +However, it also is necessary to register |struct cpuidle_device| objects for
-> +all of the logical CPUs to be handled by the given ``CPUIdle`` driver with the
-> +help of :c:func:`cpuidle_register_device()` after the driver has been registered
-> +and :c:func:`cpuidle_register_driver()`, unlike :c:func:`cpuidle_register()`,
-> +does not do that automatically.  For this reason, the drivers that use
-> +:c:func:`cpuidle_register_driver()` to register themselves must also take care
-> +of registering the |struct cpuidle_device| objects as needed, so it is generally
-> +recommended to use :c:func:`cpuidle_register()` for ``CPUIdle`` driver
-> +registration in all cases.
-> +
-> +The registration of a |struct cpuidle_device| object causes the ``CPUIdle``
-> +``sysfs`` interface to be created and the governor's ``->enable()`` callback to
-> +be invoked for the logical CPU represented by it, so it must take place after
-> +registering the driver that will handle the CPU in question.
-> +
-> +``CPUIdle`` drivers and |struct cpuidle_device| objects can be unregistered
-> +when they are not necessary any more which allows some resources associated with
-> +them to be released.  Due to dependencies between them, all of the
-> +|struct cpuidle_device| objects representing CPUs handled by the given
-> +``CPUIdle`` driver must be unregistered, with the help of
-> +:c:func:`cpuidle_unregister_device()`, before calling
-> +:c:func:`cpuidle_unregister_driver()` to unregister the driver.  Alternatively,
-> +:c:func:`cpuidle_unregister()` can be called to unregister a ``CPUIdle`` driver
-> +along with all of the |struct cpuidle_device| objects representing CPUs handled
-> +by it.
-> +
-> +``CPUIdle`` drivers can respond to runtime system configuration changes that
-> +lead to modifications of the list of available processor idle states (which can
-> +happen, for example, when the system's power source is switched from AC to
-> +battery or the other way around).  Upon a notification of such a change,
-> +a ``CPUIdle`` driver is expected to call :c:func:`cpuidle_pause_and_lock()` to
-> +turn ``CPUIdle`` off temporarily and then :c:func:`cpuidle_disable_device()` for
-> +all of the |struct cpuidle_device| objects representing CPUs affected by that
-> +change.  Next, it can update its :c:member:`states` array in accordance with
-> +the new configuration of the system, call :c:func:`cpuidle_enable_device()` for
-> +all of the relevant |struct cpuidle_device| objects and invoke
-> +:c:func:`cpuidle_resume_and_unlock()` to allow ``CPUIdle`` to be used again.
-> Index: linux-pm/Documentation/cpuidle/driver.txt
-> ===================================================================
-> --- linux-pm.orig/Documentation/cpuidle/driver.txt
-> +++ /dev/null
-> @@ -1,37 +0,0 @@
-> -
-> -
-> -               Supporting multiple CPU idle levels in kernel
-> -
-> -                               cpuidle drivers
-> -
-> -
-> -
-> -
-> -cpuidle driver hooks into the cpuidle infrastructure and handles the
-> -architecture/platform dependent part of CPU idle states. Driver
-> -provides the platform idle state detection capability and also
-> -has mechanisms in place to support actual entry-exit into CPU idle states.
-> -
-> -cpuidle driver initializes the cpuidle_device structure for each CPU device
-> -and registers with cpuidle using cpuidle_register_device.
-> -
-> -If all the idle states are the same, the wrapper function cpuidle_register
-> -could be used instead.
-> -
-> -It can also support the dynamic changes (like battery <-> AC), by using
-> -cpuidle_pause_and_lock, cpuidle_disable_device and cpuidle_enable_device,
-> -cpuidle_resume_and_unlock.
-> -
-> -Interfaces:
-> -extern int cpuidle_register(struct cpuidle_driver *drv,
-> -                            const struct cpumask *const coupled_cpus);
-> -extern int cpuidle_unregister(struct cpuidle_driver *drv);
-> -extern int cpuidle_register_driver(struct cpuidle_driver *drv);
-> -extern void cpuidle_unregister_driver(struct cpuidle_driver *drv);
-> -extern int cpuidle_register_device(struct cpuidle_device *dev);
-> -extern void cpuidle_unregister_device(struct cpuidle_device *dev);
-> -
-> -extern void cpuidle_pause_and_lock(void);
-> -extern void cpuidle_resume_and_unlock(void);
-> -extern int cpuidle_enable_device(struct cpuidle_device *dev);
-> -extern void cpuidle_disable_device(struct cpuidle_device *dev);
-> Index: linux-pm/Documentation/cpuidle/governor.txt
-> ===================================================================
-> --- linux-pm.orig/Documentation/cpuidle/governor.txt
-> +++ /dev/null
-> @@ -1,28 +0,0 @@
-> -
-> -
-> -
-> -               Supporting multiple CPU idle levels in kernel
-> -
-> -                               cpuidle governors
-> -
-> -
-> -
-> -
-> -cpuidle governor is policy routine that decides what idle state to enter at
-> -any given time. cpuidle core uses different callbacks to the governor.
-> -
-> -* enable() to enable governor for a particular device
-> -* disable() to disable governor for a particular device
-> -* select() to select an idle state to enter
-> -* reflect() called after returning from the idle state, which can be used
-> -  by the governor for some record keeping.
-> -
-> -More than one governor can be registered at the same time and
-> -users can switch between drivers using /sysfs interface (when enabled).
-> -More than one governor part is supported for developers to easily experiment
-> -with different governors. By default, most optimal governor based on your
-> -kernel configuration and platform will be selected by cpuidle.
-> -
-> -Interfaces:
-> -extern int cpuidle_register_governor(struct cpuidle_governor *gov);
-> -struct cpuidle_governor
-> Index: linux-pm/MAINTAINERS
-> ===================================================================
-> --- linux-pm.orig/MAINTAINERS
-> +++ linux-pm/MAINTAINERS
-> @@ -4016,6 +4016,7 @@ S:        Maintained
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
->  B:     https://bugzilla.kernel.org
->  F:     Documentation/admin-guide/pm/cpuidle.rst
-> +F:     Documentation/driver-api/pm/cpuidle.rst
->  F:     drivers/cpuidle/*
->  F:     include/linux/cpuidle.h
->
->
+Thanks!
+Christian
