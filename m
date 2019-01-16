@@ -2,92 +2,122 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D79A6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B4BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7662086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:51:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42A7120840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:51:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PDiFxS7Z"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bvp33zBi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390407AbfAPIvS (ORCPT
+        id S2390510AbfAPIv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:51:18 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:41456 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388743AbfAPIvS (ORCPT
+        Wed, 16 Jan 2019 03:51:29 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46020 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731718AbfAPIv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 03:51:18 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0G8nGnG157669;
-        Wed, 16 Jan 2019 08:51:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=cYT1XohZQGkO4yk5AtVj8Z3RinnutoeyYKFNnwSkSL4=;
- b=PDiFxS7ZU/bI2W2geEShQj0HwvINYTUtLM8qu5RsvkwS71Aq3mINTDppvX1M9aWik25w
- h/PaK29q5BD2s/TFoqQ7i3Iod6d/bZUNC5LWhKeCtvJQYqCFtkWSoTsp+Y6YNDZQm2vG
- WBi4qvh7TF6xE4DWMNGKwNEoS4XDYXW0KPFjpE7X/hEhGRNlQVklTgX0Ug83x/Wy3Y7r
- Y/RKY2QLHnBOomJOFcCJs57PRAnMuzKh25nT81Tr3UAjmxOc3uGQj6KfPiLl50VFhFSi
- vv6Um8OSlHyj9mQ0ZaoLeDcRbXyLu09WwgHF4mL7Es7UakOt1xUATg/gIMjbyIxnNFLW fg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2pybkcgfm3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Jan 2019 08:51:07 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0G8p6eV031322
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Jan 2019 08:51:07 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0G8p65d010925;
-        Wed, 16 Jan 2019 08:51:06 GMT
-Received: from kadam (/10.175.54.137)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Jan 2019 00:51:05 -0800
-Date:   Wed, 16 Jan 2019 11:50:51 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Chas Williams <3chas3@gmail.com>,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] atm: he: fix sign-extension overflow on large shift
-Message-ID: <20190116085051.GC4482@kadam>
-References: <20190115180338.32357-1-colin.king@canonical.com>
+        Wed, 16 Jan 2019 03:51:29 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t6so5884794wrr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 00:51:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=aXQ0K5EeXE1/NVz3VWlVrghUCjY2HyvRcO/snvuf/fQ=;
+        b=Bvp33zBiSTtnXm0Hr3tZmBzM30w9OoFnOV5Ba46W7pK73xH3haMsJxGfmNxHGwidgX
+         uM+zJaLRRHTgA7ZQlSnRbc2I4L30QEImxWfPXGQFAxlNMhU5SeZ3+GGpdiMAiP5Ny8Jn
+         DxOnfrVM+6vBYN28fdPC9sJorMGiACypf1GLI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=aXQ0K5EeXE1/NVz3VWlVrghUCjY2HyvRcO/snvuf/fQ=;
+        b=iwy42brpHlfwdpHIxYxoBXeXshFzaxGq4qkBv4PvVA1zmC2OPM0ZjPg+GIA+Bjj/OH
+         C00p26ppFUgQRdiV2yJCJ1/mgfpodop80NdYxrd+EOV09bv48LYdMWIPeLALjmkXY26T
+         YLB/D6FQQHdjqdt/Qkx6SteGcEIObfEpBhbGjVdUgRdsl8kzFbi4ISeQeAOebJH99xDi
+         XXIn6G5E/+rlPvtvomqerT4KmFitpoGPGZLc7NKRS44a62v841j2hk2L0HHylL7GxCIz
+         fZUlxVwfS/SugeooOcwknmA9u7EBTGtmEa3oeVVVSD9YGUc3QiCs+FALXSrOdaxrm/m7
+         sVfg==
+X-Gm-Message-State: AJcUukdKQ1WabU37oFD+Vvfa13Jz0Q9JvYypsHmVHFOCLzkSwcnjX4J3
+        ZAbWIadIZ7C+5MWyvx3ByeDrKg==
+X-Google-Smtp-Source: ALg8bN48n1MJdc2AXn2aF5J3I17GsIrHiaSULo22q/p4Cax9q2Y0fJ345etvMsYgFQA/AY9Ge3w2/g==
+X-Received: by 2002:adf:ee07:: with SMTP id y7mr6728416wrn.187.1547628687179;
+        Wed, 16 Jan 2019 00:51:27 -0800 (PST)
+Received: from dell ([2.27.35.149])
+        by smtp.gmail.com with ESMTPSA id y1sm40093167wme.1.2019.01.16.00.51.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 00:51:26 -0800 (PST)
+Date:   Wed, 16 Jan 2019 08:51:24 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org
+Subject: Re: [PATCH v5 0/7] mfd / platform: cros_ec: move cros_ec sysfs
+ attributes to its own drivers.
+Message-ID: <20190116085124.GC23399@dell>
+References: <20181212173402.27086-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190115180338.32357-1-colin.king@canonical.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181212173402.27086-1-enric.balletbo@collabora.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9137 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=641
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901160075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 06:03:38PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, 12 Dec 2018, Enric Balletbo i Serra wrote:
+
+> Hi,
 > 
-> Shifting the 1 by exp by an int can lead to sign-extension overlow when
-> exp is 31 since 1 is an signed int and sign-extending this result to an
-> unsigned long long will set the upper 32 bits.  Fix this by shifting an
-> unsigned long.
+> This is another patchset to try to cleanup a bit more the crossed
+> references for cros-ec driver between the MFD and the platform/chrome
+> subsystems.
+> 
+> The purpose of these patches is get rid of the different cros-ec attributes
+> from mfd/cros_ec_dev to its own sub-driver in platform/chrome. cros_ec_dev
+> continues instantiating the sub-devices but the sysfs attributes are owned
+> by the platform driver.E.g. The lightbar driver should own his sysfs
+> attributes and be instantiated only if the Embedded Controller has a
+> lightbar.
+> 
+> The patchset also adds the documentation of the sysfs attributes.
+> 
+> Most of the patches touches mfd subsystem and platform/chrome so I'd
+> suggest go all using and inmutable branch.
+> 
+> Best regards,
+>  Enric
 
-You could just cast it to unsigned.
+[...]
 
-	rate_cps = (unsigned long long) (1U << exp) * (man + 512) >> 9;
+> Enric Balletbo i Serra (7):
+>   mfd / platform: cros_ec: use devm_mfd_add_devices
+>   mfd / platform: cros_ec: move lightbar attributes to its own driver
+>   mfd / platform: cros_ec: move vbc attributes to its own driver
+>   mfd / platform: cros_ec: move debugfs attributes to its own driver
+>   mfd / platform: cros_ec: move device sysfs attributes to its own
+>     driver
+>   mfd / platform: cros_ec_vbc: instantiate only if the EC has a VBC
+>     NVRAM
+>   platform/chrome: cros_ec_lightbar: instantiate only if the EC has a
+>     lightbar
 
-I don't think it makes a difference at runtime because we just
-pick buf = 4 either way...
+These patches have been applied to my local MFD tree.  It will be
+pushed when 5.0-rc3 has been released.  The MFD tree needs rebasing
+onto it since it contains all of the MFD patches due for v5.0.
 
-regards,
-dan carpenter
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
