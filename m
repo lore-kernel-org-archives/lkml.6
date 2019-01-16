@@ -2,120 +2,150 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D014C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C32BEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77C4620859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5176A20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:19:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="pPUGdl1l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391807AbfAPKSR (ORCPT
+        id S2391888AbfAPKTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:18:17 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:45350 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731883AbfAPKSQ (ORCPT
+        Wed, 16 Jan 2019 05:19:41 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:62311 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732352AbfAPKTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:18:16 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-140-oD2z7rEBMLKdTeVKeKMxSg-1; Wed, 16 Jan 2019 10:18:13 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 16 Jan 2019 10:18:41 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 16 Jan 2019 10:18:41 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Andy Lutomirski' <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>
-CC:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: RE: [PATCH v6] x86: load FPU registers on return to userland
-Thread-Topic: [PATCH v6] x86: load FPU registers on return to userland
-Thread-Index: AQHUqBFG/2WmFKVnEEqv3ikTpa8106WwTizwgACDNzCAAOLSMA==
-Date:   Wed, 16 Jan 2019 10:18:41 +0000
-Message-ID: <c5eb624af88a4692a0c8e7a889844472@AcuMS.aculab.com>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <2e396dbcbb1c4cc191b4208626baed07@AcuMS.aculab.com>
- <dc9e3308-4e2a-2ce8-495e-6fdb868c60b2@intel.com>
- <CALCETrX0RNgiVop+9uSkLyfxoy-cDyWk2G09svGD_UPsVyLAhA@mail.gmail.com>
-In-Reply-To: <CALCETrX0RNgiVop+9uSkLyfxoy-cDyWk2G09svGD_UPsVyLAhA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 16 Jan 2019 05:19:41 -0500
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x0GAJR6s004494
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 19:19:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x0GAJR6s004494
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547633968;
+        bh=XluTAMMuVTynizhM8TMwuGt9FIM9t7DE2JUqtbv9fic=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pPUGdl1l3ZpHL7yLtjuSGOscWpi5WxXiFiYEG8J8Lqd6nnMCaCck2tZe9OGNvhIhq
+         A71C4r/MCCp1uNORf6QjuJwQq4XocXJT4tQ5VoVrWCq2tZ+qFYf97KckvRco5bb0UN
+         hjvBTLYeMRUKUG4ZUDEXE9JQXnWFQo+xRkSezTgIsPzM7jTSx/QsE6FUr++oELGD+H
+         2it3Z0hh/TUu7Qfu74HkKWyzYkekxHhK2ySjI6Jal6sxMkEgB5cFTvUr5y3Zef26An
+         KiSkmklDhCcTQCQGqpuJpNhSgQf1Eh2q78cR4TJjPkt/kotJSTW8f7/d7vVpQQd0m4
+         9/fF0WHk9o02A==
+X-Nifty-SrcIP: [209.85.222.44]
+Received: by mail-ua1-f44.google.com with SMTP id t8so1986915uap.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 02:19:28 -0800 (PST)
+X-Gm-Message-State: AJcUukcsnS3aIhaycV0BYAhh7AIVa64oVY2etQfB9woEbRw2Nnxh9/mm
+        EouEv9nXWrYefP6uOx2DEmTEIQMHtS9v153nui4=
+X-Google-Smtp-Source: ALg8bN6SrjnM3StAZGOhmaFFEpGiOk6Ki/SYfPBuegIzLsLL0prTnl9pco7a+FAK9pc1IeuHZrcAgao0L3G+5A0n0O8=
+X-Received: by 2002:ab0:66d1:: with SMTP id d17mr3440639uaq.89.1547633966865;
+ Wed, 16 Jan 2019 02:19:26 -0800 (PST)
 MIME-Version: 1.0
-X-MC-Unique: oD2z7rEBMLKdTeVKeKMxSg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20190115183643.120619-1-trong@google.com> <20190115183643.120619-5-trong@google.com>
+ <CAKwvOdkUMpqu3_2bC1DJ47JKg-YVDZDbUOwu63uGkH+wvxA=cg@mail.gmail.com>
+In-Reply-To: <CAKwvOdkUMpqu3_2bC1DJ47JKg-YVDZDbUOwu63uGkH+wvxA=cg@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 16 Jan 2019 19:18:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQXY-hU+dvgRM15zRKu-noK=esQu+85uASYFPC5UwfnhA@mail.gmail.com>
+Message-ID: <CAK7LNAQXY-hU+dvgRM15zRKu-noK=esQu+85uASYFPC5UwfnhA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] gcov: clang: pick GCC vs Clang format depending on compiler
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Tri Vo <trong@android.com>, oberpar@linux.ibm.com,
+        Greg Hackmann <ghackmann@android.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQW5keSBMdXRvbWlyc2tpDQo+IFNlbnQ6IDE1IEphbnVhcnkgMjAxOSAyMDoyNw0KPiBP
-biBUdWUsIEphbiAxNSwgMjAxOSBhdCAxMTo0NiBBTSBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5A
-aW50ZWwuY29tPiB3cm90ZToNCj4gPg0KPiA+IE9uIDEvMTUvMTkgNDo0NCBBTSwgRGF2aWQgTGFp
-Z2h0IHdyb3RlOg0KPiA+ID4gT25jZSB0aGlzIGlzIGRvbmUgaXQgbWlnaHQgYmUgd29ydGggd2hp
-bGUgYWRkaW5nIGEgcGFyYW1ldGVyIHRvDQo+ID4gPiBrZXJuZWxfZnB1X2JlZ2luKCkgdG8gcmVx
-dWVzdCB0aGUgcmVnaXN0ZXJzIG9ubHkgd2hlbiB0aGV5IGRvbid0DQo+ID4gPiBuZWVkIHNhdmlu
-Zy4NCj4gPiA+IFRoaXMgd291bGQgYmVuZWZpdCBjb2RlIHBhdGhzIHdoZXJlIHRoZSBnYWlucyBh
-cmUgcmVhc29uYWJsZSBidXQgbm90IG1hc3NpdmUuDQo+ID4gPg0KPiA+ID4gVGhlIHJldHVybiB2
-YWx1ZSBmcm9tIGtlcm5lbF9mcHVfYmVnaW4oKSBvdWdodCB0byBpbmRpY2F0ZSB3aGljaA0KPiA+
-ID4gcmVnaXN0ZXJzIGFyZSBhdmFpbGFibGUgLSBub25lLCBTU0UsIFNTRTIsIEFWWCwgQVZYNTEy
-IGV0Yy4NCj4gPiA+IFNvIGNvZGUgY2FuIHVzZSBhbiBhcHByb3ByaWF0ZSBpbXBsZW1lbnRhdGlv
-bi4NCj4gPiA+IChJJ3ZlIG5vdCBsb29rZWQgdG8gc2VlIGlmIHRoaXMgaXMgYWxyZWFkeSB0aGUg
-Y2FzZSEpDQo+ID4NCj4gPiBZZWFoLCBpdCB3b3VsZCBiZSBzYW5lIHRvIGhhdmUgYm90aCBhIG1h
-c2sgcGFzc2VkLCBhbmQgcmV0dXJuZWQsIHNheToNCj4gPg0KPiA+ICAgICAgICAgZ290ID0ga2Vy
-bmVsX2ZwdV9iZWdpbihYRkVBVFVSRV9NQVNLX0FWWDUxMiwgTk9fWFNBVkVfQUxMT1dFRCk7DQoN
-CllvdSBjb3VsZCBtZXJnZSB0aGUgdHdvIGFyZ3VtZW50cy4NCg0KPiA+ICAgICAgICAgaWYgKGdv
-dCA9PSBYRkVBVFVSRV9NQVNLX0FWWDUxMikNCg0KCWdvdCAmIFhGRUFUVVJFX01BU0tfQVZYNTEy
-DQoNCj4gPiAgICAgICAgICAgICAgICAgZG9fYXZ4XzUxMl9nb28oKTsNCj4gPiAgICAgICAgIGVs
-c2UNCj4gPiAgICAgICAgICAgICAgICAgZG9faW50ZWdlcl9nb28oKTsNCj4gPg0KPiA+ICAgICAg
-ICAga2VybmVsX2ZwdV9lbmQoZ290KQ0KPiA+DQo+ID4gVGhlbiwga2VybmVsX2ZwdV9iZWdpbigp
-IGNhbiBhY3R1YWxseSB3b3JrIHdpdGhvdXQgZXZlbiAqZG9pbmcqIGFuIFhTQVZFOg0KPiA+DQo+
-ID4gICAgICAgICAvKiBEbyB3ZSBoYXZlIHRvIHNhdmUgc3RhdGUgZm9yIGFueXRoaW5nIGluICdh
-c2tfbWFzayc/ICovDQo+ID4gICAgICAgICBpZiAoYWxsX3N0YXRlc19hcmVfaW5pdChhc2tfbWFz
-aykpDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiBhc2tfbWFzazsNCg0KSXQgYWxtb3N0IGNl
-cnRhaW5seSBuZWVkcyB0byBkaXNhYmxlIHByZS1lbXB0aW9uIC0gdGhlcmUgaXNuJ3QgYW5vdGhl
-cg0KZnB1IHNhdmUgYXJlYS4NCg0KPiA+DQo+ID4gVGhlbiBrZXJuZWxfZnB1X2VuZCgpIGp1c3Qg
-bmVlZHMgdG8gemVybyBvdXQgKHJlLWluaXQpIHRoZSBzdGF0ZSwgd2hpY2gNCj4gPiBpdCBjYW4g
-ZG8gd2l0aCBYUlNUT1JTIGFuZCBhIGNhcmVmdWwgY29tYmluYXRpb24gb2YgWFNUQVRFX0JWIGFu
-ZCB0aGUNCj4gPiByZXF1ZXN0ZWQgZmVhdHVyZSBiaXRtYXAgKFJGQk0pLg0KPiA+DQo+ID4gVGhp
-cyBpcyBhbGwganVzdCBvcHRpbWl6YXRpb24sIHRob3VnaC4NCj4gDQo+IEkgZG9uJ3QgdGhpbmsg
-d2UnZCBldmVyIHdhbnQga2VybmVsX2ZwdV9lbmQoKSB0byByZXN0b3JlIGFueXRoaW5nLA0KPiBy
-aWdodD8gIEknbSBhIGJpdCBjb25mdXNlZCBhcyB0byB3aGVuIHRoaXMgb3B0aW1pemF0aW9uIHdv
-dWxkIGFjdHVhbGx5DQo+IGJlIHVzZWZ1bC4NCg0KVGhlIHVzZXIgcmVnaXN0ZXIgcmVzdG9yZSBp
-cyBkZWZlcnJlZCB0byAncmV0dXJuIHRvIHVzZXInLg0KDQpXaGF0IHlvdSBuZWVkIHRvIGVuc3Vy
-ZSBpcyB0aGF0IHRoZSBrZXJuZWwgdmFsdWVzIG5ldmVyIGxlYWsgb3V0DQp0byB1c2Vyc3BhY2Uu
-DQoNCklTVFIgdGhlcmUgaXMgYSBmbGFnIHRoYXQgc2F5cyB0aGF0IGFsbCB0aGUgQVZYIHJlZ2lz
-dGVycyBhcmUgemVybw0KKFhTQVZFIHdyaXRlcyBvbmUsIEkgY2FuJ3QgcmVtZW1iZXIgaWYgaXQg
-aXMgcmVhZGFibGUpLg0KSWYgdGhlIHJlZ2lzdGVycyBhcmUgYWxsIHplcm8gSSB0aGluayB0aGUg
-a2VybmVsIGNvZGUgY2FuIHVzZSB0aGVtDQpldmVuIGlmIHRoZXkgYXJlICdsaXZlJyAtIHByb3Zp
-ZGVkIHRoZXkgZ2V0IHplcm9lZCBhZ2FpbiBiZWZvcmUNCnJldHVybiB0byB1c2VyLg0KSSBhbHNv
-IGNhbid0IHJlbWVtYmVyIHdoZXRoZXIgdGhlIGZwdSBmbGFncyByZWdpc3RlciBpcyBzZXQgYnkg
-QVZYDQppbnN0cnVjdGlvbnMgLSBJIGtub3cgdGhhdCBpcyBhIHBpdGEgdG8gcmVjb3Zlci4NCg0K
-QWxzbyBhcmUgYWxsIHN5c3RlbSBjYWxscyBlbnRlcmVkIHZpYSBhc20gc3R1YnMgdGhhdCBsb29r
-IGxpa2UgcmVhbCBmdW5jdGlvbnM/DQooSSB0aGluayBJJ3ZlIHNlZW4gaW5saW5lIHN5c3RlbSBj
-YWxscyBpbiBhIGxpbnV4IGJpbmFyeSAtIGJ1dCB0aGF0IHdhcyBhDQpsb25nIHRpbWUgYWdvLikN
-CklmIHRoYXQgYXNzdW1wdGlvbiBjYW4gYmUgbWFkZSB0aGVuIGJlY2F1c2UgdGhlIEFWWCByZWdp
-c3RlcnMgYXJlIGFsbA0KY2FsbGVyLXNhdmVkIHRoZXkgYXJlIG5vdCAnbGl2ZScgb24gc3lzdGVt
-IGNhbGwgZW50cnkgc28gY2FuIGJlIHplcm9lZA0KYW5kIG5lZWQgbm90IGJlIHNhdmVkIG9uIGEg
-Y29udGV4dCBzd2l0Y2guDQooVGhleSBzdGlsbCBuZWVkIHNhdmluZyBpZiB0aGUga2VybmVsIGlz
-IGVudGVyZWQgYnkgdHJhcCBvciBpbnRlcnJ1cHQuKQ0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJl
-ZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXlu
-ZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Wed, Jan 16, 2019 at 7:00 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> + Masahiro
+>
+> On Tue, Jan 15, 2019 at 10:37 AM Tri Vo <trong@android.com> wrote:
+> >
+> > From: Tri Vo <trong@android.com>
+> >
+> > Clang gcov format is only supported by Clang compiler, and Clang
+> > compiler only supports Clang format.
+> >
+> > We set gcov format to depend on which compiler (GCC or Clang) is used.
+> >
+> > Automatic format detection behavior is preserved because:
+> > If GCC is used, one of the GCC gcov formats is selected.
+> > If Clang is used, Clang gcov format is selected.
+> >
+> > Signed-off-by: Tri Vo <trong@android.com>
+> > ---
+> >  kernel/gcov/Kconfig  | 8 ++------
+> >  kernel/gcov/Makefile | 2 +-
+> >  2 files changed, 3 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/kernel/gcov/Kconfig b/kernel/gcov/Kconfig
+> > index eb428e570923..f71c1adcff31 100644
+> > --- a/kernel/gcov/Kconfig
+> > +++ b/kernel/gcov/Kconfig
+> > @@ -53,6 +53,7 @@ config GCOV_PROFILE_ALL
+> >  choice
+> >         prompt "Specify GCOV format"
+> >         depends on GCOV_KERNEL
+> > +       depends on CC_IS_GCC
+> >         ---help---
+> >         The gcov format is usually determined by the GCC version, and the
+> >         default is chosen according to your GCC version. However, there are
+> > @@ -62,7 +63,7 @@ choice
+> >
+> >  config GCOV_FORMAT_3_4
+> >         bool "GCC 3.4 format"
+> > -       depends on CC_IS_GCC && GCC_VERSION < 40700
+> > +       depends on GCC_VERSION < 40700
+> >         ---help---
+> >         Select this option to use the format defined by GCC 3.4.
+> >
+> > @@ -71,11 +72,6 @@ config GCOV_FORMAT_4_7
+> >         ---help---
+> >         Select this option to use the format defined by GCC 4.7.
+> >
+> > -config GCOV_FORMAT_CLANG
+> > -       bool "Clang format"
+> > -       ---help---
+> > -       Select this option to use the format defined by Clang.
+> > -
+> >  endchoice
+> >
+> >  endmenu
+> > diff --git a/kernel/gcov/Makefile b/kernel/gcov/Makefile
+> > index 83da4765c18d..d66a74b0f100 100644
+> > --- a/kernel/gcov/Makefile
+> > +++ b/kernel/gcov/Makefile
+> > @@ -4,4 +4,4 @@ ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
+> >  obj-y := base.o fs.o
+> >  obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_base.o gcc_3_4.o
+> >  obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_base.o gcc_4_7.o
+> > -obj-$(CONFIG_GCOV_FORMAT_CLANG) += clang.o
+> > +obj-$(CONFIG_CC_IS_CLANG) += clang.o
+>
+> I think this was the suggestion from Masahiro from v1?
 
+Yes.
+
+
+What is strange is, 2/4 added GCOV_FORMAT_CLANG,
+then 4/4 deletes it.
+
+
+Probably, changing the patch order,
+or squashing 4/4 into 2/4 would be cleaner.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
