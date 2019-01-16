@@ -2,128 +2,68 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126A8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B399C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BBC2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:46:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547649960;
-	bh=RpxCb7uIWRRnSDY18jtHaRcDC4JxCs48Xtr9FHci1pA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=MwEdzM8wKC+lLPJBHGPAkZb4rwPzkFrvtWw7joIRVvp4utv9PcOD6PkyeTCQ2DGR1
-	 lSr98acVqj9stFg0w2rDfT2C5H3NortbYJ3osNX0RgfFvQ5S9EEUBhhhdy2pGgX61E
-	 khheecQpHnquKhzmkGbdYn4HUpLM2c36w8D/DES4=
+	by mail.kernel.org (Postfix) with ESMTP id 6444520657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:48:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OxX0kYs5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390998AbfAPOp7 (ORCPT
+        id S2404700AbfAPOse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:45:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47892 "EHLO mail.kernel.org"
+        Wed, 16 Jan 2019 09:48:34 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:45289 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730894AbfAPOp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:45:58 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F72520657;
-        Wed, 16 Jan 2019 14:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547649958;
-        bh=RpxCb7uIWRRnSDY18jtHaRcDC4JxCs48Xtr9FHci1pA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cR/DhM8fX69O18yQo6C4R4q1WzitweTNFkCofTQiA4aGLy0Gh18x97b+adlHkewQc
-         3/WLhtWa1yHvP9aYeMhMrcitAgof465jSeVxkHx+Ttnq/1Uh0imMB1TUPA9WOzKdD7
-         9Bh3ON1HQnPneSShoSJvkq5VvDEPvqlID4TKgMiY=
-Date:   Wed, 16 Jan 2019 15:45:47 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [PATCH 4/4] drm/atmel-hlcdc: do not immediately disable planes,
- wait for next frame
-Message-ID: <20190116154547.711d7087@bbrezillon>
-In-Reply-To: <e35d6894-fd62-efd1-38f7-cc5cbdbbacbb@axentia.se>
-References: <20190110151020.30468-1-peda@axentia.se>
-        <20190110151020.30468-5-peda@axentia.se>
-        <20190110182904.5efd08f2@bbrezillon>
-        <a31e6514-1643-9e47-cbb4-3323183fd370@axentia.se>
-        <20190110202522.10206f2d@bbrezillon>
-        <e35d6894-fd62-efd1-38f7-cc5cbdbbacbb@axentia.se>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1733224AbfAPOsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 09:48:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=WwOlmpwAMZI6HE4VnDBXxaMouoJua1d8jL03E3u8LVo=;
+        b=OxX0kYs5vxyW5am2gFdduVK+QNVm8/cBi776DWy6e6mRCufu0NfLsFxNJDH6wtIOViLYaVDiiKgr4Eq52Khck3JsVyG5GZc/a2fZ+C807BNHG18PqZEX248nt2U/pN/7W7sVkxzew/ZY86dxkxTlGfKKYNcBTkB0GasiEZuLpIU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gjmUX-0007Ib-QM; Wed, 16 Jan 2019 15:48:29 +0100
+Date:   Wed, 16 Jan 2019 15:48:29 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH] net: phy: mdio_bus: add missing device_del() in
+ mdiobus_register() error handling
+Message-ID: <20190116144829.GC25731@lunn.ch>
+References: <20190116095358.28354-1-thomas.petazzoni@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116095358.28354-1-thomas.petazzoni@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 14:29:28 +0000
-Peter Rosin <peda@axentia.se> wrote:
-
-> On 2019-01-10 20:25, Boris Brezillon wrote:
-> > On Thu, 10 Jan 2019 18:51:21 +0000
-> > Peter Rosin <peda@axentia.se> wrote:
-> >   
-> >> On 2019-01-10 18:29, Boris Brezillon wrote:  
-> >>> On Thu, 10 Jan 2019 15:10:48 +0000
-> >>> Peter Rosin <peda@axentia.se> wrote:
-> >>>     
-> >>>> The A2Q and UPDATE bits have no effect in the channel disable registers.
-> >>>> However, since they are present, assume that the intention is to disable
-> >>>> planes, not immediately as indicated by the RST bit, but on the next
-> >>>> frame shift since that is what A2Q and UPDATE means in the channel enable
-> >>>> registers.
-> >>>>
-> >>>> Disabling the plane on the next frame shift is done with the EN bit,
-> >>>> so use that.    
-> >>>
-> >>> It's been a long time, but I think I had a good reason for forcing a
-> >>> reset. IIRC, when you don't do that and the CRTC is disabled before the
-> >>> plane, the EN bit stays around, and next time you queue a plane update,
-> >>> you'll start with an invalid buf pointer.    
-> >>
-> >> It might be possible to clear the EN bit in ...CHDR before enabling the
-> >> plane in ...CHER. Or is that too late?  
-> > 
-> > I think I tried that, but I'm not sure (BTW, this change was done in
-> > bd4248bb5e8b ("drm: atmel-hlcdc: reset layer A2Q and UPDATE bits when  
+> The actual error that we had from devm_gpiod_get_optional() was
+> -EPROBE_DEFER, due to the GPIO being provided by a driver that is
+> probed later than the Ethernet controller driver.
 > 
-> That patch is a big fat NOP if you read the documentation. Those bits
-> are marked with a '-' for all LCDC channel disable registers, for all
-> supported chips IIUC. Are the effects of those bits mentioned in any
-> errata?
+> To fix this, we simply add the missing device_del() invocation in the
+> error path.
 
-IIRC, it was not documented in the datasheet, but this came out during
-a discussion with the IP designer.
+Hi Thomas
 
-> 
-> It would be good with a comment that the present undocumented disable
-> method is intentional.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Yes, I should have added a comment about that, my bad.
+However, i wounder if it makes sense to add a label before the
+existing device_del() at the end of the function, and convert this,
+and the case above into a goto? That might scale better, avoiding the
+same issue in the future?
 
-> That would have kept me from assuming the whole
-> thing was just copy-paste junk from ..._enable that happened to work.
-> 
-> >> disabling it")). Anyway, I'm not even sure this is still needed now
-> >> that atomic updates have a wait_for_flip_done/vblank() in the commit
-> >> path.  
-> 
-> The documentation for the RST bit states "Resets the layer immediately.
-> The frame is aborted." which sounds a bit scary and heavy-handed. But
-> again, I don't know what that actually means and what the effects are
-> but that was the reason for me wanting to avoid the RST bit.
+Thanks
 
-As I said, I'm not even sure the problem I was trying to fix still
-exists.
+    Andrew
