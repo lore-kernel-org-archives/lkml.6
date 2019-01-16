@@ -2,255 +2,113 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47081C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA487C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C9620675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:59:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wn4egayT"
+	by mail.kernel.org (Postfix) with ESMTP id A214620840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbfAPW7g (ORCPT
+        id S1731523AbfAPXBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:59:36 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34685 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726838AbfAPW7f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:59:35 -0500
-Received: by mail-pg1-f193.google.com with SMTP id j10so3500635pga.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 14:59:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QDVWsplCmCZoQvbsUv+vaBJ5uZN+cqAhijuFmiT0DKE=;
-        b=Wn4egayTTyrkb3wGYn/6fR4/LHPUkWUf38G8gS9SGPv55Fm6qYZU/ncKcSGIIZb83Q
-         pbHbt387GlL1xKLO+7tnes8jHfQI7tFt7GrJJALfqWuO1rOtpvlbuIsRixhqPoTFYws/
-         09fZFco7bwE2rvUSRxu5Bx2s9suhEyiPWZCbgTSl/FTFn23liwP8z3qnFlD9eXS+4/qn
-         25gmRWNM23vcPYb4eJC5aARsuFAOaaD/yh9VtEjeaTFb/cWe3EpKKGQiW58w0qC+dN2Z
-         yIIs9i8r2YvOVWVAD2V+L3HaAGu2F153EQqa83QKw5LeLLvvgQMAX2afrNODpOSxNsaS
-         9NKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QDVWsplCmCZoQvbsUv+vaBJ5uZN+cqAhijuFmiT0DKE=;
-        b=EQkLPdIpkAZI4z51RXbSqcxp6ASsVqG0+l4vc18c2fizkw6MxxN2UhFqJjBcb1DWvm
-         So0z42NfZtVO2q3u3sKXRYkkXL9Zbv0GgSdsxt+GNaeXuVZJFbeiemokF7uLX0iOzQC+
-         zjuha5QtXEcavBU3H+2z9K/5oFdsh0repQ9yMxDlqIW22LX6szHAw/weNWqQqWQHu7mO
-         AU28zaCfj/RdbG6Qp6Kw8AOjBPSjtCZJR/t3rFEB/wNCBxJXpowIzEo93P0HP90VsPxr
-         TYmUMRy79/UAczUDnqn6ZLdZVCUNmX93PSvZ9GOna7kAMiH9EwhD/aixpxHrjz6F7Zcg
-         XPzA==
-X-Gm-Message-State: AJcUukcWBguPbgi48U5uj9tyOcys2i+P1M259/bbwqXCubHYl8b02L3X
-        wqAD3f3RL5h8TJ28zKbKzSA=
-X-Google-Smtp-Source: ALg8bN4eCf2dl5W/W5CkMr4rPA+0P7iufAR4RgoikmB3ceXTbzD1kqWHRNkK0fVdX1CmK/wcLtZZUA==
-X-Received: by 2002:a63:e950:: with SMTP id q16mr11180889pgj.138.1547679574042;
-        Wed, 16 Jan 2019 14:59:34 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w184sm7442393pgd.34.2019.01.16.14.59.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 14:59:32 -0800 (PST)
-Date:   Wed, 16 Jan 2019 14:59:31 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Cheng-Yi Chiang <cychiang@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        tzungbi@chromium.org, Benson Leung <bleung@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Guenter Roeck <groeck@chromium.org>, dgreid@chromium.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [alsa-devel] [PATCH v3 3/3] ASoC: cros_ec_codec: Add codec
- driver for Cros EC
-Message-ID: <20190116225931.GA13512@roeck-us.net>
-References: <20181226070317.72022-1-cychiang@chromium.org>
- <20181226070317.72022-3-cychiang@chromium.org>
- <20190116061802.GA31405@roeck-us.net>
+        Wed, 16 Jan 2019 18:01:42 -0500
+Received: from mga01.intel.com ([192.55.52.88]:40769 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730097AbfAPXBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 18:01:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 15:01:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="128371313"
+Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
+  by orsmga001.jf.intel.com with ESMTP; 16 Jan 2019 15:01:39 -0800
+Subject: Re: [PATCH 2/4] mm/memory-hotplug: allow memory resources to be
+ children
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     dave@sr71.net, dan.j.williams@intel.com, dave.jiang@intel.com,
+        zwisler@kernel.org, vishal.l.verma@intel.com,
+        thomas.lendacky@amd.com, akpm@linux-foundation.org,
+        mhocko@suse.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        ying.huang@intel.com, fengguang.wu@intel.com, bp@suse.de,
+        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de
+References: <20190116181859.D1504459@viggo.jf.intel.com>
+ <20190116181902.670EEBC3@viggo.jf.intel.com>
+ <20190116191635.GD3617@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <2b52778d-f120-eec7-3e7a-3a9c182170f0@intel.com>
+Date:   Wed, 16 Jan 2019 15:01:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116061802.GA31405@roeck-us.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190116191635.GD3617@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 10:18:02PM -0800, Guenter Roeck wrote:
-> On Wed, Dec 26, 2018 at 03:03:19PM +0800, Cheng-Yi Chiang wrote:
-> > Add a codec driver to control ChromeOS EC codec.
-> > 
-> > Use EC Host command to enable/disable I2S recording and control other
-> > configurations.
-> > 
-> > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-> > ---
-> > Changes in v3:
-> > 1.remove cros_ec_codec.h.
-> > 2.Fix error code overriding in
-> >     set_i2s_config
-> >     set_i2s_sample_depth
-> >     set_bclk
-> >     get_ec_mic_gain
-> >     set_ec_mic_gain
-> >     enable_i2s
-> > 3.Fix missing return code in cros_ec_i2s_set_dai_fmt.
-> > 4.Simplify return code in cros_ec_i2s_hw_params and mic_gain_put.
-> > 5.Remove useless debug message in cros_ec_codec_platform_probe.
-> > 
-> >  MAINTAINERS                      |   2 +
-> >  sound/soc/codecs/Kconfig         |   8 +
-> >  sound/soc/codecs/Makefile        |   2 +
-> >  sound/soc/codecs/cros_ec_codec.c | 454 +++++++++++++++++++++++++++++++
-> >  4 files changed, 466 insertions(+)
-> >  create mode 100644 sound/soc/codecs/cros_ec_codec.c
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 05e1922624e58..d66f80f3252d7 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -3638,8 +3638,10 @@ F:	drivers/platform/chrome/
-> >  
-> >  CHROMEOS EC CODEC DRIVER
-> >  M:	Cheng-Yi Chiang <cychiang@chromium.org>
-> > +R:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >  S:	Maintained
-> >  F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-> > +F:	sound/soc/codecs/cros_ec_codec.*
-> >  
-> >  CIRRUS LOGIC AUDIO CODEC DRIVERS
-> >  M:	Brian Austin <brian.austin@cirrus.com>
-> > diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-> > index 87cb9c51e6f5a..0b36428159b71 100644
-> > --- a/sound/soc/codecs/Kconfig
-> > +++ b/sound/soc/codecs/Kconfig
-> > @@ -50,6 +50,7 @@ config SND_SOC_ALL_CODECS
-> >  	select SND_SOC_BT_SCO
-> >  	select SND_SOC_BD28623
-> >  	select SND_SOC_CQ0093VC
-> > +	select SND_SOC_CROS_EC_CODEC
-> 
-> This unconditionally selects SND_SOC_CROS_EC_CODEC, but SND_SOC_CROS_EC_CODEC
-> depends on MFD_CROS_EC. This is missing an "if MFD_CROS_EC" qualifier.
-> 
-> >  	select SND_SOC_CS35L32 if I2C
-> >  	select SND_SOC_CS35L33 if I2C
-> >  	select SND_SOC_CS35L34 if I2C
-> > @@ -457,6 +458,13 @@ config SND_SOC_CPCAP
-> >  config SND_SOC_CQ0093VC
-> >  	tristate
-> >  
-> > +config SND_SOC_CROS_EC_CODEC
-> > +	tristate "codec driver for ChromeOS EC"
-> > +	depends on MFD_CROS_EC
-> > +	help
-> > +	  If you say yes here you will get support for the
-> > +	  ChromeOS Embedded Controller's Audio Codec.
-> > +
-> >  config SND_SOC_CS35L32
-> >  	tristate "Cirrus Logic CS35L32 CODEC"
-> >  	depends on I2C
-> > diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-> > index 9bb3346fab2fe..3cfd8f5f61705 100644
-> > --- a/sound/soc/codecs/Makefile
-> > +++ b/sound/soc/codecs/Makefile
-> > @@ -42,6 +42,7 @@ snd-soc-bd28623-objs := bd28623.o
-> >  snd-soc-bt-sco-objs := bt-sco.o
-> >  snd-soc-cpcap-objs := cpcap.o
-> >  snd-soc-cq93vc-objs := cq93vc.o
-> > +snd-soc-cros-ec-codec-objs := cros_ec_codec.o
-> >  snd-soc-cs35l32-objs := cs35l32.o
-> >  snd-soc-cs35l33-objs := cs35l33.o
-> >  snd-soc-cs35l34-objs := cs35l34.o
-> > @@ -310,6 +311,7 @@ obj-$(CONFIG_SND_SOC_BD28623)	+= snd-soc-bd28623.o
-> >  obj-$(CONFIG_SND_SOC_BT_SCO)	+= snd-soc-bt-sco.o
-> >  obj-$(CONFIG_SND_SOC_CQ0093VC) += snd-soc-cq93vc.o
-> >  obj-$(CONFIG_SND_SOC_CPCAP)	+= snd-soc-cpcap.o
-> > +obj-$(CONFIG_SND_SOC_CROS_EC_CODEC)	+= snd-soc-cros-ec-codec.o
-> >  obj-$(CONFIG_SND_SOC_CS35L32)	+= snd-soc-cs35l32.o
-> >  obj-$(CONFIG_SND_SOC_CS35L33)	+= snd-soc-cs35l33.o
-> >  obj-$(CONFIG_SND_SOC_CS35L34)	+= snd-soc-cs35l34.o
-> > diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
-> > new file mode 100644
-> > index 0000000000000..85ea23f4b681c
-> > --- /dev/null
-> > +++ b/sound/soc/codecs/cros_ec_codec.c
-> > @@ -0,0 +1,454 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Driver for ChromeOS Embedded Controller codec.
-> > + *
-> > + * This driver uses the cros-ec interface to communicate with the ChromeOS
-> > + * EC for audio function.
-> > + */
-> > +
-> > +#include <linux/delay.h>
-> > +#include <linux/device.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/mfd/cros_ec.h>
-> > +#include <linux/mfd/cros_ec_commands.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <sound/pcm.h>
-> > +#include <sound/pcm_params.h>
-> > +#include <sound/soc.h>
-> > +#include <sound/tlv.h>
-> > +
-> > +#define MAX_GAIN 43
-> 
-> Is there some reason for this magic number ? What does it reflect ? 
-> 
-> > +
-> > +#define DRV_NAME "cros-ec-codec"
-> > +
-> > +/**
-> > + * struct cros_ec_codec_data - ChromeOS EC codec driver data.
-> > + * @dev:         Device structure used in sysfs.
-> > + * @ec_device:   cros_ec_device structure to talk to the physical device.
-> > + * @component:   Pointer to the component.
-> > + */
-> > +struct cros_ec_codec_data {
-> > +	struct device *dev;
-> > +	struct cros_ec_device *ec_device;
-> > +	struct snd_soc_component *component;
-> > +};
-> > +
-> > +static const DECLARE_TLV_DB_SCALE(ec_mic_gain_tlv, 0, 100, 0);
-> > +/*
-> > + * Wrapper for EC command.
-> > + */
-> > +static int ec_command(struct snd_soc_component *component, int version,
-> > +		      int command, u8 *outdata, int outsize,
-> > +		      u8 *indata, int insize)
-> > +{
-> > +	struct cros_ec_codec_data *codec_data =
-> > +		snd_soc_component_get_drvdata(component);
-> > +	struct cros_ec_device *ec_device = codec_data->ec_device;
-> > +	struct cros_ec_command *msg;
-> > +	int ret;
-> > +
-> > +	msg = kzalloc(sizeof(*msg) + max(insize, outsize), GFP_KERNEL);
-> > +	if (!msg)
-> > +		return -ENOMEM;
-> 
-> As far as I can see, the calling parameter is always "struct ec_param_codec_i2s".
-> With that in mind, this code seems unnecessarily complex. Is this code expected
-> to be called multiple times in parallel and requires multiple instances of
-> struct ec_param_codec_i2s to be allocated ? Even if so, why not just use
-> a local variable / array ?
-> 
-> [ This makes me wonder how EC transfers are synchronized in
->   cros_ec_cmd_xfer_status() and below. Does anyone know ? I don't immedately
->   see it.
-> ]
-> 
-Answering this part myself: locking is implemented in cros_ec_cmd_xfer(),
-which is called from cros_ec_cmd_xfer_status(). No idea why I didn't see
-that earlier.
+On 1/16/19 11:16 AM, Jerome Glisse wrote:
+>> We also rework the old error message a bit since we do not get
+>> the conflicting entry back: only an indication that we *had* a
+>> conflict.
+> We should keep the device private check (moving it in __request_region)
+> as device private can try to register un-use physical address (un-use
+> at time of device private registration) that latter can block valid
+> physical address the error message you are removing report such event.
 
-Guenter
+If a resource can't support having a child, shouldn't it just be marked
+IORESOURCE_BUSY, rather than trying to somehow special-case
+IORES_DESC_DEVICE_PRIVATE_MEMORY behavior?
