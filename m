@@ -2,175 +2,297 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E759C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67819C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F171C20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:22:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ys6yE7gB"
+	by mail.kernel.org (Postfix) with ESMTP id 24FBB2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547670191;
+	bh=6PqeFg2h3mQ32mZ6AxAtvae43XfVC4/nqfs9r/iT3lc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=dnrLH/4kyv1HOUXHIikUxLYJzfBDqoRbvrxhUcpyku6eX+She50uOCmvztwnxcJ2p
+	 Lim3kQXNhdAzKn6Ls92WMWMm6/CbhpKJ2TFAOG/sb2IPvLqiXX6px4mmGWpwn6gaRW
+	 4B7FZCrtExzQQHbaVyZFoBkMg7o0UgJvW030hFLQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732584AbfAPUW4 (ORCPT
+        id S1732605AbfAPUXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 15:22:56 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46199 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727511AbfAPUW4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 15:22:56 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t13so3522583ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 12:22:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ATF5Lt37lZd4XR74weI4YdFP5xD4fmjGIe3UjfXgJs0=;
-        b=Ys6yE7gBUdham7sCbDYYl11kLIa783zCix6NZY6wSopEKMswotxOPX72RIau9tLorw
-         DgXo9dA18KrdLiTuLCrCzThRVMww1nd7ysfTAsrLJ3tXtBAr/J6uIcr9KElWzXcQX7ga
-         M+et3ytePBaFUe9nNwLd7/EeOUuZoWsWvTPs0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ATF5Lt37lZd4XR74weI4YdFP5xD4fmjGIe3UjfXgJs0=;
-        b=LBNukBqKVu37HpA01L3519BtdgobGRRjR4wGnmpn5v1FW4hHXDlvXdmhWJs3J14Rem
-         X6x2K56LxYYju9PFgVN3CH3qFPlDf4JgGizzOoZNt0dIgXHqR5YNZPauwlOGerW+A5qG
-         YwAIyAXz2iK05cNbQDLNsld9KSJxH2eJyffVC4MDPhjVa3jAEQV8cuVBgD5rTj7DAFZN
-         zpgqf/vCN+lTe7fuCHzkYn/XiZSnaiijPDtPYS9UKC6OffWjgZUHkxq9x2X59Lj+B9p5
-         UkNvEJYQ1Br+aCEuEKiq/ioeSDD9JKOlNInsVy+oXcC6Dy83dCVxZVLwP6WdulyRHgFa
-         0Xkw==
-X-Gm-Message-State: AJcUukf4SLQGz6AMCQ5vFxEecJxdWKpONLs/DC0DFz0VvuB4OW/RJkK5
-        LjceeSYb3f7yZwxKQOOhV+CROw==
-X-Google-Smtp-Source: ALg8bN4pJ040ecnF/7FzaQXtnqodtpti32I7WuYPl7fiovVlgvXoKdQZPcjhefmCzNbqbTt7h/CBNQ==
-X-Received: by 2002:a17:902:b03:: with SMTP id 3mr11614360plq.91.1547670175228;
-        Wed, 16 Jan 2019 12:22:55 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id i184sm9684698pfc.41.2019.01.16.12.22.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 12:22:54 -0800 (PST)
-Date:   Wed, 16 Jan 2019 12:22:53 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v8 1/3] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-Message-ID: <20190116202253.GS261387@google.com>
-References: <20190116114603.500-1-bgodavar@codeaurora.org>
- <20190116114603.500-2-bgodavar@codeaurora.org>
+        Wed, 16 Jan 2019 15:23:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38546 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727511AbfAPUXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 15:23:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AC756ADD7;
+        Wed, 16 Jan 2019 20:23:05 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 21:23:04 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+In-Reply-To: <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
+Message-ID: <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
+References: <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com> <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com> <20190110122442.GA21216@nautica>
+ <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com> <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com> <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
+ <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com> <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com> <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm>
+ <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190116114603.500-2-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/mixed; boundary="1678380546-457690195-1547670185=:6626"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 05:16:01PM +0530, Balakrishna Godavarthi wrote:
-> wcn3990 requires a power pulse to turn ON/OFF along with
-> regulators. Sometimes we are observing the power pulses are sent
-> out with some time delay, due to queuing these commands. This is
-> causing synchronization issues with chip, which intern delay the
-> chip setup or may end up with communication issues.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--1678380546-457690195-1547670185=:6626
+Content-Type: text/plain; charset=US-ASCII
+
+On Thu, 17 Jan 2019, Linus Torvalds wrote:
+
+> > So that seems to deal with mincore() in a reasonable way indeed.
+> >
+> > It doesn't unfortunately really solve the preadv2(RWF_NOWAIT), nor does it
+> > provide any good answer what to do about it, does it?
 > 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
-> Changes in v8:
->  * Updated 1 second timeout instead of indefinite wait.
-> 
-> Changes in v7:
->  *  updated the wait time to 5 ms after sending power pulses.
-> 
-> Changes in v6:
->  * added serdev_device_write_flush() in qca_send_power_pulse
->    instead during the power off pulse.
-> 
-> Changes in v5:
->  * added serdev_device_write_flush() in qca_power_off().
-> ---
->  drivers/bluetooth/hci_qca.c | 46 ++++++++++++++++---------------------
->  1 file changed, 20 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index f036c8f98ea3..681bfa30467e 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -60,6 +60,7 @@
->  #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
->  #define IBS_TX_IDLE_TIMEOUT_MS		2000
->  #define BAUDRATE_SETTLE_TIMEOUT_MS	300
-> +#define POWER_PULSE_TRANS_TIMEOUT_MS	1000
+> As I suggested earlier in the thread, the fix for RWF_NOWAIT might be
+> to just move the test down to after readahead.
 
-nit: Not that it should make a different in normal operation, but 1s
-seems extreme. Is there really any chance that the byte hasn't been
-sent after say 100ms (which is still an eternity for a single byte)?
+So I've done some basic smoke testing (~2 hours of LTP+xfstests) on the 
+kernel with the three topmost patches from
 
->  /* susclk rate */
->  #define SUSCLK_RATE_32KHZ	32768
-> @@ -1013,11 +1014,10 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
->  		hci_uart_set_baudrate(hu, speed);
->  }
->  
-> -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
-> +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
->  {
-> -	struct hci_uart *hu = hci_get_drvdata(hdev);
-> -	struct qca_data *qca = hu->priv;
-> -	struct sk_buff *skb;
-> +	int ret;
-> +	int timeout = __msecs_to_jiffies(POWER_PULSE_TRANS_TIMEOUT_MS);
+	https://git.kernel.org/pub/scm/linux/kernel/git/jikos/jikos.git/log/?h=pagecache-sidechannel
 
-use msecs_to_jiffies()
+applied (also attaching to this mail), and no obvious breakage popped up.
 
->  	/* These power pulses are single byte command which are sent
->  	 * at required baudrate to wcn3990. On wcn3990, we have an external
-> @@ -1029,22 +1029,22 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->  	 * save power. Disabling hardware flow control is mandatory while
->  	 * sending power pulses to SoC.
->  	 */
-> -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
-> -
-> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
-> -	if (!skb)
-> -		return -ENOMEM;
-> +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to controller", cmd);
->  
-> +	serdev_device_write_flush(hu->serdev);
->  	hci_uart_set_flow_control(hu, true);
-> +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
-> +	if (ret < 0) {
-> +		bt_dev_err(hu->hdev, "failed to send power pulse %02x", cmd);
-> +		return ret;
-> +	}
->  
-> -	skb_put_u8(skb, cmd);
-> -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
-> -
-> -	skb_queue_tail(&qca->txq, skb);
-> -	hci_uart_tx_wakeup(hu);
-> -
-> -	/* Wait for 100 uS for SoC to settle down */
-> -	usleep_range(100, 200);
-> +	serdev_device_wait_until_sent(hu->serdev, timeout);
-> +	/* Wait of 5ms is required for assuring to send the byte on the Tx
-> +	 * line and also for the controller to settle down for the received
-> +	 * byte.
-> +	 */
-> +	usleep_range(5000, 6000);
+So if noone sees any principal problem there, I'll happily submit it with 
+proper attribution etc.
 
-I incorrectly claimed that there might be still bytes sitting in the
-UART FIFO when serdev_device_wait_until_sent() returns, Johan
-corrected me on that (thanks!). So if it takes the SoC 100us to settle
-down we should be good with the original code.
+Thanks,
 
-Cheers
+-- 
+Jiri Kosina
+SUSE Labs
 
-Matthias
+--1678380546-457690195-1547670185=:6626
+Content-Type: text/x-patch; name=0001-Revert-Change-mincore-to-count-mapped-pages-rather-t.patch
+Content-Transfer-Encoding: BASE64
+Content-ID: <nycvar.YFH.7.76.1901162123040.6626@cbobk.fhfr.pm>
+Content-Description: 
+Content-Disposition: attachment; filename=0001-Revert-Change-mincore-to-count-mapped-pages-rather-t.patch
+
+RnJvbSBjYmY5MzgxZWVkNjc2NmNmZjViMDVmOWQ5NDhjMWQyMjVjYjNkNzhi
+IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSmlyaSBLb3NpbmEg
+PGprb3NpbmFAc3VzZS5jej4NCkRhdGU6IFdlZCwgMTYgSmFuIDIwMTkgMjA6
+NTE6MzEgKzAxMDANClN1YmplY3Q6IFtQQVRDSCAxLzNdIFJldmVydCAiQ2hh
+bmdlIG1pbmNvcmUoKSB0byBjb3VudCAibWFwcGVkIiBwYWdlcyByYXRoZXIN
+CiB0aGFuICJjYWNoZWQiIHBhZ2VzIg0KDQpUaGlzIHJldmVydHMgY29tbWl0
+IDU3NDgyM2JmYWI4MmQ5ZDhmYTQ3ZjQyMjc3ODA0M2ZiYjRiNGY1MGUuDQoN
+CkFub3RoZXIgYXByb2FjaCAoY2hlY2tpbmcgZmlsZSBhY2Nlc3MgcGVybWlz
+c2lvbnMgaW4gb3JkZXIgdG8gZGVjaWRlDQp3aGF0IG1pbmNvcmUoKSBzaG91
+bGQgcmV0dXJuIGluIG9yZGVyIG5vdCB0byBsZWFrIGRhdGEpIHdpbGwgYmUg
+aW1wbGVtZW50ZWQNCmluc3RlYWQuDQoNClNpZ25lZC1vZmYtYnk6IEppcmkg
+S29zaW5hIDxqa29zaW5hQHN1c2UuY3o+DQotLS0NCiBtbS9taW5jb3JlLmMg
+fCA5NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKystLS0tLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgODEgaW5z
+ZXJ0aW9ucygrKSwgMTMgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9t
+bS9taW5jb3JlLmMgYi9tbS9taW5jb3JlLmMNCmluZGV4IGYwZjkxNDYxYTlm
+NC4uMjE4MDk5YjVlZDMxIDEwMDY0NA0KLS0tIGEvbW0vbWluY29yZS5jDQor
+KysgYi9tbS9taW5jb3JlLmMNCkBAIC00MiwxNCArNDIsNzIgQEAgc3RhdGlj
+IGludCBtaW5jb3JlX2h1Z2V0bGIocHRlX3QgKnB0ZSwgdW5zaWduZWQgbG9u
+ZyBobWFzaywgdW5zaWduZWQgbG9uZyBhZGRyLA0KIAlyZXR1cm4gMDsNCiB9
+DQogDQotc3RhdGljIGludCBtaW5jb3JlX3VubWFwcGVkX3JhbmdlKHVuc2ln
+bmVkIGxvbmcgYWRkciwgdW5zaWduZWQgbG9uZyBlbmQsDQotCQkJCSAgIHN0
+cnVjdCBtbV93YWxrICp3YWxrKQ0KKy8qDQorICogTGF0ZXIgd2UgY2FuIGdl
+dCBtb3JlIHBpY2t5IGFib3V0IHdoYXQgImluIGNvcmUiIG1lYW5zIHByZWNp
+c2VseS4NCisgKiBGb3Igbm93LCBzaW1wbHkgY2hlY2sgdG8gc2VlIGlmIHRo
+ZSBwYWdlIGlzIGluIHRoZSBwYWdlIGNhY2hlLA0KKyAqIGFuZCBpcyB1cCB0
+byBkYXRlOyBpLmUuIHRoYXQgbm8gcGFnZS1pbiBvcGVyYXRpb24gd291bGQg
+YmUgcmVxdWlyZWQNCisgKiBhdCB0aGlzIHRpbWUgaWYgYW4gYXBwbGljYXRp
+b24gd2VyZSB0byBtYXAgYW5kIGFjY2VzcyB0aGlzIHBhZ2UuDQorICovDQor
+c3RhdGljIHVuc2lnbmVkIGNoYXIgbWluY29yZV9wYWdlKHN0cnVjdCBhZGRy
+ZXNzX3NwYWNlICptYXBwaW5nLCBwZ29mZl90IHBnb2ZmKQ0KK3sNCisJdW5z
+aWduZWQgY2hhciBwcmVzZW50ID0gMDsNCisJc3RydWN0IHBhZ2UgKnBhZ2U7
+DQorDQorCS8qDQorCSAqIFdoZW4gdG1wZnMgc3dhcHMgb3V0IGEgcGFnZSBm
+cm9tIGEgZmlsZSwgYW55IHByb2Nlc3MgbWFwcGluZyB0aGF0DQorCSAqIGZp
+bGUgd2lsbCBub3QgZ2V0IGEgc3dwX2VudHJ5X3QgaW4gaXRzIHB0ZSwgYnV0
+IHJhdGhlciBpdCBpcyBsaWtlDQorCSAqIGFueSBvdGhlciBmaWxlIG1hcHBp
+bmcgKGllLiBtYXJrZWQgIXByZXNlbnQgYW5kIGZhdWx0ZWQgaW4gd2l0aA0K
+KwkgKiB0bXBmcydzIC5mYXVsdCkuIFNvIHN3YXBwZWQgb3V0IHRtcGZzIG1h
+cHBpbmdzIGFyZSB0ZXN0ZWQgaGVyZS4NCisJICovDQorI2lmZGVmIENPTkZJ
+R19TV0FQDQorCWlmIChzaG1lbV9tYXBwaW5nKG1hcHBpbmcpKSB7DQorCQlw
+YWdlID0gZmluZF9nZXRfZW50cnkobWFwcGluZywgcGdvZmYpOw0KKwkJLyoN
+CisJCSAqIHNobWVtL3RtcGZzIG1heSByZXR1cm4gc3dhcDogYWNjb3VudCBm
+b3Igc3dhcGNhY2hlDQorCQkgKiBwYWdlIHRvby4NCisJCSAqLw0KKwkJaWYg
+KHhhX2lzX3ZhbHVlKHBhZ2UpKSB7DQorCQkJc3dwX2VudHJ5X3Qgc3dwID0g
+cmFkaXhfdG9fc3dwX2VudHJ5KHBhZ2UpOw0KKwkJCXBhZ2UgPSBmaW5kX2dl
+dF9wYWdlKHN3YXBfYWRkcmVzc19zcGFjZShzd3ApLA0KKwkJCQkJICAgICBz
+d3Bfb2Zmc2V0KHN3cCkpOw0KKwkJfQ0KKwl9IGVsc2UNCisJCXBhZ2UgPSBm
+aW5kX2dldF9wYWdlKG1hcHBpbmcsIHBnb2ZmKTsNCisjZWxzZQ0KKwlwYWdl
+ID0gZmluZF9nZXRfcGFnZShtYXBwaW5nLCBwZ29mZik7DQorI2VuZGlmDQor
+CWlmIChwYWdlKSB7DQorCQlwcmVzZW50ID0gUGFnZVVwdG9kYXRlKHBhZ2Up
+Ow0KKwkJcHV0X3BhZ2UocGFnZSk7DQorCX0NCisNCisJcmV0dXJuIHByZXNl
+bnQ7DQorfQ0KKw0KK3N0YXRpYyBpbnQgX19taW5jb3JlX3VubWFwcGVkX3Jh
+bmdlKHVuc2lnbmVkIGxvbmcgYWRkciwgdW5zaWduZWQgbG9uZyBlbmQsDQor
+CQkJCXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hLCB1bnNpZ25lZCBjaGFy
+ICp2ZWMpDQogew0KLQl1bnNpZ25lZCBjaGFyICp2ZWMgPSB3YWxrLT5wcml2
+YXRlOw0KIAl1bnNpZ25lZCBsb25nIG5yID0gKGVuZCAtIGFkZHIpID4+IFBB
+R0VfU0hJRlQ7DQorCWludCBpOw0KIA0KLQltZW1zZXQodmVjLCAwLCBucik7
+DQotCXdhbGstPnByaXZhdGUgKz0gbnI7DQorCWlmICh2bWEtPnZtX2ZpbGUp
+IHsNCisJCXBnb2ZmX3QgcGdvZmY7DQorDQorCQlwZ29mZiA9IGxpbmVhcl9w
+YWdlX2luZGV4KHZtYSwgYWRkcik7DQorCQlmb3IgKGkgPSAwOyBpIDwgbnI7
+IGkrKywgcGdvZmYrKykNCisJCQl2ZWNbaV0gPSBtaW5jb3JlX3BhZ2Uodm1h
+LT52bV9maWxlLT5mX21hcHBpbmcsIHBnb2ZmKTsNCisJfSBlbHNlIHsNCisJ
+CWZvciAoaSA9IDA7IGkgPCBucjsgaSsrKQ0KKwkJCXZlY1tpXSA9IDA7DQor
+CX0NCisJcmV0dXJuIG5yOw0KK30NCisNCitzdGF0aWMgaW50IG1pbmNvcmVf
+dW5tYXBwZWRfcmFuZ2UodW5zaWduZWQgbG9uZyBhZGRyLCB1bnNpZ25lZCBs
+b25nIGVuZCwNCisJCQkJICAgc3RydWN0IG1tX3dhbGsgKndhbGspDQorew0K
+Kwl3YWxrLT5wcml2YXRlICs9IF9fbWluY29yZV91bm1hcHBlZF9yYW5nZShh
+ZGRyLCBlbmQsDQorCQkJCQkJICB3YWxrLT52bWEsIHdhbGstPnByaXZhdGUp
+Ow0KIAlyZXR1cm4gMDsNCiB9DQogDQpAQCAtNjksOSArMTI3LDggQEAgc3Rh
+dGljIGludCBtaW5jb3JlX3B0ZV9yYW5nZShwbWRfdCAqcG1kLCB1bnNpZ25l
+ZCBsb25nIGFkZHIsIHVuc2lnbmVkIGxvbmcgZW5kLA0KIAkJZ290byBvdXQ7
+DQogCX0NCiANCi0JLyogV2UnbGwgY29uc2lkZXIgYSBUSFAgcGFnZSB1bmRl
+ciBjb25zdHJ1Y3Rpb24gdG8gYmUgdGhlcmUgKi8NCiAJaWYgKHBtZF90cmFu
+c191bnN0YWJsZShwbWQpKSB7DQotCQltZW1zZXQodmVjLCAxLCBucik7DQor
+CQlfX21pbmNvcmVfdW5tYXBwZWRfcmFuZ2UoYWRkciwgZW5kLCB2bWEsIHZl
+Yyk7DQogCQlnb3RvIG91dDsNCiAJfQ0KIA0KQEAgLTgwLDE3ICsxMzcsMjgg
+QEAgc3RhdGljIGludCBtaW5jb3JlX3B0ZV9yYW5nZShwbWRfdCAqcG1kLCB1
+bnNpZ25lZCBsb25nIGFkZHIsIHVuc2lnbmVkIGxvbmcgZW5kLA0KIAkJcHRl
+X3QgcHRlID0gKnB0ZXA7DQogDQogCQlpZiAocHRlX25vbmUocHRlKSkNCi0J
+CQkqdmVjID0gMDsNCisJCQlfX21pbmNvcmVfdW5tYXBwZWRfcmFuZ2UoYWRk
+ciwgYWRkciArIFBBR0VfU0laRSwNCisJCQkJCQkgdm1hLCB2ZWMpOw0KIAkJ
+ZWxzZSBpZiAocHRlX3ByZXNlbnQocHRlKSkNCiAJCQkqdmVjID0gMTsNCiAJ
+CWVsc2UgeyAvKiBwdGUgaXMgYSBzd2FwIGVudHJ5ICovDQogCQkJc3dwX2Vu
+dHJ5X3QgZW50cnkgPSBwdGVfdG9fc3dwX2VudHJ5KHB0ZSk7DQogDQotCQkJ
+LyoNCi0JCQkgKiBtaWdyYXRpb24gb3IgaHdwb2lzb24gZW50cmllcyBhcmUg
+YWx3YXlzDQotCQkJICogdXB0b2RhdGUNCi0JCQkgKi8NCi0JCQkqdmVjID0g
+ISFub25fc3dhcF9lbnRyeShlbnRyeSk7DQorCQkJaWYgKG5vbl9zd2FwX2Vu
+dHJ5KGVudHJ5KSkgew0KKwkJCQkvKg0KKwkJCQkgKiBtaWdyYXRpb24gb3Ig
+aHdwb2lzb24gZW50cmllcyBhcmUgYWx3YXlzDQorCQkJCSAqIHVwdG9kYXRl
+DQorCQkJCSAqLw0KKwkJCQkqdmVjID0gMTsNCisJCQl9IGVsc2Ugew0KKyNp
+ZmRlZiBDT05GSUdfU1dBUA0KKwkJCQkqdmVjID0gbWluY29yZV9wYWdlKHN3
+YXBfYWRkcmVzc19zcGFjZShlbnRyeSksDQorCQkJCQkJICAgIHN3cF9vZmZz
+ZXQoZW50cnkpKTsNCisjZWxzZQ0KKwkJCQlXQVJOX09OKDEpOw0KKwkJCQkq
+dmVjID0gMTsNCisjZW5kaWYNCisJCQl9DQogCQl9DQogCQl2ZWMrKzsNCiAJ
+fQ0KLS0gDQoyLjEyLjMNCg0K
+
+--1678380546-457690195-1547670185=:6626
+Content-Type: text/x-patch; name=0002-mm-mincore-make-mincore-more-conservative.patch
+Content-Transfer-Encoding: BASE64
+Content-ID: <nycvar.YFH.7.76.1901162123041.6626@cbobk.fhfr.pm>
+Content-Description: 
+Content-Disposition: attachment; filename=0002-mm-mincore-make-mincore-more-conservative.patch
+
+RnJvbSBjYTAyYTAyNmY0MGRmYWViYzI5YzI5ZWRkOWM5OTJhMGZmMTAwNzVl
+IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSmlyaSBLb3NpbmEg
+PGprb3NpbmFAc3VzZS5jej4NCkRhdGU6IFdlZCwgMTYgSmFuIDIwMTkgMjA6
+NTM6MTcgKzAxMDANClN1YmplY3Q6IFtQQVRDSCAyLzNdIG1tL21pbmNvcmU6
+IG1ha2UgbWluY29yZSgpIG1vcmUgY29uc2VydmF0aXZlDQoNClRoZSBzZW1h
+bnRpY3Mgb2Ygd2hhdCBtaW5jb3JlKCkgY29uc2lkZXJzIHRvIGJlIHJlc2lk
+ZW50IGlzIG5vdCBjb21wbGV0ZWx5DQpjbGVhcmFyLCBidXQgTGludXggaGFz
+IGFsd2F5cyAoc2luY2UgMi4zLjUyLCB3aGljaCBpcyB3aGVuIG1pbmNvcmUo
+KSB3YXMNCmluaXRpYWxseSBkb25lKSB0cmVhdGVkIGl0IGFzICJwYWdlIGlz
+IGF2YWlsYWJsZSBpbiBwYWdlIGNhY2hlIi4NCg0KVGhhdCdzIHBvdGVudGlh
+bGx5IGEgcHJvYmxlbSwgYXMgdGhhdCBbaW5dZGlyZWN0bHkgZXhwb3NlcyBt
+ZXRhLWluZm9ybWF0aW9uDQphYm91dCBwYWdlY2FjaGUgLyBtZW1vcnkgbWFw
+cGluZyBzdGF0ZSBldmVuIGFib3V0IG1lbW9yeSBub3Qgc3RyaWN0bHkgYmVs
+b25naW5nDQp0byB0aGUgcHJvY2VzcyBleGVjdXRpbmcgdGhlIHN5c2NhbGws
+IG9wZW5pbmcgcG9zc2liaWxpdGllcyBmb3Igc2lkZWNoYW5uZWwNCmF0dGFj
+a3MuDQoNCkNoYW5nZSB0aGUgc2VtYW50aWNzIG9mIG1pbmNvcmUoKSBzbyB0
+aGF0IGl0IG9ubHkgcmV2ZWFscyBwYWdlY2FjaGUgaW5mb3JtYXRpb24NCmZv
+ciBub24tYW5vbnltb3VzIG1hcHBpbmdzIHRoYXQgYmVsb2cgdG8gZmlsZXMg
+dGhhdCB0aGUgY2FsbGluZyBwcm9jZXNzIGNvdWxkDQooaWYgaXQgdHJpZWQg
+dG8pIHN1Y2Nlc3NmdWxseSBvcGVuIGZvciB3cml0aW5nLg0KDQpPcmlnaW5h
+bGx5LWJ5OiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
+dGlvbi5vcmc+DQpPcmlnaW5hbGx5LWJ5OiBEb21pbmlxdWUgTWFydGluZXQg
+PGFzbWFkZXVzQGNvZGV3cmVjay5vcmc+DQpTaWduZWQtb2ZmLWJ5OiBKaXJp
+IEtvc2luYSA8amtvc2luYUBzdXNlLmN6Pg0KLS0tDQogbW0vbWluY29yZS5j
+IHwgMTQgKysrKysrKysrKysrKy0NCiAxIGZpbGUgY2hhbmdlZCwgMTMgaW5z
+ZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvbW0v
+bWluY29yZS5jIGIvbW0vbWluY29yZS5jDQppbmRleCAyMTgwOTliNWVkMzEu
+LjExZWQ3MDY0ZjRlYiAxMDA2NDQNCi0tLSBhL21tL21pbmNvcmUuYw0KKysr
+IGIvbW0vbWluY29yZS5jDQpAQCAtMTY5LDYgKzE2OSwxMyBAQCBzdGF0aWMg
+aW50IG1pbmNvcmVfcHRlX3JhbmdlKHBtZF90ICpwbWQsIHVuc2lnbmVkIGxv
+bmcgYWRkciwgdW5zaWduZWQgbG9uZyBlbmQsDQogCXJldHVybiAwOw0KIH0N
+CiANCitzdGF0aWMgaW5saW5lIGJvb2wgY2FuX2RvX21pbmNvcmUoc3RydWN0
+IHZtX2FyZWFfc3RydWN0ICp2bWEpDQorew0KKwlyZXR1cm4gdm1hX2lzX2Fu
+b255bW91cyh2bWEpDQorCQl8fCAodm1hLT52bV9maWxlICYmICh2bWEtPnZt
+X2ZpbGUtPmZfbW9kZSAmIEZNT0RFX1dSSVRFKSkNCisJCXx8IGlub2RlX3Bl
+cm1pc3Npb24oZmlsZV9pbm9kZSh2bWEtPnZtX2ZpbGUpLCBNQVlfV1JJVEUp
+ID09IDA7DQorfQ0KKw0KIC8qDQogICogRG8gYSBjaHVuayBvZiAic3lzX21p
+bmNvcmUoKSIuIFdlJ3ZlIGFscmVhZHkgY2hlY2tlZA0KICAqIGFsbCB0aGUg
+YXJndW1lbnRzLCB3ZSBob2xkIHRoZSBtbWFwIHNlbWFwaG9yZTogd2Ugc2hv
+dWxkDQpAQCAtMTg5LDggKzE5NiwxMyBAQCBzdGF0aWMgbG9uZyBkb19taW5j
+b3JlKHVuc2lnbmVkIGxvbmcgYWRkciwgdW5zaWduZWQgbG9uZyBwYWdlcywg
+dW5zaWduZWQgY2hhciAqdg0KIAl2bWEgPSBmaW5kX3ZtYShjdXJyZW50LT5t
+bSwgYWRkcik7DQogCWlmICghdm1hIHx8IGFkZHIgPCB2bWEtPnZtX3N0YXJ0
+KQ0KIAkJcmV0dXJuIC1FTk9NRU07DQotCW1pbmNvcmVfd2Fsay5tbSA9IHZt
+YS0+dm1fbW07DQogCWVuZCA9IG1pbih2bWEtPnZtX2VuZCwgYWRkciArIChw
+YWdlcyA8PCBQQUdFX1NISUZUKSk7DQorCWlmICghY2FuX2RvX21pbmNvcmUo
+dm1hKSkgew0KKwkJdW5zaWduZWQgbG9uZyBwYWdlcyA9IChlbmQgLSBhZGRy
+KSA+PiBQQUdFX1NISUZUOw0KKwkJbWVtc2V0KHZlYywgMSwgcGFnZXMpOw0K
+KwkJcmV0dXJuIHBhZ2VzOw0KKwl9DQorCW1pbmNvcmVfd2Fsay5tbSA9IHZt
+YS0+dm1fbW07DQogCWVyciA9IHdhbGtfcGFnZV9yYW5nZShhZGRyLCBlbmQs
+ICZtaW5jb3JlX3dhbGspOw0KIAlpZiAoZXJyIDwgMCkNCiAJCXJldHVybiBl
+cnI7DQotLSANCjIuMTIuMw0KDQo=
+
+--1678380546-457690195-1547670185=:6626
+Content-Type: text/x-patch; name=0003-mm-filemap-initiate-readahead-even-if-IOCB_NOWAIT-is.patch
+Content-Transfer-Encoding: BASE64
+Content-ID: <nycvar.YFH.7.76.1901162123042.6626@cbobk.fhfr.pm>
+Content-Description: 
+Content-Disposition: attachment; filename=0003-mm-filemap-initiate-readahead-even-if-IOCB_NOWAIT-is.patch
+
+RnJvbSBlNzc2NWYzMTdhZmIxOTNhZGI0YmEwMGQ4MTI1MTY4NjE5MWNiZjRi
+IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSmlyaSBLb3NpbmEg
+PGprb3NpbmFAc3VzZS5jej4NCkRhdGU6IFdlZCwgMTYgSmFuIDIwMTkgMjE6
+MDY6NTggKzAxMDANClN1YmplY3Q6IFtQQVRDSCAzLzNdIG1tL2ZpbGVtYXA6
+IGluaXRpYXRlIHJlYWRhaGVhZCBldmVuIGlmIElPQ0JfTk9XQUlUIGlzIHNl
+dA0KIGZvciB0aGUgSS9PDQoNCnByZWFkdjIoUldGX05PV0FJVCkgY2FuIGJl
+IHVzZWQgdG8gb3BlbiBhIHNpZGUtY2hhbm5lbCB0byBwYWdlY2FjaGUgY29u
+dGVudHMsIGFzDQppdCByZXZlYWxzIG1ldGFkYXRhIGFib3V0IHJlc2lkZW5j
+eSBvZiBwYWdlcyBpbiBwYWdlY2FjaGUuDQoNCklmIHByZWFkdjIoUldGX05P
+V0FJVCkgcmV0dXJucyBpbW1lZGlhdGVseSwgaXQgcHJvdmlkZXMgYSBjbGVh
+ciAicGFnZSBub3QNCnJlc2lkZW50IiBpbmZvcm1hdGlvbiwgYW5kIHZpY2Ug
+dmVyc2EuDQoNCkNsb3NlIHRoYXQgc2lkZWNoYW5uZWwgYnkgYWx3YXlzIGlu
+aXRpYXRpbmcgcmVhZGFoZWFkIG9uIHRoZSBjYWNoZSBpZiB3ZQ0KZW5jb3Vu
+dGVyIGEgY2FjaGUgbWlzcyBmb3IgcHJlYWR2MihSV0ZfTk9XQUlUKTsgd2l0
+aCB0aGF0IGluIHBsYWNlLCBwcm9iaW5nDQp0aGUgcGFnZWNhY2hlIHJlc2lk
+ZW5jeSBpdHNlbGYgd2lsbCBhY3R1YWxseSBwb3B1bGF0ZSB0aGUgY2FjaGUs
+IG1ha2luZyB0aGUNCnNpZGVjaGFubmVsIHVzZWxlc3MuDQoNCk9yaWdpbmFs
+bHktYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0
+aW9uLm9yZz4NClNpZ25lZC1vZmYtYnk6IEppcmkgS29zaW5hIDxqa29zaW5h
+QHN1c2UuY3o+DQotLS0NCiBtbS9maWxlbWFwLmMgfCAyIC0tDQogMSBmaWxl
+IGNoYW5nZWQsIDIgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9tbS9m
+aWxlbWFwLmMgYi9tbS9maWxlbWFwLmMNCmluZGV4IDlmNWUzMjNlODgzZS4u
+N2JjZGQzNmU2MjlkIDEwMDY0NA0KLS0tIGEvbW0vZmlsZW1hcC5jDQorKysg
+Yi9tbS9maWxlbWFwLmMNCkBAIC0yMDc1LDggKzIwNzUsNiBAQCBzdGF0aWMg
+c3NpemVfdCBnZW5lcmljX2ZpbGVfYnVmZmVyZWRfcmVhZChzdHJ1Y3Qga2lv
+Y2IgKmlvY2IsDQogDQogCQlwYWdlID0gZmluZF9nZXRfcGFnZShtYXBwaW5n
+LCBpbmRleCk7DQogCQlpZiAoIXBhZ2UpIHsNCi0JCQlpZiAoaW9jYi0+a2lf
+ZmxhZ3MgJiBJT0NCX05PV0FJVCkNCi0JCQkJZ290byB3b3VsZF9ibG9jazsN
+CiAJCQlwYWdlX2NhY2hlX3N5bmNfcmVhZGFoZWFkKG1hcHBpbmcsDQogCQkJ
+CQlyYSwgZmlscCwNCiAJCQkJCWluZGV4LCBsYXN0X2luZGV4IC0gaW5kZXgp
+Ow0KLS0gDQoyLjEyLjMNCg0K
+
+--1678380546-457690195-1547670185=:6626--
