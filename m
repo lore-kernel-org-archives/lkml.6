@@ -2,307 +2,142 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AC4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2E0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9CD820840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1CB62086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:17:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KTc6jeDi"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="UCFK5HWc";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="XhPocGon"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbfAPVQd (ORCPT
+        id S1728611AbfAPVQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:16:33 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37832 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727827AbfAPVQc (ORCPT
+        Wed, 16 Jan 2019 16:16:58 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:57866 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726942AbfAPVQ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:16:32 -0500
-Received: by mail-wr1-f68.google.com with SMTP id s12so8641011wrt.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 13:16:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ob5jkTMk4Tc1Z6vb38Mi5X0Qeb1CVfPq6CwrWwzYARQ=;
-        b=KTc6jeDiCP0SteKXTKbBgBNQ7Xgs1SiUmvchVTgmW1QMhv/8a7YkZ1nanBjYVTzndY
-         BOAi18F0l4j2Zh8bXmmAboWyWVKgIkmVKSqg+1sRtHVD67AjxNdbixDL9LasjRcSN0o+
-         jxuuJHEkBemAJJi/ZVnVvz3+UBLqdTUTic0/udntepAwMNsiodidtafyEdu3VVLudKcW
-         pTTfNNqskVhg7/OdrmU4Zrh3wInUKqy/00CFX3czlL/K3S+9jR1Y8N9tcHz2otOsPoAx
-         KfX/iF/okYefujTlB55600YLcpqyXUbzGIZrKUKXtJ5OmiCLz4J5GDfk3UmeRotSq25n
-         t1Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ob5jkTMk4Tc1Z6vb38Mi5X0Qeb1CVfPq6CwrWwzYARQ=;
-        b=YtO/Q9eUHGqYF11tbvIXL6VcWWOzh3wafpfq05PqGh932ltEC4eK1fmfls7Kid2FIN
-         CQotx9g4KpWBu8lqPn6Y1CjOyUWSJDtVOWzr4SrWF/HGb696FQLjoT+h7dMlQ/DbXWJ6
-         ctRZY/PbNKL8PQqFOl8FbmUNRhmcKHqMV325xb3R1SuJ3rm7AG4wqrd/l9x2DSwcHTr3
-         7ip27m8vAvTEBRReramLUJrUsR3K/rAcifwXuDHoklHV7FDjxghpr44nn1mfGutj84PY
-         1k6K3zr7st0Q85/rI2918/6JbMFaYDsfxfTX3DyiuvhhqufUKdemg3ChOoXIjxfBntrT
-         weZQ==
-X-Gm-Message-State: AJcUukesgo4xMQtHX+u8OWqIuNldzzXtAqzsv+uWG99ZIdLD73zdO7uG
-        zmyE8ZQ7FxwOzZ+el6VkPlJSsKKdWRZI8tdKQNoZ
-X-Google-Smtp-Source: ALg8bN5nmdMUdB53qQcly3AxbdrUlK/4f+RagxvskM29rAsHKkQ/tvk4zgd0SWc2JGm8GuEk0TtT/nS6URsoONULB+4=
-X-Received: by 2002:adf:9b11:: with SMTP id b17mr9299929wrc.168.1547673390110;
- Wed, 16 Jan 2019 13:16:30 -0800 (PST)
+        Wed, 16 Jan 2019 16:16:58 -0500
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0GLDUDj026622;
+        Wed, 16 Jan 2019 13:16:32 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=q7+HCnPO6D/KWoisLt05HOZ3nm92pYZHTP7DqFhBAFs=;
+ b=UCFK5HWcVt0i9FiySne0tEd5pcHrkdn5W8DDuU38mEjQUryC3xp27ZtOmm4rECH8s8yI
+ jpeyVRrMvpCkn1F5vL9OiqO5tIsll9BHicFZ+TTR0GPwIDfWbrZhDaVgL9RIt2lY9V7l
+ VceD5lOR4QwjuHwKVUyCaPF1NPoQhXxjGVU= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q29h68ndy-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 16 Jan 2019 13:16:32 -0800
+Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Wed, 16 Jan 2019 13:16:31 -0800
+Received: from NAM01-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Wed, 16 Jan 2019 13:16:31 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q7+HCnPO6D/KWoisLt05HOZ3nm92pYZHTP7DqFhBAFs=;
+ b=XhPocGonP6lYZrmyq3OTVSYmAy+7+cHIGvC5WalBPa1R+1kBORdDt6lAQ1NZEdoFCdNei+Kake6FkslfCkhELwd11/eBtgjj+Bly98gdjqMIzNbz3bICm9aNv3Vpj1TJlomeGTXn1wae/XYIQn34qh9wCGXYrnzFX6leIdtxCe0=
+Received: from MWHPR15MB1790.namprd15.prod.outlook.com (10.174.255.19) by
+ MWHPR15MB1344.namprd15.prod.outlook.com (10.175.3.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.18; Wed, 16 Jan 2019 21:16:30 +0000
+Received: from MWHPR15MB1790.namprd15.prod.outlook.com
+ ([fe80::b109:3050:fc26:dabd]) by MWHPR15MB1790.namprd15.prod.outlook.com
+ ([fe80::b109:3050:fc26:dabd%2]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
+ 21:16:30 +0000
+From:   Martin Lau <kafai@fb.com>
+To:     Mathieu Malaterre <malat@debian.org>
+CC:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf: Make function btf_name_offset_valid static
+Thread-Topic: [PATCH] bpf: Make function btf_name_offset_valid static
+Thread-Index: AQHUrdHh9EehrgX/eEebLdg+YVNkzqWyZdeA
+Date:   Wed, 16 Jan 2019 21:16:29 +0000
+Message-ID: <20190116211627.bs3rrolbjdsxkyvp@kafai-mbp.dhcp.thefacebook.com>
+References: <20190116192940.32104-1-malat@debian.org>
+In-Reply-To: <20190116192940.32104-1-malat@debian.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR14CA0068.namprd14.prod.outlook.com
+ (2603:10b6:300:81::30) To MWHPR15MB1790.namprd15.prod.outlook.com
+ (2603:10b6:301:4e::19)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::4:7976]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1344;20:GBoLqq3A0B+t3AQZ0tZFAE12Ai/7oX8aDe4IfqpTZtQ/vNuDpG1ZG7eFFE18xNmu3sIe5bdfJIxVGPw0C781o2X7EQpaT0UKpFdWrgnzyD6AVBv1zKJU8rY4j+AsNB8fUP3S8QixARJv05CBNCBVmLcVxvNijo+sRrWsfosyi2A=
+x-ms-office365-filtering-correlation-id: 754267e8-da2b-4e85-1167-08d67bf7e186
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1344;
+x-ms-traffictypediagnostic: MWHPR15MB1344:
+x-microsoft-antispam-prvs: <MWHPR15MB13440B0CAB301F1FD14AAC2AD5820@MWHPR15MB1344.namprd15.prod.outlook.com>
+x-forefront-prvs: 091949432C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(136003)(376002)(346002)(51914003)(189003)(199004)(446003)(476003)(229853002)(186003)(52116002)(102836004)(76176011)(71200400001)(71190400001)(33896004)(386003)(6506007)(11346002)(316002)(6486002)(46003)(106356001)(4326008)(54906003)(6436002)(25786009)(105586002)(2906002)(8676002)(8936002)(81156014)(81166006)(9686003)(97736004)(6246003)(1076003)(53936002)(478600001)(6512007)(14454004)(486006)(5660300001)(256004)(14444005)(4744005)(305945005)(7736002)(86362001)(6116002)(68736007)(6916009)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1344;H:MWHPR15MB1790.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: OhgdUE81bCKHz88LQ6s6zKLr28ZN+Mq2C+Z1yzrcCtCM7ON/l9v0yXmL3jQ/l43WsAIoYKKKjHtbubCHQ/nXRCpQo+juy79cCDRCoz5wt3EnOCeX+FMU+U4BclL0FoYaWkxquM71EhckcM6AgYxLnHQpCUyjqj5F5EjvQS9+cHKeahLiFrqGGBM1rJzXw+giJH9XChOGkAQWhMbzazbPwtPp96oN3HgX2RGPK3W+hMTgXCqJj+6HzwPv5FB2JEZiaEQIUgclT++e5ene/Tq963Y+ixyRDtg6ZKn8XWbA+jg8ME7osf6Xetk0CaKgiyjJkLQoxSaXjPKqaVh0dLMSoxeZi6bff1lPoecCihsidHKg7MDUkMO9PFDddrGp5d5ereLtYpKsjdxBium78FLM00LiD3CRxONKxg4aSSTDArM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9FD541D38FC99B42AC8675A59E731370@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190116181859.D1504459@viggo.jf.intel.com> <20190116181905.12E102B4@viggo.jf.intel.com>
-In-Reply-To: <20190116181905.12E102B4@viggo.jf.intel.com>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Wed, 16 Jan 2019 15:16:16 -0600
-Message-ID: <CAErSpo55j7odYf-B-KSoogabD9Qqt605oUGYe6td9wZdYNq_Hg@mail.gmail.com>
-Subject: Re: [PATCH 4/4] dax: "Hotplug" persistent memory for use like normal RAM
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     dave@sr71.net, Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
-        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
-        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
-        linux-nvdimm@lists.01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, Huang Ying <ying.huang@intel.com>,
-        Wu Fengguang <fengguang.wu@intel.com>,
-        Borislav Petkov <bp@suse.de>, baiyaowei@cmss.chinamobile.com,
-        Takashi Iwai <tiwai@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 754267e8-da2b-4e85-1167-08d67bf7e186
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 21:16:28.7960
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1344
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 12:25 PM Dave Hansen
-<dave.hansen@linux.intel.com> wrote:
->
->
-> From: Dave Hansen <dave.hansen@linux.intel.com>
->
-> Currently, a persistent memory region is "owned" by a device driver,
-> either the "Direct DAX" or "Filesystem DAX" drivers.  These drivers
-> allow applications to explicitly use persistent memory, generally
-> by being modified to use special, new libraries.
+On Wed, Jan 16, 2019 at 08:29:40PM +0100, Mathieu Malaterre wrote:
+> Initially in commit 69b693f0aefa ("bpf: btf: Introduce BPF Type Format
+> (BTF)") the function 'btf_name_offset_valid' was introduced as static
+> function it was later on changed to a non-static one, and then finally
+> in commit c454a46b5efd ("bpf: Add bpf_line_info support") the function
+> prototype was removed.
+Instead of c454a46b5efd, it was removed from btf.h in
+commit 23127b33ec80 ("bpf: Create a new btf_name_by_offset() for non type n=
+ame use case")
 
-Is there any documentation about exactly what persistent memory is?
-In Documentation/, I see references to pstore and pmem, which sound
-sort of similar, but maybe not quite the same?
+>=20
+> Revert back to original implementation and make the function static.
+> Remove warning triggered with W=3D1:
+>=20
+>   kernel/bpf/btf.c:470:6: warning: no previous prototype for 'btf_name_of=
+fset_valid' [-Wmissing-prototypes]
+>=20
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Fixes: 23127b33ec80 ("bpf: Create a new btf_name_by_offset() for non type n=
+ame use case")
 
-> However, this limits persistent memory use to applications which
-> *have* been modified.  To make it more broadly usable, this driver
-> "hotplugs" memory into the kernel, to be managed ad used just like
-> normal RAM would be.
+Thanks for the fix!
 
-s/ad/and/
+Other than the above,
 
-> To make this work, management software must remove the device from
-> being controlled by the "Device DAX" infrastructure:
->
->         echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
->         echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
->
-> and then bind it to this new driver:
->
->         echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
->         echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
->
-> After this, there will be a number of new memory sections visible
-> in sysfs that can be onlined, or that may get onlined by existing
-> udev-initiated memory hotplug rules.
->
-> Note: this inherits any existing NUMA information for the newly-
-> added memory from the persistent memory device that came from the
-> firmware.  On Intel platforms, the firmware has guarantees that
-> require each socket's persistent memory to be in a separate
-> memory-only NUMA node.  That means that this patch is not expected
-> to create NUMA nodes, but will simply hotplug memory into existing
-> nodes.
->
-> There is currently some metadata at the beginning of pmem regions.
-> The section-size memory hotplug restrictions, plus this small
-> reserved area can cause the "loss" of a section or two of capacity.
-> This should be fixable in follow-on patches.  But, as a first step,
-> losing 256MB of memory (worst case) out of hundreds of gigabytes
-> is a good tradeoff vs. the required code to fix this up precisely.
->
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Ross Zwisler <zwisler@kernel.org>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: linux-nvdimm@lists.01.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Fengguang Wu <fengguang.wu@intel.com>
-> Cc: Borislav Petkov <bp@suse.de>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-> Cc: Takashi Iwai <tiwai@suse.de>
-> ---
->
->  b/drivers/dax/Kconfig  |    5 ++
->  b/drivers/dax/Makefile |    1
->  b/drivers/dax/kmem.c   |   93 +++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 99 insertions(+)
->
-> diff -puN drivers/dax/Kconfig~dax-kmem-try-4 drivers/dax/Kconfig
-> --- a/drivers/dax/Kconfig~dax-kmem-try-4        2019-01-08 09:54:44.051694874 -0800
-> +++ b/drivers/dax/Kconfig       2019-01-08 09:54:44.056694874 -0800
-> @@ -32,6 +32,11 @@ config DEV_DAX_PMEM
->
->           Say M if unsure
->
-> +config DEV_DAX_KMEM
-> +       def_bool y
-
-Is "y" the right default here?  I periodically see Linus complain
-about new things defaulting to "on", but I admit I haven't paid enough
-attention to know whether that would apply here.
-
-> +       depends on DEV_DAX_PMEM   # Needs DEV_DAX_PMEM infrastructure
-> +       depends on MEMORY_HOTPLUG # for add_memory() and friends
-> +
->  config DEV_DAX_PMEM_COMPAT
->         tristate "PMEM DAX: support the deprecated /sys/class/dax interface"
->         depends on DEV_DAX_PMEM
-> diff -puN /dev/null drivers/dax/kmem.c
-> --- /dev/null   2018-12-03 08:41:47.355756491 -0800
-> +++ b/drivers/dax/kmem.c        2019-01-08 09:54:44.056694874 -0800
-> @@ -0,0 +1,93 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright(c) 2016-2018 Intel Corporation. All rights reserved. */
-> +#include <linux/memremap.h>
-> +#include <linux/pagemap.h>
-> +#include <linux/memory.h>
-> +#include <linux/module.h>
-> +#include <linux/device.h>
-> +#include <linux/pfn_t.h>
-> +#include <linux/slab.h>
-> +#include <linux/dax.h>
-> +#include <linux/fs.h>
-> +#include <linux/mm.h>
-> +#include <linux/mman.h>
-> +#include "dax-private.h"
-> +#include "bus.h"
-> +
-> +int dev_dax_kmem_probe(struct device *dev)
-> +{
-> +       struct dev_dax *dev_dax = to_dev_dax(dev);
-> +       struct resource *res = &dev_dax->region->res;
-> +       resource_size_t kmem_start;
-> +       resource_size_t kmem_size;
-> +       struct resource *new_res;
-> +       int numa_node;
-> +       int rc;
-> +
-> +       /* Hotplug starting at the beginning of the next block: */
-> +       kmem_start = ALIGN(res->start, memory_block_size_bytes());
-> +
-> +       kmem_size = resource_size(res);
-> +       /* Adjust the size down to compensate for moving up kmem_start: */
-> +        kmem_size -= kmem_start - res->start;
-> +       /* Align the size down to cover only complete blocks: */
-> +       kmem_size &= ~(memory_block_size_bytes() - 1);
-> +
-> +       new_res = devm_request_mem_region(dev, kmem_start, kmem_size,
-> +                                         dev_name(dev));
-> +
-> +       if (!new_res) {
-> +               printk("could not reserve region %016llx -> %016llx\n",
-> +                               kmem_start, kmem_start+kmem_size);
-
-1) It'd be nice to have some sort of module tag in the output that
-ties it to this driver.
-
-2) It might be nice to print the range in the same format as %pR,
-i.e., "[mem %#010x-%#010x]" with the end included (start + size -1 ).
-
-> +               return -EBUSY;
-> +       }
-> +
-> +       /*
-> +        * Set flags appropriate for System RAM.  Leave ..._BUSY clear
-> +        * so that add_memory() can add a child resource.
-> +        */
-> +       new_res->flags = IORESOURCE_SYSTEM_RAM;
-
-IIUC, new_res->flags was set to "IORESOURCE_MEM | ..." in the
-devm_request_mem_region() path.  I think you should keep at least
-IORESOURCE_MEM so the iomem_resource tree stays consistent.
-
-> +       new_res->name = dev_name(dev);
-> +
-> +       numa_node = dev_dax->target_node;
-> +       if (numa_node < 0) {
-> +               pr_warn_once("bad numa_node: %d, forcing to 0\n", numa_node);
-
-It'd be nice to again have a module tag and an indication of what
-range is affected, e.g., %pR of new_res.
-
-You don't save the new_res pointer anywhere, which I guess you intend
-for now since there's no remove or anything else to do with this
-resource?  I thought maybe devm_request_mem_region() would implicitly
-save it, but it doesn't; it only saves the parent (iomem_resource, the
-start (kmem_start), and the size (kmem_size)).
-
-> +               numa_node = 0;
-> +       }
-> +
-> +       rc = add_memory(numa_node, new_res->start, resource_size(new_res));
-> +       if (rc)
-> +               return rc;
-> +
-> +       return 0;
-
-Doesn't this mean "return rc" or even just "return add_memory(...)"?
-
-> +}
-> +EXPORT_SYMBOL_GPL(dev_dax_kmem_probe);
-> +
-> +static int dev_dax_kmem_remove(struct device *dev)
-> +{
-> +       /* Assume that hot-remove will fail for now */
-> +       return -EBUSY;
-> +}
-> +
-> +static struct dax_device_driver device_dax_kmem_driver = {
-> +       .drv = {
-> +               .probe = dev_dax_kmem_probe,
-> +               .remove = dev_dax_kmem_remove,
-> +       },
-> +};
-> +
-> +static int __init dax_kmem_init(void)
-> +{
-> +       return dax_driver_register(&device_dax_kmem_driver);
-> +}
-> +
-> +static void __exit dax_kmem_exit(void)
-> +{
-> +       dax_driver_unregister(&device_dax_kmem_driver);
-> +}
-> +
-> +MODULE_AUTHOR("Intel Corporation");
-> +MODULE_LICENSE("GPL v2");
-> +module_init(dax_kmem_init);
-> +module_exit(dax_kmem_exit);
-> +MODULE_ALIAS_DAX_DEVICE(0);
-> diff -puN drivers/dax/Makefile~dax-kmem-try-4 drivers/dax/Makefile
-> --- a/drivers/dax/Makefile~dax-kmem-try-4       2019-01-08 09:54:44.053694874 -0800
-> +++ b/drivers/dax/Makefile      2019-01-08 09:54:44.056694874 -0800
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_DAX) += dax.o
->  obj-$(CONFIG_DEV_DAX) += device_dax.o
-> +obj-$(CONFIG_DEV_DAX_KMEM) += kmem.o
->
->  dax-y := super.o
->  dax-y += bus.o
-> _
+Acked-by: Martin KaFai Lau <kafai@fb.com>
