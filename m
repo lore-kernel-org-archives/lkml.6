@@ -2,427 +2,601 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DD1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6050C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4724C2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547647246;
-	bh=25XicmVncCLxdY2OHYZfxWSeuKP+78hhF3FZo2I1IAc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MHgJrglWtrrYzy5rnfWat40XWnObIlgquTKLZKkU3PAUa7JS65OYIunfwrrf6S5ex
-	 z39Cqfl4evMEqidrkJqVMor6wPWnNWfKs/J3ytTqzZbb6jMe8kJf2g14xnjfpRD135
-	 4gqMWRW55ke3teYaCBTsZTEx5+gh55P5t9/iViuE=
+	by mail.kernel.org (Postfix) with ESMTP id 5EB7A20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:02:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C/R5zk0S";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d1SOzUDi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387960AbfAPOAo (ORCPT
+        id S2390246AbfAPOB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:00:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbfAPOAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:00:43 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1322C20657;
-        Wed, 16 Jan 2019 14:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547647242;
-        bh=25XicmVncCLxdY2OHYZfxWSeuKP+78hhF3FZo2I1IAc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fLca+eFjVdcNXs+EM/D87Rbgkm4VklzD5NI/wLj61IghUkVW7gOUnmJnonWuoiQ7a
-         LV9AI2zVKCuqs1wuljjTa6TJeNia1YcTcOcJKp6Fk+FT5VT1YUrEMGnpWq+PGlErXR
-         bzSf+LbGlZPMFbV1RllJ76ra5RBQYJVCAGgaKSu4=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7385C41AB5; Wed, 16 Jan 2019 11:00:38 -0300 (-03)
-Date:   Wed, 16 Jan 2019 11:00:38 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
-        kernel-team@fb.com, dsahern@gmail.com
-Subject: Re: [PATCH v9 perf, bpf-next 5/9] perf util: handle
- PERF_RECORD_KSYMBOL
-Message-ID: <20190116140038.GB2243@kernel.org>
-References: <20190116001410.3522226-1-songliubraving@fb.com>
- <20190116001410.3522226-6-songliubraving@fb.com>
+        Wed, 16 Jan 2019 09:01:59 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33110 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387726AbfAPOB7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 09:01:59 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0D74A6121D; Wed, 16 Jan 2019 14:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547647318;
+        bh=Ww3Sc84qJxGOYsvxDkDc7OsigJa8uHHAikI5eJfQaFw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=C/R5zk0S+4LIKxTf0sFDkuf9Gst3XLf2ElqR2AZkWMC4XW0ey5ZiX3NusvI6phGBj
+         yyRtqFD4YgLOwSf88rfw3lMfTWtlb6dOV61L988LvuTc2sLsLbTJ3ee2SzX2WUgJ3Z
+         QOOP/4Gc8SD3KragVofE22vt5SQXYjY0o95doiFo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id B4166611E2;
+        Wed, 16 Jan 2019 14:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547647314;
+        bh=Ww3Sc84qJxGOYsvxDkDc7OsigJa8uHHAikI5eJfQaFw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=d1SOzUDiV/WU9RghTKUMGSgmLjsE5aw/+FGTFxr9kiLWbvHUW8ndiQRhwBVW1Q6vu
+         VFTN6ulYiEIfo895POmCnpuKtxGik0ku0QA2M+7xlu0enna/NIBFwELENVrH9+z0xf
+         jiSR7GVKTthOpnlUDxVRO2eaz0c9QMBwiE+HBX/s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116001410.3522226-6-songliubraving@fb.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 16 Jan 2019 19:31:53 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [RFC,v2] Bluetooth: hci_qca: Collect controller memory dump
+ during SSR
+In-Reply-To: <7FE05B13-885C-4454-8168-75411AF8F5C2@holtmann.org>
+References: <20181228130411.23007-1-bgodavar@codeaurora.org>
+ <8B1A4B0A-BFC3-44EC-A75F-D87DBA64625B@holtmann.org>
+ <25b5db1596c46f41e883bd9fd971392b@codeaurora.org>
+ <7FE05B13-885C-4454-8168-75411AF8F5C2@holtmann.org>
+Message-ID: <95e5932be1a189ac2dae78c7b690dd03@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jan 15, 2019 at 04:14:06PM -0800, Song Liu escreveu:
-> This patch handles PERF_RECORD_KSYMBOL in perf record/report.
-> Specifically, map and symbol are created for ksymbol register, and
-> removed for ksymbol unregister.
+Hi Marcel,
+
+On 2019-01-04 14:41, Marcel Holtmann wrote:
+> Hi Balakrishna,
 > 
-> This patch also set perf_event_attr.ksymbol properly. The flag is
-> ON by default.
+>>>> We will collect the ramdump of BT controller when hardware error 
+>>>> event
+>>>> received before rebooting the HCI layer. Before restarting a 
+>>>> subsystem
+>>>> or a process running on a subsystem, it is often required to request
+>>>> either a subsystem or a process to perform proper cache dump and
+>>>> software failure reason into a memory buffer which application
+>>>> processor can retrieve afterwards. SW developers can often provide
+>>>> initial investigation by looking into that debugging information.
+>>>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>>>> ---
+>>>> changes v2:
+>>>> * entirely an newer approach handling with an work queue.
+>>>> ---
+>>>> drivers/bluetooth/hci_qca.c | 289 
+>>>> ++++++++++++++++++++++++++++++++++--
+>>>> 1 file changed, 278 insertions(+), 11 deletions(-)
+>>>> diff --git a/drivers/bluetooth/hci_qca.c 
+>>>> b/drivers/bluetooth/hci_qca.c
+>>>> index f036c8f98ea3..62b768bc32ec 100644
+>>>> --- a/drivers/bluetooth/hci_qca.c
+>>>> +++ b/drivers/bluetooth/hci_qca.c
+>>>> @@ -32,6 +32,7 @@
+>>>> #include <linux/clk.h>
+>>>> #include <linux/debugfs.h>
+>>>> #include <linux/delay.h>
+>>>> +#include <linux/devcoredump.h>
+>>>> #include <linux/device.h>
+>>>> #include <linux/gpio/consumer.h>
+>>>> #include <linux/mod_devicetable.h>
+>>> don't we have some crashdump core facility that could be utilized 
+>>> here?
+>> 
+>> [Bala]: no i don't think so. that is reason calling devcoredump.h
 > 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> ---
->  tools/perf/util/event.c   | 21 +++++++++++++++
->  tools/perf/util/event.h   | 20 ++++++++++++++
->  tools/perf/util/evsel.c   | 12 ++++++++-
->  tools/perf/util/evsel.h   |  1 +
->  tools/perf/util/machine.c | 57 +++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/machine.h |  3 +++
->  tools/perf/util/session.c |  4 +++
->  tools/perf/util/tool.h    |  4 ++-
->  8 files changed, 120 insertions(+), 2 deletions(-)
+> what is wrong with using devcoredump.h?
 > 
-> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> index 937a5a4f71cc..3c8a6a8dd260 100644
-> --- a/tools/perf/util/event.c
-> +++ b/tools/perf/util/event.c
-> @@ -24,6 +24,7 @@
->  #include "symbol/kallsyms.h"
->  #include "asm/bug.h"
->  #include "stat.h"
-> +#include "session.h"
->  
->  #define DEFAULT_PROC_MAP_PARSE_TIMEOUT 500
->  
-> @@ -45,6 +46,7 @@ static const char *perf_event__names[] = {
->  	[PERF_RECORD_SWITCH]			= "SWITCH",
->  	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
->  	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
-> +	[PERF_RECORD_KSYMBOL]			= "KSYMBOL",
->  	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
->  	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
->  	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
-> @@ -1329,6 +1331,14 @@ int perf_event__process_switch(struct perf_tool *tool __maybe_unused,
->  	return machine__process_switch_event(machine, event);
->  }
->  
-> +int perf_event__process_ksymbol(struct perf_tool *tool __maybe_unused,
-> +				union perf_event *event,
-> +				struct perf_sample *sample __maybe_unused,
-> +				struct machine *machine)
-> +{
-> +	return machine__process_ksymbol(machine, event, sample);
-> +}
-> +
->  size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
->  {
->  	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
-> @@ -1461,6 +1471,14 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
->  	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
->  }
->  
-> +size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
-> +{
-> +	return fprintf(fp, " ksymbol event with addr %lx len %u type %u flags 0x%x name %s\n",
-> +		       event->ksymbol_event.addr, event->ksymbol_event.len,
-> +		       event->ksymbol_event.ksym_type,
-> +		       event->ksymbol_event.flags, event->ksymbol_event.name);
-> +}
-> +
->  size_t perf_event__fprintf(union perf_event *event, FILE *fp)
->  {
->  	size_t ret = fprintf(fp, "PERF_RECORD_%s",
-> @@ -1496,6 +1514,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
->  	case PERF_RECORD_LOST:
->  		ret += perf_event__fprintf_lost(event, fp);
->  		break;
-> +	case PERF_RECORD_KSYMBOL:
-> +		ret += perf_event__fprintf_ksymbol(event, fp);
-> +		break;
->  	default:
->  		ret += fprintf(fp, "\n");
->  	}
-> diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-> index eb95f3384958..018322f2a13e 100644
-> --- a/tools/perf/util/event.h
-> +++ b/tools/perf/util/event.h
-> @@ -5,6 +5,7 @@
->  #include <limits.h>
->  #include <stdio.h>
->  #include <linux/kernel.h>
-> +#include <linux/bpf.h>
->  
->  #include "../perf.h"
->  #include "build-id.h"
-> @@ -84,6 +85,19 @@ struct throttle_event {
->  	u64 stream_id;
->  };
->  
-> +#ifndef KSYM_NAME_LEN
-> +#define KSYM_NAME_LEN 256
-> +#endif
-> +
-> +struct ksymbol_event {
-> +	struct perf_event_header header;
-> +	u64 addr;
-> +	u32 len;
-> +	u16 ksym_type;
-> +	u16 flags;
-> +	char name[KSYM_NAME_LEN];
-> +};
-> +
->  #define PERF_SAMPLE_MASK				\
->  	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
->  	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
-> @@ -651,6 +665,7 @@ union perf_event {
->  	struct stat_round_event		stat_round;
->  	struct time_conv_event		time_conv;
->  	struct feature_event		feat;
-> +	struct ksymbol_event		ksymbol_event;
->  };
->  
->  void perf_event__print_totals(void);
-> @@ -748,6 +763,10 @@ int perf_event__process_exit(struct perf_tool *tool,
->  			     union perf_event *event,
->  			     struct perf_sample *sample,
->  			     struct machine *machine);
-> +int perf_event__process_ksymbol(struct perf_tool *tool,
-> +				union perf_event *event,
-> +				struct perf_sample *sample,
-> +				struct machine *machine);
->  int perf_tool__process_synth_event(struct perf_tool *tool,
->  				   union perf_event *event,
->  				   struct machine *machine,
-> @@ -811,6 +830,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp);
->  size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
->  size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
->  size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
-> +size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp);
->  size_t perf_event__fprintf(union perf_event *event, FILE *fp);
->  
->  int kallsyms__get_function_start(const char *kallsyms_filename,
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index dbc0466db368..a2c75aace409 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -1035,6 +1035,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
->  	attr->mmap  = track;
->  	attr->mmap2 = track && !perf_missing_features.mmap2;
->  	attr->comm  = track;
-> +	attr->ksymbol = track && !perf_missing_features.ksymbol;
->  
->  	if (opts->record_namespaces)
->  		attr->namespaces  = track;
-> @@ -1652,6 +1653,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
->  	PRINT_ATTRf(context_switch, p_unsigned);
->  	PRINT_ATTRf(write_backward, p_unsigned);
->  	PRINT_ATTRf(namespaces, p_unsigned);
-> +	PRINT_ATTRf(ksymbol, p_unsigned);
->  
->  	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
->  	PRINT_ATTRf(bp_type, p_unsigned);
-> @@ -1811,6 +1813,8 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
->  				     PERF_SAMPLE_BRANCH_NO_CYCLES);
->  	if (perf_missing_features.group_read && evsel->attr.inherit)
->  		evsel->attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
-> +	if (perf_missing_features.ksymbol)
-> +		evsel->attr.ksymbol = 0;
->  retry_sample_id:
->  	if (perf_missing_features.sample_id_all)
->  		evsel->attr.sample_id_all = 0;
-> @@ -1930,7 +1934,13 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
->  	 * Must probe features in the order they were added to the
->  	 * perf_event_attr interface.
->  	 */
-> -	if (!perf_missing_features.write_backward && evsel->attr.write_backward) {
-> +	if (!perf_missing_features.ksymbol &&
-> +		   evsel->attr.ksymbol) {
-> +		perf_missing_features.ksymbol = true;
-> +		pr_debug2("switching off ksymbol\n");
-> +		goto fallback_missing_features;
-> +	} else if (!perf_missing_features.write_backward &&
-> +		   evsel->attr.write_backward) {
 
-Please keep the existing coding style, i.e. no need to change this line
-into two:
+[Bala]: using the  devcoredump.h
 
-	if (!perf_missing_features.write_backward && evsel->attr.write_backward) {
+>>>> @@ -57,9 +58,10 @@
+>>>> /* Controller states */
+>>>> #define STATE_IN_BAND_SLEEP_ENABLED	1
+>>>> -#define IBS_WAKE_RETRANS_TIMEOUT_MS	100
+>>>> +#define	IBS_WAKE_RETRANS_TIMEOUT_MS	100
+>>>> #define IBS_TX_IDLE_TIMEOUT_MS		2000
+>>>> -#define BAUDRATE_SETTLE_TIMEOUT_MS	300
+>>>> +#define	BAUDRATE_SETTLE_TIMEOUT_MS	300
+>>>> +#define MEMDUMP_COLLECTION_TIMEOUT_MS	8000
+>>>> /* susclk rate */
+>>>> #define SUSCLK_RATE_32KHZ	32768
+>>>> @@ -67,6 +69,13 @@
+>>>> /* Controller debug log header */
+>>>> #define QCA_DEBUG_HANDLE	0x2EDC
+>>>> +/* Controller dump header */
+>>>> +#define QCA_SSR_DUMP_HANDLE		0x0108
+>>>> +#define QCA_DUMP_PACKET_SIZE		255
+>>>> +#define QCA_LAST_SEQUENCE_NUM		0xFFFF
+>>>> +#define QCA_CRASHBYTE_PACKET_LEN	1100
+>>>> +#define QCA_MEMDUMP_BYTE		0xFB
+>>>> +
+>>>> /* HCI_IBS transmit side sleep protocol states */
+>>>> enum tx_ibs_states {
+>>>> 	HCI_IBS_TX_ASLEEP,
+>>>> @@ -89,12 +98,41 @@ enum hci_ibs_clock_state_vote {
+>>>> 	HCI_IBS_RX_VOTE_CLOCK_OFF,
+>>>> };
+>>>> +/* Controller memory dump states */
+>>>> +enum qca_memdump_states {
+>>>> +	QCA_MEMDUMP_IDLE,
+>>>> +	QCA_MEMDUMP_COLLECTING,
+>>>> +	QCA_MEMDUMP_COLLECTED,
+>>>> +	QCA_MEMDUMP_TIMEOUT,
+>>>> +};
+>>>> +
+>>>> +struct qca_memdump_data {
+>>>> +	char *memdump_buf_head;
+>>>> +	char *memdump_buf_tail;
+>>>> +	u32 current_seq_no;
+>>>> +	u32 received_dump;
+>>>> +};
+>>>> +
+>>>> +struct qca_memdump_event_hdr {
+>>>> +	__u8    evt;
+>>>> +	__u8    plen;
+>>>> +	__u16   opcode;
+>>>> +	__u16   seq_no;
+>>>> +	__u8    reserved;
+>>>> +} __packed;
+>>>> +
+>>>> +
+>>>> +struct qca_dump_size {
+>>>> +	u32 dump_size;
+>>>> +} __packed;
+>>>> +
+>>>> struct qca_data {
+>>>> 	struct hci_uart *hu;
+>>>> 	struct sk_buff *rx_skb;
+>>>> 	struct sk_buff_head txq;
+>>>> -	struct sk_buff_head tx_wait_q;	/* HCI_IBS wait queue	*/
+>>>> -	spinlock_t hci_ibs_lock;	/* HCI_IBS state lock	*/
+>>>> +	struct sk_buff_head tx_wait_q;		/* HCI_IBS wait queue	*/
+>>>> +	struct sk_buff_head rx_memdump_q;	/* Memdump wait queue	*/
+>>>> +	spinlock_t hci_ibs_lock;		/* HCI_IBS state lock	*/
+>>>> 	u8 tx_ibs_state;	/* HCI_IBS transmit side power state*/
+>>>> 	u8 rx_ibs_state;	/* HCI_IBS receive side power state */
+>>>> 	bool tx_vote;		/* Clock must be on for TX */
+>>>> @@ -103,12 +141,17 @@ struct qca_data {
+>>>> 	u32 tx_idle_delay;
+>>>> 	struct timer_list wake_retrans_timer;
+>>>> 	u32 wake_retrans;
+>>>> +	struct timer_list memdump_timer;
+>>>> +	u32 memdump_delay;
+>>>> 	struct workqueue_struct *workqueue;
+>>>> 	struct work_struct ws_awake_rx;
+>>>> 	struct work_struct ws_awake_device;
+>>>> 	struct work_struct ws_rx_vote_off;
+>>>> 	struct work_struct ws_tx_vote_off;
+>>>> +	struct work_struct ctrl_memdump_evt;
+>>>> +	struct qca_memdump_data *qca_memdump;
+>>>> 	unsigned long flags;
+>>>> +	enum qca_memdump_states memdump_state;
+>>>> 	/* For debugging purpose */
+>>>> 	u64 ibs_sent_wacks;
+>>>> @@ -173,6 +216,7 @@ struct qca_serdev {
+>>>> static int qca_power_setup(struct hci_uart *hu, bool on);
+>>>> static void qca_power_shutdown(struct hci_uart *hu);
+>>>> static int qca_power_off(struct hci_dev *hdev);
+>>>> +static void qca_controller_memdump(struct work_struct *work);
+>>>> static void __serial_clock_on(struct tty_struct *tty)
+>>>> {
+>>>> @@ -446,6 +490,21 @@ static void hci_ibs_wake_retrans_timeout(struct 
+>>>> timer_list *t)
+>>>> 		hci_uart_tx_wakeup(hu);
+>>>> }
+>>>> +static void hci_memdump_timeout(struct timer_list *t)
+>>>> +{
+>>>> +	struct qca_data *qca = from_timer(qca, t, tx_idle_timer);
+>>>> +	struct hci_uart *hu = qca->hu;
+>>>> +	struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+>>>> +	char *memdump_buf = qca_memdump->memdump_buf_tail;
+>>>> +
+>>>> +	bt_dev_err(hu->hdev, "clearing allocated memory due to memdump 
+>>>> timeout");
+>>>> +	kfree(memdump_buf);
+>>>> +	kfree(qca_memdump);
+>>>> +	qca->memdump_state = QCA_MEMDUMP_TIMEOUT;
+>>>> +	del_timer(&qca->memdump_timer);
+>>>> +	cancel_work_sync(&qca->ctrl_memdump_evt);
+>>>> +}
+>>>> +
+>>>> /* Initialize protocol */
+>>>> static int qca_open(struct hci_uart *hu)
+>>>> {
+>>>> @@ -461,6 +520,7 @@ static int qca_open(struct hci_uart *hu)
+>>>> 	skb_queue_head_init(&qca->txq);
+>>>> 	skb_queue_head_init(&qca->tx_wait_q);
+>>>> +	skb_queue_head_init(&qca->rx_memdump_q);
+>>>> 	spin_lock_init(&qca->hci_ibs_lock);
+>>>> 	qca->workqueue = alloc_ordered_workqueue("qca_wq", 0);
+>>>> 	if (!qca->workqueue) {
+>>>> @@ -473,6 +533,7 @@ static int qca_open(struct hci_uart *hu)
+>>>> 	INIT_WORK(&qca->ws_awake_device, qca_wq_awake_device);
+>>>> 	INIT_WORK(&qca->ws_rx_vote_off, qca_wq_serial_rx_clock_vote_off);
+>>>> 	INIT_WORK(&qca->ws_tx_vote_off, qca_wq_serial_tx_clock_vote_off);
+>>>> +	INIT_WORK(&qca->ctrl_memdump_evt, qca_controller_memdump);
+>>>> 	qca->hu = hu;
+>>>> @@ -500,7 +561,7 @@ static int qca_open(struct hci_uart *hu)
+>>>> 	qca->tx_votes_off = 0;
+>>>> 	qca->rx_votes_on = 0;
+>>>> 	qca->rx_votes_off = 0;
+>>>> -
+>>>> +	qca->memdump_state = QCA_MEMDUMP_IDLE;
+>>>> 	hu->priv = qca;
+>>>> 	if (hu->serdev) {
+>>>> @@ -528,6 +589,9 @@ static int qca_open(struct hci_uart *hu)
+>>>> 	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
+>>>> 	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
+>>>> +	timer_setup(&qca->memdump_timer, hci_memdump_timeout, 0);
+>>>> +	qca->memdump_delay = MEMDUMP_COLLECTION_TIMEOUT_MS;
+>>>> +
+>>>> 	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
+>>>> 	       qca->tx_idle_delay, qca->wake_retrans);
+>>>> @@ -605,8 +669,10 @@ static int qca_close(struct hci_uart *hu)
+>>>> 	skb_queue_purge(&qca->tx_wait_q);
+>>>> 	skb_queue_purge(&qca->txq);
+>>>> +	skb_queue_purge(&qca->rx_memdump_q);
+>>>> 	del_timer(&qca->tx_idle_timer);
+>>>> 	del_timer(&qca->wake_retrans_timer);
+>>>> +	del_timer(&qca->memdump_timer);
+>>>> 	destroy_workqueue(qca->workqueue);
+>>>> 	qca->hu = NULL;
+>>>> @@ -866,6 +932,141 @@ static int qca_recv_acl_data(struct hci_dev 
+>>>> *hdev, struct sk_buff *skb)
+>>>> 	return hci_recv_frame(hdev, skb);
+>>>> }
+>>>> +static void qca_controller_memdump(struct work_struct *work)
+>>>> +{
+>>>> +	struct qca_data *qca = container_of(work, struct qca_data,
+>>>> +					    ctrl_memdump_evt);
+>>>> +	struct hci_uart *hu = qca->hu;
+>>>> +	struct sk_buff *skb;
+>>>> +	struct qca_memdump_event_hdr *cmd_hdr;
+>>>> +	struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+>>>> +	struct qca_dump_size *dump;
+>>>> +	char *memdump_buf;
+>>>> +	char nullBuff[QCA_DUMP_PACKET_SIZE] = { 0 };
+>>>> +	u16 opcode, seq_no;
+>>>> +	u32 dump_size;
+>>>> +
+>>>> +	while ((skb = skb_dequeue(&qca->rx_memdump_q))) {
+>>>> +
+>>>> +		if (!qca_memdump) {
+>>>> +			qca_memdump = kzalloc(sizeof(struct qca_memdump_data),
+>>>> +					      GFP_ATOMIC);
+>>>> +			if (!qca_memdump)
+>>>> +				return;
+>>>> +
+>>>> +			qca->qca_memdump = qca_memdump;
+>>>> +		}
+>>>> +
+>>>> +		qca->memdump_state = QCA_MEMDUMP_COLLECTING;
+>>>> +		cmd_hdr = (void *) skb->data;
+>>>> +		opcode = __le16_to_cpu(cmd_hdr->opcode);
+>>>> +		seq_no = __le16_to_cpu(cmd_hdr->seq_no);
+>>>> +		skb_pull(skb, sizeof(struct qca_memdump_event_hdr));
+>>>> +
+>>>> +		if (!seq_no) {
+>>>> +
+>>>> +			/* This is the first frame of memdump packet from
+>>>> +			 * the controller, Disable IBS to recevie dump
+>>>> +			 * with out any interruption, ideally time required for
+>>>> +			 * the controller to send the dump is 8 seconds. let us
+>>>> +			 * start timer to handle this asynchronous activity.
+>>>> +			 */
+>>>> +			clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+>>>> +
+>>>> +			dump = (void *) skb->data;
+>>>> +			dump_size = __le32_to_cpu(dump->dump_size);
+>>>> +			if (!(dump_size)) {
+>>>> +				bt_dev_err(hu->hdev, "QCA invalid memdump size");
+>>>> +				kfree_skb(skb);
+>>>> +				return;
+>>>> +			}
+>>>> +
+>>>> +			bt_dev_info(hu->hdev, "QCA: collecting memdump started"
+>>>> +				     "of size:%u", dump_size);
+>>>> +			mod_timer(&qca->memdump_timer, (jiffies +
+>>>> +				  msecs_to_jiffies(qca->memdump_delay)));
+>>>> +
+>>>> +			skb_pull(skb, sizeof(dump_size));
+>>>> +			memdump_buf = vmalloc(dump_size);
+>>>> +			qca_memdump->memdump_buf_head = memdump_buf;
+>>>> +			qca_memdump->memdump_buf_tail = memdump_buf;
+>>>> +		}
+>>>> +
+>>>> +		memdump_buf = qca_memdump->memdump_buf_tail;
+>>>> +
+>>>> +		/* If sequence no 0 is missed then there is no point in
+>>>> +		 * accepting the other sequences.
+>>>> +		 */
+>>>> +		if (!memdump_buf) {
+>>>> +			bt_dev_err(hu->hdev, "QCA: Discarding other packets");
+>>>> +			kfree(qca_memdump);
+>>>> +			kfree_skb(skb);
+>>>> +			qca->qca_memdump = NULL;
+>>>> +			return;
+>>>> +		}
+>>>> +
+>>>> +		/* There could be chance of missing some packets from
+>>>> +		 * the controller. In such cases let us store the dummy
+>>>> +		 * packets in the buffer.
+>>>> +		 */
+>>>> +		while ((seq_no > qca_memdump->current_seq_no + 1) &&
+>>>> +			seq_no != QCA_LAST_SEQUENCE_NUM) {
+>>>> +			bt_dev_err(hu->hdev, "QCA controller missed packet:%d",
+>>>> +				   qca_memdump->current_seq_no);
+>>>> +			memcpy(memdump_buf, nullBuff, QCA_DUMP_PACKET_SIZE);
+>>>> +			memdump_buf = memdump_buf + QCA_DUMP_PACKET_SIZE;
+>>>> +			qca_memdump->received_dump += QCA_DUMP_PACKET_SIZE;
+>>>> +			qca_memdump->current_seq_no++;
+>>>> +		}
+>>>> +
+>>>> +		memcpy(memdump_buf, (unsigned char *) skb->data, skb->len);
+>>>> +		memdump_buf = memdump_buf + skb->len;
+>>>> +		qca_memdump->memdump_buf_tail = memdump_buf;
+>>>> +		qca_memdump->current_seq_no = seq_no + 1;
+>>>> +		qca_memdump->received_dump += skb->len;
+>>>> +		qca->qca_memdump = qca_memdump;
+>>>> +		kfree_skb(skb);
+>>>> +		if (seq_no == QCA_LAST_SEQUENCE_NUM) {
+>>>> +			bt_dev_info(hu->hdev, "QCA writing crash dump of size %d bytes",
+>>>> +				   qca_memdump->received_dump);
+>>>> +			memdump_buf = qca_memdump->memdump_buf_head;
+>>>> +			dev_coredumpv(&hu->serdev->dev, memdump_buf,
+>>>> +				      qca_memdump->received_dump, GFP_KERNEL);
+>>>> +			// Revisit for free(memdump) if needed.
+>>>> +			del_timer(&qca->memdump_timer);
+>>>> +			kfree(qca->qca_memdump);
+>>>> +			qca->qca_memdump = NULL;
+>>>> +			qca->memdump_state = QCA_MEMDUMP_COLLECTED;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +}
+>>>> +
+>>>> +int qca_controller_memdump_event(struct hci_dev *hdev, struct 
+>>>> sk_buff *skb)
+>>>> +{
+>>>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>>> +	struct qca_data *qca = hu->priv;
+>>>> +
+>>>> +	skb_queue_tail(&qca->rx_memdump_q, skb);
+>>>> +	queue_work(qca->workqueue, &qca->ctrl_memdump_evt);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int qca_recv_event_data(struct hci_dev *hdev, struct sk_buff 
+>>>> *skb)
+>>>> +{
+>>>> +	/* We receive chip memory dump as an event packet, With a 
+>>>> dedicated
+>>>> +	 * handler followed by a hardware error event. When this event is
+>>>> +	 * received we store dump into a file before closing hci. This
+>>>> +	 * dump will help in triaging the issues.
+>>>> +	 */
+>>>> +	if ((skb->data[0] == HCI_VENDOR_PKT) &&
+>>>> +	    (get_unaligned_be16((skb->data) + 2) == QCA_SSR_DUMP_HANDLE))
+>>> The (skb->data) is pointless, just do skb->data.
+>> [Bala]: will update.
+>> 
+>>>> +		return qca_controller_memdump_event(hdev, skb);
+>>>> +
+>>>> +	return hci_recv_frame(hdev, skb);
+>>>> +}
+>>>> +
+>>>> #define QCA_IBS_SLEEP_IND_EVENT \
+>>>> 	.type = HCI_IBS_SLEEP_IND, \
+>>>> 	.hlen = 0, \
+>>>> @@ -888,12 +1089,12 @@ static int qca_recv_acl_data(struct hci_dev 
+>>>> *hdev, struct sk_buff *skb)
+>>>> 	.maxlen = HCI_MAX_IBS_SIZE
+>>>> static const struct h4_recv_pkt qca_recv_pkts[] = {
+>>>> -	{ H4_RECV_ACL,             .recv = qca_recv_acl_data },
+>>>> -	{ H4_RECV_SCO,             .recv = hci_recv_frame    },
+>>>> -	{ H4_RECV_EVENT,           .recv = hci_recv_frame    },
+>>>> -	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind  },
+>>>> -	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack  },
+>>>> -	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind },
+>>>> +	{ H4_RECV_ACL,             .recv = qca_recv_acl_data	},
+>>>> +	{ H4_RECV_SCO,             .recv = hci_recv_frame	},
+>>>> +	{ H4_RECV_EVENT,           .recv = qca_recv_event_data	},
+>>> call it qca_recv_event and don't realign the whole table.
+>> [Bala]: will update.
+>> 
+>>>> +	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind	},
+>>>> +	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack	},
+>>>> +	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind	},
+>>>> };
+>>>> static int qca_recv(struct hci_uart *hu, const void *data, int 
+>>>> count)
+>>>> @@ -1114,6 +1315,68 @@ static int qca_set_speed(struct hci_uart *hu, 
+>>>> enum qca_speed_type speed_type)
+>>>> 	return 0;
+>>>> }
+>>>> +static int qca_send_crashbuffer(struct hci_uart *hu)
+>>>> +{
+>>>> +	struct qca_data *qca = hu->priv;
+>>>> +	struct sk_buff *skb;
+>>>> +	unsigned char buf[QCA_CRASHBYTE_PACKET_LEN];
+>>>> +
+>>>> +	bt_dev_dbg(hu->hdev, "sending soc crash buffer to controller");
+>>>> +
+>>>> +	/* We forcefully crash the controller, by sending 0xfb byte for
+>>>> +	 * 1024 times. We also might have chance of losing data, To be
+>>>> +	 * on safer side we send 1100 bytes to the SoC.
+>>>> +	 */
+>>>> +	memset(buf, QCA_MEMDUMP_BYTE, QCA_CRASHBYTE_PACKET_LEN);
+>>>> +
+>>>> +	skb = bt_skb_alloc(QCA_CRASHBYTE_PACKET_LEN, GFP_KERNEL);
+>>>> +	if (!skb) {
+>>>> +		bt_dev_err(hu->hdev, "Failed to allocate memory for skb packet");
+>>>> +		return -ENOMEM;
+>>>> +	}
+>>>> +
+>>>> +	skb_put_data(skb, buf, QCA_CRASHBYTE_PACKET_LEN);
+>>>> +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>>>> +
+>>>> +	skb_queue_tail(&qca->txq, skb);
+>>>> +	hci_uart_tx_wakeup(hu);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static void qca_hw_error(struct hci_dev *hdev, u8 code)
+>>>> +{
+>>>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>>> +	struct qca_data *qca = hu->priv;
+>>>> +
+>>>> +	bt_dev_info(hdev, "mem_dump_status: %d", qca->memdump_state);
+>>>> +
+>>>> +	if (qca->memdump_state == QCA_MEMDUMP_IDLE) {
+>>>> +		/* If hardware error event received for other than QCA
+>>>> +		 * soc memory dump event, then we need to crash the SOC
+>>>> +		 * and wait here for 8 seconds to get the dump packets.
+>>>> +		 * This will block main thread to be on hold until we
+>>>> +		 * collect dump.
+>>>> +		 */
+>>>> +		mod_timer(&qca->memdump_timer,
+>>>> +			  (jiffies + msecs_to_jiffies(qca->memdump_delay)));
+>>> Why a timer that then ends up in interrupt context?
+>> [Bala]: some times we only receive hardware error from the chip, so we 
+>> are sending an special buffer to request the
+>>        chip for memory dump. we are using an timer to check whether 
+>> the data memdump is collected. if the timer
+>>        over flows we are cleaning up all the assigned memory and 
+>> unblock the main thread,
+>>        in short this timer is a watch dog timer for the memory dump 
+>> collection.
+> 
+> I saw that you used a bunch of timers actually. My question is why are
+> these not delayed_wq instead? I wonder if we really want to keep using
+> timers and handling interrupt context locking if we could move
+> everything to wq instead.
+> 
 
-Just add the '} else' in front of it, ditto for the new line.
+[Bala]: Let me brief you the requirement.
+        This patch is used to collect the memory dump received from the 
+chip and store it into a file.
+        We receive chip memory dump in two cases
+         1. When chip goes into the bad state it sends the dump followed 
+by and hardware error event.
+         2. Some time when we send some garbage or un recognized command 
+to chip.
+            it will respond with a hardware error event. So we send an 
+0xfb bytes to the chip requesting it to send the memory dump.
 
-I'm not that strict about it, perhaps I should, to avoid my upstreamers
-to block things due to this ;-)
+In both cases, chip will go into the bad state once it sends the dump. 
+so we need to turn OFF and ON chip and perform the init procedure.
+So keeping the above cases in the view, we register an handle for 
+hardware error event. So that in both the cases hw error routine will 
+execute.
 
-And also this is not the only issue I found with this specific patch,
-see below for one more functional issue.
+As the dump as some specific headers we will queue the received data 
+into work queue.
+We are blocking the main thread until the total dump is stored into the 
+file.
+Here is the answer for the question, yes we check the status of the work 
+queue but for handling case 2 we require timers.
+But let us assume the wq is taking more time than expected. Then we also 
+need a timer.
+we are using timer so that we will not block the main thread 
+indefinitely.
+They are some cases where when we request a memory dump, after some 
+packet sent by the chip.
+it may go into a bad state where it will not pump the remaining dump, so 
+we are using a timer to unblock the main thread.
+so during timeout, we are restarting the flags to unblock the main 
+thread.
 
-I saw no issues in the previous patches (don't recall right now if there
-where coding style minor issues), so in your next patchset version you
-may add my:
 
-Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>>>> +		qca_send_crashbuffer(hu);
+>>>> +
+>>>> +		while (qca->memdump_state != QCA_MEMDUMP_COLLECTED &&
+>>>> +			qca->memdump_state != QCA_MEMDUMP_TIMEOUT)
+>>>> +			;
+>>> What is this? Busy loop? I rather not do that.
+>> [Bala]: this busy required to collected the dump from the chip before 
+>> we close an reopen the hci.
+>>        >> +	} else if (qca->memdump_state == QCA_MEMDUMP_COLLECTING) {
+> 
+> Why not use some wakeup handling here. I am really against any kind of
+> busy loops in a driver.
+> 
+[Bala]: this busy loop is require. pls refer my comments to the above 
+query.
+         this will help in mainly in case 2, where we will block the main 
+thread until we have dump collected.
 
-To those.
+         let us assume that we received an hardware error event, hw error 
+routine we execute which sends an
+         special byte to the chip requesting for memory dump. it starts 
+sending the dump, but we move forward and turn off the
+         chip so we will miss the dump. so here the busy loop is to wait 
+until we have dump.
+         but the we are not waiting indefinitely we have timer to unblock 
+them.
 
->  		perf_missing_features.write_backward = true;
->  		pr_debug2("switching off write_backward\n");
->  		goto out_close;
-> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> index 82a289ce8b0c..4a8c3e7f4808 100644
-> --- a/tools/perf/util/evsel.h
-> +++ b/tools/perf/util/evsel.h
-> @@ -168,6 +168,7 @@ struct perf_missing_features {
->  	bool lbr_flags;
->  	bool write_backward;
->  	bool group_read;
-> +	bool ksymbol;
->  };
->  
->  extern struct perf_missing_features perf_missing_features;
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 143f7057d581..c8f6daac9d2d 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -681,6 +681,61 @@ int machine__process_switch_event(struct machine *machine __maybe_unused,
->  	return 0;
->  }
->  
-> +static int machine__process_ksymbol_register(
-> +	struct machine *machine,
-> +	union perf_event *event,
-> +	struct perf_sample *sample __maybe_unused)
-> +{
-> +	struct symbol *sym;
-> +	struct map *map;
-> +
-> +	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
-> +	if (!map) {
-> +		map = dso__new_map("bpf_prog");
-
-Humm, why not use event->ksymbol_event.name as the name of the map as
-well? Otherwise we may end up thinking its all the same map "bpf_prog",
-when we have lots.
-
-> +		if (!map)
-> +			return -ENOMEM;
-> +
-> +		map->start = event->ksymbol_event.addr;
-> +		map->pgoff = map->start;
-> +		map->end = map->start + event->ksymbol_event.len;
-> +		map_groups__insert(&machine->kmaps, map);
-> +	}
-> +
-> +	sym = symbol__new(event->ksymbol_event.addr, event->ksymbol_event.len,
-> +			  0, 0, event->ksymbol_event.name);
-> +	if (!sym)
-> +		return -ENOMEM;
-> +	dso__insert_symbol(map->dso, sym);
-> +	return 0;
-> +}
-> +
-> +static int machine__process_ksymbol_unregister(
-> +	struct machine *machine,
-> +	union perf_event *event,
-> +	struct perf_sample *sample __maybe_unused)
-
-Please follow the existing style, the above should be:
-
-static int machine__process_ksymbol_unregister(struct machine *machine,
-					       union perf_event *event,
-					       struct perf_sample *sample __maybe_unused)
-
-> +{
-> +	struct map *map;
-> +
-> +	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
-> +	if (map)
-> +		map_groups__remove(&machine->kmaps, map);
-> +
-> +	return 0;
-> +}
-> +
-> +int machine__process_ksymbol(struct machine *machine __maybe_unused,
-> +			     union perf_event *event,
-> +			     struct perf_sample *sample)
-
-This one follows the existing style, great.
-
-> +{
-> +	if (dump_trace)
-> +		perf_event__fprintf_ksymbol(event, stdout);
-> +
-> +	if (event->ksymbol_event.flags & PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER)
-> +		return machine__process_ksymbol_unregister(machine, event,
-> +							   sample);
-> +	return machine__process_ksymbol_register(machine, event, sample);
-> +}
-> +
->  static void dso__adjust_kmod_long_name(struct dso *dso, const char *filename)
->  {
->  	const char *dup_filename;
-> @@ -1812,6 +1867,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
->  	case PERF_RECORD_SWITCH:
->  	case PERF_RECORD_SWITCH_CPU_WIDE:
->  		ret = machine__process_switch_event(machine, event); break;
-> +	case PERF_RECORD_KSYMBOL:
-> +		ret = machine__process_ksymbol(machine, event, sample); break;
->  	default:
->  		ret = -1;
->  		break;
-> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-> index a5d1da60f751..4ecd380ce1b4 100644
-> --- a/tools/perf/util/machine.h
-> +++ b/tools/perf/util/machine.h
-> @@ -130,6 +130,9 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
->  				struct perf_sample *sample);
->  int machine__process_mmap2_event(struct machine *machine, union perf_event *event,
->  				 struct perf_sample *sample);
-> +int machine__process_ksymbol(struct machine *machine,
-> +			     union perf_event *event,
-> +			     struct perf_sample *sample);
->  int machine__process_event(struct machine *machine, union perf_event *event,
->  				struct perf_sample *sample);
->  
-> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> index 5456c84c7dd1..2efa75bb0c0a 100644
-> --- a/tools/perf/util/session.c
-> +++ b/tools/perf/util/session.c
-> @@ -376,6 +376,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
->  		tool->itrace_start = perf_event__process_itrace_start;
->  	if (tool->context_switch == NULL)
->  		tool->context_switch = perf_event__process_switch;
-> +	if (tool->ksymbol == NULL)
-> +		tool->ksymbol = perf_event__process_ksymbol;
->  	if (tool->read == NULL)
->  		tool->read = process_event_sample_stub;
->  	if (tool->throttle == NULL)
-> @@ -1305,6 +1307,8 @@ static int machines__deliver_event(struct machines *machines,
->  	case PERF_RECORD_SWITCH:
->  	case PERF_RECORD_SWITCH_CPU_WIDE:
->  		return tool->context_switch(tool, event, sample, machine);
-> +	case PERF_RECORD_KSYMBOL:
-> +		return tool->ksymbol(tool, event, sample, machine);
->  	default:
->  		++evlist->stats.nr_unknown_events;
->  		return -1;
-> diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-> index 56e4ca54020a..9c81ca2f3cf7 100644
-> --- a/tools/perf/util/tool.h
-> +++ b/tools/perf/util/tool.h
-> @@ -53,7 +53,9 @@ struct perf_tool {
->  			itrace_start,
->  			context_switch,
->  			throttle,
-> -			unthrottle;
-> +			unthrottle,
-> +			ksymbol;
-> +
->  	event_attr_op	attr;
->  	event_attr_op	event_update;
->  	event_op2	tracing_data;
-> -- 
-> 2.17.1
+>>>> +		/* Let us wait here until memory dump collected or
+>>>> +		 * memory dump timer expired.
+>>>> +		 */
+>>>> +		bt_dev_info(hdev, "waiting for dump to complete");
+>>>> +		while (qca->memdump_state == QCA_MEMDUMP_COLLECTING)
+>>>> +			;
+>>>> +	}
+>>>> +
+>>>> +	qca->memdump_state = QCA_MEMDUMP_IDLE;
+>>>> +}
+>>>> +
+>>>> static int qca_wcn3990_init(struct hci_uart *hu)
+>>>> {
+>>>> 	struct hci_dev *hdev = hu->hdev;
+>>>> @@ -1229,6 +1492,10 @@ static int qca_setup(struct hci_uart *hu)
+>>>> 	if (!ret) {
+>>>> 		set_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+>>>> 		qca_debugfs_init(hdev);
+>>>> +		/* We only get controller dump when fw download is
+>>>> +		 * successful.
+>>>> +		 */
+>>>> +		hu->hdev->hw_error = qca_hw_error;
+>>> I would set this all the time and handle it with a flag if firmware
+>>> downloaded has succeeded or not.
+>> [Bala]: ok will update.
+>> 
+>>>> 	} else if (ret == -ENOENT) {
+>>>> 		/* No patch/nvm-config found, run with original fw/config */
+>>>> 		ret = 0;
+> 
+> Regards
+> 
+> Marcel
 
 -- 
-
-- Arnaldo
+Regards
+Balakrishna.
