@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2556C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CB8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0C362082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6CB120866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:58:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404093AbfAPJ61 (ORCPT
+        id S2404052AbfAPJ6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 04:58:27 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:46525 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388613AbfAPJ6M (ORCPT
+        Wed, 16 Jan 2019 04:58:09 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:49645 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404013AbfAPJ6D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 04:58:12 -0500
+        Wed, 16 Jan 2019 04:58:03 -0500
 X-IronPort-AV: E=Sophos;i="5.56,485,1539673200"; 
-   d="scan'208";a="25386573"
+   d="scan'208";a="25551586"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Jan 2019 02:58:12 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Jan 2019 02:58:02 -0700
 Received: from tenerife.corp.atmel.com (10.10.76.4) by
  chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
- 14.3.352.0; Wed, 16 Jan 2019 02:58:11 -0700
+ 14.3.352.0; Wed, 16 Jan 2019 02:58:01 -0700
 From:   Nicolas Ferre <nicolas.ferre@microchip.com>
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>
@@ -39,9 +39,9 @@ CC:     <linux-kernel@vger.kernel.org>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 8/8] net: macb: add sam9x60-macb compatibility string
-Date:   Wed, 16 Jan 2019 10:57:44 +0100
-Message-ID: <dfc7db7606e0898fbedc1f45ed9637379595f9cb.1547629763.git.nicolas.ferre@microchip.com>
+Subject: [PATCH 5/8] net/macb: bindings doc: add sam9x60 binding
+Date:   Wed, 16 Jan 2019 10:57:41 +0100
+Message-ID: <86c21275e53de0b6f26b51edbeb9b7e6506a37c7.1547629763.git.nicolas.ferre@microchip.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1547629763.git.nicolas.ferre@microchip.com>
 References: <cover.1547629763.git.nicolas.ferre@microchip.com>
@@ -52,27 +52,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new compatibility string for this product. It's using
-at91sam9260-macb layout but has a newer hardware revision: it's safer
-to use its own string.
+Add the compatibility sting documentation for sam9x60 10/100 interface.
 
 Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 ---
- drivers/net/ethernet/cadence/macb_main.c | 1 +
+ Documentation/devicetree/bindings/net/macb.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 66cc7927061a..a0889ef107a1 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -3941,6 +3941,7 @@ static const struct of_device_id macb_dt_ids[] = {
- 	{ .compatible = "cdns,np4-macb", .data = &np4_config },
- 	{ .compatible = "cdns,pc302-gem", .data = &pc302gem_config },
- 	{ .compatible = "cdns,gem", .data = &pc302gem_config },
-+	{ .compatible = "cdns,sam9x60-macb", .data = &at91sam9260_config },
- 	{ .compatible = "atmel,sama5d2-gem", .data = &sama5d2_config },
- 	{ .compatible = "atmel,sama5d3-gem", .data = &sama5d3_config },
- 	{ .compatible = "atmel,sama5d3-macb", .data = &sama5d3macb_config },
+diff --git a/Documentation/devicetree/bindings/net/macb.txt b/Documentation/devicetree/bindings/net/macb.txt
+index f5c414b10e27..174f292d8a3e 100644
+--- a/Documentation/devicetree/bindings/net/macb.txt
++++ b/Documentation/devicetree/bindings/net/macb.txt
+@@ -4,6 +4,7 @@ Required properties:
+ - compatible: Should be "cdns,[<chip>-]{macb|gem}"
+   Use "cdns,at91rm9200-emac" Atmel at91rm9200 SoC.
+   Use "cdns,at91sam9260-macb" for Atmel at91sam9 SoCs.
++  Use "cdns,sam9x60-macb" for Microchip sam9x60 SoC.
+   Use "cdns,np4-macb" for NP4 SoC devices.
+   Use "cdns,at32ap7000-macb" for other 10/100 usage or use the generic form: "cdns,macb".
+   Use "cdns,pc302-gem" for Picochip picoXcell pc302 and later devices based on
 -- 
 2.17.1
 
