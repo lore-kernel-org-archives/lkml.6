@@ -2,98 +2,85 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFCDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F4FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39FE220840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:13:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lpxjQcoz"
+	by mail.kernel.org (Postfix) with ESMTP id AAA3B20868
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:14:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbfAPVN5 (ORCPT
+        id S1728230AbfAPVOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:13:57 -0500
-Received: from ozlabs.org ([203.11.71.1]:58541 "EHLO ozlabs.org"
+        Wed, 16 Jan 2019 16:14:53 -0500
+Received: from namei.org ([65.99.196.166]:56382 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727905AbfAPVN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:13:56 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43g0Lm5xZFz9sBn;
-        Thu, 17 Jan 2019 08:13:51 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547673234;
-        bh=z1hIY1IVJ2EApSMgtBnLKSb+OoorIO/NvpFfj6im9bc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lpxjQcozaOslES14gOyttER2zq2H64JfYWj0P0gJpfyGpZBfyuNrrcV+EgrdiXm5X
-         sju9ht6QWdj5/vj0F4AQpEfYvFarwoq8OdPfOGsFwBCksurGtpEgDY/c7kBFABf3Dp
-         qXCbCZCK5Il57Btad85+NlB3RRaCxzb2veaa/EHMlk16xK4O2j/zLF6KudV9h0j7z7
-         62Mu57cvKACTvwUorXi9St5GbWutkY4KV14DntlPvHx0afn3c8ijnQ7ZGEhD7bujsI
-         kSymSkrzi33WTm5znw3ltqZHcZS6vhyq5xf6BoCQiQTNaR+6e36xw5BedB5jKe2nw8
-         DvUpom40WJBAg==
-Date:   Thu, 17 Jan 2019 08:13:51 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: Fixes tag needs some work in the drm-misc tree
-Message-ID: <20190117081351.661539c5@canb.auug.org.au>
+        id S1726924AbfAPVOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:14:53 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x0GLEjAL007529;
+        Wed, 16 Jan 2019 21:14:45 GMT
+Date:   Thu, 17 Jan 2019 08:14:45 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     John Johansen <john.johansen@canonical.com>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com
+Subject: Re: WARNING in apparmor_cred_free
+In-Reply-To: <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1901170814170.7422@namei.org>
+References: <0000000000007f604f057f2b8509@google.com> <6213e783-4377-489d-cdfb-1a83f4497076@schaufler-ca.com> <b0d2811e-87e4-21d4-c33a-2d2012a906cc@canonical.com> <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com> <234c868b-4521-0707-a135-d8c24bc179bd@schaufler-ca.com>
+ <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/d6ZA1OcL.iAiJtEIBDxPVQ."; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/d6ZA1OcL.iAiJtEIBDxPVQ.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 11 Jan 2019, Casey Schaufler wrote:
 
-[I am experimenting with checking the Fixes tags in commits in linux-next.
-Please let me know if you think I am being too strict.]
+> >From 47134986133c822e1d88860fa2b108f92c97a7ff Mon Sep 17 00:00:00 2001
+> From: Casey Schaufler <casey@schaufler-ca.com>
+> Date: Fri, 11 Jan 2019 17:31:50 -0800
+> Subject: [PATCH 1/2] LSM: Check for NULL cred-security on free
+> 
+> Check that the cred security blob has been set before trying
+> to clean it up. There is a case during credential initialization
+> that could result in this.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Hi all,
+JJ: does this fix the problem?
 
-Commit
+> ---
+>  security/security.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/security/security.c b/security/security.c
+> index a618e22df5c6..7bffc86d4e87 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1477,6 +1477,13 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+>  
+>  void security_cred_free(struct cred *cred)
+>  {
+> +	/*
+> +	 * There is a failure case in prepare_creds() that
+> +	 * may result in a call here with ->security being NULL.
+> +	 */
+> +	if (unlikely(cred->security == NULL))
+> +		return;
+> +
+>  	call_void_hook(cred_free, cred);
+>  
+>  	kfree(cred->security);
+> 
 
-  94520db52fc0 ("drm: fix alpha build after drm_util.h change")
+-- 
+James Morris
+<jmorris@namei.org>
 
-has a malformed Fixes tag:
-
-  Fixes: 733748ac37b45 ("drm: move drm_can_sleep() to drm_util.h")
-
-The SHA1 does not reference a commit currently in the tree.  Maybe it
-was meant to be e9eafcb58921.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/d6ZA1OcL.iAiJtEIBDxPVQ.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/no8ACgkQAVBC80lX
-0Gwmqgf+NL4U8JStAX92XZgjZQw7/hFo5KY57biiSGgVj41hvBd8eeaflmBNf7R6
-FvlLouSJ1EVggH2MDriUCchPzrpymJuVyESeGhk9vyT4oerf/2aRsRgQ/1QL27VO
-Nya6AhYTNudr8RMjLSkwV/lMKqiDa6+e7BI9tFTukFTpN1xXAQdx3n+RoOdzDHVL
-Zf1zauC289c1PD+erRtXP2xsM+uWl+OJ2H60DicrC02tMttgvVzk0RCFkwftApIg
-M2IaOpMUsJjtaeh/Be/H2TOWL/ep0bQoiFkM6HbzcB79ri847+nFs3GX6q5Y00Fs
-nqFKj9LA8kvDdh5wC/8RXPCqwrV5ZQ==
-=E49g
------END PGP SIGNATURE-----
-
---Sig_/d6ZA1OcL.iAiJtEIBDxPVQ.--
