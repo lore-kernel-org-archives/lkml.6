@@ -2,130 +2,83 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE977C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8224CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A11822082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F0C62082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389802AbfAPLUi (ORCPT
+        id S2389843AbfAPLVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:20:38 -0500
-Received: from mga04.intel.com ([192.55.52.120]:36577 "EHLO mga04.intel.com"
+        Wed, 16 Jan 2019 06:21:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49402 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730420AbfAPLUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:20:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 03:20:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,485,1539673200"; 
-   d="scan'208";a="310873778"
-Received: from elena-thinkpad-x230.fi.intel.com ([10.237.68.34])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Jan 2019 03:20:33 -0800
-From:   Elena Reshetova <elena.reshetova@intel.com>
-To:     rostedt@goodmis.org
-Cc:     peterz@infradead.org, mingo@redhat.com, akpm@linux-foundation.org,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH] uprobes: convert uprobe.ref to refcount_t
-Date:   Wed, 16 Jan 2019 13:20:27 +0200
-Message-Id: <1547637627-29526-1-git-send-email-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1730420AbfAPLVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:21:32 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DE988C0703AB;
+        Wed, 16 Jan 2019 11:21:31 +0000 (UTC)
+Received: from localhost (unknown [10.40.205.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D32B1059594;
+        Wed, 16 Jan 2019 11:21:31 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 12:21:30 +0100
+From:   Stanislaw Gruszka <sgruszka@redhat.com>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Helmut Schaa <helmut.schaa@googlemail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rt61pci: Work around a firmware bug with shared keys
+Message-ID: <20190116112129.GC5234@redhat.com>
+References: <AM0PR07MB3874E8F6ADD41C4E1BCBE43EE4810@AM0PR07MB3874.eurprd07.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM0PR07MB3874E8F6ADD41C4E1BCBE43EE4810@AM0PR07MB3874.eurprd07.prod.outlook.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 16 Jan 2019 11:21:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-atomic_t variables are currently used to implement reference
-counters with the following properties:
- - counter is initialized to 1 using atomic_set()
- - a resource is freed upon counter reaching zero
- - once counter reaches zero, its further
-   increments aren't allowed
- - counter schema uses basic atomic operations
-   (set, inc, inc_not_zero, dec_and_test, etc.)
+On Tue, Jan 15, 2019 at 02:01:29PM +0000, Bernd Edlinger wrote:
+> Apparently the rt2x61 firmware fails temporarily to decode
+> broadcast packets if the shared keys are not assigned
+> in the "correct" sequence. At the same time unicast
+> packets work fine, since they are encrypted with the
+> pairwise key.
+> 
+> At least with WPA2 CCMP mode the shared keys are
+> set in the following sequence: keyidx=1, 2, 1, 2.
+> After a while only keyidx 2 gets decrypted, and
+> keyidx 1 is ignored, probably because there is never
+> a keyidx 3.
+> 
+> Symptoms are arping -b works for 10 minutes, since
+> keyidx=2 is used for broadcast, and then it stops
+> working for 10 minutes, because keyidx=1 is used.
+> That failure mode repeats forever.
+> 
+> Note, the firmware does not even know which keyidx
+> corresponds to which hw_key_idx so the firmware is
+> trying to be smarter than the driver, which is bound
+> to fail.
+> 
+> As workaround the function rt61pci_config_shared_key
+> requests software decryption of the shared keys,
+> by returning EOPNOTSUPP. However, pairwise keys are
+> still handled by hardware which works just fine.
+> 
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
 
-Such atomic variables should be converted to a newly provided
-refcount_t type and API that prevents accidental counter overflows
-and underflows. This is important since overflows and underflows
-can lead to use-after-free situation and be exploitable.
-
-The variable uprobe.ref is used as pure reference counter.
-Convert it to refcount_t and fix up the operations.
-
-**Important note for maintainers:
-
-Some functions from refcount_t API defined in lib/refcount.c
-have different memory ordering guarantees than their atomic
-counterparts.
-The full comparison can be seen in
-https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
-in state to be merged to the documentation tree.
-Normally the differences should not matter since refcount_t provides
-enough guarantees to satisfy the refcounting use cases, but in
-some rare cases it might matter.
-Please double check that you don't have some undocumented
-memory guarantees for this variable usage.
-
-For the uprobe.ref it might make a difference
-in following places:
- - put_uprobe(): decrement in refcount_dec_and_test() only
-   provides RELEASE ordering and control dependency on success
-   vs. fully ordered atomic counterpart
-
-Suggested-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: David Windsor <dwindsor@gmail.com>
-Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- kernel/events/uprobes.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index ad415f7..750aece 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -66,7 +66,7 @@ static struct percpu_rw_semaphore dup_mmap_sem;
- 
- struct uprobe {
- 	struct rb_node		rb_node;	/* node in the rb tree */
--	atomic_t		ref;
-+	refcount_t		ref;
- 	struct rw_semaphore	register_rwsem;
- 	struct rw_semaphore	consumer_rwsem;
- 	struct list_head	pending_list;
-@@ -561,13 +561,13 @@ set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long v
- 
- static struct uprobe *get_uprobe(struct uprobe *uprobe)
- {
--	atomic_inc(&uprobe->ref);
-+	refcount_inc(&uprobe->ref);
- 	return uprobe;
- }
- 
- static void put_uprobe(struct uprobe *uprobe)
- {
--	if (atomic_dec_and_test(&uprobe->ref)) {
-+	if (refcount_dec_and_test(&uprobe->ref)) {
- 		/*
- 		 * If application munmap(exec_vma) before uprobe_unregister()
- 		 * gets called, we don't get a chance to remove uprobe from
-@@ -658,7 +658,7 @@ static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
- 	rb_link_node(&uprobe->rb_node, parent, p);
- 	rb_insert_color(&uprobe->rb_node, &uprobes_tree);
- 	/* get access + creation ref */
--	atomic_set(&uprobe->ref, 2);
-+	refcount_set(&uprobe->ref, 2);
- 
- 	return u;
- }
--- 
-2.7.4
-
+Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
