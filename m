@@ -2,97 +2,74 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4895CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF0EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16A5520651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:25:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G2kfkJGQ"
+	by mail.kernel.org (Postfix) with ESMTP id AE339206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547645186;
+	bh=opnxPWfcl8lROKcOERNn51KMVYIbbdUZt/fNQMzRB1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Klq+XNOBYX6xbZUHamzuY6H6NPa6hSQugrSmHMGF2mQkxtBP+SiFpejcFb3Q/7SH5
+	 /OFYS78ixuGaPMLwQ7d8N5RY7vX9IxbXd9G69Y71+zksAmLKcOVkqCSFRYndl5xooW
+	 kmeMLFeCLJv7hEfgxD0y8AGBbhu/HSpJCWEDMk6c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404294AbfAPNY7 (ORCPT
+        id S2404305AbfAPN0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:24:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48174 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732880AbfAPNY6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:24:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZhArKsuY/tKhYOpp7E5c4gvQHpi9b44Cpojgm9W2al4=; b=G2kfkJGQ6exaAg21qUWzW8RFv
-        FQ9l92BqSsJceUcSKG4R1VM3c0MyYQN/3rHjb8KoLZjvjogEHb+B8sA1izOLaN0JrUSkC4gv9bOyX
-        icZDBTwptY2OyEIWsWVlPwCX5Xroc0vphIyCUqPorrD0YdZFixmMfvbefX4A0l6Wjcwtw7gMDbvxB
-        mmD3c6C2zLiXtrfR3iH4SBwwQLUtTlWjVdsVoh18NIgjrYPkQoyDrSeyuGsVBIVXutUt3+nA8OU3O
-        94EbKtLSMupZBFbaw1PpR1tkRk8/kriLcBrvzQj9xIpF5wfI2Mssy5gSGWOMXY19zGqNFGOKnnmvO
-        +W2q5+B4Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gjlBZ-0000sA-4U; Wed, 16 Jan 2019 13:24:49 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 76814207C0189; Wed, 16 Jan 2019 14:24:46 +0100 (CET)
-Date:   Wed, 16 Jan 2019 14:24:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, lizefan@huawei.com,
-        Johannes Weiner <hannes@cmpxchg.org>, axboe@kernel.dk,
-        dennis@kernel.org, Dennis Zhou <dennisszhou@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>, linux-doc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Subject: Re: [PATCH v2 5/5] psi: introduce psi monitor
-Message-ID: <20190116132446.GF10803@hirez.programming.kicks-ass.net>
-References: <20190110220718.261134-1-surenb@google.com>
- <20190110220718.261134-6-surenb@google.com>
- <20190114102137.GB14054@worktop.programming.kicks-ass.net>
- <CAJuCfpGUWs0E9oPUjPTNm=WhPJcE_DBjZCtCiaVu5WXabKRW6A@mail.gmail.com>
+        Wed, 16 Jan 2019 08:26:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732880AbfAPN0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:26:24 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BA3920651;
+        Wed, 16 Jan 2019 13:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547645184;
+        bh=opnxPWfcl8lROKcOERNn51KMVYIbbdUZt/fNQMzRB1c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lRQie5cQpLa3QXBPAm7bqOWcMmb7z6Gwx5uFZhP5mW3mzcMwscQk+/5EVfOXGuKq1
+         KngOW/3YBc+RPPT9fRxnJV1ja3kF+2j5NlNNsX4jGZ0xxU5bV/GLQdZz7fYBfvT5Ol
+         5hyoq5y5nwRnuLtng5LPx5eY6GSgBqmxbBqoh+pA=
+Date:   Wed, 16 Jan 2019 21:25:55 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] arm64: dts: imx8qxp: Fix MU4_INT number
+Message-ID: <20190116132554.GB17702@dragon>
+References: <20190116132124.4383-1-daniel.baluta@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpGUWs0E9oPUjPTNm=WhPJcE_DBjZCtCiaVu5WXabKRW6A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190116132124.4383-1-daniel.baluta@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 11:30:12AM -0800, Suren Baghdasaryan wrote:
-> For memory ordering (which Johannes also pointed out) the critical point is:
+On Wed, Jan 16, 2019 at 01:21:36PM +0000, Daniel Baluta wrote:
+> MU4_INT correct number is 180, while 179 is for MU3_INT.
 > 
-> times[cpu] += delta           | if g->polling:
-> smp_wmb()                     |   g->polling = polling = 0
-> cmpxchg(g->polling, 0, 1)     |   smp_rmb()
->                               |   delta = times[*] (through goto SLOWPATH)
-> 
-> So that hotpath writes to times[] then g->polling and slowpath reads
-> g->polling then times[]. cmpxchg() implies a full barrier, so we can
-> drop smp_wmb(). Something like this:
-> 
-> times[cpu] += delta           | if g->polling:
-> cmpxchg(g->polling, 0, 1)     |   g->polling = polling = 0
->                               |   smp_rmb()
->                               |   delta = times[*] (through goto SLOWPATH)
-> 
-> Would that address your concern about ordering?
+> Fixes: 3d91ba65fec ("arm64: dts: imx: add imx8qxp support")
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 
-cmpxchg() implies smp_mb() before and after, so the smp_wmb() on the
-left column is superfluous.
-
-The right hand column is actively wrong; because that reads like it
-wants to order a store (g->polling = 0) and a load (d = times[]), and
-therefore requires smp_mb().
-
-Also, you probably want to use atomic_t for g->polling, because we
-(sadly) have architectures where regular stores and atomic ops don't
-work 'right'.
+Applied, thanks.
