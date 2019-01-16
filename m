@@ -2,126 +2,69 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B11A1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21031C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F02220859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:58:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PPNwGegn"
+	by mail.kernel.org (Postfix) with ESMTP id E42DC20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547618405;
+	bh=UxpPFcg8quuJKampHUxj7fYMcATihsz78UiYaLUAYjI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=JORsN4cH4/ml35mVxhEdhdlc6oxCuvBAzjJdPE2SNoJtdTqlgmAnoJfzZirBZldDx
+	 TOXnrXTqWcY+pXixcOBPkre0/d+VsDuGAAYm3X/gl+kvBOd+6sTILdWi5Ew935E162
+	 sIIA+Iwk406U3qLaAWxJehLCm4yqybG10adM/bgI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732909AbfAPF6y (ORCPT
+        id S1732967AbfAPGAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 00:58:54 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34491 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729061AbfAPF6y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 00:58:54 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u89-v6so4426033lje.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 21:58:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZZS1U4v3VDXUyEzZkch2LpzJzGSGpGfSwXpd93MlFK4=;
-        b=PPNwGegng2NcNnY4scnYrVjmXI/IOp7EcDNxzrLfLqB1Z6oAmDCmQFBvGCPnpyNDak
-         t+OaiqHTIpJ5WZRC0xGNwJ/DmR6oi4yJAQ1xfTGRPzfSsREsHHbLttRkZXqm3asv03xb
-         D2ojNpW7Jvq3VlY3z0zP4wGyOck8ObDRQi2NY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZZS1U4v3VDXUyEzZkch2LpzJzGSGpGfSwXpd93MlFK4=;
-        b=JPyq4JO+Y+8MY53dsMCtgmMb7mIGeP2OMFttf0UGTZs25TEMbl+65tQizvtzHpZcs7
-         ARWCmnBMd3EcGqiv4ZPGJjeZYpD6SMYymmynwznf9vEkF4CN755WydEaAgc1ftGEwDOT
-         wnVv6t3ddzrmDOvG9rdtlmD4EuyvQ0YOfwZtSORSDF4VzqscrKEPuqxyY3tZAKroHANS
-         uvWFmeez0DdavA4K1hRRrhg4efWJnWggXLKJZ5AsoUwZZ00DRWafT+bBYtHVaunJtiE7
-         r8QttChRBUPka0aL2yv0dZVf3RbgYa8cjwg2W5vXGWP76sM70YTn9nUihfCnQvhe4i7O
-         L20Q==
-X-Gm-Message-State: AJcUukck+Hx6319wdDg3k7Y99wHy//VHaJr0MLbo+iu13MqCYC05Q36k
-        w6uaNgFCQLvJfUBL8hlPZ7Kr8vf/Kvs=
-X-Google-Smtp-Source: ALg8bN6jt9B4YiFymp5OLcI7IP0SDkvfggYAYsrDoHs/ac0UBhEykeDnyVUN5Y631Rtqjt5AET9g9A==
-X-Received: by 2002:a2e:9d17:: with SMTP id t23-v6mr5220180lji.57.1547618331595;
-        Tue, 15 Jan 2019 21:58:51 -0800 (PST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id m21sm987239lfl.97.2019.01.15.21.58.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 21:58:50 -0800 (PST)
-Received: by mail-lf1-f47.google.com with SMTP id e26so3939427lfc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 21:58:49 -0800 (PST)
-X-Received: by 2002:a19:4287:: with SMTP id p129mr5557953lfa.135.1547618329349;
- Tue, 15 Jan 2019 21:58:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com>
- <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
- <20190110122442.GA21216@nautica> <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
- <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
- <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net> <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
- <20190116054613.GA11670@nautica>
-In-Reply-To: <20190116054613.GA11670@nautica>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 16 Jan 2019 17:58:32 +1200
-X-Gmail-Original-Message-ID: <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
-Message-ID: <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 16 Jan 2019 01:00:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732578AbfAPGAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 01:00:02 -0500
+Subject: Re: [GIT PULL] SELinux fixes for v5.0 (#1)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547618401;
+        bh=UxpPFcg8quuJKampHUxj7fYMcATihsz78UiYaLUAYjI=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=v0VzdBzQXf+CyT2AxtgSNiRce3ljT0odNyW4O5XvGhVNIoh3vapqGUxk5+NLwFxbf
+         CTq6o4KuCo89hR93UZPnVaUA/PBpf8VNgSSEuUd+82PCzgkQs55IsgVi+oohOtjAWF
+         mQt+yHdWuRq+dyl+ZJdtY0IAj+gzuqy+Y7hcMudo=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhSOqYnEPUJhcXTg4yAMw3c1+EOt9CE77JoJkdcz1MJNsA@mail.gmail.com>
+References: <CAHC9VhSOqYnEPUJhcXTg4yAMw3c1+EOt9CE77JoJkdcz1MJNsA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhSOqYnEPUJhcXTg4yAMw3c1+EOt9CE77JoJkdcz1MJNsA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20190115
+X-PR-Tracked-Commit-Id: 5b0e7310a2a33c06edc7eb81ffc521af9b2c5610
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 47bfa6d9dc8c060bf56554a465c9031e286d2f80
+Message-Id: <154761840177.28714.17165635207206358246.pr-tracker-bot@kernel.org>
+Date:   Wed, 16 Jan 2019 06:00:01 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 5:46 PM Dominique Martinet
-<asmadeus@codewreck.org> wrote:
->
-> "Being owner or has cap" (whichever cap) is probably OK.
-> On the other hand, writeability check makes more sense in general -
-> could we somehow check if the user has write access to the file instead
-> of checking if it currently is opened read-write?
+The pull request you sent on Tue, 15 Jan 2019 17:24:58 -0500:
 
-That's likely the best option. We could say "is it open for write, or
-_could_ we open it for writing?"
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20190115
 
-It's a slightly annoying special case, and I'd have preferred to avoid
-it, but it doesn't sound *compilcated*.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/47bfa6d9dc8c060bf56554a465c9031e286d2f80
 
-I'm on the road, but I did send out this:
+Thank you!
 
-    https://lore.kernel.org/lkml/CAHk-=wif_9nvNHJiyxHzJ80_WUb0P7CXNBvXkjZz-r1u0ozp7g@mail.gmail.com/
-
-originally. The "let's try to only do the mmap residency" was the
-optimistic "maybe we can just get rid of this complexity entirely"
-version..
-
-Anybody willing to test the above patch instead? And replace the
-
-   || capable(CAP_SYS_ADMIN)
-
-check with something like
-
-   || inode_permission(inode, MAY_WRITE) == 0
-
-instead?
-
-(This is obviously after you've reverted the "only check mmap
-residency" patch..)
-
-            Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
