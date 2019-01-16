@@ -2,102 +2,87 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F07AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2034C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F376520866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:07:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF7F12086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 01:25:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547600876;
-	bh=ZKHy6uhrsc1OV/zqKQdyUh6VIzyaCN0wZnffuBGFBkQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=e72ZovYtD6vt4ZhyahLNtwbyhjHF5QAamOkuU9VYWfGpls2kZdpkDs7nXiNMIO7wz
-	 Rr1fFJAd6ZtGN1UXtgvVU8dhMJ0Slhs+KFBGFh9PNXhrvELof8T5sUIqZILOT6f4+E
-	 g87dOZvwz4nId1qGXVvvsES/GUW4Fv7fTSxAYmiU=
+	s=default; t=1547601919;
+	bh=fMDru6jR7lcETWNo/xQCAzQiecq9fEFNraYCWhBRYa0=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=olEAxmZ2RYFonfFvnusuoTxS+2tGcwGN3D91qIAaAyc+jQZuvU4u+jGTtYcnEisYy
+	 6CQQ96wvNK/EPOuGI5yszJ2orlm6PCbP6bFMLKYwzuUWCMVSoJ9xZzKo8hGq53abkV
+	 NVHyRaNSqOySalM10XCiGkaGylPcht/33C3iHVMI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfAPBHq (ORCPT
+        id S1727222AbfAPBY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 20:07:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60966 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 20:24:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726841AbfAPBHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 20:07:46 -0500
-Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
+        id S1727134AbfAPBYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 20:24:55 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E848D20866;
-        Wed, 16 Jan 2019 01:07:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A068C2086D;
+        Wed, 16 Jan 2019 01:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547600865;
-        bh=ZKHy6uhrsc1OV/zqKQdyUh6VIzyaCN0wZnffuBGFBkQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iSVF+jmlly0DpAVrHjRwcPCszGEAXfIEG1TZOaVWJwPi831eV4DmFvN6v2TFacdCB
-         sZ1Wmv465jpU8D0RxbB/zCWrnIDfO2Z8kCvG71AzzAL7ogcG2Nrx1qfpVmids6QIX0
-         +7zvZDHEi3lES/o0TLybbFZo9j5YG0eRIb9gWWNI=
-Date:   Wed, 16 Jan 2019 09:07:38 +0800
-From:   Guo Ren <guoren@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     palmer@sifive.com, aou@eecs.berkeley.edu,
-        linux-arch@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
-        Mao Han <mao_han@c-sky.com>
-Subject: Re: [PATCH] riscv: fixup max_low_pfn with PFN_DOWN.
-Message-ID: <20190116010738.GA4817@guoren-Inspiron-7460>
-References: <1547280987-7630-1-git-send-email-guoren@kernel.org>
- <20190115153613.GC26443@infradead.org>
- <20190115161000.GA22705@guoren-Inspiron-7460>
- <20190115161254.GA19081@infradead.org>
+        s=default; t=1547601895;
+        bh=fMDru6jR7lcETWNo/xQCAzQiecq9fEFNraYCWhBRYa0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mqxevyRbeKsIvqMJhAPo3K7GZosOeXA1yPmth0qfJsvoWatd6hZrkuzBtk6XF9tk7
+         2sp9hZBs7/aDkz+F0mgQ+/6FRF8mPlDiCgKEBunkYlkM6gloOmzvZVMY+dbbFP0eSN
+         OzwJeCLoNbNYwQwsufI9DiLXWZ6m7i9kzMt+apq4=
+Subject: Re: [PATCH 4.4 00/51] 4.4.171-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190115154846.928796000@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <302ba6a3-b07e-5a3e-75de-97aed818c83a@kernel.org>
+Date:   Tue, 15 Jan 2019 18:24:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115161254.GA19081@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
-
-I use PFN_DOWN() every where as possible and seems it's a habit
-problem. So let risc-v maintainer to choose "PFN_DOW()" or
-">> PAGE_SHIFT".
-
-Also the same with "end_of_DRAM & max_low_pfn".
-
-Best Regards
- Guo Ren
-
-On Tue, Jan 15, 2019 at 08:12:54AM -0800, Christoph Hellwig wrote:
-> On Wed, Jan 16, 2019 at 12:10:00AM +0800, Guo Ren wrote:
-> > > >  	set_max_mapnr(PFN_DOWN(mem_size));
-> > > > -	max_low_pfn = memblock_end_of_DRAM();
-> > > > +	max_low_pfn = PFN_DOWN(memblock_end_of_DRAM());
-> > > 
-> > > I know it is used just above, but can we please just switch this
-> > > code to use >> PAGE_SHIFT instead of PFN_DOWN, which just horribly
-> > > obsfucates what is going on?
-> > ???
-> > #define PFN_DOWN(x)	((x) >> PAGE_SHIFT)
-> > 
-> > phys_addr_t __init_memblock memblock_end_of_DRAM(void)
-> > {
-> > 	int idx = memblock.memory.cnt - 1;
-> > 
-> > 	return (memblock.memory.regions[idx].base + memblock.memory.regions[idx].size);
-> > }
-> > 
-> > What's the problem? PFN_DOWN() couldn't be used with function call?
+On 1/15/19 9:34 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.171 release.
+> There are 51 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> PFN_DOWN gives you the correct result.  But I think it actually
-> drastically reduces readability over just opencoding it.
+> Responses should be made by Thu Jan 17 15:48:21 UTC 2019.
+> Anything received after that time might be too late.
 > 
-> > My patch just want to point out that max_low_pfn is PFN not size. In fact
-> > there is no error for running without my patch :P
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.171-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
 > 
-> No, I think your patch is correct.  I just wonder if we could make
-> the code easier to read.
+> thanks,
+> 
+> greg k-h
+> 
+
+Compiled and booted on my test system. No dmesg regressions.
+
+thanks,
+-- Shuah
+
