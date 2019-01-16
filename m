@@ -2,91 +2,113 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62878C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 02:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B729BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 02:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A1D20651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 02:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8757E20866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 02:21:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547605288;
+	bh=ovWCjT45h4WTfSnSYYNC56vKpypy8+XVsA6zwQ+eda4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1gLoQTO2CXuFhduW6u4QCrTX2nSaN+ZMvFn/EbcO3pPWy2FZ/NSq7USKf2suXXq2C
+	 kMSPFKJ678LOn2kYN2aq3Hqr6qj5K7DL6MvsDBI3pGiums6ym3By4reNb4GDe9tPKL
+	 ajeP7izqDjcFLB3of0L6gVsU9ziRmouuvTGwxS5k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbfAPCMW (ORCPT
+        id S1728394AbfAPCV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 21:12:22 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:23626 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727988AbfAPCMT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 21:12:19 -0500
-X-UUID: d8cfba1f4c5742e0a1cc8f6d6a034e9b-20190116
-X-UUID: d8cfba1f4c5742e0a1cc8f6d6a034e9b-20190116
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 667861983; Wed, 16 Jan 2019 10:12:09 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 16 Jan 2019 10:12:06 +0800
-Received: from mtkslt306.mediatek.inc (10.21.14.136) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 16 Jan 2019 10:12:06 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Guochun Mao <guochun.mao@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v2 2/3] mtd: spi-nor: mtk-quadspi: add SNOR_HWCAPS_READ to spi_nor_hwcaps mask
-Date:   Wed, 16 Jan 2019 10:12:04 +0800
-Message-ID: <2afa18c0c898259fc244f15844c5319f71e811df.1547538621.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <74d710ed89fd505a49bce53b51f6cb489e313dbb.1547538621.git.ryder.lee@mediatek.com>
-References: <74d710ed89fd505a49bce53b51f6cb489e313dbb.1547538621.git.ryder.lee@mediatek.com>
+        Tue, 15 Jan 2019 21:21:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727933AbfAPCV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 21:21:26 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C17920651;
+        Wed, 16 Jan 2019 02:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547605286;
+        bh=ovWCjT45h4WTfSnSYYNC56vKpypy8+XVsA6zwQ+eda4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KoIIa8uoKVz6lNzs6WW3eIWhTgNLCaI9bUc/dwCEJ2A30bnDhc80AkWweYRrZ1si5
+         JPobZQ6rM7rJVe2SdyM6nUUwOcX58OqzOqcMG2SJ7Ehr1sz2K3Ewe7ZaLKnOTAHXxg
+         z5m+T7cE6AwZ10SmJzZ9UIpmo9vlorVYwU7USeaU=
+Date:   Wed, 16 Jan 2019 10:21:01 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Yang-Leo Li <leoyang.li@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        a.tropschug@ebs-systart.com, m.bittner@ebs-systart.com,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH v2 2/3] dt-bindings: arm: fsl: Add devicetree binding for
+ Oxalis
+Message-ID: <20190116022100.GC15808@dragon>
+References: <20190114102053.16013-1-manivannan.sadhasivam@linaro.org>
+ <20190114102053.16013-3-manivannan.sadhasivam@linaro.org>
+ <CAL_JsqJpRPrCpRTpqh1v6JZwpEtZnaeuLTHR+0EiMSoxbk9zeQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: B3FC28A5443B1225512AC62F3AEA0E517B8EEF86F66CA44A453F40A9675B0B082000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJpRPrCpRTpqh1v6JZwpEtZnaeuLTHR+0EiMSoxbk9zeQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guochun Mao <guochun.mao@mediatek.com>
+On Mon, Jan 14, 2019 at 12:02:47PM -0600, Rob Herring wrote:
+> On Mon, Jan 14, 2019 at 4:21 AM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > Add devicetree binding for Oxalis board in JSON format. While adding
+> > that, let's fix the description for LS1012A also.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/arm/fsl.yaml | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > index d34fe0749199..0f30142fe316 100644
+> > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > @@ -173,12 +173,13 @@ properties:
+> >                - fsl,vf610
+> >                - fsl,vf610m4
+> >
+> > -      - description: LS1021A based Boards
+> > +      - description: LS1012A based Boards
+> 
+> Well, yes that was wrong...
+> 
+> >          items:
+> >            - enum:
+> >                - fsl,ls1012a-rdb
+> >                - fsl,ls1012a-frdm
+> >                - fsl,ls1012a-qds
+> > +              - ebs-systart,oxalis
+> 
+> Sort alphabetically.
+> 
+> >            - const: fsl,ls1021a
+> 
+> And this is wrong too.
+> 
+> I you just change it, then we will be missing an entry for LS1021A.
+> What's the status of that SoC because there is no board dts file? We
+> should not have .dtsi files in the kernel which don't get built.
 
-SNOR_HWCAPS_READ should be supported by this controller, so add this
-flag to spi_nor_hwcaps mask.
+Hmm, I do not see any LS1021A SoC .dtsi in the tree.  I suspect it's
+just a typo of LS1012A.
 
-Signed-off-by: Guochun Mao <guochun.mao@mediatek.com>
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
-Changes since v2: Revise commit msg. 
-Changes since v1: none. 
----
- drivers/mtd/spi-nor/mtk-quadspi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+@Leo, do we have a LS1021A SoC?
 
-diff --git a/drivers/mtd/spi-nor/mtk-quadspi.c b/drivers/mtd/spi-nor/mtk-quadspi.c
-index 5442993..d9eed68 100644
---- a/drivers/mtd/spi-nor/mtk-quadspi.c
-+++ b/drivers/mtd/spi-nor/mtk-quadspi.c
-@@ -431,7 +431,8 @@ static int mtk_nor_init(struct mtk_nor *mtk_nor,
- 			struct device_node *flash_node)
- {
- 	const struct spi_nor_hwcaps hwcaps = {
--		.mask = SNOR_HWCAPS_READ_FAST |
-+		.mask = SNOR_HWCAPS_READ |
-+			SNOR_HWCAPS_READ_FAST |
- 			SNOR_HWCAPS_READ_1_1_2 |
- 			SNOR_HWCAPS_PP,
- 	};
--- 
-1.9.1
-
+Shawn
