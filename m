@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237E0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876D6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E120320657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4603820657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:30:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Y54uvjGK"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="dZbUmsP7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405557AbfAPQaq (ORCPT
+        id S2405638AbfAPQa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:30:46 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:41458 "EHLO
+        Wed, 16 Jan 2019 11:30:56 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:50924 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731343AbfAPQ36 (ORCPT
+        by vger.kernel.org with ESMTP id S1730221AbfAPQ35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:29:58 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0GGRSKG013440
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:29:58 -0800
+        Wed, 16 Jan 2019 11:29:57 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0GGRZ5O012576
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:29:56 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=cfxzdm+Ctb+qXoh9zaBOoWgB6hlAqiTi3QJoE7vx1qs=;
- b=Y54uvjGKG9mEHATkjeQSrLLpkdVYzB0T3RzDss7R9fpaa9e6irJikvH4Mbpl7CQS8Llp
- VO6jRr3G9XsEYr7bxU3P2lWXIz7n8XbXagXatjJuYKIB67oSlOZfC6anHNUGToECAWCo
- /GRwQyURiK86MWd6TCZDCj+VyodKck4Vb+4= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2q277cg7d9-12
+ content-type; s=facebook; bh=4wXp/c/Qq3o/hgNoqZmm2HN5rTcKkiYixDqf13d4Ti4=;
+ b=dZbUmsP7olQfhnewvE3tm9x3D4qltLfHk0DuJWipVG7fcZrxn6U6xouveBx5OaVCOJ1x
+ 4DPSt6f/Cd//hiC2p56NGoWcsVSs2sECCnpMPpxl6IDlI37MeD4on+7+eLWXeqDaXpCV
+ IAqtwuf7MsIs/WJf8tFAnqJiLV4nZ6PEswE= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q26x0g98t-5
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:29:57 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:29:56 -0800
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Wed, 16 Jan 2019 08:29:53 -0800
+ Wed, 16 Jan 2019 08:29:50 -0800
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id EC33462E1DDD; Wed, 16 Jan 2019 08:29:49 -0800 (PST)
+        id 58F4862E1D0D; Wed, 16 Jan 2019 08:29:50 -0800 (PST)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
@@ -50,9 +50,9 @@ CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
         <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
         <kernel-team@fb.com>, <dsahern@gmail.com>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v10 perf, bpf-next 2/9] sync tools/include/uapi/linux/perf_event.h
-Date:   Wed, 16 Jan 2019 08:29:24 -0800
-Message-ID: <20190116162931.1542429-3-songliubraving@fb.com>
+Subject: [PATCH v10 perf, bpf-next 9/9] bpf: add module name [bpf] to ksymbols for bpf programs
+Date:   Wed, 16 Jan 2019 08:29:31 -0800
+Message-ID: <20190116162931.1542429-10-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190116162931.1542429-1-songliubraving@fb.com>
 References: <20190116162931.1542429-1-songliubraving@fb.com>
@@ -68,61 +68,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sync changes for PERF_RECORD_KSYMBOL
+With this patch, /proc/kallsyms will show BPF programs as
 
-Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  <addr> t bpf_prog_<tag>_<name> [bpf]
+
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- tools/include/uapi/linux/perf_event.h | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ kernel/kallsyms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 9de8780ac8d9..68c4da0227c5 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -372,7 +372,8 @@ struct perf_event_attr {
- 				context_switch :  1, /* context switch data */
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
--				__reserved_1   : 35;
-+				ksymbol        :  1, /* include ksymbol events */
-+				__reserved_1   : 34;
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index f3a04994e063..14934afa9e68 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -494,7 +494,7 @@ static int get_ksymbol_ftrace_mod(struct kallsym_iter *iter)
  
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -965,9 +966,32 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_NAMESPACES			= 16,
- 
-+	/*
-+	 * Record ksymbol register/unregister events:
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header	header;
-+	 *	u64				addr;
-+	 *	u32				len;
-+	 *	u16				ksym_type;
-+	 *	u16				flags;
-+	 *	char				name[];
-+	 *	struct sample_id		sample_id;
-+	 * };
-+	 */
-+	PERF_RECORD_KSYMBOL			= 17,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-+enum perf_record_ksymbol_type {
-+	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
-+	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
-+	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
-+};
-+
-+#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
-+
- #define PERF_MAX_STACK_DEPTH		127
- #define PERF_MAX_CONTEXTS_PER_STACK	  8
- 
+ static int get_ksymbol_bpf(struct kallsym_iter *iter)
+ {
+-	iter->module_name[0] = '\0';
++	strlcpy(iter->module_name, "bpf", MODULE_NAME_LEN);
+ 	iter->exported = 0;
+ 	return bpf_get_kallsym(iter->pos - iter->pos_ftrace_mod_end,
+ 			       &iter->value, &iter->type,
 -- 
 2.17.1
 
