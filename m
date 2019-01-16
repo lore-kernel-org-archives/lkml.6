@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BF6C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD96C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE392082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:35:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6E9620859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388799AbfAPIf3 (ORCPT
+        id S2388771AbfAPIf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:35:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44774 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388753AbfAPIf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Jan 2019 03:35:28 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+Received: from mx1.redhat.com ([209.132.183.28]:37376 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729346AbfAPIf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 03:35:26 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D0032C0528B9;
-        Wed, 16 Jan 2019 08:35:27 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A832381F13;
+        Wed, 16 Jan 2019 08:35:26 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-117-186.ams2.redhat.com [10.36.117.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B816F60BEC;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E40995D967;
         Wed, 16 Jan 2019 08:35:22 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id B7B72A213; Wed, 16 Jan 2019 09:35:21 +0100 (CET)
+        id EAECF9AD9; Wed, 16 Jan 2019 09:35:21 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Gerd Hoffmann <kraxel@redhat.com>,
@@ -39,92 +39,80 @@ Cc:     Gerd Hoffmann <kraxel@redhat.com>,
         VIRTUAL GPU),
         spice-devel@lists.freedesktop.org (open list:DRM DRIVER FOR QXL VIRTUAL
         GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/3] drm/qxl: add mode/framebuffer check functions
-Date:   Wed, 16 Jan 2019 09:35:19 +0100
-Message-Id: <20190116083521.22673-2-kraxel@redhat.com>
+Subject: [PATCH 3/3] drm/qxl: use kernel mode db
+Date:   Wed, 16 Jan 2019 09:35:21 +0100
+Message-Id: <20190116083521.22673-4-kraxel@redhat.com>
 In-Reply-To: <20190116083521.22673-1-kraxel@redhat.com>
 References: <20190116083521.22673-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 16 Jan 2019 08:35:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 16 Jan 2019 08:35:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a helper functions to check video modes.  Also add a helper to check
-framebuffer buffer objects, using the former for consistency.  That way
-we should not fail in qxl_primary_atomic_check() because video modes
-which are too big will not be added to the mode list in the first place.
+Add all standard modes from the kernel's video mode data base.
+Keep a few non-standard modes in the qxl mode list.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/qxl/qxl_display.c | 37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ drivers/gpu/drm/qxl/qxl_display.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
-index 1f8fddcc34..07a37d52c4 100644
+index b87f72f59e..9e49472872 100644
 --- a/drivers/gpu/drm/qxl/qxl_display.c
 +++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -191,6 +191,21 @@ void qxl_display_read_client_monitors_config(struct qxl_device *qdev)
- 	}
- }
+@@ -256,34 +256,20 @@ static int qxl_add_monitors_config_modes(struct drm_connector *connector)
+ static struct mode_size {
+ 	int w;
+ 	int h;
+-} common_modes[] = {
+-	{ 640,  480},
++} extra_modes[] = {
+ 	{ 720,  480},
+-	{ 800,  600},
+-	{ 848,  480},
+-	{1024,  768},
+ 	{1152,  768},
+-	{1280,  720},
+-	{1280,  800},
+ 	{1280,  854},
+-	{1280,  960},
+-	{1280, 1024},
+-	{1440,  900},
+-	{1400, 1050},
+-	{1680, 1050},
+-	{1600, 1200},
+-	{1920, 1080},
+-	{1920, 1200}
+ };
  
-+static int qxl_check_mode(struct qxl_device *qdev,
-+			  unsigned int width,
-+			  unsigned int height)
-+{
-+	if (width * height * 4 > qdev->vram_size)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+static int qxl_check_framebuffer(struct qxl_device *qdev,
-+				 struct qxl_bo *bo)
-+{
-+	return qxl_check_mode(qdev, bo->surf.width, bo->surf.height);
-+}
-+
- static int qxl_add_monitors_config_modes(struct drm_connector *connector,
-                                          unsigned *pwidth,
-                                          unsigned *pheight)
-@@ -466,12 +481,7 @@ static int qxl_primary_atomic_check(struct drm_plane *plane,
- 
- 	bo = gem_to_qxl_bo(state->fb->obj[0]);
- 
--	if (bo->surf.stride * bo->surf.height > qdev->vram_size) {
--		DRM_ERROR("Mode doesn't fit in vram size (vgamem)");
--		return -EINVAL;
--	}
--
--	return 0;
-+	return qxl_check_framebuffer(qdev, bo);
- }
- 
- static int qxl_primary_apply_cursor(struct drm_plane *plane)
-@@ -941,20 +951,11 @@ static enum drm_mode_status qxl_conn_mode_valid(struct drm_connector *connector,
+-static int qxl_add_common_modes(struct drm_connector *connector)
++static int qxl_add_extra_modes(struct drm_connector *connector)
  {
- 	struct drm_device *ddev = connector->dev;
- 	struct qxl_device *qdev = ddev->dev_private;
--	int i;
+ 	int i, ret = 0;
  
--	/* TODO: is this called for user defined modes? (xrandr --add-mode)
--	 * TODO: check that the mode fits in the framebuffer */
-+	if (qxl_check_mode(qdev, mode->hdisplay, mode->vdisplay) != 0)
-+		return MODE_BAD;
- 
--	if (qdev->monitors_config_width == mode->hdisplay &&
--	    qdev->monitors_config_height == mode->vdisplay)
--		return MODE_OK;
--
--	for (i = 0; i < ARRAY_SIZE(common_modes); i++) {
--		if (common_modes[i].w == mode->hdisplay && common_modes[i].h == mode->vdisplay)
--			return MODE_OK;
--	}
--	return MODE_BAD;
-+	return MODE_OK;
+-	for (i = 0; i < ARRAY_SIZE(common_modes); i++)
++	for (i = 0; i < ARRAY_SIZE(extra_modes); i++)
+ 		ret += qxl_add_mode(connector,
+-				    common_modes[i].w,
+-				    common_modes[i].h,
++				    extra_modes[i].w,
++				    extra_modes[i].h,
+ 				    false);
+ 	return ret;
  }
+@@ -954,7 +940,8 @@ static int qxl_conn_get_modes(struct drm_connector *connector)
+ 			pheight = head->height;
+ 	}
  
- static struct drm_encoder *qxl_best_encoder(struct drm_connector *connector)
+-	ret += qxl_add_common_modes(connector);
++	ret += drm_add_modes_noedid(connector, 8192, 8192);
++	ret += qxl_add_extra_modes(connector);
+ 	ret += qxl_add_monitors_config_modes(connector);
+ 	drm_set_preferred_mode(connector, pwidth, pheight);
+ 	return ret;
 -- 
 2.9.3
 
