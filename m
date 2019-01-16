@@ -2,98 +2,101 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB5EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1E3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F41520840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:24:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547634245;
-	bh=PZ8sk9lIN3Rzz8ye3tBUUja9CTbsuvBM7v/CPKqn+Y0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X/aoHZBOh6z9A+cE6/DnHQ5OpnQKyOAJCwl1WfMhYge6G8oiCbBA+JLnBN6HLiIn0
-	 ysl6aU5u9jU1fttgW6/kQuG+VsaLN4ki5G78CJyPUGosTSL9WM8ePcnsJCcEGeYtVX
-	 3Xf6NDB3T8KoWCPi6MxgNdz9B69ja8cbmgBb3TDU=
+	by mail.kernel.org (Postfix) with ESMTP id 2AAD820840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391983AbfAPKYC (ORCPT
+        id S2389093AbfAPKZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:24:02 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40722 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389494AbfAPKXq (ORCPT
+        Wed, 16 Jan 2019 05:25:02 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46236 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729269AbfAPKZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:23:46 -0500
-Received: by mail-lf1-f65.google.com with SMTP id v5so4437087lfe.7;
-        Wed, 16 Jan 2019 02:23:45 -0800 (PST)
+        Wed, 16 Jan 2019 05:25:01 -0500
+Received: by mail-qt1-f194.google.com with SMTP id y20so6480018qtm.13;
+        Wed, 16 Jan 2019 02:25:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=i9EBQmXkMNBYjjztGyv3wx7NdVyHDMd7kO+rKlttGLE=;
-        b=kkLHzJ00TwNmFhbXq4OLPrfLbKq9G4P6M1rc3Q93jKQ4z1kXHpMR10Lv6yIHfk1SWk
-         XNThPh22hneCiZ2l4W70Jw2rDVhvquMS5HYiycLfDsSixJ6RGxp460h88/ts5jkwogtv
-         3VrOrnozPGvjcPlebPVQMQEJDA7Jg3kSaDvwuO6M+91FVYDtzblnbnzA++67lzeAkU5/
-         9zLY7h6VIG1qmlgPIxAT1SPCKHy1H4p5tQel06qqLQ2Rj33tioZz/hoya/Xvp/foNNjL
-         7uS5Tpq/HuO0PqhdKd6OSQoDen3fMQlJbswJcrKS7nfHWlwigy5e2ptvriQiwsHCBE31
-         UIaw==
-X-Gm-Message-State: AJcUuke/cDUqZtFrnAsz/1smtWLYwm0+nrub0qDWQsyBuKQsIy+3b4dR
-        EM6pxnciCmDb7q62ct86UmE=
-X-Google-Smtp-Source: ALg8bN7yIMFMCBA2f5c/mOOOSy8yRqgip1DOVfs5fuddLh4zuAEBYYqsJRS/Gq//4z0DGx3SE5gOuA==
-X-Received: by 2002:a19:4f0c:: with SMTP id d12mr6095572lfb.121.1547634224443;
-        Wed, 16 Jan 2019 02:23:44 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm942115lju.61.2019.01.16.02.23.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 02:23:40 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@xi.terra>)
-        id 1gjiMH-0007vq-T4; Wed, 16 Jan 2019 11:23:41 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Hauke Mehrtens <hauke@hauke-m.de>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 3/3] net: dsa: lantiq_gswip: drop bogus drvdata check
-Date:   Wed, 16 Jan 2019 11:23:35 +0100
-Message-Id: <20190116102335.30433-4-johan@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190116102335.30433-1-johan@kernel.org>
-References: <20190116102335.30433-1-johan@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LmsvamTKgo+58LgedZq1GakVrL3Oa2JR2r8mNl8nyVI=;
+        b=at40uF9gLXB73WLeylDk4mWsjDDoWC4/NInB81kafbFudIfBExFllmxGU76u1t3xP+
+         HZR176KSEqAPGffLgp26/tI/taeOUEOY150tgjQnY3/KqzCxvlZxqz5WvhNP6T5LvF4M
+         DEk8tnmB4QGeQGx4joSgqXw/AAduKD8gzpFCAJjCCCJ0m9uw2ZYta3zFNjGWJabtOeTH
+         g6+A0jtC/6e9aM++0aK95MdK3C2Uk/wMxwCSeCXAZaKin9GQH0siNPVl2s4Lwx8a9xZD
+         zmOAMFIWf1qKmwOT5Oh3kUjmbpPGJ2Hn7ANGzrvIrewur24h3cjQFgh6qyHeggkfveLs
+         /Ljg==
+X-Gm-Message-State: AJcUukexUsqLrtTJ9YALKLDVEPcXs9zGzRyqNMSREjV0rAkhmio0mMde
+        jShGj4eoBnToYcRLpW40WfEP/XGtTIFWyJqxrVk=
+X-Google-Smtp-Source: ALg8bN7TPbSuZQ+urcPiZwntG9alwIAaqb+En/OZwB7UWwOChTvYfu39fhAsU8v0s7alyqMW/8JP2hpa18mO9YsbWWc=
+X-Received: by 2002:ac8:1d12:: with SMTP id d18mr6344298qtl.343.1547634300459;
+ Wed, 16 Jan 2019 02:25:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190114095804.27978-1-hch@lst.de> <CAPDyKFqCOWmd3kE=f3bgOgYX-aQKCmbuRH98sTr05sHN71vXZA@mail.gmail.com>
+In-Reply-To: <CAPDyKFqCOWmd3kE=f3bgOgYX-aQKCmbuRH98sTr05sHN71vXZA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 16 Jan 2019 11:24:43 +0100
+Message-ID: <CAK8P3a16ZoBt=HpZByb_1iH+-0e9O0F0sPX+ROfO9hWnJR94qg@mail.gmail.com>
+Subject: Re: remove block layer bounce buffering for MMC
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Ben Dooks <ben-linux@fluff.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The platform-device driver data is set on successful probe and will
-never be NULL on remove (or we have much bigger problems).
+On Mon, Jan 14, 2019 at 11:27 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> +Linus Walleij (recently made a cleanup of the mmc bounce buffering code).
+>
+> On Mon, 14 Jan 2019 at 10:58, Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > Hi everyone,
+> >
+> > this series converts the remaining MMC host drivers to properly kmap the
+> > scatterlist entries it does PIO operations on, and then goes on to
+> > remove the usage of block layer bounce buffering (which I plan to remove
+> > eventually) from the MMC layer.
+> >
+> > As a bonus I've converted various drivers to the proper scatterlist
+> > helpers so that at least in theory they are ready for chained
+> > scatterlists.
+> >
+> > All the changes are compile tested only as I don't have any of the
+> > hardware, so a careful review would be appreciated.
+>
+> Thanks for posting this. I will have a look as soon as I can, but
+> first needs to catch up with things since the holidays.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/net/dsa/lantiq_gswip.c | 3 ---
- 1 file changed, 3 deletions(-)
+Linus probably knows more here, but I have a vague recollection of
+the MMC bounce buffer code being needed mostly for performance
+reasons: when the scatterlist is discontiguous, that can result in
+a request being split up into separate MMC commands, which due
+to the lack of queued commands combined with the need for
+garbage collection on sub-page writes results in a huge slowdown
+compared to having larger bounce buffers all the time.
 
-diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
-index 5792674dd4e4..27d092cab40e 100644
---- a/drivers/net/dsa/lantiq_gswip.c
-+++ b/drivers/net/dsa/lantiq_gswip.c
-@@ -1126,9 +1126,6 @@ static int gswip_remove(struct platform_device *pdev)
- 	struct gswip_priv *priv = platform_get_drvdata(pdev);
- 	int i;
- 
--	if (!priv)
--		return 0;
--
- 	/* disable the switch */
- 	gswip_mdio_mask(priv, GSWIP_MDIO_GLOB_ENABLE, 0, GSWIP_MDIO_GLOB);
- 
--- 
-2.20.1
+We had discussed finding a different way to do this (separate
+from the bounce buffering), but I don't know if that ever happened,
+or if this is even the code that you are changing here.
 
+       Arnd
