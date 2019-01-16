@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCACC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB1BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7275920657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B251520657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="x2fCsLrP"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="P2AgmejP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392628AbfAPLtI (ORCPT
+        id S2392616AbfAPLtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:49:08 -0500
-Received: from mail-eopbgr30071.outbound.protection.outlook.com ([40.107.3.71]:27264
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        Wed, 16 Jan 2019 06:49:07 -0500
+Received: from mail-eopbgr70084.outbound.protection.outlook.com ([40.107.7.84]:57311
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2392534AbfAPLtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2392592AbfAPLtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Jan 2019 06:49:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UiDWC4QVf/ivpXJVFdoQTXI5VmYNSCbnRYKnu77U/yw=;
- b=x2fCsLrPvFWmM9mf7C8Lt4nYllz+7TuCEXsJhjnfR6xqNTtzPD0rNcOJs1G0rRtGRqj5pLasD7y/JjvxAeZaAU2XBKRfy72jGQOfKa/InFn1DOCzwC8RQjDe+xGhaCk6XqbDIyJX8u+PPMsclTcCuUBQf6MprevhH/JVMvvs4I4=
+ bh=4FO8jpD9HamqqppHoASdPuPHKCBVdRmqs0gCgBEH3wQ=;
+ b=P2AgmejPOWNe4LQMnKh/Ot5Gz13XBfH5rKvNJgNKz5D6lP5OLZ47r8WRx4dijwYKf97XlCAsHPHUsQBdg6ePOqnNOfk0aQTN/gZq7ykltTAp0EGMb1yzgvObkN7AoNvf5uaHZpOIRxt8yWRbVEoEGA720w1L/Xr4k9ghpkxa6NU=
 Received: from AM6PR04MB4007.eurprd04.prod.outlook.com (52.135.161.10) by
  AM6PR04MB6101.eurprd04.prod.outlook.com (20.179.5.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.24; Wed, 16 Jan 2019 11:48:46 +0000
+ 15.20.1537.24; Wed, 16 Jan 2019 11:48:47 +0000
 Received: from AM6PR04MB4007.eurprd04.prod.outlook.com
  ([fe80::65e5:2a3b:b9a8:3cd9]) by AM6PR04MB4007.eurprd04.prod.outlook.com
  ([fe80::65e5:2a3b:b9a8:3cd9%5]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 11:48:46 +0000
+ 11:48:47 +0000
 From:   Robert Chiras <robert.chiras@nxp.com>
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Philipp Zabel <p.zabel@pengutronix.de>,
@@ -49,12 +49,11 @@ CC:     Robert Chiras <robert.chiras@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 09/11] drm/mxsfb: Move pm_runtime_enable at the end of probe
-Thread-Topic: [PATCH 09/11] drm/mxsfb: Move pm_runtime_enable at the end of
- probe
-Thread-Index: AQHUrZFwDWaLp30y80KyD0bavPpg1A==
-Date:   Wed, 16 Jan 2019 11:48:46 +0000
-Message-ID: <1547639306-19151-10-git-send-email-robert.chiras@nxp.com>
+Subject: [PATCH 10/11] drm/mxsfb: Improve the axi clock usage
+Thread-Topic: [PATCH 10/11] drm/mxsfb: Improve the axi clock usage
+Thread-Index: AQHUrZFwh71/bvKDMU6drnSd3zNJaw==
+Date:   Wed, 16 Jan 2019 11:48:47 +0000
+Message-ID: <1547639306-19151-11-git-send-email-robert.chiras@nxp.com>
 References: <1547639306-19151-1-git-send-email-robert.chiras@nxp.com>
 In-Reply-To: <1547639306-19151-1-git-send-email-robert.chiras@nxp.com>
 Accept-Language: en-US
@@ -70,26 +69,26 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.7.4
 x-originating-ip: [95.76.156.53]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB6101;6:BUvTocEot2vELhLhGXzEZr6mLf5IJtH7YLXk8mBmFY/gCr1qYpOr2ryRIFD4SLS2VmECXgGSZgaKjLOe2Ezw1vkryD0u8fcLvHyjdQsED/dklbVnmlDyaj/A6o2duTk1c3JvleEFRFbD/g/Bd/zJQFKUrb7x7Skh88bx+LpTElIAHRPuhwHqP42sg5o3/JJ/JOE5rebVQNLTHQcr2nn9JTWTB2NiZJFkAI9gduj4kgCQOVpgabUF1pczyOz+UwGA1ADwYZGyZyO6PeF1XZ1pohfMnJgpFELRzmGZ8eco/ivLPp/ScOAPZkJpQjx/ulaMqAfKRMWRZDscZi3UJA80DbxPnNDwMFCC8AHwAJ6wJmVqwNdidUZfDpzsM9fKDuwU79IGRt5MbXXlpEwHcadBddzWJMRC8w84gcQCid7tiiT0yNNufWPHVU13LcC0n+8zRkrr11M7zgfTWJl1n08IMg==;5:YaZUWoADgq+yeucoMmALSq5q5DntA9kMh1UlPCplvRr8rsOfYcuZXBl5kt8Tvd/RYoJxI/TYhItXXGpsone38fJ9g8y8E605Jqd02DJLmSxfNNA8BuR7u8qvObyMM6MQdkOOVsTvYCpJN+5y/FgRkQiFHBWaUi1U4T9M8Ceze5cHFe9vdjRBaT6pgBLDErkID5thZt4Q/bQMDOtmaTq44w==;7:v+XNF+N90qUaUVjpF/iwv1uNlGqQADjpsjInNEcgtL20Yb/kSmOlXH49P1MEBN9dTiFWtpkkcvTHYEKmvsU4KGVYeRAB58+Kqd28U4plAw1Z3qlw/cPJlgIotutIg7EFOSDx/JhfP7pDPoKoWcw2RA==
-x-ms-office365-filtering-correlation-id: d636452e-4330-4256-9461-08d67ba892cb
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB6101;6:fzNsCCpIKkSZPrjgj81C6IhfBEiZWNxJQKzKyl3ZC+hE4oZMdpMRdRjKn5qoFs1zs8MK1kRDPmrD6UAECud2hw4OUMcsMbcvWJRQYxCMWiYIqh8dM6LJqTRJan0CoOfJX37dH5/nIrgL8y3dad54qznJbqTGtgRFpasLmk3krmJvFEvcJAGzaPkXO5oBb2G9uDreEkViYOK3YPXCoevJTvleDHvNQCvegYOVsgahOhtL8PKSZfw8ZdSbvOAxyz32dPZnmXMdwDnxfN9lnAiwKXZCDYxS6XAOl6gD3gOUtuV3R+u/N/BCZKFjhR2eOBptfHzhwnrtncFvuUyFqKcS5KX7Q3rU5wW9FDSl546bC6BiRAtcDHiBBMxe4OAjgQrLgwo1LNPXA7Wla+HoMePIoBZvyFk1Kl2cHT0I41Raltc2r+YaTkUuorlqZ3OQ63dfQ+m4G5C19DnF+4WxaXxsXA==;5:EYOarqA7gQTO8pCoIQFJlbn5GB8/FpbldRXQVSxdztSBcYQvtkY+58CVGfw/8HaXV0MSUq3LUP9EWkyUagPvkCmMELu9EeKlJSCnajl15Qdp4A3q7GsHe9xn7J3Y2fmSMby/pIAS3UkNtUTxt6sPb+n8OgVYC6B12ou+I6yeWaCXhemcMvlSFWND9EVA6XEW+dTnjTbkPem0nUE9J6UXMA==;7:RR3JwymNUxf6HpSRUunkUhpYoYNZ6ndfC11ermHf3yqPaAkoval+2aPJVv/enC7HqmEqL10BZOa1jcwWZda6ZhlSDrShPIvidMQRwru7hUJ1jtm0L5bq/twLJT/pVjric4AhEXBAp5EerND/UVHqPw==
+x-ms-office365-filtering-correlation-id: 16ecbc19-fc21-46d1-28bf-08d67ba89355
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB6101;
 x-ms-traffictypediagnostic: AM6PR04MB6101:
-x-microsoft-antispam-prvs: <AM6PR04MB61012D67D1E99B7996B67AEBE3820@AM6PR04MB6101.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM6PR04MB6101100C255AE3735693E6A4E3820@AM6PR04MB6101.eurprd04.prod.outlook.com>
 x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(366004)(376002)(396003)(199004)(189003)(316002)(81156014)(110136005)(102836004)(81166006)(476003)(26005)(2616005)(186003)(8676002)(7736002)(66066001)(3846002)(50226002)(105586002)(305945005)(6486002)(8936002)(99286004)(54906003)(6436002)(106356001)(6116002)(86362001)(2906002)(44832011)(14454004)(478600001)(486006)(71200400001)(68736007)(97736004)(5660300001)(53936002)(76176011)(36756003)(5024004)(256004)(446003)(11346002)(25786009)(386003)(6506007)(6512007)(52116002)(4326008)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6101;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(1496009)(136003)(39860400002)(346002)(366004)(376002)(396003)(199004)(189003)(316002)(81156014)(110136005)(102836004)(81166006)(476003)(26005)(2616005)(186003)(8676002)(7736002)(66066001)(3846002)(50226002)(105586002)(305945005)(6486002)(8936002)(99286004)(54906003)(6436002)(106356001)(6116002)(86362001)(2906002)(44832011)(14454004)(478600001)(486006)(71200400001)(68736007)(97736004)(5660300001)(53936002)(76176011)(36756003)(256004)(446003)(14444005)(11346002)(25786009)(386003)(6506007)(6512007)(52116002)(4326008)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6101;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Mo0Gk3SNJ1vtUe2/77RgCb9e6nahVK4G7g1LZvLTV+/WiLJGj26WRIFUABucPhWz7m4IvPPmjXIPYOrBKED7AXFCKdRYU8iESS8OOG7ko7ovfvkXHJihizLdIqi9Vu/l77YxyrboaHdzs5fVdYkgjUII6WqugVdj5HaXPDU43NbH6BmsNMfE591edwdqbWDsjEfJ96yBv4Vzg/VBNZ8nC6Sag0B3xKBxkB6YC38JsbOB5KqRD1A5+HWW5BmVOH2UJVeKzDq+re15Hn4Q9kv0/hUGsg6GmdD/wk+H2o3mowwQfLHcUDL6ROOMceQ/1xNUoao+h7KfaDnXY4EjIdgNYOT4GFr+K8aBaVTY6sqdEJQmpyKC8xFGLSNTwIgRNTOnrwFPwkxggp/501oxZoLPtG39Fj7HQGsAbo6vQB1cu8o=
+x-microsoft-antispam-message-info: t+E/+eLPDrsPH1ZzIDRixVXm35bZ7L3NdnhbvjK6O27ovedC1JrCSuiuBX6nxmCrRA+L+cX+sb6v30OvdAEsbwrOYa8gSvZe0XoT9Ei27LBmrWZfoXYwCHt6Ud+jtlBdPRrEO6CwKXf9WNds9Fgc27A2ykqSAmKqGLyymyTmpaxMpay/GDzxdwqs1bvNcWGzH7vV5WOTiiV8tb33HPOrPAZ9xqtJTf3QmWhwvxRFa8Dhxpv6VuRLGUD89SQ9kjBNw1XN5oETxnP3wR3C8PPVtIDc9e7BaucwTcqnGSae2jy0tjYzngWwPRuV+wMCWlYMhlRXFO4pxDJnXCIFsv+/xWV9ApE4LGKATEpAu4wvvZo/YDWepUTQTIrnTYGhHefgl7KsNLtXqeJJTjlTf5K9CJA892npBcHOumX6IgMSYME=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d636452e-4330-4256-9461-08d67ba892cb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 11:48:46.1027
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16ecbc19-fc21-46d1-28bf-08d67ba89355
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 11:48:47.0023
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -99,101 +98,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the pm_runtime_enable call at the end of probbe, since it was made too
-early, causing issues to DRM enable routines.
+Currently, the enable of the axi clock return status is ignored, causing
+issues when the enable fails then we try to disable it. Therefore, it is
+better to check the return status and disable it only when enable
+succeeded.
+Also, remove the helper functions around clk_axi, since we can directly
+use the clk API function for enable/disable the clock. Those functions
+are already checking for NULL clk and returning 0 if that's the case.
 
 Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
+Acked-by: Leonard Crestez <leonard.crestez@nxp.com>
 ---
- drivers/gpu/drm/mxsfb/mxsfb_drv.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/mxsfb/mxsfb_crtc.c |  8 ++++----
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 32 +++++++++++++-------------------
+ drivers/gpu/drm/mxsfb/mxsfb_drv.h  |  3 ---
+ 3 files changed, 17 insertions(+), 26 deletions(-)
 
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxs=
+fb_crtc.c
+index 35d6f10..cbdbd47 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+@@ -411,7 +411,7 @@ void mxsfb_crtc_enable(struct mxsfb_drm_private *mxsfb)
+ {
+ 	dma_addr_t paddr;
+=20
+-	mxsfb_enable_axi_clk(mxsfb);
++	clk_prepare_enable(mxsfb->clk_axi);
+ 	writel(0, mxsfb->base + LCDC_CTRL);
+ 	mxsfb_crtc_mode_set_nofb(mxsfb);
+=20
+@@ -428,7 +428,7 @@ void mxsfb_crtc_enable(struct mxsfb_drm_private *mxsfb)
+ void mxsfb_crtc_disable(struct mxsfb_drm_private *mxsfb)
+ {
+ 	mxsfb_disable_controller(mxsfb);
+-	mxsfb_disable_axi_clk(mxsfb);
++	clk_disable_unprepare(mxsfb->clk_axi);
+ }
+=20
+ void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
+@@ -456,9 +456,9 @@ void mxsfb_plane_atomic_update(struct mxsfb_drm_private=
+ *mxsfb,
+=20
+ 	paddr =3D mxsfb_get_fb_paddr(mxsfb);
+ 	if (paddr) {
+-		mxsfb_enable_axi_clk(mxsfb);
++		clk_prepare_enable(mxsfb->clk_axi);
+ 		writel(paddr, mxsfb->base + mxsfb->devdata->next_buf);
+-		mxsfb_disable_axi_clk(mxsfb);
++		clk_disable_unprepare(mxsfb->clk_axi);
+ 	}
+=20
+ 	if (!fb || !old_fb)
 diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsf=
 b_drv.c
-index 3032007..9247c76 100644
+index 9247c76..34f3de1 100644
 --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
 +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -301,12 +301,10 @@ static int mxsfb_load(struct drm_device *drm, unsigne=
-d long flags)
- 	if (ret)
- 		return ret;
-=20
--	pm_runtime_enable(drm->dev);
--
- 	ret =3D drm_vblank_init(drm, MAX_CRTCS);
- 	if (ret < 0) {
- 		dev_err(drm->dev, "Failed to initialise vblank\n");
--		goto err_vblank;
-+		return ret;
- 	}
-=20
- 	/* Modeset init */
-@@ -315,7 +313,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
-long flags)
- 	ret =3D mxsfb_create_output(drm);
- 	if (ret < 0) {
- 		dev_err(drm->dev, "Failed to create outputs\n");
--		goto err_vblank;
-+		return ret;
- 	}
-=20
- 	ret =3D drm_simple_display_pipe_init(drm, &mxsfb->pipe, &mxsfb_funcs,
-@@ -323,7 +321,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
-long flags)
- 			mxsfb->connector);
- 	if (ret < 0) {
- 		dev_err(drm->dev, "Cannot setup simple display pipe\n");
--		goto err_vblank;
-+		return ret;
- 	}
-=20
- 	drm_crtc_vblank_off(&mxsfb->pipe.crtc);
-@@ -340,14 +338,14 @@ static int mxsfb_load(struct drm_device *drm, unsigne=
-d long flags)
- 		ret =3D drm_panel_attach(mxsfb->panel, mxsfb->connector);
- 		if (ret) {
- 			dev_err(drm->dev, "Cannot connect panel\n");
--			goto err_vblank;
-+			return ret;
- 		}
- 	} else if (mxsfb->bridge) {
- 		ret =3D drm_simple_display_pipe_attach_bridge(&mxsfb->pipe,
- 				mxsfb->bridge);
- 		if (ret) {
- 			dev_err(drm->dev, "Cannot connect bridge\n");
--			goto err_vblank;
-+			return ret;
- 		}
- 	}
-=20
-@@ -367,9 +365,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
-long flags)
-=20
- 	drm_mode_config_reset(drm);
-=20
--	pm_runtime_get_sync(drm->dev);
- 	ret =3D drm_irq_install(drm, platform_get_irq(pdev, 0));
--	pm_runtime_put_sync(drm->dev);
-=20
- 	if (ret < 0) {
- 		dev_err(drm->dev, "Failed to install IRQ handler\n");
-@@ -391,14 +387,14 @@ static int mxsfb_load(struct drm_device *drm, unsigne=
-d long flags)
-=20
- 	drm_helper_hpd_irq_event(drm);
-=20
-+	pm_runtime_enable(drm->dev);
-+
- 	return 0;
-=20
- err_cma:
- 	drm_irq_uninstall(drm);
- err_irq:
- 	drm_panel_detach(mxsfb->panel);
--err_vblank:
--	pm_runtime_disable(drm->dev);
-=20
- 	return ret;
+@@ -101,18 +101,6 @@ drm_pipe_to_mxsfb_drm_private(struct drm_simple_displa=
+y_pipe *pipe)
+ 	return container_of(pipe, struct mxsfb_drm_private, pipe);
  }
+=20
+-void mxsfb_enable_axi_clk(struct mxsfb_drm_private *mxsfb)
+-{
+-	if (mxsfb->clk_axi)
+-		clk_prepare_enable(mxsfb->clk_axi);
+-}
+-
+-void mxsfb_disable_axi_clk(struct mxsfb_drm_private *mxsfb)
+-{
+-	if (mxsfb->clk_axi)
+-		clk_disable_unprepare(mxsfb->clk_axi);
+-}
+-
+ /**
+  * mxsfb_atomic_helper_check - validate state object
+  * @dev: DRM device
+@@ -235,25 +223,31 @@ static void mxsfb_pipe_update(struct drm_simple_displ=
+ay_pipe *pipe,
+ static int mxsfb_pipe_enable_vblank(struct drm_simple_display_pipe *pipe)
+ {
+ 	struct mxsfb_drm_private *mxsfb =3D drm_pipe_to_mxsfb_drm_private(pipe);
++	int ret =3D 0;
++
++	ret =3D clk_prepare_enable(mxsfb->clk_axi);
++	if (ret)
++		return ret;
+=20
+ 	/* Clear and enable VBLANK IRQ */
+-	mxsfb_enable_axi_clk(mxsfb);
+ 	writel(CTRL1_CUR_FRAME_DONE_IRQ, mxsfb->base + LCDC_CTRL1 + REG_CLR);
+ 	writel(CTRL1_CUR_FRAME_DONE_IRQ_EN, mxsfb->base + LCDC_CTRL1 + REG_SET);
+-	mxsfb_disable_axi_clk(mxsfb);
++	clk_disable_unprepare(mxsfb->clk_axi);
+=20
+-	return 0;
++	return ret;
+ }
+=20
+ static void mxsfb_pipe_disable_vblank(struct drm_simple_display_pipe *pipe=
+)
+ {
+ 	struct mxsfb_drm_private *mxsfb =3D drm_pipe_to_mxsfb_drm_private(pipe);
+=20
++	if (clk_prepare_enable(mxsfb->clk_axi))
++		return;
++
+ 	/* Disable and clear VBLANK IRQ */
+-	mxsfb_enable_axi_clk(mxsfb);
+ 	writel(CTRL1_CUR_FRAME_DONE_IRQ_EN, mxsfb->base + LCDC_CTRL1 + REG_CLR);
+ 	writel(CTRL1_CUR_FRAME_DONE_IRQ, mxsfb->base + LCDC_CTRL1 + REG_CLR);
+-	mxsfb_disable_axi_clk(mxsfb);
++	clk_disable_unprepare(mxsfb->clk_axi);
+ }
+=20
+ static struct drm_simple_display_pipe_funcs mxsfb_funcs =3D {
+@@ -438,7 +432,7 @@ static irqreturn_t mxsfb_irq_handler(int irq, void *dat=
+a)
+ 	struct mxsfb_drm_private *mxsfb =3D drm->dev_private;
+ 	u32 reg;
+=20
+-	mxsfb_enable_axi_clk(mxsfb);
++	clk_prepare_enable(mxsfb->clk_axi);
+=20
+ 	reg =3D readl(mxsfb->base + LCDC_CTRL1);
+=20
+@@ -447,7 +441,7 @@ static irqreturn_t mxsfb_irq_handler(int irq, void *dat=
+a)
+=20
+ 	writel(CTRL1_CUR_FRAME_DONE_IRQ, mxsfb->base + LCDC_CTRL1 + REG_CLR);
+=20
+-	mxsfb_disable_axi_clk(mxsfb);
++	clk_disable_unprepare(mxsfb->clk_axi);
+=20
+ 	return IRQ_HANDLED;
+ }
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.h b/drivers/gpu/drm/mxsfb/mxsf=
+b_drv.h
+index 8b6f332..e75f319 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.h
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
+@@ -46,9 +46,6 @@ struct mxsfb_drm_private {
+ int mxsfb_setup_crtc(struct drm_device *dev);
+ int mxsfb_create_output(struct drm_device *dev);
+=20
+-void mxsfb_enable_axi_clk(struct mxsfb_drm_private *mxsfb);
+-void mxsfb_disable_axi_clk(struct mxsfb_drm_private *mxsfb);
+-
+ void mxsfb_crtc_enable(struct mxsfb_drm_private *mxsfb);
+ void mxsfb_crtc_disable(struct mxsfb_drm_private *mxsfb);
+ void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
 --=20
 2.7.4
 
