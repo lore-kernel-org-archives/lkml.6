@@ -2,144 +2,94 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20087C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5ACC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6BB1206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35E0C206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:41:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U5mElneQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbfAPXlB (ORCPT
+        id S1727699AbfAPXlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 18:41:01 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32814 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727465AbfAPXlA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 18:41:00 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c123so3849538pfb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 15:41:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9fv4Anz8yqfBEeE5rRzQxGaW+VVCut0hZE37ZV8uO3I=;
-        b=IHUead+PWXi3X2ZCqfxJTZ2V86VPPELZzaE4t3av0fqu3N8UF57IDdRARbFBK7jAOc
-         JX4PI9c9UGvWBV9b4etovkt5TQ3l4eK0eeEZlTViBif7nrRTRIgxL0oMhiMfqlu0Zq2c
-         KwQnQbshHrVf62eib48LVkN5a5EN0C2qXfY1TSfPfGpW5yMNQRa5pKnV/hdvJRu/XttJ
-         0r6thw73HsoDyGr12jNc2px+aKr8rHNvT8DcMK5oZnCuirK5x19Ee2ZTur9G7JI+div1
-         xyLWHvkV+nXwUpXiDSsEzJEiCJoa3MXeEk3volhxPp3RHf3LtL3ncyDvVLc/YP8lm0RP
-         sg2w==
-X-Gm-Message-State: AJcUuke9mCqeXrpV600qR0FxZl7pddcn6jzHCxeimEpS/75z5pxGpxOn
-        fa0lTnOK4A731cASxepD3gL4qA==
-X-Google-Smtp-Source: ALg8bN7x43Y2ua/thcPiCDEjmYhpCn2j68ik77XxtdyCh1QJgsO/X4O7t5AN5zFLH8bldW77yOhFhA==
-X-Received: by 2002:a63:6bc1:: with SMTP id g184mr11470849pgc.25.1547682059292;
-        Wed, 16 Jan 2019 15:40:59 -0800 (PST)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id h64sm11334292pfc.142.2019.01.16.15.40.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 15:40:58 -0800 (PST)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] arm64: dts: sdm845: Add CPU capacity values
-Date:   Wed, 16 Jan 2019 15:40:39 -0800
-Message-Id: <20190116234039.12935-1-mka@chromium.org>
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+        Wed, 16 Jan 2019 18:41:05 -0500
+Received: from ozlabs.org ([203.11.71.1]:50823 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727660AbfAPXlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 18:41:04 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43g3cY6LHdz9sBZ;
+        Thu, 17 Jan 2019 10:41:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547682061;
+        bh=oPLHSblTihb9CKxYo3oSwfyW6F+67G99oDCgOXZ88F0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=U5mElneQq5p3fCV8+KaFI95ToQQ6vpFfuHuoU5SWfuDJMVneUw9YRcB3KVgOxP1aA
+         yosULK7vNIK86JeVgN5fagX2ChTpFdVN30y2c+4iQktQv5TF9C8i5h0rUUxAwiXTi9
+         qTWwHAyDdUIy+z1d60OTdVv7XtEPw1KpJmoIK64g8S18Nx6MhP6TKu6atrmxoFfLUR
+         IgABECXVpglakMwKCJQwyo7L79RWnO42zZTPCLwXGjSjyLy6yKOKetJ5eicZ04huYD
+         LIvK3r2bjtYdvr2P7RaOi75soo7780iXqCc9QfUYXZKlzG95j6Y1Q9GB0O6uD9quen
+         hOF8LcK+OoPVA==
+Date:   Thu, 17 Jan 2019 10:40:43 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Firoz Khan <firoz.khan@linaro.org>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20190117104043.009ef499@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1=CnjxvyRx1E39Rg1rYP8ae"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specify the relative CPU capacity of all SDM845 AP cores.
+--Sig_/1=CnjxvyRx1E39Rg1rYP8ae
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The values were provided by Qualcomm engineers.
+Hi all,
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+After merging the akpm-current tree, today's linux-next build (any sh
+config) failed like this:
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index d9be5bba62c45..e01949fd44075 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -99,6 +99,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			capacity-dmips-mhz = <607>;
- 			qcom,freq-domain = <&cpufreq_hw 0>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
-@@ -115,6 +116,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			capacity-dmips-mhz = <607>;
- 			qcom,freq-domain = <&cpufreq_hw 0>;
- 			next-level-cache = <&L2_100>;
- 			L2_100: l2-cache {
-@@ -128,6 +130,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x200>;
- 			enable-method = "psci";
-+			capacity-dmips-mhz = <607>;
- 			qcom,freq-domain = <&cpufreq_hw 0>;
- 			next-level-cache = <&L2_200>;
- 			L2_200: l2-cache {
-@@ -141,6 +144,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x300>;
- 			enable-method = "psci";
-+			capacity-dmips-mhz = <607>;
- 			qcom,freq-domain = <&cpufreq_hw 0>;
- 			next-level-cache = <&L2_300>;
- 			L2_300: l2-cache {
-@@ -154,6 +158,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x400>;
- 			enable-method = "psci";
-+			capacity-dmips-mhz = <1024>;
- 			qcom,freq-domain = <&cpufreq_hw 1>;
- 			next-level-cache = <&L2_400>;
- 			L2_400: l2-cache {
-@@ -167,6 +172,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x500>;
- 			enable-method = "psci";
-+			capacity-dmips-mhz = <1024>;
- 			qcom,freq-domain = <&cpufreq_hw 1>;
- 			next-level-cache = <&L2_500>;
- 			L2_500: l2-cache {
-@@ -180,6 +186,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x600>;
- 			enable-method = "psci";
-+			capacity-dmips-mhz = <1024>;
- 			qcom,freq-domain = <&cpufreq_hw 1>;
- 			next-level-cache = <&L2_600>;
- 			L2_600: l2-cache {
-@@ -193,6 +200,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x700>;
- 			enable-method = "psci";
-+			capacity-dmips-mhz = <1024>;
- 			qcom,freq-domain = <&cpufreq_hw 1>;
- 			next-level-cache = <&L2_700>;
- 			L2_700: l2-cache {
--- 
-2.20.1.321.g9e740568ce-goog
+make[2]: *** No rule to make target '/kisskb/src/scripts/syscalltbl.sh', ne=
+eded by 'arch/sh/include/generated/asm/syscall_table.h'.  Stop.
+make[1]: *** [arch/sh/Makefile:232: archheaders] Error 2
 
+Probably caused by commit
+
+  60a47bb1b736 ("sh: generate uapi header and syscall table header files")
+
+I will revert that commit from linux-next today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1=CnjxvyRx1E39Rg1rYP8ae
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/wPsACgkQAVBC80lX
+0GyBxwf/SACiLoC4LJHW79XoBe4TPZLSLzefS92PAsoAfoG7S4654/bvKHjZCfmI
+ANH0oeALaW2QRLdkyIBV8kF5dZL5RgzS5Am8THuzDwpmIdu8HOurzO/s4HTpmfjc
+pYKIZ8OJUc2nGuSfMFFf+JoLKkaoRSoTBAMOXsoUox55vq5+jiLP0RSuz6KsgFDx
+FxScrV8OO673NReDMGE0+AUWdhaESuDTeiYb935+d1F53LZTUihDDYwOiq3oT3i/
+nlOZhw2hjw6ryunC/nKGjHO21Zo5KC2h/3a0YftFExdsxEC6ihwUV6rq1Bql00sB
+wnMd3jFJF3JVmsXbi/xAoD9LEaEpyA==
+=AhOp
+-----END PGP SIGNATURE-----
+
+--Sig_/1=CnjxvyRx1E39Rg1rYP8ae--
