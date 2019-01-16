@@ -2,118 +2,160 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5EAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88125C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 812C72086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:51:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6015D20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388196AbfAPGvb (ORCPT
+        id S2388213AbfAPGvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 01:51:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51948 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731274AbfAPGvb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 01:51:31 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0G6iMIb119239
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 01:51:30 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q1up8jdu2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 01:51:30 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 16 Jan 2019 06:51:28 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Jan 2019 06:51:25 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0G6pOlp1114580
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 06:51:24 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BCC3CA4040;
-        Wed, 16 Jan 2019 06:51:24 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 65FDEA4051;
-        Wed, 16 Jan 2019 06:51:23 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.226])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Jan 2019 06:51:23 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 16 Jan 2019 08:51:22 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH] mm/page_alloc: check return value of memblock_alloc_node_nopanic()
-Date:   Wed, 16 Jan 2019 08:51:21 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19011606-0016-0000-0000-0000024616F4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011606-0017-0000-0000-000032A031BE
-Message-Id: <1547621481-8374-1-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=874 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901160057
+        Wed, 16 Jan 2019 01:51:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50982 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388157AbfAPGvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 01:51:37 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 64FFA58E46;
+        Wed, 16 Jan 2019 06:51:36 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-86.pek2.redhat.com [10.72.12.86])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AACF55D961;
+        Wed, 16 Jan 2019 06:51:30 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 14:51:26 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Kairui Song <kasong@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, Baoquan He <bhe@redhat.com>,
+        kexec@lists.infradead.org, akpm@linux-foundation.org,
+        robert.moore@intel.com, erik.schmauss@intel.com,
+        rafael.j.wysocki@intel.com, Len Brown <lenb@kernel.org>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v2 2/2] x86, kexec_file_load: make it work with
+ efi=noruntime or efi=old_map
+Message-ID: <20190116065126.GC6468@dhcp-128-65.nay.redhat.com>
+References: <20190115095834.22617-1-kasong@redhat.com>
+ <20190115095834.22617-3-kasong@redhat.com>
+ <20190115231005.GF6596@zn.tnic>
+ <20190116033243.GB9649@dhcp-128-65.nay.redhat.com>
+ <CACPcB9fWoV=b3DwhmBAAgqDHc0x=PfSyEuqnZcAQjM=LLLkAQw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACPcB9fWoV=b3DwhmBAAgqDHc0x=PfSyEuqnZcAQjM=LLLkAQw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Jan 2019 06:51:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two early memory allocations that use
-memblock_alloc_node_nopanic() and do not check its return value.
-While this happens very early during boot and chances that the allocation
-will fail are diminishing, it is still worth to have proper checks for the
-allocation errors.
+On 01/16/19 at 01:09pm, Kairui Song wrote:
+> On Wed, Jan 16, 2019 at 11:32 AM Dave Young <dyoung@redhat.com> wrote:
+> >
+> > On 01/16/19 at 12:10am, Borislav Petkov wrote:
+> > > On Tue, Jan 15, 2019 at 05:58:34PM +0800, Kairui Song wrote:
+> > > > When efi=noruntime or efi=oldmap is used, EFI services won't be available
+> > > > in the second kernel, therefore the second kernel will not be able to get
+> > > > the ACPI RSDP address from firmware by calling EFI services and won't
+> > > > boot. Previously we are expecting the user to set the acpi_rsdp=<addr>
+> > > > on kernel command line for second kernel as there was no way to pass RSDP
+> > > > address to second kernel.
+> > > >
+> > > > After commit e6e094e053af ('x86/acpi, x86/boot: Take RSDP address from
+> > > > boot params if available'), now it's possible to set an acpi_rsdp_addr
+> > > > parameter in the boot_params passed to second kernel, this commit make
+> > > > use of it, detect and set the RSDP address when it's required for second
+> > > > kernel to boot.
+> > > >
+> > > > Tested with an EFI enabled KVM VM with efi=noruntime.
+> > > >
+> > > > Suggested-by: Dave Young <dyoung@redhat.com>
+> > > > Signed-off-by: Kairui Song <kasong@redhat.com>
+> > > > ---
+> > > >  arch/x86/kernel/kexec-bzimage64.c | 21 +++++++++++++++++++++
+> > > >  drivers/acpi/acpica/tbxfroot.c    |  3 +--
+> > > >  include/acpi/acpixf.h             |  2 +-
+> > > >  3 files changed, 23 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+> > > > index 53917a3ebf94..0a90dcbd041f 100644
+> > > > --- a/arch/x86/kernel/kexec-bzimage64.c
+> > > > +++ b/arch/x86/kernel/kexec-bzimage64.c
+> > > > @@ -20,6 +20,7 @@
+> > > >  #include <linux/mm.h>
+> > > >  #include <linux/efi.h>
+> > > >  #include <linux/verification.h>
+> > > > +#include <linux/acpi.h>
+> > > >
+> > > >  #include <asm/bootparam.h>
+> > > >  #include <asm/setup.h>
+> > > > @@ -255,8 +256,28 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+> > > >     /* Setup EFI state */
+> > > >     setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+> > > >                     efi_setup_data_offset);
+> > > > +
+> > > > +#ifdef CONFIG_ACPI
+> > > > +   /* Setup ACPI RSDP pointer in case EFI is not available in second kernel */
+> > > > +   if (!acpi_disabled && (!efi_enabled(EFI_RUNTIME_SERVICES) || efi_enabled(EFI_OLD_MEMMAP))) {
+> > > > +           /* Copied from acpi_os_get_root_pointer accordingly */
+> > > > +           params->acpi_rsdp_addr = boot_params.acpi_rsdp_addr;
+> > > > +           if (!params->acpi_rsdp_addr) {
+> > > > +                   if (efi_enabled(EFI_CONFIG_TABLES)) {
+> > > > +                           if (efi.acpi20 != EFI_INVALID_TABLE_ADDR)
+> > > > +                                   params->acpi_rsdp_addr = efi.acpi20;
+> > > > +                           else if (efi.acpi != EFI_INVALID_TABLE_ADDR)
+> > > > +                                   params->acpi_rsdp_addr = efi.acpi;
+> > > > +                   } else if (IS_ENABLED(CONFIG_ACPI_LEGACY_TABLES_LOOKUP)) {
+> > > > +                           acpi_find_root_pointer(&params->acpi_rsdp_addr);
+> > > > +                   }
+> > > > +           }
+> > > > +           if (!params->acpi_rsdp_addr)
+> > > > +                   pr_warn("RSDP is not available for second kernel\n");
+> > > > +   }
+> > > >  #endif
+> > >
+> > > Amazing the amount of ACPI RDSP parsing and fiddling patches flying
+> > > around these days...
+> > >
+> > > In any case, this needs to be synchronized with:
+> > >
+> > > https://lkml.kernel.org/r/20190107032243.25324-1-fanc.fnst@cn.fujitsu.com
+> > >
+> > > and checked whether the above can be used instead of sprinkling of ACPI
+> > > parsing code left and right.
+> >
+> > Both Baoquan and Chao are cced for comments.
+> > The above KASLR patches seems some early code to parsing acpi, but I think in this
+> > patch just call acpi function to get the root pointer no need to add the
+> > duplicate logic of if/else/else if.
+> >
+> > Kairui,  do you have any reason for the checking?  Is there some simple
+> > acpi function to just return the root pointer?
+> 
+> Hi, I'm afraid that would require moving multiple structure and
+> function out of .init,
+> acpi_os_get_root_pointer is an ideal function to do the job, but it's
+> in .init and (on x86) it will call x86_init.acpi.get_root_pointer (by
+> calling acpi_arch_get_root_pointer) which will also be freed after
+> init, unless I change the x86_init, move they out of .init which is
+> not a good idea.
+> 
+> Maybe I could split acpi_os_get_root_pointer into two, one gets freed
+> after init, one for later use. But the "acpi_rsdp_addr" trick only
+> works for x86, and this would change more common acpi driver code so
+> not sure if a good idea.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- mm/page_alloc.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Can the acpi root pointer be saved after initialized? If that is good
+then a new function to get it would be easier. But need opinion from
+acpi people.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d295c9bc01a8..7801accbe02a 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6376,10 +6376,14 @@ static void __ref setup_usemap(struct pglist_data *pgdat,
- {
- 	unsigned long usemapsize = usemap_size(zone_start_pfn, zonesize);
- 	zone->pageblock_flags = NULL;
--	if (usemapsize)
-+	if (usemapsize) {
- 		zone->pageblock_flags =
- 			memblock_alloc_node_nopanic(usemapsize,
- 							 pgdat->node_id);
-+		if (!zone->pageblock_flags)
-+			panic("Failed to allocate %ld bytes for zone %s pageblock flags\n",
-+			      usemapsize, zone->name);
-+	}
- }
- #else
- static inline void setup_usemap(struct pglist_data *pgdat, struct zone *zone,
-@@ -6609,6 +6613,9 @@ static void __ref alloc_node_mem_map(struct pglist_data *pgdat)
- 		end = ALIGN(end, MAX_ORDER_NR_PAGES);
- 		size =  (end - start) * sizeof(struct page);
- 		map = memblock_alloc_node_nopanic(size, pgdat->node_id);
-+		if (!map)
-+			panic("Failed to allocate %ld bytes for memory map\n",
-+			      size);
- 		pgdat->node_mem_map = map + offset;
- 	}
- 	pr_debug("%s: node %d, pgdat %08lx, node_mem_map %08lx\n",
--- 
-2.7.4
-
+Thanks
+Dave
