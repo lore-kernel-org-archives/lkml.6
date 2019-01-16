@@ -2,133 +2,146 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE074C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D7BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADB6A20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D76AF20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:42:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="DAzmUc/P"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QCX6EvMU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729364AbfAPSkN (ORCPT
+        id S1729369AbfAPSmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:40:13 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43670 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729330AbfAPSkM (ORCPT
+        Wed, 16 Jan 2019 13:42:07 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:40650 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbfAPSmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:40:12 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so3461691pfk.10
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:40:11 -0800 (PST)
+        Wed, 16 Jan 2019 13:42:07 -0500
+Received: by mail-ua1-f66.google.com with SMTP id n7so2528313uao.7
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:42:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZIyuPks/WGV+kSOuibV1hRX/RG5e3NayXJi0jgd0Yd0=;
-        b=DAzmUc/P9EAoHGBxRnG5TXJHlvMmXETUQpNdPquBETb3eLOPxpHWXN+V1AOCOP7Iyi
-         vPWwGrLZ0rvV0Ep2YY5cnQNCLI3LdhpNJZZct27W4SKsd9ca36tW3FcgDBO35E9TGAdW
-         DdldUI9Y6LQEYiGS2KIhz5ZC94+bZwejl0PPwpuDNcAG0Y102uAxY7TlTImEIjdsXtds
-         z08a6+P1friOWLEohNDd7bzq88/Bmh1jVna4QbDBG0LeAa1a0YqQXadoAxFsr03nC2Iv
-         i6E+R51sI0WzvlVud0XtvoJJpeDw+3Mj6HpM5IPgY1xjNYK3AQ3q3KL2VoEgKq8vdRCg
-         Mt6A==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cEnQV8MN4U/4B+Ox+HlUduKEEyFf3+VbksN6axDmC4E=;
+        b=QCX6EvMUxpjSHQXqO6/ODO1oXCy1BuA11y+vMK7fiUeONPrteA53TAvOuSBsuLikLu
+         IhUSBIU3XPO6w3BQmBFOOSu+vyUKVqUh1Wd2E9i73Dk3s2Xy7r0Urll6r7qQMK33ZIWZ
+         Vft9KXarjIKgzQizchu9yp8VxYeMyK38438yg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZIyuPks/WGV+kSOuibV1hRX/RG5e3NayXJi0jgd0Yd0=;
-        b=l2Ggtc97kdR3JD8GC27HW0JDhRIwgQvo1bjxn6Xhrrv/pCm1oEHwFarLbeWqB1YJun
-         wigRu+YqIZWfw0ypVFzlKuJgcKjbY86N0KT7S1WwbFERXUmW/c+sHG0VGzyN6nHdYJGq
-         mB5NImGm083CxVdqlRLxf7hJvuGtrhxMplXRuJzSMvXUppXmB7XNtCJR5uMX8Bnioi9O
-         UsibeaMr0OZ8gEn1TuIPiaL6kkXX2579IXTftNaa66OH6v2LJEZ1ODBoFvzy3i93TZe3
-         qpNsFxKKORYvFqrxfJi98cae0gljD5Uj/6HCojswVQs1AMsTwlI6V4qVAMCOxsAHeLuT
-         21uw==
-X-Gm-Message-State: AJcUukfqYxpszQ42FUA+sWw4w8xvsK9LI7hA2b11yseQ9kCIgihKjNDA
-        +0VWSwWp8hVgAHZE8keXqgN28w==
-X-Google-Smtp-Source: ALg8bN74aKWrlZ5d/KXkSzovgSdXj0Djizb1oF+8It99db1RNfrGA760zzg/AjeK4yQn/2QeG+B/1Q==
-X-Received: by 2002:a65:610d:: with SMTP id z13mr10317160pgu.427.1547664010914;
-        Wed, 16 Jan 2019 10:40:10 -0800 (PST)
-Received: from cisco ([2601:282:901:dd7b:c69:9cc7:f9cf:ff1b])
-        by smtp.gmail.com with ESMTPSA id v13sm8601079pff.20.2019.01.16.10.40.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 10:40:10 -0800 (PST)
-Date:   Wed, 16 Jan 2019 11:40:03 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     samir@embedur.com
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.co,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] uart: Fix crash in uart_write and uart_put_char
-Message-ID: <20190116184003.GF1642@cisco>
-References: <1547663287-4890-1-git-send-email-samir@embedur.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cEnQV8MN4U/4B+Ox+HlUduKEEyFf3+VbksN6axDmC4E=;
+        b=mCtN3zdSq8fcmsYLI2ucmYlQWaaTy1hlEOgyK+FcHlB1iWDxWLfXMxSw7iXStRZD/m
+         6XZLqU50tZrMKyPGx38dW0+ZiBwgDvsfQzj+8EZBXV/eTMMgsk9w90K2j3QQabAHyKSF
+         nXRpagH/WPoNORkceDOnbbMXhD7MpGrvdZcLdjT30HEyXndbu8Zbs4cBhyeSZLWRJcS4
+         oiFBtqqSUqDRmdXxsFSsviqfOSWYV7OS/+MTWzc21hsHGCK5j2psyJUj6jur9Me/inxo
+         KzxA7yo1fmyRyBaMdDonjO2u0gVwCFD7ByVD6sqHk/Yefwj2/caR0FgyFl6XWDe8dAoq
+         ITDA==
+X-Gm-Message-State: AJcUukfN9B5ptncv5ovB1LDanpGEBUTes+P3s00t4jSEbR8Ub5sIm2rS
+        JSBz0FkNb1l3pqtTg8sKGuevj/IGNSI=
+X-Google-Smtp-Source: ALg8bN7bfLmdrYBCCUB9nKQyLPrJZS8cWwFOc/7Eygl/D/MUsty3qRgk7VpaZlLL9ajCEH2npa6AbA==
+X-Received: by 2002:ab0:26cb:: with SMTP id b11mr4228008uap.112.1547664125124;
+        Wed, 16 Jan 2019 10:42:05 -0800 (PST)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id l10sm74471551vkl.54.2019.01.16.10.42.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 10:42:04 -0800 (PST)
+Received: by mail-vk1-f177.google.com with SMTP id s184so1666167vkd.6
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:42:03 -0800 (PST)
+X-Received: by 2002:a1f:4982:: with SMTP id w124mr4091463vka.4.1547664122884;
+ Wed, 16 Jan 2019 10:42:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547663287-4890-1-git-send-email-samir@embedur.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190112152844.26550-1-w@1wt.eu> <20190112152844.26550-6-w@1wt.eu>
+In-Reply-To: <20190112152844.26550-6-w@1wt.eu>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 16 Jan 2019 10:41:50 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+LvQsLSO+TtVr5hrUTYHA0Hqrc=pxPMv++erySJ8pV7g@mail.gmail.com>
+Message-ID: <CAGXu5j+LvQsLSO+TtVr5hrUTYHA0Hqrc=pxPMv++erySJ8pV7g@mail.gmail.com>
+Subject: Re: [PATCH 6/8] ASoC: intel: skylake: change snprintf to scnprintf
+ for possible overflow
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:28:07AM -0800, samir@embedur.com wrote:
-> From: Samir Virmani <samir@embedur.com>
-> 
-> We were experiencing a crash similar to the one reported as part of
-> commit:a5ba1d95e46e ("uart: fix race between uart_put_char() and
-> uart_shutdown()") in our testbed as well. We continue to observe the same
-> crash after integrating the commit a5ba1d95e46e ("uart: fix race between
-> uart_put_char() and uart_shutdown()")
-> 
-> On reviewing the change, the port lock should be taken prior to checking for
-> if (!circ->buf) in fn. __uart_put_char and other fns. that update the buffer
-> uart_state->xmit.
-> 
-> Traceback:
-> 
-> [11/27/2018 06:24:32.4870] Unable to handle kernel NULL pointer dereference
->                            at virtual address 0000003b
-> 
-> [11/27/2018 06:24:32.4950] PC is at memcpy+0x48/0x180
-> [11/27/2018 06:24:32.4950] LR is at uart_write+0x74/0x120
-> [11/27/2018 06:24:32.4950] pc : [<ffffffc0002e6808>]
->                            lr : [<ffffffc0003747cc>] pstate: 000001c5
-> [11/27/2018 06:24:32.4950] sp : ffffffc076433d30
-> [11/27/2018 06:24:32.4950] x29: ffffffc076433d30 x28: 0000000000000140
-> [11/27/2018 06:24:32.4950] x27: ffffffc0009b9d5e x26: ffffffc07ce36580
-> [11/27/2018 06:24:32.4950] x25: 0000000000000000 x24: 0000000000000140
-> [11/27/2018 06:24:32.4950] x23: ffffffc000891200 x22: ffffffc01fc34000
-> [11/27/2018 06:24:32.4950] x21: 0000000000000fff x20: 0000000000000076
-> [11/27/2018 06:24:32.4950] x19: 0000000000000076 x18: 0000000000000000
-> [11/27/2018 06:24:32.4950] x17: 000000000047cf08 x16: ffffffc000099e68
-> [11/27/2018 06:24:32.4950] x15: 0000000000000018 x14: 776d726966205948
-> [11/27/2018 06:24:32.4950] x13: 50203a6c6974755f x12: 74647075205d3333
-> [11/27/2018 06:24:32.4950] x11: 3a35323a36203831 x10: 30322f37322f3131
-> [11/27/2018 06:24:32.4950] x9 : 5b205d303638342e x8 : 746164206f742070
-> [11/27/2018 06:24:32.4950] x7 : 7520736920657261 x6 : 000000000000003b
-> [11/27/2018 06:24:32.4950] x5 : 000000000000817a x4 : 0000000000000008
-> [11/27/2018 06:24:32.4950] x3 : 2f37322f31312a5b x2 : 000000000000006e
-> [11/27/2018 06:24:32.4950] x1 : ffffffc0009b9cf0 x0 : 000000000000003b
-> 
-> [11/27/2018 06:24:32.4950] CPU2: stopping
-> [11/27/2018 06:24:32.4950] CPU: 2 PID: 0 Comm: swapper/2 Tainted: P      D    O    4.1.51 #3
-> [11/27/2018 06:24:32.4950] Hardware name: Broadcom-v8A (DT)
-> [11/27/2018 06:24:32.4950] Call trace:
-> [11/27/2018 06:24:32.4950] [<ffffffc0000883b8>] dump_backtrace+0x0/0x150
-> [11/27/2018 06:24:32.4950] [<ffffffc00008851c>] show_stack+0x14/0x20
-> [11/27/2018 06:24:32.4950] [<ffffffc0005ee810>] dump_stack+0x90/0xb0
-> [11/27/2018 06:24:32.4950] [<ffffffc00008e844>] handle_IPI+0x18c/0x1a0
-> [11/27/2018 06:24:32.4950] [<ffffffc000080c68>] gic_handle_irq+0x88/0x90
-> 
-> Fixes: a5ba1d95e46e ("uart: fix race between uart_put_char() and
->                       uart_shutdown()")
-> Signed-off-by: Samir Virmani <samir@embedur.com>
-> Cc: Tycho Andersen <tycho@tycho.ws>
+On Sat, Jan 12, 2019 at 7:28 AM Willy Tarreau <w@1wt.eu> wrote:
+>
+> From: Silvio Cesare <silvio.cesare@gmail.com>
+>
+> Change snprintf to scnprintf. There are generally two cases where using
+> snprintf causes problems.
+>
+> 1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
+> In this case, if snprintf would have written more characters than what the
+> buffer size (SIZE) is, then size will end up larger than SIZE. In later
+> uses of snprintf, SIZE - size will result in a negative number, leading
+> to problems. Note that size might already be too large by using
+> size = snprintf before the code reaches a case of size += snprintf.
+>
+> 2) If size is ultimately used as a length parameter for a copy back to user
+> space, then it will potentially allow for a buffer overflow and information
+> disclosure when size is greater than SIZE. When the size is used to index
+> the buffer directly, we can have memory corruption. This also means when
+> size = snprintf... is used, it may also cause problems since size may become
+> large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
+> configuration.
+>
+> The solution to these issues is to use scnprintf which returns the number of
+> characters actually written to the buffer, so the size variable will never
+> exceed SIZE.
+>
+> Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+> Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+> Cc: Jie Yang <yang.jie@linux.intel.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Greg KH <greg@kroah.com>
+> Signed-off-by: Willy Tarreau <w@1wt.eu>
+>
+> ---
+>  sound/soc/intel/skylake/skl-debug.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+>
+> diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
+> index 5d7ac2ee7a3c..bb28db734fb7 100644
+> --- a/sound/soc/intel/skylake/skl-debug.c
+> +++ b/sound/soc/intel/skylake/skl-debug.c
+> @@ -43,7 +43,7 @@ static ssize_t skl_print_pins(struct skl_module_pin *m_pin, char *buf,
+>         ssize_t ret = 0;
+>
+>         for (i = 0; i < max_pin; i++)
+> -               ret += snprintf(buf + size, MOD_BUF - size,
+> +               ret += scnprintf(buf + size, MOD_BUF - size,
+>                                 "%s %d\n\tModule %d\n\tInstance %d\n\t"
+>                                 "In-used %s\n\tType %s\n"
+>                                 "\tState %d\n\tIndex %d\n",
+>
 
-Acked-by: Tycho Andersen <tycho@tycho.ws>
+While working on a Coccinelle script to find more cases of this, I
+noticed that this code is buggy: it keeps overwriting the same
+position in the buf string: "buf + size" and don't take "ret" into
+account at all. This needs to be:
 
-Thanks,
+ret += scnprintf(buf + size + ret, MOD_BUF - size - ret,
 
-Tycho
+-- 
+Kees Cook
