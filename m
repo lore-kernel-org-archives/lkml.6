@@ -2,156 +2,118 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C36C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C093C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 900F920859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:45:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540BA20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:48:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IOTUfqLF"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GX7h7BWr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388056AbfAPGpS (ORCPT
+        id S2388099AbfAPGsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 01:45:18 -0500
-Received: from mail-eopbgr150044.outbound.protection.outlook.com ([40.107.15.44]:32752
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        Wed, 16 Jan 2019 01:48:08 -0500
+Received: from mail-eopbgr10086.outbound.protection.outlook.com ([40.107.1.86]:46048
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730889AbfAPGpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 01:45:17 -0500
+        id S1728367AbfAPGsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 01:48:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G5EFrSI6jX6xbi0YggkwfxLVpW8YV62Kc5ZoGRYrM/E=;
- b=IOTUfqLFusxaqvTN81iHbnfOsVRLKZfIY+Y4/cEeAcyY4jKZEkhF9dPFUNoxbALAxnOZyoo+G9jRTVJJBLleBotowhvF/tsaZeadqqDX6WH2Aoz93wOiFhVs8CiMhBudq1Gu1wdvlXiYnukHmTdJIqYFmBAV2OQIgkzf/1J//oI=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB6002.eurprd04.prod.outlook.com (20.178.114.33) with Microsoft SMTP
+ bh=QjC7m9W88gJibkRl3N7XKHTN/8Pax7jOvyefhG22enU=;
+ b=GX7h7BWraxQPzNKVMZV+QH7/nO8LamrUoMycZg0BFJ02K8J7NyA9WD9KzEOuUhasd9dAOj0wBvAuiZ8T0Cr6BQkwebjLoOC65jo3DBSXYWLIGrHwwURh8x4CAx7Hw7wySTSwgmqFV7OlMhBQTc89Vqb0lYfeQx6OhJjWrCI9T7g=
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
+ AM5PR0402MB2785.eurprd04.prod.outlook.com (10.175.41.15) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.26; Wed, 16 Jan 2019 06:45:13 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 06:45:13 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [RESEND] arm64: defconfig: Add i.MX8MQ boot necessary configs
-Thread-Topic: [RESEND] arm64: defconfig: Add i.MX8MQ boot necessary configs
-Thread-Index: AQHUql41bLWLh57rrUukHyLcrmJCyaWxeH5w
-Date:   Wed, 16 Jan 2019 06:45:13 +0000
-Message-ID: <AM0PR04MB42115A85AE100A1B35E25C4E80820@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1547287458-12693-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1547287458-12693-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: zh-CN, en-US
+ 15.20.1537.26; Wed, 16 Jan 2019 06:48:03 +0000
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::1c0c:51da:f585:5626]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::1c0c:51da:f585:5626%2]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
+ 06:48:03 +0000
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ran Wang <ran.wang_1@nxp.com>
+Subject: [PATCH 0/2] usb: dwc3: Add avoiding vbus glitch happen during xhci
+ reset
+Thread-Topic: [PATCH 0/2] usb: dwc3: Add avoiding vbus glitch happen during
+ xhci reset
+Thread-Index: AQHUrWdtsUeeCB078U219GKYD8sTDw==
+Date:   Wed, 16 Jan 2019 06:48:03 +0000
+Message-ID: <20190116064820.20007-1-ran.wang_1@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK0PR03CA0077.apcprd03.prod.outlook.com
+ (2603:1096:203:72::17) To AM5PR0402MB2865.eurprd04.prod.outlook.com
+ (2603:10a6:203:99::20)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
+ smtp.mailfrom=ran.wang_1@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [119.31.174.73]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB6002;6:FYiU5uV6xWgp/OEEmTym8qgEjTfdnqnUFmEeG+zzhYtAe32JHj0oQaS9UiLGrat4FbopGfV7NcSo/Unwxh49ht0kM6tkSlBUS6afPW5orSTJ3e53V6aPejpnfqNnbc9Ra7bExhtPglO29JfiGUrIKQnZXYUpZsR9TDRvsAnEx8Mf+BTbOtyup/2nAA+ucaDVVzhdDW5JSLSaHTemCLepPUc38L5x+D5XbShpSwYjoMBcfILs7unQ2hR2a8N0waViP4x7Ss2SrvG9rSxZKyda7WtRNMkFluzHDCQERpgi6uiJZTlmKRe79h1gs8spqPwvXcK+fLM7cMxKKlD0DbKPvRe0Vx148NIhVmEP7FqquTA56I223xUTW8lcVZ40+u3QPAOIRdyTbXyefhBlmmqP9lvaLfe9aAwcsVwOS8CUC2OKOUyODcM3ET7UxbuP94+bKMnI9eX1dwQq00dqQBG5rw==;5:Uum/Ts7o7pKpU0MgBF5hyVJ9KgpvJVY1+TBiToSOqjuh/+4yDR23flkf8BlutkzaHSFvpvBnehMbf9bPFEbsLg040qbbEhZ7t2kXbuoSJBywosgjzlbFhHM+cfoT1rgI6eJxs8uAr9YKiM+t5shJ+QmRuzlnFMChKmZDDlR5hP7UwhlYZawi5rk2BC/g1vMidPYSS7a1NxYNgHbjzNtVLg==;7:WxQxgMGHGtk4xf7Jt6NLbal/wGs/I0vZA6sBuFAKG4m/ku67Ee2ooZCDQ6mmpx7VDn6H0VFFFZ3h9fYgIiy74Gkk/6hmLdFQv24zdtLA6i+N60cpWLOtuXZoGkKLm2RTK7vGZr+9C7KjB+XkMcG1Cw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 0c49df9e-9c1b-46ee-64aa-08d67b7e2b0e
+x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2785;6:Zs2YUmBQqHqsG2pr7Fg8jSNG5F1fjvhvPX/8DPIz9FmMwTEMgMi5X1aT56MegkLG9nnomCVznGCVoVxwNStuHgYSkZfYTMD0NuTXX/HJtuAs6QmpfwvMLgVDpdO3CjcP4UO4gM61e5xFFWr7CoQmlbyqjy6OL1HhKEpI6A4pejq2H3cVqLgkMZ2QfDxDIlPhMQL54ACHZEkxRuQNzN9b7PZjBoly71yFDBSemwfkcwI8m68Qa7brzbipShaZ8neF+NwyxBc7TfhNCwK39sF4Vio2HlTNMLreAhYMiAY1woMLx+w0kirhrBES4BEpMNaiDQVY6Boa9t4NxT1jaLH3JR08rsKDpje5cfUjrRRKlzJFOVON+uhwvTqCecn9ToGOt6xSGi5eTHq2bLE6gHn3azqE8ZHBEAE1aLG+izzb0jx7WM/34yEwSxiou+TbUkEKYBSH+J6DDTsvAHmKug1UEg==;5:XRgofvROm/q5jF3Spc5nZuPVJzXpkLlKhwn0xt8YFIYJtB6/c3x0Eus20AGjbPXPcuar4/FWIFwQFDMyO+Lb/nzapD3xKCkGy44tEFPCevtibYIiwTzLs8+Pz8jH+JrNiaPCpuiO9nDw5eFNHPKOgPseyLGu5L905JwSlMs2cHrZui4KDcmIeNvfUBvZy9M21SOHONGslZTgIujjGlQB3Q==;7:CXC6AwA3DPuZVecVP6LFt/KvReeAmzSKaZeNeTZxJoa2yanXZXlPpZrvfO0sJIEkiTTxFEfUhD1kYk+x6TXNiPBZE+bmBxogoTMh/373ELBbEExnBxHfIaRflVnziTV5Gpkz/A9nTQFKn/bEoc1+wg==
+x-ms-office365-filtering-correlation-id: 0464a4cf-4933-4485-4d72-08d67b7e8fa3
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6002;
-x-ms-traffictypediagnostic: AM0PR04MB6002:
-x-microsoft-antispam-prvs: <AM0PR04MB6002132680B97E7E3608980F80820@AM0PR04MB6002.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2785;
+x-ms-traffictypediagnostic: AM5PR0402MB2785:
+x-microsoft-antispam-prvs: <AM5PR0402MB27856748085BCB4480326D73F1820@AM5PR0402MB2785.eurprd04.prod.outlook.com>
 x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(136003)(346002)(39860400002)(189003)(199004)(13464003)(26005)(305945005)(99286004)(6246003)(3846002)(74316002)(105586002)(106356001)(6116002)(7736002)(4326008)(11346002)(6436002)(446003)(66066001)(25786009)(68736007)(55016002)(476003)(186003)(256004)(229853002)(81166006)(316002)(110136005)(54906003)(81156014)(9686003)(44832011)(14454004)(2501003)(486006)(33656002)(97736004)(71190400001)(71200400001)(478600001)(5660300001)(2906002)(53546011)(6506007)(102836004)(86362001)(8676002)(7696005)(53936002)(8936002)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6002;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(346002)(366004)(51874003)(189003)(199004)(106356001)(105586002)(5660300001)(99286004)(6436002)(6486002)(6512007)(4744005)(52116002)(316002)(54906003)(110136005)(6306002)(486006)(2616005)(476003)(36756003)(186003)(1076003)(71200400001)(71190400001)(25786009)(4326008)(14444005)(256004)(386003)(102836004)(26005)(6506007)(66066001)(53936002)(97736004)(86362001)(68736007)(478600001)(14454004)(50226002)(966005)(7736002)(2906002)(305945005)(6116002)(3846002)(8936002)(81166006)(8676002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2785;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: QbfvlLrjxkNzzvVzgCQYtZHJ2K5FNOhaARxaPxuv4Oq/jKtBfdT8MILpiIpxasE/CwqjPkW4BgxqDNwiZS1XH1pGuDUXUUyKo2rejec1Jhcs6udB6Dzkyb9fkUiahyWsRgNJPQvCXus+y84ZEDUgZcXK0H1hADvBJeX0mtX2l7lKBiNm7xAMpIVQAZXprD2Essyf3uJ0wqyp7Ltti+NDVM/GIruP+bEq3h9BQJckHHfBbrUOGMvLdf6IrctjoYsucbYpydH+hdb+oEa5cjUhN5gyTXHkL1VVPGUdSAJDHztIu6poQ3tFOI4q5uxbyIHj2iGgwpBT4k0zE94dGcdLnZanl+f6eWs9nBVtoKJ3r6YQpEi7RU7HDV/iJ+IeDsY743B5uj0xYT2BtRCISHTh4y/bNbHM1WSI+02bpkG7xuw=
+x-microsoft-antispam-message-info: ajCjshReypKj89EfOxmvNSOUuhBRl3N8ugs+D2N8nJ9lze7a4m+xmF6E8TrrH0TIjNEWed+GDetwwvstCjetAXQ+k02L9PPAnec8whWxf7CNo06zwWi2G8YZOD3ag9s75nWZJ0Qx7QWJl1D4jqppspSsvtJ2fRClUBme9JRFVfz4m5NeazM0HFBL55rqcFthfHiuKuRXp6sQjEW9cnEyleAKqaH3h6ShKpfW7qEfgebb02rD8xdYNqN93LypN1N1gSOmYpaVgIKJkPLd+yer8GNPfOwnpEJPwnXM4QCum2ZhdSbOke5OrdHjNhxIPoIk2rbZve9J7vl3mycHhCNnLGvl9D6D28Vu1pvnYEB8y+P3gzLroCOW/3oGrsp2fExBY9qXSzoYMg3CUXzGAmlDHtYr8L77jTP3K5mYn+FXhlk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c49df9e-9c1b-46ee-64aa-08d67b7e2b0e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 06:45:13.6592
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0464a4cf-4933-4485-4d72-08d67b7e8fa3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 06:47:59.7420
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6002
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2785
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abel,
+This to fix USB enumeration compatibility issue found on DWC3 (host mode)
+IP only.
 
-> -----Original Message-----
-> From: Abel Vesa
-> Sent: Saturday, January 12, 2019 6:05 PM
-> Subject: [RESEND] arm64: defconfig: Add i.MX8MQ boot necessary configs
->=20
-> Enable all the i.MX8MQ configs necessary to boot.
->=20
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Some pre-discussion mails can be referred from:
+https://lkml.org/lkml/2018/11/23/387
+https://lkml.org/lkml/2018/11/22/683
 
-Would you rebase and resend with GPCV2 support added?
+As to the workaround, I know programming xhci register in DWC3 dirver
+(probe function) is not good from perspective of SW stack, but it seems
+to be the only place to fix this real existing problem (test result show
+that doing this in xhci-plat.c or xhci.c would not hlep on this kind of
+failure). If who have better idea, please let me know, thanks in advanced.
 
-Regards
-Dong Aisheng
+Ran Wang (2):
+ dt-bindings: Add workaround for host mode VBUS glitch when boot
+ dwc3 core driver: Add avoiding vbus glitch happen during xhci reset
 
-> ---
->  arch/arm64/configs/defconfig | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 0478ef9..e1d875a 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -43,6 +43,7 @@ CONFIG_ARCH_HISI=3Dy
->  CONFIG_ARCH_MEDIATEK=3Dy
->  CONFIG_ARCH_MESON=3Dy
->  CONFIG_ARCH_MVEBU=3Dy
-> +CONFIG_ARCH_MXC=3Dy
->  CONFIG_ARCH_QCOM=3Dy
->  CONFIG_ARCH_RENESAS=3Dy
->  CONFIG_ARCH_R8A774A1=3Dy
-> @@ -245,6 +246,7 @@ CONFIG_NET_XGENE=3Dy
->  CONFIG_ATL1C=3Dm
->  CONFIG_MACB=3Dy
->  CONFIG_THUNDER_NIC_PF=3Dy
-> +CONFIG_FEC=3Dy
->  CONFIG_HIX5HD2_GMAC=3Dy
->  CONFIG_HNS_DSAF=3Dy
->  CONFIG_HNS_ENET=3Dy
-> @@ -319,6 +321,8 @@ CONFIG_SERIAL_MESON_CONSOLE=3Dy
-> CONFIG_SERIAL_SAMSUNG=3Dy  CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
-> CONFIG_SERIAL_TEGRA=3Dy
-> +CONFIG_SERIAL_IMX=3Dy
-> +CONFIG_SERIAL_IMX_CONSOLE=3Dy
->  CONFIG_SERIAL_SH_SCI=3Dy
->  CONFIG_SERIAL_MSM=3Dy
->  CONFIG_SERIAL_MSM_CONSOLE=3Dy
-> @@ -365,6 +369,7 @@ CONFIG_SPI_SPIDEV=3Dm
->  CONFIG_SPMI=3Dy
->  CONFIG_PINCTRL_SINGLE=3Dy
->  CONFIG_PINCTRL_MAX77620=3Dy
-> +CONFIG_PINCTRL_IMX8MQ=3Dy
->  CONFIG_PINCTRL_IPQ8074=3Dy
->  CONFIG_PINCTRL_MSM8916=3Dy
->  CONFIG_PINCTRL_MSM8994=3Dy
-> @@ -617,6 +622,7 @@ CONFIG_COMMON_CLK_RK808=3Dy
-> CONFIG_COMMON_CLK_SCPI=3Dy  CONFIG_COMMON_CLK_CS2000_CP=3Dy
-> CONFIG_COMMON_CLK_S2MPS11=3Dy
-> +CONFIG_CLK_IMX8MQ=3Dy
->  CONFIG_CLK_QORIQ=3Dy
->  CONFIG_COMMON_CLK_PWM=3Dy
->  CONFIG_TI_SCI_CLK=3Dy
-> --
-> 2.7.4
+ Documentation/devicetree/bindings/usb/dwc3.txt |    3 +++
+ drivers/usb/dwc3/core.c |   47 +++++++++++++++++++++++++++++++++++++++++++=
+++++
+ drivers/usb/dwc3/core.h |   10 +++++++++-
+ 3 files changed, 60 insertions(+), 0 deletions(-)
+--=20
+1.7.1
 
