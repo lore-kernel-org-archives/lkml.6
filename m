@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5095EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E96C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2004F20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6681820859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:43:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wc/OT1Rq"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B+w4gOfS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391787AbfAPJn0 (ORCPT
+        id S2391794AbfAPJna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 04:43:26 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33794 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391771AbfAPJnY (ORCPT
+        Wed, 16 Jan 2019 04:43:30 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38741 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391777AbfAPJn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 04:43:24 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j2so6164457wrw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 01:43:23 -0800 (PST)
+        Wed, 16 Jan 2019 04:43:28 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m22so1251731wml.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 01:43:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=U3BNDRrIiDC9gX+eckawILhRIOf/eDTHG1vkELYvYtE=;
-        b=Wc/OT1Rq9Z3sW5vUlpQ/umlnkUWXtuD2H+KzVh4GKumNG4/BFGDcD87QvGq8gl4Oa8
-         WztWfx0ma2sUnte08FjSNBLrHXOnS5uhZuzRzKKlL89Hr4orhwMsPH7s5uGiv9VOFQZ+
-         Ib+51fAQKrbrxRoH7EGlyAmpSfMO/LrwT9H0Q=
+        bh=IF8O5IB660i5uISr2+XWnKBaqatYQfBFmBwhpEAXDiM=;
+        b=B+w4gOfSUmQtZBFsM9IOmNkQO7DxVOMJyoV+4sBrlbm9rsCUJNAEzXtwr+Xu7H306r
+         aGJOXOcC3i5MTCSupFRmglXycFAP41w2nHWTU2VlnyA9vEBWY3Aq6DlULyszojdEO3ex
+         xSc2wnF7RHLAjAsSM7qUDBwIivPfvQ6ymnFvk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=U3BNDRrIiDC9gX+eckawILhRIOf/eDTHG1vkELYvYtE=;
-        b=bCUt5wM9lyd4FYTu8zCM6NOKS5HIr0PMSQ5kKplvh59DLcev42chw4zAF59ohqKUAw
-         xS9cjyK04kTMXVl3MDomLlZwX7HmOI56yDDyz1Ofwq/xGSDHnfYcQBddSSNIhI4AsUkv
-         vxGegqg6VJ1l9/mWBQLowZqE2Xf9uU62Jw6/72leJbPfQKhSj+3WXjVSadknbCHR1Xry
-         eD5V/jnjHY+fh7g3XmQ7mp6B3A/m417KoxxVSuIoZNM2D67yp4uKaK07rc2ZgwQ39CjM
-         ZK6Ow2PzEGVHt84iDFZRfJVQwnztfRor0+fBgqrWsJmX0j790tqQilYv+HQ89USV+zeX
-         sfcw==
-X-Gm-Message-State: AJcUukdzy14neBJz4JHZGTJQadonRlUWygP03dHcVjwQhez1QV7bwgee
-        n7oDgV6kGk/m00L+fF0ZR1VELA==
-X-Google-Smtp-Source: ALg8bN4+n6TEe4LOtppx5BF99X7TGv4UvVEb9b2K9sd0X0GbCKesAbH+n4by64kV6lO1ZuQ3QdE6Jg==
-X-Received: by 2002:adf:8b4d:: with SMTP id v13mr6490941wra.282.1547631802479;
-        Wed, 16 Jan 2019 01:43:22 -0800 (PST)
+        bh=IF8O5IB660i5uISr2+XWnKBaqatYQfBFmBwhpEAXDiM=;
+        b=QjSmQCFfp2OVKfnlEkZJNTilQYwHmGLYYPQlolYi3jeTGoreALotbs3Cx3bdNB/bI4
+         pXMPHA3b4zsHxMvSkCzIQw757CUOSJUyFm3PIKxzrp/OcRbNr4FzgWhQjyZGQxPDCQLK
+         bGiuEHiX/nq1KJg7GDpPJqsXFOF4Gj3JxF83yI4PNjxqjN12yaoZjV5mPb3D+XhLnaIu
+         Yu3j5NbN+JJsdlKKJpfexeJ800NnX0rXwhVNZBveAsGsWGAb08fKnWe0NNCs9jCAKrIV
+         JFx1WafNBW78n3KXcF8OE1h2N+JyEY02QNQzQoCcOecPbiQWfCBhOAQnMTrA6K/mThDG
+         hwrw==
+X-Gm-Message-State: AJcUukd6HC5mC0ZQSzpFqWKPl6Ou+31rsEjxM9hGhRaeQ21PIyT8cdB/
+        ItV4uj47QUiNYDb/YG9LfDt9484XC1lStg==
+X-Google-Smtp-Source: ALg8bN6SMGOFIXXCsN/IDHM/xpAJ0Uz8mtSrOiJqPUXZ9ynkwZPbM2SCOwPDiQPEhg1xxxgXkKFY6w==
+X-Received: by 2002:a1c:9d57:: with SMTP id g84mr6899437wme.16.1547631805375;
+        Wed, 16 Jan 2019 01:43:25 -0800 (PST)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:596d:a8c4:e914:fdde])
-        by smtp.gmail.com with ESMTPSA id k19sm115996304wre.5.2019.01.16.01.43.21
+        by smtp.gmail.com with ESMTPSA id k19sm115996304wre.5.2019.01.16.01.43.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Jan 2019 01:43:21 -0800 (PST)
+        Wed, 16 Jan 2019 01:43:24 -0800 (PST)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     peterz@infradead.org, mingo@kernel.org,
         linux-kernel@vger.kernel.org
@@ -61,9 +61,9 @@ Cc:     rjw@rjwysocki.net, dietmar.eggemann@arm.com,
         pkondeti@codeaurora.org, quentin.perret@arm.com,
         srinivas.pandruvada@linux.intel.com,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v8 1/3] sched/fair: move rq_of helper function
-Date:   Wed, 16 Jan 2019 10:43:09 +0100
-Message-Id: <1547631791-16018-2-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH v8 3/3] sched/pelt: skip updating util_est when utilization is higher than cpu's capacity
+Date:   Wed, 16 Jan 2019 10:43:11 +0100
+Message-Id: <1547631791-16018-4-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547631791-16018-1-git-send-email-vincent.guittot@linaro.org>
 References: <1547631791-16018-1-git-send-email-vincent.guittot@linaro.org>
@@ -72,72 +72,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move rq_of() helper function so it can be used in pelt.c
+util_est is mainly meant to be a lower-bound for tasks utilization.
+That's why task_util_est() returns the actual util_avg when it's higher
+than the estimated utilization.
 
+With new invaraince signal and without any special check on samples
+collection, if a task is limited because of thermal capping for
+example, we could end up overestimating its utilization and thus
+perhaps generating an unwanted frequency spike when the capping is
+relaxed... and (even worst) it will take some more activations for the
+estimated utilization to converge back to the actual utilization.
+
+Since we cannot easily know if there is idle time in a CPU when a task
+completes an activation with a utilization higher then the CPU capacity,
+we skip the sampling when utilization is higher than cpu's capacity.
+
+Suggested-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/fair.c  | 13 -------------
- kernel/sched/sched.h | 16 ++++++++++++++++
- 2 files changed, 16 insertions(+), 13 deletions(-)
+ kernel/sched/fair.c  | 14 +++++++++-----
+ kernel/sched/sched.h |  7 +++++++
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ca46964..63b9151 100644
+index 9332863..2262c8a 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -248,13 +248,6 @@ const struct sched_class fair_sched_class;
-  */
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--
--/* cpu runqueue to which this cfs_rq is attached */
--static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
--{
--	return cfs_rq->rq;
--}
--
- static inline struct task_struct *task_of(struct sched_entity *se)
+@@ -3639,6 +3639,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
  {
- 	SCHED_WARN_ON(!entity_is_task(se));
-@@ -411,12 +404,6 @@ static inline struct task_struct *task_of(struct sched_entity *se)
- 	return container_of(se, struct task_struct, se);
+ 	long last_ewma_diff;
+ 	struct util_est ue;
++	int cpu;
+ 
+ 	if (!sched_feat(UTIL_EST))
+ 		return;
+@@ -3673,6 +3674,14 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+ 		return;
+ 
+ 	/*
++	 * To avoid overestimation of actual task utilization, skip updates if
++	 * we cannot grant there is idle time in this CPU.
++	 */
++	cpu = cpu_of(rq_of(cfs_rq));
++	if (task_util(p) > capacity_orig_of(cpu))
++		return;
++
++	/*
+ 	 * Update Task's estimated utilization
+ 	 *
+ 	 * When *p completes an activation we can consolidate another sample
+@@ -5541,11 +5550,6 @@ static unsigned long capacity_of(int cpu)
+ 	return cpu_rq(cpu)->cpu_capacity;
  }
  
--static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+-static unsigned long capacity_orig_of(int cpu)
 -{
--	return container_of(cfs_rq, struct rq, cfs);
+-	return cpu_rq(cpu)->cpu_capacity_orig;
 -}
 -
--
- #define for_each_sched_entity(se) \
- 		for (; se; se = NULL)
- 
+ static unsigned long cpu_avg_load_per_task(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 0ba0892..fd1bad2 100644
+index 4c506ea..455745e 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -951,6 +951,22 @@ struct rq {
+@@ -2230,6 +2230,13 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+ # define arch_scale_freq_invariant()	false
  #endif
- };
  
-+#ifdef CONFIG_FAIR_GROUP_SCHED
-+
-+/* cpu runqueue to which this cfs_rq is attached */
-+static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
++#ifdef CONFIG_SMP
++static inline unsigned long capacity_orig_of(int cpu)
 +{
-+	return cfs_rq->rq;
-+}
-+
-+#else	/* !CONFIG_FAIR_GROUP_SCHED */
-+
-+static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
-+{
-+	return container_of(cfs_rq, struct rq, cfs);
++	return cpu_rq(cpu)->cpu_capacity_orig;
 +}
 +#endif
 +
- static inline int cpu_of(struct rq *rq)
- {
- #ifdef CONFIG_SMP
+ #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+ /**
+  * enum schedutil_type - CPU utilization type
 -- 
 2.7.4
 
