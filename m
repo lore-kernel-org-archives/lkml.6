@@ -2,179 +2,194 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F34C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AEAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C11CD20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:13:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=livid.pp.ru header.i=@livid.pp.ru header.b="ChX+/8+g"
+	by mail.kernel.org (Postfix) with ESMTP id CED0220866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:16:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730468AbfAPTNh (ORCPT
+        id S1730513AbfAPTQn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:13:37 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40922 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730403AbfAPTNh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:13:37 -0500
-Received: by mail-qt1-f195.google.com with SMTP id k12so8486384qtf.7
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:13:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=livid.pp.ru; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6O4Ox5t7gZr3BNqT4wDqOavrgJWtBvGiG11JwN1bp8U=;
-        b=ChX+/8+gdUAK9lq7XLx38pORNXW1+48u/QBXWKDG5nthXpFL2mJFJTRMQSLjiVWj02
-         MVD2A8mMtCd59PPFUFqjF03EFZHHqACyiqAXnecVASxM4KizPrshaGrIb0yzuiXzgx91
-         tHv2Cobi39d+OomOUJ/gv4+fQESevk50q2zUk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6O4Ox5t7gZr3BNqT4wDqOavrgJWtBvGiG11JwN1bp8U=;
-        b=sjYhNJ6Arc/n3MKyNLaY/FtMbNSQZfffhw1NaqCxdeL6CS6r/oy3jN2fLhdttynQnJ
-         UMncpwUHNLq8hZsU5H4BeZHR821vlq7tbF+iDDPcwIZwvXW6GrWWE1mDv0yYiJLgYfiy
-         PDBD5AgdujKNedA8cgtb2Y3JMsdjbIWDkjXib06gRp4WT0puBoXl1vXZqpKOxP09r9tp
-         4V7Gf5VhBPgUww23o+UsHucMWaHXPy5pcWt9erCOyrCEyTklqDEWQ8tqg4gU15EfwXvF
-         NbrYfCct28qiw9LSsONSpLLlseqmxXdCjpWEiLMjSupeXHyX4NPrFcovFoMy2XZcWo3A
-         sd/w==
-X-Gm-Message-State: AJcUukcA6wYwmtwBU2s/HYGJJTkvY1Vk1ehMLKbb0GwBSxlL3nk6uLKC
-        W03eVKhKLCutLUJvMmcgHaTl1aXN5r9a+mpTQtVNxg==
-X-Google-Smtp-Source: ALg8bN5UvA5w+yagy2ztvxuFzvFAZe9lnNCcHBoLmja2LDUZMas88FOXUCjXr8T90KZl1iXCLBkKWC8XogT6WP91u5A=
-X-Received: by 2002:ad4:410c:: with SMTP id i12mr8237687qvp.219.1547666015583;
- Wed, 16 Jan 2019 11:13:35 -0800 (PST)
+        Wed, 16 Jan 2019 14:16:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56440 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730367AbfAPTQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 14:16:42 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 44C6EA0C45;
+        Wed, 16 Jan 2019 19:16:41 +0000 (UTC)
+Received: from redhat.com (ovpn-122-22.rdu2.redhat.com [10.10.122.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F11C1001942;
+        Wed, 16 Jan 2019 19:16:38 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 14:16:36 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     dave@sr71.net, dan.j.williams@intel.com, dave.jiang@intel.com,
+        zwisler@kernel.org, vishal.l.verma@intel.com,
+        thomas.lendacky@amd.com, akpm@linux-foundation.org,
+        mhocko@suse.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        ying.huang@intel.com, fengguang.wu@intel.com, bp@suse.de,
+        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de
+Subject: Re: [PATCH 2/4] mm/memory-hotplug: allow memory resources to be
+ children
+Message-ID: <20190116191635.GD3617@redhat.com>
+References: <20190116181859.D1504459@viggo.jf.intel.com>
+ <20190116181902.670EEBC3@viggo.jf.intel.com>
 MIME-Version: 1.0
-References: <20190115161354.6806-1-root@livid.pp.ru> <C672AA6DAAC36042A98BAD0B0B25BDA94CB280EC@BGSMSX104.gar.corp.intel.com>
-In-Reply-To: <C672AA6DAAC36042A98BAD0B0B25BDA94CB280EC@BGSMSX104.gar.corp.intel.com>
-From:   Nikolay Yakimov <root@livid.pp.ru>
-Date:   Wed, 16 Jan 2019 22:13:24 +0300
-Message-ID: <CA+A=rXGckxCsEPAG_DczMgLwS2+K3SXFUnHnXQrOOr+9WOWj9w@mail.gmail.com>
-Subject: Re: [PATCH] USB: Fix configuration selection issues introduced in v4.20.0
-To:     "Gopal, Saranya" <saranya.gopal@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190116181902.670EEBC3@viggo.jf.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Jan 2019 19:16:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019 at 07:24, Gopal, Saranya <saranya.gopal@intel.com> wrote:
->
-> Hi Yakimov,
->
-> As per UAC3 configuration, the first configuration will always be backward-compatible.
-> So, there cannot be any UAC3-compatible device which has first configuration as UAC3.
+On Wed, Jan 16, 2019 at 10:19:02AM -0800, Dave Hansen wrote:
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> The mm/resource.c code is used to manage the physical address
+> space.  We can view the current resource configuration in
+> /proc/iomem.  An example of this is at the bottom of this
+> description.
+> 
+> The nvdimm subsystem "owns" the physical address resources which
+> map to persistent memory and has resources inserted for them as
+> "Persistent Memory".  We want to use this persistent memory, but
+> as volatile memory, just like RAM.  The best way to do this is
+> to leave the existing resource in place, but add a "System RAM"
+> resource underneath it. This clearly communicates the ownership
+> relationship of this memory.
+> 
+> The request_resource_conflict() API only deals with the
+> top-level resources.  Replace it with __request_region() which
+> will search for !IORESOURCE_BUSY areas lower in the resource
+> tree than the top level.
+> 
+> We also rework the old error message a bit since we do not get
+> the conflicting entry back: only an indication that we *had* a
+> conflict.
 
-Thanks for the clarification. I would argue though that not all
-devices might adhere to the specification, so it's still probably a
-good idea to check all configurations "just in case". I will not press
-this point though.
+We should keep the device private check (moving it in __request_region)
+as device private can try to register un-use physical address (un-use
+at time of device private registration) that latter can block valid
+physical address the error message you are removing report such event.
 
-> And secondly, the commit ff2a8c532c14 does not break the pre-existing logic.
-> I also thought so much about moving the code above Ethernet check while preparing ff2a8c532c14.
-> But, then, it doesn't break the existing logic and so decided against moving it.
 
-It does seem to change the logic for RNDIS devices with multiple
-configurations when RNDIS kernel module is enabled.
+> 
+> We *could* also simply truncate the existing top-level
+> "Persistent Memory" resource and take over the released address
+> space.  But, this means that if we ever decide to hot-unplug the
+> "RAM" and give it back, we need to recreate the original setup,
+> which may mean going back to the BIOS tables.
+> 
+> This should have no real effect on the existing collision
+> detection because the areas that truly conflict should be marked
+> IORESOURCE_BUSY.
 
-Consider an RNDIS device with multiple configurations (num_configs > 1)
+Still i am worrying that this might allow device private to register
+itself as a child of some un-busy resource as this patch obviously
+change the behavior of register_memory_resource()
 
-Before f13912d3f014a, the following sequence would be executed:
+What about instead explicitly providing parent resource to add_memory()
+and then to register_memory_resource() so if it is provided as an
+argument (!NULL) then you can __request_region(arg_res, ...) otherwise
+you keep existing code intact ?
 
-1. i == 0.
+Cheers,
+Jérôme
 
-if (i == 0 && num_configs > 1 && desc &&
-        (is_rndis(desc) || is_activesync(desc))) {
-    best = c;
-}
-else ...
 
-The condition is true, so this branch is executed. The first
-configuration is selected. Since it's the last condition (all the
-remaining code in the loop body is in the else branch), the loop will
-continue onto the next iteration.
-
-2. i == 1.
-
-if (i == 0 && num_configs > 1 && desc &&
-        (is_rndis(desc) || is_activesync(desc))) {
-    ...
-}
-else if (udev->descriptor.bDeviceClass !=
-                    USB_CLASS_VENDOR_SPEC &&
-            (desc && desc->bInterfaceClass !=
-                    USB_CLASS_VENDOR_SPEC)) {
-    best = c;
-    break;
-} else ...
-
-If the second configuration is not vendor-specific, the first "else
-if" branch would be executed, and the second configuration is
-selected. The loop is exited on break.
-
-After ff2a8c532c14, the following sequence would be executed:
-
-1. i == 0.
-
-if (i == 0 && num_configs > 1 && desc &&
-        (is_rndis(desc) || is_activesync(desc))) {
-    best = c;
-}
-
-The condition is true, so this branch is executed. The first
-configuration is selected, but the loop body continues execution.
-
-2. Still i == 0.
-
-if (i == 0 && num_configs > 1 && desc && is_audio(desc)) {
-    ...
-}
-
-A redundant check is preformed to check if the device is an audio
-device. We already know it isn't.
-
-3. Still i == 0.
-
-if (i > 0 && desc && is_audio(desc)) {
-    ...
-}
-else ...
-
-A redundant check is preformed to check if (i > 0). We already know it isn't.
-
-4. Still i == 0.
-
-else if (udev->descriptor.bDeviceClass !=
-                    USB_CLASS_VENDOR_SPEC &&
-            (desc && desc->bInterfaceClass !=
-                    USB_CLASS_VENDOR_SPEC)) {
-    best = c;
-    break;
-}
-else ...
-
-The first "else if" condition is checked. Unless bDeviceClass is
-USB_CLASS_VENDOR_SPEC (correct me if I'm wrong, but in most cases I
-think it wouldn't be), that condition evaluates as true. The
-configuration is selected (redundantly), and the loop is exited on
-break.
-
-The result is this:
-Before f13912d3f014a, if an RNDIS device has non-vendor-specific
-configurations after the first one, that one would be selected.
-After ff2a8c532c14, the first configuration would always be selected
-for RNDIS devices. Besides, there are several redundant checks in this
-case, which is, if nothing else, confusing.
-
-Hopefully I've explained my point clearly enough.
-
->
-> Thanks,
-> Saranya
+> 
+> 00000000-00000fff : Reserved
+> 00001000-0009fbff : System RAM
+> 0009fc00-0009ffff : Reserved
+> 000a0000-000bffff : PCI Bus 0000:00
+> 000c0000-000c97ff : Video ROM
+> 000c9800-000ca5ff : Adapter ROM
+> 000f0000-000fffff : Reserved
+>   000f0000-000fffff : System ROM
+> 00100000-9fffffff : System RAM
+>   01000000-01e071d0 : Kernel code
+>   01e071d1-027dfdff : Kernel data
+>   02dc6000-0305dfff : Kernel bss
+> a0000000-afffffff : Persistent Memory (legacy)
+>   a0000000-a7ffffff : System RAM
+> b0000000-bffdffff : System RAM
+> bffe0000-bfffffff : Reserved
+> c0000000-febfffff : PCI Bus 0000:00
+> 
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: linux-nvdimm@lists.01.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: Fengguang Wu <fengguang.wu@intel.com>
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> ---
+> 
+>  b/mm/memory_hotplug.c |   31 ++++++++++++++-----------------
+>  1 file changed, 14 insertions(+), 17 deletions(-)
+> 
+> diff -puN mm/memory_hotplug.c~mm-memory-hotplug-allow-memory-resource-to-be-child mm/memory_hotplug.c
+> --- a/mm/memory_hotplug.c~mm-memory-hotplug-allow-memory-resource-to-be-child	2018-12-20 11:48:42.317771933 -0800
+> +++ b/mm/memory_hotplug.c	2018-12-20 11:48:42.322771933 -0800
+> @@ -98,24 +98,21 @@ void mem_hotplug_done(void)
+>  /* add this memory to iomem resource */
+>  static struct resource *register_memory_resource(u64 start, u64 size)
+>  {
+> -	struct resource *res, *conflict;
+> -	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
+> -	if (!res)
+> -		return ERR_PTR(-ENOMEM);
+> +	struct resource *res;
+> +	unsigned long flags =  IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> +	char *resource_name = "System RAM";
+>  
+> -	res->name = "System RAM";
+> -	res->start = start;
+> -	res->end = start + size - 1;
+> -	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> -	conflict =  request_resource_conflict(&iomem_resource, res);
+> -	if (conflict) {
+> -		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
+> -			pr_debug("Device unaddressable memory block "
+> -				 "memory hotplug at %#010llx !\n",
+> -				 (unsigned long long)start);
+> -		}
+> -		pr_debug("System RAM resource %pR cannot be added\n", res);
+> -		kfree(res);
+> +	/*
+> +	 * Request ownership of the new memory range.  This might be
+> +	 * a child of an existing resource that was present but
+> +	 * not marked as busy.
+> +	 */
+> +	res = __request_region(&iomem_resource, start, size,
+> +			       resource_name, flags);
+> +
+> +	if (!res) {
+> +		pr_debug("Unable to reserve System RAM region: %016llx->%016llx\n",
+> +				start, start + size);
+>  		return ERR_PTR(-EEXIST);
+>  	}
+>  	return res;
+> _
+> 
