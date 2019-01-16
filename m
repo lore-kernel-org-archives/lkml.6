@@ -2,114 +2,334 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582E3C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8E3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B1220840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:39:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="aj+r9yLL"
+	by mail.kernel.org (Postfix) with ESMTP id 48E9E20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:40:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbfAPTj4 (ORCPT
+        id S1731528AbfAPTkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:39:56 -0500
-Received: from mail-eopbgr720065.outbound.protection.outlook.com ([40.107.72.65]:44185
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731174AbfAPTj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:39:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H0G+Dp78AOqe2D2rjvZlk8M5e3dPkdEwJSCya8e5G90=;
- b=aj+r9yLLM/48MIqlxgX6NOQGvor9xBxCRVPxOs6P5ebNW9iT7xMhfCejJV4Q2XKtHXCXjEYjuT4TG+en6iAyQw3SI/BFWTjQqMr+6TvP/bWeGl5GGxSHGpGPFP2Drb4jvDGXwn4cf1rV2FDYsd5uk6erkLYlejL8j8gSwFshdpU=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1772.namprd12.prod.outlook.com (10.175.91.137) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Wed, 16 Jan 2019 19:39:50 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::9dfd:2b7b:1999:aff2]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::9dfd:2b7b:1999:aff2%2]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 19:39:50 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Xiaochen Shen <xiaochen.shen@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 00/10] selftests/resctrl: Add resctrl selftest
-Thread-Topic: [PATCH v4 00/10] selftests/resctrl: Add resctrl selftest
-Thread-Index: AQHUmYz8wtnOL0tCbku6Pwhl6uvgeqWxz7uAgACcLoCAAAd3AA==
-Date:   Wed, 16 Jan 2019 19:39:50 +0000
-Message-ID: <6f267b9a-f621-0cdc-9189-996cd3c40d13@amd.com>
-References: <1545438038-75107-1-git-send-email-fenghua.yu@intel.com>
- <09e6d4f2-94c8-918c-4d54-0000c3d809b2@amd.com>
- <20190116191304.GA221444@romley-ivt3.sc.intel.com>
-In-Reply-To: <20190116191304.GA221444@romley-ivt3.sc.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0201CA0041.namprd02.prod.outlook.com
- (2603:10b6:803:2e::27) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1772;20:CljeeqUlCUU/QiRf6cwdZb6TMLRrJzGyIhADPEI3j1ylcibcvoGHRFZ6XnCYMJ10OXfUCEsPhdDCcLyVGaLvam86f2VsZyiNPTtHYxSq8ttIsKW8yVdzJBKrJSccofwkBdWOQTKnHsp1s5MGRsNTnU6aC9o26MZVOjimfgCjur+uTyucW0cVdD09at3ME/kqxI54pPM2jd/A3njC/hELRWhYHS7n9fF4+9DsmD10ukc724uJgE1WO6BF+pOQ5nDt
-x-ms-office365-filtering-correlation-id: 67f24b1d-e897-4e97-2bee-08d67bea613d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1772;
-x-ms-traffictypediagnostic: DM5PR12MB1772:
-x-microsoft-antispam-prvs: <DM5PR12MB17726FF6B225C240C2952CFD95820@DM5PR12MB1772.namprd12.prod.outlook.com>
-x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(396003)(376002)(136003)(199004)(189003)(6916009)(105586002)(31686004)(99286004)(4326008)(6246003)(316002)(97736004)(6116002)(3846002)(53936002)(54906003)(8936002)(25786009)(8676002)(6512007)(36756003)(81156014)(446003)(81166006)(11346002)(2616005)(6436002)(476003)(478600001)(186003)(72206003)(26005)(6486002)(256004)(14444005)(66066001)(86362001)(102836004)(4744005)(68736007)(71200400001)(71190400001)(229853002)(7416002)(76176011)(486006)(2906002)(7736002)(53546011)(31696002)(305945005)(52116002)(106356001)(14454004)(6506007)(386003)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1772;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hda1Xm5ZUsLiKRVTF2mK62ad0moBboHKehDBMrxdI8JEzRqAFrjG9YH3fK5c+u9qq7n8NRun2tF74A9bsZUUiC7viq9Wi9u+ElrsgoKzetI5T0hEeEUd5srkQoc3YRis0NxiBBO5s1sgE65ui5JR2m83/h8IRRo7Htri1adcE+zC6rRi9aJX+jNv7LNkNWFGmAXUs3WfGS7XI3qox1DZQYYAIVHn+nUy6pVgAFax6Yss1kDaoIgfsltGuNPWqGAvPp+49M4zgs/PccpCwVLa8ASVCXIRQLHwk/F4Th8FA74txKDgiVgPBXpS/ozVL4ph1QJtr8Dc6WT0JfTdgGijhwAPnh5uJAJsZCAthT8hNHeAaxvGoyRuaeko/fL8GjKPIQMwgccqgzvuTMkOazRasPrxv+Ox+9UG189TjQY3iok=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DBD6433702DE6544B2E326FC3F2C1A6C@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 16 Jan 2019 14:40:01 -0500
+Received: from mga12.intel.com ([192.55.52.136]:4932 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731174AbfAPTkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 14:40:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 11:40:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="107119004"
+Received: from maru.jf.intel.com ([10.54.51.77])
+  by orsmga007.jf.intel.com with ESMTP; 16 Jan 2019 11:40:00 -0800
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Feist <james.feist@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH] i2c: aspeed: Add multi-master use case support
+Date:   Wed, 16 Jan 2019 11:39:58 -0800
+Message-Id: <20190116193958.6049-1-jae.hyun.yoo@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67f24b1d-e897-4e97-2bee-08d67bea613d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 19:39:49.6435
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1772
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMS8xNi8xOSAxOjEzIFBNLCBGZW5naHVhIFl1IHdyb3RlOg0KPiBPbiBXZWQsIEphbiAxNiwg
-MjAxOSBhdCAwMzo1NDowN1BNICswMDAwLCBNb2dlciwgQmFidSB3cm90ZToNCj4+IEhpIEZlbmdo
-dWEvU2FpL0Fyc2hpeWEsDQo+PiAgIFdlIHdlcmUgdGhpbmtpbmcgb2YgdXBkYXRpbmcgdGhlc2Ug
-c2VsZnRlc3RzIHRvIHdvcmsgb24gYm90aCBJbnRlbCBhbmQNCj4+IEFNRC4gV2hhdCBkbyB5b3Ug
-Z3V5cyB0aGluaz8NCj4+DQo+PiBJZiB0aGF0IGlzIG9rLCBJIGNhbiB1cGRhdGUgdGhlc2UgcGF0
-Y2hlcyBhbmQgcmVzdWJtaXQuIElmIHlvdSBoYXZlDQo+PiBhbHJlYWR5IHVwZGF0ZWQsIHBsZWFz
-ZSBwb3N0IHRoZSBsYXRlc3Qgc2VyaWVzLiBJIHdpbGwgdXNlIHRoZSBsYXRlc3QNCj4+IHZlcnNp
-b24uIFBsZWFzZSBsZXQgbWUga25vdy4NCj4+IFRoYW5rcw0KPiANCj4gSGksIEJhYnUsDQo+IA0K
-PiBTdXJlLiBQbGVhc2UgZ28gYWhlYWQgdG8gdXBkYXRlIHRoZSBzZWxmdGVzdHMgdG8gd29yayBv
-biBib3RoIEludGVsIGFuZCBBTUQuDQo+IFRoYXQncyB3b25kZXJmdWwgZm9yIHJlc2N0cmwgb3Zl
-cmFsbC4NCj4gDQo+IFdlIGRvIHBsYW4gdG8gdXBkYXRlIHNlbGZ0ZXN0IGFuZCBhZGQgcmVzY3Ry
-bCBmcyBpbnRlcmZhY2UgdGVzdGluZy4gQnV0DQo+IGFzIG9mIG5vdyB3ZSBkb24ndCBoYXZlIHVw
-ZGF0ZWQgc2VsZnRlc3QgeWV0LiBQbGVhc2Ugd29yayBvbiB0aGUgdjQgcGF0Y2gNCj4gc2V0Lg0K
-DQpTdXJlLiBUaGFuayB5b3UuDQoNCj4gDQo+IFRoYW5rcy4NCj4gDQo+IC1GZW5naHVhDQo+IA0K
+In multi-master environment, this driver's master cannot know
+exactly when a peer master sends data to this driver's slave so
+cases can be happened that this master tries sending data through
+the master_xfer function but slave data from a peer master is still
+being processed or slave xfer is started by a peer immediately
+after it queues a master command. To support multi-master use cases
+properly, this H/W provides arbitration in physical level and it
+provides priority based command handling too to avoid conflicts in
+multi-master environment, means that if a master and a slave events
+happen at the same time, H/W will handle a higher priority event
+first and a pending event will be handled when bus comes back to
+the idle state.
+
+To support this H/W feature properly, this patch adds the 'pending'
+state of master and its handling code so that the pending master
+xfer can be continued after slave operation properly.
+
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+---
+ drivers/i2c/busses/i2c-aspeed.c | 118 +++++++++++++++++++++++++-------
+ 1 file changed, 92 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+index 8dc9161ced38..9253ebccb008 100644
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -117,6 +117,7 @@
+ 
+ enum aspeed_i2c_master_state {
+ 	ASPEED_I2C_MASTER_INACTIVE,
++	ASPEED_I2C_MASTER_PENDING,
+ 	ASPEED_I2C_MASTER_START,
+ 	ASPEED_I2C_MASTER_TX_FIRST,
+ 	ASPEED_I2C_MASTER_TX,
+@@ -126,12 +127,13 @@ enum aspeed_i2c_master_state {
+ };
+ 
+ enum aspeed_i2c_slave_state {
+-	ASPEED_I2C_SLAVE_STOP,
++	ASPEED_I2C_SLAVE_INACTIVE,
+ 	ASPEED_I2C_SLAVE_START,
+ 	ASPEED_I2C_SLAVE_READ_REQUESTED,
+ 	ASPEED_I2C_SLAVE_READ_PROCESSED,
+ 	ASPEED_I2C_SLAVE_WRITE_REQUESTED,
+ 	ASPEED_I2C_SLAVE_WRITE_RECEIVED,
++	ASPEED_I2C_SLAVE_STOP,
+ };
+ 
+ struct aspeed_i2c_bus {
+@@ -156,6 +158,8 @@ struct aspeed_i2c_bus {
+ 	int				cmd_err;
+ 	/* Protected only by i2c_lock_bus */
+ 	int				master_xfer_result;
++	/* Multi-master */
++	bool				multi_master;
+ #if IS_ENABLED(CONFIG_I2C_SLAVE)
+ 	struct i2c_client		*slave;
+ 	enum aspeed_i2c_slave_state	slave_state;
+@@ -251,7 +255,7 @@ static u32 aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ 	}
+ 
+ 	/* Slave is not currently active, irq was for someone else. */
+-	if (bus->slave_state == ASPEED_I2C_SLAVE_STOP)
++	if (bus->slave_state == ASPEED_I2C_SLAVE_INACTIVE)
+ 		return irq_handled;
+ 
+ 	dev_dbg(bus->dev, "slave irq status 0x%08x, cmd 0x%08x\n",
+@@ -277,16 +281,15 @@ static u32 aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ 		irq_handled |= ASPEED_I2CD_INTR_NORMAL_STOP;
+ 		bus->slave_state = ASPEED_I2C_SLAVE_STOP;
+ 	}
+-	if (irq_status & ASPEED_I2CD_INTR_TX_NAK) {
++	if (irq_status & ASPEED_I2CD_INTR_TX_NAK &&
++	    bus->slave_state == ASPEED_I2C_SLAVE_READ_PROCESSED) {
+ 		irq_handled |= ASPEED_I2CD_INTR_TX_NAK;
+ 		bus->slave_state = ASPEED_I2C_SLAVE_STOP;
+ 	}
+-	if (irq_status & ASPEED_I2CD_INTR_TX_ACK)
+-		irq_handled |= ASPEED_I2CD_INTR_TX_ACK;
+ 
+ 	switch (bus->slave_state) {
+ 	case ASPEED_I2C_SLAVE_READ_REQUESTED:
+-		if (irq_status & ASPEED_I2CD_INTR_TX_ACK)
++		if (unlikely(irq_status & ASPEED_I2CD_INTR_TX_ACK))
+ 			dev_err(bus->dev, "Unexpected ACK on read request.\n");
+ 		bus->slave_state = ASPEED_I2C_SLAVE_READ_PROCESSED;
+ 		i2c_slave_event(slave, I2C_SLAVE_READ_REQUESTED, &value);
+@@ -294,9 +297,12 @@ static u32 aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ 		writel(ASPEED_I2CD_S_TX_CMD, bus->base + ASPEED_I2C_CMD_REG);
+ 		break;
+ 	case ASPEED_I2C_SLAVE_READ_PROCESSED:
+-		if (!(irq_status & ASPEED_I2CD_INTR_TX_ACK))
++		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
+ 			dev_err(bus->dev,
+ 				"Expected ACK after processed read.\n");
++			break;
++		}
++		irq_handled |= ASPEED_I2CD_INTR_TX_ACK;
+ 		i2c_slave_event(slave, I2C_SLAVE_READ_PROCESSED, &value);
+ 		writel(value, bus->base + ASPEED_I2C_BYTE_BUF_REG);
+ 		writel(ASPEED_I2CD_S_TX_CMD, bus->base + ASPEED_I2C_CMD_REG);
+@@ -310,10 +316,15 @@ static u32 aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ 		break;
+ 	case ASPEED_I2C_SLAVE_STOP:
+ 		i2c_slave_event(slave, I2C_SLAVE_STOP, &value);
++		bus->slave_state = ASPEED_I2C_SLAVE_INACTIVE;
++		break;
++	case ASPEED_I2C_SLAVE_START:
++		/* Slave was just started. Waiting for the next event. */;
+ 		break;
+ 	default:
+-		dev_err(bus->dev, "unhandled slave_state: %d\n",
++		dev_err(bus->dev, "unknown slave_state: %d\n",
+ 			bus->slave_state);
++		bus->slave_state = ASPEED_I2C_SLAVE_INACTIVE;
+ 		break;
+ 	}
+ 
+@@ -329,6 +340,17 @@ static void aspeed_i2c_do_start(struct aspeed_i2c_bus *bus)
+ 	u8 slave_addr = i2c_8bit_addr_from_msg(msg);
+ 
+ 	bus->master_state = ASPEED_I2C_MASTER_START;
++
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	/*
++	 * If it's requested in the middle of a slave session, set the master
++	 * state to 'pending' then H/W will continue handling this master
++	 * command when the bus comes back to the idle state.
++	 */
++	if (bus->slave_state != ASPEED_I2C_SLAVE_INACTIVE)
++		bus->master_state = ASPEED_I2C_MASTER_PENDING;
++#endif /* CONFIG_I2C_SLAVE */
++
+ 	bus->buf_index = 0;
+ 
+ 	if (msg->flags & I2C_M_RD) {
+@@ -384,10 +406,6 @@ static u32 aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ 		bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
+ 		irq_handled |= ASPEED_I2CD_INTR_BUS_RECOVER_DONE;
+ 		goto out_complete;
+-	} else {
+-		/* Master is not currently active, irq was for someone else. */
+-		if (bus->master_state == ASPEED_I2C_MASTER_INACTIVE)
+-			goto out_no_complete;
+ 	}
+ 
+ 	/*
+@@ -399,11 +417,32 @@ static u32 aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ 	if (ret) {
+ 		dev_dbg(bus->dev, "received error interrupt: 0x%08x\n",
+ 			irq_status);
+-		bus->cmd_err = ret;
+-		bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
+ 		irq_handled |= (irq_status & ASPEED_I2CD_INTR_MASTER_ERRORS);
+-		goto out_complete;
++		if (bus->master_state != ASPEED_I2C_MASTER_INACTIVE) {
++			bus->cmd_err = ret;
++			bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
++			goto out_complete;
++		}
++	}
++
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	/*
++	 * A pending master command will be started by H/W when the bus comes
++	 * back to idle state after completing a slave operation so change the
++	 * master state from 'pending' to 'start' at here if slave is inactive.
++	 */
++	if (bus->master_state == ASPEED_I2C_MASTER_PENDING) {
++		if (bus->slave_state != ASPEED_I2C_SLAVE_INACTIVE)
++			goto out_no_complete;
++
++		bus->master_state = ASPEED_I2C_MASTER_START;
+ 	}
++#endif /* CONFIG_I2C_SLAVE */
++
++	/* Master is not currently active, irq was for someone else. */
++	if (bus->master_state == ASPEED_I2C_MASTER_INACTIVE ||
++	    bus->master_state == ASPEED_I2C_MASTER_PENDING)
++		goto out_no_complete;
+ 
+ 	/* We are in an invalid state; reset bus to a known state. */
+ 	if (!bus->msgs) {
+@@ -423,6 +462,20 @@ static u32 aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ 	 * then update the state and handle the new state below.
+ 	 */
+ 	if (bus->master_state == ASPEED_I2C_MASTER_START) {
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++		/*
++		 * If a peer master starts a xfer immediately after it queues a
++		 * master command, change its state to 'pending' then H/W will
++		 * continue the queued master xfer just after completing the
++		 * slave mode session.
++		 */
++		if (unlikely(irq_status & ASPEED_I2CD_INTR_SLAVE_MATCH)) {
++			bus->master_state = ASPEED_I2C_MASTER_PENDING;
++			dev_dbg(bus->dev,
++				"master goes pending due to a slave start\n");
++			goto out_no_complete;
++		}
++#endif /* CONFIG_I2C_SLAVE */
+ 		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
+ 			if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_NAK))) {
+ 				bus->cmd_err = -ENXIO;
+@@ -566,7 +619,8 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+ 	 * interrupt bits. Each case needs to be handled using corresponding
+ 	 * handlers depending on the current state.
+ 	 */
+-	if (bus->master_state != ASPEED_I2C_MASTER_INACTIVE) {
++	if (bus->master_state != ASPEED_I2C_MASTER_INACTIVE &&
++	    bus->master_state != ASPEED_I2C_MASTER_PENDING) {
+ 		irq_handled = aspeed_i2c_master_irq(bus, irq_remaining);
+ 		irq_remaining &= ~irq_handled;
+ 		if (irq_remaining)
+@@ -601,15 +655,15 @@ static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
+ {
+ 	struct aspeed_i2c_bus *bus = i2c_get_adapdata(adap);
+ 	unsigned long time_left, flags;
+-	int ret = 0;
++	int ret;
+ 
+ 	spin_lock_irqsave(&bus->lock, flags);
+ 	bus->cmd_err = 0;
+ 
+-	/* If bus is busy, attempt recovery. We assume a single master
+-	 * environment.
+-	 */
+-	if (readl(bus->base + ASPEED_I2C_CMD_REG) & ASPEED_I2CD_BUS_BUSY_STS) {
++	/* If bus is busy in a single master environment, attempt recovery. */
++	if (!bus->multi_master &&
++	    (readl(bus->base + ASPEED_I2C_CMD_REG) &
++	     ASPEED_I2CD_BUS_BUSY_STS)) {
+ 		spin_unlock_irqrestore(&bus->lock, flags);
+ 		ret = aspeed_i2c_recover_bus(bus);
+ 		if (ret)
+@@ -629,10 +683,20 @@ static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
+ 	time_left = wait_for_completion_timeout(&bus->cmd_complete,
+ 						bus->adap.timeout);
+ 
+-	if (time_left == 0)
++	if (time_left == 0) {
++		/*
++		 * If timed out and bus is still busy in a multi master
++		 * environment, attempt recovery at here.
++		 */
++		if (bus->multi_master &&
++		    (readl(bus->base + ASPEED_I2C_CMD_REG) &
++		     ASPEED_I2CD_BUS_BUSY_STS))
++			ret = aspeed_i2c_recover_bus(bus);
++
+ 		return -ETIMEDOUT;
+-	else
+-		return bus->master_xfer_result;
++	}
++
++	return bus->master_xfer_result;
+ }
+ 
+ static u32 aspeed_i2c_functionality(struct i2c_adapter *adap)
+@@ -672,7 +736,7 @@ static int aspeed_i2c_reg_slave(struct i2c_client *client)
+ 	__aspeed_i2c_reg_slave(bus, client->addr);
+ 
+ 	bus->slave = client;
+-	bus->slave_state = ASPEED_I2C_SLAVE_STOP;
++	bus->slave_state = ASPEED_I2C_SLAVE_INACTIVE;
+ 	spin_unlock_irqrestore(&bus->lock, flags);
+ 
+ 	return 0;
+@@ -827,7 +891,9 @@ static int aspeed_i2c_init(struct aspeed_i2c_bus *bus,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (!of_property_read_bool(pdev->dev.of_node, "multi-master"))
++	if (of_property_read_bool(pdev->dev.of_node, "multi-master"))
++		bus->multi_master = true;
++	else
+ 		fun_ctrl_reg |= ASPEED_I2CD_MULTI_MASTER_DIS;
+ 
+ 	/* Enable Master Mode */
+-- 
+2.20.1
+
