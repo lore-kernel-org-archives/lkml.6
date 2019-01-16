@@ -2,105 +2,130 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A8FC43613
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE977C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957DA2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A11822082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732712AbfAPLUJ (ORCPT
+        id S2389802AbfAPLUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:20:09 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44739 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728612AbfAPLUI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:20:08 -0500
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gjjEt-000609-Fi; Wed, 16 Jan 2019 12:20:07 +0100
-Message-Id: <20190116111308.012666937@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Wed, 16 Jan 2019 12:10:59 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [patch 1/3] perf/core: Convert to SPDX license identifiers
-References: <20190116111058.444514201@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Wed, 16 Jan 2019 06:20:38 -0500
+Received: from mga04.intel.com ([192.55.52.120]:36577 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730420AbfAPLUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:20:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 03:20:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,485,1539673200"; 
+   d="scan'208";a="310873778"
+Received: from elena-thinkpad-x230.fi.intel.com ([10.237.68.34])
+  by fmsmga006.fm.intel.com with ESMTP; 16 Jan 2019 03:20:33 -0800
+From:   Elena Reshetova <elena.reshetova@intel.com>
+To:     rostedt@goodmis.org
+Cc:     peterz@infradead.org, mingo@redhat.com, akpm@linux-foundation.org,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH] uprobes: convert uprobe.ref to refcount_t
+Date:   Wed, 16 Jan 2019 13:20:27 +0200
+Message-Id: <1547637627-29526-1-git-send-email-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use proper SPDX license identifiers instead of the bogus reference to
-kernel-base/COPYING.
+atomic_t variables are currently used to implement reference
+counters with the following properties:
+ - counter is initialized to 1 using atomic_set()
+ - a resource is freed upon counter reaching zero
+ - once counter reaches zero, its further
+   increments aren't allowed
+ - counter schema uses basic atomic operations
+   (set, inc, inc_not_zero, dec_and_test, etc.)
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Such atomic variables should be converted to a newly provided
+refcount_t type and API that prevents accidental counter overflows
+and underflows. This is important since overflows and underflows
+can lead to use-after-free situation and be exploitable.
+
+The variable uprobe.ref is used as pure reference counter.
+Convert it to refcount_t and fix up the operations.
+
+**Important note for maintainers:
+
+Some functions from refcount_t API defined in lib/refcount.c
+have different memory ordering guarantees than their atomic
+counterparts.
+The full comparison can be seen in
+https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
+in state to be merged to the documentation tree.
+Normally the differences should not matter since refcount_t provides
+enough guarantees to satisfy the refcounting use cases, but in
+some rare cases it might matter.
+Please double check that you don't have some undocumented
+memory guarantees for this variable usage.
+
+For the uprobe.ref it might make a difference
+in following places:
+ - put_uprobe(): decrement in refcount_dec_and_test() only
+   provides RELEASE ordering and control dependency on success
+   vs. fully ordered atomic counterpart
+
+Suggested-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: David Windsor <dwindsor@gmail.com>
+Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
+Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
 ---
- kernel/events/callchain.c   |    3 +--
- kernel/events/core.c        |    3 +--
- kernel/events/ring_buffer.c |    3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ kernel/events/uprobes.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Performance events callchain code, extracted from core.c:
-  *
-@@ -5,8 +6,6 @@
-  *  Copyright (C) 2008-2011 Red Hat, Inc., Ingo Molnar
-  *  Copyright (C) 2008-2011 Red Hat, Inc., Peter Zijlstra
-  *  Copyright  ©  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
-- *
-- * For licensing details see kernel-base/COPYING
-  */
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index ad415f7..750aece 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -66,7 +66,7 @@ static struct percpu_rw_semaphore dup_mmap_sem;
  
- #include <linux/perf_event.h>
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Performance events core code:
-  *
-@@ -5,8 +6,6 @@
-  *  Copyright (C) 2008-2011 Red Hat, Inc., Ingo Molnar
-  *  Copyright (C) 2008-2011 Red Hat, Inc., Peter Zijlstra
-  *  Copyright  ©  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
-- *
-- * For licensing details see kernel-base/COPYING
-  */
+ struct uprobe {
+ 	struct rb_node		rb_node;	/* node in the rb tree */
+-	atomic_t		ref;
++	refcount_t		ref;
+ 	struct rw_semaphore	register_rwsem;
+ 	struct rw_semaphore	consumer_rwsem;
+ 	struct list_head	pending_list;
+@@ -561,13 +561,13 @@ set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long v
  
- #include <linux/fs.h>
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Performance events ring-buffer code:
-  *
-@@ -5,8 +6,6 @@
-  *  Copyright (C) 2008-2011 Red Hat, Inc., Ingo Molnar
-  *  Copyright (C) 2008-2011 Red Hat, Inc., Peter Zijlstra
-  *  Copyright  ©  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
-- *
-- * For licensing details see kernel-base/COPYING
-  */
+ static struct uprobe *get_uprobe(struct uprobe *uprobe)
+ {
+-	atomic_inc(&uprobe->ref);
++	refcount_inc(&uprobe->ref);
+ 	return uprobe;
+ }
  
- #include <linux/perf_event.h>
-
+ static void put_uprobe(struct uprobe *uprobe)
+ {
+-	if (atomic_dec_and_test(&uprobe->ref)) {
++	if (refcount_dec_and_test(&uprobe->ref)) {
+ 		/*
+ 		 * If application munmap(exec_vma) before uprobe_unregister()
+ 		 * gets called, we don't get a chance to remove uprobe from
+@@ -658,7 +658,7 @@ static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
+ 	rb_link_node(&uprobe->rb_node, parent, p);
+ 	rb_insert_color(&uprobe->rb_node, &uprobes_tree);
+ 	/* get access + creation ref */
+-	atomic_set(&uprobe->ref, 2);
++	refcount_set(&uprobe->ref, 2);
+ 
+ 	return u;
+ }
+-- 
+2.7.4
 
