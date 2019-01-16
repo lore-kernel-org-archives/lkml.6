@@ -2,145 +2,260 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A75C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FC9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07FC020866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:10:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5818420675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:14:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bcSWqxDA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbfAPSKR (ORCPT
+        id S1728403AbfAPSOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:10:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:54470 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbfAPSKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:10:16 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3330180D;
-        Wed, 16 Jan 2019 10:10:16 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 429423F763;
-        Wed, 16 Jan 2019 10:10:15 -0800 (PST)
-From:   Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH] dma-debug: add dumping facility via debugfs
-To:     Corentin Labbe <clabbe@baylibre.com>, hch@lst.de,
-        m.szyprowski@samsung.com
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <1547646265-9414-1-git-send-email-clabbe@baylibre.com>
-Message-ID: <2f43688f-9c08-a9c4-6175-caa3d2e40261@arm.com>
-Date:   Wed, 16 Jan 2019 18:10:13 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 13:14:15 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:43223 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbfAPSOP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 13:14:15 -0500
+Received: by mail-ua1-f66.google.com with SMTP id z11so2494926uaa.10
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:14:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YeovtTKcFZoIShUVI6LJfRJxWzSHt98QfNVCTY0fudk=;
+        b=bcSWqxDATSWvM6ZIKAnmy0S4taqzqViQJa8kKQkoiMiJXewZEV6lJshRwr8wffzNHP
+         ApNxjnXfciOaPKR9V7OVG6XFwLBsn8BBqtHpHLmiyCO3K9FkFHct5DdNHXMbyQkw+Ig0
+         LqhOOt5LfPGMo6F5CoksPNitJFGI6Bzdx4q/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YeovtTKcFZoIShUVI6LJfRJxWzSHt98QfNVCTY0fudk=;
+        b=HNZs3vbJAmPquPSSzLNZ1nocjBtme0WdaGcKdShhTrpCi4SEgs71xmkyA1Lo/f5/Ki
+         PVET5MhIphkbcLa3y98zIVidjmdm4Azwnq6cCpismT8eQOklscy8x2s2ab8FLW1c3lt7
+         /C/jDiTu4pQE48ElyFyQSyxk87JJkAQS9JELg1XzdWxg/0BhntSFjcF/q93Nmi2owvH6
+         1fDTOGRVB/pv2OVCS/bW3QgXy1DXQKAEBmcxCOBewXS8A2Uwyv0LHpbPsLZ2g9znQDyO
+         oj11ZdOHJYMqFzcgkyQtrvT8X3KxrFYkuKhWSjPV212L31bspajEVb5k99iPGRj4kXIi
+         LWWw==
+X-Gm-Message-State: AJcUukcHhX2GfaoGuOzWjjverTbu5E4lvDpU/wLeXbNNKu+iumMyjv5V
+        puWLA2Acv86ow+wOqAWyblFHVe2kCwA=
+X-Google-Smtp-Source: ALg8bN6sLXyZ/YNSfwdq5XGaYpR8kIyIpCiPI8rSd5NGHYJmNu2wBmc0hVuMEhTWg1KEeUk0O0tBnQ==
+X-Received: by 2002:ab0:21c6:: with SMTP id u6mr4210879uan.97.1547662453095;
+        Wed, 16 Jan 2019 10:14:13 -0800 (PST)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id y195sm44581076vkd.0.2019.01.16.10.14.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 10:14:11 -0800 (PST)
+Received: by mail-vk1-f174.google.com with SMTP id y14so1658317vkd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:14:11 -0800 (PST)
+X-Received: by 2002:a1f:4982:: with SMTP id w124mr4042143vka.4.1547662450962;
+ Wed, 16 Jan 2019 10:14:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1547646265-9414-1-git-send-email-clabbe@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190116174320.14938-1-daniel.diaz@linaro.org> <20190116174320.14938-3-daniel.diaz@linaro.org>
+In-Reply-To: <20190116174320.14938-3-daniel.diaz@linaro.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 16 Jan 2019 10:13:59 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+1tOvB0jHk=kCxfhTg-PEPjCHp2TQb++wZsGxJCcQxng@mail.gmail.com>
+Message-ID: <CAGXu5j+1tOvB0jHk=kCxfhTg-PEPjCHp2TQb++wZsGxJCcQxng@mail.gmail.com>
+Subject: Re: [PATCH 3/4] selftests: seccomp: use LDLIBS instead of LDFLAGS
+To:     =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/01/2019 13:44, Corentin Labbe wrote:
-> While debugging a DMA mapping leak, I needed to access
-> debug_dma_dump_mappings() but easily from user space.
-> 
-> This patch adds a /sys/kernel/debug/dma-api/dump file which contain all
-> current DMA mapping.
-> 
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+On Wed, Jan 16, 2019 at 9:44 AM Daniel D=C3=ADaz <daniel.diaz@linaro.org> w=
+rote:
+>
+> From: Fathi Boudra <fathi.boudra@linaro.org>
+>
+> seccomp_bpf fails to build due to undefined reference errors:
+>
+>  aarch64-linaro-linux-gcc --sysroot=3D/build/tmp-rpb-glibc/sysroots/hikey
+>  -O2 -pipe -g -feliminate-unused-debug-types -Wl,-no-as-needed -Wall
+>  -Wl,-O1 -Wl,--hash-style=3Dgnu -Wl,--as-needed -lpthread seccomp_bpf.c -=
+o
+>  /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.=
+12-rc7/tools/testing/selftests/seccomp/seccomp_bpf
+>  /tmp/ccrlR3MW.o: In function `tsync_sibling':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
+>  /tmp/ccrlR3MW.o: In function `TSYNC_setup':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1863: undefined reference to `sem_init'
+>  /tmp/ccrlR3MW.o: In function `TSYNC_teardown':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1904: undefined reference to `sem_destroy'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1897: undefined reference to `pthread_kill'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1898: undefined reference to `pthread_cancel'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1899: undefined reference to `pthread_join'
+>  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /tmp/ccrlR3MW.o: In function `TSYNC_siblings_fail_prctl':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1978: undefined reference to `sem_wait'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1990: undefined reference to `pthread_join'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1992: undefined reference to `pthread_join'
+>  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_ancestor':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2016: undefined reference to `sem_wait'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2032: undefined reference to `pthread_join'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2034: undefined reference to `pthread_join'
+>  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /tmp/ccrlR3MW.o: In function `TSYNC_two_sibling_want_nnp':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2046: undefined reference to `sem_wait'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2058: undefined reference to `pthread_join'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2060: undefined reference to `pthread_join'
+>  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_no_filter':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2073: undefined reference to `sem_wait'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2098: undefined reference to `pthread_join'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2100: undefined reference to `pthread_join'
+>  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_one_divergence':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2125: undefined reference to `sem_wait'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2143: undefined reference to `pthread_join'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2145: undefined reference to `pthread_join'
+>  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>  /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_not_under_filter':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2169: undefined reference to `sem_wait'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2202: undefined reference to `pthread_join'
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:2227: undefined reference to `pthread_join'
+>  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
+>  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
+/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+>
+> It's GNU Make and linker specific.
+>
+> The default Makefile rule looks like:
+>
+> $(CC) $(CFLAGS) $(LDFLAGS) $@ $^ $(LDLIBS)
+>
+> When linking is done by gcc itself, no issue, but when it needs to be pas=
+sed
+> to proper ld, only LDLIBS follows and then ld cannot know what libs to li=
+nk
+> with.
+>
+> More detail:
+> https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.htm=
+l
+>
+> LDFLAGS
+> Extra flags to give to compilers when they are supposed to invoke the lin=
+ker,
+> =E2=80=98ld=E2=80=99, such as -L. Libraries (-lfoo) should be added to th=
+e LDLIBS variable
+> instead.
+>
+> LDLIBS
+> Library flags or names given to compilers when they are supposed to invok=
+e the
+> linker, =E2=80=98ld=E2=80=99. LOADLIBES is a deprecated (but still suppor=
+ted) alternative to
+> LDLIBS. Non-library linker flags, such as -L, should go in the LDFLAGS
+> variable.
+>
+> https://lkml.org/lkml/2010/2/10/362
+>
+> tools/perf: libraries must come after objects
+>
+> Link order matters, use LDLIBS instead of LDFLAGS to properly link agains=
+t
+> libpthread.
+>
+> Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+Shuah, can you take this?
+
+-Kees
+
 > ---
->   kernel/dma/debug.c | 47 ++++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 47 insertions(+)
-> 
-> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-> index 23cf5361bcf1..9253382f5729 100644
-> --- a/kernel/dma/debug.c
-> +++ b/kernel/dma/debug.c
-> @@ -144,6 +144,7 @@ static struct dentry *num_free_entries_dent __read_mostly;
->   static struct dentry *min_free_entries_dent __read_mostly;
->   static struct dentry *nr_total_entries_dent __read_mostly;
->   static struct dentry *filter_dent           __read_mostly;
-> +static struct dentry *dump_dent             __read_mostly;
->   
->   /* per-driver filter related state */
->   
-> @@ -840,6 +841,47 @@ static const struct file_operations filter_fops = {
->   	.llseek = default_llseek,
->   };
->   
-> +static int dump_read(struct seq_file *seq, void *v)
-> +{
-> +	int idx;
-> +
-> +	for (idx = 0; idx < HASH_SIZE; idx++) {
-> +		struct hash_bucket *bucket = &dma_entry_hash[idx];
-> +		struct dma_debug_entry *entry;
-> +		unsigned long flags;
-> +
-> +		spin_lock_irqsave(&bucket->lock, flags);
-> +
-> +		list_for_each_entry(entry, &bucket->list, list) {
-> +			seq_printf(seq,
-> +				   "%s %s %s idx %d P=%llx N=%lx D=%llx L=%llx %s %s\n",
-> +				   dev_name(entry->dev),
-> +				   dev_driver_string(entry->dev),
-> +				   type2name[entry->type], idx,
-> +				   phys_addr(entry), entry->pfn,
-> +				   entry->dev_addr, entry->size,
-> +				   dir2name[entry->direction],
-> +				   maperr2str[entry->map_err_type]);
-> +		}
-> +
-> +		spin_unlock_irqrestore(&bucket->lock, flags);
-> +	}
-> +	return 0;
-> +}
+>  tools/testing/selftests/seccomp/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/sel=
+ftests/seccomp/Makefile
+> index fce7f4ce0692..1760b3e39730 100644
+> --- a/tools/testing/selftests/seccomp/Makefile
+> +++ b/tools/testing/selftests/seccomp/Makefile
+> @@ -9,7 +9,7 @@ BINARIES :=3D seccomp_bpf seccomp_benchmark
+>  CFLAGS +=3D -Wl,-no-as-needed -Wall
+>
+>  seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
+> -       $(CC) $(CFLAGS) $(LDFLAGS) -lpthread $< -o $@
+> +       $(CC) $(CFLAGS) $(LDFLAGS) $< -lpthread -o $@
+>
+>  TEST_PROGS +=3D $(BINARIES)
+>  EXTRA_CLEAN :=3D $(BINARIES)
+> --
+> 2.17.1
+>
 
-It's a shame that this is pretty much a duplication of 
-debug_dma_dump_mappings(), but there seems no straightforward way to 
-define one in terms of the other :/
 
-(although given that we'd rather not have that weird external interface 
-anyway, maybe "now you can use debugfs instead" might be justification 
-enough for cleaning it up...)
-
-> +
-> +static int dump_open(struct inode *inode, struct file *file)
-> +{
-> +	return single_open(file, dump_read, inode->i_private);
-> +}
-> +
-> +static const struct file_operations dump_fops = {
-> +	.owner = THIS_MODULE,
-> +	.open = dump_open,
-> +	.read = seq_read,
-> +	.llseek = seq_lseek,
-> +	.release = single_release,
-> +};
-> +
-
-DEFINE_SHOW_ATTRIBUTE()?
-
-Robin.
-
->   static int dma_debug_fs_init(void)
->   {
->   	dma_debug_dent = debugfs_create_dir("dma-api", NULL);
-> @@ -894,6 +936,11 @@ static int dma_debug_fs_init(void)
->   	if (!filter_dent)
->   		goto out_err;
->   
-> +	dump_dent = debugfs_create_file("dump", 0444,
-> +					dma_debug_dent, NULL, &dump_fops);
-> +	if (!dump_dent)
-> +		goto out_err;
-> +
->   	return 0;
->   
->   out_err:
-> 
+--=20
+Kees Cook
