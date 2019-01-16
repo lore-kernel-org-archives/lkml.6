@@ -2,112 +2,166 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9589DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A525DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3A020657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F21320657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393754AbfAPOux (ORCPT
+        id S2404709AbfAPOvf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:50:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44176 "EHLO mx1.suse.de"
+        Wed, 16 Jan 2019 09:51:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44830 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729398AbfAPOux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:50:53 -0500
+        id S1728876AbfAPOve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 09:51:34 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 126AEAFC7;
-        Wed, 16 Jan 2019 14:50:51 +0000 (UTC)
-Subject: Re: [RFC PATCH 5/5] net: lorawan: Split skb definitions into another
- header
-To:     Jiri Pirko <jiri@resnulli.us>,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Cc:     netdev@vger.kernel.org, linux-lpwan@lists.infradead.org,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        linux-kernel@vger.kernel.org
-References: <20190116142048.19446-1-starnight@g.ncu.edu.tw>
- <20190116142458.19542-5-starnight@g.ncu.edu.tw>
- <20190116143613.GI5265@nanopsycho>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <3d905f4f-e354-3607-32e0-84ec385222f0@suse.de>
-Date:   Wed, 16 Jan 2019 15:50:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 62B62AFC7;
+        Wed, 16 Jan 2019 14:51:32 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9A4051E1580; Wed, 16 Jan 2019 15:51:30 +0100 (CET)
+Date:   Wed, 16 Jan 2019 15:51:30 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH] fs: ratelimit __find_get_block_slow() failure message.
+Message-ID: <20190116145130.GH26069@quack2.suse.cz>
+References: <CACT4Y+YsuGt32H=_UTXjj-d7fEe6Lo4Nw91R-rZPy1zOyiJ4OA@mail.gmail.com>
+ <04c6d87c-fc26-b994-3b34-947414984abe@i-love.sakura.ne.jp>
+ <CACT4Y+brHvfKHb2CvkBFRxrm0hXKA+j_eW=orSWGWutcQwZ9iw@mail.gmail.com>
+ <CACT4Y+atyYbmrkyX0n+kvBWOt0OaauQbvrRhpUezaHXce5ZDrA@mail.gmail.com>
+ <54b68f21-c8b5-7074-74e0-06e3d7ee4003@i-love.sakura.ne.jp>
+ <CACT4Y+ZyP2QGL3ENJZRe8qbiL8SB8yDPHRY-npTzb14+LB05RQ@mail.gmail.com>
+ <20190116104308.GC26069@quack2.suse.cz>
+ <CACT4Y+akwPNEAiBtd5j6r0M6M7DmXV3kig+bnDL39H7uu44O3Q@mail.gmail.com>
+ <20190116115618.GE26069@quack2.suse.cz>
+ <CACT4Y+ZtrBeZyNeSJ_9d3DdVuP21=h7TNnOZJ_wLhLu11+qAAA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190116143613.GI5265@nanopsycho>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ZtrBeZyNeSJ_9d3DdVuP21=h7TNnOZJ_wLhLu11+qAAA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 16.01.19 um 15:36 schrieb Jiri Pirko:
-> Wed, Jan 16, 2019 at 03:25:02PM CET, starnight@g.ncu.edu.tw wrote:
->> Split LoRaWAN related skb definitions from lora/lorawan_netdev.h into
->> another header lora/lorawan_skb.h.
+On Wed 16-01-19 13:37:22, Dmitry Vyukov wrote:
+> On Wed, Jan 16, 2019 at 12:56 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 16-01-19 12:03:27, Dmitry Vyukov wrote:
+> > > On Wed, Jan 16, 2019 at 11:43 AM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Wed 16-01-19 10:47:56, Dmitry Vyukov wrote:
+> > > > > On Fri, Jan 11, 2019 at 1:46 PM Tetsuo Handa
+> > > > > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> > > > > >
+> > > > > > On 2019/01/11 19:48, Dmitry Vyukov wrote:
+> > > > > > >> How did you arrive to the conclusion that it is harmless?
+> > > > > > >> There is only one relevant standard covering this, which is the C
+> > > > > > >> language standard, and it is very clear on this -- this has Undefined
+> > > > > > >> Behavior, that is the same as, for example, reading/writing random
+> > > > > > >> pointers.
+> > > > > > >>
+> > > > > > >> Check out this on how any race that you might think is benign can be
+> > > > > > >> badly miscompiled and lead to arbitrary program behavior:
+> > > > > > >> https://software.intel.com/en-us/blogs/2013/01/06/benign-data-races-what-could-possibly-go-wrong
+> > > > > > >
+> > > > > > > Also there is no other practical definition of data race for automatic
+> > > > > > > data race detectors than: two conflicting non-atomic concurrent
+> > > > > > > accesses. Which this code is. Which means that if we continue writing
+> > > > > > > such code we are not getting data race detection and don't detect
+> > > > > > > thousands of races in kernel code that one may consider more harmful
+> > > > > > > than this one the easy way. And instead will spent large amounts of
+> > > > > > > time to fix some of then the hard way, and leave the rest as just too
+> > > > > > > hard to debug so let the kernel continue crashing from time to time (I
+> > > > > > > believe a portion of currently open syzbot bugs that developers just
+> > > > > > > left as "I don't see how this can happen" are due to such races).
+> > > > > > >
+> > > > > >
+> > > > > > I still cannot catch. Read/write of sizeof(long) bytes at naturally
+> > > > > > aligned address is atomic, isn't it?
+> > > > >
+> > > > > Nobody guarantees this. According to C non-atomic conflicting
+> > > > > reads/writes of sizeof(long) cause undefined behavior of the whole
+> > > > > program.
+> > > >
+> > > > Yes, but to be fair the kernel has always relied on long accesses to be
+> > > > atomic pretty heavily so that it is now de-facto standard for the kernel
+> > > > AFAICT. I understand this makes life for static checkers hard but such is
+> > > > reality.
+> > >
+> > > Yes, but nobody never defined what "a long access" means. And if you
+> > > see a function that accepts a long argument and stores it into a long
+> > > field, no, it does not qualify. I bet this will come at surprise to
+> > > lots of developers.
+> >
+> > Yes, inlining and other optimizations can screw you.
+> >
+> > > Check out this fix and try to extrapolate how this "function stores
+> > > long into a long leads to a serious security bug" can actually be
+> > > applied to whole lot of places after inlining (or when somebody just
+> > > slightly shuffles code in a way that looks totally safe) that also
+> > > kinda look safe and atomic:
+> > > https://lore.kernel.org/patchwork/patch/599779/
+> > > So where is the boundary between "a long access" that is atomic and
+> > > the one that is not necessary atomic?
+> >
+> > So I tend to rely on "long access being atomic" for opaque values (no
+> > flags, no counters, ...). Just value that gets fetched from some global
+> > variable / other data structure, stored, read, and possibly compared for
+> > equality. I agree the compiler could still screw you if it could infer how
+> > that value got initially created and try to be clever about it...
 > 
-> What is the motivation for this change?
+> So can you, or somebody else, define a set of rules that we can use to
+> discriminate each particular case? How can we avoid that "the compiler
+> could still screw you"?
+> 
+> Inlining is always enabled, right, so one needs to take into account
+> everything that's possibly can be inlined. Now or in future. And also
+> link-time-code generation, if we don't use it we are dropping 10% of
+> performance on the floor.
+> Also, ensuring that the code works when it's first submitted is the
+> smaller part of the problem. It's ensuring that it continues to work
+> in future what's more important. Try to imagine what amount of burden
+> this puts onto all developers who touch any kernel code in future.
+> Basically if you slightly alter local logic in a function that does
+> not do any loads/stores, you can screw multiple "proofs" that long
+> accesses are atomic. Or, you just move a function from .c file to .h.
+> I can bet nobody re-proofs all "long accesses are atomic" around the
+> changed code during code reviews, so these things break over time.
+> Or, even if only comparisons are involved (that you mentioned as
+> "safe") I see how that can actually affect compilation process. Say,
+> we are in the branch where 2 variables compare equal, now since no
+> concurrency is involved from compiler point of view, it can, say,
+> discard one variable and then re-load it from the other variable's
+> location, and say not the other variable has value that the other one
+> must never have. I don't have a full scenario, but that's exactly the
+> point. One will never see all possibilities.
+> 
+> It all becomes super slippery slope very quickly. And we do want
+> compiler to generate as fast code as possible and do all these
+> optimizations. And it's not that there are big objective reasons to
+> not just mark all concurrent accesses and stop spending large amounts
+> of time on these "proofs".
 
-I suggested it because skbs could be used with either LoRa or LoRaWAN
-netdevs. I have a lora/skb.h.
+I guess you've convinced me that somehow marking such accesses is
+desirable. So is using atomic_long_t and atomic_long_set()
+/ atomic_long_read() for manipulation instead what you suggest?
 
-In general the lorawan_foo.h looks ugly to me, so I thought I suggested
-to avoid that by using [lora/]lorawan/skb.h?
-
-Regards,
-Andreas
-
+								Honza
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
