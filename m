@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC4CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FECC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9E420675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F7FE20651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:24:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405544AbfAPQYf (ORCPT
+        id S2405556AbfAPQYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:24:35 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38158 "EHLO
+        Wed, 16 Jan 2019 11:24:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51178 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405532AbfAPQYc (ORCPT
+        by vger.kernel.org with ESMTP id S1731613AbfAPQYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:24:32 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GGJsGl084149
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:24:31 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q25k8fb45-1
+        Wed, 16 Jan 2019 11:24:37 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GGMh3Q179577
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:24:36 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2832g2uw-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:24:30 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:24:35 -0500
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <s1seetee@linux.vnet.ibm.com>;
-        Wed, 16 Jan 2019 16:24:28 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 16 Jan 2019 16:24:33 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Jan 2019 16:24:25 -0000
+        Wed, 16 Jan 2019 16:24:29 -0000
 Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GGOOID52232376
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GGOS1w50266350
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 16:24:25 GMT
+        Wed, 16 Jan 2019 16:24:28 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D834F4203F;
-        Wed, 16 Jan 2019 16:24:24 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 795BD4204D;
+        Wed, 16 Jan 2019 16:24:28 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C292E42041;
-        Wed, 16 Jan 2019 16:24:22 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 4447842042;
+        Wed, 16 Jan 2019 16:24:26 +0000 (GMT)
 Received: from oc1548405160.ibm.com (unknown [9.85.72.239])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Jan 2019 16:24:22 +0000 (GMT)
+        Wed, 16 Jan 2019 16:24:26 +0000 (GMT)
 From:   Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         alexander.shishkin@linux.intel.com, jolsa@redhat.com,
         namhyung@kernel.org, linux-kernel@vger.kernel.org
 Cc:     s1seetee@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com
-Subject: [PATCH] perf scripts python: Add Python 3 support to net_dropmonitor.py
-Date:   Wed, 16 Jan 2019 21:53:38 +0530
+Subject: [PATCH] perf scripts python: Add Python 3 support to powerpc-hcalls.py
+Date:   Wed, 16 Jan 2019 21:53:39 +0530
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1547655825-28754-1-git-send-email-s1seetee@linux.vnet.ibm.com>
 References: <1547655825-28754-1-git-send-email-s1seetee@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19011616-0028-0000-0000-0000033A0BF5
+x-cbid: 19011616-4275-0000-0000-000003000E56
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011616-0029-0000-0000-000023F733BF
-Message-Id: <1547655825-28754-10-git-send-email-s1seetee@linux.vnet.ibm.com>
+x-cbparentid: 19011616-4276-0000-0000-0000380E304D
+Message-Id: <1547655825-28754-11-git-send-email-s1seetee@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -75,44 +75,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support both Python 2 and Python 3 in net_dropmonitor.py.
+Support both Python 2 and Python 3 in powerpc-hcalls.py.
 ``print`` is now a function rather than a statement. This should
 have no functional change.
+
+The "has_key()" method is deprecated in favor of the "in" operator.
+So incorporate those changes here.
 
 Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 Reviewed-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 ---
- tools/perf/scripts/python/net_dropmonitor.py | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/scripts/python/powerpc-hcalls.py | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/scripts/python/net_dropmonitor.py b/tools/perf/scripts/python/net_dropmonitor.py
-index a150164..091f4b3 100755
---- a/tools/perf/scripts/python/net_dropmonitor.py
-+++ b/tools/perf/scripts/python/net_dropmonitor.py
-@@ -50,19 +50,19 @@ def get_sym(sloc):
- 		return (None, 0)
+diff --git a/tools/perf/scripts/python/powerpc-hcalls.py b/tools/perf/scripts/python/powerpc-hcalls.py
+index 00e0e74..6cf33f0 100644
+--- a/tools/perf/scripts/python/powerpc-hcalls.py
++++ b/tools/perf/scripts/python/powerpc-hcalls.py
+@@ -149,7 +149,7 @@ hcall_table = {
+ }
  
- def print_drop_table():
--	print "%25s %25s %25s" % ("LOCATION", "OFFSET", "COUNT")
-+	print("%25s %25s %25s" % ("LOCATION", "OFFSET", "COUNT"))
- 	for i in drop_log.keys():
- 		(sym, off) = get_sym(i)
- 		if sym == None:
- 			sym = i
--		print "%25s %25s %25s" % (sym, off, drop_log[i])
-+		print("%25s %25s %25s" % (sym, off, drop_log[i]))
- 
- 
- def trace_begin():
--	print "Starting trace (Ctrl-C to dump results)"
-+	print("Starting trace (Ctrl-C to dump results)")
+ def hcall_table_lookup(opcode):
+-	if (hcall_table.has_key(opcode)):
++	if (opcode in hcall_table):
+ 		return hcall_table[opcode]
+ 	else:
+ 		return opcode
+@@ -157,8 +157,8 @@ def hcall_table_lookup(opcode):
+ print_ptrn = '%-28s%10s%10s%10s%10s'
  
  def trace_end():
--	print "Gathering kallsyms data"
-+	print("Gathering kallsyms data")
- 	get_kallsyms_table()
- 	print_drop_table()
+-	print print_ptrn % ('hcall', 'count', 'min(ns)', 'max(ns)', 'avg(ns)')
+-	print '-' * 68
++	print(print_ptrn % ('hcall', 'count', 'min(ns)', 'max(ns)', 'avg(ns)'))
++	print('-' * 68)
+ 	for opcode in output:
+ 		h_name = hcall_table_lookup(opcode)
+ 		time = output[opcode]['time']
+@@ -166,14 +166,14 @@ def trace_end():
+ 		min_t = output[opcode]['min']
+ 		max_t = output[opcode]['max']
  
+-		print print_ptrn % (h_name, cnt, min_t, max_t, time/cnt)
++		print(print_ptrn % (h_name, cnt, min_t, max_t, time/cnt))
+ 
+ def powerpc__hcall_exit(name, context, cpu, sec, nsec, pid, comm, callchain,
+ 			opcode, retval):
+-	if (d_enter.has_key(cpu) and d_enter[cpu].has_key(opcode)):
++	if ((cpu in d_enter) and (opcode in d_enter[cpu])):
+ 		diff = nsecs(sec, nsec) - d_enter[cpu][opcode]
+ 
+-		if (output.has_key(opcode)):
++		if (opcode in output):
+ 			output[opcode]['time'] += diff
+ 			output[opcode]['cnt'] += 1
+ 			if (output[opcode]['min'] > diff):
+@@ -194,7 +194,7 @@ def powerpc__hcall_exit(name, context, cpu, sec, nsec, pid, comm, callchain,
+ 
+ def powerpc__hcall_entry(event_name, context, cpu, sec, nsec, pid, comm,
+ 			 callchain, opcode):
+-		if (d_enter.has_key(cpu)):
++		if (cpu in d_enter):
+ 			d_enter[cpu][opcode] = nsecs(sec, nsec)
+ 		else:
+ 			d_enter[cpu] = {opcode: nsecs(sec, nsec)}
 -- 
 1.8.3.1
 
