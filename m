@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E521C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8B3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D633D206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D97206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:49:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387567AbfAPWtI (ORCPT
+        id S2387732AbfAPWtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:49:08 -0500
+        Wed, 16 Jan 2019 17:49:18 -0500
 Received: from mga02.intel.com ([134.134.136.20]:57462 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733300AbfAPWtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:49:08 -0500
+        id S2387598AbfAPWtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 17:49:11 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 14:49:08 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="117288375"
+   d="scan'208";a="117288408"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 14:49:07 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 14:49:08 -0800
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -38,9 +38,9 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 01/13] taint: Introduce a new taint flag (insecure)
-Date:   Wed, 16 Jan 2019 14:48:37 -0800
-Message-Id: <20190116224849.8617-2-chang.seok.bae@intel.com>
+Subject: [PATCH v4 12/13] x86/elf: Enumerate kernel FSGSBASE capability in AT_HWCAP2
+Date:   Wed, 16 Jan 2019 14:48:48 -0800
+Message-Id: <20190116224849.8617-13-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190116224849.8617-1-chang.seok.bae@intel.com>
 References: <20190116224849.8617-1-chang.seok.bae@intel.com>
@@ -51,64 +51,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For testing (or root-only) purposes, the new flag will serve to tag the
-kernel taint accurately.
+From: Andi Kleen <ak@linux.intel.com>
 
-When adding a new feature support, patches need to be incrementally
-applied and tested with temporal parameters. Currently, there is no flag
-for this usage.
+The kernel needs to explicitly enable FSGSBASE. So, the application needs
+to know if it can safely use these instructions. Just looking at the CPUID
+bit is not enough because it may be running in a kernel that does not
+enable the instructions.
 
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
+One way for the application would be to just try and catch the SIGILL.
+But that is difficult to do in libraries which may not want to overwrite
+the signal handlers of the main application.
+
+So we need to provide a way for the application to discover the kernel
+capability.
+
+I used AT_HWCAP2 in the ELF aux vector which is already used by PPC for
+similar things. We define a new Linux defined bitmap returned in AT_HWCAP.
+Next to MONITOR/MWAIT, bit 1 is reserved for FSGSBASE capability checks.
+
+The application can then access it manually or using the getauxval()
+function in newer glibc.
+
+[ chang: Rebase and edit the changelog accordingly. ]
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- Documentation/sysctl/kernel.txt | 1 +
- include/linux/kernel.h          | 3 ++-
- kernel/panic.c                  | 1 +
- 3 files changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/include/uapi/asm/hwcap2.h | 3 +++
+ arch/x86/kernel/cpu/common.c       | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index c0527d8a468a..c4f37871d86e 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -1052,6 +1052,7 @@ ORed together. The letters are seen in "Tainted" line of Oops reports.
-  32768 (K): The kernel has been live patched.
-  65536 (X): Auxiliary taint, defined and used by for distros.
- 131072 (T): The kernel was built with the struct randomization plugin.
-+262144 (Z): The kernel is running in a known insecure configuration.
+diff --git a/arch/x86/include/uapi/asm/hwcap2.h b/arch/x86/include/uapi/asm/hwcap2.h
+index 6ebaae90e207..c5ce54e749f6 100644
+--- a/arch/x86/include/uapi/asm/hwcap2.h
++++ b/arch/x86/include/uapi/asm/hwcap2.h
+@@ -5,4 +5,7 @@
+ /* MONITOR/MWAIT enabled in Ring 3 */
+ #define HWCAP2_RING3MWAIT		(1 << 0)
  
- ==============================================================
++/* Kernel allows FSGSBASE instructions available in Ring 3 */
++#define HWCAP2_FSGSBASE			BIT(1)
++
+ #endif
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 3d7d4ca1a29e..3bdac91316c9 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1369,8 +1369,10 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	setup_umip(c);
  
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 8f0e68e250a7..dc149ff8cc52 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -599,7 +599,8 @@ extern enum system_states {
- #define TAINT_LIVEPATCH			15
- #define TAINT_AUX			16
- #define TAINT_RANDSTRUCT		17
--#define TAINT_FLAGS_COUNT		18
-+#define TAINT_INSECURE			18
-+#define TAINT_FLAGS_COUNT		19
+ 	/* Enable FSGSBASE instructions if available. */
+-	if (cpu_has(c, X86_FEATURE_FSGSBASE))
++	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
+ 		cr4_set_bits(X86_CR4_FSGSBASE);
++		elf_hwcap2 |= HWCAP2_FSGSBASE;
++	}
  
- struct taint_flag {
- 	char c_true;	/* character printed when tainted */
-diff --git a/kernel/panic.c b/kernel/panic.c
-index f121e6ba7e11..cb6b90538375 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -362,6 +362,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
- 	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
- 	[ TAINT_AUX ]			= { 'X', ' ', true },
- 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
-+	[ TAINT_INSECURE ]		= { 'Z', ' ', false },
- };
- 
- /**
+ 	/*
+ 	 * The vendor-specific functions might have changed features.
 -- 
 2.19.1
 
