@@ -2,90 +2,213 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90732C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13500C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F14620840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8C3820859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:14:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VxRliN+b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389363AbfAPKOT (ORCPT
+        id S2389428AbfAPKOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:14:19 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44558 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389058AbfAPKOT (ORCPT
+        Wed, 16 Jan 2019 05:14:46 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38799 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731943AbfAPKOq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:14:19 -0500
-Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gjiD3-0004ni-Re; Wed, 16 Jan 2019 11:14:10 +0100
-Date:   Wed, 16 Jan 2019 11:14:09 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Yixun Lan <yixun.lan@amlogic.com>
-cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 1/3] dt-bindings: reset: Add bindings for the Meson-AXG
- SoC Reset Controller
-In-Reply-To: <alpine.DEB.2.21.1811121115520.14703@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1901161112090.1655@nanos.tec.linutronix.de>
-References: <20171110084650.31325-1-yixun.lan@amlogic.com> <alpine.DEB.2.21.1811121115520.14703@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 16 Jan 2019 05:14:46 -0500
+Received: by mail-ed1-f65.google.com with SMTP id h50so4960049ede.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 02:14:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xm7lOdagTUXWoApQjAoLmUIdhJ9/+q+p1K8q4ZJihQ8=;
+        b=VxRliN+b9E3BT9RqERr2ukFR4ZI4YtP/vqqB84wtUBbRdAYQuFBrf+e9UVWZt/Q+o4
+         0N0uG+K69dmgWuDpw3zDcN+K+1cjVMbSyplP0GTurO3HATg9MBoHOus8zTE/zqPvvjah
+         +1zmiujDtCOtM01TqtJbkw3+CJiAZxjf6UkQU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Xm7lOdagTUXWoApQjAoLmUIdhJ9/+q+p1K8q4ZJihQ8=;
+        b=MfrQoeUw3waJvI9soOGbDLui8gSgEKQLnq4nsMOnzCmVkdqrNPOcgO1eW1c0K0gwf0
+         zOp3YnnGVfw+jGoVL0K+QVy2rRgm7QjeyKjhOH1TIo5Ydd91GXTpRvEiazdx3ym9AF8l
+         QGWgJ+q1hWwUiEuX0BaQHMfUvYugJkL5zTsqT3tK1yhbeUAmP57huqAFtAgxbllD6+QG
+         927k7TwZN5xsbzq5GgakoxnXXsEfucFroq162eV0UcbJ8n1g+7pSxB6xqIsXmeXeDfvA
+         LzL5Nohsy2cLuD/xAni3SjoCnBimDsRHDtO/I6W4lulle2Q5CwwwjT6HfCvjn3XPFbLA
+         X6WQ==
+X-Gm-Message-State: AJcUukf4+5Oo93W69FZpHr9Rrtxb5GLgN61pYHR1ci1yu3hJVCAegRY2
+        reOF9X2vI+y0vmLl6cfvDFu6tA==
+X-Google-Smtp-Source: ALg8bN4itZZdI9JsmXYz9fwzYgNBC4Lbicat1rbUn2pDz0dBEv28JL1BZF7TRQuVyU2Ntj1cUzWjIg==
+X-Received: by 2002:a17:906:3712:: with SMTP id d18-v6mr6445225ejc.126.1547633683976;
+        Wed, 16 Jan 2019 02:14:43 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id v11sm5356616edy.49.2019.01.16.02.14.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 02:14:42 -0800 (PST)
+Date:   Wed, 16 Jan 2019 11:14:40 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "yong.zhi@intel.com" <yong.zhi@intel.com>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
+        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
+        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
+        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>
+Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Message-ID: <20190116101440.GR10517@phenom.ffwll.local>
+Mail-Followup-To: "Koenig, Christian" <Christian.Koenig@amd.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>, "hch@lst.de" <hch@lst.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "yong.zhi@intel.com" <yong.zhi@intel.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
+        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
+        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
+        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>
+References: <20190114094856.GB29604@lst.de>
+ <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
+ <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com>
+ <20190115152029.GB2325@lst.de>
+ <41d0616e95fb48942404fb54d82249f5700affb1.camel@vmware.com>
+ <20190115183133.GA12350@lst.de>
+ <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com>
+ <20190115205801.GA15432@lst.de>
+ <01e5522bf88549bfdaea1430fece23cb3d1a1a55.camel@vmware.com>
+ <8aadac80-da9b-b52a-a4bf-066406127117@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8aadac80-da9b-b52a-a4bf-066406127117@amd.com>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Nov 2018, Thomas Gleixner wrote:
-
-Gentle ping.
-
-> Yixun,
+On Wed, Jan 16, 2019 at 07:28:13AM +0000, Koenig, Christian wrote:
+> Am 16.01.19 um 08:09 schrieb Thomas Hellstrom:
+> > On Tue, 2019-01-15 at 21:58 +0100, hch@lst.de wrote:
+> >> On Tue, Jan 15, 2019 at 07:13:11PM +0000, Koenig, Christian wrote:
+> >>> Thomas is correct that the interface you propose here doesn't work
+> >>> at
+> >>> all for GPUs.
+> >>>
+> >>> The kernel driver is not informed of flush/sync, but rather just
+> >>> setups
+> >>> coherent mappings between system memory and devices.
+> >>>
+> >>> In other words you have an array of struct pages and need to map
+> >>> that to
+> >>> a specific device and so create dma_addresses for the mappings.
+> >> If you want a coherent mapping you need to use dma_alloc_coherent
+> >> and dma_mmap_coherent and you are done, that is not the problem.
+> >> That actually is one of the vmgfx modes, so I don't understand what
+> >> problem we are trying to solve if you don't actually want a non-
+> >> coherent mapping.
+> > For vmwgfx, not making dma_alloc_coherent default has a couple of
+> > reasons:
+> > 1) Memory is associated with a struct device. It has not been clear
+> > that it is exportable to other devices.
+> > 2) There seems to be restrictions in the system pages allowable. GPUs
+> > generally prefer highmem pages but dma_alloc_coherent returns a virtual
+> > address implying GFP_KERNEL? While not used by vmwgfx, TTM typically
+> > prefers HIGHMEM pages to facilitate caching mode switching without
+> > having to touch the kernel map.
+> > 3) Historically we had APIs to allow coherent access to user-space
+> > defined pages. That has gone away not but the infrastructure was built
+> > around it.
+> >
+> > dma_mmap_coherent isn't use because as the data moves between system
+> > memory, swap and VRAM, PTEs of user-space mappings are adjusted
+> > accordingly, meaning user-space doesn't have to unmap when an operation
+> > is initiated that might mean the data is moved.
 > 
-> On Fri, 10 Nov 2017, Yixun Lan wrote:
+> To summarize once more: We have an array of struct pages and want to 
+> coherently map that to a device.
 > 
-> > +/*
-> > + *
-> > + * Copyright (c) 2016 BayLibre, SAS.
-> > + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> > + *
-> > + * Copyright (c) 2017 Amlogic, inc.
-> > + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> > + *
-> > + * SPDX-License-Identifier: (GPL-2.0+ OR BSD)
+> If that is not possible because of whatever reason we want to get an 
+> error code or even not load the driver from the beginning.
+
+I guess to make this work we'd also need information about how we're
+allowed to mmap this on the cpu side, both from the kernel (kmap or vmap)
+and for userspace. At least for i915 we use all kinds of combinations,
+e.g. cpu mmap ptes as cached w/ coherent device transactions, or
+cached+clflush on the cpu side, and non-coherent device transactions (the
+no-snoop thing), or wc mode in the cpu ptes and non-coherent device
+transactions-
+
+Plus some debug mode so we catch abuse, because reality is that most of
+the gpu driver work happens on x86, where all of this just works. Even if
+you do some really serious layering violations (which is why this isn't
+that high a priority for gpu folks).
+-Daniel
+
 > 
-> There are two things wrong:
+> >
+> >
+> >> Although last time I had that discussion with Daniel Vetter
+> >> I was under the impressions that GPUs really wanted non-coherent
+> >> mappings.
+> > Intel historically has done things a bit differently. And it's also
+> > possible that embedded platforms and ARM prefer this mode of operation,
+> > but I haven't caught up on that discussion.
+> >
+> >> But if you want a coherent mapping you can't go to a struct page,
+> >> because on many systems you can't just map arbitrary memory as
+> >> uncachable.  It might either come from very special limited pools,
+> >> or might need other magic applied to it so that it is not visible
+> >> in the normal direct mapping, or at least not access through it.
+> >
+> > The TTM subsystem has been relied on to provide coherent memory with
+> > the option to switch caching mode of pages. But only on selected and
+> > well tested platforms. On other platforms we simply do not load, and
+> > that's fine for now.
+> >
+> > But as mentioned multiple times, to make GPU drivers more compliant,
+> > we'd really want that
+> >
+> > bool dma_streaming_is_coherent(const struct device *)
+> >
+> > API to help us decide when to load or not.
 > 
->   1) The placement. See Documentation/process/license-rules.rst
+> Yes, please.
 > 
->   2) BSD is not a valid license id. You really have to decide which BSD
->      variant to use.
+> Christian.
 > 
-> Please get that fixed as especially #2 is broken. The goal of using SPDX is
-> to provide reliable license information for compliance tools.
+> >
+> > Thanks,
+> > Thomas
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> 
 
-This still is broken:
-
-# scripts/spdxcheck.py include/dt-bindings/
-include/dt-bindings/reset/amlogic,meson-axg-reset.h: 9:41 Invalid License ID: BSD
-
-Thanks,
-
-	tglx
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
