@@ -2,305 +2,112 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997E9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF1EC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75269206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A0A4206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:25:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbfAPSZg (ORCPT
+        id S1728621AbfAPSZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:25:36 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:35092 "EHLO ale.deltatee.com"
+        Wed, 16 Jan 2019 13:25:45 -0500
+Received: from mga05.intel.com ([192.55.52.43]:10858 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbfAPSZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:25:35 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gjpsY-0003ND-0K; Wed, 16 Jan 2019 11:25:34 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gjpsU-00054a-37; Wed, 16 Jan 2019 11:25:26 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Suresh Warrier <warrier@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Date:   Wed, 16 Jan 2019 11:25:20 -0700
-Message-Id: <20190116182523.19446-4-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20190116182523.19446-1-logang@deltatee.com>
-References: <20190116182523.19446-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, horia.geanta@nxp.com, logang@deltatee.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, warrier@linux.vnet.ibm.com, andy.shevchenko@gmail.com, npiggin@gmail.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v25 3/6] iomap: introduce io{read|write}64_{lo_hi|hi_lo}
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1728400AbfAPSZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 13:25:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 10:25:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="126559961"
+Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
+  by orsmga002.jf.intel.com with ESMTP; 16 Jan 2019 10:25:38 -0800
+Subject: [PATCH 1/4] mm/resource: return real error codes from walk failures
+To:     dave@sr71.net
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
+        akpm@linux-foundation.org, mhocko@suse.com,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, ying.huang@intel.com, fengguang.wu@intel.com,
+        bp@suse.de, bhelgaas@google.com, baiyaowei@cmss.chinamobile.com,
+        tiwai@suse.de
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Wed, 16 Jan 2019 10:19:01 -0800
+References: <20190116181859.D1504459@viggo.jf.intel.com>
+In-Reply-To: <20190116181859.D1504459@viggo.jf.intel.com>
+Message-Id: <20190116181901.CAF85066@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to provide non-atomic functions for io{read|write}64 that will
-use readq and writeq when appropriate. We define a number of variants
-of these functions in the generic iomap that will do non-atomic
-operations on pio but atomic operations on mmio.
 
-These functions are only defined if readq and writeq are defined. If
-they are not, then the wrappers that always use non-atomic operations
-from include/linux/io-64-nonatomic*.h will be used.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Suresh Warrier <warrier@linux.vnet.ibm.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
+walk_system_ram_range() can return an error code either becuase *it*
+failed, or because the 'func' that it calls returned an error.  The
+memory hotplug does the following:
+
+        ret = walk_system_ram_range(..., func);
+        if (ret)
+		return ret;
+
+and 'ret' makes it out to userspace, eventually.  The problem is,
+walk_system_ram_range() failues that result from *it* failing (as
+opposed to 'func') return -1.  That leads to a very odd -EPERM (-1)
+return code out to userspace.
+
+Make walk_system_ram_range() return -EINVAL for internal failures to
+keep userspace less confused.
+
+This return code is compatible with all the callers that I audited.
+
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Ross Zwisler <zwisler@kernel.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: linux-nvdimm@lists.01.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- arch/powerpc/include/asm/io.h |   2 +
- include/asm-generic/iomap.h   |  22 ++++++
- lib/iomap.c                   | 132 ++++++++++++++++++++++++++++++++++
- 3 files changed, 156 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index 7f19fbd3ba55..4b73847e9b95 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -783,8 +783,10 @@ extern void __iounmap_at(void *ea, unsigned long size);
- 
- #define mmio_read16be(addr)		readw_be(addr)
- #define mmio_read32be(addr)		readl_be(addr)
-+#define mmio_read64be(addr)		readq_be(addr)
- #define mmio_write16be(val, addr)	writew_be(val, addr)
- #define mmio_write32be(val, addr)	writel_be(val, addr)
-+#define mmio_write64be(val, addr)	writeq_be(val, addr)
- #define mmio_insb(addr, dst, count)	readsb(addr, dst, count)
- #define mmio_insw(addr, dst, count)	readsw(addr, dst, count)
- #define mmio_insl(addr, dst, count)	readsl(addr, dst, count)
-diff --git a/include/asm-generic/iomap.h b/include/asm-generic/iomap.h
-index 5b63b94ef6b5..a008f504a2d0 100644
---- a/include/asm-generic/iomap.h
-+++ b/include/asm-generic/iomap.h
-@@ -36,6 +36,17 @@ extern u64 ioread64(void __iomem *);
- extern u64 ioread64be(void __iomem *);
- #endif
- 
-+#ifdef readq
-+#define ioread64_lo_hi ioread64_lo_hi
-+#define ioread64_hi_lo ioread64_hi_lo
-+#define ioread64be_lo_hi ioread64be_lo_hi
-+#define ioread64be_hi_lo ioread64be_hi_lo
-+extern u64 ioread64_lo_hi(void __iomem *addr);
-+extern u64 ioread64_hi_lo(void __iomem *addr);
-+extern u64 ioread64be_lo_hi(void __iomem *addr);
-+extern u64 ioread64be_hi_lo(void __iomem *addr);
-+#endif
-+
- extern void iowrite8(u8, void __iomem *);
- extern void iowrite16(u16, void __iomem *);
- extern void iowrite16be(u16, void __iomem *);
-@@ -46,6 +57,17 @@ extern void iowrite64(u64, void __iomem *);
- extern void iowrite64be(u64, void __iomem *);
- #endif
- 
-+#ifdef writeq
-+#define iowrite64_lo_hi iowrite64_lo_hi
-+#define iowrite64_hi_lo iowrite64_hi_lo
-+#define iowrite64be_lo_hi iowrite64be_lo_hi
-+#define iowrite64be_hi_lo iowrite64be_hi_lo
-+extern void iowrite64_lo_hi(u64 val, void __iomem *addr);
-+extern void iowrite64_hi_lo(u64 val, void __iomem *addr);
-+extern void iowrite64be_lo_hi(u64 val, void __iomem *addr);
-+extern void iowrite64be_hi_lo(u64 val, void __iomem *addr);
-+#endif
-+
- /*
-  * "string" versions of the above. Note that they
-  * use native byte ordering for the accesses (on
-diff --git a/lib/iomap.c b/lib/iomap.c
-index 2c293b22569f..e909ab71e995 100644
---- a/lib/iomap.c
-+++ b/lib/iomap.c
-@@ -67,6 +67,7 @@ static void bad_io_access(unsigned long port, const char *access)
- #ifndef mmio_read16be
- #define mmio_read16be(addr) swab16(readw(addr))
- #define mmio_read32be(addr) swab32(readl(addr))
-+#define mmio_read64be(addr) swab64(readq(addr))
- #endif
- 
- unsigned int ioread8(void __iomem *addr)
-@@ -100,6 +101,80 @@ EXPORT_SYMBOL(ioread16be);
- EXPORT_SYMBOL(ioread32);
- EXPORT_SYMBOL(ioread32be);
- 
-+#ifdef readq
-+static u64 pio_read64_lo_hi(unsigned long port)
-+{
-+	u64 lo, hi;
-+
-+	lo = inl(port);
-+	hi = inl(port + sizeof(u32));
-+
-+	return lo | (hi << 32);
-+}
-+
-+static u64 pio_read64_hi_lo(unsigned long port)
-+{
-+	u64 lo, hi;
-+
-+	hi = inl(port + sizeof(u32));
-+	lo = inl(port);
-+
-+	return lo | (hi << 32);
-+}
-+
-+static u64 pio_read64be_lo_hi(unsigned long port)
-+{
-+	u64 lo, hi;
-+
-+	lo = pio_read32be(port + sizeof(u32));
-+	hi = pio_read32be(port);
-+
-+	return lo | (hi << 32);
-+}
-+
-+static u64 pio_read64be_hi_lo(unsigned long port)
-+{
-+	u64 lo, hi;
-+
-+	hi = pio_read32be(port);
-+	lo = pio_read32be(port + sizeof(u32));
-+
-+	return lo | (hi << 32);
-+}
-+
-+u64 ioread64_lo_hi(void __iomem *addr)
-+{
-+	IO_COND(addr, return pio_read64_lo_hi(port), return readq(addr));
-+	return 0xffffffffffffffffULL;
-+}
-+
-+u64 ioread64_hi_lo(void __iomem *addr)
-+{
-+	IO_COND(addr, return pio_read64_hi_lo(port), return readq(addr));
-+	return 0xffffffffffffffffULL;
-+}
-+
-+u64 ioread64be_lo_hi(void __iomem *addr)
-+{
-+	IO_COND(addr, return pio_read64be_lo_hi(port),
-+		return mmio_read64be(addr));
-+	return 0xffffffffffffffffULL;
-+}
-+
-+u64 ioread64be_hi_lo(void __iomem *addr)
-+{
-+	IO_COND(addr, return pio_read64be_hi_lo(port),
-+		return mmio_read64be(addr));
-+	return 0xffffffffffffffffULL;
-+}
-+
-+EXPORT_SYMBOL(ioread64_lo_hi);
-+EXPORT_SYMBOL(ioread64_hi_lo);
-+EXPORT_SYMBOL(ioread64be_lo_hi);
-+EXPORT_SYMBOL(ioread64be_hi_lo);
-+
-+#endif /* readq */
-+
- #ifndef pio_write16be
- #define pio_write16be(val,port) outw(swab16(val),port)
- #define pio_write32be(val,port) outl(swab32(val),port)
-@@ -108,6 +183,7 @@ EXPORT_SYMBOL(ioread32be);
- #ifndef mmio_write16be
- #define mmio_write16be(val,port) writew(swab16(val),port)
- #define mmio_write32be(val,port) writel(swab32(val),port)
-+#define mmio_write64be(val,port) writeq(swab64(val),port)
- #endif
- 
- void iowrite8(u8 val, void __iomem *addr)
-@@ -136,6 +212,62 @@ EXPORT_SYMBOL(iowrite16be);
- EXPORT_SYMBOL(iowrite32);
- EXPORT_SYMBOL(iowrite32be);
- 
-+#ifdef writeq
-+static void pio_write64_lo_hi(u64 val, unsigned long port)
-+{
-+	outl(val, port);
-+	outl(val >> 32, port + sizeof(u32));
-+}
-+
-+static void pio_write64_hi_lo(u64 val, unsigned long port)
-+{
-+	outl(val >> 32, port + sizeof(u32));
-+	outl(val, port);
-+}
-+
-+static void pio_write64be_lo_hi(u64 val, unsigned long port)
-+{
-+	pio_write32be(val, port + sizeof(u32));
-+	pio_write32be(val >> 32, port);
-+}
-+
-+static void pio_write64be_hi_lo(u64 val, unsigned long port)
-+{
-+	pio_write32be(val >> 32, port);
-+	pio_write32be(val, port + sizeof(u32));
-+}
-+
-+void iowrite64_lo_hi(u64 val, void __iomem *addr)
-+{
-+	IO_COND(addr, pio_write64_lo_hi(val, port),
-+		writeq(val, addr));
-+}
-+
-+void iowrite64_hi_lo(u64 val, void __iomem *addr)
-+{
-+	IO_COND(addr, pio_write64_hi_lo(val, port),
-+		writeq(val, addr));
-+}
-+
-+void iowrite64be_lo_hi(u64 val, void __iomem *addr)
-+{
-+	IO_COND(addr, pio_write64be_lo_hi(val, port),
-+		mmio_write64be(val, addr));
-+}
-+
-+void iowrite64be_hi_lo(u64 val, void __iomem *addr)
-+{
-+	IO_COND(addr, pio_write64be_hi_lo(val, port),
-+		mmio_write64be(val, addr));
-+}
-+
-+EXPORT_SYMBOL(iowrite64_lo_hi);
-+EXPORT_SYMBOL(iowrite64_hi_lo);
-+EXPORT_SYMBOL(iowrite64be_lo_hi);
-+EXPORT_SYMBOL(iowrite64be_hi_lo);
-+
-+#endif /* readq */
-+
- /*
-  * These are the "repeat MMIO read/write" functions.
-  * Note the "__raw" accesses, since we don't want to
--- 
-2.19.0
+ b/kernel/resource.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff -puN kernel/resource.c~memory-hotplug-walk_system_ram_range-returns-neg-1 kernel/resource.c
+--- a/kernel/resource.c~memory-hotplug-walk_system_ram_range-returns-neg-1	2018-12-20 11:48:41.810771934 -0800
++++ b/kernel/resource.c	2018-12-20 11:48:41.814771934 -0800
+@@ -375,7 +375,7 @@ static int __walk_iomem_res_desc(resourc
+ 				 int (*func)(struct resource *, void *))
+ {
+ 	struct resource res;
+-	int ret = -1;
++	int ret = -EINVAL;
+ 
+ 	while (start < end &&
+ 	       !find_next_iomem_res(start, end, flags, desc, first_lvl, &res)) {
+@@ -453,7 +453,7 @@ int walk_system_ram_range(unsigned long
+ 	unsigned long flags;
+ 	struct resource res;
+ 	unsigned long pfn, end_pfn;
+-	int ret = -1;
++	int ret = -EINVAL;
+ 
+ 	start = (u64) start_pfn << PAGE_SHIFT;
+ 	end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+_
