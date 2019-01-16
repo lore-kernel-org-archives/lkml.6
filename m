@@ -2,161 +2,80 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5906C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF46C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC0820866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:18:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29420214AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:18:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730702AbfAPTSP (ORCPT
+        id S1730835AbfAPTSt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:18:15 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43668 "EHLO mail.bootlin.com"
+        Wed, 16 Jan 2019 14:18:49 -0500
+Received: from mga06.intel.com ([134.134.136.31]:15619 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730600AbfAPTSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:18:11 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 69B98209BC; Wed, 16 Jan 2019 20:18:08 +0100 (CET)
-Received: from localhost (unknown [212.81.177.10])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 072E6207B0;
-        Wed, 16 Jan 2019 20:17:57 +0100 (CET)
-Date:   Wed, 16 Jan 2019 12:11:09 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Subject: Re: [PATCH v5 2/6] media: sun6i: Add mod_rate quirk
-Message-ID: <20190116111109.dkc4zgsz6lcjlzs5@flea>
-References: <20181220125438.11700-1-jagan@amarulasolutions.com>
- <20181220125438.11700-3-jagan@amarulasolutions.com>
- <20181221130025.lbvw7yvy74brf3jn@flea>
- <CAMty3ZCG5cF3tP2mid5xyS=yhtxkY+TOcGkwRkv+vrZt1=0iQg@mail.gmail.com>
- <20190107132929.ksyajmzn2gzr6oep@flea>
- <CAMty3ZAx9MthB0M-eFmsZv9CxF3Z1BkFTU6Hw=ZT5wu6aJwjGQ@mail.gmail.com>
+        id S1730804AbfAPTSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 14:18:49 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 11:18:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="292095748"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 11:18:47 -0800
+Date:   Wed, 16 Jan 2019 11:13:05 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Xiaochen Shen <xiaochen.shen@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 00/10] selftests/resctrl: Add resctrl selftest
+Message-ID: <20190116191304.GA221444@romley-ivt3.sc.intel.com>
+References: <1545438038-75107-1-git-send-email-fenghua.yu@intel.com>
+ <09e6d4f2-94c8-918c-4d54-0000c3d809b2@amd.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tme5liorzp5mnfdf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZAx9MthB0M-eFmsZv9CxF3Z1BkFTU6Hw=ZT5wu6aJwjGQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <09e6d4f2-94c8-918c-4d54-0000c3d809b2@amd.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 16, 2019 at 03:54:07PM +0000, Moger, Babu wrote:
+> Hi Fenghua/Sai/Arshiya,
+>   We were thinking of updating these selftests to work on both Intel and
+> AMD. What do you guys think?
+> 
+> If that is ok, I can update these patches and resubmit. If you have
+> already updated, please post the latest series. I will use the latest
+> version. Please let me know.
+> Thanks
 
---tme5liorzp5mnfdf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi, Babu,
 
-On Fri, Jan 11, 2019 at 11:54:12AM +0530, Jagan Teki wrote:
-> On Mon, Jan 7, 2019 at 6:59 PM Maxime Ripard <maxime.ripard@bootlin.com> =
-wrote:
-> > On Mon, Dec 24, 2018 at 08:57:48PM +0530, Jagan Teki wrote:
-> > > On Fri, Dec 21, 2018 at 6:30 PM Maxime Ripard <maxime.ripard@bootlin.=
-com> wrote:
-> > > >
-> > > > On Thu, Dec 20, 2018 at 06:24:34PM +0530, Jagan Teki wrote:
-> > > > > Unfortunately default CSI_SCLK rate cannot work properly to
-> > > > > drive the connected sensor interface, particularly on few
-> > > > > Allwinner SoC's like A64.
-> > > > >
-> > > > > So, add mod_rate quirk via driver data so-that the respective
-> > > > > SoC's which require to alter the default mod clock rate can assign
-> > > > > the operating clock rate.
-> > > > >
-> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > ---
-> > > > >  .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 34 +++++++++++++=
-++----
-> > > > >  1 file changed, 28 insertions(+), 6 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b=
-/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > > > > index ee882b66a5ea..fe002beae09c 100644
-> > > > > --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > > > > +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > > > > @@ -15,6 +15,7 @@
-> > > > >  #include <linux/ioctl.h>
-> > > > >  #include <linux/module.h>
-> > > > >  #include <linux/of.h>
-> > > > > +#include <linux/of_device.h>
-> > > > >  #include <linux/platform_device.h>
-> > > > >  #include <linux/pm_runtime.h>
-> > > > >  #include <linux/regmap.h>
-> > > > > @@ -28,8 +29,13 @@
-> > > > >
-> > > > >  #define MODULE_NAME  "sun6i-csi"
-> > > > >
-> > > > > +struct sun6i_csi_variant {
-> > > > > +     unsigned long                   mod_rate;
-> > > > > +};
-> > > > > +
-> > > > >  struct sun6i_csi_dev {
-> > > > >       struct sun6i_csi                csi;
-> > > > > +     const struct sun6i_csi_variant  *variant;
-> > > > >       struct device                   *dev;
-> > > > >
-> > > > >       struct regmap                   *regmap;
-> > > > > @@ -822,33 +828,43 @@ static int sun6i_csi_resource_request(struc=
-t sun6i_csi_dev *sdev,
-> > > > >               return PTR_ERR(sdev->clk_mod);
-> > > > >       }
-> > > > >
-> > > > > +     if (sdev->variant->mod_rate)
-> > > > > +             clk_set_rate_exclusive(sdev->clk_mod, sdev->variant=
-->mod_rate);
-> > > > > +
-> > > >
-> > > > It still doesn't make any sense to do it in the probe function...
-> > >
-> > > I'm not sure we discussed about the context wrt probe, we discussed
-> > > about exclusive put clock.
-> >
-> > https://lkml.org/lkml/2018/12/18/584
-> >
-> > "Doing it here is not really optimal either, since you'll put a
-> > constraint on the system (maintaining that clock at 300MHz), while
-> > it's not in use."
->=20
-> But this constraint is only set, for SoC's who need mod_rate change
-> not for whole SoCs.
+Sure. Please go ahead to update the selftests to work on both Intel and AMD.
+That's wonderful for resctrl overall.
 
-Still, that constraint is there for the whole system on affected
-SoCs. Whether it applies to one SoC or not is not really relevant.
+We do plan to update selftest and add resctrl fs interface testing. But
+as of now we don't have updated selftest yet. Please work on the v4 patch
+set.
 
-Maxime
+Thanks.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-Fenghua
 
---tme5liorzp5mnfdf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXD8RTQAKCRDj7w1vZxhR
-xT6tAP9ZNf6d/5D7t2bcICJ3jps6qwA+vv4bM33AM2BI06aZLAD+KZ2PMgd+ZQfT
-8/d8btb5HBoo3QhQK+Rj9Zp4LlU5fQc=
-=xBGo
------END PGP SIGNATURE-----
-
---tme5liorzp5mnfdf--
