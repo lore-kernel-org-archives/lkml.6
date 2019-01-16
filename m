@@ -2,148 +2,121 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FFDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8BFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0242020866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:02:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gAGB4sY5"
+	by mail.kernel.org (Postfix) with ESMTP id D6CA2206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbfAPAC2 (ORCPT
+        id S1729530AbfAPAJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 19:02:28 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38129 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727060AbfAPAC1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 19:02:27 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so2096812pfi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 16:02:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=Wpx9C3gke45794DvIebWUi/xcVR5MPYC13bd7BIljjQ=;
-        b=gAGB4sY557ITsqI5hdDXSpBYVjXoZb+umGduj3ir4bigHTcRVES0RQY5wJQykgvyt6
-         ztwuFAgTzmNqSu/h3lsv22jE1Yevl1qJGOn0/M17/aX+CSLrz+8xPyJwlmi8Y/wG9prE
-         5uy9yJvA5xe3kWcAdYLuPqGdXHtZBcVFTUjlY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=Wpx9C3gke45794DvIebWUi/xcVR5MPYC13bd7BIljjQ=;
-        b=ealH06z5a/lt/FZfzhSqE8aqCX48EzhfbQ17nOKqjTQjLqGPTeSFOpY7N7t54TlkfD
-         N+6UQOhBAhAeW4mc9cMQHOs0GS/TDqzyMBH5KSST+AbFfSIIOghCRFm44hz7JzTt4cCJ
-         5E5gcrcMb1r2qDgnTrshPsjkpqELJFbEdfUnX704QYajBbjDR7RJmCL0xfR2INPr2URg
-         xB+LL8cIjBLXFzFsQ1IIn5af9U5OFK9BN+v1uop2b73Wl1Ol1xz0nfPJ/jPUK1UyLOXM
-         TR2w04ftb+4cBeyBeWFkKASEryOn3AYetzl3Ac67FT5Zw0crBkEf+eF1YFb7S2V/0VaX
-         tK8A==
-X-Gm-Message-State: AJcUukfvYnR+drAg7uVGpw7+gHvYZjqK92szgsQDkPKHnqLRHr0iKyYn
-        1/SdA7hdSKoOKbpLhmtlUa+0jw==
-X-Google-Smtp-Source: ALg8bN4SNztm9LZ9b68UE8lDQrOuELR2eroVNKed5aV6Sm5OoMSl1m0HDJrlgJ2R/Nuqb8PmrTaWcw==
-X-Received: by 2002:a62:d2c1:: with SMTP id c184mr6764582pfg.248.1547596946273;
-        Tue, 15 Jan 2019 16:02:26 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id z62sm8536957pfi.4.2019.01.15.16.02.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 16:02:25 -0800 (PST)
-Date:   Tue, 15 Jan 2019 16:02:23 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Willy Tarreau <w@1wt.eu>, Silvio Cesare <silvio.cesare@gmail.com>,
-        QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath9k/eeprom: Use scnprintf instead of snprintf
-Message-ID: <20190116000223.GA29196@beast>
+        Tue, 15 Jan 2019 19:09:27 -0500
+Received: from ozlabs.org ([203.11.71.1]:51685 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729247AbfAPAJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 19:09:26 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43fSHb5L9yz9sBQ;
+        Wed, 16 Jan 2019 11:09:15 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        David Miller <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>
+Subject: Re: [PATCH 14/15] arch: add split IPC system calls where needed
+In-Reply-To: <CAK8P3a3eUzGDrJtV2ySpgHwjKHwZYr+1xHp6tChCt1gWi=mJ+g@mail.gmail.com>
+References: <20190110162435.309262-1-arnd@arndb.de> <20190110162435.309262-15-arnd@arndb.de> <87pnsz28k2.fsf@concordia.ellerman.id.au> <CAK8P3a0uas76i2W1yjFvxHT-2=A8_egUZeAUM-Vya6386+87Xg@mail.gmail.com> <CAK8P3a3eUzGDrJtV2ySpgHwjKHwZYr+1xHp6tChCt1gWi=mJ+g@mail.gmail.com>
+Date:   Wed, 16 Jan 2019 11:09:12 +1100
+Message-ID: <874la9zcnr.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change snprintf to scnprintf. There are generally two cases where using
-snprintf causes problems.
+Arnd Bergmann <arnd@arndb.de> writes:
 
-1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)  In this case,
-if snprintf would have written more characters than what the buffer
-size (SIZE) is, then size will end up larger than SIZE. In later uses
-of snprintf, SIZE - size will result in a negative number, leading to
-problems. Note that size might already be too large by using size =
-snprintf before the code reaches a case of size += snprintf.
+> On Tue, Jan 15, 2019 at 4:01 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>> On Mon, Jan 14, 2019 at 4:59 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> > Arnd Bergmann <arnd@arndb.de> writes:
+>> > >  arch/m68k/kernel/syscalls/syscall.tbl     | 11 +++++++++++
+>> > >  arch/mips/kernel/syscalls/syscall_o32.tbl | 11 +++++++++++
+>> > >  arch/powerpc/kernel/syscalls/syscall.tbl  | 12 ++++++++++++
+>> >
+>> > I have some changes I'd like to make to our syscall table that will
+>> > clash with this.
+>> >
+>> > I'll try and send them today.
+>>
+>> Ok. Are those for 5.0 or 5.1? If they are intended for 5.0, it would be
+>> nice for me to have a branch based on 5.0-rc1 that I can put
+>> the other patches on top of.
+>
+> There is also another change that I considered:
+>
+> At the end of my series, we have a lot of entries like
+>
+> 245     32      clock_settime                   sys_clock_settime32
+> 245     64      clock_settime                   sys_clock_settime
+> 245     spu     clock_settime                   sys_clock_settime
+>
+> which could be folded into
+>
+> 245     32      clock_settime                   sys_clock_settime32
+> 245     spu64 clock_settime                   sys_clock_settime
+>
+> if we just add another option to the ABI field. Any thoughts on
+> that?
 
-2) If size is ultimately used as a length parameter for a copy back to
-user space, then it will potentially allow for a buffer overflow and
-information disclosure when size is greater than SIZE. When the size is
-used to index the buffer directly, we can have memory corruption. This
-also means when size = snprintf... is used, it may also cause problems
-since size may become large. Copying to userspace is mitigated by the
-HARDENED_USERCOPY kernel configuration.
+My series splits spu out into a separate field. So the above would be:
 
-The solution to these issues is to use scnprintf which returns the number
-of characters actually written to the buffer, so the size variable will
-never exceed SIZE.
+245     32	-	clock_settime                   sys_clock_settime32
+245     64	spu	clock_settime                   sys_clock_settime
 
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: Silvio Cesare <silvio.cesare@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/net/wireless/ath/ath9k/ar9003_eeprom.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-index f019a20e5a1f..2b29bf4730f6 100644
---- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-@@ -3457,9 +3457,9 @@ static u32 ar9003_dump_cal_data(struct ath_hw *ah, char *buf, u32 len, u32 size,
- 		if (!((pBase->txrxMask >> i) & 1))
- 			continue;
- 
--		len += snprintf(buf + len, size - len, "Chain %d\n", i);
-+		len += scnprintf(buf + len, size - len, "Chain %d\n", i);
- 
--		len += snprintf(buf + len, size - len,
-+		len += scnprintf(buf + len, size - len,
- 			"Freq\t ref\tvolt\ttemp\tnf_cal\tnf_pow\trx_temp\n");
- 
- 		for (j = 0; j < cal_pier_nr; j++) {
-@@ -3471,10 +3471,10 @@ static u32 ar9003_dump_cal_data(struct ath_hw *ah, char *buf, u32 len, u32 size,
- 				freq = 4800 + eep->calFreqPier5G[j] * 5;
- 			}
- 
--			len += snprintf(buf + len, size - len,
-+			len += scnprintf(buf + len, size - len,
- 				"%d\t", freq);
- 
--			len += snprintf(buf + len, size - len,
-+			len += scnprintf(buf + len, size - len,
- 				"%d\t%d\t%d\t%d\t%d\t%d\n",
- 				cal_pier->refPower,
- 				cal_pier->voltMeas,
-@@ -3505,12 +3505,12 @@ static u32 ath9k_hw_ar9003_dump_eeprom(struct ath_hw *ah, bool dump_base_hdr,
- 		len += scnprintf(buf + len, size - len, "Calibration data\n");
- 		len = ar9003_dump_cal_data(ah, buf, len, size, true);
- 
--		len +=  snprintf(buf + len, size - len,
-+		len += scnprintf(buf + len, size - len,
- 				 "%20s :\n", "5GHz modal Header");
- 		len = ar9003_dump_modal_eeprom(buf, len, size,
- 						&eep->modalHeader5G);
- 
--		len += snprintf(buf + len, size - len, "Calibration data\n");
-+		len += scnprintf(buf + len, size - len, "Calibration data\n");
- 		len = ar9003_dump_cal_data(ah, buf, len, size, false);
- 
- 		goto out;
--- 
-2.17.1
-
-
--- 
-Kees Cook
+cheers
