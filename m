@@ -2,85 +2,307 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F4FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AC4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAA3B20868
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9CD820840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:16:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KTc6jeDi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbfAPVOx (ORCPT
+        id S1728467AbfAPVQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:14:53 -0500
-Received: from namei.org ([65.99.196.166]:56382 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbfAPVOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:14:53 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x0GLEjAL007529;
-        Wed, 16 Jan 2019 21:14:45 GMT
-Date:   Thu, 17 Jan 2019 08:14:45 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-cc:     John Johansen <john.johansen@canonical.com>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-Subject: Re: WARNING in apparmor_cred_free
-In-Reply-To: <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1901170814170.7422@namei.org>
-References: <0000000000007f604f057f2b8509@google.com> <6213e783-4377-489d-cdfb-1a83f4497076@schaufler-ca.com> <b0d2811e-87e4-21d4-c33a-2d2012a906cc@canonical.com> <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com> <234c868b-4521-0707-a135-d8c24bc179bd@schaufler-ca.com>
- <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 16 Jan 2019 16:16:33 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37832 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727827AbfAPVQc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:16:32 -0500
+Received: by mail-wr1-f68.google.com with SMTP id s12so8641011wrt.4
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 13:16:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ob5jkTMk4Tc1Z6vb38Mi5X0Qeb1CVfPq6CwrWwzYARQ=;
+        b=KTc6jeDiCP0SteKXTKbBgBNQ7Xgs1SiUmvchVTgmW1QMhv/8a7YkZ1nanBjYVTzndY
+         BOAi18F0l4j2Zh8bXmmAboWyWVKgIkmVKSqg+1sRtHVD67AjxNdbixDL9LasjRcSN0o+
+         jxuuJHEkBemAJJi/ZVnVvz3+UBLqdTUTic0/udntepAwMNsiodidtafyEdu3VVLudKcW
+         pTTfNNqskVhg7/OdrmU4Zrh3wInUKqy/00CFX3czlL/K3S+9jR1Y8N9tcHz2otOsPoAx
+         KfX/iF/okYefujTlB55600YLcpqyXUbzGIZrKUKXtJ5OmiCLz4J5GDfk3UmeRotSq25n
+         t1Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ob5jkTMk4Tc1Z6vb38Mi5X0Qeb1CVfPq6CwrWwzYARQ=;
+        b=YtO/Q9eUHGqYF11tbvIXL6VcWWOzh3wafpfq05PqGh932ltEC4eK1fmfls7Kid2FIN
+         CQotx9g4KpWBu8lqPn6Y1CjOyUWSJDtVOWzr4SrWF/HGb696FQLjoT+h7dMlQ/DbXWJ6
+         ctRZY/PbNKL8PQqFOl8FbmUNRhmcKHqMV325xb3R1SuJ3rm7AG4wqrd/l9x2DSwcHTr3
+         7ip27m8vAvTEBRReramLUJrUsR3K/rAcifwXuDHoklHV7FDjxghpr44nn1mfGutj84PY
+         1k6K3zr7st0Q85/rI2918/6JbMFaYDsfxfTX3DyiuvhhqufUKdemg3ChOoXIjxfBntrT
+         weZQ==
+X-Gm-Message-State: AJcUukesgo4xMQtHX+u8OWqIuNldzzXtAqzsv+uWG99ZIdLD73zdO7uG
+        zmyE8ZQ7FxwOzZ+el6VkPlJSsKKdWRZI8tdKQNoZ
+X-Google-Smtp-Source: ALg8bN5nmdMUdB53qQcly3AxbdrUlK/4f+RagxvskM29rAsHKkQ/tvk4zgd0SWc2JGm8GuEk0TtT/nS6URsoONULB+4=
+X-Received: by 2002:adf:9b11:: with SMTP id b17mr9299929wrc.168.1547673390110;
+ Wed, 16 Jan 2019 13:16:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190116181859.D1504459@viggo.jf.intel.com> <20190116181905.12E102B4@viggo.jf.intel.com>
+In-Reply-To: <20190116181905.12E102B4@viggo.jf.intel.com>
+From:   Bjorn Helgaas <bhelgaas@google.com>
+Date:   Wed, 16 Jan 2019 15:16:16 -0600
+Message-ID: <CAErSpo55j7odYf-B-KSoogabD9Qqt605oUGYe6td9wZdYNq_Hg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dax: "Hotplug" persistent memory for use like normal RAM
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     dave@sr71.net, Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
+        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
+        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
+        linux-nvdimm@lists.01.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, Huang Ying <ying.huang@intel.com>,
+        Wu Fengguang <fengguang.wu@intel.com>,
+        Borislav Petkov <bp@suse.de>, baiyaowei@cmss.chinamobile.com,
+        Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019, Casey Schaufler wrote:
+On Wed, Jan 16, 2019 at 12:25 PM Dave Hansen
+<dave.hansen@linux.intel.com> wrote:
+>
+>
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+>
+> Currently, a persistent memory region is "owned" by a device driver,
+> either the "Direct DAX" or "Filesystem DAX" drivers.  These drivers
+> allow applications to explicitly use persistent memory, generally
+> by being modified to use special, new libraries.
 
-> >From 47134986133c822e1d88860fa2b108f92c97a7ff Mon Sep 17 00:00:00 2001
-> From: Casey Schaufler <casey@schaufler-ca.com>
-> Date: Fri, 11 Jan 2019 17:31:50 -0800
-> Subject: [PATCH 1/2] LSM: Check for NULL cred-security on free
-> 
-> Check that the cred security blob has been set before trying
-> to clean it up. There is a case during credential initialization
-> that could result in this.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Is there any documentation about exactly what persistent memory is?
+In Documentation/, I see references to pstore and pmem, which sound
+sort of similar, but maybe not quite the same?
 
-JJ: does this fix the problem?
+> However, this limits persistent memory use to applications which
+> *have* been modified.  To make it more broadly usable, this driver
+> "hotplugs" memory into the kernel, to be managed ad used just like
+> normal RAM would be.
 
+s/ad/and/
+
+> To make this work, management software must remove the device from
+> being controlled by the "Device DAX" infrastructure:
+>
+>         echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
+>         echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
+>
+> and then bind it to this new driver:
+>
+>         echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
+>         echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
+>
+> After this, there will be a number of new memory sections visible
+> in sysfs that can be onlined, or that may get onlined by existing
+> udev-initiated memory hotplug rules.
+>
+> Note: this inherits any existing NUMA information for the newly-
+> added memory from the persistent memory device that came from the
+> firmware.  On Intel platforms, the firmware has guarantees that
+> require each socket's persistent memory to be in a separate
+> memory-only NUMA node.  That means that this patch is not expected
+> to create NUMA nodes, but will simply hotplug memory into existing
+> nodes.
+>
+> There is currently some metadata at the beginning of pmem regions.
+> The section-size memory hotplug restrictions, plus this small
+> reserved area can cause the "loss" of a section or two of capacity.
+> This should be fixable in follow-on patches.  But, as a first step,
+> losing 256MB of memory (worst case) out of hundreds of gigabytes
+> is a good tradeoff vs. the required code to fix this up precisely.
+>
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: linux-nvdimm@lists.01.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: Fengguang Wu <fengguang.wu@intel.com>
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+> Cc: Takashi Iwai <tiwai@suse.de>
 > ---
->  security/security.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index a618e22df5c6..7bffc86d4e87 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1477,6 +1477,13 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
->  
->  void security_cred_free(struct cred *cred)
->  {
-> +	/*
-> +	 * There is a failure case in prepare_creds() that
-> +	 * may result in a call here with ->security being NULL.
-> +	 */
-> +	if (unlikely(cred->security == NULL))
-> +		return;
+>
+>  b/drivers/dax/Kconfig  |    5 ++
+>  b/drivers/dax/Makefile |    1
+>  b/drivers/dax/kmem.c   |   93 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 99 insertions(+)
+>
+> diff -puN drivers/dax/Kconfig~dax-kmem-try-4 drivers/dax/Kconfig
+> --- a/drivers/dax/Kconfig~dax-kmem-try-4        2019-01-08 09:54:44.051694874 -0800
+> +++ b/drivers/dax/Kconfig       2019-01-08 09:54:44.056694874 -0800
+> @@ -32,6 +32,11 @@ config DEV_DAX_PMEM
+>
+>           Say M if unsure
+>
+> +config DEV_DAX_KMEM
+> +       def_bool y
+
+Is "y" the right default here?  I periodically see Linus complain
+about new things defaulting to "on", but I admit I haven't paid enough
+attention to know whether that would apply here.
+
+> +       depends on DEV_DAX_PMEM   # Needs DEV_DAX_PMEM infrastructure
+> +       depends on MEMORY_HOTPLUG # for add_memory() and friends
 > +
->  	call_void_hook(cred_free, cred);
->  
->  	kfree(cred->security);
-> 
+>  config DEV_DAX_PMEM_COMPAT
+>         tristate "PMEM DAX: support the deprecated /sys/class/dax interface"
+>         depends on DEV_DAX_PMEM
+> diff -puN /dev/null drivers/dax/kmem.c
+> --- /dev/null   2018-12-03 08:41:47.355756491 -0800
+> +++ b/drivers/dax/kmem.c        2019-01-08 09:54:44.056694874 -0800
+> @@ -0,0 +1,93 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright(c) 2016-2018 Intel Corporation. All rights reserved. */
+> +#include <linux/memremap.h>
+> +#include <linux/pagemap.h>
+> +#include <linux/memory.h>
+> +#include <linux/module.h>
+> +#include <linux/device.h>
+> +#include <linux/pfn_t.h>
+> +#include <linux/slab.h>
+> +#include <linux/dax.h>
+> +#include <linux/fs.h>
+> +#include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include "dax-private.h"
+> +#include "bus.h"
+> +
+> +int dev_dax_kmem_probe(struct device *dev)
+> +{
+> +       struct dev_dax *dev_dax = to_dev_dax(dev);
+> +       struct resource *res = &dev_dax->region->res;
+> +       resource_size_t kmem_start;
+> +       resource_size_t kmem_size;
+> +       struct resource *new_res;
+> +       int numa_node;
+> +       int rc;
+> +
+> +       /* Hotplug starting at the beginning of the next block: */
+> +       kmem_start = ALIGN(res->start, memory_block_size_bytes());
+> +
+> +       kmem_size = resource_size(res);
+> +       /* Adjust the size down to compensate for moving up kmem_start: */
+> +        kmem_size -= kmem_start - res->start;
+> +       /* Align the size down to cover only complete blocks: */
+> +       kmem_size &= ~(memory_block_size_bytes() - 1);
+> +
+> +       new_res = devm_request_mem_region(dev, kmem_start, kmem_size,
+> +                                         dev_name(dev));
+> +
+> +       if (!new_res) {
+> +               printk("could not reserve region %016llx -> %016llx\n",
+> +                               kmem_start, kmem_start+kmem_size);
 
--- 
-James Morris
-<jmorris@namei.org>
+1) It'd be nice to have some sort of module tag in the output that
+ties it to this driver.
 
+2) It might be nice to print the range in the same format as %pR,
+i.e., "[mem %#010x-%#010x]" with the end included (start + size -1 ).
+
+> +               return -EBUSY;
+> +       }
+> +
+> +       /*
+> +        * Set flags appropriate for System RAM.  Leave ..._BUSY clear
+> +        * so that add_memory() can add a child resource.
+> +        */
+> +       new_res->flags = IORESOURCE_SYSTEM_RAM;
+
+IIUC, new_res->flags was set to "IORESOURCE_MEM | ..." in the
+devm_request_mem_region() path.  I think you should keep at least
+IORESOURCE_MEM so the iomem_resource tree stays consistent.
+
+> +       new_res->name = dev_name(dev);
+> +
+> +       numa_node = dev_dax->target_node;
+> +       if (numa_node < 0) {
+> +               pr_warn_once("bad numa_node: %d, forcing to 0\n", numa_node);
+
+It'd be nice to again have a module tag and an indication of what
+range is affected, e.g., %pR of new_res.
+
+You don't save the new_res pointer anywhere, which I guess you intend
+for now since there's no remove or anything else to do with this
+resource?  I thought maybe devm_request_mem_region() would implicitly
+save it, but it doesn't; it only saves the parent (iomem_resource, the
+start (kmem_start), and the size (kmem_size)).
+
+> +               numa_node = 0;
+> +       }
+> +
+> +       rc = add_memory(numa_node, new_res->start, resource_size(new_res));
+> +       if (rc)
+> +               return rc;
+> +
+> +       return 0;
+
+Doesn't this mean "return rc" or even just "return add_memory(...)"?
+
+> +}
+> +EXPORT_SYMBOL_GPL(dev_dax_kmem_probe);
+> +
+> +static int dev_dax_kmem_remove(struct device *dev)
+> +{
+> +       /* Assume that hot-remove will fail for now */
+> +       return -EBUSY;
+> +}
+> +
+> +static struct dax_device_driver device_dax_kmem_driver = {
+> +       .drv = {
+> +               .probe = dev_dax_kmem_probe,
+> +               .remove = dev_dax_kmem_remove,
+> +       },
+> +};
+> +
+> +static int __init dax_kmem_init(void)
+> +{
+> +       return dax_driver_register(&device_dax_kmem_driver);
+> +}
+> +
+> +static void __exit dax_kmem_exit(void)
+> +{
+> +       dax_driver_unregister(&device_dax_kmem_driver);
+> +}
+> +
+> +MODULE_AUTHOR("Intel Corporation");
+> +MODULE_LICENSE("GPL v2");
+> +module_init(dax_kmem_init);
+> +module_exit(dax_kmem_exit);
+> +MODULE_ALIAS_DAX_DEVICE(0);
+> diff -puN drivers/dax/Makefile~dax-kmem-try-4 drivers/dax/Makefile
+> --- a/drivers/dax/Makefile~dax-kmem-try-4       2019-01-08 09:54:44.053694874 -0800
+> +++ b/drivers/dax/Makefile      2019-01-08 09:54:44.056694874 -0800
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_DAX) += dax.o
+>  obj-$(CONFIG_DEV_DAX) += device_dax.o
+> +obj-$(CONFIG_DEV_DAX_KMEM) += kmem.o
+>
+>  dax-y := super.o
+>  dax-y += bus.o
+> _
