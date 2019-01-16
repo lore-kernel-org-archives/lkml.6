@@ -2,109 +2,95 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328DCC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAE0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 008A420675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:36:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar-org.20150623.gappssmtp.com header.i=@fooishbar-org.20150623.gappssmtp.com header.b="1/hniUxF"
+	by mail.kernel.org (Postfix) with ESMTP id 38D5620675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547656651;
+	bh=0E8482UkW9G/eNFSVcOQ9clPk1Mh0QWM7J0ZBRY6xGo=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=KG3zeV41MLo/oGtXwey/dZcm7kscwlf5j/jfyLy6vJ2VvtW8SxZA5wPBtvwQ56h24
+	 xtEJrun0algfqfrrgvJPwte8g9wJ4N3gyZs1EkeYpSjikDcge9i+2sH0HrhoOpYn8E
+	 UpaZk1Kc0Gf4O41T80zzGHD6DGg7JFxO8sT1lNhM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393804AbfAPQgu (ORCPT
+        id S2393883AbfAPQh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:36:50 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34158 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfAPQgt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:36:49 -0500
-Received: by mail-lj1-f193.google.com with SMTP id u89-v6so6013115lje.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:36:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vz/wwLMqVzygZmAEdfCKG2TFVw8PuXQMQNORL0z+e4o=;
-        b=1/hniUxFo0bJObKTii0mYRVx5MEXRR9HTwNEcm/U5eSrSXvs/81CWj9ovSX948FIC+
-         XXRbJ32dGaPIVLUxQ++/2MEKT/kT3UR3Q/h0nwl0IWpoI0Rqr/q46EPsiEQHdRECk7Kz
-         VAuqL5RHOqPiNx0yb2XxpHpfzlDCHGNLs2VvPE6MAqgacrIuVXRh8eA054OJuQVvVY7c
-         n9GyF2G4P+nxXqdI7WrnnpiiKQPMa3GyqvAWSR4Hji5YxWjQw/x3b5D3ySIgWNn3T+g+
-         CFlxcDz3IHf4M5ZxSdqcGoUW1EvxcEzlsxhd3PUMqzt/iiawuX1LvBL92Xc3e+lZOwQi
-         9vIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vz/wwLMqVzygZmAEdfCKG2TFVw8PuXQMQNORL0z+e4o=;
-        b=tlHLq7wonOZpbz5xbqTDv8W73HX3S/zqLmp1lLENYldi0NShupExJGnSYMP4jNemUg
-         J9kvU8mIx/kIrN82O5cwYZqvTY3zaCDpUNyfkNbxVIjYAvy+bFIvqxKk+c7k0O1vROLq
-         kYRMMnT4pmkSP3F1S2UGeluWeu7z/TLxXu+hf9oCFTR1Xq++a1YYPFu+HM7//JmFCOm8
-         uQXTPUbBbZpbOSSgdluRjYYaATJ7Jb+yPloWky1KlvgiCAMa5wimXGIznZoq43K+e/Bj
-         KKCJ18Kb51IU6uhIhh3wKBjeM7VauAQTz8nwEsKjfA/4XtPfDUF/gf2qHTN3oev7AuB3
-         ZGFA==
-X-Gm-Message-State: AJcUukfjLY6+22ifOyJDEARusjkK4V2bDrn3f+JhqDaNQV33oRhOi4qH
-        3McYpThcO6RKagtn3Iovi9ET9KD/m08aZI2x8zdeLg==
-X-Google-Smtp-Source: ALg8bN79YOQsr9DFPYLz9IqmQTee2fF+FhI4z2zf97SsvgvlQIfaHjpGpe7WpdjmZ1UgyLtNacBBbETN4tnj58eTx1c=
-X-Received: by 2002:a2e:302:: with SMTP id 2-v6mr6961969ljd.137.1547656606814;
- Wed, 16 Jan 2019 08:36:46 -0800 (PST)
+        Wed, 16 Jan 2019 11:37:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbfAPQh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 11:37:28 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AA7220657;
+        Wed, 16 Jan 2019 16:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547656647;
+        bh=0E8482UkW9G/eNFSVcOQ9clPk1Mh0QWM7J0ZBRY6xGo=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=o3jDF7qle1YpwxzRG8WWn+0wkNIreblaKhq2B7jUfYftpOlmqWzqGNJDcGPxb7+mN
+         xv3iCDcW15wc5jHgA3vNhuAduoJVgFB2oveKrzoS8mCIbHTc0HTUd4HY2ZAPQnycly
+         D6tkMAdh5+zq9k1nOLVbFzMZKq8vKg8/BPmcVG8k=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190114094856.GB29604@lst.de> <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
- <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com> <20190115152029.GB2325@lst.de>
- <41d0616e95fb48942404fb54d82249f5700affb1.camel@vmware.com>
- <20190115183133.GA12350@lst.de> <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com>
- <20190115205801.GA15432@lst.de> <01e5522bf88549bfdaea1430fece23cb3d1a1a55.camel@vmware.com>
- <8aadac80-da9b-b52a-a4bf-066406127117@amd.com> <20190116160639.GA28619@lst.de>
-In-Reply-To: <20190116160639.GA28619@lst.de>
-From:   Daniel Stone <daniel@fooishbar.org>
-Date:   Wed, 16 Jan 2019 16:36:33 +0000
-Message-ID: <CAPj87rNAhGsGwNWRM1iO4rruVjQ+Yu=bDXS39Om9rL6PesuQYg@mail.gmail.com>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-To:     "hch@lst.de" <hch@lst.de>
-Cc:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
+User-Agent: alot/0.8
+In-Reply-To: <20190116093505.1920945-1-lkundrak@v3.sk>
+References: <20190116093505.1920945-1-lkundrak@v3.sk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>, stable@vger.kernel.org
+To:     Lubomir Rintel <lkundrak@v3.sk>,
+        Michael Turquette <mturquette@baylibre.com>
+Message-ID: <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Wed, 16 Jan 2019 08:37:26 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019 at 16:06, hch@lst.de <hch@lst.de> wrote:
-> On Wed, Jan 16, 2019 at 07:28:13AM +0000, Koenig, Christian wrote:
-> > To summarize once more: We have an array of struct pages and want to
-> > coherently map that to a device.
->
-> And the answer to that is very simple: you can't.  What is so hard
-> to understand about?  If you want to map arbitrary memory it simply
-> can't be done in a coherent way on about half of our platforms.
->
-> > If that is not possible because of whatever reason we want to get an
-> > error code or even not load the driver from the beginning.
->
-> That is a bullshit attitude.  Just like everyone else makes their
-> drivers work you should not be lazy.
+Quoting Lubomir Rintel (2019-01-16 01:35:05)
+> There could be vital functionality running on the SP PJ1 core it can not =
+be
+> restarted just by turning the clock back on.
+>=20
+> On the OLPC laptop, the keyboard controller code runs there. It
+> wouldn't be possible to load the driver for it as a module if the clock
+> is disabled on boot.
+>=20
+> Cc: stable@vger.kernel.org # v4.18+
+> Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+> index f2a1c9bbaa63..3e33f1295f59 100644
+> --- a/drivers/clk/mmp/clk-of-mmp2.c
+> +++ b/drivers/clk/mmp/clk-of-mmp2.c
+> @@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] =3D=
+ {
+>         {MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PAREN=
+T, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
+>         {MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RA=
+TE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
+>         {MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET=
+_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
+> -       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b,=
+ 0x1b, 0x0, 0, &sp_lock},
+> +       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNORE_UN=
+USED, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
 
-Can you not talk to people like that? Even if you think that is an OK
-way to treat anyone - which it isn't, certainly not on dri-devel@ with
-the fd.o Code of Conduct, and not according to the kernel's either - I
-have absolutely no idea how you can look at the work the AMD people
-have put in over many years and conclude that they're 'lazy'.
+Is it a critical clk that should never be turned off? If so, mark it as
+CLK_IS_CRITICAL. Either way, please add a comment in the code about why
+CLK_IGNORE_UNUSED or CLK_IS_CRITICAL is used.
 
-If this makes you so angry, step back from the keyboard for a few
-minutes, and if you still can't participate in reasonable discussion
-like an adult, maybe step out of the thread entirely.
