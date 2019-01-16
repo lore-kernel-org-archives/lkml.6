@@ -2,68 +2,98 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EC8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E913C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDE4820578
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:25:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0814620578
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394231AbfAPRZh (ORCPT
+        id S2394331AbfAPR0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:25:37 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48218 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728841AbfAPRZh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:25:37 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gjowX-00067c-EM; Wed, 16 Jan 2019 17:25:33 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] libertas: fix indentation issue
-Date:   Wed, 16 Jan 2019 17:25:33 +0000
-Message-Id: <20190116172533.22972-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 16 Jan 2019 12:26:39 -0500
+Received: from shell.v3.sk ([90.176.6.54]:57499 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728076AbfAPR0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:26:38 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id B08C1558DE;
+        Wed, 16 Jan 2019 18:26:35 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 3Bajl05IjrRu; Wed, 16 Jan 2019 18:26:33 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 1A18F558E1;
+        Wed, 16 Jan 2019 18:26:33 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 5gN-fzHBQehy; Wed, 16 Jan 2019 18:26:32 +0100 (CET)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 615BA558DE;
+        Wed, 16 Jan 2019 18:26:32 +0100 (CET)
+Message-ID: <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk>
+Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Wed, 16 Jan 2019 18:26:31 +0100
+In-Reply-To: <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
+References: <20190116093505.1920945-1-lkundrak@v3.sk>
+         <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 2019-01-16 at 08:37 -0800, Stephen Boyd wrote:
+> Quoting Lubomir Rintel (2019-01-16 01:35:05)
+> > There could be vital functionality running on the SP PJ1 core it can not be
+> > restarted just by turning the clock back on.
+> > 
+> > On the OLPC laptop, the keyboard controller code runs there. It
+> > wouldn't be possible to load the driver for it as a module if the clock
+> > is disabled on boot.
+> > 
+> > Cc: stable@vger.kernel.org # v4.18+
+> > Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > ---
+> >  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+> > index f2a1c9bbaa63..3e33f1295f59 100644
+> > --- a/drivers/clk/mmp/clk-of-mmp2.c
+> > +++ b/drivers/clk/mmp/clk-of-mmp2.c
+> > @@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
+> >         {MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
+> >         {MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
+> >         {MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
+> > -       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
+> > +       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
+> 
+> Is it a critical clk that should never be turned off?
 
-There is a statement that is incorrectly indented, fix it.
+I don't think it is. It is entirely plausible to have no use for the
+"security processor", and in that case it's just okay to keep the clock
+disabled.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/marvell/libertas_tf/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> If so, mark it as
+> CLK_IS_CRITICAL. Either way, please add a comment in the code about why
+> CLK_IGNORE_UNUSED or CLK_IS_CRITICAL is used.
 
-diff --git a/drivers/net/wireless/marvell/libertas_tf/main.c b/drivers/net/wireless/marvell/libertas_tf/main.c
-index 1d45da187b9b..a7cb7d06e5e6 100644
---- a/drivers/net/wireless/marvell/libertas_tf/main.c
-+++ b/drivers/net/wireless/marvell/libertas_tf/main.c
-@@ -676,7 +676,7 @@ int lbtf_remove_card(struct lbtf_private *priv)
- 	ieee80211_unregister_hw(hw);
- 	ieee80211_free_hw(hw);
- 
--    lbtf_deb_leave(LBTF_DEB_MAIN);
-+	lbtf_deb_leave(LBTF_DEB_MAIN);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(lbtf_remove_card);
--- 
-2.19.1
+Okay.
+
+Thanks,
+Lubo
 
