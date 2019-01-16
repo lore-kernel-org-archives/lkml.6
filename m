@@ -2,143 +2,136 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA813C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4170CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B84320657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:04:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M+hmCxb/"
+	by mail.kernel.org (Postfix) with ESMTP id 1ABE820657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390738AbfAPOEb (ORCPT
+        id S2390880AbfAPOFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:04:31 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39269 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730952AbfAPOEb (ORCPT
+        Wed, 16 Jan 2019 09:05:08 -0500
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:49680 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730952AbfAPOFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:04:31 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t27so7066003wra.6
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 06:04:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=hHXoFUtu+ddd4xxKPygSSUO6RvYAa9FR8CgoDBJzUJ8=;
-        b=M+hmCxb/VO4buKAMmDJuWYSvcTKdbOQJxaDQw5p2nqKflYI6twnXR06AbIUwrGAF2p
-         gzgHCWoe5Y1lsAnDFoMWAC8IfWkVYfVMdImDd3i+mMmYix8JLtga87XaoM/IZQdg83oP
-         /BJsAaUNP4PyMyY1P3aiO4tJmnRua/3PTuwHE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=hHXoFUtu+ddd4xxKPygSSUO6RvYAa9FR8CgoDBJzUJ8=;
-        b=d6Sct8hxA/DPZRsZg6XgbrHcwLNx6AmXNOPqZi85genjPbnosBfziUbndCdzQUAzpH
-         eWHP7Xi7DEbqIeXMWdjZKYiNog3ely/dqX9fkH7lm6IZAO0Dc6e3l0A1QPzg9erNEfJR
-         Sc6cX+3VjnJlqf/XOOo6iDf9P6Z6B/wuNiA4UhJ2bH9S425nTHaZDKITQYPUxWsk1SDi
-         IiLXT6R1QHFOlgQGSODNLgm1ULpUB+gfP9/U+nFTh+Ng1dc+EKnqv61oBIYoHXyQPGdA
-         MGagxOE4fgpiP/KMYnCW6stXSwiPLdNg5LT0tsZPlNSuQMKFmpI9MGDu3ozFG1B98PyZ
-         7qig==
-X-Gm-Message-State: AJcUukdAsxkA+mEUmv8AlpZoQguwrj6bhxw8pU8C3UfMiQ2+OrgS8iUL
-        aypOtxBKEGe403zVx7E4eixecw==
-X-Google-Smtp-Source: ALg8bN6YtQI2EELIJFf9GvIiOh/nmYLu3rHDpN6vtBhR818pd+E95cUipKwe7T84Wu0ZSIBDVbqEag==
-X-Received: by 2002:adf:9ec8:: with SMTP id b8mr8098176wrf.164.1547647469209;
-        Wed, 16 Jan 2019 06:04:29 -0800 (PST)
-Received: from dell ([2.27.35.149])
-        by smtp.gmail.com with ESMTPSA id t5sm38754503wmd.15.2019.01.16.06.04.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 06:04:27 -0800 (PST)
-Date:   Wed, 16 Jan 2019 14:04:26 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Pascal PAILLET-LME <p.paillet@st.com>
-Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>,
-        "axel.lin@ingics.com" <axel.lin@ingics.com>
-Subject: [GIT PULL] Immutable branch between MFD, Input and Watchdog due for
- the v5.1 merge window
-Message-ID: <20190116140426.GF23399@dell>
-References: <1547460290-21049-1-git-send-email-p.paillet@st.com>
+        Wed, 16 Jan 2019 09:05:07 -0500
+Received: from pps.filterd (m0148664.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0G2Qbc5018936;
+        Wed, 16 Jan 2019 02:27:33 GMT
+Received: from g2t2354.austin.hpe.com (g2t2354.austin.hpe.com [15.233.44.27])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2q1qyd9cfy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Jan 2019 02:27:32 +0000
+Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
+        by g2t2354.austin.hpe.com (Postfix) with ESMTP id 4F431A2;
+        Wed, 16 Jan 2019 02:27:32 +0000 (UTC)
+Received: from anatevka (anatevka.americas.hpqcorp.net [10.34.81.61])
+        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id EF87B3A;
+        Wed, 16 Jan 2019 02:27:31 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 19:27:31 -0700
+From:   Jerry Hoemann <jerry.hoemann@hpe.com>
+To:     Ivan Mironov <mironov.ivan@gmail.com>
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [RFC PATCH 1/4] watchdog: hpwdt: Don't disable watchdog on NMI
+Message-ID: <20190116022731.GD18342@anatevka>
+Reply-To: Jerry.Hoemann@hpe.com
+References: <20190114023617.10656-1-mironov.ivan@gmail.com>
+ <20190114023617.10656-2-mironov.ivan@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547460290-21049-1-git-send-email-p.paillet@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190114023617.10656-2-mironov.ivan@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901160016
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enjoy!
+On Mon, Jan 14, 2019 at 07:36:14AM +0500, Ivan Mironov wrote:
+> Existing code disables watchdog on NMI right before completely hanging
+> the system.
+> 
+> There are two problems here:
+> 
+>  * First, watchdog is expected to reset the system in a case of such
+>    failure, no matter what.
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+Documentation/watchdog/watchdog-api.txt
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+explicitly allows for pretimeout NMI and generation of kernel crash dumps.
 
-are available in the Git repository at:
+By removing hpwdt_stop the system will likely fail to crash dump
+as there is only 9 seconds between receipt of a NMI and the iLO
+resetting the system.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-input-watchdog-v5.1
+Unfortunately, kdump is not without issues and can also be difficult
+to properly configure either of which can result in failure to dump
+and reset.
 
-for you to fetch changes up to 28804c2c8fb3401aa4b7f16a883d49dd82f5e377:
+Customers who value availability over kdump collection, the pretimeout
+NMI can be disabled and hardware will not issue the pretimeout NMI
+and will only do reset.
 
-  watchdog: stpmic1: Add STPMIC1 watchdog driver (2019-01-16 14:01:19 +0000)
+A middle ground for those who want tombstones but not kdump, would
+be to leave the pretimeout NMI enabled and add "panic=N" to the
+Linux command line.  That way after the panic, the tombstone is
+printed and the system resets after N seconds.
 
-----------------------------------------------------------------
-Immutable branch between MFD, Input and Watchdog due for the v5.1 merge window
 
-----------------------------------------------------------------
-Pascal PAILLET-LME (6):
-      dt-bindings: mfd: Document STPMIC1
-      mfd: stpmic1: Add STPMIC1 driver
-      dt-bindings: input: Document STPMIC1 PMIC onkey
-      input: stpmic1: Add STPMIC1 onkey driver
-      dt-bindings: watchdog: document STPMIC1 PMIC watchdog
-      watchdog: stpmic1: Add STPMIC1 watchdog driver
 
- .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 +++
- .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ++++++
- .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 ++
- drivers/input/misc/Kconfig                         |  11 ++
- drivers/input/misc/Makefile                        |   2 +
- drivers/input/misc/stpmic1_onkey.c                 | 198 +++++++++++++++++++
- drivers/mfd/Kconfig                                |  16 ++
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/stpmic1.c                              | 213 +++++++++++++++++++++
- drivers/watchdog/Kconfig                           |  12 ++
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/stpmic1_wdt.c                     | 139 ++++++++++++++
- include/dt-bindings/mfd/st,stpmic1.h               |  50 +++++
- include/linux/mfd/stpmic1.h                        | 212 ++++++++++++++++++++
- 14 files changed, 955 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
- create mode 100644 drivers/input/misc/stpmic1_onkey.c
- create mode 100644 drivers/mfd/stpmic1.c
- create mode 100644 drivers/watchdog/stpmic1_wdt.c
- create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
- create mode 100644 include/linux/mfd/stpmic1.h
+>  * Second, this code has no effect if there are more than one watchdog.
+
+That is correct.  Hpwdt will not turn off any other WDT.
+
+I don't see a current method of notifying other watchdogs
+that a given watchdog is going to take the system down.
+
+The closest I hook see is watchdog_notify_pretimeout, but I don't
+see that notifying other WDT.  Its not clear to me that it should.
+(e.g. the second WDT could be of longer duration and protect against
+kdump hanging. This would need to be thought through.)
+
+
+
+> 
+> Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+> ---
+>  drivers/watchdog/hpwdt.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+> index ef30c7e9728d..2467e6bc25c2 100644
+> --- a/drivers/watchdog/hpwdt.c
+> +++ b/drivers/watchdog/hpwdt.c
+> @@ -170,8 +170,6 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+>  	if (ilo5 && !pretimeout && !mynmi)
+>  		return NMI_DONE;
+>  
+> -	hpwdt_stop();
+> -
+>  	hex_byte_pack(panic_msg, mynmi);
+>  	nmi_panic(regs, panic_msg);
+>  
+> -- 
+> 2.20.1
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
