@@ -2,148 +2,171 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F33BC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520CFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B862082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547622144;
-	bh=f4Rn/CWE0P1xG99iEb5KtGaw5HrTOf+GYfYwtOZrDnw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Foo/Eix3nFwP/ZEz1wkM+hDNt7O2cMUed0H5DMZOdMIxc1iA7EiR0nQmPI0vEW9Fs
-	 /Be0aoejFTJibiiyhSemByqH3z4N6767+qCJO8L/Go6Efo6IfAYJqcvFWndec95ANc
-	 mGZTI58rCvFC7Cwz0J4eEPpvZ8O81FiI403mrK10=
+	by mail.kernel.org (Postfix) with ESMTP id 10E022082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:05:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="tFcoHl58"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388317AbfAPHCW (ORCPT
+        id S2388350AbfAPHFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 02:02:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42616 "EHLO mx1.suse.de"
+        Wed, 16 Jan 2019 02:05:53 -0500
+Received: from mail-eopbgr10085.outbound.protection.outlook.com ([40.107.1.85]:52992
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731011AbfAPHCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 02:02:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B61CBAD86;
-        Wed, 16 Jan 2019 07:02:19 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 08:02:18 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] memcg: schedule high reclaim for remote memcgs on
- high_work
-Message-ID: <20190116070218.GF24149@dhcp22.suse.cz>
-References: <20190110174432.82064-1-shakeelb@google.com>
- <20190111205948.GA4591@cmpxchg.org>
- <CALvZod7O2CJuhbuLUy9R-E4dTgL4WBg8CayW_AFnCCG6KCDjUA@mail.gmail.com>
- <20190113183402.GD1578@dhcp22.suse.cz>
- <CALvZod6paX4_vtgP8AJm5PmW_zA_ecLLP2qTvQz8rRyKticgDg@mail.gmail.com>
- <20190115072551.GO21345@dhcp22.suse.cz>
- <CALvZod6U+OGZJ1mcSG++Q5CJtEjLbr3pwvLRBbkpbZbqf6YSsA@mail.gmail.com>
+        id S2388324AbfAPHFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 02:05:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BfqQVWJJ2hbvhg9nUb/Ny/iGfQzLXnpVOzts0VZ3i94=;
+ b=tFcoHl581fsu2yJRKGXQ8UUtfB8apv68aOGXn3HZydiP6XzV883s8Wg9rOYQkrH8l213XzQ+H17Se0tK9Ektf9AgsFVEVael0VgfVwjr1lYQLbp/bp0v6UMnC6rBCxdeEckL2jHp3ftX8DvDuFKmGl18jwMFXOdB0oymCHYf4sg=
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
+ AM5PR0402MB2690.eurprd04.prod.outlook.com (10.175.40.136) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.25; Wed, 16 Jan 2019 07:05:47 +0000
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::1c0c:51da:f585:5626]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::1c0c:51da:f585:5626%2]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
+ 07:05:47 +0000
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] usb: dwc3: Add avoiding vbus glitch happen during
+ xhci reset
+Thread-Topic: [PATCH 1/2] usb: dwc3: Add avoiding vbus glitch happen during
+ xhci reset
+Thread-Index: AQHUrWdviEVntsRQzEWnqfJhKWO2IKWxd5rw
+Date:   Wed, 16 Jan 2019 07:05:46 +0000
+Message-ID: <AM5PR0402MB2865FC8FE157D5CE59126168F1820@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+References: <20190116064820.20007-1-ran.wang_1@nxp.com>
+ <20190116064820.20007-2-ran.wang_1@nxp.com>
+In-Reply-To: <20190116064820.20007-2-ran.wang_1@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ran.wang_1@nxp.com; 
+x-originating-ip: [92.121.36.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2690;6:OO9CRsekaLrKTii6LVyiJIpdRs4RE86Kr6s4tW5g6xlcm/kJrwnO8TGJiWd4ybkzVkYBu7K0hEtLhQ2uCe6o8sX2SKRAPpTzJpVrQO4kaEu6HWHTzAMYACzlxnC+NCVSZh7qbHmaxGtnCDvASq5Z5uRrrOd/Fi2gDzznIM1ig5JlnClDmf0kpS8+rBjm6ACD6lpKDSrZlNrYl2Fd+S+STWLUV4xcni+J2K3tpGhKG0eI++lYm1s1iUjs2KeE12vjQOJsKiLaDsfYCc5P6QU31RqbWn2WO4CjmPdCGFc5AzxqzqxOSHUIWl1wDFj4ciGFm161ghVDtA9y5HVKZXSND7bQ9Mu1xLG9QjntbrwRpU25i+SSh5w7NRBn+Cagdfml+3ulVPsqTnfhwk6X4ypsjWzuSpzCzNWmqjlOPDzmOci5gPcPO57vv+RxzsapDyVJXYE1mddf/uss8uwVMIu18w==;5:3ifUVSUupCDFnA2+UZd8HFzBlomX96iqMnNsoHr7K+HzKymbTmRkjimazFv1yzAzzYdS7cqEDM6DKHja4mwDSEq6sdET2cQHA7GFSJ4kB37AZt9eK4ApwWRMVHCV41SiufvaKm0Lz/YD7YS4bQ5BGWbI+3RWXa261TzVK8AW1tSyW+Tnmu4aCJIBY3DZl4JNNYT50omtuU+loSfYnyhSOA==;7:FtMq3Ko2bTM32rWEiYfGo0I/SqH6yj9E7UF4VVDKoHgvWMHNAeUUzoAaB7xaw3i/C9AwghB5xyO4aNXUW3mu/w54fosjPYk6WBOvMK7Bwh5+RC7tc6ks9+tYRgZD0mbRWF/MFPzthBvlbrxPJ8qwGw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e8045fd0-af95-455d-6743-08d67b810a21
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2690;
+x-ms-traffictypediagnostic: AM5PR0402MB2690:
+x-microsoft-antispam-prvs: <AM5PR0402MB2690DDFE0316A4B51F35F1EDF1820@AM5PR0402MB2690.eurprd04.prod.outlook.com>
+x-forefront-prvs: 091949432C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(376002)(136003)(39860400002)(199004)(189003)(51874003)(5660300001)(110136005)(33656002)(478600001)(6246003)(14454004)(305945005)(66066001)(68736007)(966005)(7736002)(4326008)(25786009)(6506007)(486006)(86362001)(54906003)(53936002)(6116002)(3846002)(9686003)(6306002)(102836004)(99286004)(316002)(26005)(7696005)(76176011)(476003)(11346002)(446003)(74316002)(2906002)(186003)(8676002)(106356001)(71200400001)(105586002)(81166006)(81156014)(97736004)(71190400001)(8936002)(229853002)(55016002)(6436002)(256004)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2690;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 8eHHTb29IqzCZ2DZjBFfGaS5pWtWMxirHTbZgBEWtmyCgpVjLfnU3pWkDOWue8RbR+dtDeiPEnPYQevY30EN6cHnCG/F9GmB7hQNcWI97Y26Ue2c6pxxPD0GAnh8/S6wrw3ZEnscOqim1t97rXsOIYed8HvCBF9DKCG7SUs7Rz04+Z93U2ZJjXKbYNJKtOaFp9SiFc78DYxU6eJyo9Sb0yA1cyWxQNiCsPjeCkphDdkP2v0hNmrwGaIYpbYgt/cFcf9gwrGABDBU58MEysk/KbEiRglxMiY8TowpPGR5KYAYip5UfLb0oiaZbzayGM2EhGoTt9nGT/3oWsTFapY/ec7266Y54cR0fZRzbjuS7I13+ft2f8dx3m3Zjk1AhYUfxBIF2KWEffVuFw85PY+hc7aDY/BS2ZPEivkn3osCmtw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod6U+OGZJ1mcSG++Q5CJtEjLbr3pwvLRBbkpbZbqf6YSsA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8045fd0-af95-455d-6743-08d67b810a21
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 07:05:46.9632
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2690
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 15-01-19 11:38:23, Shakeel Butt wrote:
-> On Mon, Jan 14, 2019 at 11:25 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Mon 14-01-19 12:18:07, Shakeel Butt wrote:
-> > > On Sun, Jan 13, 2019 at 10:34 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > > >
-> > > > On Fri 11-01-19 14:54:32, Shakeel Butt wrote:
-> > > > > Hi Johannes,
-> > > > >
-> > > > > On Fri, Jan 11, 2019 at 12:59 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > > > > >
-> > > > > > Hi Shakeel,
-> > > > > >
-> > > > > > On Thu, Jan 10, 2019 at 09:44:32AM -0800, Shakeel Butt wrote:
-> > > > > > > If a memcg is over high limit, memory reclaim is scheduled to run on
-> > > > > > > return-to-userland.  However it is assumed that the memcg is the current
-> > > > > > > process's memcg.  With remote memcg charging for kmem or swapping in a
-> > > > > > > page charged to remote memcg, current process can trigger reclaim on
-> > > > > > > remote memcg.  So, schduling reclaim on return-to-userland for remote
-> > > > > > > memcgs will ignore the high reclaim altogether. So, record the memcg
-> > > > > > > needing high reclaim and trigger high reclaim for that memcg on
-> > > > > > > return-to-userland.  However if the memcg is already recorded for high
-> > > > > > > reclaim and the recorded memcg is not the descendant of the the memcg
-> > > > > > > needing high reclaim, punt the high reclaim to the work queue.
-> > > > > >
-> > > > > > The idea behind remote charging is that the thread allocating the
-> > > > > > memory is not responsible for that memory, but a different cgroup
-> > > > > > is. Why would the same thread then have to work off any high excess
-> > > > > > this could produce in that unrelated group?
-> > > > > >
-> > > > > > Say you have a inotify/dnotify listener that is restricted in its
-> > > > > > memory use - now everybody sending notification events from outside
-> > > > > > that listener's group would get throttled on a cgroup over which it
-> > > > > > has no control. That sounds like a recipe for priority inversions.
-> > > > > >
-> > > > > > It seems to me we should only do reclaim-on-return when current is in
-> > > > > > the ill-behaved cgroup, and punt everything else - interrupts and
-> > > > > > remote charges - to the workqueue.
-> > > > >
-> > > > > This is what v1 of this patch was doing but Michal suggested to do
-> > > > > what this version is doing. Michal's argument was that the current is
-> > > > > already charging and maybe reclaiming a remote memcg then why not do
-> > > > > the high excess reclaim as well.
-> > > >
-> > > > Johannes has a good point about the priority inversion problems which I
-> > > > haven't thought about.
-> > > >
-> > > > > Personally I don't have any strong opinion either way. What I actually
-> > > > > wanted was to punt this high reclaim to some process in that remote
-> > > > > memcg. However I didn't explore much on that direction thinking if
-> > > > > that complexity is worth it. Maybe I should at least explore it, so,
-> > > > > we can compare the solutions. What do you think?
-> > > >
-> > > > My question would be whether we really care all that much. Do we know of
-> > > > workloads which would generate a large high limit excess?
-> > > >
-> > >
-> > > The current semantics of memory.high is that it can be breached under
-> > > extreme conditions. However any workload where memory.high is used and
-> > > a lot of remote memcg charging happens (inotify/dnotify example given
-> > > by Johannes or swapping in tmpfs file or shared memory region) the
-> > > memory.high breach will become common.
-> >
-> > This is exactly what I am asking about. Is this something that can
-> > happen easily? Remote charges on themselves should be rare, no?
-> >
-> 
-> At the moment, for kmem we can do remote charging for fanotify,
-> inotify and buffer_head and for anon pages we can do remote charging
-> on swap in. Now based on the workload's cgroup setup the remote
-> charging can be very frequent or rare.
-> 
-> At Google, remote charging is very frequent but since we are still on
-> cgroup-v1 and do not use memory.high, the issue this patch is fixing
-> is not observed. However for the adoption of cgroup-v2, this fix is
-> needed.
+Hi,
 
-Adding some numbers into the changelog would be really valuable to judge
-the urgency and the scale of the problem. If we are going via kworker
-then it is also important to evaluate what kind of effect on the system
-this has.  How big of the excess can we get? Why don't those memcgs
-resolve the excess by themselves on the first direct charge? Is it
-possible that kworkers simply swamp the system with many parallel memcgs
-with remote charges?
+On 16, 2019 14:48 Ran Wang wrote:
+>
 
-In other words we need deeper analysis of the problem and the solution.
--- 
-Michal Hocko
-SUSE Labs
+It seems the preface patch (0/2) failed to be accepted by patchwork (could
+anyone tell me how to generate it properly with some sommand?),=20
+I paste its content here for your reference :
+
+This to fix USB enumeration compatibility issue found on DWC3 (host mode)
+IP only.
+
+Some pre-discussion mails can be referred from:
+https://lkml.org/lkml/2018/11/23/387
+https://lkml.org/lkml/2018/11/22/683
+
+As to the workaround, I know programming xhci register in DWC3 dirver
+(probe function) is not good from perspective of SW stack, but it seems
+to be the only place to fix this real existing problem (test result show
+that doing this in xhci-plat.c or xhci.c would not hlep on this kind of
+failure). If who have better idea, please let me know, thanks in advanced.
+
+Ran Wang (2):
+ dt-bindings: Add workaround for host mode VBUS glitch when boot
+ dwc3 core driver: Add avoiding vbus glitch happen during xhci reset
+
+ Documentation/devicetree/bindings/usb/dwc3.txt |    3 +++
+ drivers/usb/dwc3/core.c |   47 +++++++++++++++++++++++++++++++++++++++++++=
+++++
+ drivers/usb/dwc3/core.h |   10 +++++++++-
+ 3 files changed, 60 insertions(+), 0 deletions(-)
+=20
+> When DWC3 is set to host mode by programming register DWC3_GCTL, VUBS
+> (or its control signal) will on immediately on related Root Hub ports.
+> Then the VUBS will be de-asserted for a little while during xhci reset
+> (conducted by xhci driver) for a little while and back to normal.
+>=20
+> This VBUS glitch might cause some USB devices emuration fail if kernel bo=
+ot
+> with them connected. One SW workaround which can fix this is to program
+> all PORTSC[PP] to 0 to turn off VBUS immediately after setting host mode =
+in
+> DWC3 driver(per signal measurement result, it will be too late to do it i=
+n
+> xhci-plat.c or xhci.c).
+>=20
+> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/usb/dwc3.txt |    3 +++
+>  1 files changed, 3 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt
+> b/Documentation/devicetree/bindings/usb/dwc3.txt
+> index 8e5265e..dadb530 100644
+> --- a/Documentation/devicetree/bindings/usb/dwc3.txt
+> +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+> @@ -106,6 +106,9 @@ Optional properties:
+>  			When just one value, which means INCRX burst
+> mode enabled. When
+>  			more than one value, which means undefined length
+> INCR burst type
+>  			enabled. The values can be 1, 4, 8, 16, 32, 64, 128
+> and 256.
+> + - snps,avoid-vbus-glitch-when-set-host: Power off all Root Hub ports
+> immediately
+> +			after setting host mode to avoid vbus (negative)
+> glitch happen in later
+> +			xhci reset. And the vbus will back to 5V automatically
+> when reset done.
+>=20
+>   - in addition all properties from usb-xhci.txt from the current directo=
+ry are
+>     supported as well
+> --
+> 1.7.1
+
+Regards,
+Ran
+
