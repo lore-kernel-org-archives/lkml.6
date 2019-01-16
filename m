@@ -2,94 +2,86 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9B4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7A8C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EACB20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:45:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE73020840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:46:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732756AbfAPFpm (ORCPT
+        id S1732818AbfAPFqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 00:45:42 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:32930 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732611AbfAPFpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 00:45:41 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EA8DDCB66FA50CDC83C3;
-        Wed, 16 Jan 2019 13:45:38 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 16 Jan 2019
- 13:45:37 +0800
-Subject: Re: [PATCH -next] LSM: Make some functions static
-To:     <jmorris@namei.org>, <serge@hallyn.com>
-References: <20190116053353.29320-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <d638d4db-3706-46a7-fe65-66e96ac6e8d7@huawei.com>
-Date:   Wed, 16 Jan 2019 13:45:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        Wed, 16 Jan 2019 00:46:32 -0500
+Received: from nautica.notk.org ([91.121.71.147]:36877 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728494AbfAPFqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 00:46:31 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id B9BA3C009; Wed, 16 Jan 2019 06:46:28 +0100 (CET)
+Date:   Wed, 16 Jan 2019 06:46:13 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190116054613.GA11670@nautica>
+References: <20190110004424.GH27534@dastard>
+ <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com>
+ <20190110070355.GJ27534@dastard>
+ <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
+ <20190110122442.GA21216@nautica>
+ <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
+ <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com>
+ <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+ <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
+ <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190116053353.29320-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pls ignore this duplicated patch.
+Linus Torvalds wrote on Wed, Jan 16, 2019:
+> *Very* few people want to run their databases as root.
 
-On 2019/1/16 13:33, YueHaibing wrote:
-> Fix the follow sparse warning:
-> 
-> security/security.c:533:5: warning: symbol 'lsm_task_alloc' was not declared. Should it be static?
-> security/security.c:554:5: warning: symbol 'lsm_ipc_alloc' was not declared. Should it be static?
-> security/security.c:575:5: warning: symbol 'lsm_msg_msg_alloc' was not declared. Should it be static?
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  security/security.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 9a98c52..750d3f3 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -530,7 +530,7 @@ int lsm_inode_alloc(struct inode *inode)
->   *
->   * Returns 0, or -ENOMEM if memory can't be allocated.
->   */
-> -int lsm_task_alloc(struct task_struct *task)
-> +static int lsm_task_alloc(struct task_struct *task)
->  {
->  	if (blob_sizes.lbs_task == 0) {
->  		task->security = NULL;
-> @@ -551,7 +551,7 @@ int lsm_task_alloc(struct task_struct *task)
->   *
->   * Returns 0, or -ENOMEM if memory can't be allocated.
->   */
-> -int lsm_ipc_alloc(struct kern_ipc_perm *kip)
-> +static int lsm_ipc_alloc(struct kern_ipc_perm *kip)
->  {
->  	if (blob_sizes.lbs_ipc == 0) {
->  		kip->security = NULL;
-> @@ -572,7 +572,7 @@ int lsm_ipc_alloc(struct kern_ipc_perm *kip)
->   *
->   * Returns 0, or -ENOMEM if memory can't be allocated.
->   */
-> -int lsm_msg_msg_alloc(struct msg_msg *mp)
-> +static int lsm_msg_msg_alloc(struct msg_msg *mp)
->  {
->  	if (blob_sizes.lbs_msg_msg == 0) {
->  		mp->security = NULL;
-> 
+In the case of happycache, this isn't the database doing the
+dump/restore, but a separate process that could have the cap - it's
+better if we can do without though, and from his readme he runs as user
+cassandra in the /var/lib/cassandra directory for example so that'd
+match the file owner.
 
+For pgfincore, it's a postgres extension so the main process does it -
+but it does have files open as write as well as being the owner.
+
+> Jiri's original patch kind of acknowledged that by making the new test
+> be conditional, and off by default. So then it's a "only do this for
+> lockdown mode, because normal people won't find it acceptable".
+> 
+> And I'm not a huge fan of that approach. If you don't protect normal
+> people, then what's the point, really?
+
+I agree with that. 
+"Being owner or has cap" (whichever cap) is probably OK.
+On the other hand, writeability check makes more sense in general -
+could we somehow check if the user has write access to the file instead
+of checking if it currently is opened read-write?
+
+-- 
+Dominique
