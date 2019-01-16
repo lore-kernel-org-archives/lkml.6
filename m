@@ -2,115 +2,72 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23A0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC08C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B747620866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2208C20866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:31:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404042AbfAPKap (ORCPT
+        id S2404094AbfAPKbT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:30:45 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:59581 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2403917AbfAPKao (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:30:44 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-136-4U74QEZyNQu_MdkClKZp5A-1; Wed, 16 Jan 2019 10:30:41 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
- 16 Jan 2019 10:31:08 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 16 Jan 2019 10:31:08 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Andy Lutomirski' <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-CC:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Rik van Riel" <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: RE: [PATCH v6] x86: load FPU registers on return to userland
-Thread-Topic: [PATCH v6] x86: load FPU registers on return to userland
-Thread-Index: AQHUqBFG/2WmFKVnEEqv3ikTpa8106WwTizwgACPwxKAANvx0A==
-Date:   Wed, 16 Jan 2019 10:31:08 +0000
-Message-ID: <ac60c5d4acc2493298d0d864320993ba@AcuMS.aculab.com>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <2e396dbcbb1c4cc191b4208626baed07@AcuMS.aculab.com>
- <dc9e3308-4e2a-2ce8-495e-6fdb868c60b2@intel.com>
- <CALCETrX0RNgiVop+9uSkLyfxoy-cDyWk2G09svGD_UPsVyLAhA@mail.gmail.com>
- <39ab2f2b-81bb-636e-933d-f3a5225aa020@intel.com>
- <CALCETrXq8GFAzunui7d-seaK-on6_xiZOv0A4wc=sAur0wuDzg@mail.gmail.com>
-In-Reply-To: <CALCETrXq8GFAzunui7d-seaK-on6_xiZOv0A4wc=sAur0wuDzg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 16 Jan 2019 05:31:19 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:58344 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731929AbfAPKbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 05:31:19 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id BCE5E13F902;
+        Wed, 16 Jan 2019 11:30:49 +0100 (CET)
+Subject: Re: [PATCH v1] phy: qcom-ufs: Use iopoll.h readl_poll_timeout macro
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Yaniv Gardi <ygardi@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Matt Wagantall <mattw@codeaurora.org>,
+        Mitchel Humpherys <mitchelh@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <88cd3a2e-2acc-02ff-9f27-284d3b679d10@free.fr>
+ <20181228160546.GC25288@hector.attlocal.net>
+ <839a30f7-b3fa-739a-52b4-5438e8573dc3@free.fr>
+ <01b81f00-dc33-cc33-53e6-c937548aa7ab@ti.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <94402bb7-2bc3-96fc-f37e-c0e57698cdc7@free.fr>
+Date:   Wed, 16 Jan 2019 11:30:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MC-Unique: 4U74QEZyNQu_MdkClKZp5A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <01b81f00-dc33-cc33-53e6-c937548aa7ab@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQW5keSBMdXRvbWlyc2tpIFttYWlsdG86bHV0b0BrZXJuZWwub3JnXQ0KPiBPbiBUdWUs
-IEphbiAxNSwgMjAxOSBhdCAxMjo1NCBQTSBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AaW50ZWwu
-Y29tPiB3cm90ZToNCj4gPg0KPiA+IE9uIDEvMTUvMTkgMTI6MjYgUE0sIEFuZHkgTHV0b21pcnNr
-aSB3cm90ZToNCj4gPiA+IEkgZG9uJ3QgdGhpbmsgd2UnZCBldmVyIHdhbnQga2VybmVsX2ZwdV9l
-bmQoKSB0byByZXN0b3JlIGFueXRoaW5nLA0KPiA+ID4gcmlnaHQ/ICBJJ20gYSBiaXQgY29uZnVz
-ZWQgYXMgdG8gd2hlbiB0aGlzIG9wdGltaXphdGlvbiB3b3VsZCBhY3R1YWxseQ0KPiA+ID4gYmUg
-dXNlZnVsLg0KPiA+DQo+ID4gVXNpbmcgQVZYLTUxMiBhcyBhbiBleGFtcGxlLi4uDQo+ID4NCj4g
-PiBMZXQncyBzYXkgdGhlcmUgd2FzIEFWWC01MTIgc3RhdGUsIGFuZCBhIGtlcm5lbF9mcHVfYmVn
-aW4oKSB1c2VyIG9ubHkNCj4gPiB1c2VkIEFWWDIuICBXZSBjb3VsZCB0b3RhbGx5IGF2b2lkIGRv
-aW5nICphbnkqIEFWWC01MTIgc3RhdGUgc2F2ZS9yZXN0b3JlLg0KPiA+DQo+ID4gVGhlIGluaXQg
-b3B0aW1pemF0aW9uIGRvZXNuJ3QgaGVscCB1cyBpZiB0aGVyZSBfaXNfIEFWWC01MTIgc3RhdGUs
-IGFuZA0KPiA+IHRoZSBtb2RpZmllZCBvcHRpbWl6YXRpb24gb25seSBoZWxwcyBpZiB3ZSByZWNl
-bnRseSBkaWQgYSBYUlNUT1IgYXQNCj4gPiBjb250ZXh0IHN3aXRjaCBhbmQgaGF2ZSBub3Qgd3Jp
-dHRlbiB0byBBVlgtNTEyIHN0YXRlIHNpbmNlIFhSU1RPUi4NCj4gPg0KPiA+IFRoaXMgcHJvYmFi
-bHkgb25seSBtYXR0ZXJzIGZvciBBVlgtNTEyLXVzaW5nIGFwcHMgdGhhdCBoYXZlIHJ1biBvbiBh
-DQo+ID4ga2VybmVsIHdpdGggbG90cyBvZiBrZXJuZWxfZnB1X2JlZ2luKClzIHRoYXQgZG9uJ3Qg
-dXNlIEFWWC01MTIuICBTbywgbm90DQo+ID4gYSBiaWcgZGVhbCByaWdodCBub3cuDQo+IA0KPiBP
-biB0b3Agb2YgdGhpcyBzZXJpZXMsIHRoaXMgZ2V0cyByYXRoZXIgYXdrd2FyZCwgSSB0aGluayAt
-LSBub3cgd2UNCj4gbmVlZCB0byBiZSBhYmxlIHRvIGtlZXAgdHJhY2sgb2YgYSBzdGF0ZSBpbiB3
-aGljaCBzb21lIG9mIHRoZSB1c2VyDQo+IHJlZ2lzdGVycyBsaXZlIGluIHRoZSBDUFUgYW5kIHNv
-bWUgbGl2ZSBpbiBtZW1vcnksIGFuZCB3ZSBuZWVkIHRvIGJlDQo+IGFibGUgdG8gZG8gdGhlIHBh
-cnRpYWwgcmVzdG9yZSBpZiB3ZSBnbyBiYWNrIHRvIHVzZXIgbW9kZSBsaWtlIHRoaXMuDQo+IFdl
-IGFsc28gbmVlZCB0byBiZSBhYmxlIHRvIGRvIGEgcGFydGlhbCBzYXZlIGlmIHdlIGVuZCB1cCBj
-b250ZXh0DQo+IHN3aXRjaGluZy4gIFRoaXMgc2VlbXMgcmF0aGVyIGNvbXBsaWNhdGVkLg0KDQpJ
-ZiBrZXJuZWxfZnB1X2JlZ2luKCkgcmVxdWVzdHMgcmVnaXN0ZXJzIHRoYXQgYXJlICdsaXZlJyBm
-b3IgdXNlcnNwYWNlLA0Kb3IgaWYgdGhlIHVzZXIgcmVnaXN0ZXJzIGhhdmUgYmVlbiBzYXZlZCB0
-aGVuIHlvdSAobW9yZSBvciBsZXNzKSBoYXZlDQp0byBkaXNhYmxlIHByZS1lbXB0aW9uLg0KT1RP
-SCBpZiB0aGUga2VybmVsIHdhbnRzIHRoZSBBVlgyIHJlZ2lzdGVycyBhbmQgdGhlIHVzZXIgb25l
-cyBhcmUgYWxsIDANCnRoZW4gdGhlIGtlcm5lbCBjYW4ganVzdCB1c2UgdGhlIHJlZ2lzdGVycyBw
-cm92aWRlZCBrZXJuZWxfZnB1X2VuZCgpDQp6ZXJvZXMgdGhlbS4gSW4gdGhpcyBjYW4geW91IGNh
-biBhbGxvdyBwcmUtZW1wdGlvbiBiZWNhdXNlIGl0IHdpbGwgc2F2ZQ0KZXZlcnl0aGluZyBhbmQg
-aXQgd2lsbCBhbGwgZ2V0IHJlc3RvcmVkIGNvcnJlY3RseSAod2lsbCBuZWVkIHRvIGJlDQpyZXN0
-b3JlZCB3aGVuIHRoZSBwcm9jZXNzIGlzIHNjaGVkdWxlZCwgbm90IHJldHVybiB0byB1c2VyKS4N
-ClRoZSByZWdpc3RlciBzYXZlIGFyZWEgbWlnaHQgbmVlZCB6YXBwaW5nIChpZiB1c2VkKSBiZWNh
-dXNlIGl0IG1pZ2h0DQpiZSByZWFkYWJsZSBmcm9tIHVzZXIgc3BhY2UgKGJ5IGEgZGVidWdnZXIp
-Lg0KDQpUaGUgb3RoZXIgY2FzZSBpcyBrZXJuZWwgY29kZSB0aGF0IGd1YXJhbnRlZXMgdG8gc2F2
-ZSBhbmQgcmVzdG9yZQ0KYW55IHJlZ2lzdGVycyBpcyB1c2VzIChpdCBtaWdodCBvbmx5IHdhbnQg
-MiByZWdpc3RlcnMgZm9yIGEgQ1JDKS4NClN1Y2ggY29kZSBjYW4gbmVzdCB3aXRoIG90aGVyIGtl
-cm5lbCB1c2VycyAoZWcgaW4gYW4gSVNSKS4NCkknbSBub3Qgc3VyZSB3aGV0aGVyIGlzIG5lZWRz
-IGEgc21hbGwgJ3NhdmUgYXJlYScgZm9yIGZwdSBmbGFncz8NCkl0IG1pZ2h0IGJlIHdvcnRoIGFk
-ZGluZyBzdWNoIGEgc3RydWN0dXJlIHRvIHRoZSBpbnRlcmZhY2UgLSBldmVuDQppZiBpdCBpcyBj
-dXJyZW50bHkgYSBkdW1teSBzdHJ1Y3R1cmUuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFk
-ZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywg
-TUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On 16/01/2019 10:24, Kishon Vijay Abraham I wrote:
 
+> On 16/01/19 2:40 PM, Marc Gonzalez wrote:
+>
+>> Would this patch go through your tree or Kishon's tree?
+> 
+> I've merged this in phy -next.
+
+Thanks Kishon.
+
+Do you mean here?
+
+https://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git/log/?h=next
+
+Regards.
