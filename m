@@ -2,100 +2,271 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9C3C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D30C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B559206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:59:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="a8I7dgjY"
+	by mail.kernel.org (Postfix) with ESMTP id 0CB7A206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbfAPR74 (ORCPT
+        id S1728061AbfAPR7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:59:56 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33736 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbfAPR7y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:59:54 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so8043477wrr.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:59:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Bcv4MkeoVz8gZ3m+0FU+1hIF0hDCII/eg515n8hHTfs=;
-        b=a8I7dgjYkgC0u2nsI3XmM5KgB4T5r3bSqVHTR4J8ABoYESmbNjaCisD4hK+GkAsidu
-         My6Qx8R1ppE1Crmj/2hsKiOpNjW02bOhZP2lldWUFx934x27+dl8HeNqlxj6fpFWGegu
-         mIgbV2MbBSPCw4bwNjOa22WY30RoFiFyYGvMN3N1yMMJvdjit027EzA7GlvKVPJYZ2f4
-         w3GZsXQvUNOaufhOiBG+3kLOQzh5WYWV6uNWrHD4D0omKZVMEr+ErTaPPMPZ81kMTzVb
-         vkdBvDzHvgNC/wHVJNmwQoHkbHzLh+5xzHGKUf0FPhBHPjYsA9nCcdRDz5RjZYQ7oWs/
-         WqPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Bcv4MkeoVz8gZ3m+0FU+1hIF0hDCII/eg515n8hHTfs=;
-        b=V4e1Z/FA6AHF3U3W+SVzUTjM6ZL469DaIN9e/XmCWe/sCvOceYnPpv+TBc/cZ5c0zS
-         3TxND1oMcjTED9Wnep2oyoPXLwQwPxReS0HSg7elmqO47q3uGAVljyab9dYLv/WaxNXr
-         32emXFTFYDoMUhssfsTCRaJgMuX9bZOMdshyH/OH1gFujwVS1Swd5TfvG3ewgyrStxcx
-         TQMuaDq2zWqXKsLQXcXbNq6KLybTnGymZtLPUHxA9gZ9UPO0UVLOG5IlRsVd0h8PyfU6
-         7Pm4a+Os4vmsL4P2WTMKuthzy0oApVxvViBA82LMqBjedgY7N5JaM4BEVv2Nr5P11FrN
-         5a6w==
-X-Gm-Message-State: AJcUukfk24KU9q8e1taz4kMaKAQI9di13bJGUoqrmasfTw/hRpihy0f4
-        0nENjUos2fWGQb1+QhRo1kwg5dV/Tsw=
-X-Google-Smtp-Source: ALg8bN6jQGun62yIQILU6wHRg/6NfJ1mnia6doWM06JqHNuITBa9t8rnEn19shKmOie2FSU3VlgwRA==
-X-Received: by 2002:a5d:4d46:: with SMTP id a6mr8771520wru.28.1547661592737;
-        Wed, 16 Jan 2019 09:59:52 -0800 (PST)
-Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id t70sm59324609wmd.36.2019.01.16.09.59.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 09:59:52 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
-Subject: [PATCH] arm64: dts: meson: s400: fix emmc maximum rate
-Date:   Wed, 16 Jan 2019 18:59:47 +0100
-Message-Id: <20190116175947.6093-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 16 Jan 2019 12:59:46 -0500
+Received: from mga04.intel.com ([192.55.52.120]:8977 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727969AbfAPR7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:59:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 09:59:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="117227786"
+Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 09:59:38 -0800
+From:   Keith Busch <keith.busch@intel.com>
+To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCHv4 06/13] acpi/hmat: Register processor domain to its memory
+Date:   Wed, 16 Jan 2019 10:57:57 -0700
+Message-Id: <20190116175804.30196-7-keith.busch@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20190116175804.30196-1-keith.busch@intel.com>
+References: <20190116175804.30196-1-keith.busch@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Limiting the HS200 rate on the s400 was just a way to mask that the
-tuning setting were not correct. This seems to have been fixed with
-the recent MMC driver update. We can now use HS200 at full speed.
+If the HMAT Subsystem Address Range provides a valid processor proximity
+domain for a memory domain, or a processor domain with the highest
+performing access exists, register the memory target with that initiator
+so this relationship will be visible under the node's sysfs directory.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Since HMAT requires valid address ranges have an equivalent SRAT entry,
+verify each memory target satisfies this requirement.
+
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/acpi/hmat/hmat.c | 143 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 136 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-index 0c98ca78c8b8..75fe1a2c49d0 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-@@ -488,9 +488,8 @@
- 	pinctrl-names = "default", "clk-gate";
+diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
+index 833a783868d5..efb33c74d1a3 100644
+--- a/drivers/acpi/hmat/hmat.c
++++ b/drivers/acpi/hmat/hmat.c
+@@ -17,6 +17,43 @@
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
  
- 	bus-width = <8>;
--	cap-sd-highspeed;
- 	cap-mmc-highspeed;
--	max-frequency = <180000000>;
-+	max-frequency = <200000000>;
- 	non-removable;
- 	disable-wp;
- 	mmc-ddr-1_8v;
++static LIST_HEAD(targets);
++
++struct memory_target {
++	struct list_head node;
++	unsigned int memory_pxm;
++	unsigned long p_nodes[BITS_TO_LONGS(MAX_NUMNODES)];
++};
++
++static __init struct memory_target *find_mem_target(unsigned int m)
++{
++	struct memory_target *t;
++
++	list_for_each_entry(t, &targets, node)
++		if (t->memory_pxm == m)
++			return t;
++	return NULL;
++}
++
++static __init void alloc_memory_target(unsigned int mem_pxm)
++{
++	struct memory_target *t;
++
++	if (pxm_to_node(mem_pxm) == NUMA_NO_NODE)
++		return;
++
++	t = find_mem_target(mem_pxm);
++	if (t)
++		return;
++
++	t = kzalloc(sizeof(*t), GFP_KERNEL);
++	if (!t)
++		return;
++
++	t->memory_pxm = mem_pxm;
++	list_add_tail(&t->node, &targets);
++}
++
+ static __init const char *hmat_data_type(u8 type)
+ {
+ 	switch (type) {
+@@ -53,11 +90,30 @@ static __init const char *hmat_data_type_suffix(u8 type)
+ 	};
+ }
+ 
++static __init void hmat_update_access(u8 type, u32 value, u32 *best)
++{
++	switch (type) {
++	case ACPI_HMAT_ACCESS_LATENCY:
++	case ACPI_HMAT_READ_LATENCY:
++	case ACPI_HMAT_WRITE_LATENCY:
++		if (!*best || *best > value)
++			*best = value;
++		break;
++	case ACPI_HMAT_ACCESS_BANDWIDTH:
++	case ACPI_HMAT_READ_BANDWIDTH:
++	case ACPI_HMAT_WRITE_BANDWIDTH:
++		if (!*best || *best < value)
++			*best = value;
++		break;
++	}
++}
++
+ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+ 				      const unsigned long end)
+ {
++	struct memory_target *t;
+ 	struct acpi_hmat_locality *loc = (void *)header;
+-	unsigned int init, targ, total_size, ipds, tpds;
++	unsigned int init, targ, pass, p_node, total_size, ipds, tpds;
+ 	u32 *inits, *targs, value;
+ 	u16 *entries;
+ 	u8 type;
+@@ -87,12 +143,28 @@ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+ 	targs = &inits[ipds];
+ 	entries = (u16 *)(&targs[tpds]);
+ 	for (targ = 0; targ < tpds; targ++) {
+-		for (init = 0; init < ipds; init++) {
+-			value = entries[init * tpds + targ];
+-			value = (value * loc->entry_base_unit) / 10;
+-			pr_info("  Initiator-Target[%d-%d]:%d%s\n",
+-				inits[init], targs[targ], value,
+-				hmat_data_type_suffix(type));
++		u32 best = 0;
++
++		t = find_mem_target(targs[targ]);
++		for (pass = 0; pass < 2; pass++) {
++			for (init = 0; init < ipds; init++) {
++				value = entries[init * tpds + targ];
++				value = (value * loc->entry_base_unit) / 10;
++
++				if (!pass) {
++					hmat_update_access(type, value, &best);
++					pr_info("  Initiator-Target[%d-%d]:%d%s\n",
++						inits[init], targs[targ], value,
++						hmat_data_type_suffix(type));
++					continue;
++				}
++
++				if (!t)
++					continue;
++				p_node = pxm_to_node(inits[init]);
++				if (p_node != NUMA_NO_NODE && value == best)
++					set_bit(p_node, t->p_nodes);
++			}
+ 		}
+ 	}
+ 	return 0;
+@@ -122,6 +194,7 @@ static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
+ 					   const unsigned long end)
+ {
+ 	struct acpi_hmat_address_range *spa = (void *)header;
++	struct memory_target *t = NULL;
+ 
+ 	if (spa->header.length != sizeof(*spa)) {
+ 		pr_err("HMAT: Unexpected address range header length: %d\n",
+@@ -131,6 +204,23 @@ static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
+ 	pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
+ 		spa->physical_address_base, spa->physical_address_length,
+ 		spa->flags, spa->processor_PD, spa->memory_PD);
++
++	if (spa->flags & ACPI_HMAT_MEMORY_PD_VALID) {
++		t = find_mem_target(spa->memory_PD);
++		if (!t) {
++			pr_warn("HMAT: Memory Domain missing from SRAT\n");
++			return -EINVAL;
++		}
++	}
++	if (t && spa->flags & ACPI_HMAT_PROCESSOR_PD_VALID) {
++		int p_node = pxm_to_node(spa->processor_PD);
++
++		if (p_node == NUMA_NO_NODE) {
++			pr_warn("HMAT: Invalid Processor Domain\n");
++			return -EINVAL;
++		}
++		set_bit(p_node, t->p_nodes);
++	}
+ 	return 0;
+ }
+ 
+@@ -154,6 +244,33 @@ static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
+ 	}
+ }
+ 
++static __init int srat_parse_mem_affinity(union acpi_subtable_headers *header,
++					  const unsigned long end)
++{
++	struct acpi_srat_mem_affinity *ma = (void *)header;
++
++	if (!ma)
++		return -EINVAL;
++	if (!(ma->flags & ACPI_SRAT_MEM_ENABLED))
++		return 0;
++	alloc_memory_target(ma->proximity_domain);
++	return 0;
++}
++
++static __init void hmat_register_targets(void)
++{
++	struct memory_target *t, *next;
++	unsigned m, p;
++
++	list_for_each_entry_safe(t, next, &targets, node) {
++		list_del(&t->node);
++		m = pxm_to_node(t->memory_pxm);
++		for_each_set_bit(p, t->p_nodes, MAX_NUMNODES)
++			register_memory_node_under_compute_node(m, p, 0);
++		kfree(t);
++	}
++}
++
+ static __init int hmat_init(void)
+ {
+ 	struct acpi_table_header *tbl;
+@@ -163,6 +280,17 @@ static __init int hmat_init(void)
+ 	if (srat_disabled())
+ 		return 0;
+ 
++	status = acpi_get_table(ACPI_SIG_SRAT, 0, &tbl);
++	if (ACPI_FAILURE(status))
++		return 0;
++
++	if (acpi_table_parse_entries(ACPI_SIG_SRAT,
++				sizeof(struct acpi_table_srat),
++				ACPI_SRAT_TYPE_MEMORY_AFFINITY,
++				srat_parse_mem_affinity, 0) < 0)
++		goto out_put;
++	acpi_put_table(tbl);
++
+ 	status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
+ 	if (ACPI_FAILURE(status))
+ 		return 0;
+@@ -173,6 +301,7 @@ static __init int hmat_init(void)
+ 					     hmat_parse_subtable, 0) < 0)
+ 			goto out_put;
+ 	}
++	hmat_register_targets();
+ out_put:
+ 	acpi_put_table(tbl);
+ 	return 0;
 -- 
-2.20.1
+2.14.4
 
