@@ -2,117 +2,96 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54003C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E105C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EAA820652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:08:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0342920652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547672891;
-	bh=M9ENv+WrHUYH9nX+r1c75NNRa1eiEiBPU5CzPf72wNY=;
+	s=default; t=1547672967;
+	bh=MLxQ6bcpl6Wle5H9cN9RisJGl3vyVW/CNFlF6pkeITk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=c80kF4PTwor57DXE04fsbdo/H9WzNr2twqHSNsFjxZS9Z3Jtemprripn1wzbi5nd/
-	 biWfg1COTvhnsPVeB9eve6kaFqPZRiLmQ4huirdupfqRodqO2uXwBPwx172A7tkhkl
-	 JAqacdq+BEEdR4zXMOysfFCCOHsuO3YIXQchkzy4=
+	b=ktJ9HyDW8fUbNjSwTXhpayl/1zkNuqg+TvOI1mft8OYDM69KC82PXUAM7bDFN+gHH
+	 GLkNISbN4F9qZlRTaORwIKBTUgCUAnjlW2TM0RKEWagP8DJqEgq05lEGM+/8chqRwd
+	 4HAeQcM6+8MPHrG23kX/t1vmUO6omfYKukQmgIhA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbfAPVIJ (ORCPT
+        id S1727531AbfAPVJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:08:09 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43670 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfAPVII (ORCPT
+        Wed, 16 Jan 2019 16:09:25 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40973 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfAPVJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:08:08 -0500
-Received: by mail-ot1-f65.google.com with SMTP id a11so9071070otr.10;
-        Wed, 16 Jan 2019 13:08:08 -0800 (PST)
+        Wed, 16 Jan 2019 16:09:24 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u16so9091421otk.8;
+        Wed, 16 Jan 2019 13:09:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wMvltuEb67wibfY2D2ojfW+tDYLhRAe2UHf8TZ4RuI0=;
-        b=rApDNUSYuVLJ2ZaRNdEtfR6ijf4qUzkHqScqjSP3Dxf0uFqsYEcwZGl+N0X2TG385L
-         jQYl64D1G1q+9FZZDfKkqMEgHpTfpySTeV8evUxOoNkYQ7TcLmq52l1w0pjG/ercXx8e
-         +0eMrz2bWSQzE5p5Ye/oUfFxNbDJN9z7/8S5uXDzuGQFeNS4yYU2bwRaZcvyz27i011/
-         qul/vF56qMjuVf3WPlNsY2Z3cXVmuqBn2BY03dcmHFTXRq0WFBEx/wA1FtuYjCKPIgmk
-         PyuflWmhqBC6UOYuLzmf82i9xuf8i1bFiGV0+tXP8z1Iccf1htEQxCn4BZ1papIsCL63
-         dDwg==
-X-Gm-Message-State: AJcUukcUAYt8XDCD81KO7BmujySrUVLEK4GZByKRAH68YzMtX/tmEbkz
-        63YtuVWUhrc///dTvVF80A==
-X-Google-Smtp-Source: ALg8bN4DvfD2O/xk0VZPhQ+44SgsduOyCG2/57/0kIBroNOMBg5LPr1zhaVKEnY8G0wB09U7COP86g==
-X-Received: by 2002:a05:6830:134a:: with SMTP id r10mr6741543otq.195.1547672887417;
-        Wed, 16 Jan 2019 13:08:07 -0800 (PST)
+        bh=gDr/MNAhN9HZwjVOmfxhxRD6SUqMvqJOtw/ZofLvTLk=;
+        b=gPh/01u/q5DXxmmcjSu23zrVC56NXy/jso12H3SttfFy7CM4LO3hgrN3DJyxeeiP5j
+         3DpM8vjhP9+IJ++kT8xhqyqk+FBErQiuW9ASlTM8Aggz+jVxOaC7RZxpfV7R4zd01Ha4
+         +FipWHm2DKwpeiDYx2a2jK9s3JvpEKnKTz3heDjXCXX8yHAPhNUKAmck8ofU3gHmpiX6
+         y+RRbMkaKHg/uGkHntfh75+F5jOs/vtjCcBBOYw8z531fSngRgYT3Zel3VP4Bsy1PA9/
+         CsVoL+zL8zn8QFBYUIZm8nmFuGHE9UiJ2mukQfAUDBDlSEL9xwvIBJX8ZMaEa3Be3fRD
+         k0NA==
+X-Gm-Message-State: AJcUukdKHxxUq7ibimZFgIUOOtrh7uXg+QPrXl6xqefMgeeeIbhkmS+Y
+        x0cL1Y5eb1cTEvbSmAeghw==
+X-Google-Smtp-Source: ALg8bN5KojRUvLn9E60Hy1A7AZoYE4wjdzgeoipx97zK9vXP937w4r+Q6hrOHFRcnPZSEApUaDyVfQ==
+X-Received: by 2002:a9d:1eea:: with SMTP id n97mr6443439otn.248.1547672964049;
+        Wed, 16 Jan 2019 13:09:24 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j5sm4371074otc.54.2019.01.16.13.08.06
+        by smtp.gmail.com with ESMTPSA id h16sm2991561otl.29.2019.01.16.13.09.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 13:08:06 -0800 (PST)
-Date:   Wed, 16 Jan 2019 15:08:06 -0600
+        Wed, 16 Jan 2019 13:09:23 -0800 (PST)
+Date:   Wed, 16 Jan 2019 15:09:22 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Jan Kotas <jank@cadence.com>
-Cc:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        mark.rutland@arm.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: rtc: Add bindings for Cadence RTC
-Message-ID: <20190116210806.GA21535@bogus>
-References: <20190111151401.25047-1-jank@cadence.com>
- <20190111151401.25047-2-jank@cadence.com>
+To:     Eugen.Hristev@microchip.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, thierry.reding@gmail.com,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Nicolas.Ferre@microchip.com, Eugen.Hristev@microchip.com,
+        Cristian.Birsan@microchip.com
+Subject: Re: [PATCH v2 2/3] dt-bindings: drm/panel: simple: add support for
+ PDA  91-00156-A0
+Message-ID: <20190116210922.GA24880@bogus>
+References: <1547458584-29548-1-git-send-email-eugen.hristev@microchip.com>
+ <1547458584-29548-3-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190111151401.25047-2-jank@cadence.com>
+In-Reply-To: <1547458584-29548-3-git-send-email-eugen.hristev@microchip.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 03:14:00PM +0000, Jan Kotas wrote:
-> This patch adds a DT binding documentation for
-> Cadence RTC controller.
+On Mon, 14 Jan 2019 09:43:28 +0000, <Eugen.Hristev@microchip.com> wrote:
+> From: Cristian Birsan <cristian.birsan@microchip.com>
 > 
-> Signed-off-by: Jan Kotas <jank@cadence.com>
+> PDA 91-00156-A0 5.0 is a 5.0" WVGA TFT LCD panel.
+> This panel with backlight is found in PDA 5" LCD screen (TM5000 series or
+> AC320005-5).
+> Adding Device Tree bindings for this panel.
+> 
+> Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
+> [eugen.hristev@microchip.com]: specified backlight and supply bindings
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
 > ---
->  Documentation/devicetree/bindings/rtc/cdns,rtc.txt | 25 ++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/cdns,rtc.txt
+> Changes in v2:
+> - added binding explanations for required properties from simple-panel:
+> backlight and power supply which are mandatory
 > 
-> diff --git a/Documentation/devicetree/bindings/rtc/cdns,rtc.txt b/Documentation/devicetree/bindings/rtc/cdns,rtc.txt
-> new file mode 100644
-> index 000000000..40713bbbe
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/cdns,rtc.txt
-> @@ -0,0 +1,25 @@
-> +Cadence Real Time Clock
-> +
-> +The Cadence RTC controller with date, time and alarm capabilities.
-> +The alarm may wake the system from low-power state.
-> +
-> +Required properties:
-> +- compatible: Should be "cdns,rtc-r109v3"
-> +- reg: Specifies base physical address and size of the register area.
-> +- interrupts: A single interrupt specifier.
-> +- clocks: Must contain two entries:
-> +	- pclk: APB registers clock
-> +	- ref_clk: reference 1Hz of 100Hz clock, depending on IP configuration
-
-1Hz OR 100Hz?
-
-> +	See ../clocks/clock-bindings.txt for details.
-> +
-> +Example:
-> +        rtc0: rtc@fd080000 {
-> +        	compatible = "cdns,rtc-r109v3";
-> +        	reg = <0xfd080000 0x1000>;
-> +
-> +        	clock-names = "pclk", "ref_clk";
-> +        	clocks = <&sysclock>, <&refclock>;
-> +
-> +        	interrupt-parent = <&gic>;
-> +        	interrupts = <0 6 IRQ_TYPE_LEVEL_HIGH>;
-> +        };
-> -- 
-> 2.15.0
+>  .../devicetree/bindings/display/panel/pda,91-00156-a0.txt  | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/pda,91-00156-a0.txt
 > 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
