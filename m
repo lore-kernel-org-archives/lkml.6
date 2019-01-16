@@ -2,103 +2,165 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D38DEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61054C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA00820859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 311DF20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:51:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RTn0T4LY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392691AbfAPLvX (ORCPT
+        id S2392703AbfAPLv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:51:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57712 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732464AbfAPLvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:51:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C4C1EACA9;
-        Wed, 16 Jan 2019 11:51:20 +0000 (UTC)
-Subject: Re: [PATCH v3] x86-64/Xen: fix stack switching
-To:     Jan Beulich <JBeulich@suse.com>, Ingo Molnar <mingo@elte.hu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <5AF03EBD02000078001C1303@suse.com>
- <5AF03EBD02000000000F91D6@suse.com> <5AF03EBD02000078001FE590@suse.com>
- <5C3E1128020000780020DFAD@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
- CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
- zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
- kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
- czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
- d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
- 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
- B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
- cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
- w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
- pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
- 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
- KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
- Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
- AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
- UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
- wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
- CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
- HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
- V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
- RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
- W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
- pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
- jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
- hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <87b0cc15-0e62-db9e-391d-77b42a2626b1@suse.com>
-Date:   Wed, 16 Jan 2019 12:51:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 16 Jan 2019 06:51:26 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44162 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392689AbfAPLvY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:51:24 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so4620692lfe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 03:51:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fhSHHYABljolfOthqLSVkjCp/eyt/46dlfwZuqWjsKg=;
+        b=RTn0T4LYg0ZxA+ZQi2kUs9yKp7lsrN6NkscrNrXBj8BLwupPDL2jAaxRmFo1ZVa73T
+         CYrAXHdrBYp7WlQN9L/MkvZqlUjMK2J5xJFhnpDi3jWpduQw4LVGRUNVHe7KdIJ7A0BL
+         nUo8wSkQ1D8oeHRq5ma+e5mv+rXyL9QF03Kcw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fhSHHYABljolfOthqLSVkjCp/eyt/46dlfwZuqWjsKg=;
+        b=BpVmVUap+w9+qKw+uqXGLhxQ8fTI1AB+Hab+f1aPPNFE29Q/gc88PIsUSy2ocZdDIp
+         ud96YwZTvZN48wAB2W+AjYo9IEqQHLx+aDf0ZkDax3jgi4JpVWmPvVg6fSJHBSg3OaZo
+         2+2OrDtKn1xLqjiCdE7CLJGjq1R3DzN48u2cueGjF4N8/vJCha///5jPxCZnh64YY1RY
+         XSd8Iuv6QDUp3L5mozaXWw7lh3Ya0yZxkznK4J55823GX8kFDIo+wbZIR3t3ObkP1elM
+         0GaJI2/c3CJtc+cGu3M6Yz6uDAxrFEH4TYj43uwkpW+l4tO8bZQeV6bIHenB/LxLq2MU
+         2xAw==
+X-Gm-Message-State: AJcUukclufKgDHjDnl2+RxSp+R1LdawRB4yM15LAFcgVU0wjNsvyaKCE
+        j40rVfHNxznojDTbTcAdnI6FMTDkTHNWS7HcnsDBnQ==
+X-Google-Smtp-Source: ALg8bN4ImJnR44tgqjCJqh4UjBbitpzkDJLz6UZoGXHo91/8hNkuiGBzQ8zikAl654SiYlEEeDA7JfMErWRK2BTvDh4=
+X-Received: by 2002:a19:750a:: with SMTP id y10mr6533014lfe.43.1547639482355;
+ Wed, 16 Jan 2019 03:51:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <5C3E1128020000780020DFAD@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+References: <20190115154901.189747728@linuxfoundation.org>
+In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 16 Jan 2019 17:21:12 +0530
+Message-ID: <CA+G9fYv_XD1r2i55qdVSHg3xsU-9cgVf2piTcxAJ--wfa+UVaA@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/27] 4.14.94-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/01/2019 17:58, Jan Beulich wrote:
-> While in the native case entry into the kernel happens on the trampoline
-> stack, PV Xen kernels get entered with the current thread stack right
-> away. Hence source and destination stacks are identical in that case,
-> and special care is needed.
-> 
-> Other than in sync_regs() the copying done on the INT80 path isn't
-> NMI / #MC safe, as either of these events occurring in the middle of the
-> stack copying would clobber data on the (source) stack.
-> 
-> I'm not altering the similar code in interrupt_entry() and nmi(), as
-> those code paths are unreachable afaict when running PV Xen guests.
-> 
-> Fixes: 7f2590a110b837af5679d08fc25c6227c5a8c497
-> Signed-off-by: Jan Beulich <jbeulich@suse.com>
-> Cc: stable@kernel.org 
+On Tue, 15 Jan 2019 at 22:10, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.14.94 release.
+> There are 27 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu Jan 17 15:48:28 UTC 2019.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.94-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.14.94-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.14.y
+git commit: ec31b1a0fd7d9092bbfbef8aed2819dcb899ebac
+git describe: v4.14.93-28-gec31b1a0fd7d
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.93-28-gec31b1a0fd7d
+
+No regressions (compared to build v4.14.93)
+
+No fixes (compared to build v4.14.93)
 
 
-Juergen
+Ran 21651 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
