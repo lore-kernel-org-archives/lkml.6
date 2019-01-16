@@ -2,122 +2,128 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F18BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA16C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C5FD206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:52:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Sa7uSJYv"
+	by mail.kernel.org (Postfix) with ESMTP id E2C66206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392228AbfAPKwd (ORCPT
+        id S2404118AbfAPKyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:52:33 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39698 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731772AbfAPKwd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:52:33 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0GAqNu8046317;
-        Wed, 16 Jan 2019 04:52:23 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547635943;
-        bh=Mlm37ln3TJslVWZf4kJfX6ItmvNfSxYsEENt3smz5lA=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=Sa7uSJYvL1PEhfvKsnGSr/+Q9BED40JJHxixLkAOO3RUKLDlh+OS1sexlJgNvjLZT
-         b4z5mb6OjdfHI5tM7lWpZ+lYZ6zYjqAEQ8VSm1iNLY9CTzeE9ZSGemPKJB5dy+8B1Q
-         1vPDqh2qISzqjis0XrShjtnQMGwZ0RBcn+LXKquY=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0GAqNa2040642
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 04:52:23 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
- Jan 2019 04:52:23 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 16 Jan 2019 04:52:23 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0GAqKEo003210;
-        Wed, 16 Jan 2019 04:52:21 -0600
-Subject: Re: [PATCH 1/3] arm64: dts: ti: am654: Add Main System Control Module
- node
-To:     Nishanth Menon <nm@ti.com>
-References: <1547200861-17795-1-git-send-email-rogerq@ti.com>
- <1547200861-17795-2-git-send-email-rogerq@ti.com>
- <20190115143355.immsdfkyulx5j6o7@kahuna>
-CC:     <t-kristo@ti.com>, <nsekhar@ti.com>, <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jyri Sarha <jsarha@ti.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C3F0CE4.9010504@ti.com>
-Date:   Wed, 16 Jan 2019 12:52:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Wed, 16 Jan 2019 05:54:04 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54674 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731772AbfAPKyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 05:54:03 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BD945207B0; Wed, 16 Jan 2019 11:54:00 +0100 (CET)
+Received: from windsurf (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7EE7F20758;
+        Wed, 16 Jan 2019 11:53:50 +0100 (CET)
+Date:   Wed, 16 Jan 2019 11:53:50 +0100
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] usb: chipidea: Grab the (legacy) USB PHY by phandle
+ first
+Message-ID: <20190116115350.3daa9b4f@windsurf>
+In-Reply-To: <20190116101051.21202-1-paul.kocialkowski@bootlin.com>
+References: <20190116101051.21202-1-paul.kocialkowski@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190115143355.immsdfkyulx5j6o7@kahuna>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/01/19 16:33, Nishanth Menon wrote:
-> On 12:00-20190111, Roger Quadros wrote:
->> From: Jyri Sarha <jsarha@ti.com>
->>
->> Main System control module support is added to the device tree to allow
->> driver to access to their control module registers.
->>
->> Signed-off-by: Jyri Sarha <jsarha@ti.com>
->> Signed-off-by: Roger Quadros <rogerq@ti.com>
->> ---
->>  arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> index 272cf8f..8b55108 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> @@ -191,4 +191,12 @@
->>  		#address-cells = <1>;
->>  		#size-cells = <0>;
->>  	};
->> +
->> +	scm_conf: scm_conf@100000 {
->> +		compatible = "syscon", "simple-mfd";
->> +		reg = <0 0x00100000 0 0x1c000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x0 0x00100000 0x1c000>;
+Hello,
+
+Thanks for the patch!
+
+On Wed, 16 Jan 2019 11:10:51 +0100, Paul Kocialkowski wrote:
+> According to the chipidea driver bindings, the USB PHY is specified via
+> the "phys" phandle node. However, this only takes effect for USB PHYs
+> that use the common PHY framework. For legacy USB PHYs, a simple lookup
+> based on the USB PHY type is done instead.
 > 
-> Who handles the MMR region unlock?
+> This does not play out well when more than USB PHY is registered, since
 
-u-boot.
+"more than *one*"
 
+> the first registered PHY matching the type will always be returned
+> regardless of what the driver was bound to.
 > 
->> +	};
->>  };
->> -- 
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
->>
+> Fix this by looking up the PHY based on the "phys" phandle node.
+> Although generic PHYS and rather matched by their "phys-name"
+
+I'm confused by "Although generic PHYS and rather matched". Perhaps
+s/and/are/ ?
+
+Also PHYS -> PHYs
+
+> and not
+> the "phys" phandle directly, there is no helper for similar lookup on
+> legacy PHYs and it's probably not worth the effort to add it.
 > 
+> When no legacy USB PHY is found by phandle, fallback to grabbing any
+> registered USB2 PHY. This ensures backward compatibility if some users
+> were actually relying on this mechanism.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  drivers/usb/chipidea/core.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+> index 7bfcbb23c2a4..11d3ee1e3fe5 100644
+> --- a/drivers/usb/chipidea/core.c
+> +++ b/drivers/usb/chipidea/core.c
+> @@ -954,8 +954,14 @@ static int ci_hdrc_probe(struct platform_device *pdev)
+>  	} else if (ci->platdata->usb_phy) {
+>  		ci->usb_phy = ci->platdata->usb_phy;
+>  	} else {
+> +		ci->usb_phy = devm_usb_get_phy_by_phandle(dev->parent, "phys",
+> +							  0);
+>  		ci->phy = devm_phy_get(dev->parent, "usb-phy");
+> -		ci->usb_phy = devm_usb_get_phy(dev->parent, USB_PHY_TYPE_USB2);
 
-cheers,
--roger
+I'm not sure why you change the order of legacy PHY lookup vs. generic
+PHY lookup.
 
+> +
+> +		/* Fallback to grabbing any registered USB2 PHY */
+> +		if (IS_ERR(ci->phy) && IS_ERR(ci->usb_phy))
+> +			ci->usb_phy = devm_usb_get_phy(dev->parent,
+> +						       USB_PHY_TYPE_USB2);
+
+Why is this conditional on the generic PHY lookup failing?
+
+Don't we simply want:
+
+	ci->phy = devm_phy_get(dev->parent, "usb-phy");
+	ci->usb_phy = devm_usb_get_phy_by_phandle(dev->parent, "phys", 0);
+	if (IS_ERR(ci->usb_phy))
+		ci->usb_phy = devm_usb_get_phy(dev->parent, USB_PHY_TYPE_USB2);
+
+ ?
+
+Does this needs a "Fixes:" tag ? It's not fixing a regression because
+nobody complained until now, but it's really fixing a behavior that
+wasn't correct.
+
+Best regards,
+
+Thomas
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thomas Petazzoni, CTO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
