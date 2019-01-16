@@ -2,83 +2,79 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8224CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E2CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0C62082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E965E206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389843AbfAPLVc (ORCPT
+        id S2389850AbfAPL2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:21:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49402 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 06:28:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60716 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730420AbfAPLVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:21:32 -0500
+        id S2389759AbfAPL2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:28:02 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DE988C0703AB;
-        Wed, 16 Jan 2019 11:21:31 +0000 (UTC)
-Received: from localhost (unknown [10.40.205.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D32B1059594;
-        Wed, 16 Jan 2019 11:21:31 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 12:21:30 +0100
-From:   Stanislaw Gruszka <sgruszka@redhat.com>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Helmut Schaa <helmut.schaa@googlemail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rt61pci: Work around a firmware bug with shared keys
-Message-ID: <20190116112129.GC5234@redhat.com>
-References: <AM0PR07MB3874E8F6ADD41C4E1BCBE43EE4810@AM0PR07MB3874.eurprd07.prod.outlook.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 533962DB737;
+        Wed, 16 Jan 2019 11:28:02 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-186.ams2.redhat.com [10.36.117.186])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BBBAB1048102;
+        Wed, 16 Jan 2019 11:28:01 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id F2EF716E03; Wed, 16 Jan 2019 12:28:00 +0100 (CET)
+Date:   Wed, 16 Jan 2019 12:28:00 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Frediano Ziglio <fziglio@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>
+Subject: Re: [Spice-devel] [PATCH 1/3] drm/qxl: add mode/framebuffer check
+ functions
+Message-ID: <20190116112800.v73xmxedt4b3gktj@sirius.home.kraxel.org>
+References: <20190116083521.22673-1-kraxel@redhat.com>
+ <20190116083521.22673-2-kraxel@redhat.com>
+ <636470684.58090538.1547630691403.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM0PR07MB3874E8F6ADD41C4E1BCBE43EE4810@AM0PR07MB3874.eurprd07.prod.outlook.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <636470684.58090538.1547630691403.JavaMail.zimbra@redhat.com>
+User-Agent: NeoMutt/20180716
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 16 Jan 2019 11:21:32 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 16 Jan 2019 11:28:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 02:01:29PM +0000, Bernd Edlinger wrote:
-> Apparently the rt2x61 firmware fails temporarily to decode
-> broadcast packets if the shared keys are not assigned
-> in the "correct" sequence. At the same time unicast
-> packets work fine, since they are encrypted with the
-> pairwise key.
+> > +static int qxl_check_mode(struct qxl_device *qdev,
+> > +			  unsigned int width,
+> > +			  unsigned int height)
+> > +{
+> > +	if (width * height * 4 > qdev->vram_size)
 > 
-> At least with WPA2 CCMP mode the shared keys are
-> set in the following sequence: keyidx=1, 2, 1, 2.
-> After a while only keyidx 2 gets decrypted, and
-> keyidx 1 is ignored, probably because there is never
-> a keyidx 3.
-> 
-> Symptoms are arping -b works for 10 minutes, since
-> keyidx=2 is used for broadcast, and then it stops
-> working for 10 minutes, because keyidx=1 is used.
-> That failure mode repeats forever.
-> 
-> Note, the firmware does not even know which keyidx
-> corresponds to which hw_key_idx so the firmware is
-> trying to be smarter than the driver, which is bound
-> to fail.
-> 
-> As workaround the function rt61pci_config_shared_key
-> requests software decryption of the shared keys,
-> by returning EOPNOTSUPP. However, pairwise keys are
-> still handled by hardware which works just fine.
-> 
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+> Is someone checking for integer overflows already?
 
-Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Need to have a look.  This is just ...
+
+> > -	if (bo->surf.stride * bo->surf.height > qdev->vram_size) {
+> > -		DRM_ERROR("Mode doesn't fit in vram size (vgamem)");
+> > -		return -EINVAL;
+> > -	}
+
+... that check moved into the new function.
+
+cheers,
+  Gerd
+
