@@ -2,100 +2,157 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6749C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD73C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDE5220675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA96C2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:28:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mC/bkxfU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404328AbfAPN11 (ORCPT
+        id S2393145AbfAPN2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:27:27 -0500
-Received: from foss.arm.com ([217.140.101.70]:48240 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732810AbfAPN10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:27:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1CB580D;
-        Wed, 16 Jan 2019 05:27:25 -0800 (PST)
-Received: from [10.162.42.129] (p8cg001049571a15.blr.arm.com [10.162.42.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 99B543F70D;
-        Wed, 16 Jan 2019 05:27:13 -0800 (PST)
-Subject: Re: [PATCH V2] mm: Introduce GFP_PGTABLE
-To:     Michal Hocko <mhocko@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, linux-riscv@lists.infradead.org,
-        linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, mpe@ellerman.id.au, tglx@linutronix.de,
-        mingo@redhat.com, dave.hansen@linux.intel.com,
-        peterz@infradead.org, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, kirill@shutemov.name,
-        rppt@linux.vnet.ibm.com, ard.biesheuvel@linaro.org,
-        mark.rutland@arm.com, steve.capper@arm.com, james.morse@arm.com,
-        robin.murphy@arm.com, aneesh.kumar@linux.ibm.com, vbabka@suse.cz,
-        shakeelb@google.com, rientjes@google.com, palmer@sifive.com,
-        greentime@andestech.com
-References: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
- <20190116065703.GE24149@dhcp22.suse.cz>
- <20190116123018.GF6310@bombadil.infradead.org>
- <20190116124431.GK24149@dhcp22.suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <d074a7aa-9582-b95a-dce0-d95ac3d3c949@arm.com>
-Date:   Wed, 16 Jan 2019 18:57:13 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 16 Jan 2019 08:28:06 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33066 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732867AbfAPN2F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:28:05 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r24so1055507wmh.0;
+        Wed, 16 Jan 2019 05:28:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wf0ohWoL4hHD+GJXTi+WxtzMT4Vn9saqHQGLGnIdDfg=;
+        b=mC/bkxfUZqoJxSf2VXd/6WR1mZxvzD7HySxrN2Ba0vT5+oPOErdRH6r49K37mVwtXJ
+         PWrmFAlVJQ+PCvqIHRrwW/M+iRiBiFzFdYmIE/d8teXYybm0S1aYf43em1wfNQvCAlDu
+         Ba0+Vxn8wVtMo0zw9gGT7edLin+N7o22UusN3v3qhW378LuvUXguzvWzUvvho/lfX/MU
+         sHYdTJT72UqSD75uBqbjuRUrrF0SmMO84R+z+atCMmusvocPBE749Bfx2xmrcbjxXBt2
+         Cv1qKdTv5EGm/18T2fjdzNsk1lS/1XzCDpJ/ZLtb/pmQ1v9V2mUkvO/knefl1xF4mWq5
+         77Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wf0ohWoL4hHD+GJXTi+WxtzMT4Vn9saqHQGLGnIdDfg=;
+        b=ckbrLVhM1YkU7ZJEkbalAsYI6pC4MyXxEbmrEPaQML3/2sh03OFHNksYamdd9MU+Z6
+         rmChvVjGP2jT6D04J1ULGb1jO0DxCvulBiXSDdptvP96WJUgjxqzbTOaEUD+NPs+TSnh
+         /tACjA/TNPRzATnLTtiyFGIEvw4qpDJwYHLxnGByDd2e9B2Zkqz2NsX+71tCJYZumPni
+         nBb0S5TlfUIJ0531FthhQynYh7sr6+M0CtZSuM76ioaksgQDe4yA59C85Pi10zHIfl+v
+         LJy1Lc9JjG8PMpMBD9rUYIZlkP70wfrw9s/+icY8Gvk0lt/1759PnNggRHc6mkOdFeTb
+         cSig==
+X-Gm-Message-State: AJcUukf5icou2oqC1SeexP/bVsak7qw498SIrzTmozr3ERlkaUwGr3YR
+        Qfln2QLZk5Fq4w4GVtXp1qM=
+X-Google-Smtp-Source: ALg8bN7sYTM6w+vcpsWXLatJxSpSt/mfIo0plm47llifkZqMQe6O4tIQ0qNtHNvzE5J2xUhERsd9Fg==
+X-Received: by 2002:a1c:ac42:: with SMTP id v63mr7337654wme.119.1547645283243;
+        Wed, 16 Jan 2019 05:28:03 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id f18sm65227607wrs.92.2019.01.16.05.27.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 05:27:48 -0800 (PST)
+Date:   Wed, 16 Jan 2019 14:27:47 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Subject: Re: [PATCH 2/3] mmc: sdhci-omap: drop ->get_ro() implementation
+Message-ID: <20190116132747.GB11050@ulmo>
+References: <20190115162837.5399-1-thomas.petazzoni@bootlin.com>
+ <20190115162837.5399-3-thomas.petazzoni@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20190116124431.GK24149@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
+Content-Disposition: inline
+In-Reply-To: <20190115162837.5399-3-thomas.petazzoni@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--CdrF4e02JqNVZeln
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 01/16/2019 06:14 PM, Michal Hocko wrote:
-> On Wed 16-01-19 04:30:18, Matthew Wilcox wrote:
->> On Wed, Jan 16, 2019 at 07:57:03AM +0100, Michal Hocko wrote:
->>> On Wed 16-01-19 11:51:32, Anshuman Khandual wrote:
->>>> All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
->>>> __GFP_ZERO) and using it for allocating page table pages. This causes some
->>>> code duplication which can be easily avoided. GFP_KERNEL allocated and
->>>> cleared out pages (__GFP_ZERO) are required for page tables on any given
->>>> architecture. This creates a new generic GFP flag flag which can be used
->>>> for any page table page allocation. Does not cause any functional change.
->>>>
->>>> GFP_PGTABLE is being added into include/asm-generic/pgtable.h which is the
->>>> generic page tabe header just to prevent it's potential misuse as a general
->>>> allocation flag if included in include/linux/gfp.h.
->>>
->>> I haven't reviewed the patch yet but I am wondering whether this is
->>> really worth it without going all the way down to unify the common code
->>> and remove much more code duplication. Or is this not possible for some
->>> reason?
->>
->> Exactly what I suggested doing in response to v1.
->>
->> Also, the approach taken here is crazy.  x86 has a feature that no other
->> architecture has bothered to implement yet -- accounting page tables
->> to the process.  Yet instead of spreading that goodness to all other
->> architectures, Anshuman has gone to more effort to avoid doing that.
-> 
-> Yes, I believe the only reason this is x86 only is that each arch would
-> have to be tweaked separately. So a cleanup in _that_ regard would be
-> helpful. There is no real reason to have ptes accounted only for x86.
-> There might be some exceptions but well, our asm-generic allows to opt
-> in for generic implementation or override it with a special one. The
-> later should be an exception rather than the rule.
+On Tue, Jan 15, 2019 at 05:28:36PM +0100, Thomas Petazzoni wrote:
+> The SDHCI core is know properly checking for the state of a WP GPIO,
 
-Fair enough. So we seem to have agreement over __GFP_ACCOUNT for user page
-tables but not for the kernel. But should we accommodate __GFP_RETRY_MAYFAIL
-or drop them altogether (including multi order allocation requests) ?
+"know" -> "now"
+
+> so there is no longer any need for the sdhci-omap code to implement
+> ->get_ro() using mmc_gpio_get_ro().
+>=20
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+> ---
+> Note: this patch has only been compiled tested, as I don't have the
+> hardware to test it.
+> ---
+>  drivers/mmc/host/sdhci-omap.c | 1 -
+>  1 file changed, 1 deletion(-)
+
+I can't runtime test this myself, but it certainly looks like this would
+do the right thing because it calls the core now call the very same
+function as this used to, so:
+
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+Adding Tony and linux-omap for a slightly wider audience and hopefully
+find someone to test this on. For reference, the whole series is here:
+
+	https://patchwork.kernel.org/project/linux-mmc/list/?series=3D66905
+
+Thierry
+
+>=20
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> index d264391616f9..c2a28930086f 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -987,7 +987,6 @@ static int sdhci_omap_probe(struct platform_device *p=
+dev)
+>  		goto err_put_sync;
+>  	}
+> =20
+> -	host->mmc_host_ops.get_ro =3D mmc_gpio_get_ro;
+>  	host->mmc_host_ops.start_signal_voltage_switch =3D
+>  					sdhci_omap_start_signal_voltage_switch;
+>  	host->mmc_host_ops.set_ios =3D sdhci_omap_set_ios;
+> --=20
+> 2.20.1
+>=20
+
+--CdrF4e02JqNVZeln
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw/MVMACgkQ3SOs138+
+s6HiJA/+PASp1njciDjqY+I9wKP97EQV3tpvJIzGCCFsL7iQ2O6p8f846Eo+OXBi
+aJmcEhUT8URqPeRZGm83NUaqBySGLZ17XyWIAOgx+pQEPgcRSvcV4Z7fUeSxlzp1
+tilRGoFwd4dgvXk/HSpYsgnWPOLBfnUuvHJZVMC31XykOiBcRNL8nNanq2tLXu5+
++7+bAw44SZbYjkMaEmkVnY1SoiaLCHXdbZekCjE205pWToOwjqy21GdZVc7hSNpG
+KS72f7xL23boeJ9R5RGJl7ez+Oq2EdfUpuC9a9D6P4iFpwmAlCvX2DrxeQycmyRJ
+IyFyRuvj+ucI27Oz9UQe9BDPNCy3BhaJLLrYlhMYZs0QPhE1lj6RXmmfH6yKMyRW
+YYr0XzWiC6gC5XoxVdhZJ7DPzkXEWpScybITgUj/kABRy9I9e9KpRmNWDo1KGeoG
+f/Cze3Q+Eg6HDotplopOhlDprFGunOSYbexvJkjyYsWw/75BzCqxIpcGSb3Dzmj+
+cI4rGS+i1BWZGSN5Js4Gzf9tasHaRUD4L8ITQCzNU1FdmGAJx/OHNcgqTr/nVqs/
+eqbgMf9W9Fwh5YhVc0293gTuXRrRtDGzoTXKhFuzfSKftHNR/peZQ8+zzp1iexK6
+4qeLEkNxH/dT16ZRzEBhQssBMO/XByXGcuU5unkCA9l0uR69auo=
+=TNNh
+-----END PGP SIGNATURE-----
+
+--CdrF4e02JqNVZeln--
