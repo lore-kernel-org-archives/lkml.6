@@ -2,79 +2,135 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC6BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A32C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D3E1206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:30:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="KdJAJktt"
+	by mail.kernel.org (Postfix) with ESMTP id 52444206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389974AbfAPLaE (ORCPT
+        id S2389880AbfAPLfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:30:04 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:35140 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730420AbfAPLaC (ORCPT
+        Wed, 16 Jan 2019 06:35:25 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:54133 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730420AbfAPLfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:30:02 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id BA29610C075A;
-        Wed, 16 Jan 2019 03:30:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1547638202; bh=h5EcPxQhGPRWk+QH06niiAc6FjPoaGFv3PntjEfYPGY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KdJAJkttqZVxJ14Eti/JlPkspMTUYbBQtWkGjd6mXd9rnjTP26MMS0ydkBFM9pcqN
-         fwdkOquAqJqepxPMcGA3EBO1Ya0E+XpYwjhwcYhf2xFdBLBv56XEVJkpkJYKnLeZBj
-         YCiQsjxvcucXZhFkoZ+VzdC1wvi+ocN8SRqwX097CYnftaSFLWz5yAsVsPcolDbhR8
-         UOopUb5BuINUpoRpllAqDbqpBriYlFmNSCOC9hhiKMW04Rhh/oodM4DLgnmgtdpJU+
-         NFqSvnVE8FWCCikzY2XXmPTGgoxPofINeQuYIsdJ4THot0TrXqLrA/V2wvG3hDVdhj
-         UiaulFpvNS6Iw==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 09F7644DE;
-        Wed, 16 Jan 2019 03:29:59 -0800 (PST)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 2/2] ARCv2: enable HAVE_EFFICIENT_UNALIGNED_ACCESS
-Date:   Wed, 16 Jan 2019 14:29:51 +0300
-Message-Id: <20190116112951.10641-2-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20190116112951.10641-1-Eugeniy.Paltsev@synopsys.com>
-References: <20190116112951.10641-1-Eugeniy.Paltsev@synopsys.com>
+        Wed, 16 Jan 2019 06:35:25 -0500
+Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id a16cbd9eab5cd01e; Wed, 16 Jan 2019 12:35:21 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sinan Kaya <okaya@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: Fixes tags need some work in the pm tree
+Date:   Wed, 16 Jan 2019 12:34:29 +0100
+Message-ID: <24595936.XVKUtQNKnv@aspire.rjw.lan>
+In-Reply-To: <877ef5zduk.fsf@concordia.ellerman.id.au>
+References: <20190116075540.78cff44e@canb.auug.org.au> <8346227.VjU8HeZdOJ@aspire.rjw.lan> <877ef5zduk.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Select HAVE_EFFICIENT_UNALIGNED_ACCESS for ARCv2 as we unconditionally
-enable unaligned access in HW.
+On Wednesday, January 16, 2019 12:43:31 AM CET Michael Ellerman wrote:
+> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+> > On Tuesday, January 15, 2019 11:43:05 PM CET Stephen Rothwell wrote:
+> >> Hi Rafael,
+> >> 
+> >> On Tue, 15 Jan 2019 23:13:16 +0100 "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+> >> >
+> >> > On Tuesday, January 15, 2019 9:55:40 PM CET Stephen Rothwell wrote:
+> >> > > [I am experimenting with checking the Fixes tags in commits in linux-next.
+> >> > > Please let me know if you think I am being too strict.]
+> >> > > 
+> >> > > Hi Rafael,
+> >> > > 
+> >> > > Commits
+> >> > > 
+> >> > >   62b33d57c534 ("drivers: thermal: int340x_thermal: Make PCI dependency explicit")
+> >> > >   cd793ab22a93 ("x86/intel/lpss: Make PCI dependency explicit")
+> >> > >   42ac19e7b81e ("ACPI: EC: Look for ECDT EC after calling acpi_load_tables()")
+> >> > >   6c29b81b5695 ("platform/x86: apple-gmux: Make PCI dependency explicit")
+> >> > >   34783dc0182a ("platform/x86: intel_pmc: Make PCI dependency explicit")
+> >> > >   704658d1d3ae ("platform/x86: intel_ips: make PCI dependency explicit")
+> >> > >   5df37f3a1aa9 ("vga-switcheroo: make PCI dependency explicit")
+> >> > >   da1df6ee4296 ("ata: pata_acpi: Make PCI dependency explicit")
+> >> > >   ce97a22a596b ("ACPI / LPSS: Make PCI dependency explicit")
+> >> > > 
+> >> > > Have malformed Fixes tags:
+> >> > > 
+> >> > > There should be double quotes around the commit subject.  
+> >> > 
+> >> > Well, where does this requirement come from?
+> >> > 
+> >> > It hasn't been there before AFAICS.
+> >> 
+> >> Documentation/process/submitting-patches.rst has the following, but I
+> >> am sure people are happy to discuss changes and it does say "For
+> >> example", so maybe I am being to strict?
+> >
+> > If that's the source of it, then it's rather weak IMO.
+> >
+> > Formal requirements should be documented as such and I would expect that
+> > to happen through the usual process: patch submission, review, acceptance etc.
+> 
+> It is documented, in submitting-patches.rst.
+> 
+> That was submitted to lkml:
+> 
+>   https://lore.kernel.org/lkml/1396949135-27122-1-git-send-email-jeffrey.t.kirsher@intel.com/
+> 
+> And committed by Linus:
+> 
+>   8401aa1f5997 ("Documentation/SubmittingPatches: describe the Fixes: tag")
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Stephen has already quoted from that doc, but it only gives the format of the
+summary line as an example.
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 376366a7db81..20ba916c50a3 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -117,6 +117,7 @@ config ISA_ARCOMPACT
- config ISA_ARCV2
- 	bool "ARC ISA v2"
- 	select ARC_TIMERS_64BIT
-+	select HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	help
- 	  ISA for the Next Generation ARC-HS cores
- 
--- 
-2.14.5
+> How would we make it more formal than that?
+
+Say somewhere that this particular summary formatting is required?
+
+Also, tags are more of a maintainers' thing and SubmittingPatches doesn't look
+like the best place for documenting how the maintainers are expected to format
+their commits.
+
+> > Moreover, extending advice on to how submit paches to formatting requirements
+> > for commits feels like a bit of a stretch to me.
+> >
+> >> The counter argument is that
+> >> there are various (semi-)automated processes that use these tags and
+> >> being consistent probably makes those processes (and life for those who
+> >> run them) easier.
+> >
+> > And frankly I wouldn't expect any of these to even look at the summary
+> > lines as they have not been consistent historically and the SHA-1 ID should
+> > be sufficient to identify the commit in question.
+> 
+> It usually is, but it's still a good sanity check to have the subject in
+> there, especially for cases where the SHA is wrong (though that should
+> be less of a problem in future due to Stephen doing these checks).
+
+A human can look at the summary after a script has not found the commit by
+ID, but the human then doesn't care about the quoting characters.
+
+Also it is rather straightforward to strip the quoting characters in a script
+whatever they are.
+
+My point basically is that in order to call something "malformed", you need
+to provide a formal definition of what is expected.  An example in
+SubmittingPatches doesn't seem quite sufficient to me for that role.
+
+Cheers,
+Rafael
 
