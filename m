@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 796E3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4A1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5449220866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B90720866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729050AbfAPSiU (ORCPT
+        id S1729247AbfAPSjP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:38:20 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:60285 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728404AbfAPSiU (ORCPT
+        Wed, 16 Jan 2019 13:39:15 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:31084 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729056AbfAPSjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:38:20 -0500
+        Wed, 16 Jan 2019 13:39:14 -0500
 X-IronPort-AV: E=Sophos;i="5.56,487,1539615600"; 
-   d="scan'208";a="5151665"
+   d="scan'208";a="5355899"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Jan 2019 03:38:17 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2019 03:39:12 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.13])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 42BB640F10DB;
-        Thu, 17 Jan 2019 03:38:11 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 03A6740F1461;
+        Thu, 17 Jan 2019 03:39:05 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -34,7 +34,7 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -49,15 +49,14 @@ Cc:     Biju Das <biju.das@bp.renesas.com>,
         =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Ben Whitten <ben.whitten@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ebiharaml@si-linux.co.jp
-Subject: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
-Date:   Wed, 16 Jan 2019 18:37:44 +0000
-Message-Id: <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
+        linux-kernel@vger.kernel.org, ebiharaml@si-linux.co.jp
+Subject: [PATCH 09/11] dt-bindings: can: rcar_can: Fix RZ/G2 CAN clocks
+Date:   Wed, 16 Jan 2019 18:37:52 +0000
+Message-Id: <1547663874-29411-10-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -66,31 +65,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+According to the latest information, the clock options for CAN on RZ/G2
+are the same as the ones available on R-Car Gen3
 
-Add Silicon Linux to the list of devicetree vendor prefixes.
-
-Website: http://www.si-linux.co.jp
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Fixes: 868b7c0f43e6 ("dt-bindings: can: rcar_can: Add r8a774a1 support")
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 4b1a2a8..02a7037 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -344,6 +344,7 @@ sgx	SGX Sensortech
- sharp	Sharp Corporation
- shimafuji	Shimafuji Electric, Inc.
- si-en	Si-En Technology Ltd.
-+si-linux	Silicon Linux Corporation
- sifive	SiFive, Inc.
- sigma	Sigma Designs, Inc.
- sii	Seiko Instruments, Inc.
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index 7fcf501..b463e12 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -28,13 +28,8 @@ Required properties:
+ 
+ - reg: physical base address and size of the R-Car CAN register map.
+ - interrupts: interrupt specifier for the sole interrupt.
+-- clocks: phandles and clock specifiers for 2 CAN clock inputs for RZ/G2
+-	  devices.
+-	  phandles and clock specifiers for 3 CAN clock inputs for every other
+-	  SoC.
+-- clock-names: 2 clock input name strings for RZ/G2: "clkp1", "can_clk".
+-	       3 clock input name strings for every other SoC: "clkp1", "clkp2",
+-	       "can_clk".
++- clocks: phandles and clock specifiers for 3 CAN clock inputs.
++- clock-names: 3 clock input name strings: "clkp1", "clkp2", and "can_clk".
+ - pinctrl-0: pin control group to be used for this controller.
+ - pinctrl-names: must be "default".
+ 
+@@ -50,8 +45,7 @@ using the below properties:
+ Optional properties:
+ - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
+ 			    <0x0> (default) : Peripheral clock (clkp1)
+-			    <0x1> : Peripheral clock (clkp2) (not supported by
+-				    RZ/G2 devices)
++			    <0x1> : Peripheral clock (clkp2)
+ 			    <0x3> : External input clock
+ 
+ Example
 -- 
 2.7.4
 
