@@ -2,140 +2,137 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6ECC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF26C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A1C120851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547758074;
-	bh=n8JMekFCbtwr62FzDCJJoj5l06UUzHpxnzcg5AUI7TM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ZEj7w+7zS4ng8xIQ8HKadPE2gjYsk1wHoFktyJlOgZ7DX1xWheehiwfjQZjGClTLt
-	 0JYEjE96GwwxYKjbuu2gmSCQgv5OXhXAlyKiY9NpEzLIoxkizGinfoUMRNz/WkiQ96
-	 r8qBMxoGB9ynsCsx6H9xPCLj3Q2e39ehZEIPeo8c=
+	by mail.kernel.org (Postfix) with ESMTP id BA7DB20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:49:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpxH99Mi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfAQUrw (ORCPT
+        id S1727628AbfAQUtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:47:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726648AbfAQUrv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:47:51 -0500
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7414521473
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547758070;
-        bh=n8JMekFCbtwr62FzDCJJoj5l06UUzHpxnzcg5AUI7TM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1v/yNJqBMgzweIaFgEWtP2lvGXeclrXJB1t0pXSbhZgFbyyQjphalnJPKjN1b7XGp
-         8qNqL7JXfylXL1R7pc0XXdlb1KZGx/cZBFV5Up9Dgj4W8zDq2uH0g8kHugPIVJxxv3
-         zqQmR8daNSixtMx2XuYELmKrlF860GrbRVCRB0Yo=
-Received: by mail-wm1-f47.google.com with SMTP id g67so2493363wmd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:47:50 -0800 (PST)
-X-Gm-Message-State: AJcUukeIJTJHcyKcgBumTDs8pj3jz7aOj8/L51lsuBYDbXr/azlBtbcO
-        e9jex5mif3XY0zUwgYB5K0ElxwwG70JdQ7VzG8uFDw==
-X-Google-Smtp-Source: ALg8bN4vqTfkkxsexP5RbKOvuJorBZi95A0P8/TrT41r99XTtUzScb+36zH48d5duGJlj85urGEm4ZA5aAqFumiCqsY=
-X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr13844935wmf.32.1547758068833;
- Thu, 17 Jan 2019 12:47:48 -0800 (PST)
+        Thu, 17 Jan 2019 15:49:33 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46891 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbfAQUtc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 15:49:32 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c73so5379511pfe.13;
+        Thu, 17 Jan 2019 12:49:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=UE+B2YfptHacugBOCw2gEIV1Rz9SUGZy1HzhzKDbTTE=;
+        b=fpxH99MiE2fPDYlKz9VG+tdABZCK5dM9pYWw+jpiZBNIL8NN3wQ5q7fUcK0zXZXTHT
+         cftrrBoVFusWi9yVGkp8IqC8eEzKS8qBIAbfgS1+buN5c4gXMHg4mSdOZjbaBirwbm2e
+         V9+9jKy0rJNl2D3lEPSzozuQSx8DAL3mAU2XxOFATXfT5711/b6xE0+PxSaTD5WbO47P
+         9y+7xBvJL/+sGa80V+VQ39BlrpbENV9SaXLIPu9WEUeg2He7thRcSr0TRQwhDXo523Ik
+         rE0sbLFScYl6guV+zgUBVyZScGdcafNqF2kIuHd8lla+fj5rhpPrf/F8AVAZToKL2eAV
+         gP+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=UE+B2YfptHacugBOCw2gEIV1Rz9SUGZy1HzhzKDbTTE=;
+        b=PRrlkR3why2htzGAw75PbVYFGsQTEBGf0uj/myG3ya7a1yzjMUNrjUMHdsbCcbhNgi
+         GHAX5700VBiY/j5iJT90w12vSXshkH33i8PeBP+zzuEwAOGcRryeKSPZTg7NTWUhuRIo
+         EZlHVIxNtNLca9ydH73yXs79BxN22HUEvfK21Bll31ozBBbmD9QnODFXOrEc07/3lhRc
+         CnilDFaKY26RPWkrXQHU52Knyhss7LIgPaMYfaVTCKOFF5WldXdh5XQF+WZQS1AprRNA
+         ZoqqNFyxMneZb/nB+mq/n5CdZk5rCT2pCUGWzYlfLwVnFDgTV4D9eRL/xeGAvKw6U19n
+         mXEg==
+X-Gm-Message-State: AJcUukcg9hxRu63XUQBYxSUFp4jm9jj/TalBEoLhdaUxFQtt6/491Su/
+        fK1FOTp/Rtd+ZtVXsQEGNUl547JcDHQ=
+X-Google-Smtp-Source: ALg8bN4JtdtYKtrV73hHI6h6Ef2qVOtZL6B6IGMRjarlKvFI8JgagDM6HAfST53wyScES2PrhaOV8g==
+X-Received: by 2002:a62:6dc7:: with SMTP id i190mr16468375pfc.166.1547758171430;
+        Thu, 17 Jan 2019 12:49:31 -0800 (PST)
+Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
+        by smtp.googlemail.com with ESMTPSA id b68sm4007481pfg.160.2019.01.17.12.49.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 12:49:30 -0800 (PST)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>, stable@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] media: imx: csi: Disable CSI immediately after last EOF
+Date:   Thu, 17 Jan 2019 12:49:11 -0800
+Message-Id: <20190117204912.28456-2-slongerbeam@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190117204912.28456-1-slongerbeam@gmail.com>
+References: <20190117204912.28456-1-slongerbeam@gmail.com>
 MIME-Version: 1.0
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-7-rick.p.edgecombe@intel.com> <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
-In-Reply-To: <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 17 Jan 2019 12:47:37 -0800
-X-Gmail-Original-Message-ID: <CALCETrXQ6uxzB3JvO14sEyMA21RcWCbwicL4nUdPBG8KAunxwg@mail.gmail.com>
-Message-ID: <CALCETrXQ6uxzB3JvO14sEyMA21RcWCbwicL4nUdPBG8KAunxwg@mail.gmail.com>
-Subject: Re: [PATCH 06/17] x86/alternative: use temporary mm for text poking
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 12:27 PM Andy Lutomirski <luto@kernel.org> wrote:
->
-> On Wed, Jan 16, 2019 at 4:33 PM Rick Edgecombe
-> <rick.p.edgecombe@intel.com> wrote:
-> >
-> > From: Nadav Amit <namit@vmware.com>
-> >
-> > text_poke() can potentially compromise the security as it sets temporary
-> > PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
-> > from other cores accidentally or maliciously, if an attacker gains the
-> > ability to write onto kernel memory.
->
-> i think this may be sufficient, but barely.
->
-> > +       pte_clear(poking_mm, poking_addr, ptep);
-> > +
-> > +       /*
-> > +        * __flush_tlb_one_user() performs a redundant TLB flush when PTI is on,
-> > +        * as it also flushes the corresponding "user" address spaces, which
-> > +        * does not exist.
-> > +        *
-> > +        * Poking, however, is already very inefficient since it does not try to
-> > +        * batch updates, so we ignore this problem for the time being.
-> > +        *
-> > +        * Since the PTEs do not exist in other kernel address-spaces, we do
-> > +        * not use __flush_tlb_one_kernel(), which when PTI is on would cause
-> > +        * more unwarranted TLB flushes.
-> > +        *
-> > +        * There is a slight anomaly here: the PTE is a supervisor-only and
-> > +        * (potentially) global and we use __flush_tlb_one_user() but this
-> > +        * should be fine.
-> > +        */
-> > +       __flush_tlb_one_user(poking_addr);
-> > +       if (cross_page_boundary) {
-> > +               pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
-> > +               __flush_tlb_one_user(poking_addr + PAGE_SIZE);
-> > +       }
->
-> In principle, another CPU could still have the old translation.  Your
-> mutex probably makes this impossible, but it makes me nervous.
-> Ideally you'd use flush_tlb_mm_range(), but I guess you can't do that
-> with IRQs off.  Hmm.  I think you should add an inc_mm_tlb_gen() here.
-> Arguably, if you did that, you could omit the flushes, but maybe
-> that's silly.
->
-> If we start getting new users of use_temporary_mm(), we should give
-> some serious thought to the SMP semantics.
->
-> Also, you're using PAGE_KERNEL.  Please tell me that the global bit
-> isn't set in there.
->
+Disable the CSI immediately after receiving the last EOF before stream
+off (and thus before disabling the IDMA channel).
 
-Much better solution: do unuse_temporary_mm() and *then*
-flush_tlb_mm_range().  This is entirely non-sketchy and should be just
-about optimal, too.
+This fixes a complete system hard lockup on the SabreAuto when streaming
+from the ADV7180, by repeatedly sending a stream off immediately followed
+by stream on:
 
---Andy
+while true; do v4l2-ctl  -d4 --stream-mmap --stream-count=3; done
+
+Eventually this either causes the system lockup or EOF timeouts at all
+subsequent stream on, until a system reset.
+
+The lockup occurs when disabling the IDMA channel at stream off. Disabling
+the CSI before disabling the IDMA channel appears to be a reliable fix for
+the hard lockup.
+
+Fixes: 4a34ec8e470cb ("[media] media: imx: Add CSI subdev driver")
+
+Reported-by: Gaël PORTAY <gael.portay@collabora.com>
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Cc: stable@vger.kernel.org
+---
+Changes in v2:
+- restore an empty line
+- Add Fixes: and Cc: stable
+---
+ drivers/staging/media/imx/imx-media-csi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+index e18f58f56dfb..e0f6f88e2e70 100644
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -681,6 +681,8 @@ static void csi_idmac_stop(struct csi_priv *priv)
+ 	if (ret == 0)
+ 		v4l2_warn(&priv->sd, "wait last EOF timeout\n");
+ 
++	ipu_csi_disable(priv->csi);
++
+ 	devm_free_irq(priv->dev, priv->eof_irq, priv);
+ 	devm_free_irq(priv->dev, priv->nfb4eof_irq, priv);
+ 
+@@ -793,9 +795,9 @@ static void csi_stop(struct csi_priv *priv)
+ 		/* stop the frame interval monitor */
+ 		if (priv->fim)
+ 			imx_media_fim_set_stream(priv->fim, NULL, false);
++	} else {
++		ipu_csi_disable(priv->csi);
+ 	}
+-
+-	ipu_csi_disable(priv->csi);
+ }
+ 
+ static const struct csi_skip_desc csi_skip[12] = {
+-- 
+2.17.1
+
