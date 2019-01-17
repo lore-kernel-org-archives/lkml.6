@@ -2,111 +2,154 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F92DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275BEC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56F32205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAA0420675
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:07:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EBt3L8hX"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A9iD/QmT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfAQB7v (ORCPT
+        id S1726931AbfAQCHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 20:59:51 -0500
-Received: from ozlabs.org ([203.11.71.1]:36777 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbfAQB7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 20:59:51 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43g6hc0wJwz9sBn;
-        Thu, 17 Jan 2019 12:59:42 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547690388;
-        bh=OCsVCYc98KmSEndL4YyCCo49Om5hgiAQ1vWWAcoktd4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=EBt3L8hXBI+JM3dgqLQuEbebusVC0iHV7tWUduznf12B0Y0xuq7MgZMXVMYyPXI02
-         1pzQo9+tUkozjgqOeuq4F3Sn19TR9/EUJ4JBpktowZFmCTLmdImYmZr9efo7PNT2HY
-         NVBobC+95J2jipnHoTMHF4gq6Incmm3Ur+uN5lzgLO60zPb0lroeu9mWf0nasDgqoO
-         5959tdD488nyp90S8MWe+LVLRhr8iHtYSee1ppwqLWrrB4jUvCkp80UTBmwC+3wlb5
-         ZPc2MI0MZfwCI7oY3h1apWowENNHLq7dUyV/zJryBV5DJ4Aefik7KeXFySdIbOEY1e
-         7Q1RWeznL+yIA==
-Date:   Thu, 17 Jan 2019 12:59:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Subject: linux-next: manual merge of the drm-intel tree with the drm tree
-Message-ID: <20190117125941.53019a72@canb.auug.org.au>
+        Wed, 16 Jan 2019 21:07:48 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:41208 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfAQCHr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 21:07:47 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0H1wvd0171654;
+        Thu, 17 Jan 2019 02:07:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=wm23DvvNOHtr368PIcEkk4KyJOHMmhsEJx2qEA+s3ns=;
+ b=A9iD/QmTbvqUJbwDRqWMBchSjzqKFCjgDKFrVP3UpGV99aN95WHqvEpGpb69Akwxur0S
+ ElHJl2UFX3B8tk01ebRpJDZzoXgzNh0nnisXbe8Y6oWpe66bf5x2Apb7GEltNgtgrxYz
+ Qd279V5Fv7qAxKAgftJCIVfR+AHXBHfzEOrWOW+pUeuWX4PJAX/LtZTfRHEudK6M23mn
+ Yif3IvhorayhuAoboiOONxv0f0MdREapkcHkssKb8j46yRWXYLwtIcKqmZ8nu/Rv79R6
+ aDIT7LX8Gn4Egp5CZZ1fr+tr4LZ9Js4TEg5sI1/INRUreHYxPu+7rs4vbHy7Kc4edl+O 6Q== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2pybjsdaqq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 02:07:42 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0H27g5J006764
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 02:07:42 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0H27fP9027943;
+        Thu, 17 Jan 2019 02:07:41 GMT
+Received: from [10.182.71.41] (/10.182.71.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Jan 2019 18:07:41 -0800
+Subject: Re: [Xen-devel] [PATCH 1/1] xen-blkback: do not wake up shutdown_wq
+ after xen_blkif_schedule() is stopped
+To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
+Cc:     linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
+        axboe@kernel.dk, linux-kernel@vger.kernel.org,
+        konrad.wilk@oracle.com
+References: <1547646461-29803-1-git-send-email-dongli.zhang@oracle.com>
+ <20190116145215.igakzdkklc6f7h6k@mac>
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+Message-ID: <30770f68-34e0-d707-b087-c43f0b51cd81@oracle.com>
+Date:   Thu, 17 Jan 2019 10:10:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QWdf.w6GxP5QwXP1pMV+fc9"; protocol="application/pgp-signature"
+In-Reply-To: <20190116145215.igakzdkklc6f7h6k@mac>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9138 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901170012
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/QWdf.w6GxP5QwXP1pMV+fc9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Roger,
 
-Hi all,
+On 2019/1/16 下午10:52, Roger Pau Monné wrote:
+> On Wed, Jan 16, 2019 at 09:47:41PM +0800, Dongli Zhang wrote:
+>> There is no need to wake up xen_blkif_schedule() as kthread_stop() is able
+>> to already wake up the kernel thread.
+>>
+>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+>> ---
+>>  drivers/block/xen-blkback/xenbus.c | 4 +---
+>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+>> index a4bc74e..37ac59e 100644
+>> --- a/drivers/block/xen-blkback/xenbus.c
+>> +++ b/drivers/block/xen-blkback/xenbus.c
+>> @@ -254,10 +254,8 @@ static int xen_blkif_disconnect(struct xen_blkif *blkif)
+>>  		if (!ring->active)
+>>  			continue;
+>>  
+>> -		if (ring->xenblkd) {
+>> +		if (ring->xenblkd)
+>>  			kthread_stop(ring->xenblkd);
+>> -			wake_up(&ring->shutdown_wq);
+> 
+> I've now realized that shutdown_wq is basically useless, and should be
+> removed, could you please do it in this patch?
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+I do not think shutdown_wq is useless.
 
-  drivers/gpu/drm/i915/i915_gem.c
+It is used to halt the xen_blkif_schedule() kthread when
+RING_REQUEST_PROD_OVERFLOW() returns true in __do_block_io_op():
 
-between commit:
+1121 static int
+1122 __do_block_io_op(struct xen_blkif_ring *ring)
+... ...
+1134         if (RING_REQUEST_PROD_OVERFLOW(&blk_rings->common, rp)) {
+1135                 rc = blk_rings->common.rsp_prod_pvt;
+1136                 pr_warn("Frontend provided bogus ring requests (%d - %d =
+%d). Halting ring processing on dev=%04x\n",
+1137                         rp, rc, rp - rc, ring->blkif->vbd.pdevice);
+1138                 return -EACCES;
+1139         }
 
-  dd847a706974 ("drm/i915: Compile fix for 64b dma-fence seqno")
 
-from the drm tree and commit:
+If there is bogus/invalid ring requests, __do_block_io_op() would return -EACCES
+without modifying prod/cons index.
 
-  9f58892ea996 ("drm/i915: Pull all the reset functionality together into i=
-915_reset.c")
+Without shutdown_wq (just simply assuming we remove the below code without
+handling -EACCES in xen_blkif_schedule()), the kernel thread would continue the
+while loop.
 
-from the drm-intel tree.
+648                 if (ret == -EACCES)
+649                         wait_event_interruptible(ring->shutdown_wq,
+650                                                  kthread_should_stop());
 
-I fixed it up (the latter moved the code updated by the former, and the
-fix has been already been applied to the moved code) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
 
---=20
-Cheers,
-Stephen Rothwell
+If xen_blkif_be_int() is triggered again (let's assume there is no optimization
+on guest part and guest would send event for every request it puts on ring
+buffer), we may come to do_block_io_op() again.
 
---Sig_/QWdf.w6GxP5QwXP1pMV+fc9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+As the prod/cons index are not modified last time the code runs into
+do_block_io_op() to process bogus request, we would hit the bogus request issue
+again.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw/4Y0ACgkQAVBC80lX
-0Gy3KQf/cun/RYc5x5HTr9bxj3EsBlfFABGr3jeiUfwMHQ8+Pi1067vPfe6VpvZR
-FXeQs/0marfS98+887p2i34kD0DgeVWtTiQ0uJYGZwlI78/RAStTKF3DHQrhSM9P
-pCXEO448hejhxNMsZps4X9VfVZO92QrCNNlmxdk8+yWEoPRplvJg2AZWhqNV3QvI
-kabWV1u5IhMdBMlmzwqsSoOpXqhOQI7HjAw0DCAkzq31tG2HcGHnP9ZGvCZ9CYJj
-gb+CARQmVQAx4lRD/YwVJOhED6Kl65cahH1iyYVqdWXb9xMEIsdUCV+hH9hmuM0O
-/RfgwOmHC8wgNdG67CZ/huYs4GkuNA==
-=oo5X
------END PGP SIGNATURE-----
 
---Sig_/QWdf.w6GxP5QwXP1pMV+fc9--
+With shutdown_wq, the kernel kthread is blocked forever until such queue/ring is
+destroyed. If we remove shutdown_wq, we are changing the policy to handle bogus
+requests on ring buffer?
+
+Please correct me if my understanding is wrong.
+
+Thank you very much!
+
+Dongli Zhang
