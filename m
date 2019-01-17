@@ -2,67 +2,143 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEC3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67784C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD3820859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:20:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547756459;
-	bh=0J5x8ir5y1+x/6DKU+VsqdxKasJTs8xBe3yatOlnz7E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=d9hpgJ+jdgUizwqFPA4PWmsuC/iYX88qD0k0lw+U1CfKQ726IMQ7AZ1Z9g9rT2Zoq
-	 r/OUiS53azzKsnEgAUi+0jgkBbjDfK+erKCc0EaSllB3+1xrxQgf9te4M7U+MtJ5Eg
-	 Ms6KXY9cgu8u656qYqIjBU/nlqqVwYIT/qtgtRec=
+	by mail.kernel.org (Postfix) with ESMTP id 39A9720859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729558AbfAQUU5 (ORCPT
+        id S1729589AbfAQUVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:20:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729150AbfAQUU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:20:57 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A1AB20859;
-        Thu, 17 Jan 2019 20:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547756456;
-        bh=0J5x8ir5y1+x/6DKU+VsqdxKasJTs8xBe3yatOlnz7E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=snFpbwVUy7YwXPAAYNRMPZjwlF/5ja23ZRa+vgZqFV2QftOSVf5fUKYKzRL2GewLR
-         GNS6ZjpOG2+90RgOXQiI+W9CKRcewyD6qWW688vAxGD6Q/wCgdjkaGO/GOzje3PrM2
-         fl+4bnLDVXCf5WN9M3RinoAnopyiGDaBjgX2PycI=
-Date:   Thu, 17 Jan 2019 15:20:55 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     haiyangz@microsoft.com
-Cc:     kys@microsoft.com, sthemmin@microsoft.com, olaf@aepfle.de,
-        vkuznets@redhat.com, davem@davemloft.net, netdev@vger.kernel.org,
-        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH hyperv-fixes,0/3] fixes for hash key setting issues
-Message-ID: <20190117202055.GC202535@sasha-vm>
-References: <20190115005144.4494-1-haiyangz@linuxonhyperv.com>
+        Thu, 17 Jan 2019 15:21:18 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:55876 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1729150AbfAQUVS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 15:21:18 -0500
+Received: (qmail 2671 invoked by uid 2102); 17 Jan 2019 15:21:17 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 17 Jan 2019 15:21:17 -0500
+Date:   Thu, 17 Jan 2019 15:21:17 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: Plain accesses and data races in the Linux Kernel Memory Model
+In-Reply-To: <20190117150336.GA10381@andrea>
+Message-ID: <Pine.LNX.4.44L0.1901171444230.1207-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190115005144.4494-1-haiyangz@linuxonhyperv.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 12:51:41AM +0000, Haiyang Zhang wrote:
->From: Haiyang Zhang <haiyangz@microsoft.com>
->
->Using ethtool to change Hash key failed on Linux VM runnig on
->Hyper-V. This patch set fix them.
->It targets Hyper-V tree, hyperv-fixes branch managed by
->Sasha Levin <sashal@kernel.org>.
+On Thu, 17 Jan 2019, Andrea Parri wrote:
 
-Queued all 3 for hyperv-fixes, thank you.
+> > > 		There is a special case (data;rfi) that doesn't
+> > > 		provide ordering in itself but can contribute to other
+> > > 		orderings.  A data;rfi link corresponds to situations
+> > > 		where a value is stored in a temporary shared variable
+> > > 		and then loaded back again.  Since the compiler might
+> > > 		choose to eliminate the temporary, its accesses can't
+> > > 		be said to be ordered -- but the accesses around it
+> > > 		might be.  As a simple example, consider:
+> > > 
+> > > 			r1 = READ_ONCE(ptr);
+> > > 			tmp = r1;
+> > > 			r2 = tmp;
+> > > 			WRITE_ONCE(*r2, 5);
+> > > 
+> > > 		The plain accesses involving tmp don't have any
+> > > 		particular ordering requirements, but we do know that
+> > > 		the READ_ONCE must be ordered before the WRITE_ONCE.
+> > > 		The chain of relations is:
+> > > 
+> > > 			[marked] ; data ; rfi ; addr ; [marked]
+> > > 
+> > > 		showing that a data;rfi has been inserted into an
+> > > 		address dependency from a marked read to a marked
+> > > 		write.  In general, any number of data;rfi links can
+> > > 		be inserted in each of the other kinds of dependencies.
+> 
+> As a more general comment (disclaimer), I'm not sure we want to/can add
+> all the constraints above.  On one hand, for some of them, I ignore the
+> existence of current use cases in the source (and I don't quite see my-
+> self encouraging their adoption...); on the other hand, these certainly
+> do not make the model "simpler" or easier to maintain (in a sound way).
+> 
+> Moreover, I doubt that runtime checkers a la KTSan will ever be able to
+> assist the developer by supporting these "dependency orderings". [1]
+> 
+> Maybe we could start by adding those orderings that we know are "widely"
+> relied upon _and_ used by the developers, and later add more/strengthen
+> the model as needed (where feasible).
+> 
+> Thoughts?
+
+Right now I'm inclined to give up on all dependency orderings other
+than address dependency from a marked read.  But this would mean
+missing things like
+
+	MR ->addr PR ->data MW
+
+which ought to be a valid ordering (MR stands for "marked read", "PR"
+for "plain read", and "MW" for "marked write").  Is that going to be 
+okay?  Or should I also include data and control dependencies from 
+plain reads to marked writes?
+
+Also, should this still include "[marked] ; (data ; rfi)* ; addr"?  
+Without it, we wouldn't be able to tell that the following test does
+not race:
+
+
+C non-race4
+
+{
+int *x = a;
+}
+
+P0(int **x, int *b)
+{
+	*b = 1;
+	smp_wmb();
+	rcu_assign_pointer(*x, b);
+}
+
+P1(int **x, int **tmp)
+{
+	int *r1;
+	int *r2;
+	int r3;
+
+	r1 = rcu_dereference(*x);
+	tmp = r1;
+	r2 = tmp;
+	r3 = *r2;
+}
+
+exists (1:r1=b /\ 1:r3=0)
+
+
+And it seems reasonable that this pattern could be used in the kernel.  
+Although, I admit, in this scenario it's much more likely that tmp
+would be a non-shared variable.
+
+Alan
+
