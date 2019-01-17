@@ -2,145 +2,225 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FBDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11D8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6404A20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6486620851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuwXGnfy"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cFAIhb0b";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Z2DhptRA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730456AbfAQHIm (ORCPT
+        id S1730464AbfAQHKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 02:08:42 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33438 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbfAQHIm (ORCPT
+        Thu, 17 Jan 2019 02:10:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34650 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbfAQHKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 02:08:42 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so4316268plo.0;
-        Wed, 16 Jan 2019 23:08:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=chhrvg54MI90YfaM2WKEa/GdmTxheYiEx0N9RVbWUss=;
-        b=VuwXGnfyh/vEhp0oOOySaoFGo+eYY7QMBEij5IpslrHillGBa21VApOjlFwUlte3Wh
-         r6mi8lG1hawfSfDQZ6jZoW4GjCwPA3PQ6NSwhU3tQMzFknbFQjD9CXQPlNXhEG4r3kYp
-         IUeohfzbHgYWVkvZwgPLywn318FQbSIMKoS3+rh38zLrrwHZqxUv4zlJaoX09202jXf2
-         nDB0Vg4QCZi+TLBJ7q8PZaDb255TUMzKfpUoRyTToZilmyUITh80irnhaN5y9zRSk2X5
-         3JrhFWMNZ0V72iYJ9/Sbh6OikCj/xUsbbE3g/4XCKaVMlaLK31Zz9HWszG6pD3w8pHu3
-         JAqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=chhrvg54MI90YfaM2WKEa/GdmTxheYiEx0N9RVbWUss=;
-        b=CUYhy5f8wcw5Ys3UrPv8fd7l3mToj/a7p6U/a5rwrZJH77gmnpH3Ahef2xDuiMq/x/
-         VSUzoA8dhWGoHJNxMiT+MFxuW7gphzrTIxlyaGSjs3wWoct9diDEfjypua6XeIqNSHE8
-         OVwF3X5JKqh4b3BmfOZVJPrZIEpL5xzuD0ey7dbh05PwYyxsyA8+v6Y1vB4p4VDrTzQz
-         rdzM3Ak9/ujx4b1/BWaIdokvGqUg1QwQrNs+xxoMs3412bd8oZSrmx3OQMKsbE+884FS
-         1bbvLTtvv8APaRGWnmoOFqCWn17GxYt9VL4/GQoB9Nd1uVJk3E9eK6SpAzGy95eUwfDi
-         n43w==
-X-Gm-Message-State: AJcUukee8oT5tmcERzUP2QAfjWc5q+VasJgD8x1K+bgnso/gcQthup/V
-        8eTaPgSutX9XBarN6hpPC8Y=
-X-Google-Smtp-Source: ALg8bN45vI739KAKPwsMaJwF3JqWMaG1AKd7ApH/krSRxDyi4Bu1dXEYoklqOwRFetXhqYWUUFFOGg==
-X-Received: by 2002:a17:902:4025:: with SMTP id b34mr13946612pld.181.1547708920735;
-        Wed, 16 Jan 2019 23:08:40 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id n22sm1444532pfh.166.2019.01.16.23.08.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 23:08:40 -0800 (PST)
-Date:   Wed, 16 Jan 2019 23:08:38 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Bakker <xc-racer2@live.ca>
-Subject: Re: [PATCH] input: misc: pwm-vibra: Prevent unbalanced regulator
-Message-ID: <20190117070838.GA8109@dtor-ws>
-References: <20190116211131.18809-1-pawel.mikolaj.chmiel@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190116211131.18809-1-pawel.mikolaj.chmiel@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 17 Jan 2019 02:10:12 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A518060807; Thu, 17 Jan 2019 07:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547709010;
+        bh=OwH1Bjp7eKVwxTMQie7vVO1cpD1DkKQL2KmIRSgsnMM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cFAIhb0bnj+nC5xjrkbCLsk9F7ZCWdwQaWZJFDyFFDWDU4nRPIRbbxucDBvroU+/8
+         wyQXf/VDLIXLKMwNEOMd6wT5tdAbFQB6iFxz1f2n9ojczaCeSB+VSqaQanq4ipuh0w
+         BidZ8h4hDc7OTxUYMk+SO2bqrMPwThMYIaEuCc1Q=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E79626079C;
+        Thu, 17 Jan 2019 07:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547709009;
+        bh=OwH1Bjp7eKVwxTMQie7vVO1cpD1DkKQL2KmIRSgsnMM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Z2DhptRAL6jxMsUZ7s/r0+PDNK8Do6WvuxsCWfXXLWWmuA0FOkkZl9OTX2sSsP2b0
+         YoCtnWhohf2YSBYsPwzMVW26Kxb6aUOzk2kAnVwkm02GtJxBmddeyo6dikjVITb6rk
+         eqJnhwHNpMwjXiTM6u5wbxqk55EBMyHRPpkPvh5I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E79626079C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        Matthias Kaehlcke <mka@chromium.org>, evgreen@google.com,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3] cpufreq: qcom: Read voltage LUT and populate OPP
+Date:   Thu, 17 Jan 2019 12:38:56 +0530
+Message-Id: <1547708936-25661-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paweł,
+Add support to read the voltage look up table and populate OPP for all
+corresponding CPUS for consumers like the energy model could use the
+frequency and voltage from the OPP tables. Also update the logic to not add
+duplicate OPPs.
 
-On Wed, Jan 16, 2019 at 10:11:31PM +0100, Paweł Chmiel wrote:
-> From: Jonathan Bakker <xc-racer2@live.ca>
-> 
-> pwm_vibrator_stop disables the regulator, but it can be called from
-> multiple places, even when the regulator is already disabled. Fix this
-> by using regulator_is_enabled check when starting and stopping device.
-> 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  drivers/input/misc/pwm-vibra.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/input/misc/pwm-vibra.c b/drivers/input/misc/pwm-vibra.c
-> index 55da191ae550..66677ee770ca 100644
-> --- a/drivers/input/misc/pwm-vibra.c
-> +++ b/drivers/input/misc/pwm-vibra.c
-> @@ -42,10 +42,12 @@ static int pwm_vibrator_start(struct pwm_vibrator *vibrator)
->  	struct pwm_state state;
->  	int err;
->  
-> -	err = regulator_enable(vibrator->vcc);
-> -	if (err) {
-> -		dev_err(pdev, "failed to enable regulator: %d", err);
-> -		return err;
-> +	if (!regulator_is_enabled(vibrator->vcc)) {
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/cpufreq/qcom-cpufreq-hw.c | 43 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 8 deletions(-)
 
-I do not think this is correct in case of shared supply, as this checks
-global state of regulator. That means that if there is another user, we
-may forego enabling regulator here, and that anther user may power it
-down and vibrator will stop working.
+diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+index d83939a..8da5576 100644
+--- a/drivers/cpufreq/qcom-cpufreq-hw.c
++++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+@@ -10,18 +10,21 @@
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
++#include <linux/pm_opp.h>
+ #include <linux/slab.h>
 
-I think you need a local flag here.
+ #define LUT_MAX_ENTRIES			40U
+ #define LUT_SRC				GENMASK(31, 30)
+ #define LUT_L_VAL			GENMASK(7, 0)
+ #define LUT_CORE_COUNT			GENMASK(18, 16)
++#define LUT_VOLT			GENMASK(11, 0)
+ #define LUT_ROW_SIZE			32
+ #define CLK_HW_DIV			2
 
-> +		err = regulator_enable(vibrator->vcc);
-> +		if (err) {
-> +			dev_err(pdev, "failed to enable regulator: %d", err);
-> +			return err;
-> +		}
->  	}
->  
->  	pwm_get_state(vibrator->pwm, &state);
-> @@ -76,7 +78,8 @@ static int pwm_vibrator_start(struct pwm_vibrator *vibrator)
->  
->  static void pwm_vibrator_stop(struct pwm_vibrator *vibrator)
->  {
-> -	regulator_disable(vibrator->vcc);
-> +	if (regulator_is_enabled(vibrator->vcc))
-> +		regulator_disable(vibrator->vcc);
+ /* Register offsets */
+ #define REG_ENABLE			0x0
+-#define REG_LUT_TABLE			0x110
++#define REG_FREQ_LUT			0x110
++#define REG_VOLT_LUT			0x114
+ #define REG_PERF_STATE			0x920
 
-Looking at this, I wonder if we should not disable PWMs first and the
-disable regulator.
+ static unsigned long cpu_hw_rate, xo_rate;
+@@ -70,35 +73,41 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
+ 	return policy->freq_table[index].frequency;
+ }
 
->  
->  	if (vibrator->pwm_dir)
->  		pwm_disable(vibrator->pwm_dir);
-> -- 
-> 2.17.1
-> 
+-static int qcom_cpufreq_hw_read_lut(struct device *dev,
+-				    struct cpufreq_policy *policy,
++static int qcom_cpufreq_hw_read_lut(struct cpufreq_policy *policy,
+ 				    void __iomem *base)
+ {
+ 	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
++	u32 volt;
+ 	unsigned int max_cores = cpumask_weight(policy->cpus);
+ 	struct cpufreq_frequency_table	*table;
++	struct device *cpu_dev = get_cpu_device(policy->cpu);
 
-Thanks.
+ 	table = kcalloc(LUT_MAX_ENTRIES + 1, sizeof(*table), GFP_KERNEL);
+ 	if (!table)
+ 		return -ENOMEM;
 
--- 
-Dmitry
+ 	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
+-		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
++		data = readl_relaxed(base + REG_FREQ_LUT +
++				      i * LUT_ROW_SIZE);
+ 		src = FIELD_GET(LUT_SRC, data);
+ 		lval = FIELD_GET(LUT_L_VAL, data);
+ 		core_count = FIELD_GET(LUT_CORE_COUNT, data);
+
++		data = readl_relaxed(base + REG_VOLT_LUT +
++				      i * LUT_ROW_SIZE);
++		volt = FIELD_GET(LUT_VOLT, data) * 1000;
++
+ 		if (src)
+ 			freq = xo_rate * lval / 1000;
+ 		else
+ 			freq = cpu_hw_rate / 1000;
+
+-		/* Ignore boosts in the middle of the table */
+-		if (core_count != max_cores) {
++		if (freq != prev_freq && core_count == max_cores) {
+ 			table[i].frequency = CPUFREQ_ENTRY_INVALID;
+ 		} else {
+ 			table[i].frequency = freq;
+-			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
++			dev_pm_opp_add(cpu_dev, freq * 1000, volt);
++			dev_dbg(cpu_dev, "index=%d freq=%d, core_count %d\n", i,
+ 				freq, core_count);
+ 		}
+
+@@ -116,6 +125,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+ 			if (prev_cc != max_cores) {
+ 				prev->frequency = prev_freq;
+ 				prev->flags = CPUFREQ_BOOST_FREQ;
++				dev_pm_opp_add(cpu_dev,	prev_freq * 1000, volt);
+ 			}
+
+ 			break;
+@@ -127,6 +137,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+
+ 	table[i].frequency = CPUFREQ_TABLE_END;
+ 	policy->freq_table = table;
++	dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
+
+ 	return 0;
+ }
+@@ -159,10 +170,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+ 	struct device *dev = &global_pdev->dev;
+ 	struct of_phandle_args args;
+ 	struct device_node *cpu_np;
++	struct device *cpu_dev;
+ 	struct resource *res;
+ 	void __iomem *base;
+ 	int ret, index;
+
++	cpu_dev = get_cpu_device(policy->cpu);
++	if (!cpu_dev) {
++		pr_err("%s: failed to get cpu%d device\n", __func__,
++		       policy->cpu);
++		return -ENODEV;
++	}
++
+ 	cpu_np = of_cpu_device_node_get(policy->cpu);
+ 	if (!cpu_np)
+ 		return -EINVAL;
+@@ -199,12 +218,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+
+ 	policy->driver_data = base + REG_PERF_STATE;
+
+-	ret = qcom_cpufreq_hw_read_lut(dev, policy, base);
++	ret = qcom_cpufreq_hw_read_lut(policy, base);
+ 	if (ret) {
+ 		dev_err(dev, "Domain-%d failed to read LUT\n", index);
+ 		goto error;
+ 	}
+
++	ret = dev_pm_opp_get_opp_count(cpu_dev);
++	if (ret <= 0) {
++		dev_err(cpu_dev, "Failed to add OPPs\n");
++		goto error;
++	}
++
+ 	policy->fast_switch_possible = true;
+
+ 	return 0;
+@@ -215,8 +240,10 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+
+ static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
+ {
++	struct device *cpu_dev = get_cpu_device(policy->cpu);
+ 	void __iomem *base = policy->driver_data - REG_PERF_STATE;
+
++	dev_pm_opp_remove_all_dynamic(cpu_dev);
+ 	kfree(policy->freq_table);
+ 	devm_iounmap(&global_pdev->dev, base);
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
