@@ -2,624 +2,227 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE546C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40914C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB4320652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547733662;
-	bh=QZ0XJiyyvpjZU20z7uyqZyvM3RqJUcir3vlkVaCqBek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Dx8Enzg8rbJoHWxQpcfCIvmw7O8DFcIE85MuWEFMOGat31tftYXTiQ+TXqJhJnsjb
-	 3/7C8dmVKJ2iHn+Lx4ueifeG3Z+7h8W8DTelqw0iovRIVj55biFGmqY9hbhALpaAei
-	 qavyUcKqex8XGjxrJNbYwRjlhwfhLPAor/QYKhjA=
+	by mail.kernel.org (Postfix) with ESMTP id EDEBA20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:01:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="dZ+roU8x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfAQOBA (ORCPT
+        id S1727774AbfAQOBP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 09:01:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727664AbfAQOA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 09:00:58 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EB1420652;
-        Thu, 17 Jan 2019 14:00:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547733657;
-        bh=QZ0XJiyyvpjZU20z7uyqZyvM3RqJUcir3vlkVaCqBek=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GTbg+QNcaNrUtpzo92lS3CWJ2kw5Wm4M8RBZ0KtUULehAafscPm3wNws7cwsXLLbO
-         4cMk4MINUz68qmmCoZ0HRWKH8zzA3etYqj4+NNburgtN8fzZV1oW9AenBtiKDLwn2d
-         zjCbIlLWBR2Vo8YtW6yCLbse0iQeWjHeXUqZSboo=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id D2CA841AB5; Thu, 17 Jan 2019 11:00:53 -0300 (-03)
-Date:   Thu, 17 Jan 2019 11:00:53 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Thomas Richter <tmricht@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCHv2 1/3] perf report: Display s390 diagnostic counter sets
-Message-ID: <20190117140053.GJ11922@kernel.org>
-References: <20190117093003.96287-1-tmricht@linux.ibm.com>
- <20190117093003.96287-2-tmricht@linux.ibm.com>
+        Thu, 17 Jan 2019 09:01:15 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38484 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbfAQOBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 09:01:13 -0500
+Received: by mail-io1-f66.google.com with SMTP id l14so7866034ioj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 06:01:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=IotE6xnVPx1DKYX/Wn7ErENMX7pC9eU2NgmLk8rr0Hs=;
+        b=dZ+roU8xfnsZFe3FAcyuftQ1wvpwZEDpeLW8czFlQoeLO9XMhHYR91mZQ6v88E7yh1
+         IW+Cxa7UrIxxPuJCuqrPZRaWxTtxJbbNUX6O3jHgMltOkj33hJ6Kc9LtaEjaM8zzRAb0
+         vJgNw+gcNX8Mj5ZQlVUGfNYItWGLE73ZbFbljYWSdkZz87kxe29tQ7Oj2iQD/JoRmXUY
+         IUhI6YU7jOo0sbFPQyX75iXn6Pdh07/0KsyxXgl3tYbtIy9ObQPN0iwd+hmT6eIjSP8t
+         0kO+sRdMVm93miYNOTrcPfvaWTQHlXscqiZcSppmXMwIdzi30+yY6ZOppHzrlYaQXPSc
+         enVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IotE6xnVPx1DKYX/Wn7ErENMX7pC9eU2NgmLk8rr0Hs=;
+        b=YXPIIKggk9U7AiLMkTZSQmVY7Hc8E2Y0PqSgyLUf4O/+ZgeCqNsYxpKpq6dOwG6B5J
+         rmFIY6f+CVtQwaeNSDVRv2TA2IgBhNfKwtavWi837QYrru2wTa8fKMFgy0Sb6qS20x+1
+         X6i0l7zVC9g9xo/JvXZxQfaMQApcMNpyh2uVtWgmrwKFjfylqUkQ0MP0dvqEvP0EOruF
+         j09TYCZcluWRPY485Q5eGTxLrNbi7fsRprLJ4NTq/xQCxccJq+RCf7O7q5mYYZVWynQL
+         6P4qX1OBQaQNctfDCNmj5UMaicIzz2pbV9/5a4WSauwJHam1b4cPqMxBGzzPwYtO7BxF
+         vkmA==
+X-Gm-Message-State: AJcUukfvHtZy4Swn96NkKxFNVxPf5unI5Cv9APX4eigMJN3k2n4K1WiZ
+        v6N6XENJvw88UcqynTDrpWMzk/h1L5th5y37VB2K4A==
+X-Google-Smtp-Source: ALg8bN4o5mgiBRAPQg5EcR53Kovyq4GBU7TQKGvYDlLSpLYUttB+oVoLjFShXC7k2+EId0PujSk/LYy+w0l84jdMUWQ=
+X-Received: by 2002:a5d:928b:: with SMTP id s11mr8291606iom.111.1547733672383;
+ Thu, 17 Jan 2019 06:01:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117093003.96287-2-tmricht@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190111172134.30147-1-brgl@bgdev.pl> <20190111172134.30147-3-brgl@bgdev.pl>
+ <08200de1-fde5-c525-c874-c7872259067b@ti.com> <CAMRc=McrT4KTW45=3CTBxspVb+z8k=DDjOvKi9NH0aA9eJ8=cQ@mail.gmail.com>
+ <a7d4994d-7740-c845-da67-9d06e6d874cc@ti.com> <d9bc1153-3b65-19a8-67ef-e131296cd8b1@ti.com>
+In-Reply-To: <d9bc1153-3b65-19a8-67ef-e131296cd8b1@ti.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 17 Jan 2019 15:01:01 +0100
+Message-ID: <CAMRc=McPCJxd7i7Ei+xOKOXYhYZgC=MYYFwyn2zAjStQov91fw@mail.gmail.com>
+Subject: Re: [PATCH 02/17] clocksource: davinci-timer: new driver
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jan 17, 2019 at 10:30:01AM +0100, Thomas Richter escreveu:
-> On s390 the event bc000 (also named CF_DIAG)
-> extracts the CPU Measurement Facility diagnostic counter sets
-> and displays them as counter number and counter value
-> pairs sorted by counter set number.
+czw., 17 sty 2019 o 13:42 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
+>
+> On 16/01/19 2:48 PM, Sekhar Nori wrote:
+> > On 14/01/19 10:09 PM, Bartosz Golaszewski wrote:
+> >> pon., 14 sty 2019 o 13:20 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a)=
+:
+> >>>
+> >>> Hi Bartosz,
+> >>>
+> >>> On 11/01/19 10:51 PM, Bartosz Golaszewski wrote:
+> >>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>>>
+> >>>> Currently the clocksource and clockevent support for davinci platfor=
+ms
+> >>>> lives in mach-davinci. It hard-codes many things, used global variab=
+les,
+> >>>> implements functionalities unused by any platform and has code fragm=
+ents
+> >>>> scattered across many (often unrelated) files.
+> >>>>
+> >>>> Implement a new, modern and simplified timer driver and put it into
+> >>>> drivers/clocksource. We still need to support legacy board files so
+> >>>> export a config structure and a function that allows machine code to
+> >>>> register the timer.
+> >>>>
+> >>>> We don't check the return values of regmap reads and writes since wi=
+th
+> >>>> mmio it's only likely to fail due to programmer's errors.
+> >>>>
+> >>>> We also don't bother freeing resources on errors in
+> >>>> davinci_timer_register() as the system won't boot without a timer an=
+yway.
+> >>>>
+> >>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>>
+> >>> With this series, DA830 fails to boot. Rest of the devices are okay f=
+rom
+> >>> boot perspective.
+> >>>
+> >>> DA830 is pretty unique because it uses the same timer-half for both
+> >>> clocksource and clockevent. May be you can set the same configuration=
+ on
+> >>> your DA850 to see the same issue? Else, I will enable low-level debug
+> >>> and try to provide more debug data.
+> >>>
+> >>
+> >> I can't boot da850 with the same config as da830 (0x60 compare
+> >> register, compare irq 74) even with the old timer code. Just to make
+> >> sure: does da830 boot fine with mainline v5.0-rc2?
+> >
+> > Yeah, I did check that without the patch DA830 does boot.
+>
+> You are right that DA850 lacks compare interrupts for timers 0 and 1.
+> So, yes, it seems like we will have to shift to timer2 to test
+> compare interrupts on DA850.
+>
 
-Thanks for taking my comments into account, I did some changes,
-documented in the updated patch, that is at the end of this message,
-first my changes to your patch, the end result should be the same:
+Timers 2 and 3 are a bit different on da850 - for instance they don't
+have separate interrupts for bottom and top halfs.
 
-$ interdiff /wb/thomas.patch /wb/acme.patch
-diff -u b/tools/perf/util/Build b/tools/perf/util/Build
---- b/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -44,7 +44,6 @@
- libperf-y += map.o
- libperf-y += pstack.o
- libperf-y += session.o
--libperf-y += trace-event-sample-raw.o
- libperf-y += s390-sample-raw.o
- libperf-$(CONFIG_TRACE) += syscalltbl.o
- libperf-y += ordered-events.o
-diff -u b/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
---- b/tools/perf/util/s390-sample-raw.c
-+++ b/tools/perf/util/s390-sample-raw.c
-@@ -150,8 +150,8 @@
-  * its raw data.
-  * The function is only invoked when the dump flag -D is set.
-  */
--void s390_sample_raw(struct perf_evlist *evlist, union perf_event *event,
--		     struct perf_sample *sample)
-+void perf_evlist__s390_sample_raw(struct perf_evlist *evlist, union perf_event *event,
-+				  struct perf_sample *sample)
- {
- 	struct perf_evsel *ev_bc000;
- 
-diff -u b/tools/perf/util/session.c b/tools/perf/util/session.c
---- b/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1065,8 +1065,8 @@
- 	       file_offset, event->header.size, event->header.type);
- 
- 	trace_event(event);
--	if (event->header.type == PERF_RECORD_SAMPLE)
--		trace_event_sample_raw(evlist, event, sample);
-+	if (event->header.type == PERF_RECORD_SAMPLE && evlist->trace_event_sample_raw)
-+		evlist->trace_event_sample_raw(evlist, event, sample);
- 
- 	if (sample)
- 		perf_evlist__print_tstamp(evlist, event, sample);
-reverted:
---- b/tools/perf/util/session.h
-+++ a/tools/perf/util/session.h
-@@ -128,9 +128,4 @@
- 				    struct perf_evlist *evlist,
- 				    struct machine *machine);
- 
--void trace_event_sample_raw(struct perf_evlist *evlist __maybe_unused,
--			    union perf_event *event __maybe_unused,
--			    struct perf_sample *sample __maybe_unused);
--void s390_sample_raw(struct perf_evlist *evlist, union perf_event *event,
--		     struct perf_sample *sample);
- #endif /* __PERF_SESSION_H */
-reverted:
---- b/tools/perf/util/trace-event-sample-raw.c
-+++ /dev/null
-@@ -1,30 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright IBM Corp. 2019
-- * Author(s): Thomas Richter <tmricht@linux.ibm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License (version 2 only)
-- * as published by the Free Software Foundation.
-- *
-- * Architecture specific trace_event function. Save event's bc000 raw data
-- * to file. File name is aux.ctr.## where ## stands for the CPU number the
-- * sample was taken from.
-- */
--
--#include <string.h>
--
--#include "session.h"
--#include "evlist.h"
--
--/* Check platform the perf data file was created on and perform platform
-- * specific interpretation.
-- */
--void trace_event_sample_raw(struct perf_evlist *evlist, union perf_event *event,
--			    struct perf_sample *sample)
--{
--	const char *arch_pf = perf_env__arch(evlist->env);
--
--	if (arch_pf && !strcmp("s390", arch_pf))
--		s390_sample_raw(evlist, event, sample);
--}
-only in patch2:
-unchanged:
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -41,6 +41,18 @@ int sigqueue(pid_t pid, int sig, const union sigval value);
- #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
- #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
- 
-+/*
-+ * Check platform the perf data file was created on and perform platform
-+ * specific interpretation.
-+ */
-+static void perf_evlist__init_trace_event_sample_raw(struct perf_evlist *evlist)
-+{
-+	const char *arch_pf = perf_env__arch(evlist->env);
-+
-+	if (arch_pf && !strcmp("s390", arch_pf))
-+		evlist->trace_event_sample_raw = perf_evlist__s390_sample_raw;
-+}
-+
- void perf_evlist__init(struct perf_evlist *evlist, struct cpu_map *cpus,
- 		       struct thread_map *threads)
- {
-@@ -53,6 +65,7 @@ void perf_evlist__init(struct perf_evlist *evlist, struct cpu_map *cpus,
- 	fdarray__init(&evlist->pollfd, 64);
- 	evlist->workload.pid = -1;
- 	evlist->bkw_mmap_state = BKW_MMAP_NOTREADY;
-+	perf_evlist__init_trace_event_sample_raw(evlist);
- }
- 
- struct perf_evlist *perf_evlist__new(void)
-only in patch2:
-unchanged:
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -49,6 +49,9 @@ struct perf_evlist {
- 	struct perf_evsel *selected;
- 	struct events_stats stats;
- 	struct perf_env	*env;
-+	void (*trace_event_sample_raw)(struct perf_evlist *evlist,
-+				       union perf_event *event,
-+				       struct perf_sample *sample);
- 	u64		first_sample_time;
- 	u64		last_sample_time;
- };
-@@ -315,4 +318,6 @@ void perf_evlist__force_leader(struct perf_evlist *evlist);
- struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evlist,
- 						 struct perf_evsel *evsel);
- 
-+void perf_evlist__s390_sample_raw(struct perf_evlist *evlist, union perf_event *event,
-+				  struct perf_sample *sample);
- #endif /* __PERF_EVLIST_H */
-only in patch2:
-unchanged:
---- a/tools/perf/util/python-ext-sources
-+++ b/tools/perf/util/python-ext-sources
-@@ -25,6 +25,7 @@ util/parse-branch-options.c
- util/rblist.c
- util/counts.c
- util/print_binary.c
-+util/s390-sample-raw.c
- util/strlist.c
- util/trace-event.c
- ../lib/rbtree.c
+I configured the old code to use timer 2 - bottom half only with
+compare register 0x60 and compare intterupt 74. It boots although very
+slowly and something's broken with timekeeping as the clock goes
+backwards and forward (seemingly) randomly.
 
+Kevin has an OMAP-L137 starter kit - is this the same as da830-evm? If
+so, then I can get remote access to it and work on this problem.
+Otherwise, I can prepare something that works on da850 with broken
+timekeeping and let you see if it works correctly on da830.
 
+Bart
 
----------------------------------------
-
-And the updated patch:
-
-$ cat /wb/acme.patch
-commit b7dd95b7479ed6773c6dbec72e0b867a1cfd3765
-Author: Thomas Richter <tmricht@linux.ibm.com>
-Date:   Thu Jan 17 10:37:17 2019 -0300
-
-    erf report: Display arch specific diagnostic counter sets, starting with s390
-    
-    On s390 the event bc000 (also named CF_DIAG) extracts the CPU
-    Measurement Facility diagnostic counter sets and displays them as
-    counter number and counter value pairs sorted by counter set number.
-    
-    Output:
-     [root@s35lp76 perf]# ./perf report -D --stdio
-    
-     [00000000] Counterset:0 Counters:6
-       Counter:000 Value:0x000000000085ec36 Counter:001 Value:0x0000000000796c94
-       Counter:002 Value:0x0000000000005ada Counter:003 Value:0x0000000000092460
-       Counter:004 Value:0x0000000000006073 Counter:005 Value:0x00000000001a9a73
-     [0x000038] Counterset:1 Counters:2
-       Counter:000 Value:0x000000000007c59f Counter:001 Value:0x000000000002fad6
-     [0x000050] Counterset:2 Counters:16
-       Counter:000 Value:000000000000000000 Counter:001 Value:000000000000000000
-       Counter:002 Value:000000000000000000 Counter:003 Value:000000000000000000
-       Counter:004 Value:000000000000000000 Counter:005 Value:000000000000000000
-       Counter:006 Value:000000000000000000 Counter:007 Value:000000000000000000
-       Counter:008 Value:000000000000000000 Counter:009 Value:000000000000000000
-       Counter:010 Value:000000000000000000 Counter:011 Value:000000000000000000
-       Counter:012 Value:000000000000000000 Counter:013 Value:000000000000000000
-       Counter:014 Value:000000000000000000 Counter:015 Value:000000000000000000
-     [0x0000d8] Counterset:3 Counters:128
-       Counter:000 Value:0x000000000000020f Counter:001 Value:0x00000000000001d8
-       Counter:002 Value:0x000000000000d7fa Counter:003 Value:0x000000000000008b
-       ...
-    
-    The number in brackets is the offset into the raw data field of the
-    sample.
-    
-    New functions trace_event_sample_raw__init() and s390_sample_raw() are
-    introduced in the code path to enable interpretation on non s390
-    platforms. This event bc000 attached raw data is generated only on s390
-    platform. Correct display on other platforms requires correct endianness
-    handling.
-    
-    Committer notes:
-    
-    Added a init function that sets up a evlist function pointer to avoid
-    repeated tests on evlist->env and calls to perf_env__name() that
-    involves normalizing, etc, for each PERF_RECORD_SAMPLE.
-    
-    Removed needless __maybe_unused from the trace_event_raw()
-    prototype in session.h, move it to be an static function in evlist.
-    
-    Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-    Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-    Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-    Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-    Link: https://lkml.kernel.org/r/20190117093003.96287-2-tmricht@linux.ibm.com
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index af72be7f5b3b..5ff0087ba693 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -44,6 +44,7 @@ libperf-y += machine.o
- libperf-y += map.o
- libperf-y += pstack.o
- libperf-y += session.o
-+libperf-y += s390-sample-raw.o
- libperf-$(CONFIG_TRACE) += syscalltbl.o
- libperf-y += ordered-events.o
- libperf-y += namespaces.o
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 8c902276d4b4..5f01bced3116 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -41,6 +41,18 @@ int sigqueue(pid_t pid, int sig, const union sigval value);
- #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
- #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
- 
-+/*
-+ * Check platform the perf data file was created on and perform platform
-+ * specific interpretation.
-+ */
-+static void perf_evlist__init_trace_event_sample_raw(struct perf_evlist *evlist)
-+{
-+	const char *arch_pf = perf_env__arch(evlist->env);
-+
-+	if (arch_pf && !strcmp("s390", arch_pf))
-+		evlist->trace_event_sample_raw = perf_evlist__s390_sample_raw;
-+}
-+
- void perf_evlist__init(struct perf_evlist *evlist, struct cpu_map *cpus,
- 		       struct thread_map *threads)
- {
-@@ -53,6 +65,7 @@ void perf_evlist__init(struct perf_evlist *evlist, struct cpu_map *cpus,
- 	fdarray__init(&evlist->pollfd, 64);
- 	evlist->workload.pid = -1;
- 	evlist->bkw_mmap_state = BKW_MMAP_NOTREADY;
-+	perf_evlist__init_trace_event_sample_raw(evlist);
- }
- 
- struct perf_evlist *perf_evlist__new(void)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 868294491194..18365b1f80b0 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -49,6 +49,9 @@ struct perf_evlist {
- 	struct perf_evsel *selected;
- 	struct events_stats stats;
- 	struct perf_env	*env;
-+	void (*trace_event_sample_raw)(struct perf_evlist *evlist,
-+				       union perf_event *event,
-+				       struct perf_sample *sample);
- 	u64		first_sample_time;
- 	u64		last_sample_time;
- };
-@@ -315,4 +318,6 @@ void perf_evlist__force_leader(struct perf_evlist *evlist);
- struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evlist,
- 						 struct perf_evsel *evsel);
- 
-+void perf_evlist__s390_sample_raw(struct perf_evlist *evlist, union perf_event *event,
-+				  struct perf_sample *sample);
- #endif /* __PERF_EVLIST_H */
-diff --git a/tools/perf/util/python-ext-sources b/tools/perf/util/python-ext-sources
-index 7aa0ea64544e..aada3e69565b 100644
---- a/tools/perf/util/python-ext-sources
-+++ b/tools/perf/util/python-ext-sources
-@@ -25,6 +25,7 @@ util/parse-branch-options.c
- util/rblist.c
- util/counts.c
- util/print_binary.c
-+util/s390-sample-raw.c
- util/strlist.c
- util/trace-event.c
- ../lib/rbtree.c
-diff --git a/tools/perf/util/s390-cpumcf-kernel.h b/tools/perf/util/s390-cpumcf-kernel.h
-new file mode 100644
-index 000000000000..d4356030b504
---- /dev/null
-+++ b/tools/perf/util/s390-cpumcf-kernel.h
-@@ -0,0 +1,62 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Support for s390 CPU measurement counter set diagnostic facility
-+ *
-+ * Copyright IBM Corp. 2019
-+   Author(s): Hendrik Brueckner <brueckner@linux.ibm.com>
-+ *		Thomas Richter <tmricht@linux.ibm.com>
-+ */
-+#ifndef S390_CPUMCF_KERNEL_H
-+#define S390_CPUMCF_KERNEL_H
-+
-+#define	S390_CPUMCF_DIAG_DEF	0xfeef	/* Counter diagnostic entry ID */
-+#define	PERF_EVENT_CPUM_CF_DIAG	0xBC000	/* Event: Counter sets */
-+
-+struct cf_ctrset_entry {	/* CPU-M CF counter set entry (8 byte) */
-+	unsigned int def:16;	/* 0-15  Data Entry Format */
-+	unsigned int set:16;	/* 16-23 Counter set identifier */
-+	unsigned int ctr:16;	/* 24-39 Number of stored counters */
-+	unsigned int res1:16;	/* 40-63 Reserved */
-+};
-+
-+struct cf_trailer_entry {	/* CPU-M CF trailer for raw traces (64 byte) */
-+	/* 0 - 7 */
-+	union {
-+		struct {
-+			unsigned int clock_base:1;	/* TOD clock base */
-+			unsigned int speed:1;		/* CPU speed */
-+			/* Measurement alerts */
-+			unsigned int mtda:1;	/* Loss of MT ctr. data alert */
-+			unsigned int caca:1;	/* Counter auth. change alert */
-+			unsigned int lcda:1;	/* Loss of counter data alert */
-+		};
-+		unsigned long flags;		/* 0-63    All indicators */
-+	};
-+	/* 8 - 15 */
-+	unsigned int cfvn:16;			/* 64-79   Ctr First Version */
-+	unsigned int csvn:16;			/* 80-95   Ctr Second Version */
-+	unsigned int cpu_speed:32;		/* 96-127  CPU speed */
-+	/* 16 - 23 */
-+	unsigned long timestamp;		/* 128-191 Timestamp (TOD) */
-+	/* 24 - 55 */
-+	union {
-+		struct {
-+			unsigned long progusage1;
-+			unsigned long progusage2;
-+			unsigned long progusage3;
-+			unsigned long tod_base;
-+		};
-+		unsigned long progusage[4];
-+	};
-+	/* 56 - 63 */
-+	unsigned int mach_type:16;		/* Machine type */
-+	unsigned int res1:16;			/* Reserved */
-+	unsigned int res2:32;			/* Reserved */
-+};
-+
-+#define	CPUMF_CTR_SET_BASIC	0	/* Basic Counter Set */
-+#define	CPUMF_CTR_SET_USER	1	/* Problem-State Counter Set */
-+#define	CPUMF_CTR_SET_CRYPTO	2	/* Crypto-Activity Counter Set */
-+#define	CPUMF_CTR_SET_EXT	3	/* Extended Counter Set */
-+#define	CPUMF_CTR_SET_MT_DIAG	4	/* MT-diagnostic Counter Set */
-+#endif
-diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
-new file mode 100644
-index 000000000000..05871da374b6
---- /dev/null
-+++ b/tools/perf/util/s390-sample-raw.c
-@@ -0,0 +1,172 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright IBM Corp. 2019
-+ * Author(s): Thomas Richter <tmricht@linux.ibm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License (version 2 only)
-+ * as published by the Free Software Foundation.
-+ *
-+ * Architecture specific trace_event function. Save event's bc000 raw data
-+ * to file. File name is aux.ctr.## where ## stands for the CPU number the
-+ * sample was taken from.
-+ */
-+
-+#include <unistd.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <inttypes.h>
-+
-+#include <sys/stat.h>
-+#include <asm/byteorder.h>
-+
-+#include "debug.h"
-+#include "util.h"
-+#include "auxtrace.h"
-+#include "session.h"
-+#include "evlist.h"
-+#include "config.h"
-+#include "color.h"
-+#include "s390-cpumcf-kernel.h"
-+
-+static size_t ctrset_size(struct cf_ctrset_entry *set)
-+{
-+	return sizeof(*set) + set->ctr * sizeof(u64);
-+}
-+
-+static bool ctrset_valid(struct cf_ctrset_entry *set)
-+{
-+	return set->def == S390_CPUMCF_DIAG_DEF;
-+}
-+
-+/* CPU Measurement Counter Facility raw data is a byte stream. It is 8 byte
-+ * aligned and might have trailing padding bytes.
-+ * Display the raw data on screen.
-+ */
-+static bool s390_cpumcfdg_testctr(struct perf_sample *sample)
-+{
-+	size_t len = sample->raw_size, offset = 0;
-+	unsigned char *buf = sample->raw_data;
-+	struct cf_trailer_entry *te;
-+	struct cf_ctrset_entry *cep, ce;
-+
-+	if (!len)
-+		return false;
-+	while (offset < len) {
-+		cep = (struct cf_ctrset_entry *)(buf + offset);
-+		ce.def = be16_to_cpu(cep->def);
-+		ce.set = be16_to_cpu(cep->set);
-+		ce.ctr = be16_to_cpu(cep->ctr);
-+		ce.res1 = be16_to_cpu(cep->res1);
-+
-+		if (!ctrset_valid(&ce) || offset + ctrset_size(&ce) > len) {
-+			/* Raw data for counter sets are always multiple of 8
-+			 * bytes. Prepending a 4 bytes size field to the
-+			 * raw data block in the sample causes the perf tool
-+			 * to append 4 padding bytes to make the raw data part
-+			 * of the sample a multiple of eight bytes again.
-+			 *
-+			 * If the last entry (trailer) is 4 bytes off the raw
-+			 * area data end, all is good.
-+			 */
-+			if (len - offset - sizeof(*te) == 4)
-+				break;
-+			pr_err("Invalid counter set entry at %#"  PRIx64 "\n",
-+			       offset);
-+			return false;
-+		}
-+		offset += ctrset_size(&ce);
-+	}
-+	return true;
-+}
-+
-+/* Dump event bc000 on screen, already tested on correctness. */
-+static void s390_cpumcfdg_dumptrail(const char *color, size_t offset,
-+				    struct cf_trailer_entry *tep)
-+{
-+	struct cf_trailer_entry  te;
-+
-+	te.flags = be64_to_cpu(tep->flags);
-+	te.cfvn = be16_to_cpu(tep->cfvn);
-+	te.csvn = be16_to_cpu(tep->csvn);
-+	te.cpu_speed = be32_to_cpu(tep->cpu_speed);
-+	te.timestamp = be64_to_cpu(tep->timestamp);
-+	te.progusage1 = be64_to_cpu(tep->progusage1);
-+	te.progusage2 = be64_to_cpu(tep->progusage2);
-+	te.progusage3 = be64_to_cpu(tep->progusage3);
-+	te.tod_base = be64_to_cpu(tep->tod_base);
-+	te.mach_type = be16_to_cpu(tep->mach_type);
-+	te.res1 = be16_to_cpu(tep->res1);
-+	te.res2 = be32_to_cpu(tep->res2);
-+
-+	color_fprintf(stdout, color, "    [%#08zx] Trailer:%c%c%c%c%c"
-+		      " Cfvn:%d Csvn:%d Speed:%d TOD:%#llx\n",
-+		      offset, te.clock_base ? 'T' : ' ',
-+		      te.speed ? 'S' : ' ', te.mtda ? 'M' : ' ',
-+		      te.caca ? 'C' : ' ', te.lcda ? 'L' : ' ',
-+		      te.cfvn, te.csvn, te.cpu_speed, te.timestamp);
-+	color_fprintf(stdout, color, "\t\t1:%lx 2:%lx 3:%lx TOD-Base:%#llx"
-+		      " Type:%x\n\n",
-+		      te.progusage1, te.progusage2, te.progusage3,
-+		      te.tod_base, te.mach_type);
-+}
-+
-+static void s390_cpumcfdg_dump(struct perf_sample *sample)
-+{
-+	size_t i, len = sample->raw_size, offset = 0;
-+	unsigned char *buf = sample->raw_data;
-+	const char *color = PERF_COLOR_BLUE;
-+	struct cf_ctrset_entry *cep, ce;
-+	u64 *p;
-+
-+	while (offset < len) {
-+		cep = (struct cf_ctrset_entry *)(buf + offset);
-+
-+		ce.def = be16_to_cpu(cep->def);
-+		ce.set = be16_to_cpu(cep->set);
-+		ce.ctr = be16_to_cpu(cep->ctr);
-+		ce.res1 = be16_to_cpu(cep->res1);
-+
-+		if (!ctrset_valid(&ce)) {	/* Print trailer */
-+			s390_cpumcfdg_dumptrail(color, offset,
-+						(struct cf_trailer_entry *)cep);
-+			return;
-+		}
-+
-+		color_fprintf(stdout, color, "    [%#08zx] Counterset:%d"
-+			      " Counters:%d\n", offset, ce.set, ce.ctr);
-+		for (i = 0, p = (u64 *)(cep + 1); i < ce.ctr; i += 2, p += 2)
-+			color_fprintf(stdout, color,
-+				      "\tCounter:%03d Value:%#018lx"
-+				      " Counter:%03d Value:%#018lx\n",
-+				      i, be64_to_cpu(*p),
-+				      i + 1, be64_to_cpu(*(p + 1)));
-+		offset += ctrset_size(&ce);
-+	}
-+}
-+
-+/* S390 specific trace event function. Check for PERF_RECORD_SAMPLE events
-+ * and if the event was triggered by a counter set diagnostic event display
-+ * its raw data.
-+ * The function is only invoked when the dump flag -D is set.
-+ */
-+void perf_evlist__s390_sample_raw(struct perf_evlist *evlist, union perf_event *event,
-+				  struct perf_sample *sample)
-+{
-+	struct perf_evsel *ev_bc000;
-+
-+	if (event->header.type != PERF_RECORD_SAMPLE)
-+		return;
-+
-+	ev_bc000 = perf_evlist__event2evsel(evlist, event);
-+	if (ev_bc000 == NULL ||
-+	    ev_bc000->attr.config != PERF_EVENT_CPUM_CF_DIAG)
-+		return;
-+
-+	/* Display raw data on screen */
-+	if (!s390_cpumcfdg_testctr(sample)) {
-+		pr_err("Invalid counter set data encountered\n");
-+		return;
-+	}
-+	s390_cpumcfdg_dump(sample);
-+}
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index d6f41611f504..379a54702ba9 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1065,6 +1065,8 @@ static void dump_event(struct perf_evlist *evlist, union perf_event *event,
- 	       file_offset, event->header.size, event->header.type);
- 
- 	trace_event(event);
-+	if (event->header.type == PERF_RECORD_SAMPLE && evlist->trace_event_sample_raw)
-+		evlist->trace_event_sample_raw(evlist, event, sample);
- 
- 	if (sample)
- 		perf_evlist__print_tstamp(evlist, event, sample);
+> Just to confirm, DA830 boots fine with the compare section removed:
+>
+> ---8<---
+> diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.=
+c
+> index 0d81a8fdd9e6..f34398a7e47c 100644
+> --- a/arch/arm/mach-davinci/da830.c
+> +++ b/arch/arm/mach-davinci/da830.c
+> @@ -788,14 +788,6 @@ static const struct davinci_timer_cfg da830_timer_cf=
+g =3D {
+>                         .flags  =3D IORESOURCE_IRQ,
+>                 },
+>         },
+> -       .cmp =3D {
+> -               .irq =3D {
+> -                       .start  =3D IRQ_DA830_T12CMPINT0_0,
+> -                       .end    =3D IRQ_DA830_T12CMPINT0_0,
+> -                       .flags  =3D IORESOURCE_IRQ,
+> -               },
+> -               .offset         =3D DA830_CMP12_0,
+> -       }
+>  };
+>
+>  static const struct davinci_soc_info davinci_soc_info_da830 =3D {
+> ---8<---
+>
+> And the low-level debug with your patches shows that its hanging at
+> delay loop calibration.
+>
+> Uncompressing Linux... done, booting the kernel.
+> Booting Linux on physical CPU 0x0
+> Linux version 5.0.0-rc1-08699-gc87d386784f3-dirty (a0875516@psplinux063) =
+(gcc v9
+> CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=3D0005317f
+> CPU: VIVT data cache, VIVT instruction cache
+> Machine: DaVinci DA830/OMAP-L137/AM17x EVM
+> Memory policy: Data cache writethrough
+> cma: Reserved 16 MiB at 0xc2800000
+> DaVinci da830/omap-l137 rev2.0 variant 0x9
+> On node 0 totalpages: 14336
+>   DMA zone: 112 pages used for memmap
+>   DMA zone: 0 pages reserved
+>   DMA zone: 14336 pages, LIFO batch:3
+> random: get_random_bytes called from start_kernel+0x80/0x3ec with crng_in=
+it=3D0
+> pcpu-alloc: s0 r0 d32768 u32768 alloc=3D1*32768
+> pcpu-alloc: [0] 0
+> Built 1 zonelists, mobility grouping on.  Total pages: 14224
+> Kernel command line: console=3DttyS2,115200n8
+> Dentry cache hash table entries: 8192 (order: 3, 32768 bytes)
+> Inode-cache hash table entries: 4096 (order: 2, 16384 bytes)
+> Memory: 33876K/57344K available (4607K kernel code, 308K rwdata, 1072K ro=
+data, )
+> Virtual kernel memory layout:
+>     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+>     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+>     vmalloc : 0xc4000000 - 0xff800000   ( 952 MB)
+>     lowmem  : 0xc0000000 - 0xc3800000   (  56 MB)
+>     modules : 0xbf000000 - 0xc0000000   (  16 MB)
+>       .text : 0x(ptrval) - 0x(ptrval)   (4609 kB)
+>       .init : 0x(ptrval) - 0x(ptrval)   ( 212 kB)
+>       .data : 0x(ptrval) - 0x(ptrval)   ( 309 kB)
+>        .bss : 0x(ptrval) - 0x(ptrval)   ( 137 kB)
+> SLUB: HWalign=3D32, Order=3D0-3, MinObjects=3D0, CPUs=3D1, Nodes=3D1
+> rcu: Preemptible hierarchical RCU implementation.
+>         Tasks RCU enabled.
+> rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+> NR_IRQS: 245
+> clocksource: timer0_0: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_=
+ns: 79s
+> sched_clock: 32 bits at 24MHz, resolution 41ns, wraps every 89478484971ns
+> Console: colour dummy device 80x30
+> Calibrating delay loop...
+> <hangs>
+>
+> Thanks,
+> Sekhar
