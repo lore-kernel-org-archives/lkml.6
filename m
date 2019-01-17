@@ -2,38 +2,39 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA00FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD44EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD4F920856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9676220657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:49:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbfAQGtA (ORCPT
+        id S1728549AbfAQGsx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:49:00 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58994 "EHLO huawei.com"
+        Thu, 17 Jan 2019 01:48:53 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2247 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728906AbfAQGs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:48:57 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7BC7D42763699AB628D2;
-        Thu, 17 Jan 2019 14:48:55 +0800 (CST)
+        id S1728359AbfAQGsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:48:52 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 65C8BC86A333BED19EF8;
+        Thu, 17 Jan 2019 14:48:50 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 17 Jan 2019 14:48:45 +0800
+ 14.3.408.0; Thu, 17 Jan 2019 14:48:44 +0800
 From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
 To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
         <ebiggers@kernel.org>
 CC:     <wangxiongfeng2@huawei.com>, <linux-crypto@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <broonie@kernel.org>,
         <ard.biesheuvel@linaro.org>, <jonathan.cameron@huawei.com>
-Subject: [PATCH V2 5/5] crypto: chacha20poly1305 - use template array registering API to simplify the code
-Date:   Thu, 17 Jan 2019 14:48:03 +0800
-Message-ID: <1547707683-45878-6-git-send-email-wangxiongfeng2@huawei.com>
+Subject: [PATCH V2 3/5] crypto: gcm - use template array registering API to simplify the code
+Date:   Thu, 17 Jan 2019 14:48:01 +0800
+Message-ID: <1547707683-45878-4-git-send-email-wangxiongfeng2@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1547707683-45878-1-git-send-email-wangxiongfeng2@huawei.com>
 References: <1547707683-45878-1-git-send-email-wangxiongfeng2@huawei.com>
@@ -50,65 +51,129 @@ Use crypto template array registering API to simplify the code.
 
 Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
 ---
- crypto/chacha20poly1305.c | 37 ++++++++++++++-----------------------
- 1 file changed, 14 insertions(+), 23 deletions(-)
+ crypto/gcm.c | 73 +++++++++++++++++++-----------------------------------------
+ 1 file changed, 23 insertions(+), 50 deletions(-)
 
-diff --git a/crypto/chacha20poly1305.c b/crypto/chacha20poly1305.c
-index fef1144..ed2e12e 100644
---- a/crypto/chacha20poly1305.c
-+++ b/crypto/chacha20poly1305.c
-@@ -701,37 +701,28 @@ static int rfc7539esp_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	return chachapoly_create(tmpl, tb, "rfc7539esp", 8);
+diff --git a/crypto/gcm.c b/crypto/gcm.c
+index e438492..31eb694 100644
+--- a/crypto/gcm.c
++++ b/crypto/gcm.c
+@@ -727,12 +727,6 @@ static int crypto_gcm_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 					ctr_name, "ghash");
  }
  
--static struct crypto_template rfc7539_tmpl = {
--	.name = "rfc7539",
--	.create = rfc7539_create,
+-static struct crypto_template crypto_gcm_tmpl = {
+-	.name = "gcm",
+-	.create = crypto_gcm_create,
 -	.module = THIS_MODULE,
 -};
 -
--static struct crypto_template rfc7539esp_tmpl = {
--	.name = "rfc7539esp",
--	.create = rfc7539esp_create,
+ static int crypto_gcm_base_create(struct crypto_template *tmpl,
+ 				  struct rtattr **tb)
+ {
+@@ -756,12 +750,6 @@ static int crypto_gcm_base_create(struct crypto_template *tmpl,
+ 					ctr_name, ghash_name);
+ }
+ 
+-static struct crypto_template crypto_gcm_base_tmpl = {
+-	.name = "gcm_base",
+-	.create = crypto_gcm_base_create,
 -	.module = THIS_MODULE,
-+static struct crypto_template rfc7539_tmpls[] = {
+-};
+-
+ static int crypto_rfc4106_setkey(struct crypto_aead *parent, const u8 *key,
+ 				 unsigned int keylen)
+ {
+@@ -989,12 +977,6 @@ static int crypto_rfc4106_create(struct crypto_template *tmpl,
+ 	goto out;
+ }
+ 
+-static struct crypto_template crypto_rfc4106_tmpl = {
+-	.name = "rfc4106",
+-	.create = crypto_rfc4106_create,
+-	.module = THIS_MODULE,
+-};
+-
+ static int crypto_rfc4543_setkey(struct crypto_aead *parent, const u8 *key,
+ 				 unsigned int keylen)
+ {
+@@ -1231,10 +1213,24 @@ static int crypto_rfc4543_create(struct crypto_template *tmpl,
+ 	goto out;
+ }
+ 
+-static struct crypto_template crypto_rfc4543_tmpl = {
+-	.name = "rfc4543",
+-	.create = crypto_rfc4543_create,
+-	.module = THIS_MODULE,
++static struct crypto_template crypto_gcm_tmpls[] = {
 +	{
-+		.name = "rfc7539",
-+		.create = rfc7539_create,
++		.name = "gcm_base",
++		.create = crypto_gcm_base_create,
 +		.module = THIS_MODULE,
 +	}, {
-+		.name = "rfc7539esp",
-+		.create = rfc7539esp_create,
++		.name = "gcm",
++		.create = crypto_gcm_create,
++		.module = THIS_MODULE,
++	}, {
++		.name = "rfc4106",
++		.create = crypto_rfc4106_create,
++		.module = THIS_MODULE,
++	}, {
++		.name = "rfc4543",
++		.create = crypto_rfc4543_create,
 +		.module = THIS_MODULE,
 +	},
  };
  
- static int __init chacha20poly1305_module_init(void)
- {
--	int err;
--
--	err = crypto_register_template(&rfc7539_tmpl);
+ static int __init crypto_gcm_module_init(void)
+@@ -1247,42 +1243,19 @@ static int __init crypto_gcm_module_init(void)
+ 
+ 	sg_init_one(&gcm_zeroes->sg, gcm_zeroes->buf, sizeof(gcm_zeroes->buf));
+ 
+-	err = crypto_register_template(&crypto_gcm_base_tmpl);
 -	if (err)
--		return err;
+-		goto out;
 -
--	err = crypto_register_template(&rfc7539esp_tmpl);
+-	err = crypto_register_template(&crypto_gcm_tmpl);
++	err = crypto_register_templates(crypto_gcm_tmpls,
++					ARRAY_SIZE(crypto_gcm_tmpls));
+ 	if (err)
+-		goto out_undo_base;
++		kfree(gcm_zeroes);
+ 
+-	err = crypto_register_template(&crypto_rfc4106_tmpl);
 -	if (err)
--		crypto_unregister_template(&rfc7539_tmpl);
+-		goto out_undo_gcm;
 -
--	return err;
-+	return crypto_register_templates(rfc7539_tmpls,
-+					 ARRAY_SIZE(rfc7539_tmpls));
+-	err = crypto_register_template(&crypto_rfc4543_tmpl);
+-	if (err)
+-		goto out_undo_rfc4106;
+-
+-	return 0;
+-
+-out_undo_rfc4106:
+-	crypto_unregister_template(&crypto_rfc4106_tmpl);
+-out_undo_gcm:
+-	crypto_unregister_template(&crypto_gcm_tmpl);
+-out_undo_base:
+-	crypto_unregister_template(&crypto_gcm_base_tmpl);
+-out:
+-	kfree(gcm_zeroes);
+ 	return err;
  }
  
- static void __exit chacha20poly1305_module_exit(void)
+ static void __exit crypto_gcm_module_exit(void)
  {
--	crypto_unregister_template(&rfc7539esp_tmpl);
--	crypto_unregister_template(&rfc7539_tmpl);
-+	crypto_unregister_templates(rfc7539_tmpls,
-+				    ARRAY_SIZE(rfc7539_tmpls));
+ 	kfree(gcm_zeroes);
+-	crypto_unregister_template(&crypto_rfc4543_tmpl);
+-	crypto_unregister_template(&crypto_rfc4106_tmpl);
+-	crypto_unregister_template(&crypto_gcm_tmpl);
+-	crypto_unregister_template(&crypto_gcm_base_tmpl);
++	crypto_unregister_templates(crypto_gcm_tmpls,
++				    ARRAY_SIZE(crypto_gcm_tmpls));
  }
  
- module_init(chacha20poly1305_module_init);
+ module_init(crypto_gcm_module_init);
 -- 
 1.7.12.4
 
