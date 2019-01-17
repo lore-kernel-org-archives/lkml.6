@@ -2,147 +2,159 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73073C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536F8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B0FF20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23C3D20651
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:01:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6q+xNzR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfAQA4a (ORCPT
+        id S1727197AbfAQBBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:56:30 -0500
-Received: from smtp.infotech.no ([82.134.31.41]:45648 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbfAQA43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:56:29 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 84CE6204237;
-        Thu, 17 Jan 2019 01:56:27 +0100 (CET)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id QOtBcti-Zl-U; Thu, 17 Jan 2019 01:56:25 +0100 (CET)
-Received: from [192.168.48.23] (host-192.252-161-233.dyn.295.ca [192.252.161.233])
-        by smtp.infotech.no (Postfix) with ESMTPA id E1537204144;
-        Thu, 17 Jan 2019 01:56:24 +0100 (CET)
-Reply-To: dgilbert@interlog.com
-Subject: Re: [ANNOUNCE] v4 sg driver: ready for testing
-From:   Douglas Gilbert <dgilbert@interlog.com>
-To:     SCSI development list <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <bebb627c-0a7a-4669-87e4-ab5eb070062a@interlog.com>
- <0adbaea3-4110-708c-5ace-ad145f6daad7@interlog.com>
-Cc:     Tony Battersby <tonyb@cybernetics.com>
-Message-ID: <03036d97-7316-4a17-4ae5-15d02eb96607@interlog.com>
-Date:   Wed, 16 Jan 2019 19:56:23 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 20:01:54 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46442 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbfAQBBx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 20:01:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so9034119wrt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 17:01:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N2zoRjaojyvjJj2TpWeK3g17xvej+ksqx+lVKWPjLjQ=;
+        b=Y6q+xNzRyKk7dPnTYp1Mwqn+F2zFHSBWSzACq48hjQuZXwNI0AohbKKVW0RR798trE
+         /lRv4zPrdtXmZGFhq2Y5KrQ17n5pqnXMA+YzOlPYkCp5+08fNVbfzZ4Z0l4v8oyWMY7W
+         isevw5ec4uGYvnNSIQd0LolAUttLVPZFIvpHgc4iW92VZyTH4KtQo82+lGRnBJJzkWEW
+         ixDN1alNmeoM5jujXw2lQ81fbpIW7M47L4c/zLI2jSfHjZaAZVW+/6nvoIq29vBbE8Dc
+         AzjZOihptYlrevvkzDMAMXBLjqrK8Qcvn4gNoX2l7rtV6UIS7+Mt5MoGZ0Kl4+E2fU9z
+         CnXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N2zoRjaojyvjJj2TpWeK3g17xvej+ksqx+lVKWPjLjQ=;
+        b=VUFmqNo7OaQydupJzKuQi4CcUu8o0iCM4/5EpcLFdTDzvglBy66bIQi8PwU2lsR6Bc
+         VpTbLgpDKBxZn93POtRGpqYIQ3GfOgkThnPa45Rs07P7N5g5ANVjS7MFTd/hVptIpAlC
+         VATcm4CtTTAuG+oQmsLtJvBK9wmYnh3yDNfVH7/3S+JI0TCULuTqUEYxtiHhozFfrNoA
+         pnWyPPtRGykOHxzvsIan5aiJZBpVCsxH6SH1dJom0fDt5swzvRkOJBWfFf4PSex1AFp5
+         BNwRQj6f4acA4yNPSYprUXSNSgU5BGlGM82ScRTeBG/5FKLN4jUkITj5Fb6MdAM4d2Oe
+         du5Q==
+X-Gm-Message-State: AJcUukdn2wfh8TModDUDFIviDJk8o2IHb4ATxVMyoBqj+vOVYA9U/0YA
+        nP9jfNRyhXKS/PSAoFbkfaM=
+X-Google-Smtp-Source: ALg8bN6rQP377JXas8WQypMmgporqOMu5MDbkVv9qyn6ihTuWky9DD5gy3Pj1bpbqcVfhOckdQeiUQ==
+X-Received: by 2002:adf:9d85:: with SMTP id p5mr9201880wre.41.1547686911746;
+        Wed, 16 Jan 2019 17:01:51 -0800 (PST)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id x186sm41293630wmg.41.2019.01.16.17.01.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 16 Jan 2019 17:01:50 -0800 (PST)
+Date:   Wed, 16 Jan 2019 18:01:48 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2] x86/pgtable: Always inline p4d_index
+Message-ID: <20190117010148.GA14152@flashbox>
+References: <20181210234538.5405-1-natechancellor@gmail.com>
+ <20190116134158.344-1-natechancellor@gmail.com>
+ <alpine.DEB.2.21.1901161848560.1642@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <0adbaea3-4110-708c-5ace-ad145f6daad7@interlog.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1901161848560.1642@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is an update to the SCSI Generic (sg) v4 driver adding synchronous
-and asynchronous bidi command support. Plus lots of fixes and some minor
-improvements. See:
-     http://sg.danny.cz/sg/sg_v40.html
-
-The kernel code is split in two in the tarball below, one targeting
-lk 5.0 and the other targeting lk 4.20 and earlier ***. Each section
-contains the 3 files that represent the sg v4 driver plus a meandering
-17 part patchset. Those patchsets reflect the driver's rewrite rather
-than a logical progression.
-     http://sg.danny.cz/sg/p/sgv4_20190116.tgz
-
-Plus there are updated testing utilities in sg3_utils-1.45 (beta,
-revision 807) at the top of this page:
-    http://sg.danny.cz/sg/index.html
-
-Doug Gilbert
-
-
-*** the reason for the split is the tree wide change to the access_ok()
-     function.
-
-
-On 2018-12-25 2:39 a.m., Douglas Gilbert wrote:
-> There is an update to the sg v4 driver with some error fixes, SIGIO and
-> RT signals work plus single READ, multiple WRITE sharing support. See:
->      http://sg.danny.cz/sg/sg_v40.html
+On Wed, Jan 16, 2019 at 10:54:25PM +0100, Thomas Gleixner wrote:
+> On Wed, 16 Jan 2019, Nathan Chancellor wrote:
 > 
-> with testing utilities in sg3_utils-1.45 (beta, revision 802) on the main
-> page:
->      http://sg.danny.cz/sg/index.html
+> > When building an allyesconfig build with Clang, the kernel fails to link
+> > arch/x86/platform/efi/efi_64.o because of a failed BUILD_BUG_ON:
+> > 
+> > ld: arch/x86/platform/efi/efi_64.o: in function `efi_sync_low_kernel_mappings':
+> > (.text+0x8e5): undefined reference to `__compiletime_assert_277'
+> > 
+> > Since there are several BUILD_BUG_ONs in efi_64.c, I isolated it down to
+> > the following:
+> > 
+> >     BUILD_BUG_ON(p4d_index(EFI_VA_END) != p4d_index(MODULES_END));
+> > 
+> > After some research, it turns out that there is a new config option
+> > called NO_AUTO_INLINE, which adds '-fno-inline-functions' to
+> > KBUILD_CFLAGS so that the compiler does not auto inline small functions,
+> > which causes this BUILD_BUG_ON to fail because p4d_index is no longer an
+> > integer constant expression.
 > 
-> Doug Gilbert
-> 
-> 
-> On 2018-12-18 6:41 p.m., Douglas Gilbert wrote:
->> After an underwhelming response to my intermediate level patchsets to
->> modernize the sg driver in October this year (see "[PATCH 0/8] sg: major
->> cleanup, remove max_queue limit" followed by v2 and v3 between 20181019
->> and 20181028), I decided to move ahead and add the functionality proposed
->> for the version 4 sg driver. That means accepting interface objects of
->> type 'struct sg_io_v4' (as found in include/uapi/linux/bsg) plus two new
->> ioctls: SG_IOSUBMIT and SG_IORECEIVE as proposed by Linus Torvalds to
->> replace the unloved write(2)/read(2) asynchronous interface ****. There
->> is a new feature called "sharing" explained in the web page (see below).
->>
->> Yes, there is a patchset available (14 part and growing) but even without
->> explanatory comments at the top of each patch, that patchset is 4 times
->> larger than the v4 sg driver (i.e. the finished product) and over 6
->> times larger than the original v3 sg driver! Part of the reason for
->> the patchset size is the multiple backtracks and rewrites associated
->> with a real development process. The cleanest patchset would have 3
->> parts:
->>    1) split the current include/scsi/sg.h into the end product headers:
->>       include/uapi/scsi/sg.h and include/scsi/sg.h
->>    2) delete drivers/scsi/sg.c
->>    3) add the v4 drivers/scsi/sg.c
->>
->> After part 2) you could build a kernel and I can guarantee that no-one
->> will be able to find any sg driver bugs but some users might get upset
->> (but not the Linux security folks).
->>
->> So there is a working v4 sg driver discussed here, with a download:
->>      http://sg.danny.cz/sg/sg_v40.html
->>
->> I will keep that page up to date while the driver is in this phase.
->> There is a sg3_utils beta of 1.45 (revision 799) package in the News
->> section at the top of the main page:
->>      http://sg.danny.cz/sg/index.html
->>
->> That sg3_utils beta package will use the v4 sg interface via sg devices
->> if the v4 driver is detected. There are also three test utilities in
->> the 'testing' directory designed to exercise the v4 extensions.
->>
->> The degree of backward compatibility with the v3 driver should be high
->> but there are limits to backward compatibility. As an example, it is
->> possible that there are user apps that depend on hitting the 16
->> outstanding command limit (per fd) in the v3 driver and go "wild"
->> when v4 removes that ceiling. If so, a "high_v3_compat" driver option
->> could be added to put that ceiling back.
->>
->> The only way to find out is for folks to try and if there is a failure,
->> contact me, or send mail to this list. Code reviews welcome as well.
->>
->> Doug Gilbert
->>
->>
->> **** I felt this was a better use of my time than trying to invent a new
->>       debug/trace mechanism for the whole SCSI subsystem. That is what
->>       _SCSI_ system maintainers are for, I'll stick to the sg driver (and
->>       scsi_debug). Add user space tools and there is more than enough work
->>       there ...
->>
+> There is no tree where this config option exists.
 > 
 
+Hmmm, appears that Linus rejected the pull that would have added
+this option, which sat in -next for a month and a half.
+
+https://lore.kernel.org/lkml/CAHk-=wiLt3rgeyM3BWAd5VJrKcnxxuHybwoQiDGMgyspo6oXDg@mail.gmail.com/
+
+It is no longer in -next or the kbuild tree so I guess it was scrapped.
+
+> > According to the help text of the config, functions explicitly marked
+> > inline should still be inlined. As it turns out, GCC and Clang both
+> > support '-fno-inline-functions' but Clang only inlines functions when
+> > they are marked with an always inline annotation[1].
+> > 
+> > Since it's expected that p4d_index should always be inlined so that its
+> > value can be evaluated at build time, mark it as __always_inline.
+> 
+> Sorry no, that's just papering over the problem.
+> 
+> The point is that NO_AUTO_INLINE is/was meant to prevent the compiler from
+> automatically inlining functions, which are NOT marked inline in any form
+> in order to expand the traceability.
+> 
+> With GCC this makes sense, because it still inlines functions which are
+> solely marked inline and even if it decides not to inline them it will
+> evaluate them if they expand to a build time constant expression.
+> 
+> Now Clang decided to give -fno-inline-functions a different meaning,
+> i.e. the same as GCC has for -fno-inline, which prevents inlining for
+> everything except functions which are marked __always_inline.
+> 
+> So just "fixing" the build wreckage by duct taping one single instance of
+> inline functions is really a bad idea. The resulting kernel will be
+> bloatware because all regular inlines and we have tons of them will turn
+> into function calls even if the function overhead is larger than the
+> resulting inline code. Not to talk about the performance impact.
+> 
+
+Far points. I don't disagree that this is a band aid patch but I was
+more concerned about the build error than the runtime impact since this
+was uncovered with an allyesconfig build, which we aren't booting
+anyways.
+
+> Anyway, as this option is found to be nowhere there is no point to apply
+> this patch.
+> 
+
+Indeed. If the config reappears, it should probably 'depends on CC_IS_GCC'.
+
+> Thanks,
+> 
+> 	tglx
+> 
+
+Thank you for the reply and review!
+Nathan
+> 
+> 
+> 
