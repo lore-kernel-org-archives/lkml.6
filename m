@@ -2,159 +2,1133 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFD8C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9F8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFF6B20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Zcelj58M"
+	by mail.kernel.org (Postfix) with ESMTP id 4708A20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547725320;
+	bh=PZWVT8gVKjJSc5NMTnJHZZKw0401vcpD2/IebTaND74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=yS7QIcIiz8Cfq8y1nAkLDsR7GST8cK67Rqx0H9ipfvC2kDnssYDc9XsrfYGJIeHk9
+	 N4LvgFMlV6bhT4QzFZJV2GXXeShULIxZpwzZD5ZWOZtdTBUAyNcZn2nVJPt2dkC+Wj
+	 w8TJ277z6S5wSanbqULkeczCTI4seFx1LRqE33qM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfAQLlw (ORCPT
+        id S1729293AbfAQLl6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:41:52 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35467 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbfAQLlt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:41:49 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t200so734410wmt.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 03:41:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hyEw4X9ww2YPwn9o5KstPSqmqW8bN2fKms4I9AI8yZw=;
-        b=Zcelj58MLCj4wOeZdWhNU/5p7yEXqvoms9YdaxxhqgX/N7PTIO+ZxnUmt3knhJlo6y
-         MyAm/td1P3KZlUBZe1MRLOUO/ve6q/uQm+fpRbT0pCHCtm44RRdSBfGVdfoCmhr6V+2l
-         XT/4D6AF/nm6JZlkanvJmcI+9YCMaUNZO1Nv6GCRw5lFjNNUYrJAM6A/sts2AWKyu+hj
-         +ykV+yIWS1JdJWOWVoipEY9ew+HgaylXJcNQ916otiGocvfnAGIHhJZpacfEWVRH84rN
-         Xd01yzj/jnsWF5nul00Y0tZkIYhp/dda4k2CLlTr0eFgsGOxpAC8VLvvSaLH1EKODlRz
-         K9Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hyEw4X9ww2YPwn9o5KstPSqmqW8bN2fKms4I9AI8yZw=;
-        b=GeZwPCvhN3aguxIN/yYhTaIHQPiV0oayPw6pthcmj0RiKE/Q/PSDAddTtU+KWGxqW4
-         7CRmnM6TLoK9o7FH8Hk1t4n1Rj0KFq3UTLzkHwPo0xxtNoVKVpzMBfGwWwXx3LmCiAnV
-         9V8RKH0mHDsZ09ToGyuh4mDYbFsMwDsptg2dNFlp6AtNaY7Rg19Gps0wLJiGgQJUuYkL
-         yIREOZbrXuaFRnck/igIoT2A9XTPp3LJnW8Nw2UtZgF5ZDNqsqWYz2WKAOQghURiWiao
-         bmYrCGV2g/Dj05CM85i26lpumjFvXaI2JxIWJme/1tKwquEBBe7Lk4TPVk8FWOUxUNDy
-         kQfA==
-X-Gm-Message-State: AJcUukcVctQo4HhCdsEMYcPGe/TEYZCDPOuzeIPaqoHPOeCnPioHGFiv
-        pqO6xTxvvmFL6LAv/ovcwmRsCA==
-X-Google-Smtp-Source: ALg8bN6YGJYZ+w+epKhovld+BvofSEJue6KHR7OS/q2Q++zRgl5kWmTZzDzivANk9XG3yd2p4GCUCg==
-X-Received: by 2002:a1c:8d12:: with SMTP id p18mr12270527wmd.31.1547725306212;
-        Thu, 17 Jan 2019 03:41:46 -0800 (PST)
-Received: from brauner.io ([154.119.33.254])
-        by smtp.gmail.com with ESMTPSA id 129sm65249118wmd.18.2019.01.17.03.41.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 03:41:45 -0800 (PST)
-Date:   Thu, 17 Jan 2019 12:41:38 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        arve@android.com, maco@android.com, joel@joelfernandes.org,
-        tkjos@google.com, shuah@kernel.org
-Subject: Re: [PATCH v2] selftests: add binderfs selftests
-Message-ID: <20190117114136.dzji6kds2ejpgq7l@brauner.io>
-References: <20190117102821.10950-1-christian@brauner.io>
- <20190117105549.GA28882@kroah.com>
+        Thu, 17 Jan 2019 06:41:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727724AbfAQLl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:41:57 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4246E20657;
+        Thu, 17 Jan 2019 11:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547725312;
+        bh=PZWVT8gVKjJSc5NMTnJHZZKw0401vcpD2/IebTaND74=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N/L49iu3qkteBfIIGwsXyD/mISNhfnscAiv1wtzem+SOlY9ulnMaiZl7k44QkS6zV
+         PHVFEpQSaPdblUWmWT4ODxKNzjVrTp5Dh0w2oP7QTUhAPX/n/x4AxHm5S6Qp0rSbWZ
+         yh4wZboNx5eEWfkTC9lg+uOKewTEPllXbDexe8bM=
+Date:   Thu, 17 Jan 2019 12:41:50 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Re: Linux 4.14.94
+Message-ID: <20190117114150.GB2109@kroah.com>
+References: <20190117114144.GA2109@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117105549.GA28882@kroah.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190117114144.GA2109@kroah.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 11:55:49AM +0100, Greg KH wrote:
-> On Thu, Jan 17, 2019 at 11:28:21AM +0100, Christian Brauner wrote:
-> > This adds the promised selftest for binderfs. It will verify the following
-> > things:
-> > - binderfs mounting works
-> > - binder device allocation works
-> > - performing a binder ioctl() request through a binderfs device works
-> > - binder device removal works
-> > - binder-control removal fails
-> > - binderfs unmounting works
-> > 
-> > The tests are performed both privileged and unprivileged. The latter
-> > verifies that binderfs behaves correctly in user namespaces.
-> > 
-> > Cc: Todd Kjos <tkjos@google.com>
-> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> Now I am just nit-picking:
-
-I would've been surprised if someone wouldn't have. :)
-
-> 
-> > +static void write_to_file(const char *filename, const void *buf, size_t count,
-> > +			  int allowed_errno)
-> > +{
-> > +	int fd, saved_errno;
-> > +	ssize_t ret;
-> > +
-> > +	fd = open(filename, O_WRONLY | O_CLOEXEC);
-> > +	if (fd < 0)
-> > +		ksft_exit_fail_msg("%s - Failed to open file %s\n",
-> > +				   strerror(errno), filename);
-> > +
-> > +	ret = write_nointr(fd, buf, count);
-> > +	if (ret < 0) {
-> > +		if (allowed_errno && (errno == allowed_errno)) {
-> > +			close(fd);
-> > +			return;
-> > +		}
-> > +
-> > +		goto on_error;
-> > +	}
-> > +
-> > +	if ((size_t)ret != count)
-> > +		goto on_error;
-> 
-> if ret < count, you are supposed to try again with the remaining data,
-> right?  A write() implementation can just take one byte at a time.
-> 
-> Yes, for your example here that isn't going to happen as the kernel
-> should be handling a larger buffer than that, but note that if you use
-> this code elsewhere, it's not really correct because:
-
-Yeah, I know you should retry but for the test I'm not really willing to
-keep track of where I was in the buffer and so on. If the test fails
-because of that I'd say to count it as failed and move on.
-
-> 
-> > +
-> > +	close(fd);
-> > +	return;
-> > +
-> > +on_error:
-> > +	saved_errno = errno;
-> 
-> If you do a short write, there is no error, so who knows what errno you
-> end up with here.
-> 
-> Anyway, just one other minor question that might be relevant:
-> 
-> > +	printf("Allocated new binder device with major %d, minor %d, and name %s\n",
-> > +	       device.major, device.minor, device.name);
-> 
-> Aren't tests supposed to print their output in some sort of normal
-> format?  I thought you were supposed to use ksft_print_msg() so that
-> tools can properly parse the output.
-
-I can switch the printf()s over to ksft_print_msg().
-
-Thanks!
-Christian
+diff --git a/Makefile b/Makefile
+index a521e4cbd66f..e9a138dd964a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 14
+-SUBLEVEL = 93
++SUBLEVEL = 94
+ EXTRAVERSION =
+ NAME = Petit Gorille
+ 
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 523308d030d2..72fac8646e9b 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -539,7 +539,20 @@ struct kvm_vcpu_arch {
+ 	struct kvm_mmu_memory_cache mmu_page_cache;
+ 	struct kvm_mmu_memory_cache mmu_page_header_cache;
+ 
++	/*
++	 * QEMU userspace and the guest each have their own FPU state.
++	 * In vcpu_run, we switch between the user and guest FPU contexts.
++	 * While running a VCPU, the VCPU thread will have the guest FPU
++	 * context.
++	 *
++	 * Note that while the PKRU state lives inside the fpu registers,
++	 * it is switched out separately at VMENTER and VMEXIT time. The
++	 * "guest_fpu" state here contains the guest FPU context, with the
++	 * host PRKU bits.
++	 */
++	struct fpu user_fpu;
+ 	struct fpu guest_fpu;
++
+ 	u64 xcr0;
+ 	u64 guest_supported_xcr0;
+ 	u32 guest_xstate_size;
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 98b24d668b08..004e60470a77 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -212,7 +212,7 @@ static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
+ static enum spectre_v2_user_mitigation spectre_v2_user __ro_after_init =
+ 	SPECTRE_V2_USER_NONE;
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+ bool retpoline_module_ok(bool has_retpoline)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index ac431fa778aa..130be2efafbe 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3020,7 +3020,6 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+ 	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+ 	pagefault_enable();
+ 	kvm_x86_ops->vcpu_put(vcpu);
+-	kvm_put_guest_fpu(vcpu);
+ 	vcpu->arch.last_host_tsc = rdtsc();
+ 	/*
+ 	 * If userspace has set any breakpoints or watchpoints, dr6 is restored
+@@ -5377,13 +5376,10 @@ static void emulator_halt(struct x86_emulate_ctxt *ctxt)
+ 
+ static void emulator_get_fpu(struct x86_emulate_ctxt *ctxt)
+ {
+-	preempt_disable();
+-	kvm_load_guest_fpu(emul_to_vcpu(ctxt));
+ }
+ 
+ static void emulator_put_fpu(struct x86_emulate_ctxt *ctxt)
+ {
+-	preempt_enable();
+ }
+ 
+ static int emulator_intercept(struct x86_emulate_ctxt *ctxt,
+@@ -7083,7 +7079,6 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+ 	preempt_disable();
+ 
+ 	kvm_x86_ops->prepare_guest_switch(vcpu);
+-	kvm_load_guest_fpu(vcpu);
+ 
+ 	/*
+ 	 * Disable IRQs before setting IN_GUEST_MODE.  Posted interrupt
+@@ -7428,12 +7423,14 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
+ 		}
+ 	}
+ 
++	kvm_load_guest_fpu(vcpu);
++
+ 	if (unlikely(vcpu->arch.complete_userspace_io)) {
+ 		int (*cui)(struct kvm_vcpu *) = vcpu->arch.complete_userspace_io;
+ 		vcpu->arch.complete_userspace_io = NULL;
+ 		r = cui(vcpu);
+ 		if (r <= 0)
+-			goto out;
++			goto out_fpu;
+ 	} else
+ 		WARN_ON(vcpu->arch.pio.count || vcpu->mmio_needed);
+ 
+@@ -7442,6 +7439,8 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
+ 	else
+ 		r = vcpu_run(vcpu);
+ 
++out_fpu:
++	kvm_put_guest_fpu(vcpu);
+ out:
+ 	kvm_put_guest_fpu(vcpu);
+ 	post_kvm_run_save(vcpu);
+@@ -7865,32 +7864,25 @@ static void fx_init(struct kvm_vcpu *vcpu)
+ 	vcpu->arch.cr0 |= X86_CR0_ET;
+ }
+ 
++/* Swap (qemu) user FPU context for the guest FPU context. */
+ void kvm_load_guest_fpu(struct kvm_vcpu *vcpu)
+ {
+-	if (vcpu->guest_fpu_loaded)
+-		return;
+-
+-	/*
+-	 * Restore all possible states in the guest,
+-	 * and assume host would use all available bits.
+-	 * Guest xcr0 would be loaded later.
+-	 */
+-	vcpu->guest_fpu_loaded = 1;
+-	__kernel_fpu_begin();
++	preempt_disable();
++	copy_fpregs_to_fpstate(&vcpu->arch.user_fpu);
+ 	/* PKRU is separately restored in kvm_x86_ops->run.  */
+ 	__copy_kernel_to_fpregs(&vcpu->arch.guest_fpu.state,
+ 				~XFEATURE_MASK_PKRU);
++	preempt_enable();
+ 	trace_kvm_fpu(1);
+ }
+ 
++/* When vcpu_run ends, restore user space FPU context. */
+ void kvm_put_guest_fpu(struct kvm_vcpu *vcpu)
+ {
+-	if (!vcpu->guest_fpu_loaded)
+-		return;
+-
+-	vcpu->guest_fpu_loaded = 0;
++	preempt_disable();
+ 	copy_fpregs_to_fpstate(&vcpu->arch.guest_fpu);
+-	__kernel_fpu_end();
++	copy_kernel_to_fpregs(&vcpu->arch.user_fpu.state);
++	preempt_enable();
+ 	++vcpu->stat.fpu_reload;
+ 	trace_kvm_fpu(0);
+ }
+diff --git a/drivers/acpi/pmic/intel_pmic_xpower.c b/drivers/acpi/pmic/intel_pmic_xpower.c
+index 6c99d3f81095..8735ac99566f 100644
+--- a/drivers/acpi/pmic/intel_pmic_xpower.c
++++ b/drivers/acpi/pmic/intel_pmic_xpower.c
+@@ -27,8 +27,11 @@
+ #define GPI1_LDO_ON		(3 << 0)
+ #define GPI1_LDO_OFF		(4 << 0)
+ 
+-#define AXP288_ADC_TS_PIN_GPADC	0xf2
+-#define AXP288_ADC_TS_PIN_ON	0xf3
++#define AXP288_ADC_TS_CURRENT_ON_OFF_MASK		GENMASK(1, 0)
++#define AXP288_ADC_TS_CURRENT_OFF			(0 << 0)
++#define AXP288_ADC_TS_CURRENT_ON_WHEN_CHARGING		(1 << 0)
++#define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
++#define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
+ 
+ static struct pmic_table power_table[] = {
+ 	{
+@@ -211,22 +214,44 @@ static int intel_xpower_pmic_update_power(struct regmap *regmap, int reg,
+  */
+ static int intel_xpower_pmic_get_raw_temp(struct regmap *regmap, int reg)
+ {
++	int ret, adc_ts_pin_ctrl;
+ 	u8 buf[2];
+-	int ret;
+ 
+-	ret = regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL,
+-			   AXP288_ADC_TS_PIN_GPADC);
++	/*
++	 * The current-source used for the battery temp-sensor (TS) is shared
++	 * with the GPADC. For proper fuel-gauge and charger operation the TS
++	 * current-source needs to be permanently on. But to read the GPADC we
++	 * need to temporary switch the TS current-source to ondemand, so that
++	 * the GPADC can use it, otherwise we will always read an all 0 value.
++	 *
++	 * Note that the switching from on to on-ondemand is not necessary
++	 * when the TS current-source is off (this happens on devices which
++	 * do not use the TS-pin).
++	 */
++	ret = regmap_read(regmap, AXP288_ADC_TS_PIN_CTRL, &adc_ts_pin_ctrl);
+ 	if (ret)
+ 		return ret;
+ 
+-	/* After switching to the GPADC pin give things some time to settle */
+-	usleep_range(6000, 10000);
++	if (adc_ts_pin_ctrl & AXP288_ADC_TS_CURRENT_ON_OFF_MASK) {
++		ret = regmap_update_bits(regmap, AXP288_ADC_TS_PIN_CTRL,
++					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
++					 AXP288_ADC_TS_CURRENT_ON_ONDEMAND);
++		if (ret)
++			return ret;
++
++		/* Wait a bit after switching the current-source */
++		usleep_range(6000, 10000);
++	}
+ 
+ 	ret = regmap_bulk_read(regmap, AXP288_GP_ADC_H, buf, 2);
+ 	if (ret == 0)
+ 		ret = (buf[0] << 4) + ((buf[1] >> 4) & 0x0f);
+ 
+-	regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, AXP288_ADC_TS_PIN_ON);
++	if (adc_ts_pin_ctrl & AXP288_ADC_TS_CURRENT_ON_OFF_MASK) {
++		regmap_update_bits(regmap, AXP288_ADC_TS_PIN_CTRL,
++				   AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
++				   AXP288_ADC_TS_CURRENT_ON);
++	}
+ 
+ 	return ret;
+ }
+diff --git a/drivers/acpi/power.c b/drivers/acpi/power.c
+index 1b475bc1ae16..665e93ca0b40 100644
+--- a/drivers/acpi/power.c
++++ b/drivers/acpi/power.c
+@@ -131,6 +131,23 @@ void acpi_power_resources_list_free(struct list_head *list)
+ 	}
+ }
+ 
++static bool acpi_power_resource_is_dup(union acpi_object *package,
++				       unsigned int start, unsigned int i)
++{
++	acpi_handle rhandle, dup;
++	unsigned int j;
++
++	/* The caller is expected to check the package element types */
++	rhandle = package->package.elements[i].reference.handle;
++	for (j = start; j < i; j++) {
++		dup = package->package.elements[j].reference.handle;
++		if (dup == rhandle)
++			return true;
++	}
++
++	return false;
++}
++
+ int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
+ 				 struct list_head *list)
+ {
+@@ -150,6 +167,11 @@ int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
+ 			err = -ENODEV;
+ 			break;
+ 		}
++
++		/* Some ACPI tables contain duplicate power resource references */
++		if (acpi_power_resource_is_dup(package, start, i))
++			continue;
++
+ 		err = acpi_add_power_resource(rhandle);
+ 		if (err)
+ 			break;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 9057dad2a64c..f2b1994d58a0 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -6308,7 +6308,6 @@ static ssize_t do_rbd_remove(struct bus_type *bus,
+ 	struct list_head *tmp;
+ 	int dev_id;
+ 	char opt_buf[6];
+-	bool already = false;
+ 	bool force = false;
+ 	int ret;
+ 
+@@ -6341,13 +6340,13 @@ static ssize_t do_rbd_remove(struct bus_type *bus,
+ 		spin_lock_irq(&rbd_dev->lock);
+ 		if (rbd_dev->open_count && !force)
+ 			ret = -EBUSY;
+-		else
+-			already = test_and_set_bit(RBD_DEV_FLAG_REMOVING,
+-							&rbd_dev->flags);
++		else if (test_and_set_bit(RBD_DEV_FLAG_REMOVING,
++					  &rbd_dev->flags))
++			ret = -EINPROGRESS;
+ 		spin_unlock_irq(&rbd_dev->lock);
+ 	}
+ 	spin_unlock(&rbd_dev_list_lock);
+-	if (ret < 0 || already)
++	if (ret)
+ 		return ret;
+ 
+ 	if (force) {
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 29d1d3df3164..ad6812baa611 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1509,6 +1509,64 @@ static bool drm_fb_pixel_format_equal(const struct fb_var_screeninfo *var_1,
+ 	       var_1->transp.msb_right == var_2->transp.msb_right;
+ }
+ 
++static void drm_fb_helper_fill_pixel_fmt(struct fb_var_screeninfo *var,
++					 u8 depth)
++{
++	switch (depth) {
++	case 8:
++		var->red.offset = 0;
++		var->green.offset = 0;
++		var->blue.offset = 0;
++		var->red.length = 8; /* 8bit DAC */
++		var->green.length = 8;
++		var->blue.length = 8;
++		var->transp.offset = 0;
++		var->transp.length = 0;
++		break;
++	case 15:
++		var->red.offset = 10;
++		var->green.offset = 5;
++		var->blue.offset = 0;
++		var->red.length = 5;
++		var->green.length = 5;
++		var->blue.length = 5;
++		var->transp.offset = 15;
++		var->transp.length = 1;
++		break;
++	case 16:
++		var->red.offset = 11;
++		var->green.offset = 5;
++		var->blue.offset = 0;
++		var->red.length = 5;
++		var->green.length = 6;
++		var->blue.length = 5;
++		var->transp.offset = 0;
++		break;
++	case 24:
++		var->red.offset = 16;
++		var->green.offset = 8;
++		var->blue.offset = 0;
++		var->red.length = 8;
++		var->green.length = 8;
++		var->blue.length = 8;
++		var->transp.offset = 0;
++		var->transp.length = 0;
++		break;
++	case 32:
++		var->red.offset = 16;
++		var->green.offset = 8;
++		var->blue.offset = 0;
++		var->red.length = 8;
++		var->green.length = 8;
++		var->blue.length = 8;
++		var->transp.offset = 24;
++		var->transp.length = 8;
++		break;
++	default:
++		break;
++	}
++}
++
+ /**
+  * drm_fb_helper_check_var - implementation for &fb_ops.fb_check_var
+  * @var: screeninfo to check
+@@ -1538,6 +1596,20 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * Workaround for SDL 1.2, which is known to be setting all pixel format
++	 * fields values to zero in some cases. We treat this situation as a
++	 * kind of "use some reasonable autodetected values".
++	 */
++	if (!var->red.offset     && !var->green.offset    &&
++	    !var->blue.offset    && !var->transp.offset   &&
++	    !var->red.length     && !var->green.length    &&
++	    !var->blue.length    && !var->transp.length   &&
++	    !var->red.msb_right  && !var->green.msb_right &&
++	    !var->blue.msb_right && !var->transp.msb_right) {
++		drm_fb_helper_fill_pixel_fmt(var, fb->format->depth);
++	}
++
+ 	/*
+ 	 * drm fbdev emulation doesn't support changing the pixel format at all,
+ 	 * so reject all pixel format changing requests.
+@@ -1848,59 +1920,7 @@ void drm_fb_helper_fill_var(struct fb_info *info, struct drm_fb_helper *fb_helpe
+ 	info->var.yoffset = 0;
+ 	info->var.activate = FB_ACTIVATE_NOW;
+ 
+-	switch (fb->format->depth) {
+-	case 8:
+-		info->var.red.offset = 0;
+-		info->var.green.offset = 0;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 8; /* 8bit DAC */
+-		info->var.green.length = 8;
+-		info->var.blue.length = 8;
+-		info->var.transp.offset = 0;
+-		info->var.transp.length = 0;
+-		break;
+-	case 15:
+-		info->var.red.offset = 10;
+-		info->var.green.offset = 5;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 5;
+-		info->var.green.length = 5;
+-		info->var.blue.length = 5;
+-		info->var.transp.offset = 15;
+-		info->var.transp.length = 1;
+-		break;
+-	case 16:
+-		info->var.red.offset = 11;
+-		info->var.green.offset = 5;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 5;
+-		info->var.green.length = 6;
+-		info->var.blue.length = 5;
+-		info->var.transp.offset = 0;
+-		break;
+-	case 24:
+-		info->var.red.offset = 16;
+-		info->var.green.offset = 8;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 8;
+-		info->var.green.length = 8;
+-		info->var.blue.length = 8;
+-		info->var.transp.offset = 0;
+-		info->var.transp.length = 0;
+-		break;
+-	case 32:
+-		info->var.red.offset = 16;
+-		info->var.green.offset = 8;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 8;
+-		info->var.green.length = 8;
+-		info->var.blue.length = 8;
+-		info->var.transp.offset = 24;
+-		info->var.transp.length = 8;
+-		break;
+-	default:
+-		break;
+-	}
++	drm_fb_helper_fill_pixel_fmt(&info->var, fb->format->depth);
+ 
+ 	info->var.xres = fb_width;
+ 	info->var.yres = fb_height;
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index 6f638bbc922d..00e8e675cbeb 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -461,9 +461,15 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		return i2cdev_ioctl_smbus(client, arg);
+ 
+ 	case I2C_RETRIES:
++		if (arg > INT_MAX)
++			return -EINVAL;
++
+ 		client->adapter->retries = arg;
+ 		break;
+ 	case I2C_TIMEOUT:
++		if (arg > INT_MAX)
++			return -EINVAL;
++
+ 		/* For historical reasons, user-space sets the timeout
+ 		 * value in units of 10 ms.
+ 		 */
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index 423a339e53bc..8ab0195f8d32 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1893,6 +1893,13 @@ static const struct usb_device_id acm_ids[] = {
+ 	.driver_info = IGNORE_DEVICE,
+ 	},
+ 
++	{ USB_DEVICE(0x1bc7, 0x0021), /* Telit 3G ACM only composition */
++	.driver_info = SEND_ZERO_PACKET,
++	},
++	{ USB_DEVICE(0x1bc7, 0x0023), /* Telit 3G ACM + ECM composition */
++	.driver_info = SEND_ZERO_PACKET,
++	},
++
+ 	/* control interfaces without any protocol set */
+ 	{ USB_INTERFACE_INFO(USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM,
+ 		USB_CDC_PROTO_NONE) },
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index cf378b1ed373..733479ddf8a7 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -240,7 +240,8 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+ 
+ 	/* Corsair K70 RGB */
+-	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
++	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT |
++	  USB_QUIRK_DELAY_CTRL_MSG },
+ 
+ 	/* Corsair Strafe */
+ 	{ USB_DEVICE(0x1b1c, 0x1b15), .driver_info = USB_QUIRK_DELAY_INIT |
+diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
+index 344ec8631481..13f2c051dbf2 100644
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@ -251,8 +251,12 @@ static int slave_configure(struct scsi_device *sdev)
+ 		if (!(us->fflags & US_FL_NEEDS_CAP16))
+ 			sdev->try_rc_10_first = 1;
+ 
+-		/* assume SPC3 or latter devices support sense size > 18 */
+-		if (sdev->scsi_level > SCSI_SPC_2)
++		/*
++		 * assume SPC3 or latter devices support sense size > 18
++		 * unless US_FL_BAD_SENSE quirk is specified.
++		 */
++		if (sdev->scsi_level > SCSI_SPC_2 &&
++		    !(us->fflags & US_FL_BAD_SENSE))
+ 			us->fflags |= US_FL_SANE_SENSE;
+ 
+ 		/*
+diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
+index 5e9b35a91431..0fa88daed149 100644
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1284,6 +1284,18 @@ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xffff,
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_FIX_CAPACITY ),
+ 
++/*
++ * Reported by Icenowy Zheng <icenowy@aosc.io>
++ * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
++ * that do not process read/write command if a long sense is requested,
++ * so force to use 18-byte sense.
++ */
++UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
++		"SMI",
++		"SM3350 UFS-to-USB-Mass-Storage bridge",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BAD_SENSE ),
++
+ /*
+  * Reported by Paul Hartman <paul.hartman+linux@gmail.com>
+  * This card reader returns "Illegal Request, Logical Block Address
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 7d6539a04fac..1e176e11dbfa 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1120,10 +1120,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf) {
++	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE))) {
+ 		free_xid(xid);
+ 		return -EINVAL;
+ 	}
+@@ -1460,10 +1460,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf)
++	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
+ 		return -EINVAL;
+ 
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
+index b4b1f0305f29..79078533f807 100644
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -124,10 +124,10 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf)
++	if (max_buf < sizeof(struct smb2_lock_element))
+ 		return -EINVAL;
+ 
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 1581e8668b09..c0f8087d9819 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2632,12 +2632,14 @@ smb2_async_readv(struct cifs_readdata *rdata)
+ 	if (rdata->credits) {
+ 		shdr->CreditCharge = cpu_to_le16(DIV_ROUND_UP(rdata->bytes,
+ 						SMB2_MAX_BUFFER_SIZE));
+-		shdr->CreditRequest = shdr->CreditCharge;
++		shdr->CreditRequest =
++			cpu_to_le16(le16_to_cpu(shdr->CreditCharge) + 1);
+ 		spin_lock(&server->req_lock);
+ 		server->credits += rdata->credits -
+ 						le16_to_cpu(shdr->CreditCharge);
+ 		spin_unlock(&server->req_lock);
+ 		wake_up(&server->request_q);
++		rdata->credits = le16_to_cpu(shdr->CreditCharge);
+ 		flags |= CIFS_HAS_CREDITS;
+ 	}
+ 
+@@ -2842,12 +2844,14 @@ smb2_async_writev(struct cifs_writedata *wdata,
+ 	if (wdata->credits) {
+ 		shdr->CreditCharge = cpu_to_le16(DIV_ROUND_UP(wdata->bytes,
+ 						    SMB2_MAX_BUFFER_SIZE));
+-		shdr->CreditRequest = shdr->CreditCharge;
++		shdr->CreditRequest =
++			cpu_to_le16(le16_to_cpu(shdr->CreditCharge) + 1);
+ 		spin_lock(&server->req_lock);
+ 		server->credits += wdata->credits -
+ 						le16_to_cpu(shdr->CreditCharge);
+ 		spin_unlock(&server->req_lock);
+ 		wake_up(&server->request_q);
++		wdata->credits = le16_to_cpu(shdr->CreditCharge);
+ 		flags |= CIFS_HAS_CREDITS;
+ 	}
+ 
+diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
+index a10f51dfa7f5..ffc8757e5a3c 100644
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -318,7 +318,7 @@ __smb_send_rqst(struct TCP_Server_Info *server, struct smb_rqst *rqst)
+ 	if (rc < 0 && rc != -EINTR)
+ 		cifs_dbg(VFS, "Error %d sending data on socket to server\n",
+ 			 rc);
+-	else
++	else if (rc > 0)
+ 		rc = 0;
+ 
+ 	return rc;
+diff --git a/fs/ext4/fsync.c b/fs/ext4/fsync.c
+index 26a7fe5c4fd3..712f00995390 100644
+--- a/fs/ext4/fsync.c
++++ b/fs/ext4/fsync.c
+@@ -116,8 +116,16 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 		goto out;
+ 	}
+ 
++	ret = file_write_and_wait_range(file, start, end);
++	if (ret)
++		return ret;
++
+ 	if (!journal) {
+-		ret = __generic_file_fsync(file, start, end, datasync);
++		struct writeback_control wbc = {
++			.sync_mode = WB_SYNC_ALL
++		};
++
++		ret = ext4_write_inode(inode, &wbc);
+ 		if (!ret)
+ 			ret = ext4_sync_parent(inode);
+ 		if (test_opt(inode->i_sb, BARRIER))
+@@ -125,9 +133,6 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 		goto out;
+ 	}
+ 
+-	ret = file_write_and_wait_range(file, start, end);
+-	if (ret)
+-		return ret;
+ 	/*
+ 	 * data=writeback,ordered:
+ 	 *  The caller's filemap_fdatawrite()/wait will sync the data.
+@@ -159,6 +164,9 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 			ret = err;
+ 	}
+ out:
++	err = file_check_and_advance_wb_err(file);
++	if (ret == 0)
++		ret = err;
+ 	trace_ext4_sync_file_exit(inode, ret);
+ 	return ret;
+ }
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 40a2d1a428c2..137c752ab985 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1864,12 +1864,12 @@ int ext4_inline_data_fiemap(struct inode *inode,
+ 	physical += (char *)ext4_raw_inode(&iloc) - iloc.bh->b_data;
+ 	physical += offsetof(struct ext4_inode, i_block);
+ 
+-	if (physical)
+-		error = fiemap_fill_next_extent(fieinfo, start, physical,
+-						inline_len, flags);
+ 	brelse(iloc.bh);
+ out:
+ 	up_read(&EXT4_I(inode)->xattr_sem);
++	if (physical)
++		error = fiemap_fill_next_extent(fieinfo, start, physical,
++						inline_len, flags);
+ 	return (error < 0 ? error : 0);
+ }
+ 
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 22c9bb8c671f..5eb28dcaa0f0 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2776,7 +2776,8 @@ static int ext4_writepages(struct address_space *mapping,
+ 		 * We may need to convert up to one extent per block in
+ 		 * the page and we may dirty the inode.
+ 		 */
+-		rsv_blocks = 1 + (PAGE_SIZE >> inode->i_blkbits);
++		rsv_blocks = 1 + ext4_chunk_trans_blocks(inode,
++						PAGE_SIZE >> inode->i_blkbits);
+ 	}
+ 
+ 	/*
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 77300b8ca211..d0049064f62f 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4844,7 +4844,7 @@ static int ext4_commit_super(struct super_block *sb, int sync)
+ 	ext4_superblock_csum_set(sb);
+ 	if (sync)
+ 		lock_buffer(sbh);
+-	if (buffer_write_io_error(sbh)) {
++	if (buffer_write_io_error(sbh) || !buffer_uptodate(sbh)) {
+ 		/*
+ 		 * Oh, dear.  A previous attempt to write the
+ 		 * superblock failed.  This could happen because the
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index c11032b06d68..00b06d7efb83 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -108,7 +108,7 @@
+ #define __weak		__attribute__((weak))
+ #define __alias(symbol)	__attribute__((alias(#symbol)))
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ #define __noretpoline __attribute__((indirect_branch("keep")))
+ #endif
+ 
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index b81d458ad4fb..b6962ae6237e 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -232,7 +232,7 @@ struct kvm_vcpu {
+ 	struct mutex mutex;
+ 	struct kvm_run *run;
+ 
+-	int guest_fpu_loaded, guest_xcr0_loaded;
++	int guest_xcr0_loaded;
+ 	struct swait_queue_head wq;
+ 	struct pid __rcu *pid;
+ 	int sigset_active;
+diff --git a/include/linux/module.h b/include/linux/module.h
+index b1cc541f2ddf..a9d546c5b9aa 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -794,7 +794,7 @@ static inline void module_bug_finalize(const Elf_Ehdr *hdr,
+ static inline void module_bug_cleanup(struct module *mod) {}
+ #endif	/* CONFIG_GENERIC_BUG */
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ extern bool retpoline_module_ok(bool has_retpoline);
+ #else
+ static inline bool retpoline_module_ok(bool has_retpoline)
+diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
+index 3b9f0d1dbb80..e1aa80c4d6db 100644
+--- a/include/linux/sunrpc/svc.h
++++ b/include/linux/sunrpc/svc.h
+@@ -292,9 +292,12 @@ struct svc_rqst {
+ 	struct svc_cacherep *	rq_cacherep;	/* cache info */
+ 	struct task_struct	*rq_task;	/* service thread */
+ 	spinlock_t		rq_lock;	/* per-request lock */
++	struct net		*rq_bc_net;	/* pointer to backchannel's
++						 * net namespace
++						 */
+ };
+ 
+-#define SVC_NET(svc_rqst)	(svc_rqst->rq_xprt->xpt_net)
++#define SVC_NET(rqst) (rqst->rq_xprt ? rqst->rq_xprt->xpt_net : rqst->rq_bc_net)
+ 
+ /*
+  * Rigorous type checking on sockaddr type conversions
+diff --git a/mm/memory.c b/mm/memory.c
+index b6cfe0cf0ead..fb9f7737c1ff 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3191,6 +3191,29 @@ static int __do_fault(struct vm_fault *vmf)
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	int ret;
+ 
++	/*
++	 * Preallocate pte before we take page_lock because this might lead to
++	 * deadlocks for memcg reclaim which waits for pages under writeback:
++	 *				lock_page(A)
++	 *				SetPageWriteback(A)
++	 *				unlock_page(A)
++	 * lock_page(B)
++	 *				lock_page(B)
++	 * pte_alloc_pne
++	 *   shrink_page_list
++	 *     wait_on_page_writeback(A)
++	 *				SetPageWriteback(B)
++	 *				unlock_page(B)
++	 *				# flush A, B to clear the writeback
++	 */
++	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
++		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm,
++						  vmf->address);
++		if (!vmf->prealloc_pte)
++			return VM_FAULT_OOM;
++		smp_wmb(); /* See comment in __pte_alloc() */
++	}
++
+ 	ret = vma->vm_ops->fault(vmf);
+ 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY |
+ 			    VM_FAULT_DONE_COW)))
+diff --git a/mm/slab.c b/mm/slab.c
+index 68ab88e2920e..09df506ae830 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -679,8 +679,10 @@ static struct alien_cache *__alloc_alien_cache(int node, int entries,
+ 	struct alien_cache *alc = NULL;
+ 
+ 	alc = kmalloc_node(memsize, gfp, node);
+-	init_arraycache(&alc->ac, entries, batch);
+-	spin_lock_init(&alc->lock);
++	if (alc) {
++		init_arraycache(&alc->ac, entries, batch);
++		spin_lock_init(&alc->lock);
++	}
+ 	return alc;
+ }
+ 
+diff --git a/mm/util.c b/mm/util.c
+index 547e04b5cfff..842ba5fb662e 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -449,7 +449,7 @@ bool page_mapped(struct page *page)
+ 		return true;
+ 	if (PageHuge(page))
+ 		return false;
+-	for (i = 0; i < hpage_nr_pages(page); i++) {
++	for (i = 0; i < (1 << compound_order(page)); i++) {
+ 		if (atomic_read(&page[i]._mapcount) >= 0)
+ 			return true;
+ 	}
+diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
+index aa04666f929d..3a9a03717212 100644
+--- a/net/sunrpc/svc.c
++++ b/net/sunrpc/svc.c
+@@ -1144,6 +1144,8 @@ void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...)
+ static __printf(2,3) void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...) {}
+ #endif
+ 
++extern void svc_tcp_prep_reply_hdr(struct svc_rqst *);
++
+ /*
+  * Common routine for processing the RPC request.
+  */
+@@ -1172,7 +1174,8 @@ svc_process_common(struct svc_rqst *rqstp, struct kvec *argv, struct kvec *resv)
+ 	clear_bit(RQ_DROPME, &rqstp->rq_flags);
+ 
+ 	/* Setup reply header */
+-	rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp);
++	if (rqstp->rq_prot == IPPROTO_TCP)
++		svc_tcp_prep_reply_hdr(rqstp);
+ 
+ 	svc_putu32(resv, rqstp->rq_xid);
+ 
+@@ -1244,7 +1247,7 @@ svc_process_common(struct svc_rqst *rqstp, struct kvec *argv, struct kvec *resv)
+ 	 * for lower versions. RPC_PROG_MISMATCH seems to be the closest
+ 	 * fit.
+ 	 */
+-	if (versp->vs_need_cong_ctrl &&
++	if (versp->vs_need_cong_ctrl && rqstp->rq_xprt &&
+ 	    !test_bit(XPT_CONG_CTRL, &rqstp->rq_xprt->xpt_flags))
+ 		goto err_bad_vers;
+ 
+@@ -1335,7 +1338,7 @@ svc_process_common(struct svc_rqst *rqstp, struct kvec *argv, struct kvec *resv)
+ 	return 0;
+ 
+  close:
+-	if (test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
++	if (rqstp->rq_xprt && test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
+ 		svc_close_xprt(rqstp->rq_xprt);
+ 	dprintk("svc: svc_process close\n");
+ 	return 0;
+@@ -1462,10 +1465,10 @@ bc_svc_process(struct svc_serv *serv, struct rpc_rqst *req,
+ 	dprintk("svc: %s(%p)\n", __func__, req);
+ 
+ 	/* Build the svc_rqst used by the common processing routine */
+-	rqstp->rq_xprt = serv->sv_bc_xprt;
+ 	rqstp->rq_xid = req->rq_xid;
+ 	rqstp->rq_prot = req->rq_xprt->prot;
+ 	rqstp->rq_server = serv;
++	rqstp->rq_bc_net = req->rq_xprt->xprt_net;
+ 
+ 	rqstp->rq_addrlen = sizeof(req->rq_xprt->addr);
+ 	memcpy(&rqstp->rq_addr, &req->rq_xprt->addr, rqstp->rq_addrlen);
+diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+index ea7b5a3a53f0..7e5f849b44cd 100644
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -510,10 +510,11 @@ static struct svc_xprt *svc_xprt_dequeue(struct svc_pool *pool)
+  */
+ void svc_reserve(struct svc_rqst *rqstp, int space)
+ {
++	struct svc_xprt *xprt = rqstp->rq_xprt;
++
+ 	space += rqstp->rq_res.head[0].iov_len;
+ 
+-	if (space < rqstp->rq_reserved) {
+-		struct svc_xprt *xprt = rqstp->rq_xprt;
++	if (xprt && space < rqstp->rq_reserved) {
+ 		atomic_sub((rqstp->rq_reserved - space), &xprt->xpt_reserved);
+ 		rqstp->rq_reserved = space;
+ 
+diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+index c83df30e9655..d6771f3b715b 100644
+--- a/net/sunrpc/svcsock.c
++++ b/net/sunrpc/svcsock.c
+@@ -1207,7 +1207,7 @@ static int svc_tcp_sendto(struct svc_rqst *rqstp)
+ /*
+  * Setup response header. TCP has a 4B record length field.
+  */
+-static void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
++void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
+ {
+ 	struct kvec *resv = &rqstp->rq_res.head[0];
+ 
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 957f6041dd79..18bc8738e989 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -2168,7 +2168,7 @@ static void add_intree_flag(struct buffer *b, int is_intree)
+ /* Cannot check for assembler */
+ static void add_retpoline(struct buffer *b)
+ {
+-	buf_printf(b, "\n#ifdef RETPOLINE\n");
++	buf_printf(b, "\n#ifdef CONFIG_RETPOLINE\n");
+ 	buf_printf(b, "MODULE_INFO(retpoline, \"Y\");\n");
+ 	buf_printf(b, "#endif\n");
+ }
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 31c91e0a815e..1191d8925c44 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4005,6 +4005,7 @@ static void alc_headset_mode_unplugged(struct hda_codec *codec)
+ 	case 0x10ec0225:
+ 	case 0x10ec0295:
+ 	case 0x10ec0299:
++		alc_process_coef_fw(codec, alc225_pre_hsmode);
+ 		alc_process_coef_fw(codec, coef0225);
+ 		break;
+ 	case 0x10ec0867:
+@@ -5252,6 +5253,13 @@ static void alc274_fixup_bind_dacs(struct hda_codec *codec,
+ 	spec->gen.preferred_dacs = preferred_pairs;
+ }
+ 
++static void alc_fixup_disable_mic_vref(struct hda_codec *codec,
++				  const struct hda_fixup *fix, int action)
++{
++	if (action == HDA_FIXUP_ACT_PRE_PROBE)
++		snd_hda_codec_set_pin_target(codec, 0x19, PIN_VREFHIZ);
++}
++
+ /* for hda_fixup_thinkpad_acpi() */
+ #include "thinkpad_helper.c"
+ 
+@@ -5361,6 +5369,7 @@ enum {
+ 	ALC293_FIXUP_LENOVO_SPK_NOISE,
+ 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
+ 	ALC255_FIXUP_DELL_SPK_NOISE,
++	ALC225_FIXUP_DISABLE_MIC_VREF,
+ 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 	ALC295_FIXUP_DISABLE_DAC3,
+ 	ALC280_FIXUP_HP_HEADSET_MIC,
+@@ -6062,6 +6071,12 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC255_FIXUP_DELL1_MIC_NO_PRESENCE
+ 	},
++	[ALC225_FIXUP_DISABLE_MIC_VREF] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc_fixup_disable_mic_vref,
++		.chained = true,
++		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
++	},
+ 	[ALC225_FIXUP_DELL1_MIC_NO_PRESENCE] = {
+ 		.type = HDA_FIXUP_VERBS,
+ 		.v.verbs = (const struct hda_verb[]) {
+@@ -6071,7 +6086,7 @@ static const struct hda_fixup alc269_fixups[] = {
+ 			{}
+ 		},
+ 		.chained = true,
+-		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
++		.chain_id = ALC225_FIXUP_DISABLE_MIC_VREF
+ 	},
+ 	[ALC280_FIXUP_HP_HEADSET_MIC] = {
+ 		.type = HDA_FIXUP_FUNC,
+@@ -6311,6 +6326,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x0871, "Dell Precision 3630", ALC255_FIXUP_DELL_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1028, 0x0872, "Dell Precision 3630", ALC255_FIXUP_DELL_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1028, 0x0873, "Dell Precision 3930", ALC255_FIXUP_DUMMY_LINEOUT_VERB),
++	SND_PCI_QUIRK(0x1028, 0x0935, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
+ 	SND_PCI_QUIRK(0x1028, 0x164a, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x164b, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x1586, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC2),
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index ed42b8cf6f5b..32aa88c19b8d 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -61,7 +61,7 @@ static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_arm_running_vcpu);
+ static atomic64_t kvm_vmid_gen = ATOMIC64_INIT(1);
+ static u32 kvm_next_vmid;
+ static unsigned int kvm_vmid_bits __read_mostly;
+-static DEFINE_RWLOCK(kvm_vmid_lock);
++static DEFINE_SPINLOCK(kvm_vmid_lock);
+ 
+ static bool vgic_present;
+ 
+@@ -447,7 +447,9 @@ void force_vm_exit(const cpumask_t *mask)
+  */
+ static bool need_new_vmid_gen(struct kvm *kvm)
+ {
+-	return unlikely(kvm->arch.vmid_gen != atomic64_read(&kvm_vmid_gen));
++	u64 current_vmid_gen = atomic64_read(&kvm_vmid_gen);
++	smp_rmb(); /* Orders read of kvm_vmid_gen and kvm->arch.vmid */
++	return unlikely(READ_ONCE(kvm->arch.vmid_gen) != current_vmid_gen);
+ }
+ 
+ /**
+@@ -462,16 +464,11 @@ static void update_vttbr(struct kvm *kvm)
+ {
+ 	phys_addr_t pgd_phys;
+ 	u64 vmid;
+-	bool new_gen;
+ 
+-	read_lock(&kvm_vmid_lock);
+-	new_gen = need_new_vmid_gen(kvm);
+-	read_unlock(&kvm_vmid_lock);
+-
+-	if (!new_gen)
++	if (!need_new_vmid_gen(kvm))
+ 		return;
+ 
+-	write_lock(&kvm_vmid_lock);
++	spin_lock(&kvm_vmid_lock);
+ 
+ 	/*
+ 	 * We need to re-check the vmid_gen here to ensure that if another vcpu
+@@ -479,7 +476,7 @@ static void update_vttbr(struct kvm *kvm)
+ 	 * use the same vmid.
+ 	 */
+ 	if (!need_new_vmid_gen(kvm)) {
+-		write_unlock(&kvm_vmid_lock);
++		spin_unlock(&kvm_vmid_lock);
+ 		return;
+ 	}
+ 
+@@ -502,7 +499,6 @@ static void update_vttbr(struct kvm *kvm)
+ 		kvm_call_hyp(__kvm_flush_vm_context);
+ 	}
+ 
+-	kvm->arch.vmid_gen = atomic64_read(&kvm_vmid_gen);
+ 	kvm->arch.vmid = kvm_next_vmid;
+ 	kvm_next_vmid++;
+ 	kvm_next_vmid &= (1 << kvm_vmid_bits) - 1;
+@@ -513,7 +509,10 @@ static void update_vttbr(struct kvm *kvm)
+ 	vmid = ((u64)(kvm->arch.vmid) << VTTBR_VMID_SHIFT) & VTTBR_VMID_MASK(kvm_vmid_bits);
+ 	kvm->arch.vttbr = pgd_phys | vmid;
+ 
+-	write_unlock(&kvm_vmid_lock);
++	smp_wmb();
++	WRITE_ONCE(kvm->arch.vmid_gen, atomic64_read(&kvm_vmid_gen));
++
++	spin_unlock(&kvm_vmid_lock);
+ }
+ 
+ static int kvm_vcpu_first_run_init(struct kvm_vcpu *vcpu)
