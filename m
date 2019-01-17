@@ -2,125 +2,106 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFBEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40360C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB7920851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:09:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547737788;
-	bh=1wwhNqpbIoelxAXUIdnvkR4vL8CxPrr+WqeT/Ep4+OY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=kma8/HNe8oOph0qLcr4HdIJbj8KC8zRCBXCe95IYWosnBy+EjgAgnQdnPigzjIaoo
-	 BzzuyoZUys+XcbErcbUJ+FUEVEw+fyWiPCwfIW7lJaf7TbNA36HsVFHBOLSIXuCpVb
-	 6xhTP2Yjmt4UinXYeqxspsw6V+gD2+13ZAT9GF6o=
+	by mail.kernel.org (Postfix) with ESMTP id 0E49020855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:14:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="LNISDhrb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbfAQPJq (ORCPT
+        id S1728126AbfAQPOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:09:46 -0500
-Received: from mail-oi1-f180.google.com ([209.85.167.180]:33616 "EHLO
-        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726916AbfAQPJo (ORCPT
+        Thu, 17 Jan 2019 10:14:49 -0500
+Received: from mx-rz-1.rrze.uni-erlangen.de ([131.188.11.20]:49474 "EHLO
+        mx-rz-1.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727671AbfAQPOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:09:44 -0500
-Received: by mail-oi1-f180.google.com with SMTP id c206so6422293oib.0;
-        Thu, 17 Jan 2019 07:09:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MXqGV/xla3Lhq8q8Yrhbnz5xbjK0BhIgvFY3XkA7gnc=;
-        b=XLV1jH2HvIaMyVnV70wgnDItn4mOE8d+N/V9zjQiaZ5Cnm6RfSkXPvrNYjn7wJQcnd
-         W1poE9gMl7pIF7vPNk813mQQmHBfiIt4wEGUSQmGIzfEYl7szZi5iGU8ke8bLv5DfjXr
-         AwsIJdVFME1cz2IGmsdnMex5hPvIPrcSpKUpvMumqYuLXFS3QtJ8Z1vf+HvNEMwxfqM9
-         waTOG272dxGewNHXfVIpii1OeN9jvj66DBdSwEEwemlb1SKJVSfggQzQQO8mPhTUBMDX
-         l+mtBxd7h9uR3shvXccIvgR6ibHB9v0wmXmoqv8TgOqWWfHUWiyS+wQkDAMAaP090f9S
-         qliQ==
-X-Gm-Message-State: AJcUukd3or7NZiNbhmt2gO5oIdRKvQ9MYEEVnKUQ2hrtG+fyk/Xryy9u
-        a37qstQhiatIQ32IYLE1WzPeAQ/leegZzz5/74o=
-X-Google-Smtp-Source: ALg8bN5iFWUYbgDOG/UTcz6q3HXMcrxIhKQkd494ya5hnftBkGkju87jPfTZfqvKeR58HAGoYm8AZcuaQtrdZXuxqho=
-X-Received: by 2002:a54:4d01:: with SMTP id v1mr638235oix.246.1547737783643;
- Thu, 17 Jan 2019 07:09:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-9-keith.busch@intel.com>
-In-Reply-To: <20190116175804.30196-9-keith.busch@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 17 Jan 2019 16:09:32 +0100
-Message-ID: <CAJZ5v0iV8qt3_1BP_4fPN77CC7yLXT4QMW=q+jWdts+e5rf8dg@mail.gmail.com>
-Subject: Re: [PATCHv4 08/13] Documentation/ABI: Add node performance attributes
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 17 Jan 2019 10:14:48 -0500
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 43gSKz0LB8z8sy8;
+        Thu, 17 Jan 2019 16:14:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
+        t=1547738087; bh=K6Ae3twbw8YxXCICeqdA/JR41PeQQBds19AxiF+LAEo=;
+        h=Subject:From:In-Reply-To:Date:Cc:References:To:From:To:CC:
+         Subject;
+        b=LNISDhrbYAFGCbTO8fir9kjztTj38pwh+PnqgRdv3BIb4E12SMh+L2ri9Fd3OHoSr
+         TFcZfYilZaz6xSHAjwuU3GjZMFzQwJhaw0w56P2l/DfHT/w9SGzFSF5QNV2afIGYNS
+         Z87M3+h9+UGPUDKxqg+R3CLXmJu/h+OM1Urlb4Z0vkbD0IDl4/N6iQs8YTwBBm19Z+
+         rsc3ARMC3b8mxR8O3K71fXk8IzPWsQR9aqEVuks/nzp1/ZCkDD8b5ysaknUP76wWdr
+         N7o5Zzok+IjAfAc/oMcjUo9/hj3HFrsWrcU+w5F8GOYGWVCy65gc9jXx8EWqpD7KSi
+         +EJfpon3CwldA==
+X-Virus-Scanned: amavisd-new at boeck2.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2a01:c22:6e20:6c00:4536:d066:91f8:5831
+Received: from [IPv6:2a01:c22:6e20:6c00:4536:d066:91f8:5831] (unknown [IPv6:2a01:c22:6e20:6c00:4536:d066:91f8:5831])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX1/hPhrvv04Bhi3s0fGCn/zqVRlWDXnZXEY=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 43gSKw69wFz8skp;
+        Thu, 17 Jan 2019 16:14:44 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2] tracing/uprobes: Fix output for multiple string
+ arguments
+From:   Andreas Ziegler <andreas.ziegler@fau.de>
+In-Reply-To: <20190117095102.724939e2@vmware.local.home>
+Date:   Thu, 17 Jan 2019 16:14:44 +0100
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0F30FF42-AE03-45CC-8877-06E83038B6A4@fau.de>
+References: <20190116084021.34b0beee@gandalf.local.home>
+ <20190116141629.5752-1-andreas.ziegler@fau.de>
+ <20190117150107.17f2c0c37e41126120c5eebb@kernel.org>
+ <b5defce3-b52a-db20-bfd1-81eec9972fab@fau.de>
+ <20190117165807.64e95553ff397e7f73ba495b@kernel.org>
+ <20190117092042.4f689462@vmware.local.home>
+ <5ceb9b3b-3f67-4e84-b029-6e6d8ccc0449@fau.de>
+ <20190117095102.724939e2@vmware.local.home>
+To:     Steven Rostedt <rostedt@goodmis.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
->
-> Add descriptions for memory class initiator performance access attributes.
+On 17. Jan 2019, at 15:51, Steven Rostedt <rostedt@goodmis.org> wrote:
+>=20
+> On Thu, 17 Jan 2019 15:29:09 +0100
+> Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+>=20
+>> =46rom my side it's basically good to go, but I just realized that =
+there=20
+>> is no "Fixes: " tag in it but the problem it fixes goes back to=20
+>> 5baaa59ef09e ("tracing/probes: Implement 'memory' fetch method for=20
+>> uprobes") from 2013 (and is present in all current longterm and =
+stable=20
+>> kernels)... should I add a tag and resend a v3?
+>>=20
+>=20
+> I was just about to ask you to provide the fixes tag. No need to
+> resend, I'll just add it manually. I asked Masami to resend because it
+> was a patch series. If it was just a single patch, I would have just
+> asked what the fixes was for that particular patch. I can handle one
+> patch, but not more than one ;-)
+>=20
+> -- Steve
 
-Again, I would combine this with the previous patch.
+One more thing maybe, the code in question was rewritten
+by Masami in 9178412ddf5a ("tracing: probeevent: Return consumed
+bytes of dynamic area=E2=80=9D) which is in v4.20 but the problem traces =
+back
+to the original commit mentioned above, so it will need manual so we
+will need a slightly modified version for earlier kernels.
 
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-> ---
->  Documentation/ABI/stable/sysfs-devices-node | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->
-> diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
-> index a9c47b4b0eee..2217557f29d3 100644
-> --- a/Documentation/ABI/stable/sysfs-devices-node
-> +++ b/Documentation/ABI/stable/sysfs-devices-node
-> @@ -114,3 +114,31 @@ Description:
->                 The node list of memory targets that this initiator node has
->                 class "Y" access. Memory accesses from this node to nodes not
->                 in this list may have differet performance.
-> +
-> +What:          /sys/devices/system/node/nodeX/classY/read_bandwidth
-> +Date:          December 2018
-> +Contact:       Keith Busch <keith.busch@intel.com>
-> +Description:
-> +               This node's read bandwidth in MB/s available to memory
-> +               initiators in nodes found in this class's initiators_nodelist.
-> +
-> +What:          /sys/devices/system/node/nodeX/classY/read_latency
-> +Date:          December 2018
-> +Contact:       Keith Busch <keith.busch@intel.com>
-> +Description:
-> +               This node's read latency in nanoseconds available to memory
-> +               initiators in nodes found in this class's initiators_nodelist.
+Regards,
 
-I'm not sure if the term "read latency" is sufficient here.  Is this
-the latency between sending a request and getting a response or
-between sending the request and when the data actually becomes
-available?
-
-Moreover, is it the worst-case latency or the average latency?
-
-> +
-> +What:          /sys/devices/system/node/nodeX/classY/write_bandwidth
-> +Date:          December 2018
-> +Contact:       Keith Busch <keith.busch@intel.com>
-> +Description:
-> +               This node's write bandwidth in MB/s available to memory
-> +               initiators in nodes found in this class's initiators_nodelist.
-> +
-> +What:          /sys/devices/system/node/nodeX/classY/write_latency
-> +Date:          December 2018
-> +Contact:       Keith Busch <keith.busch@intel.com>
-> +Description:
-> +               This node's write latency in nanoseconds available to memory
-> +               initiators in nodes found in this class's initiators_nodelist.
-> --
-
-Same questions as for the read latency apply here.
+Andreas=
