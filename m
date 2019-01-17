@@ -2,157 +2,82 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4387DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A439C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11CCB206C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9391205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:46:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="ndMWNJb7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbfAQCfe (ORCPT
+        id S1727183AbfAQCqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 21:35:34 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:57156 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726109AbfAQCfd (ORCPT
+        Wed, 16 Jan 2019 21:46:53 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:32918 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfAQCqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 21:35:33 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TIOZkKT_1547688773;
-Received: from ali-6c96cfd98fb5.local(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TIOZkKT_1547688773)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 17 Jan 2019 09:32:54 +0800
-Subject: Re: [PATCH 1/2] tpm/eventlog/tpm1: Simplify walking over *pos
- measurements
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, tweek@google.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
- <1547197173-52826-2-git-send-email-zhang.jia@linux.alibaba.com>
- <20190116220952.GH25803@linux.intel.com>
-From:   Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <8709dd61-2422-1c20-9937-d6003fa0354e@linux.alibaba.com>
-Date:   Thu, 17 Jan 2019 09:32:55 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Wed, 16 Jan 2019 21:46:53 -0500
+Received: by mail-qk1-f196.google.com with SMTP id d15so5201137qkj.0;
+        Wed, 16 Jan 2019 18:46:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B4j/WuweH0wMxL+RODpScBf2L4ITsa+/ZzunIai8Y/4=;
+        b=ndMWNJb7QvWxiFN6aMSNgjChjftJHxNGb2N5am20Zt7XOu4JU3cOpXldQSBFcxRaft
+         3kDybIQBtpZONmus/afJeaEQI9SzC8nZ92FcyabaKSlvn4mPt411lr9giwyRi+2ep/EF
+         WnCM2PZqx/MobKE62RRhgqsT9EsPsNS9PQvG8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B4j/WuweH0wMxL+RODpScBf2L4ITsa+/ZzunIai8Y/4=;
+        b=j1abaY9L6XZ4qH/+x0UnyIkYjAHA9jKSub+v577yvZHpmwxMQoI1FP25SflMJ0MhB6
+         EeC3aa7RSJ5AuFq+anRJNS9W2zJS1fDM0C9c2G09fcQC5VG6FrUMWkLeJUcjNwNvD2H/
+         3yb/CdkL0vZuj34qigKLdaqoZS67m/T1ISA52lL1xvZlp0XrPT2tSYEHNoBpgNPqk+Xv
+         rqdd2D91bHPiM0bWbIIqbJg2jogRyTV4dC38DMuBKoDN1d7rPiOTrx55+clyaFV7ROQd
+         7Q4yLLUzOpspuAzg9zL/sAaWceyawMcD15PVVZIcklCgytjp4AokyUJd0mE7U67NEl5F
+         TXiA==
+X-Gm-Message-State: AJcUukctl/l8TuFDRIY9pqaNq8/WQ7fariWrF51O/w2uA48GfsqKoX3G
+        N5hVg4SFqR3+sQxh8qMrDodQjNs8VyXhJOebMLI=
+X-Google-Smtp-Source: ALg8bN4g6CHYobJ+o57LHwHQTioIoweDmYs1sEQbf7J1qINqKMWVyLA9iuNyxJeLx02SEqS/s3dBOJQ5a+0tigglcWI=
+X-Received: by 2002:a37:781:: with SMTP id 123mr9208486qkh.231.1547693212458;
+ Wed, 16 Jan 2019 18:46:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190116220952.GH25803@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181217200405.2904551-1-vijaykhemka@fb.com>
+In-Reply-To: <20181217200405.2904551-1-vijaykhemka@fb.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Thu, 17 Jan 2019 13:46:39 +1100
+Message-ID: <CACPK8XcbXso=13nRC3xM62RnWfEKnFcZpaBA4OAB7mad4mdGGg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] ARM: dts: aspeed: Add sensors devices for Facebook
+To:     Vijay Khemka <vijaykhemka@fb.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 18 Dec 2018 at 07:04, Vijay Khemka <vijaykhemka@fb.com> wrote:
+>
+> Added ADC and other sensor devices in Facebook Tiogapass device tree.
+>
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
 
+Applied to the aspeed tree for 5.1.
 
-On 2019/1/17 上午6:09, Jarkko Sakkinen wrote:
-> Please use "tpm:" tag for commits, not "tpm/eventlog/tpm1".
-> 
-> On Fri, Jan 11, 2019 at 04:59:32PM +0800, Jia Zhang wrote:
->> The responsibility of tpm1_bios_measurements_start() is to walk
->> over the first *pos measurements, ensuring the skipped and
->> to-be-read measurements are not out-of-boundary.
->>
->> Current logic is complicated a bit. Just employ a do-while loop
->> with necessary sanity check, and then get the goal.
->>
->> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-> 
-> What does this fix? Even if the current logic is "complicated", it is
-> still a pretty simple functiion.
+Cheers,
 
-
-OK. Let me point out the fix part. Here is the original implementation:
-
- 87         /* read over *pos measurements */
- 88         for (i = 0; i < *pos; i++) {
- 89                 event = addr;
- 90
- 91                 converted_event_size =
- 92                     do_endian_conversion(event->event_size);
- 93                 converted_event_type =
- 94                     do_endian_conversion(event->event_type);
- 95
- 96                 if ((addr + sizeof(struct tcpa_event)) < limit) {
- 97                         if ((converted_event_type == 0) &&
- 98                             (converted_event_size == 0))
- 99                                 return NULL;
-100                         addr += (sizeof(struct tcpa_event) +
-101                                  converted_event_size);
-102                 }
-103         }
-
-The problem (just ignore all off-by-1 issues) is that accessing to
-event_size and event_type is not pre-checked carefully. In the latter
-part of tpm1_bios_measurements_start() and
-tpm1_bios_measurements_next(), there is a fixed patter to do the sanity
-check like this:
-
-136         /* now check if current entry is valid */
-137         if ((v + sizeof(struct tcpa_event)) >= limit)
-138                 return NULL;
-
-So if we simply change this read-over chunk with sanity check like this:
-
-        /* read over *pos measurements */
-        for (i = 0; i < *pos; i++) {
-                event = addr;
-
-                if ((addr + sizeof(struct tcpa_event)) >= limit)
-                        return NULL;
-
-                converted_event_size =
-                    do_endian_conversion(event->event_size);
-                converted_event_type =
-                    do_endian_conversion(event->event_type);
-
-                if ((converted_event_type == 0) &&
-                    (converted_event_size == 0))
-                        return NULL;
-                addr += (sizeof(struct tcpa_event) +
-                         converted_event_size);
-        }
-
-We will get two highly similar code chunks in
-tpm1_bios_measurements_start(). Here is the latter part:
-
-106         /* now check if current entry is valid */
-107         if ((addr + sizeof(struct tcpa_event)) >= limit)
-108                 return NULL;
-109
-110         event = addr;
-111
-112         converted_event_size = do_endian_conversion(event->event_size);
-113         converted_event_type = do_endian_conversion(event->event_type);
-114
-115         if (((converted_event_type == 0) && (converted_event_size == 0))
-116             || ((addr + sizeof(struct tcpa_event) +
-converted_event_size)
-117                 >= limit))
-118                 return NULL;
-119
-120         return addr;
-
-So using a do while logic can simply merge them together and thus simply
-and optimize the logic of walking over *pos measurements.
-
-Sorry I admit my initial motivation is to fix up the sanity check
-problem. If you would like to accept the optimization part, I will split
-this patch.
-
-Jia
-
-> 
-> Applying clean ups for fun has the side-effect of making backporting
-> more difficult. And swapping implementation randomly has the side-effect
-> of potentially introducing regressions. The current code might be messy
-> but it is still field tested.
-> 
-> I'm sorry but I have to reject this patch.
-> 
-> /Jarkko
-> 
+Joel
