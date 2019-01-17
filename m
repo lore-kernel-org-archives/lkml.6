@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1820C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA00FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A782C20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD4F920856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728942AbfAQGs4 (ORCPT
+        id S1729043AbfAQGtA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:48:56 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2249 "EHLO huawei.com"
+        Thu, 17 Jan 2019 01:49:00 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58994 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728333AbfAQGsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:48:52 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 768493DCC9A833AAB1F2;
-        Thu, 17 Jan 2019 14:48:50 +0800 (CST)
+        id S1728906AbfAQGs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:48:57 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7BC7D42763699AB628D2;
+        Thu, 17 Jan 2019 14:48:55 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 17 Jan 2019 14:48:44 +0800
+ 14.3.408.0; Thu, 17 Jan 2019 14:48:45 +0800
 From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
 To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
         <ebiggers@kernel.org>
 CC:     <wangxiongfeng2@huawei.com>, <linux-crypto@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <broonie@kernel.org>,
         <ard.biesheuvel@linaro.org>, <jonathan.cameron@huawei.com>
-Subject: [PATCH V2 4/5] crypto: ctr - use template array registering API to simplify the code
-Date:   Thu, 17 Jan 2019 14:48:02 +0800
-Message-ID: <1547707683-45878-5-git-send-email-wangxiongfeng2@huawei.com>
+Subject: [PATCH V2 5/5] crypto: chacha20poly1305 - use template array registering API to simplify the code
+Date:   Thu, 17 Jan 2019 14:48:03 +0800
+Message-ID: <1547707683-45878-6-git-send-email-wangxiongfeng2@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1547707683-45878-1-git-send-email-wangxiongfeng2@huawei.com>
 References: <1547707683-45878-1-git-send-email-wangxiongfeng2@huawei.com>
@@ -50,78 +50,65 @@ Use crypto template array registering API to simplify the code.
 
 Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
 ---
- crypto/ctr.c | 43 +++++++++++++++----------------------------
- 1 file changed, 15 insertions(+), 28 deletions(-)
+ crypto/chacha20poly1305.c | 37 ++++++++++++++-----------------------
+ 1 file changed, 14 insertions(+), 23 deletions(-)
 
-diff --git a/crypto/ctr.c b/crypto/ctr.c
-index 4c743a9..d9f9d65 100644
---- a/crypto/ctr.c
-+++ b/crypto/ctr.c
-@@ -171,12 +171,6 @@ static int crypto_ctr_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	return err;
+diff --git a/crypto/chacha20poly1305.c b/crypto/chacha20poly1305.c
+index fef1144..ed2e12e 100644
+--- a/crypto/chacha20poly1305.c
++++ b/crypto/chacha20poly1305.c
+@@ -701,37 +701,28 @@ static int rfc7539esp_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	return chachapoly_create(tmpl, tb, "rfc7539esp", 8);
  }
  
--static struct crypto_template crypto_ctr_tmpl = {
--	.name = "ctr",
--	.create = crypto_ctr_create,
+-static struct crypto_template rfc7539_tmpl = {
+-	.name = "rfc7539",
+-	.create = rfc7539_create,
 -	.module = THIS_MODULE,
 -};
 -
- static int crypto_rfc3686_setkey(struct crypto_skcipher *parent,
- 				 const u8 *key, unsigned int keylen)
- {
-@@ -366,36 +360,29 @@ static int crypto_rfc3686_create(struct crypto_template *tmpl,
- 	goto out;
- }
- 
--static struct crypto_template crypto_rfc3686_tmpl = {
--	.name = "rfc3686",
--	.create = crypto_rfc3686_create,
+-static struct crypto_template rfc7539esp_tmpl = {
+-	.name = "rfc7539esp",
+-	.create = rfc7539esp_create,
 -	.module = THIS_MODULE,
-+static struct crypto_template crypto_ctr_tmpls[] = {
++static struct crypto_template rfc7539_tmpls[] = {
 +	{
-+		.name = "ctr",
-+		.create = crypto_ctr_create,
++		.name = "rfc7539",
++		.create = rfc7539_create,
 +		.module = THIS_MODULE,
 +	}, {
-+		.name = "rfc3686",
-+		.create = crypto_rfc3686_create,
++		.name = "rfc7539esp",
++		.create = rfc7539esp_create,
 +		.module = THIS_MODULE,
 +	},
  };
  
-+
- static int __init crypto_ctr_module_init(void)
+ static int __init chacha20poly1305_module_init(void)
  {
 -	int err;
 -
--	err = crypto_register_template(&crypto_ctr_tmpl);
+-	err = crypto_register_template(&rfc7539_tmpl);
 -	if (err)
--		goto out;
+-		return err;
 -
--	err = crypto_register_template(&crypto_rfc3686_tmpl);
+-	err = crypto_register_template(&rfc7539esp_tmpl);
 -	if (err)
--		goto out_drop_ctr;
+-		crypto_unregister_template(&rfc7539_tmpl);
 -
--out:
 -	return err;
--
--out_drop_ctr:
--	crypto_unregister_template(&crypto_ctr_tmpl);
--	goto out;
-+	return crypto_register_templates(crypto_ctr_tmpls,
-+					 ARRAY_SIZE(crypto_ctr_tmpls));
++	return crypto_register_templates(rfc7539_tmpls,
++					 ARRAY_SIZE(rfc7539_tmpls));
  }
  
- static void __exit crypto_ctr_module_exit(void)
+ static void __exit chacha20poly1305_module_exit(void)
  {
--	crypto_unregister_template(&crypto_rfc3686_tmpl);
--	crypto_unregister_template(&crypto_ctr_tmpl);
-+	crypto_unregister_templates(crypto_ctr_tmpls,
-+				    ARRAY_SIZE(crypto_ctr_tmpls));
+-	crypto_unregister_template(&rfc7539esp_tmpl);
+-	crypto_unregister_template(&rfc7539_tmpl);
++	crypto_unregister_templates(rfc7539_tmpls,
++				    ARRAY_SIZE(rfc7539_tmpls));
  }
  
- module_init(crypto_ctr_module_init);
+ module_init(chacha20poly1305_module_init);
 -- 
 1.7.12.4
 
