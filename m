@@ -2,186 +2,92 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 453DBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 721F5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09F0120851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40D5820851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:30:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHdAQc93"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwqcp6qN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfAQW3l (ORCPT
+        id S1726005AbfAQWaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 17:29:41 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42146 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727346AbfAQW3l (ORCPT
+        Thu, 17 Jan 2019 17:30:18 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41782 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbfAQWaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 17:29:41 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so5378427plp.9;
-        Thu, 17 Jan 2019 14:29:40 -0800 (PST)
+        Thu, 17 Jan 2019 17:30:17 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so5512106pfi.8;
+        Thu, 17 Jan 2019 14:30:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=8fuEgNkk8T1WJ/UHEMWutP1XUoE1BoPWupQNbWBmkdk=;
-        b=JHdAQc93+ID0LwKz7qTSCs/xLJtLJ6/H4Jb1895LciW26CEbMyIEXMoDqApzwUHSG+
-         nY7n0XiZvB/uNijfmCxk7WcqkMygdoMZTg2TzzIAM5GmPUaR3UutTUaeX4UCdgjaDVyi
-         ugYVoMCcyNLEtDHdKO6HpbovnHuYeGo39FwDfmII3VYAMNo7jNaks8U6gutXTz245Ash
-         R7iUKsrrv5RSrW0KlAM5rYDk6TxgAiB5m6V41WkEARlA71sRfVsws1mLt5v0r1cIDORw
-         4B23uNB7tVKKUj+hOV/6gc2ncdpjITiQ+enlleUuuVlD9rYemJU2JOYjm1cLALKQYKTs
-         LnlQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Flg9UyWqDfkMw/fLK76ciPXUqMDoI3BxkA0JnI3gY78=;
+        b=iwqcp6qNckDpxeGQnZCvsWT4lATx5KeuSr68meF/BpF8H3hAZNNmWvmukTjvaHYtzA
+         1gSA2OUm+c4NucjzTAQJh7CNL1meYFuQJF0VDAxesD4LpJ5qMfpBGhpLBVb6jha7sa/m
+         QW77jAh7RWvkhF87ydiDbMDLbeClztvaL54pKrFuA+HvqVEdpr9Jm9WWz/ab5zEbo2g+
+         N+srYVKGTaYrzAsDjc53dmHgG+XVRFSBNi+jZy0uuIyFX4iHlWgqWtjrxU8YMEqnKNID
+         zArgCAJuPX8OsDtwRh3GzFNDzqh8BYdi4IH+6Qd8/9DhMVZ8IRIkaV58dbb0TjqhqKcS
+         PVfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=8fuEgNkk8T1WJ/UHEMWutP1XUoE1BoPWupQNbWBmkdk=;
-        b=i33yYF08ohiiIVz5OONhxtg0CdUxdJsQo1F5+xENUqHIIHX5fuHsG8Bzhp6weReU3z
-         202NHsohwq3z+kvyDK1ql4giLlFpoesJBt8ftz56bkmVROGWvOYk2pAfjEWMzTrftnyb
-         vezO2tdjosVLyyJpnPHquRW5SwYMkJAeU1N0EuaZJs+Q5f0U3eRonAPI9ADLym1nCGRF
-         VGx71vcd5aUZb2AMxBE0v/ge6VA3jOshv+jK4TSym9SS26nHMRAJ05xByz6FbdmD3IMb
-         Ntrfm6cO+TSmgtiQxx3TFu+D78KyR3myDT2Kgbg5VQRWThNPYL9pG5WneWoY7wOmOAJj
-         Kfcg==
-X-Gm-Message-State: AJcUukeK9bokjxKReNjh/KHwqG8y1lubMO8XkCnEOgHGYD8zGJOqLRqv
-        Fk006stFU2GSGBcCJexd6Bc=
-X-Google-Smtp-Source: ALg8bN4Y+37YAJRaLEFv+LRu5H/rIjwl1kaTrNnvfK/eu2C6XAoCkkj+RSfVNd9hxKUWd+tSix/C2w==
-X-Received: by 2002:a17:902:2ac3:: with SMTP id j61mr16746843plb.185.1547764179149;
-        Thu, 17 Jan 2019 14:29:39 -0800 (PST)
-Received: from [10.33.115.182] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id n21sm4171802pfg.84.2019.01.17.14.29.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 14:29:38 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH 06/17] x86/alternative: use temporary mm for text poking
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <B8C39C5A-A669-4F80-9BAE-7C11A4379ECF@gmail.com>
-Date:   Thu, 17 Jan 2019 14:29:36 -0800
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <32219CAE-7D49-4848-9497-A17E0D809B3E@gmail.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-7-rick.p.edgecombe@intel.com>
- <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
- <CALCETrXQ6uxzB3JvO14sEyMA21RcWCbwicL4nUdPBG8KAunxwg@mail.gmail.com>
- <B8C39C5A-A669-4F80-9BAE-7C11A4379ECF@gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Flg9UyWqDfkMw/fLK76ciPXUqMDoI3BxkA0JnI3gY78=;
+        b=gcPm0YcwCC/s+ZnXPq3788OTMIXU+ZtqmZZjb+iC2YW0b1p4UlKeMhilcOa/TmBwgE
+         gKZZjtU02n2Y5r3XdFeF3PM0y3y3SfGQc5DQddAE3cCHZTe9EsZyKsfJM5gObq9JIS9f
+         m9kSW154FIdprBHRJo3s24jC/NU3PmeuFNArjSnxjZd3kX+612o4l5NdhypsJS1EuNi9
+         PiaJC48XI7kgej7Xf+4FAsgZ0JxBXq6KlCn/tfvCKvJhDfNumH6Awc3nKYATBU9bkU6r
+         tDFyxa9/rHZQn5WkZ6+AJ5W/Nu+Mrj9uLJRh8byZFxZJ2Q9tcYmX110XRYTKG6AWrLzF
+         CpqA==
+X-Gm-Message-State: AJcUukdKvYBtRpWUn1hlnPCj0UrYq0t7TM2hH4XSJY2muMKnT4uQvSiM
+        ZkzHGeTxnA2tdiWFngClzz4=
+X-Google-Smtp-Source: ALg8bN51QAJdkUnuMhqB8DcZqA7nlGEoUa3s2Mrv81kVasrJi0932YTdly1kTMg4XxeVpMI24gPWyQ==
+X-Received: by 2002:a62:6e07:: with SMTP id j7mr17151733pfc.135.1547764216352;
+        Thu, 17 Jan 2019 14:30:16 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id u70sm4875968pfa.176.2019.01.17.14.30.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 14:30:15 -0800 (PST)
+Date:   Thu, 17 Jan 2019 14:30:13 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] hwmon: (ina3221) Implement ti,single-shot DT
+ property
+Message-ID: <20190117223012.GH16918@Asurada-Nvidia.nvidia.com>
+References: <20190105030636.533-1-nicoleotsuka@gmail.com>
+ <20190105030636.533-3-nicoleotsuka@gmail.com>
+ <20190107193555.GA13547@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107193555.GA13547@roeck-us.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Jan 17, 2019, at 1:43 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
->=20
->> On Jan 17, 2019, at 12:47 PM, Andy Lutomirski <luto@kernel.org> =
-wrote:
->>=20
->> On Thu, Jan 17, 2019 at 12:27 PM Andy Lutomirski <luto@kernel.org> =
-wrote:
->>> On Wed, Jan 16, 2019 at 4:33 PM Rick Edgecombe
->>> <rick.p.edgecombe@intel.com> wrote:
->>>> From: Nadav Amit <namit@vmware.com>
->>>>=20
->>>> text_poke() can potentially compromise the security as it sets =
-temporary
->>>> PTEs in the fixmap. These PTEs might be used to rewrite the kernel =
-code
->>>> from other cores accidentally or maliciously, if an attacker gains =
-the
->>>> ability to write onto kernel memory.
->>>=20
->>> i think this may be sufficient, but barely.
->>>=20
->>>> +       pte_clear(poking_mm, poking_addr, ptep);
->>>> +
->>>> +       /*
->>>> +        * __flush_tlb_one_user() performs a redundant TLB flush =
-when PTI is on,
->>>> +        * as it also flushes the corresponding "user" address =
-spaces, which
->>>> +        * does not exist.
->>>> +        *
->>>> +        * Poking, however, is already very inefficient since it =
-does not try to
->>>> +        * batch updates, so we ignore this problem for the time =
-being.
->>>> +        *
->>>> +        * Since the PTEs do not exist in other kernel =
-address-spaces, we do
->>>> +        * not use __flush_tlb_one_kernel(), which when PTI is on =
-would cause
->>>> +        * more unwarranted TLB flushes.
->>>> +        *
->>>> +        * There is a slight anomaly here: the PTE is a =
-supervisor-only and
->>>> +        * (potentially) global and we use __flush_tlb_one_user() =
-but this
->>>> +        * should be fine.
->>>> +        */
->>>> +       __flush_tlb_one_user(poking_addr);
->>>> +       if (cross_page_boundary) {
->>>> +               pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep =
-+ 1);
->>>> +               __flush_tlb_one_user(poking_addr + PAGE_SIZE);
->>>> +       }
->>>=20
->>> In principle, another CPU could still have the old translation.  =
-Your
->>> mutex probably makes this impossible, but it makes me nervous.
->>> Ideally you'd use flush_tlb_mm_range(), but I guess you can't do =
-that
->>> with IRQs off.  Hmm.  I think you should add an inc_mm_tlb_gen() =
-here.
->>> Arguably, if you did that, you could omit the flushes, but maybe
->>> that's silly.
->>>=20
->>> If we start getting new users of use_temporary_mm(), we should give
->>> some serious thought to the SMP semantics.
->>>=20
->>> Also, you're using PAGE_KERNEL.  Please tell me that the global bit
->>> isn't set in there.
->>=20
->> Much better solution: do unuse_temporary_mm() and *then*
->> flush_tlb_mm_range().  This is entirely non-sketchy and should be =
-just
->> about optimal, too.
->=20
-> This solution sounds nice and clean. The fact the global-bit was set =
-didn=E2=80=99t
-> matter before (since __flush_tlb_one_user would get rid of it no =
-matter
-> what), but would matter now, so I=E2=80=99ll change it too.
+On Mon, Jan 07, 2019 at 11:35:55AM -0800, Guenter Roeck wrote:
 
-Err.. so actually text_poke() might be called with disabled IRQs (by =
-kgdb).
-flush_tlb_mm_range() should still work fine even with disabled IRQs =
-since no
-core would use poking_mm at this point. I can add a comment to
-flush_tlb_mm_range(), but all in all it is actually not very pretty.
+> > +	if (of_property_read_bool(np, "ti,single-shot"))
+> > +		ina->single_shot = true;
+> > +
+> 	ina->single_shot = of_property_read_bool(np, "ti,single-shot");
+> 
+> No need to resend right now; let's wait for feedback from Rob.
 
+Looks like Rob has acked. Is this resend version fine for review?
+
+Thank you
+Nicolin
