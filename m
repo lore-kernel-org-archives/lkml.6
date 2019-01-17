@@ -2,211 +2,159 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA959C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFD8C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 983D720855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547725311;
-	bh=PRJlRrJSYhelrGeEvJXdfugj9IZv1hvpWgqJk2cZZWg=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=IyquWlh+Mnj+QxsahBGo8Sp/a6eHCPVCnWgLd/YcUZ6SuzuXnTIvoMDfsKQ+R/VDf
-	 N6NnN+/ZdU3xIh4zMKILZ1FBXZzvdIesj/8x5dn3klo1jkRHZXBBkbdyjKXuI+zD/i
-	 CBjNytO9nIHi37Q89f+xA3WcBuR2/oPcRAT+nA9k=
+	by mail.kernel.org (Postfix) with ESMTP id EFF6B20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Zcelj58M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbfAQLlt (ORCPT
+        id S1729240AbfAQLlw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 17 Jan 2019 06:41:52 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35467 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727724AbfAQLlt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 Jan 2019 06:41:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728989AbfAQLls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:41:48 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C54D320657;
-        Thu, 17 Jan 2019 11:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547725307;
-        bh=PRJlRrJSYhelrGeEvJXdfugj9IZv1hvpWgqJk2cZZWg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=gnhMQoFbnI7FzKrk/Q8IJ2hLSXV1VBol6uDJHcC6+0lmRonXA+T+N9bufPWWhlHq6
-         r88YMhqAdK5bK+IcsmLupDsPZGQlrA+iQ5I3vqdS8sxQ2YkwmMuDJd85VCxBP8N2j5
-         d5sqCmtZ4tZZyXEFaLi75juoxrjU0M4GuY6gsCjc=
-Date:   Thu, 17 Jan 2019 12:41:44 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.14.94
-Message-ID: <20190117114144.GA2109@kroah.com>
+Received: by mail-wm1-f68.google.com with SMTP id t200so734410wmt.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 03:41:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hyEw4X9ww2YPwn9o5KstPSqmqW8bN2fKms4I9AI8yZw=;
+        b=Zcelj58MLCj4wOeZdWhNU/5p7yEXqvoms9YdaxxhqgX/N7PTIO+ZxnUmt3knhJlo6y
+         MyAm/td1P3KZlUBZe1MRLOUO/ve6q/uQm+fpRbT0pCHCtm44RRdSBfGVdfoCmhr6V+2l
+         XT/4D6AF/nm6JZlkanvJmcI+9YCMaUNZO1Nv6GCRw5lFjNNUYrJAM6A/sts2AWKyu+hj
+         +ykV+yIWS1JdJWOWVoipEY9ew+HgaylXJcNQ916otiGocvfnAGIHhJZpacfEWVRH84rN
+         Xd01yzj/jnsWF5nul00Y0tZkIYhp/dda4k2CLlTr0eFgsGOxpAC8VLvvSaLH1EKODlRz
+         K9Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hyEw4X9ww2YPwn9o5KstPSqmqW8bN2fKms4I9AI8yZw=;
+        b=GeZwPCvhN3aguxIN/yYhTaIHQPiV0oayPw6pthcmj0RiKE/Q/PSDAddTtU+KWGxqW4
+         7CRmnM6TLoK9o7FH8Hk1t4n1Rj0KFq3UTLzkHwPo0xxtNoVKVpzMBfGwWwXx3LmCiAnV
+         9V8RKH0mHDsZ09ToGyuh4mDYbFsMwDsptg2dNFlp6AtNaY7Rg19Gps0wLJiGgQJUuYkL
+         yIREOZbrXuaFRnck/igIoT2A9XTPp3LJnW8Nw2UtZgF5ZDNqsqWYz2WKAOQghURiWiao
+         bmYrCGV2g/Dj05CM85i26lpumjFvXaI2JxIWJme/1tKwquEBBe7Lk4TPVk8FWOUxUNDy
+         kQfA==
+X-Gm-Message-State: AJcUukcVctQo4HhCdsEMYcPGe/TEYZCDPOuzeIPaqoHPOeCnPioHGFiv
+        pqO6xTxvvmFL6LAv/ovcwmRsCA==
+X-Google-Smtp-Source: ALg8bN6YGJYZ+w+epKhovld+BvofSEJue6KHR7OS/q2Q++zRgl5kWmTZzDzivANk9XG3yd2p4GCUCg==
+X-Received: by 2002:a1c:8d12:: with SMTP id p18mr12270527wmd.31.1547725306212;
+        Thu, 17 Jan 2019 03:41:46 -0800 (PST)
+Received: from brauner.io ([154.119.33.254])
+        by smtp.gmail.com with ESMTPSA id 129sm65249118wmd.18.2019.01.17.03.41.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 03:41:45 -0800 (PST)
+Date:   Thu, 17 Jan 2019 12:41:38 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        arve@android.com, maco@android.com, joel@joelfernandes.org,
+        tkjos@google.com, shuah@kernel.org
+Subject: Re: [PATCH v2] selftests: add binderfs selftests
+Message-ID: <20190117114136.dzji6kds2ejpgq7l@brauner.io>
+References: <20190117102821.10950-1-christian@brauner.io>
+ <20190117105549.GA28882@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190117105549.GA28882@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 17, 2019 at 11:55:49AM +0100, Greg KH wrote:
+> On Thu, Jan 17, 2019 at 11:28:21AM +0100, Christian Brauner wrote:
+> > This adds the promised selftest for binderfs. It will verify the following
+> > things:
+> > - binderfs mounting works
+> > - binder device allocation works
+> > - performing a binder ioctl() request through a binderfs device works
+> > - binder device removal works
+> > - binder-control removal fails
+> > - binderfs unmounting works
+> > 
+> > The tests are performed both privileged and unprivileged. The latter
+> > verifies that binderfs behaves correctly in user namespaces.
+> > 
+> > Cc: Todd Kjos <tkjos@google.com>
+> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> 
+> Now I am just nit-picking:
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I would've been surprised if someone wouldn't have. :)
 
-I'm announcing the release of the 4.14.94 kernel.
+> 
+> > +static void write_to_file(const char *filename, const void *buf, size_t count,
+> > +			  int allowed_errno)
+> > +{
+> > +	int fd, saved_errno;
+> > +	ssize_t ret;
+> > +
+> > +	fd = open(filename, O_WRONLY | O_CLOEXEC);
+> > +	if (fd < 0)
+> > +		ksft_exit_fail_msg("%s - Failed to open file %s\n",
+> > +				   strerror(errno), filename);
+> > +
+> > +	ret = write_nointr(fd, buf, count);
+> > +	if (ret < 0) {
+> > +		if (allowed_errno && (errno == allowed_errno)) {
+> > +			close(fd);
+> > +			return;
+> > +		}
+> > +
+> > +		goto on_error;
+> > +	}
+> > +
+> > +	if ((size_t)ret != count)
+> > +		goto on_error;
+> 
+> if ret < count, you are supposed to try again with the remaining data,
+> right?  A write() implementation can just take one byte at a time.
+> 
+> Yes, for your example here that isn't going to happen as the kernel
+> should be handling a larger buffer than that, but note that if you use
+> this code elsewhere, it's not really correct because:
 
-All users of the 4.14 kernel series must upgrade.
+Yeah, I know you should retry but for the test I'm not really willing to
+keep track of where I was in the buffer and so on. If the test fails
+because of that I'd say to count it as failed and move on.
 
-The updated 4.14.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-4.14.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
+> 
+> > +
+> > +	close(fd);
+> > +	return;
+> > +
+> > +on_error:
+> > +	saved_errno = errno;
+> 
+> If you do a short write, there is no error, so who knows what errno you
+> end up with here.
+> 
+> Anyway, just one other minor question that might be relevant:
+> 
+> > +	printf("Allocated new binder device with major %d, minor %d, and name %s\n",
+> > +	       device.major, device.minor, device.name);
+> 
+> Aren't tests supposed to print their output in some sort of normal
+> format?  I thought you were supposed to use ksft_print_msg() so that
+> tools can properly parse the output.
 
-thanks,
+I can switch the printf()s over to ksft_print_msg().
 
-greg k-h
-
-------------
-
- Makefile                              |    2=20
- arch/x86/include/asm/kvm_host.h       |   13 +++
- arch/x86/kernel/cpu/bugs.c            |    2=20
- arch/x86/kvm/x86.c                    |   34 +++------
- drivers/acpi/pmic/intel_pmic_xpower.c |   41 ++++++++---
- drivers/acpi/power.c                  |   22 +++++
- drivers/block/rbd.c                   |    9 +-
- drivers/gpu/drm/drm_fb_helper.c       |  126 +++++++++++++++++++----------=
------
- drivers/i2c/i2c-dev.c                 |    6 +
- drivers/usb/class/cdc-acm.c           |    7 +
- drivers/usb/core/quirks.c             |    3=20
- drivers/usb/storage/scsiglue.c        |    8 +-
- drivers/usb/storage/unusual_devs.h    |   12 +++
- fs/cifs/file.c                        |    8 +-
- fs/cifs/smb2file.c                    |    4 -
- fs/cifs/smb2pdu.c                     |    8 +-
- fs/cifs/transport.c                   |    2=20
- fs/ext4/fsync.c                       |   16 +++-
- fs/ext4/inline.c                      |    6 -
- fs/ext4/inode.c                       |    3=20
- fs/ext4/super.c                       |    2=20
- include/linux/compiler-gcc.h          |    2=20
- include/linux/kvm_host.h              |    2=20
- include/linux/module.h                |    2=20
- include/linux/sunrpc/svc.h            |    5 +
- mm/memory.c                           |   23 ++++++
- mm/slab.c                             |    6 +
- mm/util.c                             |    2=20
- net/sunrpc/svc.c                      |   11 +-
- net/sunrpc/svc_xprt.c                 |    5 -
- net/sunrpc/svcsock.c                  |    2=20
- scripts/mod/modpost.c                 |    2=20
- sound/pci/hda/patch_realtek.c         |   18 ++++
- virt/kvm/arm/arm.c                    |   23 ++----
- 34 files changed, 299 insertions(+), 138 deletions(-)
-
-Christoffer Dall (1):
-      KVM: arm/arm64: Fix VMID alloc race by reverting to lock-less
-
-Christoph Lameter (1):
-      slab: alien caches must not be initialized if the allocation of the a=
-lien cache failed
-
-Daniele Palmas (1):
-      usb: cdc-acm: send ZLP for Telit 3G Intel based modems
-
-Greg Kroah-Hartman (1):
-      Linux 4.14.94
-
-Hans de Goede (2):
-      ACPI: power: Skip duplicate power resource references in _PRx
-      ACPI / PMIC: xpower: Fix TS-pin current-source handling
-
-Icenowy Zheng (2):
-      USB: storage: don't insert sane sense for SPC3+ when bad sense specif=
-ied
-      USB: storage: add quirk for SMI SM3350
-
-Ilya Dryomov (1):
-      rbd: don't return 0 on unmap if RBD_DEV_FLAG_REMOVING is set
-
-Ivan Mironov (1):
-      drm/fb-helper: Partially bring back workaround for bugs of SDL 1.2
-
-Jack Stocker (1):
-      USB: Add USB_QUIRK_DELAY_CTRL_MSG quirk for Corsair K70 RGB
-
-Jan Stancek (1):
-      mm: page_mapped: don't assume compound page is huge or THP
-
-Kailang Yang (3):
-      ALSA: hda/realtek - Support Dell headset mode for New AIO platform
-      ALSA: hda/realtek - Add unplug function into unplug state of Headset =
-Mode for ALC225
-      ALSA: hda/realtek - Disable headset Mic VREF for headset mode of ALC2=
-25
-
-Michal Hocko (1):
-      mm, memcg: fix reclaim deadlock with writeback
-
-Pavel Shilovsky (2):
-      CIFS: Fix adjustment of credits for MTU requests
-      CIFS: Do not hide EINTR after sending network packets
-
-Rik van Riel (1):
-      x86,kvm: move qemu/guest FPU switching out to vcpu_run
-
-Ross Lagerwall (1):
-      cifs: Fix potential OOB access of lock element array
-
-Theodore Ts'o (5):
-      ext4: make sure enough credits are reserved for dioread_nolock writes
-      ext4: fix a potential fiemap/page fault deadlock w/ inline_data
-      ext4: avoid kernel warning when writing the superblock to a dead devi=
-ce
-      ext4: use ext4_write_inode() when fsyncing w/o a journal
-      ext4: track writeback errors using the generic tracking infrastructure
-
-Vasily Averin (1):
-      sunrpc: use-after-free in svc_process_common()
-
-WANG Chao (1):
-      x86, modpost: Replace last remnants of RETPOLINE with CONFIG_RETPOLINE
-
-Yi Zeng (1):
-      i2c: dev: prevent adapter retries and timeout being set as minus value
-
-
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlxAafgACgkQONu9yGCS
-aT72hxAAscpEzanHYBhogE/HPWDLcc0KkPZhJRktcCq0jD9QsOl/5MsOAWoTnPnP
-oLg7n2e6s+6nXz6a037OUABSAbqK8Osuyice5PdGpnuGGgp7ZIuQa43LtnRlAbdv
-EeeVqGqp5hZzVA38bBPZRlRBnPNolumIDGfhEH9MtTp+1vn8MKZlhSPSUVCE3k9n
-EGwiE0FJhtD9J9girrYNWE532U+HVrrvXYBPREpDzXq3P9wi1USncFnMaZS0R8Fh
-GY+4iEVOkyAMjHst0bMcDq8Sf8O0A1wYCv/PoNTBMp2MPTFqS11oAbYeWp+Xil+T
-qRT/zAO4ahgmvYhTiGGguPXImX5dwFzHERdfLRh8r9PIfVS2H82MaHn6SWamfCLB
-AAFZOKJZLKyOJ04YMUWdFuSeM/EeHrd7B17uNwT6DxVVFQIhkMmiEstfrtkhqVNZ
-+wwBQLB+rUdBnJrqrIjifOEigVV9TWNpOWSduHZ/cCB5wFTNoTDSVTtEQLOpW9ip
-K1XfQse4Rmld5UiHwykn92SLIHEtF+jN5N0Gg/fiZfpba4+EyzS5XaBbHuoiXqmg
-ttm7W3tEYNSR+mO0e7MvaG/WHCzf4hsZYQO6oIk8hnXHb7gUfF3eaVs2CMYqcQTH
-DErhbaSBP1Y1ObE/cFphQri9+2HjGChENDltW4dmrVQucchx0Vs=
-=o70V
------END PGP SIGNATURE-----
-
---PEIAKu/WMn1b1Hv9--
+Thanks!
+Christian
