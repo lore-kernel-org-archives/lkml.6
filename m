@@ -2,217 +2,170 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 212BBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15971C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D494F20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE05B20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:17:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbfAQCMX (ORCPT
+        id S1726865AbfAQCRx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 21:12:23 -0500
-Received: from mga11.intel.com ([192.55.52.93]:54575 "EHLO mga11.intel.com"
+        Wed, 16 Jan 2019 21:17:53 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:47772 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfAQCMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 21:12:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 18:12:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="119124604"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga003.jf.intel.com with ESMTP; 16 Jan 2019 18:12:22 -0800
-Date:   Wed, 16 Jan 2019 18:06:39 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, Gil Neiger <gil.neiger@intel.com>
-Subject: Re: [PATCH v2 3/3] x86/umwait: Control umwait maximum time
-Message-ID: <20190117020638.GB226938@romley-ivt3.sc.intel.com>
-References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
- <1547673522-226408-4-git-send-email-fenghua.yu@intel.com>
- <CALCETrVenEpKH5O=Z6J+faWTcdZpa1xx4-dYwdWu1OSEDyiUWw@mail.gmail.com>
- <20190117000731.GA226938@romley-ivt3.sc.intel.com>
- <CALCETrWnqVaocKrQjFO0bYdz1z6HJPK608V_0GmRKfH2xXq1PA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWnqVaocKrQjFO0bYdz1z6HJPK608V_0GmRKfH2xXq1PA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1725385AbfAQCRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 21:17:53 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8CDB12001F4;
+        Thu, 17 Jan 2019 03:17:50 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 403012001EA;
+        Thu, 17 Jan 2019 03:17:46 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9F9BF402EE;
+        Thu, 17 Jan 2019 10:17:40 +0800 (SGT)
+From:   Peng Ma <peng.ma@nxp.com>
+To:     shawnguo@kernel.org
+Cc:     leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andy.tang@nxp.com,
+        Peng Ma <peng.ma@nxp.com>
+Subject: [v3] arm64: dts: lx2160a: add sata node support
+Date:   Thu, 17 Jan 2019 02:12:24 +0000
+Message-Id: <20190117021224.19021-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 04:30:59PM -0800, Andy Lutomirski wrote:
-> On Wed, Jan 16, 2019 at 4:13 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
-> >
-> > On Wed, Jan 16, 2019 at 04:00:29PM -0800, Andy Lutomirski wrote:
-> > > On Wed, Jan 16, 2019 at 1:24 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
-> > > >
-> > > > IA32_UMWAIT_CONTROL[31:2] determines the maximum time in TSC-quanta
-> > > > that processor can stay in C0.1 or C0.2.
-> > > >
-> > > > The maximum time value in IA32_UMWAIT_CONTROL[31-2] is set as zero which
-> > > > means there is no global time limit for UMWAIT and TPAUSE instructions.
-> > > > Each process sets its own umwait maximum time as the instructions operand.
-> > > >
-> > > > User can specify global umwait maximum time through interface:
-> > > > /sys/devices/system/cpu/umwait_control/umwait_max_time
-> > > > The value in the interface is in decimal in TSC-quanta. Bits[1:0]
-> > > > are cleared when the value is stored.
-> > > >
-> > > > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> > > > ---
-> > > >  arch/x86/include/asm/msr-index.h |  2 ++
-> > > >  arch/x86/power/umwait.c          | 42 +++++++++++++++++++++++++++++++-
-> > > >  2 files changed, 43 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> > > > index b56bfecae0de..42b9104fc15b 100644
-> > > > --- a/arch/x86/include/asm/msr-index.h
-> > > > +++ b/arch/x86/include/asm/msr-index.h
-> > > > @@ -62,6 +62,8 @@
-> > > >  #define MSR_IA32_UMWAIT_CONTROL                0xe1
-> > > >  #define UMWAIT_CONTROL_C02_BIT         0x0
-> > > >  #define UMWAIT_CONTROL_C02_MASK                0x00000001
-> > > > +#define UMWAIT_CONTROL_MAX_TIME_BIT    0x2
-> > > > +#define UMWAIT_CONTROL_MAX_TIME_MASK   0xfffffffc
-> > > >
-> > > >  #define MSR_PKG_CST_CONFIG_CONTROL     0x000000e2
-> > > >  #define NHM_C3_AUTO_DEMOTE             (1UL << 25)
-> > > > diff --git a/arch/x86/power/umwait.c b/arch/x86/power/umwait.c
-> > > > index 95b3867aac1e..4a1a507d3bb7 100644
-> > > > --- a/arch/x86/power/umwait.c
-> > > > +++ b/arch/x86/power/umwait.c
-> > > > @@ -10,6 +10,7 @@
-> > > >  #include <asm/msr.h>
-> > > >
-> > > >  static int umwait_enable_c0_2 = 1; /* 0: disable C0.2. 1: enable C0.2. */
-> > > > +static u32 umwait_max_time; /* In TSC-quanta. Only bits [31:2] are used. */
-> > > >  static DEFINE_MUTEX(umwait_lock);
-> > > >
-> > > >  /* Return value that will be used to set umwait control MSR */
-> > > > @@ -20,7 +21,8 @@ static inline u32 umwait_control_val(void)
-> > > >          * When bit 0 is 1, C0.2 is disabled. Otherwise, C0.2 is enabled.
-> > > >          * So value in bit 0 is opposite of umwait_enable_c0_2.
-> > > >          */
-> > > > -       return ~umwait_enable_c0_2 & UMWAIT_CONTROL_C02_MASK;
-> > > > +       return (~umwait_enable_c0_2 & UMWAIT_CONTROL_C02_MASK) |
-> > > > +              umwait_max_time;
-> > > >  }
-> > > >
-> > > >  static ssize_t umwait_enable_c0_2_show(struct device *dev,
-> > > > @@ -61,8 +63,46 @@ static ssize_t umwait_enable_c0_2_store(struct device *dev,
-> > > >
-> > > >  static DEVICE_ATTR_RW(umwait_enable_c0_2);
-> > > >
-> > > > +static ssize_t umwait_max_time_show(struct device *kobj,
-> > > > +                                   struct device_attribute *attr, char *buf)
-> > > > +{
-> > > > +       return sprintf(buf, "%u\n", umwait_max_time);
-> > > > +}
-> > > > +
-> > > > +static ssize_t umwait_max_time_store(struct device *kobj,
-> > > > +                                    struct device_attribute *attr,
-> > > > +                                    const char *buf, size_t count)
-> > > > +{
-> > > > +       u32 msr_val, max_time;
-> > > > +       int cpu, ret;
-> > > > +
-> > > > +       ret = kstrtou32(buf, 10, &max_time);
-> > > > +       if (ret)
-> > > > +               return ret;
-> > > > +
-> > > > +       mutex_lock(&umwait_lock);
-> > > > +
-> > > > +       /* Only get max time value from bits [31:2] */
-> > > > +       max_time &= UMWAIT_CONTROL_MAX_TIME_MASK;
-> > > > +       /* Update the max time value in memory */
-> > > > +       umwait_max_time = max_time;
-> > > > +       msr_val = umwait_control_val();
-> > > > +       get_online_cpus();
-> > > > +       /* All CPUs have same umwait max time */
-> > > > +       for_each_online_cpu(cpu)
-> > > > +               wrmsr_on_cpu(cpu, MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
-> > > > +       put_online_cpus();
-> > > > +
-> > > > +       mutex_unlock(&umwait_lock);
-> > > > +
-> > > > +       return count;
-> > > > +}
-> > > > +
-> > > > +static DEVICE_ATTR_RW(umwait_max_time);
-> > > > +
-> > > >  static struct attribute *umwait_attrs[] = {
-> > > >         &dev_attr_umwait_enable_c0_2.attr,
-> > > > +       &dev_attr_umwait_max_time.attr,
-> > > >         NULL
-> > > >  };
-> > >
-> > > You need something to make sure that newly onlined CPUs get the right
-> > > value in the MSR.
-> >
-> > Onlined CPU takes the umwait_control value in umwait_cpu_online() in
-> > patch 2. Please check if it's correct.
-> >
-> > > You also need to make sure you restore it on resume
-> > > from suspend.  Something like cpu_init() might be the right place.
-> > >
-> > > Also, as previously discussed, I think we should set the default to
-> > > something quite small, maybe 100 microseconds.  IMO the goal is to
-> > > pick a value that is a high enough multiple of the C0.2 entry+exit
-> > > latency that we get most of the power and SMT resource savings while
-> > > being small enough that no one things that UMWAIT is more than a
-> > > glorified, slightly improved, and far more misleading version of REP
-> > > NOP.
-> > >
-> > > Andrew, would having Linux default to a small value do much to
-> > > mitigate your concerns that UMWAIT is problematic for hypervisors?
-> > >
-> > > Also, can someone who understands the hardware clarify just how
-> > > dangerous UMWAIT is from a perspective of making speculation attacks
-> > > more dangerous than they already are?  I'm wondering what events will
-> > > wake up a UMONITOR.  I bet that CLFLUSH does.  I wonder if a faulting
-> > > write to a read-only page also does.  Or a load from a remote node.
-> > > Or a speculative store that does not subsequently retire.  This
-> > > instruction seems quite delightful as a tool to create a
-> > > highish-bandwidth covert channel, and it's possibly quite nice to
-> > > agument Spectre-like attacks.  If it ends up being bad enough, we
-> > > might need to set the default timeout to the absolute minimum value
-> > > and possibly ask Intel to give us a way to turn it off entirely.
-> >
-> > If CR4.TSD=1 and CPL>0, umwait and tpause generate #GP. So if user thinks
-> > the instructions are dangerous, he can disable TSC.
-> >
-> > Is this the right handling for security concerns?
-> >
-> 
-> Setting CR4.TSD=1 systemwide would utterly destroy performance of
-> quite a few workloads.  And my argument for setting the value to a
-> lowish but not minimal value is about functionality, not security.
+Add SATA device nodes for fsl-lx2160a and enable support
+for QDS and RDB boards.
 
-CR4.TSD can be set up per process by prctl(PR_SET_TSC, PR_TSC_ENABLE)
-to enable TSC or prctl(PR_SET_TSC, PR_TSC_SIGSEGV) to disable TSC.
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
+---
+changed for V3:
+	- updated the commit log 
 
-For high performance workloads, user can turn TSC on.
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts |   16 +++++++
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |   16 +++++++
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    |   44 +++++++++++++++++++++
+ 3 files changed, 76 insertions(+), 0 deletions(-)
 
-Does it make sense?
-
-Thanks.
-
--Fenghua
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
+index 99a22ab..1a5acf6 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
+@@ -95,6 +95,22 @@
+ 	};
+ };
+ 
++&sata0 {
++	status = "okay";
++};
++
++&sata1 {
++	status = "okay";
++};
++
++&sata2 {
++	status = "okay";
++};
++
++&sata3 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+index 6481e5f..5b6799e 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+@@ -102,6 +102,22 @@
+ 	};
+ };
+ 
++&sata0 {
++	status = "okay";
++};
++
++&sata1 {
++	status = "okay";
++};
++
++&sata2 {
++	status = "okay";
++};
++
++&sata3 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+index a79f5c1..592034b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -671,6 +671,50 @@
+ 			status = "disabled";
+ 		};
+ 
++		sata0: sata@3200000 {
++			compatible = "fsl,lx2160a-ahci";
++			reg = <0x0 0x3200000 0x0 0x10000>,
++			      <0x7 0x100520 0x0 0x4>;
++			reg-names = "ahci", "sata-ecc";
++			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clockgen 4 3>;
++			dma-coherent;
++			status = "disabled";
++		};
++
++		sata1: sata@3210000 {
++			compatible = "fsl,lx2160a-ahci";
++			reg = <0x0 0x3210000 0x0 0x10000>,
++			      <0x7 0x100520 0x0 0x4>;
++			reg-names = "ahci", "sata-ecc";
++			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clockgen 4 3>;
++			dma-coherent;
++			status = "disabled";
++		};
++
++		sata2: sata@3220000 {
++			compatible = "fsl,lx2160a-ahci";
++			reg = <0x0 0x3220000 0x0 0x10000>,
++			      <0x7 0x100520 0x0 0x4>;
++			reg-names = "ahci", "sata-ecc";
++			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clockgen 4 3>;
++			dma-coherent;
++			status = "disabled";
++		};
++
++		sata3: sata@3230000 {
++			compatible = "fsl,lx2160a-ahci";
++			reg = <0x0 0x3230000 0x0 0x10000>,
++			      <0x7 0x100520 0x0 0x4>;
++			reg-names = "ahci", "sata-ecc";
++			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clockgen 4 3>;
++			dma-coherent;
++			status = "disabled";
++		};
++
+ 		smmu: iommu@5000000 {
+ 			compatible = "arm,mmu-500";
+ 			reg = <0 0x5000000 0 0x800000>;
+-- 
+1.7.1
 
