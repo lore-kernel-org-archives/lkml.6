@@ -2,230 +2,195 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A886FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A56F1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61D5E20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 697D420657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:59:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Wslk5Hdk"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tc7GJQHi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbfAQJ6P (ORCPT
+        id S1727186AbfAQJ7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:58:15 -0500
-Received: from mail-eopbgr10051.outbound.protection.outlook.com ([40.107.1.51]:55264
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725884AbfAQJ6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:58:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=44jLYGiuTtmJkacbcP8T/570wLl1LESegRHBPuzMZMI=;
- b=Wslk5HdkSPCBL5Yrdb8/lxYpgKrYvYL8yEsiLFIHvVKcKI+E0dYhP/qnULg+2/suqaKx67ilBUeu/08xmoaz01If0dZd2cK8OtuKOHQuSBuhHJqhNusHRbIcavxYIzfrOVP+GzXl1C6g8znogmxXJK1UNVZmcwGyQW41R5Nt0Ps=
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.50.159) by
- VI1PR04MB3102.eurprd04.prod.outlook.com (10.170.229.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.19; Thu, 17 Jan 2019 09:58:08 +0000
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::9c6e:406c:e2bd:c293]) by VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::9c6e:406c:e2bd:c293%5]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
- 09:58:08 +0000
-From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] i2c: imx: dma map the i2c data i/o register
-Thread-Topic: [RFC PATCH] i2c: imx: dma map the i2c data i/o register
-Thread-Index: AQHUrbb0Icryja9wuEa1okhJ2IwPcaWyLduAgAENAYA=
-Date:   Thu, 17 Jan 2019 09:58:08 +0000
-Message-ID: <90fcd7fb-13b2-97fe-d9cd-3c5e1d0fc6b7@nxp.com>
-References: <20190116161713.12748-1-laurentiu.tudor@nxp.com>
- <7f9a9486-250d-cc92-1ce5-b5c1afc96f2d@arm.com>
-In-Reply-To: <7f9a9486-250d-cc92-1ce5-b5c1afc96f2d@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=laurentiu.tudor@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB3102;6:cSAMeF2RNmE4+7N0HNqJXBBzQMXeouVw0k+tusN6ysN1hCM+Z5En9BA8LZqvN6zCeraFlPrylwYI9y+tuPL55KJtvcRMMX0vPzyaWPB5fyIhln4jtoSxc8jPgUh93vCDPxTmrxG/yH6p6MN5JNV1K34H9rsM05uO4DBR2a2gfpp5TOWBNetNN/xfXxVwTcaKZUAczegin+opez5QKw8+p4M8jDFSNrERu1bvLCU+KR+UEmkBGORkQw1XHrCr1ntJxmwvcx/Ysagr+QjLbwC8td9wSFi7/tRzF+95oHfK+cHlRv/BnfTHnFv3dKwlX4lkK50w/RwDnmgTyPJDwzRUGTXztFfXm1mq6ImmZR6X4cIKRxVHeSk2hUzoHDxuKYrjmvJSDv3eVDhYgGWgk9/eMYIvnIyipN1cmoS2/4GdPFbE5MYtdOwsVo+5uzyP+WTSqEEfQf2ao+NClJggPHUlUQ==;5:OXj45brV5xXn+qe6UDKxkgC+k4IEG51zHoHl8/zgxt4ouTzk1LzrQg4/oYbNlP70vjfbzsV3WXVLB7oXlzHtGzFMwY3vLl/DOw6tD6QKzNaubNopNQ1B+HYiNZ6NTJWFeV/Pu1wIOU+IrAZ3h7GhTKf4eCGSd5QFWKdVnvjEthR6uNTZcOFcdsCHKaUkFJPRmv9DCzvywkY8XKbyFTx4SA==;7:smOl+CnJx+pVjhQRnp/TCuobaIAZPXxwGi1krojB2u6cxMXs7FRBZFTeH7ggJyD0fRydPFR7RV3JycrcK9MZnG09HLuoV6TSFDdqnHuGZ+A94/EW0hz5GWrwC5N9E27ueH/Nz/LSUoyj6FZ3+Wopyg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 997cd883-a133-42ee-1d05-08d67c6248b9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3102;
-x-ms-traffictypediagnostic: VI1PR04MB3102:
-x-microsoft-antispam-prvs: <VI1PR04MB310260885FDDB63DB50B5BF2EC830@VI1PR04MB3102.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(39860400002)(376002)(346002)(51914003)(199004)(189003)(966005)(316002)(229853002)(86362001)(4326008)(6486002)(6436002)(6246003)(81156014)(31696002)(305945005)(14454004)(81166006)(8936002)(68736007)(5660300001)(2201001)(6116002)(102836004)(2616005)(476003)(71200400001)(71190400001)(6506007)(11346002)(53546011)(446003)(186003)(26005)(53936002)(106356001)(6306002)(6512007)(478600001)(31686004)(2906002)(2501003)(66066001)(44832011)(486006)(14444005)(256004)(25786009)(110136005)(7736002)(97736004)(54906003)(105586002)(3846002)(8676002)(99286004)(76176011)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3102;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Mt/i17EH9p578nNa4Fev12lgKxFo6ghbI9X4HIiNsKPv96MaQko1u2UjWEpUXc+9IjWZeTfhtaV9KdXY6KYz0uy5U48ermcdCCzQKp/H99oVwjQmE6f4f6EirKjDJ4iuLKh0RKlqEowm8UgYPMMxIJmB2A4mMUQXqh1OuHrLl0nBzdwaGOsLL/exqhfw/cHdPSbgk6+6HniR4J5pPficHoUiAPDmf0DGUCifCnAXQQYr+COqcekexlqfBKXqlZP2dRJyEnT4eCaVXRsHe/XjXsIuEVxrQ2vwIPjSHREjh9Mesu7S1XkWZa415rr0MWDY7Vj72oHel6PYEkulM6U/3g+DElDsDHtxlqxGRoC9vlwU3HeEKF/G8qRr9i2M1EOnLz6Tx/miC3p+UFEmHUsATNFLqzQLW7VzBF1DNlBX+JU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5B8D9E4B8806CE43831C480BDACE8ECD@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 17 Jan 2019 04:59:00 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52056 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbfAQJ7A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:59:00 -0500
+Received: by mail-it1-f193.google.com with SMTP id w18so454190ite.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 01:58:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t6bIZ+7wvX1DvoXEYmYPW0X0bnw7md2Ir4xWInKIrr0=;
+        b=Tc7GJQHib2hS8ExAYG7FL4jtRgaOSy5t0Cq95AKSSVtqW03yRHjH26k8XzkIrZh0Wd
+         FK2QzgvnxmUDdptYea1AxlgAWbbAiOiP/We9IlomjrXDEuYsYu1KluJx/74ALqZFlJDs
+         ORHASw9p9jmHR6ysDUZIhk0cG3S8oQaWdeHtdv+ZmERyCSWfL6+NkQ6lXuJevGLdEGYu
+         CO+Vl9kikGkwjyk0/W+3rA0YSz8naViMtHrwvgur/tJu5CHj00KgfQbiPYkfeoG6W6H9
+         cgqQCDKgRakMG0lnMWqyIkyVXFJNAqCb8xJU27LZCoXgUfpnJq0303hBmr3BXHvkCsio
+         Jc3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t6bIZ+7wvX1DvoXEYmYPW0X0bnw7md2Ir4xWInKIrr0=;
+        b=nBnzm0Ve0D2LyU6AgPxfcX/nsYbgnQlYt1MHn7nvzn7jmVRNhfOxCiUqcVrbzn7dR/
+         oVptqtaS1OcpPVAYcZkLo2nBCll+/Z/a7KgU/ZVPM3DOVsfMN3u25FtOhBIgvMQ82Iea
+         VOR+2HlwcLsvEYEP3ScQKm7quv01tXDmvkKT9fa+4UP3AlkE3WpUV78L2LO/a4avrh09
+         Wj8zQ3PizuCr3f8ErAVwjD1C0K069ELnuZAuxagYe+FR2swCpQ8pCyJdE0DWTfvSyi47
+         EaRrQka3MUUfMUA/tkxHaFwi6QS/5lcjD/QhOYGLUk1EdL/1ouOl7KEHYdOVuROSn/NX
+         eb1Q==
+X-Gm-Message-State: AJcUukefnpcS9UCm/Eb2+J4lI/Yv2hhWIjqwoYlJSyjZaclF+N7LldPI
+        y8KMHtlg/+beusyAQupVsH0klCqKTIxug40zTf1hpA==
+X-Google-Smtp-Source: ALg8bN7rBxarKl0xeN6ZlGavjO8CRSHeSJfGwUU4R7qYg/QG2cp9M3ZwgxnTWX/zfMa3CYIAnckAqgq1TI5C1Mzz9GE=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr1456674iti.166.1547719138716;
+ Thu, 17 Jan 2019 01:58:58 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 997cd883-a133-42ee-1d05-08d67c6248b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 09:58:08.7093
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3102
+References: <000000000000cdc61b057f9e360e@google.com> <e4cb6380-b462-857e-3219-319fdbfa6f81@suse.cz>
+In-Reply-To: <e4cb6380-b462-857e-3219-319fdbfa6f81@suse.cz>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 17 Jan 2019 10:58:47 +0100
+Message-ID: <CACT4Y+ZG1LLb_7ZyhijWJxLbrbBuP_h2++RWUfnZ65Dj9=MNkw@mail.gmail.com>
+Subject: Re: kernel BUG at mm/page_alloc.c:LINE!
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     syzbot <syzbot+80dd4798c16c634daf15@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUm9iaW4sDQoNCk9uIDE2LjAxLjIwMTkgMTk6NTUsIFJvYmluIE11cnBoeSB3cm90ZToNCj4g
-T24gMTYvMDEvMjAxOSAxNjoxNywgTGF1cmVudGl1IFR1ZG9yIHdyb3RlOg0KPj4gVGhpcyBpcyBh
-biBhdHRlbXB0IHRvIGZpeCBhbiBpb21tdSBleGNlcHRpb24gd2hlbiBkb2luZyBkbWEgdG8gdGhl
-DQo+PiBpMmMgY29udHJvbGxlciB3aXRoIEVETUEuIFdpdGhvdXQgdGhlc2UgbWFwcGluZ3MgdGhl
-IHNtbXUgcmFpc2VzIGENCj4+IGNvbnRleHQgZmF1bHQgWzFdIGV4YWN0bHkgd2l0aCB0aGUgYWRk
-cmVzcyBvZiB0aGUgaTJjIGRhdGEgaS9vIHJlZy4NCj4+IFRoaXMgd2FzIHNlZW4gb24gYW4gTlhQ
-IExTMTA0M0EgY2hpcCB3aGlsZSB3b3JraW5nIG9uIGVuYWJsaW5nIFNNTVUuDQo+IA0KPiBSYXRo
-ZXIgdGhhbiBncmFkdWFsbHkgYWRkaW5nIG11Y2ggdGhlIHNhbWUgY29kZSB0byBwb3RlbnRpYWxs
-eSBldmVyeSANCj4gcG9zc2libGUgY2xpZW50IGRyaXZlciwgY2FuIGl0IG5vdCBiZSBpbXBsZW1l
-bnRlZCBvbmNlIGluIHRoZSBlZG1hIA0KPiBkcml2ZXIgYXMgd2FzIGRvbmUgZm9yIHBsMzMwIGFu
-ZCByY2FyLWRtYWM/IFRoYXQgYWxzbyBzaWRlc3RlcHMgYW55IG9mIA0KPiB0aGUgbmFzdGluZXNz
-IG9mIHNtdWdnbGluZyBhIGRtYV9hZGRyX3QgdmlhIGEgcGh5c19hZGRyX3QgdmFyaWFibGUuDQoN
-ClRoYW5rcyBmb3IgdGhlIHBvaW50ZXIuIEkgd2FzIGFjdHVhbGx5IHVuc3VyZSB3aGVyZSB0aGlz
-IHNob3VsZCBiZSANCnRhY2tsZWQ6IGVpdGhlciBpMmMgb3IgZG1hIHNpZGUuIFBsdXMgSSBzb21l
-aG93IG1hbmFnZWQgdG8gY29tcGxldGVseSANCm1pc3MgdGhlIHN1cHBvcnQgYWRkZWQgaW4gdGhl
-IGRtYSBkcml2ZXJzIHlvdSBtZW50aW9uLiBJJ2xsIHN0YXJ0IA0KbG9va2luZyBpbnRvIHN0ZWFs
-aW5nIHNvbWUgb2YgeW91ciBjb2RlIFsxXS4gOi0pDQoNClsxXSANCmh0dHBzOi8vZ2l0Lmtlcm5l
-bC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC9jb21taXQv
-P2lkPTRkNmQ3NGUyMjA5NjU0M2NiM2IzNWU3MTdjZjFiOWFlYTM2NTVmMzcNCg0KLS0tDQpCZXN0
-IFJlZ2FyZHMsIExhdXJlbnRpdQ0KDQoNCj4gDQo+PiBbMV0gYXJtLXNtbXUgOTAwMDAwMC5pb21t
-dTogVW5oYW5kbGVkIGNvbnRleHQgZmF1bHQ6IGZzcj0weDQwMiwNCj4+IMKgwqDCoMKgIGlvdmE9
-MHgwMjE4MDAwNCwgZnN5bnI9MHgxNTAwMjEsIGNiPTcNCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBM
-YXVyZW50aXUgVHVkb3IgPGxhdXJlbnRpdS50dWRvckBueHAuY29tPg0KPj4gLS0tDQo+PiDCoCBk
-cml2ZXJzL2kyYy9idXNzZXMvaTJjLWlteC5jIHwgNTcgKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKystLS0tLS0tDQo+PiDCoCAxIGZpbGUgY2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKSwgMTAg
-ZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMt
-aW14LmMgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWlteC5jDQo+PiBpbmRleCA0ZTM0YjE1NzI3
-NTYuLjA3Y2M4ZjRiNDViOSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMt
-aW14LmMNCj4+ICsrKyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14LmMNCj4+IEBAIC0yMDIs
-NiArMjAyLDkgQEAgc3RydWN0IGlteF9pMmNfc3RydWN0IHsNCj4+IMKgwqDCoMKgwqAgc3RydWN0
-IHBpbmN0cmxfc3RhdGUgKnBpbmN0cmxfcGluc19ncGlvOw0KPj4gwqDCoMKgwqDCoCBzdHJ1Y3Qg
-aW14X2kyY19kbWHCoMKgwqAgKmRtYTsNCj4+ICsNCj4+ICvCoMKgwqAgZG1hX2FkZHJfdMKgwqDC
-oMKgwqDCoMKgIGRtYV90eF9hZGRyOw0KPj4gK8KgwqDCoCBkbWFfYWRkcl90wqDCoMKgwqDCoMKg
-wqAgZG1hX3J4X2FkZHI7DQo+PiDCoCB9Ow0KPj4gwqAgc3RhdGljIGNvbnN0IHN0cnVjdCBpbXhf
-aTJjX2h3ZGF0YSBpbXgxX2kyY19od2RhdGEgPSB7DQo+PiBAQCAtMjc0LDE3ICsyNzcsMjAgQEAg
-c3RhdGljIGlubGluZSB1bnNpZ25lZCBjaGFyIA0KPj4gaW14X2kyY19yZWFkX3JlZyhzdHJ1Y3Qg
-aW14X2kyY19zdHJ1Y3QgKmkyY19pbXgsDQo+PiDCoCAvKiBGdW5jdGlvbnMgZm9yIERNQSBzdXBw
-b3J0ICovDQo+PiDCoCBzdGF0aWMgaW50IGkyY19pbXhfZG1hX3JlcXVlc3Qoc3RydWN0IGlteF9p
-MmNfc3RydWN0ICppMmNfaW14LA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBkbWFfYWRkcl90IHBoeV9hZGRyKQ0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBwaHlzX2FkZHJfdCBwaHlfYWRkcikNCj4+IMKgIHsNCj4+IMKgwqDCoMKgwqAg
-c3RydWN0IGlteF9pMmNfZG1hICpkbWE7DQo+PiDCoMKgwqDCoMKgIHN0cnVjdCBkbWFfc2xhdmVf
-Y29uZmlnIGRtYV9zY29uZmlnOw0KPj4gwqDCoMKgwqDCoCBzdHJ1Y3QgZGV2aWNlICpkZXYgPSAm
-aTJjX2lteC0+YWRhcHRlci5kZXY7DQo+PiDCoMKgwqDCoMKgIGludCByZXQ7DQo+PiArwqDCoMKg
-IHBoeXNfYWRkcl90IGkyZHJfcGE7DQo+PiDCoMKgwqDCoMKgIGRtYSA9IGRldm1fa3phbGxvYyhk
-ZXYsIHNpemVvZigqZG1hKSwgR0ZQX0tFUk5FTCk7DQo+PiDCoMKgwqDCoMKgIGlmICghZG1hKQ0K
-Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRU5PTUVNOw0KPj4gK8KgwqDCoCBpMmRyX3Bh
-ID0gcGh5X2FkZHIgKyAoSU1YX0kyQ19JMkRSIDw8IGkyY19pbXgtPmh3ZGF0YS0+cmVnc2hpZnQp
-Ow0KPj4gKw0KPj4gwqDCoMKgwqDCoCBkbWEtPmNoYW5fdHggPSBkbWFfcmVxdWVzdF9jaGFuKGRl
-diwgInR4Iik7DQo+PiDCoMKgwqDCoMKgIGlmIChJU19FUlIoZG1hLT5jaGFuX3R4KSkgew0KPj4g
-wqDCoMKgwqDCoMKgwqDCoMKgIHJldCA9IFBUUl9FUlIoZG1hLT5jaGFuX3R4KTsNCj4+IEBAIC0y
-OTMsMTUgKzI5OSwyNSBAQCBzdGF0aWMgaW50IGkyY19pbXhfZG1hX3JlcXVlc3Qoc3RydWN0IA0K
-Pj4gaW14X2kyY19zdHJ1Y3QgKmkyY19pbXgsDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgZ290byBm
-YWlsX2FsOw0KPj4gwqDCoMKgwqDCoCB9DQo+PiAtwqDCoMKgIGRtYV9zY29uZmlnLmRzdF9hZGRy
-ID0gcGh5X2FkZHIgKw0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAoSU1YX0ky
-Q19JMkRSIDw8IGkyY19pbXgtPmh3ZGF0YS0+cmVnc2hpZnQpOw0KPj4gK8KgwqDCoCBpMmNfaW14
-LT5kbWFfdHhfYWRkciA9IGRtYV9tYXBfcmVzb3VyY2UoZG1hLT5jaGFuX3R4LT5kZXZpY2UtPmRl
-diwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGky
-ZHJfcGEsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCBETUFfU0xBVkVfQlVTV0lEVEhfMV9CWVRFLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgRE1BX01FTV9UT19ERVYsIDApOw0KPj4gK8KgwqDCoCBy
-ZXQgPSBkbWFfbWFwcGluZ19lcnJvcihkbWEtPmNoYW5fdHgtPmRldmljZS0+ZGV2LA0KPj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpMmNfaW14LT5kbWFfdHhfYWRkcik7DQo+PiAr
-wqDCoMKgIGlmIChyZXQpIHsNCj4+ICvCoMKgwqDCoMKgwqDCoCBkZXZfZXJyKGRldiwgImNhbid0
-IGRtYSBtYXAgdHggZGVzdGluYXRpb24gKCVkKVxuIiwgcmV0KTsNCj4+ICvCoMKgwqDCoMKgwqDC
-oCBnb3RvIGZhaWxfdHg7DQo+PiArwqDCoMKgIH0NCj4+ICsNCj4+ICvCoMKgwqAgZG1hX3Njb25m
-aWcuZHN0X2FkZHIgPSBpMmNfaW14LT5kbWFfdHhfYWRkcjsNCj4+IMKgwqDCoMKgwqAgZG1hX3Nj
-b25maWcuZHN0X2FkZHJfd2lkdGggPSBETUFfU0xBVkVfQlVTV0lEVEhfMV9CWVRFOw0KPj4gwqDC
-oMKgwqDCoCBkbWFfc2NvbmZpZy5kc3RfbWF4YnVyc3QgPSAxOw0KPj4gwqDCoMKgwqDCoCBkbWFf
-c2NvbmZpZy5kaXJlY3Rpb24gPSBETUFfTUVNX1RPX0RFVjsNCj4+IMKgwqDCoMKgwqAgcmV0ID0g
-ZG1hZW5naW5lX3NsYXZlX2NvbmZpZyhkbWEtPmNoYW5fdHgsICZkbWFfc2NvbmZpZyk7DQo+PiDC
-oMKgwqDCoMKgIGlmIChyZXQgPCAwKSB7DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgZGV2X2Vycihk
-ZXYsICJjYW4ndCBjb25maWd1cmUgdHggY2hhbm5lbCAoJWQpXG4iLCByZXQpOw0KPj4gLcKgwqDC
-oMKgwqDCoMKgIGdvdG8gZmFpbF90eDsNCj4+ICvCoMKgwqDCoMKgwqDCoCBnb3RvIGZhaWxfdHhf
-ZG1hOw0KPj4gwqDCoMKgwqDCoCB9DQo+PiDCoMKgwqDCoMKgIGRtYS0+Y2hhbl9yeCA9IGRtYV9y
-ZXF1ZXN0X2NoYW4oZGV2LCAicngiKTsNCj4+IEBAIC0zMDksMTggKzMyNSwyOCBAQCBzdGF0aWMg
-aW50IGkyY19pbXhfZG1hX3JlcXVlc3Qoc3RydWN0IA0KPj4gaW14X2kyY19zdHJ1Y3QgKmkyY19p
-bXgsDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0ID0gUFRSX0VSUihkbWEtPmNoYW5fcngpOw0K
-Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChyZXQgIT0gLUVOT0RFViAmJiByZXQgIT0gLUVQUk9C
-RV9ERUZFUikNCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRldl9lcnIoZGV2LCAiY2Fu
-J3QgcmVxdWVzdCBETUEgcnggY2hhbm5lbCAoJWQpXG4iLCByZXQpOw0KPj4gLcKgwqDCoMKgwqDC
-oMKgIGdvdG8gZmFpbF90eDsNCj4+ICvCoMKgwqDCoMKgwqDCoCBnb3RvIGZhaWxfdHhfZG1hOw0K
-Pj4gwqDCoMKgwqDCoCB9DQo+PiAtwqDCoMKgIGRtYV9zY29uZmlnLnNyY19hZGRyID0gcGh5X2Fk
-ZHIgKw0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAoSU1YX0kyQ19JMkRSIDw8
-IGkyY19pbXgtPmh3ZGF0YS0+cmVnc2hpZnQpOw0KPj4gK8KgwqDCoCBpMmNfaW14LT5kbWFfcnhf
-YWRkciA9IGRtYV9tYXBfcmVzb3VyY2UoZG1hLT5jaGFuX3J4LT5kZXZpY2UtPmRldiwNCj4+ICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGkyZHJfcGEsDQo+
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBETUFfU0xB
-VkVfQlVTV0lEVEhfMV9CWVRFLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgRE1BX0RFVl9UT19NRU0sIDApOw0KPj4gK8KgwqDCoCByZXQgPSBkbWFf
-bWFwcGluZ19lcnJvcihkbWEtPmNoYW5fcngtPmRldmljZS0+ZGV2LA0KPj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCBpMmNfaW14LT5kbWFfcnhfYWRkcik7DQo+PiArwqDCoMKgIGlm
-IChyZXQpIHsNCj4+ICvCoMKgwqDCoMKgwqDCoCBkZXZfZXJyKGRldiwgImNhbid0IGRtYSBtYXAg
-cnggc291cmNlICglZClcbiIsIHJldCk7DQo+PiArwqDCoMKgwqDCoMKgwqAgZ290byBmYWlsX3J4
-Ow0KPj4gK8KgwqDCoCB9DQo+PiArDQo+PiArwqDCoMKgIGRtYV9zY29uZmlnLnNyY19hZGRyID0g
-aTJjX2lteC0+ZG1hX3J4X2FkZHI7DQo+PiDCoMKgwqDCoMKgIGRtYV9zY29uZmlnLnNyY19hZGRy
-X3dpZHRoID0gRE1BX1NMQVZFX0JVU1dJRFRIXzFfQllURTsNCj4+IMKgwqDCoMKgwqAgZG1hX3Nj
-b25maWcuc3JjX21heGJ1cnN0ID0gMTsNCj4+IMKgwqDCoMKgwqAgZG1hX3Njb25maWcuZGlyZWN0
-aW9uID0gRE1BX0RFVl9UT19NRU07DQo+PiDCoMKgwqDCoMKgIHJldCA9IGRtYWVuZ2luZV9zbGF2
-ZV9jb25maWcoZG1hLT5jaGFuX3J4LCAmZG1hX3Njb25maWcpOw0KPj4gwqDCoMKgwqDCoCBpZiAo
-cmV0IDwgMCkgew0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGRldl9lcnIoZGV2LCAiY2FuJ3QgY29u
-ZmlndXJlIHJ4IGNoYW5uZWwgKCVkKVxuIiwgcmV0KTsNCj4+IC3CoMKgwqDCoMKgwqDCoCBnb3Rv
-IGZhaWxfcng7DQo+PiArwqDCoMKgwqDCoMKgwqAgZ290byBmYWlsX3J4X2RtYTsNCj4+IMKgwqDC
-oMKgwqAgfQ0KPj4gwqDCoMKgwqDCoCBpMmNfaW14LT5kbWEgPSBkbWE7DQo+PiBAQCAtMzMwLDgg
-KzM1NiwxNCBAQCBzdGF0aWMgaW50IGkyY19pbXhfZG1hX3JlcXVlc3Qoc3RydWN0IA0KPj4gaW14
-X2kyY19zdHJ1Y3QgKmkyY19pbXgsDQo+PiDCoMKgwqDCoMKgIHJldHVybiAwOw0KPj4gK2ZhaWxf
-cnhfZG1hOg0KPj4gK8KgwqDCoCBkbWFfdW5tYXBfcmVzb3VyY2UoZG1hLT5jaGFuX3J4LT5kZXZp
-Y2UtPmRldiwgaTJjX2lteC0+ZG1hX3J4X2FkZHIsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBETUFfU0xBVkVfQlVTV0lEVEhfMV9CWVRFLCBETUFfREVWX1RPX01FTSwgMCk7DQo+
-PiDCoCBmYWlsX3J4Og0KPj4gwqDCoMKgwqDCoCBkbWFfcmVsZWFzZV9jaGFubmVsKGRtYS0+Y2hh
-bl9yeCk7DQo+PiArZmFpbF90eF9kbWE6DQo+PiArwqDCoMKgIGRtYV91bm1hcF9yZXNvdXJjZShk
-bWEtPmNoYW5fdHgtPmRldmljZS0+ZGV2LCBpMmNfaW14LT5kbWFfdHhfYWRkciwNCj4+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIERNQV9TTEFWRV9CVVNXSURUSF8xX0JZVEUsIERNQV9N
-RU1fVE9fREVWLCAwKTsNCj4+IMKgIGZhaWxfdHg6DQo+PiDCoMKgwqDCoMKgIGRtYV9yZWxlYXNl
-X2NoYW5uZWwoZG1hLT5jaGFuX3R4KTsNCj4+IMKgIGZhaWxfYWw6DQo+PiBAQCAtMTA1Nyw3ICsx
-MDg5LDcgQEAgc3RhdGljIGludCBpMmNfaW14X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
-DQo+PiAqcGRldikNCj4+IMKgwqDCoMKgwqAgc3RydWN0IGlteGkyY19wbGF0Zm9ybV9kYXRhICpw
-ZGF0YSA9IGRldl9nZXRfcGxhdGRhdGEoJnBkZXYtPmRldik7DQo+PiDCoMKgwqDCoMKgIHZvaWQg
-X19pb21lbSAqYmFzZTsNCj4+IMKgwqDCoMKgwqAgaW50IGlycSwgcmV0Ow0KPj4gLcKgwqDCoCBk
-bWFfYWRkcl90IHBoeV9hZGRyOw0KPj4gK8KgwqDCoCBwaHlzX2FkZHJfdCBwaHlfYWRkcjsNCj4+
-IMKgwqDCoMKgwqAgZGV2X2RiZygmcGRldi0+ZGV2LCAiPCVzPlxuIiwgX19mdW5jX18pOw0KPj4g
-QEAgLTEwNzIsNyArMTEwNCw3IEBAIHN0YXRpYyBpbnQgaTJjX2lteF9wcm9iZShzdHJ1Y3QgcGxh
-dGZvcm1fZGV2aWNlIA0KPj4gKnBkZXYpDQo+PiDCoMKgwqDCoMKgIGlmIChJU19FUlIoYmFzZSkp
-DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIFBUUl9FUlIoYmFzZSk7DQo+PiAtwqDCoMKg
-IHBoeV9hZGRyID0gKGRtYV9hZGRyX3QpcmVzLT5zdGFydDsNCj4+ICvCoMKgwqAgcGh5X2FkZHIg
-PSByZXMtPnN0YXJ0Ow0KPj4gwqDCoMKgwqDCoCBpMmNfaW14ID0gZGV2bV9remFsbG9jKCZwZGV2
-LT5kZXYsIHNpemVvZigqaTJjX2lteCksIEdGUF9LRVJORUwpOw0KPj4gwqDCoMKgwqDCoCBpZiAo
-IWkyY19pbXgpDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FTk9NRU07DQo+PiBAQCAt
-MTIyMCw2ICsxMjUyLDExIEBAIHN0YXRpYyBpbnQgaTJjX2lteF9yZW1vdmUoc3RydWN0IA0KPj4g
-cGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPj4gwqDCoMKgwqDCoCBwbV9ydW50aW1lX3B1dF9ub2lk
-bGUoJnBkZXYtPmRldik7DQo+PiDCoMKgwqDCoMKgIHBtX3J1bnRpbWVfZGlzYWJsZSgmcGRldi0+
-ZGV2KTsNCj4+ICvCoMKgwqAgZG1hX3VubWFwX3Jlc291cmNlKCZwZGV2LT5kZXYsIGkyY19pbXgt
-PmRtYV90eF9hZGRyLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgRE1BX1NMQVZF
-X0JVU1dJRFRIXzFfQllURSwgRE1BX01FTV9UT19ERVYsIDApOw0KPj4gK8KgwqDCoCBkbWFfdW5t
-YXBfcmVzb3VyY2UoJnBkZXYtPmRldiwgaTJjX2lteC0+ZG1hX3J4X2FkZHIsDQo+PiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBETUFfU0xBVkVfQlVTV0lEVEhfMV9CWVRFLCBETUFfREVW
-X1RPX01FTSwgMCk7DQo+PiArDQo+PiDCoMKgwqDCoMKgIHJldHVybiAwOw0KPj4gwqAgfQ0KPj4=
+On Thu, Jan 17, 2019 at 9:36 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> On 1/17/19 3:33 AM, syzbot wrote:
+> > Hello> syzbot found the following crash on:
+> >
+> > HEAD commit:    b808822a75a3 Add linux-next specific files for 20190111
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16a471d8c00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c052ead0aed5001b
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=80dd4798c16c634daf15
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+80dd4798c16c634daf15@syzkaller.appspotmail.com
+> >
+> > ------------[ cut here ]------------
+> > kernel BUG at mm/page_alloc.c:3112!
+>
+> Why does the mail subject say LINE, anyway?
+
+The title is what syzbot uses as bug identity and for deduplication purposes.
+We have to remove some moving parts, like lines/addresses/etc, so that
+it does not create a new bug whenever the line changes:
+https://github.com/google/syzkaller/blob/43689bcfed82ecb780bd0e54543609fe3c080623/pkg/report/report.go#L166-L168
+
+
+> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 0 PID: 1043 Comm: kcompactd0 Not tainted 5.0.0-rc1-next-20190111 #10
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > RIP: 0010:__isolate_free_page+0x4a8/0x680 mm/page_alloc.c:3112
+>
+> That's BUG_ON(!PageBuddy(page)); in __isolate_free_page().
+>
+> > Code: 4c 39 e3 77 c0 0f b6 8d 74 ff ff ff b8 01 00 00 00 48 d3 e0 e9 11 fd
+> > ff ff 48 c7 c6 a0 63 52 88 4c 89 e7 e8 6a 14 10 00 0f 0b <0f> 0b 48 c7 c6
+> > c0 64 52 88 4c 89 e7 e8 57 14 10 00 0f 0b 48 89 cf
+> > RSP: 0000:ffff8880a78e6f58 EFLAGS: 00010007
+> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88812fffc7e0
+> > RDX: 1ffff11025fff8fc RSI: 0000000000000007 RDI: ffff88812fffc7b0
+> > RBP: ffff8880a78e7018 R08: ffff8880a78ce000 R09: ffffed1014f1cdf2
+> > R10: ffffed1014f1cdf1 R11: 0000000000000003 R12: ffff88812fffc7b0
+> > R13: 1ffff11014f1cdf2 R14: ffff88812fffc7b0 R15: ffff8880a78e6ff0
+> > FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000000438ca0 CR3: 0000000009871000 CR4: 00000000001426f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+> > Call Trace:
+> >   fast_isolate_freepages mm/compaction.c:1356 [inline]
+>
+> Mel's new code... but might be just a victim of e.g. bad struct page
+> initialization?
+>
+> >   isolate_freepages mm/compaction.c:1429 [inline]
+> >   compaction_alloc+0xd05/0x2970 mm/compaction.c:1541
+> >   unmap_and_move mm/migrate.c:1177 [inline]
+> >   migrate_pages+0x48e/0x2cc0 mm/migrate.c:1417
+> >   compact_zone+0x2207/0x3e90 mm/compaction.c:2173
+> >   kcompactd_do_work+0x6de/0x1200 mm/compaction.c:2564
+> >   kcompactd+0x251/0x970 mm/compaction.c:2657
+> >   kthread+0x357/0x430 kernel/kthread.c:247
+> >   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> > Modules linked in:
+> >
+> > ======================================================
+> > WARNING: possible circular locking dependency detected
+> > 5.0.0-rc1-next-20190111 #10 Not tainted
+> > ------------------------------------------------------
+>
+> Dunno about that, but doesn't seem to be the root cause anyway.
+>
+> > -> #0 (console_owner){-.-.}:
+> >         lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3860
+> >         console_lock_spinning_enable kernel/printk/printk.c:1647 [inline]
+> >         console_unlock+0x516/0x1040 kernel/printk/printk.c:2452
+> >         vprintk_emit+0x370/0x960 kernel/printk/printk.c:1978
+> >         vprintk_default+0x28/0x30 kernel/printk/printk.c:2005
+> >         vprintk_func+0x7e/0x189 kernel/printk/printk_safe.c:398
+> >         printk+0xba/0xed kernel/printk/printk.c:2038
+> >         report_bug.cold+0x11/0x5e lib/bug.c:191
+> >         fixup_bug arch/x86/kernel/traps.c:178 [inline]
+> >         fixup_bug arch/x86/kernel/traps.c:173 [inline]
+> >         do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+> >         do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+> >         invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+> >         __ClearPageBuddy include/linux/page-flags.h:706 [inline]
+>
+> So that's VM_BUG_ON_PAGE(!Page##uname(page), page); in
+> __ClearPage##uname, so another problem with !PageBuddy.
+>
+> >         rmv_page_order mm/page_alloc.c:744 [inline]
+> >         rmv_page_order mm/page_alloc.c:742 [inline]
+> >         __isolate_free_page+0x4a8/0x680 mm/page_alloc.c:3134
+>
+> But this is later in the function than the first BUG_ON, so something
+> has raced with us?
+>
+> Also two kcompactd crashes with slightly different stacktraces, that
+> would have to be a NUMA system with multiple kcompactd's?
+>
+> >         fast_isolate_freepages mm/compaction.c:1356 [inline]
+> >         isolate_freepages mm/compaction.c:1429 [inline]
+> >         compaction_alloc+0xd05/0x2970 mm/compaction.c:1541
+> >         unmap_and_move mm/migrate.c:1177 [inline]
+> >         migrate_pages+0x48e/0x2cc0 mm/migrate.c:1417
+> >         compact_zone+0x2207/0x3e90 mm/compaction.c:2173
+> >         kcompactd_do_work+0x6de/0x1200 mm/compaction.c:2564
+> >         kcompactd+0x251/0x970 mm/compaction.c:2657
+> >         kthread+0x357/0x430 kernel/kthread.c:247
+> >         ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/e4cb6380-b462-857e-3219-319fdbfa6f81%40suse.cz.
+> For more options, visit https://groups.google.com/d/optout.
