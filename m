@@ -2,106 +2,155 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C39C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54854C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4608205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="b85evGC/"
+	by mail.kernel.org (Postfix) with ESMTP id 2C6FF205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729866AbfAQAdh (ORCPT
+        id S1727029AbfAQAgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:33:37 -0500
-Received: from onstation.org ([52.200.56.107]:54516 "EHLO onstation.org"
+        Wed, 16 Jan 2019 19:36:12 -0500
+Received: from mga05.intel.com ([192.55.52.43]:42206 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729678AbfAQAdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:33 -0500
-Received: from localhost.localdomain (mobile-166-171-186-103.mycingular.net [166.171.186.103])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 5A4E047;
-        Thu, 17 Jan 2019 00:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1547685212;
-        bh=3DMBJWZ4LhoZ8ssGR/xPPZoMezGTLMzmZujP9qNOZGA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b85evGC/zC+aWBmwopBoMgtqHxl3J/yJ9bZdt+lKq0avo7kq4wtaq7PqfKMfm20pC
-         rU2xgB7lhFdQS1E7lGo6pwAglq7J6jrGzNzH4Qgt1FHUd3oG/SjdZowEQUxrMhMDpf
-         u63KWpjWTYA5QyPb+F0phUIV6qyLIQIjLnTihWM0=
-From:   Brian Masney <masneyb@onstation.org>
-To:     linus.walleij@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org
-Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
-        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
-        niklas.cassel@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v5 13/14] arm64: dts: qcom: pmi8998: add interrupt controller properties
-Date:   Wed, 16 Jan 2019 19:32:33 -0500
-Message-Id: <20190117003234.22127-14-masneyb@onstation.org>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190117003234.22127-1-masneyb@onstation.org>
-References: <20190117003234.22127-1-masneyb@onstation.org>
+        id S1729776AbfAQAdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
+   d="scan'208";a="292166007"
+Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
+  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:34 -0800
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH 00/17] Merge text_poke fixes and executable lockdowns
+Date:   Wed, 16 Jan 2019 16:32:42 -0800
+Message-Id: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add interrupt controller properties now that spmi-gpio is a proper
-hierarchical IRQ chip. The interrupts property is no longer needed so
-remove it.
+This patchset improves several overlapping issues around stale TLB
+entries and W^X violations. It is combined from a slightly tweaked
+"x86/alternative: text_poke() enhancements v7" [1] and a next version of
+the "Don’t leave executable TLB entries to freed pages v2" [2]
+patchsets that were conflicting.
 
-This change was not tested on any hardware but the same change was
-tested on qcom-pm8941.dtsi using a LG Nexus 5 (hammerhead) phone with
-no issues.
+The related issues that this fixes:
+1. Fixmap PTEs that are used for patching are available for access from
+   other cores and might be exploited. They are not even flushed from
+   the TLB in remote cores, so the risk is even higher. Address this
+   issue by introducing a temporary mm that is only used during
+   patching. Unfortunately, due to init ordering, fixmap is still used
+   during boot-time patching. Future patches can eliminate the need for
+   it.
+2. Missing lockdep assertion to ensure text_mutex is taken. It is
+   actually not always taken, so fix the instances that were found not
+   to take the lock (although they should be safe even without taking
+   the lock).
+3. Module_alloc returning memory that is RWX until a module is finished
+   loading.
+4. Sometimes when memory is freed via the module subsystem, an
+   executable permissioned TLB entry can remain to a freed page. If the
+   page is re-used to back an address that will receive data from
+   userspace, it can result in user data being mapped as executable in
+   the kernel. The root of this behavior is vfree lazily flushing the
+   TLB, but not lazily freeing the underlying pages.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-Changes since v4:
-- None
-
-Patch introduced in v4.
-
- arch/arm64/boot/dts/qcom/pmi8998.dtsi | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/pmi8998.dtsi b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-index da3285e216e2..051f57e7d6ac 100644
---- a/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-@@ -14,20 +14,8 @@
- 			reg = <0xc000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
--				     <0 0xc1 0 IRQ_TYPE_NONE>,
--				     <0 0xc2 0 IRQ_TYPE_NONE>,
--				     <0 0xc3 0 IRQ_TYPE_NONE>,
--				     <0 0xc4 0 IRQ_TYPE_NONE>,
--				     <0 0xc5 0 IRQ_TYPE_NONE>,
--				     <0 0xc6 0 IRQ_TYPE_NONE>,
--				     <0 0xc7 0 IRQ_TYPE_NONE>,
--				     <0 0xc8 0 IRQ_TYPE_NONE>,
--				     <0 0xc9 0 IRQ_TYPE_NONE>,
--				     <0 0xca 0 IRQ_TYPE_NONE>,
--				     <0 0xcb 0 IRQ_TYPE_NONE>,
--				     <0 0xcc 0 IRQ_TYPE_NONE>,
--				     <0 0xcd 0 IRQ_TYPE_NONE>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 		};
- 	};
+The new changes from "Don’t leave executable TLB entries to freed pages
+v2":
+ - Add support for case of hibernate trying to save an unmapped page
+   on the directmap. (Ard Biesheuvel)
+ - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
+ - Avoid changing deferred free code by moving modules init free to work
+   queue (Andy Lutomirski)
+ - Plug in new flag for kprobes and ftrace
+ - More arch generic names for set_pages functions (Ard Biesheuvel)
+ - Fix for TLB not always flushing the directmap (Nadav Amit)
  
+New changes from from "x86/alternative: text_poke() enhancements v7"
+ - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
+ - Remove text_poke usage from ftrace (Nadav)
+ 
+[1] https://lkml.org/lkml/2018/12/5/200
+[2] https://lkml.org/lkml/2018/12/11/1571
+
+Andy Lutomirski (1):
+  x86/mm: temporary mm struct
+
+Nadav Amit (12):
+  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+  x86/jump_label: Use text_poke_early() during early init
+  fork: provide a function for copying init_mm
+  x86/alternative: initializing temporary mm for patching
+  x86/alternative: use temporary mm for text poking
+  x86/kgdb: avoid redundant comparison of patched code
+  x86/ftrace: set trampoline pages as executable
+  x86/kprobes: Instruction pages initialization enhancements
+  x86: avoid W^X being broken during modules loading
+  x86/jump-label: remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  module: Prevent module removal racing with text_poke()
+
+Rick Edgecombe (4):
+  Add set_alias_ function and x86 implementation
+  mm: Make hibernate handle unmapped pages
+  vmalloc: New flags for safe vfree on special perms
+  Plug in new special vfree flag
+
+ arch/Kconfig                         |   4 +
+ arch/x86/Kconfig                     |   1 +
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  32 +++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/set_memory.h    |   3 +
+ arch/x86/include/asm/text-patching.h |   7 +-
+ arch/x86/kernel/alternative.c        | 197 ++++++++++++++++++++-------
+ arch/x86/kernel/ftrace.c             |  15 +-
+ arch/x86/kernel/jump_label.c         |  19 ++-
+ arch/x86/kernel/kgdb.c               |  25 +---
+ arch/x86/kernel/kprobes/core.c       |  19 ++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  36 +++++
+ arch/x86/mm/pageattr.c               |  16 ++-
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/linux/filter.h               |  18 +--
+ include/linux/mm.h                   |  18 +--
+ include/linux/sched/task.h           |   1 +
+ include/linux/set_memory.h           |  10 ++
+ include/linux/vmalloc.h              |  13 ++
+ init/main.c                          |   3 +
+ kernel/bpf/core.c                    |   1 -
+ kernel/fork.c                        |  24 +++-
+ kernel/module.c                      |  87 ++++++------
+ mm/page_alloc.c                      |   6 +-
+ mm/vmalloc.c                         | 122 ++++++++++++++---
+ 27 files changed, 497 insertions(+), 189 deletions(-)
+
 -- 
-2.17.2
+2.17.1
 
