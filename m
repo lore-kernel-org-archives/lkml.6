@@ -2,154 +2,389 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5A2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0E1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE4B20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB18E20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:45:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FoLHtbyD"
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WfJNDz9w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbfAQGoy (ORCPT
+        id S1728324AbfAQGp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:44:54 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44001 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbfAQGox (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:44:53 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so4325634pfk.10
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 22:44:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=atLgXCZJmtT0O+GD3SkLBWNlve906gHwrgA3+iQTNq8=;
-        b=FoLHtbyD+T0hvK+Xsp8pX/kYm+I/+k4QezqwPy4hZEZOawY2bnAnmlg4Lqho8lfRFC
-         Pe+kTdIIXJOQiqLOuMj2BNQwVtPcMeN9yRHNlK3tuyW9GRfX/qzmxsKxAR+caOljDVnx
-         7oIH1rzzHgC/Mst7cn6AwQQOxI6ERIWzCV4G4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=atLgXCZJmtT0O+GD3SkLBWNlve906gHwrgA3+iQTNq8=;
-        b=DnF0uN3ZSZ6quXcpdiytB0FA96vECVV2CFnowGBtARZu1Mj+68SMQUC7CAufa2YZfZ
-         iMw1Ws34Xe9yjUe4lQt67CcxLkf0b5lw7lZHx9sOIOPj1YKPo5MXDo7RQfsgxj0jJcxX
-         VsXBoP3cgN/+Mj8Bnsdlk4LhM30dMvZD9ERgbe68e83UDHYTzXVi+WX8/JPoqc0ZFOBK
-         11qPb1O1quwVCAw4iXNN10st60XAnswEcHVC7p2kX7aFYLZV6nMNKbgMtGxyYPlSw8Ve
-         Jqd8atAo96BlcYJFQD3maHLjJCo3FZM/yP65ay+SZ5FDeIhPNLYH35NB2tg/LOgmzjRT
-         XL4A==
-X-Gm-Message-State: AJcUukddt5rZwZrXPRgMQvlthHbVwH2oFsR7TJK7nn9+e6gV7ZQWjxBd
-        xjUYiHfYvwedj38FX0bjRD38Dg==
-X-Google-Smtp-Source: ALg8bN62G0/QBaoJRR1ApqR8rAiY5+uOY2xmB/Wpjp2VNGDP8FZVdyPWnrnDVFMusI5C+iaXRq/f4Q==
-X-Received: by 2002:a62:2fc3:: with SMTP id v186mr13782534pfv.82.1547707492463;
-        Wed, 16 Jan 2019 22:44:52 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v190sm977708pfv.26.2019.01.16.22.44.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 22:44:51 -0800 (PST)
-Date:   Wed, 16 Jan 2019 22:44:11 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com,
-        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 04/13] dt-bindings: mailbox: qcom: Add clock-name
- optional property
-Message-ID: <20190117064411.GK25498@builder>
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        Thu, 17 Jan 2019 01:45:29 -0500
+Received: from mail-eopbgr1310130.outbound.protection.outlook.com ([40.107.131.130]:14490
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726720AbfAQGp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:45:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XBcsHhrWY47NDp7DxHs9G6hWHxRLljm6w1RBQFtjgwQ=;
+ b=WfJNDz9wMaffIp5FGmMujbqxhAZO7nFhLqBRxvzV7E/4tSoA3u01xtCAsJsfu4vEzuYy/0l1qaLjw2PmI55B9ssoWs+Mu6iR79ijw+rNTjaGTCs00dRx915sKEi2/TzCr0jNPXLTm2oNqASRfW7Yy0w36K0d6yaUSm0pkjKoFrI=
+Received: from KU1P153MB0166.APCP153.PROD.OUTLOOK.COM (10.170.173.13) by
+ KU1P153MB0182.APCP153.PROD.OUTLOOK.COM (10.170.175.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.2; Thu, 17 Jan 2019 06:45:14 +0000
+Received: from KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
+ ([fe80::84f5:2b02:1afd:f72d]) by KU1P153MB0166.APCP153.PROD.OUTLOOK.COM
+ ([fe80::84f5:2b02:1afd:f72d%5]) with mapi id 15.20.1558.009; Thu, 17 Jan 2019
+ 06:45:14 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     kimbrownkd <kimbrownkd@gmail.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+CC:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3] Drivers: hv: vmbus: Expose counters for interrupts and
+ full conditions
+Thread-Topic: [PATCH v3] Drivers: hv: vmbus: Expose counters for interrupts
+ and full conditions
+Thread-Index: AQHUrh5ym5Od2NjzUkCFE4xnJ7s7EaWzA8Uw
+Date:   Thu, 17 Jan 2019 06:45:14 +0000
+Message-ID: <KU1P153MB0166DA6E76D0080C4AD43E01BF830@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
+References: <20190105043518.GA4072@ubu-Virtual-Machine>
+ <20190117043759.GA3395@ubu-Virtual-Machine>
+In-Reply-To: <20190117043759.GA3395@ubu-Virtual-Machine>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-01-17T06:45:11.2364825Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=ec3dc672-62f0-4d7d-b131-13bfd52a3caf;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+x-originating-ip: [2601:600:a280:1760:ec95:7339:194b:8848]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;KU1P153MB0182;6:UqMK1Fhw4Gi6i21gyMcc8koUxl/sSNu8mc5k5ZpdiBx57C3YqCh/0zYVFvTF4h4qbDCEeslhOxlL54x9GSh3/WXTuNIQAi6plvXspqgMvBchtBpJjzeFoES12go3Xn+52+wX3Ygf2dk7VA5VRsq5PYOATHDKCxx2VCw4+wsaFWZwvpQ+swiXQwRViq6OLltxOu0SPsTEk+Xhp860cDGmz6rA1VA0Q3m5xHPC7RK8g9Q3T4ebHn9rSUIAu1zGhYhI4AiM0HDCgRReSDdZlZ1a8BfeqlWwCBJ66lUDk8120f+E2n1oQ71y1gG6mfLM2YL+nEBcRDvRV8wepCDOrA5gcbi6YtGCB3gVTNWP8ELhnvoe/cga8AmT5QGdeLlYNy9QfrBVhGrilumZK/OzxMEdhjAB2FGCd9cj/T2sCKOfCXQYlIvGk1CJE6n9qDOJdrxMxHbcJXC4MORLQriGzJRgBA==;5:ZGlRCS2H4SYVXFk8m95DfFHvpyC4skbaccnaTROlA4KEgfLlSnx9QN42a7MgT7zFyimq/M7ifnpVf5xM7yDJrMp9PrbM84a9WmQmjQDXuW0WhZseuf+Ow0ed4cLGMiUiIoIbNSnERUMuGY9Qxr+/cQREaJ1Pjsmg5ZjNnxFWwv/4TuRDIKAeO/urmunHjOs1b4WcFY/aCZ6T1F7sIfU5sQ==;7:fRKsnd4s1aE7llWtG0870I/64y4DPZPR8FUMUUR5y/M3hNmgBegFkC+g7sdhAzJZAn0P+BMcnwv0e7CjwFvQTEGh+Gse6ygg1SFh+PuBQvd1dScuxDtZ0PcUdGKmC5wd3K50n7p1Sk3ozMDEIYg20g==
+x-ms-office365-filtering-correlation-id: 38c0f441-ab43-4221-bdb5-08d67c47560a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7193020);SRVR:KU1P153MB0182;
+x-ms-traffictypediagnostic: KU1P153MB0182:
+x-ms-exchange-purlcount: -3
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <KU1P153MB01824D55B2A3AAB628EC13ACBF830@KU1P153MB0182.APCP153.PROD.OUTLOOK.COM>
+x-forefront-prvs: 0920602B08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(39860400002)(136003)(366004)(189003)(199004)(8936002)(110136005)(476003)(22452003)(11346002)(316002)(478600001)(1511001)(106356001)(2906002)(10290500003)(6436002)(97736004)(86612001)(33656002)(5660300001)(446003)(53936002)(6636002)(86362001)(14444005)(256004)(55016002)(71200400001)(54906003)(9686003)(71190400001)(105586002)(14454004)(305945005)(186003)(6246003)(7736002)(102836004)(76176011)(6116002)(7696005)(99286004)(6346003)(6506007)(53546011)(74316002)(39060400002)(10090500001)(8990500004)(68736007)(486006)(229853002)(25786009)(46003)(4326008)(81156014)(81166006)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:KU1P153MB0182;H:KU1P153MB0166.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 5KX8cb2TzFmUffrkv+guwmbNU2vW1qrAYjNKeQ2czWTXCrT0jHsmNmNBysd7nTDcFZXea98Sluv2UYYSJqo/Cs33AZG5zEQk8YphUfOO0JJVwJl0p/Hcl6d20PPFlKmeNEDsPKZZjpaqRRp9PqGLhJtDXNXnzi7HpLyl00j7yRigNIBT1wR5cKbs6FdvBY5yhPuF6bpAW2b2jxGXMujjXM8TzP2yexmyfRiNHuKXc3epyg8UXr1loD6SEaOHyPyuAykgSsXaI1bktLxN7UqV8tLWoe8KCMnVKrAIAMUGk/IhjVEaLr+BMgveCbkHgwfubZ8BnDBpv5tcflBXRWjO6SlzINfGnYCqckss1TXz+acoDfb0yE0HtZE+2pRwzdcdMu1wd+yJj5GFaafaDJuwXtfFofvggcbN7LrsnR3n6hg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545039990-19984-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38c0f441-ab43-4221-bdb5-08d67c47560a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 06:45:14.3097
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU1P153MB0182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 17 Dec 01:46 PST 2018, Jorge Ramirez-Ortiz wrote:
-
-> When the APCS clock is registered (platform dependent), it retrieves
-> its parent names from hardcoded values in the driver.
-> 
-> The following commit allows the DT node to provide such clock names to
-> the platform data based clock driver therefore avoiding having to
-> explicitly embed those names in the clock driver source code.
-> 
-> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> From: Kimberly Brown <kimbrownkd@gmail.com>
+> Sent: Wednesday, January 16, 2019 8:38 PM
+> To: Michael Kelley <mikelley@microsoft.com>; Long Li
+> <longli@microsoft.com>; Sasha Levin <Alexander.Levin@microsoft.com>;
+> Dexuan Cui <decui@microsoft.com>
+> Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
+> <haiyangz@microsoft.com>; Stephen Hemminger
+> <sthemmin@microsoft.com>; devel@linuxdriverproject.org;
+> linux-kernel@vger.kernel.org
+> Subject: [PATCH v3] Drivers: hv: vmbus: Expose counters for interrupts an=
+d full
+> conditions
+>=20
+> Counter values for per-channel interrupts and ring buffer full
+> conditions are useful for investigating performance.
+>=20
+> Expose counters in sysfs for 2 types of guest to host interrupts:
+> 1) Interrupts caused by the channel's outbound ring buffer transitioning
+> from empty to not empty
+> 2) Interrupts caused by the channel's inbound ring buffer transitioning
+> from full to not full while a packet is waiting for enough buffer space t=
+o
+> become available
+>=20
+> Expose 2 counters in sysfs for the number of times that write operations
+> encountered a full outbound ring buffer:
+> 1) The total number of write operations that encountered a full
+> condition
+> 2) The number of write operations that were the first to encounter a
+> full condition
+>=20
+> I tested this patch by confirming that the sysfs files were created and
+> observing the counter values. The values seemed to increase by a
+> reasonable amount when the Hyper-v related drivers were in use.
+>=20
+> Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
 > ---
->  .../bindings/mailbox/qcom,apcs-kpss-global.txt      | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-> index 1232fc9..f252439 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-> @@ -23,6 +23,10 @@ platforms.
->  	Value type: <phandle>
->  	Definition: phandle to the input PLL, which feeds the APCS mux/divider
->  
-> +       Usage: required if #clock-names property is present
-> +       Value type: <phandle array>
-> +	Definition: phandles to the two parent clocks of the clock driver.
-
-I presume you meant to replace the existing definition of "clocks"?
-
-I think the purpose of "required if #clock-cells" comes from that
-meaning that it represents a clock-controller if #clock-cells is
-specified, in which case it requires the upstream clock(s).
-
-Regards,
-Bjorn
-
+> Changes in v3:
+>  - Used the outbound ring buffer spinlock to protect the the full
+>    condition counters in set_channel_pending_send_size()
+>  - Corrected the KernelVersion values for the new entries in
+>    Documentation/ABI/stable/sysfs-bus-vmbus
+>=20
+> Changes in v2:
+>  - Added mailing lists to the cc list
+>  - Removed the host to guest interrupt counters proposed in v1 because
+>    they were not accurate
+>  - Added full condition counters for the channel's outbound ring buffer
+>=20
+>  Documentation/ABI/stable/sysfs-bus-vmbus | 33 ++++++++++++++++++++
+>  drivers/hv/ring_buffer.c                 | 14 ++++++++-
+>  drivers/hv/vmbus_drv.c                   | 32 ++++++++++++++++++++
+>  include/linux/hyperv.h                   | 38
+> ++++++++++++++++++++++++
+>  4 files changed, 116 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/ABI/stable/sysfs-bus-vmbus
+> b/Documentation/ABI/stable/sysfs-bus-vmbus
+> index 3fed8fdb873d..a0304c563467 100644
+> --- a/Documentation/ABI/stable/sysfs-bus-vmbus
+> +++ b/Documentation/ABI/stable/sysfs-bus-vmbus
+> @@ -146,3 +146,36 @@ KernelVersion:	4.16
+>  Contact:	Stephen Hemminger <sthemmin@microsoft.com>
+>  Description:	Binary file created by uio_hv_generic for ring buffer
+>  Users:		Userspace drivers
 > +
->  - #mbox-cells:
->  	Usage: required
->  	Value type: <u32>
-> @@ -33,6 +37,12 @@ platforms.
->  	Value type: <u32>
->  	Definition: as described in clock.txt, must be 0
->  
-> +- clock-names:
-> +	Usage: required if the platform data based clock driver needs to
-> +	retrieve the parent clock names from device tree.
-> +	This will requires two mandatory clocks to be defined.
-> +	Value type: <string-array>
-> +	Definition: must be "aux" and "pll"
->  
->  = EXAMPLE
->  The following example describes the APCS HMSS found in MSM8996 and part of the
-> @@ -65,3 +75,14 @@ Below is another example of the APCS binding on MSM8916 platforms:
->  		clocks = <&a53pll>;
->  		#clock-cells = <0>;
->  	};
+> +What:
+> /sys/bus/vmbus/devices/<UUID>/channels/<N>/intr_in_full
+> +Date:           January 2019
+> +KernelVersion:  5.0
+> +Contact:        Michael Kelley <mikelley@microsoft.com>
+> +Description:    Number of guest to host interrupts caused by the inbound
+> ring
+> +		buffer transitioning from full to not full while a packet is
+> +		waiting for buffer space to become available
+> +Users:          Debugging tools
 > +
-> +Below is another example of the APCS binding on QCS404 platforms:
+> +What:
+> /sys/bus/vmbus/devices/<UUID>/channels/<N>/intr_out_empty
+> +Date:           January 2019
+> +KernelVersion:  5.0
+> +Contact:        Michael Kelley <mikelley@microsoft.com>
+> +Description:    Number of guest to host interrupts caused by the outboun=
+d
+> ring
+> +		buffer transitioning from empty to not empty
+> +Users:          Debugging tools
 > +
-> +	apcs_glb: mailbox@b011000 {
-> +		compatible = "qcom,qcs404-apcs-apps-global", "syscon";
-> +		reg = <0x0b011000 0x1000>;
-> +		#mbox-cells = <1>;
-> +		clocks = <&gcc GCC_GPLL0_AO_OUT_MAIN>, <&apcs_hfpll>;
-> +		clock-names = "aux", "pll";
-> +		#clock-cells = <0>;
-> +	};
-> -- 
-> 2.7.4
-> 
+> +What:
+> /sys/bus/vmbus/devices/<UUID>/channels/<N>/out_full_first
+> +Date:           January 2019
+> +KernelVersion:  5.0
+> +Contact:        Michael Kelley <mikelley@microsoft.com>
+> +Description:    Number of write operations that were the first to encoun=
+ter
+> an
+> +		outbound ring buffer full condition
+> +Users:          Debugging tools
+> +
+> +What:
+> /sys/bus/vmbus/devices/<UUID>/channels/<N>/out_full_total
+> +Date:           January 2019
+> +KernelVersion:  5.0
+> +Contact:        Michael Kelley <mikelley@microsoft.com>
+> +Description:    Total number of write operations that encountered an
+> outbound
+> +		ring buffer full condition
+> +Users:          Debugging tools
+> diff --git a/drivers/hv/ring_buffer.c b/drivers/hv/ring_buffer.c
+> index 1f1a55e07733..9e8b31ccc142 100644
+> --- a/drivers/hv/ring_buffer.c
+> +++ b/drivers/hv/ring_buffer.c
+> @@ -74,8 +74,10 @@ static void hv_signal_on_write(u32 old_write, struct
+> vmbus_channel *channel)
+>  	 * This is the only case we need to signal when the
+>  	 * ring transitions from being empty to non-empty.
+>  	 */
+> -	if (old_write =3D=3D READ_ONCE(rbi->ring_buffer->read_index))
+> +	if (old_write =3D=3D READ_ONCE(rbi->ring_buffer->read_index)) {
+> +		++channel->intr_out_empty;
+>  		vmbus_setevent(channel);
+> +	}
+>  }
+>=20
+>  /* Get the next write location for the specified ring buffer. */
+> @@ -272,10 +274,19 @@ int hv_ringbuffer_write(struct vmbus_channel
+> *channel,
+>  	 * is empty since the read index =3D=3D write index.
+>  	 */
+>  	if (bytes_avail_towrite <=3D totalbytes_towrite) {
+> +		++channel->out_full_total;
+> +
+> +		if (!channel->out_full_flag) {
+> +			++channel->out_full_first;
+> +			channel->out_full_flag =3D true;
+> +		}
+> +
+>  		spin_unlock_irqrestore(&outring_info->ring_lock, flags);
+>  		return -EAGAIN;
+>  	}
+>=20
+> +	channel->out_full_flag =3D false;
+> +
+>  	/* Write to the ring buffer */
+>  	next_write_location =3D hv_get_next_write_location(outring_info);
+>=20
+> @@ -530,6 +541,7 @@ void hv_pkt_iter_close(struct vmbus_channel
+> *channel)
+>  	if (curr_write_sz <=3D pending_sz)
+>  		return;
+>=20
+> +	++channel->intr_in_full;
+>  	vmbus_setevent(channel);
+>  }
+>  EXPORT_SYMBOL_GPL(hv_pkt_iter_close);
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 403fee01572c..e291a7d3180c 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -1496,6 +1496,34 @@ static ssize_t channel_events_show(const struct
+> vmbus_channel *channel, char *bu
+>  }
+>  static VMBUS_CHAN_ATTR(events, S_IRUGO, channel_events_show, NULL);
+>=20
+> +static ssize_t channel_intr_in_full_show(const struct vmbus_channel
+> *channel,
+> +					 char *buf)
+> +{
+> +	return sprintf(buf, "%llu\n", channel->intr_in_full);
+> +}
+> +static VMBUS_CHAN_ATTR(intr_in_full, 0444, channel_intr_in_full_show,
+> NULL);
+> +
+> +static ssize_t channel_intr_out_empty_show(const struct vmbus_channel
+> *channel,
+> +					   char *buf)
+> +{
+> +	return sprintf(buf, "%llu\n", channel->intr_out_empty);
+> +}
+> +static VMBUS_CHAN_ATTR(intr_out_empty, 0444,
+> channel_intr_out_empty_show, NULL);
+> +
+> +static ssize_t channel_out_full_first_show(const struct vmbus_channel
+> *channel,
+> +					   char *buf)
+> +{
+> +	return sprintf(buf, "%llu\n", channel->out_full_first);
+> +}
+> +static VMBUS_CHAN_ATTR(out_full_first, 0444, channel_out_full_first_show=
+,
+> NULL);
+> +
+> +static ssize_t channel_out_full_total_show(const struct vmbus_channel
+> *channel,
+> +					   char *buf)
+> +{
+> +	return sprintf(buf, "%llu\n", channel->out_full_total);
+> +}
+> +static VMBUS_CHAN_ATTR(out_full_total, 0444, channel_out_full_total_show=
+,
+> NULL);
+> +
+>  static ssize_t subchannel_monitor_id_show(const struct vmbus_channel
+> *channel,
+>  					  char *buf)
+>  {
+> @@ -1521,6 +1549,10 @@ static struct attribute *vmbus_chan_attrs[] =3D {
+>  	&chan_attr_latency.attr,
+>  	&chan_attr_interrupts.attr,
+>  	&chan_attr_events.attr,
+> +	&chan_attr_intr_in_full.attr,
+> +	&chan_attr_intr_out_empty.attr,
+> +	&chan_attr_out_full_first.attr,
+> +	&chan_attr_out_full_total.attr,
+>  	&chan_attr_monitor_id.attr,
+>  	&chan_attr_subchannel_id.attr,
+>  	NULL
+> diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+> index dcb6977afce9..7e5239123276 100644
+> --- a/include/linux/hyperv.h
+> +++ b/include/linux/hyperv.h
+> @@ -751,6 +751,27 @@ struct vmbus_channel {
+>  	u64	interrupts;	/* Host to Guest interrupts */
+>  	u64	sig_events;	/* Guest to Host events */
+>=20
+> +	/* Interrupt counts for 2 types of Guest to Host interrupts */
+> +	u64 intr_in_full;	/* in ring buffer, full to not full */
+> +	u64 intr_out_empty;	/* out ring buffer, empty to not empty */
+> +
+> +	/*
+> +	 * The total number of write operations that encountered a full
+> +	 * outbound ring buffer.
+> +	 */
+> +	u64 out_full_total;
+> +	/*
+> +	 * The number of write operations that were the first to encounter a
+> +	 * full outbound ring buffer.
+> +	 */
+> +	u64 out_full_first;
+> +	/*
+> +	 * Indicates that a full outbound ring buffer was encountered. The flag
+> +	 * is set to true when a full outbound ring buffer is encountered and
+> +	 * set to false when a write to the outbound ring buffer is completed.
+> +	 */
+> +	bool out_full_flag;
+> +
+>  	/* Channel callback's invoked in softirq context */
+>  	struct tasklet_struct callback_event;
+>  	void (*onchannel_callback)(void *context);
+> @@ -936,6 +957,23 @@ static inline void *get_per_channel_state(struct
+> vmbus_channel *c)
+>  static inline void set_channel_pending_send_size(struct vmbus_channel *c=
+,
+>  						 u32 size)
+>  {
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&c->outbound.ring_lock, flags);
+> +
+> +	if (size) {
+> +		++c->out_full_total;
+> +
+> +		if (!c->out_full_flag) {
+> +			++c->out_full_first;
+> +			c->out_full_flag =3D true;
+> +		}
+> +	} else {
+> +		c->out_full_flag =3D false;
+> +	}
+> +
+> +	spin_unlock_irqrestore(&c->outbound.ring_lock, flags);
+> +
+>  	c->outbound.ring_buffer->pending_send_sz =3D size;
+>  }
+>=20
+> --
+> 2.17.1
+
+Looks good to me.=20
+
+Reviewed-by: Dexuan Cui <decui@microsoft.com>
+
+-- Dexuan
+
