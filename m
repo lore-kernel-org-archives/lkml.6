@@ -2,178 +2,115 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D80C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 429CFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F64120855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:06:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PZNqXvgA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fch1AwEv"
+	by mail.kernel.org (Postfix) with ESMTP id 11DD320866
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547708783;
+	bh=YQg5kK0CK1gygp8V+fUKHMM30p/aVFKoBFNquIpl8z4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Nms4rVSYDFjTDWkuq5DPC9vwG/4fTBXEigN2rsk+9TycFNpihZPwCw/u3SgTM3q50
+	 I7pvzFS/gqe/OJLRg8vsHyaiHaSoIH33z+c2OaIwNNskyTxtSmynaqjf+hYgaeMr4g
+	 CHiNJ9TBU9YYay/PFIYbiKlZ9bTHsKky/TecTR1s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730395AbfAQHGF (ORCPT
+        id S1730436AbfAQHGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 02:06:05 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:59794 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729644AbfAQHGF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 02:06:05 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 057FB6079C; Thu, 17 Jan 2019 07:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547708764;
-        bh=3yFT0kaW8fsevXgSuhk2zDV4NYcTTfxcSZAnUU0S2hs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PZNqXvgAoIwT/wMdrK8tyzkxpW94GkCRNAS0KZE+wh86vnsrQKxgpqrlbntcajPDH
-         SjPGvbmTSsdrJsQLKPrS9PZ4y1OcJ4bk2G2YRMQSp16zv7O9J8ot6S6pxARZGYu1P3
-         QuD8o9j/Go6fXgs6klIi7oqnq2pOrfu/dnU1KoA8=
-Received: from [192.168.225.247] (unknown [49.33.245.52])
+        Thu, 17 Jan 2019 02:06:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730398AbfAQHGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 02:06:19 -0500
+Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DA770606E1;
-        Thu, 17 Jan 2019 07:05:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547708763;
-        bh=3yFT0kaW8fsevXgSuhk2zDV4NYcTTfxcSZAnUU0S2hs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=fch1AwEvG4FoGu3VjkfkFGd0bWR/EY6RMlquOQ1HZnjqM+M293FHn2VML2HV4Jx+J
-         6tQo9OYGR0GXLIgvW+PptOesb4s0OuWmfJiATWCSH16O+drid5m6N703eFMcIWRM0K
-         5AgT6WRBZwFAyFHCG8xU6shyDlzS0tR18RMYooz0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA770606E1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2] cpufreq: qcom: Read voltage LUT and populate OPP
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        amit.kucheria@linaro.org, Matthias Kaehlcke <mka@chromium.org>,
-        evgreen@google.com
-References: <1547021248-27258-1-git-send-email-tdas@codeaurora.org>
- <20190109085400.mscuzezwxta4fpfh@vireshk-i7>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <09114ef8-6ea7-ea92-caab-d5ea2904523f@codeaurora.org>
-Date:   Thu, 17 Jan 2019 12:35:54 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 353B920856;
+        Thu, 17 Jan 2019 07:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547708777;
+        bh=YQg5kK0CK1gygp8V+fUKHMM30p/aVFKoBFNquIpl8z4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0pw3ulKi3jq4oKmvxSJxzzJsSdMcohB7IigecglkQT5Rx7a1QVi6VMiKG+7/EaK5C
+         /1jqt2buqhHUph/IaPf93BCvJIFaI+XBcHutXpZ8WKrpTTySrlp18ZPjm07/tBc6Eg
+         nedbQORGuNF/Dh36ZedpPIbDbRoH11rc3m/ItgOI=
+Date:   Thu, 17 Jan 2019 15:06:03 +0800
+From:   Guo Ren <guoren@kernel.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 19/21] treewide: add checks for the return value of
+ memblock_alloc*()
+Message-ID: <20190117070602.GA31839@guoren-Inspiron-7460>
+References: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
+ <1547646261-32535-20-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190109085400.mscuzezwxta4fpfh@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547646261-32535-20-git-send-email-rppt@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Viresh,
+On Wed, Jan 16, 2019 at 03:44:19PM +0200, Mike Rapoport wrote:
+>  arch/csky/mm/highmem.c                    |  5 +++++
+...
+> diff --git a/arch/csky/mm/highmem.c b/arch/csky/mm/highmem.c
+> index 53b1bfa..3317b774 100644
+> --- a/arch/csky/mm/highmem.c
+> +++ b/arch/csky/mm/highmem.c
+> @@ -141,6 +141,11 @@ static void __init fixrange_init(unsigned long start, unsigned long end,
+>  			for (; (k < PTRS_PER_PMD) && (vaddr != end); pmd++, k++) {
+>  				if (pmd_none(*pmd)) {
+>  					pte = (pte_t *) memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
+> +					if (!pte)
+> +						panic("%s: Failed to allocate %lu bytes align=%lx\n",
+> +						      __func__, PAGE_SIZE,
+> +						      PAGE_SIZE);
+> +
+>  					set_pmd(pmd, __pmd(__pa(pte)));
+>  					BUG_ON(pte != pte_offset_kernel(pmd, 0));
+>  				}
 
-On 1/9/2019 2:24 PM, Viresh Kumar wrote:
-> On 09-01-19, 13:37, Taniya Das wrote:
->> @@ -98,6 +107,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
-> 
-> You are only using this "dev" parameter for dev_dbg(), instead of that
-> pass cpu_dev pointer.
-> 
+Looks good for me and panic is ok.
 
-Sure, will clean it up to use cpu_dev.
-
->>   			table[i].frequency = CPUFREQ_ENTRY_INVALID;
->>   		} else {
->>   			table[i].frequency = freq;
->> +			dev_pm_opp_add(get_cpu_device(policy->cpu),
->> +					freq * 1000, volt);
->>   			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
->>   				freq, core_count);
->>   		}
->> @@ -116,6 +127,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
->>   			if (prev_cc != max_cores) {
->>   				prev->frequency = prev_freq;
->>   				prev->flags = CPUFREQ_BOOST_FREQ;
->> +				dev_pm_opp_add(get_cpu_device(policy->cpu),
->> +						prev_freq * 1000, volt);
->>   			}
->>
->>   			break;
->> @@ -127,6 +140,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
->>
->>   	table[i].frequency = CPUFREQ_TABLE_END;
->>   	policy->freq_table = table;
->> +	dev_pm_opp_set_sharing_cpus(get_cpu_device(policy->cpu), policy->cpus);
-> 
-> and then all the above sites can be simplified a bit.
-> 
->>   	return 0;
->>   }
->> @@ -159,10 +173,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
->>   	struct device *dev = &global_pdev->dev;
->>   	struct of_phandle_args args;
->>   	struct device_node *cpu_np;
->> +	struct device *cpu_dev;
->>   	struct resource *res;
->>   	void __iomem *base;
->>   	int ret, index;
->>
->> +	cpu_dev = get_cpu_device(policy->cpu);
->> +	if (!cpu_dev) {
->> +		pr_err("%s: failed to get cpu%d device\n", __func__,
->> +		       policy->cpu);
->> +		return -ENODEV;
->> +	}
->> +
->>   	cpu_np = of_cpu_device_node_get(policy->cpu);
->>   	if (!cpu_np)
->>   		return -EINVAL;
->> @@ -205,6 +227,12 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
->>   		goto error;
->>   	}
->>
->> +	ret = dev_pm_opp_get_opp_count(cpu_dev);
->> +	if (ret <= 0) {
->> +		dev_err(cpu_dev, "OPP table is not ready\n");
-> 
-> Rather say "Failed to add OPPs\n".
-> 
-
-Sure will update it.
-
->> +		goto error;
->> +	}
->> +
->>   	policy->fast_switch_possible = true;
->>
->>   	return 0;
->> @@ -217,6 +245,7 @@ static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
->>   {
->>   	void __iomem *base = policy->driver_data - REG_PERF_STATE;
->>
->> +	dev_pm_opp_remove_all_dynamic(&global_pdev->dev);
-> 
-> This is platform device's device structure, while you added the OPPs
-> using cpu_dev. You sure this will work ?
-> 
-
-Hmm, yeah, would update it in the next patch.
-
->>   	kfree(policy->freq_table);
->>   	devm_iounmap(&global_pdev->dev, base);
->>
->> --
->> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
->> of the Code Aurora Forum, hosted by the  Linux Foundation.
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Reviewed-by: Guo Ren <ren_guo@c-sky.com>
