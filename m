@@ -2,138 +2,108 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBF9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB133C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5169820855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B42AD20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:16:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HYB1ynGw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbfAQVPB (ORCPT
+        id S1728239AbfAQVQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 16:15:01 -0500
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:36070 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726905AbfAQVPB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 16:15:01 -0500
-Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
-        by mx0a-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HL781g016458;
-        Thu, 17 Jan 2019 21:14:13 GMT
-Received: from g2t2352.austin.hpe.com (g2t2352.austin.hpe.com [15.233.44.25])
-        by mx0a-002e3701.pphosted.com with ESMTP id 2q2vemtr6x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Jan 2019 21:14:13 +0000
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2352.austin.hpe.com (Postfix) with ESMTP id F0359A7;
-        Thu, 17 Jan 2019 21:14:11 +0000 (UTC)
-Received: from anatevka (anatevka.americas.hpqcorp.net [10.34.81.61])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id B6FC336;
-        Thu, 17 Jan 2019 21:14:10 +0000 (UTC)
-Date:   Thu, 17 Jan 2019 14:14:10 -0700
-From:   Jerry Hoemann <jerry.hoemann@hpe.com>
-To:     Guenter Roeck <groeck@google.com>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCHv2] watchdog: qcom: Add suspend/resume support
-Message-ID: <20190117211410.GA30749@anatevka>
-Reply-To: Jerry.Hoemann@hpe.com
-References: <20190117151942.6092-1-saiprakash.ranjan@codeaurora.org>
- <154775022743.169631.1716489383315213219@swboyd.mtv.corp.google.com>
- <CABXOdTfE+_q8DrRfPE1V+3pU7x5rLoOy7k5LYMrwd+xojsBWvw@mail.gmail.com>
+        Thu, 17 Jan 2019 16:16:06 -0500
+Received: from ozlabs.org ([203.11.71.1]:34581 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726905AbfAQVQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 16:16:05 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43gcLp2CJ4z9s9G;
+        Fri, 18 Jan 2019 08:16:02 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547759763;
+        bh=QB8HmW8jkY8FacfGGZW9oBndrV+hEU9R9odC97b3JKk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HYB1ynGwGo4krk/aI7NFE8TtAAGS4AY4Ky4VgXU79idcYInQWh4wg0O7tnKKIT1TP
+         pzSYSkJr2dCIdRkv43M4um9pCVpQBQfgv8nhCCJsGuK+8bQ9VDoODBrcEdTv7FEG4b
+         Up9s1BAG0bUsjZA6fr+rGtPqo1RjgjMuU7rvkbT4FOKIRlbyEPh4k+Wh+kiWGJsXgk
+         3ExEv5rRPEbFnqPjyY+ZnWkf7LwN1CMLmh7NSDNk8Rg12FStbVxOxTrN2uGUxvcqEi
+         a81GoZALnAe8TMjeLQ7XRa+Je/uJwchL615FFnGKdGOpK4ntgF+HgKAmzEKC3p2bmz
+         7FCuINTvop5Bw==
+Date:   Fri, 18 Jan 2019 08:16:01 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Anand Moon <linux.amoon@gmail.com>
+Subject: linux-next: Fixes tag needs some work in the amlogic tree
+Message-ID: <20190118081601.7d60679d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABXOdTfE+_q8DrRfPE1V+3pU7x5rLoOy7k5LYMrwd+xojsBWvw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901170147
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TzLGpye+9mTmxywcGg11Lja"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 11:09:31AM -0800, Guenter Roeck wrote:
-> On Thu, Jan 17, 2019 at 10:37 AM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Quoting Sai Prakash Ranjan (2019-01-17 07:19:42)
-> > > diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-> > > index 780971318810..5dfd604477a4 100644
-> > > --- a/drivers/watchdog/qcom-wdt.c
-> > > +++ b/drivers/watchdog/qcom-wdt.c
-> > > @@ -245,6 +245,28 @@ static int qcom_wdt_remove(struct platform_device *pdev)
-> > >         return 0;
-> > >  }
-> > >
-> > > +static int __maybe_unused qcom_wdt_suspend(struct device *dev)
-> > > +{
-> > > +       struct qcom_wdt *wdt = dev_get_drvdata(dev);
-> > > +
-> > > +       if (watchdog_active(&wdt->wdd))
-> > > +               qcom_wdt_stop(&wdt->wdd);
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +static int __maybe_unused qcom_wdt_resume(struct device *dev)
-> > > +{
-> > > +       struct qcom_wdt *wdt = dev_get_drvdata(dev);
-> > > +
-> > > +       if (watchdog_active(&wdt->wdd))
-> > > +               qcom_wdt_start(&wdt->wdd);
-> > > +
-> > > +       return 0;
-> > > +}
-> >
-> > This looks fairly generic. For example, the Mediatek driver also stops
-> > and starts (but also pings after starting). Grepping for 'active' in
-> > drivers/watchdog/ finds more examples. Could there be some functions in
-> > watchdog core that do the common things like watchdog_stop() and
-> > watchdog_start() and watchdog_start_and_ping()? Or maybe a bit can be
-> > set during registration so that the 'struct class watchdog_class' can
-> > get PM ops to stop and start on suspend/resume of the watchdog character
-> > device?
-> >
-> > Nothing is wrong with the patch, I'm just bemoaning the amount of code
-> > duplication here.
-> >
-> 
-> Patch(es) to add the functionality to the watchdog core are welcome;
-> it should be possible to move the functionality into the core (maybe
-> to be enabled with a new watchdog API call). Doing it using the class
-> device sounds like an excellent idea. This should be straightforward
-> to implement, though the question of "should we ping on resume or not"
-> might be an endless source for bike shedding fun.
-> 
-> Guenter
+--Sig_/TzLGpye+9mTmxywcGg11Lja
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It could be controlled by a currently unused bit in the
-watchdog_info.options.  Then people can agree to disagree.
+Hi all,
 
+Commit
 
+  2839b54d4cae ("ARM64: dts: meson-gxbb-odroidc2: Fix usb phy reset warning=
+")
 
--- 
+Fixes tag
 
------------------------------------------------------------------------------
-Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
------------------------------------------------------------------------------
+  Fixes: 5a0803bd5ae (ARM64: dts: meson-gxbb-odroidc2: Enable USB Nodes)
+
+has these problems:
+
+  - SHA1 should be at least 12 digits long
+
+Commit
+
+  f01d1f474076 ("ARM64: dts: meson-gxbb-odroidc2: Fix usb phy regulator pow=
+er failed warning")
+
+Fixes tag
+
+  Fixes: 5a0803bd5ae ("ARM64: dts: meson-gxbb-odroidc2: Enable USB Nodes")
+
+has these problems:
+
+  - SHA1 should be at least 12 digits long
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/TzLGpye+9mTmxywcGg11Lja
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxA8JEACgkQAVBC80lX
+0GzeBwf9GZ65sEI+qh9w5sIb2Ms8jvyHqkdpbgQwkv7k5ryycCJ4zycRGZCbViCN
+Sfk/xGfWObpEXUI8f8A/ahEbqpEMkyUWWct5Cz4EeLPPsN64HJ/QyadPoopshmjs
+aFddrrNt9zac2XrfeDIbJI9JOyUmEYzVrQfpfol9W+lPJ1/A4CUi2Slke2PjZn5z
+B+jXDG+4bhdHeDT6LYFb4jxjuvV/6fodCtNDpiUYm1Jf3v9qbZnpj8m9DffZkV9H
+wdd9rjl6CEoYBjpzhYzOLdyMBIoaxm+s1f1SgbEaD8YJOlBnaLcizc2sKKAOjSBd
+7iEpeeZzprvGI0IImo2B2lz0TFVZtw==
+=ZRnt
+-----END PGP SIGNATURE-----
+
+--Sig_/TzLGpye+9mTmxywcGg11Lja--
