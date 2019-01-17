@@ -2,207 +2,154 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D3CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F628C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEAE320859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:38:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 593E220868
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:38:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmPsI3D8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pieTo06O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726032AbfAQWiU (ORCPT
+        id S1726225AbfAQWid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 17:38:20 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42657 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbfAQWiU (ORCPT
+        Thu, 17 Jan 2019 17:38:33 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35372 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbfAQWid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 17:38:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q18so12827739wrx.9
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 14:38:18 -0800 (PST)
+        Thu, 17 Jan 2019 17:38:33 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z9so5539024pfi.2;
+        Thu, 17 Jan 2019 14:38:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lN2rae8wyVAor90vR3Fuv6iYQRV6+kCDtSkz6R9rQ4Q=;
-        b=CmPsI3D8ecOulLP6isxpm0wKkhNOw4vQlvnARk3ePmXCH7AITNrDYBQKtl+k1S3fQS
-         zHAnugWsAlXXivQjaRbUPiCfoQCDXNjcp0I+t/eqHKq2f5+/8/6+HniaLoztkEEOU2Qc
-         IGkW7+JP5v3xRVK2AD0geHPmx5uFCZ5dUyr3+0mlRvGT983fQEcXlOy68ZhxMa97wgOd
-         NifTZfFzorFmXsvqttrG7IzCiklSibu8WuWD3oy2CHsVObnFVV0n91TaYAkQYIWf3dW/
-         oZV5flsrjEA7J+WDYEWiku/Fr5xBrwBE6OtXl4vWqowC4i+QN628QeuvgZ7yZ/ha9SAv
-         gcMw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=5E+2/GYKKTCBX9PRkJwki/ltO0/DQBbf8wDLJlA+F/Q=;
+        b=pieTo06OI+5DFqKZqLxhU8R3x4ayvukvWFTzcX8qvrIOJcqc/EmRKifExP7A3vcXP9
+         oR0oEgtrAL5GrYTJHQPfZSONj9vo+jl5qhVJ2J2Xde/YDKzrcLSpA752NLeeLiiV3myD
+         xiw+vyE+bFtBBYqrePFnR28vr8OVryziv2PE10VWeNg3dZSTDn1kDwx3SdsVZ/UvD946
+         XWxVqTcG8Ga01KS0kfx9kkwTzUMwHv6M2Jq/lb4oEAzI1oCGLuAZysvEygCx2v5Sioqv
+         +OQrYGxUyfRdDLY+hy/D0TQSsVQwi9COqMkuCJz6MzSvnx4duX6zChKfjby5M7qeBPhZ
+         sq9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lN2rae8wyVAor90vR3Fuv6iYQRV6+kCDtSkz6R9rQ4Q=;
-        b=RpXOxl8QvOfgJb2wdKD75jvSLXrhCdLDTXXYJagCosU5xtbwhl3FaGfb81q4jF7TJE
-         pKllB8/9eVlIKPHNYTvPctkf0FFqpO2vxbQCdBlXWbL6q679ozA/yMXIwyc2fJq/AhMw
-         CjK7t257E21PB9YkVeIJmEqpp6qqPyXBZox3rDNYuMmV3iEvShpNYD+b5nW4W191HwTT
-         YMC/d/iWPIM57Ue6Jy7kfP3OMX3Qjkv54wA54olGlYgPmt9r33MHWWHlb6iemB/n5xjx
-         NTD5/O2kwRMT/WH42ZvMc4KuNBGBYx4VeS0wrZ34DvOb0EBafSHIXHriZXLKtBe1NvYk
-         +0qw==
-X-Gm-Message-State: AJcUukffqjFluZyAuiqiu+Zpya2u5pgJPt3J4Y3SqTTvY+xTc0D6fhrn
-        vqJyo9qW9X7K3INVeps0Gdw1aM3mhI/Ocd0VlLw=
-X-Google-Smtp-Source: ALg8bN6cIhT26uiySCgu7FPFPGRBP+ONv4qG3nWR69zW5vjNrTz3nXYaJh/Ui3m2NvFtwrYtVWO7V8r68/i5A6dqtCQ=
-X-Received: by 2002:a05:6000:51:: with SMTP id k17mr13059920wrx.259.1547764697654;
- Thu, 17 Jan 2019 14:38:17 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=5E+2/GYKKTCBX9PRkJwki/ltO0/DQBbf8wDLJlA+F/Q=;
+        b=CRejyfdShD4UlMsaG8CHuDtNxXiswIcy8xnvUFRPvGZJn80Nhxr8YQPe48kk0kj59p
+         dYaQQ/B6STHZOsbmsWvVqy1LAeRD3kbWdBpxKk/eya4bphO/u/husX2XZimWnUD93TDS
+         4UUn38D8JzAfFPx3Kk5nDFWya/GzJ5l27iOB7Ws4Jg3Y+woYwDwPSlOGU//sgH7UhivP
+         M7Gzdc4MO9lPLKAgd1cXV4dmygZ5zKO79YESoMWvqxBnyW1Ee/FmbkglPDGIPvq06+JL
+         nCbg7m4JgimqeMb9oVFsXN4GQSSn5q76ub2nOtf9LRstPEAMxMC0bsnfVlMHUmpB0ZN0
+         YdYQ==
+X-Gm-Message-State: AJcUukdU5B32etQ9cWswq/pNkJHFiy8XjSXalwKOZxwr6DeN3S4fkUTi
+        CpdGyygrl15QtdKblKVjpyHEBGc+
+X-Google-Smtp-Source: ALg8bN7SDaq7ILk+XQTCSwaeR3+pavwAm9Tv0uV8GdAkf8HeqBotDVqJfmpk2C4dz5cbV1W2xaFUWA==
+X-Received: by 2002:a62:29c3:: with SMTP id p186mr17002451pfp.117.1547764711697;
+        Thu, 17 Jan 2019 14:38:31 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id b26sm4032861pfe.91.2019.01.17.14.38.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 14:38:31 -0800 (PST)
+Date:   Thu, 17 Jan 2019 14:38:28 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     =?iso-8859-1?B?QnL8bnMs?= Stefan <Stefan.Bruens@rwth-aachen.de>
+Cc:     "jdelvare@suse.com" <jdelvare@suse.com>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [RFC][PATCH] hwmon: (ina2xx) Improve current and power reading
+ precision
+Message-ID: <20190117223828.GI16918@Asurada-Nvidia.nvidia.com>
+References: <20181121012629.5432-1-nicoleotsuka@gmail.com>
+ <2863036.QIPGp1Eqjm@sbruens-linux.lcs.intern>
+ <20181121194051.GA8902@Asurada-Nvidia.nvidia.com>
+ <1717545.GXSegKtrMu@sbruens-linux.lcs.intern>
+ <20190105012642.GA18025@Asurada-Nvidia.nvidia.com>
 MIME-Version: 1.0
-References: <20181220010700.8598-1-andrew.smirnov@gmail.com>
- <20181220010700.8598-3-andrew.smirnov@gmail.com> <1547743553.4009.16.camel@pengutronix.de>
-In-Reply-To: <1547743553.4009.16.camel@pengutronix.de>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Thu, 17 Jan 2019 14:38:06 -0800
-Message-ID: <CAHQ1cqG+3K+SKptZJ-FQ6xAa+2LMs_W24TEgqyV+9kR_iAz+cg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: reset: imx7: Document usage on
- i.MX8MQ SoCs
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190105012642.GA18025@Asurada-Nvidia.nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 8:45 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
->
-> Hi Andrey,
->
-> sorry for the delay. Thank you for the update, apart from the comments
-> below, the list now looks to be complete.
->
-> On Wed, 2018-12-19 at 17:06 -0800, Andrey Smirnov wrote:
-> > The driver now supports i.MX8MQ, so update bindings accordingly.
-> >
-> > Cc: p.zabel@pengutronix.de
-> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > Cc: cphealy@gmail.com
-> > Cc: l.stach@pengutronix.de
-> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> > Cc: linux-imx@nxp.com
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> > ---
-> >  .../bindings/reset/fsl,imx7-src.txt           |  7 +-
-> >  include/dt-bindings/reset/imx8mq-reset.h      | 64 +++++++++++++++++++
-> >  2 files changed, 69 insertions(+), 2 deletions(-)
-> >  create mode 100644 include/dt-bindings/reset/imx8mq-reset.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt b/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
-> > index 1ab1d109318e..2ecf33815d18 100644
-> > --- a/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
-> > +++ b/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
-> > @@ -5,7 +5,9 @@ Please also refer to reset.txt in this directory for common reset
-> >  controller binding usage.
-> >
-> >  Required properties:
-> > -- compatible: Should be "fsl,imx7d-src", "syscon"
-> > +- compatible:
-> > +     - For i.MX7 SoCs should be "fsl,imx7d-src", "syscon"
-> > +     - For i.MX8MQ SoCs should be "fsl,imx8mq-src", "syscon"
-> >  - reg: should be register base and length as documented in the
-> >    datasheet
-> >  - interrupts: Should contain SRC interrupt
-> > @@ -44,4 +46,5 @@ Example:
-> >
-> >
-> >  For list of all valid reset indicies see
-> > -<dt-bindings/reset/imx7-reset.h>
-> > +<dt-bindings/reset/imx7-reset.h> for i.MX7 and
-> > +<dt-bindings/reset/imx8mq-reset.h> for i.MX8MQ
-> > diff --git a/include/dt-bindings/reset/imx8mq-reset.h b/include/dt-bindings/reset/imx8mq-reset.h
-> > new file mode 100644
-> > index 000000000000..57c592498aa0
-> > --- /dev/null
-> > +++ b/include/dt-bindings/reset/imx8mq-reset.h
-> > @@ -0,0 +1,64 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2018 Zodiac Inflight Innovations
-> > + *
-> > + * Author: Andrey Smirnov <andrew.smirnov@gmail.com>
-> > + */
-> > +
-> > +#ifndef DT_BINDING_RESET_IMX8MQ_H
-> > +#define DT_BINDING_RESET_IMX8MQ_H
-> > +
-> > +#define IMX8MQ_RESET_A53_CORE_POR_RESET0     0
-> > +#define IMX8MQ_RESET_A53_CORE_POR_RESET1     1
-> > +#define IMX8MQ_RESET_A53_CORE_POR_RESET2     2
-> > +#define IMX8MQ_RESET_A53_CORE_POR_RESET3     3
-> > +#define IMX8MQ_RESET_A53_CORE_RESET0         4
-> > +#define IMX8MQ_RESET_A53_CORE_RESET1         5
-> > +#define IMX8MQ_RESET_A53_CORE_RESET2         6
-> > +#define IMX8MQ_RESET_A53_CORE_RESET3         7
-> > +#define IMX8MQ_RESET_A53_DBG_RESET0          8
-> > +#define IMX8MQ_RESET_A53_DBG_RESET1          9
-> > +#define IMX8MQ_RESET_A53_DBG_RESET2          10
-> > +#define IMX8MQ_RESET_A53_DBG_RESET3          11
-> > +#define IMX8MQ_RESET_A53_ETM_RESET0          12
-> > +#define IMX8MQ_RESET_A53_ETM_RESET1          13
-> > +#define IMX8MQ_RESET_A53_ETM_RESET2          14
-> > +#define IMX8MQ_RESET_A53_ETM_RESET3          15
-> > +#define IMX8MQ_RESET_A53_SOC_DBG_RESET               16
-> > +#define IMX8MQ_RESET_A53_L2RESET             17
-> > +#define IMX8MQ_RESET_SW_NON_SCLR_M4C_RST     18
->                            ^^^^^^^^
->
-> This might be an implementation detail. The reset line is
-> (SW_?)M4C_RST. I suppose the self-clearing SW_M4C_RST bit could be used
-> to implement .reset() functionality for the same line if needed.
->
+On Fri, Jan 04, 2019 at 05:26:42PM -0800, Nicolin Chen wrote:
+> Hi Stefan,
+> 
+> Sorry for a super late reply. I took a long vacation.
+> 
+> On Wed, Nov 21, 2018 at 10:16:09PM +0000, Brüns, Stefan wrote:
+> > > > Another concern may be voltage drop over the shunt, but for this case you
+> > > > have a nominal voltage of 1.8V, so 30uV are 0.001%.
+> > > > 
+> > > > > When measuring a 1.8v voltage running a small current (e.g. 33 mA),
+> > > > > the power value (that's supposed to be 59.4 mW) becomes inaccurate
+> > > > > due to the larger scale (25mA for method A; 62.5 mA for method B).
+> > > 
+> > > Just found out that I have typos here: 25mW and 62.5mW.
+> > > 
+> > > > Another look into the datasheet reveals, even at full gain (PGA=1), the
+> > > > LSB is 40mV / 2^12 = 40mV / 4096 ~ 10uV. So when the current ADC reads
+> > > > out as 3*LSB, this anything between 25mA and 35mA. This is the best case
+> > > > figure.
+> > > Current read doesn't get affected a lot actually, since hwmon ABI
+> > > also reports current value in unit mA. However, the power read is
+> > > the matter here. With a 62.5mW power_lsb, power results are kinda
+> > > useless on my system.
+> > 
+> > The reported current does not matter here, actually. Internally, the ADC value 
+> > will have an uncertainty of 10mA (at PGA=1). At 1.8V, your uncertainty is 
+> > 18mW. And thats *only* the quantization noise. It wont get better than that.
+> 
+> The fact is that I do get better power results after setting the
+> calibration value to 0x7ff. That's the necessity of this change.
+> 
+> > Also note, you are apparently using the ina2xx hwmon driver - I strongly 
+> > advise against it, you should either use the ina2xx driver from the IIO 
+> > subsystem directly, or use the IIO driver via iio-hwmon.
+> 
+> The IIO version is also using the minimum calibration value. It
+> will not solve my problem here.
+> 
+> > There is also always the possibility to read the bus and shunt voltage 
+> > registers and calculate the power manually.
+> 
+> Won't that be a waste since the hardware could have provided a
+> better accuracy? It would need more I2C bus reads and cpu cycles
+> for calculation.
+> 
+> I don't get why you're against a setting for calibration value.
+> This is how the hardware got designed to cover different cases.
+> Since we do have such a case that needs some accuracy, it'd be
+> fair to add it into the driver. Plus, the feature won't change
+> the minimum calibration value at all -- everyone would be happy.
 
-I was using literal bit names for reset lines. In this case this is a
-bit 0 of SRC_M4RCR.
+Stefan,
 
-> What about the self-clearing SW_M4P_RST bit? Has that been left out on
-> purpose?
+Would you please kindly give an ack to this intention so that
+we can at least move forward for patch review?
 
-Since they are self-clearing they'd require a separate .reset
-function. I have no use-case for them at this moment and no way to
-test it, so I left them out.
+Neither changing hardware resistor values nor simply ignoring
+the inaccuracy is acceptable for us. Since configuring that
+calibration register value can help our use cases, we really
+need this setting to be available in the driver.
 
->
-> > +#define IMX8MQ_RESET_OTG1_PHY_RESET          19
-> > +#define IMX8MQ_RESET_OTG2_PHY_RESET          20
-> > +#define IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N   21
-> > +#define IMX8MQ_RESET_MIPI_DSI_RESET_N                22
-> > +#define IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N    23
-> > +#define IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N    24
-> > +#define IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N   25
-> > +#define IMX8MQ_RESET_PCIEPHY                 26
-> > +#define IMX8MQ_RESET_PCIEPHY_PERST           27
-> > +#define IMX8MQ_RESET_PCIE_CTRL_APPS_EN               28
-> > +#define IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF  29
->
-> To be honest, I don't like these two, I'm not convinced anymore that
-> they actually qualify as reset signals. To me it looks like this is
-> something that the PCIe glue code should handle via syscon like i.MX6.
-> Leonard, Lucas, what do you think?
+Guenter,
 
-OK, one thing to keep in mind about this is that those bits are
-already exposed for i.MX7D and I think (correct me if I am wrong)
-there's no going back there. PCIe driver already has the code to use
-those on i.MX7D and, due to high degree of similarity, i.MX8MQ
-actually re-uses the same codepath (at least for
-IMX8MQ_RESET_PCIE_CTRL_APPS_EN).
+Do you have any input regarding this change? I would like to
+hear an opinion from you.
 
-Thanks,
-Andrey Smirnov
+Thank you
