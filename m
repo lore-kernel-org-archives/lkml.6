@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33309C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78864C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02E54205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FE2C205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="c8iSKoYc"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="vOzN5hvG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbfAQAdb (ORCPT
+        id S1729708AbfAQAde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:33:31 -0500
-Received: from onstation.org ([52.200.56.107]:54498 "EHLO onstation.org"
+        Wed, 16 Jan 2019 19:33:34 -0500
+Received: from onstation.org ([52.200.56.107]:54506 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729475AbfAQAd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:28 -0500
+        id S1729587AbfAQAdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:31 -0500
 Received: from localhost.localdomain (mobile-166-171-186-103.mycingular.net [166.171.186.103])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 2E62A32F;
-        Thu, 17 Jan 2019 00:33:25 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id BE59F1A54;
+        Thu, 17 Jan 2019 00:33:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1547685207;
-        bh=BM5N/Y0UV7EbJZAd1ig8gA7PX0k3IyiXelD7QrzSEBE=;
+        s=default; t=1547685210;
+        bh=euCMaGl1yOZENuwWraDWToBqc4JG/0vv/3/pgCkqOKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c8iSKoYcAAhcPEr91i9YZKXCd7l53KEX4ouMwSr1S0J1u02psKjakvDW8rcltdttA
-         cT/wz2Rb9wuAEVBvUz15QPzCGn+y/ND/B22Hg45JWjn03lIvruKrStqnqasOf+9GJ5
-         G7dPCOUycCELf8aovhttz4YfU7nqXDI5f2od33wc=
+        b=vOzN5hvGCkYpTTucERLGXlYpGT5qCC8iS8biyjqV11u+SIH8PgjNHuG7a2ALfXyOu
+         Dzjykqqz3ceZbc852ELwE/7kuFO6TowoGTMkwdsiUmsq503PCswE1XiQfzObndENSP
+         Snw5t86R0Y7VAk6sM3vgXHF1yXzXdPSt8gZ9GWy8=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org
@@ -44,9 +44,9 @@ Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v5 11/14] arm64: dts: qcom: pm8998: add interrupt controller properties
-Date:   Wed, 16 Jan 2019 19:32:31 -0500
-Message-Id: <20190117003234.22127-12-masneyb@onstation.org>
+Subject: [PATCH v5 12/14] arm64: dts: qcom: pmi8994: add interrupt controller properties
+Date:   Wed, 16 Jan 2019 19:32:32 -0500
+Message-Id: <20190117003234.22127-13-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190117003234.22127-1-masneyb@onstation.org>
 References: <20190117003234.22127-1-masneyb@onstation.org>
@@ -72,48 +72,32 @@ Changes since v4:
 
 Patch introduced in v4.
 
- arch/arm64/boot/dts/qcom/pm8998.dtsi | 28 ++--------------------------
- 1 file changed, 2 insertions(+), 26 deletions(-)
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-index f1025a50c227..43cb5ea14089 100644
---- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-@@ -94,32 +94,8 @@
+diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+index dae1cdc23f54..3aee10e3f921 100644
+--- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+@@ -15,16 +15,8 @@
  			reg = <0xc000>;
  			gpio-controller;
  			#gpio-cells = <2>;
--			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
--				     <0 0xc1 0 IRQ_TYPE_NONE>,
--				     <0 0xc2 0 IRQ_TYPE_NONE>,
--				     <0 0xc3 0 IRQ_TYPE_NONE>,
--				     <0 0xc4 0 IRQ_TYPE_NONE>,
--				     <0 0xc5 0 IRQ_TYPE_NONE>,
--				     <0 0xc6 0 IRQ_TYPE_NONE>,
--				     <0 0xc7 0 IRQ_TYPE_NONE>,
--				     <0 0xc8 0 IRQ_TYPE_NONE>,
--				     <0 0xc9 0 IRQ_TYPE_NONE>,
--				     <0 0xca 0 IRQ_TYPE_NONE>,
--				     <0 0xcb 0 IRQ_TYPE_NONE>,
--				     <0 0xcc 0 IRQ_TYPE_NONE>,
--				     <0 0xcd 0 IRQ_TYPE_NONE>,
--				     <0 0xce 0 IRQ_TYPE_NONE>,
--				     <0 0xcf 0 IRQ_TYPE_NONE>,
--				     <0 0xd0 0 IRQ_TYPE_NONE>,
--				     <0 0xd1 0 IRQ_TYPE_NONE>,
--				     <0 0xd2 0 IRQ_TYPE_NONE>,
--				     <0 0xd3 0 IRQ_TYPE_NONE>,
--				     <0 0xd4 0 IRQ_TYPE_NONE>,
--				     <0 0xd5 0 IRQ_TYPE_NONE>,
--				     <0 0xd6 0 IRQ_TYPE_NONE>,
--				     <0 0xd7 0 IRQ_TYPE_NONE>,
--				     <0 0xd8 0 IRQ_TYPE_NONE>,
--				     <0 0xd9 0 IRQ_TYPE_NONE>;
+-			interrupts = <2 0xc0 0 IRQ_TYPE_NONE>,
+-				     <2 0xc1 0 IRQ_TYPE_NONE>,
+-				     <2 0xc2 0 IRQ_TYPE_NONE>,
+-				     <2 0xc3 0 IRQ_TYPE_NONE>,
+-				     <2 0xc4 0 IRQ_TYPE_NONE>,
+-				     <2 0xc5 0 IRQ_TYPE_NONE>,
+-				     <2 0xc6 0 IRQ_TYPE_NONE>,
+-				     <2 0xc7 0 IRQ_TYPE_NONE>,
+-				     <2 0xc8 0 IRQ_TYPE_NONE>,
+-				     <2 0xc9 0 IRQ_TYPE_NONE>;
 +			interrupt-controller;
 +			#interrupt-cells = <2>;
  		};
- 
  	};
+ 
 -- 
 2.17.2
 
