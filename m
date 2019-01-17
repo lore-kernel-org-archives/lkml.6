@@ -2,76 +2,83 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28573C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55131C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5CB120859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547753074;
-	bh=GhGLCiF6RO1ihila8yK6LTYa0FgMIwc4MLI6jXGV47M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=vgZX7+1ytrDUfGme/f5esGgYJltHq9aik8TtwzTuABaUMHwYokMdfE0Q2ZitbaW59
-	 uRsdDD2l6rMiDtTMEBcE9U+Z03heuJdkJ3FrevnVcuNiqnm4ciLoYYdDXTEIl8QrU8
-	 XmaQXZnBUqniIbkLjOu1OXcKGV2nG+Zrthn09mJo=
+	by mail.kernel.org (Postfix) with ESMTP id 1D9BF20859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfAQTYc (ORCPT
+        id S1728211AbfAQT0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:24:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37304 "EHLO mail.kernel.org"
+        Thu, 17 Jan 2019 14:26:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:4525 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728090AbfAQTYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:24:31 -0500
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726990AbfAQT0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 14:26:19 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC62D20873
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 19:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547753071;
-        bh=GhGLCiF6RO1ihila8yK6LTYa0FgMIwc4MLI6jXGV47M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lZPLJGcOG2gJuNAQXP+07tunpQeoZyTnZMnVwX/kL+y2Lwabwf3U5BZ3WWZ2645tL
-         8NtsfPzMD28PUKRgj1LFocyVjL7Jrz/YbFi4t9Bp4cgYgyzhtlv4ochYq8XPivSrLw
-         q2sPpd7MreugOwMdXx+4nibXFmLl/OMjPM0CwI4Q=
-Received: by mail-wr1-f46.google.com with SMTP id t27so12312234wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 11:24:30 -0800 (PST)
-X-Gm-Message-State: AJcUukdHfo8AupABweM1QZNaU7ziOj2SMeJkZlF4JfIMyVopaGvWjljM
-        uLMX40XVCcKY9iHQVtAOas7m/Q9+eMgHC3qDnu6qIg==
-X-Google-Smtp-Source: ALg8bN7TF8NVdypXCEsspe0qgIs0n2ybzY4aEelIqXy/tTUhBcJ73CGqA4HWTSVU4ZOSjPe6++fwvXmSlxSdFZVmv0Q=
-X-Received: by 2002:adf:8323:: with SMTP id 32mr12804417wrd.176.1547753069183;
- Thu, 17 Jan 2019 11:24:29 -0800 (PST)
+        by mx1.redhat.com (Postfix) with ESMTPS id 260733F734;
+        Thu, 17 Jan 2019 19:26:19 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F31995C8B8;
+        Thu, 17 Jan 2019 19:26:12 +0000 (UTC)
+Date:   Thu, 17 Jan 2019 14:26:10 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH ghak59 V3 2/4] audit: add syscall information to
+ CONFIG_CHANGE records
+Message-ID: <20190117192610.tswga6xweyt42hmq@madcap2.tricolour.ca>
+References: <cover.1544477629.git.rgb@redhat.com>
+ <43548fafdfa98ee64ecfd0d7a69a2f5cb2c31c50.1544477629.git.rgb@redhat.com>
+ <CAHC9VhSaTvVgSWVWo42Ur2k6hVNJ1XBkLwrd-J4-SUuidwXUYg@mail.gmail.com>
+ <20190117103255.1f640a42@ivy-bridge>
+ <CAHC9VhQvk+6AFjVU_ygyn8Q6FGwVy_JqXj7wWSNYYp5zSiBcuw@mail.gmail.com>
+ <20190117170815.40131a69@ivy-bridge>
+ <CAHC9VhQqT9HW=m5_sbru2Q7HoJC6oSrzMzrkRxgeDB7sWFLA-A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190117120728.3811-1-bp@alien8.de>
-In-Reply-To: <20190117120728.3811-1-bp@alien8.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 17 Jan 2019 11:24:17 -0800
-X-Gmail-Original-Message-ID: <CALCETrUbiuYoDzLcHm+pXYyVJWcffiY76eu6UxuaDxtOk765pw@mail.gmail.com>
-Message-ID: <CALCETrUbiuYoDzLcHm+pXYyVJWcffiY76eu6UxuaDxtOk765pw@mail.gmail.com>
-Subject: Re: [PATCH] x86/traps: Have read_cr0() only once in the #NM handler
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQqT9HW=m5_sbru2Q7HoJC6oSrzMzrkRxgeDB7sWFLA-A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 17 Jan 2019 19:26:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 4:07 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> From: Borislav Petkov <bp@suse.de>
->
-> ... instead of twice in the code. In any case, CR0 ends up being read
-> once anyway:
->
-> 1. The CONFIG_MATH_EMULATION case does so and exits.
-> 2. The normal case does it once too.
->
+On 2019-01-17 12:36, Paul Moore wrote:
+> On Thu, Jan 17, 2019 at 11:08 AM Steve Grubb <sgrubb@redhat.com> wrote:
+> > On Thu, 17 Jan 2019 08:21:40 -0500 Paul Moore <paul@paul-moore.com> wrote:
+> > > On Thu, Jan 17, 2019 at 4:33 AM Steve Grubb <sgrubb@redhat.com> wrote:
+> > > > On Mon, 14 Jan 2019 17:58:58 -0500 Paul Moore <paul@paul-moore.com> wrote:
+> > > > > On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > Tie syscall information to all CONFIG_CHANGE calls since they
+> > > > > > are all a result of user actions.
 
+> I see you added LKML to the To/CC line.  Fun.  Unless they've been
+> following the audit list for the past several years I'm not sure they
+> have all the context to fully understand some of the things in this
+> thread, but sure, why not.
 
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
+I added LKML in the original patchset posting, not Steve.
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
