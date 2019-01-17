@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE402C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01519C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE20520652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C501A20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:21:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gSQu0bn7"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gb1xWu6l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729280AbfAQQVh (ORCPT
+        id S1729314AbfAQQVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:21:37 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39905 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729108AbfAQQVM (ORCPT
+        Thu, 17 Jan 2019 11:21:47 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52318 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729066AbfAQQVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:21:12 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so11687559wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:21:11 -0800 (PST)
+        Thu, 17 Jan 2019 11:21:08 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so1694030wml.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:21:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SNb+6XKLjhFXr1Fd19oZUt5CC0wXzn1Vgn9kxNRJIs0=;
-        b=gSQu0bn7+O02Yk6QIAPNDwgLFN9/1QiHD7Y7r9xiwfiK2A8k6xb2SBc3Ut5JWrx3Bl
-         p/ZdugOLdtFScafh51vgS+65J/yoxM64/2HBwL6fmXbJBxCpWlYWKIW1V1zN8s0r/JbI
-         XckqEWMvXNs6n7Zx5LE0LUDxztKeZWJ+SHmD4=
+        bh=p9SShCCE56zaFl3EA7SWgswRXOkmYSJfgEKA8EbEbto=;
+        b=gb1xWu6lUVHgGdfEFXpVfd+bzgNpcmapkF0kR/BtDDosirkCS38A6rKagnxFPSa1Cm
+         SbeHBfJG5r7jhdYIBOu3iCPTJYBl82NoJt+oOMOEB1kCDBF9Uaq4euAlt7jEagDf94/1
+         L1I3/XeeTVG+WlgsyfK9YPryHzkGrpaH9/Kyc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SNb+6XKLjhFXr1Fd19oZUt5CC0wXzn1Vgn9kxNRJIs0=;
-        b=IhGIewVKNw/5tasm2yOhBbUGZbPvOq+abeyJ13QG8JlQ7XWdoIOhVakaJeffC7ekVd
-         nMv93NmV+HNx2A5n/QYxgdYR44dfI18peWETopTNmSTR5EKgtZP0nrPv3kC0+rwoqjsi
-         EIXbLhT4QVaXm0h8QN2ZnTaFiOs7I8TVkwUFydG9xV+UAq/sYZ+2DBiMSKXevq8T+Bub
-         XFu07usibEfmxwPtHq4Dr8KrfXnGk3PPm+JLMi2jQ2bw/eoudz1dHv141XwQuWhdafHv
-         ESdpcPmcwEywSQ2xIxpwrC+vMQ8gZiUUXZQbwhinc7oWT3r+XvgmCeQ6IKdgqi3GHgBl
-         g98A==
-X-Gm-Message-State: AJcUukeCqt5261pNVFu9+QJrLv4Ystl8jngW4t3r8XhgcO9boAL53jdC
-        d+8MdehqAbozXFR+8fvrTO8pa6/3muQ=
-X-Google-Smtp-Source: ALg8bN6c3MgkDBCCXVN8VWSfx/aV6b2dIEHFec7+iCMHKtfHCwFpbDorJ9CL0XkG9lb9lIeMpy93Pw==
-X-Received: by 2002:adf:b6a1:: with SMTP id j33mr12641852wre.55.1547742071200;
-        Thu, 17 Jan 2019 08:21:11 -0800 (PST)
+        bh=p9SShCCE56zaFl3EA7SWgswRXOkmYSJfgEKA8EbEbto=;
+        b=piWnAi0MbZrYiU8n3f4B/HN/3VIUuyfJBE0Vh5CPWJN24pzo/q2isiK3vmT1PLOo0C
+         6muUlP0Gm+zIViGBMFzdR3zGx6GKGPBr3C9RrpZwsRYmJPanVv6M2Hhqx4UaA2MPTLO5
+         p5TFMu7XrT4FURe+qBOjY0TSsgwdAG/dWUHaByHb7oOzNpwyVGdYvPfoKH0kU9vWh3pk
+         FDNDe0kcHF2V93cXO6su725mN/8++KFLA6SqprUgmDfm/OHxgU8BCybzjx2xk148akDZ
+         EYdoHlKLoRe6C9zz6Rsb3ZchU8Q2CxyGRlF6vSCBcoRr7U9oPVcKXjWH1ztJ35q+c6jI
+         3RrQ==
+X-Gm-Message-State: AJcUukfJ89vrbnKdAzU3pU9MSJBD2rgRcVvz8XIW88BljYWMtZ/0gwzs
+        9GWgyBOkEYd/EwrjMJOvcZ18oQ==
+X-Google-Smtp-Source: ALg8bN7FsdBOJw9892MXm2Ed0NpKkDJXYoPrdndTpVJDkhachJQYzkqAeBLUA12Kl7Z363bZC4qmHg==
+X-Received: by 2002:a1c:864f:: with SMTP id i76mr12143347wmd.83.1547742066369;
+        Thu, 17 Jan 2019 08:21:06 -0800 (PST)
 Received: from localhost.localdomain ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id v133sm31124734wmf.19.2019.01.17.08.21.10
+        by smtp.gmail.com with ESMTPSA id v133sm31124734wmf.19.2019.01.17.08.21.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 08:21:10 -0800 (PST)
+        Thu, 17 Jan 2019 08:21:05 -0800 (PST)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     linux-media@vger.kernel.org
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -62,9 +62,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Alexandre Courbot <acourbot@chromium.org>,
         Malathi Gottam <mgottam@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 08/10] venus: vdec_ctrls: get real minimum buffers for capture
-Date:   Thu, 17 Jan 2019 18:20:06 +0200
-Message-Id: <20190117162008.25217-9-stanimir.varbanov@linaro.org>
+Subject: [PATCH 05/10] venus: hfi: export few HFI functions
+Date:   Thu, 17 Jan 2019 18:20:03 +0200
+Message-Id: <20190117162008.25217-6-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
 References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
@@ -73,50 +73,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until now we returned num_output_bufs set during reqbuf but
-that could be wrong when we implement stateful Codec API. So
-get the minimum buffers for capture from HFI. This is supposed
-to be called after stream header parsing, i.e. after dequeue
-v4l2 event for change resolution.
+Export few HFI functions to use them from decoder to implement
+more granular control needed for stateful Codec API compliance.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/vdec_ctrls.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/media/platform/qcom/venus/hfi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/venus/vdec_ctrls.c b/drivers/media/platform/qcom/venus/vdec_ctrls.c
-index f4604b0cd57e..e1da87bf52bc 100644
---- a/drivers/media/platform/qcom/venus/vdec_ctrls.c
-+++ b/drivers/media/platform/qcom/venus/vdec_ctrls.c
-@@ -16,6 +16,7 @@
- #include <media/v4l2-ctrls.h>
+diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
+index 0b3c4a2328e4..eaa82af9ec09 100644
+--- a/drivers/media/platform/qcom/venus/hfi.c
++++ b/drivers/media/platform/qcom/venus/hfi.c
+@@ -285,6 +285,7 @@ int hfi_session_start(struct venus_inst *inst)
  
- #include "core.h"
-+#include "helpers.h"
- #include "vdec.h"
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfi_session_start);
  
- static int vdec_op_s_ctrl(struct v4l2_ctrl *ctrl)
-@@ -47,7 +48,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+ int hfi_session_stop(struct venus_inst *inst)
  {
- 	struct venus_inst *inst = ctrl_to_inst(ctrl);
- 	struct vdec_controls *ctr = &inst->controls.dec;
-+	struct hfi_buffer_requirements bufreq;
- 	union hfi_get_property hprop;
-+	enum hfi_version ver = inst->core->res->hfi_version;
- 	u32 ptype = HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT;
- 	int ret;
+@@ -308,6 +309,7 @@ int hfi_session_stop(struct venus_inst *inst)
  
-@@ -71,7 +74,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
- 		ctrl->val = ctr->post_loop_deb_mode;
- 		break;
- 	case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:
--		ctrl->val = inst->num_output_bufs;
-+		ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
-+		if (!ret)
-+			ctrl->val = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
- 		break;
- 	default:
- 		return -EINVAL;
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfi_session_stop);
+ 
+ int hfi_session_continue(struct venus_inst *inst)
+ {
+@@ -337,6 +339,7 @@ int hfi_session_abort(struct venus_inst *inst)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfi_session_abort);
+ 
+ int hfi_session_load_res(struct venus_inst *inst)
+ {
+@@ -383,6 +386,7 @@ int hfi_session_unload_res(struct venus_inst *inst)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfi_session_unload_res);
+ 
+ int hfi_session_flush(struct venus_inst *inst, u32 type)
+ {
 -- 
 2.17.1
 
