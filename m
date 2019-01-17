@@ -2,112 +2,155 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4A2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F477C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC9820859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:33:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Og5XyYXJ"
+	by mail.kernel.org (Postfix) with ESMTP id DA4D320859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfAQTd5 (ORCPT
+        id S1728779AbfAQTfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:33:57 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44221 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfAQTd5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:33:57 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f18so12174949otl.11;
-        Thu, 17 Jan 2019 11:33:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tiMK4byqwhsiWqiYm01TCI6vfQdsfTjZo9dRLYEIraU=;
-        b=Og5XyYXJzVza1lKycEzMSszRaioM1/d+THTHunNJGR4q51a9L4p12gH7vTbWDnBtG7
-         xGVCN0/2ynn75VPOHOHpYhg8TFcRYL0Zgo2jU60tPZfXB6uOeHyKCf0KTrn+MEUuFuFA
-         Y6MxRKQ3HI8xI5J76z3F/xzNq431VaFm1pRf0X8KZblzceYCq5nNdz79h/mFVR30ZfAe
-         lwkjOJqW3ZQOJO9+1ycBfqS5wyaC/iu6o2ZgFV+grociut8xGM2OXvX9geKUz66bCmyG
-         n+aYCe8GU3AkUm6R+azJXgJk+CwlxuPH3sH9cIBm2pKOkiXXx5cI92AJyyysj1JfRUIY
-         HrGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tiMK4byqwhsiWqiYm01TCI6vfQdsfTjZo9dRLYEIraU=;
-        b=Nb1dq70+ItVFMhBxU7qKQ4j2RPLwmSg7/VWMTPlFjQBEWAr+dH7MpkVhqqnUCiA2Cy
-         OZgsrXPI8fFLatBZS8QOKBoAOtfZdeb5AFs1Pt4bIme4QwJ5+J3Kg7EHlchSp6HXPxVR
-         Sv9OAImVWCcHnE17+25x3wES5xktBkN5glMu8wTzwGh+R1FMR+68ol9LxYlkWwxX0ZbZ
-         Sctwupx3BTyWcq5gy6QhmYNwuYV4j4SpXiYPCF6P+nSR2iWfPHgBuOorhysmZkHDdWFc
-         pyWu4AZ7Ckutcwl6I6LnhbW3IRbKXpm9WWqgqxnwUY13rUdcPXdTatweEBM0nUCuj/Cf
-         xaRA==
-X-Gm-Message-State: AJcUukelKN1LhG9ctIjjJsoUQmcLY5Deq121CFzJAt7oB6qkMQDqXFdL
-        JwrX6y7VNXZkPl71expO7wI=
-X-Google-Smtp-Source: ALg8bN72s1EcYKvP6X1vzO5QTGIZC2HksL5fyB2RujTI7DpNpi6h6ynsE7MaSbdXUUcwS187xO3k0A==
-X-Received: by 2002:a9d:6a50:: with SMTP id h16mr9082498otn.95.1547753635943;
-        Thu, 17 Jan 2019 11:33:55 -0800 (PST)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id h25sm1064235otj.27.2019.01.17.11.33.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 11:33:55 -0800 (PST)
-Subject: Re: [PATCH] rtlwifi: rtl818x: fix indentation issue
-To:     Joe Perches <joe@perches.com>,
-        Colin King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ping-Ke Shih <pkshih@realtek.com>
-References: <20190117152859.6873-1-colin.king@canonical.com>
- <e68c7ae7b0a863742df0f4457368a3a529ed47e5.camel@perches.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <284e7ef0-5820-021b-7b0c-2fc754440fe8@lwfinger.net>
-Date:   Thu, 17 Jan 2019 13:33:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Thu, 17 Jan 2019 14:35:18 -0500
+Received: from mga14.intel.com ([192.55.52.115]:63971 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726821AbfAQTfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 14:35:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 11:35:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
+   d="scan'208";a="139181997"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jan 2019 11:35:16 -0800
+Date:   Thu, 17 Jan 2019 12:34:03 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, thomas.lendacky@amd.com,
+        fengguang.wu@intel.com, dave@sr71.net, linux-nvdimm@lists.01.org,
+        tiwai@suse.de, zwisler@kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@suse.com,
+        baiyaowei@cmss.chinamobile.com, ying.huang@intel.com,
+        bhelgaas@google.com, akpm@linux-foundation.org, bp@suse.de
+Subject: Re: [PATCH 0/4] Allow persistent memory to be used like normal RAM
+Message-ID: <20190117193403.GD31543@localhost.localdomain>
+References: <20190116181859.D1504459@viggo.jf.intel.com>
+ <x49sgxr9rjd.fsf@segfault.boston.devel.redhat.com>
+ <20190117164736.GC31543@localhost.localdomain>
+ <x49pnsv8am1.fsf@segfault.boston.devel.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <e68c7ae7b0a863742df0f4457368a3a529ed47e5.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x49pnsv8am1.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 1:29 PM, Joe Perches wrote:
-> On Thu, 2019-01-17 at 15:28 +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> There is a statement that is indented too deeply. Fix this.
+On Thu, Jan 17, 2019 at 12:20:06PM -0500, Jeff Moyer wrote:
+> Keith Busch <keith.busch@intel.com> writes:
+> > On Thu, Jan 17, 2019 at 11:29:10AM -0500, Jeff Moyer wrote:
+> >> Dave Hansen <dave.hansen@linux.intel.com> writes:
+> >> > Persistent memory is cool.  But, currently, you have to rewrite
+> >> > your applications to use it.  Wouldn't it be cool if you could
+> >> > just have it show up in your system like normal RAM and get to
+> >> > it like a slow blob of memory?  Well... have I got the patch
+> >> > series for you!
+> >> 
+> >> So, isn't that what memory mode is for?
+> >>   https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
+> >> 
+> >> Why do we need this code in the kernel?
+> >
+> > I don't think those are the same thing. The "memory mode" in the link
+> > refers to platforms that sequester DRAM to side cache memory access, where
+> > this series doesn't have that platform dependency nor hides faster DRAM.
 > 
-> Thanks.
+> OK, so you are making two arguments, here.  1) platforms may not support
+> memory mode, and 2) this series allows for performance differentiated
+> memory (even though applications may not modified to make use of
+> that...).
 > 
->> diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
-> []
->> @@ -803,7 +803,7 @@ static void rtl8180_config_cardbus(struct ieee80211_hw *dev)
->>   		rtl818x_iowrite16(priv, FEMR_SE, 0xffff);
->>   	} else {
->>   		reg16 = rtl818x_ioread16(priv, &priv->map->FEMR);
->> -			reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
->> +		reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
->>   		rtl818x_iowrite16(priv, &priv->map->FEMR, reg16);
->>   	}
+> With this patch set, an unmodified application would either use:
 > 
-> trivia:
-> 
-> It sure looks as if there could be some rather useful
-> conversions of magic bits to constants one day.
+> 1) whatever memory it happened to get
+> 2) only the faster dram (via numactl --membind=)
+> 3) only the slower pmem (again, via numactl --membind1)
+> 4) preferentially one or the other (numactl --preferred=)
 
-How much work is warranted for this driver for a device that is not likely in 
-use anywhere in the wild? In addition, I'm not sure anyone knows what those bits 
-actually do, I certainly do not have a product sheet for that one.
+Yes, numactl and mbind are good ways for unmodified applications
+to use these different memory types when they're available.
 
-Larry
+Tangentially related, I have another series[1] that provides supplementary
+information that can be used to help make these decisions for platforms
+that provide HMAT (heterogeneous memory attribute tables).
 
+> The other options are:
+> - as mentioned above, memory mode, which uses DRAM as a cache for the
+>   slower persistent memory.  Note that it isn't all or nothing--you can
+>   configure your system with both memory mode and appdirect.  The
+>   limitation, of course, is that your platform has to support this.
+>
+>   This seems like the obvious solution if you want to make use of the
+>   larger pmem capacity as regular volatile memory (and your platform
+>   supports it).  But maybe there is some other limitation that motivated
+>   this work?
+
+The hardware supported implementation is one way it may be used, and it's
+up side is that accessing the cached memory is transparent to the OS and
+applications. They can use memory unaware that this is happening, so it
+has a low barrier for applications to make use of the large available
+address space.
+
+There are some minimal things software may do that improve this mode,
+as Dan mentioned in his reply [2], but it is still usable even without
+such optimizations.
+
+On the downside, a reboot would be required if you want to change the
+memory configuration at a later time, like you decide more or less DRAM
+as cache is needed. This series has runtime hot pluggable capabilities.
+
+It's also possible the customer may know better which applications require
+more hot vs cold data, but the memory mode caching doesn't give them as
+much control since the faster memory is hidden.
+
+> - libmemkind or pmdk.  These options typically* require application
+>   modifications, but allow those applications to actively decide which
+>   data lives in fast versus slow media.
+> 
+>   This seems like the obvious answer for applications that care about
+>   access latency.
+> 
+> * you could override the system malloc, but some libraries/application
+>   stacks already do that, so it isn't a universal solution.
+> 
+> Listing something like this in the headers of these patch series would
+> considerably reduce the head-scratching for reviewers.
+> 
+> Keith, you seem to be implying that there are platforms that won't
+> support memory mode.  Do you also have some insight into how customers
+> want to use this, beyond my speculation?  It's really frustrating to see
+> patch sets like this go by without any real use cases provided.
+
+Right, most NFIT reporting platforms today don't have memory mode, and
+the kernel currently only supports the persistent DAX mode with these.
+This series adds another option for those platforms.
+
+I think numactl as you mentioned is the first consideration for how
+customers may make use. Dave or Dan might have other use cases in mind.
+Just thinking out loud, if we wanted an in-kernel use case, it may be
+interesting to make slower memory a swap tier so the host can manage
+the cache rather than the hardware.
+
+[1]
+https://lore.kernel.org/patchwork/cover/1032688/
+
+[2]
+https://lore.kernel.org/lkml/154767945660.1983228.12167020940431682725.stgit@dwillia2-desk3.amr.corp.intel.com/
