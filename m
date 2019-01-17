@@ -2,126 +2,122 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CE5C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87426C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F5E20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547741889;
-	bh=lNXozYOQUcjQzfMz9W0qROc8mz8jYhttZGPahphyo6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=IeZvJEPGeY6D8DrVuSVTq0SmSI/BzRSeKtTs/waDoTPEieTWRBPCEEY2bNNiuEyu6
-	 fgitBGVUWD7Ipr7R90F9yUWmf8wvGneBJxxHVKwbA6aSN7x3fknjYrP3uzdZBN5L2y
-	 vvwJJ+YSgXorWcGl9cLp/e5Z8Stbjeh9FC52CE3Q=
+	by mail.kernel.org (Postfix) with ESMTP id 6014920652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:18:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbfAQQSI (ORCPT
+        id S1729145AbfAQQSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:18:08 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46153 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728834AbfAQQSH (ORCPT
+        Thu, 17 Jan 2019 11:18:21 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45128 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728675AbfAQQSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:18:07 -0500
-Received: by mail-oi1-f193.google.com with SMTP id x202so6543037oif.13;
-        Thu, 17 Jan 2019 08:18:06 -0800 (PST)
+        Thu, 17 Jan 2019 11:18:20 -0500
+Received: by mail-qk1-f194.google.com with SMTP id y78so6277874qka.12;
+        Thu, 17 Jan 2019 08:18:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SH8kFksfY6PHQ8H5TEKZ3PasvULOOTnq0NYxnZLpymU=;
-        b=B7voyNsSvs0EFKuyPc9y1rOO//ILYnGB6T6/9pj3Iq4NFsMzshs4rrFmMhvjigw55H
-         Zs/YwXSLmtPY5U1b4Dvwp2LanRKRgDB1++rBj3LdPqPA92b8PiGSochpjJJMWPSbufR/
-         iiAIBbidbaNGg0DY16e+eJI37z2qPVEYoj6L4v9VvXteGH34uY1f+kgKza3gsr5yPAVF
-         VnczDPS/QcmiV2Mi45b6zSdhZ4i+9fLmw5/eRHjq/vzN8Na1emtgUg/RiFfntewTLNyF
-         8iuN7dt3npB9KE9Ad73twTDIefTu2tdETP0UFDnc2crJZet5TdUngE1M2btyS2gGXA8L
-         7TkA==
-X-Gm-Message-State: AJcUukeZdTUJBGpslCDZwWOFRPAatArZ/YGZEI/hb8fkZ8azfgEdgRIn
-        +1Dj0QACLPnEQIFXHx1EPw==
-X-Google-Smtp-Source: ALg8bN4UOLyZ3cFya8Ty86igEAaKIJWx9rpXM8gCL/Y2ZhPcPEByP777nr6zG504n1NHYoIgYuJvfA==
-X-Received: by 2002:aca:3209:: with SMTP id y9mr6613048oiy.198.1547741885350;
-        Thu, 17 Jan 2019 08:18:05 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u109sm767931otb.8.2019.01.17.08.18.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 08:18:04 -0800 (PST)
-Date:   Thu, 17 Jan 2019 10:18:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Cosmin Samoila <cosmin.samoila@nxp.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Viorel Suman <viorel.suman@gmail.com>
-Subject: Re: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
-Message-ID: <20190117161804.GA5760@bogus>
-References: <1547729177-14317-1-git-send-email-viorel.suman@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MbyU6DABQlQUu0Tvo/yIMkfmtsqZt+GuYhN0wrtNSyk=;
+        b=kX/nNx+Z+c/FGGgZbKK8vgQ/ricXO8kNZiNHaXSzk7TkR91VBVLGunNDBsNxOrAJ3U
+         fVsDOtKfLIlGAxaS49NX3HfEsM/Gm9y9Ip6oVCl9x4T1d2jMm7Mxl7A3z01FhVdYdNeT
+         bZxDDnFjTOIzOd2BlXfdD7FnoovqCDYgRdkrWGHJzk6eCN71fob97yFQuvZQd/Y4OzZm
+         8FbjTEpDvXg4CJvrLN2pr/zawxq0vacEAf1ZUSYw89Ft/6YeriFQYTYAUpVCN+02nl7o
+         4Rhi7zXjP2aIiwDVXrQ8HPWs2jeoX3Buf1vNyYzqAetQQk5+KlDOj0/Fcca7hUSnHcY6
+         pa6w==
+X-Gm-Message-State: AJcUukdhJ9ohu64q+DQlwGQWURRSRFCiIZs2qWxgMogaztu4FHR00GkU
+        EcbNZFVGsuD3kJfQcxVISVE9xThtC1lyVLNSz/k=
+X-Google-Smtp-Source: ALg8bN4wVgtDXBX7+plwp7vCWvd6X17QeZxw7P5RxPNaPMqc6N9+IE7G4m8jEcDnoViybhnZXg97fxyltqtjNwPfBPg=
+X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr10967732qkf.107.1547741898800;
+ Thu, 17 Jan 2019 08:18:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547729177-14317-1-git-send-email-viorel.suman@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190116163253.23780-1-vincent.whitchurch@axis.com>
+ <CAK8P3a2ifu9X+SXgoDPSFMYwnKr=Yex8_tD4qRimcOQAhuEa8Q@mail.gmail.com>
+ <20190117105441.eqediwlekofp2srg@axis.com> <CAK8P3a2HtSJCLVdLcs=f0b5wv-k-6E_Z4Pt3Yp_kazUZh-Ek9A@mail.gmail.com>
+ <20190117151906.odvozs6kz3uvx32y@axis.com> <20190117152142.GB20359@infradead.org>
+ <20190117153206.2flxqb26tbdrwp4z@axis.com> <20190117154612.GA6262@infradead.org>
+In-Reply-To: <20190117154612.GA6262@infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 17 Jan 2019 17:18:02 +0100
+Message-ID: <CAK8P3a14oW-615mT-iW+C_TNmEpST7V0L4XVic3LSnvCzXh4pA@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Virtio-over-PCIe on non-MIC
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
+        gregkh <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-ntb@googlegroups.com, Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 12:46:25PM +0000, Viorel Suman wrote:
-> The patchset adds NXP Audio Mixer (AUDMIX) device and machine
-> drivers and related DT bindings documentation.
-> 
-> Changes since V2:
-> 1. Moved "dais" node from machine driver DTS node to device driver DTS node
->   as suggested by Rob.
+On Thu, Jan 17, 2019 at 4:46 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Thu, Jan 17, 2019 at 04:32:06PM +0100, Vincent Whitchurch wrote:
+> > If I understand you correctly, I think you're talking about the RC
+> > running the virtio drivers and the endpoint implementing the virtio
+> > device?  This vop stuff is used for the other way around: the virtio
+> > device is implement on the RC and the endpoint runs the virtio drivers.
+>
+> Oh.  That is really weird and not that way I'd implement it..
 
-That was not what I suggested. You still have a virtual node which looks 
-to me to be unnecessary.
+It does make sense to me for the very special requirements of the MIC
+device, which has a regular PC-style server that provides the environment
+for a special embedded device inside of a PCIe card, so the PCI-EP
+stuff is just used as a transport here going one way, and then the
+configuration of the devices implemented through it goes the other
+way, providing network connectivity and file system to the embedded
+machine on the PCI-EP.
 
-> 
-> Changes since V1:
-> 1. Original patch split into distinct patches for the device driver and
->   DT binding documentation.
-> 2. Replaced AMIX with AUDMIX in both code and file names as it looks more
->   RM-compliant.
-> 3. Removed polarity control from CPU DAI driver as suggested by Nicolin.
-> 4. Added machine driver and related DT binding documentation.
-> 
-> Viorel Suman (4):
->   ASoC: fsl: Add Audio Mixer CPU DAI driver
->   ASoC: add fsl_audmix DT binding documentation
->   ASoC: fsl: Add Audio Mixer machine driver
->   ASoC: add imx-audmix DT binding documentation
-> 
->  .../devicetree/bindings/sound/fsl,audmix.txt       |  50 ++
->  .../devicetree/bindings/sound/imx-audmix.txt       |  18 +
->  sound/soc/fsl/Kconfig                              |  16 +
->  sound/soc/fsl/Makefile                             |   5 +
->  sound/soc/fsl/fsl_audmix.c                         | 551 +++++++++++++++++++++
->  sound/soc/fsl/fsl_audmix.h                         | 102 ++++
->  sound/soc/fsl/imx-audmix.c                         | 334 +++++++++++++
->  7 files changed, 1076 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/fsl,audmix.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/imx-audmix.txt
->  create mode 100644 sound/soc/fsl/fsl_audmix.c
->  create mode 100644 sound/soc/fsl/fsl_audmix.h
->  create mode 100644 sound/soc/fsl/imx-audmix.c
-> 
-> -- 
-> 2.7.4
-> 
+This is actually very similar to a setup that I considered implementing
+over USB, where one might have an embedded machine (or a bunch
+of them on a USB hub) connected to a USB host port, and then
+use it in the opposite way of a regular gadget driver, by providing
+a virtfs over USB to the gadget with files residing on a disk on the
+USB host.
+
+Apparently Vincent has the same use case that both the Intel
+MIC folks and I had here, so doing it like this is clearly useful.
+On the other hand, I agree that there are lots of other use cases
+that need the opposite, so we should try to come up with a
+design that can cover both.
+An example of this might be a PCIe-endpoint device providing
+network connectivity to the host using a vhost-net device, which
+ideally just shows up as a device on the host as a virtio-net
+without requiring any configuration.
+
+So for configuring this, I think it'd like to see a way to have
+either the PCI-EP or the PCI-host side be the one that can
+create virtio devices that show up on the other end. This
+configuration is currently done using an ioctl interface, which
+was probably the easiest to do for the MIC case, but for
+consistency with the PCI-EP framework, using configfs
+is probably better.
+
+A different matter is the question of what a virtio device
+talks to. A lot of virtio devices are fundamentally
+asymmetric (9pfs, rng, block, ...), so you'd have to
+have the virtio device on one side, and a user space
+or vhost driver on the other. The VOP driver seems to assume
+that it's always the slave that uses virtio, while the
+master side (which could be on the PCI EP or PCI
+host for the sake of this argument) implements it in user
+space or otherwise. Is this a safe assumption, or can
+we imagine cases where this would be reversed as well?
+
+        Arnd
