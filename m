@@ -2,104 +2,140 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C6BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A27C8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932E620855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547731579;
-	bh=yKvky8E4Nm1jthZwE/JbLv4cRdicncJi3szgaxFAUfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SZ6F+0cBl1pv4u241GjZYVr/mB7jDcJqD4RbRSvjM4RDYlyNZBqUZbHRX9iHinn44
-	 lx/J0Yf57H/Klwhr1JVoroYiELaGb9vG9y5W92rqzE+HjrPoKROVeEE7Yn1CiGbYpG
-	 rlAMoTRCeiiNGTLdqp0S9X6zK2GCyXfTPNJ/FlFo=
+	by mail.kernel.org (Postfix) with ESMTP id 6D2BF205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:27:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="frOO8pkc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfAQN0R (ORCPT
+        id S1727012AbfAQN10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:26:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbfAQN0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:26:17 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 236DE20657;
-        Thu, 17 Jan 2019 13:26:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547731576;
-        bh=yKvky8E4Nm1jthZwE/JbLv4cRdicncJi3szgaxFAUfM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YFTT0O74OpIilQM38QAPwcMcP612RCY7Iz0u39kX2d8K254ntUN9z4LAQkSvrurae
-         AjaaJ0HwtKjn8a2QLRklqfOXvFVfuTkOqeARIuwug+yB/F6KrP5dVCg3JsWSGlMwPm
-         lUbShHclpHmxG0qyWFyhA86iHPZ0PGtY8azOIrj0=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 180D141AB5; Thu, 17 Jan 2019 10:26:13 -0300 (-03)
-Date:   Thu, 17 Jan 2019 10:26:13 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Nick Clifton <nickc@redhat.com>
-Cc:     Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@lge.com
-Subject: Re: [RFC] perf tools: Filter out hidden symbols from labels
-Message-ID: <20190117132612.GI11922@kernel.org>
-References: <20190115135354.11572-1-jolsa@kernel.org>
- <960f0b83-a623-67a6-ab55-d56139d10ba2@redhat.com>
- <20190115163540.GA20159@kernel.org>
- <20190116043735.GA31070@sejong>
- <35bf274a-f91e-1b4f-398a-dbe6f4105dfd@redhat.com>
- <20190116133117.GA2243@kernel.org>
- <db34cf8a-d929-ffe1-91a5-ed3da0c6df86@redhat.com>
- <20190116160422.GH2243@kernel.org>
- <d33966dd-6146-f73a-ee01-693767a7f538@redhat.com>
+        Thu, 17 Jan 2019 08:27:26 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:39258 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbfAQN1Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 08:27:25 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0HDRICS103805;
+        Thu, 17 Jan 2019 07:27:18 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547731638;
+        bh=djCWpJC0UGwknF/eUj9PjPdjxt6eoD0syV3BsrAw1yM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=frOO8pkcVWPV/twrpxb/LWTLBoD5jVAPdv/OhH6APP2wXwQY9tT/vns1mnfbAkKF9
+         CmBMNRwnly7zX/ImZxmpPV6Uqh1TW/4AMwj5vn8gY34/GkBOAHD2e550226L7BdBWg
+         r1NAEfRsb0X6kk+dmD00pQRXg8RczOxPHZI9BZfU=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0HDRI5d111524
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 07:27:18 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 17
+ Jan 2019 07:27:18 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 17 Jan 2019 07:27:18 -0600
+Received: from [172.22.123.101] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0HDRIvP021638;
+        Thu, 17 Jan 2019 07:27:18 -0600
+Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED
+ driver
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <dachaac@gmail.com>,
+        <robh+dt@kernel.org>
+References: <20190114211723.11186-1-dmurphy@ti.com>
+ <20190114211723.11186-2-dmurphy@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com> <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com> <20190116105537.GA1803@amd>
+ <86299268-3202-814a-134b-04bd2170faab@ti.com> <20190116220401.GA28024@amd>
+ <8c7dde3e-5f3c-80a5-ec57-73ce8e39deef@ti.com> <20190117100651.GB17930@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <8def5414-9170-7034-34f9-70e6c71f8161@ti.com>
+Date:   Thu, 17 Jan 2019 07:27:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d33966dd-6146-f73a-ee01-693767a7f538@redhat.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190117100651.GB17930@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jan 17, 2019 at 10:25:24AM +0000, Nick Clifton escreveu:
-> Hi Arnaldo,
+Hello
+
+On 1/17/19 4:06 AM, Pavel Machek wrote:
+> Hi!
 > 
-> >>> Humm, is -fno-omit-frame-pointer there by any chance? :-)
+>>>>> You know what? First, submit driver with similar functionality to
+>>>>> existing RGB drivers, using same interface existing drivers are
+>>>>> using. When that is accepted, we can talk about extending
+>>>>> kernel<->user interfaces.
+>>>>>
+>>>>
+>>>> I could do that but then there is no way for users to have any other color but "white" with this driver.
+>>>> That defeats the purpose of the device itself.
+>>>
+>>> No, that is not what I meant.
+>>>
+>>> We do have RGB drivers in tree, they just present three separate LEDs
+>>> -- red, green and blue. I ask you to do the same for initial
+>>> submission.
+>>>
+>>
+>> For clarification you are asking me to register a LED class per
+>> output pin?
 > 
-> > Would be interestint to have that info, as we could hint the user that
-> > backtraces should be done with something else than '--call-graph fp' :-)
+> Yes.
 > 
-> OK, well I have added the feature to annobin 8.67, now in Fedora
-> rawhide.  Unfortunately it will take a while before the information
-> actually gets into binaries, since the new data is only recorded
-> when a package is rebuilt.  So basically you are looking at Fedora 30
-> at the earliest.
 
-That is not a problem, I have containers for rawhide, so I can just go
-ahead and do a podman pull + build, build some binary, and then add the
-feature, the warning will get into effect when that note is found and
-userspace callchains are used without DWARF info for such binaries.
- 
-> If you want to see the plugin in action, build something on a rawhide
-> system (or a mock chroot) using the gcc command line option -fplugin=annobin.
+OK I can do that but I would like to get Jacek to align with this as he
+suggested creating the code as I submitted based on the review of the
+devices data sheet.
 
-Right, that is what I'll do as soon as I get the time.
+LED class registration per LED module or for the single Banked output.
 
-> (Make sure that you have annobin-8.67 installed).  Then once the binary 
-> is built run "readelf --wide --notes <file> | grep omit" to see the 
-> omit-frame-pointer notes.
+>> As explained before the Master brightness register has absolute control over the output current
+>> to the LED outputs regardless of the color control setting.
+>>
+> 
+> Yes, just set master brightness to 255 and you can ignore it.
 
-Thanks for the hints, I'll get you CCed when I get to work on this.
+OK Sounds fine.  Will just need to do an init that sets the color
+register to 0 and brightness to 0 so we don't have a flash.
 
-- Arnaldo
+> 
+>>> You'll still be able to set brightness independently on the
+>>> red/green/blue LEDs...
+>>>
+>>
+>> But which one would control the overall brightness of the cluster?
+> 
+> You would not have that control in initial version of the patch.
+> 
+
+See above on alignment
+
+Dan
+
+> 								Pavel
+> 
+
+
+-- 
+------------------
+Dan Murphy
