@@ -2,120 +2,116 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5176C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE2FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F9FC20859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4A66205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:17:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfAQPQ4 (ORCPT
+        id S1728274AbfAQPR1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:16:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37378 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725882AbfAQPQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:16:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11629ABE6;
-        Thu, 17 Jan 2019 15:16:55 +0000 (UTC)
-Subject: Re: [PATCH 14/25] mm, compaction: Avoid rescanning the same pageblock
- multiple times
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-15-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <67b95fef-6f9a-a91f-c1b2-1c3fbc9330ca@suse.cz>
-Date:   Thu, 17 Jan 2019 16:16:54 +0100
+        Thu, 17 Jan 2019 10:17:27 -0500
+Received: from mga12.intel.com ([192.55.52.136]:27247 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725882AbfAQPR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:17:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 07:17:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
+   d="scan'208";a="115423765"
+Received: from bdazey-mobl.amr.corp.intel.com (HELO [10.254.81.138]) ([10.254.81.138])
+  by fmsmga007.fm.intel.com with ESMTP; 17 Jan 2019 07:17:24 -0800
+Subject: Re: [PATCH 4/4] dax: "Hotplug" persistent memory for use like normal
+ RAM
+To:     Yanmin Zhang <yanmin_zhang@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, dave@sr71.net
+Cc:     dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
+        akpm@linux-foundation.org, mhocko@suse.com,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, ying.huang@intel.com, fengguang.wu@intel.com,
+        bp@suse.de, bhelgaas@google.com, baiyaowei@cmss.chinamobile.com,
+        tiwai@suse.de
+References: <20190116181859.D1504459@viggo.jf.intel.com>
+ <20190116181905.12E102B4@viggo.jf.intel.com>
+ <5ef5d5e9-9d35-fb84-b69e-7456dcf4c241@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <1e9377c6-11a0-3bbd-763d-d9347bd556cf@intel.com>
+Date:   Thu, 17 Jan 2019 07:17:24 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190104125011.16071-15-mgorman@techsingularity.net>
+In-Reply-To: <5ef5d5e9-9d35-fb84-b69e-7456dcf4c241@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/4/19 1:50 PM, Mel Gorman wrote:
-> Pageblocks are marked for skip when no pages are isolated after a scan.
-> However, it's possible to hit corner cases where the migration scanner
-> gets stuck near the boundary between the source and target scanner. Due
-> to pages being migrated in blocks of COMPACT_CLUSTER_MAX, pages that
-> are migrated can be reallocated before the pageblock is complete. The
-> pageblock is not necessarily skipped so it can be rescanned multiple
-> times. Similarly, a pageblock with some dirty/writeback pages may fail
-> to isolate and be rescanned until writeback completes which is wasteful.
+On 1/17/19 12:19 AM, Yanmin Zhang wrote:
+>>
+> I didn't try pmem and I am wondering it's slower than DRAM.
+> Should a flag, such like _GFP_PMEM, be added to distinguish it from
+> DRAM?
 
-     ^ migrate? If we failed to isolate, then it wouldn't bump nr_isolated.
-Wonder if we could do better checks and not isolate pages that cannot be at the
-moment migrated anyway.
+Absolutely not. :)
 
-> 
-> This patch tracks if a pageblock is being rescanned. If so, then the entire
-> pageblock will be migrated as one operation. This narrows the race window
-> during which pages can be reallocated during migration. Secondly, if there
-> are pages that cannot be isolated then the pageblock will still be fully
-> scanned and marked for skipping. On the second rescan, the pageblock skip
-> is set and the migration scanner makes progress.
-> 
->                                         4.20.0                 4.20.0
->                               finishscan-v2r15         norescan-v2r15
-> Amean     fault-both-3      3729.80 (   0.00%)     2872.13 *  23.00%*
-> Amean     fault-both-5      5148.49 (   0.00%)     4330.56 *  15.89%*
-> Amean     fault-both-7      7393.24 (   0.00%)     6496.63 (  12.13%)
-> Amean     fault-both-12    11709.32 (   0.00%)    10280.59 (  12.20%)
-> Amean     fault-both-18    16626.82 (   0.00%)    11079.19 *  33.37%*
-> Amean     fault-both-24    19944.34 (   0.00%)    17207.80 *  13.72%*
-> Amean     fault-both-30    23435.53 (   0.00%)    17736.13 *  24.32%*
-> Amean     fault-both-32    23948.70 (   0.00%)    18509.41 *  22.71%*
-> 
->                                    4.20.0                 4.20.0
->                          finishscan-v2r15         norescan-v2r15
-> Percentage huge-1         0.00 (   0.00%)        0.00 (   0.00%)
-> Percentage huge-3        88.39 (   0.00%)       96.87 (   9.60%)
-> Percentage huge-5        92.07 (   0.00%)       94.63 (   2.77%)
-> Percentage huge-7        91.96 (   0.00%)       93.83 (   2.03%)
-> Percentage huge-12       93.38 (   0.00%)       92.65 (  -0.78%)
-> Percentage huge-18       91.89 (   0.00%)       93.66 (   1.94%)
-> Percentage huge-24       91.37 (   0.00%)       93.15 (   1.95%)
-> Percentage huge-30       92.77 (   0.00%)       93.16 (   0.42%)
-> Percentage huge-32       87.97 (   0.00%)       92.58 (   5.24%)
-> 
-> The fault latency reduction is large and while the THP allocation
-> success rate is only slightly higher, it's already high at this
-> point of the series.
-> 
-> Compaction migrate scanned    60718343.00    31772603.00
-> Compaction free scanned      933061894.00    63267928.00
+We already have performance-differentiated memory, and lots of ways to
+enumerate and select it in the kernel (all of our NUMA infrastructure).
 
-Hm I thought the order of magnitude difference between migrate and free scanned
-was already gone at this point as reported in the previous 2 patches. Or is this
-from different system/configuration? Anyway, encouraging result. I would expect
-that after "Keep migration source private to a single compaction instance" sets
-the skip bits much more early and aggressively, the rescans would not happen
-anymore thanks to those, even if cached pfns were not updated.
-
-> Migration scan rates are reduced by 48% and free scan rates are
-> also reduced as the same migration source block is not being selected
-> multiple times. The corner case where migration scan rates go through the
-> roof due to a dirty/writeback pageblock located at the boundary of the
-> migration/free scanner did not happen in this case. When it does happen,
-> the scan rates multiple by factors measured in the hundreds and would be
-> misleading to present.
-> 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+PMEM is also just the first of many "kinds" of memory that folks want to
+build in systems and use a "RAM".  We literally don't have space to put
+a flag in for each type.
 
