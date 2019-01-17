@@ -4,59 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB8CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81581C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 582E820851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FDAB20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547728834;
-	bh=IkzEgNK/NLM895ZOQO55AVwIF79l0tEkPKbyO3Qf3Ec=;
+	s=default; t=1547728836;
+	bh=znEh5kGmOw3SlPM5Hh6hRwxPvlDsRSEV249QlTjM090=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=oOdgYaiZayiNFCTNauqBLEookm+r1hyK5wh9+gkbQt0TdDNcqFcY9AH2Q2NVLGOJH
-	 NelTJXIDu8FQC1yPvr8/iXQX45S3SwHkYe5Jg2kUH7YE6d2EgsJIj0VYGv8AnulZJI
-	 8okbZbxip6NaxQxB849Xk07H9hS1Qph0f173NGYg=
+	b=PGpEzzSoorVS7aN7Nmqbw813sFR65S8XSzaQy0BC/8njP+lS2iwIxrItJtv8Ed5UT
+	 pUrjKnT0MSImlWO3zG7elOiM7maviNIoIlrG4xAs03LTAVuoorD5vB6W3ew+OKzUQt
+	 vGkmDIOWblnosNSPCWX3LSExgXt39EqXbXCWeTKU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfAQMkX (ORCPT
+        id S1727837AbfAQMkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:40:23 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60490 "EHLO
+        Thu, 17 Jan 2019 07:40:35 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60582 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbfAQMkV (ORCPT
+        with ESMTP id S1727721AbfAQMkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 07:40:21 -0500
+        Thu, 17 Jan 2019 07:40:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=qsBdwsq+77gzvu4dQxeCJ/KKt32LH7f9pEazGgvO8Fk=; b=AELpN8CpBgCV
-        eZgBgBXeomyCrijMdoJepwn022YTVeEJRlCi/jhlqH1Pt0NniyuSUbF4w8T2RSQQzr3dsgrL4MVjf
-        HUFlLgrhvamQj8ecv+0pJFeo8LIjNk666DnqeSgKkF2Eybin/ZfQioL6QxNfIqaFQj7ySHMHxdmSV
-        hj8RY=;
+        List-Archive; bh=J+/ZXPmVkxZnbtyeiHXiz/lksnuUTd9WRlSqDhYcck8=; b=BjifNLH6cVo/
+        aa+mvww2CQJ8bqfgaH+5UuLzyjNGPmPU0wG0iCWuR39JQ0OByaR1fSOxV+C1mVpeLvijdQbupm3/s
+        Gb8zwdIO9C11rqYJPfrtPh25v6+D05pj6BXOE7eZKjYLUQpN8MJVJ6SuvqNwWFabeksa2lgCZpE5Q
+        L2szg=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gk6y0-0000ZD-MN; Thu, 17 Jan 2019 12:40:16 +0000
+        id 1gk6y5-0000ZU-Lh; Thu, 17 Jan 2019 12:40:21 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3961D1126FE2; Thu, 17 Jan 2019 12:40:16 +0000 (GMT)
+        id 41A871126FE2; Thu, 17 Jan 2019 12:40:20 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Alban Bedel <albeu@free.fr>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Mark Brown <broonie@kernel.org>, linux-mips@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: ath79: Enable support for compile test" to the spi tree
-In-Reply-To:  <20190116185549.23295-3-albeu@free.fr>
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: bitbang: Don't call chipselect() in spi_bitbang_setup()" to the spi tree
+In-Reply-To:  <20190116185549.23295-1-albeu@free.fr>
 X-Patchwork-Hint: ignore
-Message-Id: <20190117124016.3961D1126FE2@debutante.sirena.org.uk>
-Date:   Thu, 17 Jan 2019 12:40:16 +0000 (GMT)
+Message-Id: <20190117124020.41A871126FE2@debutante.sirena.org.uk>
+Date:   Thu, 17 Jan 2019 12:40:20 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: ath79: Enable support for compile test
+   spi: bitbang: Don't call chipselect() in spi_bitbang_setup()
 
 has been applied to the spi tree at
 
@@ -89,89 +86,46 @@ to this mail.
 Thanks,
 Mark
 
-From b172fd0c898022c47161a99cb40be5304b0d3fd0 Mon Sep 17 00:00:00 2001
+From a666f2619a97ab9264d3b06055a336b3ee75c108 Mon Sep 17 00:00:00 2001
 From: Alban Bedel <albeu@free.fr>
-Date: Wed, 16 Jan 2019 19:55:46 +0100
-Subject: [PATCH] spi: ath79: Enable support for compile test
+Date: Wed, 16 Jan 2019 19:55:44 +0100
+Subject: [PATCH] spi: bitbang: Don't call chipselect() in spi_bitbang_setup()
 
-To allow building this driver in compile test we need to remove all
-dependency on headers from arch/mips/include. To allow this we
-explicitly define all the registers locally instead of using
-ar71xx_regs.h and we move the platform data struct definition to
-include/linux/platform_data/spi-ath79.h.
+spi_setup() already call spi_set_cs() right after calling the
+controller setup method, so there is no need for the bitbang driver to
+do that. Because of this the chipselect() callback was confusingly
+still called when CS is GPIO based.
 
 Signed-off-by: Alban Bedel <albeu@free.fr>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/mips/ath79/dev-spi.h                         |  2 +-
- drivers/spi/Kconfig                               |  2 +-
- drivers/spi/spi-ath79.c                           | 15 ++++++++++++---
- .../linux/platform_data/spi-ath79.h               |  0
- 4 files changed, 14 insertions(+), 5 deletions(-)
- rename arch/mips/include/asm/mach-ath79/ath79_spi_platform.h => include/linux/platform_data/spi-ath79.h (100%)
+ drivers/spi/spi-bitbang.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/arch/mips/ath79/dev-spi.h b/arch/mips/ath79/dev-spi.h
-index d732565ca736..6e15bc8651be 100644
---- a/arch/mips/ath79/dev-spi.h
-+++ b/arch/mips/ath79/dev-spi.h
-@@ -13,7 +13,7 @@
- #define _ATH79_DEV_SPI_H
+diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
+index f29176000b8d..dd9a8c54a693 100644
+--- a/drivers/spi/spi-bitbang.c
++++ b/drivers/spi/spi-bitbang.c
+@@ -213,19 +213,6 @@ int spi_bitbang_setup(struct spi_device *spi)
  
- #include <linux/spi/spi.h>
--#include <asm/mach-ath79/ath79_spi_platform.h>
-+#include <linux/platform_data/spi-ath79.h>
+ 	dev_dbg(&spi->dev, "%s, %u nsec/bit\n", __func__, 2 * cs->nsecs);
  
- void ath79_register_spi(struct ath79_spi_platform_data *pdata,
- 			 struct spi_board_info const *info,
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 128892c7e21e..71d3d2d5e5d1 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -63,7 +63,7 @@ config SPI_ALTERA
- 
- config SPI_ATH79
- 	tristate "Atheros AR71XX/AR724X/AR913X SPI controller driver"
--	depends on ATH79
-+	depends on ATH79 || COMPILE_TEST
- 	select SPI_BITBANG
- 	help
- 	  This enables support for the SPI controller present on the
-diff --git a/drivers/spi/spi-ath79.c b/drivers/spi/spi-ath79.c
-index edf695a359f4..09c4fb7fcf7a 100644
---- a/drivers/spi/spi-ath79.c
-+++ b/drivers/spi/spi-ath79.c
-@@ -23,15 +23,24 @@
- #include <linux/bitops.h>
- #include <linux/clk.h>
- #include <linux/err.h>
+-	/* NOTE we _need_ to call chipselect() early, ideally with adapter
+-	 * setup, unless the hardware defaults cooperate to avoid confusion
+-	 * between normal (active low) and inverted chipselects.
+-	 */
 -
--#include <asm/mach-ath79/ar71xx_regs.h>
--#include <asm/mach-ath79/ath79_spi_platform.h>
-+#include <linux/platform_data/spi-ath79.h>
- 
- #define DRV_NAME	"ath79-spi"
- 
- #define ATH79_SPI_RRW_DELAY_FACTOR	12000
- #define MHZ				(1000 * 1000)
- 
-+#define AR71XX_SPI_REG_FS		0x00	/* Function Select */
-+#define AR71XX_SPI_REG_CTRL		0x04	/* SPI Control */
-+#define AR71XX_SPI_REG_IOC		0x08	/* SPI I/O Control */
-+#define AR71XX_SPI_REG_RDS		0x0c	/* Read Data Shift */
-+
-+#define AR71XX_SPI_FS_GPIO		BIT(0)	/* Enable GPIO mode */
-+
-+#define AR71XX_SPI_IOC_DO		BIT(0)	/* Data Out pin */
-+#define AR71XX_SPI_IOC_CLK		BIT(8)	/* CLK pin */
-+#define AR71XX_SPI_IOC_CS(n)		BIT(16 + (n))
-+
- struct ath79_spi {
- 	struct spi_bitbang	bitbang;
- 	u32			ioc_base;
-diff --git a/arch/mips/include/asm/mach-ath79/ath79_spi_platform.h b/include/linux/platform_data/spi-ath79.h
-similarity index 100%
-rename from arch/mips/include/asm/mach-ath79/ath79_spi_platform.h
-rename to include/linux/platform_data/spi-ath79.h
+-	/* deselect chip (low or high) */
+-	mutex_lock(&bitbang->lock);
+-	if (!bitbang->busy) {
+-		bitbang->chipselect(spi, BITBANG_CS_INACTIVE);
+-		ndelay(cs->nsecs);
+-	}
+-	mutex_unlock(&bitbang->lock);
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(spi_bitbang_setup);
 -- 
 2.20.1
 
