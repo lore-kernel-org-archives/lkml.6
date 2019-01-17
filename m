@@ -2,150 +2,82 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CADAC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72AAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2953020657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:00:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W3Y5E5SZ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UOWTVvWX"
+	by mail.kernel.org (Postfix) with ESMTP id 883FC20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:02:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbfAQNAy (ORCPT
+        id S1727921AbfAQNCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:00:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47866 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728097AbfAQNAx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:00:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BEE4E6086A; Thu, 17 Jan 2019 13:00:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547730051;
-        bh=Z2vlCHQaX9hPpwydG9WyKUvmg7ZYlm2Wytwvz3kS4vw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=W3Y5E5SZ4b86u+yjU6zPgLBzSC2HSQaS+akm7S9JhQtfj3boQYC3G+M2Szr63K6Ta
-         a94dk0qcFdMRQurwD6DoWgXVnDrZ/SIjqnszmnxLiTzfmhVJ+iL1XrwTB6wUhuZt94
-         X9ATYZcpD7stR+ghyd74OhuiMFeGCcX+rdETfXa4=
-Received: from [192.168.43.47] (unknown [106.193.6.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 700EE6053B;
-        Thu, 17 Jan 2019 13:00:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547730050;
-        bh=Z2vlCHQaX9hPpwydG9WyKUvmg7ZYlm2Wytwvz3kS4vw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UOWTVvWXExdPIS5ZaKGB+GKYWDcRiB1O2ZGZItmOlwkj3Sdrd0AxmWOMODLLX/AB5
-         bBIg0stevM853SzYZhQEdRN5vXPf7dmHP+dy4Uw2/tIiMLPjvwEJE3L1R7atYwEJom
-         ZyuUufrTaOjCwwYYg2pXdc5IsGNdn0xxmO9c6y0g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 700EE6053B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH] watchdog: qcom: Add suspend/resume support
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20190117091555.2018-1-saiprakash.ranjan@codeaurora.org>
- <20190117093113.GA23389@basecamp>
- <91108b9b-fe05-1068-b07e-872cb4cd4012@codeaurora.org>
- <20190117112730.GA25198@basecamp>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <b9f573ec-3787-2b05-52e3-60f11c061dd7@codeaurora.org>
-Date:   Thu, 17 Jan 2019 18:30:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 17 Jan 2019 08:02:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39580 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727334AbfAQNCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 08:02:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3EAA80D;
+        Thu, 17 Jan 2019 05:02:18 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B9393F557;
+        Thu, 17 Jan 2019 05:02:17 -0800 (PST)
+Subject: Re: [PATCH v1] iommu/s390: Declare s390 iommu reserved regions
+To:     Pierre Morel <pmorel@linux.ibm.com>, gerald.schaefer@de.ibm.com
+Cc:     linux-s390@vger.kernel.org, walling@linux.ibm.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+References: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <cc070df1-e7dc-8cce-f443-879e0e5e2903@arm.com>
+Date:   Thu, 17 Jan 2019 13:02:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190117112730.GA25198@basecamp>
+In-Reply-To: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/2019 4:57 PM, Brian Masney wrote:
+On 15/01/2019 17:37, Pierre Morel wrote:
+> The s390 iommu can only allow DMA transactions between the zPCI device
+> entries start_dma and end_dma.
 > 
-> That attribute suppresses a warning from the compiler if the function is
-> unused when PM_SLEEP is disabled.  I don't consider it hackish since the
-> function name no longer appears outside the #ifdef. For example:
+> Let's declare the regions before start_dma and after end_dma as
+> reserved regions using the appropriate callback in iommu_ops.
 > 
-> 	#ifdef CONFIG_PM_SLEEP
-> 	static int qcom_wdt_suspend(struct device *dev)
-> 	{
-> 		...
-> 	}
-> 	#endif /* CONFIG_PM_SLEEP */
-> 
-> 	static SIMPLE_DEV_PM_OPS(..., qcom_wdt_suspend, ...);
-> 
-> SIMPLE_DEV_PM_OPS (actually SET_SYSTEM_SLEEP_PM_OP) includes the check
-> for PM_SLEEP and its a noop if PM_SLEEP is disabled so this works.
-> 
-> Now here's the code with __maybe_unused:
-> 
-> 	static int __maybe_unused qcom_wdt_suspend(struct device *dev)
-> 	{
-> 		...
-> 	}
-> 
-> 	static SIMPLE_DEV_PM_OPS(..., qcom_wdt_suspend, ...);
-> 
-> This will still be a NOOP when power management is disabled, but have
-> the benefit of increased compile-time test coverage in that situation.
-> The symbols won't be included in the final executable. I personally
-> think the code a is cleaner with __maybe_unused.
-> 
-> This pattern is already in use across various subsystems in the kernel
-> for suspend and resume functions:
-> 
-> $ git grep __maybe_unused | egrep "_suspend|_resume"  | wc -l
-> 767
-> 
+> The reserved region may later be retrieved from sysfs or from
+> the vfio iommu internal interface.
 
-Thanks for the explanation Brian.
+For this particular case, I think the best solution is to give VFIO the 
+ability to directly interrogate the domain geometry (which s390 appears 
+to set correctly already). The idea of reserved regions was really for 
+'unexpected' holes inside the usable address space - using them to also 
+describe places that are entirely outside that address space rather 
+confuses things IMO.
 
-But I did see the maybe_unused attribute usage in other suspend and 
-resume functions before posting and decided to go with ifdef because
-I think this attribute wastes CPU time by building and later discarding 
-if the function is unused (it may be negligible).
+Furthermore, even if we *did* end up going down the route of actively 
+reserving addresses beyond the usable aperture, it doesn't seem sensible 
+for individual drivers to do it themselves when the core API already 
+describes the relevant information generically.
 
-I did not understand the increased compile-time test coverage
-you mentioned when PM_SLEEP=n because why would we need to compile
-when the config is disabled? We could just discard it. We would just
-increase the build time with this attribute (although for this case it 
-would be negligible but say we compile with PM_SLEEP disabled for all 
-those suspend/resume functions with maybe_unused attribute).
+Robin.
 
-Looking at previous discussions in LKML[1] as to why the pm 
-suspend/resume functions used __maybe_unused seemes to be because of
-wrong ifdef usage. For ex: Using #ifdef CONFIG_PM instead of
-#ifdef CONFIG_PM_SLEEP would result in a warning when
-CONFIG_PM_SLEEP=n but CONFIG_PM=y.
-
-Anyways, *I am OK with either of them*, after some more review on the
-patch I can make the change in next version of the patch.
-
-[1] https://lore.kernel.org/patchwork/patch/732981/
-
-- Sai
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> 
+> This seems to me related with the work Shameer has started on
+> vfio_iommu_type1 so I add Alex and Shameer to the CC list.
+> 
+> 
+> Pierre Morel (1):
+>    iommu/s390: Declare s390 iommu reserved regions
+> 
+>   drivers/iommu/s390-iommu.c | 29 +++++++++++++++++++++++++++++
+>   1 file changed, 29 insertions(+)
+> 
