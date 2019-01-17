@@ -2,126 +2,92 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0038AC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 244F5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD5AF20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1B0B20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:04:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LSuNPn19"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0xzsqTt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfAQMBh (ORCPT
+        id S1726948AbfAQMEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:01:37 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:60813 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbfAQMBg (ORCPT
+        Thu, 17 Jan 2019 07:04:49 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33194 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbfAQMEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 07:01:36 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id D581025B760;
-        Thu, 17 Jan 2019 23:01:30 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547726491; bh=ruO83q8hxHJPFPBe8ARuOetb0LH4VO1rcbBXKkUkhoY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LSuNPn1936n1B55LUqi84bmAQWPc/piETE0uNpiB1thlPqDnf60WP/pcnedzMoWaC
-         yfxiaqmXiVgvD4kx+ubhrML+85QR9tWK78FhjWE/UUbxRIuJvAwOeC5cZhxiSoWx37
-         mfCMuqIo21iIcNap/eWdAJyFbwX8YApdq9KW6ldk=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 45739940459; Thu, 17 Jan 2019 13:01:29 +0100 (CET)
-Date:   Thu, 17 Jan 2019 13:01:29 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        linux-kernel@vger.kernel.org, ebiharaml@si-linux.co.jp
-Subject: Re: [PATCH 09/11] dt-bindings: can: rcar_can: Fix RZ/G2 CAN clocks
-Message-ID: <20190117120128.arjdug2mhqyuvq3k@verge.net.au>
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-10-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 17 Jan 2019 07:04:48 -0500
+Received: by mail-oi1-f196.google.com with SMTP id c206so5980114oib.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:04:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jq+6Np/fMlcGZKPmTPBsY+GDhmY+Gp8cPsJZFO8SCDY=;
+        b=e0xzsqTtUc3IuNXRLBb3yRrHWClhB5WxU9+OqsOaj8j5WHrglmbIndO+cF0s5Z7w90
+         ir+tYR7r+Wft9LypTxXqNnXkt49V0STBgFW34SbsryHQzXAFczLwmnik0p5YZvwQHZQr
+         H787RDAxeEAK1i/Yv05Um5QD+GoCQkD3oO6s4FNPQpaIOd0fhoy0xd4WvX+lSprUEUYU
+         VvnCVCSZR7yACqlI1VFzZFxij+iNly/5VYft1xCfvirn0XU4xnLIU/aVa2/tY1k6Jib/
+         5S655SEhU2rB2wgXyWFHGkY+ihVVoWkPMuV7kso2A6mVN0sNGNdcncDKS2uForYr87F3
+         D18Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jq+6Np/fMlcGZKPmTPBsY+GDhmY+Gp8cPsJZFO8SCDY=;
+        b=V0Vaf2z/JlVr6JVwaA38sZ71srm7NS07lJ3akxafPyiTsKFOo7oM20dBBNWHOqTMfg
+         i1OHxxLLSfL9OpvtF+hS5A/3TPx/oawYHQ9sxubSBx7+DC9lipU8g60Edurbi2cYhACI
+         +unUjpV+aLYxD6BnDTFk7GY8fQGWwHvWD0tPbfXCW4zRjf3Q//wMYkXBXLVe0RSJJrzN
+         dZ1sdUM6y+QlK+5es1pzn8RUaFCM9Tet2ilHOBPhkjzmKxcgzSYOOUtTY3RRRk35AZRV
+         Xhx+gOhVyD2uPUhrYBPXsIK7MEf/WjDM0krowMW4qIjAVnsG1f9yAIQKbC8KJHRuig7K
+         kDKQ==
+X-Gm-Message-State: AJcUuke+brX83ACxqXxdWfWpGdyGskWWPH5otItMJwrde51ecozOaiL9
+        Jezixx5VMjVxT7r7ozU+Pty0pNoA6nFtTA8PCqE=
+X-Google-Smtp-Source: ALg8bN7JuNohoNt3pfykowZRRTZVO8X1gbadfKDJBAh2A/KqmSiYDQFOEKAoPRrv+h/cPEcx9uRa/pgy73BOqVmTI8Q=
+X-Received: by 2002:aca:3092:: with SMTP id w140mr5790872oiw.237.1547726687871;
+ Thu, 17 Jan 2019 04:04:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547663874-29411-10-git-send-email-fabrizio.castro@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190117090640.12972-1-stefan@agner.ch> <20190117090640.12972-4-stefan@agner.ch>
+In-Reply-To: <20190117090640.12972-4-stefan@agner.ch>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 17 Jan 2019 10:04:38 -0200
+Message-ID: <CAOMZO5AWvp0ALPF=Aq3rBWKe0qYNqU7cjZKDNVpFCoUsWXaOPQ@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH 4/5] ASoC: imx-sgtl5000: put of nodes if
+ finding codec fails
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     timur@kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 06:37:52PM +0000, Fabrizio Castro wrote:
-> According to the latest information, the clock options for CAN on RZ/G2
-> are the same as the ones available on R-Car Gen3
+Hi Stefan,
 
-I'm taking your word for the above.
-As the patch matches the description:
+On Thu, Jan 17, 2019 at 7:07 AM Stefan Agner <stefan@agner.ch> wrote:
+>
+> Make sure to properly put the of node in case finding the codec
+> fails.
+>
+> Fixes: 81e8e4926167 ("ASoC: fsl: add sgtl5000 clock support for imx-sgtl5000")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Looks good.
 
-> Fixes: 868b7c0f43e6 ("dt-bindings: can: rcar_can: Add r8a774a1 support")
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> ---
->  Documentation/devicetree/bindings/net/can/rcar_can.txt | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> index 7fcf501..b463e12 100644
-> --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> @@ -28,13 +28,8 @@ Required properties:
->  
->  - reg: physical base address and size of the R-Car CAN register map.
->  - interrupts: interrupt specifier for the sole interrupt.
-> -- clocks: phandles and clock specifiers for 2 CAN clock inputs for RZ/G2
-> -	  devices.
-> -	  phandles and clock specifiers for 3 CAN clock inputs for every other
-> -	  SoC.
-> -- clock-names: 2 clock input name strings for RZ/G2: "clkp1", "can_clk".
-> -	       3 clock input name strings for every other SoC: "clkp1", "clkp2",
-> -	       "can_clk".
-> +- clocks: phandles and clock specifiers for 3 CAN clock inputs.
-> +- clock-names: 3 clock input name strings: "clkp1", "clkp2", and "can_clk".
->  - pinctrl-0: pin control group to be used for this controller.
->  - pinctrl-names: must be "default".
->  
-> @@ -50,8 +45,7 @@ using the below properties:
->  Optional properties:
->  - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
->  			    <0x0> (default) : Peripheral clock (clkp1)
-> -			    <0x1> : Peripheral clock (clkp2) (not supported by
-> -				    RZ/G2 devices)
-> +			    <0x1> : Peripheral clock (clkp2)
->  			    <0x3> : External input clock
->  
->  Example
-> -- 
-> 2.7.4
-> 
+I would suggest making this patch the first one of the series, since
+it is a bug fix and could potentially be applied to stable.
+
+Thanks
