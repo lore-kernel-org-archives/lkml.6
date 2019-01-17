@@ -2,141 +2,250 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 898C4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D31C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5CD720657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:46:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="XiCbOXai"
+	by mail.kernel.org (Postfix) with ESMTP id B5BB420856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:47:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547707628;
+	bh=gCpmQqbdxn+8V7beBVn7iRHhpg1Y8TScFIjHCPA6ZN4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=JZOr3Pxdmt+OLWTVUUHqhfxB0BKywxZ14ZzB7MCzkWdsq46UbBbF5336A09aVs+ku
+	 jU99ImmtgS0xdfikAI7WMpQgKFvGA67ZwE6ChAztQ5FubyKA/BVUoN5W1TVxs6spKb
+	 4a5+trYqMM0FwSOpx0xypv1Moli0o/Nm4dmIcAYc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbfAQGqb (ORCPT
+        id S1728599AbfAQGrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:46:31 -0500
-Received: from cock.li ([185.100.85.212]:38492 "EHLO cock.li"
+        Thu, 17 Jan 2019 01:47:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725982AbfAQGqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:46:30 -0500
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1547707586; bh=qEe90IUm6+Bd6IXL/YWzX3ayRknawBL0c2/ak0eJIcc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XiCbOXaid9OEv59xkVyETm1cs/eCuxWUTM4MtZWDwDEFl8c+wyeX+/7C0e06K1UIO
-         lXTWzwbWAsqZcFcsaSP6J8cZYi/oUDmngUaypqwogv0ygH19LGo18T7LrfKgGGL/pA
-         zInUDoMhUZE+zlPEB4qL8r1h3uUZ7p7x+ddjk4z/45/wwximhjsml71iudwAqUAPq2
-         FKl6pCKe1Fi3O4RFM2IKTJ/lVKf2LDcE5FRGuRBxH/cFwb/Z/VLEoFs23GsmZJC+Qa
-         CWZYdgtFGXGakvVMjvZOg/bH52E8xc2fS+UUFfFy6j1WjGaC7HnQ1K5SzWunp24/TQ
-         nWE6laDD++aEQ==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        id S1725982AbfAQGrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:47:07 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C68C020657;
+        Thu, 17 Jan 2019 06:47:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547707626;
+        bh=gCpmQqbdxn+8V7beBVn7iRHhpg1Y8TScFIjHCPA6ZN4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MTHROg80LWd+6i1gqsbtCeDX3Uq9zeRFWWtgAaAjgkmZNcU3cLru5Cqg7gC2EHWzn
+         U36wU+EiIyYXHMbo5Ig3krrYzvlcy0hcn0y4irriTTIF1Y8Y/QKuaXH0tF6Go7bFWz
+         W3E/svhv0QKGN6wHBtTepT9tXxqRJqlcgTnxEZRc=
+Date:   Thu, 17 Jan 2019 15:47:01 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 01/17] Fix
+ "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Message-Id: <20190117154701.78aa8e9d0130716e0d9ac026@kernel.org>
+In-Reply-To: <20190117003259.23141-2-rick.p.edgecombe@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+        <20190117003259.23141-2-rick.p.edgecombe@intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 17 Jan 2019 06:46:25 +0000
-From:   sicevar@redchan.it
-To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
-        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
-Cc:     rms@gnu.org, freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
-        misc@openbsd.org, bruce@perens.com, moglen@columbia.edu
-Subject: GPL revocation (GPC-Slots2): Alex "Skud" Bayley,  Leigh Honeywell
-Message-ID: <a78f663b3d7073903fcfcc16af59e8a5@redchan.it>
-X-Sender: sicevar@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quote:
+On Wed, 16 Jan 2019 16:32:43 -0800
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
-"
-> Then you should have used them.
-Not necessary, the language used in the press release identifies them 
-easily.
+> From: Nadav Amit <namit@vmware.com>
+> 
+> text_mutex is currently expected to be held before text_poke() is
+> called, but we kgdb does not take the mutex, and instead *supposedly*
+> ensures the lock is not taken and will not be acquired by any other core
+> while text_poke() is running.
+> 
+> The reason for the "supposedly" comment is that it is not entirely clear
+> that this would be the case if gdb_do_roundup is zero.
+> 
+> This patch creates two wrapper functions, text_poke() and
+> text_poke_kgdb() which do or do not run the lockdep assertion
+> respectively.
+> 
+> While we are at it, change the return code of text_poke() to something
+> meaningful. One day, callers might actually respect it and the existing
+> BUG_ON() when patching fails could be removed. For kgdb, the return
+> value can actually be used.
 
-> should
-As if I somehow can't just rescind using their names either.
+Looks good to me.
 
-License to use/modify/etc the GPC Slots 2 code is hereby terminated for. 
-Alex "Skud" Bayley, and Leigh Honeywell.
-(Note: this termination is not to be construed as a lifting of the 
-previously issued termination regarding the "Geek Feminism collective", 
-this termination is an addendum)
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 
---MikeeUSA-- (electronic signature :D )
+Thank you,
 
->> 1019403
-Their response is irrelevant.
-"
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Acked-by: Jiri Kosina <jkosina@suse.cz>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  arch/x86/include/asm/text-patching.h |  1 +
+>  arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
+>  arch/x86/kernel/kgdb.c               | 11 +++---
+>  3 files changed, 45 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+> index e85ff65c43c3..f8fc8e86cf01 100644
+> --- a/arch/x86/include/asm/text-patching.h
+> +++ b/arch/x86/include/asm/text-patching.h
+> @@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+>   * inconsistent instruction while you patch.
+>   */
+>  extern void *text_poke(void *addr, const void *opcode, size_t len);
+> +extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+>  extern int poke_int3_handler(struct pt_regs *regs);
+>  extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+>  extern int after_bootmem;
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index ebeac487a20c..c6a3a10a2fd5 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -678,18 +678,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+>  	return addr;
+>  }
+>  
+> -/**
+> - * text_poke - Update instructions on a live kernel
+> - * @addr: address to modify
+> - * @opcode: source of the copy
+> - * @len: length to copy
+> - *
+> - * Only atomic text poke/set should be allowed when not doing early patching.
+> - * It means the size must be writable atomically and the address must be aligned
+> - * in a way that permits an atomic write. It also makes sure we fit on a single
+> - * page.
+> - */
+> -void *text_poke(void *addr, const void *opcode, size_t len)
+> +static void *__text_poke(void *addr, const void *opcode, size_t len)
+>  {
+>  	unsigned long flags;
+>  	char *vaddr;
+> @@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+>  	 */
+>  	BUG_ON(!after_bootmem);
+>  
+> -	lockdep_assert_held(&text_mutex);
+> -
+>  	if (!core_kernel_text((unsigned long)addr)) {
+>  		pages[0] = vmalloc_to_page(addr);
+>  		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+> @@ -732,6 +719,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+>  	return addr;
+>  }
+>  
+> +/**
+> + * text_poke - Update instructions on a live kernel
+> + * @addr: address to modify
+> + * @opcode: source of the copy
+> + * @len: length to copy
+> + *
+> + * Only atomic text poke/set should be allowed when not doing early patching.
+> + * It means the size must be writable atomically and the address must be aligned
+> + * in a way that permits an atomic write. It also makes sure we fit on a single
+> + * page.
+> + */
+> +void *text_poke(void *addr, const void *opcode, size_t len)
+> +{
+> +	lockdep_assert_held(&text_mutex);
+> +
+> +	return __text_poke(addr, opcode, len);
+> +}
+> +
+> +/**
+> + * text_poke_kgdb - Update instructions on a live kernel by kgdb
+> + * @addr: address to modify
+> + * @opcode: source of the copy
+> + * @len: length to copy
+> + *
+> + * Only atomic text poke/set should be allowed when not doing early patching.
+> + * It means the size must be writable atomically and the address must be aligned
+> + * in a way that permits an atomic write. It also makes sure we fit on a single
+> + * page.
+> + *
+> + * Context: should only be used by kgdb, which ensures no other core is running,
+> + *	    despite the fact it does not hold the text_mutex.
+> + */
+> +void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
+> +{
+> +	return __text_poke(addr, opcode, len);
+> +}
+> +
+>  static void do_sync_core(void *info)
+>  {
+>  	sync_core();
+> diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+> index 5db08425063e..1461544cba8b 100644
+> --- a/arch/x86/kernel/kgdb.c
+> +++ b/arch/x86/kernel/kgdb.c
+> @@ -758,13 +758,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+>  	if (!err)
+>  		return err;
+>  	/*
+> -	 * It is safe to call text_poke() because normal kernel execution
+> +	 * It is safe to call text_poke_kgdb() because normal kernel execution
+>  	 * is stopped on all cores, so long as the text_mutex is not locked.
+>  	 */
+>  	if (mutex_is_locked(&text_mutex))
+>  		return -EBUSY;
+> -	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+> -		  BREAK_INSTR_SIZE);
+> +	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+> +		       BREAK_INSTR_SIZE);
+>  	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+>  	if (err)
+>  		return err;
+> @@ -783,12 +783,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+>  	if (bpt->type != BP_POKE_BREAKPOINT)
+>  		goto knl_write;
+>  	/*
+> -	 * It is safe to call text_poke() because normal kernel execution
+> +	 * It is safe to call text_poke_kgdb() because normal kernel execution
+>  	 * is stopped on all cores, so long as the text_mutex is not locked.
+>  	 */
+>  	if (mutex_is_locked(&text_mutex))
+>  		goto knl_write;
+> -	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
+> +	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
+> +		       BREAK_INSTR_SIZE);
+>  	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+>  	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+>  		goto knl_write;
+> -- 
+> 2.17.1
+> 
 
-Discussions with author of program involved:
-http://8ch.net/tech/res/1013409.html
-http://8ch.net/tech/res/1017824.html
-http://8ch.net/tech/res/1018729.html
-------------------------
 
-https://slashdot.org/submission/9087542/author-recinds-gpl
-
-------------------------
-p46 "As long as the project continues to honor the terms of the licenses 
-under which it recieved contributions, the licenses continue in effect. 
-There is one important caveat: Even a perpetual license can be revoked. 
-See the discussion of bare licenses and contracts in Chapter 4"
---Lawrence Rosen
-
-p56 "A third problem with bare licenses is that they may be revocable by 
-the licensor. Specifically, /a license not coupled with an interest may 
-be revoked./ The term /interest/ in this context usually means the 
-payment of some royalty or license fee, but there are other more 
-complicated ways to satisfy the interest requirement. For example, a 
-licensee can demonstrate that he or she has paid some consideration-a 
-contract law term not found in copyright or patent law-in order to avoid 
-revocation. Or a licensee may claim that he or she relied on the 
-software licensed under an open source license and now is dependent upon 
-that software, but this contract law concept, called promissory 
-estoppel, is both difficult to prove and unreliable in court tests. (The 
-concepts of /consideration/ and /promissory estoppel/ are explained more 
-fully in the next section.) Unless the courts allow us to apply these 
-contract law principles to a license, we are faced with a bare license 
-that is revocable.
---Lawrence Rosen
-
-p278 "Notice that in a copyright dispute over a bare license, the 
-plaintiff will almost certainly be the copyright owner. If a licensee 
-were foolish enough to sue to enforce the terms and conditions of the 
-license, the licensor can simply revoke the bare license, thus ending 
-the dispute. Remeber that a bare license in the absence of an interest 
-is revocable."
---Lawrence Rosen
-
-Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
-Intellectual property Law
-
-
-
-p65 "Of all the licenses descibed in this book, only the GPL makes the 
-explicity point that it wants nothing of /acceptance/ of 
-/consideration/:
-...
-The GPL authors intend that it not be treated as a contract. I will say 
-much more about this license and these two provisions in Chapter 6. For 
-now, I simply point out that the GPL licensors are in essentially the 
-same situation as other open source licensors who cannot prove offer, 
-acceptance, or consideration. There is no contract."
---Lawrence Rosen
-
-------------------------
-> David McGowan, Professor of Law, University of Minnesota Law School:
-
-> "Termination of rights
-
-> [...] The most plausible assumption is that a developer who releases 
-> code under the GPL may terminate GPL rights, probably at will.
-
-> [...] My point is not that termination is a great risk, it is that it 
-> is not recognized as a risk even though it is probably relevant to 
-> commercial end-users, accustomed to having contractual rights they can 
-> enforce themselves.
-
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
