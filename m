@@ -2,100 +2,84 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F08C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B08EDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA70520851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:59:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 766F220851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:03:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="rheFNBYi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbfAQT7r (ORCPT
+        id S1729230AbfAQUDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:59:47 -0500
-Received: from smtprelay0098.hostedemail.com ([216.40.44.98]:56806 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728830AbfAQT7r (ORCPT
+        Thu, 17 Jan 2019 15:03:00 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46451 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729023AbfAQUDA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:59:47 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 5AC50100E86C0;
-        Thu, 17 Jan 2019 19:59:45 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: rose26_1abcde36c9943
-X-Filterd-Recvd-Size: 2663
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 17 Jan 2019 19:59:43 +0000 (UTC)
-Message-ID: <23fbcc92e52dea477ea16f02cced239f4afcba9a.camel@perches.com>
-Subject: Re: [PATCH] rtlwifi: rtl818x: fix indentation issue
-From:   Joe Perches <joe@perches.com>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Colin King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ping-Ke Shih <pkshih@realtek.com>
-Date:   Thu, 17 Jan 2019 11:59:42 -0800
-In-Reply-To: <284e7ef0-5820-021b-7b0c-2fc754440fe8@lwfinger.net>
-References: <20190117152859.6873-1-colin.king@canonical.com>
-         <e68c7ae7b0a863742df0f4457368a3a529ed47e5.camel@perches.com>
-         <284e7ef0-5820-021b-7b0c-2fc754440fe8@lwfinger.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Jan 2019 15:03:00 -0500
+Received: by mail-pl1-f196.google.com with SMTP id t13so5209093ply.13
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:03:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=a5n+9cXuiReBmKMc3Oq/wS2cWI61cMsEiCRcODxIuWQ=;
+        b=rheFNBYiKCzvOH8OmfbzsLYpEez+E/fcQ/Hy0hFQ3F5G4hwdCZFMYYsHHhk3EqnFfP
+         hgD7dktKyzYmOIxw05MaOgQQp3QwTvQ8KTDuPDDioRkdcYMJ1fw28tAh89znodsuX3Og
+         82m9G92rf+K2n3OuykUMdL1XSHw3Ni0E5fFkFav3Acq0nd8+9pQgn/z41R2omGQZuhfc
+         gwd1VtjCsGG7drkyIlO0yhJnlAKettACdBSdEEqhOD6w9LHGFp7XkmQ5DttgRfWekCv7
+         n2oerTjBO2L+2tUN0OCPQDjQjaf/lPgYMcgVrxFyjqzGUUu7Egb5QwMJ9fECJFyeUqbJ
+         LvkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=a5n+9cXuiReBmKMc3Oq/wS2cWI61cMsEiCRcODxIuWQ=;
+        b=Y0tY3CfeSsxtEHESn8xW0PtwMUK+uIV1WtuL02zDCzu+bYl7S3PA80rN16sXZI3R6c
+         Lhypm6UC3JwEuVfaGjjrUkvcqO2SnEg1nXgvkof7lg1u+0IekgkRWu9VXCvqe9hH4lC0
+         ezPIg+fc+9CMpYlqch2RVJyulXd+3VK9k+QC6k3zVIu/3ifGH7fngj+8IF5zxMTVRQBl
+         TkNckKN9ieihHVTfPebzJpG6IOjLchd76UOEHq+XVL1Uur77Bi/wi2QI6ID+MA7moVz+
+         gTiFKPzeFCrqc2sa15ZzTOaN8Fxe3xN8iKAjq6pMYvcDHL4SGV+MxmVJyOheVUrEm9iP
+         xVZg==
+X-Gm-Message-State: AJcUukdeLW7IQH1GK9+WlmjYr2nbzvTlVu4BT1bVflHjWMRn7JAk5iq2
+        n0VUeYuF+3l+m+Qw9NycCVg4uA==
+X-Google-Smtp-Source: ALg8bN5TFo0cKp5d6oEjtLTGdCmWvWPYIxdF5b8A/fICP7RwXjsAXp5onkINseFCbKAToJAENcBHfQ==
+X-Received: by 2002:a17:902:2aaa:: with SMTP id j39mr16687351plb.335.1547755379606;
+        Thu, 17 Jan 2019 12:02:59 -0800 (PST)
+Received: from localhost ([2601:602:9200:a1a5:e076:9fe9:59e2:1e0b])
+        by smtp.googlemail.com with ESMTPSA id v72sm4720928pfd.163.2019.01.17.12.02.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 12:02:58 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: meson: fix g12a buses
+In-Reply-To: <20190116165236.8330-1-jbrunet@baylibre.com>
+References: <20190116165236.8330-1-jbrunet@baylibre.com>
+Date:   Thu, 17 Jan 2019 12:02:57 -0800
+Message-ID: <7hy37jaw7i.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-17 at 13:33 -0600, Larry Finger wrote:
-> On 1/17/19 1:29 PM, Joe Perches wrote:
-> > On Thu, 2019-01-17 at 15:28 +0000, Colin King wrote:
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > There is a statement that is indented too deeply. Fix this.
-> > 
-> > Thanks.
-> > 
-> > > diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
-> > []
-> > > @@ -803,7 +803,7 @@ static void rtl8180_config_cardbus(struct ieee80211_hw *dev)
-> > >   		rtl818x_iowrite16(priv, FEMR_SE, 0xffff);
-> > >   	} else {
-> > >   		reg16 = rtl818x_ioread16(priv, &priv->map->FEMR);
-> > > -			reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
-> > > +		reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
-> > >   		rtl818x_iowrite16(priv, &priv->map->FEMR, reg16);
-> > >   	}
-> > 
-> > trivia:
-> > 
-> > It sure looks as if there could be some rather useful
-> > conversions of magic bits to constants one day.
-> 
-> How much work is warranted for this driver for a device that is not likely in 
-> use anywhere in the wild?
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Hey Larry.
+> periph and hiu bus addresses/size are wrong.
+> cbus, aobus and apb just don't exist in the memory map so remove them.
+>
+> Fixes: 9c8c52f7cb4f ("arm64: dts: meson-g12a: add initial g12a s905d2 SoC DT support")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Perhaps none.  The part is from 2002 after all.
+Queued as a fix for v5.0-rc (branch: v5.0/fixes)
 
-But if it really is unused, it might be better to remove
-the whole driver and see if anyone notices.
-
-> In addition, I'm not sure anyone knows what those bits 
-> actually do, I certainly do not have a product sheet for that one.
-
-It does look like this document
-http://realtek.info/pdf/rtl8180.pdf
-has a description on page 36.
-
-6.33 FEMR: Function Event Mask Register
-
-
+Kevin
