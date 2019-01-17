@@ -1,55 +1,65 @@
 Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.7 required=3.0 tests=DATE_IN_PAST_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PHOTO_EDITING_FREEM,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E4BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ADBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B39920652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCDD420652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:53:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbfAQOxp (ORCPT
+        id S1727785AbfAQOxt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 09:53:45 -0500
-Received: from blitzresults.com ([185.244.39.76]:46187 "EHLO primodoors.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726913AbfAQOxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 09:53:44 -0500
-X-Greylist: delayed 3650 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Jan 2019 09:53:43 EST
-To:     linux-kernel@vger.kernel.org
-Subject: Photos shooting and retouching
-Message-ID: <d77601c0072c92edf805587254ffde4d@arboristarlingtontx.com>
-Date:   Thu, 17 Jan 2019 11:03:15 +0100
-From:   "Lena" <kasantderisnsutiter@mail.fr>
-Reply-To: ganmanten@sina.com
+        Thu, 17 Jan 2019 09:53:49 -0500
+Received: from foss.arm.com ([217.140.101.70]:41126 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727676AbfAQOxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 09:53:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ED331596;
+        Thu, 17 Jan 2019 06:53:47 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B4513F694;
+        Thu, 17 Jan 2019 06:53:45 -0800 (PST)
+Date:   Thu, 17 Jan 2019 14:53:43 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     corbet@lwn.net, peterz@infradead.org, rjw@rjwysocki.net,
+        mingo@redhat.com, morten.rasmussen@arm.com, qais.yousef@arm.com,
+        patrick.bellasi@arm.com, dietmar.eggemann@arm.com,
+        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PM / EM: Document the Energy Model framework
+Message-ID: <20190117145341.eptge4wivoh4xqsq@queper01-lin>
+References: <20190110110546.8101-1-quentin.perret@arm.com>
+ <20190110110546.8101-2-quentin.perret@arm.com>
+ <20190117144744.GF14385@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190117144744.GF14385@localhost.localdomain>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do you need to shoot photos for your products including editing?
-We are the photo studio who can help you to edit your photos or take care
-of the photo shooting for you,
+On Thursday 17 Jan 2019 at 15:47:44 (+0100), Juri Lelli wrote:
+> Hi,
+> 
+> On 10/01/19 11:05, Quentin Perret wrote:
+> > Introduce a documentation file summarizing the key design points and
+> > APIs of the newly introduced Energy Model framework.
+> > 
+> > Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
 
-You ship – We shoot
-White background
-Retouching included
-Optimized for Shopify
-Revisions accepted
-
-We also provide dedicate editing service for you.
-Such like cutting out, masking, clipping path for your photos, including
-retouching if needed.
-
-Contact us today if need anything.
-
-Thanks,
-Lena
-
+Thanks !
+Quentin
