@@ -2,212 +2,148 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D4BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9DFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C912520856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547748885;
-	bh=YUoXJ+YfyP/8CGhuS8JfQatsoIOW6rsIMgb+J5JGTzs=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=lfcZqbC1OzzQDJcgw0bPkKoZn7kbp1HQAZr9IHFsoowm7P3VJg+QALHijMdeWzf1K
-	 UTpbScrjQzswLmmO2yRI2x+eR3i7w77IHcfDJiKhHjAuzMT+inkMR8QA4gOj7uMQFu
-	 cU6nea6ljtJbyrATFh/yLXZ4iHtY8JykFoKbPBqA=
+	by mail.kernel.org (Postfix) with ESMTP id 5BE4520855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:16:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIZMFkVV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfAQSOm (ORCPT
+        id S1728476AbfAQSQH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 13:14:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727306AbfAQSOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 13:14:42 -0500
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4DB620855;
-        Thu, 17 Jan 2019 18:14:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547748881;
-        bh=YUoXJ+YfyP/8CGhuS8JfQatsoIOW6rsIMgb+J5JGTzs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kbow17SJotJvNv252MQbz3snEhJum36zCrwT4c+vZ9RFItrJkEMg0p3gbQKX8rhcL
-         bLjFQRw1wpsn3aeGLvbew50xnyobZulWlImeLMkqYhheZTZ2iwOOukyzTY3mPq0Pkz
-         ky3Odhac+Nl71qzhpyupEEaAw5P6Wy7rOS6xC9Gc=
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Parav Pandit <parav@mellanox.com>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        cgroups <cgroups@vger.kernel.org>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: [PATCH rdma-next] IB/core: Simplify rdma cgroup registration
-Date:   Thu, 17 Jan 2019 20:14:15 +0200
-Message-Id: <20190117181415.28566-1-leon@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        Thu, 17 Jan 2019 13:16:07 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46948 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728187AbfAQSQH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 13:16:07 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t13so5084167ply.13;
+        Thu, 17 Jan 2019 10:16:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=C2Z4QWy5wNJw+5XfdnScGboqm8ucQNIbMLIloYyNmGs=;
+        b=TIZMFkVVr50pLywqY+9ZmLTAPt1srFAEqLNU42/hQaulTSrqjj0pfJdkcXYADAlW4U
+         VF1StksTRnrLRVvo27iasEhRcp+QRIoMn8KtgvYVTPCyI4xv+1R8h4C6Q6KDHOGofdou
+         A/sNqGgs/oheekTNdaCg34W9CoAqOzGivZsZLbDflH8BI/8TYKXNvr4YVULYUOoANJBC
+         F5lgTrJVlpQ4/mVAUhv8RYuf/e558bNZr3xDaH7zbGQZXm3vQfuzn8JOUbHJ1GfdCaLc
+         1y/4qqMSvxbPxXiFGdJGV3aueip1Eg/TfgKuNnEi9eXbR34qPiO0dkHMkRJbEUJloAtT
+         YvrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C2Z4QWy5wNJw+5XfdnScGboqm8ucQNIbMLIloYyNmGs=;
+        b=D8uzm/cxVCAS7UT7lyPwpvpKtpNmGnLFsDZ03AA/XLB0JsO9PZbThpG9UZ4m/Etj3s
+         j2QZMlxsSQFVm2PKC5yBoAq67T1cUK+ni/zlEwgwp04A5ZjDUAFbVXIUvP+HQJUA+I68
+         dUQXjvYRk/rI+l4L7aLoHsKMKBF7qKg32QoYcdUEPdYR0lafX8LeOoU1rxnQU7x2QiSE
+         n8BDHif1ni7v8Su8ODr4LJODgGOAk8UGOR1u3pr26UTotZeQuHcD9xDXvegszoiSA/Zx
+         Lw9l4hr7hul5JQI+LhrcCYmL5UIzV08UxOVV0fe1/w8FcWJnzSg8jptDwCpxqGQu1jco
+         KouA==
+X-Gm-Message-State: AJcUukfYnueS5wvSL1sjWwSUChOs8iNOPO6yRhxrPw9R6gf0d2CIDLZU
+        kCTm0AmgiPLdma+aSwOv9gdoV0lx
+X-Google-Smtp-Source: ALg8bN5rtvdvpSZL7vF3ibwgosO2reRsvgoAjNIN0+T/5vvJSnab7IbNYCwaxd0YjXte0uEmGBdhYQ==
+X-Received: by 2002:a17:902:2aa8:: with SMTP id j37mr15399309plb.226.1547748966386;
+        Thu, 17 Jan 2019 10:16:06 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s190sm3275776pfb.103.2019.01.17.10.16.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 10:16:05 -0800 (PST)
+Date:   Thu, 17 Jan 2019 10:16:03 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCHv2] watchdog: qcom: Add suspend/resume support
+Message-ID: <20190117181603.GA14800@roeck-us.net>
+References: <20190117151942.6092-1-saiprakash.ranjan@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190117151942.6092-1-saiprakash.ranjan@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+On Thu, Jan 17, 2019 at 08:49:42PM +0530, Sai Prakash Ranjan wrote:
+> This adds the support for qcom watchdog suspend and resume
+> when entering and exiting deep sleep states. Otherwise
+> having watchdog active after suspend would result in unwanted
+> crashes/resets if resume happens after a long time.
+> 
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 
-RDMA cgroup registration routine always returns success,
-so simplify function to be void and run clang formatter
-over whole CONFIG_CGROUP_RDMA art of core_priv.h.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-This reduces unwinding error path for regular registration and
-future net namespace change functionality for rdma device.
-
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-----
-Sorry for resend, now with relevant people in TO and CC
----
- drivers/infiniband/core/cgroup.c    |  5 ++---
- drivers/infiniband/core/core_priv.h | 17 +++++++++++------
- drivers/infiniband/core/device.c    |  8 +-------
- include/linux/cgroup_rdma.h         |  2 +-
- kernel/cgroup/rdma.c                |  5 +----
- 5 files changed, 16 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/infiniband/core/cgroup.c b/drivers/infiniband/core/cgroup.c
-index 126ac5f99db7..388fd04e5f63 100644
---- a/drivers/infiniband/core/cgroup.c
-+++ b/drivers/infiniband/core/cgroup.c
-@@ -21,12 +21,11 @@
-  * Register with the rdma cgroup. Should be called before
-  * exposing rdma device to user space applications to avoid
-  * resource accounting leak.
-- * Returns 0 on success or otherwise failure code.
-  */
--int ib_device_register_rdmacg(struct ib_device *device)
-+void ib_device_register_rdmacg(struct ib_device *device)
- {
- 	device->cg_device.name = device->name;
--	return rdmacg_register_device(&device->cg_device);
-+	rdmacg_register_device(&device->cg_device);
- }
-
- /**
-diff --git a/drivers/infiniband/core/core_priv.h b/drivers/infiniband/core/core_priv.h
-index a3d14cb1f9d1..cda2db1add39 100644
---- a/drivers/infiniband/core/core_priv.h
-+++ b/drivers/infiniband/core/core_priv.h
-@@ -115,7 +115,7 @@ void ib_cache_cleanup_one(struct ib_device *device);
- void ib_cache_release_one(struct ib_device *device);
-
- #ifdef CONFIG_CGROUP_RDMA
--int ib_device_register_rdmacg(struct ib_device *device);
-+void ib_device_register_rdmacg(struct ib_device *device);
- void ib_device_unregister_rdmacg(struct ib_device *device);
-
- int ib_rdmacg_try_charge(struct ib_rdmacg_object *cg_obj,
-@@ -126,21 +126,26 @@ void ib_rdmacg_uncharge(struct ib_rdmacg_object *cg_obj,
- 			struct ib_device *device,
- 			enum rdmacg_resource_type resource_index);
- #else
--static inline int ib_device_register_rdmacg(struct ib_device *device)
--{ return 0; }
-+static inline void ib_device_register_rdmacg(struct ib_device *device)
-+{
-+}
-
- static inline void ib_device_unregister_rdmacg(struct ib_device *device)
--{ }
-+{
-+}
-
- static inline int ib_rdmacg_try_charge(struct ib_rdmacg_object *cg_obj,
- 				       struct ib_device *device,
- 				       enum rdmacg_resource_type resource_index)
--{ return 0; }
-+{
-+	return 0;
-+}
-
- static inline void ib_rdmacg_uncharge(struct ib_rdmacg_object *cg_obj,
- 				      struct ib_device *device,
- 				      enum rdmacg_resource_type resource_index)
--{ }
-+{
-+}
- #endif
-
- static inline bool rdma_is_upper_dev_rcu(struct net_device *dev,
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index fe06c65e8039..f8e6b13fd6a6 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -605,12 +605,7 @@ int ib_register_device(struct ib_device *device, const char *name)
-
- 	device->index = __dev_new_index();
-
--	ret = ib_device_register_rdmacg(device);
--	if (ret) {
--		dev_warn(&device->dev,
--			 "Couldn't register device with rdma cgroup\n");
--		goto dev_cleanup;
--	}
-+	ib_device_register_rdmacg(device);
-
- 	ret = ib_device_register_sysfs(device);
- 	if (ret) {
-@@ -633,7 +628,6 @@ int ib_register_device(struct ib_device *device, const char *name)
-
- cg_cleanup:
- 	ib_device_unregister_rdmacg(device);
--dev_cleanup:
- 	cleanup_device(device);
- out:
- 	mutex_unlock(&device_mutex);
-diff --git a/include/linux/cgroup_rdma.h b/include/linux/cgroup_rdma.h
-index e94290b29e99..ef1bae2983f3 100644
---- a/include/linux/cgroup_rdma.h
-+++ b/include/linux/cgroup_rdma.h
-@@ -39,7 +39,7 @@ struct rdmacg_device {
-  * APIs for RDMA/IB stack to publish when a device wants to
-  * participate in resource accounting
-  */
--int rdmacg_register_device(struct rdmacg_device *device);
-+void rdmacg_register_device(struct rdmacg_device *device);
- void rdmacg_unregister_device(struct rdmacg_device *device);
-
- /* APIs for RDMA/IB stack to charge/uncharge pool specific resources */
-diff --git a/kernel/cgroup/rdma.c b/kernel/cgroup/rdma.c
-index d3bbb757ee49..1d75ae7f1cb7 100644
---- a/kernel/cgroup/rdma.c
-+++ b/kernel/cgroup/rdma.c
-@@ -313,10 +313,8 @@ EXPORT_SYMBOL(rdmacg_try_charge);
-  * If IB stack wish a device to participate in rdma cgroup resource
-  * tracking, it must invoke this API to register with rdma cgroup before
-  * any user space application can start using the RDMA resources.
-- * Returns 0 on success or EINVAL when table length given is beyond
-- * supported size.
-  */
--int rdmacg_register_device(struct rdmacg_device *device)
-+void rdmacg_register_device(struct rdmacg_device *device)
- {
- 	INIT_LIST_HEAD(&device->dev_node);
- 	INIT_LIST_HEAD(&device->rpools);
-@@ -324,7 +322,6 @@ int rdmacg_register_device(struct rdmacg_device *device)
- 	mutex_lock(&rdmacg_mutex);
- 	list_add_tail(&device->dev_node, &rdmacg_devices);
- 	mutex_unlock(&rdmacg_mutex);
--	return 0;
- }
- EXPORT_SYMBOL(rdmacg_register_device);
-
---
-2.19.1
-
+> 
+> ---
+> 
+> v2:
+>  * Use __maybe_unused instead of #ifdef as suggested by
+>    Brian and Guenter
+> ---
+>  drivers/watchdog/qcom-wdt.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+> index 780971318810..5dfd604477a4 100644
+> --- a/drivers/watchdog/qcom-wdt.c
+> +++ b/drivers/watchdog/qcom-wdt.c
+> @@ -245,6 +245,28 @@ static int qcom_wdt_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static int __maybe_unused qcom_wdt_suspend(struct device *dev)
+> +{
+> +	struct qcom_wdt *wdt = dev_get_drvdata(dev);
+> +
+> +	if (watchdog_active(&wdt->wdd))
+> +		qcom_wdt_stop(&wdt->wdd);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused qcom_wdt_resume(struct device *dev)
+> +{
+> +	struct qcom_wdt *wdt = dev_get_drvdata(dev);
+> +
+> +	if (watchdog_active(&wdt->wdd))
+> +		qcom_wdt_start(&wdt->wdd);
+> +
+> +	return 0;
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(qcom_wdt_pm_ops, qcom_wdt_suspend, qcom_wdt_resume);
+> +
+>  static const struct of_device_id qcom_wdt_of_table[] = {
+>  	{ .compatible = "qcom,kpss-timer", .data = reg_offset_data_apcs_tmr },
+>  	{ .compatible = "qcom,scss-timer", .data = reg_offset_data_apcs_tmr },
+> @@ -259,6 +281,7 @@ static struct platform_driver qcom_watchdog_driver = {
+>  	.driver	= {
+>  		.name		= KBUILD_MODNAME,
+>  		.of_match_table	= qcom_wdt_of_table,
+> +		.pm		= &qcom_wdt_pm_ops,
+>  	},
+>  };
+>  module_platform_driver(qcom_watchdog_driver);
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
