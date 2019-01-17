@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289CBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A59E1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E356C20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F32920855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:07:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="cyPHnLBe"
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="SwtMegUr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbfAQJGz (ORCPT
+        id S1728204AbfAQJHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:06:55 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:48960 "EHLO
+        Thu, 17 Jan 2019 04:07:08 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:48938 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727550AbfAQJGy (ORCPT
+        with ESMTP id S1727517AbfAQJGy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 Jan 2019 04:06:54 -0500
 Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id CE7045C1E88;
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 9256B5C1E78;
         Thu, 17 Jan 2019 10:06:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1547716013;
+        t=1547716012;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fuOcZAM7poHTd8haY3Wn+y77cpNbUfn3SELEEgK1fSY=;
-        b=cyPHnLBehkwkgKFNHxBkDl7r+ybxH5hebN+LgN7t3z280yg+D/cU7ZIW8DJ4rhR8nVJPas
-        hpMsL6v0gINu/OUtoolmt1KSytkIYBQn+vhrzP/KQ1/FsLG2DSOd5xuUYh2+d5ZDfj7Z06
-        LI4SVWXqlydNVf5ZK2fyTSAT/6h+9XY=
+        bh=fBPaG8x3udk+G/2xYvR2q6rlGVrnyup1hxsA4F87nZo=;
+        b=SwtMegUrfjenwLy2K+vnuukw+ss3EmoBPhtECCVzp4WrQO58KISzGubjTDVdaU007SQyUY
+        TVXNR+el0MHHdf7nirnjqphJ2SPmq2nchDzIDciTJHnH0lEiRImh0SqZ0vGixtD+B3ZRXe
+        vQ9KE8XFyRYacWjOobMspZi9arVFQ6M=
 From:   Stefan Agner <stefan@agner.ch>
 To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com
 Cc:     fabio.estevam@nxp.com, lgirdwood@gmail.com, broonie@kernel.org,
         perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 5/5] ASoC: imx-sgtl5000: lower log level for potential probe deferral cases
-Date:   Thu, 17 Jan 2019 10:06:40 +0100
-Message-Id: <20190117090640.12972-5-stefan@agner.ch>
+Subject: [PATCH 4/5] ASoC: imx-sgtl5000: put of nodes if finding codec fails
+Date:   Thu, 17 Jan 2019 10:06:39 +0100
+Message-Id: <20190117090640.12972-4-stefan@agner.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190117090640.12972-1-stefan@agner.ch>
 References: <20190117090640.12972-1-stefan@agner.ch>
@@ -54,34 +54,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not finding the codec/SSI instance can be due to probe deferral.
-Do not print error messages in those cases.
+Make sure to properly put the of node in case finding the codec
+fails.
 
+Fixes: 81e8e4926167 ("ASoC: fsl: add sgtl5000 clock support for imx-sgtl5000")
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- sound/soc/fsl/imx-sgtl5000.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/fsl/imx-sgtl5000.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/sound/soc/fsl/imx-sgtl5000.c b/sound/soc/fsl/imx-sgtl5000.c
-index 45969e6dfad7..b6cb80480b60 100644
+index e1e20499b2f1..45969e6dfad7 100644
 --- a/sound/soc/fsl/imx-sgtl5000.c
 +++ b/sound/soc/fsl/imx-sgtl5000.c
-@@ -104,13 +104,13 @@ static int imx_sgtl5000_probe(struct platform_device *pdev)
- 
- 	ssi_pdev = of_find_device_by_node(ssi_np);
- 	if (!ssi_pdev) {
--		dev_err(&pdev->dev, "failed to find SSI platform device\n");
-+		dev_dbg(&pdev->dev, "failed to find SSI platform device\n");
- 		ret = -EPROBE_DEFER;
- 		goto fail;
- 	}
+@@ -111,7 +111,8 @@ static int imx_sgtl5000_probe(struct platform_device *pdev)
  	codec_dev = of_find_i2c_device_by_node(codec_np);
  	if (!codec_dev) {
--		dev_err(&pdev->dev, "failed to find codec platform device\n");
-+		dev_dbg(&pdev->dev, "failed to find codec platform device\n");
- 		ret = -EPROBE_DEFER;
- 		goto fail;
+ 		dev_err(&pdev->dev, "failed to find codec platform device\n");
+-		return -EPROBE_DEFER;
++		ret = -EPROBE_DEFER;
++		goto fail;
  	}
+ 
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
 -- 
 2.20.1
 
