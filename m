@@ -2,79 +2,140 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC89C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBA5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5AB20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:02:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YTu6rxWc"
+	by mail.kernel.org (Postfix) with ESMTP id E758620855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:04:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbfAQJCu (ORCPT
+        id S1727936AbfAQJEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:02:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56034 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfAQJCu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:02:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XAoos3UGtKwWZX9H/mGqjf00n0NGLotPlsblsRqXSb4=; b=YTu6rxWc3FQhzcXk3EPBU7HLR
-        OyTcM1f9sS+6kF4/dVoOiKp7CInaF4VTp0EiSmTfXRJQQ7/W/5jP8KonkowGVKrIqaMfiWeRU9je5
-        JdkFycpKIs5gVzdRP72xc0breLM7wMeHKOyDQwsHuHIKniHsaArS6313YXeXrat/4HSzD6OBn+TdG
-        lK3d9GrluWcorLd5oSjaRJ+uhRR7MzmSPenrDm1V48o/T8q3VVbkGRvr0/INmLgsCX6p0kCXPAZ3p
-        v9S1sckbTwakh55iMk1TPS/zJOgjwyk+EItRLxvtawaefglh4KMJYL0C1CwW/bPPIcnbWcd2xcXB7
-        3oo01m5Lw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gk3ZU-0006xa-40; Thu, 17 Jan 2019 09:02:44 +0000
-Date:   Thu, 17 Jan 2019 01:02:43 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
- map/unmap
-Message-ID: <20190117090243.GA21651@infradead.org>
-References: <20190111180523.27862-1-afd@ti.com>
- <20190111180523.27862-14-afd@ti.com>
- <alpine.DEB.2.10.1901140910130.23879@lmark-linux.qualcomm.com>
- <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
- <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
- <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com>
- <b6cb5596-6beb-73e0-0d8c-d9a13466d626@redhat.com>
- <99ca0b08-02bd-64fd-d43c-c330f0d11639@ti.com>
+        Thu, 17 Jan 2019 04:04:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42304 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727021AbfAQJEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:04:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 58AA7AC9C;
+        Thu, 17 Jan 2019 09:04:10 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C880C1E1580; Thu, 17 Jan 2019 10:04:06 +0100 (CET)
+Date:   Thu, 17 Jan 2019 10:04:06 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190117090406.GA9378@quack2.suse.cz>
+References: <20190111165141.GB3190@redhat.com>
+ <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz>
+ <20190114172124.GA3702@redhat.com>
+ <20190115080759.GC29524@quack2.suse.cz>
+ <76788484-d5ec-91f2-1f66-141764ba0b1e@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <99ca0b08-02bd-64fd-d43c-c330f0d11639@ti.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <76788484-d5ec-91f2-1f66-141764ba0b1e@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:17:23AM -0600, Andrew F. Davis wrote:
-> I wouldn't go as far as to remove them just yet.. Liam seems pretty
-> adamant that they have valid uses. I'm just not sure performance is one
-> of them, maybe in the case of software locks between devices or
-> something where there needs to be a lot of back and forth interleaved
-> access on small amounts of data?
+On Wed 16-01-19 21:25:05, John Hubbard wrote:
+> On 1/15/19 12:07 AM, Jan Kara wrote:
+> >>>>> [...]
+> >>> Also there is one more idea I had how to record number of pins in the page:
+> >>>
+> >>> #define PAGE_PIN_BIAS	1024
+> >>>
+> >>> get_page_pin()
+> >>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> >>>
+> >>> put_page_pin();
+> >>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> >>>
+> >>> page_pinned(page)
+> >>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+> >>>
+> >>> This is pretty trivial scheme. It still gives us 22-bits for page pins
+> >>> which should be plenty (but we should check for that and bail with error if
+> >>> it would overflow). Also there will be no false negatives and false
+> >>> positives only if there are more than 1024 non-page-table references to the
+> >>> page which I expect to be rare (we might want to also subtract
+> >>> hpage_nr_pages() for radix tree references to avoid excessive false
+> >>> positives for huge pages although at this point I don't think they would
+> >>> matter). Thoughts?
+> 
+> Some details, sorry I'm not fully grasping your plan without more
+> explanation:
+> 
+> Do I read it correctly that this uses the lower 10 bits for the original
+> page->_refcount, and the upper 22 bits for gup-pinned counts? If so, I'm
+> surprised, because gup-pinned is going to be less than or equal to the
+> normal (get_page-based) pin count. And 1024 seems like it might be
+> reached in a large system with lots of processes and IPC.
+> 
+> Are you just allowing the lower 10 bits to overflow, and that's why the 
+> subtraction of mapcount? Wouldn't it be better to allow more than 10 bits, 
+> instead?
 
-We shouldn't add unused features to start with.  If mainline users for
-them appear we can always add them back once we've reviewed the uses
-cases and agree that they are sane and have no better solution.
+I'm not really dividing the page->_refcount counter, that's a wrong way how
+to think about it I believe. Normal get_page() simply increments the
+_refcount by 1, get_page_pin() will increment by 1024 (or 999 or whatever -
+that's PAGE_PIN_BIAS). The choice of value of PAGE_PIN_BIAS is essentially
+a tradeoff between how many page pins you allow and how likely
+page_pinned() is to return false positive. Large PAGE_PIN_BIAS means lower
+amount of false positives but also less page pins allowed for the page
+before _refcount would overflow.
+
+Now the trick with subtracting of page_mapcount() is following: We know
+that certain places hold references to the page. Common holders of
+page references are page table entries. So if we subtract page_mapcount()
+from _refcount, we'll get more accurate view how many other references
+(including pins) are there and thus reduce the number of false positives.
+
+> Another question: do we just allow other kernel code to observe this biased
+> _refcount, or do we attempt to filter it out?  In other words, do you expect 
+> problems due to some kernel code checking the _refcount and finding a large 
+> number there, when it expected, say, 3? I recall some code tries to do 
+> that...in fact, ZONE_DEVICE is 1-based, instead of zero-based, with respect 
+> to _refcount, right?
+
+I would just allow other places to observe biased refcount. Sure there are
+places that do comparions on exact refcount value but if such place does
+not exclude page pins, it cannot really depend on whether there's just one
+or thousand of them. Generally such places try to detect whether they are
+the only owner of the page (besides page cache radix tree, LRU, etc.). So
+they want to bail if any page pin exists and that check remains the same
+regardless whether we increment _refcount by 1 or by 1024 when pinning the
+page.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
