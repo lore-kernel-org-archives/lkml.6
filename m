@@ -2,134 +2,99 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C1BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E55C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E212720652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4913520652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:43:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qzR3skrK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="odqiWu2X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbfAQRm7 (ORCPT
+        id S1729416AbfAQRnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:42:59 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46922 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725967AbfAQRm7 (ORCPT
+        Thu, 17 Jan 2019 12:43:15 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35191 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbfAQRnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:42:59 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c73so5146139pfe.13;
-        Thu, 17 Jan 2019 09:42:58 -0800 (PST)
+        Thu, 17 Jan 2019 12:43:15 -0500
+Received: by mail-lf1-f67.google.com with SMTP id e26so8464454lfc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:43:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wsJOfEv3eqjFJ/DCwtmsLmOF7NCt6G4t55UwqKn1TcU=;
-        b=qzR3skrKbpu2BO+UC0uCKqt9X8Q/5NOdQzC7+WynZHa5agGElan+rt3aJEoB/UPqTb
-         Gtp/1Mv76YqR+Qm9BitSG40rjqZXcxSMG2oWzzM/7GfCSR8O+1JTTw5kPZIZTX3OAqrI
-         GDsutjTqBivUbXp8hyYMhdxFIC33RCXnx/PxX0ow14kxMShREO+XGCeYOXpEshsEPZeW
-         h2gFarOVFfW6IjZmNkQXhmWzynOXlrP2DdMWT1dFfb2hU4A9ibTriCqaK3ShYOU9kUey
-         3gjb2qF+q7xjRZaCNA33RdcPWZrvlE7y1JEUQur3CgsGKgKVoJ+oGYZ1FAr2CcIQAo+C
-         92ZA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bPK3vpUMsa41+yGP3TZAcnaVmjICNGsm5A82VYsal8k=;
+        b=odqiWu2XPvyQ1HQzXKrPOVYPd4XAJpD4kqAUDSGhyldYzvfX+00KualOUDg1acdJAG
+         4A2inNnT9K0Lq+SvozS4Oo1nuoCvMZR2GZv6SgWTFl2hLFujxvvyX9Wkx3RN1cHJpd+v
+         JBKTLAYGc0yDD4/0MrJHgPVTSrim01ax2Q+Co8DtSG1pTBAu5D7YYJmY3aGG2/o5bOEp
+         roi8obZLsYt3JD3PkFft1gkmeaV1/KdLzzw3W9PKAmY39o+vcbCw9qncep8KzNhJsKLD
+         +BSLFGUxADJMIEHIxbPExQEI1by7ypyiiTb0wB4pvfa8AoBxIw0NIQ3KZJ0zIFpCcJ8p
+         peBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wsJOfEv3eqjFJ/DCwtmsLmOF7NCt6G4t55UwqKn1TcU=;
-        b=md4wPL8RGRAbiD6EU639Zk8ski1EMpi27ymtAeLz5Y17uEwj/feX0twmgzqraYo3AM
-         SJ3WNld7HlGdwlKKuUlGqRwC+mDqe6kvJEnOGaXnJdo3UQ2ddygFA2YCxQ/RQYJ8kKBO
-         8z6HuN/zVyMNlV70X4vX3LXE3D6Qz8OEImjNdc98ZPvYHo+cfqBDlU3zDMQyIet1BknT
-         7Fb7eQtVmiyicPOSs+z6cZK7Tg2MMnBxlMkzY7H7MybjV2TZ9A7RRI0Adi2KLnEyWAdt
-         5oN92PSj6x9y4+JKdMZoffHIjXxS2ibnTIDFMihG24z0juleeEv49+MgR2l0UdS3Q96u
-         3/PQ==
-X-Gm-Message-State: AJcUukeAJG34UVcQVVyhNNdMcDQNbTgA5zwrCgzHHT40WZ5vdgIct7D6
-        AQsFnGXfHRc8R+CPiX9Uq5g=
-X-Google-Smtp-Source: ALg8bN7WdtD+xgybY7FDMAbobHcZE7Edl2+x3Gj+Bc0nCR/4Ytma1FeREBv+G9SmI6oYyqmNjjV7Ig==
-X-Received: by 2002:a62:2e46:: with SMTP id u67mr15555357pfu.3.1547746977885;
-        Thu, 17 Jan 2019 09:42:57 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 12sm2144475pgt.33.2019.01.17.09.42.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 09:42:56 -0800 (PST)
-Date:   Thu, 17 Jan 2019 09:42:54 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
-        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
-        mka@chromium.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        henryc.chen@mediatek.com
-Subject: Re: [PATCH v11 4/9] soc: qcom: rpmpd: Add a Power domain driver to
- model corners
-Message-ID: <20190117174254.GA17273@roeck-us.net>
-References: <20190110040209.6028-1-rnayak@codeaurora.org>
- <20190110040209.6028-5-rnayak@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bPK3vpUMsa41+yGP3TZAcnaVmjICNGsm5A82VYsal8k=;
+        b=L2Lwc6eLYnVvJzQU68tL2K/9/uDiUaF7WoF2SYO5aJGvHzfzp2B4NZwE1J8aRAiKIJ
+         Lu0nL9CWVvmEy+SssZeePiH9RDf5hh1QXMHlxPjI99z1UnBl7dEWhQGFQSF03la1Tbu2
+         QVso9vhHvSnWNRl/jSWPsDFGHyQCrUGJ52r8bahb43wr73peCn2Tg7dzVqufItxdBdt0
+         9zK7rjLMAViLXIx/4x5b6gW405593lDahO0Tfl7f1zwLbCkrmzzNk6ZdsDQ75wbgmMQg
+         HLlryX6e88hJ+XSDAuBtc9VNTo0EQHi1TVHrMX1YTuMino3rpQ10cG7MN6mIELfcXIxH
+         549w==
+X-Gm-Message-State: AJcUuke8hLyZeeYaKUpmvKPRex56UZvanpouaa7idMtCLHGx8Dv1aWGQ
+        NbacL0yQDr6nMyF3Wv7eP6tWrUA9IikY/UMEeGE=
+X-Google-Smtp-Source: ALg8bN4O4+46Yqxa1wZM6HnuSfhAGcKP6UY6DguBT/Qu1QdMPVFO7HFZqo1wwGV9WrGGsa1RzSFVsUiUS2P1nIVI9Io=
+X-Received: by 2002:a19:d90c:: with SMTP id q12mr10430027lfg.24.1547746993042;
+ Thu, 17 Jan 2019 09:43:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110040209.6028-5-rnayak@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <5c40aafc.1c69fb81.a0ba0.67a7@mx.google.com>
+In-Reply-To: <5c40aafc.1c69fb81.a0ba0.67a7@mx.google.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Thu, 17 Jan 2019 23:17:09 +0530
+Message-ID: <CAFqt6zZPXcX+Qk_CMNaBhs9=dTJuzv4nQzoj09xWLbMuT6NvDQ@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/cell: Remove duplicate header
+To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 09:32:04AM +0530, Rajendra Nayak wrote:
-> The Power domains for corners just pass the performance state set by the
-> consumers to the RPM (Remote Power manager) which then takes care
-> of setting the appropriate voltage on the corresponding rails to
-> meet the performance needs.
-> 
-> We add all power domain data needed on msm8996 here. This driver can easily
-> be extended by adding data for other qualcomm SoCs as well.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+On Thu, Jan 17, 2019 at 9:49 PM Sabyasachi Gupta
+<sabyasachi.linux@gmail.com> wrote:
+>
+> Remove linux/syscalls.h which is included more than once
+>
+> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+
+Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
+
 > ---
->  drivers/soc/qcom/Kconfig  |   9 ++
->  drivers/soc/qcom/Makefile |   1 +
->  drivers/soc/qcom/rpmpd.c  | 282 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 292 insertions(+)
->  create mode 100644 drivers/soc/qcom/rpmpd.c
-> 
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index fcbf8a2e4080..df5cd9fa0d5e 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -98,6 +98,15 @@ config QCOM_RPMH
->  	  of hardware components aggregate requests for these resources and
->  	  help apply the aggregated state on the resource.
->  
-> +config QCOM_RPMPD
-> +	bool "Qualcomm RPM Power domain driver"
-> +	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
-
-Since this is bool, but the dependent configurations are tristate,
-configurations such as arm64:allmodconfig result in
-
-CONFIG_QCOM_RPMPD=y
-CONFIG_MFD_QCOM_RPM=m
-CONFIG_QCOM_SMD_RPM=m
-
-This in turn results in
-
-   arm-linux-gnueabi-ld: drivers/soc/qcom/rpmpd.o: in function `rpmpd_send_enable': 
->> rpmpd.c:(.text+0x64): undefined reference to `qcom_rpm_smd_write' 
-   arm-linux-gnueabi-ld: drivers/soc/qcom/rpmpd.o: in function `rpmpd_power_on': 
-   rpmpd.c:(.text+0x408): undefined reference to `qcom_rpm_smd_write' 
->> arm-linux-gnueabi-ld: rpmpd.c:(.text+0x460): undefined reference to `qcom_rpm_smd_write' 
-
-as reported by 0day.
-
-Either this needs to change to tristate, or the dependency must be
-	depends on MFD_QCOM_RPM=y && QCOM_SMD_RPM=y
-
-Guenter
+>  arch/powerpc/platforms/cell/spu_syscalls.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/powerpc/platforms/cell/spu_syscalls.c b/arch/powerpc/platforms/cell/spu_syscalls.c
+> index 263413a..b95d6af 100644
+> --- a/arch/powerpc/platforms/cell/spu_syscalls.c
+> +++ b/arch/powerpc/platforms/cell/spu_syscalls.c
+> @@ -26,7 +26,6 @@
+>  #include <linux/syscalls.h>
+>  #include <linux/rcupdate.h>
+>  #include <linux/binfmts.h>
+> -#include <linux/syscalls.h>
+>
+>  #include <asm/spu.h>
+>
+> --
+> 2.7.4
+>
