@@ -2,112 +2,114 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC9DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574D7C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3070820855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 223DB20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:32:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wD0BBTiy"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="r4pm19eE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbfAQVar (ORCPT
+        id S1729229AbfAQVcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 16:30:47 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37256 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbfAQVar (ORCPT
+        Thu, 17 Jan 2019 16:32:39 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:34748 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbfAQVcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 16:30:47 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y126so5453722pfb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 13:30:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KD0cIMypRNFWGhod3QICd/CALDbA8g2R453skt9CpHE=;
-        b=wD0BBTiyT+I660LGZbYLe551jrp+KtoszUFtEITbuLcfy92kQm9XR/mLa5RE4pS95V
-         dINoObgv390GO9ayLzNFEIMH8n292G6MqITabFKQSu15xjvdhExK6TPH+mglaK0KQZOs
-         qWeGKDMU+xy7J41KPgyZXkMYK3sqbnGqBGBSg4R4NvhI8TnoFUzFEm3wqw8qo9Ip6Amt
-         IT4gh3FFXIZ7CY0+grvkMT1CCH+333BpVwhOeKFA9kI9NZrzHW6GuVCxcDx5c0nY6qdi
-         Y7gQndwsf2DaY3X1AjUOx6G2UDzV8Lq2jncxbjA7T0HHj77+HP2ea2sFLfrdILbIvfAl
-         Gr3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KD0cIMypRNFWGhod3QICd/CALDbA8g2R453skt9CpHE=;
-        b=JRMwYQUlzK3ZjnqtXuRgYhI0bFwfC6V3EqD3D3ERkIok84K0Bk5edv9d4u4FkXU35y
-         +1Sxr+5v4Cd6h1gwSOf90QBs4NBO1CkSebuU+KP8qxzno0Vq7vPwX+1PEnAaHZv//SMo
-         5n9zuvJAPx3qdvM5v2qI2rPTrcJIl4vRtXxl8hmeXPKIVnxvGw83axgqLRVQsT9HB1CT
-         DzsYzcibkc0tw73ojQNG4pC0U8UUhBdTM33ltGF4m2mR5xfEja0WVYKBC79OFKvxyW9s
-         HmkpRzyi1KxoA9xafdqqmCw8TjCIK8ofk5L/T65FGhS4ZV16yTRHq7r9l+3BXs1b6PLj
-         dUeA==
-X-Gm-Message-State: AJcUukees3vzgWFp3+ESKhfH926nuRfVE4DichxIH4nQbAv9m0zpPSwt
-        Wo92U6DQ7oWm/iaaQnJ2Ip5CDmkSTjp/9NQTgNoWdg==
-X-Google-Smtp-Source: ALg8bN6Jir/WJnCb/hEMi0FtIWFaE6P5N6MiVjBwgxQ+HRqReRJqjRb9tl9/JDdHIiIfTc61j5jnpunlMFSy6470nxA=
-X-Received: by 2002:a63:bf0b:: with SMTP id v11mr15258421pgf.302.1547760646048;
- Thu, 17 Jan 2019 13:30:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20190115183643.120619-1-trong@google.com> <65bb2ab8-4929-db7c-9d54-491d87ec23ae@linux.ibm.com>
-In-Reply-To: <65bb2ab8-4929-db7c-9d54-491d87ec23ae@linux.ibm.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 17 Jan 2019 13:30:34 -0800
-Message-ID: <CAKwvOdnkmnuNNVRx4cTUca7J7aFwzqH---+vmP8Cr3j55qaC6g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] gcov: add Clang support
-To:     Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Tri Vo <trong@android.com>
-Cc:     Greg Hackmann <ghackmann@android.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 17 Jan 2019 16:32:39 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id DB71AA393B;
+        Thu, 17 Jan 2019 22:32:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1547760755; i=@fjfi.cvut.cz;
+        bh=YNxX4HXoPgsHqfyMaZl/kE99by/oLg/H/mm5gNkiEBE=;
+        h=From:To:Cc:Subject:Date;
+        b=r4pm19eEm5V2ojho4PHUZhZnXV3FY43y8kZLFVJRzC4muvCuTLv2pwDB9ddx/mvRP
+         fpT8IMHo+XZjjE5O68ZKoK5CYbECf6pmuyDv/2YGiEmAJsFlgTJ0b+yNJV7jQtZSpM
+         Obj4MTCyNuVfLtFdb29n38rv79uuwONBCibLyPgU=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id jAWCj5gbDjW8; Thu, 17 Jan 2019 22:32:33 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 45399A355E;
+        Thu, 17 Jan 2019 22:32:33 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 45399A355E
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id 034B16004E; Thu, 17 Jan 2019 22:32:32 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        David Kozub <zub@linux.fjfi.cvut.cz>
+Subject: [PATCH v2 00/16] block: sed-opal: support shadow MBR done flag and write
+Date:   Thu, 17 Jan 2019 22:31:40 +0100
+Message-Id: <1547760716-7304-1-git-send-email-zub@linux.fjfi.cvut.cz>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 7:17 AM Peter Oberparleiter
-<oberpar@linux.ibm.com> wrote:
->
-> On 15.01.2019 19:36, Tri Vo wrote:
-> > From: Tri Vo <trong@android.com>
-> >
-> > This patch series adds Clang supoprt for gcov.
-> >
-> > Patch 1 refactors existing code in preparation for Clang support. Patches
-> > 2-3 implement necessary LLVM runtime hooks and gcov kernel interfaces.
-> > Patch 4 simplifies config selection.
-> >
-> > Greg Hackmann (2):
-> >   gcov: clang: move common gcc code into gcc_base.c
-> >   gcov: clang support
-> >
-> > Nick Desaulniers (1):
-> >   gcov: clang: link/unlink profiling data set.
-> >
-> > Tri Vo (1):
-> >   gcov: clang: pick GCC vs Clang format depending on compiler
->
-> Overall this patch set looks good to me. It introduces a clean way for
-> GCC and Clang specific implementation details to coexist.
->
-> A quick test compile using GCC on s390 with the patch set applied was
-> successful, so it seems like the existing support is unaffected.
->
-> There are some detail suggestions on patch improvements that I'll post
-> in separate e-mails.
+This patch series extends OPAL support: it adds IOCTL for setting the shadow
+MBR done flag which can be useful for unlocking an OPAL disk on boot and it adds
+IOCTL for writing to the shadow MBR. Also included are some minor fixes and
+improvements.
 
-Peter,
-Thank you so much for the valuable code review and feedback.  We'll prep a v3.
+This series is based on the original work done by Jonas Rabenstein which was
+submitted in March 2018.[1] I tried to apply suggestions made in review on the
+list and do some further improvements.
 
-Tri,
-I think you should change the authorship for the patches to yourself,
-and add a "Co-authored-by: " tag to the commit messages.  Can probably
-squash this series into 2 patches; the one that separates out the
-shared code; and the new llvm additions.  WDYT?
+The most contentious issue in the original series was the IOCTL for shadow MBR
+write but I think no better approach was found[2] so this was not changed. I'm
+open to suggestions.
+
+There is a fork of sed-opal-temp that can use these new IOCTLs.[3] I tested
+these on Samsung 840 EVO and 850 EVO drives, on x86-64 and arm64 systems.
+
+The series applies on v5.0-rc2.
+
+I'm resending this as v2 because I sent the first attempt incorrectly. I
+apologize for the noise.
+
+[1] https://lore.kernel.org/lkml/cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de/
+[2] https://lore.kernel.org/lkml/20180405203443.ye4gnw5aey2exlkn@sbauer-Z170X-UD5/
+[3] https://github.com/ghostav/sed-opal-temp
+
+David Kozub (8):
+  block: sed-opal: fix typos and formatting
+  block: sed-opal: close parameter list in cmd_finalize
+  block: sed-opal: unify cmd start
+  block: sed-opal: unify error handling of responses
+  block: sed-opal: reuse response_get_token to decrease code duplication
+  block: sed-opal: pass steps via argument rather than via opal_dev
+  block: sed-opal: don't repeat opal_discovery0 in each steps array
+  block: sed-opal: rename next to execute_steps
+
+Jonas Rabenstein (8):
+  block: sed-opal: use correct macro for method length
+  block: sed-opal: unify space check in add_token_*
+  block: sed-opal: print failed function address
+  block: sed-opal: split generation of bytestring header and content
+  block: sed-opal: add ioctl for done-mark of shadow mbr
+  block: sed-opal: ioctl for writing to shadow mbr
+  block: sed-opal: unify retrieval of table columns
+  block: sed-opal: check size of shadow mbr
+
+ block/opal_proto.h            |  18 +
+ block/sed-opal.c              | 843 +++++++++++++++++-----------------
+ include/linux/sed-opal.h      |   2 +
+ include/uapi/linux/sed-opal.h |   9 +
+ 4 files changed, 449 insertions(+), 423 deletions(-)
+
 -- 
-Thanks,
-~Nick Desaulniers
+2.20.1
+
