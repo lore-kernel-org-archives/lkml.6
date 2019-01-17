@@ -2,109 +2,119 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE66C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F563C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38B2B20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBDC720851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:59:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oJtNvb6q"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLcpzNHG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbfAQU6q (ORCPT
+        id S1729578AbfAQU7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:58:46 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33477 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbfAQU6q (ORCPT
+        Thu, 17 Jan 2019 15:59:49 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36930 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfAQU7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:58:46 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z11so4981876pgu.0;
-        Thu, 17 Jan 2019 12:58:45 -0800 (PST)
+        Thu, 17 Jan 2019 15:59:49 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y126so5415038pfb.4;
+        Thu, 17 Jan 2019 12:59:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cRa9K9MKtMyR4OGRgKLP+N4UO7HLSkDOtiZhxV3KTSA=;
-        b=oJtNvb6qgxD1flBBt4O6/GR3V3WQZTfJVczb1NhZn1aMcuyRSot2Ea0QVl3fU5kSAm
-         sLs1hSONNTkbdffoIVdJTeZOA5cW5aZakYkdW6H6a6ZbZxaiDsA6RalHhra2O9jQ7cQC
-         67CLmaJbpLV9BNdJfRHA+eeTnpnt/1R/ZjqpExYkGs/LFaPzabk5+gkic04i4C21vNUC
-         WxhzEkjNSvhyn6fFiz88qz3//vXgxEjfA3aZAWR1sAEqf7U8Z7POwzMbeWbKXwbFQ/Yl
-         Hm+AnQDSxnPct1oY3rc8/l4DpTpbniVHWvrB+6D1QEP1ghepQ4e+SVnKUF13IZ0CezO9
-         RPAw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wnubO1lujWGA0YOWaVjKgFKf1tN0F6G5nRARQJOP2rI=;
+        b=mLcpzNHGD3d89yoeoMgHrAJx1QiJ/X6btQFc5h0vzgFq5GZnL837St0z8eh3CZVGHV
+         HjrnAG5hYttO9C/ESDm78D9maRQeWol8bGSa2x5Zj+3yCwp4RKZnaj/OR5rQjFpF5Hr0
+         A44ejAVHdYr7Quae0j9JCvJPvTo/rWZGCAyzKrvyxXSnTP9eiSBDMYkrxl1ioAJf6qEw
+         HAjWrQG78RjRY3QqyZBuepfne0kfAo55LewRZAZyt2fKgQslKmEYGlpxCcfstquw6kCA
+         iZ8aNugoWVRUTp0wWstti8HavOQTLAz9M+lRT0Xps+XJfIblu57PYPiG7nGfxDwi8FIP
+         wi1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cRa9K9MKtMyR4OGRgKLP+N4UO7HLSkDOtiZhxV3KTSA=;
-        b=YXdcUJ4eGu3qQ0i2ZJ65baRuFgW1lu8rK5TserpBkPEYeqSGxLFx6X91jcJJ8xJfZS
-         J31EvHUSw8jMAzCMfxoZeZGLUZjHlVIdU5AWj8YwNzNpoOzZc3E2/F/2WUuUk1IWWLnE
-         YIlgY8o0KFoxeMqJBCbh3Ez7IXmsc23g+ikn6neLAxnNWKCFGIbRMHziGV3ksFDFhPG5
-         54txV/wYNgk9xdTmqPjDDd21RrvpuQYC5CUSCrw59Hkz+4mfy9+LMjos/mh9zCqvVk9q
-         KQaqYDNe2M7WyGlHANC8q4J2J8Gy4qc4E1/T3zpxN0KRFnwtyp9szc7+2nhaSYO5L1Oy
-         xEBA==
-X-Gm-Message-State: AJcUukck04xl46+SRUCTqPEEMr2veP0oy4KW5toA7GFGlYvxtqgmC8/Z
-        t7TmzCv0T21F7bsKa4Cz1uW626wuJSA=
-X-Google-Smtp-Source: ALg8bN5/aMcYaBWDIN+5wiQrKQ14IKDm0niifYm2BTTTSm4fni4oK99lfRT6L9vhdBDZkTZ1EkKXCw==
-X-Received: by 2002:a63:b34f:: with SMTP id x15mr15007723pgt.243.1547758724251;
-        Thu, 17 Jan 2019 12:58:44 -0800 (PST)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id h74sm4229828pfd.35.2019.01.17.12.58.42
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wnubO1lujWGA0YOWaVjKgFKf1tN0F6G5nRARQJOP2rI=;
+        b=nKnitpCNZ/wV8jhP7eyxOxtmpx/ZNtc+ZjngzqpirNosr+uKnsUoC5zMAyryMf5IXd
+         VsUg/fl4Jeo0zWNlBaTth5lzVPJDx+YJ9nPM5Zp2dOdGFgGeIbefp7qd5ISzoPKZ6PKb
+         6F5/5OpBrqhnfMfQoMnEusw7uQnjl+vtzvCH9zaOcjqYizR0230DBtDAGoz1bfxsXorm
+         52IjauqEQ/X+NG+Getgn9XFeULC7lsM9XDeyyBNwgFnOUthxvkkdUApjhFC/PEVZTFzm
+         Pf5QEqCt49QI8yDbba0FBXjB2bxzr2R9VT3b7pP01LIai5Q+uwNDXexc8P7mBpcSC6r7
+         RbCg==
+X-Gm-Message-State: AJcUukccl68sB7Hxo0LsTLhPu7UulX8En5As2KT7wSmZfXse53j/26Yz
+        uF0bDb0ajNeDg3fcYAAjnKo=
+X-Google-Smtp-Source: ALg8bN7nHG4HlG/JQTJ74qMuX+s0deveSgJVPEEd6EFUmFBmxfSp0htuqOAgwcIUTgogWR4RQ4a5RA==
+X-Received: by 2002:a63:ff62:: with SMTP id s34mr14958572pgk.325.1547758787915;
+        Thu, 17 Jan 2019 12:59:47 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id t24sm3355178pfh.21.2019.01.17.12.59.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 12:58:43 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>, stable@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] media: imx-csi: Input connections to CSI should be optional
-Date:   Thu, 17 Jan 2019 12:58:37 -0800
-Message-Id: <20190117205837.29003-1-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 17 Jan 2019 12:59:47 -0800 (PST)
+Date:   Thu, 17 Jan 2019 12:59:46 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, shunyong.yang@hxt-semitech.com,
+        dongsheng.wang@hxt-semitech.com
+Subject: Re: [PATCH v3 2/4] dt-bindings: hwmon: add dps650ab documentation
+Message-ID: <20190117205946.GA11509@roeck-us.net>
+References: <cover.1546918172.git.xiaoting.liu@hxt-semitech.com>
+ <0527fcf7155ea12a2a1be680b3617691e6e26d72.1546918172.git.xiaoting.liu@hxt-semitech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0527fcf7155ea12a2a1be680b3617691e6e26d72.1546918172.git.xiaoting.liu@hxt-semitech.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some imx platforms do not have fwnode connections to all CSI input
-ports, and should not be treated as an error. This includes the
-imx6q SabreAuto, which has no connections to ipu1_csi1 and ipu2_csi0.
-Return -ENOTCONN in imx_csi_parse_endpoint() so that v4l2-fwnode
-endpoint parsing will not treat an unconnected CSI input port as
-an error.
+On Thu, Jan 10, 2019 at 10:24:33AM +0800, Xiaoting Liu wrote:
+> Bindings for Delta Electronics DPS-650-AB power supply.
+> 
+> Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
 
-Fixes: c893500a16baf ("media: imx: csi: Register a subdev notifier")
+Applied to hwmon-next.
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Tim Harvey <tharvey@gateworks.com>
-Cc: stable@vger.kernel.org
----
-Changes in v2:
-- Added some acks and Cc: stable. No functional changes.
----
- drivers/staging/media/imx/imx-media-csi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+Guenter
 
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 555aa45e02e3..e18f58f56dfb 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -1861,7 +1861,7 @@ static int imx_csi_parse_endpoint(struct device *dev,
- 				  struct v4l2_fwnode_endpoint *vep,
- 				  struct v4l2_async_subdev *asd)
- {
--	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -EINVAL;
-+	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -ENOTCONN;
- }
- 
- static int imx_csi_async_register(struct csi_priv *priv)
--- 
-2.17.1
-
+> ---
+> v3:
+>   Change patch commit message.
+>   Add vendor delta to the compatible property.
+> ---
+> v2:
+>   Change the patch subject.
+> ---
+>  Documentation/devicetree/bindings/hwmon/dps650ab.txt | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/dps650ab.txt b/Documentation/devicetree/bindings/hwmon/dps650ab.txt
+> new file mode 100644
+> index 000000000000..32d89e4f4956
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/dps650ab.txt
+> @@ -0,0 +1,11 @@
+> +Bindings for Delta Electronics DPS-650-AB power supply
+> +
+> +Required properties:
+> +- compatible : "delta,dps650ab"
+> +- reg        : I2C address, one of 0x58, 0x59.
+> +
+> +Example:
+> +	dps650ab@58 {
+> +		    compatible = "delta,dps650ab";
+> +		    reg = <0x58>;
+> +	};
+> -- 
+> 1.8.3.1
+> 
