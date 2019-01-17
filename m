@@ -2,143 +2,156 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AB2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DA6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3177C20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADDDA20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:50:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wxD6aOa4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729124AbfAQTtF (ORCPT
+        id S1729141AbfAQTuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:49:05 -0500
-Received: from mga02.intel.com ([134.134.136.20]:13095 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728173AbfAQTtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:49:04 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 11:49:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
-   d="scan'208";a="117526329"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Jan 2019 11:49:03 -0800
-Date:   Thu, 17 Jan 2019 12:47:51 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>
-Subject: Re: [PATCHv4 00/13] Heterogeneuos memory node attributes
-Message-ID: <20190117194751.GE31543@localhost.localdomain>
-References: <20190116175804.30196-1-keith.busch@intel.com>
- <20190117181835.000034ab@huawei.com>
+        Thu, 17 Jan 2019 14:50:02 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:59194 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728797AbfAQTuB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 14:50:01 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 918F18365A;
+        Fri, 18 Jan 2019 08:49:58 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1547754598;
+        bh=MwP8t9x/FDq8/YP9i1LjHbN1VAAlS8YjbCVfGNccqY4=;
+        h=From:To:Subject:Date:References;
+        b=wxD6aOa4U08qEAFnPEe0yTKfAYNjrWeg2AaZuNAspCmm3EBgv+yW1hxImMDWBHtOX
+         UjelhWmpJlckaP/R/2n2+Z0OXBsjs9BrFnx916XaojE3ti7aJHn+JwRkR3MmMSrTXh
+         zqR89OWjV4XPIvpku9aSTtwp/b2l/8cqfJNgLZoTIgL8gbLyHrITf93iiHLHdXHE5i
+         4rqS2+W4A8glDd1riZlkicN6xpf1msPdwaFKBe0hcXPCgt6GcQX6jHCQl7Tq/MUaI6
+         j2F1m31HGdcA38gCjaGvkQzFJkuTCfa/u8K/vOzZIX0l58gdz08d/5PIndD/HfLs3E
+         36OstTE2AOYLA==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c40dc650000>; Fri, 18 Jan 2019 08:49:57 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1156.6; Fri, 18 Jan 2019 08:49:53 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Fri, 18 Jan 2019 08:49:53 +1300
+From:   Darwin Dingel <Darwin.Dingel@alliedtelesis.co.nz>
+To:     "zhe.he@windriver.com" <zhe.he@windriver.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "Jisheng.Zhang@synaptics.com" <Jisheng.Zhang@synaptics.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] serial: 8250: Fix serial8250 initialization crash
+Thread-Topic: [PATCH] serial: 8250: Fix serial8250 initialization crash
+Thread-Index: AQHUrkMcXKnwLVY2dEaW/IjGFnxJ8w==
+Date:   Thu, 17 Jan 2019 19:49:53 +0000
+Message-ID: <41c574bfdce7490597079dae8f328661@svr-chch-ex1.atlnz.lc>
+References: <1547715619-181299-1-git-send-email-zhe.he@windriver.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:23:c9cc:a3c:eb68:bca4]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117181835.000034ab@huawei.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 10:18:35AM -0800, Jonathan Cameron wrote:
-> I've been having a play with various hand constructed HMAT tables to allow
-> me to try breaking them in all sorts of ways.
-> 
-> Mostly working as expected.
-> 
-> Two places I am so far unsure on...
-> 
-> 1. Concept of 'best' is not implemented in a consistent fashion.
-> 
-> I don't agree with the logic to match on 'best' because it can give some counter
-> intuitive sets of target nodes.
-> 
-> For my simple test case we have both the latency and bandwidth specified (using
-> access as I'm lazy and it saves typing).
-> 
-> Rather that matching when both are the best value, we match when _any_ of the
-> measurements is the 'best' for the type of measurement.
-> 
-> A simple system with a high bandwidth interconnect between two SoCs
-> might well have identical bandwidths to memory connected to each node, but
-> much worse latency to the remote one.  Another simple case would be DDR and
-> SCM on roughly the same memory controller.  Bandwidths likely to be equal,
-> latencies very different.
-> 
-> Right now we get both nodes in the list of 'best' ones because the bandwidths
-> are equal which is far from ideal.  It also means we are presenting one value
-> for both latency and bandwidth, misrepresenting the ones where it doesn't apply.
-> 
-> If we aren't going to specify that both must be "best", then I think we should
-> separate the bandwidth and latency classes, requiring userspace to check
-> both if they want the best combination of latency and bandwidth. I'm also
-> happy enough (having not thought about it much) to have one class where the 'best'
-> is the value sorted first on best latency and then on best bandwidth.
-
-Okay, I see what you mean. I must admit my test environment doesn't have
-nodes with the same bandwith but different latency, so we may get the
-wrong information with the HMAT parsing in this series. I'll look into
-fixing that and consider your sugggestions.
- 
-> 2. Handling of memory only nodes - that might have a device attached - _PXM
-> 
-> This is a common situation in CCIX for example where you have an accelerator
-> with coherent memory homed at it. Looks like a pci device in a domain with
-> the memory.   Right now you can't actually do this as _PXM is processed
-> for pci devices, but we'll get that fixed (broken threadripper firmwares
-> meant it got reverted last cycle).
-> 
-> In my case I have 4 nodes with cpu and memory (0,1,2,3) and 2 memory only (4,5)
-> Memory only are longer latency and lower bandwidth.
-> 
-> Now
-> ls /sys/bus/nodes/devices/node0/class0/
-> ...
-> 
-> initiator0
-> target0
-> target4
-> target5
-> 
-> read_bandwidth = 15000
-> read_latency = 10000
-> 
-> These two values (and their paired write values) are correct for initiator0 to target0
-> but completely wrong for initiator0 to target4 or target5.
-
-Hm, this wasn't intended to tell us performance for the initiator's
-targets. The performance data here is when you access node0's memory
-target from a node in its initiator_list, or one of the simlinked
-initiatorX's.
-
-If you want to see the performance attributes for accessing
-initiator0->target4, you can check:
-
-  /sys/devices/system/node/node0/class0/target4/class0/read_bandwidth
-
-> This occurs because we loop over the targets looking for the best values and add
-> set the relevant bit in t->p_nodes based on that.  These memory only nodes have
-> a best value that happens to be equal from all the initiators.  The issue is it
-> isn't the one reported in the node0/class0.
->
-> Also if we look in
-> /sys/bus/nodes/devices/node4/class0 there are no targets listed (there are the expected
-> 4 initiators 0-3).
-> 
-> I'm not sure what the intended behavior would be in this case.
-
-You mentioned that node 4 is a memory-only node, so it can't have any
-targets, right?
+On 17/01/19 10:00 PM, zhe.he@windriver.com wrote:=0A=
+> From: He Zhe <zhe.he@windriver.com>=0A=
+> =0A=
+> The initialization code of interrupt backoff work might reference NULL=0A=
+> pointer and cause the following crash, if no port was found.=0A=
+> =0A=
+> [   10.017727] CPU 0 Unable to handle kernel paging request at virtual ad=
+dress 000001b0, epc =3D=3D 807088e0, ra =3D=3D 8070863c=0A=
+> ---- snip ----=0A=
+> [   11.704470] [<807088e0>] serial8250_register_8250_port+0x318/0x4ac=0A=
+> [   11.747251] [<80708d74>] serial8250_probe+0x148/0x1c0=0A=
+> [   11.789301] [<80728450>] platform_drv_probe+0x40/0x94=0A=
+> [   11.830515] [<807264f8>] really_probe+0xf8/0x318=0A=
+> [   11.870876] [<80726b7c>] __driver_attach+0x110/0x12c=0A=
+> [   11.910960] [<80724374>] bus_for_each_dev+0x78/0xcc=0A=
+> [   11.951134] [<80725958>] bus_add_driver+0x200/0x234=0A=
+> [   11.989756] [<807273d8>] driver_register+0x84/0x148=0A=
+> [   12.029832] [<80d72f84>] serial8250_init+0x138/0x198=0A=
+> [   12.070447] [<80100e6c>] do_one_initcall+0x5c/0x2a0=0A=
+> [   12.110104] [<80d3a208>] kernel_init_freeable+0x370/0x484=0A=
+> [   12.150722] [<80a49420>] kernel_init+0x10/0xf8=0A=
+> [   12.191517] [<8010756c>] ret_from_kernel_thread+0x14/0x1c=0A=
+> =0A=
+> This patch makes sure the initialization code can be reached only if a po=
+rt=0A=
+> is found.=0A=
+> =0A=
+> Fixes: commit 6d7f677a2afa ("serial: 8250: Rate limit serial port rx inte=
+rrupts during input overruns")=0A=
+> Signed-off-by: He Zhe <zhe.he@windriver.com>=0A=
+> ---=0A=
+>   drivers/tty/serial/8250/8250_core.c | 17 +++++++++--------=0A=
+>   1 file changed, 9 insertions(+), 8 deletions(-)=0A=
+> =0A=
+> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/825=
+0/8250_core.c=0A=
+> index 189ab12..e441221 100644=0A=
+> --- a/drivers/tty/serial/8250/8250_core.c=0A=
+> +++ b/drivers/tty/serial/8250/8250_core.c=0A=
+> @@ -1070,15 +1070,16 @@ int serial8250_register_8250_port(struct uart_825=
+0_port *up)=0A=
+>   =0A=
+>   			ret =3D 0;=0A=
+>   		}=0A=
+> -	}=0A=
+>   =0A=
+> -	/* Initialise interrupt backoff work if required */=0A=
+> -	if (up->overrun_backoff_time_ms > 0) {=0A=
+> -		uart->overrun_backoff_time_ms =3D up->overrun_backoff_time_ms;=0A=
+> -		INIT_DELAYED_WORK(&uart->overrun_backoff,=0A=
+> -				  serial_8250_overrun_backoff_work);=0A=
+> -	} else {=0A=
+> -		uart->overrun_backoff_time_ms =3D 0;=0A=
+> +		/* Initialise interrupt backoff work if required */=0A=
+> +		if (up->overrun_backoff_time_ms > 0) {=0A=
+> +			uart->overrun_backoff_time_ms =3D=0A=
+> +				up->overrun_backoff_time_ms;=0A=
+> +			INIT_DELAYED_WORK(&uart->overrun_backoff,=0A=
+> +					serial_8250_overrun_backoff_work);=0A=
+> +		} else {=0A=
+> +			uart->overrun_backoff_time_ms =3D 0;=0A=
+> +		}=0A=
+>   	}=0A=
+>   =0A=
+>   	mutex_unlock(&serial_mutex);=0A=
+> =0A=
+=0A=
+Reviewed-by: Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>=0A=
+=0A=
+I presume this is the same issue reported here:=0A=
+=0A=
+https://www.spinics.net/lists/linux-serial/msg33114.html=0A=
+https://lkml.org/lkml/2018/12/22/171=0A=
+=0A=
+=0A=
+=0A=
+Thanks!=0A=
+Regards,=0A=
+=0A=
+Darwin=0A=
