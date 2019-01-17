@@ -2,223 +2,224 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F520C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2BCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 605A820657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:00:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XiWL8XDF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RP1UvRUc"
+	by mail.kernel.org (Postfix) with ESMTP id 9A44620657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:00:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfAQLAP (ORCPT
+        id S1728841AbfAQLAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:00:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57840 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728422AbfAQLAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:00:14 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A55A6607CA; Thu, 17 Jan 2019 11:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547722813;
-        bh=ERadownxCDgGvwVHzeY8Kpv3JIfzoljR7QjL5lJRqOI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XiWL8XDF1AQ9yzRjrtd2TZqjaMVEr+YQaccmPOJVcvBXc8hDij77nzHno3zovI5rg
-         mBWSXyMlzsCRlW2KJgTP0kmEqSp8AsAJAdMMbTtOaL0kX9Mas6szt92sCYYF36Mcis
-         mc1mxv9MX3T/zXonX7zCBIIUCVNUEAmrc5GmN0/I=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BFD996084F;
-        Thu, 17 Jan 2019 11:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547722812;
-        bh=ERadownxCDgGvwVHzeY8Kpv3JIfzoljR7QjL5lJRqOI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RP1UvRUcKWJuLf6Ckh/CfpbsD3wgQ+GuNANhkbg91dW9vHuWmCnGCt9BNB/8U4Jbl
-         NiZDIo6TF0C80MByCXgZgk5F1RbwYwlACGqbSkKfybRJxbPF/8d7y1reZSbuldL09J
-         qMAkOFeLJCA9yDK29QNjSLv1x1ZJJj4tnWYElbwU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFD996084F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        Matthias Kaehlcke <mka@chromium.org>, evgreen@google.com,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v4] cpufreq: qcom: Read voltage LUT and populate OPP
-Date:   Thu, 17 Jan 2019 16:29:58 +0530
-Message-Id: <1547722798-8455-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 17 Jan 2019 06:00:50 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2185 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728460AbfAQLAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:00:50 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C7AD4237E2186A6AD862;
+        Thu, 17 Jan 2019 19:00:46 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 17 Jan 2019 19:00:39 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <viresh.kumar@linaro.org>, <robert.moore@intel.com>,
+        <lenb@kernel.org>, <rjw@rjwysocki.net>
+CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <guohanjun@huawei.com>,
+        <wangxiongfeng2@huawei.com>
+Subject: [RFC PATCH] cpufreq / cppc: Work around for Hisilicon CPPC cpufreq
+Date:   Thu, 17 Jan 2019 19:00:11 +0800
+Message-ID: <1547722811-18052-1-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to read the voltage look up table and populate OPP for all
-corresponding CPUS for consumers like the energy model could use the
-frequency and voltage from the OPP tables. Also update the logic to not add
-duplicate OPPs.
+Hisilicon chips do not support delivered performance counter register
+and reference performance counter register. But the platform can
+calculate the real performance using its own method. This patch provide
+a workaround for this problem, and other platforms can also use this
+workaround framework. We reuse the desired performance register to
+store the real performance calculated by the platform. After the
+platform finished the frequency adjust, it gets the real performance and
+writes it into desired performance register. OS can use it to calculate
+the real frequency.
 
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
 ---
- drivers/cpufreq/qcom-cpufreq-hw.c | 41 ++++++++++++++++++++++++++++++++-------
- 1 file changed, 34 insertions(+), 7 deletions(-)
+ drivers/acpi/cppc_acpi.c       | 29 ++++++++++++++++++++
+ drivers/cpufreq/Kconfig.arm    |  7 +++++
+ drivers/cpufreq/cppc_cpufreq.c | 62 ++++++++++++++++++++++++++++++++++++++++++
+ include/acpi/cppc_acpi.h       |  4 +++
+ 4 files changed, 102 insertions(+)
 
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-index d83939a..e006938 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -10,18 +10,21 @@
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-+#include <linux/pm_opp.h>
- #include <linux/slab.h>
-
- #define LUT_MAX_ENTRIES			40U
- #define LUT_SRC				GENMASK(31, 30)
- #define LUT_L_VAL			GENMASK(7, 0)
- #define LUT_CORE_COUNT			GENMASK(18, 16)
-+#define LUT_VOLT			GENMASK(11, 0)
- #define LUT_ROW_SIZE			32
- #define CLK_HW_DIV			2
-
- /* Register offsets */
- #define REG_ENABLE			0x0
--#define REG_LUT_TABLE			0x110
-+#define REG_FREQ_LUT			0x110
-+#define REG_VOLT_LUT			0x114
- #define REG_PERF_STATE			0x920
-
- static unsigned long cpu_hw_rate, xo_rate;
-@@ -70,11 +73,12 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
- 	return policy->freq_table[index].frequency;
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index 217a782..0cdaf7e 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -1050,6 +1050,35 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ 	return ret_val;
  }
-
--static int qcom_cpufreq_hw_read_lut(struct device *dev,
-+static int qcom_cpufreq_hw_read_lut(struct device *cpu_dev,
- 				    struct cpufreq_policy *policy,
- 				    void __iomem *base)
- {
- 	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
-+	u32 volt;
- 	unsigned int max_cores = cpumask_weight(policy->cpus);
- 	struct cpufreq_frequency_table	*table;
-
-@@ -83,22 +87,27 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
- 		return -ENOMEM;
-
- 	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
--		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
-+		data = readl_relaxed(base + REG_FREQ_LUT +
-+				      i * LUT_ROW_SIZE);
- 		src = FIELD_GET(LUT_SRC, data);
- 		lval = FIELD_GET(LUT_L_VAL, data);
- 		core_count = FIELD_GET(LUT_CORE_COUNT, data);
-
-+		data = readl_relaxed(base + REG_VOLT_LUT +
-+				      i * LUT_ROW_SIZE);
-+		volt = FIELD_GET(LUT_VOLT, data) * 1000;
+ 
++#ifdef CONFIG_HISILICON_CPPC_CPUFREQ_WORKAROUND
++/*
++ * We reuse the desired performance register to store the real performance
++ * calculated by the platform.
++ */
++u64 hisi_cppc_get_real_perf(unsigned int cpunum)
++{
++	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
++	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
++	struct cpc_register_resource *desired_reg;
++	u64 desired_perf;
++	int ret;
 +
- 		if (src)
- 			freq = xo_rate * lval / 1000;
- 		else
- 			freq = cpu_hw_rate / 1000;
-
--		/* Ignore boosts in the middle of the table */
--		if (core_count != max_cores) {
-+		if (freq != prev_freq && core_count == max_cores) {
- 			table[i].frequency = CPUFREQ_ENTRY_INVALID;
- 		} else {
- 			table[i].frequency = freq;
--			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
-+			dev_pm_opp_add(cpu_dev, freq * 1000, volt);
-+			dev_dbg(cpu_dev, "index=%d freq=%d, core_count %d\n", i,
- 				freq, core_count);
- 		}
-
-@@ -116,6 +125,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
- 			if (prev_cc != max_cores) {
- 				prev->frequency = prev_freq;
- 				prev->flags = CPUFREQ_BOOST_FREQ;
-+				dev_pm_opp_add(cpu_dev,	prev_freq * 1000, volt);
- 			}
-
- 			break;
-@@ -127,6 +137,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
-
- 	table[i].frequency = CPUFREQ_TABLE_END;
- 	policy->freq_table = table;
-+	dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
-
- 	return 0;
- }
-@@ -159,10 +170,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
- 	struct device *dev = &global_pdev->dev;
- 	struct of_phandle_args args;
- 	struct device_node *cpu_np;
-+	struct device *cpu_dev;
- 	struct resource *res;
- 	void __iomem *base;
- 	int ret, index;
-
-+	cpu_dev = get_cpu_device(policy->cpu);
-+	if (!cpu_dev) {
-+		pr_err("%s: failed to get cpu%d device\n", __func__,
-+		       policy->cpu);
-+		return -ENODEV;
++	/*
++	 * Make sure the platform has finished the frequency adjust
++	 * and wrote the real performance in desired performance register
++	 */
++	ret = check_pcc_chan(pcc_ss_id, false);
++	if (ret)
++		return 0;
++
++	desired_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
++	cpc_read(cpunum, desired_reg, &desired_perf);
++
++	return desired_perf;
++}
++EXPORT_SYMBOL_GPL(hisi_cppc_get_real_perf);
++#endif
++
+ /**
+  * cppc_get_perf_caps - Get a CPUs performance capabilities.
+  * @cpunum: CPU from which to get capabilities info.
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 688f102..236bd07 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -18,6 +18,13 @@ config ACPI_CPPC_CPUFREQ
+ 
+ 	  If in doubt, say N.
+ 
++config HISILICON_CPPC_CPUFREQ_WORKAROUND
++	bool "Workaround for Hisilicon CPPC Cpufreq"
++	default y
++	depends on ACPI_CPPC_CPUFREQ && ARM64
++	help
++	  This option enables a workaround for Hisilicon CPPC Cpufreq.
++
+ config ARM_ARMADA_37XX_CPUFREQ
+ 	tristate "Armada 37xx CPUFreq support"
+ 	depends on ARCH_MVEBU && CPUFREQ_DT
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index fd25c21c..b910e84 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -33,6 +33,13 @@
+ /* Offest in the DMI processor structure for the max frequency */
+ #define DMI_PROCESSOR_MAX_SPEED  0x14
+ 
++struct cppc_get_rate_workaround_info {
++	char oem_id[ACPI_OEM_ID_SIZE +1];
++	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
++	u32 oem_revision;
++	unsigned int (*get)(unsigned int cpu);
++};
++
+ /*
+  * These structs contain information parsed from per CPU
+  * ACPI _CPC structures.
+@@ -357,6 +364,59 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
+ 	.name = "cppc_cpufreq",
+ };
+ 
++#ifdef CONFIG_HISILICON_CPPC_CPUFREQ_WORKAROUND
++/*
++ * When the platform does not support delivered performance counter or
++ * reference performance counter, it can calculate the performance using the
++ * platform specific mechanism. We reuse the desired performance register to
++ * store the real performance calculated by the platform.
++ */
++static unsigned int hisi_cppc_cpufreq_get_rate(unsigned int cpunum)
++{
++	struct cppc_cpudata *cpu = all_cpu_data[cpunum];
++	u64 desired_perf = hisi_cppc_get_real_perf(cpunum);
++
++	return cppc_cpufreq_perf_to_khz(cpu, desired_perf);
++}
++#endif
++
++static struct cppc_get_rate_workaround_info wa_info[] = {
++#ifdef CONFIG_HISILICON_CPPC_CPUFREQ_WORKAROUND
++	{
++		.oem_id		= "HISI  ",
++		.oem_table_id	= "HIP07   ",
++		.oem_revision	= 0,
++		.get = hisi_cppc_cpufreq_get_rate,
++	},
++	{
++		.oem_id		= "HISI  ",
++		.oem_table_id	= "HIP08   ",
++		.oem_revision	= 0,
++		.get = hisi_cppc_cpufreq_get_rate,
++	},
++#endif
++	{},
++};
++
++static void cppc_check_get_rate_workaround(struct cpufreq_driver *cppc_cpufreq_driver)
++{
++	struct acpi_table_header *tbl;
++	acpi_status status = AE_OK;
++	int i;
++
++	status = acpi_get_table(ACPI_SIG_PCCT, 0, &tbl);
++	if (ACPI_FAILURE(status) || !tbl)
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(wa_info) - 1; i++) {
++		if (!memcmp(wa_info[i].oem_id, tbl->oem_id, ACPI_OEM_ID_SIZE) &&
++		    !memcmp(wa_info[i].oem_table_id, tbl->oem_table_id, ACPI_OEM_TABLE_ID_SIZE) &&
++		    wa_info[i].oem_revision == tbl->oem_revision) {
++			cppc_cpufreq_driver->get = wa_info[i].get;
++			return;
++		}
 +	}
-+
- 	cpu_np = of_cpu_device_node_get(policy->cpu);
- 	if (!cpu_np)
- 		return -EINVAL;
-@@ -199,12 +218,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-
- 	policy->driver_data = base + REG_PERF_STATE;
-
--	ret = qcom_cpufreq_hw_read_lut(dev, policy, base);
-+	ret = qcom_cpufreq_hw_read_lut(cpu_dev, policy, base);
- 	if (ret) {
- 		dev_err(dev, "Domain-%d failed to read LUT\n", index);
- 		goto error;
++}
+ static int __init cppc_cpufreq_init(void)
+ {
+ 	int i, ret = 0;
+@@ -386,6 +446,8 @@ static int __init cppc_cpufreq_init(void)
+ 		goto out;
  	}
-
-+	ret = dev_pm_opp_get_opp_count(cpu_dev);
-+	if (ret <= 0) {
-+		dev_err(cpu_dev, "Failed to add OPPs\n");
-+		goto error;
-+	}
+ 
++	cppc_check_get_rate_workaround(&cppc_cpufreq_driver);
 +
- 	policy->fast_switch_possible = true;
-
- 	return 0;
-@@ -215,8 +240,10 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-
- static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
- {
-+	struct device *cpu_dev = get_cpu_device(policy->cpu);
- 	void __iomem *base = policy->driver_data - REG_PERF_STATE;
-
-+	dev_pm_opp_remove_all_dynamic(cpu_dev);
- 	kfree(policy->freq_table);
- 	devm_iounmap(&global_pdev->dev, base);
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+ 	ret = cpufreq_register_driver(&cppc_cpufreq_driver);
+ 	if (ret)
+ 		goto out;
+diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+index 4f34734..be7400b 100644
+--- a/include/acpi/cppc_acpi.h
++++ b/include/acpi/cppc_acpi.h
+@@ -146,4 +146,8 @@ struct cppc_cpudata {
+ extern int cpc_read_ffh(int cpunum, struct cpc_reg *reg, u64 *val);
+ extern int cpc_write_ffh(int cpunum, struct cpc_reg *reg, u64 val);
+ 
++#ifdef CONFIG_HISILICON_CPPC_CPUFREQ_WORKAROUND
++u64 hisi_cppc_get_real_perf(unsigned int cpunum);
++#endif
++
+ #endif /* _CPPC_ACPI_H*/
+-- 
+1.7.12.4
 
