@@ -2,146 +2,213 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17566C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AFEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8EF220854
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:13:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547705594;
-	bh=VO92TbOWj9bd+RmcAOwk08LEpgVxgeYGe8/ku+rPKAk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=WRczLpDHaalM5JQ6GgezKzAHSCbw9Z6ObXfDRNqjl/1XeGANLx/BtUDDmnk4O40Vv
-	 8J7mixfwzlH7NvXdperTkoxjapOxOHT84dH3E9c731ibH2ZcAkdiSaXXhtt5fkZNy6
-	 YQw3zurbVKp6+w5dU/dEGyzklasD4cZLES9u9k1I=
+	by mail.kernel.org (Postfix) with ESMTP id 7A1D320851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:17:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="QrohxhwH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730006AbfAQGNN (ORCPT
+        id S1730032AbfAQGR3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:13:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbfAQGNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:13:12 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FE4C20851;
-        Thu, 17 Jan 2019 06:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547705591;
-        bh=VO92TbOWj9bd+RmcAOwk08LEpgVxgeYGe8/ku+rPKAk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1ToW7rRhy2s8r4OZY0Pn2r3cCvqKBXNBqPMCdIO/u3n9LKG+56PC7XmUFCb6/renY
-         P8NvC26zRJsYpzDC7AccaCVPzE7mODvsUU2XLdg6o4Nh4ho3wB+y23otQq0qrUTMpX
-         M43BlTpVOBTh+QfJ994KjqnyJLo75ZM/Sp+uEE08=
-Date:   Thu, 17 Jan 2019 15:13:09 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andreas Ziegler <andreas.ziegler@fau.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: uprobes: bug in comm/string output?
-Message-Id: <20190117151309.711d41ebdd761b525a168837@kernel.org>
-In-Reply-To: <62276858-9135-2393-8993-64e1088db7b9@fau.de>
-References: <bf358673-ceb2-65bf-80c9-4b1c09a8a264@fau.de>
-        <8b67136d-28d7-a734-6366-9511e30d66a7@fau.de>
-        <20190116190054.ac22c8495540578834446236@kernel.org>
-        <62276858-9135-2393-8993-64e1088db7b9@fau.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Jan 2019 01:17:29 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39310 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725320AbfAQGR3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:17:29 -0500
+Received: by mail-qt1-f193.google.com with SMTP id u47so10183971qtj.6
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 22:17:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FKfY06XBvP+7+lbG+bUd4k8JgUNDe4s1OC2BG4+aqNQ=;
+        b=QrohxhwH+D46iYBRsQWtmMIQDDPdVNdtow+/ApAd/32mCnidizUfQOmFMdAIe8fcLw
+         y8frZX0ZFffmR+9hEtWESUAUy0cOu4N0QsyVJYh8wikeRI4TYnk5i138YQW30SjCPYKp
+         7N63THQsW+z6Z+Qz9ut5aTs7kFbJHp87ul2yw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FKfY06XBvP+7+lbG+bUd4k8JgUNDe4s1OC2BG4+aqNQ=;
+        b=O8l7VSGShnbvLZt9CE2D/Nz6u2pFn1+HW4G2u6xcSbU6bTrw6mT6f/ecE9qxAV3faz
+         ForH+cWjKogeOC+JOjPmfLPjN1JwdMpOgKwS//AWsDybFeraf5erOpdUhDWmdv27gRad
+         UYj3vDUMZgzt5TFVjdd1V5KIXsWYH2PEN4ynTBECyvbV3qFBGY7b7G3i6nPAFrxvcgQ9
+         BdUR8HUCwrIKLd+tJ8got0OP4cwngPDuo7jD1Amy1/irOxbI50+6BFYu2VIsmQtb7Fcl
+         NS2CeWMl5Bdni7nE6xR4V7S2Ywvn0unsFnjhElJq58GbGll2lJvGpixH1y9qNAYcE4ji
+         tYqg==
+X-Gm-Message-State: AJcUukdwRHM24z1A2L8nVdj4qIOccLHE/sFoAHW7SESB4LqSG1MkYeoL
+        U7mpLZo5m5VD61CqdhhQ+CLAkaFqT1JO4YRqjMY=
+X-Google-Smtp-Source: ALg8bN5JkY1m/cQon+3Je4qTIUqCns1PRy7wSqDPtkx1aQq/lr6LJ3SkBE7UsuAG3vxioE1AKMPRT5667+U/NQFoX7g=
+X-Received: by 2002:ac8:748:: with SMTP id k8mr10223752qth.235.1547705847795;
+ Wed, 16 Jan 2019 22:17:27 -0800 (PST)
+MIME-Version: 1.0
+References: <20190116220154.1026171-1-vijaykhemka@fb.com>
+In-Reply-To: <20190116220154.1026171-1-vijaykhemka@fb.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Thu, 17 Jan 2019 17:17:16 +1100
+Message-ID: <CACPK8XdCVvUaCFsMXdEkc9KG0TQCGpYV55u-X7pY7vBLLHuQtw@mail.gmail.com>
+Subject: Re: [PATCH v2] misc: aspeed-lpc-ctrl: make parameter optional
+To:     Vijay Khemka <vijaykhemka@fb.com>, Andrew Jeffery <andrew@aj.id.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019 11:16:07 +0100
-Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+On Thu, 17 Jan 2019 at 09:02, Vijay Khemka <vijaykhemka@fb.com> wrote:
+>
+> Makiing memory-region and flash as optional parameter in device
+> tree if user needs to use these parameter through ioctl then
+> need to define in devicetree.
+>
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
 
-> 
-> I went into this a bit deeper today, and right now it is simply failing 
-> to parse the code because there is no FETCH_OP_COMM case in 
-> process_fetch_insn() for uprobes so that will return -EILSEQ, leading to 
-> a make_data_loc(0, ...) in store_trace_args(). If we just add 
-> FETCH_OP_COMM and let val point to current->comm (that's what 
-> trace_kprobe.c does), we get an -EFAULT return value from 
-> fetch_store_string because strncpy_from_user() checks if the argument is 
-> in user space.
+Thanks! This looks okay to me. I tested it on one of our systems which
+uses both flash and reserved memory and it was fine.
 
-Correct. I missed to add OP_COMM support. And uprobe's fetch_store_string
-is only for user space strings.
+Reviewed-by: Joel Stanley <joel@jms.id.au>
 
-> So I think we might need a special case for that, something like 
-> FETCH_OP_ST_COMM_STRING which is only used for FETCH_OP_COMM and copies 
-> current->comm over to the dynamic area. The implementation could be 
-> similar to the old fetch_comm_string implementation before your rewrite.
+Can you also send a patch to update the bindings at
+Documentation/devicetree/bindings/mfd/aspeed-lpc.txt ? I think the
+only change you need to make is to move the memory region and flash
+properties to optional (instead of required).
 
-Hmm, instead, I would like to add current->comm checker and only allows
-to copy that. That would be simpler and enough.
+Cheers,
 
-Could you test below patch?
+Joel
 
-
-tracing: uprobes: Re-enable $comm support for uprobe events
-
-From: Masami Hiramatsu <mhiramat@kernel.org>
-
-Since commit 533059281ee5 ("tracing: probeevent: Introduce new
-argument fetching code") dropped the $comm support from uprobe
-events, this re-enable it.
-
-For $comm support, use strncpy() instead of strncpy_from_user()
-to copy current task's comm. Because it is in the kernel space,
-strncpy_from_user() always fails to copy the comm.
-This also use strlen() instead of strlen_user() to measure the
-length of the comm.
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Andreas Ziegler <andreas.ziegler@fau.de>
----
- kernel/trace/trace_uprobe.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index e335576b9411..97d134e83e0f 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -156,7 +156,10 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
- 	if (unlikely(!maxlen))
- 		return -ENOMEM;
- 
--	ret = strncpy_from_user(dst, src, maxlen);
-+	if (addr == (unsigned long)current->comm)
-+		ret = strlcpy(dst, current->comm, maxlen);
-+	else
-+		ret = strncpy_from_user(dst, src, maxlen);
- 	if (ret >= 0) {
- 		if (ret == maxlen)
- 			dst[ret - 1] = '\0';
-@@ -173,7 +176,10 @@ fetch_store_strlen(unsigned long addr)
- 	int len;
- 	void __user *vaddr = (void __force __user *) addr;
- 
--	len = strnlen_user(vaddr, MAX_STRING_SIZE);
-+	if (addr == (unsigned long)current->comm)
-+		len = strlen(current->comm);
-+	else
-+		len = strnlen_user(vaddr, MAX_STRING_SIZE);
- 
- 	return (len > MAX_STRING_SIZE) ? 0 : len;
- }
-@@ -213,6 +219,9 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- 	case FETCH_OP_IMM:
- 		val = code->immediate;
- 		break;
-+	case FETCH_OP_COMM:
-+		val = (unsigned long)current->comm;
-+		break;
- 	case FETCH_OP_FOFFS:
- 		val = translate_user_vaddr(code->immediate);
- 		break;
+> ---
+>  drivers/misc/aspeed-lpc-ctrl.c | 58 +++++++++++++++++++++-------------
+>  1 file changed, 36 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/misc/aspeed-lpc-ctrl.c b/drivers/misc/aspeed-lpc-ctrl.c
+> index a024f8042259..332210e06e98 100644
+> --- a/drivers/misc/aspeed-lpc-ctrl.c
+> +++ b/drivers/misc/aspeed-lpc-ctrl.c
+> @@ -68,6 +68,7 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
+>                 unsigned long param)
+>  {
+>         struct aspeed_lpc_ctrl *lpc_ctrl = file_aspeed_lpc_ctrl(file);
+> +       struct device *dev = file->private_data;
+>         void __user *p = (void __user *)param;
+>         struct aspeed_lpc_ctrl_mapping map;
+>         u32 addr;
+> @@ -90,6 +91,12 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
+>                 if (map.window_id != 0)
+>                         return -EINVAL;
+>
+> +               /* If memory-region is not described in device tree */
+> +               if (!lpc_ctrl->mem_size) {
+> +                       dev_err(dev, "Didn't find reserved memory\n");
+> +                       return -EINVAL;
+> +               }
+> +
+>                 map.size = lpc_ctrl->mem_size;
+>
+>                 return copy_to_user(p, &map, sizeof(map)) ? -EFAULT : 0;
+> @@ -126,9 +133,18 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
+>                         return -EINVAL;
+>
+>                 if (map.window_type == ASPEED_LPC_CTRL_WINDOW_FLASH) {
+> +                       if (!lpc_ctrl->pnor_size) {
+> +                               dev_err(dev, "Didn't find host pnor flash\n");
+> +                               return -EINVAL;
+> +                       }
+>                         addr = lpc_ctrl->pnor_base;
+>                         size = lpc_ctrl->pnor_size;
+>                 } else if (map.window_type == ASPEED_LPC_CTRL_WINDOW_MEMORY) {
+> +                       /* If memory-region is not described in device tree */
+> +                       if (!lpc_ctrl->mem_size) {
+> +                               dev_err(dev, "Didn't find reserved memory\n");
+> +                               return -EINVAL;
+> +                       }
+>                         addr = lpc_ctrl->mem_base;
+>                         size = lpc_ctrl->mem_size;
+>                 } else {
+> @@ -196,17 +212,17 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
+>         if (!lpc_ctrl)
+>                 return -ENOMEM;
+>
+> +       /* If flash is described in device tree then store */
+>         node = of_parse_phandle(dev->of_node, "flash", 0);
+>         if (!node) {
+> -               dev_err(dev, "Didn't find host pnor flash node\n");
+> -               return -ENODEV;
+> -       }
+> -
+> -       rc = of_address_to_resource(node, 1, &resm);
+> -       of_node_put(node);
+> -       if (rc) {
+> -               dev_err(dev, "Couldn't address to resource for flash\n");
+> -               return rc;
+> +               dev_dbg(dev, "Didn't find host pnor flash node\n");
+> +       } else {
+> +               rc = of_address_to_resource(node, 1, &resm);
+> +               of_node_put(node);
+> +               if (rc) {
+> +                       dev_err(dev, "Couldn't address to resource for flash\n");
+> +                       return rc;
+> +               }
+>         }
+>
+>         lpc_ctrl->pnor_size = resource_size(&resm);
+> @@ -214,22 +230,22 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
+>
+>         dev_set_drvdata(&pdev->dev, lpc_ctrl);
+>
+> +       /* If memory-region is described in device tree then store */
+>         node = of_parse_phandle(dev->of_node, "memory-region", 0);
+>         if (!node) {
+> -               dev_err(dev, "Didn't find reserved memory\n");
+> -               return -EINVAL;
+> -       }
+> +               dev_dbg(dev, "Didn't find reserved memory\n");
+> +       } else {
+> +               rc = of_address_to_resource(node, 0, &resm);
+> +               of_node_put(node);
+> +               if (rc) {
+> +                       dev_err(dev, "Couldn't address to resource for reserved memory\n");
+> +                       return -ENOMEM;
+> +               }
+>
+> -       rc = of_address_to_resource(node, 0, &resm);
+> -       of_node_put(node);
+> -       if (rc) {
+> -               dev_err(dev, "Couldn't address to resource for reserved memory\n");
+> -               return -ENOMEM;
+> +               lpc_ctrl->mem_size = resource_size(&resm);
+> +               lpc_ctrl->mem_base = resm.start;
+>         }
+>
+> -       lpc_ctrl->mem_size = resource_size(&resm);
+> -       lpc_ctrl->mem_base = resm.start;
+> -
+>         lpc_ctrl->regmap = syscon_node_to_regmap(
+>                         pdev->dev.parent->of_node);
+>         if (IS_ERR(lpc_ctrl->regmap)) {
+> @@ -258,8 +274,6 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
+>                 goto err;
+>         }
+>
+> -       dev_info(dev, "Loaded at %pr\n", &resm);
+> -
+>         return 0;
+>
+>  err:
+> --
+> 2.17.1
+>
