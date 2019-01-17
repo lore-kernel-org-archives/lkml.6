@@ -2,99 +2,131 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7228CC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B57CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7BB20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D006820855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547756813;
-	bh=JdvdAGzx5pNUYFjJjXdouqCCX55bICLVqQ4ixl5Me04=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HalvMjYVSI27Z4D3262Q+OstKy/HiJnknni9llQ+Yu9tDnctOWpCU/+cTRxJclqWj
-	 bvPfAO+Dcehh92AhK+O+i3FWgQ+b+HQTKEnnPNx1KmVYfPCUrPsOZ+DH5IvWlmwLN9
-	 HrkKz+8ez/CtcWJg16hrJ/SeVde9gegUp6565vPc=
+	s=default; t=1547756860;
+	bh=2LN0b2pEyZcmNHx/q/HSwUHJ+OFapnXo/7ZJjzZgSMI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=S0qxhBxDTuCjrqPPE4BlopxS48ilPAjBuYhIPzAdSciCgA1NruDkwxJMIAZjSEsp2
+	 9igvrfnMGOwb5nh1IJTRdQPwMyIe5gypvMa1ZJ9TuPqLJZoylzsq91cXJOxe1Mv1hH
+	 epQIWREUkjR68l5sDa2x6CDcAWmeGYGSIbdMZGvA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbfAQU0v (ORCPT
+        id S1729338AbfAQU1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:26:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
+        Thu, 17 Jan 2019 15:27:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729365AbfAQU0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:26:50 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729022AbfAQU1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 15:27:38 -0500
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4DFD20855;
-        Thu, 17 Jan 2019 20:26:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D07132176F
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:27:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547756810;
-        bh=JdvdAGzx5pNUYFjJjXdouqCCX55bICLVqQ4ixl5Me04=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0LpKW5+bxSZMhUF2gV3AZhJIEgi/ORZZPhxE4KEdjeYVLD7F2YAQfGWmKaSrIZBTk
-         mIxKC03IELwRYt4b7XpQLOuqTUZu/BOu/UGURit+rh1oDOwobdPZifh6c8pX234o+e
-         NL1obv67KwPUz6koNWeuNp6Jt0DjClBzolzpX5+k=
-Date:   Thu, 17 Jan 2019 15:26:48 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Dexuan-Linux Cui <dexuan.linux@gmail.com>
-Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
-        Adrian Vladu <avladu@cloudbasesolutions.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        apilotti <apilotti@cloudbasesolutions.com>
-Subject: Re: [PATCH] hv_netvsc: fix typos in code comments
-Message-ID: <20190117202648.GD202535@sasha-vm>
-References: <20190103194308.4217-1-avladu@cloudbasesolutions.com>
- <BN6PR21MB011407C0A4C2EC0BE7A3DB41CA8D0@BN6PR21MB0114.namprd21.prod.outlook.com>
- <CAA42JLa3QEYg4-LbHem9=7ahSbte3czWAJzxRXiWvt2phxeW_Q@mail.gmail.com>
+        s=default; t=1547756857;
+        bh=2LN0b2pEyZcmNHx/q/HSwUHJ+OFapnXo/7ZJjzZgSMI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RjgICbmexgMdczEI5OACEtqWYrFZScAk3TNsnCWB7HAFfpUE/dnYOD+L8aqyDzp/q
+         pUtFUO04b/Vl2vnMVdXza76G1+kJ3pc0Ew2Rk0mGuspUf65uwViCECbO2YBJaY2cF+
+         RBjmsnXEXihbcDSpk0FhvmsWkLZrKxigmduW03e4=
+Received: by mail-wm1-f53.google.com with SMTP id r24so1915762wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:27:36 -0800 (PST)
+X-Gm-Message-State: AJcUukcMM5uN14PegCgD+9ntRR3RqpdsU2lKipVUXL0N9ZoW5eWKGx1L
+        scQ3VDwDObVhUE/HPqxJ5qhVnPDsoRjrEqnQvdJUiw==
+X-Google-Smtp-Source: ALg8bN7MSKOP0/21JXOjltlAAmBKYzTwE1r2D511kHfTY2hy/nHrEn3VjDvfVUH8+mN/r8cEPsv6UJSR9F8F17gwNbw=
+X-Received: by 2002:a7b:c7c7:: with SMTP id z7mr14010272wmk.74.1547756855114;
+ Thu, 17 Jan 2019 12:27:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAA42JLa3QEYg4-LbHem9=7ahSbte3czWAJzxRXiWvt2phxeW_Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com> <20190117003259.23141-7-rick.p.edgecombe@intel.com>
+In-Reply-To: <20190117003259.23141-7-rick.p.edgecombe@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 17 Jan 2019 12:27:23 -0800
+X-Gmail-Original-Message-ID: <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
+Message-ID: <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
+Subject: Re: [PATCH 06/17] x86/alternative: use temporary mm for text poking
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 01:18:18PM -0800, Dexuan-Linux Cui wrote:
->On Thu, Jan 3, 2019 at 4:13 PM Haiyang Zhang <haiyangz@microsoft.com> wrote:
->> > From: Adrian Vladu <avladu@cloudbasesolutions.com>
->> > Sent: Thursday, January 3, 2019 2:43 PM
->> > To: linux-kernel@vger.kernel.org
->> > Cc: Adrian Vladu <avladu@cloudbasesolutions.com>; KY Srinivasan
->> > <kys@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>; Stephen
->> > Hemminger <sthemmin@microsoft.com>; Sasha Levin <sashal@kernel.org>;
->> > David S. Miller <davem@davemloft.net>; apilotti
->> > <apilotti@cloudbasesolutions.com>
->> > Subject: [PATCH] hv_netvsc: fix typos in code comments
->> >
->> > Fix all typos from hyperv netvsc code comments.
->> >
->> > Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
->> >
->> > Cc: "K. Y. Srinivasan" <kys@microsoft.com>
->> > Cc: Haiyang Zhang <haiyangz@microsoft.com>
->> > Cc: Stephen Hemminger <sthemmin@microsoft.com>
->> > Cc: Sasha Levin <sashal@kernel.org>
->> > Cc: "David S. Miller" <davem@davemloft.net>
->> > Cc: "Alessandro Pilotti" <apilotti@cloudbasesolutions.com>
->> > ---
->>
->> Thanks.
->>
->> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+On Wed, Jan 16, 2019 at 4:33 PM Rick Edgecombe
+<rick.p.edgecombe@intel.com> wrote:
 >
->Looks good to me.
+> From: Nadav Amit <namit@vmware.com>
+>
+> text_poke() can potentially compromise the security as it sets temporary
+> PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
+> from other cores accidentally or maliciously, if an attacker gains the
+> ability to write onto kernel memory.
 
-Queued for hyperv-fixes, thank you.
+i think this may be sufficient, but barely.
 
---
-Thanks,
-Sasha
+> +       pte_clear(poking_mm, poking_addr, ptep);
+> +
+> +       /*
+> +        * __flush_tlb_one_user() performs a redundant TLB flush when PTI is on,
+> +        * as it also flushes the corresponding "user" address spaces, which
+> +        * does not exist.
+> +        *
+> +        * Poking, however, is already very inefficient since it does not try to
+> +        * batch updates, so we ignore this problem for the time being.
+> +        *
+> +        * Since the PTEs do not exist in other kernel address-spaces, we do
+> +        * not use __flush_tlb_one_kernel(), which when PTI is on would cause
+> +        * more unwarranted TLB flushes.
+> +        *
+> +        * There is a slight anomaly here: the PTE is a supervisor-only and
+> +        * (potentially) global and we use __flush_tlb_one_user() but this
+> +        * should be fine.
+> +        */
+> +       __flush_tlb_one_user(poking_addr);
+> +       if (cross_page_boundary) {
+> +               pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
+> +               __flush_tlb_one_user(poking_addr + PAGE_SIZE);
+> +       }
+
+In principle, another CPU could still have the old translation.  Your
+mutex probably makes this impossible, but it makes me nervous.
+Ideally you'd use flush_tlb_mm_range(), but I guess you can't do that
+with IRQs off.  Hmm.  I think you should add an inc_mm_tlb_gen() here.
+Arguably, if you did that, you could omit the flushes, but maybe
+that's silly.
+
+If we start getting new users of use_temporary_mm(), we should give
+some serious thought to the SMP semantics.
+
+Also, you're using PAGE_KERNEL.  Please tell me that the global bit
+isn't set in there.
+
+--Andy
