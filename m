@@ -2,145 +2,117 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D57C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B050C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCBD220851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:41:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngA7FnU4"
+	by mail.kernel.org (Postfix) with ESMTP id 45F2E20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547739716;
+	bh=Xz9fQIXuQQe0UnxUxNP5rtYpGmjpTeJVtfMuT9DisNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=PbottBQVZdUjt7V89ZMy55tX/YPpEPxJ7W69HxiVGsiSi5vhkdUMdlMtwNWWyq5Aj
+	 2vjHC9FDd7p8zitKdwGdJQjW/wxtwECHN9LFW9hLFC48KpaopkD1ILqfUH1wpI189U
+	 amKLuPR5AlUY8N8pPH6xXrppaQQ61FLbPYj8Li6Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbfAQPlK (ORCPT
+        id S1728013AbfAQPlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:41:10 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37390 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726854AbfAQPlJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:41:09 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g67so1540104wmd.2;
-        Thu, 17 Jan 2019 07:41:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/ylGOrw1kiKqI28CSL2w2XLVGVsRLas1Nz8eLY7WQDA=;
-        b=ngA7FnU4iftwG2EsosFJXjz1jXMi5w0jl8HCOf5EuCHXCe78k4lQ/8NiFxSveYV0uz
-         vSZdly7fJHNDfbnSv3fY7F1FrQaMIDMYucDYumNWAFMqx2EyRFLBAfLGSwT3X67nI+Bg
-         3QmWxUIiPTmR9FhVsWx3ZnPlNw2vmFmrLHSh69Jfb3tatsOQfnLFHKuBC+/URLr79dQi
-         UZBy3HAQm6hW7fk0vexFPdHHvdBAkrSl6X8+HfyheKh6ZcuiO6sTTje4KmAB+eRvuIGR
-         U8uz/yuCoS4amGqAU2CHpkm4MuLjArHq8+Q7x7qXLBs1r7sifZJ7xFYyGvHqEt4KDC5Q
-         5y7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/ylGOrw1kiKqI28CSL2w2XLVGVsRLas1Nz8eLY7WQDA=;
-        b=k7nFVltUeeSZlyPznJI/PiESlhhyjXDC0B8scPn4m2lKolbXOZunbfd2OvEZPnIN9f
-         l7Goiji2xYCjg2UaEfREhRN8sF66FN7lCZmG4UTldaF1m3GKJxm5bCuZ6pJsq7kbGdNP
-         Mb+HZ2l6xy8OWtJLcAPmUGq/cXWCAIBdEK5W1lmT39hLzI1lmu89eboIdvoYy8XP6Z8e
-         xnCHI1mZPkxfV3tjM6J/ZWFdlj09SK9xH/g+NDNlPqfnjjLCPfnf5aUmhN4f+Yeqzk9+
-         OrsAfey8eI6nzoehRHG78xLCVrjKwSsgjFvcUt3Lx9/Mbw+uAcANwSvFuwjvNiDLZPSC
-         etxw==
-X-Gm-Message-State: AJcUukfwgmiSq7Zj6mw4UIBTENkJkBIUMRneaV+1JL4PUML36CXv2lnW
-        duDZqxUM0rceBs0qcUlg7tx19dXSdd6XPg==
-X-Google-Smtp-Source: ALg8bN4Srk1oTF8EfYc79WdhHLhDH1qwN8Ewd4XD6omG1S5iZNQQAZUomC5yQkJWz9owyBmdA09Ubw==
-X-Received: by 2002:a1c:c58d:: with SMTP id v135mr12701156wmf.88.1547739667382;
-        Thu, 17 Jan 2019 07:41:07 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id r3sm69817303wrs.78.2019.01.17.07.41.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 07:41:06 -0800 (PST)
-Date:   Thu, 17 Jan 2019 08:41:04 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Omar Sandoval <osandov@fb.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Subject: Re: [BUG bisect] kernel BUG at block/bio.c:1833 and fail to mount
- disk
-Message-ID: <20190117154104.GA24272@flashbox>
-References: <CAJKOXPdQaxKH3z3yMBggP3dAFJ3ecgCcHk=bGaVHZ-Q+V2Riug@mail.gmail.com>
- <CAJKOXPd2WiMC8uc1YuyR+_vEScSewMzQe1Y7UGHgxvkCD+tQ7A@mail.gmail.com>
- <20190117102657.GB20220@ming.t460p>
+        Thu, 17 Jan 2019 10:41:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726162AbfAQPly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:41:54 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7567D20851;
+        Thu, 17 Jan 2019 15:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547739714;
+        bh=Xz9fQIXuQQe0UnxUxNP5rtYpGmjpTeJVtfMuT9DisNU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jV/HD/VTkFO8yqR4QhbjbJfPBlKvv0+WyGTTJB+6gPURuau+owKtGA8r2HXyZZPXE
+         +V36JRrmT852/p+dkcJvyGPc5eiAbmdINq/j3Cuavbm39c6oMUOfDVh0FmGqwf2/9k
+         ej0cZW+dihOnrc2EKwp1yXQZbeW7+oyfy3b1EZGA=
+Date:   Thu, 17 Jan 2019 16:41:51 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCHv4 07/13] node: Add heterogenous memory access attributes
+Message-ID: <20190117154151.GA3970@kroah.com>
+References: <20190116175804.30196-1-keith.busch@intel.com>
+ <20190116175804.30196-8-keith.busch@intel.com>
+ <CAJZ5v0jCEdhKndgZgJ=SdHgFBM1Bcxusm_crYzAOTZDx3s=PdQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117102657.GB20220@ming.t460p>
+In-Reply-To: <CAJZ5v0jCEdhKndgZgJ=SdHgFBM1Bcxusm_crYzAOTZDx3s=PdQ@mail.gmail.com>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 06:26:58PM +0800, Ming Lei wrote:
-> On Wed, Jan 16, 2019 at 09:54:05AM +0100, Krzysztof Kozlowski wrote:
-> > On Wed, 16 Jan 2019 at 09:52, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On today's next-20190116 I see a bug during boot:
-> > > [ 6.843308] kernel BUG at ../block/bio.c:1833!
-> > > [ 6.847723] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-> > > ...
-> > > [ 7.543824] [<c044c144>] (bio_split) from [<00000000>] ( (null))
-> > > [ 7.549881] Code: 13833b01 11c630bc e1a00006 e8bd8070 (e7f001f2)
-> > >
-> > > (not much in the calltrace)
-> > > On all my boards. Also QEMU-arm fails.
-> > >
-> > 
-> > I forgot the bisect commit:
-> > 
-> > 258cfdfaf7bd729e759a0a91fd00ac9794796ad3 is the first bad commit
-> > commit 258cfdfaf7bd729e759a0a91fd00ac9794796ad3
-> > Author: Ming Lei <ming.lei@redhat.com>
-> > Date:   Fri Jan 11 19:01:15 2019 +0800
-> > 
-> >     block: use bio_for_each_bvec() to compute multi-page bvec count
-> > 
-> > :040000 040000 d79b2e71d308650df4764ff644f29d3a24dbab96
-> > 0a5d624843b805ee0c9fd9a7e2d5163f5b15b167 M block
-> 
-> It should be one 32-bit arch specific issue, I guess.
-> 
-> The following patch should fix this issue:
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index dc4877eaf9f9..4dd7183de849 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -166,6 +166,9 @@ static unsigned get_max_segment_size(struct request_queue *q,
->  {
->  	unsigned long mask = queue_segment_boundary(q);
->  
-> +	if (mask == BLK_SEG_BOUNDARY_MASK)
-> +		return queue_max_segment_size(q);
-> +
->  	return min_t(unsigned long, mask - (mask & offset) + 1,
->  		     queue_max_segment_size(q));
->  }
-> 
-> Thanks,
-> Ming
+On Thu, Jan 17, 2019 at 04:03:42PM +0100, Rafael J. Wysocki wrote:
+>  On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
+> >
+> > Heterogeneous memory systems provide memory nodes with different latency
+> > and bandwidth performance attributes. Provide a new kernel interface for
+> > subsystems to register the attributes under the memory target node's
+> > initiator access class. If the system provides this information, applications
+> > may query these attributes when deciding which node to request memory.
+> >
+> > The following example shows the new sysfs hierarchy for a node exporting
+> > performance attributes:
+> >
+> >   # tree -P "read*|write*" /sys/devices/system/node/nodeY/classZ/
+> >   /sys/devices/system/node/nodeY/classZ/
+> >   |-- read_bandwidth
+> >   |-- read_latency
+> >   |-- write_bandwidth
+> >   `-- write_latency
+> >
+> > The bandwidth is exported as MB/s and latency is reported in nanoseconds.
+> > Memory accesses from an initiator node that is not one of the memory's
+> > class "Z" initiator nodes may encounter different performance than
+> > reported here. When a subsystem makes use of this interface, initiators
+> > of a lower class number, "Z", have better performance relative to higher
+> > class numbers. When provided, class 0 is the highest performing access
+> > class.
+> >
+> > Signed-off-by: Keith Busch <keith.busch@intel.com>
+> > ---
+> >  drivers/base/Kconfig |  8 ++++++++
+> >  drivers/base/node.c  | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/node.h | 25 +++++++++++++++++++++++++
+> >  3 files changed, 81 insertions(+)
+> >
+> > diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+> > index 3e63a900b330..6014980238e8 100644
+> > --- a/drivers/base/Kconfig
+> > +++ b/drivers/base/Kconfig
+> > @@ -149,6 +149,14 @@ config DEBUG_TEST_DRIVER_REMOVE
+> >           unusable. You should say N here unless you are explicitly looking to
+> >           test this functionality.
+> >
+> > +config HMEM_REPORTING
+> > +       bool
+> > +       default y
 
-Hi Ming,
+default y is only if the machine will not boot without it.  Please never
+make a new option y unless you really really have to have it on all
+machines in the world.
 
-We saw this issue on our CI as well: https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/170724607
+Hint, not here.
 
-I added your patch and tested locally, it boots fine now.
-
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-
-Thanks,
-Nathan
+greg k-h
