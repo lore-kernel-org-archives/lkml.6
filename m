@@ -2,127 +2,162 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A44DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91601C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AC9C20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:08:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 543E220657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:08:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gXTQ10Xn"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gwrTIPhm";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hE4mOW3h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfAQKIM (ORCPT
+        id S1728057AbfAQKIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:08:12 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43962 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbfAQKIM (ORCPT
+        Thu, 17 Jan 2019 05:08:17 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39010 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbfAQKIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:08:12 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so4594257pfk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 02:08:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+HjIxHy2YTkkHug9kwKKVx+R4/lzJQ2zziaHnfwNtT0=;
-        b=gXTQ10XnlhXUwSxfQybKblMRmC9bRikmPdTT7rRHBFXGAyRW9/ly/WqIiLeziMB9UH
-         N+JNiE0z4eITRZIaIFp+hRVpGVi4mrgjQBRwgPGLxrOqU4iDNE0762Ba/nI1nGgwd2RG
-         OZFVQTJzmUO1x4Z8F8AIsErji3dEtamnF2Jnw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+HjIxHy2YTkkHug9kwKKVx+R4/lzJQ2zziaHnfwNtT0=;
-        b=HSFWlXupTwF1T77QfpnqVW7let9NoTOE34rrXoguzSRHOUOjCb7kaA8KYj0ieOiFp+
-         KeRZDUKN2gA/aoICMkS4I83ShrByF8cTrRHbU+XM5h3PzdBZD66ot7WiJtqBXxkTrbGq
-         tkRnGFKIr1ew/E9xMkP29RRlYdQbO67cKQEHyunXWL2zGwHsk6lN0/nFI8Y123FImmIk
-         Tpb4r0oAmB35JBxryvZhQG9GcCm8uowDdxt2O2/GEDQ3OObw+PXzwOFtju6zxzsQLb5L
-         9Fwu3DXUZY22rGid/OYgbOBd5Rtyjljy7XrH7GIHrtKFxdlbPGqdx6HIB4FCKZe/f946
-         d2Fw==
-X-Gm-Message-State: AJcUukekPqlR3zPvEp3T7kLuj5rgf2xmv9vWAFYxVTPcXTeic9vPINSe
-        d/xcOIhaKpHGLr2O6tKCXfeKbQ==
-X-Google-Smtp-Source: ALg8bN5vOOzlmwPiCQJiExLQG1QkeO2rcKXMrjtF1L3GCzHIDBhN9sVTDkpwnm2Z2MIRxvddiFJlLA==
-X-Received: by 2002:a62:76cc:: with SMTP id r195mr14268347pfc.38.1547719690261;
-        Thu, 17 Jan 2019 02:08:10 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id y89sm3127863pfa.136.2019.01.17.02.08.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 02:08:09 -0800 (PST)
-Date:   Thu, 17 Jan 2019 15:38:07 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com,
-        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
+        Thu, 17 Jan 2019 05:08:16 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 66B13607F4; Thu, 17 Jan 2019 10:08:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547719695;
+        bh=dh72dpmQp78hMRCM2qBZEOQTVTgnRICZRHZTfjQ5ln8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gwrTIPhmll14wgmdiDSyKR1urv0II3Pkqq3AU4HVZJLOn6kN2uRy5nTcBf0cyXqZA
+         S4ha0eQHJPQnuZ9hy0duR/jqMfk8/QtbSPu9MD38drtSYcOHQlNfg7YW6LXMZmNX1X
+         BUGXGvi7z/EFaoqsXpq6SVw1yFQ6X2ab4a0pxcMM=
+Received: from [10.79.128.217] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CF9256024C;
+        Thu, 17 Jan 2019 10:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547719694;
+        bh=dh72dpmQp78hMRCM2qBZEOQTVTgnRICZRHZTfjQ5ln8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hE4mOW3hwy+ofOdUuDX7Kqm6w4NkNUxHM1sQdLIGaKhYWWm4FR77J/ygN9/MAxigZ
+         4Q+KRrgDRBIYyYlMeTYYRL5JGNKKpMoZBrzDl6uhw5mWvv/RKowKkSFwylIhKBrftM
+         PMqWlUgNk7NAynjMNNHQp3EA1u1vJfCAqC/dqT1E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF9256024C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH] arm64: dts: sdm845: Add CPU capacity values
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
-Message-ID: <20190117100807.pmew5iqisdcc63eq@vireshk-i7>
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <20190117063312.GE25498@builder>
- <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org>
+        Douglas Anderson <dianders@chromium.org>
+References: <20190116234039.12935-1-mka@chromium.org>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <5230df91-5d46-2d12-c31a-ca19934c521c@codeaurora.org>
+Date:   Thu, 17 Jan 2019 15:38:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20190116234039.12935-1-mka@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-01-19, 09:38, Jorge Ramirez wrote:
-> COMMON_CLK_DISABLED_UNUSED relies on the enable_count reference counter
-> to disable the clocks that were enabled by the firwmare and not by the
-> drivers.
-> 
-> the cpufreq driver does not enable the cpu clock.
-> 
-> so when clk_change_rate is called, the enable_count counter is not
-> incremented and therefore it just remains null since this was enabled by
-> the firmware.
-> 
-> I tried doing:
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> index e58bfcb..5a9f83e 100644
-> --- a/drivers/cpufreq/cpufreq-dt.c
-> +++ b/drivers/cpufreq/cpufreq-dt.c
-> @@ -124,6 +124,10 @@ static int resources_available(void)
->                 return ret;
->         }
-> 
-> + ret = clk_prepare_enable(cpu_clk);
-> + if (ret)
-> +         return ret;
-> +
->         clk_put(cpu_clk);
-> 
->         name = find_supply_name(cpu_dev);
-> 
-> 
-> and that removed the need for CLK_IGNORE_UNUSED. But I am not sure of
-> the system wide consequences of that change to cpufreq.
 
-If the cpufreq driver enables it then it should disable it on exit as
-well, right ? And in that case if you unload your driver's module, you
-will hang the system as the clock will get disabled :)
 
-Every other platform must either be marking it with CLK_IGNORE_UNUSED
-or they must be doing clk_enable from somewhere, maybe the CPU online
-path, not sure though.
+On 1/17/2019 5:10 AM, Matthias Kaehlcke wrote:
+> Specify the relative CPU capacity of all SDM845 AP cores.
+> 
+> The values were provided by Qualcomm engineers.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+
+Reviewed-by: Rajendra Nayak <rnayak@codeaurora.org>
+
+> ---
+>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index d9be5bba62c45..e01949fd44075 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -99,6 +99,7 @@
+>   			compatible = "qcom,kryo385";
+>   			reg = <0x0 0x0>;
+>   			enable-method = "psci";
+> +			capacity-dmips-mhz = <607>;
+>   			qcom,freq-domain = <&cpufreq_hw 0>;
+>   			next-level-cache = <&L2_0>;
+>   			L2_0: l2-cache {
+> @@ -115,6 +116,7 @@
+>   			compatible = "qcom,kryo385";
+>   			reg = <0x0 0x100>;
+>   			enable-method = "psci";
+> +			capacity-dmips-mhz = <607>;
+>   			qcom,freq-domain = <&cpufreq_hw 0>;
+>   			next-level-cache = <&L2_100>;
+>   			L2_100: l2-cache {
+> @@ -128,6 +130,7 @@
+>   			compatible = "qcom,kryo385";
+>   			reg = <0x0 0x200>;
+>   			enable-method = "psci";
+> +			capacity-dmips-mhz = <607>;
+>   			qcom,freq-domain = <&cpufreq_hw 0>;
+>   			next-level-cache = <&L2_200>;
+>   			L2_200: l2-cache {
+> @@ -141,6 +144,7 @@
+>   			compatible = "qcom,kryo385";
+>   			reg = <0x0 0x300>;
+>   			enable-method = "psci";
+> +			capacity-dmips-mhz = <607>;
+>   			qcom,freq-domain = <&cpufreq_hw 0>;
+>   			next-level-cache = <&L2_300>;
+>   			L2_300: l2-cache {
+> @@ -154,6 +158,7 @@
+>   			compatible = "qcom,kryo385";
+>   			reg = <0x0 0x400>;
+>   			enable-method = "psci";
+> +			capacity-dmips-mhz = <1024>;
+>   			qcom,freq-domain = <&cpufreq_hw 1>;
+>   			next-level-cache = <&L2_400>;
+>   			L2_400: l2-cache {
+> @@ -167,6 +172,7 @@
+>   			compatible = "qcom,kryo385";
+>   			reg = <0x0 0x500>;
+>   			enable-method = "psci";
+> +			capacity-dmips-mhz = <1024>;
+>   			qcom,freq-domain = <&cpufreq_hw 1>;
+>   			next-level-cache = <&L2_500>;
+>   			L2_500: l2-cache {
+> @@ -180,6 +186,7 @@
+>   			compatible = "qcom,kryo385";
+>   			reg = <0x0 0x600>;
+>   			enable-method = "psci";
+> +			capacity-dmips-mhz = <1024>;
+>   			qcom,freq-domain = <&cpufreq_hw 1>;
+>   			next-level-cache = <&L2_600>;
+>   			L2_600: l2-cache {
+> @@ -193,6 +200,7 @@
+>   			compatible = "qcom,kryo385";
+>   			reg = <0x0 0x700>;
+>   			enable-method = "psci";
+> +			capacity-dmips-mhz = <1024>;
+>   			qcom,freq-domain = <&cpufreq_hw 1>;
+>   			next-level-cache = <&L2_700>;
+>   			L2_700: l2-cache {
+> 
 
 -- 
-viresh
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
