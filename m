@@ -2,127 +2,79 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4F7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BFEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA27620855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:16:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="kNbXDsEK"
+	by mail.kernel.org (Postfix) with ESMTP id A8E0C20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:16:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbfAQQP7 (ORCPT
+        id S1729031AbfAQQQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:15:59 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:53732 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728914AbfAQQPl (ORCPT
+        Thu, 17 Jan 2019 11:16:04 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35833 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728991AbfAQQQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:15:41 -0500
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HGDOCH007147
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:15:40 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=cfxzdm+Ctb+qXoh9zaBOoWgB6hlAqiTi3QJoE7vx1qs=;
- b=kNbXDsEKPE/Lg6kiwDKpGjuhDqWCJZ5wmwJ0HTV/CogXUY41P6SGMGMi4oaOJkQcpCKR
- gOPi/ZHs4pAZzlweKD2G3gsFCkI9Ed1CNAmOatYW6zoAm7u9eX8DLjwYRQPWVnu+a/d0
- VWhG01MPb2NhFpdrmBzjJeW1RDWthKmoB9c= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2q2vnqg37f-6
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:15:40 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Thu, 17 Jan 2019 08:15:35 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id B210162E19F9; Thu, 17 Jan 2019 08:15:29 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
-        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v11 perf, bpf-next 2/9] sync tools/include/uapi/linux/perf_event.h
-Date:   Thu, 17 Jan 2019 08:15:14 -0800
-Message-ID: <20190117161521.1341602-3-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190117161521.1341602-1-songliubraving@fb.com>
-References: <20190117161521.1341602-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Thu, 17 Jan 2019 11:16:00 -0500
+Received: by mail-io1-f65.google.com with SMTP id f4so8289373ion.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:16:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UW09jR3Mveve0o0eJuP8KVFDA8mbcGUIfd5CQdcZIws=;
+        b=f475kLTKY2xcvvkez6Thm/MStl/V/Q7oz5Rk7DhgEtsKVimwferZygbBffVpwxOfWY
+         v6BWhMbXSt4lPt/DXAxI4cKUC/MYYX8/GetREk0rmzk3HLg88TOWUmy8JJutIJ8ys1pj
+         dWcumKi2rSMggbnIVaW4O7R/vSYzdG6Ccm32lYADfjnlADK/Ia0lN19wv8gxANprJ+23
+         0Qlcpwdz7fB7Z49bEzfr//6XOJbdjzXpr1nHSQWHDe5sn7OlmEkGjiq6UXlY5EdIkU7q
+         HTIxPWZ1/GUB4KvcgoHM2+TFVC8HHSFEr5kmCepCdOpFxfXJA3GTdfW2LECsXNr7XkLx
+         Z2DQ==
+X-Gm-Message-State: AJcUukcPD3Gmh1TaUUta8uwm7Wgm5lYQ0pXdxbnvCLNvmEL3X55UO2dO
+        GN1j1k4NI7ZCbeW2ETnHkpYYwEWRZV5cthn0d1xmLQ==
+X-Google-Smtp-Source: ALg8bN52KM8X0AF3Wx3aoXyIXVVHq97XuckimlopFRekQrSjx22en+lXPLUTy30tMoN/zEaeNx7wFEu+3pEjfONzN7c=
+X-Received: by 2002:a5d:8889:: with SMTP id d9mr8587221ioo.68.1547741759718;
+ Thu, 17 Jan 2019 08:15:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_05:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20190108081247.2266-1-kasong@redhat.com> <20190108081247.2266-2-kasong@redhat.com>
+ <21896.1547737461@warthog.procyon.org.uk>
+In-Reply-To: <21896.1547737461@warthog.procyon.org.uk>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Fri, 18 Jan 2019 00:15:45 +0800
+Message-ID: <CACPcB9e9ibefCgdMfKjAXV69BOoDWEmLe7K=hGG3UHW0WXeVLA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] KEYS, integrity: Link .platform keyring to .secondary_trusted_keys
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com,
+        Mimi Zohar <zohar@linux.ibm.com>, bauerman@linux.ibm.com,
+        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
+        Dave Young <dyoung@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sync changes for PERF_RECORD_KSYMBOL
+On Thu, Jan 17, 2019 at 11:04 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Kairui Song <kasong@redhat.com> wrote:
+>
+> > +extern const struct key* __init integrity_get_platform_keyring(void);
+>
+> This should really be in keys/system_keyring.h and probably shouldn't be
+> exposed directly if it can be avoided.
+>
+> David
 
-Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- tools/include/uapi/linux/perf_event.h | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+Thanks for the review, I've sent V3 of this patch series, the
+implementation changed a bit, would you mind take a look of that patch
+instead?
+https://lore.kernel.org/lkml/20190116101654.7288-1-kasong@redhat.com/
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 9de8780ac8d9..68c4da0227c5 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -372,7 +372,8 @@ struct perf_event_attr {
- 				context_switch :  1, /* context switch data */
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
--				__reserved_1   : 35;
-+				ksymbol        :  1, /* include ksymbol events */
-+				__reserved_1   : 34;
- 
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -965,9 +966,32 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_NAMESPACES			= 16,
- 
-+	/*
-+	 * Record ksymbol register/unregister events:
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header	header;
-+	 *	u64				addr;
-+	 *	u32				len;
-+	 *	u16				ksym_type;
-+	 *	u16				flags;
-+	 *	char				name[];
-+	 *	struct sample_id		sample_id;
-+	 * };
-+	 */
-+	PERF_RECORD_KSYMBOL			= 17,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-+enum perf_record_ksymbol_type {
-+	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
-+	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
-+	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
-+};
-+
-+#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
-+
- #define PERF_MAX_STACK_DEPTH		127
- #define PERF_MAX_CONTEXTS_PER_STACK	  8
- 
 -- 
-2.17.1
-
+Best Regards,
+Kairui Song
