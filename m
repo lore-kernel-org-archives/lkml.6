@@ -2,62 +2,118 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8307C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94344C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87DD220652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D70420652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbfAQRAS (ORCPT
+        id S1729229AbfAQRBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:00:18 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:55265 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728649AbfAQRAR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:00:17 -0500
-Received: from uucp by smtp.tuxdriver.com with local-rmail (Exim 4.63)
-        (envelope-from <linville@tuxdriver.com>)
-        id 1gkB1a-0004xh-ID; Thu, 17 Jan 2019 12:00:14 -0500
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by localhost.localdomain (8.15.2/8.14.6) with ESMTP id x0HGqSHk005599;
-        Thu, 17 Jan 2019 11:52:28 -0500
-Received: (from linville@localhost)
-        by localhost.localdomain (8.15.2/8.15.2/Submit) id x0HGqSpQ005591;
-        Thu, 17 Jan 2019 11:52:28 -0500
-Date:   Thu, 17 Jan 2019 11:52:28 -0500
-From:   "John W. Linville" <linville@tuxdriver.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtlwifi: rtl818x: fix indentation issue
-Message-ID: <20190117165227.GA30898@tuxdriver.com>
-References: <20190117152859.6873-1-colin.king@canonical.com>
+        Thu, 17 Jan 2019 12:01:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57134 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728649AbfAQRBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 12:01:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0049AE27;
+        Thu, 17 Jan 2019 17:01:19 +0000 (UTC)
+Subject: Re: [PATCH 16/25] mm, compaction: Check early for huge pages
+ encountered by the migration scanner
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <20190104125011.16071-1-mgorman@techsingularity.net>
+ <20190104125011.16071-17-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <724b7599-8300-15b5-2675-eecab2450f45@suse.cz>
+Date:   Thu, 17 Jan 2019 18:01:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117152859.6873-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190104125011.16071-17-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 03:28:59PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 1/4/19 1:50 PM, Mel Gorman wrote:
+> When scanning for sources or targets, PageCompound is checked for huge
+> pages as they can be skipped quickly but it happens relatively late after
+> a lot of setup and checking. This patch short-cuts the check to make it
+> earlier. It might still change when the lock is acquired but this has
+> less overhead overall. The free scanner advances but the migration scanner
+> does not. Typically the free scanner encounters more movable blocks that
+> change state over the lifetime of the system and also tends to scan more
+> aggressively as it's actively filling its portion of the physical address
+> space with data. This could change in the future but for the moment,
+> this worked better in practice and incurred fewer scan restarts.
 > 
-> There is a statement that is indented too deeply. Fix this.
+> The impact on latency and allocation success rates is marginal but the
+> free scan rates are reduced by 32% and system CPU usage is reduced by
+> 2.6%. The 2-socket results are not materially different.
+
+Hmm, interesting that adjusting migrate scanner affected free scanner. Oh well.
+
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+Nit below.
+
+> ---
+>  mm/compaction.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index 608d274f9880..921720f7a416 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -1071,6 +1071,9 @@ static bool suitable_migration_source(struct compact_control *cc,
+>  {
+>  	int block_mt;
+>  
+> +	if (pageblock_skip_persistent(page))
+> +		return false;
+> +
+>  	if ((cc->mode != MIGRATE_ASYNC) || !cc->direct_compaction)
+>  		return true;
+>  
+> @@ -1693,12 +1696,17 @@ static isolate_migrate_t isolate_migratepages(struct zone *zone,
+>  			continue;
+>  
+>  		/*
+> -		 * For async compaction, also only scan in MOVABLE blocks.
+> -		 * Async compaction is optimistic to see if the minimum amount
+> -		 * of work satisfies the allocation.
+> +		 * For async compaction, also only scan in MOVABLE blocks
+> +		 * without huge pages. Async compaction is optimistic to see
+> +		 * if the minimum amount of work satisfies the allocation.
+> +		 * The cached PFN is updated as it's possible that all
+> +		 * remaining blocks between source and target are suitable
 
-Acked-by: John W. Linville <linville@tuxdriver.com>
+								  ^ unsuitable?
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+> +		 * and the compaction scanners fail to meet.
+>  		 */
+> -		if (!suitable_migration_source(cc, page))
+> +		if (!suitable_migration_source(cc, page)) {
+> +			update_cached_migrate(cc, block_end_pfn);
+>  			continue;
+> +		}
+>  
+>  		/* Perform the isolation */
+>  		low_pfn = isolate_migratepages_block(cc, low_pfn,
+> 
+
