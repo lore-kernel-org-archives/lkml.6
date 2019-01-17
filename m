@@ -2,99 +2,146 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDB8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9C6C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D6D62054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A7120856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:40:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="Qhb3TQAM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DayZQjEB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbfAQLem (ORCPT
+        id S1728143AbfAQLj6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:34:42 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:14069 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbfAQLem (ORCPT
+        Thu, 17 Jan 2019 06:39:58 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37716 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbfAQLj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:34:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547724878;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=CMsITsKbyjvgEhreULlkX+EiLDgq7x58vODMBNcvRzQ=;
-        b=Qhb3TQAMufbkZG22rBvSdXZXwMWLOdG1mfz4Gsle4oi7H3e0WV/0K/Ys8rBRbCi7fR
-        FItT1dJrNFWGSL2YxLK7tv9u5nQP8JUL3lUWVyE7OoRM1e1arqKljsqIxNdH0lsQJCRJ
-        iY13GdS12HfYtFe8ERAyEpvvwt0KeRcx1T4DwAGtokeBw2iONMU1Clf0FaP+6WBe2/wx
-        SGctJSwgDBXnfpJZBQ89Q9OP80n874jIjOYqFwjnv/PP2ughXZhTvLOR7341A3kvnXwo
-        vXgOJu0h6LpzBhZAbCGEFo2CJrSOiAvLVyQx7TqyQLiQHlsC/XFRmuLIscRgF3QKTmTy
-        zIJA==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9yWgdNs16dfA/c7fW145n"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id 309bcfv0HBYSB7s
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 17 Jan 2019 12:34:28 +0100 (CET)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     Kalyani Akula <kalyani.akula@xilinx.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kalyani Akula <kalyania@xilinx.com>,
-        Sarat Chand Savitala <saratcha@xilinx.com>
-Subject: Re: [RFC PATCH 4/5] crypto: Adds user space interface for ALG_SET_KEY_TYPE
-Date:   Thu, 17 Jan 2019 12:34:27 +0100
-Message-ID: <4735882.YQOrfzxm5S@tauon.chronox.de>
-In-Reply-To: <1547708541-23730-5-git-send-email-kalyani.akula@xilinx.com>
-References: <1547708541-23730-1-git-send-email-kalyani.akula@xilinx.com> <1547708541-23730-5-git-send-email-kalyani.akula@xilinx.com>
+        Thu, 17 Jan 2019 06:39:58 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t18-v6so8310953ljd.4;
+        Thu, 17 Jan 2019 03:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RqoIkotrN3l6oMAC+JrcBK/f6kX7mxLOSugmUX8akyw=;
+        b=DayZQjEBT5kOQpoGi2VFE+Lz9tTTebqwjWOtbR16+0ebGzGyTuopZskDO46rrePAbK
+         BFC5JdciMoAWC9h7PJlZzQQ0ky6VS3J8892IWikOgujLnSbBE6TgeASgyluAhMvzn9D2
+         AYZH+Gl/sQpeZAldKkNZ98b2mgEIDv9JueHq6yx86dBIzzP45DzORgxhjZF4+fiRweno
+         imcNTDVw0ARgn2BvsyYZg+T/7ACPSpZZ8XovYCZ/Du+R1YTGAjk3caOSZqw9uj8li7fm
+         FChxRc6CELYunH8+CjDkMxH72RK/c1lod6sd10VCbMjLbrqxbBpFigRZfKC1GoznVbl6
+         K85w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RqoIkotrN3l6oMAC+JrcBK/f6kX7mxLOSugmUX8akyw=;
+        b=pSoiHgyPrYHx972x9TXuhmIeGXw3qoXz2D59JhY5mX5GEnXc5bbi770kNnW1BKNzd1
+         mPk3JC92zlXMatnLrQUIRp4JtcM5HcSXARSGPJd+kg3ziw65jLK3HzQUONsD5V+y3pnO
+         MDEuRDFOoUAJ6+ojkVFoztZaO/5o1zRc6czYaYBVqif+jvQLC+Or+GsjOVOAZqU79N73
+         IsikI69xLcMWhqF3jT3Qw1o/o/Tzq2Hc9Rs80O/CYeirIU3T3+V3wina34EWcvw2p8bF
+         yd8KDYOHk8TEPu9QMfjPAK5weT3bJzARMN8Dntl2G9vuizuTui0kTlAM9H6XTCcx33B6
+         3B2Q==
+X-Gm-Message-State: AJcUukeNpa7iNi3sPQ810ajBtdvRuemSUgeGHaeK2xOHpqPQngtM+tYN
+        5oPmk8b6yEo/EAgnu9xnjEEps0FgSeDBmWz3QUY=
+X-Google-Smtp-Source: ALg8bN4WjU3s0OSm/9YpUIQbO/Oo9A2A0MpGOiCgVD3iwev/FuzOnJlIV0vd6Lqn9vdpZcStOiDXH1xYeeYzkvOhrDc=
+X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr9974371lja.111.1547725195689;
+ Thu, 17 Jan 2019 03:39:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20190111150541.GA2670@jordon-HP-15-Notebook-PC>
+In-Reply-To: <20190111150541.GA2670@jordon-HP-15-Notebook-PC>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Thu, 17 Jan 2019 17:09:43 +0530
+Message-ID: <CAFqt6zYxCxzGjv3ea+dYQHcmt2P849ZgaVSH=b05m9P4=MTBEA@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Use vm_insert_range and vm_insert_range_buggy
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Cc:     linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 17. Januar 2019, 08:02:20 CET schrieb Kalyani Akula:
+On Fri, Jan 11, 2019 at 8:31 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> Previouly drivers have their own way of mapping range of
+> kernel pages/memory into user vma and this was done by
+> invoking vm_insert_page() within a loop.
+>
+> As this pattern is common across different drivers, it can
+> be generalized by creating new functions and use it across
+> the drivers.
+>
+> vm_insert_range() is the API which could be used to mapped
+> kernel memory/pages in drivers which has considered vm_pgoff
+>
+> vm_insert_range_buggy() is the API which could be used to map
+> range of kernel memory/pages in drivers which has not considered
+> vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
+>
+> We _could_ then at a later "fix" these drivers which are using
+> vm_insert_range_buggy() to behave according to the normal vm_pgoff
+> offsetting simply by removing the _buggy suffix on the function
+> name and if that causes regressions, it gives us an easy way to revert.
+>
+> There is an existing bug in [7/9], where user passed length is not
+> verified against object_count. For any value of length > object_count
+> it will end up overrun page array which could lead to a potential bug.
+> This is fixed as part of these conversion.
+>
+> Souptick Joarder (9):
+>   mm: Introduce new vm_insert_range and vm_insert_range_buggy API
+>   arch/arm/mm/dma-mapping.c: Convert to use vm_insert_range
+>   drivers/firewire/core-iso.c: Convert to use vm_insert_range_buggy
+>   drm/rockchip/rockchip_drm_gem.c: Convert to use vm_insert_range
+>   drm/xen/xen_drm_front_gem.c: Convert to use vm_insert_range
+>   iommu/dma-iommu.c: Convert to use vm_insert_range
+>   videobuf2/videobuf2-dma-sg.c: Convert to use vm_insert_range_buggy
+>   xen/gntdev.c: Convert to use vm_insert_range
+>   xen/privcmd-buf.c: Convert to use vm_insert_range_buggy
 
-Hi Kalyani,
+Any further comment on these patches ?
 
-> ALG_SET_KEY_TYPE requires caller to pass the key_type to be used
-> for AES encryption/decryption.
-> 
-> Sometimes the cipher key will be stored in the
-> device's hardware. So, there is a need to specify
-> the information about the key to use for AES operations.
-> 
-> In Xilinx ZynqMP SoC, below key types are available
-> 
-> 1. Device key, which is flashed in the HW.
-> 
-> 2. PUF KEK, which can be regenerated using the
->    helper data programmed in the HW.
-> 
-> 3. User supplied key.
-> 
-> So to choose the AES key to be used, this patch adds key-type attribute.
-
-You expose your particular driver interface to user space. So, user space 
-would need the details of you driver to know what to set. If another driver 
-has such key type support, user space would need to know about that, too. I do 
-not think this is a wise idea.
-
-If we are going to have such a keytype selection, there must be a common user 
-space interface for all drivers. I.e. define common key types the drivers then 
-can map to their particular key type interface.
-
-Besides, seem to be more a key handling issue. Wouldn't it make sense to 
-rather have such issue solved with key rings than in the kernel crypto API?
-
-Ciao
-Stephan
-
-
+>
+>  arch/arm/mm/dma-mapping.c                         | 22 ++----
+>  drivers/firewire/core-iso.c                       | 15 +----
+>  drivers/gpu/drm/rockchip/rockchip_drm_gem.c       | 17 +----
+>  drivers/gpu/drm/xen/xen_drm_front_gem.c           | 18 ++---
+>  drivers/iommu/dma-iommu.c                         | 12 +---
+>  drivers/media/common/videobuf2/videobuf2-dma-sg.c | 22 ++----
+>  drivers/xen/gntdev.c                              | 16 ++---
+>  drivers/xen/privcmd-buf.c                         |  8 +--
+>  include/linux/mm.h                                |  4 ++
+>  mm/memory.c                                       | 81 +++++++++++++++++++++++
+>  mm/nommu.c                                        | 14 ++++
+>  11 files changed, 129 insertions(+), 100 deletions(-)
+>
+> --
+> 1.9.1
+>
