@@ -2,140 +2,105 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0B7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C3AC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 781A520855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:55:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7240720856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:55:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="H0Of10pf"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kXQXFaq/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pDyFPPGT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729218AbfAQQzD (ORCPT
+        id S1729247AbfAQQzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:55:03 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53778 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728802AbfAQQyo (ORCPT
+        Thu, 17 Jan 2019 11:55:38 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37770 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728767AbfAQQzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:54:44 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d15so1806311wmb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:54:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=b8QgOE/tP8Qxz0RDuzfPpPYFYowoEBOjoA8eqPauTxo=;
-        b=H0Of10pfwb0GAxVCtSdHEMcUdQGVnzowP83zcS2ctxKASi53pk7mJaigAIOY0eQhkg
-         NmZX/E1bwDrCf/n6l1XP1LFfL8WNDNmm4LFWiWaulVt9/6IWcQvvQHe3CnXA9qhp3NCj
-         7/olVS/pMbpbUTzsNsEvwKwftD4W0IU3R9r+YBtT7jK5A9BQ5lCZUxNtpFNEBXQTm9G6
-         u6d1txDihVH8TLJ+ERFZhXOVUQ5PCn26s31KrC28xgpJfjtxvV8SsgFwgfdAv4NMNzXC
-         aCiKOeTT2jmVSh8cMkzugkzzgWQ1fCSDS7J9fUWMel44gdh/f0UERKITvwRXCxbWly4V
-         JrWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=b8QgOE/tP8Qxz0RDuzfPpPYFYowoEBOjoA8eqPauTxo=;
-        b=iMmW1OK5ZJ9J0dGMVFgYW7zUiGPYeIGBTgWsfKmsUuTC3RYXMbVsQmzBLxliiypdfq
-         wuVYILrqfjVC/n/FoMaMJgth0WnKinaAwQVb//+aS1uhx4NAsnaIbHbVc6K4QD4A9FEE
-         5Smv4Xl0lobiyqXMHGYqI5eLpMC3aku1+bHUrk04x26HObsRFRovi0rKtECQt8pS9kYT
-         K+DmYeMFbbksEk0Fn5RS3L/MivrttRxl8FmBV1Z6ehNj2hrdbSKNIsUWRq/NKaeU311A
-         LjWmZPcCdbKBex2k8S5oPZfBMnfE5deH69logVDAq014QMT/e0IFHM4kV7KnpvPfIDV6
-         mS7A==
-X-Gm-Message-State: AJcUukdXQivb7yxHPfz4Rl10bLWPLzG/LNH7QdcIbOasmlCoarxYZcqp
-        tKzAhgmPJ7B7csqrt87RslMk0g==
-X-Google-Smtp-Source: ALg8bN4SF57si1/YPd/9aUuvRaLoUikPxer9tLyuwYYMwjAf+wqgeEhhNOmtost06mEEjob9LtIuyw==
-X-Received: by 2002:a1c:96ce:: with SMTP id y197mr12976064wmd.36.1547744082833;
-        Thu, 17 Jan 2019 08:54:42 -0800 (PST)
-Received: from loys-ubuntu-BY1835A49200471.thefacebook.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id b12sm65309630wrt.17.2019.01.17.08.54.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 17 Jan 2019 08:54:42 -0800 (PST)
-From:   Loys Ollivier <lollivier@baylibre.com>
-To:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Cc:     Loys Ollivier <lollivier@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 2/4] dt-bindings: gnss: add mediatek binding
-Date:   Thu, 17 Jan 2019 17:54:32 +0100
-Message-Id: <1547744074-28308-3-git-send-email-lollivier@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
-References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
+        Thu, 17 Jan 2019 11:55:37 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5F74660A31; Thu, 17 Jan 2019 16:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547744136;
+        bh=RTpGQeuvcb5f3Ott/HNxLlLNxn36tu+Iomnxy8WHh18=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kXQXFaq/YbKYqwMzqrUc9+KLe32K9/yPS+Qk6+Cgs5QtWi7YCjibJFZ98mqGZ7DXU
+         trrUGbofFW+fSCm5olvfP/O5jnppFWro1nDXoc1RhiO1hdfNxxg1spNp8LzHiI+ACn
+         DWaYoU25Is/tfnlCcQZhAwmTYeFtrfnA/fLSomT4=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id A0BED60A44;
+        Thu, 17 Jan 2019 16:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547744134;
+        bh=RTpGQeuvcb5f3Ott/HNxLlLNxn36tu+Iomnxy8WHh18=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pDyFPPGTonbD/WD8pocLmSTYt7hmAwcrflfKvD14cOxmVhZoeM7el7Vj/kKsZYKt7
+         YMFGZe55+5M8qqYYOOzpA/AOFomRgdJOnwySC49BVFTcDuPtQ3es9ZLwDPsc5kiOwM
+         ADhDiLOIK8qw8XqGIBiswg2MmpQThaMvsYiCGgUQ=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 17 Jan 2019 22:25:33 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v8 1/3] Bluetooth: hci_qca: use wait_until_sent() for
+ power pulses
+In-Reply-To: <20190117161331.GW3691@localhost>
+References: <20190116114603.500-1-bgodavar@codeaurora.org>
+ <20190116114603.500-2-bgodavar@codeaurora.org>
+ <20190116202253.GS261387@google.com>
+ <482d8987d38f60dae1844bc30050cd06@codeaurora.org>
+ <20190117161331.GW3691@localhost>
+Message-ID: <21ac40f7314788e2d25b97628f998eb3@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding for Mediatek-based GNSS receivers.
+On 2019-01-17 21:43, Johan Hovold wrote:
+> On Thu, Jan 17, 2019 at 03:55:17PM +0530, Balakrishna Godavarthi wrote:
+>> Hi Matthias,
+>> 
+>> On 2019-01-17 01:52, Matthias Kaehlcke wrote:
+> 
+>> >> -	/* Wait for 100 uS for SoC to settle down */
+>> >> -	usleep_range(100, 200);
+>> >> +	serdev_device_wait_until_sent(hu->serdev, timeout);
+>> >> +	/* Wait of 5ms is required for assuring to send the byte on the Tx
+>> >> +	 * line and also for the controller to settle down for the received
+>> >> +	 * byte.
+>> >> +	 */
+>> >> +	usleep_range(5000, 6000);
+>> >
+>> > I incorrectly claimed that there might be still bytes sitting in the
+>> > UART FIFO when serdev_device_wait_until_sent() returns, Johan
+>> > corrected me on that (thanks!). So if it takes the SoC 100us to settle
+>> > down we should be good with the original code.
+>> 
+>> [Bala]: sure will revert, i think he commented that wait_until_sent()
+>> will only guarantee circular buffer is empty. if wait_until_sent()
+>> guarantee us that the data was transmitted from the FIFO, then 100us
+>> will work.
+> 
+> No, Matthias is correct; I claimed that the UART FIFO will be empty (at
+> least as long as flow control is disabled, otherwise it may never empty
+> and we therefore also have a time out).
+> 
+> Johan
 
-Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
----
-
-v2:
-Renamed bindings from Globaltop/gtop to Mediatek/mtk.
-Moved current-speed as an optional propertie.
-Removed the status line in the example.
-Added "mediatek,mt3339" compatible.
-
- .../devicetree/bindings/gnss/mediatek.txt          | 39 ++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gnss/mediatek.txt
-
-diff --git a/Documentation/devicetree/bindings/gnss/mediatek.txt b/Documentation/devicetree/bindings/gnss/mediatek.txt
-new file mode 100644
-index 000000000000..fd984b4a9a6d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gnss/mediatek.txt
-@@ -0,0 +1,39 @@
-+Mediatek-based GNSS Receiver DT binding
-+
-+Mediatek chipsets are used in GNSS-receiver modules produced by several
-+vendors and can use UART, SPI or I2C interfaces.
-+
-+Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
-+properties.
-+
-+Required properties:
-+
-+- compatible	: Must be one of
-+
-+			"globaltop,pa6h"
-+			"mediatek,mt3339"
-+
-+- vcc-supply	: Main voltage regulator (pin name: 3V3_IN, VCC, VDD)
-+
-+Required properties (I2C):
-+- reg		: I2C slave address
-+
-+Required properties (SPI):
-+- reg		: SPI chip select address
-+
-+Optional properties:
-+
-+- timepulse-gpios	: Time pulse GPIO
-+- v-bckp-supply		: Backup voltage regulator
-+- current-speed		: Default UART baud rate
-+
-+Example:
-+
-+serial@1234 {
-+	compatible = "ns16550a";
-+
-+	gnss {
-+		compatible = "globaltop,pa6h";
-+		vcc-supply = <&vcc_3v3>;
-+	};
-+};
+[Bala]: Thanks Johan for clarification.
 -- 
-2.7.4
-
+Regards
+Balakrishna.
