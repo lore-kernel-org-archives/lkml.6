@@ -2,150 +2,177 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A2BC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC05C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A575820856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C68DF20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:56:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ddUrGFlW"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LrK0CZYE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbfAQQ4i (ORCPT
+        id S1729299AbfAQQ4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:56:38 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37166 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728618AbfAQQ4i (ORCPT
+        Thu, 17 Jan 2019 11:56:46 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:37869 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728618AbfAQQ4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:56:38 -0500
-Received: by mail-pg1-f196.google.com with SMTP id c25so4698154pgb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:56:37 -0800 (PST)
+        Thu, 17 Jan 2019 11:56:45 -0500
+Received: by mail-ua1-f67.google.com with SMTP id u19so3701333uae.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:56:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O0BZItxe72NDpqOUQeNAUH+rms79uSn5IzgLs/SIvig=;
-        b=ddUrGFlWNS19wXFM4STS7+RiydNFM8v99ueCqW5IcmOvhrTSmLwj6ET+IH/E+neALK
-         CkaygvdZADzRaPiDrbXEM02C2hZuLTDYE5chAtlt6fL8Zn0kf7yAfpCU5IXCrN424hnn
-         K37bnxzs8gw+9D65rTdeJhtOl0MoaSFK0PX3Q=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=70nZCuQkIKbRfqYUZVeK7oZl5fyaWnmUBg0C0u3l2OE=;
+        b=LrK0CZYEJNpsxz8cLymvHGgUVV5qg8W+/CAFIxN1fZBIypBnacGhvo5OYmAZBfoCTH
+         E8FFnUJvFZggqjFEh7oqYz/CMn5mVOranCwI3CSFOdOIdo+AXGQflkLyb3CEz7XyDMJ0
+         ZO6/Q0HWe0HZwUU5uspjr/SG3LM4VjHrFsZrM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O0BZItxe72NDpqOUQeNAUH+rms79uSn5IzgLs/SIvig=;
-        b=VeB4osv9kCNrwvp/0+K6gzCTZEJ+KYNdxIb79zSV7ds6D8JMF6/TAkARiGar63MqOC
-         V2UaQs7TThl7ZdoA1h6RGErghdQivoqJLB/XgrwxJhX9+DrXUuTJhijTqadiLw3NeOeN
-         D8UW/lO5uJe7a6GHy8RDaGJAgPLRXa7xDRYQOtIy4VBgl/RpmL1PgYM+LXcOHON1mbEi
-         PI8Mjo8v1yaKXC+WESXqH6ojKX7A23TSJDyqVGRSPAnfDTqhwRQB/xX7Q1fYHcKVF4fF
-         vBykfwfqBZvPaaq6WMpKHmf55i5s7DgkEXMvDdPPGEkUiIWkEf5IbPwyvo8CsplxY62D
-         lvvA==
-X-Gm-Message-State: AJcUukebKGD8WqLDq0AtrJZEr2Qss1pA58/aOkbPnsLfvMyTqR6ky0sZ
-        sVgnu7BZk9hDAClRDRTgLu0t
-X-Google-Smtp-Source: ALg8bN63FEKZyB2rzG3V9pv9AcxURMuzrFF+wCB4YpcNM14RpdbIDE04FTvpddG2Yvwt0yxAE0tJZA==
-X-Received: by 2002:a62:824c:: with SMTP id w73mr5105470pfd.150.1547744196768;
-        Thu, 17 Jan 2019 08:56:36 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2405:204:7344:aef4:e89a:577b:dc0a:3144])
-        by smtp.gmail.com with ESMTPSA id g3sm3828317pfe.37.2019.01.17.08.56.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 08:56:36 -0800 (PST)
-Date:   Thu, 17 Jan 2019 22:26:29 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Tanglei Han <hantanglei@huawei.com>,
-        Zhuangluan Su <suzhuangluan@hisilicon.com>,
-        Ryan Grachek <ryan@edited.us>, Wei Xu <xuwei5@hisilicon.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 6/8 v3] arm64: dts: hi3660: Add dma to uart nodes
-Message-ID: <20190117165629.GI5283@Mani-XPS-13-9360>
-References: <1547141652-8660-1-git-send-email-john.stultz@linaro.org>
- <1547141652-8660-7-git-send-email-john.stultz@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=70nZCuQkIKbRfqYUZVeK7oZl5fyaWnmUBg0C0u3l2OE=;
+        b=bjU6cizHCgsIKvlkAlAn5pQ+KhBKhKvpY354EzcyQPnsDv71I3n0G63fu0+FFlIb4Z
+         DXFWqTgbprmsdzkkSYo6ZqWFg+LdWi6Rjt+boCTA5wi1bnWhWrLhn6uYv+x59tMiYvdg
+         92sB0scL66igOTwrVH9qv6tB+msi+pq1q7czPXGzg0qu0Pd176vNsnov4CA1kg2z2vgt
+         Y84QxeJos6yVAaH1ryQJObQj98H7y/tRbetbutfLABF+mztDQj7tIlJ4YTbg8Z0GYqaX
+         1LRb5RVKoy+hKLXezXMI+aU//VbnXf5RNmWHYjiEMWZwGztpYc2eFiqF06iKhQK6kD2N
+         0N1Q==
+X-Gm-Message-State: AJcUukfx6/VHRXmOI1sFMj3ezhsCUT94DFzeN/wafB8Jli9udyetiCmV
+        XAXpxrp0pfNtgsSaLYhagwUK6zdtXww=
+X-Google-Smtp-Source: ALg8bN6ZgGG/P/YN2yDUpUu6IGv/R6kzCraqDAG50XU/85rp74pXPS7O7nQiU+zzd0ddRnsMV6RQRg==
+X-Received: by 2002:ab0:3b7:: with SMTP id 52mr6087182uau.38.1547744204225;
+        Thu, 17 Jan 2019 08:56:44 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id v19sm188128uao.3.2019.01.17.08.56.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 08:56:43 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id p9so3697660uaa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:56:42 -0800 (PST)
+X-Received: by 2002:a9f:2709:: with SMTP id a9mr6185447uaa.10.1547744202573;
+ Thu, 17 Jan 2019 08:56:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547141652-8660-7-git-send-email-john.stultz@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <5c400062.1c69fb81.baac0.7895SMTPIN_ADDED_BROKEN@mx.google.com>
+In-Reply-To: <5c400062.1c69fb81.baac0.7895SMTPIN_ADDED_BROKEN@mx.google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 17 Jan 2019 08:56:30 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+HMj92iN+H1482TvWkxf7iv1w95Ru6Z_1kNzPuVjmXUw@mail.gmail.com>
+Message-ID: <CAGXu5j+HMj92iN+H1482TvWkxf7iv1w95Ru6Z_1kNzPuVjmXUw@mail.gmail.com>
+Subject: Re: [PATCH] pstore/ram: Fix failure-path memory leak in ramoops_probe
+To:     Yue Hu <huyue2@yulong.com>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 09:34:10AM -0800, John Stultz wrote:
-> Try to add DMA support to the uart nodes following
-> the assignments made in the dts from the victoria vendor kernel
-> here:
-> https://consumer.huawei.com/en/opensource/detail/?siteCode=worldwide&keywords=p10&fileType=openSourceSoftware&pageSize=10&curPage=1
-> 
-> Cc: Tanglei Han <hantanglei@huawei.com>
-> Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
-> Cc: Ryan Grachek <ryan@edited.us>
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Wei Xu <xuwei5@hisilicon.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+On Wed, Jan 16, 2019 at 8:11 PM Yue Hu <huyue2@yulong.com> wrote:
+>
+> From 12a3e710e54a00f1ccb781d38707e7d4b344403b Mon Sep 17 00:00:00 2001
+> From: Yue Hu <huyue2@yulong.com>
+> Date: Wed, 16 Jan 2019 16:58:19 +0800
+> Subject: [PATCH] pstore/ram: Fix failure-path memory leak in
+> ramoops_probe
+>
+> Missing devm_kfree(pdata) if probe fail with successful allocation
+> of platform data buffer via devm_kzalloc().
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Actually, I think this is missing a free in the normal path too. pdata
+is only allocated when:
 
-Thanks,
-Mani
+    !dev->platform_data && dev_of_node(dev)
 
+So I think it needs to be freed in both places. However, devm_*alloc()
+really only makes sense for something that will have a scope larger
+than the current function. Instead, I think we should just switch this
+to a stack variable and be done with it. Something like this (pardon
+whitespace damage):
+
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index 96f7d32cd184..be7142ae3937 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -711,18 +711,15 @@ static int ramoops_probe(struct platform_device *pdev)
+ {
+        struct device *dev = &pdev->dev;
+        struct ramoops_platform_data *pdata = dev->platform_data;
++       struct ramoops_platform_data local_data;
+        struct ramoops_context *cxt = &oops_cxt;
+        size_t dump_mem_sz;
+        phys_addr_t paddr;
+        int err = -EINVAL;
+
+        if (dev_of_node(dev) && !pdata) {
+-               pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+-               if (!pdata) {
+-                       pr_err("cannot allocate platform data buffer\n");
+-                       err = -ENOMEM;
+-                       goto fail_out;
+-               }
++               pdata = &local_data;
++               memset(pdata, 0, sizeof(*pdata));
+
+                err = ramoops_parse_dt(pdev, pdata);
+                if (err < 0)
+
+
+Does that look sensible to you?
+
+-Kees
+
+>
+> Signed-off-by: Yue Hu <huyue2@yulong.com>
 > ---
-> v3:
-> * Remove dma enablment on uart0 which would use reserved channel 0
-> ---
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> index 20ae40d..4c8d682 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> @@ -478,6 +478,8 @@
->  			compatible = "arm,pl011", "arm,primecell";
->  			reg = <0x0 0xfdf00000 0x0 0x1000>;
->  			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-> +			dma-names = "rx", "tx";
-> +			dmas =  <&dma0 2 &dma0 3>;
->  			clocks = <&crg_ctrl HI3660_CLK_GATE_UART1>,
->  				 <&crg_ctrl HI3660_CLK_GATE_UART1>;
->  			clock-names = "uartclk", "apb_pclk";
-> @@ -490,6 +492,8 @@
->  			compatible = "arm,pl011", "arm,primecell";
->  			reg = <0x0 0xfdf03000 0x0 0x1000>;
->  			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-> +			dma-names = "rx", "tx";
-> +			dmas =  <&dma0 4 &dma0 5>;
->  			clocks = <&crg_ctrl HI3660_CLK_GATE_UART2>,
->  				 <&crg_ctrl HI3660_PCLK>;
->  			clock-names = "uartclk", "apb_pclk";
-> @@ -514,6 +518,8 @@
->  			compatible = "arm,pl011", "arm,primecell";
->  			reg = <0x0 0xfdf01000 0x0 0x1000>;
->  			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-> +			dma-names = "rx", "tx";
-> +			dmas =  <&dma0 6 &dma0 7>;
->  			clocks = <&crg_ctrl HI3660_CLK_GATE_UART4>,
->  				 <&crg_ctrl HI3660_CLK_GATE_UART4>;
->  			clock-names = "uartclk", "apb_pclk";
-> @@ -526,6 +532,8 @@
->  			compatible = "arm,pl011", "arm,primecell";
->  			reg = <0x0 0xfdf05000 0x0 0x1000>;
->  			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-> +			dma-names = "rx", "tx";
-> +			dmas =  <&dma0 8 &dma0 9>;
->  			clocks = <&crg_ctrl HI3660_CLK_GATE_UART5>,
->  				 <&crg_ctrl HI3660_CLK_GATE_UART5>;
->  			clock-names = "uartclk", "apb_pclk";
-> -- 
-> 2.7.4
-> 
+>  fs/pstore/ram.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index cb9cac1..f9a6a8d 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -612,6 +612,7 @@ static int ramoops_probe(struct platform_device
+> *pdev) size_t dump_mem_sz;
+>         phys_addr_t paddr;
+>         int err = -EINVAL;
+> +       bool free_pdata = false;
+>
+>         if (dev_of_node(dev) && !pdata) {
+>                 pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata),
+> GFP_KERNEL); @@ -619,6 +620,7 @@ static int ramoops_probe(struct
+> platform_device *pdev) err = -ENOMEM;
+>                         goto fail_out;
+>                 }
+> +               free_pdata = true;
+>
+>                 err = ramoops_parse_dt(pdev, pdata);
+>                 if (err < 0)
+> @@ -754,6 +756,8 @@ static int ramoops_probe(struct platform_device
+> *pdev) fail_init_cprz:
+>         ramoops_free_przs(cxt);
+>  fail_out:
+> +       if (free_pdata)
+> +               devm_kfree(&pdev->dev, pdata);
+>         return err;
+>  }
+>
+> --
+> 1.9.1
+>
+>
+>
+>
+
+
+-- 
+Kees Cook
