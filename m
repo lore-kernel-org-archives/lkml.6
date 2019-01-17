@@ -2,94 +2,112 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBB8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9662EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E7320851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:39:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E57320851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:40:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="baiDzYw8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="llbUvU/j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729563AbfAQUjs (ORCPT
+        id S1728500AbfAQUky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:39:48 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16647 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729261AbfAQUjr (ORCPT
+        Thu, 17 Jan 2019 15:40:54 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36694 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727674AbfAQUkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:39:47 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c40e7f40000>; Thu, 17 Jan 2019 12:39:16 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 17 Jan 2019 12:39:47 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 17 Jan 2019 12:39:47 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 17 Jan
- 2019 20:39:47 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 17 Jan
- 2019 20:39:46 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 17 Jan 2019 20:39:46 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c40e8120000>; Thu, 17 Jan 2019 12:39:46 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] i2c: tegra: increase transfer timeout
-Date:   Thu, 17 Jan 2019 12:39:32 -0800
-Message-ID: <1547757572-29075-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Thu, 17 Jan 2019 15:40:53 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p6so2479580wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:40:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=L/grezJULwv9Knxf1C+1plOEJ1PG9MZ5huJPitH+iAs=;
+        b=llbUvU/jb0mub03XQ98PrTNdSh5KWnY/dFGsdffu9gPobCETinKYAkSdELfqF2sCdz
+         LsOTrbVKkQHXUi5RKn8E6doy/A7m0+tdK7DT19bqKOzIAEOtol8oz0P3o9cCmpCi/TiL
+         XT0FT7pHcpnsYawnGIUPsQ/j0xrDN5ZnAK4ARuKrJyS4zjsZAbxA5+p4vVMBPwdoQgB+
+         TYICQARZ0aOa2RFdu08xmCo93X0hXH/tj/oq6IbdWEj9CiDFSHQTf53Bn3U3haVKula4
+         SyoMcY76rPIBdQEz1ixTjRspULfIvVv6LqLjvIe9vWaQyOUAf4xZwkD+xdT076qkhWZm
+         CMvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=L/grezJULwv9Knxf1C+1plOEJ1PG9MZ5huJPitH+iAs=;
+        b=siuxwRakvJesnhqVEJ/x6yDm12GqI1i/iQS3nnkJqerMyFA6PYLiFf022Mlf9xdhpM
+         GEvixE6ouJnanPRYk5bZbtduSgKDPhmqWUXqq/InMQ2eWFbhw1mqJEEYNy+g9EG/2xuN
+         PNyRapXxdUtC95jyzp7fWp1zuIZuLQ92/fjvzf/oXf9Qrb2JQewBEl4UlbnN5xUhStIV
+         bYs1tjN9pQLtQuhBwcd45K85jSPl7jb8y6xknhOJ4EP357UJDRPPzrmGi8+0ZLDbHTT0
+         qoSM2c8+PgnnP5CkTCKRkXca1bgNtM0Zy5H16nx0AS8Ev+UvJxObkjUGdPx1SjpDrOXH
+         3G+w==
+X-Gm-Message-State: AJcUukdBkTm93NiBIVCEtcEx/F6XR9cQnGpf7wA7nNpSmwn2uWlcQrAy
+        IAY2K7drIZlq2YZKqh7d3SExEt1S
+X-Google-Smtp-Source: ALg8bN6cz6sa2sEvhl5gFhTeM48lO7SXAXKbqjRh4/be8CMEI0EnMr/7qOI6+7n61g8Go6HC90TMrw==
+X-Received: by 2002:a7b:c0c5:: with SMTP id s5mr13691610wmh.40.1547757651485;
+        Thu, 17 Jan 2019 12:40:51 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id y1sm47183040wme.1.2019.01.17.12.40.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 12:40:50 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 7C6D3114257D; Thu, 17 Jan 2019 21:40:49 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Alex Deucher <alexander.deucher@amd.com>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm: radeon: add a missing break in evergreen_cs_handle_reg
+Date:   Thu, 17 Jan 2019 21:40:47 +0100
+Message-Id: <20190117204047.1262-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190114202652.15204-1-malat@debian.org>
+References: <20190114202652.15204-1-malat@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547757556; bh=tKX/9B7fnQLWRPPC23IkONvQaMpzZYVtD/vT+rGJw9s=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=baiDzYw8D7+v3Bk9Oq38YNAFPzMBfJMJ4d9MQ6TlQdPfyKh4GnbRoObmpN2cGiHvn
-         QmHr041dwQa3hUdFTd9o4esK52pj4bCsPMKFqcBeVUYO1Vz4h5t5d/3ASlQWszeE1E
-         oh9gJyyV8bvzXf+w2lg9NaYez+P/xG/BsymKqZOu44eMCB1idlDyoHARYFnTI2jVhy
-         +8/r1VjllCfNjbu+bvxWKZgD8OwStMZV/AulljtieAoDqyzxnrKaDMFqYu0enajpo3
-         M50rQsmRqa9AkzsZpDxhSR2hlZeTxCxuQcAfQNxTPU8dLTGvr1DopQL9OQUBrUA387
-         PE54dEB+tRSLQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-increase transfer timeout to 10s to allow enough time during max
-transfer size.
+In commit dd220a00e8bd ("drm/radeon/kms: add support for streamout v7")
+case statements were added without a terminating break statement. This
+commit adds the missing break. This was discovered during a compilation
+with W=1.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+This commit removes the following warning:
+
+  drivers/gpu/drm/radeon/evergreen_cs.c:1301:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
+
+Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: dd220a00e8bd ("drm/radeon/kms: add support for streamout v7")
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Add missing break statement, instead of marking it as fall through
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e417ebf7628c..ca7c581fb4c0 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -25,7 +25,7 @@
- 
- #include <asm/unaligned.h>
- 
--#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-+#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(10000))
- #define BYTES_PER_FIFO_WORD 4
- 
- #define I2C_CNFG				0x000
+ drivers/gpu/drm/radeon/evergreen_cs.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c b/drivers/gpu/drm/radeon/evergreen_cs.c
+index f471537c852f..1e14c6921454 100644
+--- a/drivers/gpu/drm/radeon/evergreen_cs.c
++++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+@@ -1299,6 +1299,7 @@ static int evergreen_cs_handle_reg(struct radeon_cs_parser *p, u32 reg, u32 idx)
+ 			return -EINVAL;
+ 		}
+ 		ib[idx] += (u32)((reloc->gpu_offset >> 8) & 0xffffffff);
++		break;
+ 	case CB_TARGET_MASK:
+ 		track->cb_target_mask = radeon_get_ib_value(p, idx);
+ 		track->cb_dirty = true;
 -- 
-2.7.4
+2.19.2
 
