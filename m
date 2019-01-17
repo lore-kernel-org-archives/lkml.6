@@ -2,88 +2,104 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26957C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F407DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E998C20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:59:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547737182;
-	bh=TTq+3ukVouDlvXKwUE+gRDYKa4sJzEnhYZzPDhKf5s4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=YWQ48+jZvwdcuiYfju/3ttvRBa7soPqKPN+jhrPHCCo19qp/z6ht77rnfwTQq+yAd
-	 sGmAo6EndP+eI55nDbbvoH+8h5pAzjSQwGUtp7r6pRGjKaf6jIUaUux7F0NdbA9bp1
-	 KwuBuR9T9yb5/E6UV5cqs473LXpCEKdbUlM+LTOo=
+	by mail.kernel.org (Postfix) with ESMTP id C21DA20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:01:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A2Eu5a95"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbfAQO7k (ORCPT
+        id S1727900AbfAQPBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 09:59:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727714AbfAQO7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 09:59:39 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2127A20851;
-        Thu, 17 Jan 2019 14:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547737179;
-        bh=TTq+3ukVouDlvXKwUE+gRDYKa4sJzEnhYZzPDhKf5s4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Tb921DvSiyTtfgRJ8P+tjIxP01bxzQjNfG3cNOxemX+oQhu8NsMjWi+U1GVb6toQe
-         IcQWt0e7/94XE7RU7Ct35hMPpYaoRBOdaS6ksvz7KCc2GMttq42XfHfPcWk3VNSU3f
-         ezu21zGh9WaRBlSwVIAHP0HHW8viAqi3r5VG/Vag=
-Date:   Thu, 17 Jan 2019 08:59:38 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ajay Kaher <akaher@vmware.com>
-Cc:     kys@microsoft.com, haiyangz@microsoft.com,
-        devel@linuxdriverproject.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jork Loeser <jloeser@microsoft.com>
-Subject: Re: [PATCH 2/3] PCI: hv: Add vPCI version protocol negotiation
-Message-ID: <20190117145937.GE158366@google.com>
-References: <1547758038-5255-1-git-send-email-akaher@vmware.com>
- <1547758038-5255-3-git-send-email-akaher@vmware.com>
+        Thu, 17 Jan 2019 10:01:21 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56422 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfAQPBV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:01:21 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0HF0s0U002070;
+        Thu, 17 Jan 2019 09:00:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547737254;
+        bh=rdGQk9n2YzbzcczW3hOu0Ip4buEmlda/DN4Kz6Lt+Y4=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=A2Eu5a95wECgOPvbNyIpTeppAXFwQZU1fBsfB1MrdONwwu3Njia0ON4Wc8+pylKGc
+         wHZlPlYRXY+Gi+zGmkG2Ckc/kjz8gMpwt31DCSMz9vJBXcyQc156KqJnyFpo1b04zk
+         eqdZFEaj+stfp0O2pt+Rap9VmIa9JVz/y0MMAMg0=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0HF0sKj108553
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 09:00:54 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 17
+ Jan 2019 09:00:54 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 17 Jan 2019 09:00:53 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0HF0rC6003734;
+        Thu, 17 Jan 2019 09:00:53 -0600
+Date:   Thu, 17 Jan 2019 09:00:53 -0600
+From:   Bin Liu <b-liu@ti.com>
+To:     <min.guo@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
+        <hdegoede@redhat.com>
+Subject: Re: [PATCH v3 0/4] Add MediaTek MUSB Controller Driver
+Message-ID: <20190117150053.GH18026@uda0271908>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>, min.guo@mediatek.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>, chunfeng.yun@mediatek.com,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, tony@atomide.com,
+        hdegoede@redhat.com
+References: <1547709348-17506-1-git-send-email-min.guo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1547758038-5255-3-git-send-email-akaher@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1547709348-17506-1-git-send-email-min.guo@mediatek.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 02:17:17AM +0530, Ajay Kaher wrote:
-> Hyper-V vPCI offers different protocol versions.  Add the infra for
-> negotiating the one to use.
+On Thu, Jan 17, 2019 at 03:15:44PM +0800, min.guo@mediatek.com wrote:
+> From: Min Guo <min.guo@mediatek.com>
 > 
-> Signed-off-by: Jork Loeser <jloeser@microsoft.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-
-I did not sign off on this, please remove.
-
-> Reviewed-by: K. Y. Srinivasan <kys@microsoft.com>
-> Acked-by: K. Y. Srinivasan <kys@microsoft.com>
-> Signed-off-by: Ajay Kaher <akaher@vmware.com>
-> ---
->  drivers/pci/host/pci-hyperv.c | 72 +++++++++++++++++++++++++++++++------------
->  1 file changed, 53 insertions(+), 19 deletions(-)
+> These patches introduce the MediaTek MUSB controller driver.
 > 
-> diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-> index 9e44adf..6eed85b 100644
-> --- a/drivers/pci/host/pci-hyperv.c
-> +++ b/drivers/pci/host/pci-hyperv.c
-> @@ -65,22 +65,37 @@
->   * major version.
->   */
->  
-> -#define PCI_MAKE_VERSION(major, minor) ((u32)(((major) << 16) | (major)))
-> +#define PCI_MAKE_VERSION(major, minor) ((u32)(((major) << 16) | (minor)))
+> The driver can be configured as Dual-Role Device (DRD),
+> Peripheral Only and Host Only modes. This has beed tested on
+> MT2701 with a variety of devices in host mode and with the 
+> f_mass gadget driver in peripheral mode, plugging otg cables
+> in/out a lot of times in all possible imaginable plug orders.
+> 
+> changes in v3:
 
-This looks like a bug fix that should be in its own patch.
+Please put the change log in each individual patch, which helps in
+viewing patches.
+
+Regards,
+-Bin.
