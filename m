@@ -2,140 +2,287 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B07CEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BC1C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8972620855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A8A9205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:33:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="EblUqcEo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbfAQNbZ (ORCPT
+        id S1727268AbfAQNdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:31:25 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45980 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726035AbfAQNbZ (ORCPT
+        Thu, 17 Jan 2019 08:33:42 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:37689 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbfAQNdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:31:25 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HDTbjt049430
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:31:23 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2r3fyd77-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:31:22 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Thu, 17 Jan 2019 13:31:21 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 17 Jan 2019 13:31:17 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HDVGfR37945534
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Jan 2019 13:31:17 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DA024AE057;
-        Thu, 17 Jan 2019 13:31:16 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 96646AE045;
-        Thu, 17 Jan 2019 13:31:16 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.95])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 17 Jan 2019 13:31:16 +0000 (GMT)
-Date:   Thu, 17 Jan 2019 14:31:15 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-s390@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH 4/5] s390: autogenerate compat syscall wrappers
-References: <20190116131527.2071570-1-arnd@arndb.de>
- <20190116131527.2071570-5-arnd@arndb.de>
+        Thu, 17 Jan 2019 08:33:41 -0500
+Received: by mail-yb1-f195.google.com with SMTP id 2so2989116ybw.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 05:33:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZRARg234UQKVSq41AjrEKQ+5c7yzrHeZ4hw/irAy5ws=;
+        b=EblUqcEo9Li6sgfPoEh51lq1Jqin+oA5kUE4ILCnsCbpILc4POXuGzeu30FhnSWnbf
+         z152M8Gzb7N0KujOIMTmtk7vfgWlQw4fubXLZVTO54jymDytkpKAsV3v3EElByiriGRK
+         MnwYZmoVXORtw6t55zhdD6jI9MJG4IEGe69TPujKF1Xk3VZdRrEwa8jMUCX0rpg2qG9l
+         fYUVcu4GODzWIGjKUYb8zihTvNbwrbuE1oNYiX1ZMTEkt07xG6yLSZ4YajqTpfJvbw//
+         WSP7RxXwUEqTsw0CyJNkWmB9LaGk6rEScM5ghsJaP4Vs+Y8+Ujp9PCAe2PgTF/lfcMSJ
+         X5GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZRARg234UQKVSq41AjrEKQ+5c7yzrHeZ4hw/irAy5ws=;
+        b=c77KvysJW4jwcd1hClonO3ky3T4zitoJxqppp3rAScCwin97ohqqAX2LxcXh9mo7i2
+         ddrsRwSgsq1CJFz76lBwGnOPv0mexs2zLqpvem2tc3IZN/zM69tGco4wZiS2bQNU1v7p
+         MPH81KrimB5KQ48gGq3P9Mh0mBT0m4PS++UfHa5yJgdiL4nHy4Wso5mVnY1Tj6b3uYiN
+         mQqAOaHMNpOmF7SjzIRlp+DxkFxRwPayJfeT8PVFsOuCH0mBdx1t/OTYlqF8/xhLWXQz
+         gaS2d+AtcEpZd2iMohAFvibyhNRQyrX4Q8cuT1q8xCSYz5HWuGiEtyZR6bLSHzBuwalu
+         LE1g==
+X-Gm-Message-State: AJcUukcxYOz4uULK141aWeUYL/UItS0BL4UOd9e8933qU3BsGeCezQub
+        BnZudSuCyOd//E1NABzEgA7aQA==
+X-Google-Smtp-Source: ALg8bN596NMzviejCC9J+HUnvsbq2QQ3OqR5yiZfa9Y/HY6VdbT0dLYoeqosR52sBeAmv1/J4kgnsg==
+X-Received: by 2002:a25:4cc4:: with SMTP id z187mr9886470yba.121.1547732020037;
+        Thu, 17 Jan 2019 05:33:40 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id k64sm656400ywc.56.2019.01.17.05.33.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 05:33:39 -0800 (PST)
+Date:   Thu, 17 Jan 2019 08:33:38 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH v4 6/9] drm/bridge: cdns: Separate DSI and D-PHY
+ configuration
+Message-ID: <20190117133338.GA114153@art_vandelay>
+References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
+ <df619f059617d85c00efa146884e295240a07ae7.1547026369.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20190116131527.2071570-5-arnd@arndb.de>
-X-TM-AS-GCONF: 00
-x-cbid: 19011713-0028-0000-0000-0000033A74A8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011713-0029-0000-0000-000023F79FD3
-Message-Id: <20190117133115.GC18351@osiris>
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=862 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901170099
+In-Reply-To: <df619f059617d85c00efa146884e295240a07ae7.1547026369.git-series.maxime.ripard@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 02:15:22PM +0100, Arnd Bergmann wrote:
-> Any system call that takes a pointer argument on s390 requires
-> a wrapper function to do a 31-to-64 zero-extension, these are
-> currently generated in arch/s390/kernel/compat_wrapper.c.
+On Wed, Jan 09, 2019 at 10:33:23AM +0100, Maxime Ripard wrote:
+> The current configuration of the DSI bridge and its associated D-PHY is
+> intertwined. In order to ease the future conversion to the phy framework
+> for the D-PHY part, let's split the configuration in two.
 > 
-> On arm64 and x86, we already generate similar wrappers for all
-> system calls in the place of their definition, just for a different
-> purpose (they load the arguments from pt_regs).
-> 
-> We can do the same thing here, by adding an asm/syscall_wrapper.h
-> file with a copy of all the relevant macros to override the generic
-> version. Besides the addition of the compat entry point, these also
-> rename the entry points with a __s390_ or __s390x_ prefix, similar
-> to what we do on arm64 and x86. This in turn requires renaming
-> a few things, and adding a proper ni_syscall() entry point.
-> 
-> In order to still compile system call definitions that pass an
-> loff_t argument, the __SC_COMPAT_CAST() macro checks for that
-> and forces an -ENOSYS error, which was the best I could come up
-> with. Those functions must obviously not get called from user
-> space, but instead require hand-written compat_sys_*() handlers,
-> which fortunately already exist.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 > ---
->  arch/s390/Kconfig                       |   1 +
->  arch/s390/include/asm/syscall_wrapper.h | 136 ++++++++++++++++++++++++
->  arch/s390/kernel/compat_wrapper.c       |  23 +---
->  arch/s390/kernel/entry.S                |   4 +-
->  arch/s390/kernel/sys_s390.c             |   5 +
->  5 files changed, 148 insertions(+), 21 deletions(-)
->  create mode 100644 arch/s390/include/asm/syscall_wrapper.h
+>  drivers/gpu/drm/bridge/cdns-dsi.c | 96 ++++++++++++++++++++++----------
+>  1 file changed, 68 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c b/drivers/gpu/drm/bridge/cdns-dsi.c
+> index ce9496d13986..3ac6dd524b6d 100644
+> --- a/drivers/gpu/drm/bridge/cdns-dsi.c
+> +++ b/drivers/gpu/drm/bridge/cdns-dsi.c
+> @@ -545,6 +545,11 @@ bridge_to_cdns_dsi_input(struct drm_bridge *bridge)
+>  	return container_of(bridge, struct cdns_dsi_input, bridge);
+>  }
+>  
+> +static unsigned int mode_to_dpi_hfp(const struct drm_display_mode *mode)
+> +{
+> +	return mode->crtc_hsync_start - mode->crtc_hdisplay;
+> +}
+> +
+>  static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
+>  				     struct cdns_dphy_cfg *cfg,
+>  				     unsigned int dpi_htotal,
+> @@ -731,14 +736,12 @@ static unsigned int dpi_to_dsi_timing(unsigned int dpi_timing,
+>  static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
+>  			     const struct drm_display_mode *mode,
+>  			     struct cdns_dsi_cfg *dsi_cfg,
+> -			     struct cdns_dphy_cfg *dphy_cfg,
+>  			     bool mode_valid_check)
+>  {
+> -	unsigned long dsi_htotal = 0, dsi_hss_hsa_hse_hbp = 0;
+>  	struct cdns_dsi_output *output = &dsi->output;
+> -	unsigned int dsi_hfp_ext = 0, dpi_hfp, tmp;
+> +	unsigned int tmp;
+>  	bool sync_pulse = false;
+> -	int bpp, nlanes, ret;
+> +	int bpp, nlanes;
+>  
+>  	memset(dsi_cfg, 0, sizeof(*dsi_cfg));
+>  
+> @@ -757,8 +760,6 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
+>  		       mode->crtc_hsync_end : mode->crtc_hsync_start);
+>  
+>  	dsi_cfg->hbp = dpi_to_dsi_timing(tmp, bpp, DSI_HBP_FRAME_OVERHEAD);
+> -	dsi_htotal += dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+> -	dsi_hss_hsa_hse_hbp += dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+>  
+>  	if (sync_pulse) {
+>  		if (mode_valid_check)
+> @@ -768,49 +769,90 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
+>  
+>  		dsi_cfg->hsa = dpi_to_dsi_timing(tmp, bpp,
+>  						 DSI_HSA_FRAME_OVERHEAD);
+> -		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+> -		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+>  	}
+>  
+>  	dsi_cfg->hact = dpi_to_dsi_timing(mode_valid_check ?
+>  					  mode->hdisplay : mode->crtc_hdisplay,
+>  					  bpp, 0);
+> -	dsi_htotal += dsi_cfg->hact;
+> +	dsi_cfg->hfp = dpi_to_dsi_timing(mode_to_dpi_hfp(mode), bpp,
+> +					 DSI_HFP_FRAME_OVERHEAD);
 
-The patch below is needed as compile fix (allnoconfig).
-I will add this to your patch, no resend needed.
+We're throwing away the mode_valid_check switch here to flip between crtc_h*
+value and h* value. Is that intentional? We're using it above for hdisplay, so
+it's a bit confusing.
 
-diff --git a/arch/s390/include/asm/syscall_wrapper.h b/arch/s390/include/asm/syscall_wrapper.h
-index 27ebe871692f..873e7a7794b3 100644
---- a/arch/s390/include/asm/syscall_wrapper.h
-+++ b/arch/s390/include/asm/syscall_wrapper.h
-@@ -106,11 +106,10 @@
- 	asmlinkage long __s390x_sys_##sname(void)
- 
- #define COND_SYSCALL(name)						\
--	cond_syscall(__s390x_sys_##name)				\
--	cond_syscall(__s390_sys_##name)
-+	cond_syscall(__s390x_sys_##name)
- 
- #define SYS_NI(name)							\
--	SYSCALL_ALIAS(__s390_sys_##name, sys_ni_posix_timers);
-+	SYSCALL_ALIAS(__s390x_sys_##name, sys_ni_posix_timers);
- 
- #endif /* CONFIG_COMPAT */
- 
+>  
+> -	if (mode_valid_check)
+> -		dpi_hfp = mode->hsync_start - mode->hdisplay;
+> -	else
+> -		dpi_hfp = mode->crtc_hsync_start - mode->crtc_hdisplay;
+> +	return 0;
+> +}
+> +
+> +static int cdns_dphy_validate(struct cdns_dsi *dsi,
+> +			      struct cdns_dsi_cfg *dsi_cfg,
+> +			      struct cdns_dphy_cfg *dphy_cfg,
+> +			      const struct drm_display_mode *mode,
+> +			      bool mode_valid_check)
+> +{
+> +	struct cdns_dsi_output *output = &dsi->output;
+> +	unsigned long dsi_htotal;
+> +	unsigned int dsi_hfp_ext = 0;
+> +
+> +	int ret;
+>  
+> -	dsi_cfg->hfp = dpi_to_dsi_timing(dpi_hfp, bpp, DSI_HFP_FRAME_OVERHEAD);
+> +	dsi_htotal = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+> +	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+> +		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+> +
+> +	dsi_htotal += dsi_cfg->hact;
+>  	dsi_htotal += dsi_cfg->hfp + DSI_HFP_FRAME_OVERHEAD;
+>  
+>  	if (mode_valid_check)
+>  		ret = cdns_dsi_get_dphy_pll_cfg(dsi->dphy, dphy_cfg,
+> -						mode->htotal, bpp,
+> +						mode->htotal,
+>  						mode->clock * 1000,
+> -						dsi_htotal, nlanes,
+> +						mipi_dsi_pixel_format_to_bpp(output->dev->format),
+> +						dsi_htotal,
+> +						output->dev->lanes,
+>  						&dsi_hfp_ext);
+>  	else
+>  		ret = cdns_dsi_get_dphy_pll_cfg(dsi->dphy, dphy_cfg,
+> -						mode->crtc_htotal, bpp,
+> +						mode->crtc_htotal,
+> +						mipi_dsi_pixel_format_to_bpp(output->dev->format),
+>  						mode->crtc_clock * 1000,
+> -						dsi_htotal, nlanes,
+> +						dsi_htotal,
+> +						output->dev->lanes,
+>  						&dsi_hfp_ext);
+> -
+>  	if (ret)
+>  		return ret;
+>  
+>  	dsi_cfg->hfp += dsi_hfp_ext;
+> -	dsi_htotal += dsi_hfp_ext;
+> -	dsi_cfg->htotal = dsi_htotal;
+> +	dsi_cfg->htotal = dsi_htotal + dsi_hfp_ext;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
+> +			       const struct drm_display_mode *mode,
+> +			       struct cdns_dsi_cfg *dsi_cfg,
+> +			       struct cdns_dphy_cfg *dphy_cfg,
+> +			       bool mode_valid_check)
+> +{
+> +	struct cdns_dsi_output *output = &dsi->output;
+> +	unsigned long dsi_hss_hsa_hse_hbp;
+> +	unsigned int nlanes = output->dev->lanes;
+> +	int ret;
+> +
+> +	ret = cdns_dsi_mode2cfg(dsi, mode, dsi_cfg, mode_valid_check);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cdns_dphy_validate(dsi, dsi_cfg, dphy_cfg, mode, mode_valid_check);
+> +	if (ret)
+> +		return ret;
+> +
+> +	dsi_hss_hsa_hse_hbp = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+> +	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+> +		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+>  
+>  	/*
+>  	 * Make sure DPI(HFP) > DSI(HSS+HSA+HSE+HBP) to guarantee that the FIFO
+>  	 * is empty before we start a receiving a new line on the DPI
+>  	 * interface.
+>  	 */
+> -	if ((u64)dphy_cfg->lane_bps * dpi_hfp * nlanes <
+> +	if ((u64)dphy_cfg->lane_bps * mode_to_dpi_hfp(mode) * nlanes <
+>  	    (u64)dsi_hss_hsa_hse_hbp *
+>  	    (mode_valid_check ? mode->clock : mode->crtc_clock) * 1000)
+>  		return -EINVAL;
+> @@ -842,7 +884,7 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+>  	struct cdns_dsi_output *output = &dsi->output;
+>  	struct cdns_dphy_cfg dphy_cfg;
+>  	struct cdns_dsi_cfg dsi_cfg;
+> -	int bpp, nlanes, ret;
+> +	int bpp, ret;
+>  
+>  	/*
+>  	 * VFP_DSI should be less than VFP_DPI and VFP_DSI should be at
+> @@ -860,11 +902,9 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+>  	if ((mode->hdisplay * bpp) % 32)
+>  		return MODE_H_ILLEGAL;
+>  
+> -	nlanes = output->dev->lanes;
+> -
+> -	ret = cdns_dsi_mode2cfg(dsi, mode, &dsi_cfg, &dphy_cfg, true);
+> +	ret = cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg, true);
+>  	if (ret)
+> -		return MODE_CLOCK_RANGE;
+> +		return MODE_BAD;
+>  
+>  	return MODE_OK;
+>  }
+> @@ -990,7 +1030,7 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+>  	bpp = mipi_dsi_pixel_format_to_bpp(output->dev->format);
+>  	nlanes = output->dev->lanes;
+>  
+> -	WARN_ON_ONCE(cdns_dsi_mode2cfg(dsi, mode, &dsi_cfg, &dphy_cfg, false));
+> +	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg, false));
+>  
+>  	cdns_dsi_hs_init(dsi, &dphy_cfg);
+>  	cdns_dsi_init_link(dsi);
+> -- 
+> git-series 0.9.1
 
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
