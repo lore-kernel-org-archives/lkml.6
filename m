@@ -2,167 +2,510 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E2DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DE0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC39320859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:08:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41B5020859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:09:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QTfYXPiq"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E0kTJfGU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbfAQUIS (ORCPT
+        id S1729442AbfAQUJO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:08:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51676 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728797AbfAQUIR (ORCPT
+        Thu, 17 Jan 2019 15:09:14 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59290 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729380AbfAQUJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:08:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jscXmMYN7AfUsu7lB13fHEmXJtoPvVFTggQ639HBNYk=; b=QTfYXPiqAGc/1d+PwTETkN0DTn
-        iyEaeYmwLf6GM6PMaRj7SQLikxeEWeOz+ww9rhx7eyg4ZUCSZ2QrTwBYv0WGTYLgDU+NvFPxxYAPZ
-        szmSg3X8/p+N/i1Rx5Xgl7a5LoG1DPpSPUG5vzanpbKHCaqXg2vF7Gi9n8B8vBki1Qmw61vis8BD9
-        e4pxfRAHsGUN/hiv+DFZyLgSflhk1t9xsmiNvvG+0pErpk6Bwh/Jd3VZKj8I5nOjDA3nhBK3c+XGM
-        Li/2QGQ3ahPHsb1k0w/F0PP+N+gnhlZd9aLV6Y4jnhQXrD4+OgPlbZc9BJptQ27xG6Q+CkNioAmuw
-        38aGmi8A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gkDxZ-0007Ki-DU
-        for linux-kernel@vger.kernel.org; Thu, 17 Jan 2019 20:08:17 +0000
-Date:   Thu, 17 Jan 2019 12:08:17 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Subject: Design of xa_alloc
-Message-ID: <20190117200816.GP6310@bombadil.infradead.org>
+        Thu, 17 Jan 2019 15:09:10 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0HK95Ss112971;
+        Thu, 17 Jan 2019 14:09:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547755745;
+        bh=RKLcTSr04TSlQi9fMIu9A45VNIlcyL5WtUy32IyKZRA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=E0kTJfGUqWwK6D/muWzFijHO1OC0bXev7KeNkni0/FapbaB9Tyn5F1qSJJiV4Iu41
+         BPOWhTP1thAqnuYOiT/xRgnD7gZHRvhC52+Q4IlSrWn+ChK3gzO0mtNYMtlbDKfKtJ
+         EFwr9hryUjLF3aZSlX2rVIWkC8YsmmTTWfCAdlGQ=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0HK959L101927
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 14:09:05 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 17
+ Jan 2019 14:09:05 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 17 Jan 2019 14:09:05 -0600
+Received: from [172.22.100.90] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0HK95RQ004848;
+        Thu, 17 Jan 2019 14:09:05 -0600
+Subject: Re: [PATCH v4 1/4] can: m_can: Create a m_can platform framework
+To:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>
+CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190117200601.16416-1-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <aa72c1a7-ee16-dbde-0b75-96f9632ec431@ti.com>
+Date:   Thu, 17 Jan 2019 14:08:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190117200601.16416-1-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Wolfgang
 
-As part of getting rid of the radix tree, I need to replace idr_alloc()
-with xa_alloc().  xa_alloc() takes the internal xa_lock (and has
-xa_alloc_irq(), xa_alloc_bh() and __xa_alloc() variations which handle
-the lock the way you probably expect them to).
+On 1/17/19 2:05 PM, Dan Murphy wrote:
+> Create a m_can platform framework that peripherial
+> devices can register to and use common code and register sets.
+> The peripherial devices may provide read/write and configuration
+> support of the IP.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  drivers/net/can/m_can/m_can.c          |   6 +
+>  drivers/net/can/m_can/m_can_platform.c | 209 +++++++++++++++++++++++++
+>  drivers/net/can/m_can/m_can_platform.h | 163 +++++++++++++++++++
+>  3 files changed, 378 insertions(+)
+>  create mode 100644 drivers/net/can/m_can/m_can_platform.c
+>  create mode 100644 drivers/net/can/m_can/m_can_platform.h
+> 
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> index 9b449400376b..f817b28582e9 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -414,6 +414,9 @@ static inline void m_can_config_endisable(const struct m_can_priv *priv,
+>  	u32 timeout = 10;
+>  	u32 val = 0;
+>  
+> +	if (cccr & CCCR_CSR)
+> +		cccr &= ~CCCR_CSR;
+> +
+>  	if (enable) {
+>  		/* enable m_can configuration */
+>  		m_can_write(priv, M_CAN_CCCR, cccr | CCCR_INIT);
+> @@ -1155,6 +1158,9 @@ static void m_can_chip_config(struct net_device *dev)
+>  	m_can_set_bittiming(dev);
+>  
+>  	m_can_config_endisable(priv, false);
+> +
+> +	if (priv->device_init)
+> +		priv->device_init(priv);
+>  }
+>  
+>  static void m_can_start(struct net_device *dev)
+> diff --git a/drivers/net/can/m_can/m_can_platform.c b/drivers/net/can/m_can/m_can_platform.c
+> new file mode 100644
+> index 000000000000..03172911323a
+> --- /dev/null
+> +++ b/drivers/net/can/m_can/m_can_platform.c
+> @@ -0,0 +1,209 @@
+> +/*
+> + * CAN bus driver for Bosch M_CAN controller
+> + *
+> + * Copyright (C) 2014 Freescale Semiconductor, Inc.
+> + *	Dong Aisheng <b29396@freescale.com>
+> + *
+> + * Bosch M_CAN user manual can be obtained from:
+> + * http://www.bosch-semiconductors.de/media/pdf_1/ipmodules_1/m_can/
+> + * mcan_users_manual_v302.pdf
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2. This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/netdevice.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/can/dev.h>
+> +#include <linux/pinctrl/consumer.h>
+> +
+> +#include "m_can_platform.h"
+> +
+> +struct m_can_plat_priv {
+> +	void __iomem *base;
+> +	void __iomem *mram_base;
+> +};
+> +
+> +static u32 iomap_read_reg(struct m_can_classdev *m_can_class, int reg)
+> +{
+> +	struct m_can_plat_priv *priv = (struct m_can_plat_priv *)m_can_class->device_data;
+> +
+> +	return readl(priv->base + reg);
+> +}
+> +
+> +static u32 iomap_read_fifo(struct m_can_classdev *m_can_class, int addr_offset)
+> +{
+> +	struct m_can_plat_priv *priv = (struct m_can_plat_priv *)m_can_class->device_data;
+> +
+> +	return readl(priv->mram_base + addr_offset);
+> +}
+> +
+> +static int iomap_write_reg(struct m_can_classdev *m_can_class, int reg, int val)
+> +{
+> +	struct m_can_plat_priv *priv = (struct m_can_plat_priv *)m_can_class->device_data;
+> +
+> +	writel(val, priv->base + reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int iomap_write_fifo(struct m_can_classdev *m_can_class, int addr_offset, int val)
+> +{
+> +	struct m_can_plat_priv *priv = (struct m_can_plat_priv *)m_can_class->device_data;
+> +
+> +	writel(val, priv->base + addr_offset);
+> +
+> +	return 0;
+> +}
+> +
+> +static int m_can_plat_probe(struct platform_device *pdev)
+> +{
+> +	struct m_can_classdev *mcan_class;
+> +	struct m_can_plat_priv *priv;
+> +	struct resource *res;
+> +	void __iomem *addr;
+> +	void __iomem *mram_addr;
+> +	int irq, ret = 0;
+> +
+> +	mcan_class = m_can_core_allocate_dev(&pdev->dev);
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	mcan_class->device_data = priv;
+> +
+> +	m_can_core_get_clocks(mcan_class);
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "m_can");
+> +	addr = devm_ioremap_resource(&pdev->dev, res);
+> +	irq = platform_get_irq_byname(pdev, "int0");
+> +	if (IS_ERR(addr) || irq < 0) {
+> +		ret = -EINVAL;
+> +		goto failed_ret;
+> +	}
+> +
+> +	/* message ram could be shared */
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "message_ram");
+> +	if (!res) {
+> +		ret = -ENODEV;
+> +		goto failed_ret;
+> +	}
+> +
+> +	mram_addr = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+> +	if (!mram_addr) {
+> +		ret = -ENOMEM;
+> +		goto failed_ret;
+> +	}
+> +
+> +	priv->base = addr;
+> +	priv->mram_base = mram_addr;
+> +
+> +	mcan_class->net->irq = irq;
+> +	mcan_class->pm_clock_support = 1;
+> +	mcan_class->can.clock.freq = clk_get_rate(mcan_class->cclk);
+> +	mcan_class->dev = &pdev->dev;
+> +
+> +	mcan_class->read_reg = &iomap_read_reg;
+> +	mcan_class->write_reg = &iomap_write_reg;
+> +	mcan_class->write_fifo = &iomap_write_fifo;
+> +	mcan_class->read_fifo = &iomap_read_fifo;
+> +	mcan_class->is_peripherial = false;
+> +
+> +	platform_set_drvdata(pdev, mcan_class->dev);
+> +
+> +	m_can_init_ram(mcan_class);
+> +
+> +	ret = m_can_core_register(mcan_class);
+> +
+> +failed_ret:
+> +	return ret;
+> +}
+> +
+> +static __maybe_unused int m_can_suspend(struct device *dev)
+> +{
+> +	return m_can_core_suspend(dev);
+> +}
+> +
+> +static __maybe_unused int m_can_resume(struct device *dev)
+> +{
+> +	return m_can_core_resume(dev);
+> +}
+> +
+> +static int m_can_plat_remove(struct platform_device *pdev)
+> +{
+> +	struct net_device *dev = platform_get_drvdata(pdev);
+> +	struct m_can_classdev *mcan_class = netdev_priv(dev);
+> +
+> +	m_can_core_unregister(mcan_class);
+> +
+> +	platform_set_drvdata(pdev, NULL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused m_can_runtime_suspend(struct device *dev)
+> +{
+> +	struct net_device *ndev = dev_get_drvdata(dev);
+> +	struct m_can_classdev *mcan_class = netdev_priv(ndev);
+> +
+> +	m_can_core_suspend(dev);
+> +
+> +	clk_disable_unprepare(mcan_class->cclk);
+> +	clk_disable_unprepare(mcan_class->hclk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused m_can_runtime_resume(struct device *dev)
+> +{
+> +	struct net_device *ndev = dev_get_drvdata(dev);
+> +	struct m_can_classdev *mcan_class = netdev_priv(ndev);
+> +	int err;
+> +
+> +	err = clk_prepare_enable(mcan_class->hclk);
+> +	if (err)
+> +		return err;
+> +
+> +	err = clk_prepare_enable(mcan_class->cclk);
+> +	if (err)
+> +		clk_disable_unprepare(mcan_class->hclk);
+> +
+> +	m_can_core_resume(dev);
+> +
+> +	return err;
+> +}
+> +
+> +static const struct dev_pm_ops m_can_pmops = {
+> +	SET_RUNTIME_PM_OPS(m_can_runtime_suspend,
+> +			   m_can_runtime_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(m_can_suspend, m_can_resume)
+> +};
+> +
+> +static const struct of_device_id m_can_of_table[] = {
+> +	{ .compatible = "bosch,m_can", .data = NULL },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, m_can_of_table);
+> +
+> +static struct platform_driver m_can_plat_driver = {
+> +	.driver = {
+> +		.name = KBUILD_MODNAME,
+> +		.of_match_table = m_can_of_table,
+> +		.pm     = &m_can_pmops,
+> +	},
+> +	.probe = m_can_plat_probe,
+> +	.remove = m_can_plat_remove,
+> +};
+> +
+> +module_platform_driver(m_can_plat_driver);
+> +
+> +MODULE_AUTHOR("Dong Aisheng <b29396@freescale.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("CAN bus driver for Bosch M_CAN controller");
+> diff --git a/drivers/net/can/m_can/m_can_platform.h b/drivers/net/can/m_can/m_can_platform.h
+> new file mode 100644
+> index 000000000000..97e90dd79613
+> --- /dev/null
+> +++ b/drivers/net/can/m_can/m_can_platform.h
+> @@ -0,0 +1,163 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
+> +
+> +#ifndef _CAN_M_CAN_CORE_H_
+> +#define _CAN_M_CAN_CORE_H_
+> +
+> +#include <linux/can/core.h>
+> +#include <linux/can/led.h>
+> +#include <linux/completion.h>
+> +#include <linux/device.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/freezer.h>
+> +#include <linux/slab.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/netdevice.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/can/dev.h>
+> +#include <linux/pinctrl/consumer.h>
+> +
+> +/* m_can lec values */
+> +enum m_can_lec_type {
+> +	LEC_NO_ERROR = 0,
+> +	LEC_STUFF_ERROR,
+> +	LEC_FORM_ERROR,
+> +	LEC_ACK_ERROR,
+> +	LEC_BIT1_ERROR,
+> +	LEC_BIT0_ERROR,
+> +	LEC_CRC_ERROR,
+> +	LEC_UNUSED,
+> +};
+> +
+> +enum m_can_mram_cfg {
+> +	MRAM_SIDF = 0,
+> +	MRAM_XIDF,
+> +	MRAM_RXF0,
+> +	MRAM_RXF1,
+> +	MRAM_RXB,
+> +	MRAM_TXE,
+> +	MRAM_TXB,
+> +	MRAM_CFG_NUM,
+> +};
+> +
+> +/* registers definition */
+> +enum m_can_reg {
+> +	M_CAN_CREL	= 0x0,
+> +	M_CAN_ENDN	= 0x4,
+> +	M_CAN_CUST	= 0x8,
+> +	M_CAN_DBTP	= 0xc,
+> +	M_CAN_TEST	= 0x10,
+> +	M_CAN_RWD	= 0x14,
+> +	M_CAN_CCCR	= 0x18,
+> +	M_CAN_NBTP	= 0x1c,
+> +	M_CAN_TSCC	= 0x20,
+> +	M_CAN_TSCV	= 0x24,
+> +	M_CAN_TOCC	= 0x28,
+> +	M_CAN_TOCV	= 0x2c,
+> +	M_CAN_ECR	= 0x40,
+> +	M_CAN_PSR	= 0x44,
+> +/* TDCR Register only available for version >=3.1.x */
+> +	M_CAN_TDCR	= 0x48,
+> +	M_CAN_IR	= 0x50,
+> +	M_CAN_IE	= 0x54,
+> +	M_CAN_ILS	= 0x58,
+> +	M_CAN_ILE	= 0x5c,
+> +	M_CAN_GFC	= 0x80,
+> +	M_CAN_SIDFC	= 0x84,
+> +	M_CAN_XIDFC	= 0x88,
+> +	M_CAN_XIDAM	= 0x90,
+> +	M_CAN_HPMS	= 0x94,
+> +	M_CAN_NDAT1	= 0x98,
+> +	M_CAN_NDAT2	= 0x9c,
+> +	M_CAN_RXF0C	= 0xa0,
+> +	M_CAN_RXF0S	= 0xa4,
+> +	M_CAN_RXF0A	= 0xa8,
+> +	M_CAN_RXBC	= 0xac,
+> +	M_CAN_RXF1C	= 0xb0,
+> +	M_CAN_RXF1S	= 0xb4,
+> +	M_CAN_RXF1A	= 0xb8,
+> +	M_CAN_RXESC	= 0xbc,
+> +	M_CAN_TXBC	= 0xc0,
+> +	M_CAN_TXFQS	= 0xc4,
+> +	M_CAN_TXESC	= 0xc8,
+> +	M_CAN_TXBRP	= 0xcc,
+> +	M_CAN_TXBAR	= 0xd0,
+> +	M_CAN_TXBCR	= 0xd4,
+> +	M_CAN_TXBTO	= 0xd8,
+> +	M_CAN_TXBCF	= 0xdc,
+> +	M_CAN_TXBTIE	= 0xe0,
+> +	M_CAN_TXBCIE	= 0xe4,
+> +	M_CAN_TXEFC	= 0xf0,
+> +	M_CAN_TXEFS	= 0xf4,
+> +	M_CAN_TXEFA	= 0xf8,
+> +};
+> +
+> +/* address offset and element number for each FIFO/Buffer in the Message RAM */
+> +struct mram_cfg {
+> +	u16 off;
+> +	u8  num;
+> +};
+> +
+> +struct m_can_classdev;
+> +
+> +typedef	int (*can_dev_init) (struct m_can_classdev *m_can_class);
+> +typedef	int (*can_clr_dev_interrupts) (struct m_can_classdev *m_can_class);
+> +typedef	u32 (*can_reg_read) (struct m_can_classdev *m_can_class, int reg);
+> +typedef	int (*can_reg_write) (struct m_can_classdev *m_can_class, int reg, int val);
+> +typedef	u32 (*can_fifo_read) (struct m_can_classdev *m_can_class, int addr_offset);
+> +typedef	int (*can_fifo_write) (struct m_can_classdev *m_can_class, int addr_offset, int val);
+> +
+> +struct m_can_classdev {
+> +	struct can_priv can;
+> +	struct napi_struct napi;
+> +	struct net_device *net;
+> +	struct device *dev;
+> +	struct clk *hclk;
+> +	struct clk *cclk;
+> +
+> +	struct workqueue_struct *wq;
+> +	struct work_struct tx_work;
+> +	struct sk_buff *skb;
+> +
+> +	struct can_bittiming_const *bit_timing;
+> +	struct can_bittiming_const *data_timing;
+> +
+> +	void *device_data;
+> +
+> +	/* Device specific call backs */
+> +	can_dev_init device_init;
+> +	can_clr_dev_interrupts clr_dev_interrupts;
+> +	can_reg_read read_reg;
+> +	can_reg_write write_reg;
+> +	can_fifo_read read_fifo;
+> +	can_fifo_write write_fifo;
+> +
+> +	int version;
+> +	int freq;
+> +	u32 irqstatus;
+> +
+> +	int pm_clock_support;
+> +	bool is_peripherial;
+> +
+> +	struct mram_cfg mcfg[MRAM_CFG_NUM];
+> +};
+> +
+> +struct m_can_classdev *m_can_core_allocate_dev(struct device *dev);
+> +int m_can_core_register(struct m_can_classdev *m_can_dev);
+> +void m_can_core_unregister(struct m_can_classdev *m_can_dev);
+> +int m_can_core_get_clocks(struct m_can_classdev *m_can_dev);
+> +void m_can_init_ram(struct m_can_classdev *priv);
+> +void m_can_config_endisable(const struct m_can_classdev *priv, bool enable);
+> +
+> +int m_can_core_suspend(struct device *dev);
+> +int m_can_core_resume(struct device *dev);
+> +#endif	/* _CAN_M_CAN_CORE_H_ */
+> 
 
-It would, of course, be possible to make the xa_alloc() API identical
-to idr_alloc().  idr_alloc() has been a phenomenal success with around
-200 callers in the kernel today.  But it could be improved, and this
-seems like a good time to make the API changes.
+This patch set is working for the TCAN and at least boots on io-mapped devices.
+We have a couple of customers who are looking at using this implementation and we would like to
+start moving this patch set along in the review.
 
-int idr_alloc(struct idr *, void *ptr, int start, int end, gfp_t);
+I did not put a change log in here as there have been no comments for the last 3 patch sets I sent.
 
-1. It is not possible to allocate an ID above 2^31.  This led to the
-   introduction of idr_alloc_u32 (which has its own problems I'll talk
-   about later)
-2. It's hard to insert a fully-initialised object into an IDR in a
-   way that is safe for RCU-based lookups; the object needs to be marked
-   as not-fully-initialised, then inserted, then the ID updated, then the
-   object marked as fully-initialised.  Many users choose an "invalid" ID
-   for this purpose, or make two calls, first allocating a NULL pointer,
-   then replacing it with the actual object.
-3. Allocating a specific ID is a little awkward, passing 'id, id + 1' as
-   start & end.
-4, The meaning of the 'end' argument has been misunderstood by some users.
-   It's exclusive, not inclusive, so writing 'INT_MAX' means you
-   can allocate up to INT_MAX-1.  This probably doesn't cause any bugs,
-   but it's not great.
-5. Nobody actually uses the ability to allocate an ID between 'a' and
-   'a + n' which is the rationale for how idr_alloc interprets negative
-   'end'.
-6. Using a non-zero 'start' is inefficient.  I made a start on solving
-   this with IDR_INIT_BASE(), but this is a good opportunity to solve
-   it for the whole kernel.
+This v4 squashes a few bugs I found during testing across all the files.
 
-As for idr_alloc_u32(), it's just too easy to forget to initialise *id
-before calling it, and there's no realistic way to get gcc to warn for
-that mistake.  It does solve problems 2, 3 and 5, but it's a bad tradeoff.
-The current xa_alloc() in the tree is modelled after idr_alloc_u32(), but
-I feel it should be fixed.
+Dan
 
-I've been through a number of variations of this interface, but this is
-what I've currently settled on:
-
-/**
- * xa_alloc() - Find somewhere to store this entry in the XArray.
- * @xa: XArray.
- * @id: Pointer to ID.
- * @entry: New entry.
- * @limit: Range of ID to allocate.
- * @gfp: Memory allocation flags.
- *
- * Finds an empty entry in @xa between @limit.min and @limit.max,
- * stores the index into the @id pointer, then stores the entry at
- * that index.  A concurrent lookup will not see an uninitialised @id.
- *
- * Context: Any context.  Takes and releases the xa_lock.  May sleep if
- * the @gfp flags permit.
- * Return: 0 on success, -ENOMEM if memory could not be allocated or
- * -ENOSPC if there are no free entries in @limit.
- */
-static inline __must_check int xa_alloc(struct xarray *xa, u32 *id,
-                void *entry, struct xa_limit limit, gfp_t gfp)
-
-Problems 1 & 2 are solved by passing a pointer to the ID, but using it
-only as an output, avoiding the initialisation problem of idr_alloc_u32().
-There are a few users who store the allocated ID in a u16, but this
-isn't too hard to work around.
-
-Problem 3 is solved by using xa_insert() instead of xa_alloc().  It does
-return a different errno (-EEXIST) instead of -ENOSPC, but most users
-convert the errno to something else anyway because -ENOSPC is a horrible
-errno to return to userspace.
-
-Problem 4 is solved by interpreting the 'max' element of xa_limit
-inclusively.  The xa_limit is a little complicated to explain, but easy
-to use.  Most users will use one of two predefined ranges; xa_limit_32b
-or xa_limit_31b which correspond to the ranges [0 - UINT_MAX] and [0 -
-INT_MAX] respectively.  The remaining users will pass XA_LIMIT(x, y)
-as an argument.
-
-Problem 6 is solved by having two ways of declaring an allocating XArray:
-
-#define DEFINE_XARRAY_ALLOC(name) DEFINE_XARRAY_FLAGS(name, XA_FLAGS_ALLOC)
-#define DEFINE_XARRAY_ALLOC1(name) DEFINE_XARRAY_FLAGS(name, XA_FLAGS_ALLOC1)
-
-Supporting bases other than 0 and 1 seems like more effort than it's worth.
-
-
-Here's an example conversion which is fairly typical, drivers/scsi/st.c:
-
--static DEFINE_SPINLOCK(st_index_lock);
--static DEFINE_IDR(st_index_idr);
-+static DEFINE_XARRAY_ALLOC(st_index);
-
-[...]
-
--       idr_preload(GFP_KERNEL);
--       spin_lock(&st_index_lock);
--       error = idr_alloc(&st_index_idr, tpnt, 0, ST_MAX_TAPES + 1, GFP_NOWAIT);
--       spin_unlock(&st_index_lock);
--       idr_preload_end();
-+       error = xa_alloc(&st_index, &tpnt->index, tpnt,
-+                       XA_LIMIT(0, ST_MAX_TAPES), GFP_KERNEL);
-        if (error < 0) {
-                pr_warn("st: idr allocation failed: %d\n", error);
-                goto out_put_queue;
-        }
--       tpnt->index = error;
-
-
-Similarly, we also need an xa_alloc_cyclic, which can be found here:
-http://git.infradead.org/users/willy/linux-dax.git/commitdiff/9bbcfb45052235ede806b0a84dcaacc27a5c2f66
-
+-- 
+------------------
+Dan Murphy
