@@ -2,97 +2,131 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8834EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A93C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3083120657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4670120657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:09:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="U0lP6LO/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UK4FSuyw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbfAQTJH (ORCPT
+        id S1728436AbfAQTJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:09:07 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40258 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727579AbfAQTJG (ORCPT
+        Thu, 17 Jan 2019 14:09:45 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:35526 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728347AbfAQTJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:09:06 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HJ7mm7022374
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 11:09:05 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=ckG2ZZuObMxDV9IpE5nxrXx9FT1xqYgoaAGm2QN8898=;
- b=U0lP6LO/yyp6NgS6sWqmjyZuIt2LOrAIfLKj4H613IWy3VgLLxKBY7OZ7ZzJOga/Cpcq
- UV0dCqs9bFR+mMTxxD/4StvY06LGVpQnOLawoVDCrpLH9TU21Ma7els16YXuoUWWlQGY
- GZAcAwi1ucWDuNjSr4jC5WI6bqKudUEVc58= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2q2x718c3x-16
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 11:09:05 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Thu, 17 Jan 2019 11:08:33 -0800
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
-        id F02EF7ADA320; Thu, 17 Jan 2019 11:08:31 -0800 (PST)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH] dt-bindings: aspeed-lpc: Make parameter optional
-Date:   Thu, 17 Jan 2019 11:08:30 -0800
-Message-ID: <20190117190830.824013-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Thu, 17 Jan 2019 14:09:45 -0500
+Received: by mail-yb1-f194.google.com with SMTP id h81so3119049ybg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 11:09:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qe7NUhaOauVMHMbVmvcb9y61t5wbJ0dPWB9PLPVTivk=;
+        b=UK4FSuywOA+U0Swg9Voygjxj28BHGHk/5iFcLo3SkApIegWZaXrpAT+73yUEbAQxY/
+         fon1c6ftGSi9sS0xVvgLRwMoD6rEkpuMTE+RIMQ/Nr8ouBIodb1VSiV8PJzvDKmZbCiP
+         5dffp0I4TZ2BOM50VIabdYfcI5LJR8HHRShnTkk0e8KRX6L41BghlD/s4NFH13yCuo7z
+         RGaM5V2w0ie7f07OykvIgt2MA7QJcfGRTaMZ3PQWrIEfyNpBEmHIok+dbcSMgYRzPnoZ
+         4JPTFUM+bFpAZEp9ENaxDD+uJBsEcCqtqzU1R1Kt+2VfxZS7WFUHtSBt2mzdwodaIY1z
+         jCng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qe7NUhaOauVMHMbVmvcb9y61t5wbJ0dPWB9PLPVTivk=;
+        b=T+RRnda/5osOBhiamShsx0Oe4LQImNI6XZ04GYA5irOV+3OjO1YO3m/HeMrWhIfWA+
+         hBPTDbG+hCxWbN3P9AAtkitf/HwKjKxNOMD/BNMSkLVeLvKjBCIBlQbvHsTQa/tlU4Y+
+         y4r35/KBT4k2cO3Evc+eYRgiDjiz0EiEIUA9Bwu7Me70kBh9ecpjRCf9ilTusk2J0FBr
+         llzqACC/KMkDjUvBMz+KNSIQJWE1tWPKs1F+2Y5pM+dnNDd+DfbFZQXR0xq9n4R8vsi1
+         JJuTHpRTcmy2/DjqwXxU0g+mtMV99y2J3FiDxNeFrlcex3y8GKeXcu1Ah0fIZFJVWeK8
+         29nQ==
+X-Gm-Message-State: AJcUukcadqnXCceyzTn6BQMDQMkQyg9DA+HxZ89Rtkj5dxWFDF04p6Uc
+        c0NxYAPZnZfCHYfDchcjthp43oaweaMl39TdvDCcDA==
+X-Google-Smtp-Source: ALg8bN4W9AvA2U2fwcNHBAUpaLURSX1Sx0s7/VHk6pgUZPY83dNqFkQgrHIClaTANPfSi43TmCMJFuJAGi8wbrm/Qro=
+X-Received: by 2002:a25:8685:: with SMTP id z5mr3246200ybk.247.1547752183617;
+ Thu, 17 Jan 2019 11:09:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_06:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20190117151942.6092-1-saiprakash.ranjan@codeaurora.org> <154775022743.169631.1716489383315213219@swboyd.mtv.corp.google.com>
+In-Reply-To: <154775022743.169631.1716489383315213219@swboyd.mtv.corp.google.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Thu, 17 Jan 2019 11:09:31 -0800
+Message-ID: <CABXOdTfE+_q8DrRfPE1V+3pU7x5rLoOy7k5LYMrwd+xojsBWvw@mail.gmail.com>
+Subject: Re: [PATCHv2] watchdog: qcom: Add suspend/resume support
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Guenter Roeck <groeck@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory-region and flash phandle is not a required parameter, it is
-optional to describe in device tree and needed only use basis.
+On Thu, Jan 17, 2019 at 10:37 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Sai Prakash Ranjan (2019-01-17 07:19:42)
+> > diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+> > index 780971318810..5dfd604477a4 100644
+> > --- a/drivers/watchdog/qcom-wdt.c
+> > +++ b/drivers/watchdog/qcom-wdt.c
+> > @@ -245,6 +245,28 @@ static int qcom_wdt_remove(struct platform_device *pdev)
+> >         return 0;
+> >  }
+> >
+> > +static int __maybe_unused qcom_wdt_suspend(struct device *dev)
+> > +{
+> > +       struct qcom_wdt *wdt = dev_get_drvdata(dev);
+> > +
+> > +       if (watchdog_active(&wdt->wdd))
+> > +               qcom_wdt_stop(&wdt->wdd);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int __maybe_unused qcom_wdt_resume(struct device *dev)
+> > +{
+> > +       struct qcom_wdt *wdt = dev_get_drvdata(dev);
+> > +
+> > +       if (watchdog_active(&wdt->wdd))
+> > +               qcom_wdt_start(&wdt->wdd);
+> > +
+> > +       return 0;
+> > +}
+>
+> This looks fairly generic. For example, the Mediatek driver also stops
+> and starts (but also pings after starting). Grepping for 'active' in
+> drivers/watchdog/ finds more examples. Could there be some functions in
+> watchdog core that do the common things like watchdog_stop() and
+> watchdog_start() and watchdog_start_and_ping()? Or maybe a bit can be
+> set during registration so that the 'struct class watchdog_class' can
+> get PM ops to stop and start on suspend/resume of the watchdog character
+> device?
+>
+> Nothing is wrong with the patch, I'm just bemoaning the amount of code
+> duplication here.
+>
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
----
- Documentation/devicetree/bindings/mfd/aspeed-lpc.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+Patch(es) to add the functionality to the watchdog core are welcome;
+it should be possible to move the functionality into the core (maybe
+to be enabled with a new watchdog API call). Doing it using the class
+device sounds like an excellent idea. This should be straightforward
+to implement, though the question of "should we ping on resume or not"
+might be an endless source for bike shedding fun.
 
-diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-index 34dd89087cff..ff0cb28903dd 100644
---- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-+++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-@@ -135,6 +135,10 @@ Required properties:
- - clocks:	contains a phandle to the syscon node describing the clocks.
- 		There should then be one cell representing the clock to use
- 
-+Optional properties:
-+These below properties are optional and required only if one need to use it
-+through ioctl.
-+
- - memory-region: A phandle to a reserved_memory region to be used for the LPC
- 		to AHB mapping
- 
--- 
-2.17.1
-
+Guenter
