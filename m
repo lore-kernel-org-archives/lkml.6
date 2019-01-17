@@ -2,177 +2,80 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC05C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40527C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68DF20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:56:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LrK0CZYE"
+	by mail.kernel.org (Postfix) with ESMTP id 0C49A20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbfAQQ4q (ORCPT
+        id S1729135AbfAQQ6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:56:46 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:37869 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728618AbfAQQ4p (ORCPT
+        Thu, 17 Jan 2019 11:58:08 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:47471 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728618AbfAQQ6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:56:45 -0500
-Received: by mail-ua1-f67.google.com with SMTP id u19so3701333uae.4
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:56:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=70nZCuQkIKbRfqYUZVeK7oZl5fyaWnmUBg0C0u3l2OE=;
-        b=LrK0CZYEJNpsxz8cLymvHGgUVV5qg8W+/CAFIxN1fZBIypBnacGhvo5OYmAZBfoCTH
-         E8FFnUJvFZggqjFEh7oqYz/CMn5mVOranCwI3CSFOdOIdo+AXGQflkLyb3CEz7XyDMJ0
-         ZO6/Q0HWe0HZwUU5uspjr/SG3LM4VjHrFsZrM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=70nZCuQkIKbRfqYUZVeK7oZl5fyaWnmUBg0C0u3l2OE=;
-        b=bjU6cizHCgsIKvlkAlAn5pQ+KhBKhKvpY354EzcyQPnsDv71I3n0G63fu0+FFlIb4Z
-         DXFWqTgbprmsdzkkSYo6ZqWFg+LdWi6Rjt+boCTA5wi1bnWhWrLhn6uYv+x59tMiYvdg
-         92sB0scL66igOTwrVH9qv6tB+msi+pq1q7czPXGzg0qu0Pd176vNsnov4CA1kg2z2vgt
-         Y84QxeJos6yVAaH1ryQJObQj98H7y/tRbetbutfLABF+mztDQj7tIlJ4YTbg8Z0GYqaX
-         1LRb5RVKoy+hKLXezXMI+aU//VbnXf5RNmWHYjiEMWZwGztpYc2eFiqF06iKhQK6kD2N
-         0N1Q==
-X-Gm-Message-State: AJcUukfx6/VHRXmOI1sFMj3ezhsCUT94DFzeN/wafB8Jli9udyetiCmV
-        XAXpxrp0pfNtgsSaLYhagwUK6zdtXww=
-X-Google-Smtp-Source: ALg8bN6ZgGG/P/YN2yDUpUu6IGv/R6kzCraqDAG50XU/85rp74pXPS7O7nQiU+zzd0ddRnsMV6RQRg==
-X-Received: by 2002:ab0:3b7:: with SMTP id 52mr6087182uau.38.1547744204225;
-        Thu, 17 Jan 2019 08:56:44 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id v19sm188128uao.3.2019.01.17.08.56.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 08:56:43 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id p9so3697660uaa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:56:42 -0800 (PST)
-X-Received: by 2002:a9f:2709:: with SMTP id a9mr6185447uaa.10.1547744202573;
- Thu, 17 Jan 2019 08:56:42 -0800 (PST)
+        Thu, 17 Jan 2019 11:58:07 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gkAzT-00031n-5U; Thu, 17 Jan 2019 17:58:03 +0100
+Date:   Thu, 17 Jan 2019 17:57:37 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+cc:     Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stefan Liebler <stli@linux.ibm.com>
+Subject: Re: [GIT PULL] timer fix
+In-Reply-To: <20190117155859.GE18351@osiris>
+Message-ID: <alpine.DEB.2.21.1901171755460.1592@nanos.tec.linutronix.de>
+References: <20181221123453.GA102366@gmail.com> <20181223192926.GA3728@osiris> <20190117095102.GA88466@gmail.com> <20190117155859.GE18351@osiris>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <5c400062.1c69fb81.baac0.7895SMTPIN_ADDED_BROKEN@mx.google.com>
-In-Reply-To: <5c400062.1c69fb81.baac0.7895SMTPIN_ADDED_BROKEN@mx.google.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 17 Jan 2019 08:56:30 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+HMj92iN+H1482TvWkxf7iv1w95Ru6Z_1kNzPuVjmXUw@mail.gmail.com>
-Message-ID: <CAGXu5j+HMj92iN+H1482TvWkxf7iv1w95Ru6Z_1kNzPuVjmXUw@mail.gmail.com>
-Subject: Re: [PATCH] pstore/ram: Fix failure-path memory leak in ramoops_probe
-To:     Yue Hu <huyue2@yulong.com>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 8:11 PM Yue Hu <huyue2@yulong.com> wrote:
->
-> From 12a3e710e54a00f1ccb781d38707e7d4b344403b Mon Sep 17 00:00:00 2001
-> From: Yue Hu <huyue2@yulong.com>
-> Date: Wed, 16 Jan 2019 16:58:19 +0800
-> Subject: [PATCH] pstore/ram: Fix failure-path memory leak in
-> ramoops_probe
->
-> Missing devm_kfree(pdata) if probe fail with successful allocation
-> of platform data buffer via devm_kzalloc().
+On Thu, 17 Jan 2019, Heiko Carstens wrote:
+> On Thu, Jan 17, 2019 at 10:51:02AM +0100, Ingo Molnar wrote:
+> > 
+> > * Heiko Carstens <heiko.carstens@de.ibm.com> wrote:
+> > 
+> > > > -	if (timr->it_requeue_pending == info->si_sys_private) {
+> > > > +	if (timr->it_interval && timr->it_requeue_pending == info->si_sys_private) {
+> > > >  		timr->kclock->timer_rearm(timr);
+> > > 
+> > > FWIW, with this patch the vanilla glibc 2.28 self tests
+> > > rt/tst-cputimer1, rt/tst-cputimer2, and rt/tst-cputimer3
+> > > start to fail on s390:
+> ...
+> > > I haven't looked any further into this, just reporting.. otherwise the
+> > > test systems seem to be healthy.
+> > 
+> > Could you please check whether the top commit in tip:timers/urgent fixes 
+> > it:
+> >   93ad0fc088c5: posix-cpu-timers: Unbreak timer rearming
+> 
+> Yes, the test cases don't fail anymore. Thanks!
+> 
+> A general question: since I reported this already last year, was the
+> bug report not usable? I understand that x-mas holidays were in
+> between, just wondering if new "glibc test case" fails are worth to be
+> reported like I did.
 
-Actually, I think this is missing a free in the normal path too. pdata
-is only allocated when:
+I was on a 3 weeks vacation and I tend to clean out my inbox when I return
+as it turned out in the past that playing catch up is hopeless. The
+important stuff comes back by itself :)
 
-    !dev->platform_data && dev_of_node(dev)
+Thanks,
 
-So I think it needs to be freed in both places. However, devm_*alloc()
-really only makes sense for something that will have a scope larger
-than the current function. Instead, I think we should just switch this
-to a stack variable and be done with it. Something like this (pardon
-whitespace damage):
-
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index 96f7d32cd184..be7142ae3937 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -711,18 +711,15 @@ static int ramoops_probe(struct platform_device *pdev)
- {
-        struct device *dev = &pdev->dev;
-        struct ramoops_platform_data *pdata = dev->platform_data;
-+       struct ramoops_platform_data local_data;
-        struct ramoops_context *cxt = &oops_cxt;
-        size_t dump_mem_sz;
-        phys_addr_t paddr;
-        int err = -EINVAL;
-
-        if (dev_of_node(dev) && !pdata) {
--               pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
--               if (!pdata) {
--                       pr_err("cannot allocate platform data buffer\n");
--                       err = -ENOMEM;
--                       goto fail_out;
--               }
-+               pdata = &local_data;
-+               memset(pdata, 0, sizeof(*pdata));
-
-                err = ramoops_parse_dt(pdev, pdata);
-                if (err < 0)
-
-
-Does that look sensible to you?
-
--Kees
-
->
-> Signed-off-by: Yue Hu <huyue2@yulong.com>
-> ---
->  fs/pstore/ram.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index cb9cac1..f9a6a8d 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -612,6 +612,7 @@ static int ramoops_probe(struct platform_device
-> *pdev) size_t dump_mem_sz;
->         phys_addr_t paddr;
->         int err = -EINVAL;
-> +       bool free_pdata = false;
->
->         if (dev_of_node(dev) && !pdata) {
->                 pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata),
-> GFP_KERNEL); @@ -619,6 +620,7 @@ static int ramoops_probe(struct
-> platform_device *pdev) err = -ENOMEM;
->                         goto fail_out;
->                 }
-> +               free_pdata = true;
->
->                 err = ramoops_parse_dt(pdev, pdata);
->                 if (err < 0)
-> @@ -754,6 +756,8 @@ static int ramoops_probe(struct platform_device
-> *pdev) fail_init_cprz:
->         ramoops_free_przs(cxt);
->  fail_out:
-> +       if (free_pdata)
-> +               devm_kfree(&pdev->dev, pdata);
->         return err;
->  }
->
-> --
-> 1.9.1
->
->
->
->
-
-
--- 
-Kees Cook
+	tglx
