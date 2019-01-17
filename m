@@ -2,132 +2,202 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6720C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0E5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5707720657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B49D920657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:52:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="s+ZZMRJL"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZTZRUfMx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbfAQKrm (ORCPT
+        id S1728478AbfAQKw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:47:42 -0500
-Received: from mail-eopbgr720082.outbound.protection.outlook.com ([40.107.72.82]:51360
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726917AbfAQKrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:47:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ySpFAlDw3bCrwlSoI0LBRqLP7nOlw9eKHW2O6y/nY28=;
- b=s+ZZMRJL2U5W9XuS4/uY0k2/nR1TRb78WzA8pPne7i2VPjKfG/Ly3DXGuS93ApUkCB+tnVpw0pT+VUo75s1oOf4e8OCQgrHY203RYqn9sAxb7XtqoI3vW5WFsPHaoOKcpH0JVUUdXN/3aaqfDVVMj8VIa+m1CkQbXmzNkc+MS/g=
-Received: from BYAPR05MB5592.namprd05.prod.outlook.com (20.177.186.153) by
- BYAPR05MB4472.namprd05.prod.outlook.com (52.135.203.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.8; Thu, 17 Jan 2019 10:47:38 +0000
-Received: from BYAPR05MB5592.namprd05.prod.outlook.com
- ([fe80::4a1:2561:2487:5919]) by BYAPR05MB5592.namprd05.prod.outlook.com
- ([fe80::4a1:2561:2487:5919%4]) with mapi id 15.20.1558.010; Thu, 17 Jan 2019
- 10:47:38 +0000
-From:   Thomas Hellstrom <thellstrom@vmware.com>
-To:     "hch@lst.de" <hch@lst.de>, "jgg@ziepe.ca" <jgg@ziepe.ca>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syeh@vmware.com" <syeh@vmware.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "imre.deak@intel.com" <imre.deak@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Thread-Topic: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Thread-Index: AQHUpH3T+Rn6hCeN4kq6RDaSbJgsYKWpM0MAgAVgfACAAd1XAIAAd3mAgAE6wgCAABRnAIABDbyAgAAVrIA=
-Date:   Thu, 17 Jan 2019 10:47:38 +0000
-Message-ID: <c03889ffe2153cd84d263873bc8bd559c439177a.camel@vmware.com>
-References: <20190104223531.GA1705@ziepe.ca>     <20190110234218.GM6890@ziepe.ca>
- <20190114094856.GB29604@lst.de>
-         <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
-         <20190115212501.GE22045@ziepe.ca> <20190116161134.GA29041@lst.de>
-         <20190116172436.GM22045@ziepe.ca> <20190117093001.GB31303@lst.de>
-In-Reply-To: <20190117093001.GB31303@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [155.4.205.56]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4472;20:5zgG507gQ+Y4iS8/OgCcETw9x9lmtFEWeVVmH4C1gDu0LunuBIeHZwaicfuqcOQsCDSfcCyO58KRBXEHNGkbnwB1NL9Gql/KSwk7ueyHx4aGCUgL8flazhOAsPddwr9uggWcv4hgAoNS9oWkQ7uVNz9M9R+1CYKV0wgpLttZx20=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 05132288-c820-475e-138d-08d67c6932c9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4472;
-x-ms-traffictypediagnostic: BYAPR05MB4472:
-x-microsoft-antispam-prvs: <BYAPR05MB44722224170255012F0D5D98A1830@BYAPR05MB4472.namprd05.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(396003)(346002)(189003)(199004)(305945005)(2906002)(97736004)(486006)(4326008)(106356001)(7736002)(53936002)(105586002)(6246003)(68736007)(66066001)(102836004)(478600001)(6512007)(118296001)(6506007)(476003)(5660300001)(256004)(2616005)(11346002)(446003)(26005)(76176011)(6346003)(14444005)(93886005)(186003)(54906003)(71190400001)(71200400001)(6486002)(6436002)(14454004)(229853002)(86362001)(2501003)(7416002)(25786009)(3846002)(6116002)(8676002)(8936002)(81166006)(81156014)(316002)(99286004)(110136005)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4472;H:BYAPR05MB5592.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=thellstrom@vmware.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lD2vBdEi7SVbDIHYcuOQZniDE1iKx27tNvGtsoAh1R1Ulq4M6+HEWziVsNTwDXOG8KugakjL8S3+X2DX4sF7S2gkJs1PMMcAiIzjVKYjhQN1eUR5sld9jFBUljx6mLap+kOU6elrVwrxlkxxcS2B+hVmax+uJvB446XHrxQl5FLMJmkL97uyvDtkUyg1lSGQun00s0ND6jqAhmOlkp4Ikq9h0+EIH6In6WdINxYcL/ZnVlUCkfMwjlDmk/aiNJexfEFtt70ut1JbvALvdfQS85FDfNaCHhFPC3i52TID0WwSbsJW37ioaFwj7REpb3zykPzeLVztgA2xQVvehAh8UWnt4/CntEyGdB/imfU96QZJAIBk6HOelWesdRxBAEvkG1VWGmQjh9l6zyFdx7ZjSGish+wFuYF73Phd0t2KPBE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <724C136F9533C74290DE9D9D2B8F64D1@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 17 Jan 2019 05:52:57 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52010 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfAQKw4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 05:52:56 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0HAqoHj085303;
+        Thu, 17 Jan 2019 04:52:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547722370;
+        bh=ioWIoA8LRpYVn7uK7DAa6yVxDRUYF8s7vbv5d1yKKB4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZTZRUfMxOAsStcIZ7ZtHGq0pbUFxD03rVBYjCchNiiyslwAfnRc3JCqvp1eNZzH4x
+         8KFkdgJHJXWTFSLG6YRdjCt4w2l8KSTzy9O9CLoHCYf+Qw8Kp3vY4z5B+18scZq73g
+         7+mh1KOMWD9vs0Wh5bgQTRLPEPzU6jDBfy9kXoTw=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0HAqocs013167
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 04:52:50 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 17
+ Jan 2019 04:52:49 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 17 Jan 2019 04:52:49 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0HAqjYk028427;
+        Thu, 17 Jan 2019 04:52:46 -0600
+Subject: Re: [PATCH v2 3/6] phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
+To:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <andy.gross@linaro.org>, <david.brown@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <balbi@kernel.org>, <linux-usb@vger.kernel.org>
+References: <1547483802-5408-1-git-send-email-jhugo@codeaurora.org>
+ <20190115181114.GE28907@builder>
+ <72cedbb9-c64b-a142-7c0d-64cb15f7ce00@ti.com>
+ <60137083-59d3-a04f-d55b-c5587038e946@ti.com>
+ <c6b1887e-139a-6b3b-3f9e-d0842fbe8eeb@codeaurora.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <f39c4a28-18a5-4180-6283-0db6cca0ce57@ti.com>
+Date:   Thu, 17 Jan 2019 16:22:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05132288-c820-475e-138d-08d67c6932c9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 10:47:38.3031
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4472
+In-Reply-To: <c6b1887e-139a-6b3b-3f9e-d0842fbe8eeb@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTAxLTE3IGF0IDEwOjMwICswMTAwLCBoY2hAbHN0LmRlIHdyb3RlOg0KPiBP
-biBXZWQsIEphbiAxNiwgMjAxOSBhdCAxMDoyNDozNkFNIC0wNzAwLCBKYXNvbiBHdW50aG9ycGUg
-d3JvdGU6DQo+ID4gVGhlIGZhY3QgaXMgdGhlcmUgaXMgMCBpbmR1c3RyeSBpbnRlcmVzdCBpbiB1
-c2luZyBSRE1BIG9uIHBsYXRmb3Jtcw0KPiA+IHRoYXQgY2FuJ3QgZG8gSFcgRE1BIGNhY2hlIGNv
-aGVyZW5jeSAtIHRoZSBrZXJuZWwgc3lzY2FsbHMgcmVxdWlyZWQNCj4gPiB0bw0KPiA+IGRvIHRo
-ZSBjYWNoZSBmbHVzaGluZyBvbiB0aGUgSU8gcGF0aCB3b3VsZCBqdXN0IGRlc3Ryb3kgcGVyZm9y
-bWFuY2UNCj4gPiB0bw0KPiA+IHRoZSBwb2ludCBvZiBtYWtpbmcgUkRNQSBwb2ludGxlc3MuIEJl
-dHRlciB0byB1c2UgbmV0ZGV2IG9uIHRob3NlDQo+ID4gcGxhdGZvcm1zLg0KPiANCj4gSW4gZ2Vu
-ZXJhbCB0aGVyZSBpcyBubyBzeXNjYWxsIHJlcXVpcmVkIGZvciBkb2luZyBjYWNoZSBmbHVzaGlu
-ZywgeW91DQo+IGp1c3QgaXNzdWUgdGhlIHByb3BlciBpbnN0cnVjdGlvbnMgZGlyZWN0bHkgZnJv
-bSB1c2Vyc3BhY2UuDQoNCkJ1dCB3aGF0IGlmIHRoZXJlIGFyZSBvdGhlciBjb2hlcmVuY2UgaXNz
-dWVzPyBMaWtlIGJvdW5jZS1idWZmZXJzPw0KSSdkIGxpa2UgdG8gKzEgb24gd2hhdCBKYXNvbiBz
-YXlzIGFib3V0IGluZHVzdHJ5IGludGVyZXN0OiBGV0lXLCB2bXdnZngNCmlzIHByb2JhYmx5IG9u
-ZSBvZiB0aGUgZ3JhcGhpY3MgZHJpdmVycyB0aGF0IHdvdWxkIGxlbmQgaXRzZWxmIGJlc3QgdG8N
-CmRvIGEgZnVsbHktZG1hLWludGVyZmFjZSBjb21wbGlhbnQgZ3JhcGhpY3Mgc3RhY2sgZXhwZXJp
-bWVudC4gQnV0IGJlaW5nDQphIHBhcmF2aXJ0dWFsIGRyaXZlciwgYWxsIHBsYXRmb3JtcyB3ZSBj
-YW4gZXZlciBydW4gb24gYXJlIGZ1bGx5DQpjb2hlcmVudCB1bmxlc3Mgc29tZW9uZSBpbnRyb2R1
-Y2VzIGEgZmFrZSBpbmNvaGVyZW5jeSBieSBmb3JjaW5nDQpzd2lvdGxiLiBQdXR0aW5nIG1hbnkg
-bWFuLW1vbnRocyBvZiBlZmZvcnQgaW50byBzdXBwb3J0aW5nIHN5c3RlbXMgb24NCndoaWNoIHdl
-IHdvdWxkIG5ldmVyIHJ1biBvbiBhbmQgY2FuIG5ldmVyIHRlc3Qgb24gY2FuIG5ldmVyIG1ha2Ug
-bW9yZQ0KdGhhbiBhY2FkZW1pYyBzZW5zZS4NCg0KPiAgDQo+IA0KPiA+IFRoZSByZWFsaXR5IGlz
-IHRoYXQgKmFsbCogdGhlIHN1YnN5dGVtcyBkb2luZyBETUEga2VybmVsIGJ5cGFzcyBhcmUNCj4g
-PiBpZ25vcmluZyB0aGUgRE1BIG1hcHBpbmcgcnVsZXMsIEkgdGhpbmsgd2Ugc2hvdWxkIHN1cHBv
-cnQgdGhpcw0KPiA+IGJldHRlciwNCj4gPiBhbmQganVzdCBhY2NlcHQgdGhhdCB1c2VyIHNwYWNl
-IERNQSB3aWxsIG5vdCBiZSB1c2luZyBzeW5jaW5nLg0KPiA+IEJsb2NrDQo+ID4gYWNjZXNzIGlu
-IGNhc2VzIHdoZW4gdGhpcyBpcyByZXF1aXJlZCwgb3RoZXJ3aXNlIGxldCBpdCB3b3JrIGFzIGlz
-DQo+ID4gdG9kYXkuDQo+IA0KPiBJbiB0aGF0IGNhc2Ugd2UganVzdCBuZWVkIHRvIGJsb2NrIHVz
-ZXJzcGFjZSBETUEgYWNjZXNzIGVudGlyZWx5Lg0KPiBXaGljaCBnaXZlbiB0aGUgYW1vdW50IG9m
-IHByb2JsZW1zIGl0IGNyZWF0ZXMgc291bmRzIGxpa2UgYSBwcmV0dHkNCj4gZ29vZCBpZGVhIGFu
-eXdheS4NCg0KSSdtIG5vdCBzdXJlIEknbSBmb2xsb3dpbmcgeW91IGhlcmUuIEFyZSB5b3Ugc3Vn
-Z2VzdGluZyBzY3JhdGNoaW5nDQpzdXBwb3J0IGZvciBhbGwgKEdQKUdQVS0gYW5kIFJETUEgZHJp
-dmVycz8NCg0KVGhhbmtzLA0KVGhvbWFzDQoNCg0K
+Hi,
+
+On 16/01/19 8:58 PM, Jeffrey Hugo wrote:
+> On 1/16/2019 1:58 AM, Kishon Vijay Abraham I wrote:
+>> Hi,
+>>
+>> On 16/01/19 2:20 PM, Kishon Vijay Abraham I wrote:
+>>>
+>>>
+>>> On 15/01/19 11:41 PM, Bjorn Andersson wrote:
+>>>> On Mon 14 Jan 08:36 PST 2019, Jeffrey Hugo wrote:
+>>>>
+>>>>> MSM8998 contains one QUSB2 PHY which is very similar to the existing
+>>>>> sdm845 support.
+>>>>>
+>>>>
+>>> I don't seem to have the dt-binding patch in my inbox. Can you send them as
+>>> well?
+>>
+>> Ignore my request. I found the patch.
+> 
+> Sorry about that.  I was made aware there is something glitched when sending
+> this out, and the series didn't get threaded properly.  I'll be investigating
+> and correcting for the next time I need to send out a series.
+> 
+> Is this change acceptable?  I saw you picked up patch 1 (phy bindings) and
+> patch 4 (QMP phy changes), but not this one.  I do want to see as much of this
+> hit 5.1 as possible, so if there is anything I need to correct, please let me
+> know.  I'd be happy to update.
+
+I've updated the tree now. Can you check if everything looks alright w.r.t your
+patches?
+
+Thanks
+Kishon
+> 
+>>
+>> Thanks
+>> Kishon
+>>
+>>>
+>>> Thanks
+>>> Kishon
+>>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>>
+>>>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>>>>> ---
+>>>>>   drivers/phy/qualcomm/phy-qcom-qusb2.c | 41
+>>>>> +++++++++++++++++++++++++++++++++++
+>>>>>   1 file changed, 41 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>>>>> b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>>>>> index 9177989f..e5e4f36 100644
+>>>>> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>>>>> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>>>>> @@ -152,6 +152,32 @@ enum qusb2phy_reg_layout {
+>>>>>       QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_PWR_CTRL, 0x00),
+>>>>>   };
+>>>>>   +static const unsigned int msm8998_regs_layout[] = {
+>>>>> +    [QUSB2PHY_PLL_CORE_INPUT_OVERRIDE] = 0xa8,
+>>>>> +    [QUSB2PHY_PLL_STATUS]              = 0x1a0,
+>>>>> +    [QUSB2PHY_PORT_TUNE1]              = 0x23c,
+>>>>> +    [QUSB2PHY_PORT_TUNE2]              = 0x240,
+>>>>> +    [QUSB2PHY_PORT_TUNE3]              = 0x244,
+>>>>> +    [QUSB2PHY_PORT_TUNE4]              = 0x248,
+>>>>> +    [QUSB2PHY_PORT_TEST1]              = 0x24c,
+>>>>> +    [QUSB2PHY_PORT_TEST2]              = 0x250,
+>>>>> +    [QUSB2PHY_PORT_POWERDOWN]          = 0x210,
+>>>>> +    [QUSB2PHY_INTR_CTRL]               = 0x22c,
+>>>>> +};
+>>>>> +
+>>>>> +static const struct qusb2_phy_init_tbl msm8998_init_tbl[] = {
+>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_ANALOG_CONTROLS_TWO, 0x13),
+>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_CLOCK_INVERTERS, 0x7c),
+>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_CMODE, 0x80),
+>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_LOCK_DELAY, 0x0a),
+>>>>> +
+>>>>> +    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE1, 0xa5),
+>>>>> +    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE2, 0x09),
+>>>>> +
+>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_DIGITAL_TIMERS_TWO, 0x19),
+>>>>> +};
+>>>>> +
+>>>>> +
+>>>>>   static const unsigned int sdm845_regs_layout[] = {
+>>>>>       [QUSB2PHY_PLL_CORE_INPUT_OVERRIDE] = 0xa8,
+>>>>>       [QUSB2PHY_PLL_STATUS]        = 0x1a0,
+>>>>> @@ -221,6 +247,18 @@ struct qusb2_phy_cfg {
+>>>>>       .autoresume_en     = BIT(3),
+>>>>>   };
+>>>>>   +static const struct qusb2_phy_cfg msm8998_phy_cfg = {
+>>>>> +    .tbl            = msm8998_init_tbl,
+>>>>> +    .tbl_num        = ARRAY_SIZE(msm8998_init_tbl),
+>>>>> +    .regs           = msm8998_regs_layout,
+>>>>> +
+>>>>> +    .disable_ctrl   = POWER_DOWN,
+>>>>> +    .mask_core_ready = CORE_READY_STATUS,
+>>>>> +    .has_pll_override = true,
+>>>>> +    .autoresume_en   = BIT(0),
+>>>>> +    .update_tune1_with_efuse = true,
+>>>>> +};
+>>>>> +
+>>>>>   static const struct qusb2_phy_cfg sdm845_phy_cfg = {
+>>>>>       .tbl        = sdm845_init_tbl,
+>>>>>       .tbl_num    = ARRAY_SIZE(sdm845_init_tbl),
+>>>>> @@ -734,6 +772,9 @@ static int qusb2_phy_exit(struct phy *phy)
+>>>>>           .compatible    = "qcom,msm8996-qusb2-phy",
+>>>>>           .data        = &msm8996_phy_cfg,
+>>>>>       }, {
+>>>>> +        .compatible    = "qcom,msm8998-qusb2-phy",
+>>>>> +        .data        = &msm8998_phy_cfg,
+>>>>> +    }, {
+>>>>>           .compatible    = "qcom,sdm845-qusb2-phy",
+>>>>>           .data        = &sdm845_phy_cfg,
+>>>>>       },
+>>>>> -- 
+>>>>> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies,
+>>>>> Inc.
+>>>>> Qualcomm Technologies, Inc. is a member of the
+>>>>> Code Aurora Forum, a Linux Foundation Collaborative Project.
+>>>>>
+> 
+> 
