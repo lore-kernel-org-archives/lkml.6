@@ -6,18 +6,18 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B5EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E15C9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6289206C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BC5920868
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbfAQAds (ORCPT
+        id S1730445AbfAQAdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:33:48 -0500
+        Wed, 16 Jan 2019 19:33:50 -0500
 Received: from mga05.intel.com ([192.55.52.43]:42211 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729997AbfAQAdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730021AbfAQAdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Jan 2019 19:33:40 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -25,7 +25,7 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:37 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="292166050"
+   d="scan'208";a="292166056"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
   by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:36 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -42,9 +42,9 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 13/17] Add set_alias_ function and x86 implementation
-Date:   Wed, 16 Jan 2019 16:32:55 -0800
-Message-Id: <20190117003259.23141-14-rick.p.edgecombe@intel.com>
+Subject: [PATCH 15/17] vmalloc: New flags for safe vfree on special perms
+Date:   Wed, 16 Jan 2019 16:32:57 -0800
+Message-Id: <20190117003259.23141-16-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
 References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
@@ -53,130 +53,244 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds two new functions set_alias_default_noflush and set_alias_nv_noflush
-for setting the alias mapping for the page to its default valid permissions
-and to an invalid state that cannot be cached in a TLB, respectively. These
-functions to not flush the TLB.
+This adds a new flags VM_HAS_SPECIAL_PERMS, for enabling vfree operations to
+immediately clear executable TLB entries to freed pages, and handle freeing
+memory with special permissions. It also takes care of reseting the direct map
+permissions for the pages being unmapped. So this flag is useful for any kind
+of memory with elevated permissions, or where there can be related permissions
+changes on the directmap. Today this is RO+X and RO memory.
 
-Note, __kernel_map_pages does something similar but flushes the TLB and doesn't
-reset the permission bits to default on all architectures.
+Although this enables directly vfreeing RO memory now, RO memory cannot be
+freed in an interrupt because the allocation itself is used as a node on
+deferred free list. So when RO memory needs to be freed in an interrupt the
+code doing the vfree needs to have its own work queue, as was the case before
+the deferred vfree list handling was added. Today there is only one case where
+this happens.
 
-There is also an ARCH config ARCH_HAS_SET_ALIAS for specifying whether these
-have an actual implementation or a default empty one.
+For architectures with set_alias_ implementations this whole operation can be
+done with one TLB flush when centralized like this. For others with directmap
+permissions, currently only arm64, a backup method using set_memory functions
+is used to reset the directmap. When arm64 adds set_alias_ functions, this
+backup can be removed.
 
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+When the TLB is flushed to both remove TLB entries for the vmalloc range
+mapping and the direct map permissions, the lazy purge operation could be done
+to try to save a TLB flush later. However today vm_unmap_aliases could flush a
+TLB range that does not include the directmap. So a helper is added with extra
+parameters that can allow both the vmalloc address and the direct mapping to be
+flushed during this operation. The behavior of the normal vm_unmap_aliases
+function is unchanged.
+
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/Kconfig                      |  4 ++++
- arch/x86/Kconfig                  |  1 +
- arch/x86/include/asm/set_memory.h |  3 +++
- arch/x86/mm/pageattr.c            | 14 +++++++++++---
- include/linux/set_memory.h        | 10 ++++++++++
- 5 files changed, 29 insertions(+), 3 deletions(-)
+ include/linux/vmalloc.h |  13 +++++
+ mm/vmalloc.c            | 122 +++++++++++++++++++++++++++++++++-------
+ 2 files changed, 116 insertions(+), 19 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 4cfb6de48f79..4ef9db190f2d 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -249,6 +249,10 @@ config ARCH_HAS_FORTIFY_SOURCE
- config ARCH_HAS_SET_MEMORY
- 	bool
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 398e9c95cd61..9f643f917360 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -21,6 +21,11 @@ struct notifier_block;		/* in notifier.h */
+ #define VM_UNINITIALIZED	0x00000020	/* vm_struct is not fully initialized */
+ #define VM_NO_GUARD		0x00000040      /* don't add guard page */
+ #define VM_KASAN		0x00000080      /* has allocated kasan shadow memory */
++/*
++ * Memory with VM_HAS_SPECIAL_PERMS cannot be freed in an interrupt or with
++ * vfree_atomic.
++ */
++#define VM_HAS_SPECIAL_PERMS	0x00000200      /* Reset directmap and flush TLB on unmap */
+ /* bits [20..32] reserved for arch specific ioremap internals */
  
-+# Select if arch has all set_alias_nv/default() functions
-+config ARCH_HAS_SET_ALIAS
-+	bool
-+
- # Select if arch init_task must go in the __init_task_data section
- config ARCH_TASK_STRUCT_ON_STACK
-        bool
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 15af091611e2..14ad28769256 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -66,6 +66,7 @@ config X86
- 	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
- 	select ARCH_HAS_UACCESS_MCSAFE		if X86_64 && X86_MCE
- 	select ARCH_HAS_SET_MEMORY
-+	select ARCH_HAS_SET_ALIAS
- 	select ARCH_HAS_STRICT_KERNEL_RWX
- 	select ARCH_HAS_STRICT_MODULE_RWX
- 	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index 07a25753e85c..2ef4e4222df1 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -85,6 +85,9 @@ int set_pages_nx(struct page *page, int numpages);
- int set_pages_ro(struct page *page, int numpages);
- int set_pages_rw(struct page *page, int numpages);
+ /*
+@@ -135,6 +140,14 @@ extern struct vm_struct *__get_vm_area_caller(unsigned long size,
+ extern struct vm_struct *remove_vm_area(const void *addr);
+ extern struct vm_struct *find_vm_area(const void *addr);
  
-+int set_alias_nv_noflush(struct page *page);
-+int set_alias_default_noflush(struct page *page);
++static inline void set_vm_special(void *addr)
++{
++	struct vm_struct *vm = find_vm_area(addr);
 +
- extern int kernel_set_to_readonly;
- void set_kernel_text_rw(void);
- void set_kernel_text_ro(void);
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 4f8972311a77..3a51915a1410 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2209,8 +2209,6 @@ int set_pages_rw(struct page *page, int numpages)
- 	return set_memory_rw(addr, numpages);
++	if (vm)
++		vm->flags |= VM_HAS_SPECIAL_PERMS;
++}
++
+ extern int map_vm_area(struct vm_struct *area, pgprot_t prot,
+ 			struct page **pages);
+ #ifdef CONFIG_MMU
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 871e41c55e23..d459b5b9649b 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -18,6 +18,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
++#include <linux/set_memory.h>
+ #include <linux/debugobjects.h>
+ #include <linux/kallsyms.h>
+ #include <linux/list.h>
+@@ -1055,24 +1056,11 @@ static void vb_free(const void *addr, unsigned long size)
+ 		spin_unlock(&vb->lock);
  }
  
--#ifdef CONFIG_DEBUG_PAGEALLOC
--
- static int __set_pages_p(struct page *page, int numpages)
+-/**
+- * vm_unmap_aliases - unmap outstanding lazy aliases in the vmap layer
+- *
+- * The vmap/vmalloc layer lazily flushes kernel virtual mappings primarily
+- * to amortize TLB flushing overheads. What this means is that any page you
+- * have now, may, in a former life, have been mapped into kernel virtual
+- * address by the vmap layer and so there might be some CPUs with TLB entries
+- * still referencing that page (additional to the regular 1:1 kernel mapping).
+- *
+- * vm_unmap_aliases flushes all such lazy mappings. After it returns, we can
+- * be sure that none of the pages we have control over will have any aliases
+- * from the vmap layer.
+- */
+-void vm_unmap_aliases(void)
++static void _vm_unmap_aliases(unsigned long start, unsigned long end,
++				int must_flush)
  {
- 	unsigned long tempaddr = (unsigned long) page_address(page);
-@@ -2249,6 +2247,17 @@ static int __set_pages_np(struct page *page, int numpages)
- 	return __change_page_attr_set_clr(&cpa, 0);
+-	unsigned long start = ULONG_MAX, end = 0;
+ 	int cpu;
+-	int flush = 0;
++	int flush = must_flush;
+ 
+ 	if (unlikely(!vmap_initialized))
+ 		return;
+@@ -1109,6 +1097,27 @@ void vm_unmap_aliases(void)
+ 		flush_tlb_kernel_range(start, end);
+ 	mutex_unlock(&vmap_purge_lock);
+ }
++
++/**
++ * vm_unmap_aliases - unmap outstanding lazy aliases in the vmap layer
++ *
++ * The vmap/vmalloc layer lazily flushes kernel virtual mappings primarily
++ * to amortize TLB flushing overheads. What this means is that any page you
++ * have now, may, in a former life, have been mapped into kernel virtual
++ * address by the vmap layer and so there might be some CPUs with TLB entries
++ * still referencing that page (additional to the regular 1:1 kernel mapping).
++ *
++ * vm_unmap_aliases flushes all such lazy mappings. After it returns, we can
++ * be sure that none of the pages we have control over will have any aliases
++ * from the vmap layer.
++ */
++void vm_unmap_aliases(void)
++{
++	unsigned long start = ULONG_MAX, end = 0;
++	int must_flush = 0;
++
++	_vm_unmap_aliases(start, end, must_flush);
++}
+ EXPORT_SYMBOL_GPL(vm_unmap_aliases);
+ 
+ /**
+@@ -1494,6 +1503,79 @@ struct vm_struct *remove_vm_area(const void *addr)
+ 	return NULL;
  }
  
-+int set_alias_nv_noflush(struct page *page)
++static inline void set_area_alias(const struct vm_struct *area,
++			int (*set_alias)(struct page *page))
 +{
-+	return __set_pages_np(page, 1);
++	int i;
++
++	for (i = 0; i < area->nr_pages; i++) {
++		unsigned long addr =
++			(unsigned long)page_address(area->pages[i]);
++
++		if (addr)
++			set_alias(area->pages[i]);
++	}
 +}
 +
-+int set_alias_default_noflush(struct page *page)
++/* This handles removing and resetting vm mappings related to the vm_struct. */
++static void vm_remove_mappings(struct vm_struct *area, int deallocate_pages)
 +{
-+	return __set_pages_p(page, 1);
++	unsigned long addr = (unsigned long)area->addr;
++	unsigned long start = ULONG_MAX, end = 0;
++	int special = area->flags & VM_HAS_SPECIAL_PERMS;
++	int i;
++
++	/*
++	 * The below block can be removed when all architectures that have
++	 * direct map permissions also have set_alias_ implementations. This is
++	 * to do resetting on the directmap for any special permissions (today
++	 * only X), without leaving a RW+X window.
++	 */
++	if (special && !IS_ENABLED(CONFIG_ARCH_HAS_SET_ALIAS)) {
++		set_memory_nx(addr, area->nr_pages);
++		set_memory_rw(addr, area->nr_pages);
++	}
++
++	remove_vm_area(area->addr);
++
++	/* If this is not special memory, we can skip the below. */
++	if (!special)
++		return;
++
++	/*
++	 * If we are not deallocating pages, we can just do the flush of the VM
++	 * area and return.
++	 */
++	if (!deallocate_pages) {
++		vm_unmap_aliases();
++		return;
++	}
++
++	/*
++	 * If we are here, we need to flush the vm mapping and reset the direct
++	 * map.
++	 * First find the start and end range of the direct mappings to make
++	 * sure the vm_unmap_aliases flush includes the direct map.
++	 */
++	for (i = 0; i < area->nr_pages; i++) {
++		unsigned long addr =
++			(unsigned long)page_address(area->pages[i]);
++		if (addr) {
++			start = min(addr, start);
++			end = max(addr, end);
++		}
++	}
++
++	/*
++	 * First we set direct map to something not valid so that it won't be
++	 * cached if there are any accesses after the TLB flush, then we flush
++	 * the TLB, and reset the directmap permissions to the default.
++	 */
++	set_area_alias(area, set_alias_nv_noflush);
++	_vm_unmap_aliases(start, end, 1);
++	set_area_alias(area, set_alias_default_noflush);
 +}
 +
-+#ifdef CONFIG_DEBUG_PAGEALLOC
- void __kernel_map_pages(struct page *page, int numpages, int enable)
+ static void __vunmap(const void *addr, int deallocate_pages)
  {
- 	if (PageHighMem(page))
-@@ -2282,7 +2291,6 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ 	struct vm_struct *area;
+@@ -1515,7 +1597,8 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 	debug_check_no_locks_freed(area->addr, get_vm_area_size(area));
+ 	debug_check_no_obj_freed(area->addr, get_vm_area_size(area));
+ 
+-	remove_vm_area(addr);
++	vm_remove_mappings(area, deallocate_pages);
++
+ 	if (deallocate_pages) {
+ 		int i;
+ 
+@@ -1925,8 +2008,9 @@ EXPORT_SYMBOL(vzalloc_node);
+ 
+ void *vmalloc_exec(unsigned long size)
+ {
+-	return __vmalloc_node(size, 1, GFP_KERNEL, PAGE_KERNEL_EXEC,
+-			      NUMA_NO_NODE, __builtin_return_address(0));
++	return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
++			GFP_KERNEL, PAGE_KERNEL_EXEC, VM_HAS_SPECIAL_PERMS,
++			NUMA_NO_NODE, __builtin_return_address(0));
  }
  
- #ifdef CONFIG_HIBERNATION
--
- bool kernel_page_present(struct page *page)
- {
- 	unsigned int level;
-diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
-index 2a986d282a97..d19481ac6a8f 100644
---- a/include/linux/set_memory.h
-+++ b/include/linux/set_memory.h
-@@ -10,6 +10,16 @@
- 
- #ifdef CONFIG_ARCH_HAS_SET_MEMORY
- #include <asm/set_memory.h>
-+#ifndef CONFIG_ARCH_HAS_SET_ALIAS
-+static inline int set_alias_nv_noflush(struct page *page)
-+{
-+	return 0;
-+}
-+static inline int set_alias_default_noflush(struct page *page)
-+{
-+	return 0;
-+}
-+#endif
- #else
- static inline int set_memory_ro(unsigned long addr, int numpages) { return 0; }
- static inline int set_memory_rw(unsigned long addr, int numpages) { return 0; }
+ #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
 -- 
 2.17.1
 
