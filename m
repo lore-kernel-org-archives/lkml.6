@@ -2,121 +2,79 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0C5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4598AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CE222054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:42:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZDdWINFh"
+	by mail.kernel.org (Postfix) with ESMTP id 134B92054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbfAQJmB (ORCPT
+        id S1728790AbfAQJmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:42:01 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:48200 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfAQJl6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:41:58 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0H9fmkG060207;
-        Thu, 17 Jan 2019 03:41:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547718108;
-        bh=dsSzBvSvEio0e+YIzK/EXMt4VwY2qtnqkYN5joykVFk=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ZDdWINFh8kalJRO2kt7VpYIHMt/WMvmyYDb4L6HiqyzzL0R39/sPvNZTrEXf9gS8o
-         g7igAQLd7Rm5iI/inQvZtPlYe9LCERAm4BjyYXO9K4+WD45cgtWVHbaziY+6o1jqha
-         ESgWRph///EIs+JvZZh/VYvIsFsp0wvEOCTQ/fUs=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0H9fmEp018217
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Jan 2019 03:41:48 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 17
- Jan 2019 03:41:47 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 17 Jan 2019 03:41:47 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0H9fdIl016863;
-        Thu, 17 Jan 2019 03:41:45 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <nm@ti.com>,
-        <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v3 2/2] arm64: dts: ti: k3-am654-base-board: Add eMMC Support
-Date:   Thu, 17 Jan 2019 15:14:24 +0530
-Message-ID: <20190117094424.7683-3-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190117094424.7683-1-faiz_abbas@ti.com>
-References: <20190117094424.7683-1-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 17 Jan 2019 04:42:32 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:58622 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726008AbfAQJmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:42:31 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3C21E1A0296;
+        Thu, 17 Jan 2019 10:42:30 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2FDEA1A021F;
+        Thu, 17 Jan 2019 10:42:30 +0100 (CET)
+Received: from fsr-fed2164-101.ea.freescale.net (fsr-fed2164-101.ea.freescale.net [10.171.82.91])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id ECA63205DE;
+        Thu, 17 Jan 2019 10:42:29 +0100 (CET)
+From:   Madalin Bucur <madalin.bucur@nxp.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Madalin Bucur <madalin.bucur@nxp.com>
+Subject: [PATCH] dpaa_eth: NETIF_F_LLTX requires to do our own update of trans_start
+Date:   Thu, 17 Jan 2019 11:42:27 +0200
+Message-Id: <1547718147-5040-1-git-send-email-madalin.bucur@nxp.com>
+X-Mailer: git-send-email 2.1.0
+Reply-to: madalin.bucur@nxp.com
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the am654x-evm, sdhci0 node is connected to an eMMC. Add node and
-pinmux for the same.
+As txq_trans_update() only updates trans_start when the lock is held,
+trans_start does not get updated if NETIF_F_LLTX is declared.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Acked-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
 ---
- .../arm64/boot/dts/ti/k3-am654-base-board.dts | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index e41fc3a5987b..11e9a2a43dfc 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -69,6 +69,23 @@
- 			AM65X_IOPAD(0x01bc, PIN_OUTPUT, 0) /* (AG13) SPI0_CS0 */
- 		>;
- 	};
-+
-+	main_mmc0_pins_default: main-mmc0-pins-default {
-+		pinctrl-single,pins = <
-+			AM65X_IOPAD(0x01a8, PIN_INPUT_PULLDOWN, 0) /* (B25) MMC0_CLK */
-+			AM65X_IOPAD(0x01ac, PIN_INPUT_PULLUP, 0) /* (B27) MMC0_CMD */
-+			AM65X_IOPAD(0x01a4, PIN_INPUT_PULLUP, 0) /* (A26) MMC0_DAT0 */
-+			AM65X_IOPAD(0x01a0, PIN_INPUT_PULLUP, 0) /* (E25) MMC0_DAT1 */
-+			AM65X_IOPAD(0x019c, PIN_INPUT_PULLUP, 0) /* (C26) MMC0_DAT2 */
-+			AM65X_IOPAD(0x0198, PIN_INPUT_PULLUP, 0) /* (A25) MMC0_DAT3 */
-+			AM65X_IOPAD(0x0194, PIN_INPUT_PULLUP, 0) /* (E24) MMC0_DAT4 */
-+			AM65X_IOPAD(0x0190, PIN_INPUT_PULLUP, 0) /* (A24) MMC0_DAT5 */
-+			AM65X_IOPAD(0x018c, PIN_INPUT_PULLUP, 0) /* (B26) MMC0_DAT6 */
-+			AM65X_IOPAD(0x0188, PIN_INPUT_PULLUP, 0) /* (D25) MMC0_DAT7 */
-+			AM65X_IOPAD(0x01b4, PIN_INPUT_PULLUP, 0) /* (A23) MMC0_SDCD */
-+			AM65X_IOPAD(0x01b0, PIN_INPUT, 0) /* (C25) MMC0_DS */
-+		>;
-+	};
- };
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index f53090cde041..dfebc30c4841 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -2051,6 +2051,7 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 	bool nonlinear = skb_is_nonlinear(skb);
+ 	struct rtnl_link_stats64 *percpu_stats;
+ 	struct dpaa_percpu_priv *percpu_priv;
++	struct netdev_queue *txq;
+ 	struct dpaa_priv *priv;
+ 	struct qm_fd fd;
+ 	int offset = 0;
+@@ -2100,6 +2101,11 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 	if (unlikely(err < 0))
+ 		goto skb_to_fd_failed;
  
- &main_pmx1 {
-@@ -163,3 +180,11 @@
- 		#size-cells= <1>;
- 	};
- };
++	txq = netdev_get_tx_queue(net_dev, queue_mapping);
 +
-+&sdhci0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc0_pins_default>;
-+	bus-width = <8>;
-+	non-removable;
-+	ti,driver-strength-ohm = <50>;
-+};
++	/* LLTX requires to do our own update of trans_start */
++	txq->trans_start = jiffies;
++
+ 	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+ 		fd.cmd |= cpu_to_be32(FM_FD_CMD_UPD);
+ 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
 -- 
-2.19.2
+2.1.0
 
