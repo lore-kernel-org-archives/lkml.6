@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5884C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1704CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B379D20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D93A720855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:33:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="Eh9sRi7W"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="BkwbGKGW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbfAQVd0 (ORCPT
+        id S1729804AbfAQVda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 16:33:26 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:35402 "EHLO
+        Thu, 17 Jan 2019 16:33:30 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:35466 "EHLO
         mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbfAQVdX (ORCPT
+        with ESMTP id S1729738AbfAQVd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 16:33:23 -0500
+        Thu, 17 Jan 2019 16:33:26 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 320ABA3995;
-        Thu, 17 Jan 2019 22:33:21 +0100 (CET)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id C21E5A3964;
+        Thu, 17 Jan 2019 22:33:22 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1547760801; i=@fjfi.cvut.cz;
-        bh=Rpv8CdhAgujZiIel2W0MiyIQRHrS+t8AMEDdgRjAO1Q=;
+        s=20151024; t=1547760802; i=@fjfi.cvut.cz;
+        bh=uX2eDIOSDa5Anhf6mUlNXG64ORX24xhnNJO0u9bCxaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Eh9sRi7WL1wU46sqQjE/5bzSmwVfnJY3Y5WWoZVI8TAwrDr1MfrOf9qp5U6GgEuZ8
-         gF7mLEkhOlv1rPdw4I7G00fhGCMxay6xy9CJDSdEJ2q6IuYen2Pc7S++LcaKuKSIBk
-         gq3TzVsTpPX2cl1mGTI8wSs/E7vvvVDFSejsGIGk=
+        b=BkwbGKGWg5p0jtiyN1oZxn6lWLWaIE6FWbz/kWXibOpMB+rEgXpHmyXhCnpusO/80
+         Axo/AcjWLfIgKsAbOGK+RFU5CN4TEAdBroy1D5GaxRPF1CAAnkSbAwK06/YSSdzRVq
+         Hk5RhHneAFZBw2TCmfwHySIiWOLBOprhmBhLcDnE=
 X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
 Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
         by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id 1Ez_u19hb_Rm; Thu, 17 Jan 2019 22:33:13 +0100 (CET)
+        with ESMTP id 42Mm6Jcgea19; Thu, 17 Jan 2019 22:33:13 +0100 (CET)
 Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id C9482A3946;
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 0BFD5A2F18;
         Thu, 17 Jan 2019 22:33:09 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz C9482A3946
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 0BFD5A2F18
 Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id AE6336004E; Thu, 17 Jan 2019 22:33:09 +0100 (CET)
+        id D48F06004E; Thu, 17 Jan 2019 22:33:08 +0100 (CET)
 From:   David Kozub <zub@linux.fjfi.cvut.cz>
 To:     Jens Axboe <axboe@kernel.dk>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: [PATCH v2 08/16] block: sed-opal: print failed function address
-Date:   Thu, 17 Jan 2019 22:31:48 +0100
-Message-Id: <1547760716-7304-9-git-send-email-zub@linux.fjfi.cvut.cz>
+Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        David Kozub <zub@linux.fjfi.cvut.cz>
+Subject: [PATCH v2 07/16] block: sed-opal: reuse response_get_token to decrease code duplication
+Date:   Thu, 17 Jan 2019 22:31:47 +0100
+Message-Id: <1547760716-7304-8-git-send-email-zub@linux.fjfi.cvut.cz>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1547760716-7304-1-git-send-email-zub@linux.fjfi.cvut.cz>
 References: <1547760716-7304-1-git-send-email-zub@linux.fjfi.cvut.cz>
@@ -61,31 +61,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+response_get_token had already been in place, its functionality had
+been duplicated within response_get_{u64,bytestring} with the same error
+handling. Unify the handling by reusing response_get_token within the
+other functions.
 
-Add function address (and if available its symbol) to the message if a
-step function fails.
-
+Co-authored-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
 Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 ---
- block/sed-opal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ block/sed-opal.c | 46 +++++++++++++++-------------------------------
+ 1 file changed, 15 insertions(+), 31 deletions(-)
 
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 1332547e5a99..4225f23b2165 100644
+index 537cd73ea88a..1332547e5a99 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -394,8 +394,8 @@ static int next(struct opal_dev *dev)
+@@ -889,27 +889,19 @@ static size_t response_get_string(const struct parsed_resp *resp, int n,
+ 				  const char **store)
+ {
+ 	u8 skip;
+-	const struct opal_resp_tok *token;
++	const struct opal_resp_tok *tok;
  
- 		error = step->fn(dev, step->data);
- 		if (error) {
--			pr_debug("Error on step function: %d with error %d: %s\n",
--				 state, error,
-+			pr_debug("Step %d (%pS) failed wit error %d: %s\n",
-+				 state, step->fn, error,
- 				 opal_error_to_human(error));
+ 	*store = NULL;
+-	if (!resp) {
+-		pr_debug("Response is NULL\n");
+-		return 0;
+-	}
+-
+-	if (n >= resp->num) {
+-		pr_debug("Response has %d tokens. Can't access %d\n",
+-			 resp->num, n);
++	tok = response_get_token(resp, n);
++	if (IS_ERR(tok))
+ 		return 0;
+-	}
  
- 			/* For each OPAL command we do a discovery0 then we
+-	token = &resp->toks[n];
+-	if (token->type != OPAL_DTA_TOKENID_BYTESTRING) {
++	if (tok->type != OPAL_DTA_TOKENID_BYTESTRING) {
+ 		pr_debug("Token is not a byte string!\n");
+ 		return 0;
+ 	}
+ 
+-	switch (token->width) {
++	switch (tok->width) {
+ 	case OPAL_WIDTH_TINY:
+ 	case OPAL_WIDTH_SHORT:
+ 		skip = 1;
+@@ -925,37 +917,29 @@ static size_t response_get_string(const struct parsed_resp *resp, int n,
+ 		return 0;
+ 	}
+ 
+-	*store = token->pos + skip;
+-	return token->len - skip;
++	*store = tok->pos + skip;
++	return tok->len - skip;
+ }
+ 
+ static u64 response_get_u64(const struct parsed_resp *resp, int n)
+ {
+-	if (!resp) {
+-		pr_debug("Response is NULL\n");
+-		return 0;
+-	}
++	const struct opal_resp_tok *tok;
+ 
+-	if (n >= resp->num) {
+-		pr_debug("Response has %d tokens. Can't access %d\n",
+-			 resp->num, n);
++	tok = response_get_token(resp, n);
++	if (IS_ERR(tok))
+ 		return 0;
+-	}
+ 
+-	if (resp->toks[n].type != OPAL_DTA_TOKENID_UINT) {
+-		pr_debug("Token is not unsigned it: %d\n",
+-			 resp->toks[n].type);
++	if (tok->type != OPAL_DTA_TOKENID_UINT) {
++		pr_debug("Token is not unsigned int: %d\n", tok->type);
+ 		return 0;
+ 	}
+ 
+-	if (!(resp->toks[n].width == OPAL_WIDTH_TINY ||
+-	      resp->toks[n].width == OPAL_WIDTH_SHORT)) {
+-		pr_debug("Atom is not short or tiny: %d\n",
+-			 resp->toks[n].width);
++	if (tok->width != OPAL_WIDTH_TINY && tok->width != OPAL_WIDTH_SHORT) {
++		pr_debug("Atom is not short or tiny: %d\n", tok->width);
+ 		return 0;
+ 	}
+ 
+-	return resp->toks[n].stored.u;
++	return tok->stored.u;
+ }
+ 
+ static bool response_token_matches(const struct opal_resp_tok *token, u8 match)
 -- 
 2.20.1
 
