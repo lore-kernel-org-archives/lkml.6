@@ -2,95 +2,149 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA22EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0064C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8865E20859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D9D320859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:30:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HhmtXhtF"
+	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="QDmSszFI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728586AbfAQTah (ORCPT
+        id S1728801AbfAQTax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:30:37 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39252 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727692AbfAQTag (ORCPT
+        Thu, 17 Jan 2019 14:30:53 -0500
+Received: from mail-40130.protonmail.ch ([185.70.40.130]:46731 "EHLO
+        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbfAQTaw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:30:36 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w6so4870220pgl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 11:30:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=TQXPfCTSKnjwPhTiSWAl3v2d6xAWwhRd6YzBljgCz4w=;
-        b=HhmtXhtFVTykWZakQ2lVKGUpfDSjUpUFiYStj44VFTVMkUye+E/nGOmbmSXH92rxwd
-         znYaRbQ2l0GjXAwxjQ9Dr2jE8Ddy7pLvMgbYdtHm4GepGErdZXeE3JvLS0OSk1WdaFtF
-         wZB4aMIh+4lNExY+SLJ0CkkOLqMCHkgmHkihk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TQXPfCTSKnjwPhTiSWAl3v2d6xAWwhRd6YzBljgCz4w=;
-        b=O2TVC2EsxwdzcOQWQNPj+PoPuAd1BFBpLAhtG5LUS0PtXzdbCdYOeTF1JIDv9rvb1x
-         S41xi3fT/QDi+f7ISHMRYnm8L5Cj+iLeWClGoaTU03fgdJYCZ48KZ9LKeGQkDPlFMGuy
-         iMS78ZFcwdYnDOFe78+g45LDnC5OuET8hQNGyr5mzeYLZhvs5iK9Xo+Vbv9i/YjbfTaJ
-         9QmkNRA/PvUQKskAm/Iqrik5LofJLgxHthYek2sq3qks1t2QvlJ5kzHzWKWzReP6Jshr
-         DdIIY2zvRYsfNstEMzC998FzPtL7uAQLBu6MVMs6DMyEA2vsXoIvLM566lcuCpqDnr1T
-         G8rA==
-X-Gm-Message-State: AJcUukeS9MXmxc9rburZ/piStDkdg4jwjjmqZ2QU5h/XwiSmSl/uxXhs
-        HzFMDIl/jAoEUgTSEGZQhEQ9i/ZAwOM=
-X-Google-Smtp-Source: ALg8bN75cb6gF1eXOtQeb/UIK6lh7tE6tgJiAA2cVKRPT/Dbd3knq9drjlPtCF4DBDJUPPp7cnlLbw==
-X-Received: by 2002:a63:eb0e:: with SMTP id t14mr14804146pgh.445.1547753435331;
-        Thu, 17 Jan 2019 11:30:35 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x3sm3935192pgt.45.2019.01.17.11.30.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 11:30:34 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>
-Subject: [PATCH] arm64: dts: qcom: sdm845: Fix lpasscc reg
-Date:   Thu, 17 Jan 2019 11:29:55 -0800
-Message-Id: <20190117192955.16515-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Thu, 17 Jan 2019 14:30:52 -0500
+Date:   Thu, 17 Jan 2019 19:30:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1547753448;
+        bh=HJBKZ8PtqxY+VcQp4wvvTxv0AeJJfjPihAJvQvXbFJ4=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=QDmSszFILA5oT5phVVPaNnP7z7h7fMNDjX8+qFGL6fi7LPHlTJ9RaLytNgDAn7CWB
+         1LgSm7Fyqg8UzrD8f6iLP6omi8lWaJuxeO6HWtdaTLvHesWw5eBW1evoQCKmMHjEL/
+         er5qwHsSmruJs69y7V+Q4UoAWbLnLThHkinhqQSw=
+To:     Hans de Goede <hdegoede@redhat.com>
+From:   Mogens Jensen <mogens-jensen@protonmail.com>
+Cc:     Dean Wallace <duffydack73@gmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
+In-Reply-To: <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
+ <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
+ <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+ <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
+ <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
+ <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
+ <20190117091214.7djttnpo4jjzi4su@spock>
+ <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
+Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix up the lpasscc address and size, missed during the conversion to
-address- and size-cells of 2.
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Thursday, January 17, 2019 12:05 PM, Hans de Goede <hdegoede@redhat.com>=
+ wrote:
 
-Reported-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+> Hi,
+>
+> On 17-01-19 10:12, Dean Wallace wrote:
+>
+> > Hi Hans, Mogens,
+> > On 17-01-19, Mogens Jensen wrote:
+> >
+> > > Kernel is compiled with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and th=
+e quirk seems to have fixed the problem caused by commit 648e921888ad ("clk=
+: x86: Stop marking clocks as CLK_IS_CRITICAL"), as sound is now working if=
+ running "speaker-test" on my system which is clean ALSA.
+>
+> Note being "clean ALSA" is really not a good thing now a days,
+> for lots of things we depend on pulseaudio (like setting
+> up UCM mixer profiles).
+>
+I'm using UCM mixer profile from:
 
-This goes ontop of my pull request to Andy available until it's picked up at:
-https://github.com/andersson/kernel/commits/for-andy/arm64-for-5.1
+https://github.com/plbossart/UCM/tree/master/chtmax98090
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is enabled with:
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index e4156ea320aa..920bdb03a9db 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -2031,7 +2031,7 @@
- 
- 		lpasscc: clock-controller@17014000 {
- 			compatible = "qcom,sdm845-lpasscc";
--			reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
-+			reg = <0 0x17014000 0 0x1f004>, <0 0x17300000 0 0x200>;
- 			reg-names = "cc", "qdsp6ss";
- 			#clock-cells = <1>;
- 			status = "disabled";
--- 
-2.18.0
+alsaucm -c chtmax98090 set _verb HiFi set _enadev Speakers
 
+> > > Unfortunately, SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH driver is unusa=
+ble on Clapper Chromebooks as audio played from everything but "speaker-tes=
+t" as video players or web browsers is extremly low and sounds like played =
+at 10x speed. At the same time kernel log is spammed with messages like thi=
+s:
+> > > max98090 i2c-193C9890:00: PLL unlocked
+> > > intel_sst_acpi 80860F28:00: FW Version 01.0c.00.01
+> > > writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 0=
+0 00 ............U...
+> > > writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 1=
+2 00 ............u...
+> > > This is probably not related to the problem discussed in this thread,=
+ but the result is that I have to use the legacy driver SND_SOC_INTEL_BYT_M=
+AX98090_MACH and therefore still has to revert commit 648e921888ad for soun=
+d to work.
+> > > Is it possible to create a fix for SND_SOC_INTEL_BYT_MAX98090_MACH on=
+ kernel 4.19? Kernel 4.19 is a long term release so it would be very nice t=
+o have fix for this version upstream.
+> >
+> > I have been reverting "clk: x86: Stop marking clocks as CLK_IS_CRITICAL=
+"
+> > and the patch that initially added the quirk for swanky because of soun=
+d
+> > instability issues as you described. I'm compiling vanilla Archlinux
+> > kernel with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH, using pulseaudio,
+> > and have sound in all my apps.
+> > Baytrail sound has always been a little touchy, especially using headse=
+t
+> > with mic, but since the clk patch breaking sound and the quirk patch to
+> > fix it, there is a lot more instability. Just running pavucontrol, or
+> > plugging in headset sets it off. It's a head scratcher.
+>
+> Mogens, Dean, can you please try the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MA=
+CH
+> driver, without reverting any patches, with the attached patch on top and
+> see if that helps?
+>
+> Thanks & Regards,
+>
+> Hans
+
+I have applied the patch to kernel 4.19.15 and unfortunately this has not s=
+olved the problems.
+
+Audio generated from "speaker-test" is normal, but from everything else is =
+very low and played at 10x speed. However, I'm not seeing the "max98090 i2c=
+-193C9890:00: PLL unlocked" message in kernel log anymore, but it's still s=
+pammed with "writing to lpe: ...".
+
+Regards,
+
+Mogens
