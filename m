@@ -2,112 +2,102 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EFEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F1AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42D4A20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F5F20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:02:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8/PE5a2"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NPUGQJaw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbfAQKBy (ORCPT
+        id S1727425AbfAQKCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:01:54 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40331 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbfAQKBy (ORCPT
+        Thu, 17 Jan 2019 05:02:45 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38539 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfAQKCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:01:54 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g22so7845833edr.7
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 02:01:53 -0800 (PST)
+        Thu, 17 Jan 2019 05:02:45 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so10287988wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 02:02:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QJwzKcdcg0IDEcPZVYyjnbN0XcJLwhzLcPcTY/x1SLA=;
-        b=H8/PE5a2nOWCXMBzcrNWb4UHZxcwl5zoV7sNU7/abjfiU2l6UyLRkKnNxcA2ejsJ6G
-         lukhaM14XN1a+Mln2rM4nQ/oqLpM1NUtai8GmYz+20hCP6RuHrg40jmybPnA4wtTPp3N
-         QGHu5nqe29KFO6gbimM1evXMQH4OJPBWVszeuA9jqFdet+LjVDVKj8BdDvfmdZimSNze
-         6cjii4VgzkhTjxhuJ6NqTfXNJblJb3KXdgg7twlUOZxxPCicrmXczrfmGcgTxui7UfAd
-         aJIX/XW7oC7Ad7TTRsfXeC7FaoT3Qo6USr7FKArEx/lyVs/0Dm8lX/OEgcgolK6kh6D6
-         VXjA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4uoPwbzVmG0pBQc6Fwdx/UP9yYpRHZ47Q7K07lERNqk=;
+        b=NPUGQJaw4kZBQYuNueE0TOpGQ4x55G34jfUjvfSA86luMICgsgBwyI/Kz4fAr/2s+a
+         b3AAcABP5foCeiXTZaG2p+hBk5oorN3aFpolQliIAiBo6ScVl7LvuYgb5/ScpWy+xz3s
+         QQGnzaL6eLL24OW+5h7KAZV2A5WXtrHP+GwDLdCPIv6yXHih6IaCZmeVlclnid/aCh8B
+         TuD2B/qT3p8Emh0w4f+13g4orC83BkqavRYRV8Rvbv1iX4Wh7A2WNNt7XYmid0nNf6hc
+         cBG2LKgbJFZiCK4VFeJOkpj4yiyWX1lZRKj0p4WxXb2F7YcePDnPQjADZnrRajF/UQSY
+         6EYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QJwzKcdcg0IDEcPZVYyjnbN0XcJLwhzLcPcTY/x1SLA=;
-        b=RqyiUwRPDEd/o8tkUXz28YjKxSBf/Uw4AiIL19NYWUFHRqsJNjXQ3FzDqFsW0j3iUT
-         ePGNV/udVEV8o8PSDvVHc20Ye4ujsbdznLQt9ap9614Y0nYc9jWWLSRtHZu3EWYhETXs
-         mJgplTjZb0N2C12yS6jz0jDcfVrPmKclgEX0ZpSZ7VOdGgmDAkU6/rw9+TEKf/smEC2v
-         SJMOO4icNdKRV3CR0lehFxoVWp9BDPOW9jnjyTVJYj/GTVQDu5TZ4uTxOPvb/BY+B0l/
-         66U8xlyNSaahCduj3jp627+PN4gBeHjLVyWuZrC9nuk855Up5lt2qUfclupTZQM3273g
-         yL8g==
-X-Gm-Message-State: AJcUukesMTrAW4vQ2yuD/Qo/5xqhZu4cbNH5/+JBK7DDEQvQT8cTH0T1
-        okWOM/96LHC7rni/50Uzr9FbksAGrlk7ursVXIY=
-X-Google-Smtp-Source: ALg8bN4k6moxvZ8Q6GWChGmq2SjRsAfn7LDS8kyPIOBWTDTivDJghmJ98U3Ha1KAcwKgi9xwkv1gv8/3qKScCopRF/Y=
-X-Received: by 2002:a50:81e3:: with SMTP id 90mr10842999ede.67.1547719312390;
- Thu, 17 Jan 2019 02:01:52 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4uoPwbzVmG0pBQc6Fwdx/UP9yYpRHZ47Q7K07lERNqk=;
+        b=C01iC/G75R9WSnHRCZyPJpLjCwTSYv0OojpqcEG+ouXIWQxg6cYk5dZP9lO45vu/IC
+         JchvdbI1PTqHpbchctQDDt4YwynVVdauhwMqlY9BPpCfVBJTslHUu+WMfHQYcTP1UE0s
+         HGReRgBn3qsfE4M1n+5Zh6fW0a0+WKqSYjKpp+XoyyVrygGY4I4eS2OWe6s6IWqJIOwP
+         sXjZY3KgoMBx7vh7c5OpreDMuVye00Q4bCDx4QN2P3VWOJGnvbMf8nRG66YEa/Wm6CMc
+         tJXDw8Ej9HKw2ouNsULVypL5O2ANtFAg5vC9Z4Qu36zo0YixHBr/QPtvB6aRB8XM+DE3
+         TVLQ==
+X-Gm-Message-State: AJcUukfVFJSnVqWFNN91FENqCgm1fUK44DH+qfZZHttziI6Pw85bwJ6g
+        pnTQBWGx5czPV9l3+G1YpyS5cA==
+X-Google-Smtp-Source: ALg8bN4tVyNpfVLViPQ5T6QpaxT+xLmF982ZuRYczgIq4JM57KieEv6D9bsniU15Fhbhe7JbKtCeyQ==
+X-Received: by 2002:adf:f401:: with SMTP id g1mr11581670wro.103.1547719363455;
+        Thu, 17 Jan 2019 02:02:43 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id t199sm23557992wmt.1.2019.01.17.02.02.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 02:02:42 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
+Subject: [PATCH] arm64: dts: meson-axg: add efuse device
+Date:   Thu, 17 Jan 2019 11:02:34 +0100
+Message-Id: <20190117100234.30989-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190117090640.12972-1-stefan@agner.ch> <20190117090640.12972-3-stefan@agner.ch>
-In-Reply-To: <20190117090640.12972-3-stefan@agner.ch>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Thu, 17 Jan 2019 12:01:40 +0200
-Message-ID: <CAEnQRZDX=wzxbYpq6omMYetYqnr66yBJwXx6Ncy_L68p-UJJeA@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH 3/5] ASoC: imx-sgtl5000: don't print
- EPROBE_DEFER as error
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 11:07 AM Stefan Agner <stefan@agner.ch> wrote:
->
-> Probe deferral is to be expected during normal operation, so avoid
-> printing an error when it is encountered.
->
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+Add efuse to the AXG family
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> ---
->  sound/soc/fsl/imx-sgtl5000.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/soc/fsl/imx-sgtl5000.c b/sound/soc/fsl/imx-sgtl5000.c
-> index c29200cf755a..e1e20499b2f1 100644
-> --- a/sound/soc/fsl/imx-sgtl5000.c
-> +++ b/sound/soc/fsl/imx-sgtl5000.c
-> @@ -156,7 +156,9 @@ static int imx_sgtl5000_probe(struct platform_device *pdev)
->
->         ret = devm_snd_soc_register_card(&pdev->dev, &data->card);
->         if (ret) {
-> -               dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
-> +               if (ret != -EPROBE_DEFER)
-> +                       dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
-> +                               ret);
->                 goto fail;
->         }
->
-> --
-> 2.20.1
->
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index ae336cb34e29..0e0abb1a03e2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -111,6 +111,14 @@
+ 		compatible = "amlogic,meson-gxbb-sm";
+ 	};
+ 
++	efuse: efuse {
++		compatible = "amlogic,meson-gxbb-efuse";
++		clocks = <&clkc CLKID_EFUSE>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		read-only;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0";
+ 		method = "smc";
+-- 
+2.20.1
+
