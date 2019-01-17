@@ -2,106 +2,350 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A08DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C260DC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3E6E20651
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:28:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NvjQZHCD"
+	by mail.kernel.org (Postfix) with ESMTP id 8635B20651
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfAQC2W (ORCPT
+        id S1727023AbfAQCdG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 21:28:22 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:53746 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfAQC2W (ORCPT
+        Wed, 16 Jan 2019 21:33:06 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:40240 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbfAQCdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 21:28:22 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0H2OMjh031541;
-        Thu, 17 Jan 2019 02:28:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=+HEw9IuhPiwzjj+Ev4qasNXV6SV5pqUqrHk4ex3X8+4=;
- b=NvjQZHCDk+GBvfsKaklt9KLmPbs7c6m0DBklMRThcbrMgCoEU8bkyQcvVIa9wNxjbeds
- bLqcgKSy6v/Q3tE2U4jVcWmyMmOy6cKzBRXw/HgZO3K6aTqK2Et4OXK4utdowHzZwyG2
- /xZB88YFg9tKewTroYwMkNKtH/UnVSevb31YO8AikvuztJDo8vAxTJd/p+784devhdWH
- ME4KEeG+qOtZlFe/vK5yc0ZVMFacEak4Y73WytXLFuF+WbKszNmb5tRT2UyghuFvWrRZ
- OfSS2OoMs9Rhy60sajCRJIB++nH3LT/HkdI1BEnGws8ZA75Zgg0yZ2UpSyDTM7SIVeTA JA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2pybkcnbg8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jan 2019 02:28:12 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0H2SB81014252
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jan 2019 02:28:11 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0H2SBBZ011591;
-        Thu, 17 Jan 2019 02:28:11 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Jan 2019 18:28:11 -0800
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Evan Green <evgreen@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 5/8] scsi: ufs: qcom: Expose the reset controller for PHY
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190111230129.127037-1-evgreen@chromium.org>
-        <20190111230129.127037-6-evgreen@chromium.org>
-        <a289d841-858d-5583-ce9a-8dc0f2d18a78@ti.com>
-Date:   Wed, 16 Jan 2019 21:28:07 -0500
-In-Reply-To: <a289d841-858d-5583-ce9a-8dc0f2d18a78@ti.com> (Kishon Vijay
-        Abraham, I's message of "Wed, 16 Jan 2019 14:22:25 +0530")
-Message-ID: <yq1imyoqaq0.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 16 Jan 2019 21:33:06 -0500
+Received: by mail-io1-f71.google.com with SMTP id u2so6280986iob.7
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 18:33:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=9iYWz2U9DaZDQJoJs93gFR59qcXySa/M63bO0obIbsg=;
+        b=NOh+BaLefvO4dTWBb39RC5FENds3fteaeZCjbBFaAJP/c5/6qe9pzcYMeAmqoUMYtE
+         BVtsdrvpJmVyoiWKdbKjJPaN+Q1yVYMURnh15uRGafLQ+a8UExoQpDWOTt52MagwL8LQ
+         IyX+wryM5KBnVv0oHDlU5xgoMU3MRyJY/yB2n/jGw0zpfbPLjLlOza4NX7jaT3orNyHm
+         Uav8mW0pJK9ZgqwQt/Rve2HFY9SFwZe6lNN4VnmbTVSaKupDyxeKSV2MDJSZKNLM2fCc
+         4DFljE9f9JEJSvrU7IG+ZtkuqufY4IfUs/32AqPxWPrB0ElrthRq3KB7OgaeblLC4Opg
+         j/tw==
+X-Gm-Message-State: AJcUukffL4+/CMd5K5q/l7hDjnM1GlFATpfs3aubgmWermy8Yf78yyVd
+        QeVLGJCgf8hw33MfEYQzRbQoqWgqIgtv/l+eCUsfXZ5m56ft
+X-Google-Smtp-Source: ALg8bN5tWPIN5Ij97PgrCHPn1K9wE+E79IZpMo8sUy2bwOR+AUoGY+nqfxeufwpDK36oFy4ZWvxbsooOzeOGmWZ70c2gV7j+byyV
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9138 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=732
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901170015
+X-Received: by 2002:a24:2c43:: with SMTP id i64mr7703276iti.2.1547692384563;
+ Wed, 16 Jan 2019 18:33:04 -0800 (PST)
+Date:   Wed, 16 Jan 2019 18:33:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cdc61b057f9e360e@google.com>
+Subject: kernel BUG at mm/page_alloc.c:LINE!
+From:   syzbot <syzbot+80dd4798c16c634daf15@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, iamjoonsoo.kim@lge.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mgorman@techsingularity.net, mhocko@suse.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-Kishon,
+syzbot found the following crash on:
 
-> On 12/01/19 4:31 AM, Evan Green wrote:
->> Expose a reset controller that the phy can use to perform its
->> initialization in a single callback.
->> 
->> Also, change the use of the phy functions from ufs-qcom such that
->> phy_poweron actually fires up the phy, and phy_poweroff actually
->> powers it down.
->> 
->> Signed-off-by: Evan Green <evgreen@chromium.org>
->
-> Can I get Ack for this patch from SCSI MAINTAINERS?
+HEAD commit:    b808822a75a3 Add linux-next specific files for 20190111
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a471d8c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c052ead0aed5001b
+dashboard link: https://syzkaller.appspot.com/bug?extid=80dd4798c16c634daf15
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-No objection from me if there is general consensus that moving reset to
-the phy is the right thing to do.
+Unfortunately, I don't have any reproducer for this crash yet.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+80dd4798c16c634daf15@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at mm/page_alloc.c:3112!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 1043 Comm: kcompactd0 Not tainted 5.0.0-rc1-next-20190111 #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__isolate_free_page+0x4a8/0x680 mm/page_alloc.c:3112
+Code: 4c 39 e3 77 c0 0f b6 8d 74 ff ff ff b8 01 00 00 00 48 d3 e0 e9 11 fd  
+ff ff 48 c7 c6 a0 63 52 88 4c 89 e7 e8 6a 14 10 00 0f 0b <0f> 0b 48 c7 c6  
+c0 64 52 88 4c 89 e7 e8 57 14 10 00 0f 0b 48 89 cf
+RSP: 0000:ffff8880a78e6f58 EFLAGS: 00010007
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88812fffc7e0
+RDX: 1ffff11025fff8fc RSI: 0000000000000007 RDI: ffff88812fffc7b0
+RBP: ffff8880a78e7018 R08: ffff8880a78ce000 R09: ffffed1014f1cdf2
+R10: ffffed1014f1cdf1 R11: 0000000000000003 R12: ffff88812fffc7b0
+R13: 1ffff11014f1cdf2 R14: ffff88812fffc7b0 R15: ffff8880a78e6ff0
+FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000438ca0 CR3: 0000000009871000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+Call Trace:
+  fast_isolate_freepages mm/compaction.c:1356 [inline]
+  isolate_freepages mm/compaction.c:1429 [inline]
+  compaction_alloc+0xd05/0x2970 mm/compaction.c:1541
+  unmap_and_move mm/migrate.c:1177 [inline]
+  migrate_pages+0x48e/0x2cc0 mm/migrate.c:1417
+  compact_zone+0x2207/0x3e90 mm/compaction.c:2173
+  kcompactd_do_work+0x6de/0x1200 mm/compaction.c:2564
+  kcompactd+0x251/0x970 mm/compaction.c:2657
+  kthread+0x357/0x430 kernel/kthread.c:247
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Modules linked in:
+
+======================================================
+WARNING: possible circular locking dependency detected
+5.0.0-rc1-next-20190111 #10 Not tainted
+------------------------------------------------------
+kcompactd0/1043 is trying to acquire lock:
+00000000a0848583 (console_owner){-.-.}, at: log_next  
+kernel/printk/printk.c:499 [inline]
+00000000a0848583 (console_owner){-.-.}, at: console_unlock+0x4ac/0x1040  
+kernel/printk/printk.c:2442
+
+but task is already holding lock:
+00000000c8e67de2 (&(&zone->lock)->rlock){..-.}, at: fast_isolate_freepages  
+mm/compaction.c:1313 [inline]
+00000000c8e67de2 (&(&zone->lock)->rlock){..-.}, at: isolate_freepages  
+mm/compaction.c:1429 [inline]
+00000000c8e67de2 (&(&zone->lock)->rlock){..-.}, at:  
+compaction_alloc+0x6f3/0x2970 mm/compaction.c:1541
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&(&zone->lock)->rlock){..-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
+        rmqueue mm/page_alloc.c:3253 [inline]
+        get_page_from_freelist+0xf6c/0x4870 mm/page_alloc.c:3668
+        __alloc_pages_nodemask+0x4fd/0xdc0 mm/page_alloc.c:4714
+        alloc_pages_current+0x107/0x210 mm/mempolicy.c:2106
+        alloc_pages include/linux/gfp.h:509 [inline]
+        depot_save_stack+0x3da/0x460 lib/stackdepot.c:260
+        save_stack+0xa9/0xd0 mm/kasan/common.c:79
+        set_track mm/kasan/common.c:85 [inline]
+        __kasan_kmalloc mm/kasan/common.c:496 [inline]
+        __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+        kasan_kmalloc mm/kasan/common.c:504 [inline]
+        kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:411
+        slab_post_alloc_hook mm/slab.h:440 [inline]
+        slab_alloc mm/slab.c:3381 [inline]
+        __do_kmalloc mm/slab.c:3709 [inline]
+        __kmalloc+0x145/0x740 mm/slab.c:3720
+        kmalloc include/linux/slab.h:550 [inline]
+        tty_buffer_alloc drivers/tty/tty_buffer.c:175 [inline]
+        __tty_buffer_request_room+0x2bf/0x7e0 drivers/tty/tty_buffer.c:273
+        tty_insert_flip_string_fixed_flag+0x93/0x1f0  
+drivers/tty/tty_buffer.c:318
+        tty_insert_flip_string include/linux/tty_flip.h:37 [inline]
+        pty_write+0x133/0x200 drivers/tty/pty.c:122
+        tty_put_char+0x137/0x160 drivers/tty/tty_io.c:3022
+        __process_echoes+0x5c8/0xa40 drivers/tty/n_tty.c:726
+        flush_echoes drivers/tty/n_tty.c:827 [inline]
+        __receive_buf drivers/tty/n_tty.c:1646 [inline]
+        n_tty_receive_buf_common+0xc2c/0x2f30 drivers/tty/n_tty.c:1740
+        n_tty_receive_buf2+0x34/0x40 drivers/tty/n_tty.c:1775
+        tty_ldisc_receive_buf+0xaf/0x1c0 drivers/tty/tty_buffer.c:461
+        tty_port_default_receive_buf+0x114/0x190 drivers/tty/tty_port.c:38
+        receive_buf drivers/tty/tty_buffer.c:481 [inline]
+        flush_to_ldisc+0x3b2/0x590 drivers/tty/tty_buffer.c:533
+        process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
+        worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
+        kthread+0x357/0x430 kernel/kthread.c:247
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+-> #2 (&(&port->lock)->rlock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
+        tty_port_tty_get+0x22/0x80 drivers/tty/tty_port.c:287
+        tty_port_default_wakeup+0x16/0x40 drivers/tty/tty_port.c:47
+        tty_port_tty_wakeup+0x5d/0x70 drivers/tty/tty_port.c:387
+        uart_write_wakeup+0x46/0x70 drivers/tty/serial/serial_core.c:103
+        serial8250_tx_chars+0x4a4/0xb20  
+drivers/tty/serial/8250/8250_port.c:1806
+        serial8250_handle_irq.part.0+0x1be/0x2e0  
+drivers/tty/serial/8250/8250_port.c:1879
+        serial8250_handle_irq drivers/tty/serial/8250/8250_port.c:1865  
+[inline]
+        serial8250_default_handle_irq+0xc5/0x150  
+drivers/tty/serial/8250/8250_port.c:1895
+        serial8250_interrupt+0xfb/0x1a0  
+drivers/tty/serial/8250/8250_core.c:125
+        __handle_irq_event_percpu+0x1c6/0xb10 kernel/irq/handle.c:149
+        handle_irq_event_percpu+0xa0/0x1d0 kernel/irq/handle.c:189
+        handle_irq_event+0xa7/0x134 kernel/irq/handle.c:206
+        handle_edge_irq+0x232/0x8a0 kernel/irq/chip.c:791
+        generic_handle_irq_desc include/linux/irqdesc.h:154 [inline]
+        handle_irq+0x252/0x3d8 arch/x86/kernel/irq_64.c:78
+        do_IRQ+0x99/0x1d0 arch/x86/kernel/irq.c:246
+        ret_from_intr+0x0/0x1e
+        native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:57
+        arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+        default_idle_call+0x36/0x90 kernel/sched/idle.c:93
+        cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+        do_idle+0x386/0x5d0 kernel/sched/idle.c:262
+        cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
+        start_secondary+0x435/0x620 arch/x86/kernel/smpboot.c:272
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+-> #1 (&port_lock_key){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
+        serial8250_console_write+0x253/0xab0  
+drivers/tty/serial/8250/8250_port.c:3245
+        univ8250_console_write+0x5f/0x70  
+drivers/tty/serial/8250/8250_core.c:586
+        call_console_drivers kernel/printk/printk.c:1784 [inline]
+        console_unlock+0xc9a/0x1040 kernel/printk/printk.c:2455
+        vprintk_emit+0x370/0x960 kernel/printk/printk.c:1978
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:2005
+        vprintk_func+0x7e/0x189 kernel/printk/printk_safe.c:398
+        printk+0xba/0xed kernel/printk/printk.c:2038
+        register_console+0x74d/0xb50 kernel/printk/printk.c:2770
+        univ8250_console_init+0x3e/0x4b  
+drivers/tty/serial/8250/8250_core.c:681
+        console_init+0x6b7/0x9fe kernel/printk/printk.c:2856
+        start_kernel+0x5df/0x8bd init/main.c:667
+        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
+        x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:451
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+-> #0 (console_owner){-.-.}:
+        lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3860
+        console_lock_spinning_enable kernel/printk/printk.c:1647 [inline]
+        console_unlock+0x516/0x1040 kernel/printk/printk.c:2452
+        vprintk_emit+0x370/0x960 kernel/printk/printk.c:1978
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:2005
+        vprintk_func+0x7e/0x189 kernel/printk/printk_safe.c:398
+        printk+0xba/0xed kernel/printk/printk.c:2038
+        report_bug.cold+0x11/0x5e lib/bug.c:191
+        fixup_bug arch/x86/kernel/traps.c:178 [inline]
+        fixup_bug arch/x86/kernel/traps.c:173 [inline]
+        do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+        do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+        invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+        __ClearPageBuddy include/linux/page-flags.h:706 [inline]
+        rmv_page_order mm/page_alloc.c:744 [inline]
+        rmv_page_order mm/page_alloc.c:742 [inline]
+        __isolate_free_page+0x4a8/0x680 mm/page_alloc.c:3134
+        fast_isolate_freepages mm/compaction.c:1356 [inline]
+        isolate_freepages mm/compaction.c:1429 [inline]
+        compaction_alloc+0xd05/0x2970 mm/compaction.c:1541
+        unmap_and_move mm/migrate.c:1177 [inline]
+        migrate_pages+0x48e/0x2cc0 mm/migrate.c:1417
+        compact_zone+0x2207/0x3e90 mm/compaction.c:2173
+        kcompactd_do_work+0x6de/0x1200 mm/compaction.c:2564
+        kcompactd+0x251/0x970 mm/compaction.c:2657
+        kthread+0x357/0x430 kernel/kthread.c:247
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+other info that might help us debug this:
+
+Chain exists of:
+   console_owner --> &(&port->lock)->rlock --> &(&zone->lock)->rlock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&(&zone->lock)->rlock);
+                                lock(&(&port->lock)->rlock);
+                                lock(&(&zone->lock)->rlock);
+   lock(console_owner);
+
+  *** DEADLOCK ***
+
+2 locks held by kcompactd0/1043:
+  #0: 00000000c8e67de2 (&(&zone->lock)->rlock){..-.}, at:  
+fast_isolate_freepages mm/compaction.c:1313 [inline]
+  #0: 00000000c8e67de2 (&(&zone->lock)->rlock){..-.}, at: isolate_freepages  
+mm/compaction.c:1429 [inline]
+  #0: 00000000c8e67de2 (&(&zone->lock)->rlock){..-.}, at:  
+compaction_alloc+0x6f3/0x2970 mm/compaction.c:1541
+  #1: 0000000001912981 (console_lock){+.+.}, at: console_trylock_spinning  
+kernel/printk/printk.c:1709 [inline]
+  #1: 0000000001912981 (console_lock){+.+.}, at: vprintk_emit+0x351/0x960  
+kernel/printk/printk.c:1977
+
+stack backtrace:
+CPU: 0 PID: 1043 Comm: kcompactd0 Not tainted 5.0.0-rc1-next-20190111 #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_circular_bug.isra.0.cold+0x1cc/0x28f kernel/locking/lockdep.c:1225
+  check_prev_add kernel/locking/lockdep.c:1867 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1980 [inline]
+  validate_chain kernel/locking/lockdep.c:2351 [inline]
+  __lock_acquire+0x2fed/0x4a10 kernel/locking/lockdep.c:3339
+  lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3860
+  console_lock_spinning_enable kernel/printk/printk.c:1647 [inline]
+  console_unlock+0x516/0x1040 kernel/printk/printk.c:2452
+  vprintk_emit+0x370/0x960 kernel/printk/printk.c:1978
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:2005
+  vprintk_func+0x7e/0x189 kernel/printk/printk_safe.c:398
+  printk+0xba/0xed kernel/printk/printk.c:2038
+  report_bug.cold+0x11/0x5e lib/bug.c:191
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  fixup_bug arch/x86/kernel/traps.c:173 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:__isolate_free_page+0x4a8/0x680 mm/page_alloc.c:3112
+Code: 4c 39 e3 77 c0 0f b6 8d 74 ff ff ff b8 01 00 00 00 48 d3 e0 e9 11 fd  
+ff ff 48 c7 c6 a0 63 52 88 4c 89 e7 e8 6a 14 10 00 0f 0b <0f> 0b 48 c7 c6  
+c0 64 52 88 4c 89 e7 e8 57 14 10 00 0f 0b 48 89 cf
+RSP: 0000:ffff8880a78e6f58 EFLAGS: 00010007
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88812fffc7e0
+RDX: 1ffff11025fff8fc RSI: 0000000000000007 RDI: ffff88812fffc7b0
+RBP: ffff8880a78e7018 R08: ffff8880a78ce000 R09: ffffed1014f1cdf2
+R10: ffffed1014f1cdf1 R11: 0000000000000003 R12: ffff88812fffc7b0
+R13: 1ffff11014f1cdf2 R14: ffff88812fffc7b0 R15: ffff8880a78e6ff0
+  fast_isolate_freepages mm/compaction.c:1356 [inline]
+  isolate_freepages mm/compaction.c:1429 [inline]
+  compaction_alloc+0xd05/0x2970 mm/compaction.c:1541
+  unmap_and_move mm/migrate.c:1177 [inline]
+  migrate_pages+0x48e/0x2cc0 mm/migrate.c:1417
+  compact_zone+0x2207/0x3e90 mm/compaction.c:2173
+Lost 33 message(s)!
+---[ end trace b088aebfc4c7ea50 ]---
+RIP: 0010:__isolate_free_page+0x4a8/0x680 mm/page_alloc.c:3112
+Code: 4c 39 e3 77 c0 0f b6 8d 74 ff ff ff b8 01 00 00 00 48 d3 e0 e9 11 fd  
+ff ff 48 c7 c6 a0 63 52 88 4c 89 e7 e8 6a 14 10 00 0f 0b <0f> 0b 48 c7 c6  
+c0 64 52 88 4c 89 e7 e8 57 14 10 00 0f 0b 48 89 cf
+RSP: 0000:ffff8880a78e6f58 EFLAGS: 00010007
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88812fffc7e0
+RDX: 1ffff11025fff8fc RSI: 0000000000000007 RDI: ffff88812fffc7b0
+RBP: ffff8880a78e7018 R08: ffff8880a78ce000 R09: ffffed1014f1cdf2
+R10: ffffed1014f1cdf1 R11: 0000000000000003 R12: ffff88812fffc7b0
+R13: 1ffff11014f1cdf2 R14: ffff88812fffc7b0 R15: ffff8880a78e6ff0
+FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000438ca0 CR3: 0000000009871000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
