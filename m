@@ -2,96 +2,95 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B00C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2C4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42B920851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:31:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F12F720851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:31:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="fS48/Itd"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KGeDR4CF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbfAQWbk (ORCPT
+        id S1726366AbfAQWb6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 17:31:40 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:60022 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbfAQWbj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 17:31:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1547764296; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+QfZXXY/CGGFt7A/vIxhzgSb/TWMaE8ImGqTkc74C6o=;
-        b=fS48/ItdLLXUHHtjWIWhZZqQ+mw1JAxgJDtJN2MR18Fhc1R6/5VYQU454GDlQK22b61EU6
-        MGBKURelta48f7j+mdbosiimwXSH6/DS3Gf04EKDWchGt1OKoLIMb9DVxSaHUwDvb5VOBX
-        mKPvXkqyfuHh/tCVGhTV3CoJXY7H6M4=
-Date:   Thu, 17 Jan 2019 19:31:27 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 3/4] usb: musb: Kconfig: Drop dependency on MACH_JZ4740
- for jz4740
-To:     Bin Liu <b-liu@ti.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <1547764287.2057.0@crapouillou.net>
-In-Reply-To: <20190115162603.GB18026@uda0271908>
-References: <20190110133700.4471-1-paul@crapouillou.net>
-        <20190110133700.4471-3-paul@crapouillou.net>
-        <20190115162603.GB18026@uda0271908>
+        Thu, 17 Jan 2019 17:31:58 -0500
+Received: from ozlabs.org ([203.11.71.1]:36131 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfAQWb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 17:31:58 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43gf2K6KlWz9sBZ;
+        Fri, 18 Jan 2019 09:31:53 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547764315;
+        bh=plpHrhB1lCjH8EvKGtgeLyOUdwg63dbWnLV3KXy0ZFM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=KGeDR4CFo4yslzL9xv8X4uBfgHLRIYWL0t3TN2Cy6YB+3Bxz+Fxwh6frzDYRk/Wqy
+         iH5CfzzGkeGmonsgtrMdSiOqcqxhcpL8qfiQjK/YCzRTAcP4sc9PklggHE23G+alg+
+         E80Tw0h0iA+TNs0KRT+2rNdQ+prfEmGQeVyLckDtrHThEhaNNGbJNhqavcPIgoSwL4
+         7rlqIMlOc8U8KjMRGM4Do7BjeY6odDjplsXIRxtFi4/dS5N7rqfPsHjdUoMNqSe5Zj
+         KBZ7UjHQAsw/kM63PfGrr5JxEHkkAIQQXgQgW16WWieY5O7aCAAoT5tpAKdDHso01i
+         3MR0cAdoaKF8w==
+Date:   Fri, 18 Jan 2019 09:31:35 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: linux-next: Fixes tag needs some work in the tip tree
+Message-ID: <20190118093135.39cf071e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AqHG0K4+LaYSP5cre78SC7M"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--Sig_/AqHG0K4+LaYSP5cre78SC7M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 15, 2019 at 1:26 PM, Bin Liu <b-liu@ti.com> wrote:
-> Hi Paul,
-> 
-> On Thu, Jan 10, 2019 at 10:36:59AM -0300, Paul Cercueil wrote:
->>  Depending on MACH_INGENIC prevent us from creating a generic kernel 
->> that
-> 
-> Again, did you mean MACH_JZ4740 instead?
+Hi all,
 
-Dammit. I'm sorry. Will send a v3 right now.
+Commit
 
->>  works on more than one MIPS board. Instead, we just depend on MIPS 
->> being
->>  set.
->> 
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net 
->> <mailto:paul@crapouillou.net>>
->>  ---
->> 
->>  v2: Remove info about adding COMPILE_TEST in commit message, as it 
->> was
->>      there before
->> 
->>   drivers/usb/musb/Kconfig | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->>  diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
->>  index ad08895e78f9..6f5b0ed6a507 100644
->>  --- a/drivers/usb/musb/Kconfig
->>  +++ b/drivers/usb/musb/Kconfig
->>  @@ -111,7 +111,7 @@ config USB_MUSB_UX500
->>   config USB_MUSB_JZ4740
->>   	tristate "JZ4740"
->>   	depends on NOP_USB_XCEIV
->>  -	depends on MACH_JZ4740 || COMPILE_TEST
->>  +	depends on MIPS || COMPILE_TEST
->>   	depends on USB_MUSB_GADGET
->>   	depends on USB_OTG_BLACKLIST_HUB
-> 
-> Regards,
-> -Bin.
+  a31e184e4f69 ("x86/pkeys: Properly copy pkey state at fork()")
 
+Fixes tag
 
+  Fixes: e8c24d3a23a ("x86/pkeys: Allocation/free syscalls")
+
+has these problems:
+
+  - SHA1 should be at least 12 digits long
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/AqHG0K4+LaYSP5cre78SC7M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxBAkcACgkQAVBC80lX
+0GwqQgf/R7FSce8yihSxWinaT3Z/YltX1oHHs9AIPl82Ent2gd6gwX7Ix5pvBHLT
+B4VLjtxDJBq822TVI4UxWT7cjFTJ++u40OiPj5AORzy3ygVwrf/bYHV1lPBSf4zg
+i8/R9aNmefUj/Ui7He3V4G6/gYNl4/UVyDHQBHfz4mVmUjFTUNLNuaEN6nd4cw/i
+ZZ00Ugv5ZV7xBSBX+0Yu09jrbDbNMzoNUC+bVJZ39Jqy1V0bHDe52OhNpepdizaE
+Nk5diD+BgM7FrOgblT0AreymtJQDOe9wABz5vhdJpkz2dJu4Z2ZGu3aXKqBaPOYd
+gkwYTA/0uH7EowhAm5MOmhIQdIndGg==
+=ECMj
+-----END PGP SIGNATURE-----
+
+--Sig_/AqHG0K4+LaYSP5cre78SC7M--
