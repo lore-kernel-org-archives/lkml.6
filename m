@@ -3,47 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D8BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60495C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48ACC205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:57:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37DEA205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:57:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbfAQP47 (ORCPT
+        id S1728479AbfAQP5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:56:59 -0500
-Received: from www62.your-server.de ([213.133.104.62]:36176 "EHLO
+        Thu, 17 Jan 2019 10:57:35 -0500
+Received: from www62.your-server.de ([213.133.104.62]:36254 "EHLO
         www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727700AbfAQP47 (ORCPT
+        with ESMTP id S1726854AbfAQP5f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:56:59 -0500
+        Thu, 17 Jan 2019 10:57:35 -0500
 Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
         by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.89_1)
         (envelope-from <daniel@iogearbox.net>)
-        id 1gkA2I-0003ur-5B; Thu, 17 Jan 2019 16:56:54 +0100
+        id 1gkA2t-0003xb-4Q; Thu, 17 Jan 2019 16:57:31 +0100
 Received: from [178.197.248.17] (helo=linux.home)
         by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.89)
         (envelope-from <daniel@iogearbox.net>)
-        id 1gkA2H-000W2x-VN; Thu, 17 Jan 2019 16:56:54 +0100
-Subject: Re: [PATCH] bpf: Make function btf_name_offset_valid static
-To:     Martin Lau <kafai@fb.com>, Mathieu Malaterre <malat@debian.org>
+        id 1gkA2s-0002Hr-Un; Thu, 17 Jan 2019 16:57:30 +0100
+Subject: Re: [PATCH v2 1/2] bpf: Annotate implicit fall through in
+ cgroup_dev_func_proto
+To:     Mathieu Malaterre <malat@debian.org>
 Cc:     Alexei Starovoitov <ast@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190116192940.32104-1-malat@debian.org>
- <20190116211627.bs3rrolbjdsxkyvp@kafai-mbp.dhcp.thefacebook.com>
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190114202941.16183-1-malat@debian.org>
+ <20190116193529.32488-1-malat@debian.org>
 From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <06e9a2f2-50f9-99af-9fe8-51dd5425fbb7@iogearbox.net>
-Date:   Thu, 17 Jan 2019 16:56:53 +0100
+Message-ID: <7bb7ba43-533b-3cc9-6479-c24a9aea1698@iogearbox.net>
+Date:   Thu, 17 Jan 2019 16:57:30 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20190116211627.bs3rrolbjdsxkyvp@kafai-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20190116193529.32488-1-malat@debian.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,29 +55,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/16/2019 10:16 PM, Martin Lau wrote:
-> On Wed, Jan 16, 2019 at 08:29:40PM +0100, Mathieu Malaterre wrote:
->> Initially in commit 69b693f0aefa ("bpf: btf: Introduce BPF Type Format
->> (BTF)") the function 'btf_name_offset_valid' was introduced as static
->> function it was later on changed to a non-static one, and then finally
->> in commit c454a46b5efd ("bpf: Add bpf_line_info support") the function
->> prototype was removed.
-> Instead of c454a46b5efd, it was removed from btf.h in
-> commit 23127b33ec80 ("bpf: Create a new btf_name_by_offset() for non type name use case")
+On 01/16/2019 08:35 PM, Mathieu Malaterre wrote:
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> this place in the code produced a warnings (W=1).
 > 
->>
->> Revert back to original implementation and make the function static.
->> Remove warning triggered with W=1:
->>
->>   kernel/bpf/btf.c:470:6: warning: no previous prototype for 'btf_name_offset_valid' [-Wmissing-prototypes]
->>
->> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> Fixes: 23127b33ec80 ("bpf: Create a new btf_name_by_offset() for non type name use case")
+> This commit remove the following warning:
 > 
-> Thanks for the fix!
+>   kernel/bpf/cgroup.c:719:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 > 
-> Other than the above,
-> 
-> Acked-by: Martin KaFai Lau <kafai@fb.com>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-Applied to bpf and fixed up commit reference. Thanks!
+Both applied, thanks!
