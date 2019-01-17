@@ -2,115 +2,122 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA236C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA48C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 867C120851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:47:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D01320851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:48:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hokTKV3D"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WcUYBF2M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfAQMrs (ORCPT
+        id S1728069AbfAQMse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:47:48 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33968 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfAQMrs (ORCPT
+        Thu, 17 Jan 2019 07:48:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47144 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728035AbfAQMse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 07:47:48 -0500
-Received: by mail-io1-f67.google.com with SMTP id b16so7729734ior.1;
-        Thu, 17 Jan 2019 04:47:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s3fwbbwVsofMKhpSE5fgZb9rOkZsQ89dbXltbx9H7jo=;
-        b=hokTKV3DkuY+UmoJLIaODm8H1uM2q2eHdB2UFA9XliRcOHACcuFQSHZdlEYQlPTtq6
-         98+eWC348NCWG8WiLRXkNUPIVC5eGnvh5204//bX129BoryMPq085AaoSONGswxfekN0
-         uZvO6k/OVCOcS5icPOjl8Vlpt3toNOkB/71o0ORYjCk5dWZ4pJgPhUHZWt+/Yr12pcOu
-         5IvBPzZWALb7oMTu40SvC9qqe/Jcuyi9GB4/qry20ywcsDUXNjoloujbyenIVcAoJS7P
-         X7LaUBLnRnUJxeIcIKrqVtLwsfcjZdxRB3EXVML/NRqjjC+MmhAH7lxJc6NHB07y+RZL
-         awIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s3fwbbwVsofMKhpSE5fgZb9rOkZsQ89dbXltbx9H7jo=;
-        b=tpXUun1qKJWWAQHJWZ5sJQPOrOzf8hAUTDyODxVTMqlaZCGGz/MiQxwSig2f0WEidK
-         CXtX9Yo8r7VmGO4BvvC4SKDBzBBAzS2hXC3TQYGdGw3cCZHZQd0grXMMiUv6NnwD8fen
-         E1RXtAzWZbfvF0gPkhhcqAnVw9LByKQrzX8JnpVOJqJcQPMCCvwrzXtrrmavYu0SHmat
-         GHtW1VD3K+SEGekceasz4WJlYik7Ios37mGikCFFF/aWRUe1zSxfaUaoHzvQPsIXVNOm
-         aT2w9/Bv0xbDRCeTHfv0nQGbWb30in9hKIdBSUYMQcDTElrs2m9vM9JNbdutYnW58K9H
-         NORw==
-X-Gm-Message-State: AJcUukerrQ98AoyPEe7CJzp9AxTt8CxvYtUbXl7C9HgembKfyHiIHTmZ
-        HJzVk380cjTRFdqa0mfedIfTI/yDx3Vln1CSCZQ=
-X-Google-Smtp-Source: ALg8bN4BHnqWtoWTeCAAQunkiLirqvZhbHCN5R2etw5yo6gZ38XcxEvjraow8SbmCnMb0dvr0LCSiHwsxvFoTImPs/Q=
-X-Received: by 2002:a6b:f814:: with SMTP id o20mr7437690ioh.129.1547729266696;
- Thu, 17 Jan 2019 04:47:46 -0800 (PST)
+        Thu, 17 Jan 2019 07:48:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=f5w29PS1hdR7Z2K/DINYVO0LkjCbQMc/0yfsez3Z1rw=; b=WcUYBF2Mv7XPavSZ5QXwAmc3G
+        9JMqpW60Io3XL3fm5Wfd4klGybXgwYjI15/7Eq42W96dJgQlNdllxYEzhwatA3I7IBC3ydm40aIHB
+        sZByBk8fZFcrfJoIxQNSMALPqqMYRrWivCvsE4D4O9nnyea+vTY3+lF+WE9P/0SPBJRBFplBbNDjT
+        oJD9K3e9HZhyKxhvDm/CJ3jxE+DNTov4+ZIU+ptQ4rNmSoyOBADULnKXhF1srqsqY2Pibzah8f3p2
+        mjkF6BF1oCtCepCvyi/MxnFi71uag9EAPkK8kR2/jjTAujtQ+YDk2dVHtBwOQjgHtoAroy2tz4Blu
+        2rqTwlbFg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gk75v-0006uo-W3; Thu, 17 Jan 2019 12:48:28 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D7322202647CE; Thu, 17 Jan 2019 13:48:24 +0100 (CET)
+Date:   Thu, 17 Jan 2019 13:48:24 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        acme@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com, dsahern@gmail.com
+Subject: Re: [PATCH v10 perf, bpf-next 1/9] perf, bpf: Introduce
+ PERF_RECORD_KSYMBOL
+Message-ID: <20190117124824.GE10486@hirez.programming.kicks-ass.net>
+References: <20190116162931.1542429-1-songliubraving@fb.com>
+ <20190116162931.1542429-2-songliubraving@fb.com>
 MIME-Version: 1.0
-References: <20180619082445.11062-1-thellstrom@vmware.com> <20180619082445.11062-3-thellstrom@vmware.com>
- <CAF6AEGubXRVL-PA7TUvW-oF3tTL=oaQ4F+AD_AiX=wUjxCov1g@mail.gmail.com> <9c07b391c16db8b0c788afd4692cc8191baff1aa.camel@vmware.com>
-In-Reply-To: <9c07b391c16db8b0c788afd4692cc8191baff1aa.camel@vmware.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Thu, 17 Jan 2019 07:47:34 -0500
-Message-ID: <CAF6AEGvLOKOScQFMHVAFweGDnbR1E3ORqzH6mymJ60rTXkZEfw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] locking: Implement an algorithm choice for
- Wound-Wait mutexes
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "dave@stgolabs.net" <dave@stgolabs.net>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        Pv-drivers <Pv-drivers@vmware.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "gustavo@padovan.org" <gustavo@padovan.org>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116162931.1542429-2-songliubraving@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 11:49 AM Thomas Hellstrom <thellstrom@vmware.com> wrote:
->
-> Hi,
->
-> On Wed, 2019-01-16 at 09:24 -0500, Rob Clark wrote:
-> > So, I guess this is to do w/ the magic of merge commits, but it looks
-> > like the hunk changing the crtc_ww_class got lost:
->
-> So what happened here is that this commit changed it to
-> DEFINE_WD_CLASS
-> and the following commit changed it back again to
-> DEFINE_WW_CLASS
-> so that the algorithm change and only that came with the last commit.
-> Apparently the history of that line got lost when merging since the
-> merge didn't change it; git blame doesn't show it changed, but when
-> looking at the commit history in gitk it's all clear. I guess that's a
-> feature of git.
->
-> The modeset locks now use true wound-wait rather than wait-die.
+On Wed, Jan 16, 2019 at 08:29:23AM -0800, Song Liu wrote:
+> +/* callback function to generate ksymbol name */
+> +typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
+> +extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
+> +			       bool unregister,
+> +			       perf_ksymbol_get_name_f get_name, void *data);
+> +
 
-ahh, ok, that makes sense.  Thanks for clearing up my confusion.
+I'm not liking the getname thing.. I know that's what BPF does, but can
+we please do that in the caller or something?
 
-BR,
--R
+
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1114,11 +1114,8 @@ static inline void perf_event_task_sched
+ 
+ extern void perf_event_mmap(struct vm_area_struct *vma);
+ 
+-/* callback function to generate ksymbol name */
+-typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
+ extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
+-			       bool unregister,
+-			       perf_ksymbol_get_name_f get_name, void *data);
++			       bool unregister, const char *name);
+ 
+ extern struct perf_guest_info_callbacks *perf_guest_cbs;
+ extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+@@ -1341,11 +1338,8 @@ static inline int perf_unregister_guest_
+ 
+ static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
+ 
+-typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
+ static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
+-				      bool unregister,
+-				      perf_ksymbol_get_name_f get_name,
+-				      void *data)			{ }
++				      bool unregister, const char *name) { }
+ static inline void perf_event_exec(void)				{ }
+ static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
+ static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7698,8 +7698,7 @@ static void perf_event_ksymbol_output(st
+ 	perf_output_end(&handle);
+ }
+ 
+-void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
+-			perf_ksymbol_get_name_f get_name, void *data)
++void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister, const char *sym)
+ {
+ 	struct perf_ksymbol_event ksymbol_event;
+ 	char name[KSYM_NAME_LEN];
+@@ -7713,7 +7712,7 @@ void perf_event_ksymbol(u16 ksym_type, u
+ 	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
+ 		goto err;
+ 
+-	get_name(name, KSYM_NAME_LEN, data);
++	strlcpy(name, sym, KSYM_NAME_LEN);
+ 	name_len = strlen(name) + 1;
+ 	while (!IS_ALIGNED(name_len, sizeof(u64)))
+ 		name[name_len++] = '\0';
