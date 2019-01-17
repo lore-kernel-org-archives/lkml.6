@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA927C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC66CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE3320851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C9A420851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="0E6lQZS9"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YECdKmns"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbfAQKXa (ORCPT
+        id S1728095AbfAQKXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:23:30 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33065 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbfAQKX0 (ORCPT
+        Thu, 17 Jan 2019 05:23:34 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39037 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727708AbfAQKX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:23:26 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so683614wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 02:23:25 -0800 (PST)
+        Thu, 17 Jan 2019 05:23:29 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so10359331wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 02:23:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=arU82ZeX78CY4qS47DMaU2XgnlqLaod0sJ3wwiKXdJQ=;
-        b=0E6lQZS9zPkUt5xcP+4AMSa1H4NYJRIuU4bWqFMTzdbvL+uRMYXfuhwHxOIGyja/u1
-         0LiFUR2AM06a0Vnf9p6n1HwdZdxDOV15xV8f//fuc1jIVx8bcl0vpDbmGpDru/NtBu4h
-         ivi6ZDNvISNA/Vm6BJBuvtPxiKjx8LNkbijxrby0qTkY6UDJY+XYg4E3np27WWdJfVqE
-         Wp9q3ln9vEQpZXxjN58sUJCTJCvMaLFcDey/nsptyfPsxOdERxu+Aw63B9t9L7R02adf
-         u8UM0O4GXVK56hn0aogtwTQOje6YdQrsvIcFPiyu8M82BeR7UaadCCXkmh5iswDy7eEK
-         cYzA==
+        bh=/Tf+jWcbQvaP/wZHxbjP4tGEHKpoydocGjOeujE6LsY=;
+        b=YECdKmnsLma30+5hkWrT0/AErkw+qY1sW+4PEBA5VOPC3jiyD4mfoO7JIHmc8iFBsC
+         EtYlOtTc0y7kuXV5Yslhbp/mze3r5AzNYQYCo3oBHahOoaJHA9SuDD+KGTZprnVb7d1y
+         gqOR7mOgTpyQmGXveaMybagkJaVIfxpwDvBx3+E8gyDREbSHSX5r3cfb6RJtSnwKI8z1
+         D7fiXOrbVWV4H2+l6YnuwFg+mT41dt0DtBtpuFPD5GfjL4JgeWcLSFTV7mEeJiUs21GF
+         K6qTTvMdfiG4gfmZsxMq4FknElK5Kt6pS5E3DoKjQYUs9tWhkLvCbfkc6DH2JoJeJ0Eo
+         upoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=arU82ZeX78CY4qS47DMaU2XgnlqLaod0sJ3wwiKXdJQ=;
-        b=fB14+ZjqFllGv6twha7m2/q8MGhVOgbtCllMsGrAdCcKiAKKv32nezMjc7MsFjYoRZ
-         JGSF33Rb3cW3fAE9zlj6hwC7SVg97JY7P83ixe1oB3fR/rrgmtUbkUUSteMmodwEweYI
-         ojffuVI1u3jFDL4r5ym5Ni/NrF1hSbxNkRAiEYEJ6AFlAY1SGSFOCsMJavGEoJlMTFRn
-         G/VvFyb3iyZHAn9lMXGeIPb9xe+EEeD+d3LLrUSt65eUnNPsbk3OdctwTqVwLgZsBBLH
-         4OiH4Deq3b9jaSy7MRSagTYn2wZrQ34ZFOQ0rLgehH31FcZ/1fn6p8c88i2Zjw3giqec
-         ORYw==
-X-Gm-Message-State: AJcUukcKT7JzSlNQGPfD/5FZM6JGiAdtRMWJRe7wl/Z+SwJrMBQBPEdE
-        TkP+SWjvGBedg3GzRcQ6pzFwLA==
-X-Google-Smtp-Source: ALg8bN6+r6UxGkve+2SVzOFUokDcQ6JsEowB8X71IJ2tKx2zjB42OXexglSwjfpg1+jJT/u1rBsqcg==
-X-Received: by 2002:a7b:cb18:: with SMTP id u24mr10685287wmj.138.1547720604286;
-        Thu, 17 Jan 2019 02:23:24 -0800 (PST)
+        bh=/Tf+jWcbQvaP/wZHxbjP4tGEHKpoydocGjOeujE6LsY=;
+        b=YZ2cXMGf8yO1XGAZ3ubCjgKGekKb/at48GD7YqC8y5wuhPMHPl8qKSggQQwWRABGwB
+         K5pyk24/7J+ecFMyibQNLQr7b3G5YnUUaGWx9rTqW0LqFegZqNRI+XyEVlIe/74rXmJx
+         lAmu4ELMLE+f3Qr/iZFY9M5V1V6AE9fwBUMfTlIJEysGnA4OSE+x8pOkKRzlrAHeo4I6
+         v92h1LNsHxyjGH2FGKC+uwHkaXAD5sqTibLdUAWLtqUvrgo1c2cL28lATUQudjZuSDJU
+         xmSbvnNXPWxuBU0uUsLlku4ubBfg6Z5aeExbjd2XFXsdQmGWqngJH00LurJMVrTua0Ml
+         eCMA==
+X-Gm-Message-State: AJcUukdXSv4dOOzEsaNppmCpEkvQCn2E+5IFYVB20c2vXUFkOv1MZBnl
+        MHRj9VZ5Ho6MvgLOqDxDkDDn+A==
+X-Google-Smtp-Source: ALg8bN6gLhA6yd4aO0Nf1n+/DxbTHZN1epiKdGM4gxJ24u11pxa+cNjFrMswgsx6iwMKyyPVXfCrZw==
+X-Received: by 2002:adf:9382:: with SMTP id 2mr11151661wrp.269.1547720607627;
+        Thu, 17 Jan 2019 02:23:27 -0800 (PST)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id u10sm66400530wrr.33.2019.01.17.02.23.22
+        by smtp.googlemail.com with ESMTPSA id u10sm66400530wrr.33.2019.01.17.02.23.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 02:23:23 -0800 (PST)
+        Thu, 17 Jan 2019 02:23:27 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Kevin Hilman <khilman@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: pinctrl: meson: update register descriptions
-Date:   Thu, 17 Jan 2019 11:23:13 +0100
-Message-Id: <20190117102315.1833-2-jbrunet@baylibre.com>
+Subject: [PATCH 3/3] pinctrl: meson: add optional region for drive strength
+Date:   Thu, 17 Jan 2019 11:23:15 +0100
+Message-Id: <20190117102315.1833-4-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190117102315.1833-1-jbrunet@baylibre.com>
 References: <20190117102315.1833-1-jbrunet@baylibre.com>
@@ -75,46 +75,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-like pull-enable, pull should be optional has this region is available on
-every controllers. Also, the g12a feature a new region "ds" for the
-drive-strength
+On the G12a, there is a new 'region' to handle the drive-strength.
+This is optional since the older do not have this.
 
-All this region thing is one big mess. I suspect that there is only one
-big GPIO region with holes in it. All registers between the current
-regions reads '0' so it is probably just spare space to handle more pins.
-
-Since we need to continue to handle the existing controllers, switching to
-one single region now would not simplify things. However, if more
-organisation layouts and features keep on being added, we may have to look
-at this again
-
-Fixes: 3cd3c83f6752 ("pinctrl: Add compatibles for Amlogic Meson G12A pin controllers")
+Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- .../devicetree/bindings/pinctrl/meson,pinctrl.txt      | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson.c | 6 ++++++
+ drivers/pinctrl/meson/pinctrl-meson.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-index 82ead40311f6..a47dd990a8d3 100644
---- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-@@ -23,11 +23,11 @@ The GPIO bank for the controller is represented as a sub-node and it acts as a
- GPIO controller.
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index a4ae1ac5369e..96a4a72708e4 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -507,6 +507,12 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
+ 	if (IS_ERR(pc->reg_pullen))
+ 		pc->reg_pullen = pc->reg_pull;
  
- Required properties for sub-nodes are:
-- - reg: should contain address and size for mux, pull-enable, pull and
--   gpio register sets
-- - reg-names: an array of strings describing the "reg" entries. Must
--   contain "mux", "pull" and "gpio". "pull-enable" is optional and
--   when it is missing the "pull" registers are used instead
-+ - reg: should contain a list of address and size, one tuple for each entry
-+   in reg-names.
-+ - reg-names: an array of strings describing the "reg" entries.
-+   Must contain "mux" and "gpio".
-+   May contain "pull", "pull-enable" and "ds" when appropriate.
-  - gpio-controller: identifies the node as a gpio controller
-  - #gpio-cells: must be 2
++	pc->reg_ds = meson_map_resource(pc, gpio_np, "ds");
++	if (IS_ERR(pc->reg_ds)) {
++		dev_dbg(pc->dev, "ds registers not found - skipping\n");
++		pc->reg_ds = NULL;
++	}
++
+ 	return 0;
+ }
  
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+index eff61ea1c67e..5eaab925f427 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.h
++++ b/drivers/pinctrl/meson/pinctrl-meson.h
+@@ -120,6 +120,7 @@ struct meson_pinctrl {
+ 	struct regmap *reg_pullen;
+ 	struct regmap *reg_pull;
+ 	struct regmap *reg_gpio;
++	struct regmap *reg_ds;
+ 	struct gpio_chip chip;
+ 	struct device_node *of_node;
+ };
 -- 
 2.20.1
 
