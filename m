@@ -2,214 +2,117 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A73C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4E4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F77E20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:57:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hEakoqSR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qnpuh5FU"
+	by mail.kernel.org (Postfix) with ESMTP id 464F520856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547747858;
+	bh=aFoDpqYyvIa3XPsbditSEh0OFxF2BqwNiWwJrygHAXY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=IWCdoZ2/i1MWW49LcHT/ncpCWzx09tvAL9jjkDxwjRZ/PBudYHt5cB+qwhE4p0U2h
+	 miETaCCrEY89UudLSozfgQg70ssvBx3p3J4zqptGVskzpXSCVJ8lJ95S1+GFzmUgXt
+	 dCEaoiZVTW2NzXTYTtbGkoRhynamo5cvEWlc7RnM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbfAQR5X (ORCPT
+        id S1727618AbfAQR5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:57:23 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38662 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbfAQR5W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:57:22 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 029766075A; Thu, 17 Jan 2019 17:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547747841;
-        bh=0TBAGUvME8VYukGRi4qSPz2cn1aFt00K5u6usgkAUnA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hEakoqSRizHIyXMWa6+YaPoP4Q/78CJF1iofjWvvDSn8Q52mH1vVvNWGrZMfsqk9D
-         eKeD5crixLEFhp7LSoFRwxXcBdNPLpbCK+fdTnUu6H3Y9J/TYELF8gvFz8dZa2XODg
-         1FK3PCOSuMJ7auzBNi8uVAQr0rAutLVMm2ZRpkUc=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        Thu, 17 Jan 2019 12:57:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727070AbfAQR5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 12:57:36 -0500
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E305C606E1;
-        Thu, 17 Jan 2019 17:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547747839;
-        bh=0TBAGUvME8VYukGRi4qSPz2cn1aFt00K5u6usgkAUnA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Qnpuh5FU2ypA0HuIC7GPWIR3vQHEZAlhW6PPFhigVjG9OS+I/ueLs1W4fKBtIZ44n
-         dgVfoIT5Blwy5A6KNzuIMzN6PtlbkOLYXEYOyef18f70zzUWSGFi/SPxMTyj+GTIlX
-         cK5Gnpm0aoAEimKcLJC6qoR3d06lUp8vgN7wfPQg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E305C606E1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v2 3/6] phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-        balbi@kernel.org, linux-usb@vger.kernel.org
-References: <1547483802-5408-1-git-send-email-jhugo@codeaurora.org>
- <20190115181114.GE28907@builder>
- <72cedbb9-c64b-a142-7c0d-64cb15f7ce00@ti.com>
- <60137083-59d3-a04f-d55b-c5587038e946@ti.com>
- <c6b1887e-139a-6b3b-3f9e-d0842fbe8eeb@codeaurora.org>
- <f39c4a28-18a5-4180-6283-0db6cca0ce57@ti.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <e5764682-97d5-377c-f8d1-360e4dab7393@codeaurora.org>
-Date:   Thu, 17 Jan 2019 10:57:18 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 177EF20868
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 17:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547747855;
+        bh=aFoDpqYyvIa3XPsbditSEh0OFxF2BqwNiWwJrygHAXY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QlqgMrmq49+sejNQtjRK5F10YCozvuY6j/VzfXxvgpc/YjM+fWV1kvzVEQbrCk1Xf
+         TijPnmQk3GELXX8X+k99/a1U/fjwqB+++G4/L8ch2isT9rNJHGtGZ+w+5gw3BStQ+c
+         gK9ppYBONzS98hJeVGjpaoeX7VyKYkYNgmIzM/gk=
+Received: by mail-qt1-f181.google.com with SMTP id k12so12273896qtf.7
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:57:35 -0800 (PST)
+X-Gm-Message-State: AJcUuke/7h1Yq0NfqjoZxfJxrbiHUjxXczwyjvTytz81is5Ynt2mCaoT
+        MYrlGxCSaZStJNBxkAwLR/iA6p5W+qiEkp5atQ==
+X-Google-Smtp-Source: ALg8bN5tTpOwVkO7HghKv9Tc67I088OBEEsYyHiz+yga2EbGVQngUS7+t4tTs69bxdaM/qNQGnR6B5SksVNUumPISfE=
+X-Received: by 2002:a0c:e2ca:: with SMTP id t10mr12635189qvl.77.1547747854238;
+ Thu, 17 Jan 2019 09:57:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f39c4a28-18a5-4180-6283-0db6cca0ce57@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190114144202.27315-1-benjamin.gaignard@st.com>
+In-Reply-To: <20190114144202.27315-1-benjamin.gaignard@st.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 17 Jan 2019 11:57:21 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKwj46CSB8vRbYyU6kRMTXqa2Q6O=vQkJwTwC_gHjOf-g@mail.gmail.com>
+Message-ID: <CAL_JsqKwj46CSB8vRbYyU6kRMTXqa2Q6O=vQkJwTwC_gHjOf-g@mail.gmail.com>
+Subject: Re: [RFC 0/7] Introduce bus domains controller framework
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        loic pallardy <loic.pallardy@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/2019 3:52 AM, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On 16/01/19 8:58 PM, Jeffrey Hugo wrote:
->> On 1/16/2019 1:58 AM, Kishon Vijay Abraham I wrote:
->>> Hi,
->>>
->>> On 16/01/19 2:20 PM, Kishon Vijay Abraham I wrote:
->>>>
->>>>
->>>> On 15/01/19 11:41 PM, Bjorn Andersson wrote:
->>>>> On Mon 14 Jan 08:36 PST 2019, Jeffrey Hugo wrote:
->>>>>
->>>>>> MSM8998 contains one QUSB2 PHY which is very similar to the existing
->>>>>> sdm845 support.
->>>>>>
->>>>>
->>>> I don't seem to have the dt-binding patch in my inbox. Can you send them as
->>>> well?
->>>
->>> Ignore my request. I found the patch.
->>
->> Sorry about that.  I was made aware there is something glitched when sending
->> this out, and the series didn't get threaded properly.  I'll be investigating
->> and correcting for the next time I need to send out a series.
->>
->> Is this change acceptable?  I saw you picked up patch 1 (phy bindings) and
->> patch 4 (QMP phy changes), but not this one.  I do want to see as much of this
->> hit 5.1 as possible, so if there is anything I need to correct, please let me
->> know.  I'd be happy to update.
-> 
-> I've updated the tree now. Can you check if everything looks alright w.r.t your
-> patches?
+On Mon, Jan 14, 2019 at 8:42 AM Benjamin Gaignard
+<benjamin.gaignard@st.com> wrote:
+>
+> The goal of this framework is to offer an interface for the
+> hardware blocks controlling bus accesses rights.
+>
+> Bus domains controllers are typically used to control if a
+> hardware block can perform read or write operations on bus.
 
-Looks great.  Thank you very much for taking all the phy changes.
+Lots of things are domains. Power domains, clock domains, etc. But
+naming is hard.
 
-> 
-> Thanks
-> Kishon
->>
->>>
->>> Thanks
->>> Kishon
->>>
->>>>
->>>> Thanks
->>>> Kishon
->>>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>>>
->>>>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->>>>>> ---
->>>>>>    drivers/phy/qualcomm/phy-qcom-qusb2.c | 41
->>>>>> +++++++++++++++++++++++++++++++++++
->>>>>>    1 file changed, 41 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c
->>>>>> b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->>>>>> index 9177989f..e5e4f36 100644
->>>>>> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
->>>>>> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->>>>>> @@ -152,6 +152,32 @@ enum qusb2phy_reg_layout {
->>>>>>        QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_PWR_CTRL, 0x00),
->>>>>>    };
->>>>>>    +static const unsigned int msm8998_regs_layout[] = {
->>>>>> +    [QUSB2PHY_PLL_CORE_INPUT_OVERRIDE] = 0xa8,
->>>>>> +    [QUSB2PHY_PLL_STATUS]              = 0x1a0,
->>>>>> +    [QUSB2PHY_PORT_TUNE1]              = 0x23c,
->>>>>> +    [QUSB2PHY_PORT_TUNE2]              = 0x240,
->>>>>> +    [QUSB2PHY_PORT_TUNE3]              = 0x244,
->>>>>> +    [QUSB2PHY_PORT_TUNE4]              = 0x248,
->>>>>> +    [QUSB2PHY_PORT_TEST1]              = 0x24c,
->>>>>> +    [QUSB2PHY_PORT_TEST2]              = 0x250,
->>>>>> +    [QUSB2PHY_PORT_POWERDOWN]          = 0x210,
->>>>>> +    [QUSB2PHY_INTR_CTRL]               = 0x22c,
->>>>>> +};
->>>>>> +
->>>>>> +static const struct qusb2_phy_init_tbl msm8998_init_tbl[] = {
->>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_ANALOG_CONTROLS_TWO, 0x13),
->>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_CLOCK_INVERTERS, 0x7c),
->>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_CMODE, 0x80),
->>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_LOCK_DELAY, 0x0a),
->>>>>> +
->>>>>> +    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE1, 0xa5),
->>>>>> +    QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE2, 0x09),
->>>>>> +
->>>>>> +    QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_DIGITAL_TIMERS_TWO, 0x19),
->>>>>> +};
->>>>>> +
->>>>>> +
->>>>>>    static const unsigned int sdm845_regs_layout[] = {
->>>>>>        [QUSB2PHY_PLL_CORE_INPUT_OVERRIDE] = 0xa8,
->>>>>>        [QUSB2PHY_PLL_STATUS]        = 0x1a0,
->>>>>> @@ -221,6 +247,18 @@ struct qusb2_phy_cfg {
->>>>>>        .autoresume_en     = BIT(3),
->>>>>>    };
->>>>>>    +static const struct qusb2_phy_cfg msm8998_phy_cfg = {
->>>>>> +    .tbl            = msm8998_init_tbl,
->>>>>> +    .tbl_num        = ARRAY_SIZE(msm8998_init_tbl),
->>>>>> +    .regs           = msm8998_regs_layout,
->>>>>> +
->>>>>> +    .disable_ctrl   = POWER_DOWN,
->>>>>> +    .mask_core_ready = CORE_READY_STATUS,
->>>>>> +    .has_pll_override = true,
->>>>>> +    .autoresume_en   = BIT(0),
->>>>>> +    .update_tune1_with_efuse = true,
->>>>>> +};
->>>>>> +
->>>>>>    static const struct qusb2_phy_cfg sdm845_phy_cfg = {
->>>>>>        .tbl        = sdm845_init_tbl,
->>>>>>        .tbl_num    = ARRAY_SIZE(sdm845_init_tbl),
->>>>>> @@ -734,6 +772,9 @@ static int qusb2_phy_exit(struct phy *phy)
->>>>>>            .compatible    = "qcom,msm8996-qusb2-phy",
->>>>>>            .data        = &msm8996_phy_cfg,
->>>>>>        }, {
->>>>>> +        .compatible    = "qcom,msm8998-qusb2-phy",
->>>>>> +        .data        = &msm8998_phy_cfg,
->>>>>> +    }, {
->>>>>>            .compatible    = "qcom,sdm845-qusb2-phy",
->>>>>>            .data        = &sdm845_phy_cfg,
->>>>>>        },
->>>>>> -- 
->>>>>> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies,
->>>>>> Inc.
->>>>>> Qualcomm Technologies, Inc. is a member of the
->>>>>> Code Aurora Forum, a Linux Foundation Collaborative Project.
->>>>>>
->>
->>
+We now have the inter-connect binding which ATM only deals with
+bandwidth. Any reason we can't add access controls to that?
 
+> Smarter domains controllers could be able to define accesses
+> rights per hardware blocks to control where they can read
+> or write.
+>
+> Domains controller configurations are provided in device node,
+> parsed by the framework and send to the driver to apply them.
+> Each controller may need different number and type of inputs
+> to configure a domain so device-tree properties size have to
+> be define by using "#domainctrl-cells".
+> Domains configurations properties have to be named "domainsctrl-X"
+> on device node.
+> "domainsctrl-names" keyword can also be used to give a name to
+> a specific configuration.
+>
+> An example of bus domains controller is STM32 ETZPC hardware block
+> which got 3 domains:
+> - secure: hardware blocks are only accessible by software running on trust
+>   zone.
+> - non-secure: hardware blocks are accessible by non-secure software (i.e.
+>   linux kernel).
+> - coprocessor: hardware blocks are only accessible by the corpocessor.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+We already have a way to assign secure vs. non-secure with 'status'.
+Ignoring co-processors for a minute, why does that not work for you?
+
+Co-processors are so varied in terms of capabilities and view of the
+system, I'm not sure we can define something generic.
+
+> Up to 94 hardware blocks of the soc could be managed by ETZPC and
+> assigned to one of the three domains.
+>
+> It is an RFC, comments are welcome to help to create this framework, thanks.
+
+Finally, for a new, common binding, I'd like to see more than one
+platform using it (or at least an intent to use it).
+
+Rob
