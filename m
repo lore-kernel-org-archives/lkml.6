@@ -2,146 +2,109 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68E0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ADAC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73ED620855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:52:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="JROnxVcc"
+	by mail.kernel.org (Postfix) with ESMTP id 3395E20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfAQJwc (ORCPT
+        id S1726917AbfAQJyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:52:32 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36826 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfAQJwb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:52:31 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b85so4587955pfc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 01:52:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:in-reply-to:references:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=H7mpXeJ8YyGT/a6rEEiKtA/OLa1cWu67WVt0ug1SozE=;
-        b=JROnxVcceCADeYyMIbsvZKCdtUVAHyJIQIrRL3kKxj7XpM2HfiQbhIkkbYLu/K1hGh
-         KsauEtoTe00VS2iPF8Wh2Kc+YAeADn15qOT7znnYyb+k/XFtEx2K2kx3wWYkQ/cUMR92
-         PsoBan5ySWHhkfaFN+0oN63eGlEJFwUOMpb3bopEm7QE7xsg99sB+KsSBfeRgWOxMjIw
-         0krvbFDWp09J57tmZnG3oK7J/kAqkkuiXfUOAtvRHt9AJ76/1e3MYEdeiRYW/bdSkhnN
-         mELvOElsYD4KSzQmYfPzGqQkESICGDEost/xvXJORe1c0Tg/ZX03NSZ5HR0xDDZ6/i9w
-         qexg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=H7mpXeJ8YyGT/a6rEEiKtA/OLa1cWu67WVt0ug1SozE=;
-        b=IzVZnO9U51LdzbH1UfBmqakHq7Y5gpn8SvhHaVzYZ7cZSxhHuIyZvAGrGr2RNJ9QvR
-         zbmgCnyvrQ3pLv/Rs58fGTslrk0Fh+wz1Z3e+I9UpJLsfNlFZdEUPM1J2pAPTnJVBZJd
-         Fs95EWpW7plTY1+bnDpJ9mQkEggdr3FWz7boL4AeroOlPj1GkymZ3yHWbR+oS1rL64zb
-         +EkgbwTCihfXmVD8oNuQTU7YFd3wX5DPByvL5aP6EXUPgjRVZnAWSm/XycRY+CtJJBTM
-         K0o4SUBmUYWxJzsgMZzsHYO14c1D2PcyZ/LEddV/zmHtQplLZyLtuNTFO5O1xYxLRRTB
-         M9KQ==
-X-Gm-Message-State: AJcUukePXhEZVOxzYgjJTJ713mBK4YCDT2YUf6HIlij4/2CtMk6iaSrb
-        XwdDvi4VlH4S3ZgRSiiEnI4jYQ==
-X-Google-Smtp-Source: ALg8bN66QuI0CtY0wncM5QWN91qtA/gFoKZvbdntqOL0AMt6rKB4qQ62Ce1NLZuoW/bwUliqVUN6dg==
-X-Received: by 2002:a62:5dd1:: with SMTP id n78mr14072115pfj.58.1547718751042;
-        Thu, 17 Jan 2019 01:52:31 -0800 (PST)
-Received: from [192.168.0.79] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
-        by smtp.gmail.com with ESMTPSA id j21sm2075070pfn.175.2019.01.17.01.52.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 01:52:30 -0800 (PST)
-Subject: Re: [PATCH 2/3] scsi: arcmsr: Fix suspend/resume of
- ACB_ADAPTER_TYPE_B part 2
-From:   Ching Huang <ching2048@areca.com.tw>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hch@infradead.org, colin.king@canonical.com
-In-Reply-To: <20190117091646.GA11828@kadam>
-References: <1547696703.4339.21.camel@Centos6.3-64>
-         <20190117070227.GM4504@kadam> <1547714827.5079.19.camel@Centos6.3-64>
-         <20190117091646.GA11828@kadam>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Thu, 17 Jan 2019 17:52:28 +0800
-Message-ID: <1547718748.5079.34.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Jan 2019 04:54:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59266 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725965AbfAQJyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:54:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9BE55ABCE;
+        Thu, 17 Jan 2019 09:54:36 +0000 (UTC)
+Date:   Thu, 17 Jan 2019 10:52:03 +0100
+From:   Cyril Hrubis <chrubis@suse.cz>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190117095203.GA23942@rei.lan>
+References: <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+ <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
+ <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
+ <20190116054613.GA11670@nautica>
+ <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm>
+ <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
+ <20190116213708.GN6310@bombadil.infradead.org>
+ <nycvar.YFH.7.76.1901162238310.6626@cbobk.fhfr.pm>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1901162238310.6626@cbobk.fhfr.pm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-17 at 12:16 +0300, Dan Carpenter wrote:
-> On Thu, Jan 17, 2019 at 04:47:07PM +0800, Ching Huang wrote:
-> > On Thu, 2019-01-17 at 10:59 +0300, Dan Carpenter wrote:
-> > > On Thu, Jan 17, 2019 at 11:45:03AM +0800, Ching Huang wrote:
-> > > > >From Ching Huang <ching2048@areca.com.tw>
-> > > > 
-> > > > Fix suspend/resume of ACB_ADAPTER_TYPE_B part 2.
-> > > > 
-> > > 
-> > > What does this look like from a user perspective?  Does it fail every
-> > > time or does it only fail sometimes?
-> > > 
-> > > What's the bug exactly?
-> > > 
-> > > There is no Fixes tag...
-> > >From user's perspective, hibernate/resume are OK.
-> > But following IO may cause 'isr get an illegal ccb command' in
-> > log/messages sometime.
-> > > 
+Hi!
+> > Your patch 3/3 just removes the test.  Am I right in thinking that it
+> > doesn't need to be *moved* because the existing test after !PageUptodate
+> > catches it?
 > 
+> Exactly. It just initiates read-ahead for IOCB_NOWAIT cases as well, and 
+> if it's actually set, it'll be handled by the !PageUpdtodate case.
 > 
-> You will need to resend with that information included in the commit
-> message.
-OK. I will resend this patch later.
+> > Of course, there aren't any tests for RWF_NOWAIT in xfstests.  Are there 
+> > any in LTP?
 > 
-> > > > Signed-off-by: Ching Huang <ching2048@areca.com.tw>
-> > > > ---
-> > > > 
-> > > > diff --git a/drivers/scsi/arcmsr/arcmsr.h b/drivers/scsi/arcmsr/arcmsr.h
-> > > > index a94c513..b98c632 100755
-> > > > --- a/drivers/scsi/arcmsr/arcmsr.h
-> > > > +++ b/drivers/scsi/arcmsr/arcmsr.h
-> > > > @@ -508,9 +508,9 @@ struct MessageUnit_A
-> > > >  struct MessageUnit_B
-> > > >  {
-> > > >  	uint32_t	post_qbuffer[ARCMSR_MAX_HBB_POSTQUEUE];
-> > > > -	uint32_t	done_qbuffer[ARCMSR_MAX_HBB_POSTQUEUE];
-> > > > +	volatile uint32_t	done_qbuffer[ARCMSR_MAX_HBB_POSTQUEUE];
-> > > 
-> > > There is a well known rule of thumb that when someone uses "volatile"
-> > > in the kernel it means there is a locking problem...  Is this __iomem or
-> > > something?
-> > The done_qbuffer was a command completion queue, it was an area written
-> > by IO processor and read by device driver. So, ...
-> 
-> I'm not totally positive I understand this sentence.  I can find a bunch
-> of places which read from this buffer, but I haven't immediately found
-> which place writes to it.  Can you give me a function name that I should
-> read?
-Well, we allocate memory for struct MessageUnit_B in
-arcmsr_alloc_ccb_pool(), by assign to acb->dma_coherent_handle2.
-Then we tell IO controller its DMA address in arcmsr_iop_confirm().
-When a command was completed, controller's firmware program will write a
-completion ccb in done_qbuffer through DMA. So, you can't see any driver
-funtion write to it.
-> 
-> > > 
-> > > >  	uint32_t	postq_index;
-> > > > -	uint32_t	doneq_index;
-> > > > +	volatile uint32_t	doneq_index;
-> 
-> The volatile here is not right.  It's just normal memory.
-Right. this volatile is not necessary.
-> 
-> regards,
-> dan carpenter
+> Not in the released version AFAIK. I've asked the LTP maintainer (in our 
+> internal bugzilla) to take care of this thread a few days ago, but not 
+> sure what came out of it. Adding him (Cyril) to CC.
+
+So far not much, I've looked over our mincore() tests and noted down how
+to improve them here:
+
+https://github.com/linux-test-project/ltp/issues/461
+
+We do plan to test the final mincore() fix:
+
+https://github.com/linux-test-project/ltp/issues/460
+
+And we do have RWF_NOWAIT tests on our TODO for some time as well:
+
+https://github.com/linux-test-project/ltp/issues/286
+
+I guess I can raise priority for that one so that we have basic
+functional tests in a week or so. Also if anyone has some RWF_NOWAIT
+tests already it would be nice if these could be shared with us.
 
 
+[A bit off topic rant]
+
+I've been telling kernel developers for years that if they have a test
+code they used when developing a kernel feature that they should share
+it with us (LTP community) and we will turn these into automated tests
+and maintain them for free. LTP is also used in many QA departements
+around the word so such tests will end up executed in different
+environments also for free. Sadly this does not happen much and there
+are only few exceptions so far. But maybe I wasn't shouting loudly
+enough.
+
+-- 
+Cyril Hrubis
+chrubis@suse.cz
