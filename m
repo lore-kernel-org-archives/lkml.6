@@ -2,198 +2,141 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA98C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49183C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205E320851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:42:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E573020855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:46:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ypLVR4O1"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bwsQG3Vf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfAQMmr (ORCPT
+        id S1727630AbfAQMqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:42:47 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:47058 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfAQMmr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 07:42:47 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0HCgL0g107826;
-        Thu, 17 Jan 2019 06:42:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547728941;
-        bh=8Or3VrkNirQ12Q3+vnoWE6DAY4MdJCWb/qU8lUtw4tE=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=ypLVR4O1dpHZHTmOxEN6/5Dn7UdRSjBrs1jtaUsjHIRzwCxJ8VQdN3ukdLFCraN3E
-         5phE9ks6R1XChvfUYp/ct9+l2cJnp8ackpZrKPkvzl223YFjvkb8q3ZLFYHY1hPepj
-         AjjqKjBec5wPPIFnJib3nj7WDvSEVhs33xnQ0yeA=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0HCgL8n116640
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Jan 2019 06:42:21 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 17
- Jan 2019 06:42:21 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 17 Jan 2019 06:42:21 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0HCgHva011564;
-        Thu, 17 Jan 2019 06:42:18 -0600
-Subject: Re: [PATCH 02/17] clocksource: davinci-timer: new driver
-From:   Sekhar Nori <nsekhar@ti.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-CC:     Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thu, 17 Jan 2019 07:46:30 -0500
+Received: from mail-eopbgr150071.outbound.protection.outlook.com ([40.107.15.71]:27824
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726066AbfAQMq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 07:46:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oPQdcSFWDGG5DltDtQKpY+dCtnfUGXYyG78p85vE4XQ=;
+ b=bwsQG3VfZ9aNxulwYjKcoP9bV8qrV0EGvcZXvdVDFg9G/wDSZfrHjNvyrYp3Y9UErJY1Fjaw1WnDOctrwpmYJcxIB2aooCkkT2YYcARJKvzgOT/luS2z4+VBggtC37PRMTVHvMQmsga1CfOsF2nzD4PCYIbyAi7i7jRGdfbiafo=
+Received: from DB7PR04MB4699.eurprd04.prod.outlook.com (20.176.233.28) by
+ DB7PR04MB4410.eurprd04.prod.outlook.com (52.135.137.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.26; Thu, 17 Jan 2019 12:46:25 +0000
+Received: from DB7PR04MB4699.eurprd04.prod.outlook.com
+ ([fe80::f1a0:618e:40fc:a88c]) by DB7PR04MB4699.eurprd04.prod.outlook.com
+ ([fe80::f1a0:618e:40fc:a88c%2]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
+ 12:46:25 +0000
+From:   Viorel Suman <viorel.suman@nxp.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190111172134.30147-1-brgl@bgdev.pl>
- <20190111172134.30147-3-brgl@bgdev.pl>
- <08200de1-fde5-c525-c874-c7872259067b@ti.com>
- <CAMRc=McrT4KTW45=3CTBxspVb+z8k=DDjOvKi9NH0aA9eJ8=cQ@mail.gmail.com>
- <a7d4994d-7740-c845-da67-9d06e6d874cc@ti.com>
-Message-ID: <d9bc1153-3b65-19a8-67ef-e131296cd8b1@ti.com>
-Date:   Thu, 17 Jan 2019 18:12:17 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <a7d4994d-7740-c845-da67-9d06e6d874cc@ti.com>
-Content-Type: text/plain; charset="utf-8"
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>
+CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Viorel Suman <viorel.suman@gmail.com>
+Subject: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
+Thread-Topic: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
+Thread-Index: AQHUrmKoQmEVxQazyE68ciNiNCuyvg==
+Date:   Thu, 17 Jan 2019 12:46:25 +0000
+Message-ID: <1547729177-14317-1-git-send-email-viorel.suman@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6PR05CA0036.eurprd05.prod.outlook.com
+ (2603:10a6:20b:2e::49) To DB7PR04MB4699.eurprd04.prod.outlook.com
+ (2603:10a6:10:14::28)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=viorel.suman@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB4410;6:CIhUirpiE9n+NmTTvftiHthAm/dHPoHuA6tHipC7fwNQW90qGEIgas/4Mbj3F8dzpGDMiJ7cVofshpbWi1kjDsDzbPL6gwhuVKhzx98awpPraHWIHj5NKm0oToWvpxl6qsa4TeODDlSDId7Xsct4+NXPgERZnw1R8oKeeREOo+sPBedCxqzaYH/Tm1y/dnKLnDF9INDsdSgFMSC1NZ4MfHNu1vBSoz7zrL8vUsDhW9LImyZ1ku1pQELz/CTCUZivxFidh20zvV9U8KJIjVTKWQd4PnCT2XIZxem7er3docRp4YLVuCz30w/r8QhkVZU6pex3SdiXwxrzNny2UlrvZzOt1y1V4Gtmk2d1m6spKAgdm0ZNLrFjIAszRZF5DPvaVshv85+Db7rnSzHituAHOzoAFcj4QJmbjk7Q9TUhLuabwK7qM17yXgsyjEzrjjHeAyzWqAaXvn/+X7+/+hFoqw==;5:j5HsomFzPZduEG6vEkH/W1p+PtSSdLg+N/70HpNSyYYIJJgzHJBvAhL0nZ5tZDzqyIBtgsh596VArD2g6m62vreu8LO4dIA5rHaB81WZR+Q4QOm8LgtppPsWo7bQpjYg+FGQmNPVZraV54wmHjcEbNIfXh74t626L0mmSMpTEoH/FMbiolHYEeAxrsZoO+eZChCHEaNO23aMYEJUro863g==;7:aaPwpwTyri5JQ3p8nBiAtLEebcaQPfDlR/VpY2Tnxh/uxs6sioGxh7DH0kHTg54K7nW2cnxetlNxyp2iRvhNHi/kYrq3RHWIsKHubTmOuEZqxrPzlZx2I/d5nAZuN9dYpNCVajMj5kAlV75WaiBq3Q==
+x-ms-office365-filtering-correlation-id: 8d0797c8-caa2-4e16-424a-08d67c79cae7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4410;
+x-ms-traffictypediagnostic: DB7PR04MB4410:
+x-microsoft-antispam-prvs: <DB7PR04MB4410450AF94FAC3948D8005292830@DB7PR04MB4410.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0920602B08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(396003)(136003)(346002)(39860400002)(189003)(199004)(6512007)(39060400002)(6116002)(53936002)(3846002)(68736007)(36756003)(66066001)(105586002)(106356001)(14454004)(478600001)(7416002)(486006)(186003)(5660300001)(99286004)(71200400001)(71190400001)(44832011)(386003)(6506007)(102836004)(26005)(2616005)(316002)(256004)(476003)(2906002)(6436002)(6636002)(217873002)(97736004)(86362001)(54906003)(6486002)(110136005)(52116002)(25786009)(81156014)(81166006)(4326008)(8936002)(8676002)(305945005)(50226002)(7736002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4410;H:DB7PR04MB4699.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 9C/8KHBw6bViGfxaPHYtTHo6mA+AW//d2e2UL9bco2Uw1sfNZEFMQlhRO57zNv46R3DvaSJWDblPQqQ/QcZ9SXuVQ7ObJC1b1nkPDn8GvrmFIfDPNGbOzBMiskRA55vDE7ZOUKuibq79wNvsMwUZ2PaiN4B+Ma42UKMJlMHb3uEBlr6ClC5j7Jvl01D02xfJDP1hZHWNg/hD/TephiDa3YstcoxY55oaB+zN4aNfkP7pbT+O6nzyGe919XnmVbFDvyikdD87RgsGF1E4yQ+SRt8DTwMAGA1zUoIdt9RMAvpLWvgi/tbB/R2Lkk7O4etTUVKXy8gOv138d93bR4eO+UOBSlmVZhv/eDnzFhtlxt6SivRoeYJdp9ZBMAddtSR+vGLeiuqib7k92wrQvAPVO8v38eW0yVHmLJF16pSHAzo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d0797c8-caa2-4e16-424a-08d67c79cae7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 12:46:24.0450
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4410
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/01/19 2:48 PM, Sekhar Nori wrote:
-> On 14/01/19 10:09 PM, Bartosz Golaszewski wrote:
->> pon., 14 sty 2019 o 13:20 Sekhar Nori <nsekhar@ti.com> napisał(a):
->>>
->>> Hi Bartosz,
->>>
->>> On 11/01/19 10:51 PM, Bartosz Golaszewski wrote:
->>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>
->>>> Currently the clocksource and clockevent support for davinci platforms
->>>> lives in mach-davinci. It hard-codes many things, used global variables,
->>>> implements functionalities unused by any platform and has code fragments
->>>> scattered across many (often unrelated) files.
->>>>
->>>> Implement a new, modern and simplified timer driver and put it into
->>>> drivers/clocksource. We still need to support legacy board files so
->>>> export a config structure and a function that allows machine code to
->>>> register the timer.
->>>>
->>>> We don't check the return values of regmap reads and writes since with
->>>> mmio it's only likely to fail due to programmer's errors.
->>>>
->>>> We also don't bother freeing resources on errors in
->>>> davinci_timer_register() as the system won't boot without a timer anyway.
->>>>
->>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> With this series, DA830 fails to boot. Rest of the devices are okay from
->>> boot perspective.
->>>
->>> DA830 is pretty unique because it uses the same timer-half for both
->>> clocksource and clockevent. May be you can set the same configuration on
->>> your DA850 to see the same issue? Else, I will enable low-level debug
->>> and try to provide more debug data.
->>>
->>
->> I can't boot da850 with the same config as da830 (0x60 compare
->> register, compare irq 74) even with the old timer code. Just to make
->> sure: does da830 boot fine with mainline v5.0-rc2?
-> 
-> Yeah, I did check that without the patch DA830 does boot.
+The patchset adds NXP Audio Mixer (AUDMIX) device and machine
+drivers and related DT bindings documentation.
 
-You are right that DA850 lacks compare interrupts for timers 0 and 1.
-So, yes, it seems like we will have to shift to timer2 to test
-compare interrupts on DA850.
+Changes since V2:
+1. Moved "dais" node from machine driver DTS node to device driver DTS node
+  as suggested by Rob.
 
-Just to confirm, DA830 boots fine with the compare section removed:
+Changes since V1:
+1. Original patch split into distinct patches for the device driver and
+  DT binding documentation.
+2. Replaced AMIX with AUDMIX in both code and file names as it looks more
+  RM-compliant.
+3. Removed polarity control from CPU DAI driver as suggested by Nicolin.
+4. Added machine driver and related DT binding documentation.
 
----8<---
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 0d81a8fdd9e6..f34398a7e47c 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -788,14 +788,6 @@ static const struct davinci_timer_cfg da830_timer_cfg = {
- 			.flags	= IORESOURCE_IRQ,
- 		},
- 	},
--	.cmp = {
--		.irq = {
--			.start	= IRQ_DA830_T12CMPINT0_0,
--			.end	= IRQ_DA830_T12CMPINT0_0,
--			.flags	= IORESOURCE_IRQ,
--		},
--		.offset		= DA830_CMP12_0,
--	}
- };
- 
- static const struct davinci_soc_info davinci_soc_info_da830 = {
----8<---
+Viorel Suman (4):
+  ASoC: fsl: Add Audio Mixer CPU DAI driver
+  ASoC: add fsl_audmix DT binding documentation
+  ASoC: fsl: Add Audio Mixer machine driver
+  ASoC: add imx-audmix DT binding documentation
 
-And the low-level debug with your patches shows that its hanging at 
-delay loop calibration.
+ .../devicetree/bindings/sound/fsl,audmix.txt       |  50 ++
+ .../devicetree/bindings/sound/imx-audmix.txt       |  18 +
+ sound/soc/fsl/Kconfig                              |  16 +
+ sound/soc/fsl/Makefile                             |   5 +
+ sound/soc/fsl/fsl_audmix.c                         | 551 +++++++++++++++++=
+++++
+ sound/soc/fsl/fsl_audmix.h                         | 102 ++++
+ sound/soc/fsl/imx-audmix.c                         | 334 +++++++++++++
+ 7 files changed, 1076 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/fsl,audmix.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/imx-audmix.txt
+ create mode 100644 sound/soc/fsl/fsl_audmix.c
+ create mode 100644 sound/soc/fsl/fsl_audmix.h
+ create mode 100644 sound/soc/fsl/imx-audmix.c
 
-Uncompressing Linux... done, booting the kernel.                                
-Booting Linux on physical CPU 0x0                                               
-Linux version 5.0.0-rc1-08699-gc87d386784f3-dirty (a0875516@psplinux063) (gcc v9
-CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=0005317f                   
-CPU: VIVT data cache, VIVT instruction cache                                    
-Machine: DaVinci DA830/OMAP-L137/AM17x EVM                                      
-Memory policy: Data cache writethrough                                          
-cma: Reserved 16 MiB at 0xc2800000                                              
-DaVinci da830/omap-l137 rev2.0 variant 0x9                                      
-On node 0 totalpages: 14336                                                     
-  DMA zone: 112 pages used for memmap                                           
-  DMA zone: 0 pages reserved                                                    
-  DMA zone: 14336 pages, LIFO batch:3                                           
-random: get_random_bytes called from start_kernel+0x80/0x3ec with crng_init=0   
-pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768                                   
-pcpu-alloc: [0] 0                                                               
-Built 1 zonelists, mobility grouping on.  Total pages: 14224                    
-Kernel command line: console=ttyS2,115200n8                                     
-Dentry cache hash table entries: 8192 (order: 3, 32768 bytes)                   
-Inode-cache hash table entries: 4096 (order: 2, 16384 bytes)                    
-Memory: 33876K/57344K available (4607K kernel code, 308K rwdata, 1072K rodata, )
-Virtual kernel memory layout:                                                   
-    vector  : 0xffff0000 - 0xffff1000   (   4 kB)                               
-    fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)                               
-    vmalloc : 0xc4000000 - 0xff800000   ( 952 MB)                               
-    lowmem  : 0xc0000000 - 0xc3800000   (  56 MB)                               
-    modules : 0xbf000000 - 0xc0000000   (  16 MB)                               
-      .text : 0x(ptrval) - 0x(ptrval)   (4609 kB)                               
-      .init : 0x(ptrval) - 0x(ptrval)   ( 212 kB)                               
-      .data : 0x(ptrval) - 0x(ptrval)   ( 309 kB)                               
-       .bss : 0x(ptrval) - 0x(ptrval)   ( 137 kB)                               
-SLUB: HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1                      
-rcu: Preemptible hierarchical RCU implementation.                               
-        Tasks RCU enabled.                                                      
-rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.          
-NR_IRQS: 245                                                                    
-clocksource: timer0_0: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 79s
-sched_clock: 32 bits at 24MHz, resolution 41ns, wraps every 89478484971ns       
-Console: colour dummy device 80x30                                              
-Calibrating delay loop... 
-<hangs>
+--=20
+2.7.4
 
-Thanks,
-Sekhar
