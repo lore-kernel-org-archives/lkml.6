@@ -2,84 +2,96 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047D6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D785C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE1FC2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 013AE20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:04:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vMkLQMSl"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ADkg4fEN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfAQUD6 (ORCPT
+        id S1729395AbfAQUEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:03:58 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37032 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728801AbfAQUD5 (ORCPT
+        Thu, 17 Jan 2019 15:04:02 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34661 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728801AbfAQUEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:03:57 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y126so5349692pfb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:03:57 -0800 (PST)
+        Thu, 17 Jan 2019 15:04:00 -0500
+Received: by mail-ot1-f67.google.com with SMTP id t5so7251884otk.1;
+        Thu, 17 Jan 2019 12:04:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=CFnl8dyjGiuRB3x9RlqOHQmlDV1KXXaciQgsX6gUhkU=;
-        b=vMkLQMSlzFUUMoB2rdPseJ2wFWNIx7yMkFLoMjvbGe9ZQ11W8ATa4sW8NCKNDLrMfE
-         Pe0BxgOLxifJxiv6/eDPQ22CS/6tl5R6EQ9ED+L62/RKYqm1uEotxe2Tf3JOaEhHUFfS
-         qxjU1xBh99gcsbGHz8GiyNqz2O5lBKdZpCJuDCF8sUrsKP5hR4uDxXcMWRM5mFL34nBS
-         OWJ0BUwDf1sLG/mZwfRRSHUh0y3v4i5nxXPJX+5tgL6JSoIuVcQzvZvTPIwvbfvTXePB
-         qUE7ywFzJmnaJ3lkDteqJo5Yh14lioTeKY1uw4wXyh6wSCmYZWxn3dRyNA5sVDih4eGQ
-         ytGg==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aOQcJ8A/Hy4SFduSRsbtupfkyGSIJzFNagfozlCbUug=;
+        b=ADkg4fEN5BbybunEH8TAKxkFPE9qylv300UVJAHLNOUSMdCafMpKpCfjhMnJCLkEuk
+         xj/fAoCQnW4Uxj16dEgAhuKeZ2tnjtcmHk6fvbN0u258Cb4AojIVUgkl2oSsqAgQ3BsQ
+         Z5WwHwpmOoDvawLfAq6UP0JRCfOlqk8a3P+8QHInDvG1cveuDRkMwxkw20yS1LF7Qk9Q
+         gdR+cKaMS6w90oh/tjyq9bOu4IqIr4Hfb5wwWckt9P31ysMoG2KCDvUnaGiOu3mIcw8o
+         oxNMo8B0b9HqaKTOTXb2zf3aq1w8trz9XJKQeGPhh31njcVp9HRAJtM5hGVMk1jj7E3H
+         vWZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=CFnl8dyjGiuRB3x9RlqOHQmlDV1KXXaciQgsX6gUhkU=;
-        b=D2FX+NnEepa376JjBCrNtaMLpElMB/7qdwDDqGIHoPBS03Q8CTQzepmWy8J33DQil+
-         V+p6D37QUM9iCH/Lg76Eo/07h53heTahaol7HmAU5Dh1R7zjXETMexx2fbqWQkyNF66Z
-         MrCD5n4vRL0+rjFaqoztaRFHM0fhZAdyaOAfCuZW4UDF0tCYKVtNgqYds5MeVbbzkslm
-         9o7k1aYf/m9IzDZ8YrC6GfVOrGcvnCWMvAqrBskdqq208/G6iuSuaF9lGhr7G8eLYQXr
-         bWNHoHqHr8VuseNcRIMSy1mVqTxGBORr/Rnil+h2mWY+n6R6I41F4uGQwmMsJsMkikRk
-         9kMA==
-X-Gm-Message-State: AJcUukdcDimiZio8F7y9D+FQ06B3IXP8yjbEE5P2RywtUaLPNyX+qvYr
-        sKE9nKQOaboyvdu34+QdB33Vlw==
-X-Google-Smtp-Source: ALg8bN5jZaJngh1RR5VggI5q8YZhlkSYnkHJ60CjmRQnCCjaKEsSpZU0QBvT1vqA2BcKmnmat393ug==
-X-Received: by 2002:a63:334a:: with SMTP id z71mr14802353pgz.400.1547755436912;
-        Thu, 17 Jan 2019 12:03:56 -0800 (PST)
-Received: from localhost ([2601:602:9200:a1a5:e076:9fe9:59e2:1e0b])
-        by smtp.googlemail.com with ESMTPSA id v191sm4040650pgb.77.2019.01.17.12.03.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 12:03:56 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
-Subject: Re: [PATCH] arm64: dts: meson-axg: add efuse device
-In-Reply-To: <20190117100234.30989-1-jbrunet@baylibre.com>
-References: <20190117100234.30989-1-jbrunet@baylibre.com>
-Date:   Thu, 17 Jan 2019 12:03:55 -0800
-Message-ID: <7ho98faw5w.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aOQcJ8A/Hy4SFduSRsbtupfkyGSIJzFNagfozlCbUug=;
+        b=l3zuM5z/xtGsUFEL7shao6yN0bRQS/pCXJFMnACEDqBvqNa/w0SEZmIOPNzmtIAJsj
+         L3FPvfx6yKNFDHLlRW4GIPceamAIQOTpPlnp7zuNbba0tUc0k4JoK5zTMgVsF3SSxi5A
+         zlOPfuduMWHkG9/bpVo2gdRMDOmovQHyzLUMrOdZFDez2lexfvOrME8mXsDKh8kcpCrq
+         GXCE2csdXpEmPy0hO4EbrZQ8tt0EH+zzN6EcLRjFkunrRip3VKJukBwxySHop75mIVmo
+         O83sIVgQvPfGHHbqdLEwsQfPlO6ZP9OGPS2BfxCZr+KoIxrd+IeJua4Y79bVkABtDgxP
+         kmEw==
+X-Gm-Message-State: AJcUukdQJf2Np/qbby+Y40KkIz33qzE3aVbVbyphRLP7+xw2LK1cvQfK
+        oRx/GDpbE8wt8kq/MR8J8ehKeJuAyU/VnhaCv7U=
+X-Google-Smtp-Source: ALg8bN6ghFmN/VZR0Bg50QnZMHKftYcuMKJ0j+U4CijxSRFCMa8133BL6vScOSJpQDQXLIne1KpJIwGnOIJsP3IspYU=
+X-Received: by 2002:a9d:491e:: with SMTP id e30mr10121142otf.131.1547755439747;
+ Thu, 17 Jan 2019 12:03:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190116165236.8330-1-jbrunet@baylibre.com>
+In-Reply-To: <20190116165236.8330-1-jbrunet@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 17 Jan 2019 21:03:48 +0100
+Message-ID: <CAFBinCBFge2tir-MXw+ojTxzW+7n9Uf4FzCahrw0MDzAYV2SSg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: meson: fix g12a buses
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+Hi Jerome,
 
-> Add efuse to the AXG family
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On Wed, Jan 16, 2019 at 5:52 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+[...]
+> -               aobus: bus@ff800000 {
+> -                       compatible = "simple-bus";
+> -                       reg = <0x0 0xff800000 0x0 0x100000>;
+are you sure about removing aobus?
+in your patch "arm64: dts: meson: g12a: add pinctrl support
+controllers" from [0] you're adding back an "rti" bus at the same
+memory address, except that it's size is 0x1000 instead of 0x100000
 
-Queued for v5.1,
+I don't have any G12A datasheet so it's hard for me to ACK / NACK this
+patch, here are some clues why I'm asking:
+- GXM's public datasheet lists the "RTI" region at 0xC8100000 -
+0xC81FFFFF, we call it "aobus" in our .dtsi
+- buildroot_openlinux_kernel_4.9_fbdev_20180706/kernel/aml-4.9/arch/arm64/boot/dts/amlogic/mesong12a.dtsi
+also uses an aobus node as well as an io_aobus_base sub-node for the
+codec_io node (the latter is obviously not upstream)
 
-Thanks,
 
-Kevin
+Regards
+Martin
+
+
+[0] https://lore.kernel.org/patchwork/patch/1032981/
