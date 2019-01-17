@@ -2,140 +2,134 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A27C8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7048EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D2BF205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:27:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="frOO8pkc"
+	by mail.kernel.org (Postfix) with ESMTP id 42676205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:29:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfAQN10 (ORCPT
+        id S1727114AbfAQN3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:27:26 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39258 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbfAQN1Z (ORCPT
+        Thu, 17 Jan 2019 08:29:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46526 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725868AbfAQN3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:27:25 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0HDRICS103805;
-        Thu, 17 Jan 2019 07:27:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547731638;
-        bh=djCWpJC0UGwknF/eUj9PjPdjxt6eoD0syV3BsrAw1yM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=frOO8pkcVWPV/twrpxb/LWTLBoD5jVAPdv/OhH6APP2wXwQY9tT/vns1mnfbAkKF9
-         CmBMNRwnly7zX/ImZxmpPV6Uqh1TW/4AMwj5vn8gY34/GkBOAHD2e550226L7BdBWg
-         r1NAEfRsb0X6kk+dmD00pQRXg8RczOxPHZI9BZfU=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0HDRI5d111524
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Jan 2019 07:27:18 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 17
- Jan 2019 07:27:18 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 17 Jan 2019 07:27:18 -0600
-Received: from [172.22.123.101] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0HDRIvP021638;
-        Thu, 17 Jan 2019 07:27:18 -0600
-Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED
- driver
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <dachaac@gmail.com>,
-        <robh+dt@kernel.org>
-References: <20190114211723.11186-1-dmurphy@ti.com>
- <20190114211723.11186-2-dmurphy@ti.com>
- <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com> <20190115222223.GA17363@amd>
- <79394d17-3124-75b2-ccac-dc1046499d14@ti.com> <20190116105537.GA1803@amd>
- <86299268-3202-814a-134b-04bd2170faab@ti.com> <20190116220401.GA28024@amd>
- <8c7dde3e-5f3c-80a5-ec57-73ce8e39deef@ti.com> <20190117100651.GB17930@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <8def5414-9170-7034-34f9-70e6c71f8161@ti.com>
-Date:   Thu, 17 Jan 2019 07:27:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 17 Jan 2019 08:29:15 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HDT4iY137670
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:29:13 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2t7qs8j2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:29:13 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Thu, 17 Jan 2019 13:29:11 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 13:29:09 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HDT82P852320
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 13:29:08 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17DCDAE053;
+        Thu, 17 Jan 2019 13:29:08 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CA903AE045;
+        Thu, 17 Jan 2019 13:29:07 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 17 Jan 2019 13:29:07 +0000 (GMT)
+Date:   Thu, 17 Jan 2019 14:29:06 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-s390@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Mark Rutland <mark.rutland@arm.com>, linux-api@vger.kernel.org
+Subject: Re: [PATCH 2/5] ipc: introduce ksys_ipc()/compat_ksys_ipc() for s390
+References: <20190116131527.2071570-1-arnd@arndb.de>
+ <20190116131527.2071570-3-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20190117100651.GB17930@amd>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20190116131527.2071570-3-arnd@arndb.de>
+X-TM-AS-GCONF: 00
+x-cbid: 19011713-4275-0000-0000-0000030077C9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011713-4276-0000-0000-0000380E9C86
+Message-Id: <20190117132906.GB18351@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=846 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
-
-On 1/17/19 4:06 AM, Pavel Machek wrote:
-> Hi!
+On Wed, Jan 16, 2019 at 02:15:20PM +0100, Arnd Bergmann wrote:
+> The sys_ipc() and compat_ksys_ipc() functions are meant to only
+> be used from the system call table, not called by another function.
 > 
->>>>> You know what? First, submit driver with similar functionality to
->>>>> existing RGB drivers, using same interface existing drivers are
->>>>> using. When that is accepted, we can talk about extending
->>>>> kernel<->user interfaces.
->>>>>
->>>>
->>>> I could do that but then there is no way for users to have any other color but "white" with this driver.
->>>> That defeats the purpose of the device itself.
->>>
->>> No, that is not what I meant.
->>>
->>> We do have RGB drivers in tree, they just present three separate LEDs
->>> -- red, green and blue. I ask you to do the same for initial
->>> submission.
->>>
->>
->> For clarification you are asking me to register a LED class per
->> output pin?
+> Introduce ksys_*() interfaces for this purpose, as we have done
+> for many other system calls.
 > 
-> Yes.
-> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/s390/kernel/compat_linux.c |  2 +-
+>  arch/s390/kernel/sys_s390.c     |  2 +-
+>  include/linux/syscalls.h        |  4 ++++
+>  ipc/syscall.c                   | 20 ++++++++++++++++----
+>  4 files changed, 22 insertions(+), 6 deletions(-)
 
-OK I can do that but I would like to get Jacek to align with this as he
-suggested creating the code as I submitted based on the review of the
-devices data sheet.
+The patch below is needed as compile fix (allnoconfig).
+I will add this to your patch, no resend needed.
 
-LED class registration per LED module or for the single Banked output.
+diff --git a/arch/s390/kernel/sys_s390.c b/arch/s390/kernel/sys_s390.c
+index 6aa8fe00b39e..fd0cbbed4d9f 100644
+--- a/arch/s390/kernel/sys_s390.c
++++ b/arch/s390/kernel/sys_s390.c
+@@ -58,6 +58,7 @@ SYSCALL_DEFINE1(mmap2, struct s390_mmap_arg_struct __user *, arg)
+ 	return error;
+ }
+ 
++#ifdef CONFIG_SYSVIPC
+ /*
+  * sys_ipc() is the de-multiplexer for the SysV IPC calls.
+  */
+@@ -76,6 +77,7 @@ SYSCALL_DEFINE5(s390_ipc, uint, call, int, first, unsigned long, second,
+ 	 */
+ 	return ksys_ipc(call, first, second, third, ptr, third);
+ }
++#endif /* CONFIG_SYSVIPC */
+ 
+ SYSCALL_DEFINE1(s390_personality, unsigned int, personality)
+ {
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index ab9d0e3c6d50..ad016a7db0ea 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -366,7 +366,7 @@ COND_SYSCALL(kexec_file_load);
+ /* s390 */
+ COND_SYSCALL(s390_pci_mmio_read);
+ COND_SYSCALL(s390_pci_mmio_write);
+-COND_SYSCALL_COMPAT(s390_ipc);
++COND_SYSCALL(s390_ipc);
+ 
+ /* powerpc */
+ COND_SYSCALL(rtas);
 
->> As explained before the Master brightness register has absolute control over the output current
->> to the LED outputs regardless of the color control setting.
->>
-> 
-> Yes, just set master brightness to 255 and you can ignore it.
-
-OK Sounds fine.  Will just need to do an init that sets the color
-register to 0 and brightness to 0 so we don't have a flash.
-
-> 
->>> You'll still be able to set brightness independently on the
->>> red/green/blue LEDs...
->>>
->>
->> But which one would control the overall brightness of the cluster?
-> 
-> You would not have that control in initial version of the patch.
-> 
-
-See above on alignment
-
-Dan
-
-> 								Pavel
-> 
-
-
--- 
-------------------
-Dan Murphy
