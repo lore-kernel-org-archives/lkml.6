@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A1DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DBCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E783E205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E699420675
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="lo4o7FKN"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="DZBl1eHU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbfAQAdK (ORCPT
+        id S1729110AbfAQAdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:33:10 -0500
-Received: from onstation.org ([52.200.56.107]:54398 "EHLO onstation.org"
+        Wed, 16 Jan 2019 19:33:13 -0500
+Received: from onstation.org ([52.200.56.107]:54410 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728910AbfAQAdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:08 -0500
+        id S1729029AbfAQAdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:10 -0500
 Received: from localhost.localdomain (mobile-166-171-186-103.mycingular.net [166.171.186.103])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 492D747;
-        Thu, 17 Jan 2019 00:33:04 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 99FDF32F;
+        Thu, 17 Jan 2019 00:33:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1547685187;
-        bh=BK6hSC2sZEVX0wwvCJzhUY1ka3+MBeDd8i723LgXvPU=;
+        s=default; t=1547685190;
+        bh=qFPX7TCgIKD9vM2KHjrH27R24jgkSJ4U916QVwMpMqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lo4o7FKNF7xLQETI/Ilge/Lqw1n00eD11dI0CjHFIs4/qrdXbWNC62JWeI5NQrecI
-         A3pYG6LGvNqcnpEzfihz3thIHFSvVEp0XsH2OgNpZxG1F9lFjzhB6FuOPoQADcOGOL
-         B9bIW8FrZa7i8k7Sz24IWeEXdSt+4nvvv6Q5ZKUE=
+        b=DZBl1eHUKYutb+J0pYBJi2e/QDhH9XFROgsQ8gjxkzGlPAtCkcMPatBi2dWiCdAR/
+         1V/Rx8ubpjtuO0O8NHoiZKBesPNE6JVMxgD+IVKHoHWDI4u3jVHo+Gv7VM3P7jj/LB
+         flfgYperjHQnuAo+WL7KQaY/6D478KKz49C/odbY=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org
@@ -44,9 +44,9 @@ Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v5 04/14] spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips
-Date:   Wed, 16 Jan 2019 19:32:24 -0500
-Message-Id: <20190117003234.22127-5-masneyb@onstation.org>
+Subject: [PATCH v5 05/14] gpio: add irq domain activate/deactivate functions
+Date:   Wed, 16 Jan 2019 19:32:25 -0500
+Message-Id: <20190117003234.22127-6-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190117003234.22127-1-masneyb@onstation.org>
 References: <20190117003234.22127-1-masneyb@onstation.org>
@@ -55,136 +55,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the spmi-pmic-arb IRQ code to use the version 2 IRQ interface
-in order to support hierarchical IRQ chips. This is necessary so that
-spmi-gpio can be setup as a hierarchical IRQ chip with pmic-arb as the
-parent. IRQ chips in device tree should be usable from the start without
-the consumer having to make an additional call to gpio[d]_to_irq() to
-get the proper IRQ on the parent. Driver was tested on a LG Nexus 5
-(hammerhead) phone.
+This adds the two new functions gpiochip_irq_domain_activate and
+gpiochip_irq_domain_deactivate that can be used as the activate and
+deactivate functions in the struct irq_domain_ops. This is for
+situations where only gpiochip_{lock,unlock}_as_irq needs to be called.
+SPMI and SSBI GPIO are two users that will initially use these
+functions.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
 Changes since v4:
-- None
+- Change '&struct gpiochip' in kernel doc to '&struct gpio_chip'
 
 Changes since v3:
-- None
+- Correct kernel doc syntax: 'struct &foo' -> '&struct foo'
+  '&func' -> 'func()'
 
-Changes since v2:
-- Don't move pmic_gpio_of_match block. Use device_get_match_data instead
-  of of_match_device.
-- Correct build warning on arm64: warning: cast from pointer to integer
-  of different size
+ drivers/gpio/gpiolib.c      | 37 +++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h |  5 +++++
+ 2 files changed, 42 insertions(+)
 
- drivers/spmi/spmi-pmic-arb.c | 58 +++++++++++++++++++++++-------------
- 1 file changed, 38 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-index 360b8218f322..356bc3f66e22 100644
---- a/drivers/spmi/spmi-pmic-arb.c
-+++ b/drivers/spmi/spmi-pmic-arb.c
-@@ -666,7 +666,8 @@ static int qpnpint_get_irqchip_state(struct irq_data *d,
- 	return 0;
- }
- 
--static int qpnpint_irq_request_resources(struct irq_data *d)
-+static int qpnpint_irq_domain_activate(struct irq_domain *domain,
-+				       struct irq_data *d, bool reserve)
- {
- 	struct spmi_pmic_arb *pmic_arb = irq_data_get_irq_chip_data(d);
- 	u16 periph = hwirq_to_per(d->hwirq);
-@@ -692,27 +693,25 @@ static struct irq_chip pmic_arb_irqchip = {
- 	.irq_set_type	= qpnpint_irq_set_type,
- 	.irq_set_wake	= qpnpint_irq_set_wake,
- 	.irq_get_irqchip_state	= qpnpint_get_irqchip_state,
--	.irq_request_resources = qpnpint_irq_request_resources,
- 	.flags		= IRQCHIP_MASK_ON_SUSPEND,
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 1651d7f0a303..361a09c8138a 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1775,6 +1775,43 @@ static const struct irq_domain_ops gpiochip_domain_ops = {
+ 	.xlate	= irq_domain_xlate_twocell,
  };
  
--static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
--					   struct device_node *controller,
--					   const u32 *intspec,
--					   unsigned int intsize,
--					   unsigned long *out_hwirq,
--					   unsigned int *out_type)
-+static int qpnpint_irq_domain_translate(struct irq_domain *d,
-+					struct irq_fwspec *fwspec,
-+					unsigned long *out_hwirq,
-+					unsigned int *out_type)
- {
- 	struct spmi_pmic_arb *pmic_arb = d->host_data;
-+	u32 *intspec = fwspec->param;
- 	u16 apid, ppid;
- 	int rc;
- 
- 	dev_dbg(&pmic_arb->spmic->dev, "intspec[0] 0x%1x intspec[1] 0x%02x intspec[2] 0x%02x\n",
- 		intspec[0], intspec[1], intspec[2]);
- 
--	if (irq_domain_get_of_node(d) != controller)
-+	if (irq_domain_get_of_node(d) != pmic_arb->spmic->dev.of_node)
- 		return -EINVAL;
--	if (intsize != 4)
-+	if (fwspec->param_count != 4)
- 		return -EINVAL;
- 	if (intspec[0] > 0xF || intspec[1] > 0xFF || intspec[2] > 0x7)
- 		return -EINVAL;
-@@ -740,17 +739,34 @@ static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
- 	return 0;
- }
- 
--static int qpnpint_irq_domain_map(struct irq_domain *d,
--				  unsigned int virq,
--				  irq_hw_number_t hwirq)
--{
--	struct spmi_pmic_arb *pmic_arb = d->host_data;
- 
-+static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
-+				   struct irq_domain *domain, unsigned int virq,
-+				   irq_hw_number_t hwirq)
++/**
++ * gpiochip_irq_domain_activate() - Lock a GPIO to be used as an IRQ
++ * @domain: The IRQ domain used by this IRQ chip
++ * @data: Outermost irq_data associated with the IRQ
++ * @reserve: If set, only reserve an interrupt vector instead of assigning one
++ *
++ * This function is a wrapper that calls gpiochip_lock_as_irq() and is to be
++ * used as the activate function for the &struct irq_domain_ops. The host_data
++ * for the IRQ domain must be the &struct gpio_chip.
++ */
++int gpiochip_irq_domain_activate(struct irq_domain *domain,
++				 struct irq_data *data, bool reserve)
 +{
- 	dev_dbg(&pmic_arb->spmic->dev, "virq = %u, hwirq = %lu\n", virq, hwirq);
- 
--	irq_set_chip_and_handler(virq, &pmic_arb_irqchip, handle_level_irq);
--	irq_set_chip_data(virq, d->host_data);
--	irq_set_noprobe(virq);
-+	irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_arb,
-+			    handle_level_irq, NULL, NULL);
++	struct gpio_chip *chip = domain->host_data;
++
++	return gpiochip_lock_as_irq(chip, data->hwirq);
 +}
++EXPORT_SYMBOL_GPL(gpiochip_irq_domain_activate);
 +
-+static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
-+				    unsigned int virq, unsigned int nr_irqs,
-+				    void *data)
++/**
++ * gpiochip_irq_domain_deactivate() - Unlock a GPIO used as an IRQ
++ * @domain: The IRQ domain used by this IRQ chip
++ * @data: Outermost irq_data associated with the IRQ
++ *
++ * This function is a wrapper that will call gpiochip_unlock_as_irq() and is to
++ * be used as the deactivate function for the &struct irq_domain_ops. The
++ * host_data for the IRQ domain must be the &struct gpio_chip.
++ */
++void gpiochip_irq_domain_deactivate(struct irq_domain *domain,
++				    struct irq_data *data)
 +{
-+	struct spmi_pmic_arb *pmic_arb = domain->host_data;
-+	struct irq_fwspec *fwspec = data;
-+	irq_hw_number_t hwirq;
-+	unsigned int type;
-+	int ret, i;
++	struct gpio_chip *chip = domain->host_data;
 +
-+	ret = qpnpint_irq_domain_translate(domain, fwspec, &hwirq, &type);
-+	if (ret)
-+		return ret;
++	return gpiochip_unlock_as_irq(chip, data->hwirq);
++}
++EXPORT_SYMBOL_GPL(gpiochip_irq_domain_deactivate);
 +
-+	for (i = 0; i < nr_irqs; i++)
-+		qpnpint_irq_domain_map(pmic_arb, domain, virq + i, hwirq + i);
+ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
+ 	if (!gpiochip_irqchip_irq_valid(chip, offset))
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 07cddbf45186..01497910f023 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -472,6 +472,11 @@ int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+ 		     irq_hw_number_t hwirq);
+ void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq);
+ 
++int gpiochip_irq_domain_activate(struct irq_domain *domain,
++				 struct irq_data *data, bool reserve);
++void gpiochip_irq_domain_deactivate(struct irq_domain *domain,
++				    struct irq_data *data);
 +
- 	return 0;
- }
- 
-@@ -1126,8 +1142,10 @@ static const struct pmic_arb_ver_ops pmic_arb_v5 = {
- };
- 
- static const struct irq_domain_ops pmic_arb_irq_domain_ops = {
--	.map	= qpnpint_irq_domain_map,
--	.xlate	= qpnpint_irq_domain_dt_translate,
-+	.activate = qpnpint_irq_domain_activate,
-+	.alloc = qpnpint_irq_domain_alloc,
-+	.free = irq_domain_free_irqs_common,
-+	.translate = qpnpint_irq_domain_translate,
- };
- 
- static int spmi_pmic_arb_probe(struct platform_device *pdev)
+ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+ 		struct irq_chip *irqchip,
+ 		unsigned int parent_irq,
 -- 
 2.17.2
 
