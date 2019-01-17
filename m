@@ -2,136 +2,107 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B068C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F6FC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC77F20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:03:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6273B20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:04:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FW+e53Rx"
+	dkim=pass (2048-bit key) header.d=rajagiritech-edu-in.20150623.gappssmtp.com header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.b="VGGZN7mP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729622AbfAQVDe (ORCPT
+        id S1729648AbfAQVEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 16:03:34 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:33806 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729299AbfAQVDd (ORCPT
+        Thu, 17 Jan 2019 16:04:14 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40076 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729312AbfAQVEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 16:03:33 -0500
-Received: by mail-ua1-f67.google.com with SMTP id c24so3987800uak.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 13:03:32 -0800 (PST)
+        Thu, 17 Jan 2019 16:04:14 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z10so4976979pgp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 13:04:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a8lza2fWqMQIISOBA2zwbVAD4ydLvisc2ffqkqc09zk=;
-        b=FW+e53Rxb+o7EAR/9OVCbdlHrNYD/aO9WdMscX88Yergx7ix76XQw/CoQZYUFwt40G
-         +BLxAXk2YM6kA++OyQx94NbsXthcG4fsfGngDjdlqDefjbIMZoE6gmq8KHPbqWlDE7L3
-         3efk4gkISAuxXtLkOfPczoCXPaHdB++MUHFAGeU5UvZKQsEKgvbL6Z9as6cWcr7kOvR+
-         KcjtiDqUvAhMOUcW7Px71BJ6z+PWE0WnpmWRY4D7+q5jHl6GYmsBGLBysVXilecr+qc5
-         HgWz4z9ruMt0L1OXyf7st0C/9v6UbPggvBbXaACVsPmW5AgWfA5p6NDU8Uw1IVjQzTcr
-         BkGQ==
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lvbXIMcbH2/R4T1SUidbudtoMRAWFJRmwFg/TDHuXmk=;
+        b=VGGZN7mPjhJMFcmnVD0NlPoBpJH62wKwRTZElRozBsKge7MCsDoeMCZ3Y8vQ27F3CE
+         YPJ6vfgDUVU2MmpL9i6kvlTbKhphsGF4tsEoxol+bLZdHNidnxKY6JiUFTVkfZOoH/Bi
+         A0P54kfhx5IbRuLz4/EjKCotVGyctdVe8X1liELSTK1uFrfCj/hKWVrGFJV24Of6m2kQ
+         qOXdR61FlvRoCBJhVvKZdl8dhIaCCyrWsI8E13D9Pis+Ugtzcs/ppzbJzw8xeoSik4Jl
+         YmKOEAZuQLmIXka6fA0EFefEAAAtGDYsJM1fh36D1hxhlDc6olUb3/uUrNtLPMpu8ug4
+         5IlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a8lza2fWqMQIISOBA2zwbVAD4ydLvisc2ffqkqc09zk=;
-        b=LE67jP9MKr+3f/InopjgJpjHoMOGYA/2dO7WvAF7cyBjK7IMV9aMpceWcniZi2fOe7
-         AYymuQNvqm+UnMA5g+04mbJ4WLnGvNDWrV1BAZ+2hSB8I/p5K7ApNs10BbUNqceJdg+m
-         h3u2SQv7FKRialPyzwSLUh9eMt+gknSJk6T152+FGA7rP/hCsvDv/TNqdqOk1Szv+eW4
-         wJePzefcSmTCiatFKFzLfdiRwKmK+Sbd8oVCgbMt7SLVyepwwhNrdzExfFalkoBp2o3n
-         ea9XoaHZzZg6757E0DYfSfL4CF3UCUknGMwyS0d1B8jVyXOBA6erFEIhG9sLSTvLKK9A
-         UAjQ==
-X-Gm-Message-State: AJcUukc869GN+7omwcwfFknXa93thBgitGKHfLGwijInQYxpXzuhVFMN
-        OtkboKtvWGAu3bDQLL7q2ibgzmfTA9ml62bFCa+Rsf0QURY=
-X-Google-Smtp-Source: ALg8bN7FISpgC+WwsH/QMnozZVs4L7eQpqYhQ+TvVOOlsrUb33TJ/obxJpuP9wfPFjxrnhUoENmL+5bZ/NzReuYRgPY=
-X-Received: by 2002:a9f:3f41:: with SMTP id i1mr5978486uaj.42.1547759011675;
- Thu, 17 Jan 2019 13:03:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lvbXIMcbH2/R4T1SUidbudtoMRAWFJRmwFg/TDHuXmk=;
+        b=nu8H5rjWmoOWT5h9PWWkB3TBkQkmVqy4vAzAxRWEdIrX3a9xmXiIcydYEqpJQMeE0s
+         fH/kp4KmtgVaAICnE9XUtN5wn4Rw7HRe/Vgj0AUE2wGYLzYAMA4sDixBIW9XgTwh808d
+         ecYm3SHLc2dLuy6FPlfS8Hq0jhXSIdbY0EUgkHAFQgS2qgU06mBWN54mLfTu7XG1TCsT
+         Yug/oCCouElv/s5XhS3bGFdpo8oSDKt4MRbUON0YACK/+e/bMYtaJgYSLJNNM2Y+A6GZ
+         62lfPQhAttBN4WWjwSE9zYP7KyGE09pVMBVSmbMuTzo2c43YEwbApbcvfKHSyPQNzD3L
+         mCnQ==
+X-Gm-Message-State: AJcUukdCqEhTevBFaFLml24F6wvMN6whiviJcMKI3qjHc4RkA0gfNhSU
+        jYwo6c/BqBH/0tr60r5ZGC3sWQ==
+X-Google-Smtp-Source: ALg8bN4n8vbyaC72R4ALnknVo2KliHsjwcPhNQGMZJDh3k6ioVSlYeockalCHJxw+3fShr1Y9Ys0kQ==
+X-Received: by 2002:a63:ff16:: with SMTP id k22mr15020529pgi.244.1547759053363;
+        Thu, 17 Jan 2019 13:04:13 -0800 (PST)
+Received: from localhost.localdomain ([122.164.30.252])
+        by smtp.gmail.com with ESMTPSA id s2sm4916114pfa.167.2019.01.17.13.04.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 13:04:12 -0800 (PST)
+From:   Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+To:     mcgrof@kernel.org, shuah@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+Subject: [PATCH] selftests: kmod: worked on errors which breaks the overall execution of the test script
+Date:   Fri, 18 Jan 2019 02:32:58 +0530
+Message-Id: <20190117210258.7871-1-jeffrin@rajagiritech.edu.in>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1547169436-6266-1-git-send-email-eranian@google.com>
-In-Reply-To: <1547169436-6266-1-git-send-email-eranian@google.com>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Thu, 17 Jan 2019 13:03:20 -0800
-Message-ID: <CABPqkBS30_Afu3a1hycMAnB5KaqdFe=JYPoENfZG4ZtUYAE7mQ@mail.gmail.com>
-Subject: Re: [PATCH] perf/core: fix perf_proc_update_handler() bug
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu,
-        Andi Kleen <ak@linux.intel.com>,
-        "Liang, Kan" <kan.liang@intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 5:17 PM Stephane Eranian <eranian@google.com> wrote:
->
-> The perf_proc_update_handler() handles /proc/sys/kernel/perf_event_max_sample_rate
-> syctl variable.  When the PMU IRQ handler timing monitoring is disabled, i.e,
-> when /proc/sys/kernel/perf_cpu_time_max_percent is equal to 0 or 100,
-> then no modification to sysctl_perf_event_sample_rate is allowed to prevent
-> possible hang from wrong values.
->
-> The problem is that the test to prevent modification is made after the
-> sysctl variable is modified in perf_proc_update_handler().
->
-> You get an error:
->
-> $ echo 10001 >/proc/sys/kernel/perf_event_max_sample_rate
-> echo: write error: invalid argument
->
-> But the value is still modified causing all sorts of inconsistencies:
->
-> $ cat /proc/sys/kernel/perf_event_max_sample_rate
-> 10001
->
-> This patch fixes the problem by moving the parsing of the value after
-> the test.
->
-> Signed-off-by: Stephane Eranian <eranian@google.com>
+The kmod.sh script breaks because an array is passed as input
+instead of a single element input.This patch takes elements
+one at a time and passed as input to the condition statement
+which in turn fixes the error.There was an issue which had
+the need for passing a single digit to the condition statement
+which is fixed using regular expression.
 
-Ping.
+Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+---
+ tools/testing/selftests/kmod/kmod.sh | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-> ---
->  kernel/events/core.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 3cd13a30f732..e5ede6918050 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -436,18 +436,18 @@ int perf_proc_update_handler(struct ctl_table *table, int write,
->                 void __user *buffer, size_t *lenp,
->                 loff_t *ppos)
->  {
-> -       int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> -
-> -       if (ret || !write)
-> -               return ret;
-> -
-> +       int ret;
-> +       int perf_cpu = sysctl_perf_cpu_time_max_percent;
->         /*
->          * If throttling is disabled don't allow the write:
->          */
-> -       if (sysctl_perf_cpu_time_max_percent == 100 ||
-> -           sysctl_perf_cpu_time_max_percent == 0)
-> +       if (write && (perf_cpu == 100 || perf_cpu == 0))
->                 return -EINVAL;
->
-> +       ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> +       if (ret || !write)
-> +               return ret;
-> +
->         max_samples_per_tick = DIV_ROUND_UP(sysctl_perf_event_sample_rate, HZ);
->         perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
->         update_perf_cpu_limits();
-> --
-> 2.7.4
->
+diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
+index 0a76314b4414..49b273c3646e 100755
+--- a/tools/testing/selftests/kmod/kmod.sh
++++ b/tools/testing/selftests/kmod/kmod.sh
+@@ -526,9 +526,12 @@ function run_all_tests()
+ 		TEST_ID=${i%:*:*}
+ 		ENABLED=$(get_test_enabled $TEST_ID)
+ 		TEST_COUNT=$(get_test_count $TEST_ID)
+-		if [[ $ENABLED -eq "1" ]]; then
+-			test_case $TEST_ID $TEST_COUNT
+-		fi
++		for j in $ENABLED ; do
++		         CHECK=${j#*:*:}
++			 if [[ $CHECK -eq "1" ]]; then
++			     test_case $TEST_ID $TEST_COUNT
++			 fi
++		done
+ 	done
+ }
+ 
+-- 
+2.20.1
+
