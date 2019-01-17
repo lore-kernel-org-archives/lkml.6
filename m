@@ -2,175 +2,146 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B566C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17566C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2221020851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:10:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X++h4URu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X++h4URu"
+	by mail.kernel.org (Postfix) with ESMTP id D8EF220854
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547705594;
+	bh=VO92TbOWj9bd+RmcAOwk08LEpgVxgeYGe8/ku+rPKAk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=WRczLpDHaalM5JQ6GgezKzAHSCbw9Z6ObXfDRNqjl/1XeGANLx/BtUDDmnk4O40Vv
+	 8J7mixfwzlH7NvXdperTkoxjapOxOHT84dH3E9c731ibH2ZcAkdiSaXXhtt5fkZNy6
+	 YQw3zurbVKp6+w5dU/dEGyzklasD4cZLES9u9k1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbfAQGKi (ORCPT
+        id S1730006AbfAQGNN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:10:38 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51044 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725320AbfAQGKi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:10:38 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A0DFD6021A; Thu, 17 Jan 2019 06:10:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547705436;
-        bh=YEGv0O3JHr4kZdrhresN3JQvaZmIg5SeEazm6WBaeAA=;
+        Thu, 17 Jan 2019 01:13:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725320AbfAQGNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:13:12 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FE4C20851;
+        Thu, 17 Jan 2019 06:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547705591;
+        bh=VO92TbOWj9bd+RmcAOwk08LEpgVxgeYGe8/ku+rPKAk=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X++h4URuk/G6pJofRacZ8CxEcBKYDOHGZwy4f0Mei0saIa0HqNtxahkl1F39lr1u/
-         jhW9q8qOrGFuqFuZd6MNpXols4jd+6P7Db5siZx9I0s9zTeSIGvgsyoAsjymyFIsDx
-         8MEUij/gEms7lDmC22llQ5rAIOWIVUk61NHUltYc=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id E67B7601D2;
-        Thu, 17 Jan 2019 06:10:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547705436;
-        bh=YEGv0O3JHr4kZdrhresN3JQvaZmIg5SeEazm6WBaeAA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X++h4URuk/G6pJofRacZ8CxEcBKYDOHGZwy4f0Mei0saIa0HqNtxahkl1F39lr1u/
-         jhW9q8qOrGFuqFuZd6MNpXols4jd+6P7Db5siZx9I0s9zTeSIGvgsyoAsjymyFIsDx
-         8MEUij/gEms7lDmC22llQ5rAIOWIVUk61NHUltYc=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        b=1ToW7rRhy2s8r4OZY0Pn2r3cCvqKBXNBqPMCdIO/u3n9LKG+56PC7XmUFCb6/renY
+         P8NvC26zRJsYpzDC7AccaCVPzE7mODvsUU2XLdg6o4Nh4ho3wB+y23otQq0qrUTMpX
+         M43BlTpVOBTh+QfJ994KjqnyJLo75ZM/Sp+uEE08=
+Date:   Thu, 17 Jan 2019 15:13:09 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Andreas Ziegler <andreas.ziegler@fau.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: uprobes: bug in comm/string output?
+Message-Id: <20190117151309.711d41ebdd761b525a168837@kernel.org>
+In-Reply-To: <62276858-9135-2393-8993-64e1088db7b9@fau.de>
+References: <bf358673-ceb2-65bf-80c9-4b1c09a8a264@fau.de>
+        <8b67136d-28d7-a734-6366-9511e30d66a7@fau.de>
+        <20190116190054.ac22c8495540578834446236@kernel.org>
+        <62276858-9135-2393-8993-64e1088db7b9@fau.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 17 Jan 2019 11:40:35 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: Add WCN3990 BT node
-In-Reply-To: <20190117044006.12463-1-bjorn.andersson@linaro.org>
-References: <20190117044006.12463-1-bjorn.andersson@linaro.org>
-Message-ID: <aebd3bbb4bb3faac2570244af610b43d@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anderson,
+On Wed, 16 Jan 2019 11:16:07 +0100
+Andreas Ziegler <andreas.ziegler@fau.de> wrote:
 
-On 2019-01-17 10:10, Bjorn Andersson wrote:
-> The SDM845 MTP has a WCN3990 Bluetooth chip on UART6, enable this.
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 44 +++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> index af8c6a2445a2..f65d5a674103 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> @@ -17,6 +17,7 @@
-> 
->  	aliases {
->  		serial0 = &uart9;
-> +		hsuart0 = &uart6;
->  	};
-> 
->  	chosen {
-> @@ -357,6 +358,10 @@
->  	clock-frequency = <400000>;
->  };
-> 
-> +&qupv3_id_0 {
-> +	status = "okay";
-> +};
-> +
->  &qupv3_id_1 {
->  	status = "okay";
->  };
-> @@ -373,6 +378,20 @@
->  	cd-gpios = <&tlmm 126 GPIO_ACTIVE_LOW>;
->  };
-> 
-> +&uart6 {
-> +	status = "okay";
-> +
-> +	bluetooth {
-> +		compatible = "qcom,wcn3990-bt";
-> +
-> +		vddio-supply = <&vreg_s4a_1p8>;
-> +		vddxo-supply = <&vreg_l7a_1p8>;
-> +		vddrf-supply = <&vreg_l17a_1p3>;
-> +		vddch0-supply = <&vreg_l25a_3p3>;
-> +		max-speed = <3200000>;
-> +	};
-> +};
-> +
->  &uart9 {
->  	status = "okay";
->  };
-> @@ -470,6 +489,31 @@
->  	};
->  };
-> 
-> +&qup_uart6_default {
-> +	pinmux {
-> +		pins = "gpio45", "gpio46", "gpio47", "gpio48";
-> +		function = "qup6";
-> +	};
-> +
-> +	ctsrx {
-> +		pins = "gpio45", "gpio48";
-> +		drive-strength = <2>;
-> +		bias-no-pull;
-> +	};
-> +
-> +	rts {
-> +		pins = "gpio46";
-> +		drive-strength = <2>;
-> +		bias-pull-down;
-> +	};
-> +
-> +	tx {
-> +		pins = "gpio47";
-> +		drive-strength = <2>;
-> +		bias-pull-up;
-> +	};
-> +};
-> +
->  &qup_uart9_default {
->  	pinconf-tx {
->  		pins = "gpio4";
+> I went into this a bit deeper today, and right now it is simply failing 
+> to parse the code because there is no FETCH_OP_COMM case in 
+> process_fetch_insn() for uprobes so that will return -EILSEQ, leading to 
+> a make_data_loc(0, ...) in store_trace_args(). If we just add 
+> FETCH_OP_COMM and let val point to current->comm (that's what 
+> trace_kprobe.c does), we get an -EFAULT return value from 
+> fetch_store_string because strncpy_from_user() checks if the argument is 
+> in user space.
+
+Correct. I missed to add OP_COMM support. And uprobe's fetch_store_string
+is only for user space strings.
+
+> So I think we might need a special case for that, something like 
+> FETCH_OP_ST_COMM_STRING which is only used for FETCH_OP_COMM and copies 
+> current->comm over to the dynamic area. The implementation could be 
+> similar to the old fetch_comm_string implementation before your rewrite.
+
+Hmm, instead, I would like to add current->comm checker and only allows
+to copy that. That would be simpler and enough.
+
+Could you test below patch?
 
 
-[Bala]:
-        GPIO 45 is CTS
-        GPIO 46 is RTS
-        GPIO 47 is Tx
-        GPIO 48 is Rx.
+tracing: uprobes: Re-enable $comm support for uprobe events
 
-        Tx & RTS are inputs to APPS processor, bias should be disable as 
-the source i.e. BT chip will pull them up.
-        CTS & RX are outputs from APPS processor, where as CTS is GPIO 
-which need to toggled, so the default state should be pull down.
-              RX is should be pulled up.
-        when TX & RX are pulled high it indicates that the lines are 
-ideal i.e. no data.
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Above is just my assumption, not sure whether they work on MTP.
+Since commit 533059281ee5 ("tracing: probeevent: Introduce new
+argument fetching code") dropped the $comm support from uprobe
+events, this re-enable it.
 
--- 
-Regards
-Balakrishna.
+For $comm support, use strncpy() instead of strncpy_from_user()
+to copy current task's comm. Because it is in the kernel space,
+strncpy_from_user() always fails to copy the comm.
+This also use strlen() instead of strlen_user() to measure the
+length of the comm.
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reported-by: Andreas Ziegler <andreas.ziegler@fau.de>
+---
+ kernel/trace/trace_uprobe.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index e335576b9411..97d134e83e0f 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -156,7 +156,10 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
+ 	if (unlikely(!maxlen))
+ 		return -ENOMEM;
+ 
+-	ret = strncpy_from_user(dst, src, maxlen);
++	if (addr == (unsigned long)current->comm)
++		ret = strlcpy(dst, current->comm, maxlen);
++	else
++		ret = strncpy_from_user(dst, src, maxlen);
+ 	if (ret >= 0) {
+ 		if (ret == maxlen)
+ 			dst[ret - 1] = '\0';
+@@ -173,7 +176,10 @@ fetch_store_strlen(unsigned long addr)
+ 	int len;
+ 	void __user *vaddr = (void __force __user *) addr;
+ 
+-	len = strnlen_user(vaddr, MAX_STRING_SIZE);
++	if (addr == (unsigned long)current->comm)
++		len = strlen(current->comm);
++	else
++		len = strnlen_user(vaddr, MAX_STRING_SIZE);
+ 
+ 	return (len > MAX_STRING_SIZE) ? 0 : len;
+ }
+@@ -213,6 +219,9 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
+ 	case FETCH_OP_IMM:
+ 		val = code->immediate;
+ 		break;
++	case FETCH_OP_COMM:
++		val = (unsigned long)current->comm;
++		break;
+ 	case FETCH_OP_FOFFS:
+ 		val = translate_user_vaddr(code->immediate);
+ 		break;
