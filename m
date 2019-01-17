@@ -2,75 +2,93 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D408AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B79C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A912054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:19:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I6mXoR1P";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PvnaG38v"
+	by mail.kernel.org (Postfix) with ESMTP id 499672054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbfAQLTy (ORCPT
+        id S1727190AbfAQLXF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:19:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35586 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbfAQLTx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:19:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7ED3260807; Thu, 17 Jan 2019 11:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547723992;
-        bh=BCZR8UQDjYKKai5NpFpjklSk3mT5UK7jcQhOw69F3T4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=I6mXoR1Py35p+W8awHHCCTQ5O3N3x+hJ85aAFLdWbaki6d9UOzgn77Z34TT9gQxCM
-         ir8bwOGvZIQ1w2h9laY5cAC0SY8DLYRP84aZ0+EHGAry4gy3R/Ac+oKDyMfBSbVq/4
-         TMkyXSMKnudlnAGBlXDegwY5mCwZozbu8my3VsPg=
-Received: from [192.168.225.247] (unknown [49.33.245.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D0829606E1;
-        Thu, 17 Jan 2019 11:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547723991;
-        bh=BCZR8UQDjYKKai5NpFpjklSk3mT5UK7jcQhOw69F3T4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PvnaG38vg/6+ek02L4IMa++e5aBViaSvZFpYNbGnpQdtDsiWjg6U9JAUHAdWey+8u
-         R/A//gAWyh6XJtQvLJ4glViqXb5ZGZ26lClXYpBHeVX0LHlfi0H4NhfEjJFMIu6wDb
-         /gICebHf3rzt2KhUm1fcF8/14wrsMJWZ9rcI4Cs0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0829606E1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass
- clocks
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
- <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com>
- <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
- <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com>
- <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org>
- <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <6ad2f27c-0afc-af6a-8198-679a88dcc2f9@codeaurora.org>
-Date:   Thu, 17 Jan 2019 16:49:22 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Thu, 17 Jan 2019 06:23:05 -0500
+Received: from foss.arm.com ([217.140.101.70]:38092 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725889AbfAQLXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:23:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2599580D;
+        Thu, 17 Jan 2019 03:23:04 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 573D13F557;
+        Thu, 17 Jan 2019 03:23:01 -0800 (PST)
+Subject: Re: [PATCH v5 04/14] spmi: pmic-arb: convert to v2 irq interfaces to
+ support hierarchical IRQ chips
+To:     Brian Masney <masneyb@onstation.org>, linus.walleij@linaro.org,
+        sboyd@kernel.org, bjorn.andersson@linaro.org, andy.gross@linaro.org
+Cc:     shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190117003234.22127-1-masneyb@onstation.org>
+ <20190117003234.22127-5-masneyb@onstation.org>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <d2e3c91c-2a54-e130-7512-e4a65bf2794d@arm.com>
+Date:   Thu, 17 Jan 2019 11:22:59 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190117003234.22127-5-masneyb@onstation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,64 +96,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Brian,
 
-
-On 1/15/2019 3:55 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2019-01-13 22:12:39)
->>
->>
->> On 1/8/2019 2:34 AM, Stephen Boyd wrote:
->>>
->>> As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
->>> But removing CLK_IS_CRITICAL and relying on some random bootloader
->>> behavior also looks wrong. Can you clarify what's going on?
->>>
->>
->> To enable LPASS clocks the requirement is to enable the GCC_LPASS_SWAY
->> clock.
->> 1) If the LPASS drivers are enabled/probed before the clock late init
->> the client would take care to maintain the dependency to enable the
->> GCC_LPASS_SWAY clock before enabling the LPASS clocks.
->>
->> 2) There could be a condition where the LPASS drivers would probe/init
->> later the clock late_init. When the clock_late_init would try to access
->> the LPASS clocks, since we cannot maintain the dependency this access
->> would fail. To avoid this the earlier patch has made the GCC_LPASS_SWAY
->> clock as CRITICAL.
->>
->> 3) Marking the GCC_LPASS_SWAY clock as CRITICAL has a issue, in the case
->> where the LPASS subsystem would be restarted due to some critical
->> failure on LPASS. Toggling the restart register of LPASS would clear the
->> hardware state of this clock and thus the next access of the LPASS
->> clocks would result in failure of the system.
->>
->> 4) To avoid issues happening in (2) and (3) all the LPASS clocks chould
->> be safely marked as CLK_IGNORE_UNUSED. And lpass drivers would take care
->> of the dependency to enable the required clocks.
->>
+On 17/01/2019 00:32, Brian Masney wrote:
+> Convert the spmi-pmic-arb IRQ code to use the version 2 IRQ interface
+> in order to support hierarchical IRQ chips. This is necessary so that
+> spmi-gpio can be setup as a hierarchical IRQ chip with pmic-arb as the
+> parent. IRQ chips in device tree should be usable from the start without
+> the consumer having to make an additional call to gpio[d]_to_irq() to
+> get the proper IRQ on the parent. Driver was tested on a LG Nexus 5
+> (hammerhead) phone.
 > 
-> Ok, so why can't we enable/disable the lpass sway clk in the
-> prepare/unprepare phase of the lpass clk driver paths? Or why can't we
-> forcibly enable this lpass sway clk after the reset is deasserted? Which
-> clk controller is the reset part of? GCC or LPASS?
-
-It is part of Always On Subsystem.
-
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> Changes since v4:
+> - None
 > 
-> It still sounds like the LPASS clk driver isn't handling dependencies it
-> has on accessing registers, but maybe we can get away with not handling
-> the dependency still if we make the reset "do the right thing" and turn
-> the clk back on so it stays "critical".
->
+> Changes since v3:
+> - None
+> 
+> Changes since v2:
+> - Don't move pmic_gpio_of_match block. Use device_get_match_data instead
+>   of of_match_device.
+> - Correct build warning on arm64: warning: cast from pointer to integer
+>   of different size
+> 
+>  drivers/spmi/spmi-pmic-arb.c | 58 +++++++++++++++++++++++-------------
+>  1 file changed, 38 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+> index 360b8218f322..356bc3f66e22 100644
+> --- a/drivers/spmi/spmi-pmic-arb.c
+> +++ b/drivers/spmi/spmi-pmic-arb.c
+> @@ -666,7 +666,8 @@ static int qpnpint_get_irqchip_state(struct irq_data *d,
+>  	return 0;
+>  }
+>  
+> -static int qpnpint_irq_request_resources(struct irq_data *d)
+> +static int qpnpint_irq_domain_activate(struct irq_domain *domain,
+> +				       struct irq_data *d, bool reserve)
+>  {
+>  	struct spmi_pmic_arb *pmic_arb = irq_data_get_irq_chip_data(d);
+>  	u16 periph = hwirq_to_per(d->hwirq);
+> @@ -692,27 +693,25 @@ static struct irq_chip pmic_arb_irqchip = {
+>  	.irq_set_type	= qpnpint_irq_set_type,
+>  	.irq_set_wake	= qpnpint_irq_set_wake,
+>  	.irq_get_irqchip_state	= qpnpint_get_irqchip_state,
+> -	.irq_request_resources = qpnpint_irq_request_resources,
+>  	.flags		= IRQCHIP_MASK_ON_SUSPEND,
+>  };
+>  
+> -static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
+> -					   struct device_node *controller,
+> -					   const u32 *intspec,
+> -					   unsigned int intsize,
+> -					   unsigned long *out_hwirq,
+> -					   unsigned int *out_type)
+> +static int qpnpint_irq_domain_translate(struct irq_domain *d,
+> +					struct irq_fwspec *fwspec,
+> +					unsigned long *out_hwirq,
+> +					unsigned int *out_type)
+>  {
+>  	struct spmi_pmic_arb *pmic_arb = d->host_data;
+> +	u32 *intspec = fwspec->param;
+>  	u16 apid, ppid;
+>  	int rc;
+>  
+>  	dev_dbg(&pmic_arb->spmic->dev, "intspec[0] 0x%1x intspec[1] 0x%02x intspec[2] 0x%02x\n",
+>  		intspec[0], intspec[1], intspec[2]);
+>  
+> -	if (irq_domain_get_of_node(d) != controller)
+> +	if (irq_domain_get_of_node(d) != pmic_arb->spmic->dev.of_node)
+>  		return -EINVAL;
+> -	if (intsize != 4)
+> +	if (fwspec->param_count != 4)
+>  		return -EINVAL;
+>  	if (intspec[0] > 0xF || intspec[1] > 0xFF || intspec[2] > 0x7)
+>  		return -EINVAL;
+> @@ -740,17 +739,34 @@ static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
+>  	return 0;
+>  }
+>  
+> -static int qpnpint_irq_domain_map(struct irq_domain *d,
+> -				  unsigned int virq,
+> -				  irq_hw_number_t hwirq)
+> -{
+> -	struct spmi_pmic_arb *pmic_arb = d->host_data;
+>  
+> +static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
+> +				   struct irq_domain *domain, unsigned int virq,
+> +				   irq_hw_number_t hwirq)
+> +{
+>  	dev_dbg(&pmic_arb->spmic->dev, "virq = %u, hwirq = %lu\n", virq, hwirq);
+>  
+> -	irq_set_chip_and_handler(virq, &pmic_arb_irqchip, handle_level_irq);
+> -	irq_set_chip_data(virq, d->host_data);
+> -	irq_set_noprobe(virq);
+> +	irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_arb,
+> +			    handle_level_irq, NULL, NULL);
 
-This is a reset from hardware and it does not bring back the clock to 
-the previous state and so we can not mark it "critical". I would submit 
-the next series with comments updated. Please let me know in case you 
-have any comments.
+I understand you haven't changed the existing semantic here by always
+setting the handler to handle_level_irq. But is that guaranteed to
+always be the case? See below.
 
+> +}
+> +
+> +static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
+> +				    unsigned int virq, unsigned int nr_irqs,
+> +				    void *data)
+> +{
+> +	struct spmi_pmic_arb *pmic_arb = domain->host_data;
+> +	struct irq_fwspec *fwspec = data;
+> +	irq_hw_number_t hwirq;
+> +	unsigned int type;
+> +	int ret, i;
+> +
+> +	ret = qpnpint_irq_domain_translate(domain, fwspec, &hwirq, &type);
 
+Here, you extract the trigger from DT.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < nr_irqs; i++)
+> +		qpnpint_irq_domain_map(pmic_arb, domain, virq + i, hwirq + i);
+
+Shouldn't you propagate it into the mapping function so that the handler
+can be selected accordingly? Or does the interrupt controller convert
+edge signals to level somehow?
+
+> +
+>  	return 0;
+>  }
+>  
+> @@ -1126,8 +1142,10 @@ static const struct pmic_arb_ver_ops pmic_arb_v5 = {
+>  };
+>  
+>  static const struct irq_domain_ops pmic_arb_irq_domain_ops = {
+> -	.map	= qpnpint_irq_domain_map,
+> -	.xlate	= qpnpint_irq_domain_dt_translate,
+> +	.activate = qpnpint_irq_domain_activate,
+> +	.alloc = qpnpint_irq_domain_alloc,
+> +	.free = irq_domain_free_irqs_common,
+> +	.translate = qpnpint_irq_domain_translate,
+>  };
+>  
+>  static int spmi_pmic_arb_probe(struct platform_device *pdev)
+> 
+
+Thanks,
+
+	M.
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Jazz is not dead. It just smells funny...
