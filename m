@@ -3,98 +3,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E55C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32024C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4913520652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 002B820652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:44:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="odqiWu2X"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pw3/Rx/O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbfAQRnP (ORCPT
+        id S1727364AbfAQRoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:43:15 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35191 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfAQRnP (ORCPT
+        Thu, 17 Jan 2019 12:44:08 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37728 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbfAQRoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:43:15 -0500
-Received: by mail-lf1-f67.google.com with SMTP id e26so8464454lfc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:43:13 -0800 (PST)
+        Thu, 17 Jan 2019 12:44:07 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g67so1971841wmd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:44:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bPK3vpUMsa41+yGP3TZAcnaVmjICNGsm5A82VYsal8k=;
-        b=odqiWu2XPvyQ1HQzXKrPOVYPd4XAJpD4kqAUDSGhyldYzvfX+00KualOUDg1acdJAG
-         4A2inNnT9K0Lq+SvozS4Oo1nuoCvMZR2GZv6SgWTFl2hLFujxvvyX9Wkx3RN1cHJpd+v
-         JBKTLAYGc0yDD4/0MrJHgPVTSrim01ax2Q+Co8DtSG1pTBAu5D7YYJmY3aGG2/o5bOEp
-         roi8obZLsYt3JD3PkFft1gkmeaV1/KdLzzw3W9PKAmY39o+vcbCw9qncep8KzNhJsKLD
-         +BSLFGUxADJMIEHIxbPExQEI1by7ypyiiTb0wB4pvfa8AoBxIw0NIQ3KZJ0zIFpCcJ8p
-         peBw==
+        bh=QOLNUkxDa/on7JB1hVWhTK1qzUZUfphUpw71lYVwtSM=;
+        b=Pw3/Rx/ORbXo+P13kagjCExD61TI/vBxJlbTGSXHAK0Fi5uvqz4yqwo63xta0fPGMD
+         S9jPP9uIXbTiMHCVbTJj4V4rPRr/LWrrJ5IbCLGAlOcivomBMy5owihv9o6KqepE7PgQ
+         MWFoT8MtE9dtNGScy/4m/AhpPwT13fT+gcMhk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bPK3vpUMsa41+yGP3TZAcnaVmjICNGsm5A82VYsal8k=;
-        b=L2Lwc6eLYnVvJzQU68tL2K/9/uDiUaF7WoF2SYO5aJGvHzfzp2B4NZwE1J8aRAiKIJ
-         Lu0nL9CWVvmEy+SssZeePiH9RDf5hh1QXMHlxPjI99z1UnBl7dEWhQGFQSF03la1Tbu2
-         QVso9vhHvSnWNRl/jSWPsDFGHyQCrUGJ52r8bahb43wr73peCn2Tg7dzVqufItxdBdt0
-         9zK7rjLMAViLXIx/4x5b6gW405593lDahO0Tfl7f1zwLbCkrmzzNk6ZdsDQ75wbgmMQg
-         HLlryX6e88hJ+XSDAuBtc9VNTo0EQHi1TVHrMX1YTuMino3rpQ10cG7MN6mIELfcXIxH
-         549w==
-X-Gm-Message-State: AJcUuke8hLyZeeYaKUpmvKPRex56UZvanpouaa7idMtCLHGx8Dv1aWGQ
-        NbacL0yQDr6nMyF3Wv7eP6tWrUA9IikY/UMEeGE=
-X-Google-Smtp-Source: ALg8bN4O4+46Yqxa1wZM6HnuSfhAGcKP6UY6DguBT/Qu1QdMPVFO7HFZqo1wwGV9WrGGsa1RzSFVsUiUS2P1nIVI9Io=
-X-Received: by 2002:a19:d90c:: with SMTP id q12mr10430027lfg.24.1547746993042;
- Thu, 17 Jan 2019 09:43:13 -0800 (PST)
+        bh=QOLNUkxDa/on7JB1hVWhTK1qzUZUfphUpw71lYVwtSM=;
+        b=qJA5XfHPGuoaaEeKnJfU5JMxaHdn3uVFI3rm8TW05AkhN3uFEbUjDXOnvbClhZm7tJ
+         iCV5yYGnCLzQamuEnfO9VLvgqVnsWAwxfTM7SqINml6rG0M0IeFggdlltK0Q+e5oA/i/
+         2atRN0YhEfBNdH0Gi6UoxQ6Bk/TbNZyyayZ5XuMruK6fXTQjOd7fwKbWBphNqGU/9sJm
+         me20q41NU2ktNMtOYWVRnldqyG7jizNgVbZh1KDnNSjVaYeLpUyjGD8qROf7ulpm1KaB
+         WUAIQQF3QJwFKhyePxWHNWt4CsOvbLr4dW0trOCACXXTtbSyHxtKq2MSGvRS5ujdpZZ0
+         ryxw==
+X-Gm-Message-State: AJcUukctHKUB1Xc6foT2xOFOzcagPgfMTbALV9ntGbVrOHVw2Nmqjxyq
+        Ra2x2Rv9mjbZEdUUCh0ys6cbJBx2MTqePBsC3Ezlxi07nlc=
+X-Google-Smtp-Source: ALg8bN6oyQNUcrn2JKOFiN4VF9V+zUL6C7NT2K0kNLp+Xhzw8FsXmWyK66lGBlO0a+dS6qJJ1NPxlGm/quCJta3FKRQ=
+X-Received: by 2002:a1c:de57:: with SMTP id v84mr12549965wmg.55.1547747045632;
+ Thu, 17 Jan 2019 09:44:05 -0800 (PST)
 MIME-Version: 1.0
-References: <5c40aafc.1c69fb81.a0ba0.67a7@mx.google.com>
-In-Reply-To: <5c40aafc.1c69fb81.a0ba0.67a7@mx.google.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Thu, 17 Jan 2019 23:17:09 +0530
-Message-ID: <CAFqt6zZPXcX+Qk_CMNaBhs9=dTJuzv4nQzoj09xWLbMuT6NvDQ@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/cell: Remove duplicate header
-To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+References: <1547658629-25378-1-git-send-email-john.stultz@linaro.org>
+ <1547658629-25378-3-git-send-email-john.stultz@linaro.org> <20190117170829.GJ5283@Mani-XPS-13-9360>
+In-Reply-To: <20190117170829.GJ5283@Mani-XPS-13-9360>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Thu, 17 Jan 2019 09:43:52 -0800
+Message-ID: <CALAqxLXc4dE=65MYR5M_jA-uKeGjsN0CL+JjDYbZUTyi+mKUTA@mail.gmail.com>
+Subject: Re: [PATCH 2/8 v4] Documentation: bindings: dma: Add binding for dma-channel-mask
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tanglei Han <hantanglei@huawei.com>,
+        Zhuangluan Su <suzhuangluan@hisilicon.com>,
+        Ryan Grachek <ryan@edited.us>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 9:49 PM Sabyasachi Gupta
-<sabyasachi.linux@gmail.com> wrote:
+On Thu, Jan 17, 2019 at 9:08 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 >
-> Remove linux/syscalls.h which is included more than once
+> On Wed, Jan 16, 2019 at 09:10:23AM -0800, John Stultz wrote:
+> > Some dma channels can be reserved for secure mode or other
+> > hardware on the SoC, so provide a binding for a bitmask
+> > listing the available channels for the kernel to use.
+> >
+> > This follows the pre-existing bcm,dma-channel-mask binding.
+> >
+> > Cc: Vinod Koul <vkoul@kernel.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Tanglei Han <hantanglei@huawei.com>
+> > Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
+> > Cc: Ryan Grachek <ryan@edited.us>
+> > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Cc: dmaengine@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: John Stultz <john.stultz@linaro.org>
+> > ---
+> > v3: Renamed to hisi-dma-avail-chan
+> > v4: Reworked to generic dma-channel-mask
+> > ---
+> >  Documentation/devicetree/bindings/dma/dma.txt | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/dma/dma.txt b/Documentation/devicetree/bindings/dma/dma.txt
+> > index 6312fb0..eeb4e4d 100644
+> > --- a/Documentation/devicetree/bindings/dma/dma.txt
+> > +++ b/Documentation/devicetree/bindings/dma/dma.txt
+> > @@ -16,6 +16,9 @@ Optional properties:
+> >  - dma-channels:      Number of DMA channels supported by the controller.
+> >  - dma-requests:      Number of DMA request signals supported by the
+> >                       controller.
+> > +- dma-channel-mask:  Bitmask of available DMA channels in ascending order
+> > +                     that are not reserved by firmware and are available to
+> > +                     the kernel. i.e. first channel corresponds to LSB.
 >
-> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+> A general assumption is, "dma-channel-mask" refers to the bit fields of
+> the channels which needs to be masked. But here, it refers to the channels
+> which are available. Doesn't it contradict?
 
-Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
+Hrm. So while I can sort of understand the common usage of "mask" as
+to "hide", thus the desire to have a bitfield mean "the channels we
+hide" or "don't use", but in my experience bitmasking is more commonly
+used to keep only a portion of the the bits, so from that perspective
+its more intuitive that a mask be the channels we keep to use. So I'm
+not sure if your suggestion makes it more clear.
 
-> ---
->  arch/powerpc/platforms/cell/spu_syscalls.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/powerpc/platforms/cell/spu_syscalls.c b/arch/powerpc/platforms/cell/spu_syscalls.c
-> index 263413a..b95d6af 100644
-> --- a/arch/powerpc/platforms/cell/spu_syscalls.c
-> +++ b/arch/powerpc/platforms/cell/spu_syscalls.c
-> @@ -26,7 +26,6 @@
->  #include <linux/syscalls.h>
->  #include <linux/rcupdate.h>
->  #include <linux/binfmts.h>
-> -#include <linux/syscalls.h>
->
->  #include <asm/spu.h>
->
-> --
-> 2.7.4
->
+But I'm not very particular here, so I'll defer to others on this.
+
+thanks
+-john
