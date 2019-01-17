@@ -2,118 +2,95 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94344C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8996AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D70420652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:01:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A35820652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:01:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="1vkjqwWq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729229AbfAQRBV (ORCPT
+        id S1729280AbfAQRBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:01:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57134 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728649AbfAQRBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:01:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D0049AE27;
-        Thu, 17 Jan 2019 17:01:19 +0000 (UTC)
-Subject: Re: [PATCH 16/25] mm, compaction: Check early for huge pages
- encountered by the migration scanner
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-17-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <724b7599-8300-15b5-2675-eecab2450f45@suse.cz>
-Date:   Thu, 17 Jan 2019 18:01:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 17 Jan 2019 12:01:39 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46996 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728978AbfAQRBj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 12:01:39 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w25so11705404otm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:01:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=74xntSFv45P5uxE02fT3KOtvmrgwIhR0LyAitbgHaOQ=;
+        b=1vkjqwWqoRVTksMinxWeVGVBSsjSLUgN1Q/hGR3KFSqsaaMBIO9Z9oHjuIHGdo1FNx
+         V60G+ZQhQoPkLRfXTFn3+J/3a0P7VLmfyebr8mgORCZ/eEkw1/DF0ed0nTbmctifvEr3
+         1LceNfAOvOHO+/v/O/EgwPEjsRzT2+aNjoU1oc3/iUhROT/dyeOQOFtYNsTEaM1M0qpX
+         EaHpp3e/Xntx1Rokn2yVQflFS9B4yLCKZNcGefD4ciGd13UCiJG82d2x2FVpNhuL811n
+         Ylzl87Uiw9tybaxfqKttKiCdIaFgIrQPY8qIWjoETCA3g7FroNmoCybWFriYfds/qjWL
+         SxmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=74xntSFv45P5uxE02fT3KOtvmrgwIhR0LyAitbgHaOQ=;
+        b=LGhNUgeZfhtc1w2IyntiDgAAQBkoE1Kc72aSZfALgkMU6pn+GOaryaiIMCeXnK018H
+         0L5ExtzujCoOO/+g0pUcrH4xO38EIG8Vg1WuLfTnqjzf0HYAz0jsoGzxnnULxLjOkchQ
+         Rw8LwNtPq5yFkINxxGVKfcSEgzzh1xfQBZxgUCY19x4kPrXdXKK8VS5B7/P4MES87p/l
+         UZVvRwqE670gDni7Ihs4nht3c2r93Neet0KaN6zTAG1dlom7W3tlJZ3GyYAeSBqgc+ob
+         OgkG2z8pbrWcZyp0EWt/SknUiJ0mwzfx8DLNFeb7K6hgdRzgQBtCHD90Z/agN15UXBPk
+         Gtng==
+X-Gm-Message-State: AJcUukfk2N0Ua35GNozAguE8WfbUB5DzHb4QUrLv3wRnjdOoA6wPaPhF
+        2nrcYxwdGiPWct/g1ACcFmDq0OLJUrbHCYrae+yKuQ==
+X-Google-Smtp-Source: ALg8bN6xqWDc5Sq/06QYqdFQqN+1zYDMZD1kHAWmw2YWq2byOr9l4p48xyBuSkHzQ6yOO3aXhbzVNeGWi58roAGpDGw=
+X-Received: by 2002:a9d:6a50:: with SMTP id h16mr8756724otn.95.1547744498320;
+ Thu, 17 Jan 2019 09:01:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190104125011.16071-17-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-7-keith.busch@intel.com>
+ <CAJZ5v0jg24sNVQiA1AvVwP-uCCq1Uo9rxkAERyb_zDL_W8AATA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jg24sNVQiA1AvVwP-uCCq1Uo9rxkAERyb_zDL_W8AATA@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 17 Jan 2019 09:01:27 -0800
+Message-ID: <CAPcyv4i9Doi_cE8KkB-PjzPyU2GoscvJbKTJzaX1esVQQ=dxMA@mail.gmail.com>
+Subject: Re: [PATCHv4 06/13] acpi/hmat: Register processor domain to its memory
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/4/19 1:50 PM, Mel Gorman wrote:
-> When scanning for sources or targets, PageCompound is checked for huge
-> pages as they can be skipped quickly but it happens relatively late after
-> a lot of setup and checking. This patch short-cuts the check to make it
-> earlier. It might still change when the lock is acquired but this has
-> less overhead overall. The free scanner advances but the migration scanner
-> does not. Typically the free scanner encounters more movable blocks that
-> change state over the lifetime of the system and also tends to scan more
-> aggressively as it's actively filling its portion of the physical address
-> space with data. This could change in the future but for the moment,
-> this worked better in practice and incurred fewer scan restarts.
-> 
-> The impact on latency and allocation success rates is marginal but the
-> free scan rates are reduced by 32% and system CPU usage is reduced by
-> 2.6%. The 2-socket results are not materially different.
+On Thu, Jan 17, 2019 at 4:11 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+>     On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
+> >
+> > If the HMAT Subsystem Address Range provides a valid processor proximity
+> > domain for a memory domain, or a processor domain with the highest
+> > performing access exists, register the memory target with that initiator
+> > so this relationship will be visible under the node's sysfs directory.
+> >
+> > Since HMAT requires valid address ranges have an equivalent SRAT entry,
+> > verify each memory target satisfies this requirement.
+>
+> What exactly will happen after this patch?
+>
+> There will be some new directories under
+> /sys/devices/system/node/nodeX/ if all goes well.  Anything else?
 
-Hmm, interesting that adjusting migrate scanner affected free scanner. Oh well.
+When / if the memory randomization series [1] makes its way upstream
+there will be a follow-on patch to enable that randomization based on
+the presence of a memory-side cache published in the HMAT.
 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-Nit below.
-
-> ---
->  mm/compaction.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 608d274f9880..921720f7a416 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -1071,6 +1071,9 @@ static bool suitable_migration_source(struct compact_control *cc,
->  {
->  	int block_mt;
->  
-> +	if (pageblock_skip_persistent(page))
-> +		return false;
-> +
->  	if ((cc->mode != MIGRATE_ASYNC) || !cc->direct_compaction)
->  		return true;
->  
-> @@ -1693,12 +1696,17 @@ static isolate_migrate_t isolate_migratepages(struct zone *zone,
->  			continue;
->  
->  		/*
-> -		 * For async compaction, also only scan in MOVABLE blocks.
-> -		 * Async compaction is optimistic to see if the minimum amount
-> -		 * of work satisfies the allocation.
-> +		 * For async compaction, also only scan in MOVABLE blocks
-> +		 * without huge pages. Async compaction is optimistic to see
-> +		 * if the minimum amount of work satisfies the allocation.
-> +		 * The cached PFN is updated as it's possible that all
-> +		 * remaining blocks between source and target are suitable
-
-								  ^ unsuitable?
-
-> +		 * and the compaction scanners fail to meet.
->  		 */
-> -		if (!suitable_migration_source(cc, page))
-> +		if (!suitable_migration_source(cc, page)) {
-> +			update_cached_migrate(cc, block_end_pfn);
->  			continue;
-> +		}
->  
->  		/* Perform the isolation */
->  		low_pfn = isolate_migratepages_block(cc, low_pfn,
-> 
-
+[1]: https://lwn.net/Articles/767614/
