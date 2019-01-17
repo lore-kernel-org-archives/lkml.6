@@ -2,72 +2,77 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20BEEC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8B1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2D520855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 692E620851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:46:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RykqyGgO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfAQPpu (ORCPT
+        id S1728074AbfAQPqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:45:50 -0500
-Received: from mga06.intel.com ([134.134.136.31]:30748 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727093AbfAQPpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:45:50 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 07:45:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
-   d="scan'208";a="117471042"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Jan 2019 07:45:49 -0800
-Date:   Thu, 17 Jan 2019 08:44:37 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Balbir Singh <bsingharora@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCHv4 00/13] Heterogeneuos memory node attributes
-Message-ID: <20190117154436.GB31543@localhost.localdomain>
-References: <20190116175804.30196-1-keith.busch@intel.com>
- <20190117125821.GF26056@350D>
+        Thu, 17 Jan 2019 10:46:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37028 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725926AbfAQPqS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:46:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5uOvLZ7YdZQEYVquy8Opby5yGpZwzNhOFf+GdUTjQDc=; b=RykqyGgOBlCfqi9InNbzLnw0x
+        3W441ABSTgW0olQbTUfju/SuIzShEU5V7DB9BN7dQdX2bEk+D1R24zf50qBUVthTUaf/n1uu1AkWh
+        oD1ctebrctf0SMJ+wGkoZIdAwoVpaJIpV3fXAQGkWJQ3k7YwnYdsBezT4K/j08u6jOk7PJYL91gUS
+        8TBtf1ZLdPaDqSYBP2aeQBWk7nG/SCJv+fyZIy71WX9PLEkndurIf8O6y3h0rhLOcb9pyeod4z3Ki
+        1AIjZRthRN82CPUXT5RB4Vj2PERhzQWfC5i42XzVH2xyOXIbYOLROrAlzuj+wBDeND+oyhKCNNv42
+        PpDpoHCvQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gk9rx-0001eV-06; Thu, 17 Jan 2019 15:46:13 +0000
+Date:   Thu, 17 Jan 2019 07:46:12 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, sudeep.dutt@intel.com,
+        ashutosh.dixit@intel.com, gregkh <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-ntb@googlegroups.com, Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>
+Subject: Re: [PATCH 0/8] Virtio-over-PCIe on non-MIC
+Message-ID: <20190117154612.GA6262@infradead.org>
+References: <20190116163253.23780-1-vincent.whitchurch@axis.com>
+ <CAK8P3a2ifu9X+SXgoDPSFMYwnKr=Yex8_tD4qRimcOQAhuEa8Q@mail.gmail.com>
+ <20190117105441.eqediwlekofp2srg@axis.com>
+ <CAK8P3a2HtSJCLVdLcs=f0b5wv-k-6E_Z4Pt3Yp_kazUZh-Ek9A@mail.gmail.com>
+ <20190117151906.odvozs6kz3uvx32y@axis.com>
+ <20190117152142.GB20359@infradead.org>
+ <20190117153206.2flxqb26tbdrwp4z@axis.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117125821.GF26056@350D>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20190117153206.2flxqb26tbdrwp4z@axis.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 11:58:21PM +1100, Balbir Singh wrote:
-> On Wed, Jan 16, 2019 at 10:57:51AM -0700, Keith Busch wrote:
-> > It had previously been difficult to describe these setups as memory
-> > rangers were generally lumped into the NUMA node of the CPUs. New
-> > platform attributes have been created and in use today that describe
-> > the more complex memory hierarchies that can be created.
-> > 
-> 
-> Could you please expand on this text -- how are these attributes
-> exposed/consumed by both the kernel and user space?
-> 
-> > This series' objective is to provide the attributes from such systems
-> > that are useful for applications to know about, and readily usable with
-> > existing tools and libraries.
-> 
-> I presume these tools and libraries are numactl and mbind()?
+On Thu, Jan 17, 2019 at 04:32:06PM +0100, Vincent Whitchurch wrote:
+> If I understand you correctly, I think you're talking about the RC
+> running the virtio drivers and the endpoint implementing the virtio
+> device?  This vop stuff is used for the other way around: the virtio
+> device is implement on the RC and the endpoint runs the virtio drivers.
 
-Yes, and numactl is used the examples provided in both changelogs and
-documentation in this series. Do you want to see those in the cover
-letter as well?
+Oh.  That is really weird and not that way I'd implement it..
