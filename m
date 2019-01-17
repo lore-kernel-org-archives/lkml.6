@@ -2,101 +2,132 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF25C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA56DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DFD920652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9913F20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:28:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="rDT1zD5q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbfAQP1x (ORCPT
+        id S1728460AbfAQP17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:27:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52502 "EHLO mx1.redhat.com"
+        Thu, 17 Jan 2019 10:27:59 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:40060 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726913AbfAQP1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:27:52 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726913AbfAQP16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:27:58 -0500
+Received: from zn.tnic (p200300EC2BCAA900D1C41FD2C17621F7.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:a900:d1c4:1fd2:c176:21f7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9682D935C9;
-        Thu, 17 Jan 2019 15:27:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-128.rdu2.redhat.com [10.10.120.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8886D10A48D4;
-        Thu, 17 Jan 2019 15:27:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/6] afs: Don't set vnode->cb_s_break in afs_validate()
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Marc Dionne <marc.dionne@auristor.com>, dhowells@redhat.com,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 17 Jan 2019 15:27:50 +0000
-Message-ID: <154773887076.24105.174798845449873807.stgit@warthog.procyon.org.uk>
-In-Reply-To: <154773884927.24105.2730570814701376379.stgit@warthog.procyon.org.uk>
-References: <154773884927.24105.2730570814701376379.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2E4EF1EC0B7A;
+        Thu, 17 Jan 2019 16:27:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547738877;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=KYPJn03ID5gBjx5+sNW0KtRLbDQTgdzQcRfxHbR7y6I=;
+        b=rDT1zD5qvDlIHkqh9U7zJF0E0QvSax4Soc53s3/dG8V1WhHLkaUxar0FG/OvAFTGzydG8S
+        7/BtKI3GbVco3zKzxhmhH5E9zCRUo+gjgu+PykXQxXVpcN37MHdoZ772Zb7aq2VgBjpwP8
+        R+Ima/pr0wwytPs+uYekYupr7SsG6Os=
+Date:   Thu, 17 Jan 2019 16:27:51 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store
+ immovable memory
+Message-ID: <20190117152751.GD5023@zn.tnic>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+ <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
+ <20190116110158.GC15409@zn.tnic>
+ <20190117032027.GA31097@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 17 Jan 2019 15:27:52 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190117032027.GA31097@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Dionne <marc.dionne@auristor.com>
+On Thu, Jan 17, 2019 at 11:20:27AM +0800, Chao Fan wrote:
+> I have changed as you suggested, looks clear without type cast, and
+> we need some variable as long to calculate the address, and at same
+> time as the struct pointer to find it's length, so I change as below,
+> and get_acpi_srat_table() return an unsigned long.
+> How do you think of that.
+> 
+> int get_immovable_mem_num(void)
 
-A cb_interest record is not necessarily attached to the vnode on entry to
-afs_validate(), which can cause an oops when we try to bring the vnode's
-cb_s_break up to date in the default case (ie. no current callback promise
-and the vnode has not been deleted).
+I'd call that
 
-Fix this by simply removing the line, as vnode->cb_s_break will be set when
-needed by afs_register_server_cb_interest() when we next get a callback
-promise from RPC call.
+int count_immovable_mem_regions(void)
 
-The oops looks something like:
+or
 
-    BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-    ...
-    RIP: 0010:afs_validate+0x66/0x250 [kafs]
-    ...
-    Call Trace:
-     afs_d_revalidate+0x8d/0x340 [kafs]
-     ? __d_lookup+0x61/0x150
-     lookup_dcache+0x44/0x70
-     ? lookup_dcache+0x44/0x70
-     __lookup_hash+0x24/0xa0
-     do_unlinkat+0x11d/0x2c0
-     __x64_sys_unlink+0x23/0x30
-     do_syscall_64+0x4d/0xf0
-     entry_SYSCALL_64_after_hwframe+0x44/0xa9
+int enumerate_immovable_regions(void)
 
-Fixes: ae3b7361dc0e ("afs: Fix validation/callback interaction")
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+or so and put a comment above it explaining what it does and what it
+returns.
 
- fs/afs/inode.c |    1 -
- 1 file changed, 1 deletion(-)
+"mem_num" is not clear what it is.
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 6b17d3620414..211343831c30 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -414,7 +414,6 @@ int afs_validate(struct afs_vnode *vnode, struct key *key)
- 	} else if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
- 		valid = true;
- 	} else {
--		vnode->cb_s_break = vnode->cb_interest->server->cb_s_break;
- 		vnode->cb_v_break = vnode->volume->cb_v_break;
- 		valid = false;
- 	}
+> {
+>         unsigned long table_addr, table_end, table;
+>         struct acpi_table_header *table_header;
+>         struct acpi_subtable_header *sub_table;
+>         char arg[MAX_ACPI_ARG_LENGTH];
+>         int num = 0;
+> 
+>         if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
+>             !strncmp(arg, "off", 3))
+>                 return;
+> 
+>         table_addr = get_acpi_srat_table();
+>         if (!table_addr)
+>                 return;
+> 
+>         table_header = (struct acpi_table_header *)table_addr;
+>         table_end = table_addr + table_header->length;
+>         table = table_addr + sizeof(struct acpi_table_srat);
+> 
+>         while (table + sizeof(struct acpi_subtable_header) < table_end) {
+>                 sub_table = (struct acpi_subtable_header *)table;
+>                 if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+>                         struct acpi_srat_mem_affinity *ma;
+> 
+>                         ma = (struct acpi_srat_mem_affinity *)table;
+>                         if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+>                                 immovable_mem[num].start = ma->base_address;
+>                                 immovable_mem[num].size = ma->length;
+>                                 num++;
+>                         }
+> 
+>                         if (num >= MAX_NUMNODES*2) {
+>                                 debug_putstr("Too many immovable memory regions, aborting.\n");
+>                                 return 0;
+>                         }
+>                 }
+>                 table += sub_table->length;
+>         }
+>         return num;
+> }
 
+That looks clean.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
