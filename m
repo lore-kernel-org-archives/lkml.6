@@ -2,28 +2,29 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD156C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE7DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72F820855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:40:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C498D205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:40:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbfAQQkO (ORCPT
+        id S1729100AbfAQQk1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:40:14 -0500
-Received: from mout.gmx.net ([212.227.15.19]:44857 "EHLO mout.gmx.net"
+        Thu, 17 Jan 2019 11:40:27 -0500
+Received: from mout.gmx.net ([212.227.15.15]:57631 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728864AbfAQQkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:40:13 -0500
+        id S1728598AbfAQQk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 11:40:26 -0500
 Received: from corona.crabdance.com ([173.228.106.209]) by mail.gmx.com
- (mrgmx003 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 0M1n4s-1h4RLh0Q1a-00to4X; Thu, 17 Jan 2019 17:39:51 +0100
+ (mrgmx001 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 0Ma1tv-1gWkYp0Wqt-00LjM3; Thu, 17 Jan 2019 17:40:08 +0100
 Received: by corona.crabdance.com (Postfix, from userid 1001)
-        id 31DA16E85603; Thu, 17 Jan 2019 08:39:43 -0800 (PST)
+        id 1A3A36E85602; Thu, 17 Jan 2019 08:40:02 -0800 (PST)
 From:   Stefan Schaeckeler <schaecsn@gmx.net>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -35,28 +36,30 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-edac@vger.kernel.org
 Cc:     Stefan M Schaeckeler <sschaeck@cisco.com>
-Subject: [PATCH v2 0/2] Add support for the Aspeed AST2500 SoC EDAC driver
-Date:   Thu, 17 Jan 2019 08:38:15 -0800
-Message-Id: <1547743097-5236-1-git-send-email-schaecsn@gmx.net>
+Subject: [PATCH v2 2/2] dt-bindings: edac: Aspeed AST2500
+Date:   Thu, 17 Jan 2019 08:38:17 -0800
+Message-Id: <1547743097-5236-3-git-send-email-schaecsn@gmx.net>
 X-Mailer: git-send-email 2.4.5
-X-Provags-ID: V03:K1:GKo1VKn9KyeZV/UCPikGLJBxMv/BIpGyn9BpU807KE2eSsNdoQu
- xg8U5TgIwPoGsZkxB6r7aBgjNNUH/moY42AYjlJ2Zp7VaBbMxbAsgINBqjA1to9qmPs8hco
- TD57GxlxlDkKuEpn5eQuz/lJMlLB2edaNZNzBTFMX2w4grJEmU58SwBrAg/4Caa7EJjwTrE
- 26RyJjqj/xDxcxqxd6JMQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:U8wHh0ywuwI=:x/3zO11iYv/ECKfdIlri+c
- 0Okjn/KGgE+Zui6N80ea7ScUFvPx+b0kLHVBu+OxDhy/wgsdHcQ0P1cqyT2J/7R3S7evcwplC
- 9GT0tzRTFVn2k3CGnQMpjg1ohWhLCRgR5vwLYUIk2mNVa6WNDjG2wIyN71gNLvFnNNzefLLGR
- 0GO3026Mq9ddJngzCLBYtdG70/wir6xOhcIRV/vCTDMrrvldXyVmGGS/Mg0CYNCdK+OlD0ZjM
- PxvgKdb96IMBw+LTYMczAJcJPuJx/xgJLH9dL8PxWPPns+7Cz9c4BqqQHQQx5LFx9C7Nx4vN9
- o6+vLuWBItFnhLpxgVJmRLLRfp+iBK8vu2diKrjbBNJsVq25EacFd3XOHG6a9lc6kXpaY6vdF
- LS2CZf6YcCpTkndIx4fKXVyv7pT1BW0is3akd8rTsr39mwGseNwPBdmiVkPmjP2KX04Y1bC0U
- Q1Gkz3g7/Ml3C+b146dlNaeJAPqu0VBxharbdFLiPYjgE33dKrTbY9TA7lU8ewx72bS33VpY5
- m8yq+WmZCUiVghF75ghaZZCQ7owxxagxlbnzg8WSyDq/M7gIh2PE0CjQ6kQ1eeHcEFgYpPh6I
- C70QZbkfDD35XcGE8NX5SgvOtxK/u/8i9J+aT4yeCYPVNbsx3bBMsmuAPHTm21l1LqXk4uenH
- siCCzhss+USPjkhWuPHbZvuA3yaGfwQHfiSQZxSWEwidyvK6rjypb5ma1TuRfitfjd5Kl8VFC
- rBulFMYHuQwk7jqfEOE4CBu5CEI1QuKQ7hICHdWy5rUrM6R0WC06ELXpUu+Ikoai2+qkY0EOh
- hzx2/KhpHDD6FwU54UJQkuUX33lKbyd42h6HqS31xs54ck/vxY6O45ju3vdlu1I3PSbWA8c5g
- CgF7nGeH+3atthGkqsvzszFnz1I8ec1fqxY21y36pCy5UU2y1yc2qXjemrbcw/
+In-Reply-To: <1547743097-5236-1-git-send-email-schaecsn@gmx.net>
+References: <1547743097-5236-1-git-send-email-schaecsn@gmx.net>
+X-Provags-ID: V03:K1:acREAI7ia05S8qqj43tkSIgjpuCXQAGBmeAKzACUxCAVYTi+eXo
+ ntxrFUPgKUBicdHgY4+qrujF7o2Bnytl3PtEL4GIajryYUxWf3z+zFpY6uUAGplStL5aHto
+ JgRPzjMipoX8jCq4f6E2GrdkSQ+454TqAOBvYa2/gpgsk6ih/xUo7c8FjNJwTwMug0pMqx6
+ 24F92KVl+Dhq4yBk3KG3A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kSLD9qsKXwE=:9bnK4X4LFcgg+8EfZyr1/S
+ H49IljoobZeWJLJ2k7Uz4ccrcN3Uvv9vEI+i3wM6UVRYAw7WDzGLkClB7yG4XzAc+vXE2ivXd
+ Azwa9Ol0EFgrj/YVCrM3upLiVT6GeXWm0wMxaa48dZBlVwPbZe/qOBWDd3AMVwhQy0F4/sPd2
+ 0ADTc9g6/l5+rj4ycCvIDIj+Zlnv6VV33g3rbeOfQ7Y2dNjM5mhsdAsj3XvUsWpFoGtIzPPE3
+ G5WYOCDmucd9pq0Ufxxu3v796+ZPqHp7j2q/825E3Jjqjgc6KJd63zb7GnBzX/oiii7N0O5AC
+ YUuyNGApd+ciXcu3f9K0HgYC08RbZSckW+xImmrsf/b+F/B3pkO65T81v4pZqbAYjnR1hZbQL
+ JV6poeNOhvhlP5TLoST8tqICPSqcwJzKmX1iPNAyCGHoYZS2ZpY2aQEou8YBmWlhgu379XYih
+ P5AGDZeKXfuKba8+XBa4X70UxUNSTKt5Dwvkat/0rU6s2vtYBaMR5qKGV+TC6L9+1FprHAqUD
+ +CuM1i2xfXvDz+XoAoYpX+janc2ObMRuaOfyTanderCz64srZk7pt1TnjXmSaGsR4CgFlekwp
+ zwOwtkB2KDyMOQfotDkPcbHAlXBrtZiCOsazVGe9DPjI2OrRSGhMOai+X3lcSTEFNwwxKfIc7
+ 3SHC0HY0avxgSr1pMQIDytvWD8fQSyqrwBpapFXay1UES8y/sKrl6HvcEhO/tw9LC3pl/40L3
+ QU0Ftq+/KKEu+aPMFxngQ2ug3c99896lGhd9wNusGj0G1xDPShqjIuWxitKKa/gpmCuItuiMa
+ iNE2U7GYOEKIND8wq6PFiMAO+SBmhmCAwdwleVnRtlpopQoM+zLFlqPNyG7DLAuH4wZosrBtH
+ FFEbIMu0TzkigzPgcFmMXvM3/VudevnBWFnXFCN/YSXMYD5YeQmqHhq0966q8N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,29 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan M Schaeckeler <sschaeck@cisco.com>
 
-Add support for the Aspeed AST2500 SoC EDAC driver.
+Add support for EDAC on the Aspeed AST2500 SoC.
 
-Changes since v1:
-- Addressed all cosmetic issues
-- Fixed (un-)recoverable address calculation in reg58 and reg5c
-- Removed status field from the example device tree binding
-- Added little more text to Kconfig
-
-
-Stefan M Schaeckeler (2):
-  EDAC: Add Aspeed AST2500 EDAC driver
-  dt-bindings: edac: Aspeed AST2500
-
- .../bindings/edac/aspeed-sdram-edac.txt       |  25 ++
- MAINTAINERS                                   |   6 +
- arch/arm/boot/dts/aspeed-g5.dtsi              |   7 +
- drivers/edac/Kconfig                          |   8 +
- drivers/edac/Makefile                         |   1 +
- drivers/edac/aspeed_edac.c                    | 421 ++++++++++++++++++
- 6 files changed, 468 insertions(+)
+Signed-off-by: Stefan M Schaeckeler <sschaeck@cisco.com>
+---
+ .../bindings/edac/aspeed-sdram-edac.txt       | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
- create mode 100644 drivers/edac/aspeed_edac.c
 
+diff --git a/Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt b/Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
+new file mode 100644
+index 000000000000..6a0f3d90d682
+--- /dev/null
++++ b/Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
+@@ -0,0 +1,25 @@
++Aspeed AST2500 SoC EDAC node
++
++The Aspeed AST2500 SoC supports DDR3 and DDR4 memory with and without ECC (error
++correction check).
++
++The memory controller supports SECDED (single bit error correction, double bit
++error detection) and single bit error auto scrubbing by reserving 8 bits for
++every 64 bit word (effectively reducing available memory to 8/9).
++
++Note, the bootloader must configure ECC mode in the memory controller.
++
++
++Required properties:
++- compatible: should be "aspeed,ast2500-sdram-edac"
++- reg:        sdram controller register set should be <0x1e6e0000 0x174>
++- interrupts: should be AVIC interrupt #0
++
++
++Example:
++
++	edac: sdram@1e6e0000 {
++		compatible = "aspeed,ast2500-sdram-edac";
++		reg = <0x1e6e0000 0x174>;
++		interrupts = <0>;
++	};
 -- 
 2.19.1
 
