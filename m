@@ -2,106 +2,251 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB46EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6C4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7687C20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:50:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nVkoRt5Q"
+	by mail.kernel.org (Postfix) with ESMTP id F281620851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:52:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfAQUuF (ORCPT
+        id S1728309AbfAQUwQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:50:05 -0500
-Received: from ozlabs.org ([203.11.71.1]:38321 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727488AbfAQUuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:50:05 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43gbmn3g1lz9sDX;
-        Fri, 18 Jan 2019 07:50:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547758202;
-        bh=er0Q9zRFkRTuo5yGEjTDwkgRYp6+nHRFd+0OGpiEey0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=nVkoRt5QJnnF816Vztrn0c987EWMqnEdGrwDhioxgU4R8Np6uqb5KJY3rweJ1rew/
-         mpD3mFl3jfLRUWyPZyzG/XMEopZvBf9p7ZJjcKszVvlTWKcKyPobCVqZ3MFXOIwFoF
-         FUb4d/ysrJSAmY8Ob+rJDRcw8w8A6yJegowv2TbYQjxv+dSc1rGSAHIGzW8E1xE21/
-         WoRH+nFbFrdm08IGeTuSK+pPhRISRqUN6X7oG1ZNh9Guy7L3Zip+XvsTCh9+H2ltgi
-         DwzF2R94hir+hjXpmXMZqsNkAowm+bxTracqRoYVAGkzOkn/M+OKmLZNnhWTQYSIsd
-         aEqEfpB+u1fOA==
-Date:   Fri, 18 Jan 2019 07:50:01 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Alexander Shiyan <shc_work@mail.ru>
-Subject: linux-next: Fixes tag needs some work in the imx-drm tree
-Message-ID: <20190118075001.6ce1d088@canb.auug.org.au>
+        Thu, 17 Jan 2019 15:52:16 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:49371 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727337AbfAQUwP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 15:52:15 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HKonl0013946;
+        Thu, 17 Jan 2019 21:52:09 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2pyby1knrm-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 17 Jan 2019 21:52:09 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2CAA231;
+        Thu, 17 Jan 2019 20:52:08 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0496B2857;
+        Thu, 17 Jan 2019 20:52:08 +0000 (GMT)
+Received: from SFHDAG7NODE2.st.com (10.75.127.20) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 17 Jan
+ 2019 21:52:07 +0100
+Received: from SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090]) by
+ SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090%20]) with mapi id
+ 15.00.1347.000; Thu, 17 Jan 2019 21:52:07 +0100
+From:   Loic PALLARDY <loic.pallardy@st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     xiang xiao <xiaoxiang781216@gmail.com>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "s-anna@ti.com" <s-anna@ti.com>
+Subject: RE: [PATCH 1/1] remoteproc: fix recovery procedure
+Thread-Topic: [PATCH 1/1] remoteproc: fix recovery procedure
+Thread-Index: AQHUqAn/EJZV5bhF3ki4eEklyP85XqWr6HGAgAJ6h6CABVkmgIAANTLA
+Date:   Thu, 17 Jan 2019 20:52:07 +0000
+Message-ID: <d17b43ecf7c74c03b3d7a540f4d262e1@SFHDAG7NODE2.st.com>
+References: <1547031403-34535-1-git-send-email-loic.pallardy@st.com>
+ <CAH2Cfb_4qFAEjiANLpRmQL5o9-JCPHCBULLz5-r=zbK9EwiT_A@mail.gmail.com>
+ <a7040498e7dc4e64b0748052c3ff3403@SFHDAG7NODE2.st.com>
+ <20190117180007.GX9278@minitux>
+In-Reply-To: <20190117180007.GX9278@minitux>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3UE/NSD7f7zVGAmH2yIIzUU"; protocol="application/pgp-signature"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3UE/NSD7f7zVGAmH2yIIzUU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Bjorn,
 
-Hi Lucas,
+> -----Original Message-----
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Sent: jeudi 17 janvier 2019 19:00
+> To: Loic PALLARDY <loic.pallardy@st.com>
+> Cc: xiang xiao <xiaoxiang781216@gmail.com>; ohad@wizery.com; linux-
+> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
+> POULIQUEN <arnaud.pouliquen@st.com>; benjamin.gaignard@linaro.org; s-
+> anna@ti.com
+> Subject: Re: [PATCH 1/1] remoteproc: fix recovery procedure
+> 
+> On Mon 14 Jan 12:23 PST 2019, Loic PALLARDY wrote:
+> 
+> > Hi Xiang,
+> >
+> > > -----Original Message-----
+> > > From: xiang xiao <xiaoxiang781216@gmail.com>
+> > > Sent: samedi 12 janvier 2019 19:29
+> > > To: Loic PALLARDY <loic.pallardy@st.com>
+> > > Cc: bjorn.andersson@linaro.org; ohad@wizery.com; linux-
+> > > remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
+> > > POULIQUEN <arnaud.pouliquen@st.com>;
+> benjamin.gaignard@linaro.org; s-
+> > > anna@ti.com
+> > > Subject: Re: [PATCH 1/1] remoteproc: fix recovery procedure
+> > >
+> 
+> Thanks Loic for picking this up again.
+> 
+> > > Hi Loic,
+> > > The change just hide the problem, I think. The big issue is:
+> > > 1.virtio devices aren't destroyed by rpproc_stop
+> > Virtio devices are destroyed by rproc_stop() as vdev is registered as rproc
+> sub device.
+> > rproc_stop() is calling rproc_stop_subdevices() which is in charge of
+> removing virtio device and associated children.
+> > rproc_vdev_do_stop() --> rproc_remove_virtio_dev() -->
+> unregister_virtio_device()
+> >
+> 
+> Xiang is right, unregister_virtio_device() ends up decrementing the
+> refcount of device and might free it, but it's not guaranteed.
 
-Commit
+But it that case calling rproc_shutdown() doesn't guarantee devices are free, it is the same.
+The only difference will be that rproc_vdev will be released by rproc and then reallocated. So virtio device allocation is restarting with a virgin memory buffer. But you will have some ghost devices and restart may failed too.
+I post a fix [1] last summer to be sure virtio device won't be released while still registered or registering... So there is still potential issue.
 
-  bb867d219fda ("gpu: ipu-v3: Fix CSI offsets for imx53")
+> 
+> So I think we need to decouple the rproc_vdev and virtio_device, to
+> allow the latter to potentially outlive the prior.
+> 
+I checked how to decouple at least the allocation because one issue here. The main issue is that all references are done based on container_of().
+I look for a fix having the less impacts on the current code, but still possible to create cross pointer references between rproc_vdev and virtio device.
+It will clean up the memory allocation procedure, but the problem is still there if sub virtio devices not well release.
+We need to not be able to restart remote processor if at least one sub device was not correctly release...
 
-Fixes tag
+> > Please find below trace of a recovery on my ST SOC. My 2 rpmsg tty are
+> removed and re-inserted correctly
+> > root@stm32mp1:~# ls /dev/ttyRPMSG*
+> > /dev/ttyRPMSG0  /dev/ttyRPMSG1
+> > root@stm32mp1:~# [  154.832523] remoteproc remoteproc0: crash
+> detected in m4: type watchdog
+> > [  154.837725] remoteproc remoteproc0: handling crash #2 in m4
+> > [  154.843319] remoteproc remoteproc0: recovering m4
+> > [  154.849185] rpmsg_tty virtio0.rpmsg-tty-channel.-1.0: rpmsg tty device 0
+> is removed
+> > [  154.857572] rpmsg_tty virtio0.rpmsg-tty-channel.-1.1: rpmsg tty device 1
+> is removed
+> > [  155.382327] remoteproc remoteproc0: warning: remote FW shutdown
+> without ack
+> > [  155.387857] remoteproc remoteproc0: stopped remote processor m4
+> > [  155.398988]  m4@0#vdev0buffer: assigned reserved memory node
+> vdev0buffer@10044000
+> > [  155.405910] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-channel
+> addr 0x0
+> > [  155.413422] rpmsg_tty virtio0.rpmsg-tty-channel.-1.0: new channel:
+> 0x400 -> 0x0 : ttyRPMSG0
+> > [  155.421038] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-channel
+> addr 0x1
+> > [  155.429088] rpmsg_tty virtio0.rpmsg-tty-channel.-1.1: new channel:
+> 0x401 -> 0x1 : ttyRPMSG1
+> > [  155.437338] virtio_rpmsg_bus virtio0: rpmsg host is online
+> > [  155.442401]  m4@0#vdev0buffer: registered virtio0 (type 7)
+> > [  155.461154] remoteproc remoteproc0: remote processor m4 is now up
+> > ls /dev/ttyRPMSG*
+> > /dev/ttyRPMSG0  /dev/ttyRPMSG1
+> > root@stm32mp1:~#
+> >
+> > As vdev is including in a larger struct allocated by rproc, it is safe
+> > to set it to 0 before initializing virtio device while rproc subdevice
+> > sequence is respected.
+> >
+> 
+> It's likely that this works in most use cases, but if for some reason
+> there's additional references held those will operate on the object past
+> your clearing of it.
 
-  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
+In fact, as the memory is free/kzalloc, virtio device fields are not all at 0 as during boot sequence.
+As mentioned below issue is coming from kobject state_initialized field which is not in a correct state.
+This field is only set by kobject_init().
+I think normal way of working is to release memory when a device is no more used.
+But another solution could be to reset it in kobject_cleanup() or kobject_del() in order to have a symmetrical procedure.
 
-has these problems:
+Regards,
+Loic
+[1] https://patchwork.kernel.org/patch/10544757/
 
-  - SHA1 should be at least 12 digits long
-
-Commit
-
-  2c0408dd0d89 ("gpu: ipu-v3: Fix i.MX51 CSI control registers offset")
-
-Fixes tag
-
-  Fixes: 2ffd48f2e7 ("gpu: ipu-v3: Add Camera Sensor Interface unit")
-
-has these problems:
-
-  - SHA1 should be at least 12 digits long
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3UE/NSD7f7zVGAmH2yIIzUU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxA6nkACgkQAVBC80lX
-0GxhLgf9FbeiI4wacaLPqUs3dBEH6G7Qc/YN31GkVSy48SsLNVXHTbBYoMCTygmp
-vLMqwjyOroNveI7z+0C9MaisdCsqmj3pfsyvLjqLomQr9G8q4obkcMY2FjlxMWBS
-/c7AZPWHsFrHM3LFpPk+5s/DBiLATltzmb2uO4rFgFF6eD03ye+PN30+qmz2bogl
-BESqVisfohgcwgLIwoS5N+FAfADHwHDuiDBZ3fqf0J7w4UjLmAx6yP93j00AJBOb
-c4bQDyg+rUF94CfMSLz+hrwMjnjM8ItZ6Brtt/jMtgnqOPWxvMxmsn2WHRBNHhB8
-ospZgvuBH//pJ+lT/NaNCI4pnEXY0A==
-=+QMu
------END PGP SIGNATURE-----
-
---Sig_/3UE/NSD7f7zVGAmH2yIIzUU--
+> 
+> Regards,
+> Bjorn
+> 
+> > > 2.and then rpmsg child devices aren't destroyed too
+> > > Then, when the remote start and create rpmsg channel again, the
+> > > duplicated channel will appear in kernel.
+> > > To fix this problem, we need go through rpproc_shutdown/rproc_boot to
+> > > destroy all devices(virtio and rpmsg) and create them again.
+> > Rproc_shutdown/rproc_boot is solving the issue too, except if
+> rproc_boot() was called several times and so rproc->power atomic not equal
+> to 1.
+> > Using only rproc_stop() and rproc_start() allows to preserve rproc->power
+> and so to be silent from rproc user pov.
+> >
+> > Regards,
+> > Loic
+> > >
+> > > Thanks
+> > > Xiang
+> > >
+> > > On Wed, Jan 9, 2019 at 6:56 PM Loic Pallardy <loic.pallardy@st.com>
+> wrote:
+> > > >
+> > > > Commit 7e83cab824a87e83cab824a8 ("remoteproc: Modify recovery
+> path
+> > > > to use rproc_{start,stop}()") replaces rproc_{shutdown,boot}() with
+> > > > rproc_{stop,start}(), which skips destroy the virtio device at stop
+> > > > but re-initializes it again at start.
+> > > >
+> > > > Issue is that struct virtio_dev is not correctly reinitialized like done
+> > > > at initial allocation thanks to kzalloc() and kobject is considered as
+> > > > already initialized by kernel. That is due to the fact struct virtio_dev
+> > > > is allocated and released at vdev resource handling level managed and
+> > > > virtio device is registered and unregistered at rproc subdevices level.
+> > > >
+> > > > This patch initializes struct virtio_dev to 0 before using it and
+> > > > registering it.
+> > > >
+> > > > Fixes: 7e83cab824a8 ("remoteproc: Modify recovery path to use
+> > > rproc_{start,stop}()")
+> > > >
+> > > > Reported-by: Xiang Xiao <xiaoxiang781216@gmail.com>
+> > > > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > > > ---
+> > > >  drivers/remoteproc/remoteproc_virtio.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/drivers/remoteproc/remoteproc_virtio.c
+> > > b/drivers/remoteproc/remoteproc_virtio.c
+> > > > index 183fc42a510a..88eade99395c 100644
+> > > > --- a/drivers/remoteproc/remoteproc_virtio.c
+> > > > +++ b/drivers/remoteproc/remoteproc_virtio.c
+> > > > @@ -332,6 +332,8 @@ int rproc_add_virtio_dev(struct rproc_vdev
+> *rvdev,
+> > > int id)
+> > > >         struct virtio_device *vdev = &rvdev->vdev;
+> > > >         int ret;
+> > > >
+> > > > +       /* Reset vdev struct as you don't know how it has been previously
+> > > used */
+> > > > +       memset(vdev, 0, sizeof(struct virtio_device));
+> > > >         vdev->id.device = id,
+> > > >         vdev->config = &rproc_virtio_config_ops,
+> > > >         vdev->dev.parent = dev;
+> > > > --
+> > > > 2.7.4
+> > > >
