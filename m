@@ -6,152 +6,106 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6306FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1B0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C41120851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:02:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5D6E20856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:06:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HEsMOHrU"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FAx3DJ1z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729305AbfAQICv (ORCPT
+        id S1729350AbfAQIGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:02:51 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34030 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfAQICu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:02:50 -0500
-Received: by mail-io1-f66.google.com with SMTP id b16so7125525ior.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 00:02:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zGyAna2Dl1h07bAPr3fca2q6SGrMBnxgn0zuhAtSdwE=;
-        b=HEsMOHrU+BUCVJkbjxCoSHvj7aRRm4WHhMBt9q1LuXgpfMqUsxqaFvwI2cmJwk5uHm
-         vlLcaXpKscjYuHoJQmeSZs7fmzvd8XihEFxpmGxFZTWx5og1OY1NQ4hGP2gAWIIpFw21
-         Kyci6U6QJ7vQm5mAhrQ1piv8jQiw099hLYerc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zGyAna2Dl1h07bAPr3fca2q6SGrMBnxgn0zuhAtSdwE=;
-        b=tkW6KMqVN5cP4CDLIdUMbv02H84WRnV4bQ7wu1ydw82FNqyKlZvDjXDKM48qw2dJo2
-         vCjgh2PyemawINAAl8AxvnOLHZOYCHEOebmL4jMQmgTG4WYYXVjAevWdvzTDug0nMm7j
-         ajhYoqdsXdq2TegtUrm0pTCzoisv0Z6T5niwc2b4iNAWa808diV0X8VgMJnUP2n2woqU
-         36VvRjmrCt7ygLnQrYd5hOynQa+OyxyucyHTySAsJpvLZMYxSnW/DjLI9pcpwSIRY2Kb
-         vTm8p4JkhfjlNoO0qssQBnjq8grFLitXoaS9irDrRruFvo7X394e52WzmrrmMpOYXjGK
-         Ww2Q==
-X-Gm-Message-State: AJcUukesaMiify9qeVNMq3BQkdpMYZXZal0jTKsjSgMRP9/jW8Hy5KV0
-        QryHPfaJ6GRaHcXTYqNQYKjNvjQfS0e79nHzQQf74g==
-X-Google-Smtp-Source: ALg8bN6JU/UXKOzDfgrYdJgaXLJ9oLIW2kKXTJ5WCAbcEAD+xlWlbkqjq4HuqVVNB0xrMLwsHpeQeXkQvDd/ImbkBaM=
-X-Received: by 2002:a6b:5d01:: with SMTP id r1mr6691822iob.170.1547712169544;
- Thu, 17 Jan 2019 00:02:49 -0800 (PST)
+        Thu, 17 Jan 2019 03:06:15 -0500
+Received: from mail-eopbgr50045.outbound.protection.outlook.com ([40.107.5.45]:40911
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726196AbfAQIGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 03:06:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UYRcCn3v+lk0ZzXx9tzWrKiKUVs34nR8V5qb2b29LTw=;
+ b=FAx3DJ1z8P5mXSfG6LoclVr9b2jVc+aZuKhshGbCkeEwpE3bX8PAVr8tc2hXCrZqNWpdVZp6kKEjZpyOG3GtBQJEOVnCajjpw3L5ZPT8sTzXu09+s7iJjxYgcQWi4zz5IQ/OJQUbfR54WEEnZDXdu2C3eD6iQdFiSVvZ2RIqX1w=
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
+ AM5PR0402MB2833.eurprd04.prod.outlook.com (10.175.41.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.26; Thu, 17 Jan 2019 08:06:11 +0000
+Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::1c0c:51da:f585:5626]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
+ ([fe80::1c0c:51da:f585:5626%2]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
+ 08:06:11 +0000
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Alan Stern <stern@rowland.harvard.edu>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/3] usb: ehci: fsl: Update register accessing for
+ arm/arm64 platforms
+Thread-Topic: [PATCH 2/3] usb: ehci: fsl: Update register accessing for
+ arm/arm64 platforms
+Thread-Index: AQHUpxgC6yBGLPIm9UWYEo0ogu0Vc6WlhCWAgA2jZwA=
+Date:   Thu, 17 Jan 2019 08:06:10 +0000
+Message-ID: <AM5PR0402MB28657886AFEA567C4426DF73F1830@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+References: <20190108060426.11581-1-ran.wang_1@nxp.com>
+ <20190108060426.11581-2-ran.wang_1@nxp.com>
+ <20190108154523.GB20989@kroah.com>
+In-Reply-To: <20190108154523.GB20989@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ran.wang_1@nxp.com; 
+x-originating-ip: [92.121.36.198]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2833;6:/81EfGqLGP4tYDKWydtT7e4HPZwgaJsfv7X3sIXxvtcaq915EacH4SbKd/5ix61EFWlynf6R8JHtRJE9KwZd9jgfb1o22OjgoecJjGVGsYOHnQgyNixUaWI7A67Obh9UiUinHexC06ksag/2634t7LYOnPBbEW+efudG0DNuzPFkBt6njTkDyFjq/PfVIVleUsU4HlCPsdy7Krv6XgV+PbJ0wrlj6ODOTpc3EKSzruA3WNcfXKGCuF7U18PJkCp4GSdlr/DXyP434gd5XBMMYhUi9WipxGiGe2bw3IompWlYLWiSRiwxIZDHrUL7n0k3KqR91556oFMN8qzXRSRwY6xhn2ENdwTq8BQ6afkQC2W1x2S2ELDhtUHpKskXaHBl7m9KTV15JQAoo79Mt89f5EjLvAjklLQtuNkkNoY2IgLMqNA6PgyKtqCeu4ohmsyFqjnMQxIej8unxy5JAd84Bg==;5:6n1GbQSmVAeMynsORSS7DqhAm6nGHw6XBATCpbt59blMPMhvl0Vu0WyxumeyOBaGkkEtOz9u6CUB/dNl0YJvOe/mtRn8QAVUjfHAC5BQO5ACFAUd8VFXXKnBTzo3SDEp5lpRmEtChPcTgJp9HB80u4ktSXunOwctI41qSGoc1x86S4tXOAI8+xAVIZ6ibusWTHLgOQ53auU29Lgw8Z5BxQ==;7:UwNA7IqDyjx9Jy+Onfma9wfgFesnf0Ma/cUIbBzWHmsTe20lVhWl0mCQruf8UzfqJdcptFZTjMiumq730vir3YYZxCeodIuxNcU20QWvoGR7PM6FfeXuCSrTmZlHGvEllT2FggAq4tdp8B3yw0BbIQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 2de1a343-7fff-4a86-fcd8-08d67c52a4a2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2833;
+x-ms-traffictypediagnostic: AM5PR0402MB2833:
+x-microsoft-antispam-prvs: <AM5PR0402MB283346E6977447D80B69D894F1830@AM5PR0402MB2833.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0920602B08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(346002)(376002)(396003)(199004)(189003)(316002)(4744005)(54906003)(486006)(33656002)(99286004)(26005)(6506007)(6436002)(7696005)(476003)(6916009)(53936002)(446003)(11346002)(8676002)(9686003)(4326008)(102836004)(68736007)(25786009)(229853002)(305945005)(55016002)(2906002)(71200400001)(81156014)(186003)(81166006)(8936002)(76176011)(7736002)(97736004)(6246003)(71190400001)(105586002)(14454004)(478600001)(66066001)(106356001)(86362001)(14444005)(6116002)(3846002)(5660300001)(74316002)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2833;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LolAH0e1YP1M4YOnv2H75jyyTRv2p6iR5sdZNnlcKgIimeGbVDKNJKZEwW3ktyXQsg1mwJeChnhdeVuUgVGATmkkIpSYhLjnFbXDyb/wi+F/rG4BRjbExenXj7hu4nFUzAvH1g4K7p24wHGa09pcX4eDIJHx8DiZbZ6Z7VMD2MOI/gD3AEeSkUxDA+K6mDlMwNAxwxA99a4t8Ry4QKwuP58Vv7dQXdqQLuowy6sX4QPQhx7iu14kPi1PuFB5JuwnYlGlnmTlQeNpQqXrI0SwbUwqojh6izTdjXMhf0U4hnbt121IWFI512B77+J8nLPl9IiYP2WIsGaiG97fjtRBt9mfm3w1gMxGP8FJHXGb/54TEuSSHo9hakMhZL0epWUUmjIWREtElgJLUZHFIZF+WQcBd2//L8UL6fMSK+Y62do=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190110072841.3283-1-ard.biesheuvel@linaro.org>
- <5d8135de-80fe-9c0e-2206-ecb809f64cdb@daenzer.net> <CAKv+Gu_X-DH6GZ0k8RYuL18rxTwBpb5=Qp9VCZfn_kh+9b3Zkg@mail.gmail.com>
- <55facfb9-92af-86b8-40e9-d63b887b5592@amd.com> <CAKv+Gu_JyO2KNtdN1-_TcoL_kqs0yswdwBrpAXA6-jyWuDrj+g@mail.gmail.com>
- <9f956898-7973-98ee-6bf1-e1d445e9d365@amd.com> <20190114191350.GA29600@fuggles.cambridge.arm.com>
- <a6d9d0ad-d1c0-9e60-17c6-a42f7bde258c@amd.com> <20190114193548.GB29600@fuggles.cambridge.arm.com>
- <87a7k2yx66.fsf@concordia.ellerman.id.au> <ed2dd9042d1afede4843d7fd3728a4d701a19fdd.camel@kernel.crashing.org>
- <9dc27cbf-e109-0c32-fc92-6fce1b224cda@amd.com> <CAKv+Gu8_0HjPsT2ne-uCtxRt=2CE_tLGY6wo9xafC5SmJOGRKA@mail.gmail.com>
- <9d706807c93f88bc850153ae20ea28e6502e0aac.camel@kernel.crashing.org>
-In-Reply-To: <9d706807c93f88bc850153ae20ea28e6502e0aac.camel@kernel.crashing.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 17 Jan 2019 09:02:38 +0100
-Message-ID: <CAKv+Gu_jQzQ08tiC2TfSpHRvoH=AU9g50Vo-LB2yd4vTD7Qw5A@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm/ttm: force cached mappings for system RAM on ARM
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Carsten Haitzler <Carsten.Haitzler@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?Q?Bernhard_Rosenkr=C3=A4nzer?= 
-        <Bernhard.Rosenkranzer@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2de1a343-7fff-4a86-fcd8-08d67c52a4a2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 08:06:10.9690
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2833
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Jan 2019 at 07:07, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
->
-> On Wed, 2019-01-16 at 08:47 +0100, Ard Biesheuvel wrote:
-> > > As far as I know on x86 it doesn't, so when you have an un-cached page
-> > > you can still access it with a snooping DMA read/write operation and
-> > > don't cause trouble.
-> > >
-> >
-> > I think it is the other way around. The question is, on an otherwise
-> > cache coherent device, whether the NoSnoop attribute set by the GPU
-> > propagates all the way to the bus so that it bypasses the caches.
->
-> On powerpc it's ignored, all DMA accesses will be snooped. But that's
-> fine regardless of whether the memory was mapped cachable or not, the
-> snooper will simply not find anything if not. I *think* we only do
-> cache inject if the line already exists in one of the caches.
->
+Hi Greg,
 
-Others should correct me if I am wrong, but arm64 SoCs often have L3
-system caches, and I would expect inbound transactions with writeback
-write-allocate (WBWA) attributes to allocate there.
+On 08, 2019 23:45, Greg Kroah-Hartman wrote:
+>=20
+> On Tue, Jan 08, 2019 at 06:04:26AM +0000, Ran Wang wrote:
+> > arm/arm64's io.h doesn't define clrbits32() and clrsetbits_be32(),
+> > which causing compile failure on some Layerscape Platforms (such as
+> > LS1021A and LS2012A which also integrates FSL EHCI controller). So use
+> > ioread32be()/iowrite32be() instead to make it workable on both powerpc
+> > and arm.
+>=20
+> Shouldn't you have this patch before the Kconfig change, so that you do n=
+ot
+> break the build on ARM systems on that one and then fix it up on this one=
+?
 
-> > On x86, we can tolerate if this is not the case, since uncached memory
-> > accesses by the CPU snoop the caches as well.
-> >
-> > On other architectures, uncached accesses go straight to main memory,
-> > so if the device wrote anything to the caches we won't see it.
->
-> Well, on all powerpc implementations that I am aware of at least (dunno
-> about ARM), they do, but we don't have a problem because I don't think
-> the devices can/will write to the caches directly unless a
-> corresponding line already exists (but I might be wrong, we need to
-> double check all implementations which is tricky).
->
-> I am not aware of any powerpc chip implementing NoSnoop.
->
+Yes, you are right, will adjust it in next version, thanks for pointing out=
+.
 
-Do you have any history on why this optimization is disabled for power
-unless CONFIG_NOT_CACHE_COHERENT is set?
-
-That also begs the question how any of this is supposed to work with
-non-cache coherent DMA. The code appears to always assume cache
-coherent, and provide non-cache coherent as an optimization if
-dma_arch_can_wc_memory() returns true. So I wonder if that helper
-should take a struct device pointer instead, and return true for
-non-cache coherent devices.
-
-> > So to use this optimization, you have to either be 100% sure that
-> > NoSnoop is implemented correctly, or have a x86 CPU.
-> >
-> > > > The old hack of using non-cached mapping to avoid snoop cost in AGP and
-> > > > others is just that ... an ugly and horrible hacks that should have
-> > > > never eventuated, when the search for performance pushes HW people into
-> > > > utter insanity :)
-> > >
-> > > Well I agree that un-cached system memory makes things much more
-> > > complicated for a questionable gain.
-> > >
-> > > But fact is we now have to deal with the mess, so no point in
-> > > complaining about it to much :)
-> > >
-> >
-> > Indeed. I wonder if we should just disable it altogether unless CONFIG_X86=y
->
-> The question is whether DMA from a device can instanciate cache lines
-> in your system. This a system specific rather than architecture
-> specific question I suspect...
->
-
-The ARM architecture permits it, afaict, and write-allocate is a hint
-so the implementation is free to ignore it, whether it is set or
-cleared.
+Regards,
+Ran
