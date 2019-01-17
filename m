@@ -2,156 +2,122 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D90BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C39C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7727720855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1792720851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:56:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfAQO4E (ORCPT
+        id S1728022AbfAQO40 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 09:56:04 -0500
-Received: from mout.gmx.net ([212.227.15.18]:59787 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727723AbfAQO4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 09:56:03 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0M1Fe4-1h3stF2cwq-00t8JC; Thu, 17
- Jan 2019 15:55:53 +0100
-Date:   Thu, 17 Jan 2019 15:55:52 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        stable@vger.kernel.org
-Subject: Re: [RESENDING PATCH] powerpc/wii: properly disable use of BATs when
- requested.
-Message-ID: <20190117145552.GA2200@latitude>
-References: <7e6748349978f4f177b6a1f3f1c773da98ae3b59.1547570012.git.christophe.leroy@c-s.fr>
- <20190117010509.GH22334@latitude>
- <19fd4dd4-ece2-d508-1ed5-5a9ed2aa84fe@c-s.fr>
+        Thu, 17 Jan 2019 09:56:26 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:42031 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbfAQO40 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 09:56:26 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gk95j-00085n-PB; Thu, 17 Jan 2019 14:56:23 +0000
+Subject: Re: [PATCH] cw1200: fix indentation issues
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     Solomon Peachy <pizza@shaftnet.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190117143623.29363-1-colin.king@canonical.com>
+ <87sgxrpc6q.fsf@kamboji.qca.qualcomm.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1fa8b078-1db9-d109-e8e5-f05dc0e48fd6@canonical.com>
+Date:   Thu, 17 Jan 2019 14:56:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
-Content-Disposition: inline
-In-Reply-To: <19fd4dd4-ece2-d508-1ed5-5a9ed2aa84fe@c-s.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:EZSrHJPA/D0Ub2qc+wdNR4m0x2cs+sVtrlYpyk6j1x1+oqF1Snx
- yfi8yVdBXZi0El0g9gsfsBPTwAn/rQOSNGxN8wRRkTS2iso6znxANO9q+PANSQNxA5e+8Al
- dUJOl6SxrLfns+W3f2BtK5+Scpqvyy27s6b5Z+TKgxNX7M6OMlaSrQb2SjIWIYaCy2FTuv6
- cs/ruUhbwplF219uTQIEQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fNLh6XirTh0=:Bq7XPlLsnGkbaOqmoyedzs
- 7lhQg7b26XQBOIRyT5KCslkiwEasY12z6wQu8cETOopO9EWbxnJqnBRhyP6jvZPSW4wkulv+b
- peu3YZqfVMhoVcZGog56XbLlymj7PA10QWh7PR99BERNvs1G+bjq45m4qOpAAtErmLUS3ShUx
- 7/eY8YmhmVH4ieAyjVOjW6sv2TTGdj9HDGyVPyGvlcuCtCiTxpE1QsI0+KbAzBc3nK5viC7zp
- jYkJUHeUeWulimP8p3sUhTv0ngwO1QOQsTxft3vapLwbin7GU0j25gQZ29OE6WSkSaKAm8Mex
- F9eH/9SO/pLP/qpXJEt77jG5nnOaUokMXyPk9Z6zPLkKLLVJRF4ou6NGsnHI5kZcKa141kR6k
- Yt5WGbHZx962gYEhSh3Kgik17g5SLViJLGoVq8peHY0R/AVRXpqL27tHuxK3PqOqfeB2siBrU
- d8YnqT/PYNlSKkROX/yytxgTWYRAzljdIlHYQqGpyKctTRSirUqeAeCDfx2fSj3t5j65wK8wR
- /aXgLihGfn4TWDCbYocK4Rpdmm+w0rQcbSOALb0r3ugNxk0MRqQpxLvPm4GX+hoXQ4hpVaSIU
- TVBpdeEZ4KABOtOYaxBhrqh8kpEwKNCFcNM63kiiL1QPFUE60+xz2dxWHb5fSHyVEZkUJD1v1
- dS8WI4NT7drEjScI3FGpuTbyNzIQeu1knxR9sAwBo8q2uuTYfLSpkqqyDMd43N1p5N3yjYwbt
- zqlzR9Fmr8jugNYM6HZ1pXVeZm7U6ovmIo6ibD11AEefNeT5Z0bk6v7F53XfG4cpAzuzxA530
- s8eV0InTolM1GMJ+ATRTWtOhj6HxH2EvWy3PjTAKazGS0T0Iygl0zy/jfe1tuAeQO+sZn2ngB
- 0P0SpjzvuASedH2GCEK7bozUSGyXO1yby0M7e3bIiJ6o6gqoLQtE/QS3RpkjjmqwcOepuzgTK
- W2okzcyMB1w==
+In-Reply-To: <87sgxrpc6q.fsf@kamboji.qca.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 17/01/2019 14:54, Kalle Valo wrote:
+> Colin King <colin.king@canonical.com> writes:
+> 
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> There are two lines that have indentation issues, fix these.
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/net/wireless/st/cw1200/fwio.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/wireless/st/cw1200/fwio.c b/drivers/net/wireless/st/cw1200/fwio.c
+>> index 30e7646d04af..b7881232499c 100644
+>> --- a/drivers/net/wireless/st/cw1200/fwio.c
+>> +++ b/drivers/net/wireless/st/cw1200/fwio.c
+>> @@ -465,8 +465,8 @@ int cw1200_load_firmware(struct cw1200_common *priv)
+>>  
+>>  	if (!(val32 & ST90TDS_CONFIG_ACCESS_MODE_BIT)) {
+>>  		pr_err("Device is already in QUEUE mode!\n");
+>> -			ret = -EINVAL;
+>> -			goto out;
+>> +		ret = -EINVAL;
+>> +		goto out;
+> 
+> Just out of curiosity, how do you find these?
+> 
+smatch, grep for "warn: inconsistent indenting"
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jan 17, 2019 at 11:29:06AM +0100, Christophe Leroy wrote:
-[...]
-> > >   	/* MEM2 64MB@0x10000000 */
-> > >   	delta =3D wii_hole_start + wii_hole_size;
-> > > +	if (__map_without_bats)
-> > > +		return delta;
-> > > +
-> >=20
-> > Nothing is visibly broken without this patch, even with
-> > CONFIG_DEBUG_PAGEALLOC (tested on top of v5.0-rc2), but the patch still
-> > looks correct.
->=20
-> Obviously, CONFIG_DEBUG_PAGEALLOC cannot work without this patch.
-> The purpose of CONFIG_DEBUG_PAGEALLOC is to unmap unused parts of memory =
-so
-> that any access to them will pagefault.
->=20
-> As this function inconditionnaly sets a BAT for the second block of RAM, =
-any
-> access to free area in the upper block will be granted without a fault.
->=20
-> I think you can test it by doing a kmalloc() then a kfree(), then try to
-> read in that area (hopefully kmalloc() allocates memory from the top so it
-> should go in the upper block). Maybe there is an LKDTM test for that.
-
-Ah, makes sense, thanks for the explanation.
-
->=20
-> >=20
-> > I'd prefer the 'if' block to be before the whole delta/size calculation,
-> > to make the code slightly more readable because the delta and size
-> > calculations stay in one visual block. It doesn't need to happen after
-> > delta is calculated.
->=20
-> Euh ... the function has to return 'delta', so if I put the if block befo=
-re
-> the calculation of delta, it means we have to calculate delta twice:
-
-Oh, sorry, I misread the code, but you're completely right (I shouldn't
-answer mails while tired).
-
->=20
-> 	if (__map_without_bats)
-> 		return wii_hole_start + wii_hole_size;
->=20
-> 	delta =3D wii_hole_start + wii_hole_size;
->=20
-> My eyes don't really like it, so if we want to keep delta and size
-> calculation together, the 'if' will go after calculation of size.
-
-I agree.
-
-> In anycase, this change is only really for fixing stable releases because
-> this function will go away with my other serie.
-
-ACK
-
-
-Thanks,
-Jonathan
-
---6TrnltStXW4iwmi0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlxAl3AACgkQCDBEmo7z
-X9sekw//ae7XPjO55eotK1OhX+5W0gcbkzrIUV14TGSXYWeXO8LhFtt7W3tFjJky
-6mAjVmQu0wGSz/9EqKxh1p7GW9/3xWqK6vL6PCG8/9L6s39hQE6BZepE4zUL7SZO
-l/WW2RDHfgsUYcTSwHUE3Ph9R+7u33+4IJqEogW8m0HORL+D4aMaeAnRbxS1c1wu
-GvUyD99gOOIEVcmKzDzoC5MqTNpQzsPNIB1p+6O/Y+GwFUK0ZQF1YkbaGRLJSbY5
-peAp3iGwzamqLumKAI48DYp/46HQK1HsTXBLHd1ykOfYRWWcnjFsbxmzo/vn+vRA
-rpWh3TSvEnNqU5RyES8dpcov1hdIVi+yVhGOahbR6Y156+RC241voO8ppPJpQtZS
-rQ4jcc/01OExU4yM0eh4OpCx2XBvzv7Se7alH2vjJfSDLcOWFICAyw6g2KlJtIPf
-+rhpoCmAN4tpOzKio88iViAfDBivRvqqKvdDNUxfTym/14Z6JMg0Xt9WDKesVcwa
-IzCLE8bAFOv2GE8FW3KPvUQRHYoupjCVoFYREbXM8cAIfNmYC2+zqzkcIDeAehXB
-9SMOxQGkfCwPgX1rtP+kiOPrJNnMB8F/CZpWekMPAaGgYLdIfGBwLzJ3ox5wveHc
-qpKEpg0THoBIbJMcFCEy3kHI+qv4fG4jwmY8YDC8sJ1Jk6WIuSc=
-=4s0A
------END PGP SIGNATURE-----
-
---6TrnltStXW4iwmi0--
+Colin
