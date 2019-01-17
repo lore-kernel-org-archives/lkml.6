@@ -2,189 +2,162 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7516C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8D3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C2F420657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:36:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DEFB20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:40:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eO0JWB2r"
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="namiebOj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730695AbfAQHgf (ORCPT
+        id S1730712AbfAQHkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 02:36:35 -0500
-Received: from mail-eopbgr10050.outbound.protection.outlook.com ([40.107.1.50]:15136
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730036AbfAQHgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 02:36:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=luKRMKglQCS7fx8r4jYL1f29H69Jr2x9enVGcdIXla4=;
- b=eO0JWB2rczWx48aWhZbH1PUFTddXII1GMB/+8nLb1dVY0ipwNPz/GhcwrGfMMgjCgGmhS7G7cWpq3KUXqugc7WjmqpRkR/JbMBNvWumQzAHONUkJqKPoIdECRK/hu1E0Mr66afBfwvV04GEU7xVTFfhXsf9azkgnph6SXjkXr3g=
-Received: from AM0PR04MB4788.eurprd04.prod.outlook.com (20.176.215.21) by
- AM0PR04MB5028.eurprd04.prod.outlook.com (20.177.40.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Thu, 17 Jan 2019 07:36:18 +0000
-Received: from AM0PR04MB4788.eurprd04.prod.outlook.com
- ([fe80::ac51:7ff:ea6f:17c7]) by AM0PR04MB4788.eurprd04.prod.outlook.com
- ([fe80::ac51:7ff:ea6f:17c7%2]) with mapi id 15.20.1516.019; Thu, 17 Jan 2019
- 07:36:18 +0000
-From:   Camelia Alexandra Groza <camelia.groza@nxp.com>
-To:     Andrew Lunn <andrew@lunn.ch>, kernel test robot <lkp@intel.com>
-CC:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lkp@01.org" <lkp@01.org>
-Subject: RE: [net]  b8154ef682:
- WARNING:at_drivers/net/phy/phy_device.c:#phy_driver_register
-Thread-Topic: [net]  b8154ef682:
- WARNING:at_drivers/net/phy/phy_device.c:#phy_driver_register
-Thread-Index: AQHUrXnSihv6dEhp4E6y2VpqH2cjt6Wx50UAgAErXIA=
-Date:   Thu, 17 Jan 2019 07:36:17 +0000
-Message-ID: <AM0PR04MB4788C34E53855955E07ADB6AF2830@AM0PR04MB4788.eurprd04.prod.outlook.com>
-References: <1547555719-13541-1-git-send-email-camelia.groza@nxp.com>
- <20190116085858.pfl4vuutel3b5kgb@inn2.lkp.intel.com>
- <20190116134058.GA24229@lunn.ch>
-In-Reply-To: <20190116134058.GA24229@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=camelia.groza@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5028;6:ygBqdD79lirBS514uaG2TYRqhNvktaMZzcHAf7k4ems9zpHIHCaSFJdRVvUzz3wt8Rt4p/PVjR2ukaDtqszklWmgco7Y4ZujZB+r8FGKiJQPHbmD4f+Oqo2b5KHuNvbIlQrOVXHOeAOCGJu1Hq2G6F9ycOTcamS/jAwl5SeGB0Me5IgrvLzehViySfGSq9Key8IwK29o/9qWsq70WN5FJMPdev6vQ9+owHwrP5cw5qD1tT2/rm1Tdo5RIvM8cl2lqM4cfBPWaVV5d7s2a/5jm/dAkIEEOwBsMiVg471OMNDebwR6TbxX0UBRjiNHaCvwfAB6IMPatTFuU1HYpADnIkOez/Ez/dc4iV6KyVy9lfbmRBi/qMqxULG5pJleAHzt/F+kmN/ZLajwDuM/F9m3RTzzl9hGOa/laTL+6QucpFkzaVsJClYZ0Y0G5EOpOaVu5F8esv/PHr2F2m/q+swVZg==;5:MBlN23gkZRx5J8fxU/OhCe4vgB8X75O/LZZ2pSIpv17IxVnVVXEZ60dPfsnEbdGI9DpCSidyJ000YOheVL+otBQvEpT9B3tlt6dE17y7srBDpwsjeMdQIkuBKKbjv2b5HVTNZWrXT4CTRPZdg9HFJ9w2EpUlLGh0m4xre84HQ1sY2V5/v7CytqImTDbX00VnvngFdX1lErMrPt8FEiMmOA==;7:kVgB7v+6uwJmugZRDkQflFLxNlB5/1U2VvIf9pAGCSnhVWIckBgr9Zoy2SVzsE8iI57Kj5eYwP4t+vL3ubAlKffIMzWUTmNHhANcA9g0gz/2nxMIVoqq2dl6qACSr5UblFFRG+p4Cyx5m5v2+zQlCg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 18b46b82-dd96-44da-0e69-08d67c4e77eb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5028;
-x-ms-traffictypediagnostic: AM0PR04MB5028:
-x-microsoft-antispam-prvs: <AM0PR04MB502851061A9B0E94EF246C20F2830@AM0PR04MB5028.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(396003)(136003)(376002)(199004)(189003)(69234005)(13464003)(86362001)(53936002)(9686003)(74316002)(14444005)(256004)(5660300001)(6246003)(478600001)(14454004)(966005)(4326008)(5024004)(97736004)(486006)(39060400002)(2906002)(71200400001)(71190400001)(6306002)(305945005)(7736002)(316002)(66066001)(102836004)(229853002)(33656002)(25786009)(54906003)(110136005)(26005)(186003)(53546011)(476003)(55016002)(68736007)(76176011)(7696005)(105586002)(81166006)(6506007)(106356001)(99286004)(3846002)(8936002)(11346002)(6116002)(8676002)(6436002)(81156014)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5028;H:AM0PR04MB4788.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: N7sW0UJw+Jqk7agtPyAu5pBry3Mct2zS/9CDCCKaHk6DrOGEyr9US6lagaxRVOYGYuxylRHn4QBgKJiHk/zq5pp8P1mJFy9qD0jJ07qFPh4hKczF4UOFdX9xN94lEKLiEfMeY7gU2JK1182EqwENngdNt2pBHueDS49TVqd6KADvt/EqfB9ZUN25W853k4lMcv1scyXoA3uhAwI/xChn7OR4LhDB9p4pWAg5RHznzywVNHnMZhjl9iFIadSG2H079uTjrtCx17d3T5XpOBB+jPuxtcQ4YXRRFBYaMQlCcuj8fQzjiBwfeaHVL9TueSnzenGTQKgyRpTVfvHCTZrNzOLI130JYtY1i4k1ACp7QczOEMMGL9Cfszrc/Toky2soRHL0vOHV2R8en2KUnJtQMsE5b9KRstSmuw28P3xScVA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 17 Jan 2019 02:40:16 -0500
+Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:33275 "EHLO
+        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730050AbfAQHkQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 02:40:16 -0500
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 43gGFV3kskz1yS3;
+        Thu, 17 Jan 2019 08:40:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
+        t=1547710814; bh=5khhPaM7nKlBntW+RqEWqlC0HjQeUDoCIc1HqDolihY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From:To:CC:
+         Subject;
+        b=namiebOjQLmRaCLnNOweFttBKktThCwrWSYd1Aj/DU0+ogSIxEvkkFdlGswDRpw17
+         LD53AFaIgGKomnlJdMVCjJgDAQcHODBQpfa1bx8uqb+faxE3FQ7/ih2Gq3e6FRXZSC
+         u/PqyYmCBxxwrjQ9FcBG0V2DOD0u1xZBOguBPe+ZRzpCf8g7LiKzEu8fJRFPLZQm6U
+         lulY25uE/Uj9rjuQcKc079toNiMcoEXb9U0efuFq7A3IcGl2vteZYjwde9rbjrNkVp
+         YKj394+h8HghhKtbbU1yLOHyAaNEHyP8sVGZ4PntMqCzucrO4Z8M+HgK2+6/INiaiI
+         0p7tGmicNOZmw==
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2a01:c22:6e20:6c00:cd9e:a8ac:efa3:425d
+Received: from [IPv6:2a01:c22:6e20:6c00:cd9e:a8ac:efa3:425d] (unknown [IPv6:2a01:c22:6e20:6c00:cd9e:a8ac:efa3:425d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX18vvlM2fHeeUq3qiKcHKU+N9ygxVZeQvEk=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 43gGFS1Jqpz1y7m;
+        Thu, 17 Jan 2019 08:40:12 +0100 (CET)
+Subject: Re: [PATCH v2] tracing/uprobes: Fix output for multiple string
+ arguments
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+References: <20190116084021.34b0beee@gandalf.local.home>
+ <20190116141629.5752-1-andreas.ziegler@fau.de>
+ <20190117150107.17f2c0c37e41126120c5eebb@kernel.org>
+From:   Andreas Ziegler <andreas.ziegler@fau.de>
+Openpgp: preference=signencrypt
+Message-ID: <b5defce3-b52a-db20-bfd1-81eec9972fab@fau.de>
+Date:   Thu, 17 Jan 2019 08:40:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18b46b82-dd96-44da-0e69-08d67c4e77eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 07:36:17.9849
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5028
+In-Reply-To: <20190117150107.17f2c0c37e41126120c5eebb@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Wednesday, January 16, 2019 15:41
-> To: kernel test robot <lkp@intel.com>
-> Cc: Camelia Alexandra Groza <camelia.groza@nxp.com>;
-> f.fainelli@gmail.com; hkallweit1@gmail.com; davem@davemloft.net;
-> oss@buserror.net; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
-> lkp@01.org
-> Subject: Re: [net] b8154ef682:
-> WARNING:at_drivers/net/phy/phy_device.c:#phy_driver_register
->=20
-> On Wed, Jan 16, 2019 at 04:58:58PM +0800, kernel test robot wrote:
-> > FYI, we noticed the following commit (built with gcc-7):
-> >
-> > commit: b8154ef682a9a745880ecbb2ee26b16297c9bfd0 ("[PATCH net] net:
-> phy: phy driver features are mandatory")
-> > url: https://github.com/0day-ci/linux/commits/Camelia-Groza/net-phy-phy=
--driver-features-are-mandatory/20190116-004308
-> >
-> >
-> > in testcase: trinity
-> > with following parameters:
-> >
-> > 	runtime: 300s
-> >
-> > test-description: Trinity is a linux system call fuzz tester.
-> > test-url: http://codemonkey.org.uk/projects/trinity/
-> >
-> >
-> > on test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2
-> -m 512M
-> >
-> > caused below changes (please refer to attached dmesg/kmsg for entire
-> log/backtrace):
-> >
-> >
-> > +--------------------------------------------------------------+-------=
------+------------
-> +
-> > |                                                              | 2f960b=
-d056 | b8154ef682 |
-> > +--------------------------------------------------------------+-------=
------+------------
-> +
-> > | boot_successes                                               | 45    =
-     | 0          |
-> > | boot_failures                                                | 1     =
-     | 4          |
-> > | BUG:kernel_timeout_in_torture_test_stage                     | 1     =
-     |            |
-> > | WARNING:at_drivers/net/phy/phy_device.c:#phy_driver_register | 0
-> | 4          |
-> > | EIP:phy_driver_register                                      | 0     =
-     | 4          |
-> > +--------------------------------------------------------------+-------=
------+------------
-> +
-> >
-> >
-> >
-> > [  458.251512] WARNING: CPU: 0 PID: 1 at
-> drivers/net/phy/phy_device.c:2246 phy_driver_register+0x90/0xe0
-> > [  458.260864] CPU: 0 PID: 1 Comm: swapper Tainted: G                T =
-4.20.0-
-> 11080-gb8154ef6 #158
-> > [  458.260864] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS 1.10.2-1 04/01/2014
-> > [  458.260864] EIP: phy_driver_register+0x90/0xe0
-> > [  458.260864] Code: 5d 89 7b 08 89 03 89 d8 c7 43 14 02 00 00 00 e8 06=
- d3 e1
-> ff 85 c0 89 c6 75 39 83 c4 0c 89 f0 5b 5e 5f 5d c3 8d b6 00 00 00 00 <0f>=
- 0b b8 38
-> 5b 2e 5e c7 04 24 00 00 00 00 31 c9 ba 01 00 00 00 be
-> > [  458.260864] EAX: 5e2e5b50 EBX: 5e1a8fe0 ECX: 00000000 EDX: 00000001
-> > [  458.260864] ESI: 00000000 EDI: 00000000 EBP: 4010defc ESP: 4010dee4
-> > [  458.260864] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS:
-> 00210246
-> > [  458.260864] CR0: 80050033 CR2: 00000000 CR3: 1e43a000 CR4: 000006b0
-> > [  458.260864] Call Trace:
-> > [  458.260864]  ? phy_drivers_register+0x37/0x90
-> > [  458.260864]  ? phy_module_init+0x1b/0x1b
-> > [  458.260864]  ? phy_module_init+0x19/0x1b
-> > [  458.260864]  ? do_one_initcall+0xd9/0x24b
->=20
-> Hi Camelia
->=20
-> I think we need to extend your patch and print the name of the PHY
-> which is missing the features pointer. I don't see anything here which
-> allows me to determine which PHY caused the warning.
+On 17.01.19 07:01, Masami Hiramatsu wrote:
+> On Wed, 16 Jan 2019 15:16:29 +0100
+> Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+> 
+>> When printing multiple uprobe arguments as strings the output for the
+>> earlier arguments would also include all later string arguments.
+>>
+>> This is best explained in an example:
+>>
+>> Consider adding a uprobe to a function receiving two strings as
+>> parameters which is at offset 0xa0 in strlib.so and we want to print
+>> both parameters when the uprobe is hit (on x86_64):
+>>
+>> $ echo 'p:func /lib/strlib.so:0xa0 +0(%di):string +0(%si):string' > \
+>>     /sys/kernel/debug/tracing/uprobe_events
+>>
+>> When the function is called as func("foo", "bar") and we hit the probe,
+>> the trace file shows a line like the following:
+>>
+>>   [...] func: (0x7f7e683706a0) arg1="foobar" arg2="bar"
+>>
+>> Note the extra "bar" printed as part of arg1. This behaviour stacks up
+>> for additional string arguments.
+>>
+>> The strings are stored in a dynamically growing part of the uprobe
+>> buffer by fetch_store_string() after copying them from userspace via
+>> strncpy_from_user(). The return value of strncpy_from_user() is then
+>> directly used as the required size for the string. However, this does
+>> not take the terminating null byte into account as the documentation
+>> for strncpy_from_user() cleary states that it "[...] returns the
+>> length of the string (not including the trailing NUL)" even though the
+>> null byte will be copied to the destination.
+>>
+>> Therefore, subsequent calls to fetch_store_string() will overwrite
+>> the terminating null byte of the most recently fetched string with
+>> the first character of the current string, leading to the
+>> "accumulation" of strings in earlier arguments in the output.
+>>
+>> Fix this by incrementing the return value of strncpy_from_user() by
+>> one if we did not hit the maximum buffer size.
+>>
+> 
+> Yeah, I had eventually same conclusion. However, you also have to increse
+> the return value of fetch_store_strlen() too. (And I found another issue)
+> 
 
-Hi
+I don't think we need to increase that since the documentation for
+strnlen_user() says that it "[r]eturns the size of the string
+INCLUDING the terminating NUL." so its return value will already be
+one more than that of strncpy_from_user().
 
-Sure, I'll send a v2.
+Thanks,
 
-Camelia
+Andreas
+
+> Could you fix fetch_store_strlen in the same patch?
+> 
+> Thank you,
+> 
+>> Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
+>> ---
+>> v2: removed a wrong check for (ret > 0)
+>>
+>>  kernel/trace/trace_uprobe.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+>> index e335576b9411..3a1d5ab6b4ba 100644
+>> --- a/kernel/trace/trace_uprobe.c
+>> +++ b/kernel/trace/trace_uprobe.c
+>> @@ -160,6 +160,13 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
+>>  	if (ret >= 0) {
+>>  		if (ret == maxlen)
+>>  			dst[ret - 1] = '\0';
+>> +		else
+>> +			/*
+>> +			 * Include the terminating null byte. In this case it
+>> +			 * was copied by strncpy_from_user but not accounted
+>> +			 * for in ret.
+>> +			 */
+>> +			ret++;
+>>  		*(u32 *)dest = make_data_loc(ret, (void *)dst - base);
+>>  	}
+>>
+>> --
+>> 2.17.1
+>>
+> 
+> 
+
