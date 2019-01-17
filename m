@@ -2,105 +2,130 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 080A5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75606C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC40820856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E4F20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:28:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="oAyjtt6v"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NP0si3ic"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbfAQG1s (ORCPT
+        id S1730308AbfAQG20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:27:48 -0500
-Received: from mail-eopbgr60053.outbound.protection.outlook.com ([40.107.6.53]:45553
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726795AbfAQG1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:27:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6CGB8UPACeVFvfv1IejFTRcm+mQPgs6fKd19IjvDKTo=;
- b=oAyjtt6vFRynGQRmPjs4/Ue3vGP6If4oW4ILjHPsnbWbSJzbvfi8WydtlWEJNNmuN/Qx3valzIPMZneAm+e0qw0g+9SxsAO7AIq6b/OQmJBzlLwlpJ7w4oTpCEA2PuKog/BRUUJXO9zLvVDglEVIXgRrH4mVEqnaRuwKlsbsqZw=
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
- DB7PR04MB5948.eurprd04.prod.outlook.com (20.178.106.213) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Thu, 17 Jan 2019 06:27:44 +0000
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::b5b6:9a7a:7970:ffec]) by DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::b5b6:9a7a:7970:ffec%4]) with mapi id 15.20.1516.019; Thu, 17 Jan 2019
- 06:27:44 +0000
-From:   Joakim Zhang <qiangqing.zhang@nxp.com>
-To:     "mkl@pengutronix.de" <mkl@pengutronix.de>,
-        "robh@kernel.org" <robh@kernel.org>
-CC:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 0/2] can: flexcan: add PE clock source select support
-Thread-Topic: [PATCH 0/2] can: flexcan: add PE clock source select support
-Thread-Index: AQHUkrKRyn6yL7TqVE+qZvWvbmx6sKWzNfCA
-Date:   Thu, 17 Jan 2019 06:27:44 +0000
-Message-ID: <DB7PR04MB4618E703A466628F22BCFBF6E6830@DB7PR04MB4618.eurprd04.prod.outlook.com>
-References: <20181213070537.25095-1-qiangqing.zhang@nxp.com>
-In-Reply-To: <20181213070537.25095-1-qiangqing.zhang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=qiangqing.zhang@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB5948;6:RYiUy1Spk0pc1WTi7Ljyzovm5pZEh9Etq+6zT4dfPP0AUXXkZn6t8dZ8KeXOyq7AK64BOGjZJy7MOfLMwTV/IQO6c6rJXGO+Zj3LnYIa+QisENkBCFM0WfUQkO5HpDOe7I2CfzkFpeUTA6P9E+REFRlbNXdP6YcGwKb7u8phaQ3zAEYWQTi5YKNPar5ICfXti2gkV5gTRw6EQYmhSYXvhVsdSx8E5Hw2dpJbps8qDlrsvxK289O22IOQDKJ0RjbzIzciZrReKXij88v34iIsV30nMuWdG4x0SeB1dw6BuXjK9vruMk7Z083vCU8LU75ZXEeuorvk/KSLcAc6jiXgA9ce6UlREi7pSXrgO/VG5RXkbutJkelqSjZ+MFFP06bdRACw3hhNyRl/2Lp6lUsrPAs80tTuNKtWo9j9Fp+PyQxVvzYNSAW4lpHo8BhE04PI7oBRjKfIHHKIcyq4YaVfeA==;5:W7h07+s239yYyP+t9fbpTISXLwrymGSoRHpHc5z++n81l6i7DEGMNjN+3q5K9XvbUTJAGLH54Xhc87mbPmQHHgwLVRJ9uiBB2C8HurWBcPBnLiy3aJkpEShiQIuxDXhoo4aA8ECV8+CxSPlYgLMx6qddVwGzaewnVi4cN2A6y6rYTRFL71+OY4MzpuGexe8WPNs+SKYtJLB7flr8nKc2PQ==;7:Oocr3Sf7C0Kz38oGit7dhZWbrQzDr+XUKGnacLHtMHpKE+VPqJJOIg42Wl1jaio5m6EExY8Bwb388U0qH57hVcQsoDRieklm9CRHbfZg+TXQaRX4PCHt6mXUszDVsCHGKVnBaQzE7eJPrAqqiTwb7A==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a02fcc46-0c20-4b65-1474-08d67c44e433
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB5948;
-x-ms-traffictypediagnostic: DB7PR04MB5948:
-x-microsoft-antispam-prvs: <DB7PR04MB594895F661086075E338B13BE6830@DB7PR04MB5948.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(366004)(136003)(39860400002)(13464003)(189003)(199004)(14454004)(4326008)(53936002)(478600001)(186003)(106356001)(105586002)(2501003)(76176011)(2906002)(7696005)(305945005)(86362001)(71190400001)(66066001)(256004)(81166006)(7736002)(9686003)(81156014)(486006)(229853002)(74316002)(476003)(11346002)(71200400001)(446003)(102836004)(569044001)(6506007)(110136005)(316002)(6436002)(4744005)(68736007)(25786009)(99286004)(55016002)(97736004)(53546011)(8676002)(6246003)(26005)(5660300001)(3846002)(6116002)(54906003)(8936002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5948;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: F5O4eJeJQqr8CSZu4jxa/28Y0eHyN/1X79m03bp7HN6ICCLkaxn+DW/102UdqAHMROc2ikYC7hIvor2Nm3FwnVhFr3eTq/F2EXhm3Xx8EYb05pZcifRLpWz1cDeBIzz+z14JYKCH4dQzkg8pO2Xgs5Kf0wODfazIhoeyIjgO/0kOQ8ZZle9LuvNvCcIHmSJiHcIpKrcwoQqpzZKzO8M5tl8L/iL/C2omX0kbma0WtkjP05atgUVBzUjWrEEnCbQ2upB+4Tuftfjqxxadmi6TBusTAvJpVm7BqRzUoIXYqZ6lq1dzFAh8g/ujG+6w+yGr5RarcqLZlBmCEyFDZ+0HSuBrAC58tYKZw6yQnm+Eqya5jXBF3V8RfACGYg+8ZGfcZCHYexnNyTbri9EoP3BPGHfGAHkJHhtddxbRHHFLbRo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Thu, 17 Jan 2019 01:28:26 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45161 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbfAQG20 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:28:26 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a14so4226650plm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 22:28:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mCTsp1TTN24owrN3MkvyzPcw6V8d8yP34TwiCxlzb8c=;
+        b=NP0si3icH+q949vp9PsZlav441VAes3Iasb9e4lrP2xKcjFSv+lD5enZ3ImNJRIg0t
+         CWlEtH81nkckNERuyHwAjjRkMuqI3ZBPy0sRTv+3QKhdBfEwJPsMV4eIeb6Let2qgYUW
+         ucQI2iMJfKSQ9OPf4jtd3543DnAh+mqShy4Js=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mCTsp1TTN24owrN3MkvyzPcw6V8d8yP34TwiCxlzb8c=;
+        b=thCOjVOr1J9eNFsAdhTW7IstlWT9E8GLoqs/3Otl3Tk0acdtEoapFPRzxPX9EAAtwy
+         dJFSm9tPts060D46A/oOBQQqQcjEmK1Qgb1pBTgNKE00MdxG6r8K6zrG6MnZeOuWIrhr
+         2LjZDN5J61YEaqVaVVAc18ptkfYGAP102uCrR2oUR8OUask7+w950KzU1YsD6sBEVqqo
+         W33VrlfAq+OS1sMd1aotK7sZGGn6ywocm/FEmLwQIN+slkFRPTnSbeRTv2Vljn1gT51N
+         Qpwe3CIwovu8wv67WsSLg2CMEs5ZJsmzjsXEiC/cg10xOIjmC0JCUwWBEVuWFmsNVFYW
+         wKKQ==
+X-Gm-Message-State: AJcUukclA3dFIk7gSJVwKiHb1n2KzNZ9o9yw5fqO+xycLtbrYBvwGfkn
+        MOY/bEOO2ZcYa7w6K4tQHMMcAg==
+X-Google-Smtp-Source: ALg8bN6S2LSSTkwbXEfiV7zbbXX4x9A+nE0YeIh5T7O3Cy3pZEJW9a6Jh4dS+fn7V4CINpZ1PZX4CA==
+X-Received: by 2002:a17:902:24d:: with SMTP id 71mr13353580plc.225.1547706505216;
+        Wed, 16 Jan 2019 22:28:25 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y29sm755820pga.59.2019.01.16.22.28.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 22:28:24 -0800 (PST)
+Date:   Wed, 16 Jan 2019 22:27:44 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com,
+        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 06/13] clk: qcom: hfpll: get parent clock names from DT
+Message-ID: <20190117062744.GC25498@builder>
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-7-git-send-email-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a02fcc46-0c20-4b65-1474-08d67c44e433
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 06:27:44.6476
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5948
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545039990-19984-7-git-send-email-jorge.ramirez-ortiz@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpLaW5kbHkgUGluZy4uLg0KDQpCZXN0IFJlZ2FyZHMsDQpKb2FraW0gWmhhbmcNCg0KPiAtLS0t
-LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKb2FraW0gWmhhbmcNCj4gU2VudDogMjAx
-OMTqMTLUwjEzyNUgMTU6MDgNCj4gVG86IG1rbEBwZW5ndXRyb25peC5kZTsgcm9iaEBrZXJuZWwu
-b3JnDQo+IENjOiBsaW51eC1jYW5Admdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgZGwtbGludXgtaW14IDxs
-aW51eC1pbXhAbnhwLmNvbT47IEpvYWtpbQ0KPiBaaGFuZyA8cWlhbmdxaW5nLnpoYW5nQG54cC5j
-b20+DQo+IFN1YmplY3Q6IFtQQVRDSCAwLzJdIGNhbjogZmxleGNhbjogYWRkIFBFIGNsb2NrIHNv
-dXJjZSBzZWxlY3Qgc3VwcG9ydA0KPiANCj4gVGhlIHBhdGNoIHNldCBpbnRlbmRzIHRvIGFkZCBz
-dXBwb3J0IGZvciBQRSBjbG9jayBzb3VyY2Ugc2VsZWN0LiBUaGUgRmxleENBTg0KPiBjb250cm9s
-bGVyIGNhbiBwYXJzZSAiZnNsLGNsay1zb3VyY2UiIHByb3BlcnR5IGZyb20gZGV2aWNlIHRyZWUg
-dG8gc2VsZWN0IGNsb2NrDQo+IHNvdXJjZS4NCj4gDQo+IERvbmcgQWlzaGVuZyAoMik6DQo+ICAg
-RG9jdW1lbnRhdGlvbjogY2FuOiBmbGV4Y2FuOiBhZGQgUEUgY2xvY2sgc291cmNlIHByb3BlcnR5
-IHRvIGRldmljZQ0KPiAgICAgdHJlZQ0KPiAgIGNhbjogZmxleGNhbjogYWRkIHN1cHBvcnQgZm9y
-IFBFIGNsb2NrIHNvdXJjZSBzZWxlY3QNCj4gDQo+ICAuLi4vYmluZGluZ3MvbmV0L2Nhbi9mc2wt
-ZmxleGNhbi50eHQgICAgICAgICAgIHwgIDggKysrKysrKysNCj4gIGRyaXZlcnMvbmV0L2Nhbi9m
-bGV4Y2FuLmMgICAgICAgICAgICAgICAgICAgICAgfCAxOCArKysrKysrKysrKysrKy0tLS0NCj4g
-IDIgZmlsZXMgY2hhbmdlZCwgMjIgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gDQo+
-IC0tDQo+IDIuMTcuMQ0KDQo=
+On Mon 17 Dec 01:46 PST 2018, Jorge Ramirez-Ortiz wrote:
+
+> Allow accessing the parent clock name required for the driver
+> operation using the device tree node.
+> 
+> This permits extending the driver to other platforms without having to
+> modify its source code.
+> 
+> For backwards compatibility leave the previous value as default.
+> 
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
+>  drivers/clk/qcom/hfpll.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+> index a6de7101..87b7f46 100644
+> --- a/drivers/clk/qcom/hfpll.c
+> +++ b/drivers/clk/qcom/hfpll.c
+> @@ -52,6 +52,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+>  	void __iomem *base;
+>  	struct regmap *regmap;
+>  	struct clk_hfpll *h;
+> +	struct clk *pclk;
+>  	struct clk_init_data init = {
+>  		.parent_names = (const char *[]){ "xo" },
+>  		.num_parents = 1,
+> @@ -75,6 +76,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+>  					  0, &init.name))
+>  		return -ENODEV;
+>  
+> +	/* get parent clock from device tree (optional) */
+> +	pclk = devm_clk_get(dev, "xo");
+> +	if (!IS_ERR(pclk))
+> +		init.parent_names = (const char *[]){ __clk_get_name(pclk) };
+> +	else if (PTR_ERR(pclk) == -EPROBE_DEFER)
+> +		return -EPROBE_DEFER;
+> +
+>  	h->d = &hdata;
+>  	h->clkr.hw.init = &init;
+>  	spin_lock_init(&h->lock);
+> -- 
+> 2.7.4
+> 
