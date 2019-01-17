@@ -2,96 +2,378 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30581C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8C1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D7A20859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:48:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLQn6YlD"
+	by mail.kernel.org (Postfix) with ESMTP id 15B0B20859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbfAQSsF (ORCPT
+        id S1728049AbfAQSsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 13:48:05 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36662 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfAQSsE (ORCPT
+        Thu, 17 Jan 2019 13:48:23 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:48590 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbfAQSsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 13:48:04 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g11-v6so9476643ljk.3;
-        Thu, 17 Jan 2019 10:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=16wQ/W+iiw7IUM5Bi30mVlqWhz2HSmpafYkT56+zMkU=;
-        b=ZLQn6YlDN385GAiRZUoLQT0qlFcZ85lMqzjjM5IU094QhzHeI0HfSXmAiRWDo/DsMC
-         T4CD6ejl50vjgRXILrUirFyX8edtCeDIgFhi6OEeMwdMHVycO+QlVsWwqJolXtO6q52j
-         VslL3Q30IWJtx5T5n2Qjx2ZfpzFJVjOc0NesWSQW3A1AZBxBQ/GVAaJUz6DI+7qRonRO
-         QkCwsUevBf8qmRy6/gdwhAuad9xplZhOMFUytzGR9KHnVPVzWoNuCWhB8i0ESJWm8jlU
-         X4OfX694JER7FaW9IGtvGayvBLnmZeyJkXEUgbHSvxqwFxzzsa28QcVbps5k73TwRXhD
-         tIpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=16wQ/W+iiw7IUM5Bi30mVlqWhz2HSmpafYkT56+zMkU=;
-        b=THngXZOwLhSyCx9DHKrMB/CXDRCP5IRbfqZPE+IR09PkUApkcJiIixI3vI0H1YN63Q
-         mVu8IYm8CoG7vmu+ErCXWvh5LLhAutPo4afXG+aV2RuSYN2E+x5m983kBSmPbufHxI83
-         G2nY6L+RSNejId6605S5N3E31Skn7C3NSpqofCxWP7HS1W3RBTtDz5RZGtU/aGnVUPkU
-         AJxUxki5Sva6DLbsTmuHGC9PiMhVCibjVwJyHm7e8ALpRaoIucIKN12fKlFzEtDQpuNq
-         n9PbYqmq+n7XzsrgLepCv2RPevoCWTntMJhhtoWJpwMkrpbnORnkcaJNAxG5riSU6TjG
-         jpZQ==
-X-Gm-Message-State: AJcUukdyM/aW/WaLZ0QPnrFKDm8yMsFyHk/y7RHNaY4L2HQ+ByG1hoe3
-        N8I0cJCZDpogOE8RvzOLj6U=
-X-Google-Smtp-Source: ALg8bN6m8tJQxd/ldebyZLarsZu++1KrySx0C0AbR2m2Kv/lUrBPbFYZEq4nkooRbWYOtcF8fjsojw==
-X-Received: by 2002:a2e:9059:: with SMTP id n25-v6mr10536225ljg.155.1547750882189;
-        Thu, 17 Jan 2019 10:48:02 -0800 (PST)
-Received: from localhost.localdomain (6-191-187-93.customer.senator-telecom.com. [93.187.191.6])
-        by smtp.googlemail.com with ESMTPSA id p21sm433496lfj.10.2019.01.17.10.48.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 10:48:01 -0800 (PST)
-From:   Artem Panfilov <panfilov.artyom@gmail.com>
-Cc:     panfilov.artyom@gmail.com, Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] dt-bindings: rtc: add ABEOZ9 support
-Date:   Thu, 17 Jan 2019 21:47:54 +0300
-Message-Id: <20190117184755.21179-1-panfilov.artyom@gmail.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 17 Jan 2019 13:48:22 -0500
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id EF27C3A2568;
+        Thu, 17 Jan 2019 19:40:10 +0100 (CET)
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 580C1200008;
+        Thu, 17 Jan 2019 18:39:56 +0000 (UTC)
+From:   Alexandre Ghiti <aghiti@upmem.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     linux-riscv@lists.infradead.org, hch@infradead.org,
+        Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH] hugetlb: allow to free gigantic pages regardless of the configuration
+Date:   Thu, 17 Jan 2019 18:39:53 +0000
+Message-Id: <20190117183953.5990-1-aghiti@upmem.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Artem Panfilov <panfilov.artyom@gmail.com>
----
- Documentation/devicetree/bindings/rtc/rtc.txt | 1 +
- 1 file changed, 1 insertion(+)
+From: Alexandre Ghiti <alex@ghiti.fr>
 
-diff --git a/Documentation/devicetree/bindings/rtc/rtc.txt b/Documentation/devicetree/bindings/rtc/rtc.txt
-index 7c8da6926095..0ac93f2dcedc 100644
---- a/Documentation/devicetree/bindings/rtc/rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/rtc.txt
-@@ -39,6 +39,7 @@ possibly an interrupt line.
- Compatible		Vendor / Chip
- ==========		=============
- abracon,abb5zes3	AB-RTCMC-32.768kHz-B5ZE-S3: Real Time Clock/Calendar Module with I2C Interface
-+abracon,abeoz9		AB-RTCMC-32.768kHz-EOZ9: Real Time Clock/Calendar Module with I2C Interface
- dallas,ds1374		I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
- dallas,ds1672		Dallas DS1672 Real-time Clock
- dallas,ds3232		Extremely Accurate I²C RTC with Integrated Crystal and SRAM
+On systems without CMA or (MEMORY_ISOLATION && COMPACTION) activated but
+that support gigantic pages, boottime reserved gigantic pages can not be
+freed at all. This patchs simply enables the possibility to hand back
+those pages to memory allocator.
+
+This commit then renames gigantic_page_supported and
+ARCH_HAS_GIGANTIC_PAGE to make them more accurate. Indeed, those values
+being false does not mean that the system cannot use gigantic pages: it
+just means that runtime allocation of gigantic pages is not supported,
+one can still allocate boottime gigantic pages if the architecture supports
+it.
+
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+---
+
+- Compiled on all architectures
+- Tested on riscv architecture
+
+ arch/arm64/Kconfig                           |  2 +-
+ arch/arm64/include/asm/hugetlb.h             |  7 +++--
+ arch/powerpc/include/asm/book3s/64/hugetlb.h |  4 +--
+ arch/powerpc/platforms/Kconfig.cputype       |  2 +-
+ arch/s390/Kconfig                            |  2 +-
+ arch/s390/include/asm/hugetlb.h              |  7 +++--
+ arch/x86/Kconfig                             |  2 +-
+ arch/x86/include/asm/hugetlb.h               |  7 +++--
+ fs/Kconfig                                   |  2 +-
+ include/linux/gfp.h                          |  2 +-
+ mm/hugetlb.c                                 | 43 +++++++++++++++-------------
+ mm/page_alloc.c                              |  4 +--
+ 12 files changed, 48 insertions(+), 36 deletions(-)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a4168d366127..18239cbd7fcd 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -18,7 +18,7 @@ config ARM64
+ 	select ARCH_HAS_FAST_MULTIPLIER
+ 	select ARCH_HAS_FORTIFY_SOURCE
+ 	select ARCH_HAS_GCOV_PROFILE_ALL
+-	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
++	select ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION if (MEMORY_ISOLATION && COMPACTION) || CMA
+ 	select ARCH_HAS_KCOV
+ 	select ARCH_HAS_MEMBARRIER_SYNC_CORE
+ 	select ARCH_HAS_PTE_SPECIAL
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index fb6609875455..797fc77eabcd 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -65,8 +65,11 @@ extern void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr,
+ 
+ #include <asm-generic/hugetlb.h>
+ 
+-#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+-static inline bool gigantic_page_supported(void) { return true; }
++#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
++static inline bool gigantic_page_runtime_allocation_supported(void)
++{
++	return true;
++}
+ #endif
+ 
+ #endif /* __ASM_HUGETLB_H */
+diff --git a/arch/powerpc/include/asm/book3s/64/hugetlb.h b/arch/powerpc/include/asm/book3s/64/hugetlb.h
+index 5b0177733994..7711f0e2c7e5 100644
+--- a/arch/powerpc/include/asm/book3s/64/hugetlb.h
++++ b/arch/powerpc/include/asm/book3s/64/hugetlb.h
+@@ -32,8 +32,8 @@ static inline int hstate_get_psize(struct hstate *hstate)
+ 	}
+ }
+ 
+-#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+-static inline bool gigantic_page_supported(void)
++#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
++static inline bool gigantic_page_runtime_allocation_supported(void)
+ {
+ 	return true;
+ }
+diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+index 8c7464c3f27f..779e06bac697 100644
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@ -319,7 +319,7 @@ config ARCH_ENABLE_SPLIT_PMD_PTLOCK
+ config PPC_RADIX_MMU
+ 	bool "Radix MMU Support"
+ 	depends on PPC_BOOK3S_64
+-	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
++	select ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION if (MEMORY_ISOLATION && COMPACTION) || CMA
+ 	default y
+ 	help
+ 	  Enable support for the Power ISA 3.0 Radix style MMU. Currently this
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index ed554b09eb3f..6776eef6a9ae 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -69,7 +69,7 @@ config S390
+ 	select ARCH_HAS_ELF_RANDOMIZE
+ 	select ARCH_HAS_FORTIFY_SOURCE
+ 	select ARCH_HAS_GCOV_PROFILE_ALL
+-	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
++	select ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION if (MEMORY_ISOLATION && COMPACTION) || CMA
+ 	select ARCH_HAS_KCOV
+ 	select ARCH_HAS_PTE_SPECIAL
+ 	select ARCH_HAS_SET_MEMORY
+diff --git a/arch/s390/include/asm/hugetlb.h b/arch/s390/include/asm/hugetlb.h
+index 2d1afa58a4b6..57c952f5388e 100644
+--- a/arch/s390/include/asm/hugetlb.h
++++ b/arch/s390/include/asm/hugetlb.h
+@@ -116,7 +116,10 @@ static inline pte_t huge_pte_modify(pte_t pte, pgprot_t newprot)
+ 	return pte_modify(pte, newprot);
+ }
+ 
+-#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+-static inline bool gigantic_page_supported(void) { return true; }
++#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
++static inline bool gigantic_page_runtime_allocation_supported(void)
++{
++	return true;
++}
+ #endif
+ #endif /* _ASM_S390_HUGETLB_H */
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 6185d4f33296..a88f5a4311c9 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -23,7 +23,7 @@ config X86_64
+ 	def_bool y
+ 	depends on 64BIT
+ 	# Options that are inherently 64-bit kernel only:
+-	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
++	select ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION if (MEMORY_ISOLATION && COMPACTION) || CMA
+ 	select ARCH_SUPPORTS_INT128
+ 	select ARCH_USE_CMPXCHG_LOCKREF
+ 	select HAVE_ARCH_SOFT_DIRTY
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index 7469d321f072..5a5e7119ced4 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -17,8 +17,11 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+ 
+-#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+-static inline bool gigantic_page_supported(void) { return true; }
++#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
++static inline bool gigantic_page_runtime_allocation_supported(void)
++{
++	return true;
++}
+ #endif
+ 
+ #endif /* _ASM_X86_HUGETLB_H */
+diff --git a/fs/Kconfig b/fs/Kconfig
+index ac474a61be37..4192d1fde0f0 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -207,7 +207,7 @@ config HUGETLB_PAGE
+ config MEMFD_CREATE
+ 	def_bool TMPFS || HUGETLBFS
+ 
+-config ARCH_HAS_GIGANTIC_PAGE
++config ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
+ 	bool
+ 
+ source "fs/configfs/Kconfig"
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 5f5e25fd6149..79ff86fabd42 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -589,8 +589,8 @@ static inline bool pm_suspended_storage(void)
+ /* The below functions must be run on a range from a single zone. */
+ extern int alloc_contig_range(unsigned long start, unsigned long end,
+ 			      unsigned migratetype, gfp_t gfp_mask);
+-extern void free_contig_range(unsigned long pfn, unsigned nr_pages);
+ #endif
++extern void free_contig_range(unsigned long pfn, unsigned int nr_pages);
+ 
+ #ifdef CONFIG_CMA
+ /* CMA stuff */
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 745088810965..9893ba26b3b8 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -1035,7 +1035,6 @@ static int hstate_next_node_to_free(struct hstate *h, nodemask_t *nodes_allowed)
+ 		((node = hstate_next_node_to_free(hs, mask)) || 1);	\
+ 		nr_nodes--)
+ 
+-#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+ static void destroy_compound_gigantic_page(struct page *page,
+ 					unsigned int order)
+ {
+@@ -1058,6 +1057,7 @@ static void free_gigantic_page(struct page *page, unsigned int order)
+ 	free_contig_range(page_to_pfn(page), 1 << order);
+ }
+ 
++#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
+ static int __alloc_gigantic_page(unsigned long start_pfn,
+ 				unsigned long nr_pages, gfp_t gfp_mask)
+ {
+@@ -1143,22 +1143,19 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
+ static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
+ static void prep_compound_gigantic_page(struct page *page, unsigned int order);
+ 
+-#else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE */
+-static inline bool gigantic_page_supported(void) { return false; }
++#else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION */
++static inline bool gigantic_page_runtime_allocation_supported(void)
++{
++	return false;
++}
+ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
+ 		int nid, nodemask_t *nodemask) { return NULL; }
+-static inline void free_gigantic_page(struct page *page, unsigned int order) { }
+-static inline void destroy_compound_gigantic_page(struct page *page,
+-						unsigned int order) { }
+ #endif
+ 
+ static void update_and_free_page(struct hstate *h, struct page *page)
+ {
+ 	int i;
+ 
+-	if (hstate_is_gigantic(h) && !gigantic_page_supported())
+-		return;
+-
+ 	h->nr_huge_pages--;
+ 	h->nr_huge_pages_node[page_to_nid(page)]--;
+ 	for (i = 0; i < pages_per_huge_page(h); i++) {
+@@ -2276,13 +2273,20 @@ static int adjust_pool_surplus(struct hstate *h, nodemask_t *nodes_allowed,
+ }
+ 
+ #define persistent_huge_pages(h) (h->nr_huge_pages - h->surplus_huge_pages)
+-static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
++static int set_max_huge_pages(struct hstate *h, unsigned long count,
+ 						nodemask_t *nodes_allowed)
+ {
+ 	unsigned long min_count, ret;
+ 
+-	if (hstate_is_gigantic(h) && !gigantic_page_supported())
+-		return h->max_huge_pages;
++	if (hstate_is_gigantic(h) &&
++		!gigantic_page_runtime_allocation_supported()) {
++		spin_lock(&hugetlb_lock);
++		if (count > persistent_huge_pages(h)) {
++			spin_unlock(&hugetlb_lock);
++			return -EINVAL;
++		}
++		goto decrease_pool;
++	}
+ 
+ 	/*
+ 	 * Increase the pool size
+@@ -2322,6 +2326,7 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
+ 			goto out;
+ 	}
+ 
++decrease_pool:
+ 	/*
+ 	 * Decrease the pool size
+ 	 * First return free pages to the buddy allocator (being careful
+@@ -2350,9 +2355,10 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
+ 			break;
+ 	}
+ out:
+-	ret = persistent_huge_pages(h);
++	h->max_huge_pages = persistent_huge_pages(h);
+ 	spin_unlock(&hugetlb_lock);
+-	return ret;
++
++	return 0;
+ }
+ 
+ #define HSTATE_ATTR_RO(_name) \
+@@ -2404,11 +2410,6 @@ static ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
+ 	int err;
+ 	NODEMASK_ALLOC(nodemask_t, nodes_allowed, GFP_KERNEL | __GFP_NORETRY);
+ 
+-	if (hstate_is_gigantic(h) && !gigantic_page_supported()) {
+-		err = -EINVAL;
+-		goto out;
+-	}
+-
+ 	if (nid == NUMA_NO_NODE) {
+ 		/*
+ 		 * global hstate attribute
+@@ -2428,7 +2429,9 @@ static ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
+ 	} else
+ 		nodes_allowed = &node_states[N_MEMORY];
+ 
+-	h->max_huge_pages = set_max_huge_pages(h, count, nodes_allowed);
++	err = set_max_huge_pages(h, count, nodes_allowed);
++	if (err)
++		goto out;
+ 
+ 	if (nodes_allowed != &node_states[N_MEMORY])
+ 		NODEMASK_FREE(nodes_allowed);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cde5dac6229a..81b931db85a1 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8241,8 +8241,9 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+ 				pfn_max_align_up(end), migratetype);
+ 	return ret;
+ }
++#endif
+ 
+-void free_contig_range(unsigned long pfn, unsigned nr_pages)
++void free_contig_range(unsigned long pfn, unsigned int nr_pages)
+ {
+ 	unsigned int count = 0;
+ 
+@@ -8254,7 +8255,6 @@ void free_contig_range(unsigned long pfn, unsigned nr_pages)
+ 	}
+ 	WARN(count != 0, "%d pages are still in use!\n", count);
+ }
+-#endif
+ 
+ #ifdef CONFIG_MEMORY_HOTPLUG
+ /*
 -- 
-2.19.1
+2.16.2
 
