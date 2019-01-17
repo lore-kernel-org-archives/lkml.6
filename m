@@ -2,63 +2,122 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5CBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 166E9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3052420859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E51B720856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:22:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfAQOUp (ORCPT
+        id S1727098AbfAQOWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 09:20:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbfAQOUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 09:20:45 -0500
-Received: from vmware.local.home (unknown [12.174.139.122])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C50820856;
-        Thu, 17 Jan 2019 14:20:44 +0000 (UTC)
-Date:   Thu, 17 Jan 2019 09:20:42 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Andreas Ziegler <andreas.ziegler@fau.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tracing/uprobes: Fix output for multiple string
- arguments
-Message-ID: <20190117092042.4f689462@vmware.local.home>
-In-Reply-To: <20190117165807.64e95553ff397e7f73ba495b@kernel.org>
-References: <20190116084021.34b0beee@gandalf.local.home>
-        <20190116141629.5752-1-andreas.ziegler@fau.de>
-        <20190117150107.17f2c0c37e41126120c5eebb@kernel.org>
-        <b5defce3-b52a-db20-bfd1-81eec9972fab@fau.de>
-        <20190117165807.64e95553ff397e7f73ba495b@kernel.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Jan 2019 09:22:34 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46976 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726062AbfAQOWd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 09:22:33 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HEJXIR043791
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:22:32 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2rtefg4j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:22:32 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 17 Jan 2019 14:22:29 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 14:22:28 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HEMRmg9568560
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 14:22:27 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38E7A4204B;
+        Thu, 17 Jan 2019 14:22:27 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CA4964203F;
+        Thu, 17 Jan 2019 14:22:25 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.236])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 17 Jan 2019 14:22:25 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Thu, 17 Jan 2019 16:22:25 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     William Kucharski <william.kucharski@oracle.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH v2] mm/page_alloc: check return value of memblock_alloc_node_nopanic()
+Date:   Thu, 17 Jan 2019 16:22:21 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19011714-4275-0000-0000-000003007D91
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011714-4276-0000-0000-0000380EA281
+Message-Id: <1547734941-944-1-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=935 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Jan 2019 16:58:07 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+There are two early memory allocations that use
+memblock_alloc_node_nopanic() and do not check its return value.
+While this happens very early during boot and chances that the allocation
+will fail are diminishing, it is still worth to have proper checks for the
+allocation errors.
 
-> Ah, I got it.
-> Hmm, in that case, I have to update my patch in the previous mail.
-> Anyway,
-> 
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+---
+v2: add pgdat->node_id to panic message
 
-So this patch is good to go? If so, I'll pull it in and start testing
-it.
+ mm/page_alloc.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-I'm currently traveling (as you probably received my OoO emails), but I
-can still do a bit of work remotely.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d295c9bc01a8..13d5b338f434 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6376,10 +6376,14 @@ static void __ref setup_usemap(struct pglist_data *pgdat,
+ {
+ 	unsigned long usemapsize = usemap_size(zone_start_pfn, zonesize);
+ 	zone->pageblock_flags = NULL;
+-	if (usemapsize)
++	if (usemapsize) {
+ 		zone->pageblock_flags =
+ 			memblock_alloc_node_nopanic(usemapsize,
+ 							 pgdat->node_id);
++		if (!zone->pageblock_flags)
++			panic("Failed to allocate %ld bytes for zone %s pageblock flags on node %d\n",
++			      usemapsize, zone->name, pgdat->node_id);
++	}
+ }
+ #else
+ static inline void setup_usemap(struct pglist_data *pgdat, struct zone *zone,
+@@ -6609,6 +6613,9 @@ static void __ref alloc_node_mem_map(struct pglist_data *pgdat)
+ 		end = ALIGN(end, MAX_ORDER_NR_PAGES);
+ 		size =  (end - start) * sizeof(struct page);
+ 		map = memblock_alloc_node_nopanic(size, pgdat->node_id);
++		if (!map)
++			panic("Failed to allocate %ld bytes for node %d memory map\n",
++			      size, pgdat->node_id);
+ 		pgdat->node_mem_map = map + offset;
+ 	}
+ 	pr_debug("%s: node %d, pgdat %08lx, node_mem_map %08lx\n",
+-- 
+2.7.4
 
--- Steve
