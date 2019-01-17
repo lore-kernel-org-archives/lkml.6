@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A341C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028F5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7DAE20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEF8120883
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbfAQPho (ORCPT
+        id S1728120AbfAQPhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:37:44 -0500
-Received: from foss.arm.com ([217.140.101.70]:42026 "EHLO foss.arm.com"
+        Thu, 17 Jan 2019 10:37:48 -0500
+Received: from foss.arm.com ([217.140.101.70]:42036 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728120AbfAQPhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:37:42 -0500
+        id S1728211AbfAQPho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:37:44 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D3D2165C;
-        Thu, 17 Jan 2019 07:37:42 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E2DD1650;
+        Thu, 17 Jan 2019 07:37:44 -0800 (PST)
 Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 177233F819;
-        Thu, 17 Jan 2019 07:37:40 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AB5EE3F819;
+        Thu, 17 Jan 2019 07:37:42 -0800 (PST)
 From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
         morten.rasmussen@arm.com, Dietmar.Eggemann@arm.com
-Subject: [PATCH 4/5] sched/fair: Tune down misfit nohz kicks
-Date:   Thu, 17 Jan 2019 15:34:10 +0000
-Message-Id: <20190117153411.2390-5-valentin.schneider@arm.com>
+Subject: [PATCH 5/5] sched/fair: Skip LLC nohz logic for asymmetric systems
+Date:   Thu, 17 Jan 2019 15:34:11 +0000
+Message-Id: <20190117153411.2390-6-valentin.schneider@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190117153411.2390-1-valentin.schneider@arm.com>
 References: <20190117153411.2390-1-valentin.schneider@arm.com>
@@ -42,80 +42,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In
+The LLC nohz condition will become true as soon as >=2 CPUs in a
+single LLC domain are busy. On big.LITTLE systems, this translates to
+two or more CPUs of a "cluster" (big or LITTLE) being busy.
 
-  commmit 3b1baa6496e6 ("sched/fair: Add 'group_misfit_task' load-balance type")
+Issuing a nohz kick in these conditions isn't desired for asymmetric
+systems, as if the busy CPUs can provide enough compute capacity to
+the running tasks, then we can leave the nohz CPUs in peace.
 
-we set rq->misfit_task_load whenever the current running task has a
-utilization greater than 80% of rq->cpu_capacity. A non-zero value in
-this field enables misfit load balancing.
+Skip the LLC nohz condition for asymmetric systems, and rely on
+nr_running & capacity checks to trigger nohz kicks when the system
+actually needs them.
 
-However, if the task being looked at is already running on a CPU of
-highest capacity, there's nothing more we can do for it. We can
-currently spot this in update_sd_pick_busiest(), which prevents us
-from selecting a sched_group of group_type == group_misfit_task as the
-busiest group, but we don't do any of that in nohz_balancer_kick().
-
-This means that we could repeatedly kick nohz CPUs when there's no
-improvements in terms of load balance to be done.
-
-Introduce a check_misfit_status() helper that returns true iff there
-is a CPU in the system that could give more CPU capacity to a rq's
-misfit task - IOW, there exists a CPU of higher capacity_orig or the
-rq's CPU is severely pressured by rt/IRQ.
-
+Suggested-by: Morten Rasmussen <morten.rasmussen@arm.com>
 Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- kernel/sched/fair.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ kernel/sched/fair.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7658f9d76a9a..291dfdb0183f 100644
+index 291dfdb0183f..ff27bf56e8d4 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8012,6 +8012,18 @@ check_cpu_capacity(struct rq *rq, struct sched_domain *sd)
- 				(rq->cpu_capacity_orig * 100));
- }
- 
-+/*
-+ * Check whether a rq has a misfit task and if it looks like we can actually
-+ * help that task: we can migrate the task to a CPU of higher capacity, or
-+ * the task's current CPU is heavily pressured.
-+ */
-+static inline int check_misfit_status(struct rq *rq, struct sched_domain *sd)
-+{
-+	return rq->misfit_task_load &&
-+		(rq->cpu_capacity_orig < rq->rd->max_cpu_capacity ||
-+		 check_cpu_capacity(rq, sd));
-+}
-+
- /*
-  * Group imbalance indicates (and tries to solve) the problem where balancing
-  * groups is inadequate due to ->cpus_allowed constraints.
-@@ -9527,7 +9539,7 @@ static void nohz_balancer_kick(struct rq *rq)
- 	if (time_before(now, nohz.next_balance))
- 		goto out;
- 
--	if (rq->nr_running >= 2 || rq->misfit_task_load) {
-+	if (rq->nr_running >= 2) {
- 		flags = NOHZ_KICK_MASK;
- 		goto out;
- 	}
-@@ -9561,6 +9573,14 @@ static void nohz_balancer_kick(struct rq *rq)
- 		}
+@@ -9545,6 +9545,17 @@ static void nohz_balancer_kick(struct rq *rq)
  	}
  
-+	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, cpu));
-+	if (sd) {
-+		if (check_misfit_status(rq, sd)) {
-+			flags = NOHZ_KICK_MASK;
-+			goto unlock;
-+		}
-+	}
+ 	rcu_read_lock();
 +
- 	sd = rcu_dereference(per_cpu(sd_asym_packing, cpu));
++	if (static_branch_unlikely(&sched_asym_cpucapacity))
++		/*
++		 * For asymmetric systems, we do not want to nicely balance
++		 * cache use, instead we want to embrace asymmetry and only
++		 * ensure tasks have enough CPU capacity.
++		 *
++		 * Skip the LLC logic because it's not relevant in that case.
++		 */
++		goto check_capacity;
++
+ 	sds = rcu_dereference(per_cpu(sd_llc_shared, cpu));
+ 	if (sds) {
+ 		/*
+@@ -9564,6 +9575,7 @@ static void nohz_balancer_kick(struct rq *rq)
+ 
+ 	}
+ 
++check_capacity:
+ 	sd = rcu_dereference(rq->sd);
  	if (sd) {
- 		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
+ 		if ((rq->cfs.h_nr_running >= 1) &&
 -- 
 2.20.1
 
