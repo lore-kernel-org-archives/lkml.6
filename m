@@ -2,114 +2,94 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3D3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA219C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B614920851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:21:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SbEGfWea"
+	by mail.kernel.org (Postfix) with ESMTP id 93AF720851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:21:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbfAQRVN (ORCPT
+        id S1728218AbfAQRVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:21:13 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39359 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727752AbfAQRVM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:21:12 -0500
-Received: by mail-pf1-f193.google.com with SMTP id r136so5136913pfc.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:21:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pj6X9tOOCfkZoM+MJ1COk9HYEyQOdqx584QyCZWE8RU=;
-        b=SbEGfWea6iltjztfTZBjLMBQ+c23sFpW5670JQ/EVn2kFcQd9BI8ivAY1qySo4TnpQ
-         e9aYO9bqBqHid8iROVr0EdJtSO1a3GPq0DdXsfEXM2ubag2oBQ9xtHPVNKy2Xp+9hom0
-         TngvoHUqNOqITZccmUx4+4d/K2VJEIgFLerkc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pj6X9tOOCfkZoM+MJ1COk9HYEyQOdqx584QyCZWE8RU=;
-        b=FtyOVjxbuvYDqBy88MJ9qAMPp0LICtT3nCizY2GqJQL6OmbIWDkck/pxXcz2jTyL56
-         KgSukOncB6WoLEiGcZuOXfRWq8W4GFdqJ/exZbWLhu0hJ+EtMRsR6e7khCqwx0uaDjsB
-         KBV6a4RVKm1bYb2LUq1rmsGwzuI744sAA73K6R+tirSMqJLzyYkqDHa2YIgUWNd1W8wa
-         yoYlpE3STD7j/ICzmJMKOJd/0fbYCrikJ8Ydp2EQu5mAuJFgA22cicUqICjfM/gzSmvY
-         m1a8uUca/tjUEBCSHK813s3+d6F8EQ1eNgq8r8m1aHJGlpon33MxDMEdTqGGE4qbndlt
-         NXzQ==
-X-Gm-Message-State: AJcUukcJOKEF7voEUgY2Xnp8cUg86Z7mjHsuda90hU+yTlR7T8X0a2NN
-        D57b7BGKxWVXvpjEGKfnwVHNWA==
-X-Google-Smtp-Source: ALg8bN5P8QVIOYmP6eHNM0LktEbHISHst/wN7hjWOC9iXUAUPVlWhPAL+pbynnhfXBkL4wqdHMYTLg==
-X-Received: by 2002:a65:4683:: with SMTP id h3mr13596063pgr.225.1547745671437;
-        Thu, 17 Jan 2019 09:21:11 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id a4sm2444740pgv.70.2019.01.17.09.21.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 09:21:10 -0800 (PST)
-Date:   Thu, 17 Jan 2019 09:21:09 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
- change command
-Message-ID: <20190117172109.GU261387@google.com>
-References: <20190109145224.GN14782@localhost>
- <b5160d8862b49f0369fa58610516d354@codeaurora.org>
- <20190110143928.GE3430@localhost>
- <61301df80bd6a8ee0265b31b7f6a3aa1@codeaurora.org>
- <20190111013707.GD261387@google.com>
- <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
- <20190111235633.GK261387@google.com>
- <a6e083d245baebc019b6e7163fd6f133@codeaurora.org>
- <20190115234628.GQ261387@google.com>
- <20190117160944.GV3691@localhost>
+        Thu, 17 Jan 2019 12:21:54 -0500
+Received: from verein.lst.de ([213.95.11.211]:38650 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727226AbfAQRVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 12:21:54 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 0146668CEB; Thu, 17 Jan 2019 18:21:52 +0100 (CET)
+Date:   Thu, 17 Jan 2019 18:21:52 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Pawel Osciak <pawel@osciak.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Russell King <linux@armlinux.org.uk>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] videobuf2: replace a layering violation with
+ dma_map_resource
+Message-ID: <20190117172152.GA32292@lst.de>
+References: <20190111181731.11782-1-hch@lst.de> <CGME20190111181812epcas2p1eeb68a16701631513eaf297073f7299f@epcas2p1.samsung.com> <20190111181731.11782-4-hch@lst.de> <6f8892ac-c2aa-10df-c74f-ba032bf75160@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117160944.GV3691@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6f8892ac-c2aa-10df-c74f-ba032bf75160@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 05:09:44PM +0100, Johan Hovold wrote:
-> On Tue, Jan 15, 2019 at 03:46:28PM -0800, Matthias Kaehlcke wrote:
+On Mon, Jan 14, 2019 at 01:42:26PM +0100, Marek Szyprowski wrote:
+> Hi Christoph,
 > 
-> > Using RTS seems|ed like a nice solutions, since it's the native way to
-> > prevent the controller from sending data, instead of doing some custom
-> > hack. However Johan seems to be fairly convinced that flow control and
-> > manual toggling of RTS can be problematic, and we have seen that
-> > disabling flow control has its own problems. Maybe it's time to
-> > consider other solutions like the DISCARD_RX flag we discussed
-> > earlier. Not that I really liked this custom solution, but in the end
-> > it might be a more robust way to address the issue.
-> > 
-> > Johan/Marcel/others: Do you have any further ideas or input on this?
+> On 2019-01-11 19:17, Christoph Hellwig wrote:
+> > vb2_dc_get_userptr pokes into arm direct mapping details to get the
+> > resemblance of a dma address for a a physical address that does is
+> > not backed by a page struct.  Not only is this not portable to other
+> > architectures with dma direct mapping offsets, but also not to uses
+> > of IOMMUs of any kind.  Switch to the proper dma_map_resource /
+> > dma_unmap_resource interface instead.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > 
-> I don't see why deasserting RTS wouldn't work, well at least as long as
-> the RTS signal is wired correctly.
+> There are checks for IOMMU presence in other places in vb2-dma-contig,
+> so it was used only when no IOMMU is available, but I agree that the
+> hacky code should be replaced by a generic code if possible.
 > 
-> My point was simply that calling serdev_device_set_rts() will generally
-> not work unless you first disable automatic (i.e. hw-managed) flow
-> control using serdev_device_set_flow_control(). The exact behaviour is
-> serial-controller dependent, but I assume the driver needs to be
-> platform agnostic.
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> V4L2 pipeline works fine on older Exynos-based boards with CMA and IOMMU
+> disabled.
 
-I observed that the qcom_geni_serial driver doesn't raise RTS with
-flow control disabled. It seems we have to investigate why that's the
-case. I agree that the driver should be platform agnostic.
+Do you know if these rely on the offsets?  E.g. would they still work
+with the patch below applied on top.  That would keep the map_resource
+semantics as-is as solve the issue pointed out by Robin for now.
 
-Cheers
+If not I can only think of a flag to bypass the offseting for now, but
+that would be pretty ugly.  Or go for the long-term solution of
+discovering the relationship between the two devices, as done by the
+PCIe P2P code..
 
-Matthias
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 8e0359b04957..25bd19974223 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -359,7 +359,7 @@ EXPORT_SYMBOL(dma_direct_map_sg);
+ dma_addr_t dma_direct_map_resource(struct device *dev, phys_addr_t paddr,
+ 		size_t size, enum dma_data_direction dir, unsigned long attrs)
+ {
+-	dma_addr_t dma_addr = phys_to_dma(dev, paddr);
++	dma_addr_t dma_addr = paddr;
+ 
+ 	if (unlikely(!dma_direct_possible(dev, dma_addr, size))) {
+ 		report_addr(dev, dma_addr, size);
+
