@@ -2,94 +2,60 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA219C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6D4C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93AF720851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5A3720855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbfAQRVy (ORCPT
+        id S1728218AbfAQR1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:21:54 -0500
-Received: from verein.lst.de ([213.95.11.211]:38650 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbfAQRVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:21:54 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 0146668CEB; Thu, 17 Jan 2019 18:21:52 +0100 (CET)
-Date:   Thu, 17 Jan 2019 18:21:52 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Pawel Osciak <pawel@osciak.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Russell King <linux@armlinux.org.uk>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] videobuf2: replace a layering violation with
- dma_map_resource
-Message-ID: <20190117172152.GA32292@lst.de>
-References: <20190111181731.11782-1-hch@lst.de> <CGME20190111181812epcas2p1eeb68a16701631513eaf297073f7299f@epcas2p1.samsung.com> <20190111181731.11782-4-hch@lst.de> <6f8892ac-c2aa-10df-c74f-ba032bf75160@samsung.com>
+        Thu, 17 Jan 2019 12:27:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33782 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727374AbfAQR1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 12:27:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3E1EEAC43;
+        Thu, 17 Jan 2019 17:27:16 +0000 (UTC)
+Subject: Re: [PATCH 18/25] mm, compaction: Rework compact_should_abort as
+ compact_check_resched
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <20190104125011.16071-1-mgorman@techsingularity.net>
+ <20190104125011.16071-19-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <b3fed67a-30f4-9ff6-769d-deff2d141465@suse.cz>
+Date:   Thu, 17 Jan 2019 18:27:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f8892ac-c2aa-10df-c74f-ba032bf75160@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190104125011.16071-19-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 01:42:26PM +0100, Marek Szyprowski wrote:
-> Hi Christoph,
+On 1/4/19 1:50 PM, Mel Gorman wrote:
+> With incremental changes, compact_should_abort no longer makes
+> any documented sense. Rename to compact_check_resched and update the
+> associated comments.  There is no benefit other than reducing redundant
+> code and making the intent slightly clearer. It could potentially be
+> merged with earlier patches but it just makes the review slightly
+> harder.
 > 
-> On 2019-01-11 19:17, Christoph Hellwig wrote:
-> > vb2_dc_get_userptr pokes into arm direct mapping details to get the
-> > resemblance of a dma address for a a physical address that does is
-> > not backed by a page struct.  Not only is this not portable to other
-> > architectures with dma direct mapping offsets, but also not to uses
-> > of IOMMUs of any kind.  Switch to the proper dma_map_resource /
-> > dma_unmap_resource interface instead.
-> >
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> There are checks for IOMMU presence in other places in vb2-dma-contig,
-> so it was used only when no IOMMU is available, but I agree that the
-> hacky code should be replaced by a generic code if possible.
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> V4L2 pipeline works fine on older Exynos-based boards with CMA and IOMMU
-> disabled.
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-Do you know if these rely on the offsets?  E.g. would they still work
-with the patch below applied on top.  That would keep the map_resource
-semantics as-is as solve the issue pointed out by Robin for now.
-
-If not I can only think of a flag to bypass the offseting for now, but
-that would be pretty ugly.  Or go for the long-term solution of
-discovering the relationship between the two devices, as done by the
-PCIe P2P code..
-
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 8e0359b04957..25bd19974223 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -359,7 +359,7 @@ EXPORT_SYMBOL(dma_direct_map_sg);
- dma_addr_t dma_direct_map_resource(struct device *dev, phys_addr_t paddr,
- 		size_t size, enum dma_data_direction dir, unsigned long attrs)
- {
--	dma_addr_t dma_addr = phys_to_dma(dev, paddr);
-+	dma_addr_t dma_addr = paddr;
- 
- 	if (unlikely(!dma_direct_possible(dev, dma_addr, size))) {
- 		report_addr(dev, dma_addr, size);
-
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
