@@ -2,127 +2,218 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D92DC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C92DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A052086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F1142086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547769017;
+	bh=7XpQ1lYb+oSgboJPsTTY47/KAEi8rB2zD+3xaGwVh00=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=BePyybwod4mEkhma9zrSUkL5n7lSMv3OJAuO9qCXdTd5TUa/V/b73g8eyAjO9fV60
+	 +Io0LaNhK8M6MARbNi7EGIx7CQb+HERf9mmSgJliiKqyKS1svxwrftOjYgnY/FA8Dl
+	 xu0t/SC6Hrs2dqTAia4+/MdLlhTOX7xMenLyMG5Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbfAQXse (ORCPT
+        id S1727115AbfAQXuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 18:48:34 -0500
-Received: from mga17.intel.com ([192.55.52.151]:42595 "EHLO mga17.intel.com"
+        Thu, 17 Jan 2019 18:50:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbfAQXse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 18:48:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 15:48:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
-   d="scan'208";a="136723758"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Jan 2019 15:48:32 -0800
-Received: from orsmsx111.amr.corp.intel.com (10.22.240.12) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 17 Jan 2019 15:48:32 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.62]) by
- ORSMSX111.amr.corp.intel.com ([169.254.12.145]) with mapi id 14.03.0415.000;
- Thu, 17 Jan 2019 15:48:31 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "pavel@ucw.cz" <pavel@ucw.cz>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 14/17] mm: Make hibernate handle unmapped pages
-Thread-Topic: [PATCH 14/17] mm: Make hibernate handle unmapped pages
-Thread-Index: AQHUrfxTlKrIPpA6H0a8MvhHJCQ6Z6Wzu1IAgADTb4CAABejgIAAAf0A
-Date:   Thu, 17 Jan 2019 23:48:30 +0000
-Message-ID: <3c12f9b3328ee32d04a6ed3990fdf0cd3cb27532.camel@intel.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-         <20190117003259.23141-15-rick.p.edgecombe@intel.com>
-         <20190117093950.GA17930@amd>
-         <b224d88d91a5c45c44e176ea06dea558a8939ccf.camel@intel.com>
-         <20190117234111.GA27661@amd>
-In-Reply-To: <20190117234111.GA27661@amd>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.79]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <303A1B4A3E7D644A826569E054F1E051@intel.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S1726008AbfAQXuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 18:50:15 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDDF320859;
+        Thu, 17 Jan 2019 23:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547769013;
+        bh=7XpQ1lYb+oSgboJPsTTY47/KAEi8rB2zD+3xaGwVh00=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=c7KsUkz+ii4MM3zQAw4UGTzLStS99vh7pB81NBg3O8heShNn0FzRBoZboIrJrszQ1
+         vBNzU418iOn+JU0+BFQg3jrHzdWiXhwO6TSPCTA9VqAhP3+LQ1kS54JP3SHpTpvTaZ
+         uSCcAv2NImQWMCOC7J+yeEwyp7+0wSDL3IZAJ/zs=
+Date:   Fri, 18 Jan 2019 08:50:11 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Andreas Ziegler <andreas.ziegler@fau.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: uprobes: bug in comm/string output?
+Message-Id: <20190118085011.511954a760961e4eb6b8e423@kernel.org>
+In-Reply-To: <15ce335e-d40e-f9ef-e85a-507e153c55cb@fau.de>
+References: <bf358673-ceb2-65bf-80c9-4b1c09a8a264@fau.de>
+        <8b67136d-28d7-a734-6366-9511e30d66a7@fau.de>
+        <20190116190054.ac22c8495540578834446236@kernel.org>
+        <62276858-9135-2393-8993-64e1088db7b9@fau.de>
+        <20190117151309.711d41ebdd761b525a168837@kernel.org>
+        <20190117170015.403157bf619907f8467189fe@kernel.org>
+        <17147ef5-4348-9a02-d781-0f089fe603f5@fau.de>
+        <20190117184717.9bbd1218b9f4fe6a8070a0fe@kernel.org>
+        <15ce335e-d40e-f9ef-e85a-507e153c55cb@fau.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTAxLTE4IGF0IDAwOjQxICswMTAwLCBQYXZlbCBNYWNoZWsgd3JvdGU6DQo+
-IEhpIQ0KPiANCj4gPiA+ID4gRm9yIGFyY2hpdGVjdHVyZXMgd2l0aCBDT05GSUdfQVJDSF9IQVNf
-U0VUX0FMSUFTLCBwYWdlcyBjYW4gYmUgdW5tYXBwZWQNCj4gPiA+ID4gYnJpZWZseSBvbiB0aGUg
-ZGlyZWN0bWFwLCBldmVuIHdoZW4gQ09ORklHX0RFQlVHX1BBR0VBTExPQyBpcyBub3QNCj4gPiA+
-ID4gY29uZmlndXJlZC4NCj4gPiA+ID4gU28gdGhpcyBjaGFuZ2VzIGtlcm5lbF9tYXBfcGFnZXMg
-YW5kIGtlcm5lbF9wYWdlX3ByZXNlbnQgdG8gYmUgZGVmaW5lZA0KPiA+ID4gPiB3aGVuDQo+ID4g
-PiA+IENPTkZJR19BUkNIX0hBU19TRVRfQUxJQVMgaXMgZGVmaW5lZCBhcyB3ZWxsLiBJdCBhbHNv
-IGNoYW5nZXMgcGxhY2VzDQo+ID4gPiA+IChwYWdlX2FsbG9jLmMpIHdoZXJlIHRob3NlIGZ1bmN0
-aW9ucyBhcmUgYXNzdW1lZCB0byBvbmx5IGJlIGltcGxlbWVudGVkDQo+ID4gPiA+IHdoZW4NCj4g
-PiA+ID4gQ09ORklHX0RFQlVHX1BBR0VBTExPQyBpcyBkZWZpbmVkLg0KPiA+ID4gDQo+ID4gPiBX
-aGljaCBhcmNoaXRlY3R1cmVzIGFyZSB0aGF0Pw0KPiA+ID4gDQo+ID4gPiBTaG91bGQgdGhpcyBi
-ZSBtZXJnZWQgdG8gdGhlIHBhdGNoIHdoZXJlIEhBU19TRVRfQUxJQVMgaXMgaW50cm9kdWNlZD8g
-V2UNCj4gPiA+IGRvbid0IHdhbnQgYnJva2VuIGhpYmVybmF0aW9uIGluIGJldHdlZW4uLi4uDQo+
-ID4gDQo+ID4gVGhhbmtzIGZvciB0YWtpbmcgYSBsb29rLiBJdCB3YXMgYWRkZWQgZm9yIHg4NiBm
-b3IgcGF0Y2ggMTMgaW4gdGhpcyBwYXRjaHNldA0KPiA+IGFuZA0KPiA+IHRoZXJlIHdhcyBpbnRl
-cmVzdCBleHByZXNzZWQgZm9yIGFkZGluZyBmb3IgYXJtNjQuIElmIHlvdSBkaWRuJ3QgZ2V0IHRo
-ZQ0KPiA+IHdob2xlDQo+ID4gc2V0IGFuZCB3YW50IHRvIHNlZSBsZXQgbWUga25vdyBhbmQgSSBj
-YW4gc2VuZCBpdC4NCj4gDQo+IEkgZ29vZ2xlZCBpbiBpbiB0aGUgbWVhbnRpbWUuDQo+IA0KPiBB
-bnl3YXksIGlmIHNvbWV0aGluZyBpcyBicm9rZW4gYmV0d2VlbiBwYXRjaCAxMyBhbmQgMTQsIHRo
-ZW4gdGhleQ0KPiBzaG91bGQgYmUgc2FtZSBwYXRjaC4NCkdyZWF0LiBJdCBzaG91bGQgYmUgb2sg
-YmVjYXVzZSB0aGUgbmV3IGZ1bmN0aW9ucyBhcmUgbm90IHVzZWQgYW55d2hlcmUgdW50aWwNCmFm
-dGVyIHRoaXMgcGF0Y2guDQoNClRoYW5rcywNCg0KUmljaw0KDQo+ID4gPiA+IC0jaWZkZWYgQ09O
-RklHX0RFQlVHX1BBR0VBTExPQw0KPiA+ID4gPiAgZXh0ZXJuIGJvb2wgX2RlYnVnX3BhZ2VhbGxv
-Y19lbmFibGVkOw0KPiA+ID4gPiAtZXh0ZXJuIHZvaWQgX19rZXJuZWxfbWFwX3BhZ2VzKHN0cnVj
-dCBwYWdlICpwYWdlLCBpbnQgbnVtcGFnZXMsIGludA0KPiA+ID4gPiBlbmFibGUpOw0KPiA+ID4g
-PiAgDQo+ID4gPiA+ICBzdGF0aWMgaW5saW5lIGJvb2wgZGVidWdfcGFnZWFsbG9jX2VuYWJsZWQo
-dm9pZCkNCj4gPiA+ID4gIHsNCj4gPiA+ID4gLQlyZXR1cm4gX2RlYnVnX3BhZ2VhbGxvY19lbmFi
-bGVkOw0KPiA+ID4gPiArCXJldHVybiBJU19FTkFCTEVEKENPTkZJR19ERUJVR19QQUdFQUxMT0Mp
-ICYmDQo+ID4gPiA+IF9kZWJ1Z19wYWdlYWxsb2NfZW5hYmxlZDsNCj4gPiA+ID4gIH0NCj4gPiA+
-IA0KPiA+ID4gVGhpcyB3aWxsIGJyZWFrIGJ1aWxkIEFGQUlDVC4gX2RlYnVnX3BhZ2VhbGxvY19l
-bmFibGVkIHZhcmlhYmxlIGRvZXMNCj4gPiA+IG5vdCBleGlzdCBpbiAhQ09ORklHX0RFQlVHX1BB
-R0VBTExPQyBjYXNlLg0KPiA+ID4gDQo+ID4gPiAJCQkJCQkJCQlQYXZlbA0KPiA+IA0KPiA+IEFm
-dGVyIGFkZGluZyBpbiB0aGUgQ09ORklHX0FSQ0hfSEFTX1NFVF9BTElBUyBjb25kaXRpb24gdG8g
-dGhlIGlmZGVmcyBpbg0KPiA+IHRoaXMNCj4gPiBhcmVhIGl0IGxvb2tlZCBhIGxpdHRsZSBoYXJk
-IHRvIHJlYWQgdG8gbWUsIHNvIEkgbW92ZWQNCj4gPiBkZWJ1Z19wYWdlYWxsb2NfZW5hYmxlZA0K
-PiA+IGFuZCBleHRlcm4gYm9vbCBfZGVidWdfcGFnZWFsbG9jX2VuYWJsZWQgb3V0c2lkZSB0byBt
-YWtlIGl0IGVhc2llci4gSSB0aGluaw0KPiA+IHlvdQ0KPiA+IGFyZSByaWdodCwgdGhlIGFjdHVh
-bCBub24tZXh0ZXJuIHZhcmlhYmxlIGNhbiBub3QgYmUgdGhlcmUsIGJ1dCB0aGUNCj4gPiByZWZl
-cmVuY2UNCj4gPiBoZXJlIGdldHMgb3B0aW1pemVkIG91dCBpbiB0aGF0IGNhc2UuDQo+ID4gDQo+
-ID4gSnVzdCBkb3VibGUgY2hlY2tlZCBhbmQgaXQgYnVpbGRzIGZvciBib3RoIENPTkZJR19ERUJV
-R19QQUdFQUxMT0M9biBhbmQNCj4gPiBDT05GSUdfREVCVUdfUEFHRUFMTE9DPXkgZm9yIG1lLg0K
-PiANCj4gT2suDQo+IA0KPiBUaGFua3MsDQo+IAkJCQkJCQkJCVBhdmVsDQo=
+On Thu, 17 Jan 2019 14:44:41 +0100
+Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+
+> Hi,
+> 
+> On 1/17/19 10:47 AM, Masami Hiramatsu wrote:
+> > On Thu, 17 Jan 2019 09:08:41 +0100
+> > Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+> > 
+> >> On 17.01.19 09:00, Masami Hiramatsu wrote:
+> >>> On Thu, 17 Jan 2019 15:13:09 +0900
+> >>> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >>>
+> >>>> On Wed, 16 Jan 2019 11:16:07 +0100
+> >>>> Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+> >>>>
+> >>>>>
+> >>>>> I went into this a bit deeper today, and right now it is simply failing
+> >>>>> to parse the code because there is no FETCH_OP_COMM case in
+> >>>>> process_fetch_insn() for uprobes so that will return -EILSEQ, leading to
+> >>>>> a make_data_loc(0, ...) in store_trace_args(). If we just add
+> >>>>> FETCH_OP_COMM and let val point to current->comm (that's what
+> >>>>> trace_kprobe.c does), we get an -EFAULT return value from
+> >>>>> fetch_store_string because strncpy_from_user() checks if the argument is
+> >>>>> in user space.
+> >>>>
+> >>>> Correct. I missed to add OP_COMM support. And uprobe's fetch_store_string
+> >>>> is only for user space strings.
+> >>>>
+> >>>>> So I think we might need a special case for that, something like
+> >>>>> FETCH_OP_ST_COMM_STRING which is only used for FETCH_OP_COMM and copies
+> >>>>> current->comm over to the dynamic area. The implementation could be
+> >>>>> similar to the old fetch_comm_string implementation before your rewrite.
+> >>>>
+> >>>> Hmm, instead, I would like to add current->comm checker and only allows
+> >>>> to copy that. That would be simpler and enough.
+> >>>>
+> >>>> Could you test below patch?
+> >>>>
+> >>>>
+> >>>> tracing: uprobes: Re-enable $comm support for uprobe events
+> >>>>
+> >>>> From: Masami Hiramatsu <mhiramat@kernel.org>
+> >>>>
+> >>>> Since commit 533059281ee5 ("tracing: probeevent: Introduce new
+> >>>> argument fetching code") dropped the $comm support from uprobe
+> >>>> events, this re-enable it.
+> >>
+> >> this should read 're-enables'.
+> >>
+> >>>>
+> >>>> For $comm support, use strncpy() instead of strncpy_from_user()
+> >>                               ^
+> >> we're using strlcpy(), not strncpy().
+> >>
+> >>>> to copy current task's comm. Because it is in the kernel space,
+> >>>> strncpy_from_user() always fails to copy the comm.
+> >>>> This also use strlen() instead of strlen_user() to measure the
+> >>                 ^                        ^
+> >> 'uses', and the function should be 'strnlen_user()'.
+> >>
+> >>>> length of the comm.
+> >>>>
+> >>>> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> >>>> Reported-by: Andreas Ziegler <andreas.ziegler@fau.de>
+> >>>> ---
+> >>>>   kernel/trace/trace_uprobe.c |   13 +++++++++++--
+> >>>>   1 file changed, 11 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> >>>> index e335576b9411..97d134e83e0f 100644
+> >>>> --- a/kernel/trace/trace_uprobe.c
+> >>>> +++ b/kernel/trace/trace_uprobe.c
+> >>>> @@ -156,7 +156,10 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
+> >>>>   	if (unlikely(!maxlen))
+> >>>>   		return -ENOMEM;
+> >>>>   
+> >>>> -	ret = strncpy_from_user(dst, src, maxlen);
+> >>>> +	if (addr == (unsigned long)current->comm)
+> >>>> +		ret = strlcpy(dst, current->comm, maxlen);
+> >>>> +	else
+> >>>> +		ret = strncpy_from_user(dst, src, maxlen);
+> >>>>   	if (ret >= 0) {
+> >>>>   		if (ret == maxlen)
+> >>>>   			dst[ret - 1] = '\0';
+> >>>> @@ -173,7 +176,10 @@ fetch_store_strlen(unsigned long addr)
+> >>>>   	int len;
+> >>>>   	void __user *vaddr = (void __force __user *) addr;
+> >>>>   
+> >>>> -	len = strnlen_user(vaddr, MAX_STRING_SIZE);
+> >>>> +	if (addr == (unsigned long)current->comm)
+> >>>> +		len = strlen(current->comm);
+> >>>
+> >>> To balance with the strnlen_user, we must increse the len in this block.
+> >>> (strlen doesn't count the final '\0', but strnlen_user counts it)
+> >>>
+> >>
+> >> yes, we need to add a '+ 1' here.
+> >>
+> >> With the typos and this one fixed, this is
+> >>
+> >> Acked-by: Andreas Ziegler <andreas.ziegler@fau.de>
+> > 
+> > Thank you for fixing typo and Ack :)
+> > 
+> > Thanks you,
+>  >
+> >>
+> >>> Thank you,
+> >>>
+> >>>> +	else
+> >>>> +		len = strnlen_user(vaddr, MAX_STRING_SIZE);
+> >>>>   
+> >>>>   	return (len > MAX_STRING_SIZE) ? 0 : len;
+> >>>>   }
+> >>>> @@ -213,6 +219,9 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
+> >>>>   	case FETCH_OP_IMM:
+> >>>>   		val = code->immediate;
+> >>>>   		break;
+> >>>> +	case FETCH_OP_COMM:
+> >>>> +		val = (unsigned long)current->comm;
+> >>>> +		break;
+> >>>>   	case FETCH_OP_FOFFS:
+> >>>>   		val = translate_user_vaddr(code->immediate);
+> >>>>   		break;
+> >>>
+> >>>
+> >>
+> > 
+> > 
+> as the original commit breaking $comm support was merged for v4.20 
+> (which is a stable kernel) and the wrong behaviour with multiple strings 
+> exists in all longterm/stable releases (tested back to v4.4), do you 
+> think this should be going into a stable release once it's merged?
+
+Yes, clearly your patch should go to stable to fix the multiple string
+support. Mine is only for v4.20.
+
+Thank you!
+
+> 
+> I added Greg as he might know the answer to that.
+> 
+> Thanks,
+> 
+> Andreas
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
