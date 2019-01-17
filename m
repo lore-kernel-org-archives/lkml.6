@@ -2,198 +2,259 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33A2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E3BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6034A206C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8FCE206C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbfAQANP (ORCPT
+        id S1728523AbfAQASW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:13:15 -0500
-Received: from mga17.intel.com ([192.55.52.151]:2994 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728209AbfAQANP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:13:15 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:13:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="115253174"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Jan 2019 16:13:14 -0800
-Date:   Wed, 16 Jan 2019 16:07:31 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v2 3/3] x86/umwait: Control umwait maximum time
-Message-ID: <20190117000731.GA226938@romley-ivt3.sc.intel.com>
-References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
- <1547673522-226408-4-git-send-email-fenghua.yu@intel.com>
- <CALCETrVenEpKH5O=Z6J+faWTcdZpa1xx4-dYwdWu1OSEDyiUWw@mail.gmail.com>
+        Wed, 16 Jan 2019 19:18:22 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42514 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbfAQASV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:18:21 -0500
+Received: by mail-qt1-f194.google.com with SMTP id d19so9416923qtq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 16:18:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PYhecQZTukujEdBZ8fz/JSDICYAUiky1KZTPQoVROA4=;
+        b=kKK/Ys4kNMo2ifWzAXxt47tsqNgG57Ld5CaJm8ykH+U2ejaoG/cU286v8IZeLj+INO
+         UEgeG08RJt4SJTbuPvBEDsMOQdaO4gMd+UsDFyZlsDF+Mya+rCXPwggMpIy+kOZX5eRq
+         KKVuoBzg/gSCHsfzTJExW9QMFKEdyyWGhyeFxVjmf51FGqHUe/eUq2w2m72ZwHjQCmYx
+         yqR3ZEysqRbDDqoLVPbLkWCAmHIc07EHfHahNz5TQYo++dijzOvNP7c9JjkUH5McvjmR
+         N/VZxFquYf2bcKyAiZpguqCFFdVOFi1hfe9jY1GC/Qakg72iOeAcU3xCpHyKGC/zXPjJ
+         hGEw==
+X-Gm-Message-State: AJcUukeujDk/o+z8vbE0kbtj3Sk8YK4K3SuGmo620yVW+O5HacSEe9bi
+        Nrflev90jaaRpiKeVXFeCFRKOg==
+X-Google-Smtp-Source: ALg8bN5SovHvQzbJ1hU6lrHJ8lJVME6uVs1POkWMdgvfvQDmEetORKK8NoVP7LLBpnlbspxd6/ocUw==
+X-Received: by 2002:ac8:2353:: with SMTP id b19mr9284230qtb.187.1547684300203;
+        Wed, 16 Jan 2019 16:18:20 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::fb21? ([2601:602:9800:dae6::fb21])
+        by smtp.gmail.com with ESMTPSA id v57sm61334049qtv.80.2019.01.16.16.18.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 16:18:19 -0800 (PST)
+Subject: Re: [RFC PATCH v7 14/16] EXPERIMENTAL: xpfo, mm: optimize spin lock
+ usage in xpfo_kmap
+To:     Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
+        tycho@tycho.ws, jsteckli@amazon.de, ak@linux.intel.com,
+        torvalds@linux-foundation.org, liran.alon@oracle.com,
+        keescook@google.com, konrad.wilk@oracle.com
+Cc:     deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
+        tyhicks@canonical.com, dwmw@amazon.co.uk,
+        andrew.cooper3@citrix.com, jcm@redhat.com,
+        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
+        joao.m.martins@oracle.com, jmattson@google.com,
+        pradeep.vincent@oracle.com, john.haxby@oracle.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
+        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        "Vasileios P . Kemerlis" <vpk@cs.columbia.edu>,
+        Juerg Haefliger <juerg.haefliger@canonical.com>,
+        Tycho Andersen <tycho@docker.com>,
+        Marco Benatto <marco.antonio.780@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <cover.1547153058.git.khalid.aziz@oracle.com>
+ <7e8e17f519ae87a91fc6cbb57b8b27094c96305c.1547153058.git.khalid.aziz@oracle.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <b2ffc4fd-e449-b6da-7070-4f182d44dd5b@redhat.com>
+Date:   Wed, 16 Jan 2019 16:18:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrVenEpKH5O=Z6J+faWTcdZpa1xx4-dYwdWu1OSEDyiUWw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <7e8e17f519ae87a91fc6cbb57b8b27094c96305c.1547153058.git.khalid.aziz@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 04:00:29PM -0800, Andy Lutomirski wrote:
-> On Wed, Jan 16, 2019 at 1:24 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
-> >
-> > IA32_UMWAIT_CONTROL[31:2] determines the maximum time in TSC-quanta
-> > that processor can stay in C0.1 or C0.2.
-> >
-> > The maximum time value in IA32_UMWAIT_CONTROL[31-2] is set as zero which
-> > means there is no global time limit for UMWAIT and TPAUSE instructions.
-> > Each process sets its own umwait maximum time as the instructions operand.
-> >
-> > User can specify global umwait maximum time through interface:
-> > /sys/devices/system/cpu/umwait_control/umwait_max_time
-> > The value in the interface is in decimal in TSC-quanta. Bits[1:0]
-> > are cleared when the value is stored.
-> >
-> > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> > ---
-> >  arch/x86/include/asm/msr-index.h |  2 ++
-> >  arch/x86/power/umwait.c          | 42 +++++++++++++++++++++++++++++++-
-> >  2 files changed, 43 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> > index b56bfecae0de..42b9104fc15b 100644
-> > --- a/arch/x86/include/asm/msr-index.h
-> > +++ b/arch/x86/include/asm/msr-index.h
-> > @@ -62,6 +62,8 @@
-> >  #define MSR_IA32_UMWAIT_CONTROL                0xe1
-> >  #define UMWAIT_CONTROL_C02_BIT         0x0
-> >  #define UMWAIT_CONTROL_C02_MASK                0x00000001
-> > +#define UMWAIT_CONTROL_MAX_TIME_BIT    0x2
-> > +#define UMWAIT_CONTROL_MAX_TIME_MASK   0xfffffffc
-> >
-> >  #define MSR_PKG_CST_CONFIG_CONTROL     0x000000e2
-> >  #define NHM_C3_AUTO_DEMOTE             (1UL << 25)
-> > diff --git a/arch/x86/power/umwait.c b/arch/x86/power/umwait.c
-> > index 95b3867aac1e..4a1a507d3bb7 100644
-> > --- a/arch/x86/power/umwait.c
-> > +++ b/arch/x86/power/umwait.c
-> > @@ -10,6 +10,7 @@
-> >  #include <asm/msr.h>
-> >
-> >  static int umwait_enable_c0_2 = 1; /* 0: disable C0.2. 1: enable C0.2. */
-> > +static u32 umwait_max_time; /* In TSC-quanta. Only bits [31:2] are used. */
-> >  static DEFINE_MUTEX(umwait_lock);
-> >
-> >  /* Return value that will be used to set umwait control MSR */
-> > @@ -20,7 +21,8 @@ static inline u32 umwait_control_val(void)
-> >          * When bit 0 is 1, C0.2 is disabled. Otherwise, C0.2 is enabled.
-> >          * So value in bit 0 is opposite of umwait_enable_c0_2.
-> >          */
-> > -       return ~umwait_enable_c0_2 & UMWAIT_CONTROL_C02_MASK;
-> > +       return (~umwait_enable_c0_2 & UMWAIT_CONTROL_C02_MASK) |
-> > +              umwait_max_time;
-> >  }
-> >
-> >  static ssize_t umwait_enable_c0_2_show(struct device *dev,
-> > @@ -61,8 +63,46 @@ static ssize_t umwait_enable_c0_2_store(struct device *dev,
-> >
-> >  static DEVICE_ATTR_RW(umwait_enable_c0_2);
-> >
-> > +static ssize_t umwait_max_time_show(struct device *kobj,
-> > +                                   struct device_attribute *attr, char *buf)
-> > +{
-> > +       return sprintf(buf, "%u\n", umwait_max_time);
-> > +}
-> > +
-> > +static ssize_t umwait_max_time_store(struct device *kobj,
-> > +                                    struct device_attribute *attr,
-> > +                                    const char *buf, size_t count)
-> > +{
-> > +       u32 msr_val, max_time;
-> > +       int cpu, ret;
-> > +
-> > +       ret = kstrtou32(buf, 10, &max_time);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       mutex_lock(&umwait_lock);
-> > +
-> > +       /* Only get max time value from bits [31:2] */
-> > +       max_time &= UMWAIT_CONTROL_MAX_TIME_MASK;
-> > +       /* Update the max time value in memory */
-> > +       umwait_max_time = max_time;
-> > +       msr_val = umwait_control_val();
-> > +       get_online_cpus();
-> > +       /* All CPUs have same umwait max time */
-> > +       for_each_online_cpu(cpu)
-> > +               wrmsr_on_cpu(cpu, MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
-> > +       put_online_cpus();
-> > +
-> > +       mutex_unlock(&umwait_lock);
-> > +
-> > +       return count;
-> > +}
-> > +
-> > +static DEVICE_ATTR_RW(umwait_max_time);
-> > +
-> >  static struct attribute *umwait_attrs[] = {
-> >         &dev_attr_umwait_enable_c0_2.attr,
-> > +       &dev_attr_umwait_max_time.attr,
-> >         NULL
-> >  };
+On 1/10/19 1:09 PM, Khalid Aziz wrote:
+> From: Julian Stecklina <jsteckli@amazon.de>
 > 
-> You need something to make sure that newly onlined CPUs get the right
-> value in the MSR.
-
-Onlined CPU takes the umwait_control value in umwait_cpu_online() in
-patch 2. Please check if it's correct.
-
-> You also need to make sure you restore it on resume
-> from suspend.  Something like cpu_init() might be the right place.
+> We can reduce spin lock usage in xpfo_kmap to the 0->1 transition of
+> the mapcount. This means that xpfo_kmap() can now race and that we
+> get spurious page faults.
 > 
-> Also, as previously discussed, I think we should set the default to
-> something quite small, maybe 100 microseconds.  IMO the goal is to
-> pick a value that is a high enough multiple of the C0.2 entry+exit
-> latency that we get most of the power and SMT resource savings while
-> being small enough that no one things that UMWAIT is more than a
-> glorified, slightly improved, and far more misleading version of REP
-> NOP.
+> The page fault handler helps the system make forward progress by
+> fixing the page table instead of allowing repeated page faults until
+> the right xpfo_kmap went through.
 > 
-> Andrew, would having Linux default to a small value do much to
-> mitigate your concerns that UMWAIT is problematic for hypervisors?
+> Model-checked with up to 4 concurrent callers with Spin.
 > 
-> Also, can someone who understands the hardware clarify just how
-> dangerous UMWAIT is from a perspective of making speculation attacks
-> more dangerous than they already are?  I'm wondering what events will
-> wake up a UMONITOR.  I bet that CLFLUSH does.  I wonder if a faulting
-> write to a read-only page also does.  Or a load from a remote node.
-> Or a speculative store that does not subsequently retire.  This
-> instruction seems quite delightful as a tool to create a
-> highish-bandwidth covert channel, and it's possibly quite nice to
-> agument Spectre-like attacks.  If it ends up being bad enough, we
-> might need to set the default timeout to the absolute minimum value
-> and possibly ask Intel to give us a way to turn it off entirely.
 
-If CR4.TSD=1 and CPL>0, umwait and tpause generate #GP. So if user thinks
-the instructions are dangerous, he can disable TSC.
+This needs the spurious check for arm64 as well. This at
+least gets me booting but could probably use more review:
 
-Is this the right handling for security concerns?
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 7d9571f4ae3d..8f425848cbb9 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -32,6 +32,7 @@
+  #include <linux/perf_event.h>
+  #include <linux/preempt.h>
+  #include <linux/hugetlb.h>
++#include <linux/xpfo.h>
+  
+  #include <asm/bug.h>
+  #include <asm/cmpxchg.h>
+@@ -289,6 +290,9 @@ static void __do_kernel_fault(unsigned long addr, unsigned int esr,
+         if (!is_el1_instruction_abort(esr) && fixup_exception(regs))
+                 return;
+  
++       if (xpfo_spurious_fault(addr))
++               return;
++
+         if (is_el1_permission_fault(addr, esr, regs)) {
+                 if (esr & ESR_ELx_WNR)
+                         msg = "write to read-only memory";
 
-Thanks.
 
--Fenghua
+> Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
+> Cc: x86@kernel.org
+> Cc: kernel-hardening@lists.openwall.com
+> Cc: Vasileios P. Kemerlis <vpk@cs.columbia.edu>
+> Cc: Juerg Haefliger <juerg.haefliger@canonical.com>
+> Cc: Tycho Andersen <tycho@docker.com>
+> Cc: Marco Benatto <marco.antonio.780@gmail.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+> ---
+>   arch/x86/mm/fault.c  |  4 ++++
+>   include/linux/xpfo.h |  4 ++++
+>   mm/xpfo.c            | 50 +++++++++++++++++++++++++++++++++++++-------
+>   3 files changed, 51 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index ba51652fbd33..207081dcd572 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -18,6 +18,7 @@
+>   #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
+>   #include <linux/efi.h>			/* efi_recover_from_page_fault()*/
+>   #include <linux/mm_types.h>
+> +#include <linux/xpfo.h>
+>   
+>   #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
+>   #include <asm/traps.h>			/* dotraplinkage, ...		*/
+> @@ -1218,6 +1219,9 @@ do_kern_addr_fault(struct pt_regs *regs, unsigned long hw_error_code,
+>   	if (kprobes_fault(regs))
+>   		return;
+>   
+> +	if (xpfo_spurious_fault(address))
+> +		return;
+> +
+>   	/*
+>   	 * Note, despite being a "bad area", there are quite a few
+>   	 * acceptable reasons to get here, such as erratum fixups
+> diff --git a/include/linux/xpfo.h b/include/linux/xpfo.h
+> index ea5188882f49..58dd243637d2 100644
+> --- a/include/linux/xpfo.h
+> +++ b/include/linux/xpfo.h
+> @@ -54,6 +54,8 @@ bool xpfo_enabled(void);
+>   
+>   phys_addr_t user_virt_to_phys(unsigned long addr);
+>   
+> +bool xpfo_spurious_fault(unsigned long addr);
+> +
+>   #else /* !CONFIG_XPFO */
+>   
+>   static inline void xpfo_init_single_page(struct page *page) { }
+> @@ -81,6 +83,8 @@ static inline bool xpfo_enabled(void) { return false; }
+>   
+>   static inline phys_addr_t user_virt_to_phys(unsigned long addr) { return 0; }
+>   
+> +static inline bool xpfo_spurious_fault(unsigned long addr) { return false; }
+> +
+>   #endif /* CONFIG_XPFO */
+>   
+>   #endif /* _LINUX_XPFO_H */
+> diff --git a/mm/xpfo.c b/mm/xpfo.c
+> index dbf20efb0499..85079377c91d 100644
+> --- a/mm/xpfo.c
+> +++ b/mm/xpfo.c
+> @@ -119,6 +119,16 @@ void xpfo_free_pages(struct page *page, int order)
+>   	}
+>   }
+>   
+> +static void xpfo_do_map(void *kaddr, struct page *page)
+> +{
+> +	spin_lock(&page->xpfo_lock);
+> +	if (PageXpfoUnmapped(page)) {
+> +		set_kpte(kaddr, page, PAGE_KERNEL);
+> +		ClearPageXpfoUnmapped(page);
+> +	}
+> +	spin_unlock(&page->xpfo_lock);
+> +}
+> +
+>   void xpfo_kmap(void *kaddr, struct page *page)
+>   {
+>   	if (!static_branch_unlikely(&xpfo_inited))
+> @@ -127,17 +137,12 @@ void xpfo_kmap(void *kaddr, struct page *page)
+>   	if (!PageXpfoUser(page))
+>   		return;
+>   
+> -	spin_lock(&page->xpfo_lock);
+> -
+>   	/*
+>   	 * The page was previously allocated to user space, so map it back
+>   	 * into the kernel. No TLB flush required.
+>   	 */
+> -	if ((atomic_inc_return(&page->xpfo_mapcount) == 1) &&
+> -	    TestClearPageXpfoUnmapped(page))
+> -		set_kpte(kaddr, page, PAGE_KERNEL);
+> -
+> -	spin_unlock(&page->xpfo_lock);
+> +	if (atomic_inc_return(&page->xpfo_mapcount) == 1)
+> +		xpfo_do_map(kaddr, page);
+>   }
+>   EXPORT_SYMBOL(xpfo_kmap);
+>   
+> @@ -204,3 +209,34 @@ void xpfo_temp_unmap(const void *addr, size_t size, void **mapping,
+>   			kunmap_atomic(mapping[i]);
+>   }
+>   EXPORT_SYMBOL(xpfo_temp_unmap);
+> +
+> +bool xpfo_spurious_fault(unsigned long addr)
+> +{
+> +	struct page *page;
+> +	bool spurious;
+> +	int mapcount;
+> +
+> +	if (!static_branch_unlikely(&xpfo_inited))
+> +		return false;
+> +
+> +	/* XXX Is this sufficient to guard against calling virt_to_page() on a
+> +	 * virtual address that has no corresponding struct page? */
+> +	if (!virt_addr_valid(addr))
+> +		return false;
+> +
+> +	page = virt_to_page(addr);
+> +	mapcount = atomic_read(&page->xpfo_mapcount);
+> +	spurious = PageXpfoUser(page) && mapcount;
+> +
+> +	/* Guarantee forward progress in case xpfo_kmap() raced. */
+> +	if (spurious && PageXpfoUnmapped(page)) {
+> +		xpfo_do_map((void *)(addr & PAGE_MASK), page);
+> +	}
+> +
+> +	if (unlikely(!spurious))
+> +		printk("XPFO non-spurious fault %lx user=%d unmapped=%d mapcount=%d\n",
+> +			addr, PageXpfoUser(page), PageXpfoUnmapped(page),
+> +			mapcount);
+> +
+> +	return spurious;
+> +}
+> 
+
