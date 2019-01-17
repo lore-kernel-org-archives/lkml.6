@@ -2,116 +2,144 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DC1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4A6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C7420859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 184B620859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:01:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCtBB3nZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6eZq2/g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbfAQWAr (ORCPT
+        id S1728034AbfAQWBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 17:00:47 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39844 "EHLO
+        Thu, 17 Jan 2019 17:01:50 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46207 "EHLO
         mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbfAQWAq (ORCPT
+        with ESMTP id S1726348AbfAQWBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 17:00:46 -0500
-Received: by mail-pl1-f194.google.com with SMTP id 101so5348516pld.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 14:00:46 -0800 (PST)
+        Thu, 17 Jan 2019 17:01:49 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t13so5339709ply.13;
+        Thu, 17 Jan 2019 14:01:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SsOaaCSSXWMYBSprY2bua07xhAURJKtBDTpbO+78cJI=;
-        b=WCtBB3nZCUOV0qq/63/UoZnpV2wKOKi7lS0JzOeZ7JlMCUPYzB3QG03zdSuxIzgYC1
-         sY8qd4RLcHyPPMMq328H3lq3QIGNx6rjYNHf08ivyvUTCpK5beVkMk8NO2mWaKh9Fh/x
-         STBS9R10GZyqS2sNxohN0PFaI1E+6e/YnQ9xN8d1qn2RQP8vAKb6ZU624r2GRylSRpZw
-         BGObaSdxQ/aLbgqL80OSquPxhonGKoUC4fZdkfdzSO0537c7T81v80M122PAm0es7kXk
-         gxR4yJQOphfitDDv2Fb6v7bA6ViP8dMJKOXnYjuB4pHLkgBElP5kHvHTAUENtr6+DGrk
-         Dzgw==
+        h=from:to:cc:subject:date:message-id;
+        bh=mGFwHTwiNrNJ37mDbThlTGJdz4ynU/m6ZeNIEInEMT4=;
+        b=G6eZq2/ggRGY70yN8WH/6PiF6nrV5K5f5TonBE4H4pVBguANmKXxeWLGUKAn852jr1
+         yNN2luiV2kdtulYqkAu5cDsDGv7vSC0af5fwkVfrF7DCfARnlyWX6SP4rHpxgLaW5G0k
+         cWhC+BVT4eLSHd1+7RY2cX2vBfGY6TWrgnjYFJGw8h2wkCkP6pW5iL14+DcEnSnBCABF
+         YGC+nrWTm8qn/iS8/RbVoYzWvKYoRw9+mhoDo/+pIJMxeegD/YbcNFkG7Y8oO7gWivdl
+         GvzUYuKLbNXsw23eqgeJsEDqcnr2mzu40SADpfKDp8FU0sa2gnFLrQ2j8/Fupz4RI54x
+         PZXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SsOaaCSSXWMYBSprY2bua07xhAURJKtBDTpbO+78cJI=;
-        b=OuBEXfa/yK9sRIukOb43GfhehU1hrRnV7z02egkil3SiPQ4XTtVEke9rcPBPrj/2Ce
-         ajAQRZ6ypE/vU4EUg1hMUG/+lbJOXsZAgzo3RzRSWGm4z17Izwb+mRhBiEoGuSm7mm5q
-         3wsUYjTm914uLyZsq6EammfqqVTtXBS0n8wh5s05XY2cddu6byAthMgVN0M2C8xpfDFH
-         Fos1yEJfrWu/YwrVT3Ib7OrM2GAKQhlm8kqTImyfBBTy+AM8ESQDUgzQbENm0xcqOooE
-         3Uzl+WfWpOw/xXjyhtdpFK2lOHXryUgaKNQVxnnQiwKVz93JPYiAyvn0MKWtKZ2Ybz0v
-         tSIQ==
-X-Gm-Message-State: AJcUukeEqmo1atlqilb4KQhc/0hyisL479Ppk+uYcr4t0tw8MzsSsSol
-        qn2i4lYX/QsBbN7DDrEYu4iPFtKw
-X-Google-Smtp-Source: ALg8bN6S0+8IGO2GWH9+6BscnG1b+OCoM2WEkrhW5kWVgqU9ylQNMk0C7x2OssJ5lvyy//nnx8rEFg==
-X-Received: by 2002:a17:902:a601:: with SMTP id u1mr16570394plq.77.1547762445606;
-        Thu, 17 Jan 2019 14:00:45 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id 5sm5497623pfz.149.2019.01.17.14.00.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 14:00:45 -0800 (PST)
-Date:   Thu, 17 Jan 2019 14:00:42 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     timur@kernel.org, Xiubo.Lee@gmail.com, fabio.estevam@nxp.com,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] ASoC: imx-spdif: don't print EPROBE_DEFER as error
-Message-ID: <20190117220041.GB16918@Asurada-Nvidia.nvidia.com>
-References: <20190117090640.12972-1-stefan@agner.ch>
- <20190117090640.12972-2-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117090640.12972-2-stefan@agner.ch>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mGFwHTwiNrNJ37mDbThlTGJdz4ynU/m6ZeNIEInEMT4=;
+        b=Tx6/rNRbjAqxkS/DyqpssO4qXU79tFgOF9qoxzTMNkmgrpju/ETZjeHunI4aOyyjYE
+         8Mce4ap6uodYZOCDFq1e7ltsosILoLgKmF2Ph/9mCVKN0GTn8O6xX58OAte7VhNvGoS8
+         fodiFxDNyieZ8ikspGXxyDvEtOMLEIP6hPyf1qLw36pSAeaMM5EW32iSsXPE/O8FAjsv
+         hDJzQeQVtwz+P+XGpCdQelEr0ZorRqtYkJ6lWLmgvuj3rUtMNEVpiTS0XmmU0NeJDCqs
+         PMdXxuP1g2UmQVVzmWNb+9wVIDihwylLR+z9zqO/8UhraadKC/cCVO30YgRqh+TKG5dy
+         Bthw==
+X-Gm-Message-State: AJcUuke/UvNQjLgZvG8JiTIFRmGgiSfkYT+4oS9XR6tsd2/b2MpblS1y
+        2A+44sTuW7HYXbSr5Ue32rQ=
+X-Google-Smtp-Source: ALg8bN46FNp6BtGn0xtX7T+7iZQsSYm+yjBFz5y+t5QHara/2IhfdhKgl0ZARt5vHXo7ZMuIVMz/NA==
+X-Received: by 2002:a17:902:820f:: with SMTP id x15mr16035125pln.224.1547762508833;
+        Thu, 17 Jan 2019 14:01:48 -0800 (PST)
+Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id o4sm8155801pgs.12.2019.01.17.14.01.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 17 Jan 2019 14:01:48 -0800 (PST)
+From:   frowand.list@gmail.com
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH RESEND] of: add dtc annotations functionality to dtx_diff
+Date:   Thu, 17 Jan 2019 14:01:14 -0800
+Message-Id: <1547762474-7832-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 10:06:37AM +0100, Stefan Agner wrote:
+From: Frank Rowand <frank.rowand@sony.com>
 
-> Removing the goto would not be strictly necessary. However, if
-> code gets added later, the cleanup in the EPROBE_DEFER case likely
-> would get missed.
+Add -T and --annotations command line arguments to dtx_diff.  These
+arguments will be passed through to dtc.  dtc will then add source
+location annotations to its output.
 
-Considering there is no code being added between them over the
-years, I am okay to remove it since it makes things clean. But
-as you mentioned, we gotta be careful if code gets added later.
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+---
 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+If dtx_diff is provided with a single devicetree source file then
+that source file will be compiled, with all appropriate includes
+and pre-processing, and the result will be output as source.  This
+provides a convenient mechanism to see what the devicetree looks
+like after all processing and replacements occur.  The
+--annotations argument will cause dtc to report information about
+where the source was located for each line of the output.
 
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+ scripts/dtc/dtx_diff | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-> ---
->  sound/soc/fsl/imx-spdif.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/fsl/imx-spdif.c b/sound/soc/fsl/imx-spdif.c
-> index fb896b2c9ba3..797d66e43d49 100644
-> --- a/sound/soc/fsl/imx-spdif.c
-> +++ b/sound/soc/fsl/imx-spdif.c
-> @@ -67,10 +67,8 @@ static int imx_spdif_audio_probe(struct platform_device *pdev)
->  		goto end;
->  
->  	ret = devm_snd_soc_register_card(&pdev->dev, &data->card);
-> -	if (ret) {
-> +	if (ret && ret != -EPROBE_DEFER)
->  		dev_err(&pdev->dev, "snd_soc_register_card failed: %d\n", ret);
-> -		goto end;
-> -	}
->  
->  end:
->  	of_node_put(spdif_np);
-> -- 
-> 2.20.1
-> 
+diff --git a/scripts/dtc/dtx_diff b/scripts/dtc/dtx_diff
+index 8c4fbad2055e..0d8572008729 100755
+--- a/scripts/dtc/dtx_diff
++++ b/scripts/dtc/dtx_diff
+@@ -21,6 +21,7 @@ Usage:
+         diff DTx_1 and DTx_2
+ 
+ 
++      --annotate    synonym for -T
+        -f           print full dts in diff (--unified=99999)
+        -h           synonym for --help
+        -help        synonym for --help
+@@ -28,6 +29,7 @@ Usage:
+        -s SRCTREE   linux kernel source tree is at path SRCTREE
+                         (default is current directory)
+        -S           linux kernel source tree is at root of current git repo
++       -T           Annotate output .dts with input source file and line (-T -T for more details)
+        -u           unsorted, do not sort DTx
+ 
+ 
+@@ -174,6 +176,7 @@ compile_to_dts() {
+ 
+ # -----  start of script
+ 
++annotate=""
+ cmd_diff=0
+ diff_flags="-u"
+ dtx_file_1=""
+@@ -208,6 +211,14 @@ while [ $# -gt 0 ] ; do
+ 		shift
+ 		;;
+ 
++	-T | --annotate )
++		if [ "${annotate}"  = "" ] ; then
++			annotate="-T"
++		elif [ "${annotate}"  = "-T" ] ; then
++			annotate="-T -T"
++		fi
++		shift
++		;;
+ 	-u )
+ 		dtc_sort=""
+ 		shift
+@@ -327,7 +338,7 @@ cpp_flags="\
+ DTC="\
+ 	${DTC}                                     \
+ 	-i ${srctree}/scripts/dtc/include-prefixes \
+-	-O dts -qq -f ${dtc_sort} -o -"
++	-O dts -qq -f ${dtc_sort} ${annotate} -o -"
+ 
+ 
+ # -----  do the diff or decompile
+-- 
+Frank Rowand <frank.rowand@sony.com>
+
