@@ -2,84 +2,149 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A86C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E05BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E4620856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0781920652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:25:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gh+jqDZI"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DAqq+8s5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbfAQPWZ (ORCPT
+        id S1727850AbfAQPZ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:22:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48408 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727606AbfAQPWX (ORCPT
+        Thu, 17 Jan 2019 10:25:29 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35899 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbfAQPZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:22:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sgSScnt1QgVVEcuj+G3pWGQu+BBf+74x7z1h6AeXWRw=; b=Gh+jqDZInJpqo+rDIQmUlY/PB
-        au9IPKApynMgAy19qVeeL/pETLA61jXdN/bLIBRAhLKR1UrCcJPCk4+bwhtCqKwhduxOZEnQPUnFr
-        TboIWo4cT2vlmoSrEjRswmYOBjiZZSnggQmV89lQb4DPlUzUlBtHKrVBl0ylTA6Jw3sXLQiHRy2Eq
-        PxndiS717CKZjpH6C5Au83D892XmJF6YNcHWKmmzuTqKQRvdyiA8j/0xcytgNh09ai1jZTeRvTcRJ
-        5g2ukhR8y0vR9VAK8qPWgQcfec4ZwRukDLjpT/KH3CxeZmAktTUm+LyhQoJ5AXGAc/aBMaAjx8fqY
-        EufVQdk2A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gk9Uq-0007QA-Mt; Thu, 17 Jan 2019 15:22:20 +0000
-Date:   Thu, 17 Jan 2019 07:22:20 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Kozub <zub@linux.fjfi.cvut.cz>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Scott Bauer <scott.bauer@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: Re: [PATCH 00/16] block: sed-opal: support shadow MBR done flag and
- write
-Message-ID: <20190117152220.GC20359@infradead.org>
-References: <20190116225533.BD1396004E@linux.fjfi.cvut.cz>
- <20190117085727.GA14092@infradead.org>
- <alpine.LRH.2.21.1901171030320.26315@linux.fjfi.cvut.cz>
+        Thu, 17 Jan 2019 10:25:28 -0500
+Received: by mail-qt1-f195.google.com with SMTP id t13so11708535qtn.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 07:25:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sWXxCBB8Nivy/3zb+B95MOFQdh3vwvPbSP/ZdbU73Ic=;
+        b=DAqq+8s5NXvG2YDmdsMcVKPtr/jUt1Lnf7yQ8fwAoZ9DgwA/THTrN5tTB+lTPtbJ6Y
+         15B2fkKcKRqiMCePGlqIJJOsetxvlWLac0RwWG2sB/W3rQ9ZhdzrvggnhaXwYfJOe/NW
+         p5aiCUZmg60RQGNrV4c1ltuGnVPwY7OrBHMzZpXQrhCR/cozUaHZ+L20acuBx044cSl/
+         cNwnKGkuhZ3AIxtDQQLX391CNmty5EeUq4l6aCDEnTo4+x9w5Vu7mIfKb+JBLSEdI3+x
+         ZEFDOQvGldBV+7qIAzRTdfTV/+veSy7JDvx5Gnb18wWqMhfRfDJBjQtuovn7xICCtVe4
+         2j5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sWXxCBB8Nivy/3zb+B95MOFQdh3vwvPbSP/ZdbU73Ic=;
+        b=PfEikxC9AJRd3XPGhFvIY8MuVdAe0Mdx6SRIMuD7Pjok2dDiXdoXwE1KldteAJRvB8
+         ihIu7Jrmvuow4ix/cpBd7nZ/JduZwP4bdvBKwg6AbH3ASgIJ0ytgs4sVc70KGI7gfGfm
+         fX/sJW7ud9x/iFunuBSiEg+XpfwRL3ff07W2hM+CCCwoG+yn07CUS7CGI5G1jDq8jqH3
+         oS2SibVSRQAc6O3K5eyYGf939jCkrw30QldqMjdCMnBKKF3/JeffFVI1t9IpgcGT4ptk
+         tZIZy9EncIw6KraHNhotBCYiP3IjlDCZOxURlonWm4bc96zphmCIDPWiYwSULA0NdESh
+         OE2Q==
+X-Gm-Message-State: AJcUukffm3oSImkBJ2LSDV6kgwRAB2Nu83UOZV2xjErjOCLo+9870mMU
+        zzpDrZiMl8S0c7zZafvAmZmr5xQ3
+X-Google-Smtp-Source: ALg8bN6npU102hKZVmFdO5DYfR7byUitHaskIFxi+2QoHBBqZls+DSq00qhwLLjH0XFdydpmlhZmKA==
+X-Received: by 2002:a0c:aca7:: with SMTP id m36mr11445658qvc.237.1547738726934;
+        Thu, 17 Jan 2019 07:25:26 -0800 (PST)
+Received: from localhost.localdomain (198-0-156-163-static.hfc.comcastbusiness.net. [198.0.156.163])
+        by smtp.gmail.com with ESMTPSA id d21sm16474qtr.34.2019.01.17.07.25.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 07:25:26 -0800 (PST)
+Date:   Thu, 17 Jan 2019 10:25:23 -0500
+From:   Konrad Rzeszutek Wilk <konrad@darnok.org>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        konrad.wilk@oracle.com, hch@lst.de, m.szyprowski@samsung.com,
+        robin.murphy@arm.com, joe.jin@oracle.com
+Subject: Re: [PATCH v2 2/2] swiotlb: checking whether swiotlb buffer is full
+ with io_tlb_used
+Message-ID: <20190117152520.GA24900@localhost.localdomain>
+References: <1544402278-8175-1-git-send-email-dongli.zhang@oracle.com>
+ <1544402278-8175-2-git-send-email-dongli.zhang@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1901171030320.26315@linux.fjfi.cvut.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1544402278-8175-2-git-send-email-dongli.zhang@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 10:40:49AM +0100, David Kozub wrote:
-> On Thu, 17 Jan 2019, Christoph Hellwig wrote:
-> 
-> > the way the series appear looks odd, because it wasn't threaded or
-> > even ordered, and the patches from Jonas seem to have been sent out
-> > by you under his name.  Can you resend them carefully threaded, all
-> > mails from you with the additional from header for resends?
-> 
-> Ouch. I'm sorry about the ordering/threading. I (wrongly) assumed that if I
-> just send the mails in order, that suffices. I'll try to fix that in v2.
-> 
-> W.r.t. "from": Most of the patches were originally created by Jonas. I
-> touched some in order to apply review suggestions or make some small fixes.
-> But some stayed identical to Jonas' version and I didn't want to strip him
-> of authorship. I used git format-patch to produce the mails and the commit
-> author was propagated to the from header.
-> 
-> What is the proper way when I am not the author?
+On Mon, Dec 10, 2018 at 08:37:58AM +0800, Dongli Zhang wrote:
+> This patch uses io_tlb_used to help check whether swiotlb buffer is full.
+> io_tlb_used is no longer used for only debugfs. It is also used to help
+> optimize swiotlb_tbl_map_single().
 
-Send the actual mail as from you, and put another From: line for
-the original author into the mail body as the first non-empty line.
+Please split this up.
+
+That is have the 'if (unlikely(nslots > io_tlb_nslabs - io_tlb_used))'
+as a seperate patch.
+
+And the #ifdef folding in the previous patch.
+
+Also rebase on top of latest Linus please.
+
+> 
+> Suggested-by: Joe Jin <joe.jin@oracle.com>
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+>  kernel/dma/swiotlb.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 3979c2c..9300341 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -76,12 +76,10 @@ static phys_addr_t io_tlb_start, io_tlb_end;
+>   */
+>  static unsigned long io_tlb_nslabs;
+>  
+> -#ifdef CONFIG_DEBUG_FS
+>  /*
+>   * The number of used IO TLB block
+>   */
+>  static unsigned long io_tlb_used;
+> -#endif
+>  
+>  /*
+>   * This is a free list describing the number of free entries available from
+> @@ -489,6 +487,10 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>  	 * request and allocate a buffer from that IO TLB pool.
+>  	 */
+>  	spin_lock_irqsave(&io_tlb_lock, flags);
+> +
+> +	if (unlikely(nslots > io_tlb_nslabs - io_tlb_used))
+> +		goto not_found;
+> +
+>  	index = ALIGN(io_tlb_index, stride);
+>  	if (index >= io_tlb_nslabs)
+>  		index = 0;
+> @@ -538,9 +540,7 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>  		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+>  	return SWIOTLB_MAP_ERROR;
+>  found:
+> -#ifdef CONFIG_DEBUG_FS
+>  	io_tlb_used += nslots;
+> -#endif
+>  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>  
+>  	/*
+> @@ -602,9 +602,7 @@ void swiotlb_tbl_unmap_single(struct device *hwdev, phys_addr_t tlb_addr,
+>  		for (i = index - 1; (OFFSET(i, IO_TLB_SEGSIZE) != IO_TLB_SEGSIZE -1) && io_tlb_list[i]; i--)
+>  			io_tlb_list[i] = ++count;
+>  
+> -#ifdef CONFIG_DEBUG_FS
+>  		io_tlb_used -= nslots;
+> -#endif
+>  	}
+>  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>  }
+> -- 
+> 2.7.4
+> 
