@@ -2,172 +2,119 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575FCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2150EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E29B20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:17:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s/eHqSaL"
+	by mail.kernel.org (Postfix) with ESMTP id E3A5620859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:19:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbfAQURI (ORCPT
+        id S1729516AbfAQUTa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:17:08 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33088 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729401AbfAQURH (ORCPT
+        Thu, 17 Jan 2019 15:19:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54160 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729150AbfAQUT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:17:07 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so1897295wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:17:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NmfhQLcizwgYhnzBNmceH8gReZHIlQyVocW7LLwjve4=;
-        b=s/eHqSaLDNY8QU7QLvhhLiJYf0yO5SyxEssVjvvKGAsuXrhoId2gvrBoLZR8UWvQYE
-         hv+TFaeE1tej7lB89hLEbNB54HXO1Lnb9dhoe46FulzLcxGXm7G8I9mvcHB9B+WdUyp6
-         Cp6eYuVxX78Wv3kOQDuS78QLOuRABRoHgLwozEGIwDho8qKbV1iGKyvut2oMB0pvCNzc
-         h0QZNsVwQawRoivQji8cZ40XlP2v3jtf1oXuKahndqDo71VMFZIIiwSAl9vSeVbdGm5l
-         CtBFIB6AUJR7WCUbpAIKbDZoe22Lg/RJO8vnCPm0cLh72zyhXYkGlA3UijObI6bCC+yX
-         M6kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NmfhQLcizwgYhnzBNmceH8gReZHIlQyVocW7LLwjve4=;
-        b=K5cWJf1m4vEb1upoC4Zifu00onYqjZyeQxaOTnx6soxm9MxdyviTlBDdi3TAUF4yZo
-         /HCsBOd2ugba5NNfIY2koAW/kF2PZFDu0MOu8YkL2/lz3fbf74HBkiSu51i8eiGTsrR3
-         fWvWs4oHoiTBYxu08cYIHUJIVeNbtSCg1s4fL80K4O3V84N92Lx6u/Xr5UV8Y3nG67Gv
-         iRvkorzUn9O3VoPmGPRCNq2v2Ia7Y/E0maCcLVnHnhZZqi35Unt2j3Bm36hENYBBysmc
-         xMzB+fP8s333HB//ZwECHj5tYuYPYOZDJ9WasIU0rSwqRqVeYnhjcQ9rIny+JuqijfWM
-         bQcQ==
-X-Gm-Message-State: AJcUuke7S62nNPxlSPJIgvK0MNWuAKLQCrHGTl3jqIiKbT70WDMbmi7a
-        JE/dqrytGkmsqvThqxmguRAEkOy3Zgw=
-X-Google-Smtp-Source: ALg8bN6Z6Xz9jBwuiUNlgLaKVAGESinXVuQDdKxhNL1mwBU3CZRxmfdmeyTBXQyFKyEPOOAet1i/lQ==
-X-Received: by 2002:a7b:c181:: with SMTP id y1mr13335501wmi.10.1547756225201;
-        Thu, 17 Jan 2019 12:17:05 -0800 (PST)
-Received: from ?IPv6:2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba? ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id k128sm52000405wmd.37.2019.01.17.12.17.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 12:17:04 -0800 (PST)
-Subject: Re: [PATCH 2/2] staging: rtl8188eu: cleanup indenting issue in
- mlme_linux.c
-To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20190117192301.17579-1-straube.linux@gmail.com>
- <20190117192301.17579-2-straube.linux@gmail.com>
- <174b4234659bfbb4f5a072f2928301da9cce67d8.camel@perches.com>
-From:   Michael Straube <straube.linux@gmail.com>
-Message-ID: <6eac568c-307b-9ff1-6a0e-c1bcbdcacfe1@gmail.com>
-Date:   Thu, 17 Jan 2019 21:16:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 17 Jan 2019 15:19:29 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HKItIk012652
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 15:19:28 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q305b94rn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 15:19:28 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Thu, 17 Jan 2019 20:19:26 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 20:19:22 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HKJMmP60424336
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 20:19:22 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DCC2311C050;
+        Thu, 17 Jan 2019 20:19:21 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8A04E11C04A;
+        Thu, 17 Jan 2019 20:19:21 +0000 (GMT)
+Received: from osiris (unknown [9.145.18.25])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 17 Jan 2019 20:19:21 +0000 (GMT)
+Date:   Thu, 17 Jan 2019 21:19:20 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/5] s390: rework compat wrapper generation
+References: <20190116131527.2071570-1-arnd@arndb.de>
+ <20190117133619.GD18351@osiris>
+ <CAK8P3a2KvCwAa5yp+f_cZOX4Osd_tvwfBto=aMEMW9TNbePQ9w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <174b4234659bfbb4f5a072f2928301da9cce67d8.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAK8P3a2KvCwAa5yp+f_cZOX4Osd_tvwfBto=aMEMW9TNbePQ9w@mail.gmail.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19011720-0008-0000-0000-000002B278C5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011720-0009-0000-0000-0000221E9787
+Message-Id: <20190117201920.GB3687@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=958 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 8:44 PM, Joe Perches wrote:
-> On Thu, 2019-01-17 at 20:23 +0100, Michael Straube wrote:
->> Cleanup indenting issue reported by checkpatch.
->> CHECK: Alignment should match open parenthesis
-> []
->> diff --git a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-> []
->> @@ -52,9 +52,8 @@ void rtw_reset_securitypriv(struct adapter *adapter)
->>   		memset((unsigned char *)&adapter->securitypriv, 0, sizeof(struct security_priv));
->>   
->>   		/*  Restore the PMK information to securitypriv structure for the following connection. */
->> -		memcpy(&adapter->securitypriv.PMKIDList[0],
->> -			    &backup_pmkid[0],
->> -			    sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
->> +		memcpy(&adapter->securitypriv.PMKIDList[0], &backup_pmkid[0],
->> +		       sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
+On Thu, Jan 17, 2019 at 05:21:50PM +0100, Arnd Bergmann wrote:
+> On Thu, Jan 17, 2019 at 2:36 PM Heiko Carstens
+> <heiko.carstens@de.ibm.com> wrote:
+> >
+> > On Wed, Jan 16, 2019 at 02:15:18PM +0100, Arnd Bergmann wrote:
 > 
-> Hi.
+> > > I did not test the changes at runtime, but I looked at the
+> > > generated object code, which seems fine here and includes
+> > > the same conversions as before.
+> >
+> > All looks good and seems to work fine. This is a very nice
+> > simplification of our compat code, even if it adds some dead code to
+> > the kernel image.
+> >
+> > I did some tests and it all looks good. Also the generated code looks
+> > fine. So, if nothing breaks, this will go upstream with next merge
+> > window via the s390 tree.
+> >
+> > Thanks again for your work!
 > 
-> Please try not to blindly follow checkpatch messages but
-> please do try to make the code more readable.
+> Awesome, thanks for testing it so quickly and agreeing to merge it!
 > 
-> Just below this block is another block with a temporary
-> that uses &adapter->securitypriv.
+> There is a dependency that I now have for my y2038 syscall series
+> of course, so I'd need to have those patches on top of the s390 series.
 > 
-> How about hoisting the temporary and using that?
+> I think we can either have a shared git branch that gets merged both
+> into your s390 tree and my y2038 tree, or we merge it only through
+> my tree, with your Ack.
 > 
+> Does that work for you?
 
-Hi.
+I'll discuss this with Martin tomorrow, however I think a shared git
+branch would be the best solution. I want to get as much testing as
+possible for this patch set, which means this must also be in the s390
+tree.
 
-I will keep that in mind and try to be more attentive.
-Thanks for the hints.
-
-> Something like:
-> ---
->   drivers/staging/rtl8188eu/os_dep/mlme_linux.c | 32 +++++++++++++--------------
->   1 file changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-> index d5ceb3beabbc..320a0be2af3d 100644
-> --- a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-> +++ b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-> @@ -39,31 +39,31 @@ void rtw_reset_securitypriv(struct adapter *adapter)
->   	u8	backup_index = 0;
->   	u8	backup_counter = 0x00;
->   	u32	backup_time = 0;
-> +	struct security_priv *psec_priv = &adapter->securitypriv;
->   
-> -	if (adapter->securitypriv.dot11AuthAlgrthm == dot11AuthAlgrthm_8021X) {
-> +	if (psec_priv->dot11AuthAlgrthm == dot11AuthAlgrthm_8021X) {
->   		/* 802.1x */
->   		/*  We have to backup the PMK information for WiFi PMK Caching test item. */
->   		/*  Backup the btkip_countermeasure information. */
->   		/*  When the countermeasure is trigger, the driver have to disconnect with AP for 60 seconds. */
-> -		memcpy(&backup_pmkid[0], &adapter->securitypriv.PMKIDList[0], sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
-> -		backup_index = adapter->securitypriv.PMKIDIndex;
-> -		backup_counter = adapter->securitypriv.btkip_countermeasure;
-> -		backup_time = adapter->securitypriv.btkip_countermeasure_time;
-> -		memset((unsigned char *)&adapter->securitypriv, 0, sizeof(struct security_priv));
-> +		memcpy(backup_pmkid, psec_priv->PMKIDList,
-> +		       sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
-> +		backup_index = psec_priv->PMKIDIndex;
-> +		backup_counter = psec_priv->btkip_countermeasure;
-> +		backup_time = psec_priv->btkip_countermeasure_time;
-> +
-> +		memset(psec_priv, 0, sizeof(*psec_priv));
->   
->   		/*  Restore the PMK information to securitypriv structure for the following connection. */
-> -		memcpy(&adapter->securitypriv.PMKIDList[0],
-> -			    &backup_pmkid[0],
-> -			    sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
-> -		adapter->securitypriv.PMKIDIndex = backup_index;
-> -		adapter->securitypriv.btkip_countermeasure = backup_counter;
-> -		adapter->securitypriv.btkip_countermeasure_time = backup_time;
-> -		adapter->securitypriv.ndisauthtype = Ndis802_11AuthModeOpen;
-> -		adapter->securitypriv.ndisencryptstatus = Ndis802_11WEPDisabled;
-> +		memcpy(psec_priv->PMKIDList, backup_pmkid,
-> +		       sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
-> +		psec_priv->PMKIDIndex = backup_index;
-> +		psec_priv->btkip_countermeasure = backup_counter;
-> +		psec_priv->btkip_countermeasure_time = backup_time;
-> +		psec_priv->ndisauthtype = Ndis802_11AuthModeOpen;
-> +		psec_priv->ndisencryptstatus = Ndis802_11WEPDisabled;
->   	} else {
->   		/* reset values in securitypriv */
-> -		struct security_priv *psec_priv = &adapter->securitypriv;
-> -
->   		psec_priv->dot11AuthAlgrthm = dot11AuthAlgrthm_Open;
->   		psec_priv->dot11PrivacyAlgrthm = _NO_PRIVACY_;
->   		psec_priv->dot11PrivacyKeyIndex = 0;
-> 
-> 
