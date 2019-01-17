@@ -2,299 +2,141 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0044BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDA8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2A8320851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A4A820851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:25:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QOWdO3Zn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729361AbfAQFVq convert rfc822-to-8bit (ORCPT
+        id S1729327AbfAQFZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 00:21:46 -0500
-Received: from mga12.intel.com ([192.55.52.136]:47914 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729392AbfAQFVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 00:21:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 21:21:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="107227593"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by orsmga007.jf.intel.com with ESMTP; 16 Jan 2019 21:21:44 -0800
-Received: from fmsmsx153.amr.corp.intel.com (10.18.125.6) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 16 Jan 2019 21:21:44 -0800
-Received: from shsmsx154.ccr.corp.intel.com (10.239.6.54) by
- FMSMSX153.amr.corp.intel.com (10.18.125.6) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 16 Jan 2019 21:21:44 -0800
-Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.150]) by
- SHSMSX154.ccr.corp.intel.com ([169.254.7.46]) with mapi id 14.03.0415.000;
- Thu, 17 Jan 2019 13:21:42 +0800
-From:   "Du, Fan" <fan.du@intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        "dave@sr71.net" <dave@sr71.net>
-CC:     "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "tiwai@suse.de" <tiwai@suse.de>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "baiyaowei@cmss.chinamobile.com" <baiyaowei@cmss.chinamobile.com>,
-        "zwisler@kernel.org" <zwisler@kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Wu, Fengguang" <fengguang.wu@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "Du, Fan" <fan.du@intel.com>
-Subject: RE: [PATCH 4/4] dax: "Hotplug" persistent memory for use like
- normal RAM
-Thread-Topic: [PATCH 4/4] dax: "Hotplug" persistent memory for use like
- normal RAM
-Thread-Index: AQHUrcjsEcPN/CW3p0+o2B6qC3XobqWy7N/g
-Date:   Thu, 17 Jan 2019 05:21:42 +0000
-Message-ID: <5A90DA2E42F8AE43BC4A093BF06788482571FCB1@SHSMSX103.ccr.corp.intel.com>
-References: <20190116181859.D1504459@viggo.jf.intel.com>
- <20190116181905.12E102B4@viggo.jf.intel.com>
-In-Reply-To: <20190116181905.12E102B4@viggo.jf.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2NiOGFkODUtOWFiYy00ODViLTk0YzctNWY1ZGVlY2JjZGE0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRlFtYjlDY2puQ05hTUlCSEtJYVNxRUt6OGNoQWhmemVUS2V1T0dFRlZuRXhIcFZ6VXk1SHRVMnozVVVCRUdPRCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 17 Jan 2019 00:25:07 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11231 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfAQFZH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 00:25:07 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4011a20001>; Wed, 16 Jan 2019 21:24:51 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 16 Jan 2019 21:25:06 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 16 Jan 2019 21:25:06 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 17 Jan
+ 2019 05:25:05 +0000
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
+        <rcampbell@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20190103144405.GC3395@redhat.com>
+ <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
+ <20190111165141.GB3190@redhat.com>
+ <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz> <20190114172124.GA3702@redhat.com>
+ <20190115080759.GC29524@quack2.suse.cz>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <76788484-d5ec-91f2-1f66-141764ba0b1e@nvidia.com>
+Date:   Wed, 16 Jan 2019 21:25:05 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190115080759.GC29524@quack2.suse.cz>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1547702691; bh=044QbZMGoF7vRjhIGuWSKPJmv6TAL82gCvx5wUxoQg8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=QOWdO3ZnE05roJkVCzjAtF8fmAApbXuYJlSSSw1qj8Rdu1Ce3hEsO8Mv2AL56Y9wl
+         s6snFtEEo1+AXeYjCT2UIldUBoedH1sHNp5/Ln7WKkIyPdRVaXB7Whbgc92K74EJDo
+         UN2GchRAp9Nim4qPb8nJjHbHxwuvzXzZBa452wRqKkdqrfSrs1oub+2A7ndZ13bJoX
+         VcAVTR60FIyR8UpITHr7X5LkINjG0MHsGB5orXl5UJ3ZfWh2CQf3HZqE4vprs6dYPz
+         FaXP3M2FdMoVwZq9BQOf0/koDJSlC5ANHSf1Ju2Nof0cGer3e/3+yBb84TuOIxfnLz
+         c3866W2h/9pFA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->-----Original Message-----
->From: Linux-nvdimm [mailto:linux-nvdimm-bounces@lists.01.org] On Behalf
->Of Dave Hansen
->Sent: Thursday, January 17, 2019 2:19 AM
->To: dave@sr71.net
->Cc: thomas.lendacky@amd.com; mhocko@suse.com;
->linux-nvdimm@lists.01.org; tiwai@suse.de; Dave Hansen
-><dave.hansen@linux.intel.com>; Huang, Ying <ying.huang@intel.com>;
->linux-kernel@vger.kernel.org; linux-mm@kvack.org; bp@suse.de;
->baiyaowei@cmss.chinamobile.com; zwisler@kernel.org;
->bhelgaas@google.com; Wu, Fengguang <fengguang.wu@intel.com>;
->akpm@linux-foundation.org
->Subject: [PATCH 4/4] dax: "Hotplug" persistent memory for use like normal
->RAM
->
->
->From: Dave Hansen <dave.hansen@linux.intel.com>
->
->Currently, a persistent memory region is "owned" by a device driver,
->either the "Direct DAX" or "Filesystem DAX" drivers.  These drivers
->allow applications to explicitly use persistent memory, generally
->by being modified to use special, new libraries.
->
->However, this limits persistent memory use to applications which
->*have* been modified.  To make it more broadly usable, this driver
->"hotplugs" memory into the kernel, to be managed ad used just like
->normal RAM would be.
->
->To make this work, management software must remove the device from
->being controlled by the "Device DAX" infrastructure:
->
->	echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
->	echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
->
->and then bind it to this new driver:
->
->	echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
->	echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
+On 1/15/19 12:07 AM, Jan Kara wrote:
+>>>>> [...]
+>>> Also there is one more idea I had how to record number of pins in the page:
+>>>
+>>> #define PAGE_PIN_BIAS	1024
+>>>
+>>> get_page_pin()
+>>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+>>>
+>>> put_page_pin();
+>>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+>>>
+>>> page_pinned(page)
+>>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+>>>
+>>> This is pretty trivial scheme. It still gives us 22-bits for page pins
+>>> which should be plenty (but we should check for that and bail with error if
+>>> it would overflow). Also there will be no false negatives and false
+>>> positives only if there are more than 1024 non-page-table references to the
+>>> page which I expect to be rare (we might want to also subtract
+>>> hpage_nr_pages() for radix tree references to avoid excessive false
+>>> positives for huge pages although at this point I don't think they would
+>>> matter). Thoughts?
 
-Is there any plan to introduce additional mode, e.g. "kmem" in the userspace
-ndctl tool to do the configuration?
+Hi Jan,
 
->After this, there will be a number of new memory sections visible
->in sysfs that can be onlined, or that may get onlined by existing
->udev-initiated memory hotplug rules.
->
->Note: this inherits any existing NUMA information for the newly-
->added memory from the persistent memory device that came from the
->firmware.  On Intel platforms, the firmware has guarantees that
->require each socket's persistent memory to be in a separate
->memory-only NUMA node.  That means that this patch is not expected
->to create NUMA nodes, but will simply hotplug memory into existing
->nodes.
->
->There is currently some metadata at the beginning of pmem regions.
->The section-size memory hotplug restrictions, plus this small
->reserved area can cause the "loss" of a section or two of capacity.
->This should be fixable in follow-on patches.  But, as a first step,
->losing 256MB of memory (worst case) out of hundreds of gigabytes
->is a good tradeoff vs. the required code to fix this up precisely.
->
->Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
->Cc: Dan Williams <dan.j.williams@intel.com>
->Cc: Dave Jiang <dave.jiang@intel.com>
->Cc: Ross Zwisler <zwisler@kernel.org>
->Cc: Vishal Verma <vishal.l.verma@intel.com>
->Cc: Tom Lendacky <thomas.lendacky@amd.com>
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: Michal Hocko <mhocko@suse.com>
->Cc: linux-nvdimm@lists.01.org
->Cc: linux-kernel@vger.kernel.org
->Cc: linux-mm@kvack.org
->Cc: Huang Ying <ying.huang@intel.com>
->Cc: Fengguang Wu <fengguang.wu@intel.com>
->Cc: Borislav Petkov <bp@suse.de>
->Cc: Bjorn Helgaas <bhelgaas@google.com>
->Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
->Cc: Takashi Iwai <tiwai@suse.de>
->---
->
-> b/drivers/dax/Kconfig  |    5 ++
-> b/drivers/dax/Makefile |    1
-> b/drivers/dax/kmem.c   |   93
->+++++++++++++++++++++++++++++++++++++++++++++++++
-> 3 files changed, 99 insertions(+)
->
->diff -puN drivers/dax/Kconfig~dax-kmem-try-4 drivers/dax/Kconfig
->--- a/drivers/dax/Kconfig~dax-kmem-try-4	2019-01-08 09:54:44.051694874
->-0800
->+++ b/drivers/dax/Kconfig	2019-01-08 09:54:44.056694874 -0800
->@@ -32,6 +32,11 @@ config DEV_DAX_PMEM
->
-> 	  Say M if unsure
->
->+config DEV_DAX_KMEM
->+	def_bool y
->+	depends on DEV_DAX_PMEM   # Needs DEV_DAX_PMEM infrastructure
->+	depends on MEMORY_HOTPLUG # for add_memory() and friends
->+
-> config DEV_DAX_PMEM_COMPAT
-> 	tristate "PMEM DAX: support the deprecated /sys/class/dax interface"
-> 	depends on DEV_DAX_PMEM
->diff -puN /dev/null drivers/dax/kmem.c
->--- /dev/null	2018-12-03 08:41:47.355756491 -0800
->+++ b/drivers/dax/kmem.c	2019-01-08 09:54:44.056694874 -0800
->@@ -0,0 +1,93 @@
->+// SPDX-License-Identifier: GPL-2.0
->+/* Copyright(c) 2016-2018 Intel Corporation. All rights reserved. */
->+#include <linux/memremap.h>
->+#include <linux/pagemap.h>
->+#include <linux/memory.h>
->+#include <linux/module.h>
->+#include <linux/device.h>
->+#include <linux/pfn_t.h>
->+#include <linux/slab.h>
->+#include <linux/dax.h>
->+#include <linux/fs.h>
->+#include <linux/mm.h>
->+#include <linux/mman.h>
->+#include "dax-private.h"
->+#include "bus.h"
->+
->+int dev_dax_kmem_probe(struct device *dev)
->+{
->+	struct dev_dax *dev_dax = to_dev_dax(dev);
->+	struct resource *res = &dev_dax->region->res;
->+	resource_size_t kmem_start;
->+	resource_size_t kmem_size;
->+	struct resource *new_res;
->+	int numa_node;
->+	int rc;
->+
->+	/* Hotplug starting at the beginning of the next block: */
->+	kmem_start = ALIGN(res->start, memory_block_size_bytes());
->+
->+	kmem_size = resource_size(res);
->+	/* Adjust the size down to compensate for moving up kmem_start: */
->+        kmem_size -= kmem_start - res->start;
->+	/* Align the size down to cover only complete blocks: */
->+	kmem_size &= ~(memory_block_size_bytes() - 1);
->+
->+	new_res = devm_request_mem_region(dev, kmem_start, kmem_size,
->+					  dev_name(dev));
->+
->+	if (!new_res) {
->+		printk("could not reserve region %016llx -> %016llx\n",
->+				kmem_start, kmem_start+kmem_size);
->+		return -EBUSY;
->+	}
->+
->+	/*
->+	 * Set flags appropriate for System RAM.  Leave ..._BUSY clear
->+	 * so that add_memory() can add a child resource.
->+	 */
->+	new_res->flags = IORESOURCE_SYSTEM_RAM;
->+	new_res->name = dev_name(dev);
->+
->+	numa_node = dev_dax->target_node;
->+	if (numa_node < 0) {
->+		pr_warn_once("bad numa_node: %d, forcing to 0\n", numa_node);
->+		numa_node = 0;
->+	}
->+
->+	rc = add_memory(numa_node, new_res->start, resource_size(new_res));
->+	if (rc)
->+		return rc;
->+
->+	return 0;
->+}
->+EXPORT_SYMBOL_GPL(dev_dax_kmem_probe);
->+
->+static int dev_dax_kmem_remove(struct device *dev)
->+{
->+	/* Assume that hot-remove will fail for now */
->+	return -EBUSY;
->+}
->+
->+static struct dax_device_driver device_dax_kmem_driver = {
->+	.drv = {
->+		.probe = dev_dax_kmem_probe,
->+		.remove = dev_dax_kmem_remove,
->+	},
->+};
->+
->+static int __init dax_kmem_init(void)
->+{
->+	return dax_driver_register(&device_dax_kmem_driver);
->+}
->+
->+static void __exit dax_kmem_exit(void)
->+{
->+	dax_driver_unregister(&device_dax_kmem_driver);
->+}
->+
->+MODULE_AUTHOR("Intel Corporation");
->+MODULE_LICENSE("GPL v2");
->+module_init(dax_kmem_init);
->+module_exit(dax_kmem_exit);
->+MODULE_ALIAS_DAX_DEVICE(0);
->diff -puN drivers/dax/Makefile~dax-kmem-try-4 drivers/dax/Makefile
->--- a/drivers/dax/Makefile~dax-kmem-try-4	2019-01-08 09:54:44.053694874
->-0800
->+++ b/drivers/dax/Makefile	2019-01-08 09:54:44.056694874 -0800
->@@ -1,6 +1,7 @@
-> # SPDX-License-Identifier: GPL-2.0
-> obj-$(CONFIG_DAX) += dax.o
-> obj-$(CONFIG_DEV_DAX) += device_dax.o
->+obj-$(CONFIG_DEV_DAX_KMEM) += kmem.o
->
-> dax-y := super.o
-> dax-y += bus.o
->_
->_______________________________________________
->Linux-nvdimm mailing list
->Linux-nvdimm@lists.01.org
->https://lists.01.org/mailman/listinfo/linux-nvdimm
+Some details, sorry I'm not fully grasping your plan without more explanation:
+
+Do I read it correctly that this uses the lower 10 bits for the original
+page->_refcount, and the upper 22 bits for gup-pinned counts? If so, I'm surprised,
+because gup-pinned is going to be less than or equal to the normal (get_page-based)
+pin count. And 1024 seems like it might be reached in a large system with lots
+of processes and IPC.
+
+Are you just allowing the lower 10 bits to overflow, and that's why the 
+subtraction of mapcount? Wouldn't it be better to allow more than 10 bits, 
+instead?
+
+Another question: do we just allow other kernel code to observe this biased
+_refcount, or do we attempt to filter it out?  In other words, do you expect 
+problems due to some kernel code checking the _refcount and finding a large 
+number there, when it expected, say, 3? I recall some code tries to do 
+that...in fact, ZONE_DEVICE is 1-based, instead of zero-based, with respect 
+to _refcount, right?
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
