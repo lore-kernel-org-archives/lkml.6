@@ -2,162 +2,140 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21901C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D408AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE0AD2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1A912054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:19:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I6mXoR1P";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PvnaG38v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfAQLSC (ORCPT
+        id S1728706AbfAQLTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:18:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46702 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726739AbfAQLSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:18:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C2EEDAEEE;
-        Thu, 17 Jan 2019 11:17:58 +0000 (UTC)
-Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ebiharaml@si-linux.co.jp
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Message-ID: <bb5b27ed-a077-f639-b97b-4da22c9bb3ad@suse.de>
-Date:   Thu, 17 Jan 2019 12:17:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 17 Jan 2019 06:19:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35586 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbfAQLTx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:19:53 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7ED3260807; Thu, 17 Jan 2019 11:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547723992;
+        bh=BCZR8UQDjYKKai5NpFpjklSk3mT5UK7jcQhOw69F3T4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=I6mXoR1Py35p+W8awHHCCTQ5O3N3x+hJ85aAFLdWbaki6d9UOzgn77Z34TT9gQxCM
+         ir8bwOGvZIQ1w2h9laY5cAC0SY8DLYRP84aZ0+EHGAry4gy3R/Ac+oKDyMfBSbVq/4
+         TMkyXSMKnudlnAGBlXDegwY5mCwZozbu8my3VsPg=
+Received: from [192.168.225.247] (unknown [49.33.245.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D0829606E1;
+        Thu, 17 Jan 2019 11:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547723991;
+        bh=BCZR8UQDjYKKai5NpFpjklSk3mT5UK7jcQhOw69F3T4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PvnaG38vg/6+ek02L4IMa++e5aBViaSvZFpYNbGnpQdtDsiWjg6U9JAUHAdWey+8u
+         R/A//gAWyh6XJtQvLJ4glViqXb5ZGZ26lClXYpBHeVX0LHlfi0H4NhfEjJFMIu6wDb
+         /gICebHf3rzt2KhUm1fcF8/14wrsMJWZ9rcI4Cs0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0829606E1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass
+ clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
+ <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com>
+ <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
+ <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com>
+ <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org>
+ <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <6ad2f27c-0afc-af6a-8198-679a88dcc2f9@codeaurora.org>
+Date:   Thu, 17 Jan 2019 16:49:22 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrizio,
 
-Am 16.01.19 um 19:37 schrieb Fabrizio Castro:
-> From: Biju Das <biju.das@bp.renesas.com>
+
+On 1/15/2019 3:55 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-01-13 22:12:39)
+>>
+>>
+>> On 1/8/2019 2:34 AM, Stephen Boyd wrote:
+>>>
+>>> As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
+>>> But removing CLK_IS_CRITICAL and relying on some random bootloader
+>>> behavior also looks wrong. Can you clarify what's going on?
+>>>
+>>
+>> To enable LPASS clocks the requirement is to enable the GCC_LPASS_SWAY
+>> clock.
+>> 1) If the LPASS drivers are enabled/probed before the clock late init
+>> the client would take care to maintain the dependency to enable the
+>> GCC_LPASS_SWAY clock before enabling the LPASS clocks.
+>>
+>> 2) There could be a condition where the LPASS drivers would probe/init
+>> later the clock late_init. When the clock_late_init would try to access
+>> the LPASS clocks, since we cannot maintain the dependency this access
+>> would fail. To avoid this the earlier patch has made the GCC_LPASS_SWAY
+>> clock as CRITICAL.
+>>
+>> 3) Marking the GCC_LPASS_SWAY clock as CRITICAL has a issue, in the case
+>> where the LPASS subsystem would be restarted due to some critical
+>> failure on LPASS. Toggling the restart register of LPASS would clear the
+>> hardware state of this clock and thus the next access of the LPASS
+>> clocks would result in failure of the system.
+>>
+>> 4) To avoid issues happening in (2) and (3) all the LPASS clocks chould
+>> be safely marked as CLK_IGNORE_UNUSED. And lpass drivers would take care
+>> of the dependency to enable the required clocks.
+>>
 > 
-> Add Silicon Linux to the list of devicetree vendor prefixes.
+> Ok, so why can't we enable/disable the lpass sway clk in the
+> prepare/unprepare phase of the lpass clk driver paths? Or why can't we
+> forcibly enable this lpass sway clk after the reset is deasserted? Which
+> clk controller is the reset part of? GCC or LPASS?
+
+It is part of Always On Subsystem.
+
 > 
-> Website: http://www.si-linux.co.jp
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 4b1a2a8..02a7037 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -344,6 +344,7 @@ sgx	SGX Sensortech
->  sharp	Sharp Corporation
->  shimafuji	Shimafuji Electric, Inc.
->  si-en	Si-En Technology Ltd.
-> +si-linux	Silicon Linux Corporation
+> It still sounds like the LPASS clk driver isn't handling dependencies it
+> has on accessing registers, but maybe we can get away with not handling
+> the dependency still if we make the reset "do the right thing" and turn
+> the clk back on so it stays "critical".
+>
 
-With the website being Japanese only, I haven't been able to confirm the
-spelling of the company name. Looks sensible though.
+This is a reset from hardware and it does not bring back the clock to 
+the previous state and so we can not mark it "critical". I would submit 
+the next series with comments updated. Please let me know in case you 
+have any comments.
 
-Due to "en" coming before "five" I've double-checked that elsewhere we
-do order dashes before letters, so placement in file and tab-indentation
-is fine, too.
-
->  sifive	SiFive, Inc.
->  sigma	Sigma Designs, Inc.
->  sii	Seiko Instruments, Inc.
-
-Personally I would drop the full stop at the end of the subject, but anyway:
-
-Reviewed-by: Andreas Färber <afaerber@suse.de>
-
-Thanks,
-Andreas
-
-P.S. Please double-check how this excessive CC list came to life!
 
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
