@@ -2,151 +2,121 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86372C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C70C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6025B20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:41:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC65220855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:43:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfAQXlQ (ORCPT
+        id S1727090AbfAQXnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 18:41:16 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58420 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfAQXlQ (ORCPT
+        Thu, 17 Jan 2019 18:43:09 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45241 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfAQXnI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 18:41:16 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id E71E980798; Fri, 18 Jan 2019 00:41:05 +0100 (CET)
-Date:   Fri, 18 Jan 2019 00:41:11 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 14/17] mm: Make hibernate handle unmapped pages
-Message-ID: <20190117234111.GA27661@amd>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-15-rick.p.edgecombe@intel.com>
- <20190117093950.GA17930@amd>
- <b224d88d91a5c45c44e176ea06dea558a8939ccf.camel@intel.com>
+        Thu, 17 Jan 2019 18:43:08 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0HNgu0C946463
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 17 Jan 2019 15:42:56 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0HNguGG946460;
+        Thu, 17 Jan 2019 15:42:56 -0800
+Date:   Thu, 17 Jan 2019 15:42:56 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jan Beulich <tipbot@zytor.com>
+Message-ID: <tip-fc24d75a7f91837d7918e40719575951820b2b8f@git.kernel.org>
+Cc:     luto@kernel.org, linux-kernel@vger.kernel.org, jbeulich@suse.com,
+        mingo@kernel.org, boris.ostrovsky@oracle.com, hpa@zytor.com,
+        JBeulich@suse.com, tglx@linutronix.de, jgross@suse.com
+Reply-To: jbeulich@suse.com, linux-kernel@vger.kernel.org, luto@kernel.org,
+          mingo@kernel.org, hpa@zytor.com, boris.ostrovsky@oracle.com,
+          jgross@suse.com, tglx@linutronix.de, JBeulich@suse.com
+In-Reply-To: <5C3E1128020000780020DFAD@prv1-mh.provo.novell.com>
+References: <5C3E1128020000780020DFAD@prv1-mh.provo.novell.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/entry/64/compat: Fix stack switching for XEN
+ PV
+Git-Commit-ID: fc24d75a7f91837d7918e40719575951820b2b8f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <b224d88d91a5c45c44e176ea06dea558a8939ccf.camel@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  fc24d75a7f91837d7918e40719575951820b2b8f
+Gitweb:     https://git.kernel.org/tip/fc24d75a7f91837d7918e40719575951820b2b8f
+Author:     Jan Beulich <JBeulich@suse.com>
+AuthorDate: Tue, 15 Jan 2019 09:58:16 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 18 Jan 2019 00:39:33 +0100
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+x86/entry/64/compat: Fix stack switching for XEN PV
 
-Hi!
+While in the native case entry into the kernel happens on the trampoline
+stack, PV Xen kernels get entered with the current thread stack right
+away. Hence source and destination stacks are identical in that case,
+and special care is needed.
 
-> > > For architectures with CONFIG_ARCH_HAS_SET_ALIAS, pages can be unmapp=
-ed
-> > > briefly on the directmap, even when CONFIG_DEBUG_PAGEALLOC is not
-> > > configured.
-> > > So this changes kernel_map_pages and kernel_page_present to be define=
-d when
-> > > CONFIG_ARCH_HAS_SET_ALIAS is defined as well. It also changes places
-> > > (page_alloc.c) where those functions are assumed to only be implement=
-ed when
-> > > CONFIG_DEBUG_PAGEALLOC is defined.
-> >=20
-> > Which architectures are that?
-> >=20
-> > Should this be merged to the patch where HAS_SET_ALIAS is introduced? We
-> > don't want broken hibernation in between....
-> Thanks for taking a look. It was added for x86 for patch 13 in this patch=
-set and
-> there was interest expressed for adding for arm64. If you didn't get the =
-whole
-> set and want to see let me know and I can send it.
+Other than in sync_regs() the copying done on the INT80 path isn't
+NMI / #MC safe, as either of these events occurring in the middle of the
+stack copying would clobber data on the (source) stack.
 
-I googled in in the meantime.
+There is similar code in interrupt_entry() and nmi(), but there is no fixup
+required because those code paths are unreachable in XEN PV guests.
 
-Anyway, if something is broken between patch 13 and 14, then they
-should be same patch.
+[ tglx: Sanitized subject, changelog, Fixes tag and stable mail address. Sigh ]
 
-> > > -#ifdef CONFIG_DEBUG_PAGEALLOC
-> > >  extern bool _debug_pagealloc_enabled;
-> > > -extern void __kernel_map_pages(struct page *page, int numpages, int
-> > > enable);
-> > > =20
-> > >  static inline bool debug_pagealloc_enabled(void)
-> > >  {
-> > > -	return _debug_pagealloc_enabled;
-> > > +	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabl=
-ed;
-> > >  }
-> >=20
-> > This will break build AFAICT. _debug_pagealloc_enabled variable does
-> > not exist in !CONFIG_DEBUG_PAGEALLOC case.
-> >=20
-> > 									Pavel
-> After adding in the CONFIG_ARCH_HAS_SET_ALIAS condition to the ifdefs in =
-this
-> area it looked a little hard to read to me, so I moved debug_pagealloc_en=
-abled
-> and extern bool _debug_pagealloc_enabled outside to make it easier. I thi=
-nk you
-> are right, the actual non-extern variable can not be there, but the refer=
-ence
-> here gets optimized out in that case.
->=20
-> Just double checked and it builds for both CONFIG_DEBUG_PAGEALLOC=3Dn and
-> CONFIG_DEBUG_PAGEALLOC=3Dy for me.
+Fixes: 7f2590a110b8 ("x86/entry/64: Use a per-CPU trampoline stack for IDT entries")
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Acked-by: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Anvin <hpa@zytor.com>
+Cc: xen-devel@lists.xenproject.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/5C3E1128020000780020DFAD@prv1-mh.provo.novell.com
 
-Ok.
+---
+ arch/x86/entry/entry_64_compat.S | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxBEpcACgkQMOfwapXb+vJtzQCgvAwnrEXHgIY02PxK4qHmnWt+
-IrEAoJ0xu9GgDa1q1fjYTxxvffORlpYi
-=atbx
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 8eaf8952c408..39913770a44d 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -361,7 +361,8 @@ ENTRY(entry_INT80_compat)
+ 
+ 	/* Need to switch before accessing the thread stack. */
+ 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
+-	movq	%rsp, %rdi
++	/* In the Xen PV case we already run on the thread stack. */
++	ALTERNATIVE "movq %rsp, %rdi", "jmp .Lint80_keep_stack", X86_FEATURE_XENPV
+ 	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+ 
+ 	pushq	6*8(%rdi)		/* regs->ss */
+@@ -370,8 +371,9 @@ ENTRY(entry_INT80_compat)
+ 	pushq	3*8(%rdi)		/* regs->cs */
+ 	pushq	2*8(%rdi)		/* regs->ip */
+ 	pushq	1*8(%rdi)		/* regs->orig_ax */
+-
+ 	pushq	(%rdi)			/* pt_regs->di */
++.Lint80_keep_stack:
++
+ 	pushq	%rsi			/* pt_regs->si */
+ 	xorl	%esi, %esi		/* nospec   si */
+ 	pushq	%rdx			/* pt_regs->dx */
