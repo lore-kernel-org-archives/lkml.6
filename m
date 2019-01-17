@@ -2,219 +2,141 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 894F6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 898C4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA7620657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:46:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5CD720657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:46:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="jXmfboBo"
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="XiCbOXai"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbfAQGqS (ORCPT
+        id S1728424AbfAQGqb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:46:18 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44387 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbfAQGqR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:46:17 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k19-v6so7556847lji.11
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 22:46:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=NxoRT2Ol19EK1HMAFEdy4XkQkzKkEOo4TrYDIsKJ16k=;
-        b=jXmfboBoK6xjenebEmj9iey52h2s500qABifhDxqK+OF5EdXVZhY9aFAyM1QFlyn9v
-         dIAegw5wQSsYjAxcyFE9Ya9T5TKDsZrKQFktee4YdtlzXFpNJfNrQGgR5R75SotSiypR
-         MslAT5USWx7rU/IeQydxm0RB6CtFD5BG/6HHoyFsfOi6s8XOgQ4nscr2LY2N6EXWnsjV
-         Xmzsuh2K+Ut0svyDMJQn1pwjyzSht1y98vnddhMPtpc4kjbeD0eBX2tl8oLYYoWbIPOg
-         meKsqWslX7hNuoer4kHcTGwoqEeN//ZrI+bZ0V5NP2yrsFYKh7s0GWbFScPfPIBVxXNP
-         VEpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NxoRT2Ol19EK1HMAFEdy4XkQkzKkEOo4TrYDIsKJ16k=;
-        b=gE/drBG1bN6G0ZWMk64JJxd6q+4ZlBdvxEOV24FozGR2mrp8Wx+w5rBiT19kvQjS6r
-         RZ92G2pPi0uSz+QhLI44ZW2wsV6QhZim6lumxzGmISllyWRXEu9fLORZYtpXb2d0IJAQ
-         zzcst3em41fVbMClhgY2dZ6+gMXYmDpCzdgW9cvWByAVlGzgxxag0ESOlPr8YV+pq1D2
-         6r8uuCFbw1bgOBlUuDaVXZC79owll2dfm0yz6dAFyE3IxZDuxrBsqIAlMebgQdOqA4Aq
-         4qTNHiF3MLYF9vHHpaYJvs5TWiaCUYSwZKZhwsQU6KTbxU2735+jIPa0FuS4pLkHAmil
-         MP+w==
-X-Gm-Message-State: AJcUukezN2nyKAELT+3Ejo3bNXX3+Z6Kfz1X6KUNqSgD3tQPj5bXbk5Q
-        3jTsdtvXCClRCLvRdJPdeUE9GdyIrESjd7RtHz1PXg==
-X-Google-Smtp-Source: ALg8bN5o/x7JmSy8U/cUP7f6/KOxQ7/EQdSX/cXm89FRRs4FIyIj2odzpOYkmINP2uoSI96BZznz0qBlgZda+BRgg5w=
-X-Received: by 2002:a2e:1603:: with SMTP id w3-v6mr8892390ljd.33.1547707574678;
- Wed, 16 Jan 2019 22:46:14 -0800 (PST)
+        Thu, 17 Jan 2019 01:46:31 -0500
+Received: from cock.li ([185.100.85.212]:38492 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725982AbfAQGqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:46:30 -0500
 MIME-Version: 1.0
-References: <1547194964-16718-1-git-send-email-yash.shah@sifive.com>
- <1547194964-16718-3-git-send-email-yash.shah@sifive.com> <20190115220046.etgbno6ymsux75dk@pengutronix.de>
- <CAJ2_jOEuU_=bpbVmdsq7FFEKEm_wHza-h7Hu8QmZ3BgsGgi-ng@mail.gmail.com> <20190116164640.mi3zjbhbhc6k5v7p@pengutronix.de>
-In-Reply-To: <20190116164640.mi3zjbhbhc6k5v7p@pengutronix.de>
-From:   Yash Shah <yash.shah@sifive.com>
-Date:   Thu, 17 Jan 2019 12:15:38 +0530
-Message-ID: <CAJ2_jOEuE1Y8G3xnYqa+aA9GSRGmN8xN7fh4nBs0_Yb68Br9bg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pwm: sifive: Add a driver for SiFive SoC PWM
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     mark.rutland@arm.com, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1547707586; bh=qEe90IUm6+Bd6IXL/YWzX3ayRknawBL0c2/ak0eJIcc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=XiCbOXaid9OEv59xkVyETm1cs/eCuxWUTM4MtZWDwDEFl8c+wyeX+/7C0e06K1UIO
+         lXTWzwbWAsqZcFcsaSP6J8cZYi/oUDmngUaypqwogv0ygH19LGo18T7LrfKgGGL/pA
+         zInUDoMhUZE+zlPEB4qL8r1h3uUZ7p7x+ddjk4z/45/wwximhjsml71iudwAqUAPq2
+         FKl6pCKe1Fi3O4RFM2IKTJ/lVKf2LDcE5FRGuRBxH/cFwb/Z/VLEoFs23GsmZJC+Qa
+         CWZYdgtFGXGakvVMjvZOg/bH52E8xc2fS+UUFfFy6j1WjGaC7HnQ1K5SzWunp24/TQ
+         nWE6laDD++aEQ==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 17 Jan 2019 06:46:25 +0000
+From:   sicevar@redchan.it
+To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
+Cc:     rms@gnu.org, freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
+        misc@openbsd.org, bruce@perens.com, moglen@columbia.edu
+Subject: GPL revocation (GPC-Slots2): Alex "Skud" Bayley,  Leigh Honeywell
+Message-ID: <a78f663b3d7073903fcfcc16af59e8a5@redchan.it>
+X-Sender: sicevar@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:16 PM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> Hello,
->
-> On Wed, Jan 16, 2019 at 04:40:42PM +0530, Yash Shah wrote:
-> > On Wed, Jan 16, 2019 at 3:30 AM Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> wrote:
-> > > On Fri, Jan 11, 2019 at 01:52:44PM +0530, Yash Shah wrote:
-> > > > Adds a PWM driver for PWM chip present in SiFive's HiFive Unleashed=
- SoC.
-> > > >
-> > > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> > > > [Atish: Various fixes and code cleanup]
-> > > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> > > > ---
-> > > >  drivers/pwm/Kconfig      |  10 ++
-> > > >  drivers/pwm/Makefile     |   1 +
-> > > >  drivers/pwm/pwm-sifive.c | 246 +++++++++++++++++++++++++++++++++++=
-++++++++++++
-> > > >  3 files changed, 257 insertions(+)
-> > > >  create mode 100644 drivers/pwm/pwm-sifive.c
-> > > >
-> > > > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> > > > index a8f47df..3bcaf6a 100644
-> > > > --- a/drivers/pwm/Kconfig
-> > > > +++ b/drivers/pwm/Kconfig
-> > > > @@ -380,6 +380,16 @@ config PWM_SAMSUNG
-> > > >         To compile this driver as a module, choose M here: the modu=
-le
-> > > >         will be called pwm-samsung.
-> > > >
-> > > > +config PWM_SIFIVE
-> > > > +     tristate "SiFive PWM support"
-> > > > +     depends on OF
-> > > > +     depends on COMMON_CLK
-> > >
-> > > I'd say add:
-> > >
-> > >         depends on MACH_SIFIVE || COMPILE_TEST
-> > >
-> > > (I guess "MACH_SIFIVE" is wrong, but I assume you get what I mean.)
-> >
-> > As of now, MACH_SIFIVE/ARCH_SIFIVE isn't available.
-> > @Paul, Do you have any comments on this?
->
-> If this is not going to be available at least protect it by
->
->         depends RISCV || COMPILE_TEST
->
-> > > I wonder if such an instance should be only a single PWM instead of
-> > > four. Then you were more flexible with the period lengths (using
-> > > pwmcfg.pwmzerocmp) and could do stuff like inverted and uninverted mo=
-de.
-> > >
-> > > I didn't understand how the deglitch logic works yet. Currently it is
-> > > not used which might result in four edges in a single period (which i=
-s
-> > > bad).
-> >
-> > I can enable deglitch logic by just setting a bit (BIT_PWM_DEGLITCH) in
-> > REG_PWMCFG. Will do that.
->
-> This only works for the first pwm output though.
->
-> > > > +struct sifive_pwm_device {
-> > > > +     struct pwm_chip chip;
-> > > > +     struct notifier_block notifier;
-> > > > +     struct clk *clk;
-> > > > +     void __iomem *regs;
-> > > > +     unsigned int approx_period;
->
-> When thinking about this a bit more, I think the better approach would
-> be to let the consumer change the period iff there is only one consumer.
-> Then you can drop that approx-period stuff and the result is more
-> flexible. (Having said that I still prefer making the driver provide
-> only a single PWM with the ability to have periods other than powers of
-> two.)
->
+Quote:
 
-I am not confident about the implementation of the way you are suggesting.
-As of now, I am going to stick with the current implementation.
+"
+> Then you should have used them.
+Not necessary, the language used in the press release identifies them 
+easily.
 
-> > > > +     writel(frac, pwm->regs + REG_PWMCMP0 + dev->hwpwm * SIZE_PWMC=
-MP);
-> > >
-> > > If you get a constant inactive output with frac=3D0 and a constant ac=
-tive
-> > > output with frac=3D0xffff the calculation above seems wrong to me.
-> > > (A value i written to the pwmcmpX register means a duty cycle of
-> > > (i * period / 0xffff). Your calculation assumes a divisor of 0x10000
-> > > however.)
-> >
-> > Not sure if I get you completely. But, if divisor of 0xffff is your con=
-cern then
-> > does the below look ok?
-> >
-> > frac =3D div_u64(((u64)duty_cycle << 16) - duty_cycle, state->period);
->
-> This works (I think, didn't redo the maths), but I would prefer
->
->         frac =3D div_u64((u64)duty_cycle * 0xffff, state->period);
->
-> for better readability. (Maybe the compiler is even clever enough to see
-> this can be calculated as you suggested.)
+> should
+As if I somehow can't just rescind using their names either.
 
-Sure, will multiply it with 0xffff for better readability.
+License to use/modify/etc the GPC Slots 2 code is hereby terminated for. 
+Alex "Skud" Bayley, and Leigh Honeywell.
+(Note: this termination is not to be construed as a lifting of the 
+previously issued termination regarding the "Geek Feminism collective", 
+this termination is an addendum)
 
->
-> > > > +static int sifive_pwm_clock_notifier(struct notifier_block *nb,
-> > > > +                                  unsigned long event, void *data)
-> > > > +{
-> > > > +     struct clk_notifier_data *ndata =3D data;
-> > > > +     struct sifive_pwm_device *pwm =3D
-> > > > +             container_of(nb, struct sifive_pwm_device, notifier);
-> > > > +
-> > > > +     if (event =3D=3D POST_RATE_CHANGE)
-> > > > +             sifive_pwm_update_clock(pwm, ndata->new_rate);
-> > >
-> > > Does this need locking? (Maybe not with the current state.)
-> >
-> > No. We can add it when required.
->
-> My thought was, that the clk freq might change while .apply is active.
-> But given that you only configure the relative duty cycle this is
-> independent of the actual clk freq.
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+--MikeeUSA-- (electronic signature :D )
+
+>> 1019403
+Their response is irrelevant.
+"
+
+Discussions with author of program involved:
+http://8ch.net/tech/res/1013409.html
+http://8ch.net/tech/res/1017824.html
+http://8ch.net/tech/res/1018729.html
+------------------------
+
+https://slashdot.org/submission/9087542/author-recinds-gpl
+
+------------------------
+p46 "As long as the project continues to honor the terms of the licenses 
+under which it recieved contributions, the licenses continue in effect. 
+There is one important caveat: Even a perpetual license can be revoked. 
+See the discussion of bare licenses and contracts in Chapter 4"
+--Lawrence Rosen
+
+p56 "A third problem with bare licenses is that they may be revocable by 
+the licensor. Specifically, /a license not coupled with an interest may 
+be revoked./ The term /interest/ in this context usually means the 
+payment of some royalty or license fee, but there are other more 
+complicated ways to satisfy the interest requirement. For example, a 
+licensee can demonstrate that he or she has paid some consideration-a 
+contract law term not found in copyright or patent law-in order to avoid 
+revocation. Or a licensee may claim that he or she relied on the 
+software licensed under an open source license and now is dependent upon 
+that software, but this contract law concept, called promissory 
+estoppel, is both difficult to prove and unreliable in court tests. (The 
+concepts of /consideration/ and /promissory estoppel/ are explained more 
+fully in the next section.) Unless the courts allow us to apply these 
+contract law principles to a license, we are faced with a bare license 
+that is revocable.
+--Lawrence Rosen
+
+p278 "Notice that in a copyright dispute over a bare license, the 
+plaintiff will almost certainly be the copyright owner. If a licensee 
+were foolish enough to sue to enforce the terms and conditions of the 
+license, the licensor can simply revoke the bare license, thus ending 
+the dispute. Remeber that a bare license in the absence of an interest 
+is revocable."
+--Lawrence Rosen
+
+Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
+Intellectual property Law
+
+
+
+p65 "Of all the licenses descibed in this book, only the GPL makes the 
+explicity point that it wants nothing of /acceptance/ of 
+/consideration/:
+...
+The GPL authors intend that it not be treated as a contract. I will say 
+much more about this license and these two provisions in Chapter 6. For 
+now, I simply point out that the GPL licensors are in essentially the 
+same situation as other open source licensors who cannot prove offer, 
+acceptance, or consideration. There is no contract."
+--Lawrence Rosen
+
+------------------------
+> David McGowan, Professor of Law, University of Minnesota Law School:
+
+> "Termination of rights
+
+> [...] The most plausible assumption is that a developer who releases 
+> code under the GPL may terminate GPL rights, probably at will.
+
+> [...] My point is not that termination is a great risk, it is that it 
+> is not recognized as a risk even though it is probably relevant to 
+> commercial end-users, accustomed to having contractual rights they can 
+> enforce themselves.
+
