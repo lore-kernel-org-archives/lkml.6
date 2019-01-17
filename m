@@ -3,119 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4C6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA74C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9941F20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B554820855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:22:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="QC4t6mv5"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BjW3v6Gd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728664AbfAQVUg (ORCPT
+        id S1728872AbfAQVWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 16:20:36 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44581 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbfAQVUg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 16:20:36 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f18so12461774otl.11;
-        Thu, 17 Jan 2019 13:20:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ogy6xz8UHuvcLvCW7Q7NOZfiiBOXpv3rBQwAFzf/+KA=;
-        b=QC4t6mv5clBrgJeb5yOqPcQvERHHSxayfB+G0Vc4TstrM4tU4AfZIlz1XeOQS8Gzq5
-         fhLg2NJxUFfgr9hewjStmoJFfA/lCOCA/hWmSB+bckHP0QsZFRAVf9ZGWnYdLi1ZhS//
-         ywyWtHG3xex3kEXDbmqr0PG6mXMOYtaqTMKkrgksvMSQrB90l8bvlRui/ujMeqQ1GSt3
-         C5pKKOoo+Hd8z3kctEdT3cUIyVD/wk//txsRnnD2p8eNl7wWNE6oK5PdL/2hQaqL9SMZ
-         tR8C1W6EO1JyBJYQ7u7tOLMotLy5ljXgZOSaQXn7k5jn2hS931+SsdosZUOtmkXmxnqA
-         cu2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ogy6xz8UHuvcLvCW7Q7NOZfiiBOXpv3rBQwAFzf/+KA=;
-        b=ghwrn7nnuebX6TWaf2Uo7xbyD88xCnzjg/535wlGf/Nj3i/G/kx8PdOc4olnBwboS9
-         W17epi0eljVd7/y1+dWItOQQSAGgs+x014JBG8YC5qFCNicSQA2N2jGg2JXGNmT/T64W
-         JqQYgmhH3fJULkoPHgFiNKJMm9yOhDIePVgxk9uIdGYcXvADVBRqOsoc11aCnH2raj05
-         jOtfLNjUH4ol/2XvIEoJRkR6PqjDF2lR3tt1bgyzwU9b5CWjn7TX2GO7D3wQJxxYXVgN
-         fgLRZh7GV2v8kdR9NJXDadc2GLxFyIygD4t3aoVbxu+eAV8Q44tZZS2ovieEVgobZY1D
-         JONQ==
-X-Gm-Message-State: AJcUukemGLsa3pSdeBpfEGrnibHedFlgCUGJT0q2fk4QjhzP9x4lxkhI
-        KDIT15ahqB8blm6+IHjUsDAmzcLBePuQAcAxGt4=
-X-Google-Smtp-Source: ALg8bN6zst1xaYMIOyQa7NlrqiKzfcgl9QtzmKCH5E70P+hJyxC4aj13MrXwTJggDhix1GJAP580g9IvFG5B1TNqkb8=
-X-Received: by 2002:a9d:491e:: with SMTP id e30mr10306229otf.131.1547760034647;
- Thu, 17 Jan 2019 13:20:34 -0800 (PST)
+        Thu, 17 Jan 2019 16:22:41 -0500
+Received: from ozlabs.org ([203.11.71.1]:40691 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726905AbfAQVWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 16:22:41 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43gcVQ1hs4z9sDr;
+        Fri, 18 Jan 2019 08:22:37 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547760159;
+        bh=M6xoHTnXmMc42IK6fxxEPRo3Q+evfDZtyOSeUX2tqZo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BjW3v6GdaCWTi1xGAgDy7BncesKkoS9Szqvhh7rzaVi76Jsxfq9jwkx8T/2eReFxo
+         5JvNXXxZ69YfHw4vabyf6FDiqnxw3QJIoG9iqBtJQJLoDH2PbTlprQjyZB6eT0mh8L
+         MDdYqayArjO7dclWP5Zed059MBvlCjaugC9BhFfJFJycyrtKGjV7F6VdOl3WJxXC8X
+         RhBKFc1txbVt2ouOue1d5svZa6dxPHd4QFye9D/NayNhRbzLpo20mPiL97tbLRAvHY
+         gHkgMll7My7lERcTLJqeWmv2BMxfIRMgNMAWAtINPfXfi2Y9jswpqxeCjrY6rrIvEO
+         3WYUk4q6h++UA==
+Date:   Fri, 18 Jan 2019 08:22:37 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: linux-next: manual merge of the arc-current tree with Linus' tree
+Message-ID: <20190118082237.4cb892c6@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190116165236.8330-1-jbrunet@baylibre.com> <CAFBinCBFge2tir-MXw+ojTxzW+7n9Uf4FzCahrw0MDzAYV2SSg@mail.gmail.com>
- <f7289814e316ad5879848fb8c379db396f615828.camel@baylibre.com>
- <CAFBinCDhryOWHmRKp7GhWp2O+NpJziEgHoUE4HKVitTPDMrrBQ@mail.gmail.com> <ba1f56258e7873041a0f75996e376170563c9e6e.camel@baylibre.com>
-In-Reply-To: <ba1f56258e7873041a0f75996e376170563c9e6e.camel@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 17 Jan 2019 22:20:23 +0100
-Message-ID: <CAFBinCAdJu2C-LWspiHR4vVr=PUD2HGNi4zz+CSJP96ZE4GoJw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: meson: fix g12a buses
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jianxin.pan@amlogic.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+cLRlcqQ.iby8NRqd33W9Aw"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 9:39 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> On Thu, 2019-01-17 at 21:27 +0100, Martin Blumenstingl wrote:
-> > OK, but we had incorrect documentation in the past. did you check this
-> > with someone from Amlogic?
-> >
-> > I'm curious because there seem to be two different approaches here:
-> > 1) hiubus name and offsets are being fixed within this patch
-> > 2) aobus is being dropped here and re-introduced with a different name later
-> > on
-> >
->
-> because hiu exist and aobus does not, for which both the name and size was
-> wrong
->
-> > approach 1) can also be used for the "rti" region (at least in my
-> > opinion, the patch doesn't explain why it can't be done):
->
-> THe patch remove aobus (instead of fixing name and size) because, of the
-> multiple region documented covered by this 'made region', I did not anticipate
-> which one will be required and I did not want to add them all.
->
-> Better to add them as needed, which is want I done for pinctrl as you pointed
-> out
->
-> > rename "aobus" to "rti" and change the size to either 0x1000 or 0xb000
-> > (both values can be found in mesong12a.dtsi from
-> > buildroot_openlinux_kernel_4.9_fbdev_20180706)
->
-> RTI is added here:
-> https://lkml.kernel.org/r/20190117103151.3349-1-jbrunet@baylibre.com
->
-> I don't really understand the problem ? result is the same
-the actual problem is "me" as I have conflicting information:
-- Amlogic's buildroot kernel (for G12A) uses similar bus definitions
-as the GX SoCs (for which there are public datasheets) - this is how
-Jianxin added it to meson-g12a.dtsi originally
-- this patch does it different - but cannot check if this is correct
-(no public datasheet is available for G12A or AXG) nor do I have a
-"big picture" of upcoming changes
+--Sig_/+cLRlcqQ.iby8NRqd33W9Aw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Cc'ing Jianxin: can you please review Jerome's patch and give some
-more details on the memory map on G12A so further contributions can be
-reviewed easier?
+Hi all,
 
+Today's linux-next merge of the arc-current tree got a conflict in:
 
-Regards
-Martin
+  arch/arc/mm/fault.c
+
+between commit:
+
+  d8d7d842e828 ("arch/arc/mm/fault.c: remove caller signal_pending_branch p=
+redictions")
+
+from Linus' tree and commit:
+
+  ce3e02e8be58 ("ARC: mm: do_page_fault fixes #1: relinquish mmap_sem if si=
+gnal arrives while handle_mm_fault")
+
+from the arc-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arc/mm/fault.c
+index a1d723197084,535cf18e8bf2..000000000000
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@@ -141,12 -141,17 +141,17 @@@ good_area
+  	 */
+  	fault =3D handle_mm_fault(vma, address, flags);
+ =20
+- 	/* If Pagefault was interrupted by SIGKILL, exit page fault "early" */
+ -	if (unlikely(fatal_signal_pending(current))) {
+ +	if (fatal_signal_pending(current)) {
+- 		if ((fault & VM_FAULT_ERROR) && !(fault & VM_FAULT_RETRY))
+- 			up_read(&mm->mmap_sem);
+- 		if (user_mode(regs))
++=20
++ 		/*
++ 		 * if fault retry, mmap_sem already relinquished by core mm
++ 		 * so OK to return to user mode (with signal handled first)
++ 		 */
++ 		if (fault & VM_FAULT_RETRY) {
++ 			if (!user_mode(regs))
++ 				goto no_context;
+  			return;
++ 		}
+  	}
+ =20
+  	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+
+--Sig_/+cLRlcqQ.iby8NRqd33W9Aw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxA8h0ACgkQAVBC80lX
+0GyLAwf7BLnSKmuQV1SRxUTc4sQVuaTbJ6Le68lfRqFU0PWOtCqcXxffmy1xUsKN
+ihgJ+mu25mw9ZpX2razrtAxJJDy2jyDdlZ8E+Q9o0PZQ6/natcaUBIxayvnBsGiC
+SjfEAAS7l1Q5Lt5fYydY6ZQBfYyVNM64lQtr8rrcspmgSusS0Jxj5QxpZZVZ+8Hu
+19f6JiFrpjGS4v3ISC32Rv13GuJYTg++ASnnvwfZiMOYVtTmkNDEaY26of+fXnOa
+4P5lNPjTo62MDV/o7EKSqVuqRTS8HqUiJ68c9z1rZbzSTZ+6l87vqjtBwcBuPV7j
+TVw3x7fboUP2t7C6jVYXRr0PI0iHdg==
+=eZEw
+-----END PGP SIGNATURE-----
+
+--Sig_/+cLRlcqQ.iby8NRqd33W9Aw--
