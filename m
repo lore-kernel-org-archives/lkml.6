@@ -2,176 +2,153 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FEDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A90BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D91720657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 169DC20856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:51:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547707891;
+	bh=3pFFsGboE3NeLPavibg9ccKIbA+KASAPuMJu0N0lT6Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=SkEvrRr0ZhKsyYdxK39Ea3CpKW50rHtbU7BBYLNrdhwwb52xP0Aflxn9Pa7/tze+Z
+	 FbiNOBefKnSDToG5AJ67B3CWsibEWR+T9PVfg1/BEkfSUUS1ME2ayNH1AIuVrX7jkl
+	 KJDKWcTmE31GCLMlvrIC4qRUqFq06dbfnPZxzLKI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbfAQGtQ (ORCPT
+        id S1727565AbfAQGv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:49:16 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2250 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728295AbfAQGsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:48:53 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7BB376CF860124FCE08E;
-        Thu, 17 Jan 2019 14:48:50 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 17 Jan 2019 14:48:43 +0800
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <ebiggers@kernel.org>
-CC:     <wangxiongfeng2@huawei.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <broonie@kernel.org>,
-        <ard.biesheuvel@linaro.org>, <jonathan.cameron@huawei.com>
-Subject: [PATCH V2 2/5] crypto: ccm - use template array registering API to simplify the code
-Date:   Thu, 17 Jan 2019 14:48:00 +0800
-Message-ID: <1547707683-45878-3-git-send-email-wangxiongfeng2@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1547707683-45878-1-git-send-email-wangxiongfeng2@huawei.com>
-References: <1547707683-45878-1-git-send-email-wangxiongfeng2@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+        Thu, 17 Jan 2019 01:51:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726875AbfAQGv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:51:29 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71EF320657;
+        Thu, 17 Jan 2019 06:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547707887;
+        bh=3pFFsGboE3NeLPavibg9ccKIbA+KASAPuMJu0N0lT6Q=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Cqou7RJ3WeQX6iJzoKHW5+b2gpIS04SgaKTwdmeJ5A9/3XwKxow/eifoYpAI/sPut
+         OXT0khucqzxmOza+R+KqGRFPpQPHHhyjd/7eR27j8XdLZmKTIACaO6T3fgKfhVvx8S
+         SYQmovRKQVmaa7u7PqZTAF16vidRUWol3+nPyV1Y=
+Date:   Thu, 17 Jan 2019 15:51:22 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 09/17] x86/kprobes: Instruction pages initialization
+ enhancements
+Message-Id: <20190117155122.46058c707d6d07237ad913d0@kernel.org>
+In-Reply-To: <20190117003259.23141-10-rick.p.edgecombe@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+        <20190117003259.23141-10-rick.p.edgecombe@intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use crypto template array registering API to simplify the code.
+On Wed, 16 Jan 2019 16:32:51 -0800
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
-Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
----
- crypto/ccm.c | 78 ++++++++++++++++++------------------------------------------
- 1 file changed, 23 insertions(+), 55 deletions(-)
+> From: Nadav Amit <namit@vmware.com>
+> 
+> This patch is a preparatory patch for a following patch that makes
+> module allocated pages non-executable. The patch sets the page as
+> executable after allocation.
+> 
+> In the future, we may get better protection of executables. For example,
+> by using hypercalls to request the hypervisor to protect VM executable
+> pages from modifications using nested page-tables. This would allow
+> us to ensure the executable has not changed between allocation and
+> its write-protection.
+> 
+> While at it, do some small cleanup of what appears to be unnecessary
+> masking.
+> 
 
-diff --git a/crypto/ccm.c b/crypto/ccm.c
-index b242fd0..50df8f0 100644
---- a/crypto/ccm.c
-+++ b/crypto/ccm.c
-@@ -589,12 +589,6 @@ static int crypto_ccm_create(struct crypto_template *tmpl, struct rtattr **tb)
- 					mac_name);
- }
- 
--static struct crypto_template crypto_ccm_tmpl = {
--	.name = "ccm",
--	.create = crypto_ccm_create,
--	.module = THIS_MODULE,
--};
--
- static int crypto_ccm_base_create(struct crypto_template *tmpl,
- 				  struct rtattr **tb)
- {
-@@ -618,12 +612,6 @@ static int crypto_ccm_base_create(struct crypto_template *tmpl,
- 					cipher_name);
- }
- 
--static struct crypto_template crypto_ccm_base_tmpl = {
--	.name = "ccm_base",
--	.create = crypto_ccm_base_create,
--	.module = THIS_MODULE,
--};
--
- static int crypto_rfc4309_setkey(struct crypto_aead *parent, const u8 *key,
- 				 unsigned int keylen)
- {
-@@ -854,12 +842,6 @@ static int crypto_rfc4309_create(struct crypto_template *tmpl,
- 	goto out;
- }
- 
--static struct crypto_template crypto_rfc4309_tmpl = {
--	.name = "rfc4309",
--	.create = crypto_rfc4309_create,
--	.module = THIS_MODULE,
--};
--
- static int crypto_cbcmac_digest_setkey(struct crypto_shash *parent,
- 				     const u8 *inkey, unsigned int keylen)
- {
-@@ -999,51 +981,37 @@ static int cbcmac_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	return err;
- }
- 
--static struct crypto_template crypto_cbcmac_tmpl = {
--	.name = "cbcmac",
--	.create = cbcmac_create,
--	.free = shash_free_instance,
--	.module = THIS_MODULE,
-+static struct crypto_template crypto_ccm_tmpls[] = {
-+	{
-+		.name = "cbcmac",
-+		.create = cbcmac_create,
-+		.free = shash_free_instance,
-+		.module = THIS_MODULE,
-+	}, {
-+		.name = "ccm_base",
-+		.create = crypto_ccm_base_create,
-+		.module = THIS_MODULE,
-+	}, {
-+		.name = "ccm",
-+		.create = crypto_ccm_create,
-+		.module = THIS_MODULE,
-+	}, {
-+		.name = "rfc4309",
-+		.create = crypto_rfc4309_create,
-+		.module = THIS_MODULE,
-+	},
- };
- 
- static int __init crypto_ccm_module_init(void)
- {
--	int err;
--
--	err = crypto_register_template(&crypto_cbcmac_tmpl);
--	if (err)
--		goto out;
--
--	err = crypto_register_template(&crypto_ccm_base_tmpl);
--	if (err)
--		goto out_undo_cbcmac;
--
--	err = crypto_register_template(&crypto_ccm_tmpl);
--	if (err)
--		goto out_undo_base;
--
--	err = crypto_register_template(&crypto_rfc4309_tmpl);
--	if (err)
--		goto out_undo_ccm;
--
--out:
--	return err;
--
--out_undo_ccm:
--	crypto_unregister_template(&crypto_ccm_tmpl);
--out_undo_base:
--	crypto_unregister_template(&crypto_ccm_base_tmpl);
--out_undo_cbcmac:
--	crypto_register_template(&crypto_cbcmac_tmpl);
--	goto out;
-+	return crypto_register_templates(crypto_ccm_tmpls,
-+					 ARRAY_SIZE(crypto_ccm_tmpls));
- }
- 
- static void __exit crypto_ccm_module_exit(void)
- {
--	crypto_unregister_template(&crypto_rfc4309_tmpl);
--	crypto_unregister_template(&crypto_ccm_tmpl);
--	crypto_unregister_template(&crypto_ccm_base_tmpl);
--	crypto_unregister_template(&crypto_cbcmac_tmpl);
-+	crypto_unregister_templates(crypto_ccm_tmpls,
-+				    ARRAY_SIZE(crypto_ccm_tmpls));
- }
- 
- module_init(crypto_ccm_module_init);
+OK, then this should be done.
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thank you!
+
+
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
+>  1 file changed, 20 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+> index 4ba75afba527..fac692e36833 100644
+> --- a/arch/x86/kernel/kprobes/core.c
+> +++ b/arch/x86/kernel/kprobes/core.c
+> @@ -431,8 +431,20 @@ void *alloc_insn_page(void)
+>  	void *page;
+>  
+>  	page = module_alloc(PAGE_SIZE);
+> -	if (page)
+> -		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
+> +	if (page == NULL)
+> +		return NULL;
+> +
+> +	/*
+> +	 * First make the page read-only, and then only then make it executable
+> +	 * to prevent it from being W+X in between.
+> +	 */
+> +	set_memory_ro((unsigned long)page, 1);
+> +
+> +	/*
+> +	 * TODO: Once additional kernel code protection mechanisms are set, ensure
+> +	 * that the page was not maliciously altered and it is still zeroed.
+> +	 */
+> +	set_memory_x((unsigned long)page, 1);
+>  
+>  	return page;
+>  }
+> @@ -440,8 +452,12 @@ void *alloc_insn_page(void)
+>  /* Recover page to RW mode before releasing it */
+>  void free_insn_page(void *page)
+>  {
+> -	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
+> -	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
+> +	/*
+> +	 * First make the page non-executable, and then only then make it
+> +	 * writable to prevent it from being W+X in between.
+> +	 */
+> +	set_memory_nx((unsigned long)page, 1);
+> +	set_memory_rw((unsigned long)page, 1);
+>  	module_memfree(page);
+>  }
+>  
+> -- 
+> 2.17.1
+> 
+
+
 -- 
-1.7.12.4
-
+Masami Hiramatsu <mhiramat@kernel.org>
