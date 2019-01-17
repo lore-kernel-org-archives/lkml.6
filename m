@@ -2,108 +2,111 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFCCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCFDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8FC020652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F272120652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:31:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNKcV8rG"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="O6Mqytgk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbfAQP32 (ORCPT
+        id S1727634AbfAQPbl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:29:28 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40086 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbfAQP31 (ORCPT
+        Thu, 17 Jan 2019 10:31:41 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35166 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727291AbfAQPbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:29:27 -0500
-Received: by mail-qt1-f194.google.com with SMTP id k12so11689980qtf.7;
-        Thu, 17 Jan 2019 07:29:26 -0800 (PST)
+        Thu, 17 Jan 2019 10:31:41 -0500
+Received: by mail-ed1-f67.google.com with SMTP id x30so8706642edx.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 07:31:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1q9JcQzfXCyTHN8xEENUcIAYmg2fHESb/RPq3VsRrmY=;
-        b=KNKcV8rGGm3ft/hCosy6yKw8HejebNF0+qFVCsIl0msAI9t35IT7w2cYV5lF9Pgyeq
-         g8NT/0Srx1tUMm7vhL/5mfVK9c6Cq7RLUEZpX+XLadE4g4ggX9ggplBobmehHEMo5J86
-         pmv1mxp+IZEznqecjT/QtwOBGRvspEd66lpFu1j7zWSpqhDdmD4hdhGmhoGdQ1fxZGKh
-         1STqKno5w0PNYKpK1u3JZzr5xs/OS3Wes/OVzUC9h9tiERyzmL1neiWjnfHU9sx9JJBB
-         hMz83wqjIKg84Fht+1BY5AKF7ajwaKGU9XyVBIkbj9Zdfg/vePAupohuVzMK9NPJacOv
-         DtrA==
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=g5nQozMppk8DZZa/5as2q1ELxnw4VUfa1KmQAedy0yk=;
+        b=O6Mqytgky/RfbwIcMG4yXQUjH3BOLGz94nRWIQc4zvqoLXMdmqPnEoloP4yGNjA9lT
+         ULZZr3J4ayw1EpOtaK9r6WYwKhhfWEJKTZ372Hu3eWH0xLCD8d/VgABwMGq05uYAzLdv
+         yCyERVhswS0REKUH2qF8vj7wVrLWGLc8D+po0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=1q9JcQzfXCyTHN8xEENUcIAYmg2fHESb/RPq3VsRrmY=;
-        b=L1gE+NCg/vM7vnfb7q7V6bj2/tJCvw8NbNrbxxBwXJ8KnDkehDn2bC7QXGf+9kiBlJ
-         h+uSLgyG7rZDjSGY7tnSKzlqy0kMLziN5XjfgaD06osxDkmwAPYZXYmKUa1ESRa85Zxa
-         9V7v5pO5jnV3x9r9xY2DtKdKOK5Er5L8ADywrRYGr4Pz02CsK5NpS8QzB0XHkBRWarCQ
-         wj295EjqBf5F8WQMgKH44pWDtH1TWuKbvZAueOsgrimGy5KLkcWemo+r4uuisyrPF7BP
-         dKMFcTjfrgj+oO77P68IlbFgnhAsKiCKrmvx+ZYKT8HYpptAnSbIxVP/DAc4Pgs0ubBw
-         nozg==
-X-Gm-Message-State: AJcUukdNfrot1pLhcq/y22vAk/xKWbTWIDB8Xe+Bs/DsKFtu1mHrxpbt
-        yPXVZxKv0BCvZ7Hw+VUf32I=
-X-Google-Smtp-Source: ALg8bN7719gK8HKltZETIMhi3ikam+Q5tzFe4BGnczduIbW21flkO9npy1NbKol8LRW1pPxaFI6rYg==
-X-Received: by 2002:aed:2dc5:: with SMTP id i63mr12227248qtd.173.1547738965969;
-        Thu, 17 Jan 2019 07:29:25 -0800 (PST)
-Received: from localhost.localdomain (198-0-156-163-static.hfc.comcastbusiness.net. [198.0.156.163])
-        by smtp.gmail.com with ESMTPSA id l4sm6574411qtf.22.2019.01.17.07.29.24
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=g5nQozMppk8DZZa/5as2q1ELxnw4VUfa1KmQAedy0yk=;
+        b=YkQUnhTqAY1key2+pafLdoCXt0y4FyePxd3uOKPCt+I1F+bNyLc/Ii04NjRPIBwbRw
+         Nk676WZDavRxpJGYpojgtPA0bM5+RHZpzn2Li9NEYkxW8rO9/M26N3C1qWUmyO2UoOZ5
+         341lRMUcM5Tcq/N30iEy8tk4Ag4ICROyFYS2DCUMzqXPpsuhJZsM7Tw78Z9x6nHaCPdn
+         RSlxe19bb5g0/nsOAaRkbG5ZPD4c0Q5ErsbTZuVZ7xd2U2dk4Z9MoF9zcXDwpQQQaIps
+         0OQik02NY+Jyz9enWOXB3rVFgcr2fxcqQBYXtgomWlxOZTGOCXYQbC34WIyKOTWejtFU
+         velw==
+X-Gm-Message-State: AJcUukevpNrQRgF6qyIKl5r4WzgCqpSX8u9891XKsqMFZV3B856oQF6W
+        77rtiv0RYIbx1ZK1qhKpNdlqgA==
+X-Google-Smtp-Source: ALg8bN7e+nlzm2+2MsxDFCruli4t9nzBpnV9NiCRw238gEdbOwM2SIjGICvPC0FlwsFxk07et/d+0g==
+X-Received: by 2002:a50:903c:: with SMTP id b57mr12377573eda.161.1547739099271;
+        Thu, 17 Jan 2019 07:31:39 -0800 (PST)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id v14sm6030650edq.74.2019.01.17.07.31.38
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 07:29:25 -0800 (PST)
-Date:   Thu, 17 Jan 2019 10:29:23 -0500
-From:   Konrad Rzeszutek Wilk <konrad@darnok.org>
-To:     Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-Cc:     Dongli Zhang <dongli.zhang@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, axboe@kernel.dk,
-        Paul.Durrant@citrix.com, konrad.wilk@oracle.com
-Subject: Re: [Xen-devel] [PATCH v6 2/2] xen/blkback: rework connect_ring() to
- avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
-Message-ID: <20190117152919.GA26079@localhost.localdomain>
-References: <1547484104-20625-1-git-send-email-dongli.zhang@oracle.com>
- <1547484104-20625-2-git-send-email-dongli.zhang@oracle.com>
- <20190115082036.y7svi3xz3dkqd4w4@mac>
+        Thu, 17 Jan 2019 07:31:38 -0800 (PST)
+Date:   Thu, 17 Jan 2019 16:31:32 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Add missing memory barriers in afs_manage_cell()
+Message-ID: <20190117153132.GA10932@andrea>
+References: <20181126164412.11184-1-andrea.parri@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190115082036.y7svi3xz3dkqd4w4@mac>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181126164412.11184-1-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 09:20:36AM +0100, Roger Pau Monné wrote:
-> On Tue, Jan 15, 2019 at 12:41:44AM +0800, Dongli Zhang wrote:
-> > The xenstore 'ring-page-order' is used globally for each blkback queue and
-> > therefore should be read from xenstore only once. However, it is obtained
-> > in read_per_ring_refs() which might be called multiple times during the
-> > initialization of each blkback queue.
-> > 
-> > If the blkfront is malicious and the 'ring-page-order' is set in different
-> > value by blkfront every time before blkback reads it, this may end up at
-> > the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
-> > xen_blkif_disconnect() when frontend is destroyed.
-> > 
-> > This patch reworks connect_ring() to read xenstore 'ring-page-order' only
-> > once.
-> > 
-> > Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+On Mon, Nov 26, 2018 at 05:44:12PM +0100, Andrea Parri wrote:
+> As the comments for wake_up_bit() and waitqueue_active() point out,
+> the barriers are needed to order the clearing of the _FL_NOT_READY
+> bit and the waitqueue_active() load; match the implicit barrier in
+> prepare_to_wait().
 > 
-> LGTM:
-> 
-> Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-Applied.
+Hi David, do you have any feedback on this?
 
-Will push out to Jens in a couple of days. Thank you!
+  Andrea
+
+
+> ---
+>  fs/afs/cell.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Thanks!
+> diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+> index cf445dbd5f2e0..a9488abe56029 100644
+> --- a/fs/afs/cell.c
+> +++ b/fs/afs/cell.c
+> @@ -637,6 +637,7 @@ static void afs_manage_cell(struct work_struct *work)
+>  		cell->state = AFS_CELL_ACTIVE;
+>  		smp_wmb();
+>  		clear_bit(AFS_CELL_FL_NOT_READY, &cell->flags);
+> +		smp_mb__after_atomic(); /* see comment for wake_up_bit() */
+>  		wake_up_bit(&cell->flags, AFS_CELL_FL_NOT_READY);
+>  		goto again;
+>  
+> @@ -678,6 +679,7 @@ static void afs_manage_cell(struct work_struct *work)
+>  	cell->state = AFS_CELL_ACTIVE;
+>  	smp_wmb();
+>  	clear_bit(AFS_CELL_FL_NOT_READY, &cell->flags);
+> +	smp_mb__after_atomic(); /* see comment for wake_up_bit() */
+>  	wake_up_bit(&cell->flags, AFS_CELL_FL_NOT_READY);
+>  	_leave(" [deact->act]");
+>  	return;
+> -- 
+> 2.17.1
+> 
