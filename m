@@ -2,138 +2,156 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BB8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38126C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD8820855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:59:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04A2020855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:02:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="xYQJ9MI/"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="EXJeUjyx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbfAQS7R (ORCPT
+        id S1728330AbfAQTCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 13:59:17 -0500
-Received: from cock.li ([185.100.85.212]:56678 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725999AbfAQS7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 13:59:17 -0500
+        Thu, 17 Jan 2019 14:02:53 -0500
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:22600 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725967AbfAQTCw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 14:02:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1547751742; x=1579287742;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=kW74RBM+b8D648eSCazvqQ4T+1Ka2zli1qG6o6gvb3A=;
+  b=EXJeUjyxgnXCQ8BLYrfYmz2FK20gToJkRNbc7qz8X1rAfY09zHBXqgfM
+   631eMXXS6Yz/l01h+WOfc92eUdIDo+0NY6yjQ8h6m58sZnFO1KMx+Ixk4
+   hRt9s6cRLwJMTDP03jvQW56MdPrp3GZ2HI21LNel4Xt9Wle3t3oX2+Qqe
+   c=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2ElAAD70EBchiWd50NjHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBUwUBAQsBg1kSMYxwjRSXfoF7CwEBhGyCfTYHDQEDAQECAQECAQECEAE?=
+ =?us-ascii?q?BAQoJCwgpL4I6IoJvAQEBAQIBEig/BQsCAQgYHhBXAgQBGhqDAIF6CJ9lPQK?=
+ =?us-ascii?q?BbokHAQEBgh6KM45VgRGDEoUBhWACi1qKfIpgWgkFkgYgkgstiVOQZwIEAgQ?=
+ =?us-ascii?q?FAhSBTQ6BenCDPYImDgmOHkABikWBHwEB?=
+X-IPAS-Result: =?us-ascii?q?A2ElAAD70EBchiWd50NjHAEBAQQBAQcEAQGBUwUBAQsBg?=
+ =?us-ascii?q?1kSMYxwjRSXfoF7CwEBhGyCfTYHDQEDAQECAQECAQECEAEBAQoJCwgpL4I6I?=
+ =?us-ascii?q?oJvAQEBAQIBEig/BQsCAQgYHhBXAgQBGhqDAIF6CJ9lPQKBbokHAQEBgh6KM?=
+ =?us-ascii?q?45VgRGDEoUBhWACi1qKfIpgWgkFkgYgkgstiVOQZwIEAgQFAhSBTQ6BenCDP?=
+ =?us-ascii?q?YImDgmOHkABikWBHwEB?=
+Received: from mx0b-00154901.pphosted.com (HELO mx0a-00154901.pphosted.com) ([67.231.157.37])
+  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Jan 2019 13:02:21 -0600
+Received: from pps.filterd (m0089484.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HJ2jUQ081522;
+        Thu, 17 Jan 2019 14:02:50 -0500
+Received: from esa6.dell-outbound2.iphmx.com (esa6.dell-outbound2.iphmx.com [68.232.154.99])
+        by mx0b-00154901.pphosted.com with ESMTP id 2q2r5m2nx4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 14:02:50 -0500
+Cc:     <Austin.Bolen@dell.com>, <keith.busch@intel.com>,
+        <Shyam.Iyer@dell.com>, <lukas@wunner.de>, <okaya@kernel.org>,
+        <rjw@rjwysocki.net>, <lenb@kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Received: from ausc60ps301.us.dell.com ([143.166.148.206])
+  by esa6.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 18 Jan 2019 01:02:49 +0600
+X-LoopCount0: from 10.166.134.83
+X-IronPort-AV: E=Sophos;i="5.56,489,1539666000"; 
+   d="scan'208";a="1247205003"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <helgaas@kernel.org>, <mr.nuke.me@gmail.com>
+Subject: Re: [RFC] PCI / ACPI: Implementing Type 3 _HPX records
+Thread-Topic: [RFC] PCI / ACPI: Implementing Type 3 _HPX records
+Thread-Index: AQHUqTnurHiSjfxvdkuUWWPIsLecJQ==
+Date:   Thu, 17 Jan 2019 19:02:47 +0000
+Message-ID: <edf8493f2c184bd6b28d269fe5aa337a@ausx13mps321.AMER.DELL.COM>
+References: <20190110231136.31163-1-mr.nuke.me@gmail.com>
+ <20190114200120.GA33971@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.178.128.192]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1547751554; bh=qEe90IUm6+Bd6IXL/YWzX3ayRknawBL0c2/ak0eJIcc=;
-        h=Date:From:To:Subject:From;
-        b=xYQJ9MI/s1BJ0bkklo+50q/5Zp0Pvx5gQLQDzie9m4dGNFaMpZcxIrnTQowduB12c
-         PuK3clRbtRcOW4s0HGDGf1g7fxYHZ2ChTae1dFPcoc9BiFGvWZccMO15fNJEyr69y2
-         UpIeBZ4WAKDtvpuNTqZYilhPGySt0LjsCy7ehlOBBy/axRZ2iwDvRfwbRCmC9NgKwx
-         j9pVOHnw3rK6oFTX6mAN97YuMuRTwL/A0pKREXHuiqfECu5kRzoTSCQgZvUJAQoWoa
-         ksPBDnYx9JXkmWqbQl2M5OcTFbQmHaCYfmnyeH2q4EELVzuiHTqKvpXgdrtoSnw9TG
-         I6scLb/GOwJZg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 17 Jan 2019 18:59:12 +0000
-From:   sicevar@redchan.it
-To:     linux-kernel@vger.kernel.org
-Subject: GPL revocation (GPC-Slots2): Alex "Skud" Bayley,  Leigh Honeywell
-Message-ID: <5829834612f57b1604fd9ee8f5c167c3@redchan.it>
-X-Sender: sicevar@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=837 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quote:
-
-"
-> Then you should have used them.
-Not necessary, the language used in the press release identifies them 
-easily.
-
-> should
-As if I somehow can't just rescind using their names either.
-
-License to use/modify/etc the GPC Slots 2 code is hereby terminated for. 
-Alex "Skud" Bayley, and Leigh Honeywell.
-(Note: this termination is not to be construed as a lifting of the 
-previously issued termination regarding the "Geek Feminism collective", 
-this termination is an addendum)
-
---MikeeUSA-- (electronic signature :D )
-
->> 1019403
-Their response is irrelevant.
-"
-
-Discussions with author of program involved:
-http://8ch.net/tech/res/1013409.html
-http://8ch.net/tech/res/1017824.html
-http://8ch.net/tech/res/1018729.html
-------------------------
-
-https://slashdot.org/submission/9087542/author-recinds-gpl
-
-------------------------
-p46 "As long as the project continues to honor the terms of the licenses 
-under which it recieved contributions, the licenses continue in effect. 
-There is one important caveat: Even a perpetual license can be revoked. 
-See the discussion of bare licenses and contracts in Chapter 4"
---Lawrence Rosen
-
-p56 "A third problem with bare licenses is that they may be revocable by 
-the licensor. Specifically, /a license not coupled with an interest may 
-be revoked./ The term /interest/ in this context usually means the 
-payment of some royalty or license fee, but there are other more 
-complicated ways to satisfy the interest requirement. For example, a 
-licensee can demonstrate that he or she has paid some consideration-a 
-contract law term not found in copyright or patent law-in order to avoid 
-revocation. Or a licensee may claim that he or she relied on the 
-software licensed under an open source license and now is dependent upon 
-that software, but this contract law concept, called promissory 
-estoppel, is both difficult to prove and unreliable in court tests. (The 
-concepts of /consideration/ and /promissory estoppel/ are explained more 
-fully in the next section.) Unless the courts allow us to apply these 
-contract law principles to a license, we are faced with a bare license 
-that is revocable.
---Lawrence Rosen
-
-p278 "Notice that in a copyright dispute over a bare license, the 
-plaintiff will almost certainly be the copyright owner. If a licensee 
-were foolish enough to sue to enforce the terms and conditions of the 
-license, the licensor can simply revoke the bare license, thus ending 
-the dispute. Remeber that a bare license in the absence of an interest 
-is revocable."
---Lawrence Rosen
-
-Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
-Intellectual property Law
-
-
-
-p65 "Of all the licenses descibed in this book, only the GPL makes the 
-explicity point that it wants nothing of /acceptance/ of 
-/consideration/:
-...
-The GPL authors intend that it not be treated as a contract. I will say 
-much more about this license and these two provisions in Chapter 6. For 
-now, I simply point out that the GPL licensors are in essentially the 
-same situation as other open source licensors who cannot prove offer, 
-acceptance, or consideration. There is no contract."
---Lawrence Rosen
-
-------------------------
-> David McGowan, Professor of Law, University of Minnesota Law School:
-
-> "Termination of rights
-
-> [...] The most plausible assumption is that a developer who releases 
-> code under the GPL may terminate GPL rights, probably at will.
-
-> [...] My point is not that termination is a great risk, it is that it 
-> is not recognized as a risk even though it is probably relevant to 
-> commercial end-users, accustomed to having contractual rights they can 
-> enforce themselves.
-
+Hi Bjorn=0A=
+=0A=
+On 1/14/19 2:01 PM, Bjorn Helgaas wrote:=0A=
+> On Thu, Jan 10, 2019 at 05:11:27PM -0600, Alexandru Gagniuc wrote:=0A=
+>> _HPX Type 3 is intended to be more generic and allow configuration of=0A=
+>> settings not possible with Type 2 tables. For example, FW could ensure=
+=0A=
+>> that the completion timeout value is set accordingly throughout the PCI=
+=0A=
+>> tree; some switches require very special handling.=0A=
+>>=0A=
+>> Type 3 can come in an arbitrary number of ACPI packages. With the older=
+=0A=
+>> types we only ever had one descriptor. We could get lazy and store it=0A=
+>> on the stack. The current flow is to parse the HPX table=0A=
+>> --pci_get_hp_params()-- and then program the PCIe device registers.=0A=
+>>=0A=
+>> In the current flow, we'll need to malloc(). Here's what I tried:=0A=
+>>   1) devm_kmalloc() on the pci_dev=0A=
+>>    This ended up giving me NULL dereference at boot time.=0A=
+> =0A=
+> Yeah, I don't think devm_*() is going to work because that's part of the=
+=0A=
+> driver binding model; this is in the PCI core and this use is not related=
+=0A=
+> to the lifetime of a driver's binding to a device.=0A=
+> =0A=
+>>   2) Add a cleanup function to be called after writing the PCIe register=
+s=0A=
+>>=0A=
+>> This RFC implements method 2. The HPX3 stuff is still NDA'd, but the=0A=
+>> housekeeping parts are in here. Is this a good way to do things? I'm not=
+=0A=
+>> too sure about the need to call cleanup() on a stack variable. But if=0A=
+>> not that, then what else?=0A=
+> =0A=
+> pci_get_hp_params() is currently exported, but only used inside=0A=
+> drivers/pci, so I think it could be unexported.=0A=
+=0A=
+It can.=0A=
+=0A=
+> I don't remember if there's a reason why things are split between=0A=
+> pci_get_hp_params(), which runs _HPX or _HPP, and the program_hpp_type*()=
+=0A=
+> functions.  If we could get rid of that split, we could get rid of struct=
+=0A=
+> hotplug_params and do the configuration directly in the pci_get_hp_params=
+()=0A=
+> path.  I think that would simplify the memory management.=0A=
+=0A=
+Thanks for the in-depth analysis. I'm working on a proof-of-concept =0A=
+patch to do what you suggested. On downside though, is that we may have =0A=
+to parse some things twice.=0A=
+=0A=
+Another thing, I've been thinking is, why not store the hotplug =0A=
+parameters from ACPI with the pci_bus struct. That way, you only need to =
+=0A=
+parse ACPI once per bus, instead of each time a device is probed. There =0A=
+would be some memory overhead, but the hotplug structures are =0A=
+(thankfully) still relatively small. I could try a proof of concept for =0A=
+this idea as well... let me know.=0A=
+=0A=
+Alex=0A=
