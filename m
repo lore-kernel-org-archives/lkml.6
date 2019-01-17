@@ -2,112 +2,306 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2C2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B128C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ADBE20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF56120657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:06:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFBZjcuJ"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="q+WMSljV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbfAQKES (ORCPT
+        id S1727708AbfAQKGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:04:18 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42448 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726985AbfAQKES (ORCPT
+        Thu, 17 Jan 2019 05:06:15 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:53798 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfAQKGO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:04:18 -0500
-Received: by mail-ed1-f66.google.com with SMTP id y20so7840773edw.9
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 02:04:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TERpxjh2yJAbosjLOgxFJErb2g+VCA0i7onwsxlISzA=;
-        b=LFBZjcuJldeJ+0gZPMT7rNCCZMNZPPkikeQQLcCDodpNnP0edNwMhFY6cnoe1Kwiyc
-         k/+Tc2g7YoWrVlpPfuONkYQkVGmnNVgzmzLo0kr9QtXUQXTqZ8t7OdTpvfPEYv9ueDaK
-         oU9/hnANaBn5MCKnnS2hFxE6FGgnFOl2su1wHpGGoCi30bKaFFyqdsrJ5+2V2b6Ibbh1
-         6jh6oVd7tgWJqQ+GMyi7HhVd8eJHUfCVLxlMUwFZ0GpgZeCSRmPrsOap7UkNhGV21FYs
-         Dg9cCxgzEEu1X5ZyyUJr3JVNzf5Dl2VYTertZSowcvQUH/d4R2Um9bIdhdK7nKPqffc0
-         yuRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TERpxjh2yJAbosjLOgxFJErb2g+VCA0i7onwsxlISzA=;
-        b=PTz43F8xom4szunuAV+uTVGnYDB2OVWXct9KhGhqlHwishMEhrOBBErl5bySpEFkCl
-         PE9lVCfeMNJiTDQSpFlCj137P4qUchpE4ybCC4H7Ey31hC43xgW0dDLVeVO6+jGcNJyJ
-         N7odXAXj36ADPaZuMtDybpgQNPaP5JES1wB3mx3jhuoFILTre1SZ5EKayLJGYqu5KdM2
-         9ra38PHg0o1c7wLCgsKbk2hXqCevIlAxZ884GEgF4D9pk4GhmShzBSQ9OFkf3jB+jciE
-         STmSjbuctqyTIYLKPW8W5jJ80TX0gE6CApFyYQe6V6HPqc5XlunGAVY5pxICBgJGn8rH
-         TxgA==
-X-Gm-Message-State: AJcUukdU7I/RlmclZfHZTc9KHRBybTesN6uMZuiOYGs7D20ApmjtRuYr
-        tTmz/ctZDCGJ0DH0XVi1rf0ychFw+0lZEelqOfE=
-X-Google-Smtp-Source: ALg8bN5J14XHnl7ylxEO2IGpT5uPzfxr/+RRpF5eo9ZxDt3fg5d3kn99nIApeIDLZ5wCif+fB6bFo1C5+PoyIrzvCwc=
-X-Received: by 2002:a17:906:a4cf:: with SMTP id cc15-v6mr10145908ejb.157.1547719456482;
- Thu, 17 Jan 2019 02:04:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20190117090640.12972-1-stefan@agner.ch> <20190117090640.12972-4-stefan@agner.ch>
-In-Reply-To: <20190117090640.12972-4-stefan@agner.ch>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Thu, 17 Jan 2019 12:04:05 +0200
-Message-ID: <CAEnQRZDUYGnU5+G0jd_o0yH4qYjrWtdPEB7O4TfMvtpYzJPO1Q@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH 4/5] ASoC: imx-sgtl5000: put of nodes if
- finding codec fails
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 17 Jan 2019 05:06:14 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x0HA38Gs009525;
+        Thu, 17 Jan 2019 19:03:10 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x0HA38Gs009525
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547719391;
+        bh=uCbD1NfqujoHfNDZGzPP15V6qMGvWE1LwqUSGy/cdrU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=q+WMSljVwSbbUNvetGMOyIpBMNZil8tXGaZIghXUAFcOvzAYtt2eObZt9OHQw+EsB
+         VT9HrMRyw6g63duXILjG1mKDgq4fpgl7WAT8lo5hXojP6VWw5VEn6h+9a8DgEAWkOr
+         dCZxB+yBv+1dYL+BbKusReRxctJzlVQShc8vrLRAX2YzdQcr/wd6wCVGj+Id8wUkJ0
+         /hYoPQbh5sDapigvEMpqz9bGv1m04i5vi91v24AX1sDuyhiyopo8i6tAOWzlNXVoea
+         vCw6MHmNSVtEr2bEvsgcsWwQuInqKc29A9sIs2RvzIaWtWkMBpnXljjQGVMFBLouVQ
+         8BAb374SJhAnw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-s390@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Borislav Petkov <bp@alien8.de>, linux-mips@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        James Hogan <jhogan@kernel.org>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>, devicetree@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2 3/4] kbuild: add real-prereqs shorthand for $(filter-out FORCE,$^)
+Date:   Thu, 17 Jan 2019 19:02:43 +0900
+Message-Id: <1547719364-18849-3-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547719364-18849-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1547719364-18849-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 11:07 AM Stefan Agner <stefan@agner.ch> wrote:
->
-> Make sure to properly put the of node in case finding the codec
-> fails.
->
-> Fixes: 81e8e4926167 ("ASoC: fsl: add sgtl5000 clock support for imx-sgtl5000")
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+In Kbuild, if_changed and friends must have FORCE as a prerequisite.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Hence, $(filter-out FORCE,$^) or $(filter-out $(PHONY),$^) is a common
+pattern to get the names of all the prerequisites except phony targets.
 
-> ---
->  sound/soc/fsl/imx-sgtl5000.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/soc/fsl/imx-sgtl5000.c b/sound/soc/fsl/imx-sgtl5000.c
-> index e1e20499b2f1..45969e6dfad7 100644
-> --- a/sound/soc/fsl/imx-sgtl5000.c
-> +++ b/sound/soc/fsl/imx-sgtl5000.c
-> @@ -111,7 +111,8 @@ static int imx_sgtl5000_probe(struct platform_device *pdev)
->         codec_dev = of_find_i2c_device_by_node(codec_np);
->         if (!codec_dev) {
->                 dev_err(&pdev->dev, "failed to find codec platform device\n");
-> -               return -EPROBE_DEFER;
-> +               ret = -EPROBE_DEFER;
-> +               goto fail;
->         }
->
->         data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> --
-> 2.20.1
->
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+Add real-prereqs as a shorthand.
+
+Note:
+We cannot replace $(filter %.o,$^) in cmd_link_multi-m because $^ may
+include auto-generated dependencies from the .*.cmd file when a single
+object module is changed into a multi object module. Refer to commit
+69ea912fda74 ("kbuild: remove unneeded link_multi_deps"). I added some
+comment to avoid accidental breakage.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+The patch context depends on some other ones.
+Please use 'git am -C1' if you want to test this
+on Linus' tree.
+
+
+Changes in v2:
+  - clean up arch/s390/boot/Makefile as well
+
+ Documentation/devicetree/bindings/Makefile |  2 +-
+ arch/mips/boot/Makefile                    |  2 +-
+ arch/powerpc/boot/Makefile                 |  2 +-
+ arch/s390/boot/Makefile                    |  2 +-
+ arch/x86/realmode/rm/Makefile              |  3 +--
+ scripts/Kbuild.include                     |  4 ++++
+ scripts/Makefile.build                     |  9 ++++++---
+ scripts/Makefile.lib                       | 18 +++++++++---------
+ scripts/Makefile.modpost                   |  2 +-
+ 9 files changed, 25 insertions(+), 19 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
+index 6e5cef0..e4eb5d1 100644
+--- a/Documentation/devicetree/bindings/Makefile
++++ b/Documentation/devicetree/bindings/Makefile
+@@ -15,7 +15,7 @@ DT_TMP_SCHEMA := processed-schema.yaml
+ extra-y += $(DT_TMP_SCHEMA)
+ 
+ quiet_cmd_mk_schema = SCHEMA  $@
+-      cmd_mk_schema = $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(filter-out FORCE, $^)
++      cmd_mk_schema = $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(real-prereqs)
+ 
+ DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
+ DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
+diff --git a/arch/mips/boot/Makefile b/arch/mips/boot/Makefile
+index 35704c2..3ce4dd5 100644
+--- a/arch/mips/boot/Makefile
++++ b/arch/mips/boot/Makefile
+@@ -115,7 +115,7 @@ endif
+ targets += vmlinux.its.S
+ 
+ quiet_cmd_its_cat = CAT     $@
+-      cmd_its_cat = cat $(filter-out $(PHONY), $^) >$@
++      cmd_its_cat = cat $(real-prereqs) >$@
+ 
+ $(obj)/vmlinux.its.S: $(addprefix $(srctree)/arch/mips/$(PLATFORM)/,$(ITS_INPUTS)) FORCE
+ 	$(call if_changed,its_cat)
+diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+index 0e8dadd..73d1f35 100644
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -218,7 +218,7 @@ quiet_cmd_bootas = BOOTAS  $@
+       cmd_bootas = $(BOOTCC) -Wp,-MD,$(depfile) $(BOOTAFLAGS) -c -o $@ $<
+ 
+ quiet_cmd_bootar = BOOTAR  $@
+-      cmd_bootar = $(BOOTAR) $(BOOTARFLAGS) $@.$$$$ $(filter-out FORCE,$^); mv $@.$$$$ $@
++      cmd_bootar = $(BOOTAR) $(BOOTARFLAGS) $@.$$$$ $(real-prereqs); mv $@.$$$$ $@
+ 
+ $(obj-libfdt): $(obj)/%.o: $(srctree)/scripts/dtc/libfdt/%.c FORCE
+ 	$(call if_changed_dep,bootcc)
+diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
+index b4d8a42..11ca879 100644
+--- a/arch/s390/boot/Makefile
++++ b/arch/s390/boot/Makefile
+@@ -58,7 +58,7 @@ $(obj)/compressed/vmlinux: $(obj)/startup.a FORCE
+ 	$(Q)$(MAKE) $(build)=$(obj)/compressed $@
+ 
+ quiet_cmd_ar = AR      $@
+-      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(filter $(OBJECTS), $^)
++      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+ 
+ $(obj)/startup.a: $(OBJECTS) FORCE
+ 	$(call if_changed,ar)
+diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/rm/Makefile
+index 4463fa7..394377c 100644
+--- a/arch/x86/realmode/rm/Makefile
++++ b/arch/x86/realmode/rm/Makefile
+@@ -37,8 +37,7 @@ REALMODE_OBJS = $(addprefix $(obj)/,$(realmode-y))
+ sed-pasyms := -n -r -e 's/^([0-9a-fA-F]+) [ABCDGRSTVW] (.+)$$/pa_\2 = \2;/p'
+ 
+ quiet_cmd_pasyms = PASYMS  $@
+-      cmd_pasyms = $(NM) $(filter-out FORCE,$^) | \
+-		   sed $(sed-pasyms) | sort | uniq > $@
++      cmd_pasyms = $(NM) $(real-prereqs) | sed $(sed-pasyms) | sort | uniq > $@
+ 
+ targets += pasyms.h
+ $(obj)/pasyms.h: $(REALMODE_OBJS) FORCE
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index 3081603..d93250b 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -24,6 +24,10 @@ depfile = $(subst $(comma),_,$(dot-target).d)
+ basetarget = $(basename $(notdir $@))
+ 
+ ###
++# real prerequisites without phony targets
++real-prereqs = $(filter-out $(PHONY), $^)
++
++###
+ # Escape single quote for use in echo statements
+ escsq = $(subst $(squote),'\$(squote)',$1)
+ 
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 681ab58..9800178 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -399,8 +399,7 @@ $(sort $(subdir-obj-y)): $(subdir-ym) ;
+ ifdef builtin-target
+ 
+ quiet_cmd_ar_builtin = AR      $@
+-      cmd_ar_builtin = rm -f $@; \
+-                     $(AR) rcSTP$(KBUILD_ARFLAGS) $@ $(filter $(real-obj-y), $^)
++      cmd_ar_builtin = rm -f $@; $(AR) rcSTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+ 
+ $(builtin-target): $(real-obj-y) FORCE
+ 	$(call if_changed,ar_builtin)
+@@ -428,7 +427,7 @@ ifdef lib-target
+ quiet_cmd_link_l_target = AR      $@
+ 
+ # lib target archives do get a symbol table and index
+-cmd_link_l_target = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(lib-y)
++cmd_link_l_target = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+ 
+ $(lib-target): $(lib-y) FORCE
+ 	$(call if_changed,link_l_target)
+@@ -453,6 +452,10 @@ targets += $(obj)/lib-ksyms.o
+ 
+ endif
+ 
++# NOTE:
++# Do not replace $(filter %.o,^) with $(real-prereqs). When a single object
++# module is turned into a multi object module, $^ will contain header file
++# dependencies recorded in the .*.cmd file.
+ quiet_cmd_link_multi-m = LD [M]  $@
+ cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(filter %.o,$^) $(cmd_secanalysis)
+ 
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index ebaa348..c6fc295 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -231,7 +231,7 @@ $(obj)/%: $(src)/%_shipped
+ # ---------------------------------------------------------------------------
+ 
+ quiet_cmd_ld = LD      $@
+-cmd_ld = $(LD) $(ld_flags) $(filter-out FORCE,$^) -o $@
++      cmd_ld = $(LD) $(ld_flags) $(real-prereqs) -o $@
+ 
+ # Objcopy
+ # ---------------------------------------------------------------------------
+@@ -243,7 +243,7 @@ cmd_objcopy = $(OBJCOPY) $(OBJCOPYFLAGS) $(OBJCOPYFLAGS_$(@F)) $< $@
+ # ---------------------------------------------------------------------------
+ 
+ quiet_cmd_gzip = GZIP    $@
+-      cmd_gzip = cat $(filter-out FORCE,$^) | gzip -n -f -9 > $@
++      cmd_gzip = cat $(real-prereqs) | gzip -n -f -9 > $@
+ 
+ # DTC
+ # ---------------------------------------------------------------------------
+@@ -321,7 +321,7 @@ dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
+ # append the size as a 32-bit littleendian number as gzip does.
+ size_append = printf $(shell						\
+ dec_size=0;								\
+-for F in $(filter-out FORCE,$^); do					\
++for F in $(real-prereqs); do					\
+ 	fsize=$$($(CONFIG_SHELL) $(srctree)/scripts/file-size.sh $$F);	\
+ 	dec_size=$$(expr $$dec_size + $$fsize);				\
+ done;									\
+@@ -335,19 +335,19 @@ printf "%08x\n" $$dec_size |						\
+ )
+ 
+ quiet_cmd_bzip2 = BZIP2   $@
+-      cmd_bzip2 = (cat $(filter-out FORCE,$^) | bzip2 -9 && $(size_append)) > $@
++      cmd_bzip2 = (cat $(real-prereqs) | bzip2 -9 && $(size_append)) > $@
+ 
+ # Lzma
+ # ---------------------------------------------------------------------------
+ 
+ quiet_cmd_lzma = LZMA    $@
+-      cmd_lzma = (cat $(filter-out FORCE,$^) | lzma -9 && $(size_append)) > $@
++      cmd_lzma = (cat $(real-prereqs) | lzma -9 && $(size_append)) > $@
+ 
+ quiet_cmd_lzo = LZO     $@
+-      cmd_lzo = (cat $(filter-out FORCE,$^) | lzop -9 && $(size_append)) > $@
++      cmd_lzo = (cat $(real-prereqs) | lzop -9 && $(size_append)) > $@
+ 
+ quiet_cmd_lz4 = LZ4     $@
+-      cmd_lz4 = (cat $(filter-out FORCE,$^) | lz4c -l -c1 stdin stdout && \
++      cmd_lz4 = (cat $(real-prereqs) | lz4c -l -c1 stdin stdout && \
+                   $(size_append)) > $@
+ 
+ # U-Boot mkimage
+@@ -390,11 +390,11 @@ quiet_cmd_uimage = UIMAGE  $@
+ # big dictionary would increase the memory usage too much in the multi-call
+ # decompression mode. A BCJ filter isn't used either.
+ quiet_cmd_xzkern = XZKERN  $@
+-cmd_xzkern = (cat $(filter-out FORCE,$^) | \
++      cmd_xzkern = (cat $(real-prereqs) | \
+ 	sh $(srctree)/scripts/xz_wrap.sh && $(size_append)) > $@
+ 
+ quiet_cmd_xzmisc = XZMISC  $@
+-cmd_xzmisc = (cat $(filter-out FORCE,$^) | \
++      cmd_xzmisc = (cat $(real-prereqs) | \
+ 	xz --check=crc32 --lzma2=dict=1MiB) > $@
+ 
+ # ASM offsets
+diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+index 7d4af0d0..c0b7f52 100644
+--- a/scripts/Makefile.modpost
++++ b/scripts/Makefile.modpost
+@@ -122,7 +122,7 @@ quiet_cmd_ld_ko_o = LD [M]  $@
+       cmd_ld_ko_o =                                                     \
+ 	$(LD) -r $(KBUILD_LDFLAGS)                                      \
+                  $(KBUILD_LDFLAGS_MODULE) $(LDFLAGS_MODULE)             \
+-                 -o $@ $(filter-out FORCE,$^) ;                         \
++                 -o $@ $(real-prereqs) ;                                \
+ 	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
+ 
+ $(modules): %.ko :%.o %.mod.o FORCE
+-- 
+2.7.4
+
