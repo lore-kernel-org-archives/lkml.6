@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3DFC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D32C7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 147A32077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC2BB205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730333AbfAQAdq (ORCPT
+        id S1730565AbfAQAeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:33:46 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42206 "EHLO mga05.intel.com"
+        Wed, 16 Jan 2019 19:34:06 -0500
+Received: from mga11.intel.com ([192.55.52.93]:47095 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729999AbfAQAdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:40 -0500
+        id S1730163AbfAQAdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:37 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:37 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="292166048"
+   d="scan'208";a="292166062"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
   by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:36 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -42,13 +42,10 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 12/17] x86/alternative: Remove the return value of text_poke_*()
-Date:   Wed, 16 Jan 2019 16:32:54 -0800
-Message-Id: <20190117003259.23141-13-rick.p.edgecombe@intel.com>
+Subject: [PATCH 17/17] module: Prevent module removal racing with text_poke()
+Date:   Wed, 16 Jan 2019 16:32:59 -0800
+Message-Id: <20190117003259.23141-18-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
 References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
@@ -59,92 +56,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-The return value of text_poke_early() and text_poke_bp() is useless.
-Remove it.
+It seems dangerous to allow code modifications to take place
+concurrently with module unloading. So take the text_mutex while the
+memory of the module is freed.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/text-patching.h |  4 ++--
- arch/x86/kernel/alternative.c        | 11 ++++-------
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ kernel/module.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index a75eed841eed..c90678fd391a 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -18,7 +18,7 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
- #define __parainstructions_end	NULL
- #endif
+diff --git a/kernel/module.c b/kernel/module.c
+index 1af5c8e19086..90cfc4988d98 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -64,6 +64,7 @@
+ #include <linux/bsearch.h>
+ #include <linux/dynamic_debug.h>
+ #include <linux/audit.h>
++#include <linux/memory.h>
+ #include <uapi/linux/module.h>
+ #include "module-internal.h"
  
--extern void *text_poke_early(void *addr, const void *opcode, size_t len);
-+extern void text_poke_early(void *addr, const void *opcode, size_t len);
+@@ -2157,6 +2158,9 @@ static void free_module(struct module *mod)
+ 	synchronize_rcu();
+ 	mutex_unlock(&module_mutex);
  
- /*
-  * Clear and restore the kernel write-protection flag on the local CPU.
-@@ -37,7 +37,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
- extern void *text_poke(void *addr, const void *opcode, size_t len);
- extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
--extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
-+extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
- extern __ro_after_init struct mm_struct *poking_mm;
- extern __ro_after_init unsigned long poking_addr;
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 18415e3b6000..2740ad2c6f21 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -264,7 +264,7 @@ static void __init_or_module add_nops(void *insns, unsigned int len)
++	/* Protect against patching of the module while it is being removed */
++	mutex_lock(&text_mutex);
++
+ 	/* This may be empty, but that's OK */
+ 	module_arch_freeing_init(mod);
+ 	module_memfree(mod->init_layout.base);
+@@ -2168,6 +2172,7 @@ static void free_module(struct module *mod)
  
- extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
- extern s32 __smp_locks[], __smp_locks_end[];
--void *text_poke_early(void *addr, const void *opcode, size_t len);
-+void text_poke_early(void *addr, const void *opcode, size_t len);
- 
- /*
-  * Are we looking at a near JMP with a 1 or 4-byte displacement.
-@@ -666,8 +666,8 @@ void __init alternative_instructions(void)
-  * instructions. And on the local CPU you need to be protected again NMI or MCE
-  * handlers seeing an inconsistent instruction while you patch.
-  */
--void *__init_or_module text_poke_early(void *addr, const void *opcode,
--				       size_t len)
-+void __init_or_module text_poke_early(void *addr, const void *opcode,
-+				      size_t len)
- {
- 	unsigned long flags;
- 
-@@ -690,7 +690,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 		 * that causes hangs on some VIA CPUs.
- 		 */
- 	}
--	return addr;
+ 	/* Finally, free the core (containing the module structure) */
+ 	module_memfree(mod->core_layout.base);
++	mutex_unlock(&text_mutex);
  }
  
- __ro_after_init struct mm_struct *poking_mm;
-@@ -893,7 +892,7 @@ int poke_int3_handler(struct pt_regs *regs)
-  *	  replacing opcode
-  *	- sync cores
-  */
--void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
-+void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- {
- 	unsigned char int3 = 0xcc;
- 
-@@ -935,7 +934,5 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- 	 * the writing of the new instruction.
- 	 */
- 	bp_patching_in_progress = false;
--
--	return addr;
- }
- 
+ void *__symbol_get(const char *symbol)
 -- 
 2.17.1
 
