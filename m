@@ -2,107 +2,129 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0288C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A70C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4DDB20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4D9B20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730654AbfAQIUM (ORCPT
+        id S1730548AbfAQIUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:20:12 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:33573 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728331AbfAQIUM (ORCPT
+        Thu, 17 Jan 2019 03:20:55 -0500
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:7788 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728331AbfAQIUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:20:12 -0500
-Received: by mail-it1-f195.google.com with SMTP id m8so452257itk.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 00:20:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eAQZv7n1nUktN3tlxwosRxhMI9TWhXqn4epYTY9BICg=;
-        b=S3s1AXjh8VZ69d7ihWJ0JUvKY68aQZo3oa/1F/o8ZijS7xVIF4Le9GXOdfoRAAlkvi
-         y02rSxDckfRKo8NPfdsuoIZxKn64Uy7SmkT7/NBgRpCAtKHehYiQ3QCqYUlOkInBeJxe
-         PTEc6pB1/dP/8a0agDN4J3iJrA5bDdSJhVhik9TKyRefhH2PUssyhIuKfbT6t+4EndOV
-         dUt4LzmBQs5+h4i3L7ryMKdcL1W+bG4zJUHoWbI43ZFRkXeNAA9LJRsWuPntB+klNlGI
-         c6HS5dHE/lC/fxVL0jAbc2Lcn/zg8WZx91SfK+n/51GAnK08vzoUbFUBaBeS9aG3oLt5
-         iX1A==
-X-Gm-Message-State: AJcUukfPowHvMUVfqWEI076IgW2tg1nIE/r4Em5PH4fddozZbwd89gXu
-        5QC9UJXctT62YITDSmGmjMlKHOqd5M85M7+IsOGBZGcTGRqNhQ==
-X-Google-Smtp-Source: ALg8bN6KM2dPtjaz/R0+S9W32sakPD8bGs2cZz6Dbutsdpim6Ci6IjxiQy5GoGI4T/uZua8W+un47/yZ/U48Y9+4qQY=
-X-Received: by 2002:a24:5fd2:: with SMTP id r201mr9035866itb.19.1547713211125;
- Thu, 17 Jan 2019 00:20:11 -0800 (PST)
+        Thu, 17 Jan 2019 03:20:55 -0500
+X-IronPort-AV: E=Sophos;i="5.56,488,1539648000"; 
+   d="scan'208";a="84713258"
+Date:   Thu, 17 Jan 2019 09:20:43 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+CC:     <linux-block@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
+        <axboe@kernel.dk>, <linux-kernel@vger.kernel.org>,
+        <konrad.wilk@oracle.com>
+Subject: Re: [Xen-devel] [PATCH 1/1] xen-blkback: do not wake up shutdown_wq
+ after xen_blkif_schedule() is stopped
+Message-ID: <20190117082043.7y4gl4uave5pgawf@mac>
+References: <1547646461-29803-1-git-send-email-dongli.zhang@oracle.com>
+ <20190116145215.igakzdkklc6f7h6k@mac>
+ <30770f68-34e0-d707-b087-c43f0b51cd81@oracle.com>
 MIME-Version: 1.0
-References: <20190115095834.22617-1-kasong@redhat.com> <20190115095834.22617-3-kasong@redhat.com>
- <20190115231005.GF6596@zn.tnic> <CACPcB9dYD2zR7ssXFibkefo3EZuvVnLegovwTMA8MaaLP1UsYQ@mail.gmail.com>
- <20190116094619.GB15409@zn.tnic> <CACPcB9d0dKLPmZ=b++m5LYRjFUCFyLL3deDBcS4m3N-UWZ_Hyw@mail.gmail.com>
- <20190117074959.GB31097@localhost.localdomain>
-In-Reply-To: <20190117074959.GB31097@localhost.localdomain>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Thu, 17 Jan 2019 16:20:00 +0800
-Message-ID: <CACPcB9eXumk33=7ukrghYLwHbKyfbiQW4ZA7BhpX3hLewrdu-A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] x86, kexec_file_load: make it work with
- efi=noruntime or efi=old_map
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, Dave Young <dyoung@redhat.com>,
-        Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
-        akpm@linux-foundation.org, robert.moore@intel.com,
-        erik.schmauss@intel.com, rafael.j.wysocki@intel.com,
-        Len Brown <lenb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <30770f68-34e0-d707-b087-c43f0b51cd81@oracle.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 3:51 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
->
-> On Thu, Jan 17, 2019 at 03:41:13PM +0800, Kairui Song wrote:
-> >On Wed, Jan 16, 2019 at 5:46 PM Borislav Petkov <bp@alien8.de> wrote:
+On Thu, Jan 17, 2019 at 10:10:00AM +0800, Dongli Zhang wrote:
+> Hi Roger,
+> 
+> On 2019/1/16 下午10:52, Roger Pau Monné wrote:
+> > On Wed, Jan 16, 2019 at 09:47:41PM +0800, Dongli Zhang wrote:
+> >> There is no need to wake up xen_blkif_schedule() as kthread_stop() is able
+> >> to already wake up the kernel thread.
 > >>
-> >> On Wed, Jan 16, 2019 at 03:08:42PM +0800, Kairui Song wrote:
-> >> > I didn't see a way to reuse things in that patch series, situation is
-> >> > different, in that patch it needs to get RSDP in very early boot stage
-> >> > so it did everything from scratch, in this patch kexec_file_load need
-> >> > to get RSDP too, but everything is well setup so things are a lot
-> >> > easier, just read from current boot_prams, efi and fallback to
-> >> > acpi_find_root_pointer should be good.
+> >> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> >> ---
+> >>  drivers/block/xen-blkback/xenbus.c | 4 +---
+> >>  1 file changed, 1 insertion(+), 3 deletions(-)
 > >>
-> >> No no. Early code should find out that venerable RSDP thing once and
-> >> will save it somewhere for further use. No gazillion parsings of it.
-> >> Just once and share it with the rest of the code that needs it.
-> >>
-> >
-> >How about we refill the boot_params.acpi_rsdp_addr if it is not valid
-> >in early code, so it could be used as a reliable RSDP address source?
-> >That should make things easier.
->
-> I think it's OK.
-> Try to read it, if get RSDP, use it.
-> If not, search in EFI/BIOS/... and refill the RSDP to
-> boot_params.acpi_rsdp_addr.
-> By the way, I search kernel code, I didn't find other code fill and
-> use it, only you(KEXEC) are trying to fill it.
-> If I miss something, please let me know.
+> >> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> >> index a4bc74e..37ac59e 100644
+> >> --- a/drivers/block/xen-blkback/xenbus.c
+> >> +++ b/drivers/block/xen-blkback/xenbus.c
+> >> @@ -254,10 +254,8 @@ static int xen_blkif_disconnect(struct xen_blkif *blkif)
+> >>  		if (!ring->active)
+> >>  			continue;
+> >>  
+> >> -		if (ring->xenblkd) {
+> >> +		if (ring->xenblkd)
+> >>  			kthread_stop(ring->xenblkd);
+> >> -			wake_up(&ring->shutdown_wq);
+> > 
+> > I've now realized that shutdown_wq is basically useless, and should be
+> > removed, could you please do it in this patch?
+> 
+> I do not think shutdown_wq is useless.
+> 
+> It is used to halt the xen_blkif_schedule() kthread when
+> RING_REQUEST_PROD_OVERFLOW() returns true in __do_block_io_op():
+> 
+> 1121 static int
+> 1122 __do_block_io_op(struct xen_blkif_ring *ring)
+> ... ...
+> 1134         if (RING_REQUEST_PROD_OVERFLOW(&blk_rings->common, rp)) {
+> 1135                 rc = blk_rings->common.rsp_prod_pvt;
+> 1136                 pr_warn("Frontend provided bogus ring requests (%d - %d =
+> %d). Halting ring processing on dev=%04x\n",
+> 1137                         rp, rc, rp - rc, ring->blkif->vbd.pdevice);
+> 1138                 return -EACCES;
+> 1139         }
+> 
+> 
+> If there is bogus/invalid ring requests, __do_block_io_op() would return -EACCES
+> without modifying prod/cons index.
+> 
+> Without shutdown_wq (just simply assuming we remove the below code without
+> handling -EACCES in xen_blkif_schedule()), the kernel thread would continue the
+> while loop.
+> 
+> 648                 if (ret == -EACCES)
+> 649                         wait_event_interruptible(ring->shutdown_wq,
+> 650                                                  kthread_should_stop());
+> 
+> 
+> If xen_blkif_be_int() is triggered again (let's assume there is no optimization
+> on guest part and guest would send event for every request it puts on ring
+> buffer), we may come to do_block_io_op() again.
+> 
+> 
+> As the prod/cons index are not modified last time the code runs into
+> do_block_io_op() to process bogus request, we would hit the bogus request issue
+> again.
+> 
+> 
+> With shutdown_wq, the kernel kthread is blocked forever until such queue/ring is
+> destroyed. If we remove shutdown_wq, we are changing the policy to handle bogus
+> requests on ring buffer?
 
-Yes, kexec would read RSDP again to pass it to second kernel, and only
-if EFI is disabled (efi=noruntime/old_map, else second kernel will get
-rsdp just fine). Not sure if any other component would use it.
+AFAICT the only wakeup call to shutdown_wq is removed in this patch,
+hence waiting on it seems useless. I would replace the
+wait_event_interruptible call in xen_blkif_schedule with a break, so
+that the kthread ends as soon as a bogus request is found. I think
+there's no point in waiting for xen_blkif_disconnect to stop the
+kthread.
 
->
-> Thanks,
-> Chao Fan
-
->
-
---
-Best Regards,
-Kairui Song
+Thanks, Roger.
