@@ -2,96 +2,167 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D785C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1E8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013AE20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:04:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7328320859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:06:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ADkg4fEN"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="1WJs/Azf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbfAQUEC (ORCPT
+        id S1729259AbfAQUGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:04:02 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34661 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728801AbfAQUEA (ORCPT
+        Thu, 17 Jan 2019 15:06:25 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:59232 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728797AbfAQUGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:04:00 -0500
-Received: by mail-ot1-f67.google.com with SMTP id t5so7251884otk.1;
-        Thu, 17 Jan 2019 12:04:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aOQcJ8A/Hy4SFduSRsbtupfkyGSIJzFNagfozlCbUug=;
-        b=ADkg4fEN5BbybunEH8TAKxkFPE9qylv300UVJAHLNOUSMdCafMpKpCfjhMnJCLkEuk
-         xj/fAoCQnW4Uxj16dEgAhuKeZ2tnjtcmHk6fvbN0u258Cb4AojIVUgkl2oSsqAgQ3BsQ
-         Z5WwHwpmOoDvawLfAq6UP0JRCfOlqk8a3P+8QHInDvG1cveuDRkMwxkw20yS1LF7Qk9Q
-         gdR+cKaMS6w90oh/tjyq9bOu4IqIr4Hfb5wwWckt9P31ysMoG2KCDvUnaGiOu3mIcw8o
-         oxNMo8B0b9HqaKTOTXb2zf3aq1w8trz9XJKQeGPhh31njcVp9HRAJtM5hGVMk1jj7E3H
-         vWZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aOQcJ8A/Hy4SFduSRsbtupfkyGSIJzFNagfozlCbUug=;
-        b=l3zuM5z/xtGsUFEL7shao6yN0bRQS/pCXJFMnACEDqBvqNa/w0SEZmIOPNzmtIAJsj
-         L3FPvfx6yKNFDHLlRW4GIPceamAIQOTpPlnp7zuNbba0tUc0k4JoK5zTMgVsF3SSxi5A
-         zlOPfuduMWHkG9/bpVo2gdRMDOmovQHyzLUMrOdZFDez2lexfvOrME8mXsDKh8kcpCrq
-         GXCE2csdXpEmPy0hO4EbrZQ8tt0EH+zzN6EcLRjFkunrRip3VKJukBwxySHop75mIVmo
-         O83sIVgQvPfGHHbqdLEwsQfPlO6ZP9OGPS2BfxCZr+KoIxrd+IeJua4Y79bVkABtDgxP
-         kmEw==
-X-Gm-Message-State: AJcUukdQJf2Np/qbby+Y40KkIz33qzE3aVbVbyphRLP7+xw2LK1cvQfK
-        oRx/GDpbE8wt8kq/MR8J8ehKeJuAyU/VnhaCv7U=
-X-Google-Smtp-Source: ALg8bN6ghFmN/VZR0Bg50QnZMHKftYcuMKJ0j+U4CijxSRFCMa8133BL6vScOSJpQDQXLIne1KpJIwGnOIJsP3IspYU=
-X-Received: by 2002:a9d:491e:: with SMTP id e30mr10121142otf.131.1547755439747;
- Thu, 17 Jan 2019 12:03:59 -0800 (PST)
+        Thu, 17 Jan 2019 15:06:24 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5C1748365A;
+        Fri, 18 Jan 2019 09:06:21 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1547755581;
+        bh=z5UHfqjlYMuHAfZj9vBh3kktJbllCGP/fQHQ89nZo3g=;
+        h=From:To:Subject:Date:References;
+        b=1WJs/Azfjaw0t8ZghUSlFMSr1PzGMitrZLiCwxAAompG8RAPjNd/+SGRxdlh7I4vD
+         nqLU8TPwmUr/2a4GakQI11J8uqtYw4/RR9IbD2vIpBNNzn7abg7IihI02DBESZ6sZb
+         rVjq/mR2gNZbgfIaKUJCx/wv5oETcqB7/w6+lGBZfEPMSZDq6ckBUT7Nx63Qk1vK8b
+         E1+6roDAtPfSuGxRQCWUEmnnS/jCGPOUgQV0eaj39/KeSEfqbP1FbbN5FTeujGF4qD
+         wXawTBi+ybl1+cDqJSmP1THRVcJtHvo4aFdb0XkBGyo9ougOau8FT1pRG8c7AhGrMi
+         JqUFJRKOiPVYw==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c40e03b0000>; Fri, 18 Jan 2019 09:06:19 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1156.6; Fri, 18 Jan 2019 09:06:16 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Fri, 18 Jan 2019 09:06:16 +1300
+From:   Darwin Dingel <Darwin.Dingel@alliedtelesis.co.nz>
+To:     "zhe.he@windriver.com" <zhe.he@windriver.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "Jisheng.Zhang@synaptics.com" <Jisheng.Zhang@synaptics.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] serial: 8250: Fix serial8250 initialization crash
+Thread-Topic: [PATCH] serial: 8250: Fix serial8250 initialization crash
+Thread-Index: AQHUrkMcXKnwLVY2dEaW/IjGFnxJ8w==
+Date:   Thu, 17 Jan 2019 20:06:15 +0000
+Message-ID: <1fcc3761e9f34254a25602002f65773a@svr-chch-ex1.atlnz.lc>
+References: <1547715619-181299-1-git-send-email-zhe.he@windriver.com>
+ <41c574bfdce7490597079dae8f328661@svr-chch-ex1.atlnz.lc>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:23:c9cc:a3c:eb68:bca4]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190116165236.8330-1-jbrunet@baylibre.com>
-In-Reply-To: <20190116165236.8330-1-jbrunet@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 17 Jan 2019 21:03:48 +0100
-Message-ID: <CAFBinCBFge2tir-MXw+ojTxzW+7n9Uf4FzCahrw0MDzAYV2SSg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: meson: fix g12a buses
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
-
-On Wed, Jan 16, 2019 at 5:52 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-[...]
-> -               aobus: bus@ff800000 {
-> -                       compatible = "simple-bus";
-> -                       reg = <0x0 0xff800000 0x0 0x100000>;
-are you sure about removing aobus?
-in your patch "arm64: dts: meson: g12a: add pinctrl support
-controllers" from [0] you're adding back an "rti" bus at the same
-memory address, except that it's size is 0x1000 instead of 0x100000
-
-I don't have any G12A datasheet so it's hard for me to ACK / NACK this
-patch, here are some clues why I'm asking:
-- GXM's public datasheet lists the "RTI" region at 0xC8100000 -
-0xC81FFFFF, we call it "aobus" in our .dtsi
-- buildroot_openlinux_kernel_4.9_fbdev_20180706/kernel/aml-4.9/arch/arm64/boot/dts/amlogic/mesong12a.dtsi
-also uses an aobus node as well as an io_aobus_base sub-node for the
-codec_io node (the latter is obviously not upstream)
-
-
-Regards
-Martin
-
-
-[0] https://lore.kernel.org/patchwork/patch/1032981/
+On 18/01/19 8:49 AM, Darwin Dingel wrote:=0A=
+> On 17/01/19 10:00 PM, zhe.he@windriver.com wrote:=0A=
+>> From: He Zhe <zhe.he@windriver.com>=0A=
+>>=0A=
+>> The initialization code of interrupt backoff work might reference NULL=
+=0A=
+>> pointer and cause the following crash, if no port was found.=0A=
+>>=0A=
+>> [   10.017727] CPU 0 Unable to handle kernel paging request at virtual a=
+ddress 000001b0, epc =3D=3D 807088e0, ra =3D=3D 8070863c=0A=
+>> ---- snip ----=0A=
+>> [   11.704470] [<807088e0>] serial8250_register_8250_port+0x318/0x4ac=0A=
+>> [   11.747251] [<80708d74>] serial8250_probe+0x148/0x1c0=0A=
+>> [   11.789301] [<80728450>] platform_drv_probe+0x40/0x94=0A=
+>> [   11.830515] [<807264f8>] really_probe+0xf8/0x318=0A=
+>> [   11.870876] [<80726b7c>] __driver_attach+0x110/0x12c=0A=
+>> [   11.910960] [<80724374>] bus_for_each_dev+0x78/0xcc=0A=
+>> [   11.951134] [<80725958>] bus_add_driver+0x200/0x234=0A=
+>> [   11.989756] [<807273d8>] driver_register+0x84/0x148=0A=
+>> [   12.029832] [<80d72f84>] serial8250_init+0x138/0x198=0A=
+>> [   12.070447] [<80100e6c>] do_one_initcall+0x5c/0x2a0=0A=
+>> [   12.110104] [<80d3a208>] kernel_init_freeable+0x370/0x484=0A=
+>> [   12.150722] [<80a49420>] kernel_init+0x10/0xf8=0A=
+>> [   12.191517] [<8010756c>] ret_from_kernel_thread+0x14/0x1c=0A=
+>>=0A=
+>> This patch makes sure the initialization code can be reached only if a p=
+ort=0A=
+>> is found.=0A=
+>>=0A=
+>> Fixes: commit 6d7f677a2afa ("serial: 8250: Rate limit serial port rx int=
+errupts during input overruns")=0A=
+>> Signed-off-by: He Zhe <zhe.he@windriver.com>=0A=
+>> ---=0A=
+>>    drivers/tty/serial/8250/8250_core.c | 17 +++++++++--------=0A=
+>>    1 file changed, 9 insertions(+), 8 deletions(-)=0A=
+>>=0A=
+>> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/82=
+50/8250_core.c=0A=
+>> index 189ab12..e441221 100644=0A=
+>> --- a/drivers/tty/serial/8250/8250_core.c=0A=
+>> +++ b/drivers/tty/serial/8250/8250_core.c=0A=
+>> @@ -1070,15 +1070,16 @@ int serial8250_register_8250_port(struct uart_82=
+50_port *up)=0A=
+>>    =0A=
+>>    			ret =3D 0;=0A=
+>>    		}=0A=
+>> -	}=0A=
+>>    =0A=
+>> -	/* Initialise interrupt backoff work if required */=0A=
+>> -	if (up->overrun_backoff_time_ms > 0) {=0A=
+>> -		uart->overrun_backoff_time_ms =3D up->overrun_backoff_time_ms;=0A=
+>> -		INIT_DELAYED_WORK(&uart->overrun_backoff,=0A=
+>> -				  serial_8250_overrun_backoff_work);=0A=
+>> -	} else {=0A=
+>> -		uart->overrun_backoff_time_ms =3D 0;=0A=
+>> +		/* Initialise interrupt backoff work if required */=0A=
+>> +		if (up->overrun_backoff_time_ms > 0) {=0A=
+>> +			uart->overrun_backoff_time_ms =3D=0A=
+>> +				up->overrun_backoff_time_ms;=0A=
+>> +			INIT_DELAYED_WORK(&uart->overrun_backoff,=0A=
+>> +					serial_8250_overrun_backoff_work);=0A=
+>> +		} else {=0A=
+>> +			uart->overrun_backoff_time_ms =3D 0;=0A=
+>> +		}=0A=
+>>    	}=0A=
+>>    =0A=
+>>    	mutex_unlock(&serial_mutex);=0A=
+>>=0A=
+> =0A=
+> Reviewed-by: Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>=0A=
+> =0A=
+> I presume this is the same issue reported here:=0A=
+> =0A=
+> https://www.spinics.net/lists/linux-serial/msg33114.html=0A=
+> https://lkml.org/lkml/2018/12/22/171=0A=
+> =0A=
+> =0A=
+> =0A=
+> Thanks!=0A=
+> Regards,=0A=
+> =0A=
+> Darwin=0A=
+> =0A=
+=0A=
+Adding Colin and Dan.=0A=
+=0A=
+Regards,=0A=
+Darwin=0A=
