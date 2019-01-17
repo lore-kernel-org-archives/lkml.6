@@ -2,159 +2,129 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 536F8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F032C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23C3D20651
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:01:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6q+xNzR"
+	by mail.kernel.org (Postfix) with ESMTP id 12BC920675
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:05:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfAQBBy (ORCPT
+        id S1727620AbfAQBFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 20:01:54 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46442 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbfAQBBx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 20:01:53 -0500
-Received: by mail-wr1-f68.google.com with SMTP id l9so9034119wrt.13
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 17:01:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=N2zoRjaojyvjJj2TpWeK3g17xvej+ksqx+lVKWPjLjQ=;
-        b=Y6q+xNzRyKk7dPnTYp1Mwqn+F2zFHSBWSzACq48hjQuZXwNI0AohbKKVW0RR798trE
-         /lRv4zPrdtXmZGFhq2Y5KrQ17n5pqnXMA+YzOlPYkCp5+08fNVbfzZ4Z0l4v8oyWMY7W
-         isevw5ec4uGYvnNSIQd0LolAUttLVPZFIvpHgc4iW92VZyTH4KtQo82+lGRnBJJzkWEW
-         ixDN1alNmeoM5jujXw2lQ81fbpIW7M47L4c/zLI2jSfHjZaAZVW+/6nvoIq29vBbE8Dc
-         AzjZOihptYlrevvkzDMAMXBLjqrK8Qcvn4gNoX2l7rtV6UIS7+Mt5MoGZ0Kl4+E2fU9z
-         CnXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N2zoRjaojyvjJj2TpWeK3g17xvej+ksqx+lVKWPjLjQ=;
-        b=VUFmqNo7OaQydupJzKuQi4CcUu8o0iCM4/5EpcLFdTDzvglBy66bIQi8PwU2lsR6Bc
-         VpTbLgpDKBxZn93POtRGpqYIQ3GfOgkThnPa45Rs07P7N5g5ANVjS7MFTd/hVptIpAlC
-         VATcm4CtTTAuG+oQmsLtJvBK9wmYnh3yDNfVH7/3S+JI0TCULuTqUEYxtiHhozFfrNoA
-         pnWyPPtRGykOHxzvsIan5aiJZBpVCsxH6SH1dJom0fDt5swzvRkOJBWfFf4PSex1AFp5
-         BNwRQj6f4acA4yNPSYprUXSNSgU5BGlGM82ScRTeBG/5FKLN4jUkITj5Fb6MdAM4d2Oe
-         du5Q==
-X-Gm-Message-State: AJcUukdn2wfh8TModDUDFIviDJk8o2IHb4ATxVMyoBqj+vOVYA9U/0YA
-        nP9jfNRyhXKS/PSAoFbkfaM=
-X-Google-Smtp-Source: ALg8bN6rQP377JXas8WQypMmgporqOMu5MDbkVv9qyn6ihTuWky9DD5gy3Pj1bpbqcVfhOckdQeiUQ==
-X-Received: by 2002:adf:9d85:: with SMTP id p5mr9201880wre.41.1547686911746;
-        Wed, 16 Jan 2019 17:01:51 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id x186sm41293630wmg.41.2019.01.16.17.01.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 16 Jan 2019 17:01:50 -0800 (PST)
-Date:   Wed, 16 Jan 2019 18:01:48 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v2] x86/pgtable: Always inline p4d_index
-Message-ID: <20190117010148.GA14152@flashbox>
-References: <20181210234538.5405-1-natechancellor@gmail.com>
- <20190116134158.344-1-natechancellor@gmail.com>
- <alpine.DEB.2.21.1901161848560.1642@nanos.tec.linutronix.de>
+        Wed, 16 Jan 2019 20:05:22 -0500
+Received: from mout.gmx.net ([212.227.17.22]:35123 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbfAQBFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 20:05:22 -0500
+Received: from longitude ([89.0.34.110]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MGip3-1gWTrl3vcn-00DXJN; Thu, 17
+ Jan 2019 02:05:13 +0100
+Date:   Thu, 17 Jan 2019 02:05:09 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Jonathan Neuschafer <j.neuschaefer@gmx.net>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        stable@vger.kernel.org
+Subject: Re: [RESENDING PATCH] powerpc/wii: properly disable use of BATs when
+ requested.
+Message-ID: <20190117010509.GH22334@latitude>
+References: <7e6748349978f4f177b6a1f3f1c773da98ae3b59.1547570012.git.christophe.leroy@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ulDeV4rPMk/y39in"
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1901161848560.1642@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <7e6748349978f4f177b6a1f3f1c773da98ae3b59.1547570012.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:cyDBWVVTRYaWOVmOOSJGQacNT7qwshP67Nxe35TZwkmTif0ZNcL
+ QFhi0wAsBvVhRoUGqC8NNmAcOu3XrMpfCA11FE+1dKLM1yJ1uqPW6GsQtldMwY1SRsUsGuh
+ etWZCbPM3NuOHm21C3mXKZSRTktQ4RcfixZaE0DBewfJ3BlpzoRnuQMnA5Vo8tBFjCNg5u1
+ lGebbvKuhzM6nil+8m80g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Y/2qgP2U+VI=:BWhNPri8+81V93gRdMD2gY
+ 1tAexu19Q3U0WDM5j73OQ6JwxF7oQH6GueVyBPClj3ETDWZ1+oNdiIkdsluApR9zTSirI1+0H
+ i5/wag5I0VE6gQ7PM3BSIln6kJxfQdmmB2HJmzLy/xUeQY3rYiqWY/SvW2j1FCBQZ/i4wp8GF
+ DGxMD1naIy9gBaPCUs0bflar0KE7cAOEXMgA/y6yWEwaKpa3VfLb8RiYLZRRlmzw8YqFQtC3d
+ mvnu5BEHlYCGcX7dXgbJnnz1XqJQ4Ej8p4TxruqBUbDaJI0g5DGzkjNmEXtRGuNnnax7euEEy
+ JtSErsS0OoXnlL/EtyhkMJjNnRbgttBdzE+EGw1Ht+AYT6EDMgbKz0QFfthY2cBQ+hM9h3vzX
+ XjgJeZVpWqDqBaK8ZN43WDCHrVQxWVaEcTrNRHRvFNQVjAKZOzXinQP74kD5kXRO4rpz6QRIf
+ Ec0odd3Wqbczu2qm3lDgCHeTjpsCm0JjEAGzyauRyTorPCYXXOMJwpHsxWV/zQVZ3QTRBScdC
+ zHil6CtJRbSwNd1MvFzF04JWQFaMCgMkPmrDO+YXRsRHPbuC3f7abEQ8kw05jgPg0OGaPX3Kl
+ HwAlgyL8hVpJ/h6idDEOTcOMC90eSrexL2zWILEMrImJhvjMa8WxDyfqzFAK0I8NGBjrVmSFf
+ zU4iMydfxuPtX4ajXSAimHFnQ7INnOiqSmqZutTnzbMkHNKTueBJNdLIcF89o2AtEIfyUVhvd
+ Nve15naglFeB3VWUBpJZImhuNVFl8EyAW1Ng53SD3jRS8LqdzmHPZCI9zTDm4xvQgnswvSguW
+ 4620Etq7OGmLTVcedyFOOLNzTbJRX0WXSmgcc0FGowTFzIb64P+DQmFRQY9WYW61ST+kCq6nT
+ +2/zRb18hAURc3qmI631LbreOTRx2HQWarY7/pzrSl97YEJQ+gmz/lquoDpzw3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:54:25PM +0100, Thomas Gleixner wrote:
-> On Wed, 16 Jan 2019, Nathan Chancellor wrote:
-> 
-> > When building an allyesconfig build with Clang, the kernel fails to link
-> > arch/x86/platform/efi/efi_64.o because of a failed BUILD_BUG_ON:
-> > 
-> > ld: arch/x86/platform/efi/efi_64.o: in function `efi_sync_low_kernel_mappings':
-> > (.text+0x8e5): undefined reference to `__compiletime_assert_277'
-> > 
-> > Since there are several BUILD_BUG_ONs in efi_64.c, I isolated it down to
-> > the following:
-> > 
-> >     BUILD_BUG_ON(p4d_index(EFI_VA_END) != p4d_index(MODULES_END));
-> > 
-> > After some research, it turns out that there is a new config option
-> > called NO_AUTO_INLINE, which adds '-fno-inline-functions' to
-> > KBUILD_CFLAGS so that the compiler does not auto inline small functions,
-> > which causes this BUILD_BUG_ON to fail because p4d_index is no longer an
-> > integer constant expression.
-> 
-> There is no tree where this config option exists.
-> 
 
-Hmmm, appears that Linus rejected the pull that would have added
-this option, which sat in -next for a month and a half.
+--ulDeV4rPMk/y39in
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://lore.kernel.org/lkml/CAHk-=wiLt3rgeyM3BWAd5VJrKcnxxuHybwoQiDGMgyspo6oXDg@mail.gmail.com/
+Hi again,
 
-It is no longer in -next or the kbuild tree so I guess it was scrapped.
+On Tue, Jan 15, 2019 at 04:43:20PM +0000, Christophe Leroy wrote:
+> 'nobats' kernel parameter or some options like CONFIG_DEBUG_PAGEALLOC
+> deny the use of BATS for mapping memory.
+>=20
+> This patch makes sure that the specific wii RAM mapping function
+> takes it into account as well.
+>=20
+> Fixes: de32400dd26e ("wii: use both mem1 and mem2 as ram")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+[...]
+>  	/* MEM2 64MB@0x10000000 */
+>  	delta =3D wii_hole_start + wii_hole_size;
+> +	if (__map_without_bats)
+> +		return delta;
+> +
 
-> > According to the help text of the config, functions explicitly marked
-> > inline should still be inlined. As it turns out, GCC and Clang both
-> > support '-fno-inline-functions' but Clang only inlines functions when
-> > they are marked with an always inline annotation[1].
-> > 
-> > Since it's expected that p4d_index should always be inlined so that its
-> > value can be evaluated at build time, mark it as __always_inline.
-> 
-> Sorry no, that's just papering over the problem.
-> 
-> The point is that NO_AUTO_INLINE is/was meant to prevent the compiler from
-> automatically inlining functions, which are NOT marked inline in any form
-> in order to expand the traceability.
-> 
-> With GCC this makes sense, because it still inlines functions which are
-> solely marked inline and even if it decides not to inline them it will
-> evaluate them if they expand to a build time constant expression.
-> 
-> Now Clang decided to give -fno-inline-functions a different meaning,
-> i.e. the same as GCC has for -fno-inline, which prevents inlining for
-> everything except functions which are marked __always_inline.
-> 
-> So just "fixing" the build wreckage by duct taping one single instance of
-> inline functions is really a bad idea. The resulting kernel will be
-> bloatware because all regular inlines and we have tons of them will turn
-> into function calls even if the function overhead is larger than the
-> resulting inline code. Not to talk about the performance impact.
-> 
+Nothing is visibly broken without this patch, even with
+CONFIG_DEBUG_PAGEALLOC (tested on top of v5.0-rc2), but the patch still
+looks correct.
 
-Far points. I don't disagree that this is a band aid patch but I was
-more concerned about the build error than the runtime impact since this
-was uncovered with an allyesconfig build, which we aren't booting
-anyways.
+I'd prefer the 'if' block to be before the whole delta/size calculation,
+to make the code slightly more readable because the delta and size
+calculations stay in one visual block. It doesn't need to happen after
+delta is calculated.
 
-> Anyway, as this option is found to be nowhere there is no point to apply
-> this patch.
-> 
+tentatively,
+Reviewed-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 
-Indeed. If the config reappears, it should probably 'depends on CC_IS_GCC'.
 
-> Thanks,
-> 
-> 	tglx
-> 
+Thanks,
+Jonathan
 
-Thank you for the reply and review!
-Nathan
-> 
-> 
-> 
+--ulDeV4rPMk/y39in
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlw/1LwACgkQCDBEmo7z
+X9t15w/9HAIpyLsvt8vSwK4gfTd5obM3aiOswCoMWl5NJty0FA0ptb8htS29OHfe
+vvJ99HXuAh7Mg+2wtXIwqNZs7lk1EVT6N80ORj4LP7xQCzxR1q6BWaWPmSDjTtQw
+aeub/Px9Ldb7Ynglqys4fnsEi9MWUVYa++WvZ5s8UOMk6wRfxOIItUvSnOwVgATG
+KvXc7t1OJsJbgU+Goay6HggyQNmk4G9asv+OtD+hVazDpHiEOeQYweGLlQ2/lgjI
+MaEZ7FRZLqqBjTviCXkLLUJ5wkR9+Q6wioDU9ss1eHczuZinfUDoY5LYnj3oqOwn
+vLiC+HbaV2yniS6CHRLXEyonnBzVX0MHTjSiQRmfZBbX2rAaXrQbV/JUztswA/3A
+KcDERzAr2R1ZUgp8aNELQQJC5n3BhCutXJ/CndsDkqrQq5FJOEpfmuUmoJYvf+1q
+vkrLmezvcrlcgPn2H4iDi/986BAGvJNdPq0cN8x2qusn1Onb1JM7HeyNC06JR3BM
+ILCTpmpDm2lKkEL0lbFSACeIvFcuQk2A/778w/RT9Z3WN4NONthnObD79h2RFNQu
+1XmWMLgIyjTrOl5zDITwa6LsleEkDeIQo7h+3qdbytDXQAMHQhsz8nJNDh6kL6kT
+o8lhk28kHVMQGiGtp1M8VJBdW1KctUKwBOuprSAtJts9x8YPiYE=
+=ftf9
+-----END PGP SIGNATURE-----
+
+--ulDeV4rPMk/y39in--
