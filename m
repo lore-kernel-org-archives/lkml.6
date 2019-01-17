@@ -2,224 +2,119 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2850DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42B7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDEEE20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72EE520652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:47:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dSWzbnBM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729432AbfAQRoe (ORCPT
+        id S1727174AbfAQRrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:44:34 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44036 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727949AbfAQRoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:44:22 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACF8A80D;
-        Thu, 17 Jan 2019 09:44:21 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB8053F557;
-        Thu, 17 Jan 2019 09:44:18 -0800 (PST)
-Date:   Thu, 17 Jan 2019 17:44:10 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 00/27] PM / Domains: Support hierarchical CPU
- arrangement (PSCI/ARM)
-Message-ID: <20190117174410.GA8839@e107155-lin>
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20190103120612.GC23511@e107155-lin>
- <CAPDyKFp-JB85TZOs+oso0iidaAsm1A=UDrg=gv+QZ4VJ9gW=fA@mail.gmail.com>
+        Thu, 17 Jan 2019 12:47:32 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36145 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfAQRrc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 12:47:32 -0500
+Received: by mail-vs1-f65.google.com with SMTP id v205so6766544vsc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:47:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MBef/doDSOAMP9wXyEDzqga+vsHU8sCYSuC9Cg5601w=;
+        b=dSWzbnBMerk5t52BJPWS10ZjvkzD7tw1CPsOJcHRSDg6kMBOHhY2h9y1JhAiDfqtVy
+         0TohTC9dJ4WcJ1otTH8PUYBjU5yn4bBZHespd+RYwnjNjfaraWSTCUx91jwyoATIFeZJ
+         sPXmtRINAXDFwmGKUmKYkFO8ncFy5/YAuyYU4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MBef/doDSOAMP9wXyEDzqga+vsHU8sCYSuC9Cg5601w=;
+        b=GHkC1I8asd0MQdkrSMSZ2xGMY51BXzFRVZJVvOG1ZGeJvB3d3NaWKdIoi+zmSEKLCg
+         bnTXwtqG0wB434Gdqb9FJzg3uGJy2y9iSIgar95hYK8Wla+78IA09CicC/o1mY2OTag+
+         TVpY92KLQXwxkrON2rrHlnxlJ7E2mBK3jF/YyqVvQortLeHJ1OnmxU+j7EoAoT1rLtp1
+         MJhCwr0OiV54FGEk4j91nlq5hfxfMjIpsRXy4D+/fHztP8ZQwYyrlyC96PGiOa7dERmR
+         bvD6LdTVb5wcOV8pEDm44KFogMUKNqE2ga0ojJpBqP0bVrIX9sJ19jmNSlniRjgZSBgX
+         +X5g==
+X-Gm-Message-State: AJcUukdXCoXn7dYd0lDMwyQX9klb8OSVA52f2PLhsrnbEfay0Kq+3xVJ
+        0vqnyV+INsR9J9bSjCi3KEn70FJSJFQ=
+X-Google-Smtp-Source: ALg8bN7/jUb9Oe0fyFces2d9XC14up5PfUi+iQG6v21X5/scGIdWnV08Y6icHhaC/018pt7k/xGdwA==
+X-Received: by 2002:a67:f696:: with SMTP id n22mr6944156vso.175.1547747249850;
+        Thu, 17 Jan 2019 09:47:29 -0800 (PST)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id q193sm2558714vsd.0.2019.01.17.09.47.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 09:47:29 -0800 (PST)
+Received: by mail-vs1-f50.google.com with SMTP id z3so6747181vsf.7
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:47:28 -0800 (PST)
+X-Received: by 2002:a67:f943:: with SMTP id u3mr6569270vsq.149.1547747248524;
+ Thu, 17 Jan 2019 09:47:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFp-JB85TZOs+oso0iidaAsm1A=UDrg=gv+QZ4VJ9gW=fA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190117042940.25487-1-bjorn.andersson@linaro.org> <20190117042940.25487-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20190117042940.25487-2-bjorn.andersson@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 17 Jan 2019 09:47:16 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UPwHux1nBm_eO3Uida6hSZLrOwdMpjMQQb5daa3USpqg@mail.gmail.com>
+Message-ID: <CAD=FV=UPwHux1nBm_eO3Uida6hSZLrOwdMpjMQQb5daa3USpqg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] arm64: dts: qcom: sdm845: Increase address and
+ size cells for soc
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:10:08AM +0100, Ulf Hansson wrote:
-> On Thu, 3 Jan 2019 at 13:06, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > On Thu, Nov 29, 2018 at 06:46:33PM +0100, Ulf Hansson wrote:
-> > > Over the years this series have been iterated and discussed at various Linux
-> > > conferences and LKML. In this new v10, a quite significant amount of changes
-> > > have been made to address comments from v8 and v9. A summary is available
-> > > below, although let's start with a brand new clarification of the motivation
-> > > behind this series.
-> >
-> > I would like to raise few points, not blockers as such but need to be
-> > discussed and resolved before proceeding further.
-> > 1. CPU Idle Retention states
-> >         - How will be deal with flattening (which brings back the DT bindings,
-> >           i.e. do we have all we need) ? Because today there are no users of
-> >           this binding yet. I know we all agreed and added after LPC2017 but
-> >           I am not convinced about flattening with only valid states.
+Hi,
+
+On Wed, Jan 16, 2019 at 8:30 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 >
-> Not exactly sure I understand what you are concerned about here. When
-> it comes to users of the new DT binding, I am converting two new
-> platforms in this series to use of it.
+> The busses on SDM845 provides 36 address bits, extend the address and
+> size cells to make it possible to describe this in "ranges" and
+> "dma-ranges".
 >
-
-Yes that's exactly my concern. So if someone updates DT(since it's part
-of the kernel still), but don't update the firmware(for complexity reasons)
-the end result on those platform is broken CPUIdle which is a regression/
-feature break and that's what I am objecting here.
-
-> Note, the flattened model is still a valid option to describe the CPU
-> idle states after these changes. Especially when there are no last man
-> standing activities to manage by Linux and no shared resource that
-> need to prevent cluster idle states, when it's active.
-
-Since OSI vs PC is discoverable, we shouldn't tie up with DT in anyway.
-
+> While touching all reg properties, addresses are padded to 8 digits.
 >
-> >         - Will domain governor ensure not to enter deeper idles states based
-> >           on its sub-domain states. E.g.: when CPUs are in retention, so
-> >           called container/cluster domain can enter retention or below and not
-> >           power off states.
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 >
-> I have tried to point this out as a known limitation in genpd of the
-> current series, possibly I have failed to communicate that clearly.
-> Anyway, I fully agree that this needs to be addressed in a future
-> step.
+> Changes since v3:
+> - Split out address-cells/size-cells change
+> - Rewrote commit message from scratch
 >
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 300 +++++++++++++--------------
+>  1 file changed, 150 insertions(+), 150 deletions(-)
 
-Sorry, I might have missed to read. The point is if we are sacrificing
-few retention states with this new feature, I am sure PC would perform
-better that OSI on platforms which has retention states. Another
-reason for having comparison data or we should simply assume and state
-clearly OSI may perform bad on such system until the support is added.
+It was "fun" trying to apply this patch since you now based it on
+Andy's for-next branch plus outstanding patches.  I suppose that's my
+fault for suggesting that, but maybe next time it would be helpful if
+you could publish a branch somewhere that provided your basis?
 
-> Note that, this isn't a specific limitation to how idle states are
-> selected for CPUs and CPU clusters by genpd, but is rather a
-> limitation to any hierarchical PM domain topology managed by genpd
-> that has multiple idle states.
->
+NOTE: my tree also has "qcom,sdm845-lpasscc" so I had to manually fix
+that last address too.  I believe you left this out of your tree
+because it was causing you trouble on MTP.  That's fine and upstream
+can fix it up when it lands.
 
-Agreed, but with flattened mode we compile the list of valid states so
-the limitation is automatically eliminated.
+In general everything here looks good though and I'd suggest landing
+it  (and the patches it depends on) ASAP because otherwise we'll keep
+fighting conflicts.
 
-> Do note, I already started hacking on this and intend to post patches
-> on top of this series, as these changes isn't needed for those two
-> ARM64 platforms I have deployed support for.
->
-
-Good to know.
-
-> >         - Is the case of not calling cpu_pm_{enter,exit} handled now ?
->
-> It is still called, so no changes in regards to that as apart of this series.
->
-
-OK, so I assume for now we are not going to support retention states with OSI
-for now ?
-
-> When it comes to actually manage the "last man activities" as part of
-> selecting an idle state of the cluster, that is going to be addressed
-> on top as "optimizations".
->
-
-OK
-
-> In principle we should not need to call cpu_pm_enter|exit() in the
-> idle path at all,
-
-Not sure if we can do that. We need to notify things like PMU, FP, GIC
-which have per cpu context too and not just "cluster" context.
-
-> but rather only cpu_cluster_pm_enter|exit() when a cluster idle state is
-> selected.
-
-We need to avoid relying on concept of "cluster" and just think of power
-domains and what's hanging on those domains. Sorry for naive question, but
-does genpd have concept of notifiers. I do understand that it's more
-bottom up approach where each entity in genpd saves the context and requests
-to enter a particular state. But with CPU devices like GIC/VFP/PMU, it
-needs to be more top down approach where CPU genpd has to enter a enter
-so it notifies the devices attached to it to save it's context. Not ideal
-but that's current solution. Because with the new DT bindings, platforms
-can express if PMU/GIC is in per cpu domain or any pd in the hierarchy and
-we ideally need to honor that. But that's optimisation, just mentioning.
-
-> That should improve latency when
-> selecting an idle state for a CPU. However, to reach that point
-> additional changes are needed in various drivers, such as the gic
-> driver for example.
->
-
-Agreed.
-
-> >
-> > 2. Now that we have SDM845 which may soon have platform co-ordinated idle
-> >    support in mainline, I *really* would like to see some power comparison
-> >    numbers(i.e. PC without cluster idle states). This has been the main theme
-> >    for most of the discussion on this topic for years and now we are close
-> >    to have some platform, we need to try.
->
-> I have quite recently been talking to Qcom folkz about this as well,
-> but no commitments are made.
->
-
-Indeed that's the worrying. IMO, this is requested since day#1 and not
-even simple interest is shown, but that's another topic.
-
-> Although I fully agree that some comparison would be great, it still
-> doesn't matter much, as we anyway need to support PSCI OSI mode in
-> Linux. Lorenzo have agreed to this as well.
->
-
-OK, I am fine if others agree. Since we are sacrificing on few (retention)
-states that might disappear with OSI, I am still very much still interested
-as OSI might perform bad that PC especially in such cases.
-
-> >
-> > 3. Also, after adding such complexity, we really need a platform with an
-> >    option to build and upgrade firmware easily. This will help to prevent
-> >    this being not maintained for long without a platform to test, also
-> >    avoid adding lots of quirks to deal with broken firmware so that newer
-> >    platforms deal those issues in the firmware correctly.
->
-> I don't see how this series change anything from what we already have
-> today with the PSCI FW. No matter of OSI or PC mode is used, there are
-> complexity involved.
->
-
-I agree, but PC is already merged, mainitained and well tested regularly
-as it's default mode that must be supported and TF-A supports/maintains
-that. OSI is new and is on platform which may not have much commitments
-and can be thrown away and any bugs we find in future many need to worked
-around in kernel. That's what I meant as worrying.
-
-> Although, of course I agree with you, that we should continue to try
-> to convince ARM vendors about moving to the public version of ATF and
-> avoid proprietary FW binaries as much as possible.
->
-
-Indeed.
-
---
-Regards,
-Sudeep
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Douglas Anderson <dianders@chromium.org>
