@@ -2,115 +2,145 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 429CFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FBDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11DD320866
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:06:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547708783;
-	bh=YQg5kK0CK1gygp8V+fUKHMM30p/aVFKoBFNquIpl8z4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Nms4rVSYDFjTDWkuq5DPC9vwG/4fTBXEigN2rsk+9TycFNpihZPwCw/u3SgTM3q50
-	 I7pvzFS/gqe/OJLRg8vsHyaiHaSoIH33z+c2OaIwNNskyTxtSmynaqjf+hYgaeMr4g
-	 CHiNJ9TBU9YYay/PFIYbiKlZ9bTHsKky/TecTR1s=
+	by mail.kernel.org (Postfix) with ESMTP id 6404A20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:08:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuwXGnfy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbfAQHGV (ORCPT
+        id S1730456AbfAQHIm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 02:06:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730398AbfAQHGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 02:06:19 -0500
-Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 353B920856;
-        Thu, 17 Jan 2019 07:06:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547708777;
-        bh=YQg5kK0CK1gygp8V+fUKHMM30p/aVFKoBFNquIpl8z4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0pw3ulKi3jq4oKmvxSJxzzJsSdMcohB7IigecglkQT5Rx7a1QVi6VMiKG+7/EaK5C
-         /1jqt2buqhHUph/IaPf93BCvJIFaI+XBcHutXpZ8WKrpTTySrlp18ZPjm07/tBc6Eg
-         nedbQORGuNF/Dh36ZedpPIbDbRoH11rc3m/ItgOI=
-Date:   Thu, 17 Jan 2019 15:06:03 +0800
-From:   Guo Ren <guoren@kernel.org>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dennis Zhou <dennis@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Mark Salter <msalter@redhat.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stafford Horne <shorne@gmail.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 19/21] treewide: add checks for the return value of
- memblock_alloc*()
-Message-ID: <20190117070602.GA31839@guoren-Inspiron-7460>
-References: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
- <1547646261-32535-20-git-send-email-rppt@linux.ibm.com>
+        Thu, 17 Jan 2019 02:08:42 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33438 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727601AbfAQHIm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 02:08:42 -0500
+Received: by mail-pl1-f194.google.com with SMTP id z23so4316268plo.0;
+        Wed, 16 Jan 2019 23:08:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=chhrvg54MI90YfaM2WKEa/GdmTxheYiEx0N9RVbWUss=;
+        b=VuwXGnfyh/vEhp0oOOySaoFGo+eYY7QMBEij5IpslrHillGBa21VApOjlFwUlte3Wh
+         r6mi8lG1hawfSfDQZ6jZoW4GjCwPA3PQ6NSwhU3tQMzFknbFQjD9CXQPlNXhEG4r3kYp
+         IUeohfzbHgYWVkvZwgPLywn318FQbSIMKoS3+rh38zLrrwHZqxUv4zlJaoX09202jXf2
+         nDB0Vg4QCZi+TLBJ7q8PZaDb255TUMzKfpUoRyTToZilmyUITh80irnhaN5y9zRSk2X5
+         3JrhFWMNZ0V72iYJ9/Sbh6OikCj/xUsbbE3g/4XCKaVMlaLK31Zz9HWszG6pD3w8pHu3
+         JAqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=chhrvg54MI90YfaM2WKEa/GdmTxheYiEx0N9RVbWUss=;
+        b=CUYhy5f8wcw5Ys3UrPv8fd7l3mToj/a7p6U/a5rwrZJH77gmnpH3Ahef2xDuiMq/x/
+         VSUzoA8dhWGoHJNxMiT+MFxuW7gphzrTIxlyaGSjs3wWoct9diDEfjypua6XeIqNSHE8
+         OVwF3X5JKqh4b3BmfOZVJPrZIEpL5xzuD0ey7dbh05PwYyxsyA8+v6Y1vB4p4VDrTzQz
+         rdzM3Ak9/ujx4b1/BWaIdokvGqUg1QwQrNs+xxoMs3412bd8oZSrmx3OQMKsbE+884FS
+         1bbvLTtvv8APaRGWnmoOFqCWn17GxYt9VL4/GQoB9Nd1uVJk3E9eK6SpAzGy95eUwfDi
+         n43w==
+X-Gm-Message-State: AJcUukee8oT5tmcERzUP2QAfjWc5q+VasJgD8x1K+bgnso/gcQthup/V
+        8eTaPgSutX9XBarN6hpPC8Y=
+X-Google-Smtp-Source: ALg8bN45vI739KAKPwsMaJwF3JqWMaG1AKd7ApH/krSRxDyi4Bu1dXEYoklqOwRFetXhqYWUUFFOGg==
+X-Received: by 2002:a17:902:4025:: with SMTP id b34mr13946612pld.181.1547708920735;
+        Wed, 16 Jan 2019 23:08:40 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id n22sm1444532pfh.166.2019.01.16.23.08.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 23:08:40 -0800 (PST)
+Date:   Wed, 16 Jan 2019 23:08:38 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Bakker <xc-racer2@live.ca>
+Subject: Re: [PATCH] input: misc: pwm-vibra: Prevent unbalanced regulator
+Message-ID: <20190117070838.GA8109@dtor-ws>
+References: <20190116211131.18809-1-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1547646261-32535-20-git-send-email-rppt@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190116211131.18809-1-pawel.mikolaj.chmiel@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 03:44:19PM +0200, Mike Rapoport wrote:
->  arch/csky/mm/highmem.c                    |  5 +++++
-...
-> diff --git a/arch/csky/mm/highmem.c b/arch/csky/mm/highmem.c
-> index 53b1bfa..3317b774 100644
-> --- a/arch/csky/mm/highmem.c
-> +++ b/arch/csky/mm/highmem.c
-> @@ -141,6 +141,11 @@ static void __init fixrange_init(unsigned long start, unsigned long end,
->  			for (; (k < PTRS_PER_PMD) && (vaddr != end); pmd++, k++) {
->  				if (pmd_none(*pmd)) {
->  					pte = (pte_t *) memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
-> +					if (!pte)
-> +						panic("%s: Failed to allocate %lu bytes align=%lx\n",
-> +						      __func__, PAGE_SIZE,
-> +						      PAGE_SIZE);
-> +
->  					set_pmd(pmd, __pmd(__pa(pte)));
->  					BUG_ON(pte != pte_offset_kernel(pmd, 0));
->  				}
+Hi Paweł,
 
-Looks good for me and panic is ok.
+On Wed, Jan 16, 2019 at 10:11:31PM +0100, Paweł Chmiel wrote:
+> From: Jonathan Bakker <xc-racer2@live.ca>
+> 
+> pwm_vibrator_stop disables the regulator, but it can be called from
+> multiple places, even when the regulator is already disabled. Fix this
+> by using regulator_is_enabled check when starting and stopping device.
+> 
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  drivers/input/misc/pwm-vibra.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/input/misc/pwm-vibra.c b/drivers/input/misc/pwm-vibra.c
+> index 55da191ae550..66677ee770ca 100644
+> --- a/drivers/input/misc/pwm-vibra.c
+> +++ b/drivers/input/misc/pwm-vibra.c
+> @@ -42,10 +42,12 @@ static int pwm_vibrator_start(struct pwm_vibrator *vibrator)
+>  	struct pwm_state state;
+>  	int err;
+>  
+> -	err = regulator_enable(vibrator->vcc);
+> -	if (err) {
+> -		dev_err(pdev, "failed to enable regulator: %d", err);
+> -		return err;
+> +	if (!regulator_is_enabled(vibrator->vcc)) {
 
-Reviewed-by: Guo Ren <ren_guo@c-sky.com>
+I do not think this is correct in case of shared supply, as this checks
+global state of regulator. That means that if there is another user, we
+may forego enabling regulator here, and that anther user may power it
+down and vibrator will stop working.
+
+I think you need a local flag here.
+
+> +		err = regulator_enable(vibrator->vcc);
+> +		if (err) {
+> +			dev_err(pdev, "failed to enable regulator: %d", err);
+> +			return err;
+> +		}
+>  	}
+>  
+>  	pwm_get_state(vibrator->pwm, &state);
+> @@ -76,7 +78,8 @@ static int pwm_vibrator_start(struct pwm_vibrator *vibrator)
+>  
+>  static void pwm_vibrator_stop(struct pwm_vibrator *vibrator)
+>  {
+> -	regulator_disable(vibrator->vcc);
+> +	if (regulator_is_enabled(vibrator->vcc))
+> +		regulator_disable(vibrator->vcc);
+
+Looking at this, I wonder if we should not disable PWMs first and the
+disable regulator.
+
+>  
+>  	if (vibrator->pwm_dir)
+>  		pwm_disable(vibrator->pwm_dir);
+> -- 
+> 2.17.1
+> 
+
+Thanks.
+
+-- 
+Dmitry
