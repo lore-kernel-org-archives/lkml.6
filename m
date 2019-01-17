@@ -2,126 +2,147 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CF3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73073C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC0CE20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:54:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lfY1i0hC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XiBC7rtf"
+	by mail.kernel.org (Postfix) with ESMTP id 3B0FF20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbfAQAyn (ORCPT
+        id S1727130AbfAQA4a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:54:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34288 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbfAQAym (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:54:42 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 47D8F60807; Thu, 17 Jan 2019 00:54:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547686481;
-        bh=hAG9Mhht14pGQ5VVgDO7B7l2OK2TC68VXcahyGf/CqA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lfY1i0hC91jD6aorzsbZ246lVdEM3vYv3l/vJHsAdSBBPcIFo6JAYLeAGbVvLfEYI
-         KX0Ivpot3F1NiMHh/c5+qf7rMefdg2B2TQsdIzJD5cRyd7wwEm34yAAVmjks/u1U9L
-         xvef0xdF5xh1wSDWeIC7kt6XooOkM5X3bh6+SjtU=
-Received: from [10.46.162.234] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 452E56024C;
-        Thu, 17 Jan 2019 00:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547686480;
-        bh=hAG9Mhht14pGQ5VVgDO7B7l2OK2TC68VXcahyGf/CqA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XiBC7rtf32x7j6wral3WKU1OX4CBuRRL0nEYvpMa0m/nf3Sj0rXMCG1/xBq461J53
-         EV2P0lCog2MAZQ3HCUDg2AW/ClToKmOnVnTJNAHQ5xlZeEgU9qTg59qn2T6oraa4xa
-         FQwISkgOEuJzSjtWcChglhGdXSX87RngY9gfhFR4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 452E56024C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-Subject: Re: [PATCH v1] clk: qcom: clk-rpmh: Add IPA clock support
-To:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org, elder@linaro.org
-References: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org>
- <154706211110.15366.8008755843113316822@swboyd.mtv.corp.google.com>
- <11f948dc-3045-762f-b6bf-63c32d51772a@codeaurora.org>
- <154748442276.169631.994019688641603420@swboyd.mtv.corp.google.com>
-From:   David Dai <daidavid1@codeaurora.org>
-Message-ID: <7db43e9e-0f5c-9c26-6f26-c601ec69f964@codeaurora.org>
-Date:   Wed, 16 Jan 2019 16:54:39 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 16 Jan 2019 19:56:30 -0500
+Received: from smtp.infotech.no ([82.134.31.41]:45648 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725648AbfAQA43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:56:29 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 84CE6204237;
+        Thu, 17 Jan 2019 01:56:27 +0100 (CET)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id QOtBcti-Zl-U; Thu, 17 Jan 2019 01:56:25 +0100 (CET)
+Received: from [192.168.48.23] (host-192.252-161-233.dyn.295.ca [192.252.161.233])
+        by smtp.infotech.no (Postfix) with ESMTPA id E1537204144;
+        Thu, 17 Jan 2019 01:56:24 +0100 (CET)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [ANNOUNCE] v4 sg driver: ready for testing
+From:   Douglas Gilbert <dgilbert@interlog.com>
+To:     SCSI development list <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <bebb627c-0a7a-4669-87e4-ab5eb070062a@interlog.com>
+ <0adbaea3-4110-708c-5ace-ad145f6daad7@interlog.com>
+Cc:     Tony Battersby <tonyb@cybernetics.com>
+Message-ID: <03036d97-7316-4a17-4ae5-15d02eb96607@interlog.com>
+Date:   Wed, 16 Jan 2019 19:56:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <154748442276.169631.994019688641603420@swboyd.mtv.corp.google.com>
+In-Reply-To: <0adbaea3-4110-708c-5ace-ad145f6daad7@interlog.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is an update to the SCSI Generic (sg) v4 driver adding synchronous
+and asynchronous bidi command support. Plus lots of fixes and some minor
+improvements. See:
+     http://sg.danny.cz/sg/sg_v40.html
 
-On 1/14/2019 8:47 AM, Stephen Boyd wrote:
-> Quoting David Dai (2019-01-11 16:56:14)
->> On 1/9/2019 11:28 AM, Stephen Boyd wrote:
->>> Quoting David Dai (2018-12-13 18:35:04)
->>>> +
->>>> +#define BCM_TCS_CMD(valid, vote)                               \
->>>> +       (BCM_TCS_CMD_COMMIT_MASK |                              \
->>>> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |                  \
->>>> +       ((cpu_to_le32(vote) &                                   \
->>> Why?
->> Sorry, could you clarify this question? If you're referring to the
->> cpu_to_le32, shouldn't we be explicit about converting endianness even
->> if it might be redundant for this particular qcom platform?
-> Is only the vote part of the message in little endian format and the
-> rest is native CPU endianess? It's very odd to see that jammed in the
-> middle of a bit packing statement like that. Typically the whole u32
-> would be in one or the other endianness. Also, sparse right complains
-> about this macro and it's usage, so something is wrong.
-Point taken, I'll leave it out of the macro for now.
-> I think one other problem is that rpmh API doesn't really talk about
-> endianness here and that's busted. So if you want to fix endianness
-> issues that needs to be fixed first.
+The kernel code is split in two in the tarball below, one targeting
+lk 5.0 and the other targeting lk 4.20 and earlier ***. Each section
+contains the 3 files that represent the sg v4 driver plus a meandering
+17 part patchset. Those patchsets reflect the driver's rewrite rather
+than a logical progression.
+     http://sg.danny.cz/sg/p/sgv4_20190116.tgz
 
-Since a similar macro is being used as part of the interconnect provider 
-driver, I was thinking a better place for this macro might be in the 
-tcs.h as part of the rpmh driver? I could submit a different patch for 
-rpmh that mentions endianness along with this change.
+Plus there are updated testing utilities in sg3_utils-1.45 (beta,
+revision 807) at the top of this page:
+    http://sg.danny.cz/sg/index.html
 
->>>> @@ -29,6 +54,7 @@
->>>>     * @aggr_state:                rpmh clock aggregated state
->>>>     * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
->>>>     * @valid_state_mask:  mask to determine the state of the rpmh clock
->>>> + * @aux_data:          data specific to the bcm rpmh resource
->>> But there isn't aux_data. Is this supposed to be unit? And what is unit
->>> going to be? 1000?
->> Supposed to be unit, the value is on the order of Khz.
-> Ok, hopefully the kernel-doc comes out easy to understand.
->
->>>> @@ -217,6 +340,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
->>>>    DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
->>>>    DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
->>>>    DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
->>>> +DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
->>> It's really IP0?! What was wrong with IPA?
->> Yeah... convention seems to be 2 letters and then a number for most BCM
->> resources.
-> OK.
->
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Doug Gilbert
+
+
+*** the reason for the split is the tree wide change to the access_ok()
+     function.
+
+
+On 2018-12-25 2:39 a.m., Douglas Gilbert wrote:
+> There is an update to the sg v4 driver with some error fixes, SIGIO and
+> RT signals work plus single READ, multiple WRITE sharing support. See:
+>      http://sg.danny.cz/sg/sg_v40.html
+> 
+> with testing utilities in sg3_utils-1.45 (beta, revision 802) on the main
+> page:
+>      http://sg.danny.cz/sg/index.html
+> 
+> Doug Gilbert
+> 
+> 
+> On 2018-12-18 6:41 p.m., Douglas Gilbert wrote:
+>> After an underwhelming response to my intermediate level patchsets to
+>> modernize the sg driver in October this year (see "[PATCH 0/8] sg: major
+>> cleanup, remove max_queue limit" followed by v2 and v3 between 20181019
+>> and 20181028), I decided to move ahead and add the functionality proposed
+>> for the version 4 sg driver. That means accepting interface objects of
+>> type 'struct sg_io_v4' (as found in include/uapi/linux/bsg) plus two new
+>> ioctls: SG_IOSUBMIT and SG_IORECEIVE as proposed by Linus Torvalds to
+>> replace the unloved write(2)/read(2) asynchronous interface ****. There
+>> is a new feature called "sharing" explained in the web page (see below).
+>>
+>> Yes, there is a patchset available (14 part and growing) but even without
+>> explanatory comments at the top of each patch, that patchset is 4 times
+>> larger than the v4 sg driver (i.e. the finished product) and over 6
+>> times larger than the original v3 sg driver! Part of the reason for
+>> the patchset size is the multiple backtracks and rewrites associated
+>> with a real development process. The cleanest patchset would have 3
+>> parts:
+>>    1) split the current include/scsi/sg.h into the end product headers:
+>>       include/uapi/scsi/sg.h and include/scsi/sg.h
+>>    2) delete drivers/scsi/sg.c
+>>    3) add the v4 drivers/scsi/sg.c
+>>
+>> After part 2) you could build a kernel and I can guarantee that no-one
+>> will be able to find any sg driver bugs but some users might get upset
+>> (but not the Linux security folks).
+>>
+>> So there is a working v4 sg driver discussed here, with a download:
+>>      http://sg.danny.cz/sg/sg_v40.html
+>>
+>> I will keep that page up to date while the driver is in this phase.
+>> There is a sg3_utils beta of 1.45 (revision 799) package in the News
+>> section at the top of the main page:
+>>      http://sg.danny.cz/sg/index.html
+>>
+>> That sg3_utils beta package will use the v4 sg interface via sg devices
+>> if the v4 driver is detected. There are also three test utilities in
+>> the 'testing' directory designed to exercise the v4 extensions.
+>>
+>> The degree of backward compatibility with the v3 driver should be high
+>> but there are limits to backward compatibility. As an example, it is
+>> possible that there are user apps that depend on hitting the 16
+>> outstanding command limit (per fd) in the v3 driver and go "wild"
+>> when v4 removes that ceiling. If so, a "high_v3_compat" driver option
+>> could be added to put that ceiling back.
+>>
+>> The only way to find out is for folks to try and if there is a failure,
+>> contact me, or send mail to this list. Code reviews welcome as well.
+>>
+>> Doug Gilbert
+>>
+>>
+>> **** I felt this was a better use of my time than trying to invent a new
+>>       debug/trace mechanism for the whole SCSI subsystem. That is what
+>>       _SCSI_ system maintainers are for, I'll stick to the sg driver (and
+>>       scsi_debug). Add user space tools and there is more than enough work
+>>       there ...
+>>
+> 
 
