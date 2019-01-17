@@ -2,118 +2,175 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7429CC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B566C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B6FE20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2221020851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:10:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X++h4URu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X++h4URu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729916AbfAQGH4 (ORCPT
+        id S1729961AbfAQGKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:07:56 -0500
-Received: from gate.crashing.org ([63.228.1.57]:47316 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbfAQGHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:07:55 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x0H67KwY024177;
-        Thu, 17 Jan 2019 00:07:22 -0600
-Message-ID: <9d706807c93f88bc850153ae20ea28e6502e0aac.camel@kernel.crashing.org>
-Subject: Re: [RFC PATCH] drm/ttm: force cached mappings for system RAM on ARM
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        Michel =?ISO-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Carsten Haitzler <Carsten.Haitzler@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Bernhard =?ISO-8859-1?Q?Rosenkr=E4nzer?= 
-        <Bernhard.Rosenkranzer@linaro.org>
-Date:   Thu, 17 Jan 2019 17:07:20 +1100
-In-Reply-To: <CAKv+Gu8_0HjPsT2ne-uCtxRt=2CE_tLGY6wo9xafC5SmJOGRKA@mail.gmail.com>
-References: <20190110072841.3283-1-ard.biesheuvel@linaro.org>
-         <5d8135de-80fe-9c0e-2206-ecb809f64cdb@daenzer.net>
-         <CAKv+Gu_X-DH6GZ0k8RYuL18rxTwBpb5=Qp9VCZfn_kh+9b3Zkg@mail.gmail.com>
-         <55facfb9-92af-86b8-40e9-d63b887b5592@amd.com>
-         <CAKv+Gu_JyO2KNtdN1-_TcoL_kqs0yswdwBrpAXA6-jyWuDrj+g@mail.gmail.com>
-         <9f956898-7973-98ee-6bf1-e1d445e9d365@amd.com>
-         <20190114191350.GA29600@fuggles.cambridge.arm.com>
-         <a6d9d0ad-d1c0-9e60-17c6-a42f7bde258c@amd.com>
-         <20190114193548.GB29600@fuggles.cambridge.arm.com>
-         <87a7k2yx66.fsf@concordia.ellerman.id.au>
-         <ed2dd9042d1afede4843d7fd3728a4d701a19fdd.camel@kernel.crashing.org>
-         <9dc27cbf-e109-0c32-fc92-6fce1b224cda@amd.com>
-         <CAKv+Gu8_0HjPsT2ne-uCtxRt=2CE_tLGY6wo9xafC5SmJOGRKA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
+        Thu, 17 Jan 2019 01:10:38 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51044 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725320AbfAQGKi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 01:10:38 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A0DFD6021A; Thu, 17 Jan 2019 06:10:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547705436;
+        bh=YEGv0O3JHr4kZdrhresN3JQvaZmIg5SeEazm6WBaeAA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X++h4URuk/G6pJofRacZ8CxEcBKYDOHGZwy4f0Mei0saIa0HqNtxahkl1F39lr1u/
+         jhW9q8qOrGFuqFuZd6MNpXols4jd+6P7Db5siZx9I0s9zTeSIGvgsyoAsjymyFIsDx
+         8MEUij/gEms7lDmC22llQ5rAIOWIVUk61NHUltYc=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id E67B7601D2;
+        Thu, 17 Jan 2019 06:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547705436;
+        bh=YEGv0O3JHr4kZdrhresN3JQvaZmIg5SeEazm6WBaeAA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X++h4URuk/G6pJofRacZ8CxEcBKYDOHGZwy4f0Mei0saIa0HqNtxahkl1F39lr1u/
+         jhW9q8qOrGFuqFuZd6MNpXols4jd+6P7Db5siZx9I0s9zTeSIGvgsyoAsjymyFIsDx
+         8MEUij/gEms7lDmC22llQ5rAIOWIVUk61NHUltYc=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Thu, 17 Jan 2019 11:40:35 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: Add WCN3990 BT node
+In-Reply-To: <20190117044006.12463-1-bjorn.andersson@linaro.org>
+References: <20190117044006.12463-1-bjorn.andersson@linaro.org>
+Message-ID: <aebd3bbb4bb3faac2570244af610b43d@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-16 at 08:47 +0100, Ard Biesheuvel wrote:
-> > As far as I know on x86 it doesn't, so when you have an un-cached page
-> > you can still access it with a snooping DMA read/write operation and
-> > don't cause trouble.
-> > 
+Hi Anderson,
+
+On 2019-01-17 10:10, Bjorn Andersson wrote:
+> The SDM845 MTP has a WCN3990 Bluetooth chip on UART6, enable this.
 > 
-> I think it is the other way around. The question is, on an otherwise
-> cache coherent device, whether the NoSnoop attribute set by the GPU
-> propagates all the way to the bus so that it bypasses the caches.
-
-On powerpc it's ignored, all DMA accesses will be snooped. But that's
-fine regardless of whether the memory was mapped cachable or not, the
-snooper will simply not find anything if not. I *think* we only do
-cache inject if the line already exists in one of the caches.
-
-> On x86, we can tolerate if this is not the case, since uncached memory
-> accesses by the CPU snoop the caches as well.
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 44 +++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
 > 
-> On other architectures, uncached accesses go straight to main memory,
-> so if the device wrote anything to the caches we won't see it.
-
-Well, on all powerpc implementations that I am aware of at least (dunno
-about ARM), they do, but we don't have a problem because I don't think
-the devices can/will write to the caches directly unless a
-corresponding line already exists (but I might be wrong, we need to
-double check all implementations which is tricky).
-
-I am not aware of any powerpc chip implementing NoSnoop.
-
-> So to use this optimization, you have to either be 100% sure that
-> NoSnoop is implemented correctly, or have a x86 CPU.
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> index af8c6a2445a2..f65d5a674103 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> @@ -17,6 +17,7 @@
 > 
-> > > The old hack of using non-cached mapping to avoid snoop cost in AGP and
-> > > others is just that ... an ugly and horrible hacks that should have
-> > > never eventuated, when the search for performance pushes HW people into
-> > > utter insanity :)
-> > 
-> > Well I agree that un-cached system memory makes things much more
-> > complicated for a questionable gain.
-> > 
-> > But fact is we now have to deal with the mess, so no point in
-> > complaining about it to much :)
-> > 
+>  	aliases {
+>  		serial0 = &uart9;
+> +		hsuart0 = &uart6;
+>  	};
 > 
-> Indeed. I wonder if we should just disable it altogether unless CONFIG_X86=y
+>  	chosen {
+> @@ -357,6 +358,10 @@
+>  	clock-frequency = <400000>;
+>  };
+> 
+> +&qupv3_id_0 {
+> +	status = "okay";
+> +};
+> +
+>  &qupv3_id_1 {
+>  	status = "okay";
+>  };
+> @@ -373,6 +378,20 @@
+>  	cd-gpios = <&tlmm 126 GPIO_ACTIVE_LOW>;
+>  };
+> 
+> +&uart6 {
+> +	status = "okay";
+> +
+> +	bluetooth {
+> +		compatible = "qcom,wcn3990-bt";
+> +
+> +		vddio-supply = <&vreg_s4a_1p8>;
+> +		vddxo-supply = <&vreg_l7a_1p8>;
+> +		vddrf-supply = <&vreg_l17a_1p3>;
+> +		vddch0-supply = <&vreg_l25a_3p3>;
+> +		max-speed = <3200000>;
+> +	};
+> +};
+> +
+>  &uart9 {
+>  	status = "okay";
+>  };
+> @@ -470,6 +489,31 @@
+>  	};
+>  };
+> 
+> +&qup_uart6_default {
+> +	pinmux {
+> +		pins = "gpio45", "gpio46", "gpio47", "gpio48";
+> +		function = "qup6";
+> +	};
+> +
+> +	ctsrx {
+> +		pins = "gpio45", "gpio48";
+> +		drive-strength = <2>;
+> +		bias-no-pull;
+> +	};
+> +
+> +	rts {
+> +		pins = "gpio46";
+> +		drive-strength = <2>;
+> +		bias-pull-down;
+> +	};
+> +
+> +	tx {
+> +		pins = "gpio47";
+> +		drive-strength = <2>;
+> +		bias-pull-up;
+> +	};
+> +};
+> +
+>  &qup_uart9_default {
+>  	pinconf-tx {
+>  		pins = "gpio4";
 
-The question is whether DMA from a device can instanciate cache lines
-in your system. This a system specific rather than architecture
-specific question I suspect...
- 
-Cheers,
-Ben.
 
+[Bala]:
+        GPIO 45 is CTS
+        GPIO 46 is RTS
+        GPIO 47 is Tx
+        GPIO 48 is Rx.
 
+        Tx & RTS are inputs to APPS processor, bias should be disable as 
+the source i.e. BT chip will pull them up.
+        CTS & RX are outputs from APPS processor, where as CTS is GPIO 
+which need to toggled, so the default state should be pull down.
+              RX is should be pulled up.
+        when TX & RX are pulled high it indicates that the lines are 
+ideal i.e. no data.
+
+Above is just my assumption, not sure whether they work on MTP.
+
+-- 
+Regards
+Balakrishna.
