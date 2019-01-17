@@ -2,123 +2,99 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974F6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18023C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656C7205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:31:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547735487;
-	bh=QJEjP6nJ36WutPlVKF40u0LfwBxRFrXJh7PoN5SmP9I=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=bi9bFXqFVGGC/OH2jC6ndh/KSGcpjuGNK+qVVAZM4zv6KudvmwedVvn3f0wReFs8E
-	 7pFvGSI7e/gg7HBZfHBXM6win+zfKFa/EYjA0kGVKCoTH8dKwGVv0AHF7pga+NL5Ea
-	 T7i03iNFdrdJkhWKXVEg7CVOxrDwyv1i8kOHIFTU=
+	by mail.kernel.org (Postfix) with ESMTP id D9811205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:32:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="zV1WSOz0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfAQObZ (ORCPT
+        id S1727488AbfAQOcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 09:31:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbfAQObZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 09:31:25 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3087C205C9;
-        Thu, 17 Jan 2019 14:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547735484;
-        bh=QJEjP6nJ36WutPlVKF40u0LfwBxRFrXJh7PoN5SmP9I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dRlr94K42St4QFUaIO4bjUjTXzB/gMLiuRFDq6TQbUPs6knK/sETlcOm3ErxihxNB
-         +1IKTfyD+CJ/viriiX95P2pxalU1gDJY+oCfmrBI9lW3cjqqJfQglS7TKz8U5EfpnX
-         FWPg3SrHBp07lCaR4VdaoKq0P88agWCkXBxkDBJc=
-Subject: Re: [PATCH] MAINTAINERS: email address update in MAINTAINERS entries
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mchehab+samsung@kernel.org, davem@davemloft.net,
-        akpm@linux-foundation.org, nicolas.ferre@microchip.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <20190116232820.26180-1-shuah@kernel.org>
- <20190117083224.GA17261@kroah.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <7c8ea821-68c8-2c8d-56c3-58612a46d3ce@kernel.org>
-Date:   Thu, 17 Jan 2019 07:30:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 17 Jan 2019 09:32:54 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54119 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726517AbfAQOcx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 09:32:53 -0500
+Received: by mail-it1-f193.google.com with SMTP id g85so1630654ita.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 06:32:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zBP68msOjrFahT5eyfFbMaC5hk5eijUODNhs/NVuCbA=;
+        b=zV1WSOz0yzhjojGyT424OmgAiXjbmHC7A4SCyQfcvbWtrp/np1ImPAHfx3WxUBBfMV
+         /UeI9ksPhur6qitBCnkq7CZZPXxMj2Tb2Y4ZeY/oOGL2YMjX3uRaCkUn9fR0fPuyCuVh
+         5V4VLTbUUxO+Y+01RxQeBt/EV3MlyE768DWcJ4mwf2MD3hzq7T3AB9cGnG/vP14nAWc/
+         dI5lpNNe2h5nsxq+QbTBIIM1nsWv71iIlB5B8e3M8cCXHfTQyjNlZZJae9/KWfE33OW+
+         X1fl9731Zb9R6AF/dLZuWVXzQZyeaEpIYXACBOJAIm18Pr+9r8Rbeg+RCFmYHyLnHuhc
+         J43g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zBP68msOjrFahT5eyfFbMaC5hk5eijUODNhs/NVuCbA=;
+        b=U+n7WpRIgQSYqSibQaUEromdohGPpElf0MziJ6AM9gs4FV2837mfBHTCWbB1TSkzRT
+         5WFqBhOacPLw18ewKfyUvhLlkgl4CciP2bEOH1BJ+erXiH8kGjdM0LU8f+M0HuehrqCI
+         5jYZGu84b+23f0/oR7Irftf3In5s3NLNNaZMXxLG4d4BXsBSwoMtRKSteNUA2PGpkYZ1
+         2IESekXWYTACjs/mx0iTJwwELhYw3mdWegbbSJMSvPaLNBinNI8vm6xM+42LasAD2jX2
+         aAeK/kCmh3o7ynlK6YLhjatHu6E0nmtOVW8yLmydGkcUPPzTFZDwTPMIDaa1bdStMAuq
+         fKwQ==
+X-Gm-Message-State: AJcUukeHqVSyjqhh/vt7cvtE/1eQ4ipq3rSAcqqa7oPF+hBF0nlw4Ba1
+        q9Uyq1afSYr6ieZESozciQsEuhM5MoDPmVlzCtiN6g==
+X-Google-Smtp-Source: ALg8bN4Rn8FoYt9A4zaNjmm87FzmLmrDHHRH60STLHqGG1BPNxW2vG7xJT78w6ACvmsqYSAO9NGsV1pLDU/LH+GWpoA=
+X-Received: by 2002:a02:650d:: with SMTP id u13mr8610481jab.136.1547735572921;
+ Thu, 17 Jan 2019 06:32:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190117083224.GA17261@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190111172134.30147-1-brgl@bgdev.pl> <20190111172134.30147-2-brgl@bgdev.pl>
+ <250a521a-ba07-ba17-83d8-d9ad8f55a460@ti.com>
+In-Reply-To: <250a521a-ba07-ba17-83d8-d9ad8f55a460@ti.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 17 Jan 2019 15:32:42 +0100
+Message-ID: <CAMRc=MeA_AMvEikj9s03ikiFJwOi+4eri7Ba8ZxTwMogEJvdrA@mail.gmail.com>
+Subject: Re: [PATCH 01/17] ARM: dts: da850: fix interrupt numbers for clocksource
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 1:32 AM, Greg KH wrote:
-> On Wed, Jan 16, 2019 at 04:28:20PM -0700, shuah@kernel.org wrote:
->> From: Shuah Khan <shuah@kernel.org>
->>
->> Update email address in MAINTAINERS entries.
->>
->> Signed-off-by: Shuah Khan <shuah@kernel.org>
->> ---
->>   MAINTAINERS | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 4d04cebb4a71..6ca780f24808 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -3979,6 +3979,7 @@ F:	drivers/cpufreq/arm_big_little.c
->>   CPU POWER MONITORING SUBSYSTEM
->>   M:	Thomas Renninger <trenn@suse.com>
->>   M:	Shuah Khan <shuah@kernel.org>
->> +M:	Shuah Khan <skhan@linuxfoundation.org>
->>   L:	linux-pm@vger.kernel.org
->>   S:	Maintained
->>   F:	tools/power/cpupower/
->> @@ -8259,6 +8260,7 @@ F:	include/uapi/linux/sunrpc/
->>   
->>   KERNEL SELFTEST FRAMEWORK
->>   M:	Shuah Khan <shuah@kernel.org>
->> +M:	Shuah Khan <skhan@linuxfoundation.org>
->>   L:	linux-kselftest@vger.kernel.org
->>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
->>   Q:	https://patchwork.kernel.org/project/linux-kselftest/list/
->> @@ -15842,6 +15844,7 @@ F:	drivers/usb/common/usb-otg-fsm.c
->>   USB OVER IP DRIVER
->>   M:	Valentina Manea <valentina.manea.m@gmail.com>
->>   M:	Shuah Khan <shuah@kernel.org>
->> +M:	Shuah Khan <skhan@linuxfoundation.org>
->>   L:	linux-usb@vger.kernel.org
->>   S:	Maintained
->>   F:	Documentation/usb/usbip_protocol.txt
->> -- 
->> 2.17.1
->>
-> 
-> I can take this through my USB tree as 1/3 of these entries come from
-> there, unless you want to take it through your kselftest tree?  If so,
-> feel free to add my:
-> 	Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> to it.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+czw., 17 sty 2019 o 15:23 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
+>
+> On 11/01/19 10:51 PM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > The timer interrupts specified in commit 3652e2741f42 ("ARM: dts:
+> > da850: Add clocks") are wrong but since the current timer code
+> > hard-codes them, the bug was never spotted.
+> >
+> > This patch must go into stable since, once we introduce a proper
+> > clocksource driver, devices with buggy device tree will stop booting.
+>
+> Is this the case where someone uses device-tree from a stable tree and
+> kernel from latest mainline?
+>
 
-Greg,
+Well, if someone wants to use an old device tree and a newer kernel,
+then it'll be broken anyway. If we get it to stable then at least the
+fixed device tree will work in the future. That was my reasoning.
 
-Please go ahead and take this through USB tree.
-
-thanks,
--- Shuah
+Bart
