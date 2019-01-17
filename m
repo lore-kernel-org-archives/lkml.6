@@ -2,95 +2,90 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A15DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AEFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D88820859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:46:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pjzZPC48"
+	by mail.kernel.org (Postfix) with ESMTP id 8E15920859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfAQWqT (ORCPT
+        id S1726325AbfAQWuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 17:46:19 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:42488 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726782AbfAQWqS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 17:46:18 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0HMdAho153337;
-        Thu, 17 Jan 2019 22:46:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id; s=corp-2018-07-02;
- bh=0o6owPltpYV/6XBI7Z0gwP7fkogYOo4J8h3GQayBr2g=;
- b=pjzZPC48sPF3TlDEOCUwRww5RMUTNlT8WlR6d40mKr/x7SCblgvTxy8DqeyYax6XoJ7H
- ub/uV9+gS/b+L91ucaavV4K3bTw4ngU81OGAIvImbJdxXN2U3A1vwqIjNHwOGihFB6V8
- qU6zNBgS1yhgcmKckZzN8LyyqFgZFiIwblxs4fFYVXtlCl8lPtmBl76smt7cMljewXGk
- nkIkXMTKHPicR7xthY02GTVuuIqMybsSQ5uPTRkAIL5LjgClPBJLVeFQgMlVEW5lZe0H
- gN41WFHXPUoLc+DX8Edsn+ez9yJE6DarRncyltKnmJ6dv2B+uYzmyNHiVi0ECE4tkUqC 5w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2pybjp2pk3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jan 2019 22:46:12 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0HMk6wZ031453
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jan 2019 22:46:06 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0HMk5TE017132;
-        Thu, 17 Jan 2019 22:46:05 GMT
-Received: from localhost.us.oracle.com (/10.211.15.82)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Jan 2019 14:46:05 -0800
-From:   eugene.loh@oracle.com
-To:     linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
-        ak@linux.intel.com, andi@firstfloor.org
-Subject: [PATCH] Kbuild: Handle too long symbols in kallsyms.c
-Date:   Thu, 17 Jan 2019 14:46:00 -0800
-Message-Id: <1547765160-15502-1-git-send-email-eugene.loh@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9139 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=861
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901170157
+        Thu, 17 Jan 2019 17:50:17 -0500
+Received: from www.sr71.net ([198.145.64.142]:58060 "EHLO blackbird.sr71.net"
+        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1725947AbfAQWuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 17:50:17 -0500
+X-Greylist: delayed 378 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Jan 2019 17:50:17 EST
+Received: from [0.0.0.0] (50-39-110-205.bvtn.or.frontiernet.net [50.39.110.205])
+        (Authenticated sender: dave)
+        by blackbird.sr71.net (Postfix) with ESMTPSA id 6C3E3FA866;
+        Thu, 17 Jan 2019 14:43:57 -0800 (PST)
+Subject: Re: [PATCH 0/4] Allow persistent memory to be used like normal RAM
+To:     Jeff Moyer <jmoyer@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     thomas.lendacky@amd.com, mhocko@suse.com,
+        linux-nvdimm@lists.01.org, tiwai@suse.de, ying.huang@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, bp@suse.de,
+        baiyaowei@cmss.chinamobile.com, zwisler@kernel.org,
+        bhelgaas@google.com, fengguang.wu@intel.com,
+        akpm@linux-foundation.org
+References: <20190116181859.D1504459@viggo.jf.intel.com>
+ <x49sgxr9rjd.fsf@segfault.boston.devel.redhat.com>
+From:   Dave Hansen <dave@sr71.net>
+Message-ID: <360f77dc-fe8e-c7c4-84a0-852ef3c4a152@sr71.net>
+Date:   Thu, 17 Jan 2019 14:43:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <x49sgxr9rjd.fsf@segfault.boston.devel.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugene Loh <eugene.loh@oracle.com>
+On 1/17/19 8:29 AM, Jeff Moyer wrote:
+>> Persistent memory is cool.  But, currently, you have to rewrite
+>> your applications to use it.  Wouldn't it be cool if you could
+>> just have it show up in your system like normal RAM and get to
+>> it like a slow blob of memory?  Well... have I got the patch
+>> series for you!
+> So, isn't that what memory mode is for?
+>   https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
+> 
+> Why do we need this code in the kernel?
 
-When checking for symbols with excessively long names,
-account for null terminating character.
+So, my bad for not mentioning memory mode.  This patch set existed
+before we could talk about it publicly, so it simply ignores its
+existence.  It's a pretty glaring omissions at this point, sorry.
 
-Fixes: f3462aa952cf ("Kbuild: Handle longer symbols in kallsyms.c")
-Signed-off-by: Eugene Loh <eugene.loh@oracle.com>
----
- scripts/kallsyms.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'll add this to the patches, but here are a few reasons you might want
+this instead of memory mode:
+1. Memory mode is all-or-nothing.  Either 100% of your persistent memory
+   is used for memory mode, or nothing is.  With this set, you can
+   (theoretically) have very granular (128MB) assignment of PMEM to
+   either volatile or persistent uses.  We have a few practical matters
+   to fix to get us down to that 128MB value, but we can get there.
+2. The capacity of memory mode is the size of your persistent memory.
+   DRAM capacity is "lost" because it is used for cache.  With this,
+   you get PMEM+DRAM capacity for memory.
+3. DRAM acts as a cache with memory mode, and caches can lead to
+   unpredictable latencies.  Since memory mode is all-or-nothing, your
+   entire memory space is exposed to these unpredictable latencies.
+   This solution lets you guarantee DRAM latencies if you need them.
+4. The new "tier" of memory is exposed to software.  That means that you
+   can build tiered applications or infrastructure.  A cloud provider
+   could sell cheaper VMs that use more PMEM and more expensive ones
+   that use DRAM.  That's impossible with memory mode.
 
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 77cebad..f75e7bd 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -118,8 +118,8 @@ static int read_symbol(FILE *in, struct sym_entry *s)
- 			fprintf(stderr, "Read error or end of file.\n");
- 		return -1;
- 	}
--	if (strlen(sym) > KSYM_NAME_LEN) {
--		fprintf(stderr, "Symbol %s too long for kallsyms (%zu vs %d).\n"
-+	if (strlen(sym) >= KSYM_NAME_LEN) {
-+		fprintf(stderr, "Symbol %s too long for kallsyms (%zu >= %d).\n"
- 				"Please increase KSYM_NAME_LEN both in kernel and kallsyms.c\n",
- 			sym, strlen(sym), KSYM_NAME_LEN);
- 		return -1;
--- 
-1.8.3.1
-
+Don't take this as criticism of memory mode.  Memory mode is awesome,
+and doesn't strictly require *any* software changes (we have software
+changes proposed for optimizing it though).  It has tons of other
+advantages over *this* approach.  Basically, they are complementary
+enough that we think both can live side-by-side.
