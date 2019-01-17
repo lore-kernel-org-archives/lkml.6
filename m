@@ -2,136 +2,136 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B86C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E7EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1D320657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B87820657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:47:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nh97rH3g"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="LitW/m0o";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="mUM3PuK8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbfAQKq0 (ORCPT
+        id S1728469AbfAQKrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:46:26 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46184 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbfAQKqZ (ORCPT
+        Thu, 17 Jan 2019 05:47:24 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:47854 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726917AbfAQKrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:46:25 -0500
-Received: by mail-wr1-f68.google.com with SMTP id l9so10374712wrt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 02:46:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4wjGNMQ1Xyj/2nk4iZvOiwJXuhvRb1mvppAMZfhe2UI=;
-        b=Nh97rH3g4xO4yRnaRfwnZCtw8lMhWS5ifN3UoStuXWV8XreZpBgNFP6v513+F830R7
-         1A8fkYGpSLFmKF9JquRLeWu5RmELG9dEJ1uV4op58lJzDxaQpVOpCbmoNPe4RJPQq4et
-         daBtCall7K34uaGZbsbxhJ6Jx0tpmnDM2vNXE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4wjGNMQ1Xyj/2nk4iZvOiwJXuhvRb1mvppAMZfhe2UI=;
-        b=YJHJh6rt/qz8iB3TG/FTVuWzBM5qbxE9UE1uFdciFubUlpfjkppzaR+XTGy/QTW+Nq
-         RtkMgc7iVHf1pU7hacWgM9Id3DBPPiD8teXeWjGusPd7KTj16tfcWft7ABymFkA6H9x2
-         /tcN554oF2Dt0iPmMw+T3hyMqJXpvzcs7EiPlZ5x6HAACJHerL8hsY0WK0aNgxtPJO/Q
-         4x77BJC+EqogiFUuiibeQgAdGBp6k2d2svac17KhmLmC76cLTKlxMgSj5h66uPma5/8q
-         eQ6tqdHMU8AKXrmICDFOrY0M7qQlQWkGclrVrjUTcHeJJLwABgZUiJNsr4sVF+r8TwkF
-         cXZg==
-X-Gm-Message-State: AJcUukfRBaTOEHBtKAydPujhr68Of+I1gS4pqDkAg5PvB+TK+hTaz+YX
-        KitdxIaZ3R5AqJWM5d4Bh8ZuXrNpxBg=
-X-Google-Smtp-Source: ALg8bN4kXbu2kYK3OAMDoQUbHMGQHEGK66MunwyJ6kotzGX991Pg8Wz+m63sdFhnFmh4HpAV3QAiXg==
-X-Received: by 2002:a5d:6684:: with SMTP id l4mr12345067wru.154.1547721984108;
-        Thu, 17 Jan 2019 02:46:24 -0800 (PST)
-Received: from [192.168.1.2] (92.red-83-34-185.dynamicip.rima-tde.net. [83.34.185.92])
-        by smtp.gmail.com with ESMTPSA id s16sm63932643wrt.77.2019.01.17.02.46.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 02:46:23 -0800 (PST)
-Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com,
-        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <20190117063312.GE25498@builder>
- <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org>
- <20190117100807.pmew5iqisdcc63eq@vireshk-i7>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <e55df608-7058-63b9-b449-982d32e08759@linaro.org>
-Date:   Thu, 17 Jan 2019 11:46:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190117100807.pmew5iqisdcc63eq@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
+        Thu, 17 Jan 2019 05:47:23 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HAkkTI003078;
+        Thu, 17 Jan 2019 02:46:53 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=proofpoint;
+ bh=JyDDDXmvmRvEeu8EzUiMGQ02FCyNqGq/5y86oyDAxrY=;
+ b=LitW/m0oerwFp8zDE1O00v4aAMwawavvKRyKtU12OJGUM8TBgDCosKp3yFq1qgaavFdE
+ uo0MHEWoaTJELIcQEuoquP4uH6S478qsBXjp0wZ65kcHSzUyWnVF2mRz3TCJRQXvlI9G
+ aXp9+x3rN9Xondawi1bIMZ76Hmvdvbr82RiD4kgx2eHHg+FWPydFT8Nhzb3jeOTSHVFc
+ wEq1pIijQ7hcoZqU0wyDWKN1gVPoWMS+8zCTn62Ar1g2mK9/8B/O5ZRMtrPBJwPB0AE3
+ gUupNELWvvXTprfhC79CeW5v+0kxOuycHDc+RcOJy60LBCOFKVwQKJOipD4JBNLh4Gng cw== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=jank@cadence.com
+Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2055.outbound.protection.outlook.com [104.47.41.55])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2pydnvv8s0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 17 Jan 2019 02:46:53 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JyDDDXmvmRvEeu8EzUiMGQ02FCyNqGq/5y86oyDAxrY=;
+ b=mUM3PuK8I5X51EdV9WPEnZR38/CBuvfu7EmA3NCa/DTOp8AUSt0HxTW3Y1Y+4E3ot+JMbjz4YHIjgkd+Ebu5+qGCqSvgI4BOMhT+dCars8ErAQg35rjngyFy8UoKVyfV6Lg+DgX7bbm7KpO2xXTb+bLhPWYYl8bD9EzVtXFkkwE=
+Received: from CY1PR07MB2521.namprd07.prod.outlook.com (10.167.16.12) by
+ CY1PR07MB2346.namprd07.prod.outlook.com (10.166.194.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.27; Thu, 17 Jan 2019 10:46:50 +0000
+Received: from CY1PR07MB2521.namprd07.prod.outlook.com
+ ([fe80::3943:964b:fb0b:ae91]) by CY1PR07MB2521.namprd07.prod.outlook.com
+ ([fe80::3943:964b:fb0b:ae91%5]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
+ 10:46:50 +0000
+From:   Jan Kotas <jank@cadence.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Jan Kotas <jank@cadence.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: rtc: Add bindings for Cadence RTC
+Thread-Topic: [PATCH v2 1/2] dt-bindings: rtc: Add bindings for Cadence RTC
+Thread-Index: AQHUqcBYGlDbfw3xWEeNgMJSC0Vnj6Wya6UAgADkv4A=
+Date:   Thu, 17 Jan 2019 10:46:50 +0000
+Message-ID: <46BA7224-B229-4594-B039-8801A806657E@global.cadence.com>
+References: <20190111151401.25047-1-jank@cadence.com>
+ <20190111151401.25047-2-jank@cadence.com> <20190116210806.GA21535@bogus>
+In-Reply-To: <20190116210806.GA21535@bogus>
+Accept-Language: en-US, pl-PL
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY1PR07MB2346;20:8TrTQgrZRqTG+uIymcAhiWMALwSyGcTxspS1ze/5P28HRT4ApehA6Ad5hb/pvzvfksvSFMey+LhzpkrVWlqc8X/cChtNug6d2PCU1zTcdP57/xqRUpZD7Dz9FPKTSMQRnGyhzSxl93zP9q53i1Q8X4iJb2bu/G7cYlzf5wQW/WGsrKiJa8svIDg5Dd6eAKu9eTV4d0AbPV6OWD+7Qwwp1Ot1fQJXUMyB3jgvIldwrJwSXaNp5QCvV+iDg0WoqfOf
+x-ms-office365-filtering-correlation-id: 143c4542-1466-4fc9-5ae9-08d67c69163d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR07MB2346;
+x-ms-traffictypediagnostic: CY1PR07MB2346:
+x-microsoft-antispam-prvs: <CY1PR07MB23467766A5AB867E4FD67E29D0830@CY1PR07MB2346.namprd07.prod.outlook.com>
+x-forefront-prvs: 0920602B08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39850400004)(376002)(136003)(346002)(366004)(36092001)(189003)(199004)(305945005)(6436002)(7736002)(26005)(66066001)(14454004)(6506007)(102836004)(82746002)(81156014)(81166006)(4744005)(4326008)(53546011)(186003)(53936002)(6246003)(8676002)(25786009)(478600001)(86362001)(2906002)(68736007)(106356001)(97736004)(83716004)(71190400001)(105586002)(71200400001)(76176011)(99286004)(6116002)(3846002)(33656002)(54906003)(316002)(5660300001)(256004)(6916009)(229853002)(6512007)(8936002)(11346002)(6486002)(446003)(486006)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2346;H:CY1PR07MB2521.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: MM1g5oSMKXmstWK2r5XExvRI7SI5uIAbLY57m/cDC3xcb+b744Av72rkzbwIsCMSvzaWlTIB6tpTX/LOSHrAcL8SQbtei38Eh/1ulByXOTAjiH0PnVdVDCknTsdhlwiXB9MZADAfK6c/n4W1U3DLoKDQV+1FfRGCa/hVrqre4vs3b/mtrXHpszTLLulSytXlKic4XhxJlFceL2SuEzWLfhebrZlpRYmvugqkewhElm2AK6YVgNyWj3wwYSolMHM4x5pjlUN9WBL0akoFrZF9hcPRpYrzTRsllnOmbuzpgZ9J5vmT7tFizWkkfB9Y3xB7UDj8EjxQPzc14FxgzbSGHi9ldK2huzX7P0Fho0IcG23PPI7v6xufkTHEkM+IGeP8gVJs6dPzIeIf9xHF2eD6TBvzx6HF5to2+NJn3kH+lNU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AD0E85CDC7D69644A830DE0B82855FF1@namprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 143c4542-1466-4fc9-5ae9-08d67c69163d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 10:46:50.4342
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2346
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=826 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 11:08, Viresh Kumar wrote:
-> On 17-01-19, 09:38, Jorge Ramirez wrote:
->> COMMON_CLK_DISABLED_UNUSED relies on the enable_count reference counter
->> to disable the clocks that were enabled by the firwmare and not by the
->> drivers.
->>
->> the cpufreq driver does not enable the cpu clock.
->>
->> so when clk_change_rate is called, the enable_count counter is not
->> incremented and therefore it just remains null since this was enabled by
->> the firmware.
->>
->> I tried doing:
->>
->> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
->> index e58bfcb..5a9f83e 100644
->> --- a/drivers/cpufreq/cpufreq-dt.c
->> +++ b/drivers/cpufreq/cpufreq-dt.c
->> @@ -124,6 +124,10 @@ static int resources_available(void)
->>                 return ret;
->>         }
->>
->> + ret = clk_prepare_enable(cpu_clk);
->> + if (ret)
->> +         return ret;
->> +
->>         clk_put(cpu_clk);
->>
->>         name = find_supply_name(cpu_dev);
->>
->>
->> and that removed the need for CLK_IGNORE_UNUSED. But I am not sure of
->> the system wide consequences of that change to cpufreq.
-> 
-> If the cpufreq driver enables it then it should disable it on exit as
-> well, right ? And in that case if you unload your driver's module, you
-> will hang the system as the clock will get disabled :)
-
-ah, of course, sorry was over-thinking this thing :)
-
-> 
-> Every other platform must either be marking it with CLK_IGNORE_UNUSED
-> or they must be doing clk_enable from somewhere, maybe the CPU online
-> path, not sure though.
-> 
-
-since this clock is enabled by the firmware, it seems to me that using
-CLK_IGNORE_UNUSED remains the best option.
-
+DQo+IE9uIDE2IEphbiAyMDE5LCBhdCAyMjowOCwgUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9y
+Zz4gd3JvdGU6DQo+IA0KPiANCj4gT24gRnJpLCBKYW4gMTEsIDIwMTkgYXQgMDM6MTQ6MDBQTSAr
+MDAwMCwgSmFuIEtvdGFzIHdyb3RlOg0KPj4gVGhpcyBwYXRjaCBhZGRzIGEgRFQgYmluZGluZyBk
+b2N1bWVudGF0aW9uIGZvcg0KPj4gQ2FkZW5jZSBSVEMgY29udHJvbGxlci4NCj4+ICtSZXF1aXJl
+ZCBwcm9wZXJ0aWVzOg0KPj4gKy0gY29tcGF0aWJsZTogU2hvdWxkIGJlICJjZG5zLHJ0Yy1yMTA5
+djMiDQo+PiArLSByZWc6IFNwZWNpZmllcyBiYXNlIHBoeXNpY2FsIGFkZHJlc3MgYW5kIHNpemUg
+b2YgdGhlIHJlZ2lzdGVyIGFyZWEuDQo+PiArLSBpbnRlcnJ1cHRzOiBBIHNpbmdsZSBpbnRlcnJ1
+cHQgc3BlY2lmaWVyLg0KPj4gKy0gY2xvY2tzOiBNdXN0IGNvbnRhaW4gdHdvIGVudHJpZXM6DQo+
+PiArCS0gcGNsazogQVBCIHJlZ2lzdGVycyBjbG9jaw0KPj4gKwktIHJlZl9jbGs6IHJlZmVyZW5j
+ZSAxSHogb2YgMTAwSHogY2xvY2ssIGRlcGVuZGluZyBvbiBJUCBjb25maWd1cmF0aW9uDQo+IA0K
+PiAxSHogT1IgMTAwSHo/DQoNCkhpLA0KDQpUaGUgSVAgaGFzIGEgY29uZmlndXJhdGlvbiBwYXJh
+bWV0ZXIgYXQgYnVpbGQgdGltZSwNCndoaWNoIHNlbGVjdHMgdGhlIHJlZmVyZW5jZSBjbG9jayBm
+cmVxdWVuY3kuDQoNCkl0IGNhbm5vdCBiZSBjaGFuZ2VkIGxhdGVyLCBhbmQgdGhlcmXigJlzIG5v
+IHJlZ2lzdGVyIHdoaWNoDQp0ZWxscyB0aGUgc29mdHdhcmUgd2hpY2ggb3B0aW9uIHdhcyBzZWxl
+Y3RlZC4NCg0KSW4gdGhpcyB2ZXJzaW9uIG9mIHRoZSBwYXRjaCwgYm90aCB2YWx1ZXMgYXJlIGFj
+Y2VwdGVkLg0KSWYgaXQgbWFrZXMgc2Vuc2UgSSBjYW4gYWRkIGEgYm9vbCBwcm9wZXJ0eSwgbGlr
+ZQ0KcmVmY2xvY2stMTAwaHosIHdoaWNoIGNhbiBiZSB1c2VkIHRvIGNoZWNrIHRoZSBjbG9jayBm
+cmVxdWVuY3kuDQoNClJlZ2FyZHMsDQpKYW4NCg0K
