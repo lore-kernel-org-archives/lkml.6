@@ -2,138 +2,173 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EEDC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A609C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7EE720851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A6BD20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547728820;
+	bh=TR0G15CjA4sXCj/vZBtwgVWEuHf6HtZn1HQTmPqFLKA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=Bck+69fNPhsRuhiDhpxlbzhoCaKpmBPwkEcV9yYOVq4qHpRTtBh/JjV09WZfda0wz
+	 r6Ljlo7WIH22p5UcINmPVZ4m6vaJwHk821umXMFLCBd8Qxna04Fu/Mq7WdJ8+YDFml
+	 OESGMIRABt2ea3Ns2mKY6QcwV5GKozSuXGW9DpMg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbfAQMjp (ORCPT
+        id S1727674AbfAQMkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:39:45 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42656 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbfAQMjp (ORCPT
+        Thu, 17 Jan 2019 07:40:18 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60352 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfAQMkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 07:39:45 -0500
-Received: by mail-qt1-f194.google.com with SMTP id d19so11056219qtq.9;
-        Thu, 17 Jan 2019 04:39:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=949CkYqovZVuyrEra8i6ETtjiOyejpzRupZ62jVpBcM=;
-        b=GzPs5wUfrVRxSLJQIOLIdFTRDn49Mzh+WsrgIt56eyotOEDMU9jJBpcLLZIU/sHKGX
-         wuueKeTDRfKfG6CkLP+0uwn+HY4/UWm83dgtmdRKQtxcnUWFfHsAeZCa6++KE1eWcS+e
-         GgxJ87mrc2Mxey57cF+a+qmj0qgeXqduMvi0G0GwFuWlr7bnql2j2GpXWP3+4XyFXXr0
-         rmBcMOXEYlk7r4sN1vcRl9uM4LivkIyr817BtqFz5G0/7o5hMLFCJXZMOFOEv7u3o/Ko
-         mFNrFiOgaDzC5nv7J7g8zIxUrJb89uUhRP+yp1bbQrV3xQ6TcQ+KHwYfr+QwMg73MX/Y
-         Ma7g==
-X-Gm-Message-State: AJcUukd4xbfHJzr5sKQKiSMXZI9qlI3NuJ0L9rEVGJklL3Vf/KAZUh1P
-        X216JFEdzPXObl8PudDWkPad4+Uay5e/PGRIPGE=
-X-Google-Smtp-Source: ALg8bN7Y+BsS3HFCaeZ5V6zZxudaxgbAwIr5a0Zeg/+zj9LAgvku+dzWLdBQ4TeqQJ2aICrN0UyczlwwDSTx5zPfC/E=
-X-Received: by 2002:aed:35c5:: with SMTP id d5mr11164733qte.212.1547728783775;
- Thu, 17 Jan 2019 04:39:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20190116163253.23780-1-vincent.whitchurch@axis.com>
- <CAK8P3a2ifu9X+SXgoDPSFMYwnKr=Yex8_tD4qRimcOQAhuEa8Q@mail.gmail.com> <20190117105441.eqediwlekofp2srg@axis.com>
-In-Reply-To: <20190117105441.eqediwlekofp2srg@axis.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 17 Jan 2019 13:39:27 +0100
-Message-ID: <CAK8P3a2HtSJCLVdLcs=f0b5wv-k-6E_Z4Pt3Yp_kazUZh-Ek9A@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Virtio-over-PCIe on non-MIC
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
-        gregkh <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        linux-ntb@googlegroups.com, Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 17 Jan 2019 07:40:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=jG5WUhG6OdPd3gSf1gnyNHcXhYSta8gmBgSkujOYyDo=; b=oZCx9XuYwYS7
+        eQe/eCYSO1Z629dZ1AP28o8Ep2aQvMHxjIXGWiGdB4KtIysm5D8L3Z0RISdfgJACMsICKklhOG3ZV
+        UpKI66uZymHbZw6YN3ZAx3xomak5XzVinykAn4eUFaCfu82C/QlMyg4KQOTDcnAljwHAPI1F8DoXs
+        Tvmms=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gk6xy-0000Z6-NY; Thu, 17 Jan 2019 12:40:14 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 55E0D1126FE2; Thu, 17 Jan 2019 12:40:14 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Alban Bedel <albeu@free.fr>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: ath79: Remove now useless code" to the spi tree
+In-Reply-To:  <20190116185549.23295-4-albeu@free.fr>
+X-Patchwork-Hint: ignore
+Message-Id: <20190117124014.55E0D1126FE2@debutante.sirena.org.uk>
+Date:   Thu, 17 Jan 2019 12:40:14 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 11:54 AM Vincent Whitchurch
-<vincent.whitchurch@axis.com> wrote:
->
-> On Wed, Jan 16, 2019 at 06:07:53PM +0100, Arnd Bergmann wrote:
-> > On Wed, Jan 16, 2019 at 5:33 PM Vincent Whitchurch <vincent.whitchurch@axis.com> wrote:
-> > > The Virtio-over-PCIe framework living under drivers/misc/mic/vop implements a
-> > > generic framework to use virtio between two Linux systems, given shared memory
-> > > and a couple of interrupts.  It does not actually require the Intel MIC
-> > > hardware, x86-64, or even PCIe for that matter.  This patch series makes it
-> > > buildable on more systems and adds a loopback driver to test it without special
-> > > hardware.
-> > >
-> > > Note that I don't have access to Intel MIC hardware so some testing of the
-> > > patchset (especially the patch "vop: Use consistent DMA") on that platform
-> > > would be appreciated, to ensure that the series does not break anything there.
-> >
-> > I think we need to take a step back though and discuss what combinations
-> > we actually do want to support. I have not actually read the whole mic/vop
-> > driver, so I don't know if this would be a good fit as a generic interface --
-> > it may or may not be, and any other input would be helpful.
->
-> The MIC driver as a whole is uninteresting as a generic interface since
-> it is quite tied to the Intel hardware.  The VOP parts though are
-> logically separated and have no relation to that hardware, even if the
-> ioctls are called MIC_VIRTIO_*.
->
-> The samples/mic/mpssd/mpssd.c code handles both the boot of the MIC
-> (sysfs) and the VOP parts (ioctls).
+The patch
 
-Right, I wasn't talking about the MIC driver here, just the VOP
-stuff. Since that comes with an ioctl interface that you want to keep
-using on other hardware, this still means we have to review if it is
-a good fit as a general-purpose API.
+   spi: ath79: Remove now useless code
 
-> > Aside from that, I should note that we have two related subsystems
-> > in the kernel: the PCIe endpoint subsystem maintained by Kishon and
-> > Lorenzo, and the NTB subsystem maintained by Jon, Dave and Allen.
-> >
-> > In order to properly support virtio over PCIe, I would hope we can come
-> > up with a user space interface that looks the same way for configuring
-> > virtio drivers in mic, pcie-endpoint and ntb, if at all possible. Have
-> > you looked at those two subsystems?
->
-> pcie-endpoint is a generic framework that allows Linux to act as an
-> endpoint and set up the BARs, etc.  mic appears to have Intel
-> MIC-specific code for this (pre-dating pcie-endpoint) but this is
-> separate from the vop code.  pcie-endpoint and vop do not have
-> overlapping functionality and can be used together.
+has been applied to the spi tree at
 
-What we need to find out though is whether the combination of vop
-with pcie-endpoint provides a good abstraction for what users
-actually need when want to use e.g. a virtio-net connection on top
-of PCIe endpoint hardware.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-> I'm not familiar with NTB, but from a quick look it seems to be tied to
-> special hardware, and I don't see any virtio-related code there.  A vop
-> backend for NTB-backend would presumably work to allow virtio
-> functionality there.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Correct, and again we have to see if this is a good interface. The NTB
-and PCIe-endpoint interfaces have a number of differences and a
-number of similarities. In particular they should both be usable with
-virtio-style drivers, but the underlying hardware differs mainly in how
-it is probed by the system: an NTB is seen as a PCI device attached
-to two host bridges, while and endpoint is typically a platform_device
-on one side, but a pci_dev on the other side.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Can you describe how you expect a VOP device over NTB or
-PCIe-endpoint would get created, configured and used?
-Is there always one master side that is responsible for creating
-virtio devices on it, with the slave side automatically attaching to
-them, or can either side create virtio devices? Is there any limit on
-the number of virtio devices or queues within a VOP device?
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-       Arnd
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f1b2c1c84f7f04d91749e1550f24510c6b6eac73 Mon Sep 17 00:00:00 2001
+From: Alban Bedel <albeu@free.fr>
+Date: Wed, 16 Jan 2019 19:55:47 +0100
+Subject: [PATCH] spi: ath79: Remove now useless code
+
+The custom setup/cleanup routines included in the ath79 driver only
+take care of setting the initial CS state. However that is already
+handled by the bitbang code, so this code can be removed.
+
+Signed-off-by: Alban Bedel <albeu@free.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-ath79.c | 43 ++---------------------------------------
+ 1 file changed, 2 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/spi/spi-ath79.c b/drivers/spi/spi-ath79.c
+index 09c4fb7fcf7a..847f354ebef1 100644
+--- a/drivers/spi/spi-ath79.c
++++ b/drivers/spi/spi-ath79.c
+@@ -109,44 +109,6 @@ static void ath79_spi_disable(struct ath79_spi *sp)
+ 	ath79_spi_wr(sp, AR71XX_SPI_REG_FS, 0);
+ }
+ 
+-static int ath79_spi_setup_cs(struct spi_device *spi)
+-{
+-	struct ath79_spi *sp = ath79_spidev_to_sp(spi);
+-
+-	if (!spi->cs_gpiod) {
+-		u32 cs_bit = AR71XX_SPI_IOC_CS(spi->chip_select);
+-
+-		if (spi->mode & SPI_CS_HIGH)
+-			sp->ioc_base &= ~cs_bit;
+-		else
+-			sp->ioc_base |= cs_bit;
+-
+-		ath79_spi_wr(sp, AR71XX_SPI_REG_IOC, sp->ioc_base);
+-	}
+-
+-	return 0;
+-}
+-
+-static int ath79_spi_setup(struct spi_device *spi)
+-{
+-	int status = 0;
+-
+-	if (!spi->controller_state) {
+-		status = ath79_spi_setup_cs(spi);
+-		if (status)
+-			return status;
+-	}
+-
+-	status = spi_bitbang_setup(spi);
+-
+-	return status;
+-}
+-
+-static void ath79_spi_cleanup(struct spi_device *spi)
+-{
+-	spi_bitbang_cleanup(spi);
+-}
+-
+ static u32 ath79_spi_txrx_mode0(struct spi_device *spi, unsigned int nsecs,
+ 			       u32 word, u8 bits, unsigned flags)
+ {
+@@ -199,8 +161,8 @@ static int ath79_spi_probe(struct platform_device *pdev)
+ 
+ 	master->use_gpio_descriptors = true;
+ 	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
+-	master->setup = ath79_spi_setup;
+-	master->cleanup = ath79_spi_cleanup;
++	master->setup = spi_bitbang_setup;
++	master->cleanup = spi_bitbang_cleanup;
+ 	if (pdata) {
+ 		master->bus_num = pdata->bus_num;
+ 		master->num_chipselect = pdata->num_chipselect;
+@@ -209,7 +171,6 @@ static int ath79_spi_probe(struct platform_device *pdev)
+ 	sp->bitbang.master = master;
+ 	sp->bitbang.chipselect = ath79_spi_chipselect;
+ 	sp->bitbang.txrx_word[SPI_MODE_0] = ath79_spi_txrx_mode0;
+-	sp->bitbang.setup_transfer = spi_bitbang_setup_transfer;
+ 	sp->bitbang.flags = SPI_CS_HIGH;
+ 
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-- 
+2.20.1
+
