@@ -2,95 +2,149 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2C4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CB5C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:32:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12F720851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:31:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KGeDR4CF"
+	by mail.kernel.org (Postfix) with ESMTP id E491A20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfAQWb6 (ORCPT
+        id S1726732AbfAQWco convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 17:31:58 -0500
-Received: from ozlabs.org ([203.11.71.1]:36131 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbfAQWb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 17:31:58 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43gf2K6KlWz9sBZ;
-        Fri, 18 Jan 2019 09:31:53 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547764315;
-        bh=plpHrhB1lCjH8EvKGtgeLyOUdwg63dbWnLV3KXy0ZFM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KGeDR4CFo4yslzL9xv8X4uBfgHLRIYWL0t3TN2Cy6YB+3Bxz+Fxwh6frzDYRk/Wqy
-         iH5CfzzGkeGmonsgtrMdSiOqcqxhcpL8qfiQjK/YCzRTAcP4sc9PklggHE23G+alg+
-         E80Tw0h0iA+TNs0KRT+2rNdQ+prfEmGQeVyLckDtrHThEhaNNGbJNhqavcPIgoSwL4
-         7rlqIMlOc8U8KjMRGM4Do7BjeY6odDjplsXIRxtFi4/dS5N7rqfPsHjdUoMNqSe5Zj
-         KBZ7UjHQAsw/kM63PfGrr5JxEHkkAIQQXgQgW16WWieY5O7aCAAoT5tpAKdDHso01i
-         3MR0cAdoaKF8w==
-Date:   Fri, 18 Jan 2019 09:31:35 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: linux-next: Fixes tag needs some work in the tip tree
-Message-ID: <20190118093135.39cf071e@canb.auug.org.au>
+        Thu, 17 Jan 2019 17:32:44 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45339 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfAQWcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 17:32:43 -0500
+Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0HMW1mP924604
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 17 Jan 2019 14:32:01 -0800
+Date:   Thu, 17 Jan 2019 14:31:53 -0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <B8C39C5A-A669-4F80-9BAE-7C11A4379ECF@gmail.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com> <20190117003259.23141-7-rick.p.edgecombe@intel.com> <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com> <CALCETrXQ6uxzB3JvO14sEyMA21RcWCbwicL4nUdPBG8KAunxwg@mail.gmail.com> <B8C39C5A-A669-4F80-9BAE-7C11A4379ECF@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AqHG0K4+LaYSP5cre78SC7M"; protocol="application/pgp-signature"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH 06/17] x86/alternative: use temporary mm for text poking
+To:     Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>
+CC:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+From:   hpa@zytor.com
+Message-ID: <7E4A4400-0A2E-4393-B22C-DBD708610BB5@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/AqHG0K4+LaYSP5cre78SC7M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On January 17, 2019 1:43:54 PM PST, Nadav Amit <nadav.amit@gmail.com> wrote:
+>> On Jan 17, 2019, at 12:47 PM, Andy Lutomirski <luto@kernel.org>
+>wrote:
+>> 
+>> On Thu, Jan 17, 2019 at 12:27 PM Andy Lutomirski <luto@kernel.org>
+>wrote:
+>>> On Wed, Jan 16, 2019 at 4:33 PM Rick Edgecombe
+>>> <rick.p.edgecombe@intel.com> wrote:
+>>>> From: Nadav Amit <namit@vmware.com>
+>>>> 
+>>>> text_poke() can potentially compromise the security as it sets
+>temporary
+>>>> PTEs in the fixmap. These PTEs might be used to rewrite the kernel
+>code
+>>>> from other cores accidentally or maliciously, if an attacker gains
+>the
+>>>> ability to write onto kernel memory.
+>>> 
+>>> i think this may be sufficient, but barely.
+>>> 
+>>>> +       pte_clear(poking_mm, poking_addr, ptep);
+>>>> +
+>>>> +       /*
+>>>> +        * __flush_tlb_one_user() performs a redundant TLB flush
+>when PTI is on,
+>>>> +        * as it also flushes the corresponding "user" address
+>spaces, which
+>>>> +        * does not exist.
+>>>> +        *
+>>>> +        * Poking, however, is already very inefficient since it
+>does not try to
+>>>> +        * batch updates, so we ignore this problem for the time
+>being.
+>>>> +        *
+>>>> +        * Since the PTEs do not exist in other kernel
+>address-spaces, we do
+>>>> +        * not use __flush_tlb_one_kernel(), which when PTI is on
+>would cause
+>>>> +        * more unwarranted TLB flushes.
+>>>> +        *
+>>>> +        * There is a slight anomaly here: the PTE is a
+>supervisor-only and
+>>>> +        * (potentially) global and we use __flush_tlb_one_user()
+>but this
+>>>> +        * should be fine.
+>>>> +        */
+>>>> +       __flush_tlb_one_user(poking_addr);
+>>>> +       if (cross_page_boundary) {
+>>>> +               pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep
+>+ 1);
+>>>> +               __flush_tlb_one_user(poking_addr + PAGE_SIZE);
+>>>> +       }
+>>> 
+>>> In principle, another CPU could still have the old translation. 
+>Your
+>>> mutex probably makes this impossible, but it makes me nervous.
+>>> Ideally you'd use flush_tlb_mm_range(), but I guess you can't do
+>that
+>>> with IRQs off.  Hmm.  I think you should add an inc_mm_tlb_gen()
+>here.
+>>> Arguably, if you did that, you could omit the flushes, but maybe
+>>> that's silly.
+>>> 
+>>> If we start getting new users of use_temporary_mm(), we should give
+>>> some serious thought to the SMP semantics.
+>>> 
+>>> Also, you're using PAGE_KERNEL.  Please tell me that the global bit
+>>> isn't set in there.
+>> 
+>> Much better solution: do unuse_temporary_mm() and *then*
+>> flush_tlb_mm_range().  This is entirely non-sketchy and should be
+>just
+>> about optimal, too.
+>
+>This solution sounds nice and clean. The fact the global-bit was set
+>didn’t
+>matter before (since __flush_tlb_one_user would get rid of it no matter
+>what), but would matter now, so I’ll change it too.
+>
+>Thanks!
+>
+>Nadav
 
-Hi all,
+You can just disable the global bit at the top level, obviously.
 
-Commit
-
-  a31e184e4f69 ("x86/pkeys: Properly copy pkey state at fork()")
-
-Fixes tag
-
-  Fixes: e8c24d3a23a ("x86/pkeys: Allocation/free syscalls")
-
-has these problems:
-
-  - SHA1 should be at least 12 digits long
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/AqHG0K4+LaYSP5cre78SC7M
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxBAkcACgkQAVBC80lX
-0GwqQgf/R7FSce8yihSxWinaT3Z/YltX1oHHs9AIPl82Ent2gd6gwX7Ix5pvBHLT
-B4VLjtxDJBq822TVI4UxWT7cjFTJ++u40OiPj5AORzy3ygVwrf/bYHV1lPBSf4zg
-i8/R9aNmefUj/Ui7He3V4G6/gYNl4/UVyDHQBHfz4mVmUjFTUNLNuaEN6nd4cw/i
-ZZ00Ugv5ZV7xBSBX+0Yu09jrbDbNMzoNUC+bVJZ39Jqy1V0bHDe52OhNpepdizaE
-Nk5diD+BgM7FrOgblT0AreymtJQDOe9wABz5vhdJpkz2dJu4Z2ZGu3aXKqBaPOYd
-gkwYTA/0uH7EowhAm5MOmhIQdIndGg==
-=ECMj
------END PGP SIGNATURE-----
-
---Sig_/AqHG0K4+LaYSP5cre78SC7M--
+This approach also should make it far easier to do batching if desired.
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
