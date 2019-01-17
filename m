@@ -2,113 +2,114 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB5AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D01C1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BCF320851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FEED20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:38:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="n9kUkzEX"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G4aRN9aV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728942AbfAQQhb (ORCPT
+        id S1728978AbfAQQiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:37:31 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:50780 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726854AbfAQQha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:37:30 -0500
-Received: from zn.tnic (p200300EC2BCAA900D1C41FD2C17621F7.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:a900:d1c4:1fd2:c176:21f7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 870F41EC014B;
-        Thu, 17 Jan 2019 17:37:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547743048;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=JhsFqAmcfSl4XxISmW2aE/lNgBtmGfNdWg3Bhoa0n+o=;
-        b=n9kUkzEXjh1+oTb+rwf42Jl3Zo2Eatm1gzX2LiHGR1/jB8DbOW3jOCAQKa9M6tMa3z5G5T
-        GvyvlmXIcNVc5MqnHDtbqdprxW9+WSgheNBIpHbK4JZXKFLMuUf7naIQxUdXfcWXkTHK7x
-        Iw/wiu8OOJWzzEnQugjn20UPYoyJb98=
-Date:   Thu, 17 Jan 2019 17:37:22 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sinan Kaya <okaya@kernel.org>, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     linux-next@vger.kernel.org, linux-acpi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [for-next][PATCH] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI
- is enabled
-Message-ID: <20190117163722.GE5023@zn.tnic>
-References: <20190117161722.3945-1-okaya@kernel.org>
+        Thu, 17 Jan 2019 11:38:06 -0500
+Received: from mail-vs1-f44.google.com ([209.85.217.44]:44839 "EHLO
+        mail-vs1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726854AbfAQQiG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 11:38:06 -0500
+Received: by mail-vs1-f44.google.com with SMTP id u11so6581595vsp.11
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:38:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E1IrF3eis0mCvRuWvGulZ/N1BHfT3unQZ7rTHyNT+LI=;
+        b=G4aRN9aVt1IeppwYJ6Jmw3SAnbYPLD9exZ/liY0Rgi3TwaGRWiHXros7hg7/GClG29
+         +0FHZP83arKaIhMa2DXCSSToKbUjqBnT8MKpUBXDtmUEAns0OKGr4wjrBqxkZ3RETl0o
+         u66kTHtT/0hcUPhVSuImLbWsrXwCVzQaeU6uU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E1IrF3eis0mCvRuWvGulZ/N1BHfT3unQZ7rTHyNT+LI=;
+        b=qJ/Oms8ohrMN1A2MDkHykP9lWuyemG0ENnEW3Jbf2TKnZSBa6Wt7Tis0b0D5qPVrPa
+         a3KyQyq/g1lielgzX3LONs6ZELwDu/6v/p/xDd3ogD4RK+5lsD+Hk63EfJAKRqRva6id
+         Q581TOTK0lJYpKnA5kI1mYGSoj2jHUIeFkUNibHnE46G/vPOylpnS9LXK/r54YIG1slj
+         VxG8bX0UcgGLk6P1a6alI3V29/r3LkoxRmsUI4bIWusPsV0XoSQlOj/xPkPbFRbTro/m
+         RKl7uqkwHlvvASrzgR6xz21a00I7BzPU2WQ51W5onb8YB9NdxCrjSyeWZTExgze3rqUn
+         kfnw==
+X-Gm-Message-State: AJcUukfm9nLTIVTtOTZK6ouDyt9+HftlC+M3Jf+i7GH3M8a0KLn7PLb4
+        YOIaOqEZ899pirrpsmnByn4WvJg1SB4=
+X-Google-Smtp-Source: ALg8bN68xfGB+gd0aEFPnfgJqSShPJtUd0SXIB8HAycrSvMdR1cN7B0Kw/fOX3GQXcwyqV6SlRQkOg==
+X-Received: by 2002:a67:e28a:: with SMTP id g10mr6659157vsf.178.1547743084564;
+        Thu, 17 Jan 2019 08:38:04 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id x20sm3113893uan.12.2019.01.17.08.38.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 08:38:03 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id z24so3665201ual.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:38:02 -0800 (PST)
+X-Received: by 2002:a9f:2709:: with SMTP id a9mr6155293uaa.10.1547743082325;
+ Thu, 17 Jan 2019 08:38:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190117161722.3945-1-okaya@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190117071734.7792-1-yuehaibing@huawei.com>
+In-Reply-To: <20190117071734.7792-1-yuehaibing@huawei.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 17 Jan 2019 08:37:50 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jK3b7YwHpgv5XtNUFHcrxcndNWpiZdWaoQR1LKO34Or-w@mail.gmail.com>
+Message-ID: <CAGXu5jK3b7YwHpgv5XtNUFHcrxcndNWpiZdWaoQR1LKO34Or-w@mail.gmail.com>
+Subject: Re: [PATCH -next] security: remove duplicated include from security.h
+To:     james.morris@microsoft.com, YueHaibing <yuehaibing@huawei.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 04:17:22PM +0000, Sinan Kaya wrote:
-> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-> satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> specified directly.
-> 
-> PCI_LOCKLESS_CONFIG depends on PCI but this dependency has not been
-> mentioned in the Kconfig.
-> 
-> Add an explicit dependency here.
-> 
-> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+On Wed, Jan 16, 2019 at 11:17 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Remove duplicated include.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+James, can you take this?
+
+-Kees
+
 > ---
->  arch/x86/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 568f339595ed..0519da6f8ee4 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -199,7 +199,7 @@ config X86
->  	select IRQ_FORCED_THREADING
->  	select NEED_SG_DMA_LENGTH
->  	select PCI_DOMAINS			if PCI
-> -	select PCI_LOCKLESS_CONFIG
-> +	select PCI_LOCKLESS_CONFIG		if PCI
->  	select PERF_EVENTS
->  	select RTC_LIB
->  	select RTC_MC146818_LIB
-> -- 
+>  include/linux/security.h | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index b10866b..7ed03c6 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -30,7 +30,6 @@
+>  #include <linux/err.h>
+>  #include <linux/string.h>
+>  #include <linux/mm.h>
+> -#include <linux/fs.h>
+>
+>  struct linux_binprm;
+>  struct cred;
+> --
+> 2.7.0
+>
+>
 
-Are there any more arch/x86/ fixes for the 5d32a66541c4 fallout floating
-around?
-
-If so, pls merge them all together into a single patch so that we're
-done with this once and for all.
-
-Also, I see a lot of build failures when doing randconfig builds for the
-stuff in drivers/platform/x86/Kconfig. Is someone picking those up too?
-
-If not, I'd take 'em too in a single patch, if Darren and Andy are fine
-with it.
-
-Thx.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Kees Cook
