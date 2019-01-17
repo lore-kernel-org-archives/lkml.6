@@ -2,132 +2,186 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0E9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FD1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E06FA20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA50E20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:37:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="PI1pQTbT"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="sy5XkojQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbfAQRgS (ORCPT
+        id S1728947AbfAQRhM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:36:18 -0500
-Received: from mail-qt1-f170.google.com ([209.85.160.170]:43260 "EHLO
-        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727226AbfAQRgR (ORCPT
+        Thu, 17 Jan 2019 12:37:12 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36871 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfAQRhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:36:17 -0500
-Received: by mail-qt1-f170.google.com with SMTP id i7so12171732qtj.10
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:36:16 -0800 (PST)
+        Thu, 17 Jan 2019 12:37:11 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y11so8456840lfj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:37:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=4s+aw4cqHlFtyBwSJLP5pQLIUbRVwDOyiFK3nKFejho=;
-        b=PI1pQTbT9G4zxJBqXN/kqXc5QhWQEgcAgAm5vXCm8GIQ30ZvJVNVusdIJbpoo3prhl
-         3iXo/JWYKlel9AHpD6PPv7+LmK9Lbuqo3l/308z8DvT4EBLRwx95s4NW4Y8ScGr1EVOg
-         2Wy6pDe47YnLgZPsdQ7Li819VgvJVbxQ8m3tx7xJIavdUDKQEadDBUzLSiUc0SAAHHS8
-         2MfqQ2rnioIreeK/d3aw0fb6Wt1CYOvXock/UpD4HnXigpOmSyfOwf0E7b/GCY2IvMtO
-         sGsptoYPtYFRiHBGnof0S62whXWMfoHeVnAfb457Yh+blXDL+bTOGsNPOy7hjHoyzbs1
-         tHzQ==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G/THK+qaZMV6onb+whGUS01TPNUJ8oRJ6JjQya0Gf5I=;
+        b=sy5XkojQVNXw6SJDkiL+Km0JZWx0aGku+BZKQSmmcxErd0WafWamZPyB0ExoovwIpS
+         sHjtVoqwzGeOx+NhUZUwXsJ5FeKYZ5vivM3kgdcYhPrrI3o9MIbCNKvCvl/8cInOaGXN
+         eh1kl+EaQj+upNvmgjc6AQvR91wKWTCc1er+ymfnL/1oRTztnILpRin5cTiZn71oTOgL
+         EGaVsx+u+guj9C6s/s137ecHZdx/NHtPKz9fDoHd5ltNoMhPqeiE/rz2a8q0z3dbHVLs
+         FeZBnT1TuUag8/mLySo9eoQ2oiVOcmyt6p8LEjoK7N5EzkKBA+pNA5kKAPb7latOTP8j
+         nP1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=4s+aw4cqHlFtyBwSJLP5pQLIUbRVwDOyiFK3nKFejho=;
-        b=eNtYa13Do/7c17SMa0YaQUivp3jRG7RduFJl8txSX/Yn7PDHabkq9ksXiuf+lfLiL0
-         4ZtotIwJMYiZvTmhBw8WWJZvUlpvElYKCBdZ8q+x+rvsGtb9wglqiDDzXREK7UPr7AVN
-         t2i+n2fqtaAMSNZEdgeCPsDOVE46cqDyTg6u2vwBotvvn2NhCCoWCf7MYFtZGQGxNz+V
-         PHIOnQOSLl+8tIXHPwJC2snMRS6EuUS3MeqDoZpXuE/c0CA9S2vxrWa3zTneiIigFrmx
-         KA1E1Yt74MpYagyEcVv/YfGbBmLRaVA9Wp66Yao6QSNW65dCpIDBfssgS5h7bWVJ+tSB
-         0Kxw==
-X-Gm-Message-State: AJcUukev7OtWhYDjfx9316eb1K9R5OAullVaWxcvjeGRUaX2eDT4HDFa
-        tcUKq1X06zU4q5d3wjzexDRIAV8pkO6Vjw==
-X-Google-Smtp-Source: ALg8bN7VdCazLk/VYBGDZiW+4f/wwTPUAXLGDYHKbCi5ffLWIiua28lgOIhT82qwjBFvqqgCJ/DDjA==
-X-Received: by 2002:ac8:1b82:: with SMTP id z2mr12592368qtj.321.1547746575884;
-        Thu, 17 Jan 2019 09:36:15 -0800 (PST)
-Received: from ovpn-124-227.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id f19sm57832091qtf.1.2019.01.17.09.36.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 09:36:15 -0800 (PST)
-To:     osalvador@suse.de, Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        linux kernel <linux-kernel@vger.kernel.org>
-From:   Qian Cai <cai@lca.pw>
-Subject: kmemleak scan crash due to invalid PFNs
-Message-ID: <51e79597-21ef-3073-9036-cfc33291f395@lca.pw>
-Date:   Thu, 17 Jan 2019 12:36:14 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G/THK+qaZMV6onb+whGUS01TPNUJ8oRJ6JjQya0Gf5I=;
+        b=LfVejvXjsWdJ/wdlphYikfr9vn4yq1ml2eKIAieKc/lgAq8yFX3Qdyy8DsKquY3v1z
+         j1LAR4ya0WJcwoOklM1FmuofxW3n2ucFvVFsqRnI7/wK0pkmMFVPBLhviGP0T9kVMVby
+         GKHoUGm1PCU4c7myV+iUisM9BQVAsHgwOPUCnyXHSOLbglB0qgpJy2U/uycDaVZl7gv1
+         TmlmtfdDsExQXYp/6piLxON/uDE/iXMAIHKVMA3DtJb92K/ncoFq4eD8bzAMBwbrQXrM
+         x4UdKAc0WPWfPrTRC/Q64an7qn6BTB1M0XZ9+9vdvYAJDVB1491Xs3RVKVvkRi8qBVHU
+         wLpw==
+X-Gm-Message-State: AJcUukfagJRypHUgDnqxFzjn2yp770pHl1cKsnCiMhegNOZ8tQeZbqjd
+        ZZEz3U5zZoV1DlqQXZ21YHSxuI6rMSnfAtZtufeh
+X-Google-Smtp-Source: ALg8bN7jzs6+Ni9VR60QNYXHqkscXGIV5R2X98Xmzx1BFsg2kDcgoUPbky1NsJoz99qgZMlizQCJZEiaUhgMZJny3iY=
+X-Received: by 2002:a19:5402:: with SMTP id i2mr10729689lfb.128.1547746628075;
+ Thu, 17 Jan 2019 09:37:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1544477629.git.rgb@redhat.com> <43548fafdfa98ee64ecfd0d7a69a2f5cb2c31c50.1544477629.git.rgb@redhat.com>
+ <CAHC9VhSaTvVgSWVWo42Ur2k6hVNJ1XBkLwrd-J4-SUuidwXUYg@mail.gmail.com>
+ <20190117103255.1f640a42@ivy-bridge> <CAHC9VhQvk+6AFjVU_ygyn8Q6FGwVy_JqXj7wWSNYYp5zSiBcuw@mail.gmail.com>
+ <20190117170815.40131a69@ivy-bridge>
+In-Reply-To: <20190117170815.40131a69@ivy-bridge>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 17 Jan 2019 12:36:56 -0500
+Message-ID: <CAHC9VhQqT9HW=m5_sbru2Q7HoJC6oSrzMzrkRxgeDB7sWFLA-A@mail.gmail.com>
+Subject: Re: [PATCH ghak59 V3 2/4] audit: add syscall information to
+ CONFIG_CHANGE records
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Eric Paris <eparis@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On an arm64 ThunderX2 server, the first kmemleak scan would crash with
-CONFIG_DEBUG_VM_PGFLAGS=y due to page_to_nid() found a pfn that is not directly
-mapped. Hence, the page->flags is not initialized.
+On Thu, Jan 17, 2019 at 11:08 AM Steve Grubb <sgrubb@redhat.com> wrote:
+> On Thu, 17 Jan 2019 08:21:40 -0500
+> Paul Moore <paul@paul-moore.com> wrote:
+>
+> > On Thu, Jan 17, 2019 at 4:33 AM Steve Grubb <sgrubb@redhat.com> wrote:
+> > > On Mon, 14 Jan 2019 17:58:58 -0500
+> > > Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > > On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs
+> > > > <rgb@redhat.com> wrote:
+> > > > >
+> > > > > Tie syscall information to all CONFIG_CHANGE calls since they
+> > > > > are all a result of user actions.
+> > >
+> > > Please don't tie syscall information to this. The syscall will be
+> > > sendto. We don't need that information, its implicit. Also, doing
+> > > this will possibly wreck things in libauparse. Please test the
+> > > events with ausearch --format csv and --format text. IFF the event
+> > > looks better or the same should we do this. If stuff disappears,
+> > > the patch is breaking things
+> >
+> > We've discussed this quite a bit already;
+>
+> Yes, and you still don't seem be listening. You have to cooperate on
+> modifying events. We as a community need to respect each other's needs
+> and work together to solve problems. What this is saying sounds a lot
+> like I don't care if it breaks things, I'm gonna do it my way. Tough
+> luck.
 
-Reverted 9f1eb38e0e113 (mm, kmemleak: little optimization while scanning) fixed
-the problem.
+I see you added LKML to the To/CC line.  Fun.  Unless they've been
+following the audit list for the past several years I'm not sure they
+have all the context to fully understand some of the things in this
+thread, but sure, why not.
 
-[  102.195320] Unable to handle kernel NULL pointer dereference at virtual
-address 0000000000000006
-[  102.204113] Mem abort info:
-[  102.206921]   ESR = 0x96000005
-[  102.209997]   Exception class = DABT (current EL), IL = 32 bits
-[  102.215926]   SET = 0, FnV = 0
-[  102.218993]   EA = 0, S1PTW = 0
-[  102.222150] Data abort info:
-[  102.225047]   ISV = 0, ISS = 0x00000005
-[  102.228887]   CM = 0, WnR = 0
-[  102.231866] user pgtable: 64k pages, 48-bit VAs, pgdp = (____ptrval____)
-[  102.238572] [0000000000000006] pgd=0000000000000000, pud=0000000000000000
-[  102.245448] Internal error: Oops: 96000005 [#1] SMP
-[  102.264062] CPU: 60 PID: 1408 Comm: kmemleak Not tainted 5.0.0-rc2+ #8
-[  102.280403] pstate: 60400009 (nZCv daif +PAN -UAO)
-[  102.280409] pc : page_mapping+0x24/0x144
-[  102.280415] lr : __dump_page+0x34/0x3dc
-[  102.292923] sp : ffff00003a5cfd10
-[  102.296229] x29: ffff00003a5cfd10 x28: 000000000000802f
-[  102.301533] x27: 0000000000000000 x26: 0000000000277d00
-[  102.306835] x25: ffff000010791f56 x24: ffff7fe000000000
-[  102.312138] x23: ffff000010772f8b x22: ffff00001125f670
-[  102.317442] x21: ffff000011311000 x20: ffff000010772f8b
-[  102.322747] x19: fffffffffffffffe x18: 0000000000000000
-[  102.328049] x17: 0000000000000000 x16: 0000000000000000
-[  102.333352] x15: 0000000000000000 x14: ffff802698b19600
-[  102.338654] x13: ffff802698b1a200 x12: ffff802698b16f00
-[  102.343956] x11: ffff802698b1a400 x10: 0000000000001400
-[  102.349260] x9 : 0000000000000001 x8 : ffff00001121a000
-[  102.354563] x7 : 0000000000000000 x6 : ffff0000102c53b8
-[  102.359868] x5 : 0000000000000000 x4 : 0000000000000003
-[  102.365173] x3 : 0000000000000100 x2 : 0000000000000000
-[  102.370476] x1 : ffff000010772f8b x0 : ffffffffffffffff
-[  102.375782] Process kmemleak (pid: 1408, stack limit = 0x(____ptrval____))
-[  102.382648] Call trace:
-[  102.385091]  page_mapping+0x24/0x144
-[  102.388659]  __dump_page+0x34/0x3dc
-[  102.392140]  dump_page+0x28/0x4c
-[  102.395363]  kmemleak_scan+0x4ac/0x680
-[  102.399106]  kmemleak_scan_thread+0xb4/0xdc
-[  102.403285]  kthread+0x12c/0x13c
-[  102.406509]  ret_from_fork+0x10/0x18
-[  102.410080] Code: d503201f f9400660 36000040 d1000413 (f9400661)
-[  102.416357] ---[ end trace 4d4bd7f573490c8e ]---
-[  102.420966] Kernel panic - not syncing: Fatal exception
-[  102.426293] SMP: stopping secondary CPUs
-[  102.431830] Kernel Offset: disabled
-[  102.435311] CPU features: 0x002,20000c38
-[  102.439223] Memory Limit: none
-[  102.442384] ---[ end Kernel panic - not syncing: Fatal exception ]---
+I understand you are frustrated Steve, I get it.  I can also
+understand how you feel that I'm not listening to you because I'm not
+agreeing with you on this, I get this too.  However, we've talked
+about this quite a bit and keeping individual audit records split
+across multiple events when they are all part of the same event just
+doesn't make sense to me.  The users who have commented on this also
+agree that associated records should be combined into one event.  I
+definitely don't want to put words in Richard's mouth, but I believe
+he has also said that he believes that associating all related records
+into a single event makes sense.
+
+I'm listening to you Steve - look at all the times I've asked for your
+perspective when it comes to certification requirements? - I just
+don't always agree with you.
+
+> You do not have to make sense of any of these events. So, what does it
+> really matter to you how the event is formed? What I'm asking for is
+> have these changes been vetted to ensure that they are not breaking
+> things?
+
+We are not changing the record formats, all we are doing is changing
+the timestamp/event counter so that related records are grouped
+together into the same event.  For example, in this particular case
+(describing this for the LKML crowd that may be reading this) we are
+combining the syscall audit record that triggers the audit
+configuration change with the audit configuration change record into a
+single event.  The code currently treats the syscall record and the
+audit config change record as separate events - which is just silly as
+they belong to the same event, triggered by the same user action -
+this patch should fix this by associating the two records so they are
+part of the same audit event.  From my perspective this is a bug fix.
+
+> > connecting associated records into a single event is something that
+> > should happen, needs to happen, and will happen.  Conceptually it
+> > makes no sense to record the syscall (and any other associated
+> > records) which triggers the audit configuration change, and the
+> > configuration change record itself as two distinct events - they are
+> > the same event.
+>
+> Except that they are not. The design of the audit system is to save
+> disk space as much as possible by emitting single record events on
+> certain event types that are simple. To add a syscall to it adds useless
+> information (such as a socket address record), slows down processing,
+> and wastes disk space. If you get a SYSCALL record, that indicates that
+> you have triggered an event that the system admin has placed explicit
+> rules on. That is different than the common criteria required
+> configuration change event.
+
+I've said this many times in the past, I believe Richard has said the
+same too (maybe it was in a GH issue?), but I'll say it again ... if
+the system's audit config is such that syscall records are not being
+generated, then this patch will not cause them to be generated; all
+this patch does is ensure that *if* a syscall record is being
+generated *and* an audit config change record is being generated, then
+the two records will share the same event counter and treated as a
+single event.  This change does not cause any change to the amount of
+information emitted by the kernel, all it does is group the related
+records together.
+
+> >  We've also heard from a prominent user that
+> > associating records in this way is desirable.
+> >
+> > If the ausearch csv and text audit log transformations can't handle
+> > this particular change, I would consider that a shortcoming of that
+> > code.  We have multi-record events now, and this is only going to
+> > increase in the future.
+>
+> Isn't there some kind a guideline about not breaking user space?
+
+Yes, when that bit of userspace code predates the change.  You knew
+this was coming when you wrote that tool, writing userspace
+applications that make poor assumptions and using that as a way to
+block kernel development is not something I look upon favorably.
+
+-- 
+paul moore
+www.paul-moore.com
