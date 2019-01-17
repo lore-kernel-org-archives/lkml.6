@@ -2,99 +2,102 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4217BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31749C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F4820873
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:06:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2C2920851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 21:06:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmzwLMeW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbfAQVGb (ORCPT
+        id S1729624AbfAQVGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 16:06:31 -0500
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:11818 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726648AbfAQVGb (ORCPT
+        Thu, 17 Jan 2019 16:06:40 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38655 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727347AbfAQVGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 16:06:31 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail06.adl2.internode.on.net with ESMTP; 18 Jan 2019 07:36:11 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gkEra-0004VW-JC; Fri, 18 Jan 2019 08:06:10 +1100
-Date:   Fri, 18 Jan 2019 08:06:10 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190117210610.GW4205@dastard>
-References: <20190108044336.GB27534@dastard>
- <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
- <20190109022430.GE27534@dastard>
- <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm>
- <20190109043906.GF27534@dastard>
- <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com>
- <20190110004424.GH27534@dastard>
- <nycvar.YFH.7.76.1901110836110.6626@cbobk.fhfr.pm>
- <20190117022244.GV4205@dastard>
- <nycvar.YFH.7.76.1901170917490.6626@cbobk.fhfr.pm>
+        Thu, 17 Jan 2019 16:06:39 -0500
+Received: by mail-oi1-f195.google.com with SMTP id a77so7312375oii.5;
+        Thu, 17 Jan 2019 13:06:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bgk/6Ps/xUTQpdibaLyXKx6/iY/tGquGS2LL5V8oQsU=;
+        b=AmzwLMeWhsDvhnK7nbduEV1OZmIdoXRBms3nws26ocbwUvIK8wY7kAqwWp8DHmj7z5
+         SBir8n6RcCV0wHA+yRzu7bePkbxUGx/x/q8+zooF5x8ZJdnF+kSilEGAgMw+8D6hJwgm
+         XUxhKwHHiZkDdxFI1NK4qLVVCyiR+Jaxl8Wu47aqQX6rPB5WvbSXE7eDnyHfnJWG64hh
+         DuGUWzHEW7QP/PyaUo1izix/LOeXxhrNKbbqJm0fjxXWQelXUXNC8pIE/K7S4BdF8Xcw
+         SUk/dbfs5SFQrEDq2hSt6plSn9F+0nQWj2P3Moh1mU6tPG3cRmpL6rNAdvRjgnfqJx7s
+         FxOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bgk/6Ps/xUTQpdibaLyXKx6/iY/tGquGS2LL5V8oQsU=;
+        b=mPgVfcbSqpKivjm6Xk1kseNvTf4Ts/ljUE/oqSaFtLT9kCiOPKcyT0Bih9H2AxLKhx
+         c49FRLorNy9GjlbVaLov+qbf8Lh2erdF+3wyqMnaBbM4xLeOZ8IkK9ZVc0rBXH76uceE
+         Kdes2kSa0nYwy0TH/k14RQl3Eu+h5E9NZ0n9tTUaCBlfWkTLbHlFO/zeU9e64RGUvatf
+         IGRXRhLvhJE1WCyH6jO8SYiuvsCaUmKH4YZXWOetQ22UZMywqPqGdofoeY8zYPa/Ai9D
+         lFUSqYTjG+4HYXBh/2G5Qhl9YFEyh2Hf0mlMS9sffMu5X2C3ycfGblDK255kTVVVmiSf
+         cGbQ==
+X-Gm-Message-State: AJcUukfvS0hNWzu82Fmh/wmWEPcWL+IEBisxhb0+LvmvCYCln8IN8UbG
+        f6oXu97h7h/7MO1o6MWa0Icgw54xpXzI+8/HTvM=
+X-Google-Smtp-Source: ALg8bN6DAIJjbS8g3145YNSD07EWipH+sDQQROtX5Ayq+b5SOJR+dBhP9c8d20/L7XSMcybS4+YFD9q5ylvWqDmxqs4=
+X-Received: by 2002:aca:ab53:: with SMTP id u80mr1745841oie.261.1547759198634;
+ Thu, 17 Jan 2019 13:06:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1901170917490.6626@cbobk.fhfr.pm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190117205837.29003-1-slongerbeam@gmail.com>
+In-Reply-To: <20190117205837.29003-1-slongerbeam@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 17 Jan 2019 19:06:28 -0200
+Message-ID: <CAOMZO5BwAaEirMnuDbPLCw4D5Xb1krMW2WzUeBrAkqinzS_skA@mail.gmail.com>
+Subject: Re: [PATCH v2] media: imx-csi: Input connections to CSI should be optional
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media <linux-media@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 09:18:41AM +0100, Jiri Kosina wrote:
-> On Thu, 17 Jan 2019, Dave Chinner wrote:
-> 
-> > > > commit e837eac23662afae603aaaef7c94bc839c1b8f67
-> > > > Author: Steve Lord <lord@sgi.com>
-> > > > Date:   Mon Mar 5 16:47:52 2001 +0000
-> > > > 
-> > > >     Add bounds checking for direct I/O, do the cache invalidation for
-> > > >     data coherency on direct I/O.
-> > > 
-> > > Out of curiosity, which repository is this from please? Even google 
-> > > doesn't seem to know about this SHA.
-> > 
-> > because oss.sgi.com is no longer with us, it's fallen out of all the
-> > search engines.  It was from the "archive/xfs-import.git" tree on
-> > oss.sgi.com:
-> > 
-> > https://web.archive.org/web/20120326044237/http://oss.sgi.com:80/cgi-bin/gitweb.cgi
-> > 
-> > but archive.org doesn't have a copy of the git tree. It contained
-> > the XFS history right back to the first Irix commit in 1993. Some of
-> > us still have copies of it sitting around....
-> 
-> For cases like this, would it be worth pushing it to git.kernel.org as an 
-> frozen historical reference archive?
+Hi Steve,
 
-I'm not sure we should be putting code from Irix on kernel.org. I
-uploaded a copy to github a few months ago so XFS devs could easily
-reference relevant commits in email. The reasons we decided not to
-upload it to kernel.org should be clear from the readme...
+On Thu, Jan 17, 2019 at 6:59 PM Steve Longerbeam <slongerbeam@gmail.com> wrote:
+>
+> Some imx platforms do not have fwnode connections to all CSI input
+> ports, and should not be treated as an error. This includes the
+> imx6q SabreAuto, which has no connections to ipu1_csi1 and ipu2_csi0.
+> Return -ENOTCONN in imx_csi_parse_endpoint() so that v4l2-fwnode
+> endpoint parsing will not treat an unconnected CSI input port as
+> an error.
+>
+> Fixes: c893500a16baf ("media: imx: csi: Register a subdev notifier")
+>
+> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Acked-by: Tim Harvey <tharvey@gateworks.com>
+> Cc: stable@vger.kernel.org
 
-https://github.com/dchinner/xfs-history
+Thanks. This fixes the following error messages:
 
-Cheers,
+[    3.449564] imx-ipuv3 2400000.ipu: driver could not parse
+port@1/endpoint@0 (-22)
+[    3.457342] imx-ipuv3-csi: probe of imx-ipuv3-csi.1 failed with error -22
+[    3.464498] imx-ipuv3 2800000.ipu: driver could not parse
+port@0/endpoint@0 (-22)
+[    3.472120] imx-ipuv3-csi: probe of imx-ipuv3-csi.4 failed with error -22
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Tested-by: Fabio Estevam <festevam@gmail.com>
