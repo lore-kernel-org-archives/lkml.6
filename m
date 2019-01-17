@@ -2,79 +2,88 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE393C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29335C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A30D020856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C5720856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:05:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LdjU7yEo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbfAQSE5 (ORCPT
+        id S1728090AbfAQSFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 13:04:57 -0500
-Received: from mga05.intel.com ([192.55.52.43]:56884 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726517AbfAQSE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 13:04:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 10:04:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
-   d="scan'208";a="136647956"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Jan 2019 10:04:56 -0800
-Received: from fmsmsx120.amr.corp.intel.com (10.18.124.208) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 17 Jan 2019 10:04:55 -0800
-Received: from crsmsx103.amr.corp.intel.com (172.18.63.31) by
- fmsmsx120.amr.corp.intel.com (10.18.124.208) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 17 Jan 2019 10:04:55 -0800
-Received: from crsmsx102.amr.corp.intel.com ([169.254.2.15]) by
- CRSMSX103.amr.corp.intel.com ([169.254.4.39]) with mapi id 14.03.0415.000;
- Thu, 17 Jan 2019 12:04:53 -0600
-From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To:     Andi Kleen <ak@linux.intel.com>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 04/13] x86/fsgsbase/64: Add intrinsics/macros for
- FSGSBASE instructions
-Thread-Topic: [PATCH v4 04/13] x86/fsgsbase/64: Add intrinsics/macros for
- FSGSBASE instructions
-Thread-Index: AQHUre217UI/BdFLXUeK3bbdpSYohKWzTlQAgADYrwA=
-Date:   Thu, 17 Jan 2019 18:04:52 +0000
-Message-ID: <0E0B43A0-76AC-440B-A592-F4940C1028CF@intel.com>
-References: <20190116224849.8617-1-chang.seok.bae@intel.com>
- <20190116224849.8617-5-chang.seok.bae@intel.com>
- <20190117050920.GJ6118@tassilo.jf.intel.com>
-In-Reply-To: <20190117050920.GJ6118@tassilo.jf.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.157.18]
+        Thu, 17 Jan 2019 13:05:08 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43918 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfAQSFH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 13:05:07 -0500
+Received: by mail-pg1-f196.google.com with SMTP id v28so4764511pgk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 10:05:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:user-agent
+         :in-reply-to:references:cc:to:message-id:from:date;
+        bh=7U/nsRFPVTPZDZZemdQdKQ3Mc/Z2r9c4acHjZBXMUVw=;
+        b=LdjU7yEoEd+LjlyxZdRbSy7WIzy4lgct4eSNhadn/fRJyRT82AaIc4U47w6xxx0Ojl
+         +gt9GgCgGBzrcK6joSkcUzBGY1XrzpUCZdUeWqgG68z+5rvBDYrJju8JC0W+GlhASk4i
+         UR4vzJbSESnwqGAAyAu1R+UuSYgw6rxFHFb+E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
+        bh=7U/nsRFPVTPZDZZemdQdKQ3Mc/Z2r9c4acHjZBXMUVw=;
+        b=fFu7fTRWkhIydTQjvneqZvYN46+j1ICMSnwJf7GltioTIejchyObhHZ/cJQa+tYqSY
+         l/2xZRSYI/v0flCNImkbaaJwx1wEXfIE8qY33kS9BaECZ1by/h2pAMsrbq1ncFoAEl8e
+         +BEEXngaGpsor+t3mgk6+s4pPHqztH6IlWsi+u9DQWB27ZW0xg0YQHGNlfrAXw+gd1+S
+         6i4P/UvUrmBcX1RGmJdlReVS2MT8+wEBa6u/1S8X1gDzAuabnAhAYMfhtjYXl5S+JNQi
+         g+lCEX7+NZvqtYMjHHOl1ViqObmH2dZ63WyLpvhvp/CZDs8jdIe8ZNbnSkPMiuygzL5k
+         drOw==
+X-Gm-Message-State: AJcUuketu0DWDjW5ffZPZEDkvKYlLLIUEnXeCib47QuyTMVv8a3EGfXl
+        R6n281K1hX4svBEQhx9ZB2CRKA==
+X-Google-Smtp-Source: ALg8bN4vZlGN9Go8mOHsufcVSXwo4OEgkaHC50c49fSwZFnDrasq5JwBSYQ2M+o4nBqdCD0cFfQRow==
+X-Received: by 2002:a63:f006:: with SMTP id k6mr14349879pgh.259.1547748307066;
+        Thu, 17 Jan 2019 10:05:07 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id p67sm3547724pfg.44.2019.01.17.10.05.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 10:05:06 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <3DA721196DCF344FA73A3B2C03BB2451@intel.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 1/2] arm64: dts: qcom: sdm845: Increase address and size cells for soc
+User-Agent: alot/0.8
+In-Reply-To: <20190117042940.25487-2-bjorn.andersson@linaro.org>
+References: <20190117042940.25487-1-bjorn.andersson@linaro.org> <20190117042940.25487-2-bjorn.andersson@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Message-ID: <154774830553.169631.17749173860111529783@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Thu, 17 Jan 2019 10:05:05 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IE9uIEphbiAxNiwgMjAxOSwgYXQgMjE6MDksIEFuZGkgS2xlZW4gPGFrQGxpbnV4LmludGVs
-LmNvbT4gd3JvdGU6DQo+IA0KPj4gKyNpZmRlZiBDT05GSUdfWDg2XzY0DQo+PiArDQo+PiArI2lu
-Y2x1ZGUgPGFzbS9pbnN0Lmg+DQo+PiArDQo+PiArLm1hY3JvIFJER1NCQVNFIG9wZA0KPiANCj4g
-VGhlIGNhbGxlciBjYW4gbm93IHVzZSB0aGUgYXNzZW1ibGVyIGluc3RydWN0aW9ucyBkaXJlY3Rs
-eSwgc28gdGhlIG1hY3Jvcw0KPiBhcmUgbm90IG5lZWRlZCBhbnltb3JlLg0KPiANCj4gLUFuZGkN
-Cg0KWWVhaCwgeW914oCZcmUgcmlnaHQsIHNpbmNlIEdBUyBpcyBpbmNsdWRlZCBpbiB0aGUgYmlu
-dXRpbHMuDQoNClRoYW5rcw==
+Quoting Bjorn Andersson (2019-01-16 20:29:39)
+> The busses on SDM845 provides 36 address bits, extend the address and
+> size cells to make it possible to describe this in "ranges" and
+> "dma-ranges".
+>=20
+> While touching all reg properties, addresses are padded to 8 digits.
+>=20
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+
