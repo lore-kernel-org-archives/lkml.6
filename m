@@ -4,77 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6E6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF150C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA0620855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69AF220855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:03:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="ggdzGy0M"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="oD31oScO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730138AbfAQHC5 (ORCPT
+        id S1730225AbfAQHDF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 02:02:57 -0500
-Received: from mail-eopbgr700084.outbound.protection.outlook.com ([40.107.70.84]:23296
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Thu, 17 Jan 2019 02:03:05 -0500
+Received: from mail-eopbgr810050.outbound.protection.outlook.com ([40.107.81.50]:24298
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729608AbfAQHCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 02:02:48 -0500
+        id S1729689AbfAQHCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 02:02:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Aev3OpyfSUsm7cLtAhvtGwjx5J8yuQwizR0wmLKwRVo=;
- b=ggdzGy0MWkXOjEWcJnGdevLMxWaUlW9mQyD0GQp2wKHJCr3s7TquLII69+BLEo03SZrtS7Otfp7x/f8b4FFQNIBaNksCdglRwFdO4sB/wX6JkCA5hWOu3xZpLLBlH96xbVYePJ00ELY1jWP6EZC5E/L8f6LGU8U0aKvFKwUhpzI=
-Received: from SN6PR02CA0032.namprd02.prod.outlook.com (2603:10b6:805:a2::45)
- by SN6PR02MB4336.namprd02.prod.outlook.com (2603:10b6:805:a4::29) with
+ bh=rPGlAuSkCLmXFrix51WqbphvboZUkyg6fYxRuDySG6Y=;
+ b=oD31oScOCCJUOw4JcRKC9k/gTUcBVCNPKXyf5viTPoOr4kWLntYwxJsyLi8IzLze7dZz/9TsgcuOf/BqbaButUlLYY6r+ElX119ZUX0mNoIjLJszR4R/PieXnxGc/99OHtUg15fRh+8o0ZKxSEAyRiFL4/yXqkGtTJKwiwHK7G4=
+Received: from BN6PR02CA0036.namprd02.prod.outlook.com (2603:10b6:404:5f::22)
+ by DM6PR02MB4329.namprd02.prod.outlook.com (2603:10b6:5:2a::26) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1516.18; Thu, 17 Jan
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1537.25; Thu, 17 Jan
  2019 07:02:43 +0000
-Received: from CY1NAM02FT007.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::203) by SN6PR02CA0032.outlook.office365.com
- (2603:10b6:805:a2::45) with Microsoft SMTP Server (version=TLS1_2,
+Received: from CY1NAM02FT041.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::200) by BN6PR02CA0036.outlook.office365.com
+ (2603:10b6:404:5f::22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1537.26 via Frontend
  Transport; Thu, 17 Jan 2019 07:02:42 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT007.mail.protection.outlook.com (10.152.75.5) with Microsoft SMTP
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ CY1NAM02FT041.mail.protection.outlook.com (10.152.74.156) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1471.13
- via Frontend Transport; Thu, 17 Jan 2019 07:02:41 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+ via Frontend Transport; Thu, 17 Jan 2019 07:02:42 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:42170 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <kalyani.akula@xilinx.com>)
-        id 1gk1hI-0005kB-KL; Wed, 16 Jan 2019 23:02:40 -0800
+        id 1gk1hJ-0006rl-3r; Wed, 16 Jan 2019 23:02:41 -0800
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <kalyani.akula@xilinx.com>)
-        id 1gk1hD-0007Rm-Fd; Wed, 16 Jan 2019 23:02:35 -0800
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x0H72PFc022382;
+        id 1gk1hE-0007Rm-0N; Wed, 16 Jan 2019 23:02:36 -0800
+Received: from xsj-pvapsmtp01 (xsj-smtp1.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x0H72Pli022378;
         Wed, 16 Jan 2019 23:02:25 -0800
 Received: from [172.23.155.90] (helo=xhdengvm155090.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <kalyania@xilinx.com>)
-        id 1gk1h3-0007MP-6J; Wed, 16 Jan 2019 23:02:25 -0800
+        id 1gk1h3-0007MO-5j; Wed, 16 Jan 2019 23:02:25 -0800
 Received: by xhdengvm155090.xilinx.com (Postfix, from userid 23151)
-        id 67E74800ED; Thu, 17 Jan 2019 12:32:24 +0530 (IST)
+        id 64DBC800EC; Thu, 17 Jan 2019 12:32:24 +0530 (IST)
 From:   Kalyani Akula <kalyani.akula@xilinx.com>
 To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
         <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     Kalyani Akula <kalyania@xilinx.com>,
         Sarat Chand Savitala <saratcha@xilinx.com>,
         Kalyani Akula <kalyani.akula@xilinx.com>
-Subject: [RFC PATCH 4/5] crypto: Adds user space interface for ALG_SET_KEY_TYPE
-Date:   Thu, 17 Jan 2019 12:32:20 +0530
-Message-ID: <1547708541-23730-5-git-send-email-kalyani.akula@xilinx.com>
+Subject: [RFC PATCH 3/5] firmware: xilinx: Add ZynqMP aes API for AES functionality
+Date:   Thu, 17 Jan 2019 12:32:19 +0530
+Message-ID: <1547708541-23730-4-git-send-email-kalyani.akula@xilinx.com>
 X-Mailer: git-send-email 1.9.5
 In-Reply-To: <1547708541-23730-1-git-send-email-kalyani.akula@xilinx.com>
 References: <1547708541-23730-1-git-send-email-kalyani.akula@xilinx.com>
@@ -83,292 +83,131 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(346002)(376002)(2980300002)(199004)(189003)(2906002)(16586007)(356004)(6666004)(4326008)(44832011)(186003)(110136005)(54906003)(26005)(36386004)(106002)(426003)(63266004)(316002)(42186006)(305945005)(106466001)(478600001)(336012)(90966002)(14444005)(81166006)(81156014)(486006)(51416003)(8936002)(8676002)(107886003)(5660300001)(47776003)(50226002)(6266002)(76176011)(217873002)(11346002)(2201001)(48376002)(50466002)(36756003)(446003)(103686004)(52956003)(126002)(2616005)(476003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4336;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT007;1:IJbnXJO0OPqV8U1Xo6dlBW7bJrPiGUb42NFbWcywt1aTCx0vSQB4Fsx5xliSYIxxhBEJQ2NRCfWmFyB0/nCd08xV79vWb3etyYZ38n13WxygibwcCtRuK+NYV9Et/Pw9
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(136003)(376002)(2980300002)(199004)(189003)(106002)(8936002)(44832011)(103686004)(107886003)(54906003)(90966002)(110136005)(50226002)(50466002)(48376002)(305945005)(2616005)(51416003)(76176011)(63266004)(446003)(81156014)(8676002)(126002)(106466001)(426003)(81166006)(4326008)(486006)(476003)(36386004)(11346002)(217873002)(2906002)(356004)(6666004)(36756003)(5660300001)(336012)(478600001)(14444005)(52956003)(316002)(16586007)(42186006)(26005)(6266002)(47776003)(2201001)(186003)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4329;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT041;1:UfXZelcT+c5mFqBKSENm6I0efSHRaVPqbjizxh9+WflEz493QYwzCBloFWGKC1TvDoaYnSqak78U+5Hlvx6hKoICfyRM3t2dEcyfiCkg/H147r/XcDjil4X5eFKocRcC
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6f1e570f-fa92-4daa-4d16-08d67c49c5ec
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:SN6PR02MB4336;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4336;3:K14C/5P94gP5rtvPWPQCoADF0TusqizjhccdlVg1/7f1Ux5gvvL1OzUFwVdBJ7Anw0MbGFgx54vH3q77v+epFZHjkA0xuHDpPqmSh1cipWDh+EHHPPB3f71B1jZPZG1Y1k/U8aHo+82tnH3Vzg370Nvnx19i2J/r06UXh5YzX8fDGl3lCLSEjFU8pyLebpdNlBcutKMUAnQyX0//psqNMJWwjolatKyEtfVDDa0XwEITfR+Z2mu00hiUcYfKLfaChLVsBFpbFiR8Ob8swrmUxyT6YAqMcDX8OHPMIUPMWCDSYlsU/tVsII0Hl15z87PLogQmpYF17Zid3Cbc8rKeZSVYsBoiQy7nFIJHyqlQ8J2taazP7lIfeK6QNO8L4Zf4;25:LX9xoneArQ0FTEdiwDD0eOeNGYfAN5Ytv+9OqQtBNiUCjUE6Ynqa/rEvfceHZGMNaoin9Br/r7jjc5km0Qt2tC8F37Q2fJJY4PFcu+ii5n8eT+NQfJSe9Tfl/0SZNCeuKwWfuoNeqkGMDUEcTZhliFdcE1hNWZU8+Nw0JSNOJ2tetjePCGvEg+FklvJ0u15B21ptRaaWzXgvdJzm3p5s2tCGMY+Ic/aCqzWcg84oyvvWpnyTQOYP022gOQKWhy1TloItj0nyYFsJXA3pHMOHjylAJ9v3g49/oB4e80k5aH0MUI8ALq4s9MyXYLTHRZ2NTdCWltaOqI8Ng5JhGeWHtg==
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4336:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4336;31:b1gPx4SB4yVfTrmo5r+4Q1GjYzqDlBqSgrGd+R0c3Kp8TaIHlx2lSfuSlu0PGtGtwmjkAKKPuDUjNDiupPfW4ezx47rXj4rMLjyIeGb7RSYM2g3G8HSb8xEliZWO7/1tjPsAB3zUh3wL690JzukaVPJDEEUY/XotTxGTKmZCRqRovY+GGJjGY7DYoQQpDWnLa7wAEqwPh4eM+axojLFIJa7sw54kpvaT8aFsgkVnMT8=;20:48VPZdIM5opmBqWaoRct0MTwHDtuhzrrI2Iaz7XGryLvEtizgf9SLcTGnfthzzmiDRQUzc6Wq5OJmiVkeDZbKI4cdXS5HcnySAdY3NVORbo8RqyHl4W4EQgS2XHsEHLvViSYiT5n3B63fsTgCTmEqoOoaOPqDkrBmL29PQlDvPJoncYQov9Vsi93GJqHcPnnf0HGiXvbltMQT/dYBSNvRdTWdy9bgfpu5fG5pT5/vAl+Qi0t7XSwJ5iXgM8AVlcwV1hqT3YWvzrpY7vNu1i/Dy9RSc5wlm9i+IwV/sgM1400+qAPTdBbKfWvd644tJX7QbAIpcoj8iqGEzg/UtpyaCJId/4ewEGYNfYhK7XRBy/EVQw/SYvkWlQBlg6hT3v3gIAD7zrXXr1mpvvWKP+BzhDB6PGjjKjpZMfdfeFrVY5o6l4xwhTklJGFuDdN7zN9UxPoYY3qVtMPrvwO/P3MY/WnT09h/0lawaedPovBurQ1/ZDZdiNuzTuQ/VJwcMzJ
+X-MS-Office365-Filtering-Correlation-Id: fadfeb9f-ad61-49cd-1802-08d67c49c694
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:DM6PR02MB4329;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;3:1RtsIToIqcuLvW/VKHO0rn1iYkSd1Rih1B/VwFPFoSiqyve5lXWVgyO/z4/Zj9Mxt8IxFYhnWrMmRgei84UKYsFQ0O5Sr+MryICl9AU/BZI0aOcaT+twkwY0KHlJYXWieHxMYvCvrFhiKPJP9FtIhkZ0T5H19iba3XJBypnjywh6mXJsnRYc8WrMkY7iXATA+RsNY3KxqsVAjYksijUJdzV6AqAJEG4Pb8vQgCn1TjU4MCv3tXNGJoyoj25a145v6fDL98gcACHePrsLXLz5vttk6eTTRDvRG3PYiqzxx25XXcZZnS+nbMCnzPh6WPFKrfkgl4Qra0aF8/DxTMaQsA8t1FnPgPYTAghEDeoEB7e+eLE/boasLmY1k+1oA3ia;25:5n7OIp3V6iXaYZFhc+zlYy6qJE8C2rtb3+01vrwUvJl0mCKXhV7bTIDZVeBAp6YwVxGV+lSBL1e0wjW9mVnhFyLWanwJ3fengKVIDd/B7iJq3dxjoz+vWelXr3UloAp4XC6DPzbeZN3Msp38jXsE3XntpRu3nF4DmXnJvfIM3kIxfUq3ca3MlOsjT4CFyae64xfXtQQORWdRZLsmfAbtE2c9Db4IXqVCEUqD/7wdX4lMt+cMcvA/eQffwZSxaKMxI/LMk5OK1fsbLb2tmQ889u2s9uyC/0EIswXm5osakMExVY7Q333qOHt7OZKFOKRvT40HBqAaC5c9/4M9JCwi6w==
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4329:
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;31:1LHn9YLyZQZyrbWKYqTNJKRT0urR0oolNrieSIdgkBbswihMlcVLOh90nap7qplgFGmVevhjyku/094WvRDUioGzpoOJzLIvjtSYmKpLUs6GGTk1PppD306JL+axg606GkubSuHr73k5CRpNMmel02suOQlWUUMc71BK7ZsXlEBeSHmfciW/BjCsZ8zXu7VuOwE6xOuh+j9xwZzkTTu2z5JSxM2tfKTK2RSB4yHPvdY=;20:9DVTX4IC7pMn2QL7lWcHWHi1Dcv09CkoavB3ByXBqVKWleEcYwQ4Tlnry8ydaMEuLgOHEAgwL1Uqu7Euc4XrbgNznG6/Sdo8XeOl7sbEUwqYNxXfjsPShMe/Fx+41Ac0Ez/X19d3SK9GNZqjhKUWTPvS6Ziq/QlDYY4C2bh8XINKOLCD27Fk5paoEBIL9nVfI7caYCTphAhXZbFnJprrIUApfTRkIW5Wb+1d9YkZYz8AL5eHu+El+1LvpYV43PyCr/DK2OPTWilTLMQAKuB2xhlz+Vayd21kRttgZruj4ZJ47BR6B5vfHH0xlTozfsoeiA+6ZTGwXzFiv73+jw0rlUfv58BJ5sprLKiW5NSeQLF8g8pP91ZyDAuwst6YMnyAMReMi+N860LPwtCZopPgC7ZdV9U1RbPifOtfu7b7iVPhBxtSfJAK5tp+j8TasyEBEad1iMLNFSWegSiGRzDGkQdqM7fyOsXqMdq0Quj6RMKZ9bCnNb/ncCvOb06b+JMj
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <SN6PR02MB4336C3E4833D1856E92B0094AF830@SN6PR02MB4336.namprd02.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4336;4:jT+L+V5LAeJzfJBUoVO9KNRUmBHlPu9usgpK/AZjEcEffImaIQ+xfZVSpyaTPGpddPcKcYNsSN58goRyKl65NICVsosuzTYAA6+EmEiDwbbh1DwUqhr5yLLtNfeqtld6CyiXtsF0yaJ5tnklEXJLegLja6LPG/hnPWWCMK8ueahsOFh2tk3nAFrPCS/iKBaN2hwaaHrb2hlCX0q6nJo2bS0lzkVQdOmZ0gvok+Ek3rmi+8UMbi/RQuWAmDCvod8iie/fGv4pY5uUqhKkx0ayXrY8h2Ay9LTMExen7dblOHUVWdiUEny/bQyr54NjzLdd
+X-Microsoft-Antispam-PRVS: <DM6PR02MB432902D914EA1DA695C1034FAF830@DM6PR02MB4329.namprd02.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;4:0UPX2aD7eqLsDPaYqdm+NWG7hWjCdSBNnXc2ltlrGG/WSUzHw6bHr5lp4Fpb30hF9UXZqGAT4ZV2uQAh/bgqMmEEfvBRQnku3KBVQyK72iZZCGZlFlr5yITGAeBZdSyTnhSuz8vG7dqkuqkkUkzwAwhpXmzSczFTXGAk1NL0fnYzME71sr/RODwxIolisZjusYzweFFGktS/jK06jCcy6fl3F0boM/ugoEMuS+t9CpdE4i82R/csfE7uabrazN+CqqjV552YZ55Ri1gN+BaCifYC2RlaMW972h7syFrPhBlklszhF0Qcyg7O1eIPCyM+
 X-Forefront-PRVS: 0920602B08
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR02MB4336;23:IKBW54pdRttpU6dEzMVl/IEI1nijhyuDwr+d8j/ke?=
- =?us-ascii?Q?UFfJmEdIcsH48m41sBQPu8xZfnYvvVLpn75CIWTBPWqI1dEhHsYHbISfHX1G?=
- =?us-ascii?Q?g0z5foEKtEXcizGu9jqs70X1u4u6ZId7kg/I3tvgQfYB/dQNXJuIw109NXGq?=
- =?us-ascii?Q?3jb/MoxzS4qIrqj2cH0CO2HxH2Nzd/ugOBRiOdRv57EwHpLObnIrkkoQpvRM?=
- =?us-ascii?Q?A/DeDmF2qt7drxfLyKBGtw3OcKrC38cHPQjs8+058qrkHcovPwObzu4xo+4i?=
- =?us-ascii?Q?p02RvqA3ehUaQI95JUD1gBMdZWfQVZ4+1ED03Xz+ybFL43FJ8U7gkCX/IYcQ?=
- =?us-ascii?Q?vL1hVnQNQtwdZy6mdhd1+051LWra1gKA7/GHGNZw+JxiovssDKSAIWNzD1MG?=
- =?us-ascii?Q?SUnEc5E0aojrGW/oHgndX9sO0CrFZ2Vlw68tprlPRzsAwqoDaaB+S4eIOxnB?=
- =?us-ascii?Q?mO5vAl601P/09AskQK7Y3eTUU59JgWXg4VICZ4z+soQF1QTxBWXVABpo7zdN?=
- =?us-ascii?Q?DIgfM+PPm48i8zzIlLGwjrNJpSxFT14nFbO2IDGallhc8quhyDcqx1HoslkS?=
- =?us-ascii?Q?nauFbDCHuVQQwxevYW3APw/vrsZfT3matulJvz4ZYNqjarTprJiK74RCxH7F?=
- =?us-ascii?Q?IW8WdWHnyWIwMXoAEaVnrj6fcPUSpkxktlTb2tGkKHu3NXkLFkAurObk6RRR?=
- =?us-ascii?Q?vb3HNNLgBi1YEprZH5P3RGp+ApzlxENlRXfB1kSskF1rkABC7mxBT5ha4sHO?=
- =?us-ascii?Q?veB2KGjdssZQKszQrHAxKZmM8dKUbs2GM1TIxOFaBZrn5m6LFwA9trgcEWwG?=
- =?us-ascii?Q?LV6F66xpmxJaPpjEZV+e9rbMJ4uTskEhx0lBAcoPd1L+YoyfpZQPGJev9yVh?=
- =?us-ascii?Q?NqQ16d/0ncm3dzUqPtI5Yqu3Z2miSVLw04NgsmnVNxyO8bS6mywZSbVVPiM1?=
- =?us-ascii?Q?3JDHI3i11i0klMhVt/9gfFO84kMu4+f33Rq/g7Xf9INBbn/jFaeZa59O634k?=
- =?us-ascii?Q?oipcw/XNrwrqQKQxCDLkd/fdfisBjeF53g0POHAtOF7QA8wa2DpIKMsjdr6d?=
- =?us-ascii?Q?TdkOK7pvjZNGlzXnExAsxKtHNgvH2af6XX2urCDxUd908zrj4sFinRenXINs?=
- =?us-ascii?Q?WDsbZ22Nuj81cM+baZ/kfADYQwxnqHU29/ILCpXpHmD1qLcx7PyZezvKhp9J?=
- =?us-ascii?Q?POYManjwTxNtLoqez9lzLrCNMuas5VQb0wO?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR02MB4329;23:USoYIlxwICE3//6FOJHYW2vpK1v0xTi6BPFL4QyBY?=
+ =?us-ascii?Q?7QrFAo1sbGGq0+LaL7VMwb9d52NBdbtmc3IVJee5OPHmT1/M9bIcpdees8/Q?=
+ =?us-ascii?Q?Vg/BXdlHdgsSK11TOUj4PkITAOhAvJ5ETOIJQq66Wom+JzpLePA3asXDpOWc?=
+ =?us-ascii?Q?bMuEGBd0qA17EzsHDnt+x9LDiE6zdz8S5Pu1ik8aE4ny4tqAmYYdyYE+1AVe?=
+ =?us-ascii?Q?CSfUIrwq1YglMovaTps0JtETLcwN/+7DciM6duHRAXpXl2KIkpo9KeJW/8VZ?=
+ =?us-ascii?Q?xL7IHTfz/KDMw5RA7MVBFlsCVCWQfi6+RVNthHSrZU8+xQTnCf1UmrSwIh/f?=
+ =?us-ascii?Q?4L7LvwOIDKkXxpnmtxsbm1XiSvat8VEUi+msjPGuUtHNRzl+iUHTm4U7z49/?=
+ =?us-ascii?Q?YSgeVxyko4HCUsEZkwcSX8G69bNlVSTeKUABb8t+TiQ4aYE/DMQ/j9pw6gNv?=
+ =?us-ascii?Q?tb3btFUoHnRuGUeID1R8wsS1dC/AWmT/kV03DfabCAGTg0NffqdrdOGuPt8r?=
+ =?us-ascii?Q?gtrKQpx99gQBFtfvA7dVFALL77SIz5n2df3Y3eemVU3FXd+x6+Zbmg8UE71w?=
+ =?us-ascii?Q?+WWSb3a4slYLZow6OCuOprVpFQOe6waqzlHOvV2bXseJNOyap16uVJp1C0LB?=
+ =?us-ascii?Q?P+TecTwk0Em5vuprxSKI7b2BpqJyZXdrQtTMeBS2HLR9jdS1Xl5IudeYOFYZ?=
+ =?us-ascii?Q?5YoJI09qikK1SCqZLo/i9+i9CU4bjVGwml74Zfp1MXppik6SeDdI5qaM79Bk?=
+ =?us-ascii?Q?fs3sbHiaRl4qt0MVv2uYdl7I2u8eAqwsETFW2cx0KqSM46PtT/kqwJ8SNkwZ?=
+ =?us-ascii?Q?jz8c8zcKBZnNydqIKHYoO8KGYbNy2td7Lqmo7MHMzHly+o7tEm3PcFAKENIl?=
+ =?us-ascii?Q?/VtjCu9bqQhSF5gT/i6X8PzCqyNCI0GcUpFJ9IL5STlMftgEDOos2mlggOn4?=
+ =?us-ascii?Q?9TBmRAWVGoYEolCCUUWmNr5igIsRqzKvOacYaAUDRBrMfYuIBlMGorCeevCh?=
+ =?us-ascii?Q?taomH7qBw+OOXHu6MUPqKEk8usfBqC9II5MGTaiBK0CMwOpRoC+sgBHeqmll?=
+ =?us-ascii?Q?N0GbXMeuftvj2jgpUzzbRmLPfk4Ifua8Rv9KbYHuxEB/cdbRs5L+4P/CrQxP?=
+ =?us-ascii?Q?cKPR2U0KwvMUeqj4fVzBGbG2ZMUpE0NEDGBiZ0Apfvo/gsC6RIdG32PDRorU?=
+ =?us-ascii?Q?jXHaXn1hmsGSmuW6H/7FUWEWGXzMyM355eMCr39tPXO6iDMHY/oCKpwtBguH?=
+ =?us-ascii?Q?FX2P5w4BowsaTVD8H0=3D?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: RXeewfogAnlm/3Vj2pn/xWbFd0FFTd5HvPqGhVBA/LUymmnMFJS9h0+eN4rw5oAPmkHjE0+7d5zig2MdmmEz96fa8+zHSEjhJJp4l7nDxbfvTYIMY5HD/3HOFQO0c7RcMJZpaGesximAj4OAwIp3YENVG8aPnUFfUvSbOJqz5xk4d9bRqycH6e6319YaGiCwIhjQWEwRpWF/7ZOMWoW+9yLtyyQgwOZwialOUlXsrVX+xRjMCIsNGLZkcqP0xsqRJ/UC+hqiFV/x/l/2dJ/ce4QckElAGXthjCUUleCN1AWzDipaUvrBfb03UgPOYx6c3IkpBPRuHAxxL1NJ9inORoOswMqBimmJySUYHVMyOt/G8eqd/5dexS9cDkRU0YsMufYV16u6y5hjHVLf5COHxoKRz57AfVj4TaAptpmh3yw=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4336;6:/spLuqRiDbxqRkb0PiywxLidk7+ceh2Q+LGEln1bzALkFQIQIxKgFqkjuJSpTVgbU4lxuEh/zUxDMm+Th4KKtCywVoF4HLARsFTWwH3yaInBgoBugHq7Q6HbXqzskc3a+F12VF4x+2EZBhWjvuyvU97n9jaoxlO9GuqsrW6HBQqvEXcCGQni/7iY9q80A5sdcpVDRWwvNHDlhnDLbjq3uOVVTSdXOd37sFc3sd5ppS1oMmEerPgN7eedMcnMS3OgqdkMRGbX9oBLuSApaeJRBSSq7RFgPR8AaJEf1DX8fASQ8nFt+yMR1wVoYatpDfMgVN6IiriQ35yk2YdlksqYEQHLzeXn9irImBQEpXLmY9lL3+aDxxuIWULfMZyRmG1iHUCbiF2T3PslMNP1eOmk2HmdkW53eXevTBbawhl/+mlPecDTld9h5Qq16W4dBuB1pXxYh68H7a6zMN4dKg34Ag==;5:SM6GuE1ZIjQKRBc9jsRfnWdiQrGJxX+Ub5WWbU6hkRP7vRMv8KWN5tw954h3AXuLrIJdyWdVwikM+d1HBZZ7eWCb1Ve9Z6ZPPzWI+CpsfMVFNPYj2ESrAGCZxUkP0XLge2S1XxITp07IfpxUUABBalSi1Tv5i/s9smaA5Gl1Tiy1S/xpKVXq0msGujwE3bH8Mi1zNyzwcz4c5wa2GSQKgw==;7:NQ2V43fj8Nc6o/1ov78c5Kio7gkySJRwAt1syBZPnFgZooixHEV1A3vdFaVvstqEjMkAMieMQhbteY+Di7hTDzqLuQZlanr0ScI1jPfk1iItWY28af1jkaSSJW4y5Hxg0/7ZvgBPtc5NNvSzgdHeCw==
+X-Microsoft-Antispam-Message-Info: 82SdCLd4APNgU1JYwIqF2nn2jiSKZ1TAAfLh0Km+F+IoTRFsoHZMY6xVPrEg+6wG1El32TVO4ELzCbJPVfGDBGaK2sWDXrJLsVZVt22utNqugy3iVS/X77FOdKp2bSgM1yR2VBvx+QcnB9wZzv5eXkjVCUlbcvUTV5V/giYEpzXEypG/WG/WAV4oAM+Y1Rv5cgyyuM6Hz3mzRuLBbGTtEHMXOypsScfV0k92sUmt1bLMkmpPLkxNMEpL4EpZucTkLD+OwFlJOSrUg8jBuOMNHxQD2TUmOfIhhXwqe1KYhSO0lcyMh/TEW5lTLmB4M8VoYzzJPX9t7WxR53LwxTH9+XWmNleDT2b0SctRTbeYDsEoPUQAbYMkJNfDno3I/hNpFEd7Z/mjph/7ml47BXtCoLHNZn79a+qK+4QZ9JfeMHs=
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;6:uOBLlCk9cFikqn7SJPRcEfs6s1rPv6VTDwlqeAa56yVhVHZGhGxGwnJxU8aveZIu6u7S9KWzvQmS/dMFlS8u/3gL+Z7/GOwhwbvgiquZvpXmE9XZVr6DEJ7UcCNlaWRAHn9W2gFIZemccq3G8H3ik2ymscg0H6VRrRUTlY3N8b6hbwW5uReUlAuksxx5uKd8grArTRQQafezFU+kBbDPS0yRb6Su1Ds5pQeQFpwjvu4B/sDXeOStxAZZbeH/7D5Jy17X4byl2SKt6f82VTiobUXbLxgAn4YceTdzOEMvcgeqRBsJmZesJDATtvlGnqBlOCbGTj86ySEB6xqK14nRVjkwGxq4ISIB/0wuMNpxyX3rSLMibwUN2sDPHFm1OJEEYCwPqMPG+QIBg2ERELh8wjWcOo5QO/LHKdkQDIDO34TiczWyLiLpW5TYkmxWJ0lJb5g283vHveDmWwFecmfD8Q==;5:9lR9bX976eMBPNQkFeWo2C1qi5uZTv9BrX7JUufwTz3r1RWFMpjil45VZKCZ814+IXWO3YyHo5OhYslc9f97bZW9zUfCr6s0PzY7sgnC0yRPfQNt3wMUSz0TK1JZkCUi+SzrhfqFEWKKRjXCh6AiAs0ufG4zAKF13CYalZfMKC+fQULvEj4xOKUlOMTl2ILoKAmoelMxlH+ZCqJ7BMZtdQ==;7:5+HUc2/fqiWmcF3CIdGC1iLm/1GWhqtNVTOkvctXX1xtNge7bwOPe+jBOT3YJsZnfBsS15+ijV7IfABhRulhcaAuc0E/oYc9w3J78TJ/v8fDGeb8+lxlHbdTLe7QxWT1d7mdihTAalkrQaqSlr3Oig==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2019 07:02:41.0495
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2019 07:02:42.3054
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f1e570f-fa92-4daa-4d16-08d67c49c5ec
+X-MS-Exchange-CrossTenant-Network-Message-Id: fadfeb9f-ad61-49cd-1802-08d67c49c694
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4336
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4329
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ALG_SET_KEY_TYPE requires caller to pass the key_type to be used
-for AES encryption/decryption.
-
-Sometimes the cipher key will be stored in the
-device's hardware. So, there is a need to specify
-the information about the key to use for AES operations.
-
-In Xilinx ZynqMP SoC, below key types are available
-
-1. Device key, which is flashed in the HW.
-
-2. PUF KEK, which can be regenerated using the
-   helper data programmed in the HW.
-
-3. User supplied key.
-
-So to choose the AES key to be used, this patch adds key-type attribute.
+Add ZynqMP firmware AES API to perform encryption/decryption
+of given data.
 
 Signed-off-by: Kalyani Akula <kalyani.akula@xilinx.com>
 ---
- crypto/af_alg.c             |  7 +++++++
- crypto/algif_skcipher.c     |  7 +++++++
- crypto/blkcipher.c          |  9 +++++++++
- crypto/skcipher.c           | 18 ++++++++++++++++++
- include/crypto/if_alg.h     |  2 ++
- include/crypto/skcipher.h   | 10 ++++++++++
- include/linux/crypto.h      | 12 ++++++++++++
- include/uapi/linux/if_alg.h |  1 +
- 8 files changed, 66 insertions(+)
+ drivers/firmware/xilinx/zynqmp.c     | 24 ++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |  2 ++
+ 2 files changed, 26 insertions(+)
 
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 17eb09d..c3c0660 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -261,6 +261,13 @@ static int alg_setsockopt(struct socket *sock, int level, int optname,
- 		if (!type->setauthsize)
- 			goto unlock;
- 		err = type->setauthsize(ask->private, optlen);
-+		break;
-+	case ALG_SET_KEY_TYPE:
-+		if (sock->state == SS_CONNECTED)
-+			goto unlock;
-+		if (!type->setkeytype)
-+			goto unlock;
-+		err = type->setkeytype(ask->private, optval, optlen);
- 	}
- 
- unlock:
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index cfdaab2..9911a56 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -320,6 +320,12 @@ static int skcipher_setkey(void *private, const u8 *key, unsigned int keylen)
- 	return crypto_skcipher_setkey(private, key, keylen);
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 9a1c72a..332f98c1 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -469,6 +469,29 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+ 				   arg1, arg2, out);
  }
  
-+static int skcipher_setkeytype(void *private, const u8 *key,
-+			       unsigned int keylen)
++/**
++ * zynqmp_pm_aes - Access AES hardware to encrypt/decrypt the data using
++ * AES-GCM core.
++ * @address:	Address of the AesParams structure.
++ * @out:	Returned output value
++ *
++ * Return:	Returns status, either success or error code.
++ */
++static int zynqmp_pm_aes_engine(const u64 address, u32 *out)
 +{
-+	return crypto_skcipher_setkeytype(private, key, keylen);
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	if (!out)
++		return -EINVAL;
++
++	ret = zynqmp_pm_invoke_fn(PM_SECURE_AES, upper_32_bits(address),
++				  lower_32_bits(address),
++				  0, 0, ret_payload);
++	*out = ret_payload[1];
++	return ret;
 +}
 +
- static void skcipher_sock_destruct(struct sock *sk)
- {
- 	struct alg_sock *ask = alg_sk(sk);
-@@ -384,6 +390,7 @@ static int skcipher_accept_parent(void *private, struct sock *sk)
- 	.bind		=	skcipher_bind,
- 	.release	=	skcipher_release,
- 	.setkey		=	skcipher_setkey,
-+	.setkeytype	=	skcipher_setkeytype,
- 	.accept		=	skcipher_accept_parent,
- 	.accept_nokey	=	skcipher_accept_parent_nokey,
- 	.ops		=	&algif_skcipher_ops,
-diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
-index c5398bd..8922f58 100644
---- a/crypto/blkcipher.c
-+++ b/crypto/blkcipher.c
-@@ -408,6 +408,14 @@ static int setkey(struct crypto_tfm *tfm, const u8 *key, unsigned int keylen)
- 	return cipher->setkey(tfm, key, keylen);
- }
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.query_data = zynqmp_pm_query_data,
+@@ -482,6 +505,7 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+ 	.clock_setparent = zynqmp_pm_clock_setparent,
+ 	.clock_getparent = zynqmp_pm_clock_getparent,
+ 	.ioctl = zynqmp_pm_ioctl,
++	.aes = zynqmp_pm_aes_engine,
+ };
  
-+static int setkeytype(struct crypto_tfm *tfm, const u8 *key,
-+		      unsigned int keylen)
-+{
-+	struct blkcipher_alg *cipher = &tfm->__crt_alg->cra_blkcipher;
-+
-+	return cipher->setkeytype(tfm, key, keylen);
-+}
-+
- static int async_setkey(struct crypto_ablkcipher *tfm, const u8 *key,
- 			unsigned int keylen)
- {
-@@ -478,6 +486,7 @@ static int crypto_init_blkcipher_ops_sync(struct crypto_tfm *tfm)
- 	unsigned long addr;
- 
- 	crt->setkey = setkey;
-+	crt->setkeytype = setkeytype;
- 	crt->encrypt = alg->encrypt;
- 	crt->decrypt = alg->decrypt;
- 
-diff --git a/crypto/skcipher.c b/crypto/skcipher.c
-index 2a96929..6a2a0dd 100644
---- a/crypto/skcipher.c
-+++ b/crypto/skcipher.c
-@@ -605,6 +605,23 @@ static int skcipher_setkey_blkcipher(struct crypto_skcipher *tfm,
- 	return 0;
- }
- 
-+static int skcipher_setkeytype_blkcipher(struct crypto_skcipher *tfm,
-+					 const u8 *key, unsigned int keylen)
-+{
-+	struct crypto_blkcipher **ctx = crypto_skcipher_ctx(tfm);
-+	struct crypto_blkcipher *blkcipher = *ctx;
-+	int err;
-+
-+	crypto_blkcipher_clear_flags(blkcipher, ~0);
-+	crypto_blkcipher_set_flags(blkcipher, crypto_skcipher_get_flags(tfm) &
-+			CRYPTO_TFM_REQ_MASK);
-+	err = crypto_blkcipher_setkeytype(blkcipher, key, keylen);
-+	crypto_skcipher_set_flags(tfm, crypto_blkcipher_get_flags(blkcipher) &
-+			CRYPTO_TFM_RES_MASK);
-+
-+	return err;
-+}
-+
- static int skcipher_crypt_blkcipher(struct skcipher_request *req,
- 				    int (*crypt)(struct blkcipher_desc *,
- 						 struct scatterlist *,
-@@ -671,6 +688,7 @@ static int crypto_init_skcipher_ops_blkcipher(struct crypto_tfm *tfm)
- 	tfm->exit = crypto_exit_skcipher_ops_blkcipher;
- 
- 	skcipher->setkey = skcipher_setkey_blkcipher;
-+	skcipher->setkeytype = skcipher_setkeytype_blkcipher;
- 	skcipher->encrypt = skcipher_encrypt_blkcipher;
- 	skcipher->decrypt = skcipher_decrypt_blkcipher;
- 
-diff --git a/include/crypto/if_alg.h b/include/crypto/if_alg.h
-index 482461d..202298e 100644
---- a/include/crypto/if_alg.h
-+++ b/include/crypto/if_alg.h
-@@ -51,6 +51,8 @@ struct af_alg_type {
- 	void *(*bind)(const char *name, u32 type, u32 mask);
- 	void (*release)(void *private);
- 	int (*setkey)(void *private, const u8 *key, unsigned int keylen);
-+	int (*setkeytype)(void *private, const u8 *keytype,
-+			  unsigned int keylen);
- 	int (*accept)(void *private, struct sock *sk);
- 	int (*accept_nokey)(void *private, struct sock *sk);
- 	int (*setauthsize)(void *private, unsigned int authsize);
-diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
-index e555294..a6e1eda 100644
---- a/include/crypto/skcipher.h
-+++ b/include/crypto/skcipher.h
-@@ -42,6 +42,8 @@ struct skcipher_request {
- struct crypto_skcipher {
- 	int (*setkey)(struct crypto_skcipher *tfm, const u8 *key,
- 	              unsigned int keylen);
-+	int (*setkeytype)(struct crypto_skcipher *tfm, const u8 *key,
-+			  unsigned int keylen);
- 	int (*encrypt)(struct skcipher_request *req);
- 	int (*decrypt)(struct skcipher_request *req);
- 
-@@ -116,6 +118,8 @@ struct crypto_sync_skcipher {
- struct skcipher_alg {
- 	int (*setkey)(struct crypto_skcipher *tfm, const u8 *key,
- 	              unsigned int keylen);
-+	int (*setkeytype)(struct crypto_skcipher *tfm, const u8 *key,
-+			  unsigned int keylen);
- 	int (*encrypt)(struct skcipher_request *req);
- 	int (*decrypt)(struct skcipher_request *req);
- 	int (*init)(struct crypto_skcipher *tfm);
-@@ -444,6 +448,12 @@ static inline int crypto_sync_skcipher_setkey(struct crypto_sync_skcipher *tfm,
- 	return crypto_skcipher_setkey(&tfm->base, key, keylen);
- }
- 
-+static inline int crypto_skcipher_setkeytype(struct crypto_skcipher *tfm,
-+					     const u8 *key, unsigned int keylen)
-+{
-+	return tfm->setkeytype(tfm, key, keylen);
-+}
-+
- static inline unsigned int crypto_skcipher_default_keysize(
- 	struct crypto_skcipher *tfm)
- {
-diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-index 902ec17..a47c9a8 100644
---- a/include/linux/crypto.h
-+++ b/include/linux/crypto.h
-@@ -268,6 +268,8 @@ struct ablkcipher_alg {
- struct blkcipher_alg {
- 	int (*setkey)(struct crypto_tfm *tfm, const u8 *key,
- 	              unsigned int keylen);
-+	int (*setkeytype)(struct crypto_tfm *tfm, const u8 *keytype,
-+			  unsigned int keylen);
- 	int (*encrypt)(struct blkcipher_desc *desc,
- 		       struct scatterlist *dst, struct scatterlist *src,
- 		       unsigned int nbytes);
-@@ -734,6 +736,8 @@ struct blkcipher_tfm {
- 	void *iv;
- 	int (*setkey)(struct crypto_tfm *tfm, const u8 *key,
- 		      unsigned int keylen);
-+	int (*setkeytype)(struct crypto_tfm *tfm, const u8 *key,
-+			  unsigned int keylen);
- 	int (*encrypt)(struct blkcipher_desc *desc, struct scatterlist *dst,
- 		       struct scatterlist *src, unsigned int nbytes);
- 	int (*decrypt)(struct blkcipher_desc *desc, struct scatterlist *dst,
-@@ -1466,6 +1470,14 @@ static inline int crypto_blkcipher_setkey(struct crypto_blkcipher *tfm,
- 						 key, keylen);
- }
- 
-+static inline int crypto_blkcipher_setkeytype(struct crypto_blkcipher *tfm,
-+					      const u8 *key,
-+					      unsigned int keylen)
-+{
-+	return crypto_blkcipher_crt(tfm)->setkeytype(crypto_blkcipher_tfm(tfm),
-+						     key, keylen);
-+}
-+
  /**
-  * crypto_blkcipher_encrypt() - encrypt plaintext
-  * @desc: reference to the block cipher handle with meta data
-diff --git a/include/uapi/linux/if_alg.h b/include/uapi/linux/if_alg.h
-index bc2bcde..aa31b18 100644
---- a/include/uapi/linux/if_alg.h
-+++ b/include/uapi/linux/if_alg.h
-@@ -35,6 +35,7 @@ struct af_alg_iv {
- #define ALG_SET_OP			3
- #define ALG_SET_AEAD_ASSOCLEN		4
- #define ALG_SET_AEAD_AUTHSIZE		5
-+#define ALG_SET_KEY_TYPE		6
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 3c3c28e..815fa30 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -45,6 +45,7 @@ enum pm_api_id {
+ 	PM_CLOCK_GETRATE,
+ 	PM_CLOCK_SETPARENT,
+ 	PM_CLOCK_GETPARENT,
++	PM_SECURE_AES = 47,
+ };
  
- /* Operations */
- #define ALG_OP_DECRYPT			0
+ /* PMU-FW return status codes */
+@@ -102,6 +103,7 @@ struct zynqmp_eemi_ops {
+ 	int (*clock_setparent)(u32 clock_id, u32 parent_id);
+ 	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
+ 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
++	int (*aes)(const u64 address, u32 *out);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
 1.9.5
 
