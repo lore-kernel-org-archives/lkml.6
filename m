@@ -2,160 +2,174 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11FEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79205C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE9EC20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4572E20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 10:24:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HzOoNuPd"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lQHGLopf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbfAQKXj (ORCPT
+        id S1728189AbfAQKYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:23:39 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37947 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727810AbfAQKX2 (ORCPT
+        Thu, 17 Jan 2019 05:24:08 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:54078 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbfAQKYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:23:28 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m22so452726wml.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 02:23:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9Y0Y5B6s0w0R3Gp1L8M/91nvIc1hUn7ja0tycQpJro8=;
-        b=HzOoNuPdoK9zHB3vqZE86aLSUSENong1ks01P2QHeVQ6ZAHt5MqnxRh8hf1J/cwIo6
-         GqRcSKTR03esabYqdhw0iJkLipx5NqOqTkny55JN+wxHdeuqzLGSt/M0I36Tn7Z+pPik
-         2QacXWzVG+re0r3nAtURi3FSsSjyuL+S2XbS0rla/qUP5N6Dv6t8fUQG2cH4RrRzLnau
-         g/DnhUptnm7Z13p5IoN79X642DJTDCQyDzhOkR+8/Q9WsgSy0yudjp4xKuLNOPJF6D0Q
-         OUydwcTgOzE/g9VugndT90IAdQ9fagXP5YBeaYyehkLvo+vluMNnOkl7rmkrOZwkv9+n
-         +2/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9Y0Y5B6s0w0R3Gp1L8M/91nvIc1hUn7ja0tycQpJro8=;
-        b=mnDEB+mI8We4C3MdR7293JZi4DicGBFPkB0FYdgbZaEf1NTzi/tk9HzZ4qnksZYNu3
-         687hR6TScMrHiRATeHAYP8UAkss9ZAddMaD+F1G0OQXegZ7h+PFnajYvA4iPsMN5kCdw
-         nPx6OgC7ljsLA+SBQaZRmJBvukFhNWvSnndb/Ifpi+VSTd0GCaPyA/9lHwG5PwgU1ZNd
-         LUlA44x+oGGiqmHKLaM1JVdECYBxZlw1HENnrxwphA8FHJtuaZ6TQzdfDu3Rq8m8zrBc
-         C2cpBsmTRGnl7VcHOXl5Cych4pFqra5WrO2UIcJD2S5CFH1/QtCYVnp9mipVjgO3wKJq
-         wEkA==
-X-Gm-Message-State: AJcUuke05hwU/WGKu8cAVNh+/ZcLxtIMiTejDbiJ1B2ocg5XNwiJxYmQ
-        XKLkSKIrmJwK1mI7cOtC0LcTqw==
-X-Google-Smtp-Source: ALg8bN6oj3zTDxDK/3lEWYmXIfBdJ8/WDqpeY/FgGXn5Hhv/4j6+xjMsB0USmaApqRcJRBcid+MceQ==
-X-Received: by 2002:a1c:f509:: with SMTP id t9mr11758492wmh.76.1547720606130;
-        Thu, 17 Jan 2019 02:23:26 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id u10sm66400530wrr.33.2019.01.17.02.23.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 02:23:25 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Xingyu Chen <xingyu.chen@amlogic.com>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 2/3] pinctrl: meson: fix G12A ao pull registers base address
-Date:   Thu, 17 Jan 2019 11:23:14 +0100
-Message-Id: <20190117102315.1833-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190117102315.1833-1-jbrunet@baylibre.com>
-References: <20190117102315.1833-1-jbrunet@baylibre.com>
+        Thu, 17 Jan 2019 05:24:07 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0HAJ9aY133557;
+        Thu, 17 Jan 2019 10:24:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=dfsp1dXyx45JIGMw+iqNIkL28PGq42l3fxGxKYjLfd0=;
+ b=lQHGLopfddFR0kr876kDa4yDAVF2U2oN7JuFApSeBdZGryr2+iCRpmxaFsAD/IUNz2u2
+ g6cc+CzwIfoeG28y6HuLH6pWMQEJjp5vXmms12bD9Mkj0tfHfEFETJPQkkXa26xF7j3j
+ eOnhDyk6TB4qk4qOoKVqaajckMQqYpJeMTuB/bK2Z9XSy3SaKiRPAKesja8b8X8Zw3tN
+ 10IQft5SVu1MZGUyyOVVUq8vTYn/JD15U46yhgci8MXVL2um1gMezYCM2ZWLWUi8cAf3
+ UG475KCec4qPc9cKejSMZ5KTmW/TtXLnvCxWzn939YFZAO912QHNrhojEfvym3fJEB+z mg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2pybjny29h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 10:24:01 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0HAO0Qn010046
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 10:24:01 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0HAO0VZ030901;
+        Thu, 17 Jan 2019 10:24:00 GMT
+Received: from [10.191.26.246] (/10.191.26.246)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Jan 2019 02:23:59 -0800
+Subject: Re: [Xen-devel] [PATCH 1/1] xen-blkback: do not wake up shutdown_wq
+ after xen_blkif_schedule() is stopped
+To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
+References: <1547646461-29803-1-git-send-email-dongli.zhang@oracle.com>
+ <20190116145215.igakzdkklc6f7h6k@mac>
+ <30770f68-34e0-d707-b087-c43f0b51cd81@oracle.com>
+ <20190117082043.7y4gl4uave5pgawf@mac>
+Cc:     linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
+        axboe@kernel.dk, linux-kernel@vger.kernel.org,
+        konrad.wilk@oracle.com
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+Message-ID: <00a7b217-ead4-06e2-2eaa-56c6d1920372@oracle.com>
+Date:   Thu, 17 Jan 2019 18:23:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
+In-Reply-To: <20190117082043.7y4gl4uave5pgawf@mac>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9138 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901170076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xingyu Chen <xingyu.chen@amlogic.com>
+Hi Roger,
 
-Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
-and AO_GPIO_O.
+On 01/17/2019 04:20 PM, Roger Pau Monné wrote:
+> On Thu, Jan 17, 2019 at 10:10:00AM +0800, Dongli Zhang wrote:
+>> Hi Roger,
+>>
+>> On 2019/1/16 下午10:52, Roger Pau Monné wrote:
+>>> On Wed, Jan 16, 2019 at 09:47:41PM +0800, Dongli Zhang wrote:
+>>>> There is no need to wake up xen_blkif_schedule() as kthread_stop() is able
+>>>> to already wake up the kernel thread.
+>>>>
+>>>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+>>>> ---
+>>>>  drivers/block/xen-blkback/xenbus.c | 4 +---
+>>>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+>>>> index a4bc74e..37ac59e 100644
+>>>> --- a/drivers/block/xen-blkback/xenbus.c
+>>>> +++ b/drivers/block/xen-blkback/xenbus.c
+>>>> @@ -254,10 +254,8 @@ static int xen_blkif_disconnect(struct xen_blkif *blkif)
+>>>>  		if (!ring->active)
+>>>>  			continue;
+>>>>  
+>>>> -		if (ring->xenblkd) {
+>>>> +		if (ring->xenblkd)
+>>>>  			kthread_stop(ring->xenblkd);
+>>>> -			wake_up(&ring->shutdown_wq);
+>>>
+>>> I've now realized that shutdown_wq is basically useless, and should be
+>>> removed, could you please do it in this patch?
+>>
+>> I do not think shutdown_wq is useless.
+>>
+>> It is used to halt the xen_blkif_schedule() kthread when
+>> RING_REQUEST_PROD_OVERFLOW() returns true in __do_block_io_op():
+>>
+>> 1121 static int
+>> 1122 __do_block_io_op(struct xen_blkif_ring *ring)
+>> ... ...
+>> 1134         if (RING_REQUEST_PROD_OVERFLOW(&blk_rings->common, rp)) {
+>> 1135                 rc = blk_rings->common.rsp_prod_pvt;
+>> 1136                 pr_warn("Frontend provided bogus ring requests (%d - %d =
+>> %d). Halting ring processing on dev=%04x\n",
+>> 1137                         rp, rc, rp - rc, ring->blkif->vbd.pdevice);
+>> 1138                 return -EACCES;
+>> 1139         }
+>>
+>>
+>> If there is bogus/invalid ring requests, __do_block_io_op() would return -EACCES
+>> without modifying prod/cons index.
+>>
+>> Without shutdown_wq (just simply assuming we remove the below code without
+>> handling -EACCES in xen_blkif_schedule()), the kernel thread would continue the
+>> while loop.
+>>
+>> 648                 if (ret == -EACCES)
+>> 649                         wait_event_interruptible(ring->shutdown_wq,
+>> 650                                                  kthread_should_stop());
+>>
+>>
+>> If xen_blkif_be_int() is triggered again (let's assume there is no optimization
+>> on guest part and guest would send event for every request it puts on ring
+>> buffer), we may come to do_block_io_op() again.
+>>
+>>
+>> As the prod/cons index are not modified last time the code runs into
+>> do_block_io_op() to process bogus request, we would hit the bogus request issue
+>> again.
+>>
+>>
+>> With shutdown_wq, the kernel kthread is blocked forever until such queue/ring is
+>> destroyed. If we remove shutdown_wq, we are changing the policy to handle bogus
+>> requests on ring buffer?
+> 
+> AFAICT the only wakeup call to shutdown_wq is removed in this patch,
+> hence waiting on it seems useless. I would replace the
+> wait_event_interruptible call in xen_blkif_schedule with a break, so
+> that the kthread ends as soon as a bogus request is found. I think
+> there's no point in waiting for xen_blkif_disconnect to stop the
+> kthread.
+> 
+> Thanks, Roger.
+> 
 
-These bits of controlling output level are remapped to the new register
-AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
+My fault. The shutdown_wq is useless. I think I was going to say
+wait_event_interruptible() is useful as it is used to halt the kthread when
+there is bogus request.
 
-These bits of controlling pull enable are remapped to the new register
-AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
-pull type(up/down).
+It is fine to replace wait_event_interruptible with a break to exit immediately
+when there is bogus request.
 
-The new layout of ao gpio/pull registers is as follows:
-- AO_GPIO_O_EN_N        [offset: 0x9 << 2]
-- AO_GPIO_I             [offset: 0xa << 2]
-- AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
-- AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
-- AO_GPIO_O             [offset: 0xd << 2]
+Thank you very much!
 
-From above, we can see ao GPIO registers region has been separated by the
-ao pull registers. In order to ensure the continuity of the region on
-software, the ao GPIO and ao pull registers use the same base address, but
-can be identified by the offset.
-
-Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index ea87d739f534..a4ae1ac5369e 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -31,6 +31,9 @@
-  * In some cases the register ranges for pull enable and pull
-  * direction are the same and thus there are only 3 register ranges.
-  *
-+ * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
-+ * and pull direction are the same, so there are only 2 register ranges.
-+ *
-  * For the pull and GPIO configuration every bank uses a contiguous
-  * set of bits in the register sets described above; the same register
-  * can be shared by more banks with different offsets.
-@@ -488,23 +491,22 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
- 		return PTR_ERR(pc->reg_mux);
- 	}
- 
--	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
--	if (IS_ERR(pc->reg_pull)) {
--		dev_err(pc->dev, "pull registers not found\n");
--		return PTR_ERR(pc->reg_pull);
-+	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
-+	if (IS_ERR(pc->reg_gpio)) {
-+		dev_err(pc->dev, "gpio registers not found\n");
-+		return PTR_ERR(pc->reg_gpio);
- 	}
- 
-+	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
-+	/* Use gpio region if pull one is not present */
-+	if (IS_ERR(pc->reg_pull))
-+		pc->reg_pull = pc->reg_gpio;
-+
- 	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
- 	/* Use pull region if pull-enable one is not present */
- 	if (IS_ERR(pc->reg_pullen))
- 		pc->reg_pullen = pc->reg_pull;
- 
--	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
--	if (IS_ERR(pc->reg_gpio)) {
--		dev_err(pc->dev, "gpio registers not found\n");
--		return PTR_ERR(pc->reg_gpio);
--	}
--
- 	return 0;
- }
- 
--- 
-2.20.1
-
+Dongli Zhang
