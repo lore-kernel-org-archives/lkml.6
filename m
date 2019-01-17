@@ -2,101 +2,106 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4F5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C39C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01116205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4608205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="b85evGC/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbfAQAfn (ORCPT
+        id S1729866AbfAQAdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:35:43 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42209 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729881AbfAQAdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Jan 2019 19:33:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="292166012"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:35 -0800
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 02/17] x86/jump_label: Use text_poke_early() during early init
-Date:   Wed, 16 Jan 2019 16:32:44 -0800
-Message-Id: <20190117003259.23141-3-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+Received: from onstation.org ([52.200.56.107]:54516 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729678AbfAQAdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:33 -0500
+Received: from localhost.localdomain (mobile-166-171-186-103.mycingular.net [166.171.186.103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 5A4E047;
+        Thu, 17 Jan 2019 00:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1547685212;
+        bh=3DMBJWZ4LhoZ8ssGR/xPPZoMezGTLMzmZujP9qNOZGA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=b85evGC/zC+aWBmwopBoMgtqHxl3J/yJ9bZdt+lKq0avo7kq4wtaq7PqfKMfm20pC
+         rU2xgB7lhFdQS1E7lGo6pwAglq7J6jrGzNzH4Qgt1FHUd3oG/SjdZowEQUxrMhMDpf
+         u63KWpjWTYA5QyPb+F0phUIV6qyLIQIjLnTihWM0=
+From:   Brian Masney <masneyb@onstation.org>
+To:     linus.walleij@linaro.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, andy.gross@linaro.org
+Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v5 13/14] arm64: dts: qcom: pmi8998: add interrupt controller properties
+Date:   Wed, 16 Jan 2019 19:32:33 -0500
+Message-Id: <20190117003234.22127-14-masneyb@onstation.org>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20190117003234.22127-1-masneyb@onstation.org>
+References: <20190117003234.22127-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nadav Amit <namit@vmware.com>
+Add interrupt controller properties now that spmi-gpio is a proper
+hierarchical IRQ chip. The interrupts property is no longer needed so
+remove it.
 
-There is no apparent reason not to use text_poke_early() while we are
-during early-init and we do not patch code that might be on the stack
-(i.e., we'll return to the middle of the patched code). This appears to
-be the case of jump-labels, so do so.
+This change was not tested on any hardware but the same change was
+tested on qcom-pm8941.dtsi using a LG Nexus 5 (hammerhead) phone with
+no issues.
 
-This is required for the next patches that would set a temporary mm for
-patching, which is initialized after some static-keys are
-enabled/disabled.
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- arch/x86/kernel/jump_label.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Changes since v4:
+- None
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index f99bd26bd3f1..e36cfec0f35e 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -50,7 +50,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+Patch introduced in v4.
+
+ arch/arm64/boot/dts/qcom/pmi8998.dtsi | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/pmi8998.dtsi b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
+index da3285e216e2..051f57e7d6ac 100644
+--- a/arch/arm64/boot/dts/qcom/pmi8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
+@@ -14,20 +14,8 @@
+ 			reg = <0xc000>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
+-				     <0 0xc1 0 IRQ_TYPE_NONE>,
+-				     <0 0xc2 0 IRQ_TYPE_NONE>,
+-				     <0 0xc3 0 IRQ_TYPE_NONE>,
+-				     <0 0xc4 0 IRQ_TYPE_NONE>,
+-				     <0 0xc5 0 IRQ_TYPE_NONE>,
+-				     <0 0xc6 0 IRQ_TYPE_NONE>,
+-				     <0 0xc7 0 IRQ_TYPE_NONE>,
+-				     <0 0xc8 0 IRQ_TYPE_NONE>,
+-				     <0 0xc9 0 IRQ_TYPE_NONE>,
+-				     <0 0xca 0 IRQ_TYPE_NONE>,
+-				     <0 0xcb 0 IRQ_TYPE_NONE>,
+-				     <0 0xcc 0 IRQ_TYPE_NONE>,
+-				     <0 0xcd 0 IRQ_TYPE_NONE>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
+ 		};
+ 	};
  
--	if (early_boot_irqs_disabled)
-+	/*
-+	 * As long as we're UP and not yet marked RO, we can use
-+	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-+	 * SYSTEM_SCHEDULING before going either.
-+	 */
-+	if (system_state == SYSTEM_BOOTING)
- 		poker = text_poke_early;
- 
- 	if (type == JUMP_LABEL_JMP) {
 -- 
-2.17.1
+2.17.2
 
