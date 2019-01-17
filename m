@@ -2,98 +2,75 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4378BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6271C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1349F20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547737325;
-	bh=O3QvxLfHo3EfCLtB+q2Uij5S1mbABkEhbHkPGGkVXWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GgnOnxroYvym6xbTgjpQvntSBa4K3KalgiDiLzXWuxu5yBdY6GlTqDQG3GE3TLoJx
-	 xGjhQPoiQJDUbE+qWpvVGHonx+skcyOLyUxDeon/6T89qkIklHB50hnE8pjjUuNH4O
-	 XkHSyJArLf4k4FDlD6A3wQjveZ/D6KR7m7PzeSAg=
+	by mail.kernel.org (Postfix) with ESMTP id 9AA9220855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:03:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbfAQPCD (ORCPT
+        id S1728062AbfAQPD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:02:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43418 "EHLO mail.kernel.org"
+        Thu, 17 Jan 2019 10:03:27 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:20203 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727819AbfAQPCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:02:03 -0500
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FB5620851;
-        Thu, 17 Jan 2019 15:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547737322;
-        bh=O3QvxLfHo3EfCLtB+q2Uij5S1mbABkEhbHkPGGkVXWM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VZ/eYJx6lAcooLEKVB+tnizFcirajSDr0Hw/I8CM01CrC17CvT56ynFXvcP4Y9j0x
-         hoFnJyYvRsZHCikukB/3MytlBOGcRXmkxW8X7ebca4Q/QJ6nnf5qrqJO4765+xm2/s
-         TlhL14GNocb7VCuZbGEmhqXu4C8tTTaamSgpTAis=
-Date:   Thu, 17 Jan 2019 17:01:56 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     davem@davemloft.net, tariqt@mellanox.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH net-next] net/mlx4: remove unneeded semicolon
-Message-ID: <20190117150156.GE15600@mtr-leonro.mtl.com>
-References: <20190117130356.13652-1-yuehaibing@huawei.com>
+        id S1727165AbfAQPD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:03:27 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 7A5CA13F86A;
+        Thu, 17 Jan 2019 16:03:10 +0100 (CET)
+Subject: Re: [PATCH v11 0/9] Add power domain driver for corners on
+ msm8996/sdm845
+To:     Rajendra Nayak <rnayak@codeaurora.org>,
+        MSM <linux-arm-msm@vger.kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190110040209.6028-1-rnayak@codeaurora.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <90f8bfec-f1dd-6031-9d98-468b29627a2f@free.fr>
+Date:   Thu, 17 Jan 2019 16:03:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tjOMJDssiV0CZSJH"
-Content-Disposition: inline
-In-Reply-To: <20190117130356.13652-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190110040209.6028-1-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/01/2019 05:02, Rajendra Nayak wrote:
 
---tjOMJDssiV0CZSJH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Rajendra Nayak (9):
+>   dt-bindings: opp: Introduce opp-level bindings
+>   OPP: Add support for parsing the 'opp-level' property
+>   dt-bindings: power: Add qcom rpm power domain driver bindings
+>   soc: qcom: rpmpd: Add a Power domain driver to model corners
+>   soc: qcom: rpmpd: Add support for get/set performance state
+>   arm64: dts: msm8996: Add rpmpd device node
+>   soc: qcom: rpmhpd: Add RPMh power domain driver
+>   arm64: dts: sdm845: Add rpmh powercontroller node
+>   soc: qcom: rpmhpd: Mark mx as a parent for cx
+> 
+>  Documentation/devicetree/bindings/opp/opp.txt |   3 +
+>  .../devicetree/bindings/power/qcom,rpmpd.txt  | 145 +++++++
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi         |  34 ++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi          |  51 +++
 
-On Thu, Jan 17, 2019 at 09:03:56PM +0800, YueHaibing wrote:
-> Remove unneeded semicolon.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx4/cmd.c | 2 +-
->  drivers/net/ethernet/mellanox/mlx4/eq.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
+Whenever I see these patches adding support for msm8996 (aka sdm820) and sdm845
+simultaneously, I think to myself: "Why is sdm835 being left out? It was released
+between sdm820 and sdm845, it cannot be /that/ different."
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+So I'm wondering: how much extra work would it be to add support for msm8998
+aka sdm835?
 
---tjOMJDssiV0CZSJH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcQJjkAAoJEORje4g2clinJjQQALdXCpK68tJIVbV8fFTiyRR9
-PkmOMSwDNmy+2rrvJ3Lxen9U64T053Wmm3JeremEeuRHMHG7WcVLe/9ecpuItcys
-T7YDJQBcAwPNuG68xh3hUVieuAHCrhuJv105syV3yaM8IbJadSNOLNvpwp+d+T5l
-G3NVECR37u9w8z69vDw5D5egedIKHzqPBS6EV+oxFgv0EJ5Tpz+zAOEd/1KM5oqX
-P9zaiOMdemxuX8EFP0Ytys0isMRjWvf2quQyVrVx3WpDHhquaQfpDyAWHHlV4JnQ
-Lvwn5yeqoNUxF5Fh5htcEKv4842c6OWg842osamVNet2ROT/CMG/K4xLYPjSzVLN
-9HGDjIIKXVopyJHZlouGvfbzhzARriIt4qx4fPMFdwlKeT+lf4PM1iAjjPKPW0OB
-0GST+J07FDfIXz84IvjoIuEIbnAxddGxFKTf+jt5hFYMYcUWmrYOibbAYzMsMlNX
-9IiNe8VfwylsMH8Js5Oj5iqxmrxerG8fGDka6/ySK2PfAEFQYIvVBw99ZPbDekeW
-+ABwyzi+FbeDMUnyhg+HB6cfptcKnJyLn+65/tncUNeALhKbX2wOVnQfXa2uNoOA
-4l5v1yFI3Pavo2ds9oRcVXOqPlkevYr7yYTNsjsDt6dmgtunAF31XYABBRQIrwv7
-8QCoKbMxEwyu4GYngrKH
-=ZWsK
------END PGP SIGNATURE-----
-
---tjOMJDssiV0CZSJH--
+Regards.
