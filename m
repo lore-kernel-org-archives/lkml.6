@@ -2,110 +2,120 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1B0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F91C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D6E20856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:06:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FAx3DJ1z"
+	by mail.kernel.org (Postfix) with ESMTP id 9334320851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbfAQIGP (ORCPT
+        id S1729473AbfAQIGX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:06:15 -0500
-Received: from mail-eopbgr50045.outbound.protection.outlook.com ([40.107.5.45]:40911
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726196AbfAQIGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:06:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UYRcCn3v+lk0ZzXx9tzWrKiKUVs34nR8V5qb2b29LTw=;
- b=FAx3DJ1z8P5mXSfG6LoclVr9b2jVc+aZuKhshGbCkeEwpE3bX8PAVr8tc2hXCrZqNWpdVZp6kKEjZpyOG3GtBQJEOVnCajjpw3L5ZPT8sTzXu09+s7iJjxYgcQWi4zz5IQ/OJQUbfR54WEEnZDXdu2C3eD6iQdFiSVvZ2RIqX1w=
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
- AM5PR0402MB2833.eurprd04.prod.outlook.com (10.175.41.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.26; Thu, 17 Jan 2019 08:06:11 +0000
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::1c0c:51da:f585:5626]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::1c0c:51da:f585:5626%2]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
- 08:06:11 +0000
-From:   Ran Wang <ran.wang_1@nxp.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Alan Stern <stern@rowland.harvard.edu>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/3] usb: ehci: fsl: Update register accessing for
- arm/arm64 platforms
-Thread-Topic: [PATCH 2/3] usb: ehci: fsl: Update register accessing for
- arm/arm64 platforms
-Thread-Index: AQHUpxgC6yBGLPIm9UWYEo0ogu0Vc6WlhCWAgA2jZwA=
-Date:   Thu, 17 Jan 2019 08:06:10 +0000
-Message-ID: <AM5PR0402MB28657886AFEA567C4426DF73F1830@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-References: <20190108060426.11581-1-ran.wang_1@nxp.com>
- <20190108060426.11581-2-ran.wang_1@nxp.com>
- <20190108154523.GB20989@kroah.com>
-In-Reply-To: <20190108154523.GB20989@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ran.wang_1@nxp.com; 
-x-originating-ip: [92.121.36.198]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2833;6:/81EfGqLGP4tYDKWydtT7e4HPZwgaJsfv7X3sIXxvtcaq915EacH4SbKd/5ix61EFWlynf6R8JHtRJE9KwZd9jgfb1o22OjgoecJjGVGsYOHnQgyNixUaWI7A67Obh9UiUinHexC06ksag/2634t7LYOnPBbEW+efudG0DNuzPFkBt6njTkDyFjq/PfVIVleUsU4HlCPsdy7Krv6XgV+PbJ0wrlj6ODOTpc3EKSzruA3WNcfXKGCuF7U18PJkCp4GSdlr/DXyP434gd5XBMMYhUi9WipxGiGe2bw3IompWlYLWiSRiwxIZDHrUL7n0k3KqR91556oFMN8qzXRSRwY6xhn2ENdwTq8BQ6afkQC2W1x2S2ELDhtUHpKskXaHBl7m9KTV15JQAoo79Mt89f5EjLvAjklLQtuNkkNoY2IgLMqNA6PgyKtqCeu4ohmsyFqjnMQxIej8unxy5JAd84Bg==;5:6n1GbQSmVAeMynsORSS7DqhAm6nGHw6XBATCpbt59blMPMhvl0Vu0WyxumeyOBaGkkEtOz9u6CUB/dNl0YJvOe/mtRn8QAVUjfHAC5BQO5ACFAUd8VFXXKnBTzo3SDEp5lpRmEtChPcTgJp9HB80u4ktSXunOwctI41qSGoc1x86S4tXOAI8+xAVIZ6ibusWTHLgOQ53auU29Lgw8Z5BxQ==;7:UwNA7IqDyjx9Jy+Onfma9wfgFesnf0Ma/cUIbBzWHmsTe20lVhWl0mCQruf8UzfqJdcptFZTjMiumq730vir3YYZxCeodIuxNcU20QWvoGR7PM6FfeXuCSrTmZlHGvEllT2FggAq4tdp8B3yw0BbIQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 2de1a343-7fff-4a86-fcd8-08d67c52a4a2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2833;
-x-ms-traffictypediagnostic: AM5PR0402MB2833:
-x-microsoft-antispam-prvs: <AM5PR0402MB283346E6977447D80B69D894F1830@AM5PR0402MB2833.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(346002)(376002)(396003)(199004)(189003)(316002)(4744005)(54906003)(486006)(33656002)(99286004)(26005)(6506007)(6436002)(7696005)(476003)(6916009)(53936002)(446003)(11346002)(8676002)(9686003)(4326008)(102836004)(68736007)(25786009)(229853002)(305945005)(55016002)(2906002)(71200400001)(81156014)(186003)(81166006)(8936002)(76176011)(7736002)(97736004)(6246003)(71190400001)(105586002)(14454004)(478600001)(66066001)(106356001)(86362001)(14444005)(6116002)(3846002)(5660300001)(74316002)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2833;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LolAH0e1YP1M4YOnv2H75jyyTRv2p6iR5sdZNnlcKgIimeGbVDKNJKZEwW3ktyXQsg1mwJeChnhdeVuUgVGATmkkIpSYhLjnFbXDyb/wi+F/rG4BRjbExenXj7hu4nFUzAvH1g4K7p24wHGa09pcX4eDIJHx8DiZbZ6Z7VMD2MOI/gD3AEeSkUxDA+K6mDlMwNAxwxA99a4t8Ry4QKwuP58Vv7dQXdqQLuowy6sX4QPQhx7iu14kPi1PuFB5JuwnYlGlnmTlQeNpQqXrI0SwbUwqojh6izTdjXMhf0U4hnbt121IWFI512B77+J8nLPl9IiYP2WIsGaiG97fjtRBt9mfm3w1gMxGP8FJHXGb/54TEuSSHo9hakMhZL0epWUUmjIWREtElgJLUZHFIZF+WQcBd2//L8UL6fMSK+Y62do=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 17 Jan 2019 03:06:23 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41161 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729372AbfAQIGU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 03:06:20 -0500
+Received: by mail-qt1-f194.google.com with SMTP id l12so10369780qtf.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 00:06:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qmIHC5eao7Ug/guLsv7lcO5haNnntIRBhCPpoyV5/g8=;
+        b=RxgIq09NlZOIgmO+FLexODW+mc9qC5bTc1xHwRY8QL+HT1biqzESHPeXjBQi+enqqb
+         yCriHcD7Ww3fmmhHgqqPChP6eSdGLQE6Dj6klqfSuctQEsDmhCKqWNqs5htMl5EkX1JX
+         CrWQPf/sYtrmY699Gx+VFrtTcfx4c+XsBEPItt8lRUW4qstjNsuuHP4RM5BMuou3IkZj
+         khLkycHMPEE3rQFFOmmwuhH8++5iZC4U/MUoMXTURixY+kUOIOU5q0MyoYOz5O/Tg5Ed
+         v7hYCHecBMpQRgyqUe7OlU6h5vK5DH0YqMOI2i+YFEIPr9Qerv/ZeLrWK0jgJL5R+gn7
+         yqVA==
+X-Gm-Message-State: AJcUukdBRFXhcrVcJe97GLjXvrV+kT+NJpEg5MwHOLpTl8bdNPoHwzoz
+        XO6ed/L90jf060ZSpzG6OnyjIQbKLkamBmGb/k3Bog==
+X-Google-Smtp-Source: ALg8bN5Nw25QGKW0A1c/h4k3WwQXcO3YHa/+9wYMlYog95TBY/Bg4VzLVIw3v6m6NYdngTnwOlC+wEBvAoOvASV65QM=
+X-Received: by 2002:ac8:1a08:: with SMTP id v8mr10160840qtj.362.1547712379448;
+ Thu, 17 Jan 2019 00:06:19 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2de1a343-7fff-4a86-fcd8-08d67c52a4a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 08:06:10.9690
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2833
+References: <20190114084734.3362-1-kai.heng.feng@canonical.com>
+ <nycvar.YFH.7.76.1901141217550.6626@cbobk.fhfr.pm> <663EE74C-02E8-49DB-A197-2022AFE2D863@canonical.com>
+ <2149AEF5-ABBF-4745-89F9-7FF9719251B5@canonical.com>
+In-Reply-To: <2149AEF5-ABBF-4745-89F9-7FF9719251B5@canonical.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 17 Jan 2019 09:06:07 +0100
+Message-ID: <CAO-hwJLHm8b6X9kX1myz7xx1992VW2tVjdn6xw2n1MVX2dn0=g@mail.gmail.com>
+Subject: Re: [PATCH] HID: i2c-hid: Disable runtime PM on Goodix touchpad
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Thu, Jan 17, 2019 at 6:02 AM Kai-Heng Feng
+<kai.heng.feng@canonical.com> wrote:
+>
+>
+>
+> > On Jan 16, 2019, at 16:21, Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
+> >
+> >
+> >
+> >> On Jan 14, 2019, at 19:18, Jiri Kosina <jikos@kernel.org> wrote:
+> >>
+> >> On Mon, 14 Jan 2019, Kai-Heng Feng wrote:
+> >>
+> >>> A Goodix touchpad doesn't work. Touching the touchpad can trigger IRQ
+> >>> but there's no input event from HID subsystem.
+> >>>
+> >>> Turns out it reports some invalid data:
+> >>> [   22.136630] i2c_hid i2c-DELL091F:00: input: 0b 00 01 00 00 00 00 00 00 00 00
+> >>>
+> >>> After some trial and error, it's another device that doesn't work well
+> >>> with ON/SLEEP commands. Disable runtime PM to fix the issue.
+> >>
+> >> Thanks, I've now applied the patch to for-5.0/upstream-fixes. I am
+> >> wondering though we are we seeing these at all - do other OSes not do the
+> >> runtime PM on i2c at all?
+> >
+> > According to the vendor, Windows does use ON/SLEEP, but infrequently.
+> >
+> > We can use pm_runtime_use_autosuspend() to reduce the frequency of
+> > ON/SLEEP commands, but it’s just papering over the touchpad firmware
+> > bug.
+>
+> Goodix says the firmware needs at least 60ms to fully respond ON and
+> SLEEP command.
 
-On 08, 2019 23:45, Greg Kroah-Hartman wrote:
->=20
-> On Tue, Jan 08, 2019 at 06:04:26AM +0000, Ran Wang wrote:
-> > arm/arm64's io.h doesn't define clrbits32() and clrsetbits_be32(),
-> > which causing compile failure on some Layerscape Platforms (such as
-> > LS1021A and LS2012A which also integrates FSL EHCI controller). So use
-> > ioread32be()/iowrite32be() instead to make it workable on both powerpc
-> > and arm.
->=20
-> Shouldn't you have this patch before the Kconfig change, so that you do n=
-ot
-> break the build on ARM systems on that one and then fix it up on this one=
-?
+I was about to say that this is not conformant to the specification.
+But looking at 7.2.8 SET_POWER of
+https://docs.microsoft.com/en-us/previous-versions/windows/hardware/design/dn642101(v=vs.85)
 
-Yes, you are right, will adjust it in next version, thanks for pointing out=
-.
+They say:
+"The DEVICE must ensure that it transitions to the HOST specified
+Power State in under 1 second. "
+But in the RESPONSE paragraph: "The DEVICE shall not respond back
+after receiving the command. The DEVICE is mandated to enter that
+power state imminently."
 
-Regards,
-Ran
+My interpretation was always that the device has to be in a ready
+state for new commands "immediately".
+However, the first sentence may suggest that the driver would block
+any command to the device before the 1 second timestamp.
+
+>
+> I’ll see if an 200ms autosuspend can solve all Goodix, LG and Raydium
+> touchpanels.
+
+We already have a I2C_HID_QUIRK_DELAY_AFTER_SLEEP quirk that delay
+operations after sleep by 20ms. Maybe we can keep the runtime PM but
+use the same timers to not confuse the hardware.
+
+Cheers,
+Benjamin
