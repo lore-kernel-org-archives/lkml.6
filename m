@@ -2,135 +2,100 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D150C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CF4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F09B320859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:26:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3882205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:29:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXHzeKKU"
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="JT1lPvgt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfAQO0t (ORCPT
+        id S1727038AbfAQO3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 09:26:49 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39599 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfAQO0t (ORCPT
+        Thu, 17 Jan 2019 09:29:14 -0500
+Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:33620 "EHLO
+        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725878AbfAQO3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 09:26:49 -0500
-Received: by mail-qt1-f193.google.com with SMTP id u47so11463566qtj.6;
-        Thu, 17 Jan 2019 06:26:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=qj+S80oVMmKMkbkSkgMh8yWZ6DRMk7MT5zaCIjeD/hc=;
-        b=cXHzeKKUwbyk5jAb/Ete5Jq9I/gfngIRkj3iOossgbMHi00pB0olpn69glSyQ1jjhZ
-         hsSTC8eovSMnyO0sSDzM/Ie4b95iO2vcLWPkzIcgIQdWAyPhWsrrVnX4iZEjhV2TMCHQ
-         YWgw9I+nh8qNX9nf836KBgwt3LQFNEe/sSvNDQ193PzgO+Dzj6GdUav2UzFpAvBj3twF
-         Lam1EM+B7ghwBbEZzjRJ17PTxowa4pc9aTqFAM2LSFoeyWEwVbm/xOY9rnvHOsgMtIeO
-         34FbvvnHo4QPl88BeMkZLq+t9x68WsqPd51tUgus7/sKJ3/RLfqe0yVBGWt3AN9cqIKE
-         ZX/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=qj+S80oVMmKMkbkSkgMh8yWZ6DRMk7MT5zaCIjeD/hc=;
-        b=DF8OACLTtBU3PtMk2i1uBaw3BmOvAf/+EoA5HU0gL299b2XXIraMa+jjYwklrAkaS9
-         V64RFnlVFRXOkx44onyexLImdYAv0r9Owtegz6txLefnna6QLN/8pKi7cw19uBLTqbUn
-         XvvEX/JA2HwTw6cyHcrGrxUPnVC4uSgDu3iJzJ913PMQJZQumjjTeNAXS3WKTL5zcp+m
-         1hVF1W91lPhvGWRitgVzcA37SPdiUZZxtOiptcPM+jfptaPZDqc4Grb/JGxCxRIS76vb
-         RAjLKFcaY3I7XbsCE/xpHVOClIN+fAQtrUdfBA/PUlGPOTOe8OZ1bG1ykkPbV+4k9vn5
-         3u8w==
-X-Gm-Message-State: AJcUukeVibhtLfWETAbiBUxVnB31/eA3lm6p+/7nvX6KhXoVf0uhkgdt
-        I52RSd/BG7dCgAE7dAX5KXsgcPPc7qXYJtUscw==
-X-Google-Smtp-Source: ALg8bN6I2qEdFCG+iF4I7goroQ2oJgNgrwQcH18v8TeI+8MjvPMwFNkQ4IXN8JF5jVaY8DnXCg0zYk3tpk2CoPNlsrI=
-X-Received: by 2002:aed:29a6:: with SMTP id o35mr11328337qtd.257.1547735208082;
- Thu, 17 Jan 2019 06:26:48 -0800 (PST)
+        Thu, 17 Jan 2019 09:29:13 -0500
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 43gRKM547Sz1y8k;
+        Thu, 17 Jan 2019 15:29:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
+        t=1547735351; bh=P2foAXieJGN1qz49gJJgSp8jtE8tajWr4Ms7C9SpmrI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From:To:CC:
+         Subject;
+        b=JT1lPvgtaLPNYXbcPe9LLOwRTnrlviEuvkZty2iQ2dbP7LjB22OZ2QsX5YQNDxW2A
+         kgXY3Li9F4IpaowxlaW8KjQGB1oipg+tTDfcLAarTSVmfH6nODaJrK9v56eG2fxI+n
+         /IKdxJxuHfww09VLzyHb/XcEg2mQ0wLpZySFo00xk63ox2aCdCG26/5dbGO+s9x/YQ
+         7oyySm0KGOHUGbgF69dj84osL+SYtIFFA1iGuIkF+x6mq7epBQwsqunynB/Q2A4ed8
+         lainPTxZj9UaQz4wFDKLGnaNF/nJCj7W4WaTWqlerbdARCVGN7/RShiPe6HvqyXaRY
+         9gtpusLF8tR5w==
+X-Virus-Scanned: amavisd-new at boeck5.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:638:a000:4142::ffff:149
+Received: from [IPv6:2001:638:a000:4142::ffff:149] (faui49copter1.informatik.uni-erlangen.de [IPv6:2001:638:a000:4142::ffff:149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX188SGleHbMKBBfQbX1gXMtTcvMLbCKYBmE=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 43gRKK4stkz1xt6;
+        Thu, 17 Jan 2019 15:29:09 +0100 (CET)
+Subject: Re: [PATCH v2] tracing/uprobes: Fix output for multiple string
+ arguments
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+References: <20190116084021.34b0beee@gandalf.local.home>
+ <20190116141629.5752-1-andreas.ziegler@fau.de>
+ <20190117150107.17f2c0c37e41126120c5eebb@kernel.org>
+ <b5defce3-b52a-db20-bfd1-81eec9972fab@fau.de>
+ <20190117165807.64e95553ff397e7f73ba495b@kernel.org>
+ <20190117092042.4f689462@vmware.local.home>
+From:   Andreas Ziegler <andreas.ziegler@fau.de>
+Message-ID: <5ceb9b3b-3f67-4e84-b029-6e6d8ccc0449@fau.de>
+Date:   Thu, 17 Jan 2019 15:29:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-From:   Rob Herring <robherring2@gmail.com>
-Date:   Thu, 17 Jan 2019 08:26:36 -0600
-Message-ID: <CAL_JsqLiE8-TCRSigXxaGonaJE=7j9Ywggniy9_QXR3qFSbojg@mail.gmail.com>
-Subject: [GIT PULL] Devicetree fixes for 5.0-rc
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190117092042.4f689462@vmware.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 1/17/19 3:20 PM, Steven Rostedt wrote:
+> On Thu, 17 Jan 2019 16:58:07 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+>> Ah, I got it.
+>> Hmm, in that case, I have to update my patch in the previous mail.
+>> Anyway,
+>>
+>> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> So this patch is good to go? If so, I'll pull it in and start testing
+> it.
+> 
+> I'm currently traveling (as you probably received my OoO emails), but I
+> can still do a bit of work remotely.
+> 
+> -- Steve
+> 
+ From my side it's basically good to go, but I just realized that there 
+is no "Fixes: " tag in it but the problem it fixes goes back to 
+5baaa59ef09e ("tracing/probes: Implement 'memory' fetch method for 
+uprobes") from 2013 (and is present in all current longterm and stable 
+kernels)... should I add a tag and resend a v3?
 
-Please pull DT fixes for 5.0.
+Thanks,
 
-Rob
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
-tags/devicetree-fixes-for-5.0
-
-for you to fetch changes up to 3705add0b783e0deeb6646ba0311bf214fe52b0a:
-
-  dt-bindings: reset: meson-axg: fix SPDX license id (2019-01-16 12:50:27 -0600)
-
-----------------------------------------------------------------
-Devicetree fixes for v5.0:
-
-- Remove now unused struct device_node.type pointer
-
-- Fix meson-axg reset header SPDX tag
-
-- Add missing of_node_put in of_graph_get_remote_port_parent
-
-- Fix several binding doc file references and typos
-
-----------------------------------------------------------------
-Jerome Brunet (1):
-      dt-bindings: reset: meson-axg: fix SPDX license id
-
-Julia Lawall (1):
-      OF: properties: add missing of_node_put
-
-Krzysztof Kozlowski (1):
-      dt-bindings: soc: qcom: Fix trivial language typos
-
-Lubomir Rintel (1):
-      dt-bindings: marvell,mmp2: fix typos in bindings doc
-
-Otto Sabart (2):
-      doc: bindings: fix bad reference to ARM CPU bindings
-      doc: gpio-mvebu: fix broken reference to cp110-system-controller0.txt file
-
-Rob Herring (1):
-      of: Remove struct device_node.type pointer
-
- Documentation/devicetree/bindings/arm/cpu-capacity.txt                | 2 +-
- Documentation/devicetree/bindings/arm/idle-states.txt                 | 2 +-
- Documentation/devicetree/bindings/arm/sp810.txt                       | 2 +-
- Documentation/devicetree/bindings/arm/topology.txt                    | 2 +-
- Documentation/devicetree/bindings/clock/marvell,mmp2.txt              | 2 +-
- Documentation/devicetree/bindings/display/arm,pl11x.txt               | 2 +-
- Documentation/devicetree/bindings/gpio/gpio-mvebu.txt                 | 2 --
- Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt | 2 +-
- Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt             | 2 +-
- Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.txt             | 4 ++--
- drivers/of/dynamic.c                                                  | 3 ---
- drivers/of/fdt.c                                                      | 4 ----
- drivers/of/overlay.c                                                  | 3 ---
- drivers/of/pdt.c                                                      | 1 -
- drivers/of/property.c                                                 | 1 +
- include/dt-bindings/reset/amlogic,meson-axg-reset.h                   | 3 +--
- include/linux/of.h                                                    | 1 -
- 17 files changed, 12 insertions(+), 26 deletions(-)
+Andreas
