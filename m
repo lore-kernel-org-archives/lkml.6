@@ -2,161 +2,122 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB14CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81139C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A546720856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547712020;
-	bh=TAUvhFBBPhzFMQHqV+AxfOwIHUEU4irjTO63lle4NIY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=TbjBjpKff7WIBYRxaTH4drMZ3h04NQuvEGPjlhaoGx+PEhvhOl7Z+56iaipYpRbNS
-	 nhbcZ+9vdp6PG+E8qwmeTvZSNhRVtU+0jbbdjmmQCjiWdH20wh9Dn4dBbFO78VH53w
-	 RzsIPEKm8nwYOTJU6a9PgJ/0Dw0u2B4R98Zo27Is=
+	by mail.kernel.org (Postfix) with ESMTP id 5902220856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:00:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbfAQIAT (ORCPT
+        id S1729108AbfAQIAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:00:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727491AbfAQIAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:00:18 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88BE720851;
-        Thu, 17 Jan 2019 08:00:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547712017;
-        bh=TAUvhFBBPhzFMQHqV+AxfOwIHUEU4irjTO63lle4NIY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dkcMT4ncgbO/NkOgju+ZMa1kwj585gHeDeAyldFM75O6VF3HynS9kBlhjSGAJSmU/
-         7xbsEhGGx5xMhJ/hTiGfAQxXPue7AHNqnnvge5V07Wa6q19uDH4yH+P9a6NP1QEuzB
-         Rb3ZGkiX7wmGkMDgoucXlHYN2poV9oxILRg+FDtA=
-Date:   Thu, 17 Jan 2019 17:00:15 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Andreas Ziegler <andreas.ziegler@fau.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: uprobes: bug in comm/string output?
-Message-Id: <20190117170015.403157bf619907f8467189fe@kernel.org>
-In-Reply-To: <20190117151309.711d41ebdd761b525a168837@kernel.org>
-References: <bf358673-ceb2-65bf-80c9-4b1c09a8a264@fau.de>
-        <8b67136d-28d7-a734-6366-9511e30d66a7@fau.de>
-        <20190116190054.ac22c8495540578834446236@kernel.org>
-        <62276858-9135-2393-8993-64e1088db7b9@fau.de>
-        <20190117151309.711d41ebdd761b525a168837@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 17 Jan 2019 03:00:39 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:34414 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727491AbfAQIAj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 03:00:39 -0500
+X-UUID: ea431d14c2c54d268671b5d4f52924a8-20190117
+X-UUID: ea431d14c2c54d268671b5d4f52924a8-20190117
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 153089909; Thu, 17 Jan 2019 16:00:34 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 17 Jan 2019 16:00:32 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 17 Jan 2019 16:00:32 +0800
+Message-ID: <1547712032.5318.17.camel@mtksdaap41>
+Subject: Re: [PATCH 1/3] mailbox: Add ability for clients to abort data in
+ channel
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Thu, 17 Jan 2019 16:00:32 +0800
+In-Reply-To: <CABb+yY0JfRbdVb_3wqxve1pYH0ZpFNrA2Kr6qovBruzhbeFRuw@mail.gmail.com>
+References: <20190116050435.11624-1-ck.hu@mediatek.com>
+         <20190116050435.11624-2-ck.hu@mediatek.com>
+         <CABb+yY0JfRbdVb_3wqxve1pYH0ZpFNrA2Kr6qovBruzhbeFRuw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 0AE1DE8F454E571EC2C12497B1F87F8F86732474482BE7D983F49524CDF2F1912000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Jan 2019 15:13:09 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Hi, Jassi:
 
-> On Wed, 16 Jan 2019 11:16:07 +0100
-> Andreas Ziegler <andreas.ziegler@fau.de> wrote:
-> 
-> > 
-> > I went into this a bit deeper today, and right now it is simply failing 
-> > to parse the code because there is no FETCH_OP_COMM case in 
-> > process_fetch_insn() for uprobes so that will return -EILSEQ, leading to 
-> > a make_data_loc(0, ...) in store_trace_args(). If we just add 
-> > FETCH_OP_COMM and let val point to current->comm (that's what 
-> > trace_kprobe.c does), we get an -EFAULT return value from 
-> > fetch_store_string because strncpy_from_user() checks if the argument is 
-> > in user space.
-> 
-> Correct. I missed to add OP_COMM support. And uprobe's fetch_store_string
-> is only for user space strings.
-> 
-> > So I think we might need a special case for that, something like 
-> > FETCH_OP_ST_COMM_STRING which is only used for FETCH_OP_COMM and copies 
-> > current->comm over to the dynamic area. The implementation could be 
-> > similar to the old fetch_comm_string implementation before your rewrite.
-> 
-> Hmm, instead, I would like to add current->comm checker and only allows
-> to copy that. That would be simpler and enough.
-> 
-> Could you test below patch?
-> 
-> 
-> tracing: uprobes: Re-enable $comm support for uprobe events
-> 
-> From: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> Since commit 533059281ee5 ("tracing: probeevent: Introduce new
-> argument fetching code") dropped the $comm support from uprobe
-> events, this re-enable it.
-> 
-> For $comm support, use strncpy() instead of strncpy_from_user()
-> to copy current task's comm. Because it is in the kernel space,
-> strncpy_from_user() always fails to copy the comm.
-> This also use strlen() instead of strlen_user() to measure the
-> length of the comm.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Reported-by: Andreas Ziegler <andreas.ziegler@fau.de>
-> ---
->  kernel/trace/trace_uprobe.c |   13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index e335576b9411..97d134e83e0f 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -156,7 +156,10 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
->  	if (unlikely(!maxlen))
->  		return -ENOMEM;
->  
-> -	ret = strncpy_from_user(dst, src, maxlen);
-> +	if (addr == (unsigned long)current->comm)
-> +		ret = strlcpy(dst, current->comm, maxlen);
-> +	else
-> +		ret = strncpy_from_user(dst, src, maxlen);
->  	if (ret >= 0) {
->  		if (ret == maxlen)
->  			dst[ret - 1] = '\0';
-> @@ -173,7 +176,10 @@ fetch_store_strlen(unsigned long addr)
->  	int len;
->  	void __user *vaddr = (void __force __user *) addr;
->  
-> -	len = strnlen_user(vaddr, MAX_STRING_SIZE);
-> +	if (addr == (unsigned long)current->comm)
-> +		len = strlen(current->comm);
+On Wed, 2019-01-16 at 10:22 -0600, Jassi Brar wrote:
+> On Tue, Jan 15, 2019 at 11:07 PM CK Hu <ck.hu@mediatek.com> wrote:
+> >
+> > This patch supplies a new framework API, mbox_abort_channel(), and
+> > a new controller interface, abort_data().
+> >
+> > For some client's application, it need to clean up the data in channel
+> > but keep the channel so it could send data to channel later.
+> >
+> > Signed-off-by: CK Hu <ck.hu@mediatek.com>
+> > ---
+> >  drivers/mailbox/mailbox.c          | 23 +++++++++++++++++++++++
+> >  include/linux/mailbox_client.h     |  1 +
+> >  include/linux/mailbox_controller.h |  4 ++++
+> >  3 files changed, 28 insertions(+)
+> >
+> > diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> > index c6a7d4582dc6..281647162c76 100644
+> > --- a/drivers/mailbox/mailbox.c
+> > +++ b/drivers/mailbox/mailbox.c
+> > @@ -428,6 +428,29 @@ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
+> >  }
+> >  EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
+> >
+> > +/**
+> > + * mbox_abort_channel - The client abort all data in a mailbox
+> > + *                     channel by this call.
+> > + * @chan: The mailbox channel to be aborted.
+> > + */
+> > +void mbox_abort_channel(struct mbox_chan *chan)
+> > +{
+> > +       unsigned long flags;
+> > +
+> > +       if (!chan || !chan->cl)
+> > +               return;
+> > +
+> > +       if (chan->mbox->ops->abort_data)
+> > +               chan->mbox->ops->abort_data(chan);
+> > +
+> > +       /* The queued TX requests are simply aborted, no callbacks are made */
+> > +       spin_lock_irqsave(&chan->lock, flags);
+> > +       chan->cl = NULL;
+> > +       chan->active_req = NULL;
+> > +       spin_unlock_irqrestore(&chan->lock, flags);
+> > +}
+> >
+> Why not just release and then request channel again ?
+> mbox_abort_channel() is just a copy of mbox_free_channel() and if the
+> abort can sleep, that is more reason to just do that.
 
-To balance with the strnlen_user, we must increse the len in this block.
-(strlen doesn't count the final '\0', but strnlen_user counts it)
+The cursor may change position 300 times in one second, so I still
+concern the processing time. Request and free channel looks too heavy to
+do 300 times per second. Conceptually, I just want to clean up the
+channel rather than free and request it, so they are somewhat different.
+I say it may sleep because mbox_abort_channel() is a copy of
+mbox_free_channel(). I could change it to 'must not sleep' because
+Mediatek controller does not sleep in abort callback.
 
-Thank you,
+Regards,
+CK
 
-> +	else
-> +		len = strnlen_user(vaddr, MAX_STRING_SIZE);
->  
->  	return (len > MAX_STRING_SIZE) ? 0 : len;
->  }
-> @@ -213,6 +219,9 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
->  	case FETCH_OP_IMM:
->  		val = code->immediate;
->  		break;
-> +	case FETCH_OP_COMM:
-> +		val = (unsigned long)current->comm;
-> +		break;
->  	case FETCH_OP_FOFFS:
->  		val = translate_user_vaddr(code->immediate);
->  		break;
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
