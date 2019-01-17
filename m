@@ -2,162 +2,162 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF3DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21901C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D984620657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:09:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="QmIVYB3V"
+	by mail.kernel.org (Postfix) with ESMTP id EE0AD2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:18:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbfAQLJ2 (ORCPT
+        id S1728422AbfAQLSC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:09:28 -0500
-Received: from mail-eopbgr60086.outbound.protection.outlook.com ([40.107.6.86]:8064
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        Thu, 17 Jan 2019 06:18:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46702 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725990AbfAQLJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:09:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ksxe4c1zINsTD2ThFKpcC55kjx7q2Kt4a8d/6pqit9o=;
- b=QmIVYB3VDBked799M4GlBsd0PbdopJvy9Jzf7isZKp/Le4JHy4DVR3t8UGH8xyZ3MTZ/CS+xDKp7WYYWQsR+NWMab5mGV6M7oIU6gHrbdcyrkQnhkHk+CfbtD+nwmD2+IcfPuEUj5ZuzOa3TYJ8RTw2BYCZWtz6v1n998O2X5x4=
-Received: from AM0PR08MB4483.eurprd08.prod.outlook.com (20.179.35.149) by
- AM0PR08MB3124.eurprd08.prod.outlook.com (52.134.93.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Thu, 17 Jan 2019 11:09:23 +0000
-Received: from AM0PR08MB4483.eurprd08.prod.outlook.com
- ([fe80::915f:e024:438d:7f2]) by AM0PR08MB4483.eurprd08.prod.outlook.com
- ([fe80::915f:e024:438d:7f2%3]) with mapi id 15.20.1516.019; Thu, 17 Jan 2019
- 11:09:23 +0000
-From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-To:     Liviu Dudau <Liviu.Dudau@arm.com>
-CC:     David Airlie <airlied@linux.ie>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI devel <dri-devel@lists.freedesktop.org>, nd <nd@arm.com>
-Subject: Re: drm: arm/komeda: Remove IRQ parsing from initial series
-Thread-Topic: drm: arm/komeda: Remove IRQ parsing from initial series
-Thread-Index: AQHUrlUQ2Jrgf7OCVUeSuU1n5chEOQ==
-Date:   Thu, 17 Jan 2019 11:09:22 +0000
-Message-ID: <20190117110907.GC29795@james-ThinkStation-P300>
-References: <20190115101544.8653-1-Liviu.Dudau@arm.com>
-In-Reply-To: <20190115101544.8653-1-Liviu.Dudau@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.9.4 (2018-02-28)
-x-originating-ip: [113.29.88.7]
-x-clientproxiedby: SY2PR01CA0001.ausprd01.prod.outlook.com
- (2603:10c6:1:14::13) To AM0PR08MB4483.eurprd08.prod.outlook.com
- (2603:10a6:208:145::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=james.qian.wang@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR08MB3124;6:zBV/bGi486XBwPasc9k1r3XM2vox47HPs55AQhdZf/puaiYUnRSP66QbXJcg+niPPBks4sst5b7IYEBD4/QsoAtYaVYJQbcEkMcaI93Bx77mOKuILySAln4G9+duRCYMJjK7vzhIlpyXvpXxhwEbzJrnrqvBnPwXZRu9nGhKuz5DNMshkdbRsxpX5Me/FCkUiwLEO9cTlJla1no01E594P5jYRurOU0rnDbSZjwpp9mjUe/scMSiELIc4A2pjQXw2BIO4zaFJddxFEjKLgK7zM0Qw/w1QDDBLzIOJzrc1Qscn51ji3Oln7VHJfJdW3D7nR+EnLuz6Te6HtXlLYns6lu7XE+HzpCtdcxBhd+BNhkz6cAcHf3MSndrJilrqHzf7AdfmoBUFPZwtmGadBMG6DWYoy9/h3+Ic44tBjl4ud74n0l6xt/6rEX4wnerxpcnXbkd6TPoFV035RkrLcxxwA==;5:7lT/cdLx3rJ6jISL92gWxe0N+AYVwJVXup2QOYSK+W9i0ooHO4LS9OrePle1sL1p8sx4bI7zk4PgxzTZfvyChmnAvx6vXHddDqvMOcFjx7su2lWvysH85eqMBrdYW/ixuLDWtZkaXn2wdsFydd7fbQqSI17yaH4TJ9zXBGmk5TA/ZsR/PXI37G6MdzmAlQzoZXFxmLTWij2iY8s3UNpKIw==;7:zl2Wmnoexr0xuhV8aic0HbxCz0Ppe4vK9SOeIQbO4yS3awxmZc9NDeNwJ9pWRB3Fg7FgcYG8BoydWleazlhqFesQqKiJ+KEs2BwcceuU8NCvJqalEwhceE4X3TwbpNta7e8qwnW8aF3tl1Rm5SQlGA==
-x-ms-office365-filtering-correlation-id: e6b7fbae-357f-4f06-591d-08d67c6c3c3c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3124;
-x-ms-traffictypediagnostic: AM0PR08MB3124:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB31249A18E1E5A1A71C1FEFC0B3830@AM0PR08MB3124.eurprd08.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(346002)(136003)(376002)(396003)(366004)(39860400002)(189003)(199004)(6636002)(106356001)(316002)(102836004)(33656002)(55236004)(6506007)(386003)(97736004)(6246003)(99286004)(54906003)(5660300001)(9686003)(7736002)(8936002)(68736007)(58126008)(2906002)(33716001)(486006)(25786009)(6512007)(105586002)(476003)(256004)(5024004)(305945005)(4326008)(229853002)(1076003)(52116002)(66066001)(33896004)(446003)(53936002)(76176011)(71190400001)(8676002)(11346002)(3846002)(26005)(186003)(14454004)(478600001)(81166006)(81156014)(6486002)(71200400001)(6862004)(6436002)(6116002)(86362001)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3124;H:AM0PR08MB4483.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: EG0oiPGxdtkTHrzDWECORdjkl1av6x7LHqkVAR+tMwx86LaViRdEKCDK9FHS7Vvrntf9G8uIZfcJ83QPDNPhdCXqKogS4ySoJ/d3OdYgqwHpFxIusVqozfL+3HM8h3Wih0FTRxLpRuoRm9Li8ovCzt6A2BT1tYEmvG2i2nbcM4EkH9Aiv+KfjVyN4XkgCHZMvJXc1svf/KMMgtZG/O3fNksYfnW6lcqb5mcvYY3GL4cty14alFSfRgq0BuKDAWhAV78C3T/uyqyrSO7dlYQTXcNxqYDQ6IaMPYIXUDwgmPMFl5TQJcAEF2AbTqZDvvIKsfcpJvpEMo8+7OEfUUfrLy7Hlnp/GTa0qOiA8oFhWA0cbZvRsVNbuKF4UDPIKvkilbEb3bbXjWfPXFCSVdEGCabadv/HHsBCp71NncSuU80=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C430BE9F26F74D41B0CBD9A439B277EB@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726739AbfAQLSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:18:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C2EEDAEEE;
+        Thu, 17 Jan 2019 11:17:58 +0000 (UTC)
+Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ebiharaml@si-linux.co.jp
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Message-ID: <bb5b27ed-a077-f639-b97b-4da22c9bb3ad@suse.de>
+Date:   Thu, 17 Jan 2019 12:17:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6b7fbae-357f-4f06-591d-08d67c6c3c3c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 11:09:21.8416
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3124
+In-Reply-To: <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 10:15:44AM +0000, Liviu Dudau wrote:
-> The initial series is only introducing the basic components and not
-> implementing IRQ handling. Remove the left over code that touches
-> IRQs until the proper implementation is introduced in a later series.
->=20
-> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+Hi Fabrizio,
 
-Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.co=
-m>
-
+Am 16.01.19 um 19:37 schrieb Fabrizio Castro:
+> From: Biju Das <biju.das@bp.renesas.com>
+> 
+> Add Silicon Linux to the list of devicetree vendor prefixes.
+> 
+> Website: http://www.si-linux.co.jp
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 > ---
->  drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 5 -----
->  drivers/gpu/drm/arm/display/komeda/komeda_dev.h | 3 ---
->  drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 4 +---
->  3 files changed, 1 insertion(+), 11 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gp=
-u/drm/arm/display/komeda/komeda_dev.c
-> index 84fdf707f2107..16f4e72abc1a3 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> @@ -59,11 +59,6 @@ static int komeda_parse_dt(struct device *dev, struct =
-komeda_dev *mdev)
->  		return PTR_ERR(clk);
-> =20
->  	mdev->mclk =3D clk;
-> -	mdev->irq  =3D platform_get_irq(pdev, 0);
-> -	if (mdev->irq < 0) {
-> -		DRM_ERROR("could not get IRQ number.\n");
-> -		return mdev->irq;
-> -	}
-> =20
->  	for_each_available_child_of_node(np, child) {
->  		if (of_node_cmp(child->name, "pipeline") =3D=3D 0) {
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gp=
-u/drm/arm/display/komeda/komeda_dev.h
-> index a0bf7050037a0..0f77dead6a237 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-> @@ -81,9 +81,6 @@ struct komeda_dev {
->  	/** @mck: HW main engine clk */
->  	struct clk *mclk;
-> =20
-> -	/** @irq: irq number */
-> -	u32 irq;
-> -
->  	int n_pipelines;
->  	struct komeda_pipeline *pipelines[KOMEDA_MAX_PIPELINES];
-> =20
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gp=
-u/drm/arm/display/komeda/komeda_kms.c
-> index f41b20235130b..3fc096d3883e8 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> @@ -142,12 +142,10 @@ struct komeda_kms_dev *komeda_kms_attach(struct kom=
-eda_dev *mdev)
-> =20
->  	err =3D drm_dev_register(drm, 0);
->  	if (err)
-> -		goto uninstall_irq;
-> +		goto cleanup_mode_config;
-> =20
->  	return kms;
-> =20
-> -uninstall_irq:
-> -	drm_irq_uninstall(drm);
->  cleanup_mode_config:
->  	drm_mode_config_cleanup(drm);
->  free_kms:
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 4b1a2a8..02a7037 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -344,6 +344,7 @@ sgx	SGX Sensortech
+>  sharp	Sharp Corporation
+>  shimafuji	Shimafuji Electric, Inc.
+>  si-en	Si-En Technology Ltd.
+> +si-linux	Silicon Linux Corporation
+
+With the website being Japanese only, I haven't been able to confirm the
+spelling of the company name. Looks sensible though.
+
+Due to "en" coming before "five" I've double-checked that elsewhere we
+do order dashes before letters, so placement in file and tab-indentation
+is fine, too.
+
+>  sifive	SiFive, Inc.
+>  sigma	Sigma Designs, Inc.
+>  sii	Seiko Instruments, Inc.
+
+Personally I would drop the full stop at the end of the subject, but anyway:
+
+Reviewed-by: Andreas Färber <afaerber@suse.de>
+
+Thanks,
+Andreas
+
+P.S. Please double-check how this excessive CC list came to life!
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
