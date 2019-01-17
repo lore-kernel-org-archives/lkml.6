@@ -2,139 +2,81 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BD1C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E5EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D9AB20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D38620657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:04:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfAQNEL (ORCPT
+        id S1727872AbfAQNER (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:04:11 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:2143 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726018AbfAQNEL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:04:11 -0500
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Thu, 17 Jan 2019 04:48:57 -0800
-Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 4007BB1341;
-        Thu, 17 Jan 2019 07:49:05 -0500 (EST)
-From:   Ajay Kaher <akaher@vmware.com>
-To:     <kys@microsoft.com>, <haiyangz@microsoft.com>
-CC:     <devel@linuxdriverproject.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajay Kaher <akaher@vmware.com>,
-        Long Li <longli@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 1/3] PCI: hv: Allocate physically contiguous hypercall params buffer
-Date:   Fri, 18 Jan 2019 02:17:16 +0530
-Message-ID: <1547758038-5255-2-git-send-email-akaher@vmware.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547758038-5255-1-git-send-email-akaher@vmware.com>
-References: <1547758038-5255-1-git-send-email-akaher@vmware.com>
+        Thu, 17 Jan 2019 08:04:17 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45638 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726018AbfAQNEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 08:04:16 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A407445BE0C369435145;
+        Thu, 17 Jan 2019 21:04:11 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Thu, 17 Jan 2019
+ 21:04:03 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <tariqt@mellanox.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net/mlx4: remove unneeded semicolon
+Date:   Thu, 17 Jan 2019 21:03:56 +0800
+Message-ID: <20190117130356.13652-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: akaher@vmware.com does not
- designate permitted sender hosts)
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hv_do_hypercall() assumes that we pass a segment from a physically
-contiguous buffer.  A buffer allocated on the stack may not work if
-CONFIG_VMAP_STACK=y is set.
+Remove unneeded semicolon.
 
-Use kmalloc() to allocate this buffer.
-
-Reported-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: Long Li <longli@microsoft.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pci/host/pci-hyperv.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/cmd.c | 2 +-
+ drivers/net/ethernet/mellanox/mlx4/eq.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-index b4d8ccf..9e44adf 100644
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -383,6 +383,8 @@ struct hv_pcibus_device {
- 	struct msi_domain_info msi_info;
- 	struct msi_controller msi_chip;
- 	struct irq_domain *irq_domain;
-+	struct retarget_msi_interrupt retarget_msi_interrupt_params;
-+	spinlock_t retarget_msi_interrupt_lock;
- };
+diff --git a/drivers/net/ethernet/mellanox/mlx4/cmd.c b/drivers/net/ethernet/mellanox/mlx4/cmd.c
+index e65bc3c..c19e74e 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx4/cmd.c
+@@ -3274,7 +3274,7 @@ int mlx4_set_vf_link_state(struct mlx4_dev *dev, int port, int vf, int link_stat
+ 		mlx4_warn(dev, "unknown value for link_state %02x on slave %d port %d\n",
+ 			  link_state, slave, port);
+ 		return -EINVAL;
+-	};
++	}
+ 	s_info = &priv->mfunc.master.vf_admin[slave].vport[port];
+ 	s_info->link_state = link_state;
  
- /*
-@@ -780,34 +782,40 @@ void hv_irq_unmask(struct irq_data *data)
- {
- 	struct msi_desc *msi_desc = irq_data_get_msi_desc(data);
- 	struct irq_cfg *cfg = irqd_cfg(data);
--	struct retarget_msi_interrupt params;
-+	struct retarget_msi_interrupt *params;
- 	struct hv_pcibus_device *hbus;
- 	struct cpumask *dest;
- 	struct pci_bus *pbus;
- 	struct pci_dev *pdev;
- 	int cpu;
-+	unsigned long flags;
+diff --git a/drivers/net/ethernet/mellanox/mlx4/eq.c b/drivers/net/ethernet/mellanox/mlx4/eq.c
+index 2df92db..4953c85 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx4/eq.c
+@@ -820,7 +820,7 @@ static int mlx4_eq_int(struct mlx4_dev *dev, struct mlx4_eq *eq)
+ 				  !!(eqe->owner & 0x80) ^
+ 				  !!(eq->cons_index & eq->nent) ? "HW" : "SW");
+ 			break;
+-		};
++		}
  
- 	dest = irq_data_get_affinity_mask(data);
- 	pdev = msi_desc_to_pci_dev(msi_desc);
- 	pbus = pdev->bus;
- 	hbus = container_of(pbus->sysdata, struct hv_pcibus_device, sysdata);
- 
--	memset(&params, 0, sizeof(params));
--	params.partition_id = HV_PARTITION_ID_SELF;
--	params.source = 1; /* MSI(-X) */
--	params.address = msi_desc->msg.address_lo;
--	params.data = msi_desc->msg.data;
--	params.device_id = (hbus->hdev->dev_instance.b[5] << 24) |
-+	spin_lock_irqsave(&hbus->retarget_msi_interrupt_lock, flags);
-+
-+	params = &hbus->retarget_msi_interrupt_params;
-+	memset(params, 0, sizeof(*params));
-+	params->partition_id = HV_PARTITION_ID_SELF;
-+	params->source = 1; /* MSI(-X) */
-+	params->address = msi_desc->msg.address_lo;
-+	params->data = msi_desc->msg.data;
-+	params->device_id = (hbus->hdev->dev_instance.b[5] << 24) |
- 			   (hbus->hdev->dev_instance.b[4] << 16) |
- 			   (hbus->hdev->dev_instance.b[7] << 8) |
- 			   (hbus->hdev->dev_instance.b[6] & 0xf8) |
- 			   PCI_FUNC(pdev->devfn);
--	params.vector = cfg->vector;
-+	params->vector = cfg->vector;
- 
- 	for_each_cpu_and(cpu, dest, cpu_online_mask)
--		params.vp_mask |= (1ULL << vmbus_cpu_number_to_vp_number(cpu));
-+		params->vp_mask |= (1ULL << vmbus_cpu_number_to_vp_number(cpu));
-+
-+	hv_do_hypercall(HVCALL_RETARGET_INTERRUPT, params, NULL);
- 
--	hv_do_hypercall(HVCALL_RETARGET_INTERRUPT, &params, NULL);
-+	spin_unlock_irqrestore(&hbus->retarget_msi_interrupt_lock, flags);
- 
- 	pci_msi_unmask_irq(data);
- }
-@@ -2212,6 +2220,7 @@ static int hv_pci_probe(struct hv_device *hdev,
- 	INIT_LIST_HEAD(&hbus->resources_for_children);
- 	spin_lock_init(&hbus->config_lock);
- 	spin_lock_init(&hbus->device_list_lock);
-+	spin_lock_init(&hbus->retarget_msi_interrupt_lock);
- 	sema_init(&hbus->enum_sem, 1);
- 	init_completion(&hbus->remove_event);
- 
+ 		++eq->cons_index;
+ 		eqes_found = 1;
 -- 
-2.7.4
+2.7.0
+
 
