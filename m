@@ -2,120 +2,89 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABDAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D06C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBD7920652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:21:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PRBmAB49"
+	by mail.kernel.org (Postfix) with ESMTP id AD9A920652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbfAQQVx (ORCPT
+        id S1729030AbfAQQWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:21:53 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33260 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729034AbfAQQVG (ORCPT
+        Thu, 17 Jan 2019 11:22:08 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35647 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728747AbfAQQWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:21:06 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so11740753wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:21:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aXeep5x7ETGFolIIRZohdiZMVYaJ9v3T7r4d/NZltdg=;
-        b=PRBmAB49jSZAIg8mh24ykmR15+Iu/5sXiCDMYeUHOmk2GcLg8nlTpSwB1rA6YuJJxI
-         epFkq42/j9nuo4wCqb5xVXToUmzoHuYqDdxWUAdnjYdcc6XVdS05wO8R/D0gGE/2ONoy
-         y08UUdCde950E4kHPln95jtM7A5tntQFNA+BE=
+        Thu, 17 Jan 2019 11:22:07 -0500
+Received: by mail-qt1-f196.google.com with SMTP id v11so11968208qtc.2;
+        Thu, 17 Jan 2019 08:22:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aXeep5x7ETGFolIIRZohdiZMVYaJ9v3T7r4d/NZltdg=;
-        b=nQxaItckhQqEr9WMPbzvNRZaPKuECsa8r4geYiCWUmRBJehln3aAJ5yaqmeBz019Gd
-         sWcfueRtPu7OXF4AilCTHAxIwnU24zqVcVCrpr7vbycx+AO331X1neru1+pgflvzkNhw
-         5nZ5v+i2QhP1TSet2g077WghgRG8CgmlBy1NluALA1dSaKPuy0TEcNEfUrico3pAn4CT
-         0WIwk443YewSmMWSEcBlWVxsI7AD/Ft2c0n8cDafM2HxPj6/MZ+bNBg0FExy/wV24tkq
-         bOIoCFDX846AF+Df1lU0vVfDqeKGNGr6cdfFG4PLsXc+2/HKPk+GR05Tr/qYIkHDJ4t7
-         Kidg==
-X-Gm-Message-State: AJcUukemQ0AU7lbQVbRB7pX48BYjIdpUUEjHBJTSzRex9XMdX29Ev2C+
-        anQ4PxxZVkSl11FYbXYunJ9nqA==
-X-Google-Smtp-Source: ALg8bN5pgpCGsysvTJ6cB40fJcHPbkNW+SWYapbHRVJkjfjeFgn2sn2XVq7SUnwnZWTW8NPD0Q0apg==
-X-Received: by 2002:a5d:4d46:: with SMTP id a6mr12929529wru.28.1547742064717;
-        Thu, 17 Jan 2019 08:21:04 -0800 (PST)
-Received: from localhost.localdomain ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id v133sm31124734wmf.19.2019.01.17.08.21.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 08:21:04 -0800 (PST)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To:     linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 04/10] venus: hfi: add type argument to hfi flush function
-Date:   Thu, 17 Jan 2019 18:20:02 +0200
-Message-Id: <20190117162008.25217-5-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BfPrNcYZP0i0LRrIhY6o20XIavlGcH3tB9XloDLeW18=;
+        b=jvTFiblRj5Cf0ziiSHysc3piRoxcynep6+5DkXkZYZ6Gb6+adlkNs6us4sRDopre/a
+         3RAOKdNcNjnzRSrMAp9H4z4wnZLbhRlx5/a+4rewHpLwkQqZJRZhLLCFsdToggYuXnTk
+         ThUisgoy6lOKBbab9SY4N3t7GFsSMt4AFsdrVuozzQWpdbiI1HagZgTJ5ZfwGpwpVh/g
+         nYvyQw/U6PQpHlKMP7NQxJePoUI6fol9Hb/TOvgrIjSgY0wKVizpeZwH4J159UBjlQth
+         UmQuK1RZLtmbL6b2IeoamqkO47uNOPA1JA80DD8LSrvICsEjsO0DIjKfnLvWCc77CoHF
+         EdXQ==
+X-Gm-Message-State: AJcUukcG2RKS+6sOCxYOijLiaauZAhrzDsdwiz50wqE+e1GypZ4uB/2o
+        JETmuPETUL99xRatXe2gtV8xzdMs6ni0TGtrA4v7yA==
+X-Google-Smtp-Source: ALg8bN6iJyjLy+u58V6GX5QsbbZNrzSgjW8ORlgHPHIFXNYsAG9Q5od8R4iIxL5EPRGGMYamIQKKJU2VJjvsyvC1VWo=
+X-Received: by 2002:ac8:4141:: with SMTP id e1mr11642121qtm.96.1547742126732;
+ Thu, 17 Jan 2019 08:22:06 -0800 (PST)
+MIME-Version: 1.0
+References: <20190116131527.2071570-1-arnd@arndb.de> <20190117133619.GD18351@osiris>
+In-Reply-To: <20190117133619.GD18351@osiris>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 17 Jan 2019 17:21:50 +0100
+Message-ID: <CAK8P3a2KvCwAa5yp+f_cZOX4Osd_tvwfBto=aMEMW9TNbePQ9w@mail.gmail.com>
+Subject: Re: [PATCH 0/5] s390: rework compat wrapper generation
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make hfi_flush function to receive an argument for the type
-of flush.
+On Thu, Jan 17, 2019 at 2:36 PM Heiko Carstens
+<heiko.carstens@de.ibm.com> wrote:
+>
+> On Wed, Jan 16, 2019 at 02:15:18PM +0100, Arnd Bergmann wrote:
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/hfi.c | 4 ++--
- drivers/media/platform/qcom/venus/hfi.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> > I did not test the changes at runtime, but I looked at the
+> > generated object code, which seems fine here and includes
+> > the same conversions as before.
+>
+> All looks good and seems to work fine. This is a very nice
+> simplification of our compat code, even if it adds some dead code to
+> the kernel image.
+>
+> I did some tests and it all looks good. Also the generated code looks
+> fine. So, if nothing breaks, this will go upstream with next merge
+> window via the s390 tree.
+>
+> Thanks again for your work!
 
-diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
-index 24207829982f..0b3c4a2328e4 100644
---- a/drivers/media/platform/qcom/venus/hfi.c
-+++ b/drivers/media/platform/qcom/venus/hfi.c
-@@ -384,14 +384,14 @@ int hfi_session_unload_res(struct venus_inst *inst)
- 	return 0;
- }
- 
--int hfi_session_flush(struct venus_inst *inst)
-+int hfi_session_flush(struct venus_inst *inst, u32 type)
- {
- 	const struct hfi_ops *ops = inst->core->ops;
- 	int ret;
- 
- 	reinit_completion(&inst->done);
- 
--	ret = ops->session_flush(inst, HFI_FLUSH_ALL);
-+	ret = ops->session_flush(inst, type);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/media/platform/qcom/venus/hfi.h b/drivers/media/platform/qcom/venus/hfi.h
-index 6038d8e0ab22..a216914f88bf 100644
---- a/drivers/media/platform/qcom/venus/hfi.h
-+++ b/drivers/media/platform/qcom/venus/hfi.h
-@@ -170,7 +170,7 @@ int hfi_session_continue(struct venus_inst *inst);
- int hfi_session_abort(struct venus_inst *inst);
- int hfi_session_load_res(struct venus_inst *inst);
- int hfi_session_unload_res(struct venus_inst *inst);
--int hfi_session_flush(struct venus_inst *inst);
-+int hfi_session_flush(struct venus_inst *inst, u32 type);
- int hfi_session_set_buffers(struct venus_inst *inst,
- 			    struct hfi_buffer_desc *bd);
- int hfi_session_unset_buffers(struct venus_inst *inst,
--- 
-2.17.1
+Awesome, thanks for testing it so quickly and agreeing to merge it!
 
+There is a dependency that I now have for my y2038 syscall series
+of course, so I'd need to have those patches on top of the s390 series.
+
+I think we can either have a shared git branch that gets merged both
+into your s390 tree and my y2038 tree, or we merge it only through
+my tree, with your Ack.
+
+Does that work for you?
+
+     Arnd
