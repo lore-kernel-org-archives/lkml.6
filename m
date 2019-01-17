@@ -2,129 +2,124 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F032C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 642D0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12BC920675
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3197620651
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:07:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sVri7sll"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfAQBFW (ORCPT
+        id S1727300AbfAQBHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 20:05:22 -0500
-Received: from mout.gmx.net ([212.227.17.22]:35123 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbfAQBFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 20:05:22 -0500
-Received: from longitude ([89.0.34.110]) by mail.gmx.com (mrgmx103
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MGip3-1gWTrl3vcn-00DXJN; Thu, 17
- Jan 2019 02:05:13 +0100
-Date:   Thu, 17 Jan 2019 02:05:09 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Jonathan Neuschafer <j.neuschaefer@gmx.net>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        stable@vger.kernel.org
-Subject: Re: [RESENDING PATCH] powerpc/wii: properly disable use of BATs when
- requested.
-Message-ID: <20190117010509.GH22334@latitude>
-References: <7e6748349978f4f177b6a1f3f1c773da98ae3b59.1547570012.git.christophe.leroy@c-s.fr>
+        Wed, 16 Jan 2019 20:07:20 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:56248 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbfAQBHU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 20:07:20 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0H14ESo136681;
+        Thu, 17 Jan 2019 01:07:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=2yaE5uM2adhOSD1zdQ+y4kx25xSnvz/OGPo4CJW2q+w=;
+ b=sVri7slljbsysR9z2s5ZjYVrvfLW+DMJjJ8rrqEiZlDrg0kkjBkwdQRBY5aSIB6D3ADq
+ Kl/kQM3ZhFmcS+V29+9C9OskQ4iMLOadi99OqN5oc/SRRwxrN1aFHAss+m4naAYVRrNZ
+ mGA1u46CAjtT2N8s7tn2oY9i6toYuuSk1LiDxQCI02oRc1plnkDcT3heGImfzBbQjcSH
+ wXDtTdc++Uilo7osVEBKpUANDqXwmP64rLUlmRiD2ttZkfXSDpDRraZZ6PjuxxraYqOy
+ 4toEBT7irvQ3JnjgQkxQYo/YAV2TjaPzDAIx/21bKL0dABRplBR3qO/fbR5hBT9rkxq7 2A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2pybjsd6ay-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 01:07:12 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0H17BPp013313
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 01:07:11 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0H17ARW031844;
+        Thu, 17 Jan 2019 01:07:10 GMT
+Received: from [10.159.231.6] (/10.159.231.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Jan 2019 17:07:10 -0800
+Subject: Re: [PATCH] mm: hwpoison: use do_send_sig_info() instead of
+ force_sig() (Re: PMEM error-handling forces SIGKILL causes kernel panic)
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <e3c4c0e0-1434-4353-b893-2973c04e7ff7@oracle.com>
+ <CAPcyv4j67n6H7hD6haXJqysbaauci4usuuj5c+JQ7VQBGngO1Q@mail.gmail.com>
+ <20190111081401.GA5080@hori1.linux.bs1.fc.nec.co.jp>
+ <20190116093046.GA29835@hori1.linux.bs1.fc.nec.co.jp>
+ <97e179e1-8a3a-5acb-78c1-a4b06b33db4c@oracle.com>
+ <20190116233207.GA5868@hori1.linux.bs1.fc.nec.co.jp>
+From:   Jane Chu <jane.chu@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <6fa27824-d86d-f642-db7c-a13faaac527d@oracle.com>
+Date:   Wed, 16 Jan 2019 17:07:09 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ulDeV4rPMk/y39in"
-Content-Disposition: inline
-In-Reply-To: <7e6748349978f4f177b6a1f3f1c773da98ae3b59.1547570012.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:cyDBWVVTRYaWOVmOOSJGQacNT7qwshP67Nxe35TZwkmTif0ZNcL
- QFhi0wAsBvVhRoUGqC8NNmAcOu3XrMpfCA11FE+1dKLM1yJ1uqPW6GsQtldMwY1SRsUsGuh
- etWZCbPM3NuOHm21C3mXKZSRTktQ4RcfixZaE0DBewfJ3BlpzoRnuQMnA5Vo8tBFjCNg5u1
- lGebbvKuhzM6nil+8m80g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Y/2qgP2U+VI=:BWhNPri8+81V93gRdMD2gY
- 1tAexu19Q3U0WDM5j73OQ6JwxF7oQH6GueVyBPClj3ETDWZ1+oNdiIkdsluApR9zTSirI1+0H
- i5/wag5I0VE6gQ7PM3BSIln6kJxfQdmmB2HJmzLy/xUeQY3rYiqWY/SvW2j1FCBQZ/i4wp8GF
- DGxMD1naIy9gBaPCUs0bflar0KE7cAOEXMgA/y6yWEwaKpa3VfLb8RiYLZRRlmzw8YqFQtC3d
- mvnu5BEHlYCGcX7dXgbJnnz1XqJQ4Ej8p4TxruqBUbDaJI0g5DGzkjNmEXtRGuNnnax7euEEy
- JtSErsS0OoXnlL/EtyhkMJjNnRbgttBdzE+EGw1Ht+AYT6EDMgbKz0QFfthY2cBQ+hM9h3vzX
- XjgJeZVpWqDqBaK8ZN43WDCHrVQxWVaEcTrNRHRvFNQVjAKZOzXinQP74kD5kXRO4rpz6QRIf
- Ec0odd3Wqbczu2qm3lDgCHeTjpsCm0JjEAGzyauRyTorPCYXXOMJwpHsxWV/zQVZ3QTRBScdC
- zHil6CtJRbSwNd1MvFzF04JWQFaMCgMkPmrDO+YXRsRHPbuC3f7abEQ8kw05jgPg0OGaPX3Kl
- HwAlgyL8hVpJ/h6idDEOTcOMC90eSrexL2zWILEMrImJhvjMa8WxDyfqzFAK0I8NGBjrVmSFf
- zU4iMydfxuPtX4ajXSAimHFnQ7INnOiqSmqZutTnzbMkHNKTueBJNdLIcF89o2AtEIfyUVhvd
- Nve15naglFeB3VWUBpJZImhuNVFl8EyAW1Ng53SD3jRS8LqdzmHPZCI9zTDm4xvQgnswvSguW
- 4620Etq7OGmLTVcedyFOOLNzTbJRX0WXSmgcc0FGowTFzIb64P+DQmFRQY9WYW61ST+kCq6nT
- +2/zRb18hAURc3qmI631LbreOTRx2HQWarY7/pzrSl97YEJQ+gmz/lquoDpzw3
+In-Reply-To: <20190116233207.GA5868@hori1.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9138 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901170005
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ulDeV4rPMk/y39in
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi again,
+On 1/16/2019 3:32 PM, Naoya Horiguchi wrote:
+> Hi Jane,
+> 
+> On Wed, Jan 16, 2019 at 09:56:02AM -0800, Jane Chu wrote:
+>> Hi, Naoya,
+>>
+>> On 1/16/2019 1:30 AM, Naoya Horiguchi wrote:
+>>
+>>      diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>>      index 7c72f2a95785..831be5ff5f4d 100644
+>>      --- a/mm/memory-failure.c
+>>      +++ b/mm/memory-failure.c
+>>      @@ -372,7 +372,8 @@ static void kill_procs(struct list_head *to_kill, int forcekill, bool fail,
+>>                              if (fail || tk->addr_valid == 0) {
+>>                                      pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
+>>                                             pfn, tk->tsk->comm, tk->tsk->pid);
+>>      -                               force_sig(SIGKILL, tk->tsk);
+>>      +                               do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
+>>      +                                                tk->tsk, PIDTYPE_PID);
+>>                              }
+>>
+>>
+>> Since we don't care the return from do_send_sig_info(), would you mind to
+>> prefix it with (void) ?
+> 
+> Sorry, I'm not sure about the benefit to do casting the return value
+> just being ignored, so personally I'd like keeping the code simple.
+> Do you have some in mind?
 
-On Tue, Jan 15, 2019 at 04:43:20PM +0000, Christophe Leroy wrote:
-> 'nobats' kernel parameter or some options like CONFIG_DEBUG_PAGEALLOC
-> deny the use of BATS for mapping memory.
->=20
-> This patch makes sure that the specific wii RAM mapping function
-> takes it into account as well.
->=20
-> Fixes: de32400dd26e ("wii: use both mem1 and mem2 as ram")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
-[...]
->  	/* MEM2 64MB@0x10000000 */
->  	delta =3D wii_hole_start + wii_hole_size;
-> +	if (__map_without_bats)
-> +		return delta;
-> +
+It's just coding style I'm used to, no big deal.
+Up to you to decide. :)
 
-Nothing is visibly broken without this patch, even with
-CONFIG_DEBUG_PAGEALLOC (tested on top of v5.0-rc2), but the patch still
-looks correct.
+thanks,
+-jane
 
-I'd prefer the 'if' block to be before the whole delta/size calculation,
-to make the code slightly more readable because the delta and size
-calculations stay in one visual block. It doesn't need to happen after
-delta is calculated.
-
-tentatively,
-Reviewed-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-
-
-Thanks,
-Jonathan
-
---ulDeV4rPMk/y39in
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlw/1LwACgkQCDBEmo7z
-X9t15w/9HAIpyLsvt8vSwK4gfTd5obM3aiOswCoMWl5NJty0FA0ptb8htS29OHfe
-vvJ99HXuAh7Mg+2wtXIwqNZs7lk1EVT6N80ORj4LP7xQCzxR1q6BWaWPmSDjTtQw
-aeub/Px9Ldb7Ynglqys4fnsEi9MWUVYa++WvZ5s8UOMk6wRfxOIItUvSnOwVgATG
-KvXc7t1OJsJbgU+Goay6HggyQNmk4G9asv+OtD+hVazDpHiEOeQYweGLlQ2/lgjI
-MaEZ7FRZLqqBjTviCXkLLUJ5wkR9+Q6wioDU9ss1eHczuZinfUDoY5LYnj3oqOwn
-vLiC+HbaV2yniS6CHRLXEyonnBzVX0MHTjSiQRmfZBbX2rAaXrQbV/JUztswA/3A
-KcDERzAr2R1ZUgp8aNELQQJC5n3BhCutXJ/CndsDkqrQq5FJOEpfmuUmoJYvf+1q
-vkrLmezvcrlcgPn2H4iDi/986BAGvJNdPq0cN8x2qusn1Onb1JM7HeyNC06JR3BM
-ILCTpmpDm2lKkEL0lbFSACeIvFcuQk2A/778w/RT9Z3WN4NONthnObD79h2RFNQu
-1XmWMLgIyjTrOl5zDITwa6LsleEkDeIQo7h+3qdbytDXQAMHQhsz8nJNDh6kL6kT
-o8lhk28kHVMQGiGtp1M8VJBdW1KctUKwBOuprSAtJts9x8YPiYE=
-=ftf9
------END PGP SIGNATURE-----
-
---ulDeV4rPMk/y39in--
+> 
+> - Naoya
+> 
