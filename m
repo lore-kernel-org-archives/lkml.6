@@ -2,150 +2,126 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFA1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0038AC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D820820851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD5AF20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:01:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QZrDnw6f"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LSuNPn19"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfAQL6K (ORCPT
+        id S1727200AbfAQMBh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:58:10 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40685 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbfAQL6J (ORCPT
+        Thu, 17 Jan 2019 07:01:37 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:60813 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbfAQMBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:58:09 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f188so753206wmf.5
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 03:58:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ltGnCxcWg0Ap4FsMopVRb/SaOLjtiOKjd7M3xkCFCV4=;
-        b=QZrDnw6f6/HAgutYsVDYjBe112BeTPj2zWjL6D3p3AtvCmy6FD2IXiIdvxgzBwy7fX
-         HCzhlSuCq8ZlcHIH60w3p0shmQ46MxByiwQbk3xahnLoGnbQ+sRZR/kwvFeC96ox0VNq
-         pcoI+yWFycvtE+oJTARr9i8Tg2ptJLUn1ZIeQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ltGnCxcWg0Ap4FsMopVRb/SaOLjtiOKjd7M3xkCFCV4=;
-        b=i2HLLUhhbUwYrR2YhJoaXCAn93ztvaEqVLdMsH7Wd6ytCRYfXctslVrzY1k5sRcxkO
-         l4I1hJu0PMYuBZIo1zQpX5qbvhTZt9vd58KIatrBC1ojluSx40woHMfxGKt7Oe7W5/DL
-         AxDQD9wykRNHUwdU0Tmcp8vyKQw2Tyu5VrSLwLNLiEME6WdR/iva/WHOswlejRMtLQ7f
-         aYAp8WmpUYriK9TdhSDu5p3DdfVZg5Wu52ZQpBPFjaMHCR53LRQzik70EvAqAknem0Hu
-         /moDwy6P6MtH3++tuENDI2YsdFMqQuwRDA3wfx1VrhkqYP7n4e6zB5dEfJuCTNScnWWx
-         SHJw==
-X-Gm-Message-State: AJcUukc/NLYkyIxCsIJUPkfP2RWJM27QMKzgUK8m7NuEthkfMXBqRZE8
-        uk/fbemYGULt0rHtZe1vhMK/AQ==
-X-Google-Smtp-Source: ALg8bN6q9Jly6ShQSpKbxeglTag1G7LNCDlRkQyALblhNBxA1GA10Ihh1QvbNB7+qc9F1b3TRijG3Q==
-X-Received: by 2002:a1c:dd04:: with SMTP id u4mr11421498wmg.84.1547726287926;
-        Thu, 17 Jan 2019 03:58:07 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id 143sm78008876wml.14.2019.01.17.03.58.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 03:58:07 -0800 (PST)
-Subject: Re: [PATCH v3] arm64: dts: sdm845: add video nodes
-To:     Malathi Gottam <mgottam@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
-        vgarodia@codeaurora.org
-References: <1545292023-5489-1-git-send-email-mgottam@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <0ee6676f-f169-1ea1-506e-16e4097d1c04@linaro.org>
-Date:   Thu, 17 Jan 2019 13:58:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 17 Jan 2019 07:01:36 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D581025B760;
+        Thu, 17 Jan 2019 23:01:30 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1547726491; bh=ruO83q8hxHJPFPBe8ARuOetb0LH4VO1rcbBXKkUkhoY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LSuNPn1936n1B55LUqi84bmAQWPc/piETE0uNpiB1thlPqDnf60WP/pcnedzMoWaC
+         yfxiaqmXiVgvD4kx+ubhrML+85QR9tWK78FhjWE/UUbxRIuJvAwOeC5cZhxiSoWx37
+         mfCMuqIo21iIcNap/eWdAJyFbwX8YApdq9KW6ldk=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 45739940459; Thu, 17 Jan 2019 13:01:29 +0100 (CET)
+Date:   Thu, 17 Jan 2019 13:01:29 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
+        linux-kernel@vger.kernel.org, ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH 09/11] dt-bindings: can: rcar_can: Fix RZ/G2 CAN clocks
+Message-ID: <20190117120128.arjdug2mhqyuvq3k@verge.net.au>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-10-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1545292023-5489-1-git-send-email-mgottam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547663874-29411-10-git-send-email-fabrizio.castro@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Malathi,
+On Wed, Jan 16, 2019 at 06:37:52PM +0000, Fabrizio Castro wrote:
+> According to the latest information, the clock options for CAN on RZ/G2
+> are the same as the ones available on R-Car Gen3
 
-On 12/20/18 9:47 AM, Malathi Gottam wrote:
-> This adds video nodes to sdm845 based on the examples
-> in the bindings.
-> 
-> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+I'm taking your word for the above.
+As the patch matches the description:
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+> Fixes: 868b7c0f43e6 ("dt-bindings: can: rcar_can: Add r8a774a1 support")
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 > ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 35 +++++++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-
-Looks good to me:
-
-Reviewed-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-
+>  Documentation/devicetree/bindings/net/can/rcar_can.txt | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index b72bdb0..ccd2b10 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -87,6 +87,11 @@
->  			reg = <0 0x86200000 0 0x2d00000>;
->  			no-map;
->  		};
-> +
-> +		venus_region: memory@95800000 {
-> +			reg = <0x0 0x95800000 0x0 0x500000>;
-> +			no-map;
-> +		};
->  	};
+> diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> index 7fcf501..b463e12 100644
+> --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> @@ -28,13 +28,8 @@ Required properties:
 >  
->  	cpus {
-> @@ -1403,5 +1408,35 @@
->  				status = "disabled";
->  			};
->  		};
-> +
-> +		video-codec@aa00000 {
-> +			compatible = "qcom,sdm845-venus";
-> +			reg = <0x0aa00000 0xff000>;
-> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-> +			power-domains = <&videocc VENUS_GDSC>;
-> +			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
-> +				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
-> +				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>;
-> +			clock-names = "core", "iface", "bus";
-> +			iommus = <&apps_smmu 0x10a0 0x8>,
-> +				 <&apps_smmu 0x10b0 0x0>;
-> +			memory-region = <&venus_region>;
-> +
-> +			video-core0 {
-> +				compatible = "venus-decoder";
-> +				clocks = <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
-> +					 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
-> +				clock-names = "core", "bus";
-> +				power-domains = <&videocc VCODEC0_GDSC>;
-> +			};
-> +
-> +			video-core1 {
-> +				compatible = "venus-encoder";
-> +				clocks = <&videocc VIDEO_CC_VCODEC1_CORE_CLK>,
-> +					 <&videocc VIDEO_CC_VCODEC1_AXI_CLK>;
-> +				clock-names = "core", "bus";
-> +				power-domains = <&videocc VCODEC1_GDSC>;
-> +			};
-> +		};
->  	};
->  };
+>  - reg: physical base address and size of the R-Car CAN register map.
+>  - interrupts: interrupt specifier for the sole interrupt.
+> -- clocks: phandles and clock specifiers for 2 CAN clock inputs for RZ/G2
+> -	  devices.
+> -	  phandles and clock specifiers for 3 CAN clock inputs for every other
+> -	  SoC.
+> -- clock-names: 2 clock input name strings for RZ/G2: "clkp1", "can_clk".
+> -	       3 clock input name strings for every other SoC: "clkp1", "clkp2",
+> -	       "can_clk".
+> +- clocks: phandles and clock specifiers for 3 CAN clock inputs.
+> +- clock-names: 3 clock input name strings: "clkp1", "clkp2", and "can_clk".
+>  - pinctrl-0: pin control group to be used for this controller.
+>  - pinctrl-names: must be "default".
+>  
+> @@ -50,8 +45,7 @@ using the below properties:
+>  Optional properties:
+>  - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
+>  			    <0x0> (default) : Peripheral clock (clkp1)
+> -			    <0x1> : Peripheral clock (clkp2) (not supported by
+> -				    RZ/G2 devices)
+> +			    <0x1> : Peripheral clock (clkp2)
+>  			    <0x3> : External input clock
+>  
+>  Example
+> -- 
+> 2.7.4
 > 
-
--- 
-regards,
-Stan
