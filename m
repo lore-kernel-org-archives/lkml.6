@@ -2,156 +2,75 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DA9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 654D0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E216A20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547737076;
-	bh=X1ezWKZbAVJffvFEijXJReFElLQuF9FuVUuwkZZcLW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=me2kk5evoSyYq8u922B+wAyURw6Ar2qTp+Do4o3klFtpKCWno5O3cgmsp+vG9jNAs
-	 wZP8zp0PFYYlv8/oxWHWGTyViSDmfQ1QJV8tEpgGRfA9TfSgc5+3hFc5J7cKqAhdPs
-	 ZjwNzV9yIsJVnC4b9nicZecxNDsY8RHyJEhyyXqA=
+	by mail.kernel.org (Postfix) with ESMTP id 35D8120851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 14:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfAQO5y (ORCPT
+        id S1727882AbfAQO6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 09:57:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40416 "EHLO mail.kernel.org"
+        Thu, 17 Jan 2019 09:58:23 -0500
+Received: from gate.crashing.org ([63.228.1.57]:41068 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726913AbfAQO5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 09:57:53 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A102420851;
-        Thu, 17 Jan 2019 14:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547737072;
-        bh=X1ezWKZbAVJffvFEijXJReFElLQuF9FuVUuwkZZcLW0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k1J+QDBuACHCCp7nv5/ZVDJdtsPkq34MS0dQzJjQMS8Z+mUuZ7A/0EEjC1u1k+oZU
-         +LWIYkP0rl10OFkSGNOqDV2sSrj1d9oFp7N+V5MX/lA2RUytPYLsRPKSOHaDP9tYXk
-         w3GRA/HkL2IEgIxJdUs7UsvMVRcidPq5sod91BDk=
-Date:   Thu, 17 Jan 2019 08:57:51 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ajay Kaher <akaher@vmware.com>
-Cc:     kys@microsoft.com, haiyangz@microsoft.com,
-        devel@linuxdriverproject.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Long Li <longli@microsoft.com>
-Subject: Re: [PATCH 1/3] PCI: hv: Allocate physically contiguous hypercall
- params buffer
-Message-ID: <20190117145751.GD158366@google.com>
-References: <1547758038-5255-1-git-send-email-akaher@vmware.com>
- <1547758038-5255-2-git-send-email-akaher@vmware.com>
-MIME-Version: 1.0
+        id S1726913AbfAQO6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 09:58:23 -0500
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x0HEqabh031907;
+        Thu, 17 Jan 2019 08:52:36 -0600
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x0HEqYcN031906;
+        Thu, 17 Jan 2019 08:52:34 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Thu, 17 Jan 2019 08:52:33 -0600
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>, linux-kernel@vger.kernel.org,
+        Torsten Duwe <duwe@lst.de>, live-patching@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: ppc64le reliable stack unwinder and scheduled tasks
+Message-ID: <20190117145233.GQ14180@gate.crashing.org>
+References: <7f468285-b149-37e2-e782-c9e538b997a9@redhat.com> <20190112010914.GB10427@350D> <20190112084541.GK14180@gate.crashing.org> <20190113123356.GA26056@350D>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547758038-5255-2-git-send-email-akaher@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190113123356.GA26056@350D>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 02:17:16AM +0530, Ajay Kaher wrote:
-> hv_do_hypercall() assumes that we pass a segment from a physically
-> contiguous buffer.  A buffer allocated on the stack may not work if
-> CONFIG_VMAP_STACK=y is set.
+On Sun, Jan 13, 2019 at 11:33:56PM +1100, Balbir Singh wrote:
+> On Sat, Jan 12, 2019 at 02:45:41AM -0600, Segher Boessenkool wrote:
+> > On Sat, Jan 12, 2019 at 12:09:14PM +1100, Balbir Singh wrote:
+> > > Could you please define interesting frame on top a bit more? Usually
+> > > the topmost return address is in LR
+> > 
+> > There is no reliable way (other than DWARF unwind info) to find out where
+> > the value of LR at function entry currently lives (if anywhere). It may or
+> > may not be still available in LR, it may or may not be saved to the return
+> > stack slot.  It can also live in some GPR, or in some other stack slot.
+> > 
+> > (The same is true for all other registers).
+> > 
+> > The only thing the ABI guarantees you is that you can find all stack frames
+> > via the back chain.  If you want more you can use some heuristics and do
+> > some heroics (like GDB does), but this is not fully reliable.  Using DWARF
+> > unwind info is, but that requires big tables.
+> >
 > 
-> Use kmalloc() to allocate this buffer.
-> 
-> Reported-by: Haiyang Zhang <haiyangz@microsoft.com>
-> Signed-off-by: Long Li <longli@microsoft.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Thanks, so are you suggesting that a reliable stack is not possible on
+> ppc64le? Even with the restricted scope of the kernel?
 
-I did not sign off on this; please remove this.  Signed-off-by should
-only be added by the person mentioned.
+It depends on what you mean with "reliable stack unwinder".  You can unwind
+the stack reliably on Power, but you want more, you want to know where some
+state local to functions is kept on the stack.
 
-> Acked-by: K. Y. Srinivasan <kys@microsoft.com>
-> Signed-off-by: Ajay Kaher <akaher@vmware.com>
-> ---
->  drivers/pci/host/pci-hyperv.c | 29 +++++++++++++++++++----------
->  1 file changed, 19 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-> index b4d8ccf..9e44adf 100644
-> --- a/drivers/pci/host/pci-hyperv.c
-> +++ b/drivers/pci/host/pci-hyperv.c
-> @@ -383,6 +383,8 @@ struct hv_pcibus_device {
->  	struct msi_domain_info msi_info;
->  	struct msi_controller msi_chip;
->  	struct irq_domain *irq_domain;
-> +	struct retarget_msi_interrupt retarget_msi_interrupt_params;
-> +	spinlock_t retarget_msi_interrupt_lock;
->  };
->  
->  /*
-> @@ -780,34 +782,40 @@ void hv_irq_unmask(struct irq_data *data)
->  {
->  	struct msi_desc *msi_desc = irq_data_get_msi_desc(data);
->  	struct irq_cfg *cfg = irqd_cfg(data);
-> -	struct retarget_msi_interrupt params;
-> +	struct retarget_msi_interrupt *params;
->  	struct hv_pcibus_device *hbus;
->  	struct cpumask *dest;
->  	struct pci_bus *pbus;
->  	struct pci_dev *pdev;
->  	int cpu;
-> +	unsigned long flags;
->  
->  	dest = irq_data_get_affinity_mask(data);
->  	pdev = msi_desc_to_pci_dev(msi_desc);
->  	pbus = pdev->bus;
->  	hbus = container_of(pbus->sysdata, struct hv_pcibus_device, sysdata);
->  
-> -	memset(&params, 0, sizeof(params));
-> -	params.partition_id = HV_PARTITION_ID_SELF;
-> -	params.source = 1; /* MSI(-X) */
-> -	params.address = msi_desc->msg.address_lo;
-> -	params.data = msi_desc->msg.data;
-> -	params.device_id = (hbus->hdev->dev_instance.b[5] << 24) |
-> +	spin_lock_irqsave(&hbus->retarget_msi_interrupt_lock, flags);
-> +
-> +	params = &hbus->retarget_msi_interrupt_params;
-> +	memset(params, 0, sizeof(*params));
-> +	params->partition_id = HV_PARTITION_ID_SELF;
-> +	params->source = 1; /* MSI(-X) */
-> +	params->address = msi_desc->msg.address_lo;
-> +	params->data = msi_desc->msg.data;
-> +	params->device_id = (hbus->hdev->dev_instance.b[5] << 24) |
->  			   (hbus->hdev->dev_instance.b[4] << 16) |
->  			   (hbus->hdev->dev_instance.b[7] << 8) |
->  			   (hbus->hdev->dev_instance.b[6] & 0xf8) |
->  			   PCI_FUNC(pdev->devfn);
-> -	params.vector = cfg->vector;
-> +	params->vector = cfg->vector;
->  
->  	for_each_cpu_and(cpu, dest, cpu_online_mask)
-> -		params.vp_mask |= (1ULL << vmbus_cpu_number_to_vp_number(cpu));
-> +		params->vp_mask |= (1ULL << vmbus_cpu_number_to_vp_number(cpu));
-> +
-> +	hv_do_hypercall(HVCALL_RETARGET_INTERRUPT, params, NULL);
->  
-> -	hv_do_hypercall(HVCALL_RETARGET_INTERRUPT, &params, NULL);
-> +	spin_unlock_irqrestore(&hbus->retarget_msi_interrupt_lock, flags);
->  
->  	pci_msi_unmask_irq(data);
->  }
-> @@ -2212,6 +2220,7 @@ static int hv_pci_probe(struct hv_device *hdev,
->  	INIT_LIST_HEAD(&hbus->resources_for_children);
->  	spin_lock_init(&hbus->config_lock);
->  	spin_lock_init(&hbus->device_list_lock);
-> +	spin_lock_init(&hbus->retarget_msi_interrupt_lock);
->  	sema_init(&hbus->enum_sem, 1);
->  	init_completion(&hbus->remove_event);
->  
-> -- 
-> 2.7.4
-> 
+
+Segher
