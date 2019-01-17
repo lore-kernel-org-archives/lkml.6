@@ -2,41 +2,81 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C825C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B05C4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61DEC20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8056420657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:38:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fqMWms08"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730766AbfAQIgR (ORCPT
+        id S1727970AbfAQIiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:36:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35350 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726785AbfAQIgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:36:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 06DB9AD0A;
-        Thu, 17 Jan 2019 08:36:14 +0000 (UTC)
-Subject: Re: kernel BUG at mm/page_alloc.c:LINE!
-To:     syzbot <syzbot+80dd4798c16c634daf15@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, iamjoonsoo.kim@lge.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mgorman@techsingularity.net, mhocko@suse.com, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000cdc61b057f9e360e@google.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <e4cb6380-b462-857e-3219-319fdbfa6f81@suse.cz>
-Date:   Thu, 17 Jan 2019 09:33:09 +0100
+        Thu, 17 Jan 2019 03:38:21 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41147 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbfAQIiV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 03:38:21 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x10so9949511wrs.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 00:38:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TUa7v44EgL51hqJdpJbqu9DZEckjKML/2Dfdppi/ENE=;
+        b=fqMWms08tAtamGiiA6y4t6ZIt2keKs81seHvpVhDYMWC3D4WpnFk1qAK5yikFmIBFf
+         LwiNIQQuXhwhJHNB75wRiva9svb11nqKl2KE3szXtl2xomYQkjQrp3RcW2nPAJG+Iyur
+         EqIfK8caZ3jtTiiVu4/TPv3MxJrENPrRz7dpE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TUa7v44EgL51hqJdpJbqu9DZEckjKML/2Dfdppi/ENE=;
+        b=nTrxpSP4YMgKhYJyB7t20OEBFEkLAa0obPCNWPXASBKp9idyKJuFFxjRsd3g4zr4JD
+         6yaNvzYVY09mSImWM/YbWtjsohiLfz2KyKqCSPFrrfzoOQC/mYUuNY/eNBcBEbKMooJM
+         Sb2bVY/eUDwx54tb8czm311pEO9imoL803rqJg8vT+oYVLY0MjoQFg+FCY/dSQYy0QSc
+         R2R+nJb/vh3KrBdeeqdoMmbfPlBKDkd/3ZhOSczWgQgwNvhV3MG1c3K0R1nKrA2Ab04b
+         oKpdH9eWwiVD1ldm9F+DMoSZm+c37Ht6VR2rYit2AlZAeEQ04PdxrqiTlubmfYOtVAhd
+         hh4w==
+X-Gm-Message-State: AJcUukdAppwBockMeIlpHbTunqrKh6pPcYiyWzjGIcprOWxDWb/NbivJ
+        BjoA6s5z05ljsCrGDqUy0Mlt3g==
+X-Google-Smtp-Source: ALg8bN6+5FHCyE61OT0u4whQA+qc0ReIsDotQjaFj3HTMiktBe1MtVo8XThYvV3D2lTGfHLjIyvnZQ==
+X-Received: by 2002:adf:b102:: with SMTP id l2mr10609682wra.296.1547714298758;
+        Thu, 17 Jan 2019 00:38:18 -0800 (PST)
+Received: from [192.168.1.2] (92.red-83-34-185.dynamicip.rima-tde.net. [83.34.185.92])
+        by smtp.gmail.com with ESMTPSA id f2sm94297783wre.34.2019.01.17.00.38.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 00:38:18 -0800 (PST)
+Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com,
+        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <20190117063312.GE25498@builder>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org>
+Date:   Thu, 17 Jan 2019 09:38:16 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <000000000000cdc61b057f9e360e@google.com>
+In-Reply-To: <20190117063312.GE25498@builder>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -45,108 +85,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 3:33 AM, syzbot wrote:
-> Hello> syzbot found the following crash on:
+On 1/17/19 07:33, Bjorn Andersson wrote:
+> On Mon 17 Dec 01:46 PST 2018, Jorge Ramirez-Ortiz wrote:
 > 
-> HEAD commit:    b808822a75a3 Add linux-next specific files for 20190111
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16a471d8c00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c052ead0aed5001b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=80dd4798c16c634daf15
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>> When COMMON_CLK_DISABLED_UNUSED is set, in an effort to save power and
+>> to keep the software model of the clock in line with reality, the
+>> framework transverses the clock tree and disables those clocks that
+>> were enabled by the firmware but have not been enabled by any device
+>> driver.
+>>
+>> If CPUFREQ is enabled, early during the system boot, it might attempt
+>> to change the CPU frequency ("set_rate"). If the HFPLL is selected as
+>> a provider, it will then change the rate for this clock.
+>>
+>> As boot continues, clk_disable_unused_subtree will run. Since it wont
+>> find a valid counter (enable_count) for a clock that is actually
+>> enabled it will attempt to disable it which will cause the CPU to
+>> stop. Notice that in this driver, calls to check whether the clock is
+>> enabled are routed via the is_enabled callback which queries the
+>> hardware.
+>>
 > 
-> Unfortunately, I don't have any reproducer for this crash yet.
+> With the CPUFREQ referencing the CPU clock driver, that has decided to
+> run off this clock, why is it not refcounted?
+
+COMMON_CLK_DISABLED_UNUSED relies on the enable_count reference counter
+to disable the clocks that were enabled by the firwmare and not by the
+drivers.
+
+the cpufreq driver does not enable the cpu clock.
+
+so when clk_change_rate is called, the enable_count counter is not
+incremented and therefore it just remains null since this was enabled by
+the firmware.
+
+I tried doing:
+
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index e58bfcb..5a9f83e 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -124,6 +124,10 @@ static int resources_available(void)
+                return ret;
+        }
+
++ ret = clk_prepare_enable(cpu_clk);
++ if (ret)
++         return ret;
++
+        clk_put(cpu_clk);
+
+        name = find_supply_name(cpu_dev);
+
+
+and that removed the need for CLK_IGNORE_UNUSED. But I am not sure of
+the system wide consequences of that change to cpufreq.
+
+maybe Viresh can comment?
+
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+80dd4798c16c634daf15@syzkaller.appspotmail.com
+> Regards,
+> Bjorn
 > 
-> ------------[ cut here ]------------
-> kernel BUG at mm/page_alloc.c:3112!
-
-Why does the mail subject say LINE, anyway?
-
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 1043 Comm: kcompactd0 Not tainted 5.0.0-rc1-next-20190111 #10
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> RIP: 0010:__isolate_free_page+0x4a8/0x680 mm/page_alloc.c:3112
-
-That's BUG_ON(!PageBuddy(page)); in __isolate_free_page().
-
-> Code: 4c 39 e3 77 c0 0f b6 8d 74 ff ff ff b8 01 00 00 00 48 d3 e0 e9 11 fd  
-> ff ff 48 c7 c6 a0 63 52 88 4c 89 e7 e8 6a 14 10 00 0f 0b <0f> 0b 48 c7 c6  
-> c0 64 52 88 4c 89 e7 e8 57 14 10 00 0f 0b 48 89 cf
-> RSP: 0000:ffff8880a78e6f58 EFLAGS: 00010007
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88812fffc7e0
-> RDX: 1ffff11025fff8fc RSI: 0000000000000007 RDI: ffff88812fffc7b0
-> RBP: ffff8880a78e7018 R08: ffff8880a78ce000 R09: ffffed1014f1cdf2
-> R10: ffffed1014f1cdf1 R11: 0000000000000003 R12: ffff88812fffc7b0
-> R13: 1ffff11014f1cdf2 R14: ffff88812fffc7b0 R15: ffff8880a78e6ff0
-> FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000438ca0 CR3: 0000000009871000 CR4: 00000000001426f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-> Call Trace:
->   fast_isolate_freepages mm/compaction.c:1356 [inline]
-
-Mel's new code... but might be just a victim of e.g. bad struct page
-initialization?
-
->   isolate_freepages mm/compaction.c:1429 [inline]
->   compaction_alloc+0xd05/0x2970 mm/compaction.c:1541
->   unmap_and_move mm/migrate.c:1177 [inline]
->   migrate_pages+0x48e/0x2cc0 mm/migrate.c:1417
->   compact_zone+0x2207/0x3e90 mm/compaction.c:2173
->   kcompactd_do_work+0x6de/0x1200 mm/compaction.c:2564
->   kcompactd+0x251/0x970 mm/compaction.c:2657
->   kthread+0x357/0x430 kernel/kthread.c:247
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-> Modules linked in:
+>> The following commit, rather than marking the clock critical and
+>> forcing the clock to be always enabled, addresses the above scenario
+>> making sure the clock is not disabled but it continues to rely on the
+>> firmware to enable the clock.
+>>
+>> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+>> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>> ---
+>>  drivers/clk/qcom/hfpll.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+>> index 0ffed0d..9d92f5d 100644
+>> --- a/drivers/clk/qcom/hfpll.c
+>> +++ b/drivers/clk/qcom/hfpll.c
+>> @@ -58,6 +58,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+>>  		.parent_names = (const char *[]){ "xo" },
+>>  		.num_parents = 1,
+>>  		.ops = &clk_ops_hfpll,
+>> +		.flags = CLK_IGNORE_UNUSED,
+>>  	};
+>>  
+>>  	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
+>> -- 
+>> 2.7.4
+>>
 > 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 5.0.0-rc1-next-20190111 #10 Not tainted
-> ------------------------------------------------------
 
-Dunno about that, but doesn't seem to be the root cause anyway.
-
-> -> #0 (console_owner){-.-.}:
->         lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3860
->         console_lock_spinning_enable kernel/printk/printk.c:1647 [inline]
->         console_unlock+0x516/0x1040 kernel/printk/printk.c:2452
->         vprintk_emit+0x370/0x960 kernel/printk/printk.c:1978
->         vprintk_default+0x28/0x30 kernel/printk/printk.c:2005
->         vprintk_func+0x7e/0x189 kernel/printk/printk_safe.c:398
->         printk+0xba/0xed kernel/printk/printk.c:2038
->         report_bug.cold+0x11/0x5e lib/bug.c:191
->         fixup_bug arch/x86/kernel/traps.c:178 [inline]
->         fixup_bug arch/x86/kernel/traps.c:173 [inline]
->         do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
->         do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
->         invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
->         __ClearPageBuddy include/linux/page-flags.h:706 [inline]
-
-So that's VM_BUG_ON_PAGE(!Page##uname(page), page); in
-__ClearPage##uname, so another problem with !PageBuddy.
-
->         rmv_page_order mm/page_alloc.c:744 [inline]
->         rmv_page_order mm/page_alloc.c:742 [inline]
->         __isolate_free_page+0x4a8/0x680 mm/page_alloc.c:3134
-
-But this is later in the function than the first BUG_ON, so something
-has raced with us?
-
-Also two kcompactd crashes with slightly different stacktraces, that
-would have to be a NUMA system with multiple kcompactd's?
-
->         fast_isolate_freepages mm/compaction.c:1356 [inline]
->         isolate_freepages mm/compaction.c:1429 [inline]
->         compaction_alloc+0xd05/0x2970 mm/compaction.c:1541
->         unmap_and_move mm/migrate.c:1177 [inline]
->         migrate_pages+0x48e/0x2cc0 mm/migrate.c:1417
->         compact_zone+0x2207/0x3e90 mm/compaction.c:2173
->         kcompactd_do_work+0x6de/0x1200 mm/compaction.c:2564
->         kcompactd+0x251/0x970 mm/compaction.c:2657
->         kthread+0x357/0x430 kernel/kthread.c:247
->         ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
