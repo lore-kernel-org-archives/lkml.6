@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B63E5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 586E1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D18205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 292ED205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="gcF/qtTg"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="janTDzK3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729183AbfAQAdR (ORCPT
+        id S1729313AbfAQAdV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:33:17 -0500
-Received: from onstation.org ([52.200.56.107]:54424 "EHLO onstation.org"
+        Wed, 16 Jan 2019 19:33:21 -0500
+Received: from onstation.org ([52.200.56.107]:54452 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729089AbfAQAdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:13 -0500
+        id S1729089AbfAQAdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:20 -0500
 Received: from localhost.localdomain (mobile-166-171-186-103.mycingular.net [166.171.186.103])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 3AC2D47;
-        Thu, 17 Jan 2019 00:33:10 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 2E64B47;
+        Thu, 17 Jan 2019 00:33:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1547685192;
-        bh=zbzwMVlg2WPqRhyJ01NsUFaxlBjs3rw7ss6sddvnK9M=;
+        s=default; t=1547685198;
+        bh=d311ggP8kJJGey6rkEiK9Nr2DC2Kumjo6srKw6P2yWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gcF/qtTgJFe0I2yhrSarADowpbwsShuLW+Ue9xTapZVDsHQENDoxbhMAMTjT+b/oA
-         SJ245OB3oDDVHlGIpDBtwwr1DEPyN3akCp6p1OAfQCuQaqIBsqJT8SvapG0TZ5bn7B
-         9Q9tz6ssk13sWtXbUiV9pADZ3a0ncq+ftZs5kk8c=
+        b=janTDzK3RFPaXW/JzLIsBbg7ZULrhl3VGrIxgUPTsTNfAwa8UTECwvxHZ+YzSoe5P
+         I7q5/e0I3VW+pv1lfKakxwcRkmiOY/zkXhyPI7eOsmFuEzk3etMClnw7VBqHhwKFag
+         DgznozWmVbU7P6lWG/iaWvZNeHVX0cr0AabbzIUQ=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org
@@ -44,9 +44,9 @@ Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v5 06/14] spmi: pmic-arb: disassociate old virq if hwirq mapping already exists
-Date:   Wed, 16 Jan 2019 19:32:26 -0500
-Message-Id: <20190117003234.22127-7-masneyb@onstation.org>
+Subject: [PATCH v5 08/14] ARM: dts: qcom: pm8941: add interrupt controller properties
+Date:   Wed, 16 Jan 2019 19:32:28 -0500
+Message-Id: <20190117003234.22127-9-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190117003234.22127-1-masneyb@onstation.org>
 References: <20190117003234.22127-1-masneyb@onstation.org>
@@ -55,60 +55,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check to see if the hwirq is already associated with another virq on
-this IRQ domain. If so, then disassociate it before associating the
-hwirq with the new virq.
-
-This is a temporary hack that is needed in order to not break git
-bisect for existing boards. The next patch in this series converts
-spmi-gpio to be a hierarchical IRQ chip, then there are several patches
-to update all of the device tree files, and finally this patch will be
-reverted within the same patch series.
-
-IRQs for spmi-gpio are all initially setup without an IRQ hierarchy
-on pmic-arb when mfd/qcom-spmi-pmic.c is probed (via the
-devm_of_platform_populate call) due to the interrupts property in
-device tree. Once spmi-gpio is converted to be a hierarchical IRQ chip
-in the next patch, existing users of gpio[d]_to_irq() will call
-pmic_gpio_to_irq(), and that will use the new IRQ chip code in
-spmi-gpio that sets up the IRQ in an IRQ hierarchy. The hwirq is now
-associated with two Linux virqs and interrupts will not work as
-expected. This patch corrects that issue.
-
-Driver was tested using gpio-keys and iadc/vadc on the LG Nexus 5
-(hammerhead) phone.
+Add interrupt controller properties now that spmi-gpio is a proper
+hierarchical IRQ chip. The interrupts property is no longer needed so
+remove it. Code was tested on the LG Nexus 5 (hammerhead) phone.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 Changes since v4:
 - None
 
-Patch introduced in v4.
+Changes since v3:
+- None
 
- drivers/spmi/spmi-pmic-arb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Changes since v2:
+- Remove interrupt-parent property
 
-diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-index 356bc3f66e22..b7cfee831417 100644
---- a/drivers/spmi/spmi-pmic-arb.c
-+++ b/drivers/spmi/spmi-pmic-arb.c
-@@ -744,8 +744,14 @@ static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
- 				   struct irq_domain *domain, unsigned int virq,
- 				   irq_hw_number_t hwirq)
- {
-+	unsigned int old_virq;
-+
- 	dev_dbg(&pmic_arb->spmic->dev, "virq = %u, hwirq = %lu\n", virq, hwirq);
+Changes since v1:
+- Interrupts are now two cells instead of four cells.
+- Drop unnecessary interrupts property.
+
+ arch/arm/boot/dts/qcom-pm8941.dtsi | 38 ++----------------------------
+ 1 file changed, 2 insertions(+), 36 deletions(-)
+
+diff --git a/arch/arm/boot/dts/qcom-pm8941.dtsi b/arch/arm/boot/dts/qcom-pm8941.dtsi
+index 2515c5c217ac..e65049e0fb45 100644
+--- a/arch/arm/boot/dts/qcom-pm8941.dtsi
++++ b/arch/arm/boot/dts/qcom-pm8941.dtsi
+@@ -64,42 +64,8 @@
+ 			reg = <0xc000>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
+-				     <0 0xc1 0 IRQ_TYPE_NONE>,
+-				     <0 0xc2 0 IRQ_TYPE_NONE>,
+-				     <0 0xc3 0 IRQ_TYPE_NONE>,
+-				     <0 0xc4 0 IRQ_TYPE_NONE>,
+-				     <0 0xc5 0 IRQ_TYPE_NONE>,
+-				     <0 0xc6 0 IRQ_TYPE_NONE>,
+-				     <0 0xc7 0 IRQ_TYPE_NONE>,
+-				     <0 0xc8 0 IRQ_TYPE_NONE>,
+-				     <0 0xc9 0 IRQ_TYPE_NONE>,
+-				     <0 0xca 0 IRQ_TYPE_NONE>,
+-				     <0 0xcb 0 IRQ_TYPE_NONE>,
+-				     <0 0xcc 0 IRQ_TYPE_NONE>,
+-				     <0 0xcd 0 IRQ_TYPE_NONE>,
+-				     <0 0xce 0 IRQ_TYPE_NONE>,
+-				     <0 0xcf 0 IRQ_TYPE_NONE>,
+-				     <0 0xd0 0 IRQ_TYPE_NONE>,
+-				     <0 0xd1 0 IRQ_TYPE_NONE>,
+-				     <0 0xd2 0 IRQ_TYPE_NONE>,
+-				     <0 0xd3 0 IRQ_TYPE_NONE>,
+-				     <0 0xd4 0 IRQ_TYPE_NONE>,
+-				     <0 0xd5 0 IRQ_TYPE_NONE>,
+-				     <0 0xd6 0 IRQ_TYPE_NONE>,
+-				     <0 0xd7 0 IRQ_TYPE_NONE>,
+-				     <0 0xd8 0 IRQ_TYPE_NONE>,
+-				     <0 0xd9 0 IRQ_TYPE_NONE>,
+-				     <0 0xda 0 IRQ_TYPE_NONE>,
+-				     <0 0xdb 0 IRQ_TYPE_NONE>,
+-				     <0 0xdc 0 IRQ_TYPE_NONE>,
+-				     <0 0xdd 0 IRQ_TYPE_NONE>,
+-				     <0 0xde 0 IRQ_TYPE_NONE>,
+-				     <0 0xdf 0 IRQ_TYPE_NONE>,
+-				     <0 0xe0 0 IRQ_TYPE_NONE>,
+-				     <0 0xe1 0 IRQ_TYPE_NONE>,
+-				     <0 0xe2 0 IRQ_TYPE_NONE>,
+-				     <0 0xe3 0 IRQ_TYPE_NONE>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
  
-+	old_virq = irq_find_mapping(domain, hwirq);
-+	if (old_virq)
-+		irq_domain_disassociate(domain, old_virq);
-+
- 	irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_arb,
- 			    handle_level_irq, NULL, NULL);
- }
+ 			boost_bypass_n_pin: boost-bypass {
+ 				pins = "gpio21";
 -- 
 2.17.2
 
