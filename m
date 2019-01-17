@@ -2,289 +2,299 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F2FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0044BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C9820854
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:17:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547702224;
-	bh=wdTC8rlKjGEgoNxoQMtmSwqLnPn6ph8PIeRqOZGJBEw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=LS1bmGIu4SJo+c12cMeisM0eKl3+8lBIGRsGYE2AF5P8w7vpmjUsnsKdy9TVUnMAl
-	 K8XWObEXRRW2M7gv+UKBT98eFzj7zw/GifDJrH0+gM2a2wUwcdBHXR7TXoqBpNWrlb
-	 2EyE7D3EcYMJdnV25Cqz9T8UDEoLLoC6CObMiE/0=
+	by mail.kernel.org (Postfix) with ESMTP id B2A8320851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729314AbfAQFRC (ORCPT
+        id S1729361AbfAQFVq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 00:17:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57258 "EHLO mail.kernel.org"
+        Thu, 17 Jan 2019 00:21:46 -0500
+Received: from mga12.intel.com ([192.55.52.136]:47914 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726131AbfAQFRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 00:17:02 -0500
-Received: from localhost (c-98-234-55-98.hsd1.ca.comcast.net [98.234.55.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40FA920657;
-        Thu, 17 Jan 2019 05:17:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547702221;
-        bh=wdTC8rlKjGEgoNxoQMtmSwqLnPn6ph8PIeRqOZGJBEw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=F4jQp2Im4/OfhMQ40SLBi7MCch4it+MviCS9kQBvV17Ch1LVZsHIbIVrGhWid0iqw
-         dTcZy7Vsg+DM39+16jgatV+cJ6RRlBCluydawCJ6wMo0PapIZmSm7VI53UZcIZ3s4+
-         SdOmBcHXGT6QFO2j4EBG97pA6dcpA8jJ3RMlnquk=
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: run gc/discard jobs when put_super
-Date:   Wed, 16 Jan 2019 21:17:00 -0800
-Message-Id: <20190117051700.52062-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        id S1729392AbfAQFVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 00:21:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 21:21:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
+   d="scan'208";a="107227593"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga007.jf.intel.com with ESMTP; 16 Jan 2019 21:21:44 -0800
+Received: from fmsmsx153.amr.corp.intel.com (10.18.125.6) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 16 Jan 2019 21:21:44 -0800
+Received: from shsmsx154.ccr.corp.intel.com (10.239.6.54) by
+ FMSMSX153.amr.corp.intel.com (10.18.125.6) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 16 Jan 2019 21:21:44 -0800
+Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.150]) by
+ SHSMSX154.ccr.corp.intel.com ([169.254.7.46]) with mapi id 14.03.0415.000;
+ Thu, 17 Jan 2019 13:21:42 +0800
+From:   "Du, Fan" <fan.du@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        "dave@sr71.net" <dave@sr71.net>
+CC:     "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "tiwai@suse.de" <tiwai@suse.de>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "baiyaowei@cmss.chinamobile.com" <baiyaowei@cmss.chinamobile.com>,
+        "zwisler@kernel.org" <zwisler@kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Wu, Fengguang" <fengguang.wu@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "Du, Fan" <fan.du@intel.com>
+Subject: RE: [PATCH 4/4] dax: "Hotplug" persistent memory for use like
+ normal RAM
+Thread-Topic: [PATCH 4/4] dax: "Hotplug" persistent memory for use like
+ normal RAM
+Thread-Index: AQHUrcjsEcPN/CW3p0+o2B6qC3XobqWy7N/g
+Date:   Thu, 17 Jan 2019 05:21:42 +0000
+Message-ID: <5A90DA2E42F8AE43BC4A093BF06788482571FCB1@SHSMSX103.ccr.corp.intel.com>
+References: <20190116181859.D1504459@viggo.jf.intel.com>
+ <20190116181905.12E102B4@viggo.jf.intel.com>
+In-Reply-To: <20190116181905.12E102B4@viggo.jf.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2NiOGFkODUtOWFiYy00ODViLTk0YzctNWY1ZGVlY2JjZGE0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRlFtYjlDY2puQ05hTUlCSEtJYVNxRUt6OGNoQWhmemVUS2V1T0dFRlZuRXhIcFZ6VXk1SHRVMnozVVVCRUdPRCJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we umount f2fs, we need to avoid long delay due to discard commands, which
-is actually taking tens of seconds, if storage is very slow on UNMAP. So, this
-patch introduces timeout-based work on it. In addition to discard commands, we
-can also do GC during the given time period.
+>-----Original Message-----
+>From: Linux-nvdimm [mailto:linux-nvdimm-bounces@lists.01.org] On Behalf
+>Of Dave Hansen
+>Sent: Thursday, January 17, 2019 2:19 AM
+>To: dave@sr71.net
+>Cc: thomas.lendacky@amd.com; mhocko@suse.com;
+>linux-nvdimm@lists.01.org; tiwai@suse.de; Dave Hansen
+><dave.hansen@linux.intel.com>; Huang, Ying <ying.huang@intel.com>;
+>linux-kernel@vger.kernel.org; linux-mm@kvack.org; bp@suse.de;
+>baiyaowei@cmss.chinamobile.com; zwisler@kernel.org;
+>bhelgaas@google.com; Wu, Fengguang <fengguang.wu@intel.com>;
+>akpm@linux-foundation.org
+>Subject: [PATCH 4/4] dax: "Hotplug" persistent memory for use like normal
+>RAM
+>
+>
+>From: Dave Hansen <dave.hansen@linux.intel.com>
+>
+>Currently, a persistent memory region is "owned" by a device driver,
+>either the "Direct DAX" or "Filesystem DAX" drivers.  These drivers
+>allow applications to explicitly use persistent memory, generally
+>by being modified to use special, new libraries.
+>
+>However, this limits persistent memory use to applications which
+>*have* been modified.  To make it more broadly usable, this driver
+>"hotplugs" memory into the kernel, to be managed ad used just like
+>normal RAM would be.
+>
+>To make this work, management software must remove the device from
+>being controlled by the "Device DAX" infrastructure:
+>
+>	echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
+>	echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
+>
+>and then bind it to this new driver:
+>
+>	echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
+>	echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
 
-By default, let me give 4 seconds for GC and 4 seconds for discard.
+Is there any plan to introduce additional mode, e.g. "kmem" in the userspace
+ndctl tool to do the configuration?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h    |  7 ++++++-
- fs/f2fs/gc.c      | 17 +++++++++++++++++
- fs/f2fs/segment.c | 14 ++++++++++----
- fs/f2fs/super.c   | 37 ++++++++++++++++++-------------------
- fs/f2fs/sysfs.c   |  6 ++++++
- 5 files changed, 57 insertions(+), 24 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7df41cd1eb35..e56364a2e597 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -191,6 +191,8 @@ enum {
- #define DEF_CP_INTERVAL			60	/* 60 secs */
- #define DEF_IDLE_INTERVAL		5	/* 5 secs */
- #define DEF_DISABLE_INTERVAL		5	/* 5 secs */
-+#define DEF_UMOUNT_GC_TIMEOUT		4	/* 4 secs */
-+#define DEF_UMOUNT_DISCARD_TIMEOUT	4	/* 4 secs */
- 
- struct cp_control {
- 	int reason;
-@@ -1110,6 +1112,8 @@ enum {
- 	DISCARD_TIME,
- 	GC_TIME,
- 	DISABLE_TIME,
-+	UMOUNT_GC_TIMEOUT,
-+	UMOUNT_DISCARD_TIMEOUT,
- 	MAX_TIME,
- };
- 
-@@ -3007,7 +3011,7 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
- bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
- void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
- void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
--bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
-+bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi);
- void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 					struct cp_control *cpc);
- void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi);
-@@ -3151,6 +3155,7 @@ block_t f2fs_start_bidx_of_node(unsigned int node_ofs, struct inode *inode);
- int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
- 			unsigned int segno);
- void f2fs_build_gc_manager(struct f2fs_sb_info *sbi);
-+int f2fs_gc_timeout(struct f2fs_sb_info *sbi, int time);
- 
- /*
-  * recovery.c
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 195cf0f9d9ef..ccfc807e4095 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -159,6 +159,23 @@ void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
- 	sbi->gc_thread = NULL;
- }
- 
-+int f2fs_gc_timeout(struct f2fs_sb_info *sbi, int time_type)
-+{
-+	int err = 0;
-+
-+	f2fs_update_time(sbi, time_type);
-+
-+	while (!f2fs_time_over(sbi, time_type)) {
-+		mutex_lock(&sbi->gc_mutex);
-+		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
-+		if (err == -ENODATA)
-+			err = 0;
-+		if (err && err != -EAGAIN)
-+			break;
-+	}
-+	return err;
-+}
-+
- static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
- {
- 	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9b79056d705d..cbdb64237f8e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1415,7 +1415,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- }
- 
- static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
--					struct discard_policy *dpolicy)
-+			struct discard_policy *dpolicy, int timeout)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	struct list_head *pend_list;
-@@ -1424,7 +1424,13 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	int i, issued = 0;
- 	bool io_interrupted = false;
- 
-+	if (timeout != MAX_TIME)
-+		f2fs_update_time(sbi, timeout);
-+
- 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
-+		if (timeout != MAX_TIME && f2fs_time_over(sbi, timeout))
-+			break;
-+
- 		if (i + 1 < dpolicy->granularity)
- 			break;
- 
-@@ -1611,7 +1617,7 @@ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi)
- }
- 
- /* This comes from f2fs_put_super */
--bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
-+bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	struct discard_policy dpolicy;
-@@ -1619,7 +1625,7 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
- 
- 	__init_discard_policy(sbi, &dpolicy, DPOLICY_UMOUNT,
- 					dcc->discard_granularity);
--	__issue_discard_cmd(sbi, &dpolicy);
-+	__issue_discard_cmd(sbi, &dpolicy, UMOUNT_DISCARD_TIMEOUT);
- 	dropped = __drop_discard_cmd(sbi);
- 
- 	/* just to make sure there is no pending discard commands */
-@@ -1672,7 +1678,7 @@ static int issue_discard_thread(void *data)
- 
- 		sb_start_intwrite(sbi->sb);
- 
--		issued = __issue_discard_cmd(sbi, &dpolicy);
-+		issued = __issue_discard_cmd(sbi, &dpolicy, MAX_TIME);
- 		if (issued > 0) {
- 			__wait_all_discard_cmd(sbi, &dpolicy);
- 			wait_ms = dpolicy.min_interval;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index cbd97dc280fb..5fa7cb9d4e71 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1029,6 +1029,15 @@ static void f2fs_put_super(struct super_block *sb)
- 	int i;
- 	bool dropped;
- 
-+	/* run some GCs when un-mounting the partition */
-+	f2fs_gc_timeout(sbi, UMOUNT_GC_TIMEOUT);
-+
-+	/* be sure to wait for any on-going discard commands */
-+	dropped = f2fs_issue_discard_timeout(sbi);
-+
-+	/* sync dirty data */
-+	sync_filesystem(sbi->sb);
-+
- 	f2fs_quota_off_umount(sb);
- 
- 	/* prevent remaining shrinker jobs */
-@@ -1044,17 +1053,12 @@ static void f2fs_put_super(struct super_block *sb)
- 		struct cp_control cpc = {
- 			.reason = CP_UMOUNT,
- 		};
--		f2fs_write_checkpoint(sbi, &cpc);
--	}
- 
--	/* be sure to wait for any on-going discard commands */
--	dropped = f2fs_wait_discard_bios(sbi);
-+		if ((f2fs_hw_support_discard(sbi) ||
-+				f2fs_hw_should_discard(sbi)) &&
-+				!sbi->discard_blks && !dropped)
-+			cpc.reason |= CP_TRIMMED;
- 
--	if ((f2fs_hw_support_discard(sbi) || f2fs_hw_should_discard(sbi)) &&
--					!sbi->discard_blks && !dropped) {
--		struct cp_control cpc = {
--			.reason = CP_UMOUNT | CP_TRIMMED,
--		};
- 		f2fs_write_checkpoint(sbi, &cpc);
- 	}
- 
-@@ -1463,16 +1467,9 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 
- 	sbi->sb->s_flags |= SB_ACTIVE;
- 
--	f2fs_update_time(sbi, DISABLE_TIME);
--
--	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
--		mutex_lock(&sbi->gc_mutex);
--		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
--		if (err == -ENODATA)
--			break;
--		if (err && err != -EAGAIN)
--			return err;
--	}
-+	err = f2fs_gc_timeout(sbi, DISABLE_TIME);
-+	if (err)
-+		return err;
- 
- 	err = sync_filesystem(sbi->sb);
- 	if (err)
-@@ -2706,6 +2703,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
- 	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
- 	sbi->interval_time[DISABLE_TIME] = DEF_DISABLE_INTERVAL;
-+	sbi->interval_time[UMOUNT_GC_TIMEOUT] = DEF_UMOUNT_GC_TIMEOUT;
-+	sbi->interval_time[UMOUNT_DISCARD_TIMEOUT] = DEF_UMOUNT_DISCARD_TIMEOUT;
- 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
- 
- 	for (i = 0; i < NR_COUNT_TYPE; i++)
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 02d4012a9183..47f25eac9d67 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -420,6 +420,10 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
- 					interval_time[DISCARD_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info,
-+		umount_gc_timeout, interval_time[UMOUNT_GC_TIMEOUT]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info,
-+		umount_discard_timeout, interval_time[UMOUNT_DISCARD_TIMEOUT]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-@@ -477,6 +481,8 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(idle_interval),
- 	ATTR_LIST(discard_idle_interval),
- 	ATTR_LIST(gc_idle_interval),
-+	ATTR_LIST(umount_gc_timeout),
-+	ATTR_LIST(umount_discard_timeout),
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(readdir_ra),
- 	ATTR_LIST(gc_pin_file_thresh),
--- 
-2.19.0.605.g01d371f741-goog
-
+>After this, there will be a number of new memory sections visible
+>in sysfs that can be onlined, or that may get onlined by existing
+>udev-initiated memory hotplug rules.
+>
+>Note: this inherits any existing NUMA information for the newly-
+>added memory from the persistent memory device that came from the
+>firmware.  On Intel platforms, the firmware has guarantees that
+>require each socket's persistent memory to be in a separate
+>memory-only NUMA node.  That means that this patch is not expected
+>to create NUMA nodes, but will simply hotplug memory into existing
+>nodes.
+>
+>There is currently some metadata at the beginning of pmem regions.
+>The section-size memory hotplug restrictions, plus this small
+>reserved area can cause the "loss" of a section or two of capacity.
+>This should be fixable in follow-on patches.  But, as a first step,
+>losing 256MB of memory (worst case) out of hundreds of gigabytes
+>is a good tradeoff vs. the required code to fix this up precisely.
+>
+>Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+>Cc: Dan Williams <dan.j.williams@intel.com>
+>Cc: Dave Jiang <dave.jiang@intel.com>
+>Cc: Ross Zwisler <zwisler@kernel.org>
+>Cc: Vishal Verma <vishal.l.verma@intel.com>
+>Cc: Tom Lendacky <thomas.lendacky@amd.com>
+>Cc: Andrew Morton <akpm@linux-foundation.org>
+>Cc: Michal Hocko <mhocko@suse.com>
+>Cc: linux-nvdimm@lists.01.org
+>Cc: linux-kernel@vger.kernel.org
+>Cc: linux-mm@kvack.org
+>Cc: Huang Ying <ying.huang@intel.com>
+>Cc: Fengguang Wu <fengguang.wu@intel.com>
+>Cc: Borislav Petkov <bp@suse.de>
+>Cc: Bjorn Helgaas <bhelgaas@google.com>
+>Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+>Cc: Takashi Iwai <tiwai@suse.de>
+>---
+>
+> b/drivers/dax/Kconfig  |    5 ++
+> b/drivers/dax/Makefile |    1
+> b/drivers/dax/kmem.c   |   93
+>+++++++++++++++++++++++++++++++++++++++++++++++++
+> 3 files changed, 99 insertions(+)
+>
+>diff -puN drivers/dax/Kconfig~dax-kmem-try-4 drivers/dax/Kconfig
+>--- a/drivers/dax/Kconfig~dax-kmem-try-4	2019-01-08 09:54:44.051694874
+>-0800
+>+++ b/drivers/dax/Kconfig	2019-01-08 09:54:44.056694874 -0800
+>@@ -32,6 +32,11 @@ config DEV_DAX_PMEM
+>
+> 	  Say M if unsure
+>
+>+config DEV_DAX_KMEM
+>+	def_bool y
+>+	depends on DEV_DAX_PMEM   # Needs DEV_DAX_PMEM infrastructure
+>+	depends on MEMORY_HOTPLUG # for add_memory() and friends
+>+
+> config DEV_DAX_PMEM_COMPAT
+> 	tristate "PMEM DAX: support the deprecated /sys/class/dax interface"
+> 	depends on DEV_DAX_PMEM
+>diff -puN /dev/null drivers/dax/kmem.c
+>--- /dev/null	2018-12-03 08:41:47.355756491 -0800
+>+++ b/drivers/dax/kmem.c	2019-01-08 09:54:44.056694874 -0800
+>@@ -0,0 +1,93 @@
+>+// SPDX-License-Identifier: GPL-2.0
+>+/* Copyright(c) 2016-2018 Intel Corporation. All rights reserved. */
+>+#include <linux/memremap.h>
+>+#include <linux/pagemap.h>
+>+#include <linux/memory.h>
+>+#include <linux/module.h>
+>+#include <linux/device.h>
+>+#include <linux/pfn_t.h>
+>+#include <linux/slab.h>
+>+#include <linux/dax.h>
+>+#include <linux/fs.h>
+>+#include <linux/mm.h>
+>+#include <linux/mman.h>
+>+#include "dax-private.h"
+>+#include "bus.h"
+>+
+>+int dev_dax_kmem_probe(struct device *dev)
+>+{
+>+	struct dev_dax *dev_dax = to_dev_dax(dev);
+>+	struct resource *res = &dev_dax->region->res;
+>+	resource_size_t kmem_start;
+>+	resource_size_t kmem_size;
+>+	struct resource *new_res;
+>+	int numa_node;
+>+	int rc;
+>+
+>+	/* Hotplug starting at the beginning of the next block: */
+>+	kmem_start = ALIGN(res->start, memory_block_size_bytes());
+>+
+>+	kmem_size = resource_size(res);
+>+	/* Adjust the size down to compensate for moving up kmem_start: */
+>+        kmem_size -= kmem_start - res->start;
+>+	/* Align the size down to cover only complete blocks: */
+>+	kmem_size &= ~(memory_block_size_bytes() - 1);
+>+
+>+	new_res = devm_request_mem_region(dev, kmem_start, kmem_size,
+>+					  dev_name(dev));
+>+
+>+	if (!new_res) {
+>+		printk("could not reserve region %016llx -> %016llx\n",
+>+				kmem_start, kmem_start+kmem_size);
+>+		return -EBUSY;
+>+	}
+>+
+>+	/*
+>+	 * Set flags appropriate for System RAM.  Leave ..._BUSY clear
+>+	 * so that add_memory() can add a child resource.
+>+	 */
+>+	new_res->flags = IORESOURCE_SYSTEM_RAM;
+>+	new_res->name = dev_name(dev);
+>+
+>+	numa_node = dev_dax->target_node;
+>+	if (numa_node < 0) {
+>+		pr_warn_once("bad numa_node: %d, forcing to 0\n", numa_node);
+>+		numa_node = 0;
+>+	}
+>+
+>+	rc = add_memory(numa_node, new_res->start, resource_size(new_res));
+>+	if (rc)
+>+		return rc;
+>+
+>+	return 0;
+>+}
+>+EXPORT_SYMBOL_GPL(dev_dax_kmem_probe);
+>+
+>+static int dev_dax_kmem_remove(struct device *dev)
+>+{
+>+	/* Assume that hot-remove will fail for now */
+>+	return -EBUSY;
+>+}
+>+
+>+static struct dax_device_driver device_dax_kmem_driver = {
+>+	.drv = {
+>+		.probe = dev_dax_kmem_probe,
+>+		.remove = dev_dax_kmem_remove,
+>+	},
+>+};
+>+
+>+static int __init dax_kmem_init(void)
+>+{
+>+	return dax_driver_register(&device_dax_kmem_driver);
+>+}
+>+
+>+static void __exit dax_kmem_exit(void)
+>+{
+>+	dax_driver_unregister(&device_dax_kmem_driver);
+>+}
+>+
+>+MODULE_AUTHOR("Intel Corporation");
+>+MODULE_LICENSE("GPL v2");
+>+module_init(dax_kmem_init);
+>+module_exit(dax_kmem_exit);
+>+MODULE_ALIAS_DAX_DEVICE(0);
+>diff -puN drivers/dax/Makefile~dax-kmem-try-4 drivers/dax/Makefile
+>--- a/drivers/dax/Makefile~dax-kmem-try-4	2019-01-08 09:54:44.053694874
+>-0800
+>+++ b/drivers/dax/Makefile	2019-01-08 09:54:44.056694874 -0800
+>@@ -1,6 +1,7 @@
+> # SPDX-License-Identifier: GPL-2.0
+> obj-$(CONFIG_DAX) += dax.o
+> obj-$(CONFIG_DEV_DAX) += device_dax.o
+>+obj-$(CONFIG_DEV_DAX_KMEM) += kmem.o
+>
+> dax-y := super.o
+> dax-y += bus.o
+>_
+>_______________________________________________
+>Linux-nvdimm mailing list
+>Linux-nvdimm@lists.01.org
+>https://lists.01.org/mailman/listinfo/linux-nvdimm
