@@ -2,190 +2,176 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AA5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED1DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4D320855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547718444;
-	bh=o28NqsGSY95ZLjTV2EWyCit9Vwdp0y6JgTbhsEgWIRg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=KJnj7NU74ApdBU8g5eMPQBb5GI7k+k/4IhUcBmr9MDkP914iCcWBGVIAJfwz2DfqH
-	 dO3LZm9mPWzCrqfwJncmiAu3SoooRrl4CO1bhapdnMg3qSB9Xobg96hbIRK/bywtP/
-	 +9cPVLZkSLIvIZ8o8NBMhMg8476k4wXCKxf5mI88=
+	by mail.kernel.org (Postfix) with ESMTP id 0A51B20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbfAQJrW (ORCPT
+        id S1726955AbfAQJqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:47:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728872AbfAQJrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:47:21 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E13862054F;
-        Thu, 17 Jan 2019 09:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547718439;
-        bh=o28NqsGSY95ZLjTV2EWyCit9Vwdp0y6JgTbhsEgWIRg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SXNEQ/Cx5Y8V25Q3bReRh7v0QNXjcKQFQ40OoqyxoQxdMXZ6DyNnestPcYvUAsSvn
-         IzBEmJQA5p0hRSsePGf2L/c65Lqrxwg8lDnrwGwn+WjFhP+AnqhNSlfh0XyDEI2Ins
-         zbW0ssBWjYby9zJpmwk9Q/HnF1f3RP1EcxEsXbkU=
-Date:   Thu, 17 Jan 2019 18:47:17 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andreas Ziegler <andreas.ziegler@fau.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: uprobes: bug in comm/string output?
-Message-Id: <20190117184717.9bbd1218b9f4fe6a8070a0fe@kernel.org>
-In-Reply-To: <17147ef5-4348-9a02-d781-0f089fe603f5@fau.de>
-References: <bf358673-ceb2-65bf-80c9-4b1c09a8a264@fau.de>
-        <8b67136d-28d7-a734-6366-9511e30d66a7@fau.de>
-        <20190116190054.ac22c8495540578834446236@kernel.org>
-        <62276858-9135-2393-8993-64e1088db7b9@fau.de>
-        <20190117151309.711d41ebdd761b525a168837@kernel.org>
-        <20190117170015.403157bf619907f8467189fe@kernel.org>
-        <17147ef5-4348-9a02-d781-0f089fe603f5@fau.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Jan 2019 04:46:02 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59184 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727410AbfAQJp6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:45:58 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0H9iBOC095416
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:45:57 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2ppyhv4h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:45:56 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <s1seetee@linux.vnet.ibm.com>;
+        Thu, 17 Jan 2019 09:45:55 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 09:45:48 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0H9jlLr61866024
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 09:45:47 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B6F3811C050;
+        Thu, 17 Jan 2019 09:45:47 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55E9111C04C;
+        Thu, 17 Jan 2019 09:45:46 +0000 (GMT)
+Received: from oc1548405160.ibm.com (unknown [9.124.35.202])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 17 Jan 2019 09:45:46 +0000 (GMT)
+From:   Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Cc:     s1seetee@linux.vnet.ibm.com
+Subject: [PATCH v2] perf scripts python: Add Python 3 support to check-perf-trace.py
+Date:   Thu, 17 Jan 2019 15:15:28 +0530
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 19011709-0008-0000-0000-000002B23609
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011709-0009-0000-0000-0000221E5279
+Message-Id: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Jan 2019 09:08:41 +0100
-Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+Support both Python 2 and Python 3 in check-perf-trace.py.
+``print`` is now a function rather than a statement. This should have
+no functional change.
 
-> On 17.01.19 09:00, Masami Hiramatsu wrote:
-> > On Thu, 17 Jan 2019 15:13:09 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> >> On Wed, 16 Jan 2019 11:16:07 +0100
-> >> Andreas Ziegler <andreas.ziegler@fau.de> wrote:
-> >>
-> >>>
-> >>> I went into this a bit deeper today, and right now it is simply failing 
-> >>> to parse the code because there is no FETCH_OP_COMM case in 
-> >>> process_fetch_insn() for uprobes so that will return -EILSEQ, leading to 
-> >>> a make_data_loc(0, ...) in store_trace_args(). If we just add 
-> >>> FETCH_OP_COMM and let val point to current->comm (that's what 
-> >>> trace_kprobe.c does), we get an -EFAULT return value from 
-> >>> fetch_store_string because strncpy_from_user() checks if the argument is 
-> >>> in user space.
-> >>
-> >> Correct. I missed to add OP_COMM support. And uprobe's fetch_store_string
-> >> is only for user space strings.
-> >>
-> >>> So I think we might need a special case for that, something like 
-> >>> FETCH_OP_ST_COMM_STRING which is only used for FETCH_OP_COMM and copies 
-> >>> current->comm over to the dynamic area. The implementation could be 
-> >>> similar to the old fetch_comm_string implementation before your rewrite.
-> >>
-> >> Hmm, instead, I would like to add current->comm checker and only allows
-> >> to copy that. That would be simpler and enough.
-> >>
-> >> Could you test below patch?
-> >>
-> >>
-> >> tracing: uprobes: Re-enable $comm support for uprobe events
-> >>
-> >> From: Masami Hiramatsu <mhiramat@kernel.org>
-> >>
-> >> Since commit 533059281ee5 ("tracing: probeevent: Introduce new
-> >> argument fetching code") dropped the $comm support from uprobe
-> >> events, this re-enable it.
-> 
-> this should read 're-enables'.
-> 
-> >>
-> >> For $comm support, use strncpy() instead of strncpy_from_user()
->                              ^
-> we're using strlcpy(), not strncpy().
-> 
-> >> to copy current task's comm. Because it is in the kernel space,
-> >> strncpy_from_user() always fails to copy the comm.
-> >> This also use strlen() instead of strlen_user() to measure the
->                ^                        ^
-> 'uses', and the function should be 'strnlen_user()'.
-> 
-> >> length of the comm.
-> >>
-> >> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> >> Reported-by: Andreas Ziegler <andreas.ziegler@fau.de>
-> >> ---
-> >>  kernel/trace/trace_uprobe.c |   13 +++++++++++--
-> >>  1 file changed, 11 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> >> index e335576b9411..97d134e83e0f 100644
-> >> --- a/kernel/trace/trace_uprobe.c
-> >> +++ b/kernel/trace/trace_uprobe.c
-> >> @@ -156,7 +156,10 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
-> >>  	if (unlikely(!maxlen))
-> >>  		return -ENOMEM;
-> >>  
-> >> -	ret = strncpy_from_user(dst, src, maxlen);
-> >> +	if (addr == (unsigned long)current->comm)
-> >> +		ret = strlcpy(dst, current->comm, maxlen);
-> >> +	else
-> >> +		ret = strncpy_from_user(dst, src, maxlen);
-> >>  	if (ret >= 0) {
-> >>  		if (ret == maxlen)
-> >>  			dst[ret - 1] = '\0';
-> >> @@ -173,7 +176,10 @@ fetch_store_strlen(unsigned long addr)
-> >>  	int len;
-> >>  	void __user *vaddr = (void __force __user *) addr;
-> >>  
-> >> -	len = strnlen_user(vaddr, MAX_STRING_SIZE);
-> >> +	if (addr == (unsigned long)current->comm)
-> >> +		len = strlen(current->comm);
-> > 
-> > To balance with the strnlen_user, we must increse the len in this block.
-> > (strlen doesn't count the final '\0', but strnlen_user counts it)
-> > 
-> 
-> yes, we need to add a '+ 1' here.
-> 
-> With the typos and this one fixed, this is
-> 
-> Acked-by: Andreas Ziegler <andreas.ziegler@fau.de>
+Fix indentation issue, replace spaces with tab
 
-Thank you for fixing typo and Ack :)
+Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Reviewed-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+---
+ tools/perf/scripts/python/check-perf-trace.py | 33 ++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-Thanks you,
-
-> 
-> > Thank you,
-> > 
-> >> +	else
-> >> +		len = strnlen_user(vaddr, MAX_STRING_SIZE);
-> >>  
-> >>  	return (len > MAX_STRING_SIZE) ? 0 : len;
-> >>  }
-> >> @@ -213,6 +219,9 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
-> >>  	case FETCH_OP_IMM:
-> >>  		val = code->immediate;
-> >>  		break;
-> >> +	case FETCH_OP_COMM:
-> >> +		val = (unsigned long)current->comm;
-> >> +		break;
-> >>  	case FETCH_OP_FOFFS:
-> >>  		val = translate_user_vaddr(code->immediate);
-> >>  		break;
-> > 
-> > 
-> 
-
-
+diff --git a/tools/perf/scripts/python/check-perf-trace.py b/tools/perf/scripts/python/check-perf-trace.py
+index 334599c..91fc499 100644
+--- a/tools/perf/scripts/python/check-perf-trace.py
++++ b/tools/perf/scripts/python/check-perf-trace.py
+@@ -7,6 +7,7 @@
+ # events, etc.  Basically, if this script runs successfully and
+ # displays expected results, Python scripting support should be ok.
+ 
++from __future__ import print_function
+ import os
+ import sys
+ 
+@@ -19,7 +20,7 @@ from perf_trace_context import *
+ unhandled = autodict()
+ 
+ def trace_begin():
+-	print "trace_begin"
++	print("trace_begin")
+ 	pass
+ 
+ def trace_end():
+@@ -31,10 +32,10 @@ def irq__softirq_entry(event_name, context, common_cpu,
+ 		print_header(event_name, common_cpu, common_secs, common_nsecs,
+ 			common_pid, common_comm)
+ 
+-                print_uncommon(context)
++		print_uncommon(context)
+ 
+-		print "vec=%s\n" % \
+-		(symbol_str("irq__softirq_entry", "vec", vec)),
++		print("vec=%s\n" % \
++		(symbol_str("irq__softirq_entry", "vec", vec))),
+ 
+ def kmem__kmalloc(event_name, context, common_cpu,
+ 	common_secs, common_nsecs, common_pid, common_comm,
+@@ -43,13 +44,13 @@ def kmem__kmalloc(event_name, context, common_cpu,
+ 		print_header(event_name, common_cpu, common_secs, common_nsecs,
+ 			common_pid, common_comm)
+ 
+-                print_uncommon(context)
++		print_uncommon(context)
+ 
+-		print "call_site=%u, ptr=%u, bytes_req=%u, " \
++		print("call_site=%u, ptr=%u, bytes_req=%u, " \
+ 		"bytes_alloc=%u, gfp_flags=%s\n" % \
+ 		(call_site, ptr, bytes_req, bytes_alloc,
+ 
+-		flag_str("kmem__kmalloc", "gfp_flags", gfp_flags)),
++		flag_str("kmem__kmalloc", "gfp_flags", gfp_flags))),
+ 
+ def trace_unhandled(event_name, context, event_fields_dict):
+     try:
+@@ -58,25 +59,25 @@ def trace_unhandled(event_name, context, event_fields_dict):
+         unhandled[event_name] = 1
+ 
+ def print_header(event_name, cpu, secs, nsecs, pid, comm):
+-	print "%-20s %5u %05u.%09u %8u %-20s " % \
+-	(event_name, cpu, secs, nsecs, pid, comm),
++	print("%-20s %5u %05u.%09u %8u %-20s " % \
++	(event_name, cpu, secs, nsecs, pid, comm)),
+ 
+ # print trace fields not included in handler args
+ def print_uncommon(context):
+-    print "common_preempt_count=%d, common_flags=%s, common_lock_depth=%d, " \
++    print("common_preempt_count=%d, common_flags=%s, common_lock_depth=%d, " \
+         % (common_pc(context), trace_flag_str(common_flags(context)), \
+-               common_lock_depth(context))
++               common_lock_depth(context)))
+ 
+ def print_unhandled():
+     keys = unhandled.keys()
+     if not keys:
+         return
+ 
+-    print "\nunhandled events:\n\n",
++    print("\nunhandled events:\n\n"),
+ 
+-    print "%-40s  %10s\n" % ("event", "count"),
+-    print "%-40s  %10s\n" % ("----------------------------------------", \
+-                                 "-----------"),
++    print("%-40s  %10s\n" % ("event", "count")),
++    print("%-40s  %10s\n" % ("----------------------------------------", \
++                                 "-----------")),
+ 
+     for event_name in keys:
+-	print "%-40s  %10d\n" % (event_name, unhandled[event_name])
++        print("%-40s  %10d\n" % (event_name, unhandled[event_name]))
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+1.8.3.1
+
