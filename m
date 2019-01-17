@@ -2,133 +2,117 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A6AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 04:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEE5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0144820851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 04:52:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="C6MlEvjF"
+	by mail.kernel.org (Postfix) with ESMTP id A1D69205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 05:02:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbfAQEwH (ORCPT
+        id S1725954AbfAQFCu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 23:52:07 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33229 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729115AbfAQEwG (ORCPT
+        Thu, 17 Jan 2019 00:02:50 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58521 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725792AbfAQFCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 23:52:06 -0500
-Received: by mail-lf1-f67.google.com with SMTP id i26so6778602lfc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 20:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7yg/fey2gwxJ3j2bGARMVT/eRJirMo8WI+36rgecn44=;
-        b=C6MlEvjFBkcWofmUUmP+orz3WZY5+zYliTWZFP0dxTKmc6y20wo/64FLm3lY/8d7uq
-         zRUrUISklDIlgc9mcichrGZav7zNAit4hsMlYOxsvg/fQVAkEU+k/3J7nNx7BOUgMqHi
-         snOWNxQuPFTwE3YsEekTQj4G0UD1pozuqEmEc=
+        Thu, 17 Jan 2019 00:02:49 -0500
+Received: from mail-pf1-f198.google.com ([209.85.210.198])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gjzpG-0002Wh-S4
+        for linux-kernel@vger.kernel.org; Thu, 17 Jan 2019 05:02:47 +0000
+Received: by mail-pf1-f198.google.com with SMTP id x67so6481776pfk.16
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 21:02:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7yg/fey2gwxJ3j2bGARMVT/eRJirMo8WI+36rgecn44=;
-        b=ECZicebYdoRTmhXLD2Iu48CYysHtlbwXD8dmSM0x9NuHSnJur46Wjew91fs/CLYQYK
-         7gBcpOPlXW5JOMeTTOqLjwFUd9Guf02nPjO92Y5vszg14wqaMhZWGWVvCRtV9fZjMg9w
-         7HCcZMb06tKVXP+3EJ+yGpOZjCsjVqRaE37q7vLM39nd5QL3olT0yc88AlEkg17Pnj+s
-         DAHhbuBRq5orONvvT+FOdDrs7ah+RhIUg2VKjMrSsRIO/tVhFirh8BxYyTnr/eyi9+co
-         6RaIjJS8YiitFx9tuH3ZYgsDAb7ehdogb/CMnp9p5FKtIvBXHnBzhaVg2TySTDFt97P1
-         onbA==
-X-Gm-Message-State: AJcUukfFroqs0Jiy/AxXPmddbvjg/Bn2KA51BKiVsF17RdS7daL7cD8T
-        PRd8KArOYIZjpZkI3vl2nvGeF+DllTE=
-X-Google-Smtp-Source: ALg8bN7+mjFZ2sbYyWDMjUAaC3+QoBBzSEHt7OyJbqIu8i7S9Us2THqBUBye9uZnT04kyoT5nY/JNw==
-X-Received: by 2002:a19:739d:: with SMTP id h29mr9637871lfk.85.1547700723997;
-        Wed, 16 Jan 2019 20:52:03 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm54619ljh.59.2019.01.16.20.52.02
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=MM5RWvNjsypXprGf4euM8vZ9+a0uwkXjiHilGsps0PY=;
+        b=BX/sIOlye2NKQmrn4GFb0UVDlRxFpfK9X90/YdcLKcrBVPDcRpDr3FsSBMkpexn+Xj
+         LIb95YX5HZHx7mqSaHsaU/8JkyhYKZ9LDETWEYssLElBEc5aHgdIrCCGy+5HaQOLvBur
+         rUIXzI1FNDsLrhq6VoddffgExwiJnXKMlawTn17OT7GRibglqEk16Wns9nbES3Tzgfzf
+         Jf1mSPd4onjFW8fFRGiZsVJUuj28QEmvTM3cFJnmJf1R/FLwmfNZSHRfO70jt64uuCqy
+         idhO87/r7HYSqk4oTIfZjpqr3Gm1ClWMkxBzNIjVItPETPGQCBjpoJykTrTM4so4rac+
+         9SdA==
+X-Gm-Message-State: AJcUukcJyG9RXQnUYMDOpVSjubbHA4Qs6hMYnfs86zVgpDEayPGQaOQy
+        8ETBbSvrBLVJOmFBozZQjfVL+nUU+Ta89MsvrXQBRLiaXdCMGRSGWjqpYkRP7NFP0uSdkaIj7zZ
+        rjmjxWhf187dIkbB2zEicsctSTnjxpsL9BH6/0GSP1w==
+X-Received: by 2002:aa7:83c6:: with SMTP id j6mr13495356pfn.91.1547701365255;
+        Wed, 16 Jan 2019 21:02:45 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN511xLazrnU1fPV1LtKxk01aKVlEmOEsUNv47KCETYSQ0fmAJj96KXWj8gTQ0UHRA9ov4pBNQ==
+X-Received: by 2002:aa7:83c6:: with SMTP id j6mr13495327pfn.91.1547701364802;
+        Wed, 16 Jan 2019 21:02:44 -0800 (PST)
+Received: from 2001-b011-380f-13aa-ed95-5ef5-fa2b-0d58.dynamic-ip6.hinet.net (2001-b011-380f-13aa-ed95-5ef5-fa2b-0d58.dynamic-ip6.hinet.net. [2001:b011:380f:13aa:ed95:5ef5:fa2b:d58])
+        by smtp.gmail.com with ESMTPSA id n73sm738449pfj.148.2019.01.16.21.02.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 20:52:02 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id n18-v6so7409676lji.7
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 20:52:02 -0800 (PST)
-X-Received: by 2002:a2e:3e04:: with SMTP id l4-v6mr8407355lja.148.1547700722094;
- Wed, 16 Jan 2019 20:52:02 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
- <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
- <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net> <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
- <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
- <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm> <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
- <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm> <20190116213708.GN6310@bombadil.infradead.org>
-In-Reply-To: <20190116213708.GN6310@bombadil.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 17 Jan 2019 16:51:44 +1200
-X-Gmail-Original-Message-ID: <CAHk-=wjciBwJo5JHcvUO+JAC13TUME1PH=ftsaNt+0RC-3PCSw@mail.gmail.com>
-Message-ID: <CAHk-=wjciBwJo5JHcvUO+JAC13TUME1PH=ftsaNt+0RC-3PCSw@mail.gmail.com>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 16 Jan 2019 21:02:44 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] HID: i2c-hid: Disable runtime PM on Goodix touchpad
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <663EE74C-02E8-49DB-A197-2022AFE2D863@canonical.com>
+Date:   Thu, 17 Jan 2019 13:02:42 +0800
+Cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <2149AEF5-ABBF-4745-89F9-7FF9719251B5@canonical.com>
+References: <20190114084734.3362-1-kai.heng.feng@canonical.com>
+ <nycvar.YFH.7.76.1901141217550.6626@cbobk.fhfr.pm>
+ <663EE74C-02E8-49DB-A197-2022AFE2D863@canonical.com>
+To:     Jiri Kosina <jikos@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 9:37 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> Your patch 3/3 just removes the test.  Am I right in thinking that it
-> doesn't need to be *moved* because the existing test after !PageUptodate
-> catches it?
 
-That's the _hope_.
 
-That's the simplest patch I can come up with as a potential solution.
-But it's possible that there's some nasty performance regression
-because somebody really relies on not even triggering read-ahead, and
-we might need to do some totally different thing.
+> On Jan 16, 2019, at 16:21, Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
+> 
+> 
+> 
+>> On Jan 14, 2019, at 19:18, Jiri Kosina <jikos@kernel.org> wrote:
+>> 
+>> On Mon, 14 Jan 2019, Kai-Heng Feng wrote:
+>> 
+>>> A Goodix touchpad doesn't work. Touching the touchpad can trigger IRQ
+>>> but there's no input event from HID subsystem.
+>>> 
+>>> Turns out it reports some invalid data:
+>>> [   22.136630] i2c_hid i2c-DELL091F:00: input: 0b 00 01 00 00 00 00 00 00 00 00
+>>> 
+>>> After some trial and error, it's another device that doesn't work well
+>>> with ON/SLEEP commands. Disable runtime PM to fix the issue.
+>> 
+>> Thanks, I've now applied the patch to for-5.0/upstream-fixes. I am 
+>> wondering though we are we seeing these at all - do other OSes not do the 
+>> runtime PM on i2c at all?
+> 
+> According to the vendor, Windows does use ON/SLEEP, but infrequently.
+> 
+> We can use pm_runtime_use_autosuspend() to reduce the frequency of
+> ON/SLEEP commands, but it’s just papering over the touchpad firmware
+> bug.
 
-So it may be that somebody has a case that really wants something
-else, and we'd need to move the RWF_NOWAIT test elsewhere and do
-something slightly more complicated. As with the mincore() change,
-maybe reality doesn't like the simplest fix...
+Goodix says the firmware needs at least 60ms to fully respond ON and
+SLEEP command.
 
-> Of course, there aren't any tests for RWF_NOWAIT in xfstests.  Are there
-> any in LTP?
+I’ll see if an 200ms autosuspend can solve all Goodix, LG and Raydium
+touchpanels.
 
-RWF_NOWAIT is actually _fairly_ new.  It was introduced "only" about
-18 months ago and made it into 4.13.
+Kai-Heng
 
-Which makes me hopeful there aren't a lot of people who care deeply.
+> 
+> Kai-Heng
+> 
+>> 
+>> -- 
+>> Jiri Kosina
+>> SUSE Labs
 
-And starting readahead *may* actually be what a RWF_NOWAIT read user
-generally wants, so for all we know it might even improve performance
-and/or allow new uses. With the "start readahead but don't wait for
-it" semantics, you can have a model where you try to handle all the
-requests that can be handled out of cache first (using RWF_NOWAIT) and
-then when you've run out of cached cases you clear the RWF_NOWAIT
-flag, but now the IO has been started early (and could overlap with
-the cached request handling), so then when you actually do a blocking
-version, you get much better performance.
-
-So there is an argument that removing that one RWF_NOWAIT case might
-actually be a good thing in general, outside of  the "don't allow
-probing the cache without changing the state of it" issue.
-
-But that's handwavy and optimistic. Reality is often not as accomodating ;)
-
-                   Linus
