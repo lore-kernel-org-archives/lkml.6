@@ -2,116 +2,117 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E716C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB24C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B3B20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:56:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nxc7OS4m"
+	by mail.kernel.org (Postfix) with ESMTP id 4BC1B20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:58:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbfAQS41 (ORCPT
+        id S1728090AbfAQS6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 13:56:27 -0500
-Received: from mail-qt1-f182.google.com ([209.85.160.182]:35637 "EHLO
-        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfAQS40 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 13:56:26 -0500
-Received: by mail-qt1-f182.google.com with SMTP id v11so12557617qtc.2;
-        Thu, 17 Jan 2019 10:56:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:message-id:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-disposition:content-transfer-encoding;
-        bh=eXGdA58LB03KIzz8jtLlW+Qk3NDztSphKtPaDkeJ26E=;
-        b=nxc7OS4mys8K22fTsAFhZBa3OWeYnm3WUFf0eQmiNF0M3psVYZwTAAnnXHp0Rw07iW
-         rI+pVAW983gUnmrSLATI9JfMyUOQDQKE1tMHkQ4P+EoQ/tmUXhBBRelxdwMOEDPHO/S8
-         XOY7+FddzVr7jnMo20TRX5Anty8NPyeBBI/3O2HpCb2JSCT22hgdsV3xWJcdz7GahBvt
-         97de6gerMBXA5iTQLOX2OqqL9Z6nLg5sbn5HCRBm4AU8C+dPvDtWs8oGHDVPQnPEWBOe
-         fvCpLHxI+tnCO+seJ9tDXOZKWId4x8wcxXmu2a774un9VN8sJM1PK4QD1RNN/g98Q03l
-         kCpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=eXGdA58LB03KIzz8jtLlW+Qk3NDztSphKtPaDkeJ26E=;
-        b=ZDN1YYZu0syoswsp/Olob5xDCaZsr9d9A0JgG3hBL6FMyfAIAmlvZlmeSZCh5+xerK
-         jvRDSuMrE3jk88RCmjtCWc74JC2Rq/chC0TN+H4nMoBLk0+i1TZ/hsFcAtP1hg5pwxbU
-         I1iMT8/MSVFtcOz5xEhu13yJu8fVHWJ9V6tMuqgd+Eh9jRNuQ/IK6T2n9G39p20J5JQn
-         ykJHd9aODpDmUF2l1k7EagP9NMJ6t2eTCeSK7h80CSlfHYqKAIn9yFVnCRhrQoR6Ux75
-         S6cN59vreC9DfMZ7E6os3w5kM8RR3NSHLNGW5wyHCU3yksN15tNDlIoIW5sWVKjoa7qh
-         x0iQ==
-X-Gm-Message-State: AJcUukfGHIw79BymR8MwmB652OqCUJF2Apag4DlRccoEYgrQaYAhrrKc
-        0iPw+tCjdMVdcTHe3yJE1sZ0l6mKZC0=
-X-Google-Smtp-Source: ALg8bN79JLIIGK+E1i95kW7BNCnc8helOLVBXcjC2rIy3aajAzAGZpiL0Xgq0+ASk5ibe/lx0j3x5g==
-X-Received: by 2002:ac8:246:: with SMTP id o6mr5270755qtg.0.1547751385405;
-        Thu, 17 Jan 2019 10:56:25 -0800 (PST)
-Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
-        by smtp.gmail.com with ESMTPSA id c48sm58138001qtd.9.2019.01.17.10.56.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 10:56:24 -0800 (PST)
-Date:   Thu, 17 Jan 2019 13:56:23 -0500
-Message-ID: <20190117135623.GD7380@t480s.localdomain>
-From:   Vivien Didelot <vivien.didelot@gmail.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: Add suspend/resume
- callbacks
-In-Reply-To: <b804e77a-5eb5-6d18-cb79-f8176e370775@gmail.com>
-References: <20190116153419.3208-1-miquel.raynal@bootlin.com>
- <20190116155651.GC29244@lunn.ch>
- <e9ac5203-87ba-c14f-8140-5b100808a8a4@gmail.com>
- <20190116222329.GP29244@lunn.ch> <20190117104641.GD13242@t480s.localdomain>
- <20190117165052.6d1f1a58@xps13>
- <b804e77a-5eb5-6d18-cb79-f8176e370775@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 17 Jan 2019 13:58:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49334 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725999AbfAQS6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 13:58:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 309BBAE77;
+        Thu, 17 Jan 2019 18:58:30 +0000 (UTC)
+Message-ID: <1547751492.2917.0.camel@suse.de>
+Subject: Re: kmemleak scan crash due to invalid PFNs
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Qian Cai <cai@lca.pw>, Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        linux kernel <linux-kernel@vger.kernel.org>
+Date:   Thu, 17 Jan 2019 19:58:12 +0100
+In-Reply-To: <51e79597-21ef-3073-9036-cfc33291f395@lca.pw>
+References: <51e79597-21ef-3073-9036-cfc33291f395@lca.pw>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Jan 2019 10:00:46 -0800, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> >>>> A possible approach could be to call the port_disable, port_enable
-> >>>> callbacks from dsa_slave_suspend() and dsa_slave_resume(), I might have
-> >>>> some patches doing that already somewhere.  
-> >>>
-> >>> I expect it is also on Viviens TODO list, since this really could be
-> >>> in the core.  
-> >>
-> >> Indeed that is!
-> > 
-> > So, shall I wait for Vivien's patches (adding port_disable/enable()
-> > in dsa_slave_suspend/resume()) and keep the driver as-is or do you want
-> > me to manually call port_disable/enable() from the mv88e6xxx driver?
+On Thu, 2019-01-17 at 12:36 -0500, Qian Cai wrote:
+> On an arm64 ThunderX2 server, the first kmemleak scan would crash
+> with
+> CONFIG_DEBUG_VM_PGFLAGS=y due to page_to_nid() found a pfn that is
+> not directly
+> mapped. Hence, the page->flags is not initialized.
 > 
-> Up to you guys, the only thing that I an tell you is that my platform
-> loses its register contents during suspend/resume, therefore you must
-> make sure the driver re-applies the entire switch configuration,
-> identical to how it was prior to suspend. If you need me to test
-> something, please holler.
+> Reverted 9f1eb38e0e113 (mm, kmemleak: little optimization while
+> scanning) fixed
+> the problem.
 
+Thanks for reporting this.
+I will take a look later.
+(sorry for tue dupped mail, html sucks)
 
-Let's wait then.
-
-
-Thanks,
-
-	Vivien
+> 
+> [  102.195320] Unable to handle kernel NULL pointer dereference at
+> virtual
+> address 0000000000000006
+> [  102.204113] Mem abort info:
+> [  102.206921]   ESR = 0x96000005
+> [  102.209997]   Exception class = DABT (current EL), IL = 32 bits
+> [  102.215926]   SET = 0, FnV = 0
+> [  102.218993]   EA = 0, S1PTW = 0
+> [  102.222150] Data abort info:
+> [  102.225047]   ISV = 0, ISS = 0x00000005
+> [  102.228887]   CM = 0, WnR = 0
+> [  102.231866] user pgtable: 64k pages, 48-bit VAs, pgdp =
+> (____ptrval____)
+> [  102.238572] [0000000000000006] pgd=0000000000000000,
+> pud=0000000000000000
+> [  102.245448] Internal error: Oops: 96000005 [#1] SMP
+> [  102.264062] CPU: 60 PID: 1408 Comm: kmemleak Not tainted 5.0.0-
+> rc2+ #8
+> [  102.280403] pstate: 60400009 (nZCv daif +PAN -UAO)
+> [  102.280409] pc : page_mapping+0x24/0x144
+> [  102.280415] lr : __dump_page+0x34/0x3dc
+> [  102.292923] sp : ffff00003a5cfd10
+> [  102.296229] x29: ffff00003a5cfd10 x28: 000000000000802f
+> [  102.301533] x27: 0000000000000000 x26: 0000000000277d00
+> [  102.306835] x25: ffff000010791f56 x24: ffff7fe000000000
+> [  102.312138] x23: ffff000010772f8b x22: ffff00001125f670
+> [  102.317442] x21: ffff000011311000 x20: ffff000010772f8b
+> [  102.322747] x19: fffffffffffffffe x18: 0000000000000000
+> [  102.328049] x17: 0000000000000000 x16: 0000000000000000
+> [  102.333352] x15: 0000000000000000 x14: ffff802698b19600
+> [  102.338654] x13: ffff802698b1a200 x12: ffff802698b16f00
+> [  102.343956] x11: ffff802698b1a400 x10: 0000000000001400
+> [  102.349260] x9 : 0000000000000001 x8 : ffff00001121a000
+> [  102.354563] x7 : 0000000000000000 x6 : ffff0000102c53b8
+> [  102.359868] x5 : 0000000000000000 x4 : 0000000000000003
+> [  102.365173] x3 : 0000000000000100 x2 : 0000000000000000
+> [  102.370476] x1 : ffff000010772f8b x0 : ffffffffffffffff
+> [  102.375782] Process kmemleak (pid: 1408, stack limit =
+> 0x(____ptrval____))
+> [  102.382648] Call trace:
+> [  102.385091]  page_mapping+0x24/0x144
+> [  102.388659]  __dump_page+0x34/0x3dc
+> [  102.392140]  dump_page+0x28/0x4c
+> [  102.395363]  kmemleak_scan+0x4ac/0x680
+> [  102.399106]  kmemleak_scan_thread+0xb4/0xdc
+> [  102.403285]  kthread+0x12c/0x13c
+> [  102.406509]  ret_from_fork+0x10/0x18
+> [  102.410080] Code: d503201f f9400660 36000040 d1000413 (f9400661)
+> [  102.416357] ---[ end trace 4d4bd7f573490c8e ]---
+> [  102.420966] Kernel panic - not syncing: Fatal exception
+> [  102.426293] SMP: stopping secondary CPUs
+> [  102.431830] Kernel Offset: disabled
+> [  102.435311] CPU features: 0x002,20000c38
+> [  102.439223] Memory Limit: none
+> [  102.442384] ---[ end Kernel panic - not syncing: Fatal exception
+> ]---
+-- 
+Oscar Salvador
+SUSE L3
