@@ -2,97 +2,169 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD74CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874F2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A141C2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 543AE20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:26:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547724390;
+	bh=jaHJPlkQ1jV/T1HVLb8XI/7GrZReyoE7ojBMm8kxPZo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=1Tweg38iwUfvwHCxwerTLKpNLaiC5CYJ1tuLlP/HB51Bu4GINfxdiwaYzTOGVxKem
+	 pof/WA5GJf18RVuoj1O4uETAm6w3Y9dcRsdkehMOLvroukb3dFkL0J6S3MSkVVsg2B
+	 1dXbzxPWNkgs21LslqXnAGV0srXsuBvYAJWvfXyY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725904AbfAQL0V (ORCPT
+        id S1728746AbfAQL03 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:26:21 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32902 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725889AbfAQL0U (ORCPT
+        Thu, 17 Jan 2019 06:26:29 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45476 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbfAQL03 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:26:20 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HBOikO107578
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 06:26:19 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2qtf2pyj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 06:26:19 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 17 Jan 2019 11:26:17 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 17 Jan 2019 11:26:14 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HBQDIU14221542
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Jan 2019 11:26:13 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A336452054;
-        Thu, 17 Jan 2019 11:26:13 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.236])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 3DEAB5204E;
-        Thu, 17 Jan 2019 11:26:13 +0000 (GMT)
-Date:   Thu, 17 Jan 2019 13:26:11 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     William Kucharski <william.kucharski@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: check return value of
- memblock_alloc_node_nopanic()
-References: <1547621481-8374-1-git-send-email-rppt@linux.ibm.com>
- <5195030D-7ED9-4074-AB6C-92A3AFF11E00@oracle.com>
+        Thu, 17 Jan 2019 06:26:29 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y1so5836824oie.12;
+        Thu, 17 Jan 2019 03:26:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+Lw2WQMOYvQqN57P2A8zIzSFAHgU0oFB/MCvtZM0Klw=;
+        b=qwfXYVOUFKCbeDjt9ohgliWwHEDSttDAQaaxznzJ3UpgEccHFzJthQe3r2n856OK1n
+         D0JMez7t4gZf5k3Vp7e+q3umK04giGUemk3LECEkEvb3zbQpQpM8UklzhFkdORK6Lf4G
+         BQhSFVU4tiyPMZyYJOR7Ex+7jI9L2KMBucOgfxsEdyZgPjjLTfgm4z5o/ANgVYg225FQ
+         RMm7IUSTMGFr8qK9KCMdbdS8OwVXe8Cl+4mdBkCy3qdzDp+zEwtgY+0RthohQGZhVtFB
+         AtzfLqAayMOWVrXp/pRZtm99TpaC6gl2tkeefqK7lfu+CFrq3aR9X1rBLpjB6jNx20BH
+         FcIA==
+X-Gm-Message-State: AJcUukfrF/OUXtgp2SebwTBeBYgxzlysCNOrcEbOpw1uGPeXaK6/Kl12
+        hKIuAIfcXqi5yOKKy8lQ6yNUgA0kceKClKhaGvc=
+X-Google-Smtp-Source: ALg8bN7OnPsrfMexTY9aSwF/wMm/Ex9BtZEcTv78k21GLZ0mIxjGP11ug0klf7kXK9JusdS6afirRpHR8irgcT8oupk=
+X-Received: by 2002:aca:195:: with SMTP id 143mr4767332oib.322.1547724387887;
+ Thu, 17 Jan 2019 03:26:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5195030D-7ED9-4074-AB6C-92A3AFF11E00@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19011711-0016-0000-0000-00000246B055
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011711-0017-0000-0000-000032A0D2A1
-Message-Id: <20190117112611.GB3710@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901170084
+References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-5-keith.busch@intel.com>
+In-Reply-To: <20190116175804.30196-5-keith.busch@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 17 Jan 2019 12:26:16 +0100
+Message-ID: <CAJZ5v0hRsW037B1uPMYj=UO6TWDX9CWVyhYYjVjnvKQ=4ZaU5w@mail.gmail.com>
+Subject: Re: [PATCHv4 04/13] node: Link memory nodes to their compute nodes
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 03:19:35AM -0700, William Kucharski wrote:
-> 
-> This seems very reasonable, but if the code is just going to panic if the
-> allocation fails, why not call memblock_alloc_node() instead?
+On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
+>
+> Systems may be constructed with various specialized nodes. Some nodes
+> may provide memory, some provide compute devices that access and use
+> that memory, and others may provide both. Nodes that provide memory are
+> referred to as memory targets, and nodes that can initiate memory access
+> are referred to as memory initiators.
+>
+> Memory targets will often have varying access characteristics from
+> different initiators, and platforms may have ways to express those
+> relationships. In preparation for these systems, provide interfaces
+> for the kernel to export the memory relationship among different nodes
+> memory targets and their initiators with symlinks to each other's nodes,
+> and export node lists showing the same relationship.
+>
+> If a system provides access locality for each initiator-target pair, nodes
+> may be grouped into ranked access classes relative to other nodes. The new
+> interface allows a subsystem to register relationships of varying classes
+> if available and desired to be exported. A lower class number indicates
+> a higher performing tier, with 0 being the best performing class.
+>
+> A memory initiator may have multiple memory targets in the same access
+> class. The initiator's memory targets in given class indicate the node's
+> access characteristics perform better relative to other initiator nodes
+> either unreported or in lower class numbers. The targets within an
+> initiator's class, though, do not necessarily perform the same as each
+> other.
+>
+> A memory target node may have multiple memory initiators. All linked
+> initiators in a target's class have the same access characteristics to
+> that target.
+>
+> The following example show the nodes' new sysfs hierarchy for a memory
+> target node 'Y' with class 0 access from initiator node 'X':
+>
+>   # symlinks -v /sys/devices/system/node/nodeX/class0/
+>   relative: /sys/devices/system/node/nodeX/class0/targetY -> ../../nodeY
 
-I've sent patches [1] that remove panic() from memblock_alloc*() and drop
-_nopanic variants. After they will be (hopefully) merged,
-memblock_alloc_node() will return NULL on error.
- 
-> If there is a reason we'd prefer to call memblock_alloc_node_nopanic(),
-> I'd like to see pgdat->nodeid printed in the panic message as well.
+If you added one more directory level and had "targets" and
+"initiators" under "class0", the names of the symlinks could be the
+same as the names of the nodes themselves, that is
 
-Sure.
+/sys/devices/system/node/nodeX/class0/targets/nodeY -> ../../../nodeY
 
-[1] https://lore.kernel.org/lkml/1547646261-32535-1-git-send-email-rppt@linux.ibm.com/
+and the whole "nodelist" part wouldn't be necessary any more.
 
--- 
-Sincerely yours,
-Mike.
+Also, it looks like "class0" is just a name at this point, but it will
+represent an access class going forward.  Maybe it would be better to
+use the word "access" in the directory name to indicate that (so there
+would be "access0" instead of "class0").
 
+>
+>   # symlinks -v /sys/devices/system/node/nodeY/class0/
+>   relative: /sys/devices/system/node/nodeY/class0/initiatorX -> ../../nodeX
+>
+> And the same information is reflected in the nodelist:
+>
+>   # cat /sys/devices/system/node/nodeX/class0/target_nodelist
+>   Y
+>
+>   # cat /sys/devices/system/node/nodeY/class0/initiator_nodelist
+>   X
+>
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+> ---
+>  drivers/base/node.c  | 127 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  include/linux/node.h |   6 ++-
+>  2 files changed, 131 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/node.c b/drivers/base/node.c
+> index 86d6cd92ce3d..1da5072116ab 100644
+> --- a/drivers/base/node.c
+> +++ b/drivers/base/node.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/nodemask.h>
+>  #include <linux/cpu.h>
+>  #include <linux/device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/swap.h>
+>  #include <linux/slab.h>
+>
+> @@ -59,6 +60,91 @@ static inline ssize_t node_read_cpulist(struct device *dev,
+>  static DEVICE_ATTR(cpumap,  S_IRUGO, node_read_cpumask, NULL);
+>  static DEVICE_ATTR(cpulist, S_IRUGO, node_read_cpulist, NULL);
+>
+
+A kerneldoc describing the struct type, please.
+
+> +struct node_class_nodes {
+> +       struct device           dev;
+> +       struct list_head        list_node;
+> +       unsigned                class;
+> +       nodemask_t              initiator_nodes;
+> +       nodemask_t              target_nodes;
+> +};
+> +#define to_class_nodes(dev) container_of(dev, struct node_class_nodes, dev)
+> +
+
+Generally speaking, your code is devoid of comments.
+
+To a minimum, there should be kerneldoc comments for non-static
+functions to explain what they are for.
