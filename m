@@ -2,57 +2,59 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB18C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB4CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BF7120855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C80DA20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:54:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zQVadgvm"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ZMMVlo6g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbfAQQyp (ORCPT
+        id S1729188AbfAQQyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:54:45 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35451 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728767AbfAQQyn (ORCPT
+        Thu, 17 Jan 2019 11:54:51 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54913 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728810AbfAQQyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:54:43 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t200so1834269wmt.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:54:41 -0800 (PST)
+        Thu, 17 Jan 2019 11:54:45 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a62so1800732wmh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:54:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=guam8jHzK8TRYRb78oVM8jQvkOc1edl/EV41EjO5ZPI=;
-        b=zQVadgvmWN0kg3Iw41u1o+AFKjzYiVvu5IErM0gsdf7HBWaomZcj9Cbu+DvMMXtkU2
-         Gl1QkYG8Q4/CgFIzWF00/ZNjQzkxAMQ0M3s+y/mN44f1C/h+srIh4XFYFhuXCA/6jKV+
-         sXOmGgi/+GJmhzh2K2RtIclu1x10IGToNgAcIiea8HYJ/czOFD+2fJB5pM15oVDssMtC
-         K9Te7dX9uqcFGozw2N0XPPAvvKyhImPY7AfFWjMtZSfSPk7XnWzP+qU2uBqnowlxZcL1
-         BEqc7UZI5et5DHfBR+0zPsiZR8BNXWdNYdsvWXQRvJActaOdmwmxXV2yI4/0qFdniIdY
-         odlA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=9j/4jxpYoQpPS/+1F1W02eb69wy8a+vueBOw79dZhl0=;
+        b=ZMMVlo6gORfpCiJzCTh35BEQkxOT58yOVe7R5axxirvuNI7pvedOR7BDZIct9vWjLH
+         xHFV0uD762SYEPELWy4SofB0e6QtGlu1ob1ua8RM8TeB8wbwRVposUIq87sy7IaoQn4u
+         73tRkOcyhtSpHqQ0gFzkYRaCC/4ktaZ1QjvMFQ8tfT05X14fL99Z6kMFrPJ8kIkGwmBS
+         wA7cpklVkVKdRsxjfAaDoI+My9hdnV7DlJTPEc6bMhFY6A/WkZwKsKXOb2/pJF4B0fZ8
+         WWuAEJg8YGYgiJu+N9hyMjQA3uHnjko42yKcCo7o7E/UHMMHU7estb/PGK65ii1164Hd
+         Lhug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=guam8jHzK8TRYRb78oVM8jQvkOc1edl/EV41EjO5ZPI=;
-        b=pu7tTL11uqcHfqYQUB1TZKwAI9sNav7r910Sdo3plD1azY9DCEGbzxd9W78LT83Qvm
-         xOZP4JOwySkma+lNyJM0aPhbSn3q/Oug06RpqNb3gyY3quOIGHb6NebbNOoNrwF+ekJB
-         wZWwWbic8YKjwOEcL882pXM2dYc1Z5UXgMx7fIYAHTEFCMPHVtk7bsfT6k6BMW5ONvHx
-         pYb3FZGn/NKkMwoJfflz/GQwW9JOcMc87OE1rvheELjGFD9/NgHTlIpTwfa4FdtMTQBf
-         d9t8kWGnJk9QKP/8j4purBgUMg4ZCwy5Tmr4xIijQ3+1W+wd+E2flMXcBA0IzTTzFjVT
-         JfLA==
-X-Gm-Message-State: AJcUukdAtFRm7bzxd0vctZsKJdQc/e6/1a8PI6sTx9v/ikkVUuMpjBUV
-        hM8xHiCrplMBScnu9aa/FkI9Fg==
-X-Google-Smtp-Source: ALg8bN7vrQfMtSrk/vXxv8n8yhIkmaujikkGXUBK5XR9asB5O1uN5DUXPrZjJhuNDW9uz17jVJURWw==
-X-Received: by 2002:a7b:c181:: with SMTP id y1mr12732023wmi.10.1547744080858;
-        Thu, 17 Jan 2019 08:54:40 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=9j/4jxpYoQpPS/+1F1W02eb69wy8a+vueBOw79dZhl0=;
+        b=Eqyevk7p7Efgl5jjr1hculqQCtzwqGjbPNToRsjvLpzFjafPULaJOfQ8ScHl2Jl1uS
+         qzfwVqFXszekr/IYuKF8KmrxanWbBhzzhx4+7lXGJ3m075TkQFgdEapsjuKqRGgTub20
+         yaPTkrMN7jRiyzFBv7GzIa7+jBcUnLCI4RR+DglRjgmLgwrIc5Rv/JCb3m2vrSQE2ppE
+         8phJXRCxvsDgU9EPy26T6kaHOy34DrGPWuK/K0vFRTN+GNJRreQUwkYKqnYC+47j6VrJ
+         qpv4AdWaaGLUrRj3nlwL4VBOYhNFuEK73PyL30Og3B/AND8HY2t2w9QztFI8xIM8Pnhm
+         QywQ==
+X-Gm-Message-State: AJcUukd0Sm15x3em33wZefqOufQV8WXPDcrHLdil0F6wl3LAzlJeKxyJ
+        EwCN5V3rzBSBdsfOdxJot5Nblg==
+X-Google-Smtp-Source: ALg8bN4JFH5Al+JSn0k9EAkO6wjhzOlxBRiDe8ShCU05xJYXuEkqlX6BaZPLbL8Ttdb1wmQQMZyM6g==
+X-Received: by 2002:a1c:c60e:: with SMTP id w14mr13223913wmf.18.1547744083821;
+        Thu, 17 Jan 2019 08:54:43 -0800 (PST)
 Received: from loys-ubuntu-BY1835A49200471.thefacebook.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id b12sm65309630wrt.17.2019.01.17.08.54.39
+        by smtp.googlemail.com with ESMTPSA id b12sm65309630wrt.17.2019.01.17.08.54.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 17 Jan 2019 08:54:39 -0800 (PST)
+        Thu, 17 Jan 2019 08:54:43 -0800 (PST)
 From:   Loys Ollivier <lollivier@baylibre.com>
 To:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
 Cc:     Loys Ollivier <lollivier@baylibre.com>,
@@ -63,90 +65,42 @@ Cc:     Loys Ollivier <lollivier@baylibre.com>,
         linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/4] Add driver for Mediatek-based GNSS receivers
-Date:   Thu, 17 Jan 2019 17:54:30 +0100
-Message-Id: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
+Subject: [PATCH v2 3/4] gnss: add mtk receiver type support
+Date:   Thu, 17 Jan 2019 17:54:33 +0100
+Message-Id: <1547744074-28308-4-git-send-email-lollivier@baylibre.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
+References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add an MTK (Mediatek) type to the "GNSS_TYPE" attribute.
 
-This patch series adds a new GNSS driver for the Mediatek-based GNSS receivers.
-These receivers transmits NMEA output sequence after boot.
-Power management can be done via the main supply and optional backup supply
-as defined in the device tree.
+Note that MTK receivers support a subset of NMEA 0183 with vendor
+extensions (e.g. to allow switching to the vendor protocol).
 
-The driver has been tested using a GlobalTop pa6h chipset on a Libretech-cc
-board using the expansion header. Changes made in the board device tree can
-be found below for reference and testing.
-
-Loys
-
-Sorry it took so long for the v2. Rebased that serie on 5.0-rc1 and had to send
-some fixes for the board before testing.
-
-Version 2 changes:
-- driver: Renamed driver from Globaltop/gtop to Mediatek/mtk
-- driver: Added "mediatek,mt3339" compatible
-- dt: Renamed bindings from Globaltop to Mediatek
-- dt: Moved the current-speed property as optional
-- dt: removed the status line in example
-- cover-letter: removed the alias that is not needed anymore
-
-Loys Ollivier (4):
-  dt-bindings: Add vendor prefix for "GlobalTop Technology, Inc."
-  dt-bindings: gnss: add mediatek binding
-  gnss: add mtk receiver type support
-  gnss: add driver for mediatek receivers
-
- .../devicetree/bindings/gnss/mediatek.txt          |  39 ++++++
- .../devicetree/bindings/vendor-prefixes.txt        |   1 +
- drivers/gnss/Kconfig                               |  13 ++
- drivers/gnss/Makefile                              |   3 +
- drivers/gnss/core.c                                |   1 +
- drivers/gnss/mtk.c                                 | 153 +++++++++++++++++++++
- include/linux/gnss.h                               |   1 +
- 7 files changed, 211 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gnss/mediatek.txt
- create mode 100644 drivers/gnss/mtk.c
-
+Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
 ---
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-index 90a56af967a7..3b3d4dcc47aa 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-@@ -17,6 +17,7 @@
- 
-        aliases {
-                serial0 = &uart_AO;
-                ethernet0 = &ethmac;
-        };
- 
-@@ -269,7 +270,20 @@
-        pinctrl-names = "default";
- };
- 
-+/* This is brought out on the UART_A_TX (8) and UART_A_RX (10) pins: */
-+&uart_A {
-+       status = "okay";
-+       pinctrl-0 = <&uart_a_pins>;
-+       pinctrl-names = "default";
-+
-+       gnss {
-+               compatible = "globaltop,pa6h";
-+               v-bckp-supply = <&vcc_3v3>;
-+               vcc-supply = <&vcc_3v3>;
-+               current-speed = <9600>;
-+       };
-+};
-+
- &usb0 {
-        status = "okay";
- };
 
+v2: renamed from GTOP to MTK.
+
+ include/linux/gnss.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/gnss.h b/include/linux/gnss.h
+index 43546977098c..36968a0f33e8 100644
+--- a/include/linux/gnss.h
++++ b/include/linux/gnss.h
+@@ -22,6 +22,7 @@ enum gnss_type {
+ 	GNSS_TYPE_NMEA = 0,
+ 	GNSS_TYPE_SIRF,
+ 	GNSS_TYPE_UBX,
++	GNSS_TYPE_MTK,
+ 
+ 	GNSS_TYPE_COUNT
+ };
 -- 
 2.7.4
 
