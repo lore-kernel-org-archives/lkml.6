@@ -2,154 +2,249 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F628C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8D5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 593E220868
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6375B20859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pieTo06O"
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="Ngm/O7k5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726225AbfAQWid (ORCPT
+        id S1726385AbfAQWjY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 17:38:33 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35372 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbfAQWid (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 17:38:33 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z9so5539024pfi.2;
-        Thu, 17 Jan 2019 14:38:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5E+2/GYKKTCBX9PRkJwki/ltO0/DQBbf8wDLJlA+F/Q=;
-        b=pieTo06OI+5DFqKZqLxhU8R3x4ayvukvWFTzcX8qvrIOJcqc/EmRKifExP7A3vcXP9
-         oR0oEgtrAL5GrYTJHQPfZSONj9vo+jl5qhVJ2J2Xde/YDKzrcLSpA752NLeeLiiV3myD
-         xiw+vyE+bFtBBYqrePFnR28vr8OVryziv2PE10VWeNg3dZSTDn1kDwx3SdsVZ/UvD946
-         XWxVqTcG8Ga01KS0kfx9kkwTzUMwHv6M2Jq/lb4oEAzI1oCGLuAZysvEygCx2v5Sioqv
-         +OQrYGxUyfRdDLY+hy/D0TQSsVQwi9COqMkuCJz6MzSvnx4duX6zChKfjby5M7qeBPhZ
-         sq9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5E+2/GYKKTCBX9PRkJwki/ltO0/DQBbf8wDLJlA+F/Q=;
-        b=CRejyfdShD4UlMsaG8CHuDtNxXiswIcy8xnvUFRPvGZJn80Nhxr8YQPe48kk0kj59p
-         dYaQQ/B6STHZOsbmsWvVqy1LAeRD3kbWdBpxKk/eya4bphO/u/husX2XZimWnUD93TDS
-         4UUn38D8JzAfFPx3Kk5nDFWya/GzJ5l27iOB7Ws4Jg3Y+woYwDwPSlOGU//sgH7UhivP
-         M7Gzdc4MO9lPLKAgd1cXV4dmygZ5zKO79YESoMWvqxBnyW1Ee/FmbkglPDGIPvq06+JL
-         nCbg7m4JgimqeMb9oVFsXN4GQSSn5q76ub2nOtf9LRstPEAMxMC0bsnfVlMHUmpB0ZN0
-         YdYQ==
-X-Gm-Message-State: AJcUukdU5B32etQ9cWswq/pNkJHFiy8XjSXalwKOZxwr6DeN3S4fkUTi
-        CpdGyygrl15QtdKblKVjpyHEBGc+
-X-Google-Smtp-Source: ALg8bN7SDaq7ILk+XQTCSwaeR3+pavwAm9Tv0uV8GdAkf8HeqBotDVqJfmpk2C4dz5cbV1W2xaFUWA==
-X-Received: by 2002:a62:29c3:: with SMTP id p186mr17002451pfp.117.1547764711697;
-        Thu, 17 Jan 2019 14:38:31 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id b26sm4032861pfe.91.2019.01.17.14.38.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 14:38:31 -0800 (PST)
-Date:   Thu, 17 Jan 2019 14:38:28 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     =?iso-8859-1?B?QnL8bnMs?= Stefan <Stefan.Bruens@rwth-aachen.de>
-Cc:     "jdelvare@suse.com" <jdelvare@suse.com>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [RFC][PATCH] hwmon: (ina2xx) Improve current and power reading
- precision
-Message-ID: <20190117223828.GI16918@Asurada-Nvidia.nvidia.com>
-References: <20181121012629.5432-1-nicoleotsuka@gmail.com>
- <2863036.QIPGp1Eqjm@sbruens-linux.lcs.intern>
- <20181121194051.GA8902@Asurada-Nvidia.nvidia.com>
- <1717545.GXSegKtrMu@sbruens-linux.lcs.intern>
- <20190105012642.GA18025@Asurada-Nvidia.nvidia.com>
+        Thu, 17 Jan 2019 17:39:24 -0500
+Received: from mail-eopbgr730053.outbound.protection.outlook.com ([40.107.73.53]:10496
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725784AbfAQWjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 17:39:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A6E9EkZ0hUVD3GvqqkbExqitLTr7a0tMBAfIGgQN51Y=;
+ b=Ngm/O7k5woKA2Aa+SOOSLPZyyTN8Tp3iVE8acDt0CHPYRXaAqdh1hsxbe1lvm2j36p/FKGSa+B2xhfoFwEz7KA4nuLK9wU6kEY4uL5NSvWFPy3HfmavziPn9I97v7GKhmgxZLf7yuXeyHVBYV/GGah+CRSeBPU2iG5OdtREqZM0=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5000.namprd05.prod.outlook.com (20.177.230.206) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.16; Thu, 17 Jan 2019 22:39:16 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::35a9:ab4b:cc18:b732]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::35a9:ab4b:cc18:b732%2]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
+ 22:39:16 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+CC:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex
+ in text_poke*()"
+Thread-Topic: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex
+ in text_poke*()"
+Thread-Index: AQHUrfxOhBIE3CgBbEWQpABmYJlN26WzBO2AgADywwCAABdJAA==
+Date:   Thu, 17 Jan 2019 22:39:15 +0000
+Message-ID: <8817DE5F-BCF4-4F6A-A496-E0DB6889D86E@vmware.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+ <20190117003259.23141-2-rick.p.edgecombe@intel.com>
+ <20190117154701.78aa8e9d0130716e0d9ac026@kernel.org>
+ <F3B332DA-4637-4A3B-93F9-C7903C1D9FF9@zytor.com>
+In-Reply-To: <F3B332DA-4637-4A3B-93F9-C7903C1D9FF9@zytor.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5000;20:dfOqghGNBhvEuFB2jGYZFLIhe0LuCtIhE3q1/sehR1BSuQnmQH4SByzLpVfgDWM9DCIuCpasPsZN5WLKD9IveAGkjkESvOr701XHLRkH618pEWYVJSWZB4vwKhVFodGFGgfSAcOznfqxGxUWwhOjDUGRBlEGwU3xZds/gLkpt8g=
+x-ms-office365-filtering-correlation-id: f0694afa-ece9-4511-8850-08d67ccc9c97
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5000;
+x-ms-traffictypediagnostic: BYAPR05MB5000:
+x-microsoft-antispam-prvs: <BYAPR05MB5000678AEAC09A3A68E90000D0830@BYAPR05MB5000.namprd05.prod.outlook.com>
+x-forefront-prvs: 0920602B08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(346002)(376002)(396003)(199004)(189003)(26005)(2616005)(11346002)(81156014)(446003)(6506007)(5660300001)(316002)(8676002)(25786009)(66066001)(7416002)(186003)(97736004)(6486002)(8936002)(81166006)(229853002)(93886005)(53546011)(6436002)(4326008)(102836004)(6916009)(86362001)(486006)(6116002)(2906002)(82746002)(53936002)(33656002)(3846002)(14454004)(106356001)(36756003)(71190400001)(83716004)(39060400002)(54906003)(6512007)(476003)(71200400001)(305945005)(478600001)(105586002)(14444005)(256004)(7736002)(99286004)(68736007)(966005)(6306002)(6246003)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5000;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: zZaMMGBo4W1c0onMFNp5eKxciDXL4vqEJKyi+2fZk+2dx1gz9NZbu9Zyfdc51dLx65P+ZAyyGfAmXD2rra5forubf5qTp7bl+APSTRyzFz82ozyxdGuq7XGA5n6WJoDvT1anaoTMTzzGqL36vtSFdpqlnxDgsSmPe/WjB3MVw24TKzYW1TMwW+VOOAutiq+EC0J/YlxCkqpReysLVzfL+JI2uZ3QF/bDTFS5x9jUsmVdJ2nBVL3F0fx9hE7nfHblJf+DCQcUEQy1JsK1/grd7yFoHtu/FM47dxYezfTzN8bZy9MJf/Zz+4rN7EQlrQlvhfMFyNWDPnpeFuSW02dDoWB4IwvSmROBKfT1I4/a+DgCQL1HHDj2vHaOE5QiIvWi94u/QqPffxbwfAF0jg/zodMgZRA+KNGASk42+cdeqtM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D15D5A09441E2E45B1C3866169288B31@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190105012642.GA18025@Asurada-Nvidia.nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0694afa-ece9-4511-8850-08d67ccc9c97
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 22:39:15.7569
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 05:26:42PM -0800, Nicolin Chen wrote:
-> Hi Stefan,
-> 
-> Sorry for a super late reply. I took a long vacation.
-> 
-> On Wed, Nov 21, 2018 at 10:16:09PM +0000, Brüns, Stefan wrote:
-> > > > Another concern may be voltage drop over the shunt, but for this case you
-> > > > have a nominal voltage of 1.8V, so 30uV are 0.001%.
-> > > > 
-> > > > > When measuring a 1.8v voltage running a small current (e.g. 33 mA),
-> > > > > the power value (that's supposed to be 59.4 mW) becomes inaccurate
-> > > > > due to the larger scale (25mA for method A; 62.5 mA for method B).
-> > > 
-> > > Just found out that I have typos here: 25mW and 62.5mW.
-> > > 
-> > > > Another look into the datasheet reveals, even at full gain (PGA=1), the
-> > > > LSB is 40mV / 2^12 = 40mV / 4096 ~ 10uV. So when the current ADC reads
-> > > > out as 3*LSB, this anything between 25mA and 35mA. This is the best case
-> > > > figure.
-> > > Current read doesn't get affected a lot actually, since hwmon ABI
-> > > also reports current value in unit mA. However, the power read is
-> > > the matter here. With a 62.5mW power_lsb, power results are kinda
-> > > useless on my system.
-> > 
-> > The reported current does not matter here, actually. Internally, the ADC value 
-> > will have an uncertainty of 10mA (at PGA=1). At 1.8V, your uncertainty is 
-> > 18mW. And thats *only* the quantization noise. It wont get better than that.
-> 
-> The fact is that I do get better power results after setting the
-> calibration value to 0x7ff. That's the necessity of this change.
-> 
-> > Also note, you are apparently using the ina2xx hwmon driver - I strongly 
-> > advise against it, you should either use the ina2xx driver from the IIO 
-> > subsystem directly, or use the IIO driver via iio-hwmon.
-> 
-> The IIO version is also using the minimum calibration value. It
-> will not solve my problem here.
-> 
-> > There is also always the possibility to read the bus and shunt voltage 
-> > registers and calculate the power manually.
-> 
-> Won't that be a waste since the hardware could have provided a
-> better accuracy? It would need more I2C bus reads and cpu cycles
-> for calculation.
-> 
-> I don't get why you're against a setting for calibration value.
-> This is how the hardware got designed to cover different cases.
-> Since we do have such a case that needs some accuracy, it'd be
-> fair to add it into the driver. Plus, the feature won't change
-> the minimum calibration value at all -- everyone would be happy.
-
-Stefan,
-
-Would you please kindly give an ack to this intention so that
-we can at least move forward for patch review?
-
-Neither changing hardware resistor values nor simply ignoring
-the inaccuracy is acceptable for us. Since configuring that
-calibration register value can help our use cases, we really
-need this setting to be available in the driver.
-
-Guenter,
-
-Do you have any input regarding this change? I would like to
-hear an opinion from you.
-
-Thank you
+PiBPbiBKYW4gMTcsIDIwMTksIGF0IDE6MTUgUE0sIGhwYUB6eXRvci5jb20gd3JvdGU6DQo+IA0K
+PiBPbiBKYW51YXJ5IDE2LCAyMDE5IDEwOjQ3OjAxIFBNIFBTVCwgTWFzYW1pIEhpcmFtYXRzdSA8
+bWhpcmFtYXRAa2VybmVsLm9yZz4gd3JvdGU6DQo+PiBPbiBXZWQsIDE2IEphbiAyMDE5IDE2OjMy
+OjQzIC0wODAwDQo+PiBSaWNrIEVkZ2Vjb21iZSA8cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+
+IHdyb3RlOg0KPj4gDQo+Pj4gRnJvbTogTmFkYXYgQW1pdCA8bmFtaXRAdm13YXJlLmNvbT4NCj4+
+PiANCj4+PiB0ZXh0X211dGV4IGlzIGN1cnJlbnRseSBleHBlY3RlZCB0byBiZSBoZWxkIGJlZm9y
+ZSB0ZXh0X3Bva2UoKSBpcw0KPj4+IGNhbGxlZCwgYnV0IHdlIGtnZGIgZG9lcyBub3QgdGFrZSB0
+aGUgbXV0ZXgsIGFuZCBpbnN0ZWFkICpzdXBwb3NlZGx5Kg0KPj4+IGVuc3VyZXMgdGhlIGxvY2sg
+aXMgbm90IHRha2VuIGFuZCB3aWxsIG5vdCBiZSBhY3F1aXJlZCBieSBhbnkgb3RoZXINCj4+IGNv
+cmUNCj4+PiB3aGlsZSB0ZXh0X3Bva2UoKSBpcyBydW5uaW5nLg0KPj4+IA0KPj4+IFRoZSByZWFz
+b24gZm9yIHRoZSAic3VwcG9zZWRseSIgY29tbWVudCBpcyB0aGF0IGl0IGlzIG5vdCBlbnRpcmVs
+eQ0KPj4gY2xlYXINCj4+PiB0aGF0IHRoaXMgd291bGQgYmUgdGhlIGNhc2UgaWYgZ2RiX2RvX3Jv
+dW5kdXAgaXMgemVyby4NCj4+PiANCj4+PiBUaGlzIHBhdGNoIGNyZWF0ZXMgdHdvIHdyYXBwZXIg
+ZnVuY3Rpb25zLCB0ZXh0X3Bva2UoKSBhbmQNCj4+PiB0ZXh0X3Bva2Vfa2dkYigpIHdoaWNoIGRv
+IG9yIGRvIG5vdCBydW4gdGhlIGxvY2tkZXAgYXNzZXJ0aW9uDQo+Pj4gcmVzcGVjdGl2ZWx5Lg0K
+Pj4+IA0KPj4+IFdoaWxlIHdlIGFyZSBhdCBpdCwgY2hhbmdlIHRoZSByZXR1cm4gY29kZSBvZiB0
+ZXh0X3Bva2UoKSB0bw0KPj4gc29tZXRoaW5nDQo+Pj4gbWVhbmluZ2Z1bC4gT25lIGRheSwgY2Fs
+bGVycyBtaWdodCBhY3R1YWxseSByZXNwZWN0IGl0IGFuZCB0aGUNCj4+IGV4aXN0aW5nDQo+Pj4g
+QlVHX09OKCkgd2hlbiBwYXRjaGluZyBmYWlscyBjb3VsZCBiZSByZW1vdmVkLiBGb3Iga2dkYiwg
+dGhlIHJldHVybg0KPj4+IHZhbHVlIGNhbiBhY3R1YWxseSBiZSB1c2VkLg0KPj4gDQo+PiBMb29r
+cyBnb29kIHRvIG1lLg0KPj4gDQo+PiBSZXZpZXdlZC1ieTogTWFzYW1pIEhpcmFtYXRzdSA8bWhp
+cmFtYXRAa2VybmVsLm9yZz4NCj4+IA0KPj4gVGhhbmsgeW91LA0KPj4gDQo+Pj4gQ2M6IEFuZHkg
+THV0b21pcnNraSA8bHV0b0BrZXJuZWwub3JnPg0KPj4+IENjOiBLZWVzIENvb2sgPGtlZXNjb29r
+QGNocm9taXVtLm9yZz4NCj4+PiBDYzogRGF2ZSBIYW5zZW4gPGRhdmUuaGFuc2VuQGludGVsLmNv
+bT4NCj4+PiBDYzogTWFzYW1pIEhpcmFtYXRzdSA8bWhpcmFtYXRAa2VybmVsLm9yZz4NCj4+PiBG
+aXhlczogOTIyMmY2MDY1MDZjICgieDg2L2FsdGVybmF0aXZlczogTG9ja2RlcC1lbmZvcmNlIHRl
+eHRfbXV0ZXggaW4NCj4+IHRleHRfcG9rZSooKSIpDQo+Pj4gU3VnZ2VzdGVkLWJ5OiBQZXRlciBa
+aWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+DQo+Pj4gQWNrZWQtYnk6IEppcmkgS29zaW5h
+IDxqa29zaW5hQHN1c2UuY3o+DQo+Pj4gU2lnbmVkLW9mZi1ieTogTmFkYXYgQW1pdCA8bmFtaXRA
+dm13YXJlLmNvbT4NCj4+PiBTaWduZWQtb2ZmLWJ5OiBSaWNrIEVkZ2Vjb21iZSA8cmljay5wLmVk
+Z2Vjb21iZUBpbnRlbC5jb20+DQo+Pj4gLS0tDQo+Pj4gYXJjaC94ODYvaW5jbHVkZS9hc20vdGV4
+dC1wYXRjaGluZy5oIHwgIDEgKw0KPj4+IGFyY2gveDg2L2tlcm5lbC9hbHRlcm5hdGl2ZS5jICAg
+ICAgICB8IDUyDQo+PiArKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tDQo+Pj4gYXJjaC94ODYv
+a2VybmVsL2tnZGIuYyAgICAgICAgICAgICAgIHwgMTEgKysrLS0tDQo+Pj4gMyBmaWxlcyBjaGFu
+Z2VkLCA0NSBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkNCj4+PiANCj4+PiBkaWZmIC0t
+Z2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdGV4dC1wYXRjaGluZy5oDQo+PiBiL2FyY2gveDg2
+L2luY2x1ZGUvYXNtL3RleHQtcGF0Y2hpbmcuaA0KPj4+IGluZGV4IGU4NWZmNjVjNDNjMy4uZjhm
+YzhlODZjZjAxIDEwMDY0NA0KPj4+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3RleHQtcGF0
+Y2hpbmcuaA0KPj4+ICsrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3RleHQtcGF0Y2hpbmcuaA0K
+Pj4+IEBAIC0zNSw2ICszNSw3IEBAIGV4dGVybiB2b2lkICp0ZXh0X3Bva2VfZWFybHkodm9pZCAq
+YWRkciwgY29uc3Qgdm9pZA0KPj4gKm9wY29kZSwgc2l6ZV90IGxlbik7DQo+Pj4gICogaW5jb25z
+aXN0ZW50IGluc3RydWN0aW9uIHdoaWxlIHlvdSBwYXRjaC4NCj4+PiAgKi8NCj4+PiBleHRlcm4g
+dm9pZCAqdGV4dF9wb2tlKHZvaWQgKmFkZHIsIGNvbnN0IHZvaWQgKm9wY29kZSwgc2l6ZV90IGxl
+bik7DQo+Pj4gK2V4dGVybiB2b2lkICp0ZXh0X3Bva2Vfa2dkYih2b2lkICphZGRyLCBjb25zdCB2
+b2lkICpvcGNvZGUsIHNpemVfdA0KPj4gbGVuKTsNCj4+PiBleHRlcm4gaW50IHBva2VfaW50M19o
+YW5kbGVyKHN0cnVjdCBwdF9yZWdzICpyZWdzKTsNCj4+PiBleHRlcm4gdm9pZCAqdGV4dF9wb2tl
+X2JwKHZvaWQgKmFkZHIsIGNvbnN0IHZvaWQgKm9wY29kZSwgc2l6ZV90DQo+PiBsZW4sIHZvaWQg
+KmhhbmRsZXIpOw0KPj4+IGV4dGVybiBpbnQgYWZ0ZXJfYm9vdG1lbTsNCj4+PiBkaWZmIC0tZ2l0
+IGEvYXJjaC94ODYva2VybmVsL2FsdGVybmF0aXZlLmMNCj4+IGIvYXJjaC94ODYva2VybmVsL2Fs
+dGVybmF0aXZlLmMNCj4+PiBpbmRleCBlYmVhYzQ4N2EyMGMuLmM2YTNhMTBhMmZkNSAxMDA2NDQN
+Cj4+PiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvYWx0ZXJuYXRpdmUuYw0KPj4+ICsrKyBiL2FyY2gv
+eDg2L2tlcm5lbC9hbHRlcm5hdGl2ZS5jDQo+Pj4gQEAgLTY3OCwxOCArNjc4LDcgQEAgdm9pZCAq
+X19pbml0X29yX21vZHVsZSB0ZXh0X3Bva2VfZWFybHkodm9pZA0KPj4gKmFkZHIsIGNvbnN0IHZv
+aWQgKm9wY29kZSwNCj4+PiByZXR1cm4gYWRkcjsNCj4+PiB9DQo+Pj4gDQo+Pj4gLS8qKg0KPj4+
+IC0gKiB0ZXh0X3Bva2UgLSBVcGRhdGUgaW5zdHJ1Y3Rpb25zIG9uIGEgbGl2ZSBrZXJuZWwNCj4+
+PiAtICogQGFkZHI6IGFkZHJlc3MgdG8gbW9kaWZ5DQo+Pj4gLSAqIEBvcGNvZGU6IHNvdXJjZSBv
+ZiB0aGUgY29weQ0KPj4+IC0gKiBAbGVuOiBsZW5ndGggdG8gY29weQ0KPj4+IC0gKg0KPj4+IC0g
+KiBPbmx5IGF0b21pYyB0ZXh0IHBva2Uvc2V0IHNob3VsZCBiZSBhbGxvd2VkIHdoZW4gbm90IGRv
+aW5nIGVhcmx5DQo+PiBwYXRjaGluZy4NCj4+PiAtICogSXQgbWVhbnMgdGhlIHNpemUgbXVzdCBi
+ZSB3cml0YWJsZSBhdG9taWNhbGx5IGFuZCB0aGUgYWRkcmVzcw0KPj4gbXVzdCBiZSBhbGlnbmVk
+DQo+Pj4gLSAqIGluIGEgd2F5IHRoYXQgcGVybWl0cyBhbiBhdG9taWMgd3JpdGUuIEl0IGFsc28g
+bWFrZXMgc3VyZSB3ZSBmaXQNCj4+IG9uIGEgc2luZ2xlDQo+Pj4gLSAqIHBhZ2UuDQo+Pj4gLSAq
+Lw0KPj4+IC12b2lkICp0ZXh0X3Bva2Uodm9pZCAqYWRkciwgY29uc3Qgdm9pZCAqb3Bjb2RlLCBz
+aXplX3QgbGVuKQ0KPj4+ICtzdGF0aWMgdm9pZCAqX190ZXh0X3Bva2Uodm9pZCAqYWRkciwgY29u
+c3Qgdm9pZCAqb3Bjb2RlLCBzaXplX3QgbGVuKQ0KPj4+IHsNCj4+PiAJdW5zaWduZWQgbG9uZyBm
+bGFnczsNCj4+PiAJY2hhciAqdmFkZHI7DQo+Pj4gQEAgLTcwMiw4ICs2OTEsNiBAQCB2b2lkICp0
+ZXh0X3Bva2Uodm9pZCAqYWRkciwgY29uc3Qgdm9pZCAqb3Bjb2RlLA0KPj4gc2l6ZV90IGxlbikN
+Cj4+PiAgKi8NCj4+PiAJQlVHX09OKCFhZnRlcl9ib290bWVtKTsNCj4+PiANCj4+PiAtCWxvY2tk
+ZXBfYXNzZXJ0X2hlbGQoJnRleHRfbXV0ZXgpOw0KPj4+IC0NCj4+PiAJaWYgKCFjb3JlX2tlcm5l
+bF90ZXh0KCh1bnNpZ25lZCBsb25nKWFkZHIpKSB7DQo+Pj4gCQlwYWdlc1swXSA9IHZtYWxsb2Nf
+dG9fcGFnZShhZGRyKTsNCj4+PiAJCXBhZ2VzWzFdID0gdm1hbGxvY190b19wYWdlKGFkZHIgKyBQ
+QUdFX1NJWkUpOw0KPj4+IEBAIC03MzIsNiArNzE5LDQzIEBAIHZvaWQgKnRleHRfcG9rZSh2b2lk
+ICphZGRyLCBjb25zdCB2b2lkICpvcGNvZGUsDQo+PiBzaXplX3QgbGVuKQ0KPj4+IHJldHVybiBh
+ZGRyOw0KPj4+IH0NCj4+PiANCj4+PiArLyoqDQo+Pj4gKyAqIHRleHRfcG9rZSAtIFVwZGF0ZSBp
+bnN0cnVjdGlvbnMgb24gYSBsaXZlIGtlcm5lbA0KPj4+ICsgKiBAYWRkcjogYWRkcmVzcyB0byBt
+b2RpZnkNCj4+PiArICogQG9wY29kZTogc291cmNlIG9mIHRoZSBjb3B5DQo+Pj4gKyAqIEBsZW46
+IGxlbmd0aCB0byBjb3B5DQo+Pj4gKyAqDQo+Pj4gKyAqIE9ubHkgYXRvbWljIHRleHQgcG9rZS9z
+ZXQgc2hvdWxkIGJlIGFsbG93ZWQgd2hlbiBub3QgZG9pbmcgZWFybHkNCj4+IHBhdGNoaW5nLg0K
+Pj4+ICsgKiBJdCBtZWFucyB0aGUgc2l6ZSBtdXN0IGJlIHdyaXRhYmxlIGF0b21pY2FsbHkgYW5k
+IHRoZSBhZGRyZXNzDQo+PiBtdXN0IGJlIGFsaWduZWQNCj4+PiArICogaW4gYSB3YXkgdGhhdCBw
+ZXJtaXRzIGFuIGF0b21pYyB3cml0ZS4gSXQgYWxzbyBtYWtlcyBzdXJlIHdlIGZpdA0KPj4gb24g
+YSBzaW5nbGUNCj4+PiArICogcGFnZS4NCj4+PiArICovDQo+Pj4gK3ZvaWQgKnRleHRfcG9rZSh2
+b2lkICphZGRyLCBjb25zdCB2b2lkICpvcGNvZGUsIHNpemVfdCBsZW4pDQo+Pj4gK3sNCj4+PiAr
+CWxvY2tkZXBfYXNzZXJ0X2hlbGQoJnRleHRfbXV0ZXgpOw0KPj4+ICsNCj4+PiArCXJldHVybiBf
+X3RleHRfcG9rZShhZGRyLCBvcGNvZGUsIGxlbik7DQo+Pj4gK30NCj4+PiArDQo+Pj4gKy8qKg0K
+Pj4+ICsgKiB0ZXh0X3Bva2Vfa2dkYiAtIFVwZGF0ZSBpbnN0cnVjdGlvbnMgb24gYSBsaXZlIGtl
+cm5lbCBieSBrZ2RiDQo+Pj4gKyAqIEBhZGRyOiBhZGRyZXNzIHRvIG1vZGlmeQ0KPj4+ICsgKiBA
+b3Bjb2RlOiBzb3VyY2Ugb2YgdGhlIGNvcHkNCj4+PiArICogQGxlbjogbGVuZ3RoIHRvIGNvcHkN
+Cj4+PiArICoNCj4+PiArICogT25seSBhdG9taWMgdGV4dCBwb2tlL3NldCBzaG91bGQgYmUgYWxs
+b3dlZCB3aGVuIG5vdCBkb2luZyBlYXJseQ0KPj4gcGF0Y2hpbmcuDQo+Pj4gKyAqIEl0IG1lYW5z
+IHRoZSBzaXplIG11c3QgYmUgd3JpdGFibGUgYXRvbWljYWxseSBhbmQgdGhlIGFkZHJlc3MNCj4+
+IG11c3QgYmUgYWxpZ25lZA0KPj4+ICsgKiBpbiBhIHdheSB0aGF0IHBlcm1pdHMgYW4gYXRvbWlj
+IHdyaXRlLiBJdCBhbHNvIG1ha2VzIHN1cmUgd2UgZml0DQo+PiBvbiBhIHNpbmdsZQ0KPj4+ICsg
+KiBwYWdlLg0KPj4+ICsgKg0KPj4+ICsgKiBDb250ZXh0OiBzaG91bGQgb25seSBiZSB1c2VkIGJ5
+IGtnZGIsIHdoaWNoIGVuc3VyZXMgbm8gb3RoZXIgY29yZQ0KPj4gaXMgcnVubmluZywNCj4+PiAr
+ICoJICAgIGRlc3BpdGUgdGhlIGZhY3QgaXQgZG9lcyBub3QgaG9sZCB0aGUgdGV4dF9tdXRleC4N
+Cj4+PiArICovDQo+Pj4gK3ZvaWQgKnRleHRfcG9rZV9rZ2RiKHZvaWQgKmFkZHIsIGNvbnN0IHZv
+aWQgKm9wY29kZSwgc2l6ZV90IGxlbikNCj4+PiArew0KPj4+ICsJcmV0dXJuIF9fdGV4dF9wb2tl
+KGFkZHIsIG9wY29kZSwgbGVuKTsNCj4+PiArfQ0KPj4+ICsNCj4+PiBzdGF0aWMgdm9pZCBkb19z
+eW5jX2NvcmUodm9pZCAqaW5mbykNCj4+PiB7DQo+Pj4gCXN5bmNfY29yZSgpOw0KPj4+IGRpZmYg
+LS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwva2dkYi5jIGIvYXJjaC94ODYva2VybmVsL2tnZGIuYw0K
+Pj4+IGluZGV4IDVkYjA4NDI1MDYzZS4uMTQ2MTU0NGNiYThiIDEwMDY0NA0KPj4+IC0tLSBhL2Fy
+Y2gveDg2L2tlcm5lbC9rZ2RiLmMNCj4+PiArKysgYi9hcmNoL3g4Ni9rZXJuZWwva2dkYi5jDQo+
+Pj4gQEAgLTc1OCwxMyArNzU4LDEzIEBAIGludCBrZ2RiX2FyY2hfc2V0X2JyZWFrcG9pbnQoc3Ry
+dWN0IGtnZGJfYmtwdA0KPj4gKmJwdCkNCj4+PiBpZiAoIWVycikNCj4+PiAJCXJldHVybiBlcnI7
+DQo+Pj4gCS8qDQo+Pj4gLQkgKiBJdCBpcyBzYWZlIHRvIGNhbGwgdGV4dF9wb2tlKCkgYmVjYXVz
+ZSBub3JtYWwga2VybmVsIGV4ZWN1dGlvbg0KPj4+ICsJICogSXQgaXMgc2FmZSB0byBjYWxsIHRl
+eHRfcG9rZV9rZ2RiKCkgYmVjYXVzZSBub3JtYWwga2VybmVsDQo+PiBleGVjdXRpb24NCj4+PiAg
+KiBpcyBzdG9wcGVkIG9uIGFsbCBjb3Jlcywgc28gbG9uZyBhcyB0aGUgdGV4dF9tdXRleCBpcyBu
+b3QNCj4+IGxvY2tlZC4NCj4+PiAgKi8NCj4+PiAJaWYgKG11dGV4X2lzX2xvY2tlZCgmdGV4dF9t
+dXRleCkpDQo+Pj4gCQlyZXR1cm4gLUVCVVNZOw0KPj4+IC0JdGV4dF9wb2tlKCh2b2lkICopYnB0
+LT5icHRfYWRkciwgYXJjaF9rZ2RiX29wcy5nZGJfYnB0X2luc3RyLA0KPj4+IC0JCSAgQlJFQUtf
+SU5TVFJfU0laRSk7DQo+Pj4gKwl0ZXh0X3Bva2Vfa2dkYigodm9pZCAqKWJwdC0+YnB0X2FkZHIs
+IGFyY2hfa2dkYl9vcHMuZ2RiX2JwdF9pbnN0ciwNCj4+PiArCQkgICAgICAgQlJFQUtfSU5TVFJf
+U0laRSk7DQo+Pj4gCWVyciA9IHByb2JlX2tlcm5lbF9yZWFkKG9wYywgKGNoYXIgKilicHQtPmJw
+dF9hZGRyLA0KPj4gQlJFQUtfSU5TVFJfU0laRSk7DQo+Pj4gaWYgKGVycikNCj4+PiAJCXJldHVy
+biBlcnI7DQo+Pj4gQEAgLTc4MywxMiArNzgzLDEzIEBAIGludCBrZ2RiX2FyY2hfcmVtb3ZlX2Jy
+ZWFrcG9pbnQoc3RydWN0DQo+PiBrZ2RiX2JrcHQgKmJwdCkNCj4+PiBpZiAoYnB0LT50eXBlICE9
+IEJQX1BPS0VfQlJFQUtQT0lOVCkNCj4+PiAJCWdvdG8ga25sX3dyaXRlOw0KPj4+IAkvKg0KPj4+
+IC0JICogSXQgaXMgc2FmZSB0byBjYWxsIHRleHRfcG9rZSgpIGJlY2F1c2Ugbm9ybWFsIGtlcm5l
+bCBleGVjdXRpb24NCj4+PiArCSAqIEl0IGlzIHNhZmUgdG8gY2FsbCB0ZXh0X3Bva2Vfa2dkYigp
+IGJlY2F1c2Ugbm9ybWFsIGtlcm5lbA0KPj4gZXhlY3V0aW9uDQo+Pj4gICogaXMgc3RvcHBlZCBv
+biBhbGwgY29yZXMsIHNvIGxvbmcgYXMgdGhlIHRleHRfbXV0ZXggaXMgbm90DQo+PiBsb2NrZWQu
+DQo+Pj4gICovDQo+Pj4gCWlmIChtdXRleF9pc19sb2NrZWQoJnRleHRfbXV0ZXgpKQ0KPj4+IAkJ
+Z290byBrbmxfd3JpdGU7DQo+Pj4gLQl0ZXh0X3Bva2UoKHZvaWQgKilicHQtPmJwdF9hZGRyLCBi
+cHQtPnNhdmVkX2luc3RyLA0KPj4gQlJFQUtfSU5TVFJfU0laRSk7DQo+Pj4gKwl0ZXh0X3Bva2Vf
+a2dkYigodm9pZCAqKWJwdC0+YnB0X2FkZHIsIGJwdC0+c2F2ZWRfaW5zdHIsDQo+Pj4gKwkJICAg
+ICAgIEJSRUFLX0lOU1RSX1NJWkUpOw0KPj4+IAllcnIgPSBwcm9iZV9rZXJuZWxfcmVhZChvcGMs
+IChjaGFyICopYnB0LT5icHRfYWRkciwNCj4+IEJSRUFLX0lOU1RSX1NJWkUpOw0KPj4+IGlmIChl
+cnIgfHwgbWVtY21wKG9wYywgYnB0LT5zYXZlZF9pbnN0ciwgQlJFQUtfSU5TVFJfU0laRSkpDQo+
+Pj4gCQlnb3RvIGtubF93cml0ZTsNCj4+PiAtLSANCj4+PiAyLjE3LjENCj4gDQo+IElmIHlvdSBh
+cmUgcmVvcmdhbml6aW5nIHRoaXMgY29kZSwgcGxlYXNlIGRvIHNvIHNvIHRoYXQgdGhlIGNhbGxl
+ciBkb2VzbuKAmXQNCj4gaGF2ZSB0byB3b3JyeSBhYm91dCBpZiBpdCBzaG91bGQgY2FsbCB0ZXh0
+X3Bva2VfYnAoKSBvciB0ZXh0X3Bva2VfZWFybHkoKS4NCj4gUmlnaHQgbm93IHRoZSBjYWxsZXIg
+aGFkIHRvIGtub3cgdGhhdCwgd2hpY2ggbWFrZXMgbm8gc2Vuc2UuDQoNCkRpZCB5b3UgbG9vayBh
+dCAiWzExLzE3XSB4ODYvanVtcC1sYWJlbDogcmVtb3ZlIHN1cHBvcnQgZm9yIGN1c3RvbSBwb2tl
+cuKAnT8NCg0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvcGF0Y2h3b3JrL3BhdGNoLzEwMzI4NTcv
+DQoNCklmIHRoaXMgaXMgbm90IHdoYXQgeW91IHJlZ2FyZCwgcGxlYXNlIGJlIG1vcmUgY29uY3Jl
+dGUuIHRleHRfcG9rZV9lYXJseSgpDQppcyBzdGlsbCB1c2VkIGRpcmVjdGx5IG9uIGluaXQgYW5k
+IHdoaWxlIG1vZHVsZXMgYXJlIGxvYWRlZCwgd2hpY2ggbWlnaHQgbm90DQpiZSBncmVhdCwgYnV0
+IGlzIG91dHNpZGUgb2YgdGhlIHNjb3BlIG9mIHRoaXMgcGF0Y2gtc2V0Lg0KDQo=
