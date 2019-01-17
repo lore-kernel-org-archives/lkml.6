@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15C9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF77CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC5920868
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD19C205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730445AbfAQAdu (ORCPT
+        id S1730494AbfAQAdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:33:50 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42211 "EHLO mga05.intel.com"
+        Wed, 16 Jan 2019 19:33:55 -0500
+Received: from mga05.intel.com ([192.55.52.43]:42209 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730021AbfAQAdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:40 -0500
+        id S1729898AbfAQAdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 19:33:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:37 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:36 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="292166056"
+   d="scan'208";a="292166022"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:36 -0800
+  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:35 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -41,10 +41,13 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 15/17] vmalloc: New flags for safe vfree on special perms
-Date:   Wed, 16 Jan 2019 16:32:57 -0800
-Message-Id: <20190117003259.23141-16-rick.p.edgecombe@intel.com>
+Subject: [PATCH 05/17] x86/alternative: initializing temporary mm for patching
+Date:   Wed, 16 Jan 2019 16:32:47 -0800
+Message-Id: <20190117003259.23141-6-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
 References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
@@ -53,244 +56,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a new flags VM_HAS_SPECIAL_PERMS, for enabling vfree operations to
-immediately clear executable TLB entries to freed pages, and handle freeing
-memory with special permissions. It also takes care of reseting the direct map
-permissions for the pages being unmapped. So this flag is useful for any kind
-of memory with elevated permissions, or where there can be related permissions
-changes on the directmap. Today this is RO+X and RO memory.
+From: Nadav Amit <namit@vmware.com>
 
-Although this enables directly vfreeing RO memory now, RO memory cannot be
-freed in an interrupt because the allocation itself is used as a node on
-deferred free list. So when RO memory needs to be freed in an interrupt the
-code doing the vfree needs to have its own work queue, as was the case before
-the deferred vfree list handling was added. Today there is only one case where
-this happens.
+To prevent improper use of the PTEs that are used for text patching, we
+want to use a temporary mm struct. We initailize it by copying the init
+mm.
 
-For architectures with set_alias_ implementations this whole operation can be
-done with one TLB flush when centralized like this. For others with directmap
-permissions, currently only arm64, a backup method using set_memory functions
-is used to reset the directmap. When arm64 adds set_alias_ functions, this
-backup can be removed.
+The address that will be used for patching is taken from the lower area
+that is usually used for the task memory. Doing so prevents the need to
+frequently synchronize the temporary-mm (e.g., when BPF programs are
+installed), since different PGDs are used for the task memory.
 
-When the TLB is flushed to both remove TLB entries for the vmalloc range
-mapping and the direct map permissions, the lazy purge operation could be done
-to try to save a TLB flush later. However today vm_unmap_aliases could flush a
-TLB range that does not include the directmap. So a helper is added with extra
-parameters that can allow both the vmalloc address and the direct mapping to be
-flushed during this operation. The behavior of the normal vm_unmap_aliases
-function is unchanged.
+Finally, we randomize the address of the PTEs to harden against exploits
+that use these PTEs.
 
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
 Suggested-by: Andy Lutomirski <luto@kernel.org>
-Suggested-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- include/linux/vmalloc.h |  13 +++++
- mm/vmalloc.c            | 122 +++++++++++++++++++++++++++++++++-------
- 2 files changed, 116 insertions(+), 19 deletions(-)
+ arch/x86/include/asm/pgtable.h       |  3 +++
+ arch/x86/include/asm/text-patching.h |  2 ++
+ arch/x86/kernel/alternative.c        |  3 +++
+ arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
+ init/main.c                          |  3 +++
+ 5 files changed, 47 insertions(+)
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 398e9c95cd61..9f643f917360 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -21,6 +21,11 @@ struct notifier_block;		/* in notifier.h */
- #define VM_UNINITIALIZED	0x00000020	/* vm_struct is not fully initialized */
- #define VM_NO_GUARD		0x00000040      /* don't add guard page */
- #define VM_KASAN		0x00000080      /* has allocated kasan shadow memory */
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 40616e805292..e8f630d9a2ed 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1021,6 +1021,9 @@ static inline void __meminit init_trampoline_default(void)
+ 	/* Default trampoline pgd value */
+ 	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
+ }
++
++void __init poking_init(void);
++
+ # ifdef CONFIG_RANDOMIZE_MEMORY
+ void __meminit init_trampoline(void);
+ # else
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index f8fc8e86cf01..a75eed841eed 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
++extern __ro_after_init struct mm_struct *poking_mm;
++extern __ro_after_init unsigned long poking_addr;
+ 
+ #endif /* _ASM_X86_TEXT_PATCHING_H */
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index c6a3a10a2fd5..57fdde308bb6 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
+ }
+ 
++__ro_after_init struct mm_struct *poking_mm;
++__ro_after_init unsigned long poking_addr;
++
+ static void *__text_poke(void *addr, const void *opcode, size_t len)
+ {
+ 	unsigned long flags;
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index bccff68e3267..125c8c48aa24 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -53,6 +53,7 @@
+ #include <asm/init.h>
+ #include <asm/uv/uv.h>
+ #include <asm/setup.h>
++#include <asm/text-patching.h>
+ 
+ #include "mm_internal.h"
+ 
+@@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
+ 	return memory_block_size_probed;
+ }
+ 
 +/*
-+ * Memory with VM_HAS_SPECIAL_PERMS cannot be freed in an interrupt or with
-+ * vfree_atomic.
++ * Initialize an mm_struct to be used during poking and a pointer to be used
++ * during patching.
 + */
-+#define VM_HAS_SPECIAL_PERMS	0x00000200      /* Reset directmap and flush TLB on unmap */
- /* bits [20..32] reserved for arch specific ioremap internals */
- 
++void __init poking_init(void)
++{
++	spinlock_t *ptl;
++	pte_t *ptep;
++
++	poking_mm = copy_init_mm();
++	BUG_ON(!poking_mm);
++
++	/*
++	 * Randomize the poking address, but make sure that the following page
++	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
++	 * and adjust the address if the PMD ends after the first one.
++	 */
++	poking_addr = TASK_UNMAPPED_BASE;
++	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
++		poking_addr += (kaslr_get_random_long("Poking") & PAGE_MASK) %
++			(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
++
++	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
++		poking_addr += PAGE_SIZE;
++
++	/*
++	 * We need to trigger the allocation of the page-tables that will be
++	 * needed for poking now. Later, poking may be performed in an atomic
++	 * section, which might cause allocation to fail.
++	 */
++	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
++	BUG_ON(!ptep);
++	pte_unmap_unlock(ptep, ptl);
++}
++
+ #ifdef CONFIG_SPARSEMEM_VMEMMAP
  /*
-@@ -135,6 +140,14 @@ extern struct vm_struct *__get_vm_area_caller(unsigned long size,
- extern struct vm_struct *remove_vm_area(const void *addr);
- extern struct vm_struct *find_vm_area(const void *addr);
+  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
+diff --git a/init/main.c b/init/main.c
+index e2e80ca3165a..f5947ba53bb4 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -496,6 +496,8 @@ void __init __weak thread_stack_cache_init(void)
  
-+static inline void set_vm_special(void *addr)
-+{
-+	struct vm_struct *vm = find_vm_area(addr);
-+
-+	if (vm)
-+		vm->flags |= VM_HAS_SPECIAL_PERMS;
-+}
-+
- extern int map_vm_area(struct vm_struct *area, pgprot_t prot,
- 			struct page **pages);
- #ifdef CONFIG_MMU
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 871e41c55e23..d459b5b9649b 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -18,6 +18,7 @@
- #include <linux/interrupt.h>
- #include <linux/proc_fs.h>
- #include <linux/seq_file.h>
-+#include <linux/set_memory.h>
- #include <linux/debugobjects.h>
- #include <linux/kallsyms.h>
- #include <linux/list.h>
-@@ -1055,24 +1056,11 @@ static void vb_free(const void *addr, unsigned long size)
- 		spin_unlock(&vb->lock);
- }
+ void __init __weak mem_encrypt_init(void) { }
  
--/**
-- * vm_unmap_aliases - unmap outstanding lazy aliases in the vmap layer
-- *
-- * The vmap/vmalloc layer lazily flushes kernel virtual mappings primarily
-- * to amortize TLB flushing overheads. What this means is that any page you
-- * have now, may, in a former life, have been mapped into kernel virtual
-- * address by the vmap layer and so there might be some CPUs with TLB entries
-- * still referencing that page (additional to the regular 1:1 kernel mapping).
-- *
-- * vm_unmap_aliases flushes all such lazy mappings. After it returns, we can
-- * be sure that none of the pages we have control over will have any aliases
-- * from the vmap layer.
-- */
--void vm_unmap_aliases(void)
-+static void _vm_unmap_aliases(unsigned long start, unsigned long end,
-+				int must_flush)
- {
--	unsigned long start = ULONG_MAX, end = 0;
- 	int cpu;
--	int flush = 0;
-+	int flush = must_flush;
++void __init __weak poking_init(void) { }
++
+ bool initcall_debug;
+ core_param(initcall_debug, initcall_debug, bool, 0644);
  
- 	if (unlikely(!vmap_initialized))
- 		return;
-@@ -1109,6 +1097,27 @@ void vm_unmap_aliases(void)
- 		flush_tlb_kernel_range(start, end);
- 	mutex_unlock(&vmap_purge_lock);
- }
-+
-+/**
-+ * vm_unmap_aliases - unmap outstanding lazy aliases in the vmap layer
-+ *
-+ * The vmap/vmalloc layer lazily flushes kernel virtual mappings primarily
-+ * to amortize TLB flushing overheads. What this means is that any page you
-+ * have now, may, in a former life, have been mapped into kernel virtual
-+ * address by the vmap layer and so there might be some CPUs with TLB entries
-+ * still referencing that page (additional to the regular 1:1 kernel mapping).
-+ *
-+ * vm_unmap_aliases flushes all such lazy mappings. After it returns, we can
-+ * be sure that none of the pages we have control over will have any aliases
-+ * from the vmap layer.
-+ */
-+void vm_unmap_aliases(void)
-+{
-+	unsigned long start = ULONG_MAX, end = 0;
-+	int must_flush = 0;
-+
-+	_vm_unmap_aliases(start, end, must_flush);
-+}
- EXPORT_SYMBOL_GPL(vm_unmap_aliases);
+@@ -730,6 +732,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	taskstats_init_early();
+ 	delayacct_init();
  
- /**
-@@ -1494,6 +1503,79 @@ struct vm_struct *remove_vm_area(const void *addr)
- 	return NULL;
- }
++	poking_init();
+ 	check_bugs();
  
-+static inline void set_area_alias(const struct vm_struct *area,
-+			int (*set_alias)(struct page *page))
-+{
-+	int i;
-+
-+	for (i = 0; i < area->nr_pages; i++) {
-+		unsigned long addr =
-+			(unsigned long)page_address(area->pages[i]);
-+
-+		if (addr)
-+			set_alias(area->pages[i]);
-+	}
-+}
-+
-+/* This handles removing and resetting vm mappings related to the vm_struct. */
-+static void vm_remove_mappings(struct vm_struct *area, int deallocate_pages)
-+{
-+	unsigned long addr = (unsigned long)area->addr;
-+	unsigned long start = ULONG_MAX, end = 0;
-+	int special = area->flags & VM_HAS_SPECIAL_PERMS;
-+	int i;
-+
-+	/*
-+	 * The below block can be removed when all architectures that have
-+	 * direct map permissions also have set_alias_ implementations. This is
-+	 * to do resetting on the directmap for any special permissions (today
-+	 * only X), without leaving a RW+X window.
-+	 */
-+	if (special && !IS_ENABLED(CONFIG_ARCH_HAS_SET_ALIAS)) {
-+		set_memory_nx(addr, area->nr_pages);
-+		set_memory_rw(addr, area->nr_pages);
-+	}
-+
-+	remove_vm_area(area->addr);
-+
-+	/* If this is not special memory, we can skip the below. */
-+	if (!special)
-+		return;
-+
-+	/*
-+	 * If we are not deallocating pages, we can just do the flush of the VM
-+	 * area and return.
-+	 */
-+	if (!deallocate_pages) {
-+		vm_unmap_aliases();
-+		return;
-+	}
-+
-+	/*
-+	 * If we are here, we need to flush the vm mapping and reset the direct
-+	 * map.
-+	 * First find the start and end range of the direct mappings to make
-+	 * sure the vm_unmap_aliases flush includes the direct map.
-+	 */
-+	for (i = 0; i < area->nr_pages; i++) {
-+		unsigned long addr =
-+			(unsigned long)page_address(area->pages[i]);
-+		if (addr) {
-+			start = min(addr, start);
-+			end = max(addr, end);
-+		}
-+	}
-+
-+	/*
-+	 * First we set direct map to something not valid so that it won't be
-+	 * cached if there are any accesses after the TLB flush, then we flush
-+	 * the TLB, and reset the directmap permissions to the default.
-+	 */
-+	set_area_alias(area, set_alias_nv_noflush);
-+	_vm_unmap_aliases(start, end, 1);
-+	set_area_alias(area, set_alias_default_noflush);
-+}
-+
- static void __vunmap(const void *addr, int deallocate_pages)
- {
- 	struct vm_struct *area;
-@@ -1515,7 +1597,8 @@ static void __vunmap(const void *addr, int deallocate_pages)
- 	debug_check_no_locks_freed(area->addr, get_vm_area_size(area));
- 	debug_check_no_obj_freed(area->addr, get_vm_area_size(area));
- 
--	remove_vm_area(addr);
-+	vm_remove_mappings(area, deallocate_pages);
-+
- 	if (deallocate_pages) {
- 		int i;
- 
-@@ -1925,8 +2008,9 @@ EXPORT_SYMBOL(vzalloc_node);
- 
- void *vmalloc_exec(unsigned long size)
- {
--	return __vmalloc_node(size, 1, GFP_KERNEL, PAGE_KERNEL_EXEC,
--			      NUMA_NO_NODE, __builtin_return_address(0));
-+	return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
-+			GFP_KERNEL, PAGE_KERNEL_EXEC, VM_HAS_SPECIAL_PERMS,
-+			NUMA_NO_NODE, __builtin_return_address(0));
- }
- 
- #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
+ 	acpi_subsystem_init();
 -- 
 2.17.1
 
