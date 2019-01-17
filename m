@@ -2,90 +2,136 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD72C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E6EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0703620652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:02:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F68920856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:08:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RuqVmREK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbfAQRCr (ORCPT
+        id S1729129AbfAQRIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:02:47 -0500
-Received: from mout.gmx.net ([212.227.15.18]:41299 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728515AbfAQRCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:02:46 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MJjOu-1glGzL1jDo-001BJF; Thu, 17
- Jan 2019 18:02:31 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     netdev@vger.kernel.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        David Ahern <dsa@cumulusnetworks.com>,
-        Matteo Croce <mcroce@redhat.com>,
-        Tobias Regnery <tobias.regnery@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net: Fix typo in NET_FAILOVER help text
-Date:   Thu, 17 Jan 2019 18:02:18 +0100
-Message-Id: <20190117170220.32239-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+        Thu, 17 Jan 2019 12:08:40 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44244 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728971AbfAQRIj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 12:08:39 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u6so5108032pfh.11
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:08:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=puECamhBYeL6uC1xKJYWEb0GT+YzCKI4Se6bf3iW8OA=;
+        b=RuqVmREKCvqOcWquUeyvudqFXygPEg4CpfahXyAUZiNXwiiA5NdSy67goh+7d1wfSq
+         t4kbUB0i6lnfD+s3Np97yuYtAufmAFWpBT3B8GY0yGsIK6LELzEA5/wooUBLeASAEu8i
+         cqBlLxV404a1vtqtswwULTyRyDvhP2phj2PGg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=puECamhBYeL6uC1xKJYWEb0GT+YzCKI4Se6bf3iW8OA=;
+        b=JeRAff7n5qpZySXjz2wYOL6NzphQpPgD+CBJ84K9onLkIhON/8htBHJqCRN6QCnkzW
+         sMheVZJMb7wwFTsWbnjn18DIblIDl0/k09UkhyS0SiyDaY0LRE57A7dJV5AQvO7xWj1v
+         rhLJw/75J970IgQk9CxQI5aemPZiQ2hFqGAfOd22vfhWgRmV9e2OiE5DaV6G/magQkhg
+         jeNqRMjrvYRXUMokohzYpvwYKQ6Xp8ddSsMQtXIMxe8EeV7yPMilL7H/guTrmQayPxNI
+         VQInnxTFwGXJNpSF3EDRdR9Zf6ZZT6/kEBoFg3oH/2ZtOgApkmLJ+h9Cq72U8tGP6zYB
+         1J1g==
+X-Gm-Message-State: AJcUukdHP8VS95e4EbNJb4JNlI2WLjKFwBkiIBe5YPxx6czSI1cJ8wnY
+        sVyNGmj8Yyvmp+AY4HtRejEp
+X-Google-Smtp-Source: ALg8bN75jETmHXS8tagJlYntkucqHyFpUbsM0MGqjXjJeN8+Yj6LOZGFT0PUbnSDxgXY3g6rtMx8hA==
+X-Received: by 2002:a62:e0d8:: with SMTP id d85mr15455718pfm.214.1547744918468;
+        Thu, 17 Jan 2019 09:08:38 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2405:204:7344:aef4:e89a:577b:dc0a:3144])
+        by smtp.gmail.com with ESMTPSA id e23sm3615723pfh.68.2019.01.17.09.08.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 09:08:37 -0800 (PST)
+Date:   Thu, 17 Jan 2019 22:38:29 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tanglei Han <hantanglei@huawei.com>,
+        Zhuangluan Su <suzhuangluan@hisilicon.com>,
+        Ryan Grachek <ryan@edited.us>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/8 v4] Documentation: bindings: dma: Add binding for
+ dma-channel-mask
+Message-ID: <20190117170829.GJ5283@Mani-XPS-13-9360>
+References: <1547658629-25378-1-git-send-email-john.stultz@linaro.org>
+ <1547658629-25378-3-git-send-email-john.stultz@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:w0zNVhslHIHTujFpnceXI3pOoHo7o63dZmpP0Q2v3GzY60l6z+u
- WvYMvwQJLZfSy4fltodHv7dCGEA/cb8RdaazSt5h5V0ZezC8oG1uG9/lGdS5s6EDq1KRtwP
- TJIy8iJOYKpb/XZeb3PRr5McjDNaRNQml97NpD6Y8vDKrkcxQGOi9a7GoQX9U5L0K3SoLWB
- Acrn+4vTWpTzR1ywjCCNw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HnmPvvnCU14=:WFeTRCcMuxW+qFvkXiafsA
- l1Usqpb7YMhp+kDfSQJcpegOkSLrFM3oOP2nFL1ZqwFWJ92wziPE/hy0cPoONYrAQ5eGd5W99
- 2xt1k7/WffgS5zfTDyQHWBxtXLfNgWQoH4bUWshacImvQ62FES6Jb40xZB8y4PzTTpHKFAEri
- k1FDdgNQwFqiu4EGx4l6frdi+phTca3k0cGXkKWwPLT3G8zytn/liQRRtaVmBcBlhZ/vVlVW2
- NVBjp5kAnrp+U3PuAYneTRSwA6CvCqEhsWgF3jmjTuwhDmO+ArRNqtpoKwqBmUos9JhM7n4eW
- 0hVLbCujRZKWK3DAijKT0tk9Hpxmuj1GiLQEO2gJ8vHc8fAax0cHTiZ36qf9prcrqkDeVcBea
- SGk+XRAkQGCPlIrErj2BT1l6IUwloKWhZM1kdsxOFBoU7pbmuWpoqnn+jggMw8IZ4QZ0L07yP
- sS9U7sdCYBcxpqjuFRVtvd7hhZ28aWjPiFxO0ecjcur/2a34K+ISTWV2t0jfhgfmyX3WZnzDF
- yp2CmRhkjfjgKVyLPw8R1TlytmqlMbx2jFl1dOMMI2oIxVEgfoUyUF77UhoL3KESYsSrXFBzQ
- 4RjeTSCtHvySrckhhjwFBq0G9t+PR7JeUlj6ji6QXnAc4dwzwjY4c0nuOSogIG28YQSLJAxvm
- 40Bt6Xv8C2innrA87AltkYSDAYfCcKOkjwuyKQy5ZWWVBZUKSIb6Q/+Mc8p/dPlK72J8hBo+7
- o+SUz4PwZou15tPTOJ3Q4NqiYgs4fK1jsQntxiNRw+ofGgxA9zyRqY9JFi4FcpanXrgHpm6tA
- Xs4AVi2ejONsqhSGdbgUpj3hZ6HrnHXl4wwRJKgMRe22aXYBf4o9zDCy/DJxl+vsceLG/2pQM
- R4gQpnnfuBZPSRK3nCVS3A9VyUqtwgqBn4e55tme8qplLa2gUIoY7PTmgxyAYAFXYpMrPIip7
- KnsT9BVtg5w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547658629-25378-3-git-send-email-john.stultz@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"also enables" should not be spelled as one word.
+On Wed, Jan 16, 2019 at 09:10:23AM -0800, John Stultz wrote:
+> Some dma channels can be reserved for secure mode or other
+> hardware on the SoC, so provide a binding for a bitmask
+> listing the available channels for the kernel to use.
+> 
+> This follows the pre-existing bcm,dma-channel-mask binding.
+> 
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Tanglei Han <hantanglei@huawei.com>
+> Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
+> Cc: Ryan Grachek <ryan@edited.us>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: dmaengine@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+> v3: Renamed to hisi-dma-avail-chan
+> v4: Reworked to generic dma-channel-mask
+> ---
+>  Documentation/devicetree/bindings/dma/dma.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/dma.txt b/Documentation/devicetree/bindings/dma/dma.txt
+> index 6312fb0..eeb4e4d 100644
+> --- a/Documentation/devicetree/bindings/dma/dma.txt
+> +++ b/Documentation/devicetree/bindings/dma/dma.txt
+> @@ -16,6 +16,9 @@ Optional properties:
+>  - dma-channels: 	Number of DMA channels supported by the controller.
+>  - dma-requests: 	Number of DMA request signals supported by the
+>  			controller.
+> +- dma-channel-mask:	Bitmask of available DMA channels in ascending order
+> +			that are not reserved by firmware and are available to
+> +			the kernel. i.e. first channel corresponds to LSB.
 
-Fixes: cfc80d9a1163 ("net: Introduce net_failover driver")
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
----
- drivers/net/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+A general assumption is, "dma-channel-mask" refers to the bit fields of
+the channels which needs to be masked. But here, it refers to the channels
+which are available. Doesn't it contradict?
 
-diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index d03775100f7d..853cc108b57e 100644
---- a/drivers/net/Kconfig
-+++ b/drivers/net/Kconfig
-@@ -519,7 +519,7 @@ config NET_FAILOVER
- 	  and destroy a failover master netdev and manages a primary and
- 	  standby slave netdevs that get registered via the generic failover
- 	  infrastructure. This can be used by paravirtual drivers to enable
--	  an alternate low latency datapath. It alsoenables live migration of
-+	  an alternate low latency datapath. It also enables live migration of
- 	  a VM with direct attached VF by failing over to the paravirtual
- 	  datapath when the VF is unplugged.
- 
--- 
-2.17.1
+Thanks,
+Mani
 
+>  
+>  Example:
+>  
+> @@ -29,6 +32,7 @@ Example:
+>  		#dma-cells = <1>;
+>  		dma-channels = <32>;
+>  		dma-requests = <127>;
+> +		dma-channel-mask = <0xfffe>
+>  	};
+>  
+>  * DMA router
+> -- 
+> 2.7.4
+> 
