@@ -2,246 +2,550 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B80FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ECA5C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D214A20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:49:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28BBC20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:53:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="G/nC8s1T";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="YRGEkEYY"
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="X0TPjnaf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725994AbfAQNtz (ORCPT
+        id S1727259AbfAQNxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:49:55 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:47732 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725878AbfAQNtz (ORCPT
+        Thu, 17 Jan 2019 08:53:25 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:39343 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725924AbfAQNxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:49:55 -0500
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HDlhwl000578;
-        Thu, 17 Jan 2019 05:49:22 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=FZ3Ud8FgY20ID+whupDYN3MmFdsOqAgDUYDgSDhF68w=;
- b=G/nC8s1T6qfvBl3se2bPsAhSP4FlSucqlvqOj34e3i6fhmU3qc53BTMoL7ym8bv/vUZ3
- ZQPKvvZK1dCeKvOJw73eWxYq/K0GlpwOBqzdIXuVwzw2X/qKae1uupb5o6OQ4AGP6Baw
- 9ky2HKiKeOFxlD4NCXLlfYiP8nux7AHlWKo= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2q2ttyg0ms-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 17 Jan 2019 05:49:22 -0800
-Received: from prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) by
- prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Thu, 17 Jan 2019 05:49:21 -0800
-Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
- prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Thu, 17 Jan 2019 05:49:21 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Thu, 17 Jan 2019 05:49:21 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZ3Ud8FgY20ID+whupDYN3MmFdsOqAgDUYDgSDhF68w=;
- b=YRGEkEYYVZQbqoZ/k844rz82UnwiGMAgNJOMvfLK3mmHtEw0qvZBjDzW4NiBsnIIHTZDhpiga5DDMdaSbiCHrPJbrsGlFzmze4E9a4ajwWVAaN6KuuOU1t0n4DXTzLX1Bu++tkKXaf/eHZQeJLxdSqvgooCQ6ZSfJ5IKbFD6+so=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1198.namprd15.prod.outlook.com (10.175.2.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.26; Thu, 17 Jan 2019 13:49:19 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::ec0e:4a05:81f8:7df9]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::ec0e:4a05:81f8:7df9%4]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
- 13:49:19 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        "dsahern@gmail.com" <dsahern@gmail.com>
-Subject: Re: [PATCH v10 perf, bpf-next 3/9] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Thread-Topic: [PATCH v10 perf, bpf-next 3/9] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Thread-Index: AQHUrbjDUgyWFsoaF06T/QPKIRgBIqWzcGsAgAALBQA=
-Date:   Thu, 17 Jan 2019 13:49:19 +0000
-Message-ID: <AF388120-70CD-4590-803B-F8F303334726@fb.com>
-References: <20190116162931.1542429-1-songliubraving@fb.com>
- <20190116162931.1542429-4-songliubraving@fb.com>
- <20190117130952.GG10486@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190117130952.GG10486@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.102.3)
-x-originating-ip: [2620:10d:c090:180::1:4cc3]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1198;20:dbqcHJWuzVJNvtSNwfmFteiLsd7ki3fueDwa9kmRPXJTDjgXpmy+13GEAaPi+K6WHxXAhXVHSXJW7LadhwhLjNHo9gukS7jauTSeB6sgO51+HuRgnuTTJDHpZ361AVNf1Du+opl7uqIsYroXmi2DgWvcRcuMMBDKRs8IjBjWjWE=
-x-ms-office365-filtering-correlation-id: 5981949c-e0c9-4b07-bb31-08d67c829465
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1198;
-x-ms-traffictypediagnostic: MWHPR15MB1198:
-x-microsoft-antispam-prvs: <MWHPR15MB1198F642750C64DE2E595290B3830@MWHPR15MB1198.namprd15.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(346002)(136003)(39860400002)(199004)(189003)(52314003)(229853002)(57306001)(36756003)(50226002)(53936002)(6512007)(86362001)(99286004)(46003)(76176011)(316002)(2906002)(81156014)(11346002)(8676002)(486006)(476003)(2616005)(256004)(105586002)(446003)(6506007)(81166006)(53546011)(6246003)(6346003)(25786009)(8936002)(39060400002)(102836004)(54906003)(82746002)(7736002)(186003)(305945005)(6116002)(71190400001)(83716004)(106356001)(4326008)(68736007)(6916009)(5660300001)(478600001)(14454004)(33656002)(71200400001)(6486002)(6436002)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1198;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: v4Z3uDxmp1UOnPD5tXgxgVNXfCltFIU2O5ka+UCEPC4viTdvbaS0GAhXsz+lu0k5iqbXer5RM/VvUXZFOnx3h/C+6hCnW/LMkFh1zzWZrGSd9XAglaYELJV5ekxXB33zj/O6huhSJ0f7NOEUD6VPggif+vru5mMR5olyUKAEc34W/yktrZjTp+XomoYH8kpAA/7eGUCXA9ItP6h2sO2M8wVmNRN6qd2qaKfn0xkrit8S8NnuId+pFlS9xg7EQOFq7gLAvB90Wvul2cKi6ZC9QuTqFaA5CcZm/IioR6MiAnBrRUhp6JpCqIsKz7ZeROuHHWfCsdaoK739yVHqpm9+apDgHrBlq6qpchogb+oDQ4nXQnkyrLSXb/cTPmwTPmeM8rjmDo3QLVERVHQ7Mhw+cgeNNk0oalWKGKLfCEKV+mM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1493CF3AF99B9E45BB36BB2B6C88E26B@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 17 Jan 2019 08:53:25 -0500
+Received: by mail-yb1-f193.google.com with SMTP id s17so3010787ybp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 05:53:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BI00+F9pWZV/tYvgqcbYQ7Dg+y83NiVkHGfFJ5Qza8Q=;
+        b=X0TPjnafW+QBEF+IijE5G8p1TNCPYHKMjz/El8mq0/WV3XxkfMASHAMCR7W7Z4I88G
+         92sEOyUpVFn0z989zVY/ULRxqLF/RF9BKg9YACHNb/c36pbOP/kV1N6S624SVyJLS3fX
+         3/xpphQ6V5amq3B8LHwLtLnNyDJr/9NGCY6kh3cxbdEFyMSW8NbKgwtxuHOeTZtlpKDl
+         HbRoRKj/I5NGnH8Rnn7fQ50XjfW63u+XyktK2RByuO+PrTFCp3UolWF2ZKn+oHR3Fo9U
+         bl0iGi5GQaobNrmPhdQds+zUEYfrvFumfKBO/oTL51Egtycqehn23ZwuMUqiJ297GZoN
+         oQSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BI00+F9pWZV/tYvgqcbYQ7Dg+y83NiVkHGfFJ5Qza8Q=;
+        b=sOhJnJU4P9TgVzFONgEeD6lurcbp4PgkaIc/GheOpqYqqfjQK6RmdY6sdqFltpafBx
+         puj+INyGCYaPEmCkJ1aivN6SMefWhuv8UAQKbrn9D8HT7FFz1qaOcJvD3hMgcLs/pcSs
+         CcERw6cYrMUfiF4ycaHV2UVootGPShO4AwAzfTuVQzJyEdiouuKOZyvgRR+iEpbslwnx
+         lGA7WHxaELBpR6VUKbEMCmtk7TtIZo5STYbAjJlWWY1rHHHl7r1yfypqTdOuTtK/HVXT
+         j1qjqxzrjKe/xPxa2Y+s9wip2pTU4sCU+E3J60Slg3/vbenlaVCvFsB6R5qUNpcRemw1
+         SxFA==
+X-Gm-Message-State: AJcUukdMlrfastFUzybMDNK7llkZGI2jyckZKiG3cPF42tr6tFwYsNRd
+        e+6+hbgn8ZDzDJTNReJvXLH9dg==
+X-Google-Smtp-Source: ALg8bN7NadpN4P0Hr6fXYnPMcQwRmrfFaXhCvX3Mt+iUNM5e+vHBRtHWl/xCgBkdRX570nZJo3FN2A==
+X-Received: by 2002:a25:aa73:: with SMTP id s106mr1429108ybi.519.1547733203392;
+        Thu, 17 Jan 2019 05:53:23 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id a72sm929807ywh.42.2019.01.17.05.53.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 05:53:22 -0800 (PST)
+Date:   Thu, 17 Jan 2019 08:53:22 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Krzysztof Witos <kwitos@cadence.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v4 8/9] phy: Add Cadence D-PHY support
+Message-ID: <20190117135322.GB114153@art_vandelay>
+References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
+ <a089ce6aaefe6d2ddf6b17f5558ec7eb0ebf3774.1547026369.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5981949c-e0c9-4b07-bb31-08d67c829465
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 13:49:19.5180
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1198
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a089ce6aaefe6d2ddf6b17f5558ec7eb0ebf3774.1547026369.git-series.maxime.ripard@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Peter!
+On Wed, Jan 09, 2019 at 10:33:25AM +0100, Maxime Ripard wrote:
+> Cadence has designed a D-PHY that can be used by the, currently in tree,
+> DSI bridge (DRM), CSI Transceiver and CSI Receiver (v4l2) drivers.
+> 
+> Only the DSI driver has an ad-hoc driver for that phy at the moment, while
+> the v4l2 drivers are completely missing any phy support. In order to make
+> that phy support available to all these drivers, without having to
+> duplicate that code three times, let's create a generic phy framework
+> driver.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  drivers/phy/cadence/Kconfig     |  13 +-
+>  drivers/phy/cadence/Makefile    |   1 +-
+>  drivers/phy/cadence/cdns-dphy.c | 389 +++++++++++++++++++++++++++++++++-
+>  3 files changed, 402 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/phy/cadence/cdns-dphy.c
+> 
+> diff --git a/drivers/phy/cadence/Kconfig b/drivers/phy/cadence/Kconfig
+> index 2b8c0851ff33..31f18b67dd7c 100644
+> --- a/drivers/phy/cadence/Kconfig
+> +++ b/drivers/phy/cadence/Kconfig
+> @@ -1,6 +1,7 @@
+>  #
+>  # Phy drivers for Cadence PHYs
+>  #
+> +
+>  config PHY_CADENCE_DP
+>  	tristate "Cadence MHDP DisplayPort PHY driver"
+>  	depends on OF
+> @@ -9,9 +10,19 @@ config PHY_CADENCE_DP
+>  	help
+>  	  Support for Cadence MHDP DisplayPort PHY.
+>  
+> +config PHY_CADENCE_DPHY
+> +	tristate "Cadence D-PHY Support"
+> +	depends on HAS_IOMEM && OF
+> +	select GENERIC_PHY
+> +	select GENERIC_PHY_MIPI_DPHY
+> +	help
+> +	  Choose this option if you have a Cadence D-PHY in your
+> +	  system. If M is selected, the module will be called
+> +	  cdns-dphy.
+> +
+>  config PHY_CADENCE_SIERRA
+>  	tristate "Cadence Sierra PHY Driver"
+>  	depends on OF && HAS_IOMEM && RESET_CONTROLLER
+>  	select GENERIC_PHY
+>  	help
+> -	  Enable this to support the Cadence Sierra PHY driver
+> \ No newline at end of file
+> +	  Enable this to support the Cadence Sierra PHY driver
+> diff --git a/drivers/phy/cadence/Makefile b/drivers/phy/cadence/Makefile
+> index 412349af0492..2f9e3457b954 100644
+> --- a/drivers/phy/cadence/Makefile
+> +++ b/drivers/phy/cadence/Makefile
+> @@ -1,2 +1,3 @@
+>  obj-$(CONFIG_PHY_CADENCE_DP)	+= phy-cadence-dp.o
+> +obj-$(CONFIG_PHY_CADENCE_DPHY)	+= cdns-dphy.o
+>  obj-$(CONFIG_PHY_CADENCE_SIERRA)	+= phy-cadence-sierra.o
+> diff --git a/drivers/phy/cadence/cdns-dphy.c b/drivers/phy/cadence/cdns-dphy.c
+> new file mode 100644
+> index 000000000000..1d0abba03f37
+> --- /dev/null
+> +++ b/drivers/phy/cadence/cdns-dphy.c
+> @@ -0,0 +1,389 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright: 2017-2018 Cadence Design Systems, Inc.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +
+> +#include <linux/phy/phy.h>
+> +#include <linux/phy/phy-mipi-dphy.h>
+> +
+> +#define REG_WAKEUP_TIME_NS		800
+> +#define DPHY_PLL_RATE_HZ		108000000
+> +
+> +/* DPHY registers */
+> +#define DPHY_PMA_CMN(reg)		(reg)
+> +#define DPHY_PMA_LCLK(reg)		(0x100 + (reg))
+> +#define DPHY_PMA_LDATA(lane, reg)	(0x200 + ((lane) * 0x100) + (reg))
+> +#define DPHY_PMA_RCLK(reg)		(0x600 + (reg))
+> +#define DPHY_PMA_RDATA(lane, reg)	(0x700 + ((lane) * 0x100) + (reg))
+> +#define DPHY_PCS(reg)			(0xb00 + (reg))
+> +
+> +#define DPHY_CMN_SSM			DPHY_PMA_CMN(0x20)
+> +#define DPHY_CMN_SSM_EN			BIT(0)
+> +#define DPHY_CMN_TX_MODE_EN		BIT(9)
+> +
+> +#define DPHY_CMN_PWM			DPHY_PMA_CMN(0x40)
+> +#define DPHY_CMN_PWM_DIV(x)		((x) << 20)
+> +#define DPHY_CMN_PWM_LOW(x)		((x) << 10)
+> +#define DPHY_CMN_PWM_HIGH(x)		(x)
+> +
+> +#define DPHY_CMN_FBDIV			DPHY_PMA_CMN(0x4c)
+> +#define DPHY_CMN_FBDIV_VAL(low, high)	(((high) << 11) | ((low) << 22))
+> +#define DPHY_CMN_FBDIV_FROM_REG		(BIT(10) | BIT(21))
+> +
+> +#define DPHY_CMN_OPIPDIV		DPHY_PMA_CMN(0x50)
+> +#define DPHY_CMN_IPDIV_FROM_REG		BIT(0)
+> +#define DPHY_CMN_IPDIV(x)		((x) << 1)
+> +#define DPHY_CMN_OPDIV_FROM_REG		BIT(6)
+> +#define DPHY_CMN_OPDIV(x)		((x) << 7)
+> +
+> +#define DPHY_PSM_CFG			DPHY_PCS(0x4)
+> +#define DPHY_PSM_CFG_FROM_REG		BIT(0)
+> +#define DPHY_PSM_CLK_DIV(x)		((x) << 1)
+> +
+> +#define DSI_HBP_FRAME_OVERHEAD		12
+> +#define DSI_HSA_FRAME_OVERHEAD		14
+> +#define DSI_HFP_FRAME_OVERHEAD		6
+> +#define DSI_HSS_VSS_VSE_FRAME_OVERHEAD	4
+> +#define DSI_BLANKING_FRAME_OVERHEAD	6
+> +#define DSI_NULL_FRAME_OVERHEAD		6
+> +#define DSI_EOT_PKT_SIZE		4
+> +
+> +struct cdns_dphy_cfg {
+> +	u8 pll_ipdiv;
+> +	u8 pll_opdiv;
+> +	u16 pll_fbdiv;
+> +	unsigned int nlanes;
+> +};
+> +
+> +enum cdns_dphy_clk_lane_cfg {
+> +	DPHY_CLK_CFG_LEFT_DRIVES_ALL = 0,
+> +	DPHY_CLK_CFG_LEFT_DRIVES_RIGHT = 1,
+> +	DPHY_CLK_CFG_LEFT_DRIVES_LEFT = 2,
+> +	DPHY_CLK_CFG_RIGHT_DRIVES_ALL = 3,
+> +};
+> +
+> +struct cdns_dphy;
+> +struct cdns_dphy_ops {
+> +	int (*probe)(struct cdns_dphy *dphy);
+> +	void (*remove)(struct cdns_dphy *dphy);
+> +	void (*set_psm_div)(struct cdns_dphy *dphy, u8 div);
+> +	void (*set_clk_lane_cfg)(struct cdns_dphy *dphy,
+> +				 enum cdns_dphy_clk_lane_cfg cfg);
+> +	void (*set_pll_cfg)(struct cdns_dphy *dphy,
+> +			    const struct cdns_dphy_cfg *cfg);
+> +	unsigned long (*get_wakeup_time_ns)(struct cdns_dphy *dphy);
+> +};
+> +
+> +struct cdns_dphy {
+> +	struct cdns_dphy_cfg cfg;
+> +	void __iomem *regs;
+> +	struct clk *psm_clk;
+> +	struct clk *pll_ref_clk;
+> +	const struct cdns_dphy_ops *ops;
+> +	struct phy *phy;
+> +};
+> +
+> +static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
+> +				     struct cdns_dphy_cfg *cfg,
+> +				     struct phy_configure_opts_mipi_dphy *opts,
+> +				     unsigned int *dsi_hfp_ext)
+> +{
+> +	unsigned long pll_ref_hz = clk_get_rate(dphy->pll_ref_clk);
+> +	u64 dlane_bps;
+> +
+> +	memset(cfg, 0, sizeof(*cfg));
+> +
+> +	if (pll_ref_hz < 9600000 || pll_ref_hz >= 150000000)
+> +		return -EINVAL;
+> +	else if (pll_ref_hz < 19200000)
+> +		cfg->pll_ipdiv = 1;
+> +	else if (pll_ref_hz < 38400000)
+> +		cfg->pll_ipdiv = 2;
+> +	else if (pll_ref_hz < 76800000)
+> +		cfg->pll_ipdiv = 4;
+> +	else
+> +		cfg->pll_ipdiv = 8;
+> +
+> +	dlane_bps = opts->hs_clk_rate;
+> +
+> +	if (dlane_bps > 2500000000UL || dlane_bps < 160000000UL)
+> +		return -EINVAL;
+> +	else if (dlane_bps >= 1250000000)
+> +		cfg->pll_opdiv = 1;
+> +	else if (dlane_bps >= 630000000)
+> +		cfg->pll_opdiv = 2;
+> +	else if (dlane_bps >= 320000000)
+> +		cfg->pll_opdiv = 4;
+> +	else if (dlane_bps >= 160000000)
+> +		cfg->pll_opdiv = 8;
+> +
+> +	cfg->pll_fbdiv = DIV_ROUND_UP_ULL(dlane_bps * 2 * cfg->pll_opdiv *
+> +					  cfg->pll_ipdiv,
+> +					  pll_ref_hz);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_dphy_setup_psm(struct cdns_dphy *dphy)
+> +{
+> +	unsigned long psm_clk_hz = clk_get_rate(dphy->psm_clk);
+> +	unsigned long psm_div;
+> +
+> +	if (!psm_clk_hz || psm_clk_hz > 100000000)
+> +		return -EINVAL;
+> +
+> +	psm_div = DIV_ROUND_CLOSEST(psm_clk_hz, 1000000);
+> +	if (dphy->ops->set_psm_div)
+> +		dphy->ops->set_psm_div(dphy, psm_div);
+> +
+> +	return 0;
+> +}
+> +
+> +static void cdns_dphy_set_clk_lane_cfg(struct cdns_dphy *dphy,
+> +				       enum cdns_dphy_clk_lane_cfg cfg)
+> +{
+> +	if (dphy->ops->set_clk_lane_cfg)
+> +		dphy->ops->set_clk_lane_cfg(dphy, cfg);
+> +}
+> +
+> +static void cdns_dphy_set_pll_cfg(struct cdns_dphy *dphy,
+> +				  const struct cdns_dphy_cfg *cfg)
+> +{
+> +	if (dphy->ops->set_pll_cfg)
+> +		dphy->ops->set_pll_cfg(dphy, cfg);
+> +}
+> +
+> +static unsigned long cdns_dphy_get_wakeup_time_ns(struct cdns_dphy *dphy)
+> +{
+> +	return dphy->ops->get_wakeup_time_ns(dphy);
+> +}
+> +
+> +static unsigned long cdns_dphy_ref_get_wakeup_time_ns(struct cdns_dphy *dphy)
+> +{
+> +	/* Default wakeup time is 800 ns (in a simulated environment). */
+> +	return 800;
+> +}
+> +
+> +static void cdns_dphy_ref_set_pll_cfg(struct cdns_dphy *dphy,
+> +				      const struct cdns_dphy_cfg *cfg)
+> +{
+> +	u32 fbdiv_low, fbdiv_high;
+> +
+> +	fbdiv_low = (cfg->pll_fbdiv / 4) - 2;
+> +	fbdiv_high = cfg->pll_fbdiv - fbdiv_low - 2;
+> +
+> +	writel(DPHY_CMN_IPDIV_FROM_REG | DPHY_CMN_OPDIV_FROM_REG |
+> +	       DPHY_CMN_IPDIV(cfg->pll_ipdiv) |
+> +	       DPHY_CMN_OPDIV(cfg->pll_opdiv),
+> +	       dphy->regs + DPHY_CMN_OPIPDIV);
+> +	writel(DPHY_CMN_FBDIV_FROM_REG |
+> +	       DPHY_CMN_FBDIV_VAL(fbdiv_low, fbdiv_high),
+> +	       dphy->regs + DPHY_CMN_FBDIV);
+> +	writel(DPHY_CMN_PWM_HIGH(6) | DPHY_CMN_PWM_LOW(0x101) |
+> +	       DPHY_CMN_PWM_DIV(0x8),
+> +	       dphy->regs + DPHY_CMN_PWM);
+> +}
+> +
+> +static void cdns_dphy_ref_set_psm_div(struct cdns_dphy *dphy, u8 div)
+> +{
+> +	writel(DPHY_PSM_CFG_FROM_REG | DPHY_PSM_CLK_DIV(div),
+> +	       dphy->regs + DPHY_PSM_CFG);
+> +}
+> +
+> +/*
+> + * This is the reference implementation of DPHY hooks. Specific integration of
+> + * this IP may have to re-implement some of them depending on how they decided
+> + * to wire things in the SoC.
+> + */
+> +static const struct cdns_dphy_ops ref_dphy_ops = {
+> +	.get_wakeup_time_ns = cdns_dphy_ref_get_wakeup_time_ns,
+> +	.set_pll_cfg = cdns_dphy_ref_set_pll_cfg,
+> +	.set_psm_div = cdns_dphy_ref_set_psm_div,
+> +};
+> +
+> +static int cdns_dphy_config_from_opts(struct phy *phy,
+> +				      struct phy_configure_opts_mipi_dphy *opts,
+> +				      struct cdns_dphy_cfg *cfg)
+> +{
+> +	struct cdns_dphy *dphy = phy_get_drvdata(phy);
+> +	unsigned int dsi_hfp_ext = 0;
+> +	int ret;
+> +
+> +	ret = phy_mipi_dphy_config_validate(opts);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cdns_dsi_get_dphy_pll_cfg(dphy, cfg,
+> +					opts, &dsi_hfp_ext);
+> +	if (ret)
+> +		return ret;
+> +
+> +	opts->wakeup = cdns_dphy_get_wakeup_time_ns(dphy) * 1000;
 
-> On Jan 17, 2019, at 5:09 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->=20
-> On Wed, Jan 16, 2019 at 08:29:25AM -0800, Song Liu wrote:
->> +	/*
->> +	 * Record bpf events:
->> +	 *  enum perf_bpf_event_type {
->> +	 *	PERF_BPF_EVENT_UNKNOWN		=3D 0,
->> +	 *	PERF_BPF_EVENT_PROG_LOAD	=3D 1,
->> +	 *	PERF_BPF_EVENT_PROG_UNLOAD	=3D 2,
->> +	 *  };
->> +	 *
->> +	 * struct {
->> +	 *	struct perf_event_header	header;
->> +	 *	u16				type;
->> +	 *	u16				flags;
->> +	 *	u32				id;
->> +	 *	u8				tag[BPF_TAG_SIZE];
->=20
-> This does forever fix BPF_TAG_SIZE; is that intentional? We could easily
-> make that a variable length field like with the other event. Or is that
-> value already part of the eBPF ABI?
+This should be "/ 1000" since the units of wakeup is us now (thanks to patch 2).
+You've made this change in patch 9, so I think it's just a misplaced fixup.
 
-Yes, BPF_TAG_SIZE is already part of eBPF ABI.=20
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_dphy_validate(struct phy *phy, enum phy_mode mode, int submode,
+> +			      union phy_configure_opts *opts)
+> +{
+> +	struct cdns_dphy_cfg cfg = { 0 };
+> +
+> +	if (mode != PHY_MODE_MIPI_DPHY)
+> +		return -EINVAL;
+> +
+> +	return cdns_dphy_config_from_opts(phy, &opts->mipi_dphy, &cfg);
+> +}
+> +
+> +static int cdns_dphy_configure(struct phy *phy, union phy_configure_opts *opts)
+> +{
+> +	struct cdns_dphy *dphy = phy_get_drvdata(phy);
+> +	struct cdns_dphy_cfg cfg = { 0 };
+> +	int ret;
+> +
+> +	ret = cdns_dphy_config_from_opts(phy, &opts->mipi_dphy, &cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Configure the internal PSM clk divider so that the DPHY has a
+> +	 * 1MHz clk (or something close).
+> +	 */
+> +	ret = cdns_dphy_setup_psm(dphy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Configure attach clk lanes to data lanes: the DPHY has 2 clk lanes
+> +	 * and 8 data lanes, each clk lane can be attache different set of
+> +	 * data lanes. The 2 groups are named 'left' and 'right', so here we
+> +	 * just say that we want the 'left' clk lane to drive the 'left' data
+> +	 * lanes.
+> +	 */
+> +	cdns_dphy_set_clk_lane_cfg(dphy, DPHY_CLK_CFG_LEFT_DRIVES_LEFT);
+> +
+> +	/*
+> +	 * Configure the DPHY PLL that will be used to generate the TX byte
+> +	 * clk.
+> +	 */
+> +	cdns_dphy_set_pll_cfg(dphy, &cfg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_dphy_power_on(struct phy *phy)
+> +{
+> +	struct cdns_dphy *dphy = phy_get_drvdata(phy);
+> +
+> +	clk_prepare_enable(dphy->psm_clk);
+> +	clk_prepare_enable(dphy->pll_ref_clk);
+> +
+> +	/* Start TX state machine. */
+> +	writel(DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN, dphy->regs + DPHY_CMN_SSM);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_dphy_power_off(struct phy *phy)
+> +{
+> +	struct cdns_dphy *dphy = phy_get_drvdata(phy);
+> +
+> +	clk_disable_unprepare(dphy->pll_ref_clk);
+> +	clk_disable_unprepare(dphy->psm_clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct phy_ops cdns_dphy_ops = {
+> +	.configure	= cdns_dphy_configure,
+> +	.validate	= cdns_dphy_validate,
+> +	.power_on	= cdns_dphy_power_on,
+> +	.power_off	= cdns_dphy_power_off,
+> +};
+> +
+> +static int cdns_dphy_probe(struct platform_device *pdev)
+> +{
+> +	struct phy_provider *phy_provider;
+> +	struct cdns_dphy *dphy;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	dphy = devm_kzalloc(&pdev->dev, sizeof(*dphy), GFP_KERNEL);
+> +	if (!dphy)
+> +		return -ENOMEM;
+> +	dev_set_drvdata(&pdev->dev, dphy);
+> +
+> +	dphy->ops = of_device_get_match_data(&pdev->dev);
+> +	if (!dphy->ops)
+> +		return -EINVAL;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	dphy->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(dphy->regs))
+> +		return PTR_ERR(dphy->regs);
+> +
+> +	dphy->psm_clk = devm_clk_get(&pdev->dev, "psm");
+> +	if (IS_ERR(dphy->psm_clk))
+> +		return PTR_ERR(dphy->psm_clk);
+> +
+> +	dphy->pll_ref_clk = devm_clk_get(&pdev->dev, "pll_ref");
+> +	if (IS_ERR(dphy->pll_ref_clk))
+> +		return PTR_ERR(dphy->pll_ref_clk);
+> +
+> +	if (dphy->ops->probe) {
+> +		ret = dphy->ops->probe(dphy);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	dphy->phy = devm_phy_create(&pdev->dev, NULL, &cdns_dphy_ops);
+> +	if (IS_ERR(dphy->phy)) {
+> +		dev_err(&pdev->dev, "failed to create PHY\n");
+> +		if (dphy->ops->remove)
+> +			dphy->ops->remove(dphy);
+> +		return PTR_ERR(dphy->phy);
+> +	}
+> +
+> +	phy_set_drvdata(dphy->phy, dphy);
+> +	phy_provider = devm_of_phy_provider_register(&pdev->dev, of_phy_simple_xlate);
+> +
+> +	return PTR_ERR_OR_ZERO(phy_provider);
+> +}
+> +
+> +static int cdns_dphy_remove(struct platform_device *pdev)
+> +{
+> +	struct cdns_dphy *dphy = dev_get_drvdata(&pdev->dev);
+> +
+> +	if (dphy->ops->remove)
+> +		dphy->ops->remove(dphy);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id cdns_dphy_of_match[] = {
+> +	{ .compatible = "cdns,dphy", .data = &ref_dphy_ops },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, cdns_dphy_of_match);
+> +
+> +static struct platform_driver cdns_dphy_platform_driver = {
+> +	.probe		= cdns_dphy_probe,
+> +	.remove		= cdns_dphy_remove,
+> +	.driver		= {
+> +		.name		= "cdns-mipi-dphy",
+> +		.of_match_table	= cdns_dphy_of_match,
+> +	},
+> +};
+> +module_platform_driver(cdns_dphy_platform_driver);
+> +
+> +MODULE_AUTHOR("Maxime Ripard <maxime.ripard@bootlin.com>");
+> +MODULE_DESCRIPTION("Cadence MIPI D-PHY Driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> git-series 0.9.1
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Song
-
->=20
->> +	 *	struct sample_id		sample_id;
->> +	 * };
->> +	 */
->> +	PERF_RECORD_BPF_EVENT			=3D 18,
->> @@ -7744,6 +7747,121 @@ void perf_event_ksymbol(u16 ksym_type, u64 addr,=
- u32 len, bool unregister,
->> 	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
->> }
->>=20
->> +struct perf_bpf_event {
->> +	struct bpf_prog	*prog;
->> +	struct {
->> +		struct perf_event_header        header;
->> +		u16				type;
->> +		u16				flags;
->> +		u32				id;
->> +		u8				tag[BPF_TAG_SIZE];
->> +	} event_id;
->> +};
->=20
->> +static void perf_event_bpf_emit_ksymbols(struct bpf_prog *prog,
->> +					 enum perf_bpf_event_type type)
->> +{
->> +	bool unregister =3D type =3D=3D PERF_BPF_EVENT_PROG_UNLOAD;
->> +	int i;
->> +
->> +	if (prog->aux->func_cnt =3D=3D 0) {
->> +		perf_event_ksymbol(PERF_RECORD_KSYMBOL_TYPE_BPF,
->> +				   (u64)(unsigned long)prog->bpf_func,
->> +				   prog->jited_len, unregister,
->> +				   perf_event_bpf_get_name, prog);
->> +	} else {
->> +		for (i =3D 0; i < prog->aux->func_cnt; i++) {
->> +			struct bpf_prog *subprog =3D prog->aux->func[i];
->> +
->> +			perf_event_ksymbol(
->> +				PERF_RECORD_KSYMBOL_TYPE_BPF,
->> +				(u64)(unsigned long)subprog->bpf_func,
->> +				subprog->jited_len, unregister,
->> +				perf_event_bpf_get_name, subprog);
->> +		}
->> +	}
->> +}
->=20
-> I still think this is a weird place to do this.. :-) See them patches I
-> just send.
->=20
->> +void perf_event_bpf_event(struct bpf_prog *prog,
->> +			  enum perf_bpf_event_type type,
->> +			  u16 flags)
->> +{
->> +	struct perf_bpf_event bpf_event;
->> +
->> +	if (type <=3D PERF_BPF_EVENT_UNKNOWN ||
->> +	    type >=3D PERF_BPF_EVENT_MAX)
->> +		return;
->> +
->> +	switch (type) {
->> +	case PERF_BPF_EVENT_PROG_LOAD:
->> +	case PERF_BPF_EVENT_PROG_UNLOAD:
->> +		if (atomic_read(&nr_ksymbol_events))
->> +			perf_event_bpf_emit_ksymbols(prog, type);
->> +		break;
->> +	default:
->> +		break;
->> +	}
->> +
->> +	if (!atomic_read(&nr_bpf_events))
->> +		return;
->> +
->> +	bpf_event =3D (struct perf_bpf_event){
->> +		.prog =3D prog,
->> +		.event_id =3D {
->> +			.header =3D {
->> +				.type =3D PERF_RECORD_BPF_EVENT,
->> +				.size =3D sizeof(bpf_event.event_id),
->> +			},
->> +			.type =3D type,
->> +			.flags =3D flags,
->> +			.id =3D prog->aux->id,
->> +		},
->> +	};
->=20
-> 	BUILD_BUG_ON(BPF_TAG_SIZE % sizeof(u64));
->=20
->> +	memcpy(bpf_event.event_id.tag, prog->tag, BPF_TAG_SIZE);
->> +	perf_iterate_sb(perf_event_bpf_output, &bpf_event, NULL);
->> +}
->=20
-> Anyway, small nits only:
->=20
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradeaed.org>
-
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
