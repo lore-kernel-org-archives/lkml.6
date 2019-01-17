@@ -2,105 +2,115 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C3AC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B022CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7240720856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80E9B20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:56:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kXQXFaq/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pDyFPPGT"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="cns3pxBj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbfAQQzi (ORCPT
+        id S1729201AbfAQQ4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:55:38 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37770 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728767AbfAQQzh (ORCPT
+        Thu, 17 Jan 2019 11:56:20 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44992 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728515AbfAQQ4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:55:37 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5F74660A31; Thu, 17 Jan 2019 16:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547744136;
-        bh=RTpGQeuvcb5f3Ott/HNxLlLNxn36tu+Iomnxy8WHh18=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kXQXFaq/YbKYqwMzqrUc9+KLe32K9/yPS+Qk6+Cgs5QtWi7YCjibJFZ98mqGZ7DXU
-         trrUGbofFW+fSCm5olvfP/O5jnppFWro1nDXoc1RhiO1hdfNxxg1spNp8LzHiI+ACn
-         DWaYoU25Is/tfnlCcQZhAwmTYeFtrfnA/fLSomT4=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id A0BED60A44;
-        Thu, 17 Jan 2019 16:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547744134;
-        bh=RTpGQeuvcb5f3Ott/HNxLlLNxn36tu+Iomnxy8WHh18=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pDyFPPGTonbD/WD8pocLmSTYt7hmAwcrflfKvD14cOxmVhZoeM7el7Vj/kKsZYKt7
-         YMFGZe55+5M8qqYYOOzpA/AOFomRgdJOnwySC49BVFTcDuPtQ3es9ZLwDPsc5kiOwM
-         ADhDiLOIK8qw8XqGIBiswg2MmpQThaMvsYiCGgUQ=
+        Thu, 17 Jan 2019 11:56:20 -0500
+Received: by mail-ot1-f67.google.com with SMTP id f18so11700664otl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:56:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rn9rsZuCSSjzYYPQ+62CJKuWjWxIhG5kt5EwxvzV0zY=;
+        b=cns3pxBjqz2aeJW7ho3ts/fvTC5/fMjksg2ZBn3RDRN6Ce1LFr/eaNkkar5bCU2hD1
+         AZTk8cC+zT9/gltc0y5w/xZH+fVckPgARXuwzx8/wGYnNNwcVBTYcGJcbrlCU9QoDODs
+         OyLNR01z65fZ28+2QODVrb3NJ0PROp31Z30Oe4WEBUJaaCdonumn5bmrcBUF4/zDgV9c
+         r2c7HwTUMf69pHmtSNr072Q6DiaLgp82NRO+Xnst8ocjX3vYAm1Gd72BlSqVptP538FK
+         i9eMT6OKkSrShBWJ5zc9k4+rdybJnRVKJgDvlzSUqMPnwNFhYoQffmolStM0WYg57Spt
+         7Jog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rn9rsZuCSSjzYYPQ+62CJKuWjWxIhG5kt5EwxvzV0zY=;
+        b=r9iMKW9+hJwO5yJtsSoap24vW02wPO2iI21htWy7/FFpJ6TmKJq6Tkr73r9tdqzMAl
+         6KbX0yx/l+q8Il2ZKx2RLb+Cqc4xLFzm1NiADhNuMyK+8983D5wK6MKezmxsKdueki8Q
+         V69tB6nIlH8Z9+gywCr9GmvkQ1Ucz7LIZfO6OXfK5svdfC77s//jHqhFhXijVttXy+2s
+         FewPndae54/AvYkAjWiEGSbUov+55NTXSEePTkQTYtzJXvODTn9Mxed4Zk0lf7SvYln1
+         J+IXl+WK8TGRqJ+5x6bOQ6fDUmsKrQP+inP7bRf6sI8Q/8hw1ywL/PTHtWjFcVIP+e4x
+         EDmw==
+X-Gm-Message-State: AJcUukeywd0SSl8tS6axoDhIZ2mbIce7UApUtaHPaGO4l6hAYtjpSerK
+        HuB+Pxa++tPuQBW6sXO/Q1MWkfNdc6PgDWo21sjY0w==
+X-Google-Smtp-Source: ALg8bN5kBBgKK8xzyu7fcYVTWd5irm9JOMtTRrCCpfXvQofB7v7nUulz8yc18vhIDbNF+9CMOfZAkNghbfqL+ruYv40=
+X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr9245443oti.367.1547744179510;
+ Thu, 17 Jan 2019 08:56:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 17 Jan 2019 22:25:33 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>, marcel@holtmann.org,
-        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v8 1/3] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-In-Reply-To: <20190117161331.GW3691@localhost>
-References: <20190116114603.500-1-bgodavar@codeaurora.org>
- <20190116114603.500-2-bgodavar@codeaurora.org>
- <20190116202253.GS261387@google.com>
- <482d8987d38f60dae1844bc30050cd06@codeaurora.org>
- <20190117161331.GW3691@localhost>
-Message-ID: <21ac40f7314788e2d25b97628f998eb3@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20190116181859.D1504459@viggo.jf.intel.com> <20190116181905.12E102B4@viggo.jf.intel.com>
+ <5A90DA2E42F8AE43BC4A093BF06788482571FCB1@SHSMSX103.ccr.corp.intel.com>
+In-Reply-To: <5A90DA2E42F8AE43BC4A093BF06788482571FCB1@SHSMSX103.ccr.corp.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 17 Jan 2019 08:56:08 -0800
+Message-ID: <CAPcyv4heNGQf4NHYrMzUdBRw2n3tE08bMaVKzgYrPYVaVDWE9Q@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dax: "Hotplug" persistent memory for use like normal RAM
+To:     "Du, Fan" <fan.du@intel.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        "dave@sr71.net" <dave@sr71.net>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "tiwai@suse.de" <tiwai@suse.de>,
+        "zwisler@kernel.org" <zwisler@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Wu, Fengguang" <fengguang.wu@intel.com>,
+        "baiyaowei@cmss.chinamobile.com" <baiyaowei@cmss.chinamobile.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "bp@suse.de" <bp@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-17 21:43, Johan Hovold wrote:
-> On Thu, Jan 17, 2019 at 03:55:17PM +0530, Balakrishna Godavarthi wrote:
->> Hi Matthias,
->> 
->> On 2019-01-17 01:52, Matthias Kaehlcke wrote:
-> 
->> >> -	/* Wait for 100 uS for SoC to settle down */
->> >> -	usleep_range(100, 200);
->> >> +	serdev_device_wait_until_sent(hu->serdev, timeout);
->> >> +	/* Wait of 5ms is required for assuring to send the byte on the Tx
->> >> +	 * line and also for the controller to settle down for the received
->> >> +	 * byte.
->> >> +	 */
->> >> +	usleep_range(5000, 6000);
->> >
->> > I incorrectly claimed that there might be still bytes sitting in the
->> > UART FIFO when serdev_device_wait_until_sent() returns, Johan
->> > corrected me on that (thanks!). So if it takes the SoC 100us to settle
->> > down we should be good with the original code.
->> 
->> [Bala]: sure will revert, i think he commented that wait_until_sent()
->> will only guarantee circular buffer is empty. if wait_until_sent()
->> guarantee us that the data was transmitted from the FIFO, then 100us
->> will work.
-> 
-> No, Matthias is correct; I claimed that the UART FIFO will be empty (at
-> least as long as flow control is disabled, otherwise it may never empty
-> and we therefore also have a time out).
-> 
-> Johan
+On Wed, Jan 16, 2019 at 9:21 PM Du, Fan <fan.du@intel.com> wrote:
+[..]
+> >From: Dave Hansen <dave.hansen@linux.intel.com>
+> >
+> >Currently, a persistent memory region is "owned" by a device driver,
+> >either the "Direct DAX" or "Filesystem DAX" drivers.  These drivers
+> >allow applications to explicitly use persistent memory, generally
+> >by being modified to use special, new libraries.
+> >
+> >However, this limits persistent memory use to applications which
+> >*have* been modified.  To make it more broadly usable, this driver
+> >"hotplugs" memory into the kernel, to be managed ad used just like
+> >normal RAM would be.
+> >
+> >To make this work, management software must remove the device from
+> >being controlled by the "Device DAX" infrastructure:
+> >
+> >       echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
+> >       echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
+> >
+> >and then bind it to this new driver:
+> >
+> >       echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
+> >       echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
+>
+> Is there any plan to introduce additional mode, e.g. "kmem" in the userspace
+> ndctl tool to do the configuration?
+>
 
-[Bala]: Thanks Johan for clarification.
--- 
-Regards
-Balakrishna.
+Yes, but not to ndctl. The daxctl tool will grow a helper for this.
+The policy of what device-dax instances should be hotplugged at system
+init will be managed by a persistent configuration file and udev
+rules.
