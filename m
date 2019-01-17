@@ -2,164 +2,172 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2D8C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 575FCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B71D20859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:15:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E29B20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:17:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J/S7bkUI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s/eHqSaL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbfAQUPH (ORCPT
+        id S1729519AbfAQURI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:15:07 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35837 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729567AbfAQUPF (ORCPT
+        Thu, 17 Jan 2019 15:17:08 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33088 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729401AbfAQURH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:15:05 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so5251097plo.2;
-        Thu, 17 Jan 2019 12:15:05 -0800 (PST)
+        Thu, 17 Jan 2019 15:17:07 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r24so1897295wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:17:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3e+dMxNIs+9y9RgEfuBUSZuI1L9RakC9z6GiJpLFCgk=;
-        b=J/S7bkUIuBKeHUags6OQNlQRtOarBP5DvjBxZa4MMyAY+hFC92SfjVAPhP62nN5I9r
-         /P2M4m6LF94MyFl3+tTnPI0Wj0vmNQuiWdjMkvS6C8lPvu1nDVIZ2Pd3BLHHwIxG+xmp
-         77mEnwA70ZV04WMyDcW1AEuke/CjVVGFrrOa9X+lubwZFf18MrCYHhPZUkWMEdBrcXdl
-         wFF9/GFpjQTGP6XiT0KvAbA7gDaVOoYC7sv3aL3/Ke9v9Wk9Hqp4D1xvYbxx2EFQl1fc
-         xFGBMGT/Ie9zDpP8PDBUt+4ZH+y7Vmwhuvts8uqpC9y9oIj1tCc+PfqFG+vHyDPe+I7W
-         u0/Q==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NmfhQLcizwgYhnzBNmceH8gReZHIlQyVocW7LLwjve4=;
+        b=s/eHqSaLDNY8QU7QLvhhLiJYf0yO5SyxEssVjvvKGAsuXrhoId2gvrBoLZR8UWvQYE
+         hv+TFaeE1tej7lB89hLEbNB54HXO1Lnb9dhoe46FulzLcxGXm7G8I9mvcHB9B+WdUyp6
+         Cp6eYuVxX78Wv3kOQDuS78QLOuRABRoHgLwozEGIwDho8qKbV1iGKyvut2oMB0pvCNzc
+         h0QZNsVwQawRoivQji8cZ40XlP2v3jtf1oXuKahndqDo71VMFZIIiwSAl9vSeVbdGm5l
+         CtBFIB6AUJR7WCUbpAIKbDZoe22Lg/RJO8vnCPm0cLh72zyhXYkGlA3UijObI6bCC+yX
+         M6kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3e+dMxNIs+9y9RgEfuBUSZuI1L9RakC9z6GiJpLFCgk=;
-        b=eVbqyxDCIYFZQAg/vjYB+SP0uFC3aQJ/5fa+5DfHzfS99qnks9UhujJm/HvviCgdNS
-         ZS1z0lwLXFnBG75oODfs10ciGIvtNUzdn4XQrrsUMWd4mUUkNGpgOKR7g8G5rrTOxdTy
-         m8v3tBagWigZ2a5jnEh8WbvS1evVdYQ6hHNbWoPfj64HAOXkve6T3wHOrG9ga6yG6jlQ
-         KLukjIymwJjaExu/R0QnZDcGmwgbPQwGIojxZu8bPy2Jexs75rYS/mOmF4y3dEOgUPem
-         lOuptgMXEYMvhzGy6etuExvEacpTbzBUK8KYeNa2Xp7/CSxf5LSlH/+OdrbcIpULJ81u
-         5baA==
-X-Gm-Message-State: AJcUukf0KgEAON+ZSfZ1e1vIxdi8vTtDMO1fRfbCOopMLV5sl7GrUdkU
-        N7eP5Y+FKYgpPbYcmSi0Skd1tqaHtz4=
-X-Google-Smtp-Source: ALg8bN5KtV7F9Vks/KOBSgMQAVKIKn5rUImGWrUqu2Fq1iLei3w3Ka+fg85/ZMdV+m9aSuKsk2jRmg==
-X-Received: by 2002:a17:902:724a:: with SMTP id c10mr16564989pll.51.1547756104091;
-        Thu, 17 Jan 2019 12:15:04 -0800 (PST)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id b202sm5600744pfb.88.2019.01.17.12.15.02
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NmfhQLcizwgYhnzBNmceH8gReZHIlQyVocW7LLwjve4=;
+        b=K5cWJf1m4vEb1upoC4Zifu00onYqjZyeQxaOTnx6soxm9MxdyviTlBDdi3TAUF4yZo
+         /HCsBOd2ugba5NNfIY2koAW/kF2PZFDu0MOu8YkL2/lz3fbf74HBkiSu51i8eiGTsrR3
+         fWvWs4oHoiTBYxu08cYIHUJIVeNbtSCg1s4fL80K4O3V84N92Lx6u/Xr5UV8Y3nG67Gv
+         iRvkorzUn9O3VoPmGPRCNq2v2Ia7Y/E0maCcLVnHnhZZqi35Unt2j3Bm36hENYBBysmc
+         xMzB+fP8s333HB//ZwECHj5tYuYPYOZDJ9WasIU0rSwqRqVeYnhjcQ9rIny+JuqijfWM
+         bQcQ==
+X-Gm-Message-State: AJcUuke7S62nNPxlSPJIgvK0MNWuAKLQCrHGTl3jqIiKbT70WDMbmi7a
+        JE/dqrytGkmsqvThqxmguRAEkOy3Zgw=
+X-Google-Smtp-Source: ALg8bN6Z6Xz9jBwuiUNlgLaKVAGESinXVuQDdKxhNL1mwBU3CZRxmfdmeyTBXQyFKyEPOOAet1i/lQ==
+X-Received: by 2002:a7b:c181:: with SMTP id y1mr13335501wmi.10.1547756225201;
+        Thu, 17 Jan 2019 12:17:05 -0800 (PST)
+Received: from ?IPv6:2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba? ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
+        by smtp.gmail.com with ESMTPSA id k128sm52000405wmd.37.2019.01.17.12.17.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 12:15:03 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] media: imx: prpencvf: Disable CSI immediately after last EOF
-Date:   Thu, 17 Jan 2019 12:13:47 -0800
-Message-Id: <20190117201347.27347-3-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190117201347.27347-1-slongerbeam@gmail.com>
-References: <20190117201347.27347-1-slongerbeam@gmail.com>
+        Thu, 17 Jan 2019 12:17:04 -0800 (PST)
+Subject: Re: [PATCH 2/2] staging: rtl8188eu: cleanup indenting issue in
+ mlme_linux.c
+To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20190117192301.17579-1-straube.linux@gmail.com>
+ <20190117192301.17579-2-straube.linux@gmail.com>
+ <174b4234659bfbb4f5a072f2928301da9cce67d8.camel@perches.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <6eac568c-307b-9ff1-6a0e-c1bcbdcacfe1@gmail.com>
+Date:   Thu, 17 Jan 2019 21:16:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <174b4234659bfbb4f5a072f2928301da9cce67d8.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CSI must be disabled immediately after receiving the last EOF before
-stream off (and thus before disabling the IDMA channel). This can be
-accomplished by moving upstream stream off to just after receiving the
-last EOF completion in prp_stop(). For symmetry also move upstream
-stream on to end of prp_start().
+On 1/17/19 8:44 PM, Joe Perches wrote:
+> On Thu, 2019-01-17 at 20:23 +0100, Michael Straube wrote:
+>> Cleanup indenting issue reported by checkpatch.
+>> CHECK: Alignment should match open parenthesis
+> []
+>> diff --git a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
+> []
+>> @@ -52,9 +52,8 @@ void rtw_reset_securitypriv(struct adapter *adapter)
+>>   		memset((unsigned char *)&adapter->securitypriv, 0, sizeof(struct security_priv));
+>>   
+>>   		/*  Restore the PMK information to securitypriv structure for the following connection. */
+>> -		memcpy(&adapter->securitypriv.PMKIDList[0],
+>> -			    &backup_pmkid[0],
+>> -			    sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
+>> +		memcpy(&adapter->securitypriv.PMKIDList[0], &backup_pmkid[0],
+>> +		       sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
+> 
+> Hi.
+> 
+> Please try not to blindly follow checkpatch messages but
+> please do try to make the code more readable.
+> 
+> Just below this block is another block with a temporary
+> that uses &adapter->securitypriv.
+> 
+> How about hoisting the temporary and using that?
+> 
 
-This fixes a complete system hard lockup on the SabreAuto when streaming
-from the ADV7180, by repeatedly sending a stream off immediately followed
-by stream on:
+Hi.
 
-while true; do v4l2-ctl  -d1 --stream-mmap --stream-count=3; done
+I will keep that in mind and try to be more attentive.
+Thanks for the hints.
 
-Eventually this either causes the system lockup or EOF timeouts at all
-subsequent stream on, until a system reset.
-
-The lockup occurs when disabling the IDMA channel at stream off. Disabling
-the CSI before disabling the IDMA channel appears to be a reliable fix for
-the hard lockup.
-
-Reported-by: Gaël PORTAY <gael.portay@collabora.com>
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
----
- drivers/staging/media/imx/imx-ic-prpencvf.c | 26 ++++++++++++++-------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
-index 33ada6612fee..f53cdb608528 100644
---- a/drivers/staging/media/imx/imx-ic-prpencvf.c
-+++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
-@@ -707,12 +707,23 @@ static int prp_start(struct prp_priv *priv)
- 		goto out_free_nfb4eof_irq;
- 	}
- 
-+	/* start upstream */
-+	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, 1);
-+	ret = (ret && ret != -ENOIOCTLCMD) ? ret : 0;
-+	if (ret) {
-+		v4l2_err(&ic_priv->sd,
-+			 "upstream stream on failed: %d\n", ret);
-+		goto out_free_eof_irq;
-+	}
-+
- 	/* start the EOF timeout timer */
- 	mod_timer(&priv->eof_timeout_timer,
- 		  jiffies + msecs_to_jiffies(IMX_MEDIA_EOF_TIMEOUT));
- 
- 	return 0;
- 
-+out_free_eof_irq:
-+	devm_free_irq(ic_priv->dev, priv->eof_irq, priv);
- out_free_nfb4eof_irq:
- 	devm_free_irq(ic_priv->dev, priv->nfb4eof_irq, priv);
- out_unsetup:
-@@ -744,6 +755,12 @@ static void prp_stop(struct prp_priv *priv)
- 	if (ret == 0)
- 		v4l2_warn(&ic_priv->sd, "wait last EOF timeout\n");
- 
-+	/* stop upstream */
-+	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, 0);
-+	if (ret && ret != -ENOIOCTLCMD)
-+		v4l2_warn(&ic_priv->sd,
-+			  "upstream stream off failed: %d\n", ret);
-+
- 	devm_free_irq(ic_priv->dev, priv->eof_irq, priv);
- 	devm_free_irq(ic_priv->dev, priv->nfb4eof_irq, priv);
- 
-@@ -1174,15 +1191,6 @@ static int prp_s_stream(struct v4l2_subdev *sd, int enable)
- 	if (ret)
- 		goto out;
- 
--	/* start/stop upstream */
--	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, enable);
--	ret = (ret && ret != -ENOIOCTLCMD) ? ret : 0;
--	if (ret) {
--		if (enable)
--			prp_stop(priv);
--		goto out;
--	}
--
- update_count:
- 	priv->stream_count += enable ? 1 : -1;
- 	if (priv->stream_count < 0)
--- 
-2.17.1
-
+> Something like:
+> ---
+>   drivers/staging/rtl8188eu/os_dep/mlme_linux.c | 32 +++++++++++++--------------
+>   1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
+> index d5ceb3beabbc..320a0be2af3d 100644
+> --- a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
+> +++ b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
+> @@ -39,31 +39,31 @@ void rtw_reset_securitypriv(struct adapter *adapter)
+>   	u8	backup_index = 0;
+>   	u8	backup_counter = 0x00;
+>   	u32	backup_time = 0;
+> +	struct security_priv *psec_priv = &adapter->securitypriv;
+>   
+> -	if (adapter->securitypriv.dot11AuthAlgrthm == dot11AuthAlgrthm_8021X) {
+> +	if (psec_priv->dot11AuthAlgrthm == dot11AuthAlgrthm_8021X) {
+>   		/* 802.1x */
+>   		/*  We have to backup the PMK information for WiFi PMK Caching test item. */
+>   		/*  Backup the btkip_countermeasure information. */
+>   		/*  When the countermeasure is trigger, the driver have to disconnect with AP for 60 seconds. */
+> -		memcpy(&backup_pmkid[0], &adapter->securitypriv.PMKIDList[0], sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
+> -		backup_index = adapter->securitypriv.PMKIDIndex;
+> -		backup_counter = adapter->securitypriv.btkip_countermeasure;
+> -		backup_time = adapter->securitypriv.btkip_countermeasure_time;
+> -		memset((unsigned char *)&adapter->securitypriv, 0, sizeof(struct security_priv));
+> +		memcpy(backup_pmkid, psec_priv->PMKIDList,
+> +		       sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
+> +		backup_index = psec_priv->PMKIDIndex;
+> +		backup_counter = psec_priv->btkip_countermeasure;
+> +		backup_time = psec_priv->btkip_countermeasure_time;
+> +
+> +		memset(psec_priv, 0, sizeof(*psec_priv));
+>   
+>   		/*  Restore the PMK information to securitypriv structure for the following connection. */
+> -		memcpy(&adapter->securitypriv.PMKIDList[0],
+> -			    &backup_pmkid[0],
+> -			    sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
+> -		adapter->securitypriv.PMKIDIndex = backup_index;
+> -		adapter->securitypriv.btkip_countermeasure = backup_counter;
+> -		adapter->securitypriv.btkip_countermeasure_time = backup_time;
+> -		adapter->securitypriv.ndisauthtype = Ndis802_11AuthModeOpen;
+> -		adapter->securitypriv.ndisencryptstatus = Ndis802_11WEPDisabled;
+> +		memcpy(psec_priv->PMKIDList, backup_pmkid,
+> +		       sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
+> +		psec_priv->PMKIDIndex = backup_index;
+> +		psec_priv->btkip_countermeasure = backup_counter;
+> +		psec_priv->btkip_countermeasure_time = backup_time;
+> +		psec_priv->ndisauthtype = Ndis802_11AuthModeOpen;
+> +		psec_priv->ndisencryptstatus = Ndis802_11WEPDisabled;
+>   	} else {
+>   		/* reset values in securitypriv */
+> -		struct security_priv *psec_priv = &adapter->securitypriv;
+> -
+>   		psec_priv->dot11AuthAlgrthm = dot11AuthAlgrthm_Open;
+>   		psec_priv->dot11PrivacyAlgrthm = _NO_PRIVACY_;
+>   		psec_priv->dot11PrivacyKeyIndex = 0;
+> 
+> 
