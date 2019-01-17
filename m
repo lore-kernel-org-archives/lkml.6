@@ -2,84 +2,186 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C39A0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9583C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A3AC20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:03:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i5kUDPGP"
+	by mail.kernel.org (Postfix) with ESMTP id 6CDEE20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 06:03:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbfAQGDM (ORCPT
+        id S1729934AbfAQGD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:03:12 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35301 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725320AbfAQGDL (ORCPT
+        Thu, 17 Jan 2019 01:03:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53558 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725902AbfAQGD1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:03:11 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z9so4292441pfi.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 22:03:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MLCch3I7PE6svC3w0vQLhPrZTpLsf/C1HXPIf6HKMoI=;
-        b=i5kUDPGP2WFBaamSz0M4Avb7thCJ6wLTghQAMiT3ixrMR0oNCES2dW/ViW0KcCR/qr
-         rqk6pN9pZDM7bpLdkf+55fXllk5xqa2x2+9FFGfEtl6ngBXuwTogMecKT+gWlZUIpX7V
-         8mcYUiQUXZF4WoUWGdzvfGK/M39PzpeMlFs5Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MLCch3I7PE6svC3w0vQLhPrZTpLsf/C1HXPIf6HKMoI=;
-        b=TeWrEus1TNnWToTFr9sQeUU6K+fcDJcqCTCWuJatDp1KN86oVQPuoNTPeexk4b1Iq2
-         4POHYdG8vA5CS+8CYZUSuAAw0OLQNDw8PCn7Xqed8iTWmpQA4LYmAuOZa+9QYfM+B0p3
-         Aj0y2yjaqPonpHfxTSFVuQ/x2djx43OznO8g2Fxlks/n9hWjSw4kYFuMq9bwGNt554OT
-         5GSrIB9KVGjhbG35qZStM8SNE0uMql07c0n3Zg5fqP+OplEi9ZeItU7YVFKrilzAPApZ
-         iqt/SlIC6/Nda/k8DDvhsBOckKIx3I62ct5+2aXeYMTBlQEEKrlAkVBpAcoFMos9mim3
-         V4aQ==
-X-Gm-Message-State: AJcUukdYP2q3Oe36rw5isowDdtJ3WWrOwcijpGOj/RdB3zQzi/DeC2li
-        i7G0R4H9SQgg8u/7tnjCddJ6nQ==
-X-Google-Smtp-Source: ALg8bN5R0xsCmLyoAAeEsPoEHHBO3QbWFUGyHLDWuYHYmxZbtoVbxtUyg7Z6c+lw81JU5FxWdIdZ+g==
-X-Received: by 2002:a63:1321:: with SMTP id i33mr12475174pgl.380.1547704991167;
-        Wed, 16 Jan 2019 22:03:11 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id u87sm1596719pfi.2.2019.01.16.22.03.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 22:03:10 -0800 (PST)
-Date:   Thu, 17 Jan 2019 11:33:08 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com,
-        andy.gross@linaro.org, tdas@codeaurora.org, swboyd@chromium.org,
-        dianders@chromium.org, mka@chromium.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "open list:CPU FREQUENCY DRIVERS" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 1/9] [ALREADY QUEUED] cpufreq: qcom-hw: Move to
- device_initcall
-Message-ID: <20190117060308.a72klvinblx64uuy@vireshk-i7>
-References: <cover.1547458732.git.amit.kucheria@linaro.org>
- <2ae45b9263f51a14a7f672f40da2193caf174971.1547458732.git.amit.kucheria@linaro.org>
+        Thu, 17 Jan 2019 01:03:27 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0H5xAQj138415
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 01:03:26 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2g1dfr39-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 01:03:26 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Thu, 17 Jan 2019 06:03:25 -0000
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 06:03:22 -0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0H63MuV17235986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 06:03:22 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E74CDBE051;
+        Thu, 17 Jan 2019 06:03:21 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DA60BE056;
+        Thu, 17 Jan 2019 06:03:21 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.124.35.138])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Jan 2019 06:03:21 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 378F82E3D42; Thu, 17 Jan 2019 11:33:17 +0530 (IST)
+Date:   Thu, 17 Jan 2019 11:33:17 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Michael Bringmann <mwb@linux.vnet.ibm.com>
+Cc:     ego@linux.vnet.ibm.com,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] pseries/hotplug: Add more delay in pseries_cpu_die while
+ waiting for rtas-stop
+Reply-To: ego@linux.vnet.ibm.com
+References: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com>
+ <87a7li5zv2.fsf@morokweng.localdomain>
+ <20181207104311.GA11431@in.ibm.com>
+ <20181207120346.GB11431@in.ibm.com>
+ <87va443fm3.fsf@morokweng.localdomain>
+ <20190109060823.GA20248@in.ibm.com>
+ <74b2262b-48e7-b2a5-7d20-dc7f590958d9@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ae45b9263f51a14a7f672f40da2193caf174971.1547458732.git.amit.kucheria@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <74b2262b-48e7-b2a5-7d20-dc7f590958d9@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 19011706-8235-0000-0000-00000E4C3D9B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010422; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01147632; UDB=6.00597825; IPR=6.00927931;
+ MB=3.00025167; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-17 06:03:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011706-8236-0000-0000-0000441CA26E
+Message-Id: <20190117060317.GA6897@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-01-19, 15:51, Amit Kucheria wrote:
-> (Resent to allow people testing the series to test it easily)
+Hello Michael,
 
-Maybe just share your branch then, instead of sending this again ?
+On Mon, Jan 14, 2019 at 12:11:44PM -0600, Michael Bringmann wrote:
+> On 1/9/19 12:08 AM, Gautham R Shenoy wrote:
+> 
+> > I did some testing during the holidays. Here are the observations:
+> > 
+> > 1) With just your patch (without any additional debug patch), if I run
+> > DLPAR on /off operations on a system that has SMT=off, I am able to
+> > see a crash involving RTAS stack corruption within an hour's time.
+> > 
+> > 2) With the debug patch (appended below) which has additional debug to
+> > capture the callers of stop-self, start-cpu, set-power-levels, the
+> > system is able to perform DLPAR on/off operations on a system with
+> > SMT=off for three days. And then, it crashed with the dead CPU showing
+> > a "Bad kernel stack pointer". From this log, I can clearly
+> > see that there were no concurrent calls to stop-self, start-cpu,
+> > set-power-levels. The only concurrent RTAS calls were the dying CPU
+> > calling "stop-self", and the CPU running the DLPAR operation calling
+> > "query-cpu-stopped-state". The crash signature is appended below as
+> > well.
+> > 
+> > 3) Modifying your patch to remove the udelay and increase the loop
+> > count from 25 to 1000 doesn't improve the situation. We are still able
+> > to see the crash.
+> > 
+> > 4) With my patch, even without any additional debug, I was able to
+> > observe the system run the tests successfully for over a week (I
+> > started the tests before the Christmas weekend, and forgot to turn it
+> > off!)
+> 
+> So does this mean that the problem is fixed with your patch?
 
--- 
-viresh
+No. On the contrary I think my patch unable to exploit the possible
+race window.  From a technical point of view, Thiago's patch does the
+right things
+
+  - It waits for the target CPU to come out of CEDE and set its state
+    to CPU_STATE_OFFLINE.
+  
+  - Only then it then makes the "query-cpu-stopped-state" rtas call in
+    a loop, while giving sufficient delay between successive
+    queries. This reduces the unnecessary rtas-calls.
+
+In my patch, I don't do any of this, but simply keep calling
+"query-cpu-stopped-state" call in a loop for 4000 iterations.
+
+That said, if I incorporate the wait for the target CPU to set its
+state to CPU_STATE_OFFLINE in my patch and then make the
+"query-cpu-stopped-state" rtas call, then, even I am able to get the
+crash with the "RTAS CALL BUFFER CORRUPTION" message.
+
+I think that incorporating the wait for the target CPU set its state
+to CPU_STATE_OFFLINE increases the probability that
+"query-cpu-stopped-state" and "stop-self" rtas calls get called more
+or less at the same time. However since concurrent invocations of
+these rtas-calls is allowed by the PAPR, it should not result in a
+"RTAS CALL BUFFER CORRUPTION". Am I missing something here ?
+
+> 
+> > 
+> > It appears that there is a narrow race window involving rtas-stop-self
+> > and rtas-query-cpu-stopped-state calls that can be observed with your
+> > patch. Adding any printk's seems to reduce the probability of hitting
+> > this race window. It might be worth the while to check with RTAS
+> > folks, if they suspect something here.
+> 
+> What would the RTAS folks be looking at here?  The 'narrow race window'
+> is with respect to a patch that it sound like we should not be
+> using.
+
+IMHO, if the race-window exists, it would be better to confirm and fix
+it, given that we have a patch that can exploit it consistently.
+
+> 
+> Thanks.
+> Michael
+> 
+> -- 
+> Michael W. Bringmann
+> Linux Technology Center
+> IBM Corporation
+> Tie-Line  363-5196
+> External: (512) 286-5196
+> Cell:       (512) 466-0650
+> mwb@linux.vnet.ibm.com
+
+--
+Thanks and Regards
+gautham.
+
