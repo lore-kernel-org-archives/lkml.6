@@ -2,507 +2,146 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B54C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3ECC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3174820657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:05:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A2AF20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:09:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfAQNFI (ORCPT
+        id S1728059AbfAQNJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:05:08 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:2164 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725914AbfAQNFH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:05:07 -0500
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Thu, 17 Jan 2019 04:49:36 -0800
-Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id E928EB1E12;
-        Thu, 17 Jan 2019 07:49:44 -0500 (EST)
-From:   Ajay Kaher <akaher@vmware.com>
-To:     <kys@microsoft.com>, <haiyangz@microsoft.com>
-CC:     <devel@linuxdriverproject.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajay Kaher <akaher@vmware.com>,
-        Jork Loeser <jloeser@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 3/3] PCI: hv: Use vPCI protocol version 1.2 for v4.9
-Date:   Fri, 18 Jan 2019 02:17:18 +0530
-Message-ID: <1547758038-5255-4-git-send-email-akaher@vmware.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547758038-5255-1-git-send-email-akaher@vmware.com>
-References: <1547758038-5255-1-git-send-email-akaher@vmware.com>
+        Thu, 17 Jan 2019 08:09:49 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47926 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725889AbfAQNJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 08:09:48 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5A1BB19CBDB;
+        Thu, 17 Jan 2019 13:09:48 +0000 (UTC)
+Received: from [10.72.12.16] (ovpn-12-16.pek2.redhat.com [10.72.12.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BC4C85DD7B;
+        Thu, 17 Jan 2019 13:09:34 +0000 (UTC)
+Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
+        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+References: <20181205225323.12555-1-mst@redhat.com>
+ <20181205225323.12555-2-mst@redhat.com>
+ <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
+ <20181226102100-mutt-send-email-mst@kernel.org>
+ <620cfd46-aa3e-7eb6-0757-f4afbafda44b@redhat.com>
+ <20181230134539-mutt-send-email-mst@kernel.org>
+ <01e0fe8f-bd75-c39b-9d77-c5a9baf87348@redhat.com>
+ <20190102083202-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <a8f84698-9a60-93ac-c2ee-3634f6ba5cf7@redhat.com>
+Date:   Thu, 17 Jan 2019 21:09:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: akaher@vmware.com does not
- designate permitted sender hosts)
+In-Reply-To: <20190102083202-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 17 Jan 2019 13:09:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the Hyper-V vPCI driver to use the Server-2016 version of the vPCI
-protocol, fixing MSI creation and retargeting issues.
 
-Replaced hv_tmp_cpu_nr_to_vp_nr() with vmbus_cpu_number_to_vp_number()
-to make this patch compatibale for linux v4.9.
+On 2019/1/2 下午9:54, Michael S. Tsirkin wrote:
+> On Wed, Jan 02, 2019 at 11:30:11AM +0800, Jason Wang wrote:
+>> On 2018/12/31 上午2:48, Michael S. Tsirkin wrote:
+>>> On Thu, Dec 27, 2018 at 06:04:53PM +0800, Jason Wang wrote:
+>>>> On 2018/12/26 下午11:22, Michael S. Tsirkin wrote:
+>>>>> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
+>>>>>> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
+>>>>>>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
+>>>>>>> similar to wifi.  It's worth considering whether something similar to
+>>>>>>> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
+>>>>>>> benefitial.
+>>>>>> I've played a similar patch several days before. The tricky part is the mode
+>>>>>> switching between napi and no napi. We should make sure when the packet is
+>>>>>> sent and trakced by BQL,  it should be consumed by BQL as well.
+>>>>> I just went over the patch again and I don't understand this comment.
+>>>>> This patch only enabled BQL with tx napi.
+>>>>>
+>>>>> Thus there's no mode switching.
+>>>>>
+>>>>> What did I miss?
+>>>> Consider the case:
+>>>>
+>>>>
+>>>> TX NAPI is disabled:
+>>>>
+>>>> send N packets
+>>>>
+>>>> turn TX NAPI on:
+>>>>
+>>>> get tx interrupt
+>>>>
+>>>> BQL try to consume those packets when lead WARN for dql.
+>>>>
+>>>>
+>>>> Thanks
+>>> Can one really switch tx napi on and off? How?
+>>> While root can change the napi_tx module parameter, I don't think
+>>> that has any effect outside device probe time. What did I miss?
+>>>
+>>>
+>>>
+>> We support switch the mode through ethtool recently. See
+>>
+>> commit 0c465be183c7c57a26446df6ea96d8676b865f92
+>> Author: Jason Wang <jasowang@redhat.com>
+>> Date:   Tue Oct 9 10:06:26 2018 +0800
+>>
+>>      virtio_net: ethtool tx napi configuration
+>>
+>>      Implement ethtool .set_coalesce (-C) and .get_coalesce (-c) handlers.
+>>      Interrupt moderation is currently not supported, so these accept and
+>>      display the default settings of 0 usec and 1 frame.
+>>
+>>      Toggle tx napi through setting tx-frames. So as to not interfere
+>>      with possible future interrupt moderation, value 1 means tx napi while
+>>      value 0 means not.
+>>
+>>      Only allow the switching when device is down for simplicity.
+>>
+>>      Link: https://patchwork.ozlabs.org/patch/948149/
+>>      Suggested-by: Jason Wang <jasowang@redhat.com>
+>>      Signed-off-by: Willem de Bruijn <willemb@google.com>
+>>      Signed-off-by: Jason Wang <jasowang@redhat.com>
+>>      Signed-off-by: David S. Miller <davem@davemloft.net>
+>>
+>> Thanks
+>
+> It's disabled when device is up - isn't that enough?
 
-Signed-off-by: Jork Loeser <jloeser@microsoft.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: K. Y. Srinivasan <kys@microsoft.com>
-Acked-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
----
- drivers/pci/host/pci-hyperv.c | 300 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 246 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-index 6eed85b..37d70b1 100644
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -71,6 +71,7 @@
- 
- enum pci_protocol_version_t {
- 	PCI_PROTOCOL_VERSION_1_1 = PCI_MAKE_VERSION(1, 1),	/* Win10 */
-+	PCI_PROTOCOL_VERSION_1_2 = PCI_MAKE_VERSION(1, 2),	/* RS1 */
- };
- 
- #define CPU_AFFINITY_ALL	-1ULL
-@@ -80,6 +81,7 @@ enum pci_protocol_version_t {
-  * first.
-  */
- static enum pci_protocol_version_t pci_protocol_versions[] = {
-+	PCI_PROTOCOL_VERSION_1_2,
- 	PCI_PROTOCOL_VERSION_1_1,
- };
- 
-@@ -125,6 +127,9 @@ enum pci_message_type {
- 	PCI_QUERY_PROTOCOL_VERSION      = PCI_MESSAGE_BASE + 0x13,
- 	PCI_CREATE_INTERRUPT_MESSAGE    = PCI_MESSAGE_BASE + 0x14,
- 	PCI_DELETE_INTERRUPT_MESSAGE    = PCI_MESSAGE_BASE + 0x15,
-+	PCI_RESOURCES_ASSIGNED2		= PCI_MESSAGE_BASE + 0x16,
-+	PCI_CREATE_INTERRUPT_MESSAGE2	= PCI_MESSAGE_BASE + 0x17,
-+	PCI_DELETE_INTERRUPT_MESSAGE2	= PCI_MESSAGE_BASE + 0x18, /* unused */
- 	PCI_MESSAGE_MAXIMUM
- };
- 
-@@ -195,6 +200,30 @@ struct hv_msi_desc {
- } __packed;
- 
- /**
-+ * struct hv_msi_desc2 - 1.2 version of hv_msi_desc
-+ * @vector:		IDT entry
-+ * @delivery_mode:	As defined in Intel's Programmer's
-+ *			Reference Manual, Volume 3, Chapter 8.
-+ * @vector_count:	Number of contiguous entries in the
-+ *			Interrupt Descriptor Table that are
-+ *			occupied by this Message-Signaled
-+ *			Interrupt. For "MSI", as first defined
-+ *			in PCI 2.2, this can be between 1 and
-+ *			32. For "MSI-X," as first defined in PCI
-+ *			3.0, this must be 1, as each MSI-X table
-+ *			entry would have its own descriptor.
-+ * @processor_count:	number of bits enabled in array.
-+ * @processor_array:	All the target virtual processors.
-+ */
-+struct hv_msi_desc2 {
-+	u8	vector;
-+	u8	delivery_mode;
-+	u16	vector_count;
-+	u16	processor_count;
-+	u16	processor_array[32];
-+} __packed;
-+
-+/**
-  * struct tran_int_desc
-  * @reserved:		unused, padding
-  * @vector_count:	same as in hv_msi_desc
-@@ -310,6 +339,14 @@ struct pci_resources_assigned {
- 	u32 reserved[4];
- } __packed;
- 
-+struct pci_resources_assigned2 {
-+	struct pci_message message_type;
-+	union win_slot_encoding wslot;
-+	u8 memory_range[0x14][6];	/* not used here */
-+	u32 msi_descriptor_count;
-+	u8 reserved[70];
-+} __packed;
-+
- struct pci_create_interrupt {
- 	struct pci_message message_type;
- 	union win_slot_encoding wslot;
-@@ -322,6 +359,12 @@ struct pci_create_int_response {
- 	struct tran_int_desc int_desc;
- } __packed;
- 
-+struct pci_create_interrupt2 {
-+	struct pci_message message_type;
-+	union win_slot_encoding wslot;
-+	struct hv_msi_desc2 int_desc;
-+} __packed;
-+
- struct pci_delete_interrupt {
- 	struct pci_message message_type;
- 	union win_slot_encoding wslot;
-@@ -347,17 +390,42 @@ static int pci_ring_size = (4 * PAGE_SIZE);
- #define HV_PARTITION_ID_SELF		((u64)-1)
- #define HVCALL_RETARGET_INTERRUPT	0x7e
- 
--struct retarget_msi_interrupt {
--	u64	partition_id;		/* use "self" */
--	u64	device_id;
-+struct hv_interrupt_entry {
- 	u32	source;			/* 1 for MSI(-X) */
- 	u32	reserved1;
- 	u32	address;
- 	u32	data;
--	u64	reserved2;
-+};
-+
-+#define HV_VP_SET_BANK_COUNT_MAX	5 /* current implementation limit */
-+
-+struct hv_vp_set {
-+	u64	format;			/* 0 (HvGenericSetSparse4k) */
-+	u64	valid_banks;
-+	u64	masks[HV_VP_SET_BANK_COUNT_MAX];
-+};
-+
-+/*
-+ * flags for hv_device_interrupt_target.flags
-+ */
-+#define HV_DEVICE_INTERRUPT_TARGET_MULTICAST		1
-+#define HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET	2
-+
-+struct hv_device_interrupt_target {
- 	u32	vector;
- 	u32	flags;
--	u64	vp_mask;
-+	union {
-+		u64		 vp_mask;
-+		struct hv_vp_set vp_set;
-+	};
-+};
-+
-+struct retarget_msi_interrupt {
-+	u64	partition_id;		/* use "self" */
-+	u64	device_id;
-+	struct hv_interrupt_entry int_entry;
-+	u64	reserved2;
-+	struct hv_device_interrupt_target int_target;
- } __packed;
- 
- /*
-@@ -802,8 +870,11 @@ void hv_irq_unmask(struct irq_data *data)
- 	struct cpumask *dest;
- 	struct pci_bus *pbus;
- 	struct pci_dev *pdev;
--	int cpu;
- 	unsigned long flags;
-+	u32 var_size = 0;
-+	int cpu_vmbus;
-+	int cpu;
-+	u64 res;
- 
- 	dest = irq_data_get_affinity_mask(data);
- 	pdev = msi_desc_to_pci_dev(msi_desc);
-@@ -815,23 +886,74 @@ void hv_irq_unmask(struct irq_data *data)
- 	params = &hbus->retarget_msi_interrupt_params;
- 	memset(params, 0, sizeof(*params));
- 	params->partition_id = HV_PARTITION_ID_SELF;
--	params->source = 1; /* MSI(-X) */
--	params->address = msi_desc->msg.address_lo;
--	params->data = msi_desc->msg.data;
-+	params->int_entry.source = 1; /* MSI(-X) */
-+	params->int_entry.address = msi_desc->msg.address_lo;
-+	params->int_entry.data = msi_desc->msg.data;
- 	params->device_id = (hbus->hdev->dev_instance.b[5] << 24) |
- 			   (hbus->hdev->dev_instance.b[4] << 16) |
- 			   (hbus->hdev->dev_instance.b[7] << 8) |
- 			   (hbus->hdev->dev_instance.b[6] & 0xf8) |
- 			   PCI_FUNC(pdev->devfn);
--	params->vector = cfg->vector;
-+	params->int_target.vector = cfg->vector;
-+
-+	/*
-+	 * Honoring apic->irq_delivery_mode set to dest_Fixed by
-+	 * setting the HV_DEVICE_INTERRUPT_TARGET_MULTICAST flag results in a
-+	 * spurious interrupt storm. Not doing so does not seem to have a
-+	 * negative effect (yet?).
-+	 */
-+
-+	if (pci_protocol_version >= PCI_PROTOCOL_VERSION_1_2) {
-+		/*
-+		 * PCI_PROTOCOL_VERSION_1_2 supports the VP_SET version of the
-+		 * HVCALL_RETARGET_INTERRUPT hypercall, which also coincides
-+		 * with >64 VP support.
-+		 * ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED
-+		 * is not sufficient for this hypercall.
-+		 */
-+		params->int_target.flags |=
-+			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
-+		params->int_target.vp_set.valid_banks =
-+			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
- 
--	for_each_cpu_and(cpu, dest, cpu_online_mask)
--		params->vp_mask |= (1ULL << vmbus_cpu_number_to_vp_number(cpu));
-+		/*
-+		 * var-sized hypercall, var-size starts after vp_mask (thus
-+		 * vp_set.format does not count, but vp_set.valid_banks does).
-+		 */
-+		var_size = 1 + HV_VP_SET_BANK_COUNT_MAX;
- 
--	hv_do_hypercall(HVCALL_RETARGET_INTERRUPT, params, NULL);
-+		for_each_cpu_and(cpu, dest, cpu_online_mask) {
-+			cpu_vmbus = vmbus_cpu_number_to_vp_number(cpu);
-+
-+			if (cpu_vmbus >= HV_VP_SET_BANK_COUNT_MAX * 64) {
-+				dev_err(&hbus->hdev->device,
-+					"too high CPU %d", cpu_vmbus);
-+				res = 1;
-+				goto exit_unlock;
-+			}
- 
-+			params->int_target.vp_set.masks[cpu_vmbus / 64] |=
-+				(1ULL << (cpu_vmbus & 63));
-+		}
-+	} else {
-+		for_each_cpu_and(cpu, dest, cpu_online_mask) {
-+			params->int_target.vp_mask |=
-+				(1ULL << vmbus_cpu_number_to_vp_number(cpu));
-+		}
-+	}
-+
-+	res = hv_do_hypercall(HVCALL_RETARGET_INTERRUPT | (var_size << 17),
-+			      params, NULL);
-+
-+exit_unlock:
- 	spin_unlock_irqrestore(&hbus->retarget_msi_interrupt_lock, flags);
- 
-+	if (res) {
-+		dev_err(&hbus->hdev->device,
-+			"%s() failed: %#llx", __func__, res);
-+		return;
-+	}
-+
- 	pci_msi_unmask_irq(data);
- }
- 
-@@ -852,6 +974,53 @@ static void hv_pci_compose_compl(void *context, struct pci_response *resp,
- 	complete(&comp_pkt->comp_pkt.host_event);
- }
- 
-+static u32 hv_compose_msi_req_v1(
-+	struct pci_create_interrupt *int_pkt, struct cpumask *affinity,
-+	u32 slot, u8 vector)
-+{
-+	int_pkt->message_type.type = PCI_CREATE_INTERRUPT_MESSAGE;
-+	int_pkt->wslot.slot = slot;
-+	int_pkt->int_desc.vector = vector;
-+	int_pkt->int_desc.vector_count = 1;
-+	int_pkt->int_desc.delivery_mode =
-+		(apic->irq_delivery_mode == dest_LowestPrio) ?
-+			dest_LowestPrio : dest_Fixed;
-+
-+	/*
-+	 * Create MSI w/ dummy vCPU set, overwritten by subsequent retarget in
-+	 * hv_irq_unmask().
-+	 */
-+	int_pkt->int_desc.cpu_mask = CPU_AFFINITY_ALL;
-+
-+	return sizeof(*int_pkt);
-+}
-+
-+static u32 hv_compose_msi_req_v2(
-+	struct pci_create_interrupt2 *int_pkt, struct cpumask *affinity,
-+	u32 slot, u8 vector)
-+{
-+	int cpu;
-+
-+	int_pkt->message_type.type = PCI_CREATE_INTERRUPT_MESSAGE2;
-+	int_pkt->wslot.slot = slot;
-+	int_pkt->int_desc.vector = vector;
-+	int_pkt->int_desc.vector_count = 1;
-+	int_pkt->int_desc.delivery_mode =
-+		(apic->irq_delivery_mode == dest_LowestPrio) ?
-+			dest_LowestPrio : dest_Fixed;
-+
-+	/*
-+	 * Create MSI w/ dummy vCPU set targeting just one vCPU, overwritten
-+	 * by subsequent retarget in hv_irq_unmask().
-+	 */
-+	cpu = cpumask_first_and(affinity, cpu_online_mask);
-+	int_pkt->int_desc.processor_array[0] =
-+		vmbus_cpu_number_to_vp_number(cpu);
-+	int_pkt->int_desc.processor_count = 1;
-+
-+	return sizeof(*int_pkt);
-+}
-+
- /**
-  * hv_compose_msi_msg() - Supplies a valid MSI address/data
-  * @data:	Everything about this MSI
-@@ -870,15 +1039,17 @@ static void hv_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
- 	struct hv_pci_dev *hpdev;
- 	struct pci_bus *pbus;
- 	struct pci_dev *pdev;
--	struct pci_create_interrupt *int_pkt;
- 	struct compose_comp_ctxt comp;
- 	struct tran_int_desc *int_desc;
--	struct cpumask *affinity;
- 	struct {
--		struct pci_packet pkt;
--		u8 buffer[sizeof(struct pci_create_interrupt)];
--	} ctxt;
--	int cpu;
-+		struct pci_packet pci_pkt;
-+		union {
-+			struct pci_create_interrupt v1;
-+			struct pci_create_interrupt2 v2;
-+		} int_pkts;
-+	} __packed ctxt;
-+
-+	u32 size;
- 	int ret;
- 
- 	pdev = msi_desc_to_pci_dev(irq_data_get_msi_desc(data));
-@@ -901,36 +1072,44 @@ static void hv_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
- 
- 	memset(&ctxt, 0, sizeof(ctxt));
- 	init_completion(&comp.comp_pkt.host_event);
--	ctxt.pkt.completion_func = hv_pci_compose_compl;
--	ctxt.pkt.compl_ctxt = &comp;
--	int_pkt = (struct pci_create_interrupt *)&ctxt.pkt.message;
--	int_pkt->message_type.type = PCI_CREATE_INTERRUPT_MESSAGE;
--	int_pkt->wslot.slot = hpdev->desc.win_slot.slot;
--	int_pkt->int_desc.vector = cfg->vector;
--	int_pkt->int_desc.vector_count = 1;
--	int_pkt->int_desc.delivery_mode =
--		(apic->irq_delivery_mode == dest_LowestPrio) ? 1 : 0;
-+	ctxt.pci_pkt.completion_func = hv_pci_compose_compl;
-+	ctxt.pci_pkt.compl_ctxt = &comp;
-+
-+	switch (pci_protocol_version) {
-+	case PCI_PROTOCOL_VERSION_1_1:
-+		size = hv_compose_msi_req_v1(&ctxt.int_pkts.v1,
-+					irq_data_get_affinity_mask(data),
-+					hpdev->desc.win_slot.slot,
-+					cfg->vector);
-+		break;
- 
--	/*
--	 * This bit doesn't have to work on machines with more than 64
--	 * processors because Hyper-V only supports 64 in a guest.
--	 */
--	affinity = irq_data_get_affinity_mask(data);
--	if (cpumask_weight(affinity) >= 32) {
--		int_pkt->int_desc.cpu_mask = CPU_AFFINITY_ALL;
--	} else {
--		for_each_cpu_and(cpu, affinity, cpu_online_mask) {
--			int_pkt->int_desc.cpu_mask |=
--				(1ULL << vmbus_cpu_number_to_vp_number(cpu));
--		}
-+	case PCI_PROTOCOL_VERSION_1_2:
-+		size = hv_compose_msi_req_v2(&ctxt.int_pkts.v2,
-+					irq_data_get_affinity_mask(data),
-+					hpdev->desc.win_slot.slot,
-+					cfg->vector);
-+		break;
-+
-+	default:
-+		/* As we only negotiate protocol versions known to this driver,
-+		 * this path should never hit. However, this is it not a hot
-+		 * path so we print a message to aid future updates.
-+		 */
-+		dev_err(&hbus->hdev->device,
-+			"Unexpected vPCI protocol, update driver.");
-+		goto free_int_desc;
- 	}
- 
--	ret = vmbus_sendpacket(hpdev->hbus->hdev->channel, int_pkt,
--			       sizeof(*int_pkt), (unsigned long)&ctxt.pkt,
-+	ret = vmbus_sendpacket(hpdev->hbus->hdev->channel, &ctxt.int_pkts,
-+			       size, (unsigned long)&ctxt.pci_pkt,
- 			       VM_PKT_DATA_INBAND,
- 			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
--	if (ret)
-+	if (ret) {
-+		dev_err(&hbus->hdev->device,
-+			"Sending request for interrupt failed: 0x%x",
-+			comp.comp_pkt.completion_status);
- 		goto free_int_desc;
-+	}
- 
- 	wait_for_completion(&comp.comp_pkt.host_event);
- 
-@@ -2117,13 +2296,18 @@ static int hv_send_resources_allocated(struct hv_device *hdev)
- {
- 	struct hv_pcibus_device *hbus = hv_get_drvdata(hdev);
- 	struct pci_resources_assigned *res_assigned;
-+	struct pci_resources_assigned2 *res_assigned2;
- 	struct hv_pci_compl comp_pkt;
- 	struct hv_pci_dev *hpdev;
- 	struct pci_packet *pkt;
-+	size_t size_res;
- 	u32 wslot;
- 	int ret;
- 
--	pkt = kmalloc(sizeof(*pkt) + sizeof(*res_assigned), GFP_KERNEL);
-+	size_res = (pci_protocol_version < PCI_PROTOCOL_VERSION_1_2)
-+			? sizeof(*res_assigned) : sizeof(*res_assigned2);
-+
-+	pkt = kmalloc(sizeof(*pkt) + size_res, GFP_KERNEL);
- 	if (!pkt)
- 		return -ENOMEM;
- 
-@@ -2134,22 +2318,30 @@ static int hv_send_resources_allocated(struct hv_device *hdev)
- 		if (!hpdev)
- 			continue;
- 
--		memset(pkt, 0, sizeof(*pkt) + sizeof(*res_assigned));
-+		memset(pkt, 0, sizeof(*pkt) + size_res);
- 		init_completion(&comp_pkt.host_event);
- 		pkt->completion_func = hv_pci_generic_compl;
- 		pkt->compl_ctxt = &comp_pkt;
--		res_assigned = (struct pci_resources_assigned *)&pkt->message;
--		res_assigned->message_type.type = PCI_RESOURCES_ASSIGNED;
--		res_assigned->wslot.slot = hpdev->desc.win_slot.slot;
- 
-+		if (pci_protocol_version < PCI_PROTOCOL_VERSION_1_2) {
-+			res_assigned =
-+				(struct pci_resources_assigned *)&pkt->message;
-+			res_assigned->message_type.type =
-+				PCI_RESOURCES_ASSIGNED;
-+			res_assigned->wslot.slot = hpdev->desc.win_slot.slot;
-+		} else {
-+			res_assigned2 =
-+				(struct pci_resources_assigned2 *)&pkt->message;
-+			res_assigned2->message_type.type =
-+				PCI_RESOURCES_ASSIGNED2;
-+			res_assigned2->wslot.slot = hpdev->desc.win_slot.slot;
-+		}
- 		put_pcichild(hpdev, hv_pcidev_ref_by_slot);
- 
--		ret = vmbus_sendpacket(
--			hdev->channel, &pkt->message,
--			sizeof(*res_assigned),
--			(unsigned long)pkt,
--			VM_PKT_DATA_INBAND,
--			VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
-+		ret = vmbus_sendpacket(hdev->channel, &pkt->message,
-+				size_res, (unsigned long)pkt,
-+				VM_PKT_DATA_INBAND,
-+				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- 		if (ret)
- 			break;
- 
--- 
-2.7.4
+Consider the case:
+
+1) tx napi is disabled
+
+2) send packets
+
+3) tx napi is enabled through ethtool
+
+4) get tx interrupt
+
+5) BQL may start to consume packet that was sent when tx napi is 
+disabled which will trigger BUG or WARN in dql
+
+Thanks
+
 
