@@ -2,287 +2,77 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BC1C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A4FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8A9205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:33:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="EblUqcEo"
+	by mail.kernel.org (Postfix) with ESMTP id BF0ED205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:34:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbfAQNdm (ORCPT
+        id S1727359AbfAQNe6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:33:42 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:37689 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbfAQNdl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:33:41 -0500
-Received: by mail-yb1-f195.google.com with SMTP id 2so2989116ybw.4
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 05:33:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZRARg234UQKVSq41AjrEKQ+5c7yzrHeZ4hw/irAy5ws=;
-        b=EblUqcEo9Li6sgfPoEh51lq1Jqin+oA5kUE4ILCnsCbpILc4POXuGzeu30FhnSWnbf
-         z152M8Gzb7N0KujOIMTmtk7vfgWlQw4fubXLZVTO54jymDytkpKAsV3v3EElByiriGRK
-         MnwYZmoVXORtw6t55zhdD6jI9MJG4IEGe69TPujKF1Xk3VZdRrEwa8jMUCX0rpg2qG9l
-         fYUVcu4GODzWIGjKUYb8zihTvNbwrbuE1oNYiX1ZMTEkt07xG6yLSZ4YajqTpfJvbw//
-         WSP7RxXwUEqTsw0CyJNkWmB9LaGk6rEScM5ghsJaP4Vs+Y8+Ujp9PCAe2PgTF/lfcMSJ
-         X5GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZRARg234UQKVSq41AjrEKQ+5c7yzrHeZ4hw/irAy5ws=;
-        b=c77KvysJW4jwcd1hClonO3ky3T4zitoJxqppp3rAScCwin97ohqqAX2LxcXh9mo7i2
-         ddrsRwSgsq1CJFz76lBwGnOPv0mexs2zLqpvem2tc3IZN/zM69tGco4wZiS2bQNU1v7p
-         MPH81KrimB5KQ48gGq3P9Mh0mBT0m4PS++UfHa5yJgdiL4nHy4Wso5mVnY1Tj6b3uYiN
-         mQqAOaHMNpOmF7SjzIRlp+DxkFxRwPayJfeT8PVFsOuCH0mBdx1t/OTYlqF8/xhLWXQz
-         gaS2d+AtcEpZd2iMohAFvibyhNRQyrX4Q8cuT1q8xCSYz5HWuGiEtyZR6bLSHzBuwalu
-         LE1g==
-X-Gm-Message-State: AJcUukcxYOz4uULK141aWeUYL/UItS0BL4UOd9e8933qU3BsGeCezQub
-        BnZudSuCyOd//E1NABzEgA7aQA==
-X-Google-Smtp-Source: ALg8bN596NMzviejCC9J+HUnvsbq2QQ3OqR5yiZfa9Y/HY6VdbT0dLYoeqosR52sBeAmv1/J4kgnsg==
-X-Received: by 2002:a25:4cc4:: with SMTP id z187mr9886470yba.121.1547732020037;
-        Thu, 17 Jan 2019 05:33:40 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id k64sm656400ywc.56.2019.01.17.05.33.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 05:33:39 -0800 (PST)
-Date:   Thu, 17 Jan 2019 08:33:38 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH v4 6/9] drm/bridge: cdns: Separate DSI and D-PHY
- configuration
-Message-ID: <20190117133338.GA114153@art_vandelay>
-References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
- <df619f059617d85c00efa146884e295240a07ae7.1547026369.git-series.maxime.ripard@bootlin.com>
+        Thu, 17 Jan 2019 08:34:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60306 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725924AbfAQNe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 08:34:58 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DFC7E9E62D;
+        Thu, 17 Jan 2019 13:34:57 +0000 (UTC)
+Received: from redhat.com (ovpn-122-124.rdu2.redhat.com [10.10.122.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 376D45DD7B;
+        Thu, 17 Jan 2019 13:34:57 +0000 (UTC)
+Date:   Thu, 17 Jan 2019 08:34:56 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] virtio_net: bulk free tx skbs
+Message-ID: <20190117083429-mutt-send-email-mst@kernel.org>
+References: <20190115012847.14730-1-mst@redhat.com>
+ <20190116.153158.1210819126964530944.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <df619f059617d85c00efa146884e295240a07ae7.1547026369.git-series.maxime.ripard@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190116.153158.1210819126964530944.davem@davemloft.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 17 Jan 2019 13:34:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:33:23AM +0100, Maxime Ripard wrote:
-> The current configuration of the DSI bridge and its associated D-PHY is
-> intertwined. In order to ease the future conversion to the phy framework
-> for the D-PHY part, let's split the configuration in two.
+On Wed, Jan 16, 2019 at 03:31:58PM -0800, David Miller wrote:
+> From: "Michael S. Tsirkin" <mst@redhat.com>
+> Date: Mon, 14 Jan 2019 20:34:26 -0500
 > 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  drivers/gpu/drm/bridge/cdns-dsi.c | 96 ++++++++++++++++++++++----------
->  1 file changed, 68 insertions(+), 28 deletions(-)
+> > Use napi_consume_skb() to get bulk free.  Note that napi_consume_skb is
+> > safe to call in a non-napi context as long as the napi_budget flag is
+> > correct.
+> > 
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > ---
+> > 
+> > My perf testing setup is down but it works fine on my devel box and
+> > should be fairly uncontroversial.
 > 
-> diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c b/drivers/gpu/drm/bridge/cdns-dsi.c
-> index ce9496d13986..3ac6dd524b6d 100644
-> --- a/drivers/gpu/drm/bridge/cdns-dsi.c
-> +++ b/drivers/gpu/drm/bridge/cdns-dsi.c
-> @@ -545,6 +545,11 @@ bridge_to_cdns_dsi_input(struct drm_bridge *bridge)
->  	return container_of(bridge, struct cdns_dsi_input, bridge);
->  }
->  
-> +static unsigned int mode_to_dpi_hfp(const struct drm_display_mode *mode)
-> +{
-> +	return mode->crtc_hsync_start - mode->crtc_hdisplay;
-> +}
-> +
->  static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
->  				     struct cdns_dphy_cfg *cfg,
->  				     unsigned int dpi_htotal,
-> @@ -731,14 +736,12 @@ static unsigned int dpi_to_dsi_timing(unsigned int dpi_timing,
->  static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
->  			     const struct drm_display_mode *mode,
->  			     struct cdns_dsi_cfg *dsi_cfg,
-> -			     struct cdns_dphy_cfg *dphy_cfg,
->  			     bool mode_valid_check)
->  {
-> -	unsigned long dsi_htotal = 0, dsi_hss_hsa_hse_hbp = 0;
->  	struct cdns_dsi_output *output = &dsi->output;
-> -	unsigned int dsi_hfp_ext = 0, dpi_hfp, tmp;
-> +	unsigned int tmp;
->  	bool sync_pulse = false;
-> -	int bpp, nlanes, ret;
-> +	int bpp, nlanes;
->  
->  	memset(dsi_cfg, 0, sizeof(*dsi_cfg));
->  
-> @@ -757,8 +760,6 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
->  		       mode->crtc_hsync_end : mode->crtc_hsync_start);
->  
->  	dsi_cfg->hbp = dpi_to_dsi_timing(tmp, bpp, DSI_HBP_FRAME_OVERHEAD);
-> -	dsi_htotal += dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
-> -	dsi_hss_hsa_hse_hbp += dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
->  
->  	if (sync_pulse) {
->  		if (mode_valid_check)
-> @@ -768,49 +769,90 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
->  
->  		dsi_cfg->hsa = dpi_to_dsi_timing(tmp, bpp,
->  						 DSI_HSA_FRAME_OVERHEAD);
-> -		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
-> -		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
->  	}
->  
->  	dsi_cfg->hact = dpi_to_dsi_timing(mode_valid_check ?
->  					  mode->hdisplay : mode->crtc_hdisplay,
->  					  bpp, 0);
-> -	dsi_htotal += dsi_cfg->hact;
-> +	dsi_cfg->hfp = dpi_to_dsi_timing(mode_to_dpi_hfp(mode), bpp,
-> +					 DSI_HFP_FRAME_OVERHEAD);
+> It would be uncontroversial if it compiled.
+> 
+> drivers/net/virtio_net.c: In function ‘free_old_xmit_skbs’:
+> drivers/net/virtio_net.c:1346:25: error: ‘use_napi’ undeclared (first use in this function); did you mean ‘used_math’?
+>    napi_consume_skb(skb, use_napi);
+>                          ^~~~~~~~
+>                          used_math
+> drivers/net/virtio_net.c:1346:25: note: each undeclared identifier is reported only once for each function it appears in
 
-We're throwing away the mode_valid_check switch here to flip between crtc_h*
-value and h* value. Is that intentional? We're using it above for hdisplay, so
-it's a bit confusing.
-
->  
-> -	if (mode_valid_check)
-> -		dpi_hfp = mode->hsync_start - mode->hdisplay;
-> -	else
-> -		dpi_hfp = mode->crtc_hsync_start - mode->crtc_hdisplay;
-> +	return 0;
-> +}
-> +
-> +static int cdns_dphy_validate(struct cdns_dsi *dsi,
-> +			      struct cdns_dsi_cfg *dsi_cfg,
-> +			      struct cdns_dphy_cfg *dphy_cfg,
-> +			      const struct drm_display_mode *mode,
-> +			      bool mode_valid_check)
-> +{
-> +	struct cdns_dsi_output *output = &dsi->output;
-> +	unsigned long dsi_htotal;
-> +	unsigned int dsi_hfp_ext = 0;
-> +
-> +	int ret;
->  
-> -	dsi_cfg->hfp = dpi_to_dsi_timing(dpi_hfp, bpp, DSI_HFP_FRAME_OVERHEAD);
-> +	dsi_htotal = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
-> +	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-> +		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
-> +
-> +	dsi_htotal += dsi_cfg->hact;
->  	dsi_htotal += dsi_cfg->hfp + DSI_HFP_FRAME_OVERHEAD;
->  
->  	if (mode_valid_check)
->  		ret = cdns_dsi_get_dphy_pll_cfg(dsi->dphy, dphy_cfg,
-> -						mode->htotal, bpp,
-> +						mode->htotal,
->  						mode->clock * 1000,
-> -						dsi_htotal, nlanes,
-> +						mipi_dsi_pixel_format_to_bpp(output->dev->format),
-> +						dsi_htotal,
-> +						output->dev->lanes,
->  						&dsi_hfp_ext);
->  	else
->  		ret = cdns_dsi_get_dphy_pll_cfg(dsi->dphy, dphy_cfg,
-> -						mode->crtc_htotal, bpp,
-> +						mode->crtc_htotal,
-> +						mipi_dsi_pixel_format_to_bpp(output->dev->format),
->  						mode->crtc_clock * 1000,
-> -						dsi_htotal, nlanes,
-> +						dsi_htotal,
-> +						output->dev->lanes,
->  						&dsi_hfp_ext);
-> -
->  	if (ret)
->  		return ret;
->  
->  	dsi_cfg->hfp += dsi_hfp_ext;
-> -	dsi_htotal += dsi_hfp_ext;
-> -	dsi_cfg->htotal = dsi_htotal;
-> +	dsi_cfg->htotal = dsi_htotal + dsi_hfp_ext;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
-> +			       const struct drm_display_mode *mode,
-> +			       struct cdns_dsi_cfg *dsi_cfg,
-> +			       struct cdns_dphy_cfg *dphy_cfg,
-> +			       bool mode_valid_check)
-> +{
-> +	struct cdns_dsi_output *output = &dsi->output;
-> +	unsigned long dsi_hss_hsa_hse_hbp;
-> +	unsigned int nlanes = output->dev->lanes;
-> +	int ret;
-> +
-> +	ret = cdns_dsi_mode2cfg(dsi, mode, dsi_cfg, mode_valid_check);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = cdns_dphy_validate(dsi, dsi_cfg, dphy_cfg, mode, mode_valid_check);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dsi_hss_hsa_hse_hbp = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
-> +	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-> +		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
->  
->  	/*
->  	 * Make sure DPI(HFP) > DSI(HSS+HSA+HSE+HBP) to guarantee that the FIFO
->  	 * is empty before we start a receiving a new line on the DPI
->  	 * interface.
->  	 */
-> -	if ((u64)dphy_cfg->lane_bps * dpi_hfp * nlanes <
-> +	if ((u64)dphy_cfg->lane_bps * mode_to_dpi_hfp(mode) * nlanes <
->  	    (u64)dsi_hss_hsa_hse_hbp *
->  	    (mode_valid_check ? mode->clock : mode->crtc_clock) * 1000)
->  		return -EINVAL;
-> @@ -842,7 +884,7 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
->  	struct cdns_dsi_output *output = &dsi->output;
->  	struct cdns_dphy_cfg dphy_cfg;
->  	struct cdns_dsi_cfg dsi_cfg;
-> -	int bpp, nlanes, ret;
-> +	int bpp, ret;
->  
->  	/*
->  	 * VFP_DSI should be less than VFP_DPI and VFP_DSI should be at
-> @@ -860,11 +902,9 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
->  	if ((mode->hdisplay * bpp) % 32)
->  		return MODE_H_ILLEGAL;
->  
-> -	nlanes = output->dev->lanes;
-> -
-> -	ret = cdns_dsi_mode2cfg(dsi, mode, &dsi_cfg, &dphy_cfg, true);
-> +	ret = cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg, true);
->  	if (ret)
-> -		return MODE_CLOCK_RANGE;
-> +		return MODE_BAD;
->  
->  	return MODE_OK;
->  }
-> @@ -990,7 +1030,7 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
->  	bpp = mipi_dsi_pixel_format_to_bpp(output->dev->format);
->  	nlanes = output->dev->lanes;
->  
-> -	WARN_ON_ONCE(cdns_dsi_mode2cfg(dsi, mode, &dsi_cfg, &dphy_cfg, false));
-> +	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg, false));
->  
->  	cdns_dsi_hs_init(dsi, &dphy_cfg);
->  	cdns_dsi_init_link(dsi);
-> -- 
-> git-series 0.9.1
+Yes my bad it was on top of other patches.
+I'm rebasing and will repost.
 
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+MST
