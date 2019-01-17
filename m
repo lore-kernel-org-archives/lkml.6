@@ -2,154 +2,217 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275BEC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 212BBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAA0420675
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:07:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A9iD/QmT"
+	by mail.kernel.org (Postfix) with ESMTP id D494F20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:12:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfAQCHs (ORCPT
+        id S1726835AbfAQCMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 21:07:48 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:41208 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfAQCHr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 21:07:47 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0H1wvd0171654;
-        Thu, 17 Jan 2019 02:07:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=wm23DvvNOHtr368PIcEkk4KyJOHMmhsEJx2qEA+s3ns=;
- b=A9iD/QmTbvqUJbwDRqWMBchSjzqKFCjgDKFrVP3UpGV99aN95WHqvEpGpb69Akwxur0S
- ElHJl2UFX3B8tk01ebRpJDZzoXgzNh0nnisXbe8Y6oWpe66bf5x2Apb7GEltNgtgrxYz
- Qd279V5Fv7qAxKAgftJCIVfR+AHXBHfzEOrWOW+pUeuWX4PJAX/LtZTfRHEudK6M23mn
- Yif3IvhorayhuAoboiOONxv0f0MdREapkcHkssKb8j46yRWXYLwtIcKqmZ8nu/Rv79R6
- aDIT7LX8Gn4Egp5CZZ1fr+tr4LZ9Js4TEg5sI1/INRUreHYxPu+7rs4vbHy7Kc4edl+O 6Q== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2pybjsdaqq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jan 2019 02:07:42 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0H27g5J006764
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jan 2019 02:07:42 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0H27fP9027943;
-        Thu, 17 Jan 2019 02:07:41 GMT
-Received: from [10.182.71.41] (/10.182.71.41)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Jan 2019 18:07:41 -0800
-Subject: Re: [Xen-devel] [PATCH 1/1] xen-blkback: do not wake up shutdown_wq
- after xen_blkif_schedule() is stopped
-To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
-Cc:     linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
-        axboe@kernel.dk, linux-kernel@vger.kernel.org,
-        konrad.wilk@oracle.com
-References: <1547646461-29803-1-git-send-email-dongli.zhang@oracle.com>
- <20190116145215.igakzdkklc6f7h6k@mac>
-From:   Dongli Zhang <dongli.zhang@oracle.com>
-Message-ID: <30770f68-34e0-d707-b087-c43f0b51cd81@oracle.com>
-Date:   Thu, 17 Jan 2019 10:10:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 21:12:23 -0500
+Received: from mga11.intel.com ([192.55.52.93]:54575 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725385AbfAQCMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 21:12:23 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 18:12:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
+   d="scan'208";a="119124604"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga003.jf.intel.com with ESMTP; 16 Jan 2019 18:12:22 -0800
+Date:   Wed, 16 Jan 2019 18:06:39 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, Gil Neiger <gil.neiger@intel.com>
+Subject: Re: [PATCH v2 3/3] x86/umwait: Control umwait maximum time
+Message-ID: <20190117020638.GB226938@romley-ivt3.sc.intel.com>
+References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
+ <1547673522-226408-4-git-send-email-fenghua.yu@intel.com>
+ <CALCETrVenEpKH5O=Z6J+faWTcdZpa1xx4-dYwdWu1OSEDyiUWw@mail.gmail.com>
+ <20190117000731.GA226938@romley-ivt3.sc.intel.com>
+ <CALCETrWnqVaocKrQjFO0bYdz1z6HJPK608V_0GmRKfH2xXq1PA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190116145215.igakzdkklc6f7h6k@mac>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9138 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901170012
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWnqVaocKrQjFO0bYdz1z6HJPK608V_0GmRKfH2xXq1PA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roger,
-
-On 2019/1/16 下午10:52, Roger Pau Monné wrote:
-> On Wed, Jan 16, 2019 at 09:47:41PM +0800, Dongli Zhang wrote:
->> There is no need to wake up xen_blkif_schedule() as kthread_stop() is able
->> to already wake up the kernel thread.
->>
->> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
->> ---
->>  drivers/block/xen-blkback/xenbus.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
->> index a4bc74e..37ac59e 100644
->> --- a/drivers/block/xen-blkback/xenbus.c
->> +++ b/drivers/block/xen-blkback/xenbus.c
->> @@ -254,10 +254,8 @@ static int xen_blkif_disconnect(struct xen_blkif *blkif)
->>  		if (!ring->active)
->>  			continue;
->>  
->> -		if (ring->xenblkd) {
->> +		if (ring->xenblkd)
->>  			kthread_stop(ring->xenblkd);
->> -			wake_up(&ring->shutdown_wq);
+On Wed, Jan 16, 2019 at 04:30:59PM -0800, Andy Lutomirski wrote:
+> On Wed, Jan 16, 2019 at 4:13 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> >
+> > On Wed, Jan 16, 2019 at 04:00:29PM -0800, Andy Lutomirski wrote:
+> > > On Wed, Jan 16, 2019 at 1:24 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> > > >
+> > > > IA32_UMWAIT_CONTROL[31:2] determines the maximum time in TSC-quanta
+> > > > that processor can stay in C0.1 or C0.2.
+> > > >
+> > > > The maximum time value in IA32_UMWAIT_CONTROL[31-2] is set as zero which
+> > > > means there is no global time limit for UMWAIT and TPAUSE instructions.
+> > > > Each process sets its own umwait maximum time as the instructions operand.
+> > > >
+> > > > User can specify global umwait maximum time through interface:
+> > > > /sys/devices/system/cpu/umwait_control/umwait_max_time
+> > > > The value in the interface is in decimal in TSC-quanta. Bits[1:0]
+> > > > are cleared when the value is stored.
+> > > >
+> > > > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> > > > ---
+> > > >  arch/x86/include/asm/msr-index.h |  2 ++
+> > > >  arch/x86/power/umwait.c          | 42 +++++++++++++++++++++++++++++++-
+> > > >  2 files changed, 43 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+> > > > index b56bfecae0de..42b9104fc15b 100644
+> > > > --- a/arch/x86/include/asm/msr-index.h
+> > > > +++ b/arch/x86/include/asm/msr-index.h
+> > > > @@ -62,6 +62,8 @@
+> > > >  #define MSR_IA32_UMWAIT_CONTROL                0xe1
+> > > >  #define UMWAIT_CONTROL_C02_BIT         0x0
+> > > >  #define UMWAIT_CONTROL_C02_MASK                0x00000001
+> > > > +#define UMWAIT_CONTROL_MAX_TIME_BIT    0x2
+> > > > +#define UMWAIT_CONTROL_MAX_TIME_MASK   0xfffffffc
+> > > >
+> > > >  #define MSR_PKG_CST_CONFIG_CONTROL     0x000000e2
+> > > >  #define NHM_C3_AUTO_DEMOTE             (1UL << 25)
+> > > > diff --git a/arch/x86/power/umwait.c b/arch/x86/power/umwait.c
+> > > > index 95b3867aac1e..4a1a507d3bb7 100644
+> > > > --- a/arch/x86/power/umwait.c
+> > > > +++ b/arch/x86/power/umwait.c
+> > > > @@ -10,6 +10,7 @@
+> > > >  #include <asm/msr.h>
+> > > >
+> > > >  static int umwait_enable_c0_2 = 1; /* 0: disable C0.2. 1: enable C0.2. */
+> > > > +static u32 umwait_max_time; /* In TSC-quanta. Only bits [31:2] are used. */
+> > > >  static DEFINE_MUTEX(umwait_lock);
+> > > >
+> > > >  /* Return value that will be used to set umwait control MSR */
+> > > > @@ -20,7 +21,8 @@ static inline u32 umwait_control_val(void)
+> > > >          * When bit 0 is 1, C0.2 is disabled. Otherwise, C0.2 is enabled.
+> > > >          * So value in bit 0 is opposite of umwait_enable_c0_2.
+> > > >          */
+> > > > -       return ~umwait_enable_c0_2 & UMWAIT_CONTROL_C02_MASK;
+> > > > +       return (~umwait_enable_c0_2 & UMWAIT_CONTROL_C02_MASK) |
+> > > > +              umwait_max_time;
+> > > >  }
+> > > >
+> > > >  static ssize_t umwait_enable_c0_2_show(struct device *dev,
+> > > > @@ -61,8 +63,46 @@ static ssize_t umwait_enable_c0_2_store(struct device *dev,
+> > > >
+> > > >  static DEVICE_ATTR_RW(umwait_enable_c0_2);
+> > > >
+> > > > +static ssize_t umwait_max_time_show(struct device *kobj,
+> > > > +                                   struct device_attribute *attr, char *buf)
+> > > > +{
+> > > > +       return sprintf(buf, "%u\n", umwait_max_time);
+> > > > +}
+> > > > +
+> > > > +static ssize_t umwait_max_time_store(struct device *kobj,
+> > > > +                                    struct device_attribute *attr,
+> > > > +                                    const char *buf, size_t count)
+> > > > +{
+> > > > +       u32 msr_val, max_time;
+> > > > +       int cpu, ret;
+> > > > +
+> > > > +       ret = kstrtou32(buf, 10, &max_time);
+> > > > +       if (ret)
+> > > > +               return ret;
+> > > > +
+> > > > +       mutex_lock(&umwait_lock);
+> > > > +
+> > > > +       /* Only get max time value from bits [31:2] */
+> > > > +       max_time &= UMWAIT_CONTROL_MAX_TIME_MASK;
+> > > > +       /* Update the max time value in memory */
+> > > > +       umwait_max_time = max_time;
+> > > > +       msr_val = umwait_control_val();
+> > > > +       get_online_cpus();
+> > > > +       /* All CPUs have same umwait max time */
+> > > > +       for_each_online_cpu(cpu)
+> > > > +               wrmsr_on_cpu(cpu, MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
+> > > > +       put_online_cpus();
+> > > > +
+> > > > +       mutex_unlock(&umwait_lock);
+> > > > +
+> > > > +       return count;
+> > > > +}
+> > > > +
+> > > > +static DEVICE_ATTR_RW(umwait_max_time);
+> > > > +
+> > > >  static struct attribute *umwait_attrs[] = {
+> > > >         &dev_attr_umwait_enable_c0_2.attr,
+> > > > +       &dev_attr_umwait_max_time.attr,
+> > > >         NULL
+> > > >  };
+> > >
+> > > You need something to make sure that newly onlined CPUs get the right
+> > > value in the MSR.
+> >
+> > Onlined CPU takes the umwait_control value in umwait_cpu_online() in
+> > patch 2. Please check if it's correct.
+> >
+> > > You also need to make sure you restore it on resume
+> > > from suspend.  Something like cpu_init() might be the right place.
+> > >
+> > > Also, as previously discussed, I think we should set the default to
+> > > something quite small, maybe 100 microseconds.  IMO the goal is to
+> > > pick a value that is a high enough multiple of the C0.2 entry+exit
+> > > latency that we get most of the power and SMT resource savings while
+> > > being small enough that no one things that UMWAIT is more than a
+> > > glorified, slightly improved, and far more misleading version of REP
+> > > NOP.
+> > >
+> > > Andrew, would having Linux default to a small value do much to
+> > > mitigate your concerns that UMWAIT is problematic for hypervisors?
+> > >
+> > > Also, can someone who understands the hardware clarify just how
+> > > dangerous UMWAIT is from a perspective of making speculation attacks
+> > > more dangerous than they already are?  I'm wondering what events will
+> > > wake up a UMONITOR.  I bet that CLFLUSH does.  I wonder if a faulting
+> > > write to a read-only page also does.  Or a load from a remote node.
+> > > Or a speculative store that does not subsequently retire.  This
+> > > instruction seems quite delightful as a tool to create a
+> > > highish-bandwidth covert channel, and it's possibly quite nice to
+> > > agument Spectre-like attacks.  If it ends up being bad enough, we
+> > > might need to set the default timeout to the absolute minimum value
+> > > and possibly ask Intel to give us a way to turn it off entirely.
+> >
+> > If CR4.TSD=1 and CPL>0, umwait and tpause generate #GP. So if user thinks
+> > the instructions are dangerous, he can disable TSC.
+> >
+> > Is this the right handling for security concerns?
+> >
 > 
-> I've now realized that shutdown_wq is basically useless, and should be
-> removed, could you please do it in this patch?
+> Setting CR4.TSD=1 systemwide would utterly destroy performance of
+> quite a few workloads.  And my argument for setting the value to a
+> lowish but not minimal value is about functionality, not security.
 
-I do not think shutdown_wq is useless.
+CR4.TSD can be set up per process by prctl(PR_SET_TSC, PR_TSC_ENABLE)
+to enable TSC or prctl(PR_SET_TSC, PR_TSC_SIGSEGV) to disable TSC.
 
-It is used to halt the xen_blkif_schedule() kthread when
-RING_REQUEST_PROD_OVERFLOW() returns true in __do_block_io_op():
+For high performance workloads, user can turn TSC on.
 
-1121 static int
-1122 __do_block_io_op(struct xen_blkif_ring *ring)
-... ...
-1134         if (RING_REQUEST_PROD_OVERFLOW(&blk_rings->common, rp)) {
-1135                 rc = blk_rings->common.rsp_prod_pvt;
-1136                 pr_warn("Frontend provided bogus ring requests (%d - %d =
-%d). Halting ring processing on dev=%04x\n",
-1137                         rp, rc, rp - rc, ring->blkif->vbd.pdevice);
-1138                 return -EACCES;
-1139         }
+Does it make sense?
 
+Thanks.
 
-If there is bogus/invalid ring requests, __do_block_io_op() would return -EACCES
-without modifying prod/cons index.
+-Fenghua
 
-Without shutdown_wq (just simply assuming we remove the below code without
-handling -EACCES in xen_blkif_schedule()), the kernel thread would continue the
-while loop.
-
-648                 if (ret == -EACCES)
-649                         wait_event_interruptible(ring->shutdown_wq,
-650                                                  kthread_should_stop());
-
-
-If xen_blkif_be_int() is triggered again (let's assume there is no optimization
-on guest part and guest would send event for every request it puts on ring
-buffer), we may come to do_block_io_op() again.
-
-
-As the prod/cons index are not modified last time the code runs into
-do_block_io_op() to process bogus request, we would hit the bogus request issue
-again.
-
-
-With shutdown_wq, the kernel kthread is blocked forever until such queue/ring is
-destroyed. If we remove shutdown_wq, we are changing the policy to handle bogus
-requests on ring buffer?
-
-Please correct me if my understanding is wrong.
-
-Thank you very much!
-
-Dongli Zhang
