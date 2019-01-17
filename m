@@ -3,73 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D1BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F08C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21DAE20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA70520851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbfAQT65 (ORCPT
+        id S1729313AbfAQT7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:58:57 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:59570 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728830AbfAQT65 (ORCPT
+        Thu, 17 Jan 2019 14:59:47 -0500
+Received: from smtprelay0098.hostedemail.com ([216.40.44.98]:56806 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728830AbfAQT7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:58:57 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 463B414B95576;
-        Thu, 17 Jan 2019 11:58:56 -0800 (PST)
-Date:   Thu, 17 Jan 2019 11:58:55 -0800 (PST)
-Message-Id: <20190117.115855.725358558291814993.davem@davemloft.net>
-To:     jasowang@redhat.com
-Cc:     mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jintack@cs.columbia.edu
-Subject: Re: [PATCH net V4] vhost: log dirty page correctly
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190116085442.3836-1-jasowang@redhat.com>
-References: <20190116085442.3836-1-jasowang@redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
+        Thu, 17 Jan 2019 14:59:47 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 5AC50100E86C0;
+        Thu, 17 Jan 2019 19:59:45 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: rose26_1abcde36c9943
+X-Filterd-Recvd-Size: 2663
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 17 Jan 2019 19:59:43 +0000 (UTC)
+Message-ID: <23fbcc92e52dea477ea16f02cced239f4afcba9a.camel@perches.com>
+Subject: Re: [PATCH] rtlwifi: rtl818x: fix indentation issue
+From:   Joe Perches <joe@perches.com>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Colin King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ping-Ke Shih <pkshih@realtek.com>
+Date:   Thu, 17 Jan 2019 11:59:42 -0800
+In-Reply-To: <284e7ef0-5820-021b-7b0c-2fc754440fe8@lwfinger.net>
+References: <20190117152859.6873-1-colin.king@canonical.com>
+         <e68c7ae7b0a863742df0f4457368a3a529ed47e5.camel@perches.com>
+         <284e7ef0-5820-021b-7b0c-2fc754440fe8@lwfinger.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 17 Jan 2019 11:58:56 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 16 Jan 2019 16:54:42 +0800
+On Thu, 2019-01-17 at 13:33 -0600, Larry Finger wrote:
+> On 1/17/19 1:29 PM, Joe Perches wrote:
+> > On Thu, 2019-01-17 at 15:28 +0000, Colin King wrote:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > There is a statement that is indented too deeply. Fix this.
+> > 
+> > Thanks.
+> > 
+> > > diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
+> > []
+> > > @@ -803,7 +803,7 @@ static void rtl8180_config_cardbus(struct ieee80211_hw *dev)
+> > >   		rtl818x_iowrite16(priv, FEMR_SE, 0xffff);
+> > >   	} else {
+> > >   		reg16 = rtl818x_ioread16(priv, &priv->map->FEMR);
+> > > -			reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
+> > > +		reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
+> > >   		rtl818x_iowrite16(priv, &priv->map->FEMR, reg16);
+> > >   	}
+> > 
+> > trivia:
+> > 
+> > It sure looks as if there could be some rather useful
+> > conversions of magic bits to constants one day.
+> 
+> How much work is warranted for this driver for a device that is not likely in 
+> use anywhere in the wild?
 
-> Vhost dirty page logging API is designed to sync through GPA. But we
-> try to log GIOVA when device IOTLB is enabled. This is wrong and may
-> lead to missing data after migration.
-> 
-> To solve this issue, when logging with device IOTLB enabled, we will:
-> 
-> 1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
->    get HVA, for writable descriptor, get HVA through iovec. For used
->    ring update, translate its GIOVA to HVA
-> 2) traverse the GPA->HVA mapping to get the possible GPA and log
->    through GPA. Pay attention this reverse mapping is not guaranteed
->    to be unique, so we should log each possible GPA in this case.
-> 
-> This fix the failure of scp to guest during migration. In -next, we
-> will probably support passing GIOVA->GPA instead of GIOVA->HVA.
-> 
-> Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-> Reported-by: Jintack Lim <jintack@cs.columbia.edu>
-> Cc: Jintack Lim <jintack@cs.columbia.edu>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Hey Larry.
 
-Michaell, can I get a review for this please?
+Perhaps none.  The part is from 2002 after all.
 
-Thank you.
+But if it really is unused, it might be better to remove
+the whole driver and see if anyone notices.
+
+> In addition, I'm not sure anyone knows what those bits 
+> actually do, I certainly do not have a product sheet for that one.
+
+It does look like this document
+http://realtek.info/pdf/rtl8180.pdf
+has a description on page 36.
+
+6.33 FEMR: Function Event Mask Register
+
+
