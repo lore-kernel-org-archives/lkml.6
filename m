@@ -2,92 +2,70 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 919A7C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BD3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6799A205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:51:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEBB5205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfAQCvQ (ORCPT
+        id S1727546AbfAQCyl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 21:51:16 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40928 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727449AbfAQCvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 21:51:15 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A3598E4A3C1B1A8C8134;
-        Thu, 17 Jan 2019 10:51:11 +0800 (CST)
-Received: from [127.0.0.1] (10.184.52.56) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Thu, 17 Jan 2019
- 10:51:01 +0800
-Subject: Re: [PATCH 0/5] Crypto Cleanup
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <broonie@kernel.org>, <ard.biesheuvel@linaro.org>,
-        <jonathan.cameron@huawei.com>
-References: <1547607034-40948-1-git-send-email-wangxiongfeng2@huawei.com>
- <20190116174949.GA152952@gmail.com>
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Message-ID: <62435a58-91fb-c48d-73f8-0b7634721924@huawei.com>
-Date:   Thu, 17 Jan 2019 10:50:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 16 Jan 2019 21:54:41 -0500
+Received: from muru.com ([72.249.23.125]:33956 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727185AbfAQCyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 21:54:40 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 2B0648030;
+        Thu, 17 Jan 2019 02:54:46 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 18:54:36 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
+Message-ID: <20190117025436.GR5544@atomide.com>
+References: <20181217004450.GW6707@atomide.com>
+ <20181218124616.GA10758@amd>
+ <20181218153650.GA6707@atomide.com>
+ <20181218202242.GA30831@amd>
+ <20181218215311.GD6707@atomide.com>
+ <20190116134823.GA10145@amd>
 MIME-Version: 1.0
-In-Reply-To: <20190116174949.GA152952@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.52.56]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116134823.GA10145@amd>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+* Pavel Machek <pavel@ucw.cz> [190116 13:48]:
+> "quite trivial" does not mix with ofono. I did parts and it is still
+> not finished. At the moment, I do not have enough working SIM cards to
+> test everything. Feel free to help :-).
 
+I gave it a try but could only see "ofonod[14012]: motmdm init"
+on start up. Running test/list-modems shows only /stktest
+and no motmdm..
 
-On 2019/1/17 1:49, Eric Biggers wrote:
-> On Wed, Jan 16, 2019 at 10:50:29AM +0800, Xiongfeng Wang wrote:
->> The patchset introduce a helper to (un)register a array of crypto templates.
->> The following patches use this helper to simplify the code. This is also
->> a preparation for a coming patchset, which will register several crypto
->> templates.
->>
->> Xiongfeng Wang (5):
->>   crypto: api - add a helper to (un)register a array of templates
->>   crypto: ccm - use template array registering API to simplify the code
->>   crypto: gcm - use template array registering API to simplify the code
->>   crypto: ctr - use template array registering API to simplify the code
->>   crypto: chacha20poly1305 - use template array registering API to
->>     simplify the code
->>
->>  crypto/algapi.c           | 27 ++++++++++++++++
->>  crypto/ccm.c              | 81 +++++++++++++++--------------------------------
->>  crypto/chacha20poly1305.c | 38 +++++++++-------------
->>  crypto/ctr.c              | 46 ++++++++++-----------------
->>  crypto/gcm.c              | 76 +++++++++++++++-----------------------------
->>  include/crypto/algapi.h   |  2 ++
->>  6 files changed, 113 insertions(+), 157 deletions(-)
->>
->> -- 
->> 1.7.12.4
->>
-> 
-> Hi Xiongfeng, I think this a useful cleanup but can you please rebase this onto
-> cryptodev?  There is a conflict in crypto/ctr.c.
+Do I need to configure something in /etc/ofono?
 
-Hi Eric, thanks for your reply. I will change it in the next version.
+Regards,
 
-Thanks,
-Xiongfeng
-> 
-> - Eric
-> 
-> .
-> 
-
+Tony
