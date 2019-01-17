@@ -2,134 +2,67 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C536C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEC3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC7F120859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:20:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJFgGmll"
+	by mail.kernel.org (Postfix) with ESMTP id 8AD3820859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:20:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547756459;
+	bh=0J5x8ir5y1+x/6DKU+VsqdxKasJTs8xBe3yatOlnz7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=d9hpgJ+jdgUizwqFPA4PWmsuC/iYX88qD0k0lw+U1CfKQ726IMQ7AZ1Z9g9rT2Zoq
+	 r/OUiS53azzKsnEgAUi+0jgkBbjDfK+erKCc0EaSllB3+1xrxQgf9te4M7U+MtJ5Eg
+	 Ms6KXY9cgu8u656qYqIjBU/nlqqVwYIT/qtgtRec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbfAQUUm (ORCPT
+        id S1729558AbfAQUU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:20:42 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44379 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729150AbfAQUUm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:20:42 -0500
-Received: by mail-ot1-f68.google.com with SMTP id f18so12304784otl.11;
-        Thu, 17 Jan 2019 12:20:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=x/hXwTsO0lVqZLYTBZaCdFP+uwsSEazPwXTSeHiU9/w=;
-        b=UJFgGmll28r8i4VjjgIA1sdpT3wPyW9lPzqBY1yzSbkMu9M0DHVXNlMjH2uiIVQYuZ
-         +TvqpMUYzbQoXMli/3fmRXEoFzXaGKcE5APX0JcQX5g8OH+Qn9PKoscQKyOwRjL5QhXn
-         y26t8bbM9PtkFdh05X2RK1BINPY0Ke0SktuQT0Frg4sj6Jd/hOIru9WM4gaHQK7s6Q9n
-         2r4u6IlfWnTjSWJcARF8K4q5mG1ZzoFiUU6VVrl5dT1u7V0vM2lc1gUt27rwhAixWHXo
-         ULyueni3M9EzcCgW0KlX6ie3CJxAo+e47I49V9keT23G9Ak8/J2v9AN9XKZCyZ88funw
-         45tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=x/hXwTsO0lVqZLYTBZaCdFP+uwsSEazPwXTSeHiU9/w=;
-        b=mL0m8iThBhKK/B7peU0+pvWwj+xGp6RITCO+SDQJqn/oNqmEQJdN63XjLa0R69/dGL
-         A/XC44wlNb6Sdv7fr1/1agT/1CBmNELUxEKQQjPPo3QI3fNfYJhoebgXmfMg6eh7by2v
-         +fstXywrke6YyQd6WyIFTW6EjlvDdxR6UreLDw1iRNUHrCPPfkG6YmXeLR7cNWrh2nMt
-         oNHBjouAVzTmQufwpxp96Zwy3U78ABJiLthFTesrPRN6wsnXayJoP4+A1oHdOp3jLstz
-         +GVZMZungII9jY/RGwwYy6EQYBRQP4CtrsKepjBGlyQwgleuXOhD49mlL3adglZ/Usc0
-         94Aw==
-X-Gm-Message-State: AJcUukcQrpVYd/IX8ctnQIIUhq11IH3v6QpJEaWF0M5d5ptfaadRUzSc
-        V7TQXF+/6GEZF6QVh7udP55qKpeqHzPEyNGLvT4GnA==
-X-Google-Smtp-Source: ALg8bN6jzsMxdpE4SQ/YoeqMAdAgXnHhMb/AlUI+nwsbzIauvC61zsb2Q8/8UeS79dTVYbW16k6KiERZlObF6i+OC3Y=
-X-Received: by 2002:a9d:721e:: with SMTP id u30mr9938017otj.203.1547756440888;
- Thu, 17 Jan 2019 12:20:40 -0800 (PST)
+        Thu, 17 Jan 2019 15:20:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729150AbfAQUU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 15:20:57 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A1AB20859;
+        Thu, 17 Jan 2019 20:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547756456;
+        bh=0J5x8ir5y1+x/6DKU+VsqdxKasJTs8xBe3yatOlnz7E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=snFpbwVUy7YwXPAAYNRMPZjwlF/5ja23ZRa+vgZqFV2QftOSVf5fUKYKzRL2GewLR
+         GNS6ZjpOG2+90RgOXQiI+W9CKRcewyD6qWW688vAxGD6Q/wCgdjkaGO/GOzje3PrM2
+         fl+4bnLDVXCf5WN9M3RinoAnopyiGDaBjgX2PycI=
+Date:   Thu, 17 Jan 2019 15:20:55 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     haiyangz@microsoft.com
+Cc:     kys@microsoft.com, sthemmin@microsoft.com, olaf@aepfle.de,
+        vkuznets@redhat.com, davem@davemloft.net, netdev@vger.kernel.org,
+        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH hyperv-fixes,0/3] fixes for hash key setting issues
+Message-ID: <20190117202055.GC202535@sasha-vm>
+References: <20190115005144.4494-1-haiyangz@linuxonhyperv.com>
 MIME-Version: 1.0
-References: <20190117201347.27347-1-slongerbeam@gmail.com> <20190117201347.27347-2-slongerbeam@gmail.com>
-In-Reply-To: <20190117201347.27347-2-slongerbeam@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 17 Jan 2019 18:20:30 -0200
-Message-ID: <CAOMZO5BtS_iLcUH0zO1u_L+jVCena-WzRJgR3NUif7UoxQAYVw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: imx: csi: Disable CSI immediately after last EOF
-To:     Steve Longerbeam <slongerbeam@gmail.com>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190115005144.4494-1-haiyangz@linuxonhyperv.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Tue, Jan 15, 2019 at 12:51:41AM +0000, Haiyang Zhang wrote:
+>From: Haiyang Zhang <haiyangz@microsoft.com>
+>
+>Using ethtool to change Hash key failed on Linux VM runnig on
+>Hyper-V. This patch set fix them.
+>It targets Hyper-V tree, hyperv-fixes branch managed by
+>Sasha Levin <sashal@kernel.org>.
 
-On Thu, Jan 17, 2019 at 6:15 PM Steve Longerbeam <slongerbeam@gmail.com> wr=
-ote:
->
-> Disable the CSI immediately after receiving the last EOF before stream
-> off (and thus before disabling the IDMA channel).
->
-> This fixes a complete system hard lockup on the SabreAuto when streaming
-> from the ADV7180, by repeatedly sending a stream off immediately followed
-> by stream on:
->
-> while true; do v4l2-ctl  -d4 --stream-mmap --stream-count=3D3; done
->
-> Eventually this either causes the system lockup or EOF timeouts at all
-> subsequent stream on, until a system reset.
->
-> The lockup occurs when disabling the IDMA channel at stream off. Disablin=
-g
-> the CSI before disabling the IDMA channel appears to be a reliable fix fo=
-r
-> the hard lockup.
->
-> Reported-by: Ga=C3=ABl PORTAY <gael.portay@collabora.com>
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-
-Thanks. Since this fixes a lockup, maybe it is worth adding a Fixes
-tag and Cc stable?
-
-> ---
->  drivers/staging/media/imx/imx-media-csi.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/=
-media/imx/imx-media-csi.c
-> index e18f58f56dfb..9218372cb997 100644
-> --- a/drivers/staging/media/imx/imx-media-csi.c
-> +++ b/drivers/staging/media/imx/imx-media-csi.c
-> @@ -681,6 +681,8 @@ static void csi_idmac_stop(struct csi_priv *priv)
->         if (ret =3D=3D 0)
->                 v4l2_warn(&priv->sd, "wait last EOF timeout\n");
->
-> +       ipu_csi_disable(priv->csi);
-> +
->         devm_free_irq(priv->dev, priv->eof_irq, priv);
->         devm_free_irq(priv->dev, priv->nfb4eof_irq, priv);
->
-> @@ -793,11 +795,10 @@ static void csi_stop(struct csi_priv *priv)
->                 /* stop the frame interval monitor */
->                 if (priv->fim)
->                         imx_media_fim_set_stream(priv->fim, NULL, false);
-> +       } else {
-> +               ipu_csi_disable(priv->csi);
->         }
-> -
-> -       ipu_csi_disable(priv->csi);
->  }
-> -
-
-Unneeded line removal.
+Queued all 3 for hyperv-fixes, thank you.
