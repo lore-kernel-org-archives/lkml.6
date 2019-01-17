@@ -2,118 +2,81 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 367D0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D8BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC2820851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:54:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="I7MydC1P"
+	by mail.kernel.org (Postfix) with ESMTP id 48ACC205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:57:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfAQPyU (ORCPT
+        id S1728446AbfAQP47 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:54:20 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:47095 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbfAQPyU (ORCPT
+        Thu, 17 Jan 2019 10:56:59 -0500
+Received: from www62.your-server.de ([213.133.104.62]:36176 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727700AbfAQP47 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:54:20 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so4998701pfe.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 07:54:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XoyTkci7Xp8nMCsWzbFM4wtrRh6DnJmyxh+OjoiL0IM=;
-        b=I7MydC1P7i1ju7q1CMrbpHev2RNE0RTiJhi4H1jlVNeEOCHKMoZEWSb0urKeWSLRZc
-         10Bcp9jbY+u0n5lqq/lzgXhSUpoWLtU6VzLpYpCauoJH+M6Em7HE454XQ9ST9eifWoHz
-         JXE8afWHg9h7szhHiOxdNsYnuLE58AhoOmnYTp5yYE7ZnniEYPrw4SSEoK0kACVQSKtC
-         ywp7tV18XrsvUJtubKtgz7FplJgrZraxgPfv9R7OozrIGFPsmob+p0WHbYxsWYcHl6P3
-         K2rrYisDx216Ii5AcbhkkupWq23bb446jIBaKaxskuYsFHQ674O2FTRdQpztvVgLz8XC
-         Op2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XoyTkci7Xp8nMCsWzbFM4wtrRh6DnJmyxh+OjoiL0IM=;
-        b=i5gGgRGAWoEoZAYRJV36lPAM6dr+BoddJCSnWaJClFacSxdCb75TWr2Ard4e0ib8P3
-         kj9qbgf5XvU+sqlqa0oov4E9HHBQGwAX/iYbr0Wtr4HEoD01HOxs70haS6Oz7TvF4now
-         6d2e5WiNDyWHMACi3oCsBH/hCjazaEqDA/8vkK6V4GzEZEIO99RuROM2Roz78NpmoKGW
-         +Bf7ntxURdhX7PV3d3A+WohWZrzj0yWYYAs7+YqnjGXgcYOcCcQcpXtbbI9QvL/Sx9y8
-         Sszr2dT22evDTFriGBdzt0mhcMWXIyfXlQ70ShWGaOg4GZLfje4uOkbx6uV9yccaInu+
-         Vnbg==
-X-Gm-Message-State: AJcUukc6R9WKO/FWeo63p0Q/jh9I5CGITS7fJw6WcJEDGAJ6gN+yoCUY
-        kp/WGsOZB0cI8wNewpoOH+11KA==
-X-Google-Smtp-Source: ALg8bN7i4AEcXrvgf2w5lkLDM59sbNtHu1LAnlsxU5Ir5bbeI1rNtUTupfIyXf5Xa76CZvPDMT+8ug==
-X-Received: by 2002:a62:8c11:: with SMTP id m17mr15472054pfd.224.1547740459205;
-        Thu, 17 Jan 2019 07:54:19 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id u6sm1926006pgr.79.2019.01.17.07.54.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 07:54:18 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gk9zl-0002uC-9u; Thu, 17 Jan 2019 08:54:17 -0700
-Date:   Thu, 17 Jan 2019 08:54:17 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     "hch@lst.de" <hch@lst.de>
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "syeh@vmware.com" <syeh@vmware.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "imre.deak@intel.com" <imre.deak@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Message-ID: <20190117155417.GA9629@ziepe.ca>
-References: <20190104223531.GA1705@ziepe.ca>
- <20190110234218.GM6890@ziepe.ca>
- <20190114094856.GB29604@lst.de>
- <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
- <20190115212501.GE22045@ziepe.ca>
- <20190116161134.GA29041@lst.de>
- <20190116172436.GM22045@ziepe.ca>
- <20190117093001.GB31303@lst.de>
+        Thu, 17 Jan 2019 10:56:59 -0500
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gkA2I-0003ur-5B; Thu, 17 Jan 2019 16:56:54 +0100
+Received: from [178.197.248.17] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gkA2H-000W2x-VN; Thu, 17 Jan 2019 16:56:54 +0100
+Subject: Re: [PATCH] bpf: Make function btf_name_offset_valid static
+To:     Martin Lau <kafai@fb.com>, Mathieu Malaterre <malat@debian.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190116192940.32104-1-malat@debian.org>
+ <20190116211627.bs3rrolbjdsxkyvp@kafai-mbp.dhcp.thefacebook.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <06e9a2f2-50f9-99af-9fe8-51dd5425fbb7@iogearbox.net>
+Date:   Thu, 17 Jan 2019 16:56:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117093001.GB31303@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190116211627.bs3rrolbjdsxkyvp@kafai-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25306/Thu Jan 17 11:24:24 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 10:30:01AM +0100, hch@lst.de wrote:
-> On Wed, Jan 16, 2019 at 10:24:36AM -0700, Jason Gunthorpe wrote:
-> > The fact is there is 0 industry interest in using RDMA on platforms
-> > that can't do HW DMA cache coherency - the kernel syscalls required to
-> > do the cache flushing on the IO path would just destroy performance to
-> > the point of making RDMA pointless. Better to use netdev on those
-> > platforms.
+On 01/16/2019 10:16 PM, Martin Lau wrote:
+> On Wed, Jan 16, 2019 at 08:29:40PM +0100, Mathieu Malaterre wrote:
+>> Initially in commit 69b693f0aefa ("bpf: btf: Introduce BPF Type Format
+>> (BTF)") the function 'btf_name_offset_valid' was introduced as static
+>> function it was later on changed to a non-static one, and then finally
+>> in commit c454a46b5efd ("bpf: Add bpf_line_info support") the function
+>> prototype was removed.
+> Instead of c454a46b5efd, it was removed from btf.h in
+> commit 23127b33ec80 ("bpf: Create a new btf_name_by_offset() for non type name use case")
 > 
-> In general there is no syscall required for doing cache flushing, you
-> just issue the proper instructions directly from userspace. 
+>>
+>> Revert back to original implementation and make the function static.
+>> Remove warning triggered with W=1:
+>>
+>>   kernel/bpf/btf.c:470:6: warning: no previous prototype for 'btf_name_offset_valid' [-Wmissing-prototypes]
+>>
+>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Fixes: 23127b33ec80 ("bpf: Create a new btf_name_by_offset() for non type name use case")
+> 
+> Thanks for the fix!
+> 
+> Other than the above,
+> 
+> Acked-by: Martin KaFai Lau <kafai@fb.com>
 
-At least on the ARM/MIPS systems I've worked with like this the cache
-manipulation instructions are privileged and cannot be executed by
-userspace. So the general case requires a syscall.
-
-> In that case we just need to block userspace DMA access entirely.
-> Which given the amount of problems it creates sounds like a pretty
-> good idea anyway.
-
-I doubt there is any support for that idea...
-
-Jason
+Applied to bpf and fixed up commit reference. Thanks!
