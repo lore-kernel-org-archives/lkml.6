@@ -2,156 +2,92 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7754C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 03:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8705C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 03:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7597620851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 03:21:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE1C420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 03:26:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xV3qOu9U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfAQDV1 (ORCPT
+        id S1727974AbfAQD0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 22:21:27 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:40675 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727772AbfAQDV0 (ORCPT
+        Wed, 16 Jan 2019 22:26:18 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:43091 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbfAQD0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 22:21:26 -0500
-X-IronPort-AV: E=Sophos;i="5.56,488,1539619200"; 
-   d="scan'208";a="52187350"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 17 Jan 2019 11:21:24 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id A5A624BAD9C2;
-        Thu, 17 Jan 2019 11:21:22 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 17 Jan 2019 11:21:29 +0800
-Date:   Thu, 17 Jan 2019 11:20:27 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store
- immovable memory
-Message-ID: <20190117032027.GA31097@localhost.localdomain>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
- <20190116110158.GC15409@zn.tnic>
+        Wed, 16 Jan 2019 22:26:17 -0500
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x0H3Q6vw002711
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:26:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x0H3Q6vw002711
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547695567;
+        bh=ZhGTP/dZN/BDKdDBQsCFCzvYK3IhmjbwG6lQcl3uMTk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xV3qOu9UVu7K0N5N0aOwwZdm/lFnYYG5ETvmCwPvcMPKfrrYvvYC6swiqG0O9mwlY
+         5LWHoogQwYpA+2AOWS0s29Vr2IRN7o30gmydUaFWcOJ8Z9XxkvdjSKz3ysGV8PMyWL
+         HBW2Y8aTLM5IQx0mOwfo7UkcldZZDyg9W/0on2pD+mvmT3CW+26FX+MUOKhczfpqlf
+         /FQYziPNPys6HUIlea+4AXXO2h5HGH1A/mzyRYf5ueWbrmB/vM+66jeVayarTMkcaw
+         1aCtn8POD8kT6o4yrqXaWu4RVhkW15KhDt38ba9ZSKaUdKD1k7bQEc2+qYyNzZAJR7
+         9skTLlQvwsqRg==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id x1so5338232vsc.10
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 19:26:06 -0800 (PST)
+X-Gm-Message-State: AJcUukeNPbYKu4puYcmUfKTcwnObd7J1GXZ3CxnpbRNnxkbZcmT+vY9f
+        QEGQda+LM/m8pHtNJe/pU18aie43B/M58I6qQcI=
+X-Google-Smtp-Source: ALg8bN44/DJUBK4TTQM/o62vC1G/VMqYRYSgQlI/0aIl7L3fbNN4y4EwvFxZEjBUBbIibjvm0JQNTPyNQ60z+O9ecPs=
+X-Received: by 2002:a67:5f03:: with SMTP id t3mr5189380vsb.155.1547695565773;
+ Wed, 16 Jan 2019 19:26:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190116110158.GC15409@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: A5A624BAD9C2.AE99A
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+References: <1544969781-14506-1-git-send-email-yamada.masahiro@socionext.com>
+ <C2D7FE5348E1B147BCA15975FBA23075014641FC6F@US01WEMBX2.internal.synopsys.com>
+ <CAK7LNATJVGVJi_S99zfEpKe+HYWpk+TkfT4gCFZVVTibyP=ThA@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA2307501464221E5@US01WEMBX2.internal.synopsys.com>
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307501464221E5@US01WEMBX2.internal.synopsys.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 17 Jan 2019 12:25:29 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT99BNySdeUK=qhXnYSwry=8wADOd7KLjVUAdgQoKjeuA@mail.gmail.com>
+Message-ID: <CAK7LNAT99BNySdeUK=qhXnYSwry=8wADOd7KLjVUAdgQoKjeuA@mail.gmail.com>
+Subject: Re: [PATCH] arc: remove redundant kernel-space generic-y
+To:     Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 12:01:58PM +0100, Borislav Petkov wrote:
->On Mon, Jan 07, 2019 at 11:22:42AM +0800, Chao Fan wrote:
->> +void get_immovable_mem(void)
->> +{
->> +	struct acpi_table_header *table_header;
->> +	struct acpi_subtable_header *table;
->> +	struct acpi_srat_mem_affinity *ma;
->> +	char arg[MAX_ACPI_ARG_LENGTH];
->> +	unsigned long table_end;
->> +	int i = 0;
->> +
->> +	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
->> +	    !strncmp(arg, "off", 3))
->> +		return;
->> +
->> +	table_header = get_acpi_srat_table();
->> +	if (!table_header)
->> +		return;
->> +
->> +	table_end = (unsigned long)table_header + table_header->length;
->> +	table = (struct acpi_subtable_header *)
->> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
->> +
->> +	while (((unsigned long)table) +
->> +		       sizeof(struct acpi_subtable_header) < table_end) {
->> +		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
->> +			ma = (struct acpi_srat_mem_affinity *)table;
->> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
->> +				immovable_mem[i].start = ma->base_address;
->> +				immovable_mem[i].size = ma->length;
->> +				i++;
->> +			}
->> +
->> +			if (i >= MAX_NUMNODES*2) {
->> +				debug_putstr("Too many immovable memory regions, aborting.\n");
->> +				return;
->> +			}
->> +		}
->> +		table = (struct acpi_subtable_header *)
->> +			((unsigned long)table + table->length);
+Hi Vineet,
+
+
+On Thu, Dec 20, 2018 at 4:52 AM Vineet Gupta <vineet.gupta1@synopsys.com> wrote:
 >
->That's a lot of unnecessary casting AFAICT. You can return an unsigned
->long from get_acpi_srat_table() and get rid of all that casting here.
+> On 12/19/18 7:16 AM, Masahiro Yamada wrote:
+> > Could you pick this up to your arc tree?
 >
-Hi Boris,
+> Done, will push it in a day or so !
+>
+> Thx,
+> -Vineet
 
-I have changed as you suggested, looks clear without type cast, and
-we need some variable as long to calculate the address, and at same
-time as the struct pointer to find it's length, so I change as below,
-and get_acpi_srat_table() return an unsigned long.
-How do you think of that.
+This was not sent in the previous MW.
+(Nor did I see ARC pull request.)
 
-int get_immovable_mem_num(void)
-{
-        unsigned long table_addr, table_end, table;
-        struct acpi_table_header *table_header;
-        struct acpi_subtable_header *sub_table;
-        char arg[MAX_ACPI_ARG_LENGTH];
-        int num = 0;
-
-        if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
-            !strncmp(arg, "off", 3))
-                return;
-
-        table_addr = get_acpi_srat_table();
-        if (!table_addr)
-                return;
-
-        table_header = (struct acpi_table_header *)table_addr;
-        table_end = table_addr + table_header->length;
-        table = table_addr + sizeof(struct acpi_table_srat);
-
-        while (table + sizeof(struct acpi_subtable_header) < table_end) {
-                sub_table = (struct acpi_subtable_header *)table;
-                if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
-                        struct acpi_srat_mem_affinity *ma;
-
-                        ma = (struct acpi_srat_mem_affinity *)table;
-                        if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
-                                immovable_mem[num].start = ma->base_address;
-                                immovable_mem[num].size = ma->length;
-                                num++;
-                        }
-
-                        if (num >= MAX_NUMNODES*2) {
-                                debug_putstr("Too many immovable memory regions, aborting.\n");
-                                return 0;
-                        }
-                }
-                table += sub_table->length;
-        }
-        return num;
-}
-
-Thanks,
-Chao Fan
+Is it aiming for v5.1-rc1 ?
 
 
+
+
+-- 
+Best Regards
+Masahiro Yamada
