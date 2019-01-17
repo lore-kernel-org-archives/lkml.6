@@ -2,169 +2,118 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874F2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC91C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543AE20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:26:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547724390;
-	bh=jaHJPlkQ1jV/T1HVLb8XI/7GrZReyoE7ojBMm8kxPZo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=1Tweg38iwUfvwHCxwerTLKpNLaiC5CYJ1tuLlP/HB51Bu4GINfxdiwaYzTOGVxKem
-	 pof/WA5GJf18RVuoj1O4uETAm6w3Y9dcRsdkehMOLvroukb3dFkL0J6S3MSkVVsg2B
-	 1dXbzxPWNkgs21LslqXnAGV0srXsuBvYAJWvfXyY=
+	by mail.kernel.org (Postfix) with ESMTP id 6AF712054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:27:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="Z+YAU/lY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbfAQL03 (ORCPT
+        id S1728819AbfAQL1c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:26:29 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45476 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbfAQL03 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:26:29 -0500
-Received: by mail-oi1-f196.google.com with SMTP id y1so5836824oie.12;
-        Thu, 17 Jan 2019 03:26:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+Lw2WQMOYvQqN57P2A8zIzSFAHgU0oFB/MCvtZM0Klw=;
-        b=qwfXYVOUFKCbeDjt9ohgliWwHEDSttDAQaaxznzJ3UpgEccHFzJthQe3r2n856OK1n
-         D0JMez7t4gZf5k3Vp7e+q3umK04giGUemk3LECEkEvb3zbQpQpM8UklzhFkdORK6Lf4G
-         BQhSFVU4tiyPMZyYJOR7Ex+7jI9L2KMBucOgfxsEdyZgPjjLTfgm4z5o/ANgVYg225FQ
-         RMm7IUSTMGFr8qK9KCMdbdS8OwVXe8Cl+4mdBkCy3qdzDp+zEwtgY+0RthohQGZhVtFB
-         AtzfLqAayMOWVrXp/pRZtm99TpaC6gl2tkeefqK7lfu+CFrq3aR9X1rBLpjB6jNx20BH
-         FcIA==
-X-Gm-Message-State: AJcUukfrF/OUXtgp2SebwTBeBYgxzlysCNOrcEbOpw1uGPeXaK6/Kl12
-        hKIuAIfcXqi5yOKKy8lQ6yNUgA0kceKClKhaGvc=
-X-Google-Smtp-Source: ALg8bN7OnPsrfMexTY9aSwF/wMm/Ex9BtZEcTv78k21GLZ0mIxjGP11ug0klf7kXK9JusdS6afirRpHR8irgcT8oupk=
-X-Received: by 2002:aca:195:: with SMTP id 143mr4767332oib.322.1547724387887;
- Thu, 17 Jan 2019 03:26:27 -0800 (PST)
+        Thu, 17 Jan 2019 06:27:32 -0500
+Received: from onstation.org ([52.200.56.107]:55756 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725889AbfAQL1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:27:32 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id DED1617F;
+        Thu, 17 Jan 2019 11:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1547724451;
+        bh=fYkbefJ+qXthGu5ibucFnH4X+A77wMucqnhEdZHrBAg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z+YAU/lYSKbHMVxho3dOOtEqr9FG8mV1siUGrjYqfsLEW+FsJBgn9VzJvpVZUGyUw
+         kqeuHH085rO+JcOj/QnXRtd0rMPpImvxeYCiQxdpf410Du4QgzkYFTMtTwibmn+PUA
+         c1nEtODaBhAX0n8lcuwKnmLfwEX5F8qhdfiAJTCU=
+Date:   Thu, 17 Jan 2019 06:27:30 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] watchdog: qcom: Add suspend/resume support
+Message-ID: <20190117112730.GA25198@basecamp>
+References: <20190117091555.2018-1-saiprakash.ranjan@codeaurora.org>
+ <20190117093113.GA23389@basecamp>
+ <91108b9b-fe05-1068-b07e-872cb4cd4012@codeaurora.org>
 MIME-Version: 1.0
-References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-5-keith.busch@intel.com>
-In-Reply-To: <20190116175804.30196-5-keith.busch@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 17 Jan 2019 12:26:16 +0100
-Message-ID: <CAJZ5v0hRsW037B1uPMYj=UO6TWDX9CWVyhYYjVjnvKQ=4ZaU5w@mail.gmail.com>
-Subject: Re: [PATCHv4 04/13] node: Link memory nodes to their compute nodes
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91108b9b-fe05-1068-b07e-872cb4cd4012@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
->
-> Systems may be constructed with various specialized nodes. Some nodes
-> may provide memory, some provide compute devices that access and use
-> that memory, and others may provide both. Nodes that provide memory are
-> referred to as memory targets, and nodes that can initiate memory access
-> are referred to as memory initiators.
->
-> Memory targets will often have varying access characteristics from
-> different initiators, and platforms may have ways to express those
-> relationships. In preparation for these systems, provide interfaces
-> for the kernel to export the memory relationship among different nodes
-> memory targets and their initiators with symlinks to each other's nodes,
-> and export node lists showing the same relationship.
->
-> If a system provides access locality for each initiator-target pair, nodes
-> may be grouped into ranked access classes relative to other nodes. The new
-> interface allows a subsystem to register relationships of varying classes
-> if available and desired to be exported. A lower class number indicates
-> a higher performing tier, with 0 being the best performing class.
->
-> A memory initiator may have multiple memory targets in the same access
-> class. The initiator's memory targets in given class indicate the node's
-> access characteristics perform better relative to other initiator nodes
-> either unreported or in lower class numbers. The targets within an
-> initiator's class, though, do not necessarily perform the same as each
-> other.
->
-> A memory target node may have multiple memory initiators. All linked
-> initiators in a target's class have the same access characteristics to
-> that target.
->
-> The following example show the nodes' new sysfs hierarchy for a memory
-> target node 'Y' with class 0 access from initiator node 'X':
->
->   # symlinks -v /sys/devices/system/node/nodeX/class0/
->   relative: /sys/devices/system/node/nodeX/class0/targetY -> ../../nodeY
+On Thu, Jan 17, 2019 at 04:08:52PM +0530, Sai Prakash Ranjan wrote:
+> On 1/17/2019 3:01 PM, Brian Masney wrote:
+> > 
+> > You can use the __maybe_unused attribute to remove the #ifdef:
+> > 
+> > static int __maybe_unused qcom_wdt_suspend(struct device *dev)
+> > 
+> 
+> Thanks for looking into this.
+> 
+> As for __maybe_unused, I think it's better to keep #ifdef rather than
+> this attribute which seems to be meaning unused when actually its possible
+> that it's used often(PM_SLEEP is def y). It's like saying unused when you
+> are actually using it. The attribute seems like a
+> hack to avoid compilation error. Please correct me if I am wrong.
 
-If you added one more directory level and had "targets" and
-"initiators" under "class0", the names of the symlinks could be the
-same as the names of the nodes themselves, that is
+That attribute suppresses a warning from the compiler if the function is
+unused when PM_SLEEP is disabled.  I don't consider it hackish since the
+function name no longer appears outside the #ifdef. For example:
 
-/sys/devices/system/node/nodeX/class0/targets/nodeY -> ../../../nodeY
+	#ifdef CONFIG_PM_SLEEP
+	static int qcom_wdt_suspend(struct device *dev)
+	{
+		...
+	}
+	#endif /* CONFIG_PM_SLEEP */
 
-and the whole "nodelist" part wouldn't be necessary any more.
+	static SIMPLE_DEV_PM_OPS(..., qcom_wdt_suspend, ...);
 
-Also, it looks like "class0" is just a name at this point, but it will
-represent an access class going forward.  Maybe it would be better to
-use the word "access" in the directory name to indicate that (so there
-would be "access0" instead of "class0").
+SIMPLE_DEV_PM_OPS (actually SET_SYSTEM_SLEEP_PM_OP) includes the check
+for PM_SLEEP and its a noop if PM_SLEEP is disabled so this works.
 
->
->   # symlinks -v /sys/devices/system/node/nodeY/class0/
->   relative: /sys/devices/system/node/nodeY/class0/initiatorX -> ../../nodeX
->
-> And the same information is reflected in the nodelist:
->
->   # cat /sys/devices/system/node/nodeX/class0/target_nodelist
->   Y
->
->   # cat /sys/devices/system/node/nodeY/class0/initiator_nodelist
->   X
->
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-> ---
->  drivers/base/node.c  | 127 ++++++++++++++++++++++++++++++++++++++++++++++++++-
->  include/linux/node.h |   6 ++-
->  2 files changed, 131 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index 86d6cd92ce3d..1da5072116ab 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -17,6 +17,7 @@
->  #include <linux/nodemask.h>
->  #include <linux/cpu.h>
->  #include <linux/device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/swap.h>
->  #include <linux/slab.h>
->
-> @@ -59,6 +60,91 @@ static inline ssize_t node_read_cpulist(struct device *dev,
->  static DEVICE_ATTR(cpumap,  S_IRUGO, node_read_cpumask, NULL);
->  static DEVICE_ATTR(cpulist, S_IRUGO, node_read_cpulist, NULL);
->
+Now here's the code with __maybe_unused:
 
-A kerneldoc describing the struct type, please.
+	static int __maybe_unused qcom_wdt_suspend(struct device *dev)
+	{
+		...
+	}
 
-> +struct node_class_nodes {
-> +       struct device           dev;
-> +       struct list_head        list_node;
-> +       unsigned                class;
-> +       nodemask_t              initiator_nodes;
-> +       nodemask_t              target_nodes;
-> +};
-> +#define to_class_nodes(dev) container_of(dev, struct node_class_nodes, dev)
-> +
+	static SIMPLE_DEV_PM_OPS(..., qcom_wdt_suspend, ...);
 
-Generally speaking, your code is devoid of comments.
+This will still be a NOOP when power management is disabled, but have
+the benefit of increased compile-time test coverage in that situation.
+The symbols won't be included in the final executable. I personally
+think the code a is cleaner with __maybe_unused.
 
-To a minimum, there should be kerneldoc comments for non-static
-functions to explain what they are for.
+This pattern is already in use across various subsystems in the kernel
+for suspend and resume functions:
+
+$ git grep __maybe_unused | egrep "_suspend|_resume"  | wc -l
+767
+
+Brian
