@@ -2,91 +2,126 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7747C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CE5C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE7920855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:17:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6F5E20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:18:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547741850;
-	bh=3kufgmztrELjwW9JtGeq77yjk/C52ZMulQj9Y7Ulgho=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=zxOCU/WeR6ayFHAAKBHqOHbI9B4n55PaSSFFnNdynW9SjiOfJ5QsYEdT3dHK4KBPI
-	 X0Q+jj0bttg5ZI6iD/nCeowkI+5tYu6G2+AHQihpMMTHZCBWoAZMfr6dGd5YDEuhFt
-	 8ENApduhlPCTNT1pnKdZpUE2bnabA4IamBOSmpcA=
+	s=default; t=1547741889;
+	bh=lNXozYOQUcjQzfMz9W0qROc8mz8jYhttZGPahphyo6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=IeZvJEPGeY6D8DrVuSVTq0SmSI/BzRSeKtTs/waDoTPEieTWRBPCEEY2bNNiuEyu6
+	 fgitBGVUWD7Ipr7R90F9yUWmf8wvGneBJxxHVKwbA6aSN7x3fknjYrP3uzdZBN5L2y
+	 vvwJJ+YSgXorWcGl9cLp/e5Z8Stbjeh9FC52CE3Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbfAQQR2 (ORCPT
+        id S1728980AbfAQQSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:17:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728697AbfAQQR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:17:28 -0500
-Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [168.61.33.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14AB820652;
-        Thu, 17 Jan 2019 16:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547741847;
-        bh=3kufgmztrELjwW9JtGeq77yjk/C52ZMulQj9Y7Ulgho=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HYDD1gAPdkwfPetYBwjp3k4WSmPae5GsU+25MpOPtp9CxeV2PN2rKCHiFanTNIelU
-         VrlNjO8oKzfx3YmkRbtv6e38B8Oy5zQWe3UayxyFfDL6iozDlqaaIOiAQiy+Xg7rgq
-         tSNrlNNyDvGCFekv9YxOQ3Z7gYvqG/1yNn7JUhow=
-From:   Sinan Kaya <okaya@kernel.org>
-To:     linux-next@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT))
-Subject: [for-next][PATCH] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI is enabled
-Date:   Thu, 17 Jan 2019 16:17:22 +0000
-Message-Id: <20190117161722.3945-1-okaya@kernel.org>
-X-Mailer: git-send-email 2.19.0
+        Thu, 17 Jan 2019 11:18:08 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46153 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728834AbfAQQSH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 11:18:07 -0500
+Received: by mail-oi1-f193.google.com with SMTP id x202so6543037oif.13;
+        Thu, 17 Jan 2019 08:18:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SH8kFksfY6PHQ8H5TEKZ3PasvULOOTnq0NYxnZLpymU=;
+        b=B7voyNsSvs0EFKuyPc9y1rOO//ILYnGB6T6/9pj3Iq4NFsMzshs4rrFmMhvjigw55H
+         Zs/YwXSLmtPY5U1b4Dvwp2LanRKRgDB1++rBj3LdPqPA92b8PiGSochpjJJMWPSbufR/
+         iiAIBbidbaNGg0DY16e+eJI37z2qPVEYoj6L4v9VvXteGH34uY1f+kgKza3gsr5yPAVF
+         VnczDPS/QcmiV2Mi45b6zSdhZ4i+9fLmw5/eRHjq/vzN8Na1emtgUg/RiFfntewTLNyF
+         8iuN7dt3npB9KE9Ad73twTDIefTu2tdETP0UFDnc2crJZet5TdUngE1M2btyS2gGXA8L
+         7TkA==
+X-Gm-Message-State: AJcUukeZdTUJBGpslCDZwWOFRPAatArZ/YGZEI/hb8fkZ8azfgEdgRIn
+        +1Dj0QACLPnEQIFXHx1EPw==
+X-Google-Smtp-Source: ALg8bN4UOLyZ3cFya8Ty86igEAaKIJWx9rpXM8gCL/Y2ZhPcPEByP777nr6zG504n1NHYoIgYuJvfA==
+X-Received: by 2002:aca:3209:: with SMTP id y9mr6613048oiy.198.1547741885350;
+        Thu, 17 Jan 2019 08:18:05 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u109sm767931otb.8.2019.01.17.08.18.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 08:18:04 -0800 (PST)
+Date:   Thu, 17 Jan 2019 10:18:04 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Viorel Suman <viorel.suman@nxp.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Viorel Suman <viorel.suman@gmail.com>
+Subject: Re: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
+Message-ID: <20190117161804.GA5760@bogus>
+References: <1547729177-14317-1-git-send-email-viorel.suman@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547729177-14317-1-git-send-email-viorel.suman@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-satisfied implicitly through dependencies on CONFIG_ACPI have to be
-specified directly.
+On Thu, Jan 17, 2019 at 12:46:25PM +0000, Viorel Suman wrote:
+> The patchset adds NXP Audio Mixer (AUDMIX) device and machine
+> drivers and related DT bindings documentation.
+> 
+> Changes since V2:
+> 1. Moved "dais" node from machine driver DTS node to device driver DTS node
+>   as suggested by Rob.
 
-PCI_LOCKLESS_CONFIG depends on PCI but this dependency has not been
-mentioned in the Kconfig.
+That was not what I suggested. You still have a virtual node which looks 
+to me to be unnecessary.
 
-Add an explicit dependency here.
-
-Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- arch/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 568f339595ed..0519da6f8ee4 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -199,7 +199,7 @@ config X86
- 	select IRQ_FORCED_THREADING
- 	select NEED_SG_DMA_LENGTH
- 	select PCI_DOMAINS			if PCI
--	select PCI_LOCKLESS_CONFIG
-+	select PCI_LOCKLESS_CONFIG		if PCI
- 	select PERF_EVENTS
- 	select RTC_LIB
- 	select RTC_MC146818_LIB
--- 
-2.19.0
-
+> 
+> Changes since V1:
+> 1. Original patch split into distinct patches for the device driver and
+>   DT binding documentation.
+> 2. Replaced AMIX with AUDMIX in both code and file names as it looks more
+>   RM-compliant.
+> 3. Removed polarity control from CPU DAI driver as suggested by Nicolin.
+> 4. Added machine driver and related DT binding documentation.
+> 
+> Viorel Suman (4):
+>   ASoC: fsl: Add Audio Mixer CPU DAI driver
+>   ASoC: add fsl_audmix DT binding documentation
+>   ASoC: fsl: Add Audio Mixer machine driver
+>   ASoC: add imx-audmix DT binding documentation
+> 
+>  .../devicetree/bindings/sound/fsl,audmix.txt       |  50 ++
+>  .../devicetree/bindings/sound/imx-audmix.txt       |  18 +
+>  sound/soc/fsl/Kconfig                              |  16 +
+>  sound/soc/fsl/Makefile                             |   5 +
+>  sound/soc/fsl/fsl_audmix.c                         | 551 +++++++++++++++++++++
+>  sound/soc/fsl/fsl_audmix.h                         | 102 ++++
+>  sound/soc/fsl/imx-audmix.c                         | 334 +++++++++++++
+>  7 files changed, 1076 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/fsl,audmix.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/imx-audmix.txt
+>  create mode 100644 sound/soc/fsl/fsl_audmix.c
+>  create mode 100644 sound/soc/fsl/fsl_audmix.h
+>  create mode 100644 sound/soc/fsl/imx-audmix.c
+> 
+> -- 
+> 2.7.4
+> 
