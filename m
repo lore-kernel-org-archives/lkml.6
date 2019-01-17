@@ -2,92 +2,92 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F04BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919A7C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01F11205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:48:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="jY4zAGqe"
+	by mail.kernel.org (Postfix) with ESMTP id 6799A205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:51:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfAQCst (ORCPT
+        id S1727511AbfAQCvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 21:48:49 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41843 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfAQCst (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 21:48:49 -0500
-Received: by mail-qk1-f193.google.com with SMTP id 189so5158444qkj.8;
-        Wed, 16 Jan 2019 18:48:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9li+6dKy82nfP6IXQsUZqEUGFFE4s5Pj00jdazTthFk=;
-        b=jY4zAGqe8y8lpCsiqm9m/KgiUQIb1k1LqXm1c1HZwSetLbw3QaLuNxhzvmDtYUikhH
-         78ZiNXtzSwVMj5I27BCu4Og6AyvZzw8VHn6R604WuRv1/KwuVye1fws4SAOZ2Do5vobR
-         kP6lT2gRCVsplGc/JmboPjzSqK76BiScRtMq0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9li+6dKy82nfP6IXQsUZqEUGFFE4s5Pj00jdazTthFk=;
-        b=JO42BrNHmgc5kfx7kn0Tqevj+vJ+GFfowuLpR6CmUHaVudSnam03iWBGsb78tssSxW
-         xOIGoJOEvuA83RvZij4Zi37rVw9O3yzM8Qe3uML/gbasv2pkO7MoEApMap0Pm/7orj1x
-         HFYOm5r26sdb+yBGyksNMoGYLXNR9uikk20ulzZDfof2SL2ckHH20u2dZOJOX/KqGaDh
-         kWaVjYRz2o6A8oyyj+TAQVZ1jPQHF+mAe21x+mUKKf3v/G4axnk2SMQS5AI5fmuq6uMY
-         KCewKTvNHjvRk7imJCd1DPVekOkp8gGOppyFZn10LOpnGkwgEjcexHZT+x93XHmJPOsF
-         7ixg==
-X-Gm-Message-State: AJcUukf5KidTJ/6C4T0BETBrt6QlQnyie5KebXHDHI+PPJ2WjZuvs0VJ
-        3TrGB5n8rbUNsGgzyGKvRSnbTSP6IlAG/MgcqYY=
-X-Google-Smtp-Source: ALg8bN6S0ZkkQqCqSM52W9OpcMUcZwXcTDuxo85athkDUTfOiowTNeCMIfLjqWY72yeyKjpfjJU/S5kXnmbQZeQpeek=
-X-Received: by 2002:a37:61cd:: with SMTP id v196mr9332441qkb.25.1547693327920;
- Wed, 16 Jan 2019 18:48:47 -0800 (PST)
+        Wed, 16 Jan 2019 21:51:16 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40928 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727449AbfAQCvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 21:51:15 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A3598E4A3C1B1A8C8134;
+        Thu, 17 Jan 2019 10:51:11 +0800 (CST)
+Received: from [127.0.0.1] (10.184.52.56) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Thu, 17 Jan 2019
+ 10:51:01 +0800
+Subject: Re: [PATCH 0/5] Crypto Cleanup
+To:     Eric Biggers <ebiggers@kernel.org>
+CC:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <broonie@kernel.org>, <ard.biesheuvel@linaro.org>,
+        <jonathan.cameron@huawei.com>
+References: <1547607034-40948-1-git-send-email-wangxiongfeng2@huawei.com>
+ <20190116174949.GA152952@gmail.com>
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Message-ID: <62435a58-91fb-c48d-73f8-0b7634721924@huawei.com>
+Date:   Thu, 17 Jan 2019 10:50:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <20181217200405.2904551-1-vijaykhemka@fb.com> <20181217200405.2904551-4-vijaykhemka@fb.com>
- <F23E6426-F6FE-4F10-A88A-D5862D5407B4@fb.com>
-In-Reply-To: <F23E6426-F6FE-4F10-A88A-D5862D5407B4@fb.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 17 Jan 2019 13:48:36 +1100
-Message-ID: <CACPK8Xfn_iNWe+iWash2MV2e+Uz_0mV9Hwz_PdgNzfYpmrLvcw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] ARM: dts: aspeed: Add lpc ctrl for Facebook
-To:     Vijay Khemka <vijaykhemka@fb.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190116174949.GA152952@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.52.56]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Dec 2018 at 05:06, Vijay Khemka <vijaykhemka@fb.com> wrote:
->
-> =EF=BB=BFOn 12/17/18, 12:04 PM, "Vijay Khemka" <vijaykhemka@fb.com> wrote=
-:
->
->     Added lpc ctrl device to enable LPC clock in Facebook
->     Tiogapass device tree.
->
->     Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
->
-> Joel, Can you please take care of these patches merge.
 
-I did not apply this one as I think the description will change once
-we've merged your aspeed-lpc-ctrl patch.
 
-Cheers,
+On 2019/1/17 1:49, Eric Biggers wrote:
+> On Wed, Jan 16, 2019 at 10:50:29AM +0800, Xiongfeng Wang wrote:
+>> The patchset introduce a helper to (un)register a array of crypto templates.
+>> The following patches use this helper to simplify the code. This is also
+>> a preparation for a coming patchset, which will register several crypto
+>> templates.
+>>
+>> Xiongfeng Wang (5):
+>>   crypto: api - add a helper to (un)register a array of templates
+>>   crypto: ccm - use template array registering API to simplify the code
+>>   crypto: gcm - use template array registering API to simplify the code
+>>   crypto: ctr - use template array registering API to simplify the code
+>>   crypto: chacha20poly1305 - use template array registering API to
+>>     simplify the code
+>>
+>>  crypto/algapi.c           | 27 ++++++++++++++++
+>>  crypto/ccm.c              | 81 +++++++++++++++--------------------------------
+>>  crypto/chacha20poly1305.c | 38 +++++++++-------------
+>>  crypto/ctr.c              | 46 ++++++++++-----------------
+>>  crypto/gcm.c              | 76 +++++++++++++++-----------------------------
+>>  include/crypto/algapi.h   |  2 ++
+>>  6 files changed, 113 insertions(+), 157 deletions(-)
+>>
+>> -- 
+>> 1.7.12.4
+>>
+> 
+> Hi Xiongfeng, I think this a useful cleanup but can you please rebase this onto
+> cryptodev?  There is a conflict in crypto/ctr.c.
 
-Joel
+Hi Eric, thanks for your reply. I will change it in the next version.
+
+Thanks,
+Xiongfeng
+> 
+> - Eric
+> 
+> .
+> 
+
