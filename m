@@ -2,90 +2,132 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 429DFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0E9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AFCF20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E06FA20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:36:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="PI1pQTbT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbfAQRfR (ORCPT
+        id S1728779AbfAQRgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:35:17 -0500
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:56615 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727226AbfAQRfR (ORCPT
+        Thu, 17 Jan 2019 12:36:18 -0500
+Received: from mail-qt1-f170.google.com ([209.85.160.170]:43260 "EHLO
+        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfAQRgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:35:17 -0500
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id B7ADBF400B
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 17:35:14 +0000 (UTC)
-Received: (qmail 15587 invoked from network); 17 Jan 2019 17:35:14 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 17 Jan 2019 17:35:14 -0000
-Date:   Thu, 17 Jan 2019 17:35:13 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
+        Thu, 17 Jan 2019 12:36:17 -0500
+Received: by mail-qt1-f170.google.com with SMTP id i7so12171732qtj.10
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:36:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=4s+aw4cqHlFtyBwSJLP5pQLIUbRVwDOyiFK3nKFejho=;
+        b=PI1pQTbT9G4zxJBqXN/kqXc5QhWQEgcAgAm5vXCm8GIQ30ZvJVNVusdIJbpoo3prhl
+         3iXo/JWYKlel9AHpD6PPv7+LmK9Lbuqo3l/308z8DvT4EBLRwx95s4NW4Y8ScGr1EVOg
+         2Wy6pDe47YnLgZPsdQ7Li819VgvJVbxQ8m3tx7xJIavdUDKQEadDBUzLSiUc0SAAHHS8
+         2MfqQ2rnioIreeK/d3aw0fb6Wt1CYOvXock/UpD4HnXigpOmSyfOwf0E7b/GCY2IvMtO
+         sGsptoYPtYFRiHBGnof0S62whXWMfoHeVnAfb457Yh+blXDL+bTOGsNPOy7hjHoyzbs1
+         tHzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=4s+aw4cqHlFtyBwSJLP5pQLIUbRVwDOyiFK3nKFejho=;
+        b=eNtYa13Do/7c17SMa0YaQUivp3jRG7RduFJl8txSX/Yn7PDHabkq9ksXiuf+lfLiL0
+         4ZtotIwJMYiZvTmhBw8WWJZvUlpvElYKCBdZ8q+x+rvsGtb9wglqiDDzXREK7UPr7AVN
+         t2i+n2fqtaAMSNZEdgeCPsDOVE46cqDyTg6u2vwBotvvn2NhCCoWCf7MYFtZGQGxNz+V
+         PHIOnQOSLl+8tIXHPwJC2snMRS6EuUS3MeqDoZpXuE/c0CA9S2vxrWa3zTneiIigFrmx
+         KA1E1Yt74MpYagyEcVv/YfGbBmLRaVA9Wp66Yao6QSNW65dCpIDBfssgS5h7bWVJ+tSB
+         0Kxw==
+X-Gm-Message-State: AJcUukev7OtWhYDjfx9316eb1K9R5OAullVaWxcvjeGRUaX2eDT4HDFa
+        tcUKq1X06zU4q5d3wjzexDRIAV8pkO6Vjw==
+X-Google-Smtp-Source: ALg8bN7VdCazLk/VYBGDZiW+4f/wwTPUAXLGDYHKbCi5ffLWIiua28lgOIhT82qwjBFvqqgCJ/DDjA==
+X-Received: by 2002:ac8:1b82:: with SMTP id z2mr12592368qtj.321.1547746575884;
+        Thu, 17 Jan 2019 09:36:15 -0800 (PST)
+Received: from ovpn-124-227.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id f19sm57832091qtf.1.2019.01.17.09.36.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 09:36:15 -0800 (PST)
+To:     osalvador@suse.de, Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 16/25] mm, compaction: Check early for huge pages
- encountered by the migration scanner
-Message-ID: <20190117173512.GL27437@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-17-mgorman@techsingularity.net>
- <724b7599-8300-15b5-2675-eecab2450f45@suse.cz>
+        linux kernel <linux-kernel@vger.kernel.org>
+From:   Qian Cai <cai@lca.pw>
+Subject: kmemleak scan crash due to invalid PFNs
+Message-ID: <51e79597-21ef-3073-9036-cfc33291f395@lca.pw>
+Date:   Thu, 17 Jan 2019 12:36:14 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <724b7599-8300-15b5-2675-eecab2450f45@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 06:01:18PM +0100, Vlastimil Babka wrote:
-> On 1/4/19 1:50 PM, Mel Gorman wrote:
-> > When scanning for sources or targets, PageCompound is checked for huge
-> > pages as they can be skipped quickly but it happens relatively late after
-> > a lot of setup and checking. This patch short-cuts the check to make it
-> > earlier. It might still change when the lock is acquired but this has
-> > less overhead overall. The free scanner advances but the migration scanner
-> > does not. Typically the free scanner encounters more movable blocks that
-> > change state over the lifetime of the system and also tends to scan more
-> > aggressively as it's actively filling its portion of the physical address
-> > space with data. This could change in the future but for the moment,
-> > this worked better in practice and incurred fewer scan restarts.
-> > 
-> > The impact on latency and allocation success rates is marginal but the
-> > free scan rates are reduced by 32% and system CPU usage is reduced by
-> > 2.6%. The 2-socket results are not materially different.
-> 
-> Hmm, interesting that adjusting migrate scanner affected free scanner. Oh well.
-> 
+On an arm64 ThunderX2 server, the first kmemleak scan would crash with
+CONFIG_DEBUG_VM_PGFLAGS=y due to page_to_nid() found a pfn that is not directly
+mapped. Hence, the page->flags is not initialized.
 
-Russian Roulette again. The exact scan rates depend on the system state
-which are non-deterministic.  It's not until very late in the series that
-they stabilise somewhat. In fact, during the development of the series,
-I had to reorder patches multiple times when a corner case was dealt with
-to avoid 1 in every 3-6 runs having crazy insane scan rates. The final
-ordering was based on *relative* stability.
+Reverted 9f1eb38e0e113 (mm, kmemleak: little optimization while scanning) fixed
+the problem.
 
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Nit below.
-> 
-
-Nit fixed.
-
--- 
-Mel Gorman
-SUSE Labs
+[  102.195320] Unable to handle kernel NULL pointer dereference at virtual
+address 0000000000000006
+[  102.204113] Mem abort info:
+[  102.206921]   ESR = 0x96000005
+[  102.209997]   Exception class = DABT (current EL), IL = 32 bits
+[  102.215926]   SET = 0, FnV = 0
+[  102.218993]   EA = 0, S1PTW = 0
+[  102.222150] Data abort info:
+[  102.225047]   ISV = 0, ISS = 0x00000005
+[  102.228887]   CM = 0, WnR = 0
+[  102.231866] user pgtable: 64k pages, 48-bit VAs, pgdp = (____ptrval____)
+[  102.238572] [0000000000000006] pgd=0000000000000000, pud=0000000000000000
+[  102.245448] Internal error: Oops: 96000005 [#1] SMP
+[  102.264062] CPU: 60 PID: 1408 Comm: kmemleak Not tainted 5.0.0-rc2+ #8
+[  102.280403] pstate: 60400009 (nZCv daif +PAN -UAO)
+[  102.280409] pc : page_mapping+0x24/0x144
+[  102.280415] lr : __dump_page+0x34/0x3dc
+[  102.292923] sp : ffff00003a5cfd10
+[  102.296229] x29: ffff00003a5cfd10 x28: 000000000000802f
+[  102.301533] x27: 0000000000000000 x26: 0000000000277d00
+[  102.306835] x25: ffff000010791f56 x24: ffff7fe000000000
+[  102.312138] x23: ffff000010772f8b x22: ffff00001125f670
+[  102.317442] x21: ffff000011311000 x20: ffff000010772f8b
+[  102.322747] x19: fffffffffffffffe x18: 0000000000000000
+[  102.328049] x17: 0000000000000000 x16: 0000000000000000
+[  102.333352] x15: 0000000000000000 x14: ffff802698b19600
+[  102.338654] x13: ffff802698b1a200 x12: ffff802698b16f00
+[  102.343956] x11: ffff802698b1a400 x10: 0000000000001400
+[  102.349260] x9 : 0000000000000001 x8 : ffff00001121a000
+[  102.354563] x7 : 0000000000000000 x6 : ffff0000102c53b8
+[  102.359868] x5 : 0000000000000000 x4 : 0000000000000003
+[  102.365173] x3 : 0000000000000100 x2 : 0000000000000000
+[  102.370476] x1 : ffff000010772f8b x0 : ffffffffffffffff
+[  102.375782] Process kmemleak (pid: 1408, stack limit = 0x(____ptrval____))
+[  102.382648] Call trace:
+[  102.385091]  page_mapping+0x24/0x144
+[  102.388659]  __dump_page+0x34/0x3dc
+[  102.392140]  dump_page+0x28/0x4c
+[  102.395363]  kmemleak_scan+0x4ac/0x680
+[  102.399106]  kmemleak_scan_thread+0xb4/0xdc
+[  102.403285]  kthread+0x12c/0x13c
+[  102.406509]  ret_from_fork+0x10/0x18
+[  102.410080] Code: d503201f f9400660 36000040 d1000413 (f9400661)
+[  102.416357] ---[ end trace 4d4bd7f573490c8e ]---
+[  102.420966] Kernel panic - not syncing: Fatal exception
+[  102.426293] SMP: stopping secondary CPUs
+[  102.431830] Kernel Offset: disabled
+[  102.435311] CPU features: 0x002,20000c38
+[  102.439223] Memory Limit: none
+[  102.442384] ---[ end Kernel panic - not syncing: Fatal exception ]---
