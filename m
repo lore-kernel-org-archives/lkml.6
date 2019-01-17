@@ -2,259 +2,79 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E3BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ABBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8FCE206C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:18:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC5F1206C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 00:21:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbfAQASW (ORCPT
+        id S1728574AbfAQAVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:18:22 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42514 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbfAQASV (ORCPT
+        Wed, 16 Jan 2019 19:21:04 -0500
+Received: from smtprelay0223.hostedemail.com ([216.40.44.223]:35886 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727397AbfAQAVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:18:21 -0500
-Received: by mail-qt1-f194.google.com with SMTP id d19so9416923qtq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 16:18:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PYhecQZTukujEdBZ8fz/JSDICYAUiky1KZTPQoVROA4=;
-        b=kKK/Ys4kNMo2ifWzAXxt47tsqNgG57Ld5CaJm8ykH+U2ejaoG/cU286v8IZeLj+INO
-         UEgeG08RJt4SJTbuPvBEDsMOQdaO4gMd+UsDFyZlsDF+Mya+rCXPwggMpIy+kOZX5eRq
-         KKVuoBzg/gSCHsfzTJExW9QMFKEdyyWGhyeFxVjmf51FGqHUe/eUq2w2m72ZwHjQCmYx
-         yqR3ZEysqRbDDqoLVPbLkWCAmHIc07EHfHahNz5TQYo++dijzOvNP7c9JjkUH5McvjmR
-         N/VZxFquYf2bcKyAiZpguqCFFdVOFi1hfe9jY1GC/Qakg72iOeAcU3xCpHyKGC/zXPjJ
-         hGEw==
-X-Gm-Message-State: AJcUukeujDk/o+z8vbE0kbtj3Sk8YK4K3SuGmo620yVW+O5HacSEe9bi
-        Nrflev90jaaRpiKeVXFeCFRKOg==
-X-Google-Smtp-Source: ALg8bN5SovHvQzbJ1hU6lrHJ8lJVME6uVs1POkWMdgvfvQDmEetORKK8NoVP7LLBpnlbspxd6/ocUw==
-X-Received: by 2002:ac8:2353:: with SMTP id b19mr9284230qtb.187.1547684300203;
-        Wed, 16 Jan 2019 16:18:20 -0800 (PST)
-Received: from ?IPv6:2601:602:9800:dae6::fb21? ([2601:602:9800:dae6::fb21])
-        by smtp.gmail.com with ESMTPSA id v57sm61334049qtv.80.2019.01.16.16.18.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 16:18:19 -0800 (PST)
-Subject: Re: [RFC PATCH v7 14/16] EXPERIMENTAL: xpfo, mm: optimize spin lock
- usage in xpfo_kmap
-To:     Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
-        tycho@tycho.ws, jsteckli@amazon.de, ak@linux.intel.com,
-        torvalds@linux-foundation.org, liran.alon@oracle.com,
-        keescook@google.com, konrad.wilk@oracle.com
-Cc:     deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        "Vasileios P . Kemerlis" <vpk@cs.columbia.edu>,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        Tycho Andersen <tycho@docker.com>,
-        Marco Benatto <marco.antonio.780@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
- <7e8e17f519ae87a91fc6cbb57b8b27094c96305c.1547153058.git.khalid.aziz@oracle.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <b2ffc4fd-e449-b6da-7070-4f182d44dd5b@redhat.com>
-Date:   Wed, 16 Jan 2019 16:18:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <7e8e17f519ae87a91fc6cbb57b8b27094c96305c.1547153058.git.khalid.aziz@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Wed, 16 Jan 2019 19:21:04 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 9DCDA1802E2D4;
+        Thu, 17 Jan 2019 00:21:02 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: roll44_432cf94083b0b
+X-Filterd-Recvd-Size: 1829
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 17 Jan 2019 00:21:01 +0000 (UTC)
+Message-ID: <e9c1698dcf0ef40eb15035cfb32d9b3456f197d6.camel@perches.com>
+Subject: Re: [PATCH] sb1000: fix a couple of indentation issues
+From:   Joe Perches <joe@perches.com>
+To:     Colin King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 16 Jan 2019 16:20:59 -0800
+In-Reply-To: <20190117001301.29948-1-colin.king@canonical.com>
+References: <20190117001301.29948-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/10/19 1:09 PM, Khalid Aziz wrote:
-> From: Julian Stecklina <jsteckli@amazon.de>
+On Thu, 2019-01-17 at 00:13 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> We can reduce spin lock usage in xpfo_kmap to the 0->1 transition of
-> the mapcount. This means that xpfo_kmap() can now race and that we
-> get spurious page faults.
-> 
-> The page fault handler helps the system make forward progress by
-> fixing the page table instead of allowing repeated page faults until
-> the right xpfo_kmap went through.
-> 
-> Model-checked with up to 4 concurrent callers with Spin.
-> 
+> There is an if statement and a return statement that are incorrectly
+> indented. Fix these.
+[]
+> diff --git a/drivers/net/sb1000.c b/drivers/net/sb1000.c
+[]
+> @@ -540,12 +540,12 @@ sb1000_activate(const int ioaddr[], const char* name)
+>  	if ((status = card_send_command(ioaddr, name, Command1, st)))
+>  		return status;
+>  	if (st[3] != 0xf1) {
+> -    	if ((status = sb1000_start_get_set_command(ioaddr, name)))
+> +		if ((status = sb1000_start_get_set_command(ioaddr, name)))
 
-This needs the spurious check for arm64 as well. This at
-least gets me booting but could probably use more review:
+Probably better to remove the assignment in the if at the same time.
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 7d9571f4ae3d..8f425848cbb9 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -32,6 +32,7 @@
-  #include <linux/perf_event.h>
-  #include <linux/preempt.h>
-  #include <linux/hugetlb.h>
-+#include <linux/xpfo.h>
-  
-  #include <asm/bug.h>
-  #include <asm/cmpxchg.h>
-@@ -289,6 +290,9 @@ static void __do_kernel_fault(unsigned long addr, unsigned int esr,
-         if (!is_el1_instruction_abort(esr) && fixup_exception(regs))
-                 return;
-  
-+       if (xpfo_spurious_fault(addr))
-+               return;
-+
-         if (is_el1_permission_fault(addr, esr, regs)) {
-                 if (esr & ESR_ELx_WNR)
-                         msg = "write to read-only memory";
+		status = sb1000_start_get_set_command(ioaddr, name);
+		if (status)
 
-
-> Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
-> Cc: x86@kernel.org
-> Cc: kernel-hardening@lists.openwall.com
-> Cc: Vasileios P. Kemerlis <vpk@cs.columbia.edu>
-> Cc: Juerg Haefliger <juerg.haefliger@canonical.com>
-> Cc: Tycho Andersen <tycho@docker.com>
-> Cc: Marco Benatto <marco.antonio.780@gmail.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
-> ---
->   arch/x86/mm/fault.c  |  4 ++++
->   include/linux/xpfo.h |  4 ++++
->   mm/xpfo.c            | 50 +++++++++++++++++++++++++++++++++++++-------
->   3 files changed, 51 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index ba51652fbd33..207081dcd572 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -18,6 +18,7 @@
->   #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
->   #include <linux/efi.h>			/* efi_recover_from_page_fault()*/
->   #include <linux/mm_types.h>
-> +#include <linux/xpfo.h>
->   
->   #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
->   #include <asm/traps.h>			/* dotraplinkage, ...		*/
-> @@ -1218,6 +1219,9 @@ do_kern_addr_fault(struct pt_regs *regs, unsigned long hw_error_code,
->   	if (kprobes_fault(regs))
->   		return;
->   
-> +	if (xpfo_spurious_fault(address))
-> +		return;
-> +
->   	/*
->   	 * Note, despite being a "bad area", there are quite a few
->   	 * acceptable reasons to get here, such as erratum fixups
-> diff --git a/include/linux/xpfo.h b/include/linux/xpfo.h
-> index ea5188882f49..58dd243637d2 100644
-> --- a/include/linux/xpfo.h
-> +++ b/include/linux/xpfo.h
-> @@ -54,6 +54,8 @@ bool xpfo_enabled(void);
->   
->   phys_addr_t user_virt_to_phys(unsigned long addr);
->   
-> +bool xpfo_spurious_fault(unsigned long addr);
-> +
->   #else /* !CONFIG_XPFO */
->   
->   static inline void xpfo_init_single_page(struct page *page) { }
-> @@ -81,6 +83,8 @@ static inline bool xpfo_enabled(void) { return false; }
->   
->   static inline phys_addr_t user_virt_to_phys(unsigned long addr) { return 0; }
->   
-> +static inline bool xpfo_spurious_fault(unsigned long addr) { return false; }
-> +
->   #endif /* CONFIG_XPFO */
->   
->   #endif /* _LINUX_XPFO_H */
-> diff --git a/mm/xpfo.c b/mm/xpfo.c
-> index dbf20efb0499..85079377c91d 100644
-> --- a/mm/xpfo.c
-> +++ b/mm/xpfo.c
-> @@ -119,6 +119,16 @@ void xpfo_free_pages(struct page *page, int order)
->   	}
->   }
->   
-> +static void xpfo_do_map(void *kaddr, struct page *page)
-> +{
-> +	spin_lock(&page->xpfo_lock);
-> +	if (PageXpfoUnmapped(page)) {
-> +		set_kpte(kaddr, page, PAGE_KERNEL);
-> +		ClearPageXpfoUnmapped(page);
-> +	}
-> +	spin_unlock(&page->xpfo_lock);
-> +}
-> +
->   void xpfo_kmap(void *kaddr, struct page *page)
->   {
->   	if (!static_branch_unlikely(&xpfo_inited))
-> @@ -127,17 +137,12 @@ void xpfo_kmap(void *kaddr, struct page *page)
->   	if (!PageXpfoUser(page))
->   		return;
->   
-> -	spin_lock(&page->xpfo_lock);
-> -
->   	/*
->   	 * The page was previously allocated to user space, so map it back
->   	 * into the kernel. No TLB flush required.
->   	 */
-> -	if ((atomic_inc_return(&page->xpfo_mapcount) == 1) &&
-> -	    TestClearPageXpfoUnmapped(page))
-> -		set_kpte(kaddr, page, PAGE_KERNEL);
-> -
-> -	spin_unlock(&page->xpfo_lock);
-> +	if (atomic_inc_return(&page->xpfo_mapcount) == 1)
-> +		xpfo_do_map(kaddr, page);
->   }
->   EXPORT_SYMBOL(xpfo_kmap);
->   
-> @@ -204,3 +209,34 @@ void xpfo_temp_unmap(const void *addr, size_t size, void **mapping,
->   			kunmap_atomic(mapping[i]);
->   }
->   EXPORT_SYMBOL(xpfo_temp_unmap);
-> +
-> +bool xpfo_spurious_fault(unsigned long addr)
-> +{
-> +	struct page *page;
-> +	bool spurious;
-> +	int mapcount;
-> +
-> +	if (!static_branch_unlikely(&xpfo_inited))
-> +		return false;
-> +
-> +	/* XXX Is this sufficient to guard against calling virt_to_page() on a
-> +	 * virtual address that has no corresponding struct page? */
-> +	if (!virt_addr_valid(addr))
-> +		return false;
-> +
-> +	page = virt_to_page(addr);
-> +	mapcount = atomic_read(&page->xpfo_mapcount);
-> +	spurious = PageXpfoUser(page) && mapcount;
-> +
-> +	/* Guarantee forward progress in case xpfo_kmap() raced. */
-> +	if (spurious && PageXpfoUnmapped(page)) {
-> +		xpfo_do_map((void *)(addr & PAGE_MASK), page);
-> +	}
-> +
-> +	if (unlikely(!spurious))
-> +		printk("XPFO non-spurious fault %lx user=%d unmapped=%d mapcount=%d\n",
-> +			addr, PageXpfoUser(page), PageXpfoUnmapped(page),
-> +			mapcount);
-> +
-> +	return spurious;
-> +}
-> 
+>  			return status;
+>  		return -EIO;
+>  	}
+>  	udelay(1000);
+> -    return sb1000_start_get_set_command(ioaddr, name);
+> +	return sb1000_start_get_set_command(ioaddr, name);
+>  }
+>  
+>  /* get SB1000 firmware version */
 
