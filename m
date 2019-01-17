@@ -2,131 +2,126 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA2AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E65AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1EB20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AF3C20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 13:16:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxWo0xtr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYV8Mkim"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfAQNQG (ORCPT
+        id S1727402AbfAQNQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:16:06 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38071 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfAQNQF (ORCPT
+        Thu, 17 Jan 2019 08:16:38 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34687 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbfAQNQh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:16:05 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v13so10976487wrw.5;
-        Thu, 17 Jan 2019 05:16:04 -0800 (PST)
+        Thu, 17 Jan 2019 08:16:37 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y185so1045868wmd.1;
+        Thu, 17 Jan 2019 05:16:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vO0u/ighJu9/Pgld8XWvcp25uFZhyw/lMVsD9ojHRh8=;
-        b=kxWo0xtrN4S9G9SG3QB8h/KJn3nNYrHG2n8GN743BJqSe9Kk5yq8MkvUaabJKwGpWt
-         kkFZQyCNVyIr2jVYJg5ZfeYb2xSRM9QR/9T4c9JEne7vrcDK/dNrdL8i9Icvw/1UNSi/
-         /n2L2EyrpBfr7e9IrNMCzrZ2FwR7bYiXl/8fad+nFarRtF1P8uZIBdWBpY8SAHwLnXMW
-         5z0Bc6A8OYjyJFWfsODzvK5k8zpMO6SKuyNwJ3WJ0ta3iLBKM0DDskaC0ln+ROildl+z
-         Kioa/gFBOMph4VUQEySfPiDNkhKkilYrxR4x91oIbmgRFJza4lS8yGw6mDL1DoRm/pqm
-         f9+g==
+        bh=wbHkGjrwcKb0NuTw5WydDOQqTO6/1obTSoZfynLnP+E=;
+        b=GYV8Mkim59chUp5Uwv0l5MpF6Dhzj44p3HpNVzt6WkpvlI1o6yYrCvP6xdqOArXthx
+         7OeXsxc+dKmgVI/f4i6ey2ce/o9jSPKouenS3BfkJp+LCxJZDaUQxRBF/H+lrYFiziZD
+         Ye+aP5IjVUdrQCkKvN5CbkPpHPt2P+GT3Eaa5L0g7CDBza8jVcgOssJs+eccLSD/cuZA
+         sNXzXYvQ8/+fwcehDTL7RxmlovgKx1hoN3O8BKbFjvxwZFX4wu/8TIaVCYfSVAXCs25F
+         EavZbgH4rD3QbjSYKUSjYsECRBsQMKeDq7pdSXu2fDXgl77rfy0XpRgOuZVxOf9MfOR2
+         VryA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vO0u/ighJu9/Pgld8XWvcp25uFZhyw/lMVsD9ojHRh8=;
-        b=JhTQhCS7Lap23FdEa2e9/QYuLJfWZR0mdYEnvl9onrEs2n2Vi3l0/2y9an5L46daiF
-         bnem8Jx5o/lAgUVxjp3bNLLQDVmWrJP26MahHQLQyFoHC+6p2Jjs4Ul4c119Ab8lh4lm
-         HukuYAsuSkRfc2t3b7raO8ILRblKsDqtceDqql+70bLC+hEHW5u8tfaBpdRUWDEHnX2O
-         88VGLZYllJ0ckdbA8/97yA74tyH04+y+MAQ7IB9iY8L3PMNQHoDYSv6Zyq7QWNTxQx2y
-         iaY170qMo2aj9VFP9KS7ZuuK4qby+xgZAthIr1IAoatuub8G1ZQMBWXsLCOWsHkknZQ0
-         a3fA==
-X-Gm-Message-State: AJcUukePdZfVdVNFkiyGjV0Z+cKnY2k3p/0tQaXauQaDRE3kpM3yIb8c
-        2BVC4033R+DBP3/eqovR+rU=
-X-Google-Smtp-Source: ALg8bN5jE5ei3NdujAOhSwy2ncQ0ixXP4RHKHTQReyRtYx+sNO7w3afFtTuqcfpN6cmsA2Pt9ddlcw==
-X-Received: by 2002:adf:ea11:: with SMTP id q17mr11550698wrm.328.1547730963253;
-        Thu, 17 Jan 2019 05:16:03 -0800 (PST)
-Received: from spock ([194.207.103.1])
-        by smtp.gmail.com with ESMTPSA id k3sm117499926wrm.7.2019.01.17.05.16.01
+        bh=wbHkGjrwcKb0NuTw5WydDOQqTO6/1obTSoZfynLnP+E=;
+        b=jF2oXCXaijnY564Dzc6OtYo93XPArD5GV1QFA++YYujMMXuMn3Mcwamb1hFpaOPI2F
+         whUAagGHjkbivebxKkqrsi9dx4unxQ6rtMV7CeVbmgoXKsYUCndJa4lrJaamEDqrNEMv
+         pT/01TPomUT407RGMBRn1DPvrEKaxY/QGOUDUP1NEYTMEp9DvWdVxgipp5mMaZhj4kQ/
+         QlNWN2SWeEcfj0sV8nouxwOdlh+uiBOz/0RG9vMjT6FOHDuRzVvo4txbPvH8481aaXOz
+         kFQOwZenb8UUvVe4azXYnEObtcwKLgfpZaCoRty7TbeyXYsJ4UpHaJPqio702ASGn5Tb
+         jCeQ==
+X-Gm-Message-State: AJcUukeSD6d/SJoRsJaBKul/Z+X1NqmX4Di2VirBh6v+g335pk0s7EGf
+        6QaREdeT9ZSqnrTsZ9QQbWk=
+X-Google-Smtp-Source: ALg8bN7jC9MuhtVzMpbWIahaditaGu77lxQkYuVt3EAYIDCd1VQjchLgSx6yHnLczLeBc9Nbj2Fx7g==
+X-Received: by 2002:a7b:c2a9:: with SMTP id c9mr9395359wmk.44.1547730994826;
+        Thu, 17 Jan 2019 05:16:34 -0800 (PST)
+Received: from localhost.localdomain ([151.15.254.62])
+        by smtp.gmail.com with ESMTPSA id q9sm123835287wrp.0.2019.01.17.05.16.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 05:16:02 -0800 (PST)
-Date:   Thu, 17 Jan 2019 13:16:01 +0000
-From:   Dean Wallace <duffydack73@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mogens Jensen <mogens-jensen@protonmail.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thu, 17 Jan 2019 05:16:33 -0800 (PST)
+Date:   Thu, 17 Jan 2019 14:16:31 +0100
+From:   Juri Lelli <juri.lelli@gmail.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-Message-ID: <20190117131601.qlkdk6tqznyr2s7x@spock>
-References: <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
- <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
- <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
- <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
- <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
- <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
- <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
- <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
- <20190117091214.7djttnpo4jjzi4su@spock>
- <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
+Subject: Re: [PATCH 0/3] drivers: Frequency constraint infrastructure
+Message-ID: <20190117131631.GA14385@localhost.localdomain>
+References: <cover.1547197612.git.viresh.kumar@linaro.org>
+ <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
-X-Info: Keep It Simple, Stupid.
-X-Operating-System: Linux, kernel 4.20.3-arch1-1-max98090
-X-Message-Flag: WARNING!! Outlook sucks
-User-Agent: Every email client sucks, this one just sucks less.
+In-Reply-To: <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-01-19, Hans de Goede wrote:
-> Mogens, Dean, can you please try the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
-> driver, without reverting any patches, with the attached patch on top and
-> see if that helps?
+On 11/01/19 10:47, Rafael J. Wysocki wrote:
+> On Fri, Jan 11, 2019 at 10:18 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > Hi,
+> >
+> > This commit introduces the frequency constraint infrastructure, which
+> > provides a generic interface for parts of the kernel to constraint the
+> > working frequency range of a device.
+> >
+> > The primary users of this are the cpufreq and devfreq frameworks. The
+> > cpufreq framework already implements such constraints with help of
+> > notifier chains (for thermal and other constraints) and some local code
+> > (for user-space constraints). The devfreq framework developers have also
+> > shown interest [1] in such a framework, which may use it at a later
+> > point of time.
+> >
+> > The idea here is to provide a generic interface and get rid of the
+> > notifier based mechanism.
+> >
+> > Only one constraint is added for now for the cpufreq framework and the
+> > rest will follow after this stuff is merged.
+> >
+> > Matthias Kaehlcke was involved in the preparation of the first draft of
+> > this work and so I have added him as Co-author to the first patch.
+> > Thanks Matthias.
+> >
+> > FWIW, This doesn't have anything to do with the boot-constraints
+> > framework [2] I was trying to upstream earlier :)
+> 
+> This is quite a bit of code to review, so it will take some time.
+> 
+> One immediate observation is that it seems to do quite a bit of what
+> is done in the PM QoS framework, so maybe there is an opportunity for
+> some consolidation in there.
 
-Hi Hans.   Just compiled 4.20.3 with your new patch and no other
-patches.  First impressions are, this is now as stable as it has ever
-been in my experiences with this baytrail drama.  A quick run down on my
-tests/findings:-
+Right, had the same impression. :-)
 
-No PLL messages on boot, good.
-Played audio using mpd, all fine.  Plugged in headphones, switches,
-stays stable, no messages.
-Unplugged/plugged again few times, no issues.
-Ran pavucontrol, stayed stable, no messages.
-I can still make it lose the lock and turn on the dalek distortion by
-switching profiles in pavucontrol (from stereo output to any other, like
-putput + input) but that has always been the case afaik for this
-machine.  So basically this is now back to working as it was before the
-4.18.5 'clk' breakage.
+I was also wondering how this new framework is dealing with
+constraints/request imposed/generated by the scheduler and related
+interfaces (thinking about schedutil and Patrick's util_clamp).
 
-One thing to mention, I don;t normally use UCM files, tho I have in the
-past, which is where I assume my asound.state file has come from, which
-makes my sound work /shrug.  Well I've just tested using the UCM, and
-things are a little less stable regarding plugging/unplugging headset a
-few times.  It loses lock, but, what's different now is after maybe 3-4
-seconds it corrects itself.  Not sure if it matters, but shows things
-are a little more stable with this patch than previously known.
+Thanks,
 
-I'll test a little longer and report (if) any problems.  It will be
-interesting to see how my buddy who uses headset/mic a lot gets on, as
-he needs to use usb audio device because internal sound and mic don't
-work properly.
-
--Dean
+- Juri
