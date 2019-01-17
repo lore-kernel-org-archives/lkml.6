@@ -2,109 +2,167 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ADAC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67915C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3395E20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B31820855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:55:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jUppjekq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfAQJyi (ORCPT
+        id S1727141AbfAQJzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:54:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59266 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725965AbfAQJyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:54:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9BE55ABCE;
-        Thu, 17 Jan 2019 09:54:36 +0000 (UTC)
-Date:   Thu, 17 Jan 2019 10:52:03 +0100
-From:   Cyril Hrubis <chrubis@suse.cz>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190117095203.GA23942@rei.lan>
-References: <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
- <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
- <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
- <20190116054613.GA11670@nautica>
- <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
- <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm>
- <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
- <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
- <20190116213708.GN6310@bombadil.infradead.org>
- <nycvar.YFH.7.76.1901162238310.6626@cbobk.fhfr.pm>
+        Thu, 17 Jan 2019 04:55:11 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:33123 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfAQJzK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:55:10 -0500
+Received: by mail-vs1-f67.google.com with SMTP id p74so5871200vsc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 01:55:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NTvgrK18nJp4k4myt9gradc1DReDsWdvoCIOcsKdrW8=;
+        b=jUppjekqSB+5CifvaUCUplJNrZYp6K9fM8s/qxS3X0uHCgab6OK4pG1IL4fDnF6Sii
+         aImt28R1slp3Q6By63sSy020V1U/+wXZOYwQT4XoylKKeJ2qR9Wm2hKBTqYSrDnTl8Rg
+         Cg3GAh1JadWGinstIb5qt5KU7Y+oujesu86W0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NTvgrK18nJp4k4myt9gradc1DReDsWdvoCIOcsKdrW8=;
+        b=ILa1XVqX9kyBE479HMN3pcMG+0rXrPb+6F/tSkRvD7d7nAcIPM/7voemf5KGZiP4aV
+         G2DohsaLZ/mP8f5jh5eMZ5WpRD0JYpgyg+FmUF7QIEDUSuECGtS7RHlc9sljASM6nzsS
+         hsR8+wa5l/uP8v0nEcjsX9HKQ0c1kG1gmTq8W68c6K9rbcE3k5937eFqe+lxeBs3Y8cZ
+         vhWQ6bRgt4IPOzxrJhQr6dv7cJs2vffd1ZV8MTS7Puih41RteUjP5t0TkJEf0d4oM7xA
+         Qa6KSCdwBhoIUhdY06FTICCy0HhbM0MdFWNB+Au1jYdLW1dLVDE7FfaP/V3JQEoEfJkk
+         jSww==
+X-Gm-Message-State: AJcUukeSimC17mZwGsRDSxktn7T8YxfS6kWQhGGwCg7eDSbsVeSkv/8I
+        B+8cMEPPQ+Cx62N6uJlWKN/ZVOEJZeK5k5+cC+lZyg==
+X-Google-Smtp-Source: ALg8bN7ubUANcy3Ur1KQIxKxpvreBSzhrxE3NZnjCYly/YiS+NzHlOYRS58kxR55s7ORgpJSDEVDa7Am65/WojwsIVE=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr5388726vsh.200.1547718909305;
+ Thu, 17 Jan 2019 01:55:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1901162238310.6626@cbobk.fhfr.pm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190116113723.15668-1-ulf.hansson@linaro.org> <258ecb6b-c2b2-c8b8-9804-4df69002d9f5@web.de>
+In-Reply-To: <258ecb6b-c2b2-c8b8-9804-4df69002d9f5@web.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 17 Jan 2019 10:54:32 +0100
+Message-ID: <CAPDyKFoqfyvQRnSBRvPVxrL-nmf1YoSzxRkPfGwr==L3LOwgaw@mail.gmail.com>
+Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
+To:     Jan Kiszka <jan.kiszka@web.de>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
+        linux-wireless@vger.kernel.org,
+        Ricardo Salveti <rsalveti@rsalveti.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
-> > Your patch 3/3 just removes the test.  Am I right in thinking that it
-> > doesn't need to be *moved* because the existing test after !PageUptodate
-> > catches it?
-> 
-> Exactly. It just initiates read-ahead for IOCB_NOWAIT cases as well, and 
-> if it's actually set, it'll be handled by the !PageUpdtodate case.
-> 
-> > Of course, there aren't any tests for RWF_NOWAIT in xfstests.  Are there 
-> > any in LTP?
-> 
-> Not in the released version AFAIK. I've asked the LTP maintainer (in our 
-> internal bugzilla) to take care of this thread a few days ago, but not 
-> sure what came out of it. Adding him (Cyril) to CC.
+On Wed, 16 Jan 2019 at 21:26, Jan Kiszka <jan.kiszka@web.de> wrote:
+>
+> On 16.01.19 12:37, Ulf Hansson wrote:
+> > During "wlan-up", we are programming the FW into the WiFi-chip. However,
+> > re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
+> > is made in-between the programmings.
+> >
+> > To conform to this requirement and to fix the regression in a simple way,
+> > let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
+> > (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
+> > current code is to treat this scenario as an error, but unfortunate this
+> > doesn't work as expected, so let's fix this.
+> >
+> > The other part is to guarantee that a power cycle of the SDIO card has been
+> > completed when wl12xx_sdio_power_on() returns, as to allow the FW
+> > programming to succeed. However, relying solely on runtime PM to deal with
+> > this isn't sufficient. For example, userspace may prevent runtime suspend
+> > via sysfs for the device that represents the SDIO card, leading to that the
+> > mmc core also keeps it powered on. For this reason, let's instead do a
+> > brute force power cycle in wl12xx_sdio_power_on().
+> >
+> > Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >
+> > Changes in v2:
+> >       - Keep the SDIO host claimed when calling mmc_hw_reset().
+> >       - Add a fixes tag.
+> > ---
+> >   drivers/net/wireless/ti/wlcore/sdio.c | 15 +++++++--------
+> >   1 file changed, 7 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
+> > index bd10165d7eec..4d4b07701149 100644
+> > --- a/drivers/net/wireless/ti/wlcore/sdio.c
+> > +++ b/drivers/net/wireless/ti/wlcore/sdio.c
+> > @@ -164,6 +164,12 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
+> >       }
+> >
+> >       sdio_claim_host(func);
+> > +     /*
+> > +      * To guarantee that the SDIO card is power cycled, as required to make
+> > +      * the FW programming to succeed, let's do a brute force HW reset.
+> > +      */
+> > +     mmc_hw_reset(card->host);
+> > +
+> >       sdio_enable_func(func);
+> >       sdio_release_host(func);
+> >
+> > @@ -174,20 +180,13 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
+> >   {
+> >       struct sdio_func *func = dev_to_sdio_func(glue->dev);
+> >       struct mmc_card *card = func->card;
+> > -     int error;
+> >
+> >       sdio_claim_host(func);
+> >       sdio_disable_func(func);
+> >       sdio_release_host(func);
+> >
+> >       /* Let runtime PM know the card is powered off */
+> > -     error = pm_runtime_put(&card->dev);
+> > -     if (error < 0 && error != -EBUSY) {
+> > -             dev_err(&card->dev, "%s failed: %i\n", __func__, error);
+> > -
+> > -             return error;
+> > -     }
+> > -
+> > +     pm_runtime_put(&card->dev);
+> >       return 0;
+> >   }
+> >
+> >
+>
+> Just tested on both HiKey (620) and Ultra96 but it fails to fix the issue on
+> both. I'm getting
+>
+> wl1271_sdio: probe of mmc2:0001:1 failed with error -16
+>
+> during boot again, and the interface is not available.
 
-So far not much, I've looked over our mincore() tests and noted down how
-to improve them here:
+Okay, sounds like this may be a different problem then. Can you share
+the complete log and the kernel config?
+I can prepare a debug patch as well, if you are willing to re-run the test?
 
-https://github.com/linux-test-project/ltp/issues/461
+Adding a post-power-on-delay-ms of 1 ms as you suggested [1], doesn't
+sounds like the correct solution to me, unless I am overlooking some
+things. The point is, since the mmc core succeeds to detect and
+initialize the SDIO card, the power sequence seems to be correct.
 
-We do plan to test the final mincore() fix:
+Kind regards
+Uffe
 
-https://github.com/linux-test-project/ltp/issues/460
-
-And we do have RWF_NOWAIT tests on our TODO for some time as well:
-
-https://github.com/linux-test-project/ltp/issues/286
-
-I guess I can raise priority for that one so that we have basic
-functional tests in a week or so. Also if anyone has some RWF_NOWAIT
-tests already it would be nice if these could be shared with us.
-
-
-[A bit off topic rant]
-
-I've been telling kernel developers for years that if they have a test
-code they used when developing a kernel feature that they should share
-it with us (LTP community) and we will turn these into automated tests
-and maintain them for free. LTP is also used in many QA departements
-around the word so such tests will end up executed in different
-environments also for free. Sadly this does not happen much and there
-are only few exceptions so far. But maybe I wasn't shouting loudly
-enough.
-
--- 
-Cyril Hrubis
-chrubis@suse.cz
+[1]
+https://patchwork.kernel.org/patch/10745075/
