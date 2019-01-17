@@ -2,150 +2,99 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE76FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7228CC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A558420855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:22:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyqB5I8u"
+	by mail.kernel.org (Postfix) with ESMTP id 2F7BB20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:26:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547756813;
+	bh=JdvdAGzx5pNUYFjJjXdouqCCX55bICLVqQ4ixl5Me04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HalvMjYVSI27Z4D3262Q+OstKy/HiJnknni9llQ+Yu9tDnctOWpCU/+cTRxJclqWj
+	 bvPfAO+Dcehh92AhK+O+i3FWgQ+b+HQTKEnnPNx1KmVYfPCUrPsOZ+DH5IvWlmwLN9
+	 HrkKz+8ez/CtcWJg16hrJ/SeVde9gegUp6565vPc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbfAQUWi (ORCPT
+        id S1729545AbfAQU0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:22:38 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51169 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729356AbfAQUWh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:22:37 -0500
-Received: by mail-wm1-f66.google.com with SMTP id n190so2451297wmd.0;
-        Thu, 17 Jan 2019 12:22:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=TvIqlaWvOQqsbMKPshcCR2uTFXyMf2wrdRHxcefFmck=;
-        b=kyqB5I8uIVX1SaesrD3AISJ3TSTkP4dpt3omJEoHCa5iVBxgCPKVTBJj63nZ31wAaz
-         SkBxit4oK/9NV02wCuDrqLrPZGhtJP87TT2QWwhrbSWn96mJ3ZD+u3Rfsng+DE19vuWl
-         O5Dm4oPDV5lh8AmObLdTefDScV10GUMD9+7k6eWWZCIK3LhrWsU5jfCUD0cfR3NYi8MK
-         8jmn4m5IRO6yEpFWRR8WmpGteSdDlxe/1pW122+JXvbA3zdI0z6xiY/WtqxVcQ1glrOI
-         Rh32mIoLHqgzTxAtOnHweOnbsmqOvNVpqBFjbi7CUZ9W3yPIvZP0A+1AmYQI6R1oQyhP
-         hkCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=TvIqlaWvOQqsbMKPshcCR2uTFXyMf2wrdRHxcefFmck=;
-        b=N77+uty98ApMXSRcv0Wv7xSpNguIuqBL4oT5IyEcgJ/hZtC1qLi4+5VKFvmUbZisI4
-         UkzP2fFDM+vEzVZFMrgXXmPzxy/tOQTvURc0UkfQWEKB5CbHXisu6pkCJYWMHyLKeLOk
-         +9DB4LPFUEwWn6y+VpokOhLXQfvSBnoVRFmFlKUvR2m6w09gzdXHPP+Lrl9GBKENqWPY
-         jHqef+6t4XL1swaGH/FgmQWvpK2m6aEAzQ71wslyrKUGgetS0l7fowXWzO6gBWzYW7mR
-         /rNJeU98YR1TgyAx/DEwLaem2xpvr+Xr5kz8GhPJjH4Qte7sSrzR7lBPWrfISIbZ8Kka
-         rTPg==
-X-Gm-Message-State: AJcUukd0uPh82M6FoqnDs3+7RNx3g7zKO1aEwfiR+JgcY2ajYfugn8d/
-        PolbMhfbtlacwFEAiN/ZlG4=
-X-Google-Smtp-Source: ALg8bN5aZD1V2HV12Rvogwklru/npDrHQu9PqYnUoh2VZCoyPksmG6W7mHK8jfvMFQv595DlycYPIw==
-X-Received: by 2002:a1c:7a16:: with SMTP id v22mr12148603wmc.131.1547756554167;
-        Thu, 17 Jan 2019 12:22:34 -0800 (PST)
-Received: from [172.30.90.213] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id o4sm76513349wrq.66.2019.01.17.12.22.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 12:22:33 -0800 (PST)
-Subject: Re: [PATCH 1/2] media: imx: csi: Disable CSI immediately after last
- EOF
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20190117201347.27347-1-slongerbeam@gmail.com>
- <20190117201347.27347-2-slongerbeam@gmail.com>
- <CAOMZO5BtS_iLcUH0zO1u_L+jVCena-WzRJgR3NUif7UoxQAYVw@mail.gmail.com>
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-Message-ID: <788352ec-dc51-605f-6ca3-115d1163b0b2@gmail.com>
-Date:   Thu, 17 Jan 2019 12:22:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 17 Jan 2019 15:26:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729365AbfAQU0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 15:26:50 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4DFD20855;
+        Thu, 17 Jan 2019 20:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547756810;
+        bh=JdvdAGzx5pNUYFjJjXdouqCCX55bICLVqQ4ixl5Me04=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0LpKW5+bxSZMhUF2gV3AZhJIEgi/ORZZPhxE4KEdjeYVLD7F2YAQfGWmKaSrIZBTk
+         mIxKC03IELwRYt4b7XpQLOuqTUZu/BOu/UGURit+rh1oDOwobdPZifh6c8pX234o+e
+         NL1obv67KwPUz6koNWeuNp6Jt0DjClBzolzpX5+k=
+Date:   Thu, 17 Jan 2019 15:26:48 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Dexuan-Linux Cui <dexuan.linux@gmail.com>
+Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
+        Adrian Vladu <avladu@cloudbasesolutions.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        apilotti <apilotti@cloudbasesolutions.com>
+Subject: Re: [PATCH] hv_netvsc: fix typos in code comments
+Message-ID: <20190117202648.GD202535@sasha-vm>
+References: <20190103194308.4217-1-avladu@cloudbasesolutions.com>
+ <BN6PR21MB011407C0A4C2EC0BE7A3DB41CA8D0@BN6PR21MB0114.namprd21.prod.outlook.com>
+ <CAA42JLa3QEYg4-LbHem9=7ahSbte3czWAJzxRXiWvt2phxeW_Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5BtS_iLcUH0zO1u_L+jVCena-WzRJgR3NUif7UoxQAYVw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAA42JLa3QEYg4-LbHem9=7ahSbte3czWAJzxRXiWvt2phxeW_Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabio, thanks for the review.
-
-On 1/17/19 12:20 PM, Fabio Estevam wrote:
-> Hi Steve,
+On Wed, Jan 09, 2019 at 01:18:18PM -0800, Dexuan-Linux Cui wrote:
+>On Thu, Jan 3, 2019 at 4:13 PM Haiyang Zhang <haiyangz@microsoft.com> wrote:
+>> > From: Adrian Vladu <avladu@cloudbasesolutions.com>
+>> > Sent: Thursday, January 3, 2019 2:43 PM
+>> > To: linux-kernel@vger.kernel.org
+>> > Cc: Adrian Vladu <avladu@cloudbasesolutions.com>; KY Srinivasan
+>> > <kys@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>; Stephen
+>> > Hemminger <sthemmin@microsoft.com>; Sasha Levin <sashal@kernel.org>;
+>> > David S. Miller <davem@davemloft.net>; apilotti
+>> > <apilotti@cloudbasesolutions.com>
+>> > Subject: [PATCH] hv_netvsc: fix typos in code comments
+>> >
+>> > Fix all typos from hyperv netvsc code comments.
+>> >
+>> > Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+>> >
+>> > Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+>> > Cc: Haiyang Zhang <haiyangz@microsoft.com>
+>> > Cc: Stephen Hemminger <sthemmin@microsoft.com>
+>> > Cc: Sasha Levin <sashal@kernel.org>
+>> > Cc: "David S. Miller" <davem@davemloft.net>
+>> > Cc: "Alessandro Pilotti" <apilotti@cloudbasesolutions.com>
+>> > ---
+>>
+>> Thanks.
+>>
+>> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
 >
-> On Thu, Jan 17, 2019 at 6:15 PM Steve Longerbeam <slongerbeam@gmail.com> wrote:
->> Disable the CSI immediately after receiving the last EOF before stream
->> off (and thus before disabling the IDMA channel).
->>
->> This fixes a complete system hard lockup on the SabreAuto when streaming
->> from the ADV7180, by repeatedly sending a stream off immediately followed
->> by stream on:
->>
->> while true; do v4l2-ctl  -d4 --stream-mmap --stream-count=3; done
->>
->> Eventually this either causes the system lockup or EOF timeouts at all
->> subsequent stream on, until a system reset.
->>
->> The lockup occurs when disabling the IDMA channel at stream off. Disabling
->> the CSI before disabling the IDMA channel appears to be a reliable fix for
->> the hard lockup.
->>
->> Reported-by: Gaël PORTAY <gael.portay@collabora.com>
->> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> Thanks. Since this fixes a lockup, maybe it is worth adding a Fixes
-> tag and Cc stable?
+>Looks good to me.
 
-Right, forgot. I will do that and resubmit.
+Queued for hyperv-fixes, thank you.
 
-
->
->> ---
->>   drivers/staging/media/imx/imx-media-csi.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
->> index e18f58f56dfb..9218372cb997 100644
->> --- a/drivers/staging/media/imx/imx-media-csi.c
->> +++ b/drivers/staging/media/imx/imx-media-csi.c
->> @@ -681,6 +681,8 @@ static void csi_idmac_stop(struct csi_priv *priv)
->>          if (ret == 0)
->>                  v4l2_warn(&priv->sd, "wait last EOF timeout\n");
->>
->> +       ipu_csi_disable(priv->csi);
->> +
->>          devm_free_irq(priv->dev, priv->eof_irq, priv);
->>          devm_free_irq(priv->dev, priv->nfb4eof_irq, priv);
->>
->> @@ -793,11 +795,10 @@ static void csi_stop(struct csi_priv *priv)
->>                  /* stop the frame interval monitor */
->>                  if (priv->fim)
->>                          imx_media_fim_set_stream(priv->fim, NULL, false);
->> +       } else {
->> +               ipu_csi_disable(priv->csi);
->>          }
->> -
->> -       ipu_csi_disable(priv->csi);
->>   }
->> -
-> Unneeded line removal.
-
-Will fix.
-
-Steve
-
+--
+Thanks,
+Sasha
