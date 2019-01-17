@@ -2,96 +2,100 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E031DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EC7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3E6420868
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:39:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 538F720855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:40:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DXn+8lMr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbfAQTjN (ORCPT
+        id S1728801AbfAQTkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:39:13 -0500
-Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:46528 "EHLO
-        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726821AbfAQTjN (ORCPT
+        Thu, 17 Jan 2019 14:40:24 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:34047 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728454AbfAQTkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:39:13 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp16.blacknight.com (Postfix) with ESMTPS id 70C4B1C2E59
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 19:39:11 +0000 (GMT)
-Received: (qmail 1433 invoked from network); 17 Jan 2019 19:39:11 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 17 Jan 2019 19:39:11 -0000
-Date:   Thu, 17 Jan 2019 19:39:09 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 20/25] mm, compaction: Reduce unnecessary skipping of
- migration target scanner
-Message-ID: <20190117193909.GO27437@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-21-mgorman@techsingularity.net>
- <8e310c2a-5f2e-ee99-24c5-10a71972699a@suse.cz>
+        Thu, 17 Jan 2019 14:40:23 -0500
+Received: by mail-ua1-f65.google.com with SMTP id c24so3901714uak.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 11:40:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hyUCyCnHBmSBfMUjqgdfF7JKmw7FO8Zu5HTtKTOIlAc=;
+        b=DXn+8lMr7ZyqZ1mNa2UzpSkDvP1lAmIq959QGxufJw8urRV5KGiUOdkGLRcR9n6V86
+         /3CJT5OATJyt2lgt+CWLMsQ51Lhnjx0/o4iQ9Zg/+/Gg/2jkRfpcui7jaLkrs7+sKQiP
+         q/b/tttwbPFz4emiQDosx2FWZqVGfLQza2Db0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hyUCyCnHBmSBfMUjqgdfF7JKmw7FO8Zu5HTtKTOIlAc=;
+        b=HaHIbCcdfIxY7sK4B2vm/cAC8e3e9jE1OqK+7BSMvjjNut8rqNqHS/db7HT0Dj/Vu7
+         OE+hU/pRyIe7T0aiIaDTD79A1B/UII1rlCyJdPjAMecHfj+oibpRZtKcjGoIdax+jt10
+         /1+vJ+ot0aL/a8GFBU4Sq8YAjgqYcxb9/CwxivNksTX0qph2ygxEWtVvjroTsSCgn+kx
+         Bryvd5+j9k5AgdN3ZREwolHBks4iDMSl0tw+Uz1RBrNUwBYQ12Ua1zXUqj5Km1B7yN4n
+         hjXvdEzBfb7H1nu2I9Z9FbmB/X1ogjLInhwTtOjnQdD+7j9+9fnootR2SQowLbI25kKt
+         Altw==
+X-Gm-Message-State: AJcUukdM+bAiOcDrpxg/amgHYviFCKNHbEPtmJsipMcN8AYWwaQCnKUe
+        Jvg8h8KSINyIxskKN18NyUUWQD626+o=
+X-Google-Smtp-Source: ALg8bN6KdGYEWav+uEqDdGmf2EeGmhr73SWqQbewLnwdNO4eHjuMwegpFgebEbGdzJL5f4yfX8HLgQ==
+X-Received: by 2002:ab0:3402:: with SMTP id z2mr6352404uap.6.1547754022795;
+        Thu, 17 Jan 2019 11:40:22 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id d7sm21299435vke.12.2019.01.17.11.40.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 11:40:22 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id y27so6998923vsi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 11:40:21 -0800 (PST)
+X-Received: by 2002:a67:1505:: with SMTP id 5mr6210138vsv.20.1547754021603;
+ Thu, 17 Jan 2019 11:40:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <8e310c2a-5f2e-ee99-24c5-10a71972699a@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190117192955.16515-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20190117192955.16515-1-bjorn.andersson@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 17 Jan 2019 11:40:09 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WyR3g=uhPtOnr6bx6RkktsRMKt4V9KfoHxJiMOVb4dQQ@mail.gmail.com>
+Message-ID: <CAD=FV=WyR3g=uhPtOnr6bx6RkktsRMKt4V9KfoHxJiMOVb4dQQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Fix lpasscc reg
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 06:58:30PM +0100, Vlastimil Babka wrote:
-> On 1/4/19 1:50 PM, Mel Gorman wrote:
-> > The fast isolation of pages can move the scanner faster than is necessary
-> > depending on the contents of the free list. This patch will only allow
-> > the fast isolation to initialise the scanner and advance it slowly. The
-> > primary means of moving the scanner forward is via the linear scanner
-> > to reduce the likelihood the migration source/target scanners meet
-> > prematurely triggering a rescan.
-> 
-> Maybe I've seen enough code today and need to stop, but AFAICS the description
-> here doesn't match the actual code changes? What I see are some cleanups, and a
-> change in free scanner that will set pageblock skip bit after a pageblock has
-> been scanned, even if there were pages isolated, while previously it would set
-> the skip bit only if nothing was isolated.
-> 
+Hi,
 
-The first three hunks could have been split out but it wouldn't help
-overall. Maybe a changelog rewrite will help;
 
-mm, compaction: Reduce premature advancement of the migration target scanner
+On Thu, Jan 17, 2019 at 11:30 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> Fix up the lpasscc address and size, missed during the conversion to
+> address- and size-cells of 2.
+>
+> Reported-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>
+> This goes ontop of my pull request to Andy available until it's picked up at:
+> https://github.com/andersson/kernel/commits/for-andy/arm64-for-5.1
+>
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The fast isolation of free pages allows the cached PFN of the free
-scanner to advance faster than necessary depending on the contents
-of the free list. The key is that fast_isolate_freepages() can update
-zone->compact_cached_free_pfn via isolate_freepages_block().  When the
-fast search fails, the linear scan can start from a point that has skipped
-valid migration targets, particularly pageblocks with just low-order
-free pages. This can cause the migration source/target scanners to meet
-prematurely causing a reset.
+Looks fine.
 
-This patch starts by avoiding an update of the pageblock skip information
-and cached PFN from isolate_freepages_block() and puts the responsibility
-of updating that information in the callers. The fast scanner will update
-the cached PFN if and only if it finds a block that is higher than the
-existing cached PFN and sets the skip if the pageblock is full or nearly
-full. The linear scanner will update skipped information and the cached
-PFN only when a block is completely scanned. The total impact is that
-the free scanner advances more slowly as it is primarily driven by the
-linear scanner instead of the fast search.
-
-Does that help?
-
--- 
-Mel Gorman
-SUSE Labs
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
