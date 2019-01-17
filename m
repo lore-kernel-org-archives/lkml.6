@@ -2,123 +2,130 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD197C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD70C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9BB620652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:36:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547739396;
-	bh=t2FBn0J/BcupMwYzFMIBEh3ZJ9ldVENzDMZtzpN5Q0Y=;
-	h=Date:From:To:Subject:List-ID:From;
-	b=I1ikoSxp1QRSImL9fgQtDBQjNsFybp08M0vP1ZnrnBXD81r81c8ugQrB6XfYICJ3N
-	 atEhEi4HMxg1XJ1Rt+DC64CTSIbRl1zE2tGe3P4PdY7PPf9QKL4wfopwnB/iiwpCIZ
-	 My/q+M/IjbvL+LBRwTWwZq2XQp/kwJ4ryrt/AlA0=
+	by mail.kernel.org (Postfix) with ESMTP id 98F8D20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfAQPge (ORCPT
+        id S1727716AbfAQPhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:36:34 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46986 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfAQPge (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:36:34 -0500
-Received: by mail-qk1-f196.google.com with SMTP id q1so6186995qkf.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 07:36:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ng2CIeLikQVApX6+ZAVaiSUGIm+YtUIYnDD+RTA5Fv0=;
-        b=rZzJXXWJuK3QDnAH2vhh8Ff0B8rdUgvSHYyg3aOk6r7FMWRIwK4hfTyMonyiR5p+Ze
-         DEdLm2li3B4ctUayanU7tTwg8kotXtcWPvDmZE8YM2YYPrhP7YrgUWW/YSbuXdqXAGSh
-         h6CyGY+NZt6J4G4UyP9TIVDvALb00+lvlVxRXkB/rAS5dX7blWH7WBHKBUHbyWHzhwSi
-         wIzZeg1lv0ALfqMBEKXvJ+H7drf871mAuLs9S5YTOvvt7LM11lYl7V61qCrNv3FcPqN6
-         KeWZFXRHgRibWn2/SuERoCvMjSuhILEsWszyaPbL3qdiF9fg+U/Wpa14pG1FoIKIvKOl
-         wQVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=ng2CIeLikQVApX6+ZAVaiSUGIm+YtUIYnDD+RTA5Fv0=;
-        b=K7akbOZWJNHHfqRSrc7uWI12TIIgZ4i9E8pbxZ7zGec/j4emVungWklMqsaE5zc6O7
-         tD8WHjQ+BhW7ZhRdiQt5QbJu6sMqEjr7tYS2+s6wmjrBfuEDL+bRM7tYGpbMzWe9vk7l
-         YuodiIxZml7zaRRK1cirRUsn08WM6J47rQVSbb/44ijXbkFGezL53ENz3X1T0rFrWr4Q
-         tCrDv5YwHv42Ybk562LazIKxDgi52ysk+y0VB8EmSgvNAfFF/RJIG72W1yDdb+17PKoX
-         CUXf9fP3b4BcffzsAHthffpZ+zVmKwneYm3TFKO0TGhdH7eDd9X0tiOn8isNvyGgJi9C
-         Mp2Q==
-X-Gm-Message-State: AJcUukfPgnb0eDY8fnIeomU3dc2OUbXztGoLs4FckQH54HN7Qx9qUJKI
-        lRYUQT73vyN6Pfqy1KGNbCp72Pd9HDUGsQ==
-X-Google-Smtp-Source: ALg8bN5so0x/vPKn4Xbrv5GxLsNQv86kHBPI41NTpdTMHWMeRhLYa+Eu2WLYJG3JU6URLC0M6dAneA==
-X-Received: by 2002:a37:8383:: with SMTP id f125mr11254225qkd.49.1547739392917;
-        Thu, 17 Jan 2019 07:36:32 -0800 (PST)
-Received: from localhost.localdomain (198-0-156-163-static.hfc.comcastbusiness.net. [198.0.156.163])
-        by smtp.gmail.com with ESMTPSA id y12sm66368662qta.13.2019.01.17.07.36.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 07:36:32 -0800 (PST)
-Date:   Thu, 17 Jan 2019 10:36:30 -0500
-From:   Konrad Rzeszutek Wilk <konrad@kernel.org>
-To:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        hch@lst.de
-Subject: [GIT PULL] (swiotbl) tiny fix for 5.0rc2
-Message-ID: <20190117153629.GA24883@localhost.localdomain>
+        Thu, 17 Jan 2019 10:37:36 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41980 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725928AbfAQPhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:37:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F39F7EBD;
+        Thu, 17 Jan 2019 07:37:35 -0800 (PST)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9CB1E3F694;
+        Thu, 17 Jan 2019 07:37:34 -0800 (PST)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        morten.rasmussen@arm.com, Dietmar.Eggemann@arm.com
+Subject: [PATCH 0/5] sched/fair: NOHZ cleanups and misfit improvement
+Date:   Thu, 17 Jan 2019 15:34:06 +0000
+Message-Id: <20190117153411.2390-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In
 
---lrZ03NoBR/3+SXJZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  commit 5fbdfae5221a ("sched/fair: Kick nohz balance if rq->misfit_task_load")
 
-Hey Linus,
+was added a trigger for nohz kicks, which is required to offload misfit tasks
+from LITTLE to big CPUs. However, those kicks could be issued a lot more
+frequently than what is strictly needed.
 
-Please pull a tiny fix for v5.0-rc2:
+This patch-set brings some unrelated nohz code cleanups, and tunes down
+unneeded nohz kicks.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb.git stable/for-linus-5.0
+- Patches [1-3] do some cleaning up of the current nohz code
+- Patches [4-5] tweak the nohz kick conditions for asymmetric systems
+  
+* Testing
+** kick_ilb() hits
+  This causes a large reduction in calls to kick_ilb() (and thus subsequent
+  rescheduling interrupts & useless nohz balance calls) in most scenarios.
 
-This fixes an issue with GPU cards not working anymore with the DMA
-mapping work Christopher did - as the SWIOTLB is initialized first
-and then free-ed (as IOMMU is available) but we forgot to clear our
-start and end entries which are used and BOOM.
+  The "best case" one is running NR_BIG_CPUS big tasks, which I tested with
+  4 50% periodic tasks running for 5 seconds on my HiKey960 (4x4 big.LITTLE):
 
-Thank you!
+  | CPU | hits (baseline) | hits (patchset) |
+  |-----+-----------------+-----------------|
+  |   0 |              31 |              41 |
+  |   1 |              21 |               3 |
+  |   2 |              35 |               2 |
+  |   3 |               9 |               4 |
+  |-----+-----------------+-----------------|
+  |   4 |             170 |               4 |
+  |   5 |             573 |               4 |
+  |   6 |             544 |               4 |
+  |   7 |             579 |               4 |
 
- kernel/dma/swiotlb.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-Christoph Hellwig (1):
-      swiotlb: clear io_tlb_start and io_tlb_end in swiotlb_exit
+  Something a bit less idealistic with NR_CPUS-1 big tasks still shows some
+  improvements (7 100% tasks running for 5 seconds on my HiKey960):
 
+  | CPU | hits (baseline) | hits (patchset) |
+  |-----+-----------------+-----------------|
+  |   0 |              14 |             122 |
+  |   1 |              47 |             162 |
+  |   2 |              11 |             156 |
+  |   3 |               9 |               3 |
+  |-----+-----------------+-----------------|
+  |   4 |              53 |               6 |
+  |   5 |             276 |              13 |
+  |   6 |             312 |               7 |
+  |   7 |             250 |              11 |
 
---lrZ03NoBR/3+SXJZ
-Content-Type: application/pgp-signature; name="signature.asc"
+  I was surprised to see such an increase in calls to kick_ilb() from LITTLE
+  CPUs ([0-3]), but after a bit of investigation it turns out that the big
+  CPUs would always run nohz_balancer_kick() a jiffy before the LITTLEs, so
+  the LITTLEs would always bail out because nohz.next_balance had just been
+  updated before they called nohz_balancer_kick(). IOW,
 
------BEGIN PGP SIGNATURE-----
+      time_before(now, nohz.next_balance)
 
-iQIcBAEBAgAGBQJcQKD9AAoJEFKlDoTx2wm/tUAQAJYB2CaPd09ddhCw0X/WZCWD
-wX3/ERgkCLHfcE7+5bc5U5l+BFJHUqkozCCtsqgLA2qUKfo9WJoiem2dk8lTVZcC
-4V4GVo7O/ViA8mT+emiNJe44ncYtGwwD92ewVZH1XLXk/0TMfMxiXAu7/Dmu0L8i
-WcbpPqZDe1gkwe8TDp9hYKTd8xfre6ILiYPgxT8zV1uj2FzGE1oV18u2nHY08qi6
-S7qjfgjMN8f37CKEtbXJcgRPay+oPsP9zi8j0tFwfwAKexEd4oCwnaYSyyDYFy3i
-iHXkUEiMycbBPh1kLIwnwLPFQDSkppTVX48EJwpVqrrpxsfAh4h31+4vuIKjj1pM
-vg6yo4yobYvc5j3FdS8ZDetRJjvbQjjqQ8YjrABevavE9xHJ9CBY5o0rfR04PYZG
-4i3BXzFWMhRBcHSEjvvK2SbCVJYIVbCKbclzmKITwxJZ2bf26GYpeL2n+ZbB2ySX
-xqHQCscJagt1juQQ3dbd8lFR1tXNkHCy2mqSWOcql/AZdc0ocrta6ygMVF+JyTNI
-4bIslFc0t8M1tuSx8uJvrwmDUqFHIHiyC7hmgfHUzyKsZmmAS+s1azJqNgLDEDvc
-je8aRIb3gcUpqdmgdQoErNu148zUHkoBBuDoRjPfrB00smco7PPC4H+kL8qrLoK3
-TIhZOP9s2ImnR71uC1cC
-=fZZ9
------END PGP SIGNATURE-----
+  would always be true on CPUs [0-3] during my workload. Quieting the kicks
+  issued by the big CPUs allowed the LITTLEs to execute nohz_balancer_kick()
+  past that condition, explaining the higher number of kicks issued from LITTLE
+  CPUs.
+  
+** misfit behaviour
+  For good measure I also ran the usual misfit tests [1] which showed no
+  particular change.
 
---lrZ03NoBR/3+SXJZ--
+* Notes
+
+  Since patch 05 introduces yet another label in kick_nohz_balancer(),
+  I benchmarked splitting its "slowpath"  (all of the rcu derefs) into
+  its own function and didn't find any real overhead. If folks don't
+  hate the idea I can add it to a v2 or post it separately.
+
+[1]: https://github.com/ARM-software/lisa/blob/next/lisa/tests/kernel/scheduler/misfit.py
+
+Valentin Schneider (5):
+  sched/fair: Use for_each_cpu_and for asym-packing nohz kicks
+  sched/fair: Explain LLC nohz kick condition
+  sched/fair: Prune nohz_balancer_kick() comment block
+  sched/fair: Tune down misfit nohz kicks
+  sched/fair: Skip LLC nohz logic for asymmetric systems
+
+ kernel/sched/fair.c | 62 ++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 44 insertions(+), 18 deletions(-)
+
+--
+2.20.1
+
