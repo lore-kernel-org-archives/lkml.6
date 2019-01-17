@@ -2,87 +2,93 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D505C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CF2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B932320855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:47:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7146C20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:48:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="h894TA//"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="Si7xZ42f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfAQLrl (ORCPT
+        id S1726943AbfAQLsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:47:41 -0500
-Received: from mail-eopbgr730087.outbound.protection.outlook.com ([40.107.73.87]:5363
+        Thu, 17 Jan 2019 06:48:47 -0500
+Received: from mail-eopbgr730051.outbound.protection.outlook.com ([40.107.73.51]:42112
         "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725878AbfAQLrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:47:40 -0500
+        id S1726795AbfAQLsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:48:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pItHEkGyIIyAwVayZDZqHtDjpORukdahsGJYf0ekpDU=;
- b=h894TA//Xy1LscMZ+8qK3q1HgdHRR9FfzqBG/1H1UhUrhu+hXvPjqUb0MEIck1ubMEXgzkrFcYIndM4szYLWoQo80TLO96reFXVjQ8mB0ENcI723zu9WTYWowFkyj41eQjGOSUdR110owe2qcKY/4IlT9btcDeEQ6Fb2E+OH38Y=
+ bh=tbSMYOkeriWMJEf0JSYikrKue1BwrM4qc0jxH11UCUo=;
+ b=Si7xZ42fMXKhSacCBtemrr9WSd4jM2s2G6SFqM+FdsUjMLdZ6Z5i9lflGn9LiBSyPlQEu4dNuGJLQQhll9U1lnL2Wn+HlzHA5syBgfXx/D1Ca245KmAJ5CYWUwun/1OThLMjeY6FCzMlc8WOM+zEaOw48CQBFMXqMxYuId4w9pM=
 Received: from DM6PR12MB2844.namprd12.prod.outlook.com (20.176.117.96) by
  DM6PR12MB2619.namprd12.prod.outlook.com (20.176.116.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.19; Thu, 17 Jan 2019 11:47:36 +0000
+ 15.20.1516.19; Thu, 17 Jan 2019 11:48:44 +0000
 Received: from DM6PR12MB2844.namprd12.prod.outlook.com
  ([fe80::c40:929a:abab:308d]) by DM6PR12MB2844.namprd12.prod.outlook.com
  ([fe80::c40:929a:abab:308d%3]) with mapi id 15.20.1516.019; Thu, 17 Jan 2019
- 11:47:35 +0000
+ 11:48:44 +0000
 From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-CC:     "joro@8bytes.org" <joro@8bytes.org>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+To:     "joro@8bytes.org" <joro@8bytes.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         "Singh, Brijesh" <brijesh.singh@amd.com>
-Subject: [PATCH v2] iommu/amd: Fix IOMMU page flush when detach all devices
+Subject: Re: [PATCH] iommu/amd: Fix IOMMU page flush when detach all devices
  from a domain
-Thread-Topic: [PATCH v2] iommu/amd: Fix IOMMU page flush when detach all
- devices from a domain
-Thread-Index: AQHUrlpwnx8bCgNNzkO0cNUxOunOMQ==
-Date:   Thu, 17 Jan 2019 11:47:35 +0000
-Message-ID: <20190117114714.126410-1-Suravee.Suthikulpanit@amd.com>
+Thread-Topic: [PATCH] iommu/amd: Fix IOMMU page flush when detach all devices
+ from a domain
+Thread-Index: AQHUrVI/ylqJsNQGs0C49TFTH04R5KWx458AgAALuQCAADJSAIABBWMAgAAzdwA=
+Date:   Thu, 17 Jan 2019 11:48:44 +0000
+Message-ID: <d5d1e325-cbbd-487a-66b9-8723c505ec02@amd.com>
+References: <20190116041546.3541-1-Suravee.Suthikulpanit@amd.com>
+ <20190116132648.i5n3hz3k7d2wxbrx@8bytes.org>
+ <60c24182-c58e-0575-b085-c7eebc00c49b@amd.com>
+ <20190116170852.GD4681@8bytes.org>
+ <0a61c07d-edfe-2738-380d-33d39e40fc0a@amd.com>
+In-Reply-To: <0a61c07d-edfe-2738-380d-33d39e40fc0a@amd.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 x-originating-ip: [124.121.4.136]
-x-clientproxiedby: SG2PR06CA0208.apcprd06.prod.outlook.com
- (2603:1096:4:68::16) To DM6PR12MB2844.namprd12.prod.outlook.com
+x-clientproxiedby: SG2PR0302CA0016.apcprd03.prod.outlook.com
+ (2603:1096:3:2::26) To DM6PR12MB2844.namprd12.prod.outlook.com
  (2603:10b6:5:45::32)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR12MB2619;20:Wa8ejE15O6YjxUGRKsxwX1YCuA7TRCEAreQzULrHKk7dPLzRsYtj7YkFISez4C1l4xgLpQ3H0acs1Cb6pIvqaRiyoxWKB+lH9qrcaj3j+csspeeMbljWj+/tHGZJfBbG/GTJAcMGyM9BNmBW+nPErPDYXqlOQA1HoAtEPY5KZx+cvC5zQSbg8KSZcypFJJrxbIlxle+A4PqKatdlodvVCvMWaqFTLUZlXB5SvE3Eu5PANKySTH4Gd4HKC+uyw1kS
-x-ms-office365-filtering-correlation-id: 724c8a50-8028-4622-650e-08d67c7192d8
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB2619;20:TwwE1teHXxx8WG0lDBINFIm6OHXTC/mRR0sghsYFpU2Se/G5+BpP6V1SXl+kEMwD/Bat6lx4DvQleA9d9abWm74pbhko+gDpqiiXJDlhIgyA7i4J/1hkyh5H/0ewRERiVpsQzQlo4paFlLl1qSFZ5W0JVAaUxFOZmslcHp0NMDSZlr0DDeSF3GY+TCCD7njtLqRKf6BvfhwKajm5js0cmmgcxzAF/D4j17Q3wWmQbs30ZQobd+C8weEQOeUgZmBL
+x-ms-office365-filtering-correlation-id: 7cc054fb-080c-43c9-f960-08d67c71bbf1
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB2619;
 x-ms-traffictypediagnostic: DM6PR12MB2619:
-x-microsoft-antispam-prvs: <DM6PR12MB2619F222EC32F5FE19D55AE7F3830@DM6PR12MB2619.namprd12.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM6PR12MB26198558FCA49ACEF409931EF3830@DM6PR12MB2619.namprd12.prod.outlook.com>
 x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(346002)(136003)(376002)(189003)(199004)(66066001)(36756003)(99286004)(81166006)(81156014)(8676002)(7736002)(6436002)(106356001)(8936002)(105586002)(305945005)(1076003)(2616005)(2906002)(476003)(50226002)(6512007)(486006)(53936002)(6486002)(4326008)(6506007)(25786009)(26005)(186003)(14454004)(68736007)(478600001)(386003)(102836004)(5660300001)(71200400001)(316002)(97736004)(256004)(72206003)(5024004)(14444005)(71190400001)(86362001)(54906003)(110136005)(2501003)(52116002)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2619;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(346002)(136003)(376002)(189003)(199004)(65806001)(65956001)(66066001)(1730700003)(36756003)(99286004)(81166006)(81156014)(93886005)(8676002)(7736002)(6436002)(106356001)(8936002)(105586002)(305945005)(2616005)(11346002)(2906002)(446003)(229853002)(2351001)(476003)(31686004)(6512007)(486006)(6246003)(5640700003)(53936002)(6486002)(4326008)(6506007)(25786009)(65826007)(26005)(186003)(76176011)(14454004)(68736007)(478600001)(386003)(102836004)(5660300001)(71200400001)(316002)(97736004)(64126003)(256004)(72206003)(31696002)(5024004)(58126008)(71190400001)(86362001)(54906003)(2501003)(52116002)(6916009)(6116002)(3846002)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2619;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: erEsdnKenTGaQVrm7ZwuRJhxv8ulVLQYlvJEbaNTiJ6jPuMoWzI1UHagkoeqcoVqfiR8kEQORCzjpBSHHZg+RFhADJxsPEJ8eR5epNHgYcnmr5Ronjsa4cW9X7oOophhy/gAR/hfuLXTK37PUuG0cjeM4iaLZXJdsbzWV9IRgC7EcpbnyfmSJMvIDiF6Aaq7CD/r9Xnvp/zu27gg02l0Kkj1wb6PMphDEmatg1z392Zli2azyFKr/0Y/2iimKl1JRzWdR9InCNHZ4ieuTdjFB15xoVzh/vWAbIc1KSRcyf9eoUt89i5UdUbXdlxJgfmaNKX3laOfV50wvu51EgfbNooFCdUjIdaLoyYpBMq0iuE67XZwB3SmOajIAIre8OV0XngfcgF0LV+x2jusrHcXo5Ahl3JOpdbKGa2N4y98rPY=
+x-microsoft-antispam-message-info: qnFAn5PwoxbCy03ANdcV7dco8Je+22xAvJebu1Ale6dO5vvqS9ugzvRpttEKAv8fPCYjzoXsHvLKZOwUcjYQRaobjvVKsg/crGq2z+Xk+yMPoGsOtLI7eVO9TXhOA9KpxM5wJN/fYyKsWIB+LdAuPFYHskX1mK5QHxdVrkFv/9Sf1Pq0hsbpB62OPB9Nj0BB7MtGpPS5WZhneOA88BY1tKCwkhTbyyIFdQG/z/qPeoVXfr8cJiiI33W3xYOQLAcuhVC3PpofNTPoBApR6xcW1L3UOj9/+wT1u0mor7rm77Kf/LnI2tLAvx5AGKKtkk+WU0nHOcDH+4opxj/MRBesxiYNpkxNdEhK/8AfPU0WkoUog8BYpPn6VpsPnA1QUCjY7ZIa7pwMlD4NvRndAL17EfE+koR1PddspsIMmkbcp/c=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E65043004400F14F8E5630B4CD67589E@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 724c8a50-8028-4622-650e-08d67c7192d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 11:47:33.4744
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cc054fb-080c-43c9-f960-08d67c71bbf1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 11:48:42.7099
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
@@ -92,141 +98,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-
-When a VM is terminated, the VFIO driver detaches all pass-through
-devices from VFIO domain by clearing domain id and page table root
-pointer from each device table entry (DTE), and then invalidates
-the DTE. Then, the VFIO driver unmap pages and invalidate IOMMU pages.
-
-Currently, the IOMMU driver keeps track of which IOMMU and how many
-devices are attached to the domain. When invalidate IOMMU pages,
-the driver checks if the IOMMU is still attached to the domain before
-issuing the invalidate page command.
-
-However, since VFIO has already detached all devices from the domain,
-the subsequent INVALIDATE_IOMMU_PAGES commands are being skipped as
-there is no IOMMU attached to the domain. This results in data
-corruption and could cause the PCI device to end up in indeterministic
-state.
-
-Fix this by introducing IOMMU domain states attached, detached,
-and free. Then only issuing the IOMMU pages invalidate command when
-domain is in attached and detached states.
-
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- drivers/iommu/amd_iommu.c       | 25 ++++++++++++++++++++-----
- drivers/iommu/amd_iommu_types.h |  8 +++++++-
- 2 files changed, 27 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 525659b88ade..1c64a26c50fb 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -1248,7 +1248,14 @@ static void __domain_flush_pages(struct protection_d=
-omain *domain,
- 	build_inv_iommu_pages(&cmd, address, size, domain->id, pde);
-=20
- 	for (i =3D 0; i < amd_iommu_get_num_iommus(); ++i) {
--		if (!domain->dev_iommu[i])
-+		/*
-+		 * We issue the command only when the domain is
-+		 * in ATTACHED and DETACHED state. This is required
-+		 * since VFIO detaches all devices from the group
-+		 * before invalidating IOMMU pages. Please see
-+		 * vfio_iommu_type1_detach_group().
-+		 */
-+		if (domain->dev_iommu[i] =3D=3D IOMMU_DOMAIN_STATE_FREE)
- 			continue;
-=20
- 		/*
-@@ -1292,7 +1299,8 @@ static void domain_flush_complete(struct protection_d=
-omain *domain)
- 	int i;
-=20
- 	for (i =3D 0; i < amd_iommu_get_num_iommus(); ++i) {
--		if (domain && !domain->dev_iommu[i])
-+		if (domain &&
-+		    domain->dev_iommu[i] < IOMMU_DOMAIN_STATE_ATTACHED)
- 			continue;
-=20
- 		/*
-@@ -1978,8 +1986,11 @@ static void do_attach(struct iommu_dev_data *dev_dat=
-a,
- 	list_add(&dev_data->list, &domain->dev_list);
-=20
- 	/* Do reference counting */
--	domain->dev_iommu[iommu->index] +=3D 1;
--	domain->dev_cnt                 +=3D 1;
-+	if (domain->dev_iommu[iommu->index] < IOMMU_DOMAIN_STATE_ATTACHED)
-+		domain->dev_iommu[iommu->index] =3D IOMMU_DOMAIN_STATE_ATTACHED;
-+	else
-+		domain->dev_iommu[iommu->index] +=3D 1;
-+	domain->dev_cnt +=3D 1;
-=20
- 	/* Update device table */
- 	set_dte_entry(dev_data->devid, domain, ats, dev_data->iommu_v2);
-@@ -2904,6 +2915,7 @@ static int protection_domain_init(struct protection_d=
-omain *domain)
-=20
- static struct protection_domain *protection_domain_alloc(void)
- {
-+	int i;
- 	struct protection_domain *domain;
-=20
- 	domain =3D kzalloc(sizeof(*domain), GFP_KERNEL);
-@@ -2915,6 +2927,9 @@ static struct protection_domain *protection_domain_al=
-loc(void)
-=20
- 	add_domain_to_list(domain);
-=20
-+	for (i =3D 0; i < MAX_IOMMUS; i++)
-+		domain->dev_iommu[i] =3D IOMMU_DOMAIN_STATE_FREE;
-+
- 	return domain;
-=20
- out_err:
-@@ -3364,7 +3379,7 @@ static int __flush_pasid(struct protection_domain *do=
-main, int pasid,
- 	 * prevent device TLB refill from IOMMU TLB
- 	 */
- 	for (i =3D 0; i < amd_iommu_get_num_iommus(); ++i) {
--		if (domain->dev_iommu[i] =3D=3D 0)
-+		if (domain->dev_iommu[i] < IOMMU_DOMAIN_STATE_ATTACHED)
- 			continue;
-=20
- 		ret =3D iommu_queue_command(amd_iommus[i], &cmd);
-diff --git a/drivers/iommu/amd_iommu_types.h b/drivers/iommu/amd_iommu_type=
-s.h
-index eae0741f72dc..6d17cdcfa306 100644
---- a/drivers/iommu/amd_iommu_types.h
-+++ b/drivers/iommu/amd_iommu_types.h
-@@ -461,6 +461,12 @@ struct amd_irte_ops;
-=20
- #define AMD_IOMMU_FLAG_TRANS_PRE_ENABLED      (1 << 0)
-=20
-+enum IOMMU_DOMAIN_STATES {
-+	IOMMU_DOMAIN_STATE_FREE =3D -1,
-+	IOMMU_DOMAIN_STATE_DETTACHED,
-+	IOMMU_DOMAIN_STATE_ATTACHED
-+};
-+
- /*
-  * This structure contains generic data for  IOMMU protection domains
-  * independent of their use.
-@@ -480,7 +486,7 @@ struct protection_domain {
- 	unsigned long flags;	/* flags to find out type of domain */
- 	bool updated;		/* complete domain flush required */
- 	unsigned dev_cnt;	/* devices assigned to this domain */
--	unsigned dev_iommu[MAX_IOMMUS]; /* per-IOMMU reference count */
-+	int dev_iommu[MAX_IOMMUS]; /* per-IOMMU domain state and reference count =
-*/
- };
-=20
- /*
---=20
-2.17.1
-
+Sm9lcmcsDQoNCk9uIDEvMTcvMTkgMzo0NCBQTSwgU3VyYXZlZSBTdXRoaWt1bHBhbml0IHdyb3Rl
+Og0KPiBKb2VyZywNCj4gDQo+IE9uIDEvMTcvMTkgMTI6MDggQU0sIGpvcm9AOGJ5dGVzLm9yZyB3
+cm90ZToNCj4+IE9uIFdlZCwgSmFuIDE2LCAyMDE5IGF0IDAyOjA4OjU1UE0gKzAwMDAsIFN1dGhp
+a3VscGFuaXQsIFN1cmF2ZWUgd3JvdGU6DQo+Pj4gQWN0dWFsbHksIEkgYW0gbm90IHN1cmUgaG93
+IHdlIHdvdWxkIGJlIG1pc3NpbmcgdGhlIGZsdXNoIG9uIHRoZSBsYXN0IGRldmljZS4NCj4+PiBJ
+biBteSB0ZXN0LCBJIGFtIHNlZWluZyB0aGUgZmx1c2ggY29tbWFuZCBiZWluZyBpc3N1ZWQgY29y
+cmVjdGx5IGR1cmluZw0KPj4+IHZmaW9fdW5tYXBfdW5waW4oKSwgd2hpY2ggaXMgYWZ0ZXIgYWxs
+IGRldmljZXMgYXJlIGRldGFjaGVkLg0KPj4+IEFsdGhvdWdoLCBJIG1pZ2h0IGJlIG1pc3Npbmcg
+eW91ciBwb2ludCBoZXJlLiBDb3VsZCB5b3UgcGxlYXNlIGVsYWJvcmF0ZT8NCj4+DQo+PiBPa2F5
+LCB5b3UgYXJlIHJpZ2h0LCB0aGUgcGF0Y2ggZWZmZWN0aXZseSBhZGRzIGFuIHVuY29uZGl0aW9u
+YWwgZmx1c2ggb2YNCj4+IHRoZSBkb21haW4gb24gYWxsIGlvbW11cyB3aGVuIHRoZSBsYXN0IGRl
+dmljZSBpcyBkZXRhY2hlZC4gU28gaXQgaXMNCj4+IGNvcnJlY3QgaW4gdGhhdCByZWdhcmQuIEJ1
+dCB0aGF0IGNvZGUgcGF0aCBpcyBhbHNvIHVzZWQgaW4gdGhlDQo+PiBpb21tdV91bm1hcCgpIHBh
+dGguDQo+Pg0KPj4gVGhlIHByb2JsZW0gbm93IGlzLCB0aGF0IHdpdGggeW91ciBjaGFuZ2Ugd2Ug
+c2VuZCBmbHVzaCBjb21tYW5kcyB0byBhbGwNCj4+IElPTU1VcyBpbiB0aGUgdW5tYXAgcGF0aCB3
+aGVuIG5vIGRldmljZSBpcyBhdHRhY2hlZCB0byB0aGUgZG9tYWluLg0KPj4gVGhpcyB3aWxsIGh1
+cnQgcGVyZm9ybWFuY2UgdGhlcmUsIG5vPw0KPj4NCj4+IFJlZ2FyZHMsDQo+Pg0KPj4gwqDCoMKg
+wqBKb2VyZw0KPj4NCj4gDQo+IFNvdW5kcyBsaWtlIHdlIG5lZWQgYSB3YXkgdG8gdHJhY2sgc3Rh
+dGUgb2YgZWFjaCBJT01NVSBmb3IgYSBkb21haW4uDQo+IFdoYXQgaWYgd2UgZGVmaW5lIHRoZSBm
+b2xsb3dpbmc6DQo+IA0KPiAgwqAgZW51bSBJT01NVV9ET01BSU5fU1RBVEVTIHsNCj4gIMKgwqDC
+oCBET01BSU5fRlJFRSA9IC0xLA0KPiAgwqDCoMKgIERPTUFJTl9ERVRBQ0hFRCA9IDAsDQo+ICDC
+oMKgwqAgRE9NQUlOX0FUVEFDSEVEID49IDENCj4gIMKgIH0NCj4gDQo+IFdlIHNob3VsZCBiZSBh
+YmxlIHRvIHVzZSB0aGUgZGV2X2lvbW11W10gdG8gaGVscCB0cmFjayB0aGUgc3RhdGUuDQo+ICDC
+oMKgwqAgLSBJbiBhbWRfaW9tbXVfZG9tYWluX2FsbG9jLCB3ZSBpbml0aWFsaXplIHRoZSBhcnJh
+eSB0byBET01BSU5fRlJFRQ0KPiAgwqDCoMKgIC0gSW4gZG9fYXR0YWNoKCksIHdlIGNoYW5nZSB0
+byBET01BSU5fQVRUQUNIIG9yIHdlIGNhbiBpbmNyZW1lbnQgdGhlIGNvdW50DQo+ICDCoMKgwqDC
+oMKgIGlmIGl0IGlzIGFscmVhZHkgaW4gRE9NQUlOX0FUVEFDSCBzdGF0ZS4NCj4gIMKgwqDCoCAt
+IEluIGRvX2RldGFjaCgpLiB3ZSBjaGFuZ2UgdG8gRE9NQUlOX0RFVEFDSC4NCj4gDQo+IFRoZW4s
+IGluIF9fZG9tYWluX2ZsdXNoX3BhZ2VzLCB3ZSBpc3N1ZSBjb21tYW5kIHdoZW4gdGhlIGRldl9p
+b21tdVtdID49IDAuDQo+IFRoaXMgc2hvdWxkIHByZXNlcnZlIHByZXZpb3VzIGJlaGF2aW9yLCBh
+bmQgb25seSBhZGQgZmx1c2hpbmcgY29uZGl0aW9uIHRvDQo+IHRoZSBzcGVjaWZpYyBJT01NVSBp
+biBkZXRhY2hlZCBzdGF0ZS4gUGxlYXNlIGxldCBtZSBrbm93IHdoYXQgeW91IHRoaW5rLg0KPiAN
+Cj4gUmVnYXJkcywNCj4gU3VyYXZlZQ0KDQpCeSB0aGUgd2F5LCBJIGp1c3Qgc2VudCBWMiBvZiB0
+aGlzIHBhdGNoIHNpbmNlIGl0IG1pZ2h0IGJlIG1vcmUgY2xlYXIuDQoNClJlZ2FyZHMsDQpTdXJh
+dmVlDQo=
