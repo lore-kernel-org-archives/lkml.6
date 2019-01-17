@@ -2,175 +2,151 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DCDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D830CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E78120851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:11:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="YM2kqrve"
+	by mail.kernel.org (Postfix) with ESMTP id B199A20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfAQRLN (ORCPT
+        id S1726993AbfAQRL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:11:13 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37245 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725967AbfAQRLM (ORCPT
+        Thu, 17 Jan 2019 12:11:27 -0500
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:47252 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725878AbfAQRL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:11:12 -0500
-Received: by mail-pg1-f193.google.com with SMTP id c25so4715900pgb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 09:11:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UqfVIg7yFjrTzWvVaXbwKW1bCMZ7k6hvwzPZ7Gi3uzc=;
-        b=YM2kqrvesE06nwhDJHOupevX1TSY629WTBKZJnr7CwPZWu0rv/bKG5Cwbd26qVjguj
-         aPzCSnCWaXJG/zdRpinCKYM38uPIiAE/2l17hxIWGgIRc0qR+UAmVFxcsSTkjIgzRIxS
-         0J4J0+ohoUF8ilC/KOIKSj6jJ1NDj4Xfcj+nAQTfitS/B6jLZuyQjPKr3oyDeB+nyKCV
-         qPVPwOvugcQl0znIeDLUX0Tm5mEgBhAunRScOh7jhZVYiGTXsIE/LyAkLM2Fte/+PP+S
-         RgnKhso4uD9Dd12kHzEpJ9/hiTGllR50uv1PD3C+JOmLYk1gxFSWFjfc8W+2aJaJJXN4
-         XemQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UqfVIg7yFjrTzWvVaXbwKW1bCMZ7k6hvwzPZ7Gi3uzc=;
-        b=oGLdLglIpd2BkB4Wpp2/XBayNXXiuDBlf6PSRHNwppQi5M4Yi0XjYWeCag8eJz2pNc
-         Nhm7J1Wl2u/Mwa1nA3sAGN+Ayr/Xwd4sPhGiTeCGTm2G3+/grNGG273TdjgD1Zx5tKxT
-         nQ3JcVMUwKeG+SxVDTmKYtmPUwS2Illa+xIUV9o+qafwLczbdyBcBdLwgFGGopZjYbWO
-         n/iOqjrZFgPl9QiucV5Gxjo/gCgGgMX/2O+Ngzspp39Aby5VxyJPWcUU9y5giSMghPjp
-         FwvX2ZrTgBZLDHHyEoD/Ee878r1oSc0rZPNc0kbNx5BDr3PN86AwHcEaEabhJN9QJeA8
-         c1tQ==
-X-Gm-Message-State: AJcUukf9J0nguPgDMqNZq0BFxfbmLN9U5NNP0nVWDUlrrtHJCODTsiMe
-        cmgdWZ2bQfK0ptv5ikXf3tDyUg==
-X-Google-Smtp-Source: ALg8bN6tOi2nqSk7pXeOn47gLx17P5dNb8OvExKWp0QqXfhQPouqGigKhzh4L5O+CLa5rMhEWbraMw==
-X-Received: by 2002:aa7:84d3:: with SMTP id x19mr15601015pfn.220.1547745071406;
-        Thu, 17 Jan 2019 09:11:11 -0800 (PST)
-Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id k24sm4032961pfj.13.2019.01.17.09.11.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 09:11:11 -0800 (PST)
-Date:   Thu, 17 Jan 2019 09:11:03 -0800
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     kimbrownkd <kimbrownkd@gmail.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] Drivers: hv: vmbus: Expose counters for interrupts
- and full conditions
-Message-ID: <20190117091019.1fb0c186@hermes.lan>
-In-Reply-To: <KU1P153MB0166DA6E76D0080C4AD43E01BF830@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
-References: <20190105043518.GA4072@ubu-Virtual-Machine>
-        <20190117043759.GA3395@ubu-Virtual-Machine>
-        <KU1P153MB0166DA6E76D0080C4AD43E01BF830@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
+        Thu, 17 Jan 2019 12:11:26 -0500
+Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
+        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id 157071C2B47
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 17:11:24 +0000 (GMT)
+Received: (qmail 11962 invoked from network); 17 Jan 2019 17:11:23 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 17 Jan 2019 17:11:23 -0000
+Date:   Thu, 17 Jan 2019 17:11:22 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 15/25] mm, compaction: Finish pageblock scanning on
+ contention
+Message-ID: <20190117171122.GK27437@techsingularity.net>
+References: <20190104125011.16071-1-mgorman@techsingularity.net>
+ <20190104125011.16071-16-mgorman@techsingularity.net>
+ <ab29ee0b-6b01-c57e-7d7d-de540f06ce07@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <ab29ee0b-6b01-c57e-7d7d-de540f06ce07@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> +static ssize_t channel_intr_in_full_show(const struct vmbus_channel
-> *channel,
-> +					 char *buf)
-> +{
-> +	return sprintf(buf, "%llu\n", channel->intr_in_full);
-> +}
-
-
-intr_in_full is u64, which is not the same as unsigned long long.
-to be correct you need a cast here.
-
-> > diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-> > index dcb6977afce9..7e5239123276 100644
-> > --- a/include/linux/hyperv.h
-> > +++ b/include/linux/hyperv.h
-> > @@ -751,6 +751,27 @@ struct vmbus_channel {
-> >  	u64	interrupts;	/* Host to Guest interrupts */
-> >  	u64	sig_events;	/* Guest to Host events */
+On Thu, Jan 17, 2019 at 05:38:36PM +0100, Vlastimil Babka wrote:
+> > rate but also by the fact that the scanners do not meet for longer when
+> > pageblocks are actually used. Overall this is justified and completing
+> > a pageblock scan is very important for later patches.
 > > 
-> > +	/* Interrupt counts for 2 types of Guest to Host interrupts */
-> > +	u64 intr_in_full;	/* in ring buffer, full to not full */
-> > +	u64 intr_out_empty;	/* out ring buffer, empty to not empty */
-> > +
-> > +	/*
-> > +	 * The total number of write operations that encountered a full
-> > +	 * outbound ring buffer.
-> > +	 */
-> > +	u64 out_full_total;
-> > +	/*
-> > +	 * The number of write operations that were the first to encounter a
-> > +	 * full outbound ring buffer.
-> > +	 */
-> > +	u64 out_full_first;
+> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> 
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> 
+> Some comments below.
+> 
 
-Adding more fields changes cache layout which can cause
-additional cache miss in the hot path.  
+Thanks
 
-> > +	/*
-> > +	 * Indicates that a full outbound ring buffer was encountered. The flag
-> > +	 * is set to true when a full outbound ring buffer is encountered and
-> > +	 * set to false when a write to the outbound ring buffer is completed.
-> > +	 */
-> > +	bool out_full_flag;
+> > @@ -538,18 +535,8 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+> >  		 * recheck as well.
+> >  		 */
+> >  		if (!locked) {
+> > -			/*
+> > -			 * The zone lock must be held to isolate freepages.
+> > -			 * Unfortunately this is a very coarse lock and can be
+> > -			 * heavily contended if there are parallel allocations
+> > -			 * or parallel compactions. For async compaction do not
+> > -			 * spin on the lock and we acquire the lock as late as
+> > -			 * possible.
+> > -			 */
+> > -			locked = compact_trylock_irqsave(&cc->zone->lock,
+> > +			locked = compact_lock_irqsave(&cc->zone->lock,
+> >  								&flags, cc);
+> > -			if (!locked)
+> > -				break;
+> 
+> Seems a bit dangerous to continue compact_lock_irqsave() to return bool that
+> however now always returns true, and remove the safety checks that test the
+> result. Easy for somebody in the future to reintroduce some 'return false'
+> condition (even though the name now says lock and not trylock) and start
+> crashing. I would either change it to return void, or leave the checks in place.
+> 
 
-Discussion on kernel mailing list. Recommends against putting bool
-in structures since that pads to full sizeof(int).  Could this be
-part of a bitfield?
+I considered changing it from bool at the same time as "Rework
+compact_should_abort as compact_check_resched". It turned out to be a
+bit clumsy because the locked state must be explicitly updated in the
+caller then. e.g.
 
-> >  	/* Channel callback's invoked in softirq context */
-> >  	struct tasklet_struct callback_event;
-> >  	void (*onchannel_callback)(void *context);
-> > @@ -936,6 +957,23 @@ static inline void *get_per_channel_state(struct
-> > vmbus_channel *c)
-> >  static inline void set_channel_pending_send_size(struct vmbus_channel *c,
-> >  						 u32 size)
-> >  {
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&c->outbound.ring_lock, flags);
-> > +
-> > +	if (size) {
-> > +		++c->out_full_total;
-> > +
-> > +		if (!c->out_full_flag) {
-> > +			++c->out_full_first;
-> > +			c->out_full_flag = true;
-> > +		}
-> > +	} else {
-> > +		c->out_full_flag = false;
-> > +	}
-> > +
-> > +	spin_unlock_irqrestore(&c->outbound.ring_lock, flags);
+locked = compact_lock_irqsave(...)
 
-If this is called often, the additional locking will impact performance.
+becomes
 
-> >  	c->outbound.ring_buffer->pending_send_sz = size;
-> >  }
+compact_lock_irqsave(...)
+locked = true
+
+I didn't think the result looked that great to be honest but maybe it's
+worth revisiting as a cleanup patch like "Rework compact_should_abort as
+compact_check_resched" on top.
+
 > > 
+> > @@ -1411,12 +1395,8 @@ static void isolate_freepages(struct compact_control *cc)
+> >  		isolate_freepages_block(cc, &isolate_start_pfn, block_end_pfn,
+> >  					freelist, false);
+> >  
+> > -		/*
+> > -		 * If we isolated enough freepages, or aborted due to lock
+> > -		 * contention, terminate.
+> > -		 */
+> > -		if ((cc->nr_freepages >= cc->nr_migratepages)
+> > -							|| cc->contended) {
+> 
+> Does it really make sense to continue in the case of free scanner, when we know
+> we will just return back the extra pages in the end? release_freepages() will
+> update the cached pfns, but the pageblock skip bit will stay, so we just leave
+> those pages behind. Unless finishing the block is important for the later
+> patches (as changelog mentions) even in the case of free scanner, but then we
+> can just skip the rest of it, as truly scanning it can't really help anything?
+> 
 
-Could I propose another alternative.
+Finishing is important for later patches is one factor but not the only
+factor. While we eventually return all pages, we do not know at this
+point in time how many free pages are needed. Remember the migration
+source isolates COMPACT_CLUSTER_MAX pages and then looks for migration
+targets.  If the source isolates 32 pages, free might isolate more from
+one pageblock but that's ok as the migration source may need more free
+pages in the immediate future. It's less wasteful than it looks at first
+glance (or second or even third glance).
 
-It might be more useful to count the guest to host interaction events
-rather than the ring buffer.
+However, if we isolated exactly enough targets, and the pageblock gets
+marked skipped, then each COMPACT_CLUSTER_MAX isolation from the target
+could potentially marge one new pageblock unnecessarily and increase
+scanning+resets overall. That would be bad.
 
-For example the number of calls to:
-	vmbus_set_event which means host exit call
-	vmbus_setevent fastpath using sync_set_bit
-	calls to rinbuffer_write that returned -EAGAIN
+There still can be waste because we do not know in advance exactly how
+many migration sources there will be -- sure, we could calculate it but
+that involves scanning the source pageblock twice which is wasteful.
+I did try estimating it based on the remaining number of pages in the
+pageblock but the additional complexity did not appear to help.
 
-These would require less locking, reuse existing code paths
-and not require additional state.
+Does that make sense?
 
+-- 
+Mel Gorman
+SUSE Labs
