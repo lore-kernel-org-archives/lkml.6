@@ -2,118 +2,168 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD43C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91EDC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93BC520657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79BAE20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547725285;
+	bh=VEaLXnem8vi+0muEJ5D96zBV5gIm1vLaygwY1Yq/O/U=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=nfZa6dtpXkfUv6y6JUX7yrdpc2qSv4kdPr7f/Ar+Zi7CE3A/viISpQyB4SUNhBMOO
+	 luirxOjHAaajLZDmiAnQN18Vw6WFVx5+393IBhN02CGrkiE48wwptxV1Y3PygnOv8v
+	 v0DdsY/9Vt/MAzi+WBkImCL2v6d8YeO3EuR2i4VQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbfAQLlU convert rfc822-to-8bit (ORCPT
+        id S1728761AbfAQLlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 17 Jan 2019 06:41:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728475AbfAQLlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 Jan 2019 06:41:20 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:37844 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728454AbfAQLlT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:41:19 -0500
-Received: from mail-pl1-f200.google.com ([209.85.214.200])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gk62u-0004My-W5
-        for linux-kernel@vger.kernel.org; Thu, 17 Jan 2019 11:41:17 +0000
-Received: by mail-pl1-f200.google.com with SMTP id v12so5875077plp.16
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 03:41:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IPxrqQnKcrHuHratqjWNtQBiUH385900csiixktheXo=;
-        b=dLCiyBIT90YPopiAdG8ra+zmlhREdQ0sqIwSyZXfGpzhUkl2cGPYA+mpHY6QusuIQL
-         wMWY7E18G/n5eDc7BqYr2qsgbC49LX8La/Cxjz/AoD2Z4BEw0HwhZhWGar1U91j5vaTZ
-         3wQtT+715zMKhwH7+P00GvevCKuYqpMl3/wcYKNr1c1IRBrLdysQZc/H3oM7fcAw4taC
-         +erzZ8Xua02KywVMlp7k8Gz5bBiPjrKxx1GL4aO02lm/4FiLK4U05MazZLUnAk+XH4qM
-         MqfdFCvfC6ZDryV6LlDJ8Q7TgWITqYhZK0r2IBgswsUmvxL20/zIDxYmuM9O+dWWJjou
-         iKYQ==
-X-Gm-Message-State: AJcUukeh0MW++11+99BGRVL/0UHtFkKXfqmQJUFxJ+yQTVMV+tdOVYZd
-        Bzsy7/2f7qW9OCLSuvvq9etgabtcHfK5wed7x9vqCyxf4Y9XrOSkBqFBASKHevQtNlQam6zyGxY
-        LPnNc0K+w/V56V+TQ9vs/8uZufFsPReIpODlHX+IzLQ==
-X-Received: by 2002:a62:46d0:: with SMTP id o77mr14670188pfi.172.1547725275469;
-        Thu, 17 Jan 2019 03:41:15 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN6209Tcv0xZ5TSPJykZW8lETjgv2V9A7fiYF5C+PqAoHlHyuliQKNG9BJBHlzszv/LaExuILA==
-X-Received: by 2002:a62:46d0:: with SMTP id o77mr14670171pfi.172.1547725275192;
-        Thu, 17 Jan 2019 03:41:15 -0800 (PST)
-Received: from 2001-b011-380f-13aa-ed95-5ef5-fa2b-0d58.dynamic-ip6.hinet.net (2001-b011-380f-13aa-ed95-5ef5-fa2b-0d58.dynamic-ip6.hinet.net. [2001:b011:380f:13aa:ed95:5ef5:fa2b:d58])
-        by smtp.gmail.com with ESMTPSA id y71sm2970806pfi.123.2019.01.17.03.41.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 03:41:14 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] HID: i2c-hid: Disable runtime PM on Goodix touchpad
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAO-hwJLHm8b6X9kX1myz7xx1992VW2tVjdn6xw2n1MVX2dn0=g@mail.gmail.com>
-Date:   Thu, 17 Jan 2019 19:41:12 +0800
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <1897F291-4EB4-4E4B-87AA-3C16EF321340@canonical.com>
-References: <20190114084734.3362-1-kai.heng.feng@canonical.com>
- <nycvar.YFH.7.76.1901141217550.6626@cbobk.fhfr.pm>
- <663EE74C-02E8-49DB-A197-2022AFE2D863@canonical.com>
- <2149AEF5-ABBF-4745-89F9-7FF9719251B5@canonical.com>
- <CAO-hwJLHm8b6X9kX1myz7xx1992VW2tVjdn6xw2n1MVX2dn0=g@mail.gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F50520855;
+        Thu, 17 Jan 2019 11:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547725279;
+        bh=VEaLXnem8vi+0muEJ5D96zBV5gIm1vLaygwY1Yq/O/U=;
+        h=Date:From:To:Cc:Subject:From;
+        b=zbMlSoFz46iTDuUuM/j/3Uhr7xYaJvE/IQrKhnIsqBEanxMw4gAuyHu6hBnGxaSud
+         fH6czWxpE2yFz+jKhSn8KS6zgTEdjlnQb8TS6GAxqQCSg4yr5400SmFGTaErbR1esr
+         nqw/z2jIb1aUXtjZqq3DKK3v1Y+i0N6KOQMvR7/M=
+Date:   Thu, 17 Jan 2019 12:41:17 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.9.151
+Message-ID: <20190117114117.GA2003@kroah.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
+Content-Disposition: inline
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On Jan 17, 2019, at 16:06, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
-> 
-> On Thu, Jan 17, 2019 at 6:02 AM Kai-Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
-[snipped]
->> Goodix says the firmware needs at least 60ms to fully respond ON and
->> SLEEP command.
-> 
-> I was about to say that this is not conformant to the specification.
-> But looking at 7.2.8 SET_POWER of
-> https://docs.microsoft.com/en-us/previous-versions/windows/hardware/design/dn642101(v=vs.85)
-> 
-> They say:
-> "The DEVICE must ensure that it transitions to the HOST specified
-> Power State in under 1 second. "
-> But in the RESPONSE paragraph: "The DEVICE shall not respond back
-> after receiving the command. The DEVICE is mandated to enter that
-> power state imminently."
-> 
-> My interpretation was always that the device has to be in a ready
-> state for new commands "immediately".
-> However, the first sentence may suggest that the driver would block
-> any command to the device before the 1 second timestamp.
-> 
->> 
->> I’ll see if an 200ms autosuspend can solve all Goodix, LG and Raydium
->> touchpanels.
-> 
-> We already have a I2C_HID_QUIRK_DELAY_AFTER_SLEEP quirk that delay
-> operations after sleep by 20ms. Maybe we can keep the runtime PM but
-> use the same timers to not confuse the hardware.
+I'm announcing the release of the 4.9.151 kernel.
 
-Yes, but wouldn’t use pm_*_autosuspend() helpers can both solve the issue
-and make the code more cleaner?
+All users of the 4.9 kernel series must upgrade.
 
-Kai-Heng
+The updated 4.9.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.9.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-> 
-> Cheers,
-> Benjamin
+thanks,
 
+greg k-h
+
+------------
+
+ Makefile                           |    2 +-
+ drivers/acpi/power.c               |   22 ++++++++++++++++++++++
+ drivers/block/rbd.c                |    9 ++++-----
+ drivers/i2c/i2c-dev.c              |    6 ++++++
+ drivers/usb/class/cdc-acm.c        |    7 +++++++
+ drivers/usb/core/quirks.c          |    3 ++-
+ drivers/usb/storage/scsiglue.c     |    8 ++++++--
+ drivers/usb/storage/unusual_devs.h |   12 ++++++++++++
+ fs/cifs/file.c                     |    8 ++++----
+ fs/cifs/smb2file.c                 |    4 ++--
+ fs/cifs/transport.c                |    2 +-
+ fs/ext4/inline.c                   |    6 +++---
+ fs/ext4/inode.c                    |    3 ++-
+ fs/ext4/super.c                    |    2 +-
+ include/linux/sunrpc/svc.h         |    5 ++++-
+ mm/slab.c                          |    6 ++++--
+ mm/util.c                          |    2 +-
+ net/sunrpc/svc.c                   |    9 ++++++---
+ net/sunrpc/svc_xprt.c              |    5 +++--
+ net/sunrpc/svcsock.c               |    2 +-
+ sound/pci/hda/patch_realtek.c      |   16 +++++++++++++++-
+ 21 files changed, 107 insertions(+), 32 deletions(-)
+
+Christoph Lameter (1):
+      slab: alien caches must not be initialized if the allocation of the alien cache failed
+
+Daniele Palmas (1):
+      usb: cdc-acm: send ZLP for Telit 3G Intel based modems
+
+Greg Kroah-Hartman (1):
+      Linux 4.9.151
+
+Hans de Goede (1):
+      ACPI: power: Skip duplicate power resource references in _PRx
+
+Icenowy Zheng (2):
+      USB: storage: don't insert sane sense for SPC3+ when bad sense specified
+      USB: storage: add quirk for SMI SM3350
+
+Ilya Dryomov (1):
+      rbd: don't return 0 on unmap if RBD_DEV_FLAG_REMOVING is set
+
+Jack Stocker (1):
+      USB: Add USB_QUIRK_DELAY_CTRL_MSG quirk for Corsair K70 RGB
+
+Jan Stancek (1):
+      mm: page_mapped: don't assume compound page is huge or THP
+
+Kailang Yang (1):
+      ALSA: hda/realtek - Disable headset Mic VREF for headset mode of ALC225
+
+Pavel Shilovsky (1):
+      CIFS: Do not hide EINTR after sending network packets
+
+Ross Lagerwall (1):
+      cifs: Fix potential OOB access of lock element array
+
+Theodore Ts'o (3):
+      ext4: make sure enough credits are reserved for dioread_nolock writes
+      ext4: fix a potential fiemap/page fault deadlock w/ inline_data
+      ext4: avoid kernel warning when writing the superblock to a dead device
+
+Vasily Averin (1):
+      sunrpc: use-after-free in svc_process_common()
+
+Yi Zeng (1):
+      i2c: dev: prevent adapter retries and timeout being set as minus value
+
+
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlxAad0ACgkQONu9yGCS
+aT7fTw/8Cwk12kVXhoUGcVf7J6CULS/MV/H1WogS/X199qFLiPRwPVjL/i9Qh5SJ
+Cq2kSjBL5qtnVJNFfBPftLNWpqde2Tsl7OVDnWUtrvtKDo/muHjxWP8kwvYSytMT
+Q3TTlvAmcxU98vuAuqcFl6mBuJmtIkaanogAVXgppver2d2dUADuhB1/BLtzaQsY
+dH4Ke+JxoHI0GhhQjLFx4+ZdKX6/MCRpXjvmaGrfJMUhz/jv3vBOQV5Y7A1BB3MV
+uJVRmbnn8pGSqNTcXXivFS6PPkZeXVEyGDqaH9DzUGSWQVCxCtto0PJrzY30tPUG
+3sEla15J6JLMUfZ68hjQBwyZE426Tsf/HJmyM6/UplM7d0SzjM/VQ1vpqcZ//Rz3
+GfeLhbECYKWLk1fB78Ouufj1wmDnEpwZ6ABSY6D7igWZkIQVG/2qXImICShHWKRW
+4bHxKO0UocG59Ecb1rlubfJMwwT6VX8jdi3St5KxsruKzjucbsqOlSPfMi9SDQsy
+K4bLtRsYLnIfEnSjVSgSe5pfX9Va+nk9qxihdVpHongDOaRTAuecRa2RZWQNOKuf
+UagOhLQKaFnV6te3Eu6trkHE437K707raVXHmG/m2Q5O+++4I4U+vnS7FAlHxwSU
+jLZ40TxQJWcRYNQ3SY9SzbT7fPcBWvjhyEWVi1BKRXarVRENJ5I=
+=J76a
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
