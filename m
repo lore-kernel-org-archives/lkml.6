@@ -2,73 +2,92 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38854C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0E5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0986420651
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:49:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7339D205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 01:57:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="O6YOuPxe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbfAQBte (ORCPT
+        id S1726941AbfAQB5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 20:49:34 -0500
-Received: from nautica.notk.org ([91.121.71.147]:48628 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbfAQBtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 20:49:33 -0500
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 8A919C009; Thu, 17 Jan 2019 02:49:31 +0100 (CET)
-Date:   Thu, 17 Jan 2019 02:49:16 +0100
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190117014916.GA10968@nautica>
-References: <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
- <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com>
- <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
- <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
- <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
- <20190116054613.GA11670@nautica>
- <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
- <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm>
- <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
- <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
+        Wed, 16 Jan 2019 20:57:21 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37120 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbfAQB5V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 20:57:21 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t33so9663042qtt.4;
+        Wed, 16 Jan 2019 17:57:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8hf+ofgSsRS5t45iZYlUrALq0LlHYKreLgUYHny3V58=;
+        b=O6YOuPxeg9LSor66Vb6PPawvMjF+bLGkWqJ3eH1LliKIo+5jbgmzK2QN7P8qPI0ykA
+         6kCu17SfTW+GGVNd7oTN4WLLpejkNd5bWVBcf4ug947rp4wz+SnMhnBCEcdun09QRJBu
+         Loe9vvYMEdeOypnNyLG6ZUkq4x2KJPrNiAm8U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8hf+ofgSsRS5t45iZYlUrALq0LlHYKreLgUYHny3V58=;
+        b=apJ/nR/vKUCp4OhyqiqhRvZY2RiFUCdAXlkwY7FCPXG+SrBULZSWThMTcbGUPcH0ZI
+         gElogHQla2hi/qQuHAUMOCSQu7Pn+NrjSSzY6M28hUZQCWhc307u/WhmdzFzSe4gDEvV
+         Jg6BnB+tKMgBkdGz7E58mVVfD0qSN4K/R33TKo0tkRqn3/tp903O+ycFiuBaSpaGa1Bi
+         Pf3d+9kAErRMNw6hVUPysnmX/LSQRFcMkmKzl8s7K4VffdUdYwvRet1GFfDtReNxt8v6
+         /rs/pOV+lm0vKRBiIdEOFhjJ0ULsxYLQl6szuzP+jDuwnDa16xqfK9Ljuk8Bu9e+FJ6S
+         Icyg==
+X-Gm-Message-State: AJcUukcj7LL8OMRLEyEWJUt29pAZmr4577we/T/BRbgK8hfAlaPQ0KOc
+        FEcf7JD1cpNy8pFLVh1Lsu6+DyxmnGvTa16mKaxeKg==
+X-Google-Smtp-Source: ALg8bN61lhbNxFwc1ARjGAmnrnKs2Mbk9pynH7KNswSOG0TKqsaJVyiLI67+wVdcAgOc5AHNnQAx9H4f84v7bYQVm4M=
+X-Received: by 2002:a0c:e789:: with SMTP id x9mr9533669qvn.245.1547690240331;
+ Wed, 16 Jan 2019 17:57:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <cover.1546918172.git.xiaoting.liu@hxt-semitech.com> <a7b5fa54198e7fd0def33de3e7db36239a2e3da7.1546918172.git.xiaoting.liu@hxt-semitech.com>
+In-Reply-To: <a7b5fa54198e7fd0def33de3e7db36239a2e3da7.1546918172.git.xiaoting.liu@hxt-semitech.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Thu, 17 Jan 2019 12:57:08 +1100
+Message-ID: <CACPK8Xdj1Cas8E+141f=ke99REhm-H-pgWE0GBwxXaZ996tCeQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] ARM: dts: dps650ab: add power supply
+To:     Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        shunyong.yang@hxt-semitech.com, linux-aspeed@lists.ozlabs.org,
+        dongsheng.wang@hxt-semitech.com, Andrew Jeffery <andrew@aj.id.au>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jiri Kosina wrote on Wed, Jan 16, 2019:
-> So if noone sees any principal problem there, I'll happily submit it with 
-> proper attribution etc.
+On Thu, 10 Jan 2019 at 13:29, Xiaoting Liu
+<xiaoting.liu@hxt-semitech.com> wrote:
+>
+> Add Delta Electronics power supply DPS-650-AB.
+>
+> Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+> ---
+> v3:
+>   Modify patch subject and commit message.
+>   Add delta to compatible property.
+> ---
+> v2:
+>   No change.
 
-I'm not convinced just the write permission check is enough for
-mincore(), as Josh also seems to share the concern I raised (e.g. map a
-git directory "hot" pages)
-We probably need to add an inode_owner_or_capable() or similar, the open
-question is do we still need the write access check after that - I don't
-really know how expensive these calls are.
+I tweaked the commit message to mention the board you were applying
+to. Applied to the aspeed tree for 5.1.
 
 Thanks,
--- 
-Dominique
+
+Joel
