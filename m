@@ -2,106 +2,127 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B14C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D736EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E3692054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:28:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 974552054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbfAQL2N (ORCPT
+        id S1729087AbfAQL2Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:28:13 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:34886 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728877AbfAQL2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:28:11 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E9B52207B2; Thu, 17 Jan 2019 12:28:08 +0100 (CET)
-Received: from localhost (build.bootlin.com [163.172.53.213])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C03E42074E;
-        Thu, 17 Jan 2019 12:28:08 +0100 (CET)
-Date:   Thu, 17 Jan 2019 12:21:50 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     ayaka <ayaka@soulik.info>
-Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
-        linux-kernel@vger.kernel.org, tfiga@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, posciak@chromium.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        nicolas.dufresne@collabora.com,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] media: uapi: Add H264 low-level decoder API
- compound controls.
-Message-ID: <20190117112150.qfzqjdmrqpcjqvnh@flea>
-References: <20181115145650.9827-1-maxime.ripard@bootlin.com>
- <20181115145650.9827-2-maxime.ripard@bootlin.com>
- <20190108095228.GA5161@misaki.sumomo.pri>
- <2149617a-6a36-4c0b-26c9-7fdfee9da9c9@soulik.info>
- <2e734dd6-d459-9990-61fe-27301df35ff7@soulik.info>
+        Thu, 17 Jan 2019 06:28:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40446 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729010AbfAQL2O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:28:14 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HBOs8T072256
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 06:28:12 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2nt0raxp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 06:28:12 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 17 Jan 2019 11:28:10 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 11:28:07 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HBS6IU56950948
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 17 Jan 2019 11:28:06 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3510BA4057;
+        Thu, 17 Jan 2019 11:28:06 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 77880A404D;
+        Thu, 17 Jan 2019 11:28:05 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.236])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 17 Jan 2019 11:28:05 +0000 (GMT)
+Date:   Thu, 17 Jan 2019 13:28:03 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Michal Hocko <mhocko@suse.com>, rppt@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Subject: Re: [PATCH] arch/arm/mm: Remove duplicate header
+References: <20190107172805.GA8462@jordon-HP-15-Notebook-PC>
+ <CAFqt6zbbXvpEEH2rNnLCBpNxEjK3YwNS1kYkyFPBhG7uvsHE1A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oqkbl2a7clijvahv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2e734dd6-d459-9990-61fe-27301df35ff7@soulik.info>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAFqt6zbbXvpEEH2rNnLCBpNxEjK3YwNS1kYkyFPBhG7uvsHE1A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19011711-0020-0000-0000-00000307B493
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011711-0021-0000-0000-00002158D5AE
+Message-Id: <20190117112803.GC3710@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=935 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 17, 2019 at 04:53:44PM +0530, Souptick Joarder wrote:
+> On Mon, Jan 7, 2019 at 10:54 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > Remove duplicate headers which are included twice.
+> >
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
---oqkbl2a7clijvahv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+ 
+> Any comment on this patch ?
+> 
+> > ---
+> >  arch/arm/mm/mmu.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> > diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+> > index f5cc1cc..dde3032 100644
+> > --- a/arch/arm/mm/mmu.c
+> > +++ b/arch/arm/mm/mmu.c
+> > @@ -23,7 +23,6 @@
+> >  #include <asm/sections.h>
+> >  #include <asm/cachetype.h>
+> >  #include <asm/fixmap.h>
+> > -#include <asm/sections.h>
+> >  #include <asm/setup.h>
+> >  #include <asm/smp_plat.h>
+> >  #include <asm/tlb.h>
+> > @@ -36,7 +35,6 @@
+> >  #include <asm/mach/arch.h>
+> >  #include <asm/mach/map.h>
+> >  #include <asm/mach/pci.h>
+> > -#include <asm/fixmap.h>
+> >
+> >  #include "fault.h"
+> >  #include "mm.h"
+> > --
+> > 1.9.1
+> >
+> 
 
-Hi,
+-- 
+Sincerely yours,
+Mike.
 
-On Thu, Jan 10, 2019 at 09:33:01PM +0800, ayaka wrote:
-> I forget a important thing, for the rkvdec and rk hevc decoder, it would
-> requests cabac table, scaling list, picture parameter set and reference
-> picture storing in one or various of DMA buffers. I am not talking about =
-the
-> data been parsed, the decoder would requests a raw data.
->=20
-> For the pps and rps, it is possible to reuse the slice header, just let t=
-he
-> decoder know the offset from the bitstream bufer, I would suggest to add
-> three properties(with sps) for them. But I think we need a method to mark=
- a
-> OUTPUT side buffer for those aux data.
-
-I'm not sure this is something we actually want. The whole design
-decision was that we wouldn't have a bitstream parser in the kernel,
-and doing as you suggest goes against that design.
-
-And either if it is something that turns out to be useful, this is
-really out of scope for this series.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---oqkbl2a7clijvahv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEBlTgAKCRDj7w1vZxhR
-xRcgAP0dWriJx8+o1omXhfWzZxnYLft+14hPq2CjUX6JxflfLQEAmPrSaLuuzNxR
-APurR6hH+cGQ0z90Wdyrw41F9LbmnAg=
-=fkam
------END PGP SIGNATURE-----
-
---oqkbl2a7clijvahv--
