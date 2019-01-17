@@ -2,106 +2,93 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 559FDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9725C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2489F20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75E6920851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:17:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sLXvPzaE"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="PZ2OcmJC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfAQXQ3 (ORCPT
+        id S1727054AbfAQXRj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 18:16:29 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41932 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfAQXQ2 (ORCPT
+        Thu, 17 Jan 2019 18:17:39 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:57878 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725981AbfAQXRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 18:16:28 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b7so5563730pfi.8;
-        Thu, 17 Jan 2019 15:16:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z2Qiq0Ed588WGoXnC05hwrw0bSJ0AT21Dhu9rJ7m6Xo=;
-        b=sLXvPzaEhjKQfTb9+vpI/ouwGnfbEkqvdmUaVSgtOBqBud546z2SBrKkj3ZIB8eCjK
-         qFMWnDu/JRVEKjBqWycfD9d8eOuPQs7nQortz2QdluO5dqCJa07e8Z4CohOLuVa0j4NE
-         578RA6TS/I0R4vT2sm6OXewIbWN7G0dcQVApEuy8YtgWWsgMV8nfecyKNVj88ERr7Hut
-         HYb+hgjtwsZV/a5p2ih1fTc9j1dMWYzVMaKW++dpoI7XM5SLOpRV7N1FcCyzlf8vuH6W
-         ggfsJPT7FRAfixAXA8JLT6XKWSQfTrctEAKR9MiWRcskqkm5ehLOCRdSgsxIFsVyKYBJ
-         YwAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z2Qiq0Ed588WGoXnC05hwrw0bSJ0AT21Dhu9rJ7m6Xo=;
-        b=caaOEqOwRb7WDIcmKlxZ+k2OnNCmpJ7IUs9kVdUXR2taAm45lhqn7CLOeixUgdT844
-         G0E0cR0ulinUuCjHDHvwuVfQNhZ+wxk/2bdYP9GI+Y/BjqPat4DEODtGE/ogS3+4c6uq
-         ExTs+p8TvaWFnJBzQQS6uuZjV1eTBICQ9VohoVoTZIewSHPuibf0CWpIAnmAaEG5MRmI
-         MAaAPakhtJjvb62YRsZetk0sSZY8UdXqhQ0U85QgndmcwLlws+fin5zP2AomViFn0Eyq
-         C1TNqFSb+m/JY3adh4VtFBko9uY9NOj9O2vVdpUK8DdU4/wXrLpUTG37I0VfoFXQxTQh
-         IoLA==
-X-Gm-Message-State: AJcUukdDK16XBt7OjqBkGKP4O6mOlATPqyiX1eMSUi8JNcJfnIUUxYJg
-        pI5AkCYAeEjji3GNAoGj5Uc=
-X-Google-Smtp-Source: ALg8bN4leVLb42zsC8U0ccMYFCDWtoLfSKM/fX3V4FAF2HoRLYrIvdDiZ8iMZDvioiEPmeauQaWXVQ==
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr15142445pgh.265.1547766987223;
-        Thu, 17 Jan 2019 15:16:27 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id y6sm5685597pfd.104.2019.01.17.15.16.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 15:16:27 -0800 (PST)
-Date:   Thu, 17 Jan 2019 15:16:22 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     =?iso-8859-1?B?QnL8bnMs?= Stefan <Stefan.Bruens@rwth-aachen.de>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [RFC][PATCH] hwmon: (ina2xx) Improve current and power reading
- precision
-Message-ID: <20190117231622.GA9310@Asurada-Nvidia.nvidia.com>
-References: <20181121012629.5432-1-nicoleotsuka@gmail.com>
- <2863036.QIPGp1Eqjm@sbruens-linux.lcs.intern>
- <20181121194051.GA8902@Asurada-Nvidia.nvidia.com>
- <1717545.GXSegKtrMu@sbruens-linux.lcs.intern>
- <20190105012642.GA18025@Asurada-Nvidia.nvidia.com>
- <20190117223828.GI16918@Asurada-Nvidia.nvidia.com>
- <20190117231323.GB23511@roeck-us.net>
+        Thu, 17 Jan 2019 18:17:38 -0500
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HNEAEN015653
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 15:17:37 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=EW6Ss/Xc6/uYPcEVb35Qc4pfjivpYzKRttF5jugJZbI=;
+ b=PZ2OcmJC/A7vECFi3j3BqFoBiAjowePgvQ12zm6wAKRyJHoROGSfUmaor6A6HvaGxirU
+ iZIavKfpSciHHEC4Ffet/onatkxrD1nv7CeyRxXcXSRYw9UFay6B6/bz2rJ07uW6m3Zc
+ B9D08wDdvL4EB7rLFG4HuwROD5U1HyJcdZY= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2q317a8dg9-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 15:17:37 -0800
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Thu, 17 Jan 2019 15:17:35 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 1AB9C62E214C; Thu, 17 Jan 2019 15:17:32 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH kallsyms, bpf 0/3] kallsym_tree for dynamic ksymbols
+Date:   Thu, 17 Jan 2019 15:17:27 -0800
+Message-ID: <20190117231730.2413466-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117231323.GB23511@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
+This set includes Peter's work to merge multiple trees for different types
+of dynamic kallsyms (BPF, ftrace, etc.). Symbols for BPF programs are
+migrated to use kallsym_tree.
 
-On Thu, Jan 17, 2019 at 03:13:23PM -0800, Guenter Roeck wrote:
+I have made minor changes to Peter's patches, and tested them with BPF
+programs and perf utility.
 
-> I have one claim stating that your change won't make a difference,
-> and your claim that it would. That leaves me with no choice but to
-> spend a large amount of time with the datasheet, and possibly with
-> my evaluation boards, trying to find out who is correct. Unfortunately,
-> time is scarce to come by those days. I would very much prefer for
-> you folks to sort out your differences and present me with a single
-> opinion.
-> 
-> Long term the best solution would really be to replace the hwmon
-> driver with the iio driver and use the iio-hwmon bridge. The ina2xx
-> driver doesn't support limits, so there is no real benefit of using
-> the hwmon driver over the iio driver, at least assuming that the
-> iio driver supports all the attributes. So maybe you should make your
-> case for the changes in the iio driver.
+Thanks,
+Song
 
-Thanks for the input. Let's drop this hwmon change then.
+Peter Zijlstra (3):
+  rbtree_latch: Introduce latch_tree_first() and latch_tree_next()
+  kallsyms: Introduce kallsym_tree for dynamic symbols
+  bpf: migrate symbols for BPF programs to kallsym_tree
+
+ include/linux/bpf.h          |   7 +-
+ include/linux/filter.h       |  42 --------
+ include/linux/kallsyms.h     |  16 +++
+ include/linux/rbtree_latch.h |  54 ++++++++++
+ kernel/bpf/core.c            | 167 ++++-------------------------
+ kernel/events/core.c         |  35 ------
+ kernel/extable.c             |   6 +-
+ kernel/kallsyms.c            | 201 ++++++++++++++++++++++++++++++++---
+ 8 files changed, 281 insertions(+), 247 deletions(-)
+
+--
+2.17.1
