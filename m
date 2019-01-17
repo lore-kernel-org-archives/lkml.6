@@ -2,352 +2,223 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE97FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3370C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A89B620657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:01:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547722870;
-	bh=VN3kgnMKHQGi2eswyorXKOqND9YMEWrVRU8zFhRG4p8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=DZ86YTuveQLYt8G+QF+jv6Xf/fEhS5U0ubVc4jAknsgUIC6/LF2Pgxt7U+p9E0xCY
-	 hqtNawqDv/vMi3T+qiTvbAnCxb0ib+1LXFLK8+mrABP+vlCoFopb0ilE2ZDOds2t5Q
-	 TY8E1AlW5h2vFwj/hj66jql6pM6/KMycaAA/QmDo=
+	by mail.kernel.org (Postfix) with ESMTP id 5CD8F20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:01:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="UsG5fWmx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbfAQLBI (ORCPT
+        id S1728989AbfAQLBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:01:08 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43036 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728908AbfAQLBG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:01:06 -0500
-Received: by mail-oi1-f195.google.com with SMTP id u18so5784904oie.10;
-        Thu, 17 Jan 2019 03:01:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gIA+Ukehi0waRescaoYbJ1AUOp6HQMBv7yTnbtoQPHs=;
-        b=Bko1WE5DmrHm0dWv13mYFMcRA42ZuUL2HkF4CuRFf40PmfmX8opYxSbkWiftbD+Z/5
-         xjFr1HYq/uNNeIgjZDW6S344ru1Dgp+ySyGM65n+pSTqeorE2otyzdQIRmuNcHqUqWyx
-         mW0m7mZyi3bOaIcY3Hbeu0xCMWXxHfr1rUAl+/792oMWj21jejjkuNXTDUnQaJ5IEYDA
-         NtDbFSfCgM4Q9F4+1MhK0leGZJtfieB5ugnJKHAS+7580+UnU9b19JLsDWjCHZy0jaev
-         5qslmUYx3DfDdlBiaA/9sRW20kOfljy9GSzu5sl0+8CsYWJTb6sSk1vUpSB5PGb9NivB
-         bWMA==
-X-Gm-Message-State: AJcUukdIIhecR2kk30zog6JCwLg0HRVweih3E/Piajgnz5AdIsu4UyQQ
-        ApvLs6+6FgFb3qRNcJsZ6SrH6ikc6zfoz44xs8c9hw==
-X-Google-Smtp-Source: ALg8bN7OZT03eKoLNgehBIyi9rWPmEOfBIDWwLN6Ndl9ybgkk9BCn+XDCsztOR5+yAY0s0c8GttNhsJMxR1y+ev59nU=
-X-Received: by 2002:a54:4d01:: with SMTP id v1mr132879oix.246.1547722864498;
- Thu, 17 Jan 2019 03:01:04 -0800 (PST)
+        Thu, 17 Jan 2019 06:01:32 -0500
+Received: from mail-eopbgr790081.outbound.protection.outlook.com ([40.107.79.81]:7635
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728467AbfAQLBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:01:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rDif2KXduD5/frFlPCQNXaOlnxdb4bW134LuH83OVCA=;
+ b=UsG5fWmxs1mxRqFSWwJzifmugLBbpPZ4OmY+xpUHem+is20ctukf4cbzBtGtEEwyDq5S5+4BiM1PbZIzls0hzOh6XJuEcijwfRkTPabmIpeRdLCWmdMjHywkIlc8pegPakDQ3C8375FCXPhVotcE7sTA/rcLpBEjde6SULoOl5w=
+Received: from DM5PR02MB2617.namprd02.prod.outlook.com (10.168.196.7) by
+ DM5PR02MB2634.namprd02.prod.outlook.com (10.168.196.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.24; Thu, 17 Jan 2019 11:01:27 +0000
+Received: from DM5PR02MB2617.namprd02.prod.outlook.com
+ ([fe80::ec13:473a:bffc:b1d3]) by DM5PR02MB2617.namprd02.prod.outlook.com
+ ([fe80::ec13:473a:bffc:b1d3%9]) with mapi id 15.20.1537.018; Thu, 17 Jan 2019
+ 11:01:27 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Romain Perier <romain.perier@gmail.com>
+CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "peterpandong@micron.com" <peterpandong@micron.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [LINUX PATCH v12] mtd: rawnand: pl353: Add basic driver for arm
+ pl353 smc nand interface
+Thread-Topic: [LINUX PATCH v12] mtd: rawnand: pl353: Add basic driver for arm
+ pl353 smc nand interface
+Thread-Index: AQHUmQ4LiiFMPM7qzEydyT81wJBeTaWbuZsAgAAFQPCAB/XcgIAPviPA
+Date:   Thu, 17 Jan 2019 11:01:26 +0000
+Message-ID: <DM5PR02MB2617E518DC7148ABE27A85C4AF830@DM5PR02MB2617.namprd02.prod.outlook.com>
+References: <1533620414-3332-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+ <20181221091750.GA19470@hp-probook-450> <20190102093338.3b4a8c69@xps13>
+ <MWHPR02MB26237BE35B07E8930B5E2AB2AF8C0@MWHPR02MB2623.namprd02.prod.outlook.com>
+ <CABgxDoKgC_oYkKf5hsyDnH6USeqbjSFGV6R4rxpTDAYUiQcBkg@mail.gmail.com>
+In-Reply-To: <CABgxDoKgC_oYkKf5hsyDnH6USeqbjSFGV6R4rxpTDAYUiQcBkg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR02MB2634;6:G/dIF/IzhrSCur8YKjUNZHmJJklG1ZXZC2ZZlM5+wpFhmGTqEgXZwDCYeFtEqHrbPpxPl/53gM16NUFLoxPXDV1TpHyWxXE6L1IVi4dbq/z/GZRs7xgTB+lU6AT/mwD+PylHbiR4EWwa54kNkbyMbVRgohI8ddHhO6EggN1+C0bv6vHXjJU0pPF3g4YUzIFYvs3AnDmF51sY1wj6fWJoAnqk9TgQV0+p806/eHjMUXl27fIbQqeJPFAPxIHn81fGbotbdSScEUhGYStRgy4OasSKn5cgyrSzrUbohUcbRb75zuSzIo3yGiX0hLJtjgm+YvtWGb4Pr92rjMh+55tazxarWKjXM/9SvoW7eblx3rIpK8YK27oJCVKU0DjbAVvfYB9RgXr3Z12AnSIwOb/PXM2b2gkvVHpoQceZqAO69PdBgS8CQAxSuSBczstNvZ7+W55rxOae7izLIwdGE2Qyug==;5:NDeE+RA4NvS7I0dLSdOUlsYWAqmOQc7L8lK2yEEP64slbrQ2UPjmOwxvI0C394Lc0IustgS+yiOFqJXgfLeOw+TU2hm0PG7cvW99yD2GW85rFgQsVi9/AMi7Yagoz1TjdMbEPrFqbWFfy3sGp6vTHqtytLgkUdeo7q4QZTkIEhFHufGiIcyBMfHdA4mbQqtWVQH838fJXOGmjrDe40s/lw==;7:6I4/tEMUAwsfdWLfxivF/PdDvSIuhWGRI6SSgf8OuKZ2KthVpraCGh7AIkkT5mZYO6YcFEUmNrIS+U2gPa/6+vfVbeF3QDxN5ANIBCdTxhbhNXozWNPoy7LuOdBqU46suv89nLRSjNMpJDDlgfQpeA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 4f2830c6-9ec7-4c45-efcc-08d67c6b20bd
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR02MB2634;
+x-ms-traffictypediagnostic: DM5PR02MB2634:
+x-microsoft-antispam-prvs: <DM5PR02MB2634C576359E24D3BC7AC9FDAF830@DM5PR02MB2634.namprd02.prod.outlook.com>
+x-forefront-prvs: 0920602B08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(136003)(346002)(13464003)(129404003)(189003)(199004)(7696005)(39060400002)(186003)(6436002)(256004)(71190400001)(3846002)(316002)(8676002)(66066001)(6116002)(55016002)(5660300001)(54906003)(53546011)(25786009)(11346002)(71200400001)(4326008)(7736002)(26005)(14444005)(53936002)(486006)(68736007)(6246003)(102836004)(476003)(305945005)(446003)(76176011)(9686003)(6506007)(74316002)(93886005)(97736004)(6916009)(8936002)(99286004)(229853002)(2906002)(86362001)(81166006)(81156014)(217873002)(33656002)(66574012)(14454004)(106356001)(105586002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB2634;H:DM5PR02MB2617.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UXK2hXKhr9ME4BLW/tMmTesx+mcWAi5+weOVMkvHv/JFO0ml/8HRjaYjywRuBCSERclsBA6mL0yGJVcFpWDWohyTwVPJ6uw+iiLHc0XRJdlbtUjE+fK5fSIucASVuJlXLO6R7bqtWpWJGpGMPlBy0V5QqyYGBFBvop2BrudVYYiP7KYZEkSecrM5ulS/09paTJ6R2BKIWaHwvQFEkLrqWhBb4rCrMaPZCIen8awQUBWe/Fc8r2Ya/koe78HSFSIpHdGfGznqU2/cEW703cbSi+eVAlmX31ICh9Yjdshkr9TM3OR9jSup/Bw7RkZiK4oiWWLeGGDPjHW6qnA7WAbSFHbDjwmYMrOkL6OHWy4M0RCujZx8ZiP4GZ5QYamDhmTpm5hiuImFrlhsLvw63ijThV88hniaPOJWzjvw23rY70E=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-4-keith.busch@intel.com>
-In-Reply-To: <20190116175804.30196-4-keith.busch@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 17 Jan 2019 12:00:53 +0100
-Message-ID: <CAJZ5v0hEg3V7FoE6arwTTodVQ4uUZNLpwdOpjzh7PjqB3jguGw@mail.gmail.com>
-Subject: Re: [PATCHv4 03/13] acpi/hmat: Parse and report heterogeneous memory
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f2830c6-9ec7-4c45-efcc-08d67c6b20bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 11:01:27.0105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB2634
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
->
-> Systems may provide different memory types and export this information
-> in the ACPI Heterogeneous Memory Attribute Table (HMAT). Parse these
-> tables provided by the platform and report the memory access and caching
-> attributes.
->
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-> ---
->  drivers/acpi/Kconfig       |   1 +
->  drivers/acpi/Makefile      |   1 +
->  drivers/acpi/hmat/Kconfig  |   8 ++
->  drivers/acpi/hmat/Makefile |   1 +
->  drivers/acpi/hmat/hmat.c   | 180 +++++++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 191 insertions(+)
->  create mode 100644 drivers/acpi/hmat/Kconfig
->  create mode 100644 drivers/acpi/hmat/Makefile
->  create mode 100644 drivers/acpi/hmat/hmat.c
->
-> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-> index 90ff0a47c12e..b377f970adfd 100644
-> --- a/drivers/acpi/Kconfig
-> +++ b/drivers/acpi/Kconfig
-> @@ -465,6 +465,7 @@ config ACPI_REDUCED_HARDWARE_ONLY
->           If you are unsure what to do, do not enable this option.
->
->  source "drivers/acpi/nfit/Kconfig"
-> +source "drivers/acpi/hmat/Kconfig"
->
->  source "drivers/acpi/apei/Kconfig"
->  source "drivers/acpi/dptf/Kconfig"
-> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-> index 7c6afc111d76..bff8fbe5a6ab 100644
-> --- a/drivers/acpi/Makefile
-> +++ b/drivers/acpi/Makefile
-> @@ -79,6 +79,7 @@ obj-$(CONFIG_ACPI_PROCESSOR)  += processor.o
->  obj-$(CONFIG_ACPI)             += container.o
->  obj-$(CONFIG_ACPI_THERMAL)     += thermal.o
->  obj-$(CONFIG_ACPI_NFIT)                += nfit/
-> +obj-$(CONFIG_ACPI_HMAT)                += hmat/
-
-Yes, I prefer it to go into a separate directory.
-
-Who do you want to maintain it, me or Dan?
-
->  obj-$(CONFIG_ACPI)             += acpi_memhotplug.o
->  obj-$(CONFIG_ACPI_HOTPLUG_IOAPIC) += ioapic.o
->  obj-$(CONFIG_ACPI_BATTERY)     += battery.o
-> diff --git a/drivers/acpi/hmat/Kconfig b/drivers/acpi/hmat/Kconfig
-> new file mode 100644
-> index 000000000000..a4034d37a311
-> --- /dev/null
-> +++ b/drivers/acpi/hmat/Kconfig
-> @@ -0,0 +1,8 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +config ACPI_HMAT
-> +       bool "ACPI Heterogeneous Memory Attribute Table Support"
-> +       depends on ACPI_NUMA
-> +       help
-> +        Parses representation of the ACPI Heterogeneous Memory Attributes
-> +        Table (HMAT) and set the memory node relationships and access
-> +        attributes.
-
-What about:
-
-"If set, this option causes the kernel to set the memory NUMA node
-relationships and access attributes in accordance with ACPI HMAT
-(Heterogeneous Memory Attributes Table)."
-
-> diff --git a/drivers/acpi/hmat/Makefile b/drivers/acpi/hmat/Makefile
-> new file mode 100644
-> index 000000000000..e909051d3d00
-> --- /dev/null
-> +++ b/drivers/acpi/hmat/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_ACPI_HMAT) := hmat.o
-> diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
-> new file mode 100644
-> index 000000000000..833a783868d5
-> --- /dev/null
-> +++ b/drivers/acpi/hmat/hmat.c
-> @@ -0,0 +1,180 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Heterogeneous Memory Attributes Table (HMAT) representation
-> + *
-> + * Copyright (c) 2018, Intel Corporation.
-
-Can you put a comment describing the code somewhat in here?
-
-> + */
-> +
-> +#include <acpi/acpi_numa.h>
-> +#include <linux/acpi.h>
-> +#include <linux/bitops.h>
-> +#include <linux/cpu.h>
-> +#include <linux/device.h>
-> +#include <linux/init.h>
-> +#include <linux/list.h>
-> +#include <linux/module.h>
-> +#include <linux/node.h>
-> +#include <linux/slab.h>
-> +#include <linux/sysfs.h>
-
-Are all of the headers above really necessary to build the code?
-
-> +
-> +static __init const char *hmat_data_type(u8 type)
-> +{
-> +       switch (type) {
-> +       case ACPI_HMAT_ACCESS_LATENCY:
-> +               return "Access Latency";
-> +       case ACPI_HMAT_READ_LATENCY:
-> +               return "Read Latency";
-> +       case ACPI_HMAT_WRITE_LATENCY:
-> +               return "Write Latency";
-> +       case ACPI_HMAT_ACCESS_BANDWIDTH:
-> +               return "Access Bandwidth";
-> +       case ACPI_HMAT_READ_BANDWIDTH:
-> +               return "Read Bandwidth";
-> +       case ACPI_HMAT_WRITE_BANDWIDTH:
-> +               return "Write Bandwidth";
-> +       default:
-> +               return "Reserved";
-> +       };
-> +}
-> +
-> +static __init const char *hmat_data_type_suffix(u8 type)
-> +{
-> +       switch (type) {
-> +       case ACPI_HMAT_ACCESS_LATENCY:
-> +       case ACPI_HMAT_READ_LATENCY:
-> +       case ACPI_HMAT_WRITE_LATENCY:
-> +               return " nsec";
-> +       case ACPI_HMAT_ACCESS_BANDWIDTH:
-> +       case ACPI_HMAT_READ_BANDWIDTH:
-> +       case ACPI_HMAT_WRITE_BANDWIDTH:
-> +               return " MB/s";
-> +       default:
-> +               return "";
-> +       };
-> +}
-> +
-> +static __init int hmat_parse_locality(union acpi_subtable_headers *header,
-> +                                     const unsigned long end)
-> +{
-> +       struct acpi_hmat_locality *loc = (void *)header;
-> +       unsigned int init, targ, total_size, ipds, tpds;
-> +       u32 *inits, *targs, value;
-> +       u16 *entries;
-> +       u8 type;
-> +
-> +       if (loc->header.length < sizeof(*loc)) {
-> +               pr_err("HMAT: Unexpected locality header length: %d\n",
-> +                       loc->header.length);
-
-Why pr_err()?  Is the error really high-prio?
-
-Same below.
-
-> +               return -EINVAL;
-> +       }
-> +
-> +       type = loc->data_type;
-> +       ipds = loc->number_of_initiator_Pds;
-> +       tpds = loc->number_of_target_Pds;
-> +       total_size = sizeof(*loc) + sizeof(*entries) * ipds * tpds +
-> +                    sizeof(*inits) * ipds + sizeof(*targs) * tpds;
-> +       if (loc->header.length < total_size) {
-> +               pr_err("HMAT: Unexpected locality header length:%d, minimum required:%d\n",
-> +                       loc->header.length, total_size);
-> +               return -EINVAL;
-> +       }
-> +
-> +       pr_info("HMAT: Locality: Flags:%02x Type:%s Initiator Domains:%d Target Domains:%d Base:%lld\n",
-> +               loc->flags, hmat_data_type(type), ipds, tpds,
-> +               loc->entry_base_unit);
-> +
-> +       inits = (u32 *)(loc + 1);
-> +       targs = &inits[ipds];
-> +       entries = (u16 *)(&targs[tpds]);
-> +       for (targ = 0; targ < tpds; targ++) {
-> +               for (init = 0; init < ipds; init++) {
-> +                       value = entries[init * tpds + targ];
-> +                       value = (value * loc->entry_base_unit) / 10;
-> +                       pr_info("  Initiator-Target[%d-%d]:%d%s\n",
-> +                               inits[init], targs[targ], value,
-> +                               hmat_data_type_suffix(type));
-> +               }
-> +       }
-> +       return 0;
-> +}
-
-The format and meaning of what is printed into the log should be
-documented somewhere IMO.
-
-Of course, that applies to the functions below as well.
-
-> +
-> +static __init int hmat_parse_cache(union acpi_subtable_headers *header,
-> +                                  const unsigned long end)
-> +{
-> +       struct acpi_hmat_cache *cache = (void *)header;
-> +       u32 attrs;
-> +
-> +       if (cache->header.length < sizeof(*cache)) {
-> +               pr_err("HMAT: Unexpected cache header length: %d\n",
-> +                       cache->header.length);
-> +               return -EINVAL;
-> +       }
-> +
-> +       attrs = cache->cache_attributes;
-> +       pr_info("HMAT: Cache: Domain:%d Size:%llu Attrs:%08x SMBIOS Handles:%d\n",
-> +               cache->memory_PD, cache->cache_size, attrs,
-> +               cache->number_of_SMBIOShandles);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
-> +                                          const unsigned long end)
-> +{
-> +       struct acpi_hmat_address_range *spa = (void *)header;
-> +
-> +       if (spa->header.length != sizeof(*spa)) {
-> +               pr_err("HMAT: Unexpected address range header length: %d\n",
-> +                       spa->header.length);
-> +               return -EINVAL;
-> +       }
-> +       pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
-> +               spa->physical_address_base, spa->physical_address_length,
-> +               spa->flags, spa->processor_PD, spa->memory_PD);
-> +       return 0;
-> +}
-> +
-> +static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
-> +                                     const unsigned long end)
-> +{
-> +       struct acpi_hmat_structure *hdr = (void *)header;
-> +
-> +       if (!hdr)
-> +               return -EINVAL;
-> +
-> +       switch (hdr->type) {
-> +       case ACPI_HMAT_TYPE_ADDRESS_RANGE:
-> +               return hmat_parse_address_range(header, end);
-> +       case ACPI_HMAT_TYPE_LOCALITY:
-> +               return hmat_parse_locality(header, end);
-> +       case ACPI_HMAT_TYPE_CACHE:
-> +               return hmat_parse_cache(header, end);
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +}
-> +
-> +static __init int hmat_init(void)
-> +{
-> +       struct acpi_table_header *tbl;
-> +       enum acpi_hmat_type i;
-> +       acpi_status status;
-> +
-> +       if (srat_disabled())
-> +               return 0;
-> +
-> +       status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
-> +       if (ACPI_FAILURE(status))
-> +               return 0;
-> +
-> +       for (i = ACPI_HMAT_TYPE_ADDRESS_RANGE; i < ACPI_HMAT_TYPE_RESERVED; i++) {
-> +               if (acpi_table_parse_entries(ACPI_SIG_HMAT,
-> +                                            sizeof(struct acpi_table_hmat), i,
-> +                                            hmat_parse_subtable, 0) < 0)
-> +                       goto out_put;
-> +       }
-> +out_put:
-> +       acpi_put_table(tbl);
-> +       return 0;
-> +}
-> +subsys_initcall(hmat_init);
-> --
-
-It looks like this particular patch only causes some extra messages to
-be printed into the log, no attributes setting etc yet.
-
-I would like the changelog to mention that.
+SGkgUm9tYWluLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFJvbWFp
+biBQZXJpZXIgW21haWx0bzpyb21haW4ucGVyaWVyQGdtYWlsLmNvbV0NCj4gU2VudDogTW9uZGF5
+LCBKYW51YXJ5IDcsIDIwMTkgMzo1NiBQTQ0KPiBUbzogTmFnYSBTdXJlc2hrdW1hciBSZWxsaSA8
+bmFnYXN1cmVAeGlsaW54LmNvbT4NCj4gQ2M6IE1pcXVlbCBSYXluYWwgPG1pcXVlbC5yYXluYWxA
+Ym9vdGxpbi5jb20+OyBCb3JpcyBCcmV6aWxsb24NCj4gPGJicmV6aWxsb25Aa2VybmVsLm9yZz47
+IGxpbnV4LW10ZEBsaXN0cy5pbmZyYWRlYWQub3JnOyBwZXRlcnBhbmRvbmdAbWljcm9uLmNvbTsN
+Cj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW0xJTlVYIFBB
+VENIIHYxMl0gbXRkOiByYXduYW5kOiBwbDM1MzogQWRkIGJhc2ljIGRyaXZlciBmb3IgYXJtIHBs
+MzUzDQo+IHNtYyBuYW5kIGludGVyZmFjZQ0KPiANCj4gSGksDQo+IA0KPiBMZSBtZXIuIDIgamFu
+di4gMjAxOSDDoCAxMDoyMywgTmFnYSBTdXJlc2hrdW1hciBSZWxsaSA8bmFnYXN1cmVAeGlsaW54
+LmNvbT4gYSDDqWNyaXQgOg0KPiA+DQo+ID4gSGksDQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBNaXF1ZWwgUmF5bmFsIFttYWlsdG86bWlxdWVsLnJh
+eW5hbEBib290bGluLmNvbV0NCj4gPiA+IFNlbnQ6IFdlZG5lc2RheSwgSmFudWFyeSAyLCAyMDE5
+IDI6MDQgUE0NCj4gPiA+IFRvOiBSb21haW4gUGVyaWVyIDxyb21haW4ucGVyaWVyQGdtYWlsLmNv
+bT4NCj4gPiA+IENjOiBOYWdhIFN1cmVzaGt1bWFyIFJlbGxpIDxuYWdhc3VyZUB4aWxpbnguY29t
+PjsgQm9yaXMgQnJlemlsbG9uDQo+ID4gPiA8YmJyZXppbGxvbkBrZXJuZWwub3JnPjsgbGludXgt
+bXRkQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+ID4gPiBwZXRlcnBhbmRvbmdAbWljcm9uLmNvbTsg
+bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiA+ID4gU3ViamVjdDogUmU6IFtMSU5VWCBQ
+QVRDSCB2MTJdIG10ZDogcmF3bmFuZDogcGwzNTM6IEFkZCBiYXNpYyBkcml2ZXINCj4gPiA+IGZv
+ciBhcm0gcGwzNTMgc21jIG5hbmQgaW50ZXJmYWNlDQo+ID4gPg0KPiA+ID4gSGkgUm9tYWluLA0K
+PiA+ID4NCj4gPiA+IFN3aXRjaGluZyBCb3JpcyBhZGRyZXNzLg0KPiA+ID4NCj4gPiA+IFJvbWFp
+biBQZXJpZXIgPHJvbWFpbi5wZXJpZXJAZ21haWwuY29tPiB3cm90ZSBvbiBGcmksIDIxIERlYyAy
+MDE4DQo+ID4gPiAxMDoxNzo1MCArMDEwMDoNCj4gPiA+DQo+ID4gPiA+IEhlbGxvLA0KPiA+ID4g
+Pg0KPiA+ID4gPiBJIGhhdmUgcmViYXNlZCB0aGlzIHBhdGNoIG9udG8gNC4xOS4xMS4gSSB1c2Ug
+aXQgb24gYQ0KPiA+ID4gPiBaeW5xNzAwMC1iYXNlZCBib2FyZCB3aXRoIGEgTkFORCBjaGlwIE1p
+Y3JvbiBNVDI5RjRHMDhBQkFEQUg0LCBzaW5jZSB+Mg0KPiB3ZWVrcyBub3cuDQo+ID4gPiA+IFRo
+ZSBvbmx5IHByb2JsZW0gSSBoYXZlIHRvIHJlcG9ydCBpcyB0aGF0IHdoZW4gSSBib290IHdpdGgg
+YW4NCj4gPiA+ID4gdW5jaGFuZ2VkIGRyaXZlciBvbiBteSBib2FyZCwgSSBnZXQgdGhlIGZvbGxv
+d2luZyBsb2dzOg0KPiA+ID4gPg0KPiA+ID4gPiBbICAgIDEuOTg4Nzk3XSBuYW5kOiBkZXZpY2Ug
+Zm91bmQsIE1hbnVmYWN0dXJlciBJRDogMHgyYywgQ2hpcCBJRDogMHhkYw0KPiA+ID4gPiBbICAg
+IDEuOTk1MTg0XSBuYW5kOiBNaWNyb24gTVQyOUY0RzA4QUJBREFINA0KPiA+ID4gPiBbICAgIDEu
+OTk5MTg3XSBuYW5kOiA1MTIgTWlCLCBTTEMsIGVyYXNlIHNpemU6IDEyOCBLaUIsIHBhZ2Ugc2l6
+ZTogMjA0OCwgT09CIHNpemU6IDY0DQo+ID4gPiA+IFsgICAgMi40MDI2NjFdIG5hbmQ6IHRpbWVv
+dXQgd2hpbGUgd2FpdGluZyBmb3IgY2hpcCB0byBiZWNvbWUgcmVhZHkNCj4gPiA+ID4gWyAgICAy
+LjQwODY2NV0gbmFuZDogdGltaW5nIG1vZGUgNSBub3QgYWNrbm93bGVkZ2VkIGJ5IHRoZSBOQU5E
+IGNoaXANCj4gPiA+ID4gWyAgICAyLjQxNjI1MV0gQmFkIGJsb2NrIHRhYmxlIG5vdCBmb3VuZCBm
+b3IgY2hpcCAwDQo+ID4gPiA+IFsgICAgMi40MjIyNzhdIEJhZCBibG9jayB0YWJsZSBub3QgZm91
+bmQgZm9yIGNoaXAgMA0KPiA+ID4gPiBbICAgIDIuNDI2OTAzXSBTY2FubmluZyBkZXZpY2UgZm9y
+IGJhZCBibG9ja3MNCj4gPiA+ID4gWyAgICAyLjQzMTAyNF0gQmFkIGVyYXNlYmxvY2sgMCBhdCAw
+eDAwMDAwMDAwMDAwMA0KPiA+ID4gPiBbICAgIDIuNDM1NTA5XSBCYWQgZXJhc2VibG9jayAxIGF0
+IDB4MDAwMDAwMDIwMDAwDQo+ID4gPiA+IFsgICAgMi40Mzk5NzhdIEJhZCBlcmFzZWJsb2NrIDIg
+YXQgMHgwMDAwMDAwNDAwMDANCj4gPiA+ID4gWyAgICAyLjQ0NDQ2NV0gQmFkIGVyYXNlYmxvY2sg
+MyBhdCAweDAwMDAwMDA2MDAwMA0KPiA+ID4gPiBbICAgIDIuNDQ4OTM2XSBCYWQgZXJhc2VibG9j
+ayA0IGF0IDB4MDAwMDAwMDgwMDAwDQo+ID4gPiA+IFsgICAgMi40NTM0MjNdIEJhZCBlcmFzZWJs
+b2NrIDUgYXQgMHgwMDAwMDAwYTAwMDANCj4gPiA+ID4gWyAgICAyLjQ1Nzg5M10gQmFkIGVyYXNl
+YmxvY2sgNiBhdCAweDAwMDAwMDBjMDAwMA0KPiA+ID4gPiBbICAgIDIuNDYyMzU0XSBCYWQgZXJh
+c2VibG9jayA3IGF0IDB4MDAwMDAwMGUwMDAwDQo+ID4gPiA+IFsgICAgMi40NjY4NDFdIEJhZCBl
+cmFzZWJsb2NrIDggYXQgMHgwMDAwMDAxMDAwMDANCj4gPiA+ID4gWyAgICAyLjQ3MTMwNF0gQmFk
+IGVyYXNlYmxvY2sgOSBhdCAweDAwMDAwMDEyMDAwMA0KPiA+ID4gPiBbICAgIDIuNDc1NzkzXSBC
+YWQgZXJhc2VibG9jayAxMCBhdCAweDAwMDAwMDE0MDAwMA0KPiA+ID4gPiBbICAgIDIuNDgwMzQ5
+XSBCYWQgZXJhc2VibG9jayAxMSBhdCAweDAwMDAwMDE2MDAwMA0KPiA+ID4gPg0KPiA+ID4gPiBb
+Li4uXQ0KPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBBZnRlciBpbnZlc3RpZ2F0aW9uLCBpdCBz
+ZWVtcyB0aGF0IGR1cmluZyB0aGUgbmFuZF9zY2FuIHBoYXNlLCB0aGUNCj4gPiA+ID4gTkFORCBz
+dWJzeXN0ZW0gdGVzdHMgZGlmZmVyZW50IHRpbWluZyBtb2RlcyBvbiB0aGUgTkFORCBjaGlwICht
+b2RlDQo+ID4gPiA+IDAgc2VlbXMgdG8gYmUgYXBwbHkgZHVyaW5nIHJlc2V0LCBhbmQgdGhlbiBp
+dCB0cmllcyB0byBkZXRlY3QgdGhlDQo+ID4gPiA+IGJlc3QgbW9kZSBzdXBwb3J0ZWQgYnkgdGhl
+IE5BTkQgY2hpcCkuIE9ubHkgdGhlIG1vZGUgMCB3b3JrcyBoZXJlLA0KPiA+ID4gPiB0cnlpbmcg
+dGhlIHVzZSB0aGUgbW9kZSA1IHJlc3VscyBpbiBhbiBlcnJvciAoYXMgeW91IGNhbiBzZWUgaW4N
+Cj4gPiA+ID4gdGhlIGxvZykgYW5kIGEgYmFkIEJCVCBkZXRlY3Rpb24uIEJvdGggbW9kZXMgYXJl
+IHN1cHBvcnRlZCBieSB0aGUNCj4gPiA+ID4gTkFORCBjaGlwLiBJbiBvcmRlciB0byBmaXggdGhp
+cywgSSBoYWQgdG8gcHV0IHRoZSBuZmMgdGltaW5nIGludG8NCj4gPiA+ID4gdGhlIGRldmljZSBu
+b2RlIG9mIHRoZSBuZmMsIGluc2lkZSB0aGUgRFQNCj4gPiA+ICh0aGF0J3Mgbm90IGEgcmVhbCBm
+aXgsIGlobW8pLg0KPiA+ID4NCj4gPiA+IFRoYW5rcyBmb3IgdGVzdGluZyEgSW5kZWVkLCB0aGUg
+LT5zZXR1cF9kYXRhX2ludGVyZmFjZSgpIGNhbGxiYWNrIHNob3VsZCBiZSBmaXhlZC4NCj4gPiBP
+aywgbGV0IG1lIGNoZWNrLg0KPiA+IE1lYW53aGlsZSwgY2FuIHlvdSBzaGFyZSB0aGUgdGltaW5n
+cyB0aGF0IHlvdSBwdXQgaW5zaWRlIHRoZSBEVD8NCj4gDQo+IFN1cmUsIEkgaGF2ZSBzaW1wbHkg
+YWRkZWQgYW4gYXJyYXkgaW4gdGhlIERUOg0KPiANCj4gcGwzNTMsbmFuZC1jb250cm9sbGVyLXRp
+bWluZ3M9PDQgNCAyIDIgMSAxIDI+Ow0KQnV0IHRoZSBiZWxvdyB2YWx1ZXMgYXJlIG5vdCBtYXRj
+aGluZyB3aXRoIHNkciBtb2RlIDUgdGltaW5ncy4NClRoZSB2YWx1ZSBhdCBpbmRleCAzLCByZXBy
+ZXNlbnRzIHRXUF9taW4gYW5kIGFzIHBlciBTRFIgbW9kZTUgdGltaW5ncyB0aGlzIHZhbHVlIGlz
+IDEgKGV4cHJlc3NlZCBpbiBjbG9jayBjeWNsZXMpLg0KQW5kIGFsc28gdmFsdWUgYXQgaW5kZXgg
+MSByZXByZXNlbnRzIHRXQ19taW4gYW5kIGFzIHBlciBTRFIgbW9kZTUgdGltaW5ncyB0aGlzIHZh
+bHVlIGlzIDIuDQpJIHdpbGwgYWxzbyBjcm9zcyBjaGVjayB0aGUgc2V0dXBfZGF0YV9pbnRlcmZh
+Y2UoKSBob29rLg0KDQpNaXF1YWwsIHRoaXMgdmVyc2lvbiBvZiBkcml2ZXIgaXMgcmViYXNlZCBv
+biB0b3Agb2YgNC4xOSwgSSB3aWxsIHNlbmQgbmV4dCB2ZXJzaW9uIG9uIHRvcCBvZiA0LjIwDQoN
+ClRoYW5rcywNCk5hZ2EgU3VyZXNoa3VtYXIgUmVsbGkNCj4gDQo+IFRoZW4sIEkgcGFzcyB0aGlz
+IGFycmF5IGRpcmVjdGx5IHRvIHBsMzUzX3NtY19zZXRfY3ljbGVzKCkuICAoSSBnb3QgdGhlc2Ug
+dmFsdWUgZnJvbSB0aGUgaGRmDQo+IG9yaWdpbmFsbHksIHRoZW4gSSBwb3J0ZWQgdGhlIERUIHRv
+IGEgbWFpbmxpbmUgZm9ybWF0LCB3cml0dGVuIGJ5IGhhbmQpLg0KPiANCj4gSG9wZSB0aGlzIGhl
+bHBzLA0KPiBSZWdhcmRzLA0KPiBSb21haW4NCj4gDQo+ID4gPg0KPiA+ID4gPiBFeGNlcHQgdGhp
+cywgZXZlcnl0aGluZyBpcyB3b3JraW5nIGFzIGV4cGVjdGVkLiBFdmVyeXRoaW5nIGlzDQo+ID4g
+PiA+IHN0YWJsZSB3aXRoIGNvcnJlY3QgcGVyZm9ybWFuY2VzLg0KPiA+ID4gPg0KPiA+ID4gPiBJ
+ZiBJIGNhbiBwcm92aWRlIG1vcmUgaW5mb3JtYXRpb25zLCBmZWVsIGZyZWUgdG8gYXNrLg0KPiA+
+ID4NCj4gPiA+IFsuLi5dDQo+ID4gPg0KPiA+ID4gPiA+ICtzdGF0aWMgaW50IHBsMzUzX3NldHVw
+X2RhdGFfaW50ZXJmYWNlKHN0cnVjdCBtdGRfaW5mbyAqbXRkLCBpbnQgY3NsaW5lLA0KPiA+ID4g
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IHN0cnVjdA0KPiA+ID4g
+PiA+ICtuYW5kX2RhdGFfaW50ZXJmYWNlICpjb25mKSB7ICBzdHJ1Y3QgbmFuZF9jaGlwICpjaGlw
+ID0NCj4gPiA+ID4gPiArbXRkX3RvX25hbmQobXRkKTsgIHN0cnVjdCBwbDM1M19uYW5kX2NvbnRy
+b2xsZXIgKnhuZmMgPQ0KPiA+ID4gPiA+ICsgICAgICAgICBjb250YWluZXJfb2YoY2hpcCwgc3Ry
+dWN0IHBsMzUzX25hbmRfY29udHJvbGxlciwNCj4gPiA+ID4gPiArY2hpcCk7ICBjb25zdCBzdHJ1
+Y3QgbmFuZF9zZHJfdGltaW5ncyAqc2RyOw0KPiA+ID4gPiA+ICsgdTMyIHRpbWluZ3NbN10sIG1j
+a3BlcmlvZHBzOw0KPiA+ID4gPiA+ICsNCj4gPiA+ID4gPiArIGlmIChjc2xpbmUgPT0gTkFORF9E
+QVRBX0lGQUNFX0NIRUNLX09OTFkpDQo+ID4gPiA+ID4gKyAgICAgICAgIHJldHVybiAwOw0KPiA+
+ID4gPiA+ICsNCj4gPiA+ID4gPiArIHNkciA9IG5hbmRfZ2V0X3Nkcl90aW1pbmdzKGNvbmYpOyBp
+ZiAoSVNfRVJSKHNkcikpDQo+ID4gPiA+ID4gKyAgICAgICAgIHJldHVybiBQVFJfRVJSKHNkcik7
+DQo+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICsgLyoNCj4gPiA+ID4gPiArICAqIFNEUiB0aW1pbmdz
+IGFyZSBnaXZlbiBpbiBwaWNvLXNlY29uZHMgd2hpbGUgTkZDIHRpbWluZ3MNCj4gPiA+ID4gPiAr
+IG11c3QgYmUNCj4gPiA+ID4gPiArICAqIGV4cHJlc3NlZCBpbiBOQU5EIGNvbnRyb2xsZXIgY2xv
+Y2sgY3ljbGVzLg0KPiA+ID4gPiA+ICsgICovDQo+ID4gPiA+ID4gKyBtY2twZXJpb2RwcyA9IE5T
+RUNfUEVSX1NFQyAvIGNsa19nZXRfcmF0ZSh4bmZjLT5tY2xrKTsNCj4gPiA+ID4gPiArIG1ja3Bl
+cmlvZHBzICo9IDEwMDA7IGlmIChzZHItPnRSQ19taW4gPD0gMjAwMDApDQo+ID4gPiA+ID4gKyAg
+ICAgICAgIC8qDQo+ID4gPiA+ID4gKyAgICAgICAgICAqIFBMMzUzIFNNQyBuZWVkcyBvbmUgZXh0
+cmEgcmVhZCBjeWNsZSBpbiBTRFIgTW9kZSA1DQo+ID4gPiA+ID4gKyAgICAgICAgICAqIFRoaXMg
+aXMgbm90IHdyaXR0ZW4gYW55d2hlcmUgaW4gdGhlIGRhdGFzaGVldCBidXQNCj4gPiA+ID4gPiAr
+ICAgICAgICAgICogdGhlIHJlc3VsdHMgb2JzZXJ2ZWQgZHVyaW5nIHRlc3RpbmcuDQo+ID4gPiA+
+ID4gKyAgICAgICAgICAqLw0KPiA+ID4gPiA+ICsgICAgICAgICB0aW1pbmdzWzBdID0gRElWX1JP
+VU5EX1VQKHNkci0+dFJDX21pbiwgbWNrcGVyaW9kcHMpICsNCj4gPiA+ID4gPiArIDE7IGVsc2UN
+Cj4gPiA+ID4gPiArICAgICAgICAgdGltaW5nc1swXSA9IERJVl9ST1VORF9VUChzZHItPnRSQ19t
+aW4sIG1ja3BlcmlvZHBzKTsNCj4gPiA+ID4gPiArDQo+ID4gPiA+ID4gKyB0aW1pbmdzWzFdID0g
+RElWX1JPVU5EX1VQKHNkci0+dFdDX21pbiwgbWNrcGVyaW9kcHMpOw0KPiA+ID4gPiA+ICsgLyoN
+Cj4gPiA+ID4gPiArICAqIEZvciBhbGwgU0RSIG1vZGVzLCBQTDM1MyBTTUMgbmVlZHMgdFJFQSBt
+YXggdmFsdWUgYXMgMSwNCj4gPiA+ID4gPiArICAqIFJlc3VsdHMgb2JzZXJ2ZWQgZHVyaW5nIHRl
+c3RpbmcuDQo+ID4gPiA+ID4gKyAgKi8NCj4gPiA+ID4gPiArIHRpbWluZ3NbMl0gPSBQTDM1M19U
+UkVBX01BWF9WQUxVRTsgdGltaW5nc1szXSA9DQo+ID4gPiA+ID4gKyBESVZfUk9VTkRfVVAoc2Ry
+LT50V1BfbWluLCBtY2twZXJpb2Rwcyk7IHRpbWluZ3NbNF0gPQ0KPiA+ID4gPiA+ICsgRElWX1JP
+VU5EX1VQKHNkci0+dENMUl9taW4sIG1ja3BlcmlvZHBzKTsgdGltaW5nc1s1XSA9DQo+ID4gPiA+
+ID4gKyBESVZfUk9VTkRfVVAoc2RyLT50QVJfbWluLCBtY2twZXJpb2Rwcyk7IHRpbWluZ3NbNl0g
+PQ0KPiA+ID4gPiA+ICsgRElWX1JPVU5EX1VQKHNkci0+dFJSX21pbiwgbWNrcGVyaW9kcHMpOw0K
+PiA+ID4gPiA+ICsgcGwzNTNfc21jX3NldF9jeWNsZXModGltaW5ncyk7DQo+ID4gPiA+ID4gKw0K
+PiA+ID4gPiA+ICsgcmV0dXJuIDA7DQo+ID4gPiA+ID4gK30NCj4gPiA+ID4NCj4gPiA+ID4gSWYg
+SSBoYWNrIHRoaXMgZnVuY3Rpb24gaW4gb3JkZXIgdG8gbGltaXQgdGhlIHRpbWluZ3Mgb25seSB0
+byBtb2RlDQo+ID4gPiA+IDAsIGV2ZXJ5dGhpbmcgd29ya3MuIE90aGVyd2lzZSBpdCBoYW5ncyB3
+aGVuIGl0IHRyaWVzIHRvIGFwcGx5IG1vZGUgNS4NCj4gPiA+ID4NCj4gPiA+DQo+ID4gPiBNYXli
+ZSBOYWdhIGlzIG5vdCB1c2luZyBhIGNoaXAgY29tcGF0aWJsZSB3aXRoIG1vZGUgNSBhbmQgZGlk
+IG5vdCByYW4gaW50byB0aGlzIGlzc3VlPw0KPiA+IE5vLCB0aGVzZSBhcmUgdGhlIGNoaXBzIEkg
+YW0gdXNpbmcsIFMzNE1MMDFHMSBhbmQgTVQyOUYyRzE2QUJBRUFXUC4NCj4gPiBUaGVzZSBhcmUg
+dXAgdG8gbW9kZSA1IGNvbXBhdGlibGUuDQo+ID4NCj4gPiBUaGFua3MsDQo+ID4gTmFnYSBTdXJl
+c2hrdW1hciBSZWxsaQ0KPiA+ID4NCj4gPiA+DQo+ID4gPiBUaGFua3MsDQo+ID4gPiBNaXF1w6hs
+DQo=
