@@ -2,205 +2,392 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8228AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 650E7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC4820652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D25620652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:15:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="L88jVkAs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbfAQQOx convert rfc822-to-8bit (ORCPT
+        id S1728862AbfAQQPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:14:53 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:43775 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728655AbfAQQOx (ORCPT
+        Thu, 17 Jan 2019 11:15:35 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:49886 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728587AbfAQQPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:14:53 -0500
-Received: from mail-pf1-f198.google.com ([209.85.210.198])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gkAJf-0004d9-A9
-        for linux-kernel@vger.kernel.org; Thu, 17 Jan 2019 16:14:51 +0000
-Received: by mail-pf1-f198.google.com with SMTP id d18so7729650pfe.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:14:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=oHQAHivtz+yEt62uqUOkyMqycTlzyMFNKyCXzcdRxYc=;
-        b=ngVwJ56y1FX4KErsmmmD01f4DyxsHfExa4bAK/9i/TYcaBR8KDuiZZHgWMNvR41HcL
-         7YPkGd/aA5VvCKDkpmU8ztWQ/cB0MN5wiIgAN7CR3B14LinZ0Axpclkgp+QU2mfIlbNr
-         aNUh0LjNRtScpPqeRAHykpPRdLJQeaq9AxQ0NuM5wq/Y5c9ZBie2gAL+if7KRrPWtvdr
-         pwKbMZ+r26LyFrc9lEEAGnDXqi4mExPwjpdDmtKddeXpjwNLx4ayAIDNaNUUXDiCs3ek
-         1rPnI/Ilw8IXPnsGKdZp/OVR04POimZ2KPDcBnk+s9tf090cLIqNENSxqfe/8TadOd7b
-         HD0A==
-X-Gm-Message-State: AJcUukdniw2v1RfN+O6jG1waV7CYdn8u6+9azNdQ+mzfnDQIBCEJ3b3Y
-        UM1Jge4RcvUirDtAlqhGOYhnd5iITip3RDyf0qLxHw9Rar75c4JZU7J8zJxWYwV7Sm7N2KXhfb7
-        +Bm9GaPZx3qBjZziAPrtk0/NNKDaFSCkKAx8cx2U/7Q==
-X-Received: by 2002:a62:2a4b:: with SMTP id q72mr15301676pfq.61.1547741689825;
-        Thu, 17 Jan 2019 08:14:49 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN6KiUo3guoJFcIqp64sopYzqcjsLUQcvuZc0yu2jljeYGpjj5l0lPM1OMQGxCVpvlC2aIZelw==
-X-Received: by 2002:a62:2a4b:: with SMTP id q72mr15301647pfq.61.1547741689416;
-        Thu, 17 Jan 2019 08:14:49 -0800 (PST)
-Received: from [192.168.1.215] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id f32sm2662993pgf.80.2019.01.17.08.14.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 08:14:48 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH 1/1] Input: elantech: Use SMBus based on bus info
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAO-hwJKyBHM1Yy8=pQrbDoArTOX4=8G6f0jECv4x1mth+LZZDw@mail.gmail.com>
-Date:   Fri, 18 Jan 2019 00:14:45 +0800
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        =?utf-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <0BD3A587-B7B6-4C99-8F87-187394FF6EFC@canonical.com>
-References: <20190117092948.32079-1-kai.heng.feng@canonical.com>
- <CAO-hwJKyBHM1Yy8=pQrbDoArTOX4=8G6f0jECv4x1mth+LZZDw@mail.gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 17 Jan 2019 11:15:34 -0500
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HGF3BX018314
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:15:33 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=b1boIXGx7+AI70WpBvOAXQWT8QFnUXvMZc9l3EQLuys=;
+ b=L88jVkAsgEf5fTm9oQbc86DJyb3QDAH/8GXliMsgfxXeuNcGCjTMXtaILTI/GSgnoSbj
+ gqhtemDdzKNt44wt3IGPvahePcGz9ptnlfLtLlniTWx2yOJu7MiS3wph+gU8Gc7QxIGi
+ xxoHwN3CgOsM2+jTeupz+6iXrrj1sP2o8iE= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q2uwt09dq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:15:33 -0800
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Thu, 17 Jan 2019 08:15:31 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id BFDC562E1AFC; Thu, 17 Jan 2019 08:15:29 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v11 perf, bpf-next 3/9] perf, bpf: introduce PERF_RECORD_BPF_EVENT
+Date:   Thu, 17 Jan 2019 08:15:15 -0800
+Message-ID: <20190117161521.1341602-4-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190117161521.1341602-1-songliubraving@fb.com>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
+X-FB-Internal: Safe
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For better performance analysis of BPF programs, this patch introduces
+PERF_RECORD_BPF_EVENT, a new perf_event_type that exposes BPF program
+load/unload information to user space.
 
+Each BPF program may contain up to BPF_MAX_SUBPROGS (256) sub programs.
+The following example shows kernel symbols for a BPF program with 7
+sub programs:
 
-> On Jan 17, 2019, at 10:42 PM, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
-> 
-> Hi Kai-Heng,
-> 
-> On Thu, Jan 17, 2019 at 10:30 AM Kai-Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
->> 
->> There are some new HP laptops with Elantech touchpad don't support
->> multitouch.
->> 
->> Both ETP_BUS_SMB_HST_NTFY_ONLY and ETP_BUS_PS2_SMB_HST_NTFY devices can
->> use SMBus to support 5 fingers touch, so we need to chech them too.
->> 
->> So use elantech_use_host_notify() to do a more thouroughly check.
->> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> drivers/input/mouse/elantech.c | 58 +++++++++++++++++-----------------
->> 1 file changed, 29 insertions(+), 29 deletions(-)
->> 
->> diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
->> index 9fe075c137dc..5bcf1c147eb1 100644
->> --- a/drivers/input/mouse/elantech.c
->> +++ b/drivers/input/mouse/elantech.c
->> @@ -1799,6 +1799,34 @@ static int elantech_create_smbus(struct psmouse *psmouse,
->>                                  leave_breadcrumbs);
->> }
->> 
->> +static bool elantech_use_host_notify(struct psmouse *psmouse,
->> +                                    struct elantech_device_info *info)
->> +{
->> +       if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
->> +               return true;
->> +
->> +       switch (info->bus) {
->> +       case ETP_BUS_PS2_ONLY:
->> +               /* expected case */
->> +               break;
->> +       case ETP_BUS_SMB_ALERT_ONLY:
->> +               /* fall-through  */
->> +       case ETP_BUS_PS2_SMB_ALERT:
->> +               psmouse_dbg(psmouse, "Ignoring SMBus provider through alert protocol.\n");
->> +               break;
->> +       case ETP_BUS_SMB_HST_NTFY_ONLY:
->> +               /* fall-through  */
->> +       case ETP_BUS_PS2_SMB_HST_NTFY:
->> +               return true;
->> +       default:
->> +               psmouse_dbg(psmouse,
->> +                           "Ignoring SMBus bus provider %d.\n",
->> +                           info->bus);
->> +       }
->> +
->> +       return false;
->> +}
->> +
->> /**
->>  * elantech_setup_smbus - called once the PS/2 devices are enumerated
->>  * and decides to instantiate a SMBus InterTouch device.
->> @@ -1818,7 +1846,7 @@ static int elantech_setup_smbus(struct psmouse *psmouse,
->>                 * i2c_blacklist_pnp_ids.
->>                 * Old ICs are up to the user to decide.
->>                 */
->> -               if (!ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version) ||
->> +               if (!elantech_use_host_notify(psmouse, info) ||
-> 
-> That was my initial approach of the series, but I ended up being more
-> conservative as this would flip all of the existing elantech SMBUS
-> capable touchpads to use elan_i2c.
-> And I didn't want to deal with 4/5 year old laptops that suddenly broke.
-> 
-> So I wonder if you can restrict this default change to the recent
-> laptops (let's say 2018+). Maybe by looking at their FW version or
-> something else in the DMI?
+    ffffffffa0257cf9 t bpf_prog_b07ccb89267cf242_F
+    ffffffffa02592e1 t bpf_prog_2dcecc18072623fc_F
+    ffffffffa025b0e9 t bpf_prog_bb7a405ebaec5d5c_F
+    ffffffffa025dd2c t bpf_prog_a7540d4a39ec1fc7_F
+    ffffffffa025fcca t bpf_prog_05762d4ade0e3737_F
+    ffffffffa026108f t bpf_prog_db4bd11e35df90d4_F
+    ffffffffa0263f00 t bpf_prog_89d64e4abf0f0126_F
+    ffffffffa0257cf9 t bpf_prog_ae31629322c4b018__dummy_tracepoi
 
-It was KT who told me that I should use ETP_BUS_PS2_SMB_HST_NTFY.
+When a bpf program is loaded, PERF_RECORD_KSYMBOL is generated for
+each of these sub programs. Therefore, PERF_RECORD_BPF_EVENT is not
+needed for simple profiling.
 
-As for date, KT still knows better than me.
+For annotation, user space need to listen to PERF_RECORD_BPF_EVENT
+and gather more information about these (sub) programs via sys_bpf.
 
-KT, 
-Can you name a year which is safe enough to enable SMBus?
+Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradeaed.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ include/linux/filter.h          |   7 ++
+ include/linux/perf_event.h      |   6 ++
+ include/uapi/linux/perf_event.h |  29 +++++++-
+ kernel/bpf/core.c               |   2 +-
+ kernel/bpf/syscall.c            |   2 +
+ kernel/events/core.c            | 115 ++++++++++++++++++++++++++++++++
+ 6 files changed, 159 insertions(+), 2 deletions(-)
 
-Kai-Heng
-
-> 
-> Cheers,
-> Benjamin
-> 
->>                    psmouse_matches_pnp_id(psmouse, i2c_blacklist_pnp_ids))
->>                        return -ENXIO;
->>        }
->> @@ -1838,34 +1866,6 @@ static int elantech_setup_smbus(struct psmouse *psmouse,
->>        return 0;
->> }
->> 
->> -static bool elantech_use_host_notify(struct psmouse *psmouse,
->> -                                    struct elantech_device_info *info)
->> -{
->> -       if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
->> -               return true;
->> -
->> -       switch (info->bus) {
->> -       case ETP_BUS_PS2_ONLY:
->> -               /* expected case */
->> -               break;
->> -       case ETP_BUS_SMB_ALERT_ONLY:
->> -               /* fall-through  */
->> -       case ETP_BUS_PS2_SMB_ALERT:
->> -               psmouse_dbg(psmouse, "Ignoring SMBus provider through alert protocol.\n");
->> -               break;
->> -       case ETP_BUS_SMB_HST_NTFY_ONLY:
->> -               /* fall-through  */
->> -       case ETP_BUS_PS2_SMB_HST_NTFY:
->> -               return true;
->> -       default:
->> -               psmouse_dbg(psmouse,
->> -                           "Ignoring SMBus bus provider %d.\n",
->> -                           info->bus);
->> -       }
->> -
->> -       return false;
->> -}
->> -
->> int elantech_init_smbus(struct psmouse *psmouse)
->> {
->>        struct elantech_device_info info;
->> --
->> 2.17.1
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index ad106d845b22..d531d4250bff 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -951,6 +951,7 @@ bpf_address_lookup(unsigned long addr, unsigned long *size,
+ 
+ void bpf_prog_kallsyms_add(struct bpf_prog *fp);
+ void bpf_prog_kallsyms_del(struct bpf_prog *fp);
++void bpf_get_prog_name(const struct bpf_prog *prog, char *sym);
+ 
+ #else /* CONFIG_BPF_JIT */
+ 
+@@ -1006,6 +1007,12 @@ static inline void bpf_prog_kallsyms_add(struct bpf_prog *fp)
+ static inline void bpf_prog_kallsyms_del(struct bpf_prog *fp)
+ {
+ }
++
++static inline void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
++{
++	sym[0] = '\0';
++}
++
+ #endif /* CONFIG_BPF_JIT */
+ 
+ void bpf_prog_kallsyms_del_subprogs(struct bpf_prog *fp);
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index b46d11d8d79c..896f25b98cd7 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1116,6 +1116,9 @@ extern void perf_event_mmap(struct vm_area_struct *vma);
+ 
+ extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
+ 			       bool unregister, const char *sym);
++extern void perf_event_bpf_event(struct bpf_prog *prog,
++				 enum perf_bpf_event_type type,
++				 u16 flags);
+ 
+ extern struct perf_guest_info_callbacks *perf_guest_cbs;
+ extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+@@ -1341,6 +1344,9 @@ static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
+ typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
+ static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
+ 				      bool unregister, const char *sym)	{ }
++static inline void perf_event_bpf_event(struct bpf_prog *prog,
++					enum perf_bpf_event_type type,
++					u16 flags)			{ }
+ static inline void perf_event_exec(void)				{ }
+ static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
+ static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 68c4da0227c5..8bd78a34e396 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -373,7 +373,8 @@ struct perf_event_attr {
+ 				write_backward :  1, /* Write ring buffer from end to beginning */
+ 				namespaces     :  1, /* include namespaces data */
+ 				ksymbol        :  1, /* include ksymbol events */
+-				__reserved_1   : 34;
++				bpf_event      :  1, /* include bpf events */
++				__reserved_1   : 33;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+@@ -981,6 +982,25 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_KSYMBOL			= 17,
+ 
++	/*
++	 * Record bpf events:
++	 *  enum perf_bpf_event_type {
++	 *	PERF_BPF_EVENT_UNKNOWN		= 0,
++	 *	PERF_BPF_EVENT_PROG_LOAD	= 1,
++	 *	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
++	 *  };
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u16				type;
++	 *	u16				flags;
++	 *	u32				id;
++	 *	u8				tag[BPF_TAG_SIZE];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_BPF_EVENT			= 18,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
+@@ -992,6 +1012,13 @@ enum perf_record_ksymbol_type {
+ 
+ #define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
+ 
++enum perf_bpf_event_type {
++	PERF_BPF_EVENT_UNKNOWN		= 0,
++	PERF_BPF_EVENT_PROG_LOAD	= 1,
++	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
++	PERF_BPF_EVENT_MAX,		/* non-ABI */
++};
++
+ #define PERF_MAX_STACK_DEPTH		127
+ #define PERF_MAX_CONTEXTS_PER_STACK	  8
+ 
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index f908b9356025..19c49313c709 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -495,7 +495,7 @@ bpf_get_prog_addr_region(const struct bpf_prog *prog,
+ 	*symbol_end   = addr + hdr->pages * PAGE_SIZE;
+ }
+ 
+-static void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
++void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
+ {
+ 	const char *end = sym + KSYM_NAME_LEN;
+ 	const struct btf_type *type;
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index b155cd17c1bd..30ebd085790b 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1211,6 +1211,7 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
+ static void __bpf_prog_put(struct bpf_prog *prog, bool do_idr_lock)
+ {
+ 	if (atomic_dec_and_test(&prog->aux->refcnt)) {
++		perf_event_bpf_event(prog, PERF_BPF_EVENT_PROG_UNLOAD, 0);
+ 		/* bpf_prog_free_id() must be called first */
+ 		bpf_prog_free_id(prog, do_idr_lock);
+ 		bpf_prog_kallsyms_del_all(prog);
+@@ -1554,6 +1555,7 @@ static int bpf_prog_load(union bpf_attr *attr, union bpf_attr __user *uattr)
+ 	}
+ 
+ 	bpf_prog_kallsyms_add(prog);
++	perf_event_bpf_event(prog, PERF_BPF_EVENT_PROG_LOAD, 0);
+ 	return err;
+ 
+ free_used_maps:
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 64480a4ae2e2..0a8dab322111 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -386,6 +386,7 @@ static atomic_t nr_task_events __read_mostly;
+ static atomic_t nr_freq_events __read_mostly;
+ static atomic_t nr_switch_events __read_mostly;
+ static atomic_t nr_ksymbol_events __read_mostly;
++static atomic_t nr_bpf_events __read_mostly;
+ 
+ static LIST_HEAD(pmus);
+ static DEFINE_MUTEX(pmus_lock);
+@@ -4308,6 +4309,8 @@ static void unaccount_event(struct perf_event *event)
+ 		dec = true;
+ 	if (event->attr.ksymbol)
+ 		atomic_dec(&nr_ksymbol_events);
++	if (event->attr.bpf_event)
++		atomic_dec(&nr_bpf_events);
+ 
+ 	if (dec) {
+ 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
+@@ -7744,6 +7747,116 @@ void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
+ 	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
+ }
+ 
++/*
++ * bpf program load/unload tracking
++ */
++
++struct perf_bpf_event {
++	struct bpf_prog	*prog;
++	struct {
++		struct perf_event_header        header;
++		u16				type;
++		u16				flags;
++		u32				id;
++		u8				tag[BPF_TAG_SIZE];
++	} event_id;
++};
++
++static int perf_event_bpf_match(struct perf_event *event)
++{
++	return event->attr.bpf_event;
++}
++
++static void perf_event_bpf_output(struct perf_event *event, void *data)
++{
++	struct perf_bpf_event *bpf_event = data;
++	struct perf_output_handle handle;
++	struct perf_sample_data sample;
++	int ret;
++
++	if (!perf_event_bpf_match(event))
++		return;
++
++	perf_event_header__init_id(&bpf_event->event_id.header,
++				   &sample, event);
++	ret = perf_output_begin(&handle, event,
++				bpf_event->event_id.header.size);
++	if (ret)
++		return;
++
++	perf_output_put(&handle, bpf_event->event_id);
++	perf_event__output_id_sample(event, &handle, &sample);
++
++	perf_output_end(&handle);
++}
++
++static void perf_event_bpf_emit_ksymbols(struct bpf_prog *prog,
++					 enum perf_bpf_event_type type)
++{
++	bool unregister = type == PERF_BPF_EVENT_PROG_UNLOAD;
++	char sym[KSYM_NAME_LEN];
++	int i;
++
++	if (prog->aux->func_cnt == 0) {
++		bpf_get_prog_name(prog, sym);
++		perf_event_ksymbol(PERF_RECORD_KSYMBOL_TYPE_BPF,
++				   (u64)(unsigned long)prog->bpf_func,
++				   prog->jited_len, unregister, sym);
++	} else {
++		for (i = 0; i < prog->aux->func_cnt; i++) {
++			struct bpf_prog *subprog = prog->aux->func[i];
++
++			bpf_get_prog_name(subprog, sym);
++			perf_event_ksymbol(
++				PERF_RECORD_KSYMBOL_TYPE_BPF,
++				(u64)(unsigned long)subprog->bpf_func,
++				subprog->jited_len, unregister, sym);
++		}
++	}
++}
++
++void perf_event_bpf_event(struct bpf_prog *prog,
++			  enum perf_bpf_event_type type,
++			  u16 flags)
++{
++	struct perf_bpf_event bpf_event;
++
++	if (type <= PERF_BPF_EVENT_UNKNOWN ||
++	    type >= PERF_BPF_EVENT_MAX)
++		return;
++
++	switch (type) {
++	case PERF_BPF_EVENT_PROG_LOAD:
++	case PERF_BPF_EVENT_PROG_UNLOAD:
++		if (atomic_read(&nr_ksymbol_events))
++			perf_event_bpf_emit_ksymbols(prog, type);
++		break;
++	default:
++		break;
++	}
++
++	if (!atomic_read(&nr_bpf_events))
++		return;
++
++	bpf_event = (struct perf_bpf_event){
++		.prog = prog,
++		.event_id = {
++			.header = {
++				.type = PERF_RECORD_BPF_EVENT,
++				.size = sizeof(bpf_event.event_id),
++			},
++			.type = type,
++			.flags = flags,
++			.id = prog->aux->id,
++		},
++	};
++
++	BUILD_BUG_ON(BPF_TAG_SIZE % sizeof(u64));
++
++	memcpy(bpf_event.event_id.tag, prog->tag, BPF_TAG_SIZE);
++	perf_iterate_sb(perf_event_bpf_output, &bpf_event, NULL);
++}
++
+ void perf_event_itrace_started(struct perf_event *event)
+ {
+ 	event->attach_state |= PERF_ATTACH_ITRACE;
+@@ -9996,6 +10109,8 @@ static void account_event(struct perf_event *event)
+ 		inc = true;
+ 	if (event->attr.ksymbol)
+ 		atomic_inc(&nr_ksymbol_events);
++	if (event->attr.bpf_event)
++		atomic_inc(&nr_bpf_events);
+ 
+ 	if (inc) {
+ 		/*
+-- 
+2.17.1
 
