@@ -2,111 +2,196 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 385E9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0EEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB6C20856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:45:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="WQ/xyrie"
+	by mail.kernel.org (Postfix) with ESMTP id 52A1E20859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:46:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbfAQQpg (ORCPT
+        id S1729022AbfAQQqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:45:36 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42414 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728767AbfAQQpf (ORCPT
+        Thu, 17 Jan 2019 11:46:02 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54711 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728649AbfAQQqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:45:35 -0500
-Received: by mail-yb1-f195.google.com with SMTP id q145so3233305ybq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:45:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JO8OK9lnLxz9ocpuQkpfBP4EQtitfGExKeOwXfemQ8o=;
-        b=WQ/xyriesTSaoGMj1sV9QmgGY+AMiz+S9+eWutbX42lDkulRqZ0OLCCD9zh1sQ5dv+
-         tTO0H4LTYv8mUNDhQLDIG/mnaq837khBBX4p8PWT+dCZFbdM1VgMOMh/ORoY41id9JCv
-         G0ECA9Cr4Ml9eZxBIi6DkIsyi8L07D+Ph/tpduTzAGonfFDn2pSLkBWVXkcUEhJ06zpG
-         DSDJor26npPAH2bO/f+3QiMzddmk0oYNqFmgAJpUqHV3v0aa3q4cSxhxYrWO6A+trQqK
-         BPu2dTikaveA64J609gFoHvF9RyrW79nJKsVFKr+JOC8lIFnOGutGlvawnJkbqt0U4eF
-         7yOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JO8OK9lnLxz9ocpuQkpfBP4EQtitfGExKeOwXfemQ8o=;
-        b=phHlsgjcP3UmpiPxCV2EOSv6ClUGcwSUO0qj9BnIvPOg7ATLwaIjhplV+YOLsyvuN5
-         kNLOzyHQvs8Qf79YuhZw0ZD3aBDCftbMgJOeL6z6OUQTLfdF6epFthWUFC3zhWUNIxO/
-         pD3spUlysjz3DgVo8MGR3Y2lGi7SG+9fsQYPVZSvybOyILP028xn7hK5jW09rzRf9iBF
-         X5514o7tjOrzbG1e/9cw8QrqX/y4fzBCFGbBMJmCVOtdzgj8CrqvlknzdzZX64noNHrl
-         6xNcgew7KGhLicPojnMBt9CAu1SfNR+SbLBOXD9efOoE4HqhAvwKI2ATkLQWPJN73+34
-         cuAA==
-X-Gm-Message-State: AJcUukfSD4pvXytuaaKU9kIWZdNjZZIN5p3Yx373zHTXJRQ0Vzb9cTMZ
-        /AUTY4CaGPyZsKNJ1CZDvq27yQ==
-X-Google-Smtp-Source: ALg8bN4RsK86yh0yrPd6L5KPIXAnTTkUOw3oth6Ik1Qe7cGZTs3gSfk3ER1rO8oArmrRLLwp1atpHQ==
-X-Received: by 2002:a25:da4c:: with SMTP id n73mr2638829ybf.385.1547743534324;
-        Thu, 17 Jan 2019 08:45:34 -0800 (PST)
-Received: from cisco ([2601:282:901:dd7b:f990:e507:9c40:21df])
-        by smtp.gmail.com with ESMTPSA id y125sm749001ywc.97.2019.01.17.08.45.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 08:45:33 -0800 (PST)
-Date:   Thu, 17 Jan 2019 09:45:31 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     shuah <shuah@kernel.org>, James Morris <jmorris@namei.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: Linux 5.0-rc2 seccomp_bpf user_notification_basic test hangs
-Message-ID: <20190117164531.GD17449@cisco>
-References: <7cd7d5bc-1d69-57f5-4a98-81b036f81682@kernel.org>
- <CAGXu5jLGqXstRCmM1_fxUxn4djs1YLUun2Fc8ExcaN4-CKyELQ@mail.gmail.com>
- <20190117004416.GA17449@cisco>
- <f665bb74-293b-d627-2605-5b8de7671743@kernel.org>
- <CAGXu5jJ0VK4UiOeKTqv_TZSn5aZAVsXjUZgiXD=KFbZ-Ng_+KQ@mail.gmail.com>
- <20190117162703.GC17449@cisco>
- <CAGXu5jJOGO1UWdYdGmnnUEZOm-DaMUqR3UVSi+gnSc7q3KE8xA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jJOGO1UWdYdGmnnUEZOm-DaMUqR3UVSi+gnSc7q3KE8xA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 17 Jan 2019 11:46:02 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gkAni-000665-IB; Thu, 17 Jan 2019 17:45:54 +0100
+Message-ID: <1547743553.4009.16.camel@pengutronix.de>
+Subject: Re: [PATCH v4 2/3] dt-bindings: reset: imx7: Document usage on
+ i.MX8MQ SoCs
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>, cphealy@gmail.com,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Thu, 17 Jan 2019 17:45:53 +0100
+In-Reply-To: <20181220010700.8598-3-andrew.smirnov@gmail.com>
+References: <20181220010700.8598-1-andrew.smirnov@gmail.com>
+         <20181220010700.8598-3-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 08:41:59AM -0800, Kees Cook wrote:
-> On Thu, Jan 17, 2019 at 8:27 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> >
-> > On Thu, Jan 17, 2019 at 08:12:50AM -0800, Kees Cook wrote:
-> > > On Wed, Jan 16, 2019 at 5:26 PM shuah <shuah@kernel.org> wrote:
-> > > > I am running Linux 5.0-rc2 and not an older kernel.
-> > >
-> > > Weird. I couldn't reproduce this on 5.0-rc2, but I did see it on a
-> > > kernel without seccomp user_notif. Does the patch I sent fix it for
-> > > you? (And if so, can you take it in your tree?)
-> >
-> > I can reproduce it; you have to run it as non-root. I think your patch
-> > is necessary to get it to at least fail. The question is: what should
-> > we do about these tests that require real root? Skip them if we're not
-> > real-root, I guess?
+Hi Andrey,
+
+sorry for the delay. Thank you for the update, apart from the comments
+below, the list now looks to be complete.
+
+On Wed, 2018-12-19 at 17:06 -0800, Andrey Smirnov wrote:
+> The driver now supports i.MX8MQ, so update bindings accordingly.
 > 
-> Hm, maybe use the XFAIL() bit of the harness?
+> Cc: p.zabel@pengutronix.de
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: cphealy@gmail.com
+> Cc: l.stach@pengutronix.de
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>  .../bindings/reset/fsl,imx7-src.txt           |  7 +-
+>  include/dt-bindings/reset/imx8mq-reset.h      | 64 +++++++++++++++++++
+>  2 files changed, 69 insertions(+), 2 deletions(-)
+>  create mode 100644 include/dt-bindings/reset/imx8mq-reset.h
 > 
-> Perhaps it's time to make it a root-only test and do internal
-> priv-dropping to test the nnp-requiring parts? I'll add it to the TODO
-> list...
+> diff --git a/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt b/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
+> index 1ab1d109318e..2ecf33815d18 100644
+> --- a/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
+> +++ b/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
+> @@ -5,7 +5,9 @@ Please also refer to reset.txt in this directory for common reset
+>  controller binding usage.
+>  
+>  Required properties:
+> -- compatible: Should be "fsl,imx7d-src", "syscon"
+> +- compatible:
+> +	- For i.MX7 SoCs should be "fsl,imx7d-src", "syscon"
+> +	- For i.MX8MQ SoCs should be "fsl,imx8mq-src", "syscon"
+>  - reg: should be register base and length as documented in the
+>    datasheet
+>  - interrupts: Should contain SRC interrupt
+> @@ -44,4 +46,5 @@ Example:
+>  
+>  
+>  For list of all valid reset indicies see
+> -<dt-bindings/reset/imx7-reset.h>
+> +<dt-bindings/reset/imx7-reset.h> for i.MX7 and
+> +<dt-bindings/reset/imx8mq-reset.h> for i.MX8MQ
+> diff --git a/include/dt-bindings/reset/imx8mq-reset.h b/include/dt-bindings/reset/imx8mq-reset.h
+> new file mode 100644
+> index 000000000000..57c592498aa0
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/imx8mq-reset.h
+> @@ -0,0 +1,64 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2018 Zodiac Inflight Innovations
+> + *
+> + * Author: Andrey Smirnov <andrew.smirnov@gmail.com>
+> + */
+> +
+> +#ifndef DT_BINDING_RESET_IMX8MQ_H
+> +#define DT_BINDING_RESET_IMX8MQ_H
+> +
+> +#define IMX8MQ_RESET_A53_CORE_POR_RESET0	0
+> +#define IMX8MQ_RESET_A53_CORE_POR_RESET1	1
+> +#define IMX8MQ_RESET_A53_CORE_POR_RESET2	2
+> +#define IMX8MQ_RESET_A53_CORE_POR_RESET3	3
+> +#define IMX8MQ_RESET_A53_CORE_RESET0		4
+> +#define IMX8MQ_RESET_A53_CORE_RESET1		5
+> +#define IMX8MQ_RESET_A53_CORE_RESET2		6
+> +#define IMX8MQ_RESET_A53_CORE_RESET3		7
+> +#define IMX8MQ_RESET_A53_DBG_RESET0		8
+> +#define IMX8MQ_RESET_A53_DBG_RESET1		9
+> +#define IMX8MQ_RESET_A53_DBG_RESET2		10
+> +#define IMX8MQ_RESET_A53_DBG_RESET3		11
+> +#define IMX8MQ_RESET_A53_ETM_RESET0		12
+> +#define IMX8MQ_RESET_A53_ETM_RESET1		13
+> +#define IMX8MQ_RESET_A53_ETM_RESET2		14
+> +#define IMX8MQ_RESET_A53_ETM_RESET3		15
+> +#define IMX8MQ_RESET_A53_SOC_DBG_RESET		16
+> +#define IMX8MQ_RESET_A53_L2RESET		17
+> +#define IMX8MQ_RESET_SW_NON_SCLR_M4C_RST	18
+                           ^^^^^^^^
 
-Ok, I'll try to send a couple of patches soon to fix some of this up.
-But at least yours should should stop things from hanging for now.
+This might be an implementation detail. The reset line is
+(SW_?)M4C_RST. I suppose the self-clearing SW_M4C_RST bit could be used
+to implement .reset() functionality for the same line if needed.
 
-Thanks,
+What about the self-clearing SW_M4P_RST bit? Has that been left out on
+purpose?
 
-Tycho
+> +#define IMX8MQ_RESET_OTG1_PHY_RESET		19
+> +#define IMX8MQ_RESET_OTG2_PHY_RESET		20
+> +#define IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N	21
+> +#define IMX8MQ_RESET_MIPI_DSI_RESET_N		22
+> +#define IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N	23
+> +#define IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N	24
+> +#define IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N	25
+> +#define IMX8MQ_RESET_PCIEPHY			26
+> +#define IMX8MQ_RESET_PCIEPHY_PERST		27
+> +#define IMX8MQ_RESET_PCIE_CTRL_APPS_EN		28
+> +#define IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF	29
+
+To be honest, I don't like these two, I'm not convinced anymore that
+they actually qualify as reset signals. To me it looks like this is
+something that the PCIe glue code should handle via syscon like i.MX6.
+Leonard, Lucas, what do you think?
+
+> +#define IMX8MQ_RESET_HDMI_PHY_APB_RESET		30
+> +#define IMX8MQ_RESET_DISP_RESET			31
+> +#define IMX8MQ_RESET_GPU_RESET			32
+> +#define IMX8MQ_RESET_VPU_RESET			33
+> +#define IMX8MQ_RESET_PCIEPHY2			34
+> +#define IMX8MQ_RESET_PCIEPHY2_PERST		35
+> +#define IMX8MQ_RESET_PCIE2_CTRL_APPS_EN		36
+> +#define IMX8MQ_RESET_PCIE2_CTRL_APPS_TURNOFF	37
+
+Same issue as PCIe #1
+
+> +#define IMX8MQ_RESET_MIPI_CSI1_CORE_RESET	38
+> +#define IMX8MQ_RESET_MIPI_CSI1_PHY_REF_RESET	39
+> +#define IMX8MQ_RESET_MIPI_CSI1_ESC_RESET	40
+> +#define IMX8MQ_RESET_MIPI_CSI2_CORE_RESET	41
+> +#define IMX8MQ_RESET_MIPI_CSI2_PHY_REF_RESET	42
+> +#define IMX8MQ_RESET_MIPI_CSI2_ESC_RESET	43
+> +#define IMX8MQ_RESET_DDRC1_PRST			44
+> +#define IMX8MQ_RESET_DDRC1_CORE_RESET		45
+> +#define IMX8MQ_RESET_DDRC1_PHY_RESET		46
+
+Does anybody know what the DDRC1_PHY_PWROKIN bit is, right next to the
+PHY reset?
+
+> +#define IMX8MQ_RESET_DDRC2_PRST			47
+> +#define IMX8MQ_RESET_DDRC2_CORE_RESET		48
+> +#define IMX8MQ_RESET_DDRC2_PHY_RESET		49
+> +
+> +#define IMX8MQ_RESET_NUM			50
+> +
+> +#endif
+
+regards
+Philipp
