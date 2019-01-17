@@ -2,78 +2,77 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B16C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 04:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97E7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 04:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EDBC20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 04:32:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70F5520657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 04:34:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="icT2g4/x"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KZFPWe/i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbfAQEcZ (ORCPT
+        id S1728973AbfAQEeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 23:32:25 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:52662 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbfAQEcZ (ORCPT
+        Wed, 16 Jan 2019 23:34:20 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:34818 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728945AbfAQEeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 23:32:25 -0500
-Received: by mail-it1-f194.google.com with SMTP id g76so6821833itg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 20:32:24 -0800 (PST)
+        Wed, 16 Jan 2019 23:34:20 -0500
+Received: by mail-it1-f196.google.com with SMTP id p197so6053157itp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 20:34:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZsXVNpKQnBsqi29ZepEVp6DR5CyMftcA0Ev/oOZ4p1w=;
-        b=icT2g4/xCFD2rxhgpNkTzA1/5epdYT2eWAu16wZUYgvVWUim43FdhaXM1H624HLBW9
-         PlRray4VBEJzNVyIhdMaN1ifE1bfF+C9STa9q/gtP5rmyEc69KNWn7Ggm1TJv7mYwQ/p
-         uWCTMZqzvbhqBOg6hUWKJLVUv4zNlBn8aQYRg=
+        bh=ncfqnoSxbMnH+Fh+JaP/u+vtHVJmV/Txi/tk5jsE1wU=;
+        b=KZFPWe/iqDMTX1Z0rZuglCSYugvqmZAr8uYaIvWOq+aCivOr8RSzEAm9MACZm2SV7B
+         oqiSM4j2jtsbo+jBocrC7Px31uIXaSmdXGV54ycyG/qaBU0kRt7nqwcyKcEnD4H9FzVt
+         9SqzRQ5uOHSkOfL8XVsx+4P142FN14EZA3eb4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZsXVNpKQnBsqi29ZepEVp6DR5CyMftcA0Ev/oOZ4p1w=;
-        b=QfsyU6Ka2iEhjvBtDrDSxdmOGM8yfUykbBejf9jQ/1w26jazbtz79qRNIhYjTmYnIv
-         NVKiSRgZmdKAhZs4iBBKpKYJaj8o2b8V6AUIDJzx0xJM/ODKZACCiv6nVQXMKAiJqCJd
-         yGXEpunJ0KsEvj/rhS3Jqku1IzGpzNCBdht35tUtc2DkXlKtr4KxyEKxMQHxZa1qliIL
-         6o3+qYLO668IvPnPdMQBOkwVi+wtGNpPIRKNePH2baOKELd2kOavdXtTKPJJ0W7ahrjs
-         5IgpR8TkjbKm5J8AnAt2nbgqXF5YFX8QwhmqN8RJPPobnXhYUdsDDICiS7wBvgQw3rlY
-         k64A==
-X-Gm-Message-State: AJcUukfKBgLokqxS8KnXAAV4CrI8lrOXrbAOvOp/GTJ4NdoWPJs0lsz8
-        h1PGKAP9mv+UmMpt/LNiHOXue60qsHqys9WWt/eOBA==
-X-Google-Smtp-Source: ALg8bN4LBtuMuYJRxuoCtj4jcK7NzTzmR+sGnRZ9nhO7G+cF4g+YnIOnYs5VCmYuNtc/4wVQIzLztNs1T/ySnduLvIA=
-X-Received: by 2002:a02:104a:: with SMTP id 71mr6639151jay.103.1547699543763;
- Wed, 16 Jan 2019 20:32:23 -0800 (PST)
+        bh=ncfqnoSxbMnH+Fh+JaP/u+vtHVJmV/Txi/tk5jsE1wU=;
+        b=Ue0WQ+AngqklFvo5JxxlSKkwNmtwAGD3FQG3U33oTPOk2a1p9YkSX2c3arN9MYHAzv
+         sQztcPSQlTAGj7fsY3BdjBapWE0v4lCc5LzEXAeKZB/sl+mBVpmSHHVRBXLQ6xcS/ug6
+         6Doq9SCzuFyAHrAzk93nfumA8UrNGCK/8HNjCZsgbWkdobO5GM8lSszEOgx8/gjIGaUr
+         T5pdYIWIOI/cfCzTeno0KIIf11A8jUe9UTgfPI8EUQUV7ENscuFnCzBw6CdTSofAi5wK
+         yLDOSVRKJsAKlqAayl3Rh2p4f+mQV2e/egO8yD3bQJAggQeFbqwymy9SX5Guvooq7lG8
+         rI/Q==
+X-Gm-Message-State: AJcUukfWGqCPmL0VrNzyZl1zKJku3eUSJsU7DDupX1vY67MtPGn9yEnv
+        Q1kZZJ1ye4TkmFtEXYiacEzRmkwNOfJAbm3TVW7j3g==
+X-Google-Smtp-Source: ALg8bN7PY+YyWWjnAskyUKb7H5PgEJxwvAQCMXiyFS7v4t4l7nbNcfqbkzzCuTUHsVmk+k7DWGxgb01bYWne72CtBwI=
+X-Received: by 2002:a02:4d99:: with SMTP id t25mr7459772jad.58.1547699659321;
+ Wed, 16 Jan 2019 20:34:19 -0800 (PST)
 MIME-Version: 1.0
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
- <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
- <20190107141158.zaimizk4rlqa6xli@flea> <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
- <20190108085829.clianbtjovu3oieq@flea> <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
- <20190112164319.whr7gwvl4oux5svz@flea> <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
- <20190116191756.ajzzaga43srk77dk@flea>
-In-Reply-To: <20190116191756.ajzzaga43srk77dk@flea>
+References: <20181220125438.11700-1-jagan@amarulasolutions.com>
+ <20181220125438.11700-3-jagan@amarulasolutions.com> <20181221130025.lbvw7yvy74brf3jn@flea>
+ <CAMty3ZCG5cF3tP2mid5xyS=yhtxkY+TOcGkwRkv+vrZt1=0iQg@mail.gmail.com>
+ <20190107132929.ksyajmzn2gzr6oep@flea> <CAMty3ZAx9MthB0M-eFmsZv9CxF3Z1BkFTU6Hw=ZT5wu6aJwjGQ@mail.gmail.com>
+ <20190116111109.dkc4zgsz6lcjlzs5@flea>
+In-Reply-To: <20190116111109.dkc4zgsz6lcjlzs5@flea>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 17 Jan 2019 10:02:12 +0530
-Message-ID: <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
+Date:   Thu, 17 Jan 2019 10:04:08 +0530
+Message-ID: <CAMty3ZDVMW_BRmBgqjHWbkQF7P7T81Z5q3er9mBiJeeEVBZWXQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] media: sun6i: Add mod_rate quirk
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-media <linux-media@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
         linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -83,53 +82,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
 <maxime.ripard@bootlin.com> wrote:
 >
-> On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
-> > > > > > > Again, I cannot help you without the datasheet for the panels you're
-> > > > > > > trying to submit.
-> > > > > >
-> > > > > > The panel bound with Sitronix ST7701 IC
-> > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.pdf
+> On Fri, Jan 11, 2019 at 11:54:12AM +0530, Jagan Teki wrote:
+> > On Mon, Jan 7, 2019 at 6:59 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > On Mon, Dec 24, 2018 at 08:57:48PM +0530, Jagan Teki wrote:
+> > > > On Fri, Dec 21, 2018 at 6:30 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > > > > >
-> > > > > It's the controller, not the panel
+> > > > > On Thu, Dec 20, 2018 at 06:24:34PM +0530, Jagan Teki wrote:
+> > > > > > Unfortunately default CSI_SCLK rate cannot work properly to
+> > > > > > drive the connected sensor interface, particularly on few
+> > > > > > Allwinner SoC's like A64.
+> > > > > >
+> > > > > > So, add mod_rate quirk via driver data so-that the respective
+> > > > > > SoC's which require to alter the default mod clock rate can assign
+> > > > > > the operating clock rate.
+> > > > > >
+> > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > > ---
+> > > > > >  .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 34 +++++++++++++++----
+> > > > > >  1 file changed, 28 insertions(+), 6 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > > > > > index ee882b66a5ea..fe002beae09c 100644
+> > > > > > --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > > > > > +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > > > > > @@ -15,6 +15,7 @@
+> > > > > >  #include <linux/ioctl.h>
+> > > > > >  #include <linux/module.h>
+> > > > > >  #include <linux/of.h>
+> > > > > > +#include <linux/of_device.h>
+> > > > > >  #include <linux/platform_device.h>
+> > > > > >  #include <linux/pm_runtime.h>
+> > > > > >  #include <linux/regmap.h>
+> > > > > > @@ -28,8 +29,13 @@
+> > > > > >
+> > > > > >  #define MODULE_NAME  "sun6i-csi"
+> > > > > >
+> > > > > > +struct sun6i_csi_variant {
+> > > > > > +     unsigned long                   mod_rate;
+> > > > > > +};
+> > > > > > +
+> > > > > >  struct sun6i_csi_dev {
+> > > > > >       struct sun6i_csi                csi;
+> > > > > > +     const struct sun6i_csi_variant  *variant;
+> > > > > >       struct device                   *dev;
+> > > > > >
+> > > > > >       struct regmap                   *regmap;
+> > > > > > @@ -822,33 +828,43 @@ static int sun6i_csi_resource_request(struct sun6i_csi_dev *sdev,
+> > > > > >               return PTR_ERR(sdev->clk_mod);
+> > > > > >       }
+> > > > > >
+> > > > > > +     if (sdev->variant->mod_rate)
+> > > > > > +             clk_set_rate_exclusive(sdev->clk_mod, sdev->variant->mod_rate);
+> > > > > > +
+> > > > >
+> > > > > It still doesn't make any sense to do it in the probe function...
 > > > >
-> > > > As I said before, the datasheet of that panel doesn't have any
-> > > > information except electrical characteristics and used IC which is
-> > > > ST7701.
-> > > >
-> > > > I have one more panel, which is from Bananapi, S070WV20-CT16 ICN621
-> > > > please find the attachment for the same.
-> > > >
-> > > > Here is some more details of the same.
-> > > >
-> > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/boot/dts/erobbing/x300/x300.dtsi#L81
-> > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_Slave/USER/main.c#L15
-> > > >
-> > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
-> > > > matches timings for
-> > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
-> > > >
-> > > > https://github.com/zestroly/micromat/blob/master/test/raspberry/ICN6211.cpp#L169
+> > > > I'm not sure we discussed about the context wrt probe, we discussed
+> > > > about exclusive put clock.
 > > >
-> > > Where did you get the timings from then?
+> > > https://lkml.org/lkml/2018/12/18/584
+> > >
+> > > "Doing it here is not really optimal either, since you'll put a
+> > > constraint on the system (maintaining that clock at 300MHz), while
+> > > it's not in use."
 > >
-> > You mean drm_mode timings, the same panel with RGB available in
-> > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
-> > sequence commands from BSP[3]
-> >
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/panel/panel-simple.c?id=7ad8b41cd8f5c2842646d01cdd576663caee04a7
-> > [2] https://patchwork.kernel.org/patch/10680331/
-> > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
+> > But this constraint is only set, for SoC's who need mod_rate change
+> > not for whole SoCs.
 >
-> So you had no reliable source for the timings then? How do you know if
-> all your patches that are timing related are right then?
+> Still, that constraint is there for the whole system on affected
+> SoCs. Whether it applies to one SoC or not is not really relevant.
 
-I don't understand your point, or may be I confused with many links
-that I attached in previous mail.
+OK, please see this code change and let me know the comments.
 
-1. Patch for same panel timings are already in Mainline that was
-tested on one of the board. [1]
-2. Driver from AW, released bsp from BPI-M64-bsp [3]
-
-Do you think the above two points are not valid sources?
-
-Jagan.
+https://gist.github.com/openedev/518b9e141f53814bb3adfac6f2bfd78c
