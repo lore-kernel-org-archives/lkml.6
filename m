@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB26C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6D9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4577D20856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:48:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60F9120851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:48:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730838AbfAQIsI (ORCPT
+        id S1730108AbfAQIsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 17 Jan 2019 03:48:08 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33840 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730777AbfAQIsC (ORCPT
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44085 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730785AbfAQIsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 Jan 2019 03:48:02 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y185so476008wmd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 00:48:00 -0800 (PST)
+Received: by mail-wr1-f66.google.com with SMTP id z5so9965474wrt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 00:48:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Xjjyx0Yjyd2PsWK9SkLNxWwUaL+ykG1i9L2fhMC829Y=;
-        b=bTK04mHBdeHu694/s1C52GlmD/dWsshd4s4z/uLLHlk8Fdrq/ixJXEWHUk3cds9+XI
-         E4j9NYEYny7LcjMuTUtHJuPOcN9TPlm5wi0IBoTCotqeCvMUCk1af69g3Uqif5aqyGpJ
-         zv0927APQ9dBQhL6gNK98nM7KLMeVMqS1NSdGXbYaULcBB9wM05mNqHQHCfSMvl1A4GB
-         5skT6AryGaFqcZ4DWpngtPJ8Dgry4HQv3ak5Cc+ds2rJub/g9vAerk2l6AxAjHdusUnm
-         R9aWj6GG8vzC+j6iOEP/JrvtbibSLPW90TLM1ySQgfrTavXvbaHCau/O3FeATvIIJpEw
-         EnKA==
-X-Gm-Message-State: AJcUukcqBhas1aM2il1kbJWlh7RAa4WOS3Jon/PMG9RTjJr/BJwSMCxI
-        ocBrJWNyEzeikfDvx9btRTU2Cg==
-X-Google-Smtp-Source: ALg8bN4CChnSHyfPY9CSJGlALe5DKWmpxe3eNxb7aLHUkZQBp/s+Wnz1CQHlrn1wiDB9t3p/VAnPQw==
-X-Received: by 2002:a1c:5f8a:: with SMTP id t132mr11105254wmb.40.1547714879728;
-        Thu, 17 Jan 2019 00:47:59 -0800 (PST)
+        bh=gFvNzYDKuUqbKejnGQs5K9XJCxDZXOw4epTEezvcQ2o=;
+        b=cn12zCELeTkLUqkgkdaOMcxHkM/o7J1kl5DmbEhGqHeOc7Q7vGren4DkO8suxqXbO3
+         AMeaIeGnbETZszSLeSwUn+TM4SZsgIaxPeBW/RAprBWIwiqEeRY8WmWYMR/MKwxTHx8T
+         sQZXbQopOS5ROc3bN2K0d6HFwIiy6fnKgGkrjlfMMx9TJhavwBan3xumV4PKC+lPEzup
+         s5w22QwvGzB49SrBTwdGfiuHO9Fm6vCehwLV0BMiQyJ9c91iEaz98d6/esIB3e05OWNh
+         asUvjZ9TPyUysdNcVAV5w+iywrKyhanDtrM1ApA4TCoFaEm4onD/NRjMxsZV3XuknfQw
+         RkfQ==
+X-Gm-Message-State: AJcUukeASyeitAaMbA/uxy1aBjCjsg+SisWkHTmoD5yssilkke3FLONh
+        stXBqsaqTJUwI0cIgR1zM+Ad2Q==
+X-Google-Smtp-Source: ALg8bN6RGedCtBFvhnve+XST63G/ROIkS67UG3Hzf+nXJYD2mllfFpL+GPzjBNEyCjh9bois7IxV/A==
+X-Received: by 2002:adf:d0c9:: with SMTP id z9mr1643385wrh.317.1547714880946;
+        Thu, 17 Jan 2019 00:48:00 -0800 (PST)
 Received: from localhost.localdomain.home ([151.15.254.62])
-        by smtp.gmail.com with ESMTPSA id 199sm41984992wmh.21.2019.01.17.00.47.58
+        by smtp.gmail.com with ESMTPSA id 199sm41984992wmh.21.2019.01.17.00.47.59
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 00:47:59 -0800 (PST)
+        Thu, 17 Jan 2019 00:48:00 -0800 (PST)
 From:   Juri Lelli <juri.lelli@redhat.com>
 To:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
         tj@kernel.org
@@ -49,9 +49,9 @@ Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
         claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
         bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
         cgroups@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH v6 4/5] sched/core: Prevent race condition between cpuset and __sched_setscheduler()
-Date:   Thu, 17 Jan 2019 09:47:38 +0100
-Message-Id: <20190117084739.17078-5-juri.lelli@redhat.com>
+Subject: [PATCH v6 5/5] cpuset: Rebuild root domain deadline accounting information
+Date:   Thu, 17 Jan 2019 09:47:39 +0100
+Message-Id: <20190117084739.17078-6-juri.lelli@redhat.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190117084739.17078-1-juri.lelli@redhat.com>
 References: <20190117084739.17078-1-juri.lelli@redhat.com>
@@ -60,137 +60,265 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No synchronisation mechanism exists between the cpuset subsystem and calls
-to function __sched_setscheduler(). As such, it is possible that new root
-domains are created on the cpuset side while a deadline acceptance test
-is carried out in __sched_setscheduler(), leading to a potential oversell
-of CPU bandwidth.
+When the topology of root domains is modified by CPUset or CPUhotplug
+operations information about the current deadline bandwidth held in the
+root domain is lost.
 
-Grab callback_lock from core scheduler, so to prevent situations such as
-the one described above from happening.
+This patch addresses the issue by recalculating the lost deadline
+bandwidth information by circling through the deadline tasks held in
+CPUsets and adding their current load to the root domain they are
+associated with.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 
 ---
 
-v5->v6: Added more descriptive comments about why callback_lock gives
-the holder read-only access to cpusets.
+v5 -> v6: Since the list of tasks that belongs to each cgroup is lazily
+built only the first time cgroups are mounted, to be able to use it for
+restoring deadline accounting information, we need to make sure we build
+it also when cgroups support is enabled, but cgroups are not yet mounted
+(early hotplugging of CPUs might verify this condition).
 ---
- include/linux/cpuset.h |  6 ++++++
- kernel/cgroup/cpuset.c | 25 ++++++++++++++++++++++++-
- kernel/sched/core.c    | 10 ++++++++++
- 3 files changed, 40 insertions(+), 1 deletion(-)
+ include/linux/cgroup.h         |  1 +
+ include/linux/sched.h          |  5 +++
+ include/linux/sched/deadline.h |  8 +++++
+ kernel/cgroup/cgroup.c         |  2 +-
+ kernel/cgroup/cpuset.c         | 64 +++++++++++++++++++++++++++++++++-
+ kernel/sched/deadline.c        | 31 ++++++++++++++++
+ kernel/sched/sched.h           |  3 --
+ kernel/sched/topology.c        | 15 ++++++--
+ 8 files changed, 122 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-index 934633a05d20..8e5a8dd0622b 100644
---- a/include/linux/cpuset.h
-+++ b/include/linux/cpuset.h
-@@ -55,6 +55,8 @@ extern void cpuset_init_smp(void);
- extern void cpuset_force_rebuild(void);
- extern void cpuset_update_active_cpus(void);
- extern void cpuset_wait_for_hotplug(void);
-+extern void cpuset_read_only_lock(void);
-+extern void cpuset_read_only_unlock(void);
- extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
- extern void cpuset_cpus_allowed_fallback(struct task_struct *p);
- extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
-@@ -176,6 +178,10 @@ static inline void cpuset_update_active_cpus(void)
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index 9d12757a65b0..ffa97eea5dfd 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -141,6 +141,7 @@ struct task_struct *cgroup_taskset_first(struct cgroup_taskset *tset,
+ struct task_struct *cgroup_taskset_next(struct cgroup_taskset *tset,
+ 					struct cgroup_subsys_state **dst_cssp);
  
- static inline void cpuset_wait_for_hotplug(void) { }
++void cgroup_enable_task_cg_lists(void);
+ void css_task_iter_start(struct cgroup_subsys_state *css, unsigned int flags,
+ 			 struct css_task_iter *it);
+ struct task_struct *css_task_iter_next(struct css_task_iter *it);
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a51c13c2b1a0..cb3b14f6069b 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -280,6 +280,11 @@ struct vtime {
+ 	u64			gtime;
+ };
  
-+static inline void cpuset_read_only_lock(void) { }
++#ifdef CONFIG_SMP
++extern struct root_domain def_root_domain;
++extern struct mutex sched_domains_mutex;
++#endif
 +
-+static inline void cpuset_read_only_unlock(void) { }
-+
- static inline void cpuset_cpus_allowed(struct task_struct *p,
- 				       struct cpumask *mask)
+ struct sched_info {
+ #ifdef CONFIG_SCHED_INFO
+ 	/* Cumulative counters: */
+diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+index 0cb034331cbb..1aff00b65f3c 100644
+--- a/include/linux/sched/deadline.h
++++ b/include/linux/sched/deadline.h
+@@ -24,3 +24,11 @@ static inline bool dl_time_before(u64 a, u64 b)
  {
+ 	return (s64)(a - b) < 0;
+ }
++
++#ifdef CONFIG_SMP
++
++struct root_domain;
++extern void dl_add_task_root_domain(struct task_struct *p);
++extern void dl_clear_root_domain(struct root_domain *rd);
++
++#endif /* CONFIG_SMP */
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 879c9f191f66..bc51786a4ae6 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1802,7 +1802,7 @@ static int cgroup_remount(struct kernfs_root *kf_root, int *flags, char *data)
+  */
+ static bool use_task_css_set_links __read_mostly;
+ 
+-static void cgroup_enable_task_cg_lists(void)
++void cgroup_enable_task_cg_lists(void)
+ {
+ 	struct task_struct *p, *g;
+ 
 diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 54b8ff5de7c8..8ee1b24b6353 100644
+index 8ee1b24b6353..338cd5149436 100644
 --- a/kernel/cgroup/cpuset.c
 +++ b/kernel/cgroup/cpuset.c
-@@ -330,7 +330,8 @@ static struct cpuset top_cpuset = {
-  * __alloc_pages().
-  *
-  * If a task is only holding callback_lock, then it has read-only
-- * access to cpusets.
-+ * access to cpusets. Mind that callback_lock might be grabbed from other
-+ * subsystems as well (via cpuset_read_only_lock()).
-  *
-  * Now, the task_struct fields mems_allowed and mempolicy may be changed
-  * by other task, we use alloc_lock in the task_struct fields to protect
-@@ -3218,6 +3219,28 @@ void __init cpuset_init_smp(void)
- 	BUG_ON(!cpuset_migrate_mm_wq);
+@@ -44,6 +44,7 @@
+ #include <linux/proc_fs.h>
+ #include <linux/rcupdate.h>
+ #include <linux/sched.h>
++#include <linux/sched/deadline.h>
+ #include <linux/sched/mm.h>
+ #include <linux/sched/task.h>
+ #include <linux/seq_file.h>
+@@ -934,6 +935,67 @@ static int generate_sched_domains(cpumask_var_t **domains,
+ 	return ndoms;
  }
  
-+/**
-+ * cpuset_read_only_lock - Grab the callback_lock from cpuset subsystem.
-+ *
-+ * Description: As described in full details the comment above cpuset_mutex
-+ * and callback_lock definitions, holding callback_lock gives the holder
-+ * read-only access to cpusets. Even though it might look counter-intuitive
-+ * (as callback_lock is a spinlock), in fact a task must hold both
-+ * callback_lock _and_ cpuset_mutex to modify cpusets (write access).
-+ */
-+void cpuset_read_only_lock(void)
++static void update_tasks_root_domain(struct cpuset *cs)
 +{
-+	raw_spin_lock(&callback_lock);
++	struct css_task_iter it;
++	struct task_struct *task;
++
++	css_task_iter_start(&cs->css, 0, &it);
++
++	while ((task = css_task_iter_next(&it)))
++		dl_add_task_root_domain(task);
++
++	css_task_iter_end(&it);
 +}
 +
-+/**
-+ * cpuset_read_only_unlock - Release the callback_lock from cpuset subsystem.
-+ */
-+void cpuset_read_only_unlock(void)
++static void rebuild_root_domains(void)
 +{
-+	raw_spin_unlock(&callback_lock);
-+}
++	struct cpuset *cs = NULL;
++	struct cgroup_subsys_state *pos_css;
 +
- /**
-  * cpuset_cpus_allowed - return cpus_allowed mask from a tasks cpuset.
-  * @tsk: pointer to task_struct from which to obtain cpuset->cpus_allowed.
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index f5263383170e..d928a42b8852 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4224,6 +4224,13 @@ static int __sched_setscheduler(struct task_struct *p,
- 	rq = task_rq_lock(p, &rf);
- 	update_rq_clock(rq);
- 
++	lockdep_assert_held(&cpuset_mutex);
++	lockdep_assert_cpus_held();
++	lockdep_assert_held(&sched_domains_mutex);
++
++	cgroup_enable_task_cg_lists();
++
++	rcu_read_lock();
++
 +	/*
-+	 * Make sure we don't race with the cpuset subsystem where root
-+	 * domains can be rebuilt or modified while operations like DL
-+	 * admission checks are carried out.
++	 * Clear default root domain DL accounting, it will be computed again
++	 * if a task belongs to it.
 +	 */
-+	cpuset_read_only_lock();
++	dl_clear_root_domain(&def_root_domain);
 +
- 	/*
- 	 * Changing the policy of the stop threads its a very bad idea:
- 	 */
-@@ -4285,6 +4292,7 @@ static int __sched_setscheduler(struct task_struct *p,
- 	/* Re-check policy now with rq lock held: */
- 	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
- 		policy = oldpolicy = -1;
-+		cpuset_read_only_unlock();
- 		task_rq_unlock(rq, p, &rf);
- 		goto recheck;
- 	}
-@@ -4342,6 +4350,7 @@ static int __sched_setscheduler(struct task_struct *p,
++	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
++
++		if (cpumask_empty(cs->effective_cpus)) {
++			pos_css = css_rightmost_descendant(pos_css);
++			continue;
++		}
++
++		css_get(&cs->css);
++
++		rcu_read_unlock();
++
++		update_tasks_root_domain(cs);
++
++		rcu_read_lock();
++		css_put(&cs->css);
++	}
++	rcu_read_unlock();
++}
++
++static void
++partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
++				    struct sched_domain_attr *dattr_new)
++{
++	mutex_lock(&sched_domains_mutex);
++	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
++	rebuild_root_domains();
++	mutex_unlock(&sched_domains_mutex);
++}
++
+ /*
+  * Rebuild scheduler domains.
+  *
+@@ -971,7 +1033,7 @@ static void rebuild_sched_domains_locked(void)
+ 	ndoms = generate_sched_domains(&doms, &attr);
  
- 	/* Avoid rq from going away on us: */
- 	preempt_disable();
-+	cpuset_read_only_unlock();
- 	task_rq_unlock(rq, p, &rf);
- 
- 	if (pi)
-@@ -4354,6 +4363,7 @@ static int __sched_setscheduler(struct task_struct *p,
- 	return 0;
- 
- unlock:
-+	cpuset_read_only_unlock();
- 	task_rq_unlock(rq, p, &rf);
- 	return retval;
+ 	/* Have scheduler rebuild the domains */
+-	partition_sched_domains(ndoms, doms, attr);
++	partition_and_rebuild_sched_domains(ndoms, doms, attr);
+ out:
+ 	put_online_cpus();
  }
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 91e4202b0634..63d36958cbba 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2285,6 +2285,37 @@ void __init init_sched_dl_class(void)
+ 					GFP_KERNEL, cpu_to_node(i));
+ }
+ 
++void dl_add_task_root_domain(struct task_struct *p)
++{
++	unsigned long flags;
++	struct rq_flags rf;
++	struct rq *rq;
++	struct dl_bw *dl_b;
++
++	rq = task_rq_lock(p, &rf);
++	if (!dl_task(p))
++		goto unlock;
++
++	dl_b = &rq->rd->dl_bw;
++	raw_spin_lock_irqsave(&dl_b->lock, flags);
++
++	dl_b->total_bw += p->dl.dl_bw;
++
++	raw_spin_unlock_irqrestore(&dl_b->lock, flags);
++
++unlock:
++	task_rq_unlock(rq, p, &rf);
++}
++
++void dl_clear_root_domain(struct root_domain *rd)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
++	rd->dl_bw.total_bw = 0;
++	raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
++}
++
+ #endif /* CONFIG_SMP */
+ 
+ static void switched_from_dl(struct rq *rq, struct task_struct *p)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 618577fc9aa8..f34cc648c613 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -757,9 +757,6 @@ struct root_domain {
+ 	unsigned long		max_cpu_capacity;
+ };
+ 
+-extern struct root_domain def_root_domain;
+-extern struct mutex sched_domains_mutex;
+-
+ extern void init_defrootdomain(void);
+ extern int sched_init_domains(const struct cpumask *cpu_map);
+ extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index dd94000cb378..dc3468b4b883 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1961,9 +1961,20 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+ 	/* Destroy deleted domains: */
+ 	for (i = 0; i < ndoms_cur; i++) {
+ 		for (j = 0; j < n && !new_topology; j++) {
+-			if (cpumask_equal(doms_cur[i], doms_new[j])
+-			    && dattrs_equal(dattr_cur, i, dattr_new, j))
++			if (cpumask_equal(doms_cur[i], doms_new[j]) &&
++			    dattrs_equal(dattr_cur, i, dattr_new, j)) {
++				struct root_domain *rd;
++
++				/*
++				 * This domain won't be destroyed and as such
++				 * its dl_bw->total_bw needs to be cleared.  It
++				 * will be recomputed in function
++				 * update_tasks_root_domain().
++				 */
++				rd = cpu_rq(cpumask_any(doms_cur[i]))->rd;
++				dl_clear_root_domain(rd);
+ 				goto match1;
++			}
+ 		}
+ 		/* No match - a current sched domain not in new doms_new[] */
+ 		detach_destroy_domains(doms_cur[i]);
 -- 
 2.17.2
 
