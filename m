@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34314C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 953E2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C30F20657
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 712642087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfARB5w (ORCPT
+        id S1727178AbfARB5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 20:57:52 -0500
+        Thu, 17 Jan 2019 20:57:55 -0500
 Received: from mga14.intel.com ([192.55.52.115]:26230 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfARB5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 20:57:50 -0500
+        id S1726329AbfARB5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 20:57:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 17:57:50 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 17:57:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
-   d="scan'208";a="128728480"
+   d="scan'208";a="128728486"
 Received: from aubrey-skl.sh.intel.com ([10.239.53.9])
-  by orsmga001.jf.intel.com with ESMTP; 17 Jan 2019 17:57:48 -0800
+  by orsmga001.jf.intel.com with ESMTP; 17 Jan 2019 17:57:50 -0800
 From:   Aubrey Li <aubrey.li@intel.com>
 To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
         hpa@zytor.com
 Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
         dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
         linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
-Subject: [PATCH v8 2/3] proc: add AVX-512 usage elapsed time to /proc/pid/status
-Date:   Fri, 18 Jan 2019 02:38:21 +0800
-Message-Id: <20190117183822.31333-2-aubrey.li@intel.com>
+Subject: [PATCH v8 3/3] Documentation/filesystems/proc.txt: add AVX512_elapsed_ms
+Date:   Fri, 18 Jan 2019 02:38:22 +0800
+Message-Id: <20190117183822.31333-3-aubrey.li@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190117183822.31333-1-aubrey.li@intel.com>
 References: <20190117183822.31333-1-aubrey.li@intel.com>
@@ -46,37 +46,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AVX-512 components use could cause core turbo frequency drop. So
-it's useful to expose AVX-512 usage elapsed time as a heuristic hint
-for the user space job scheduler to cluster the AVX-512 using tasks
-together.
-
-Example:
-$ cat /proc/pid/status | grep AVX512_elapsed_ms
-AVX512_elapsed_ms:      1020
-
-The number '1020' denotes 1020 millisecond elapsed since last time
-context switch the off-CPU task using AVX-512 components, thus the
-task could cause core frequency drop.
-
-Or:
-$ cat /proc/pid/status | grep AVX512_elapsed_ms
-AVX512_elapsed_ms:      -1
-
-The number '-1' indicates the task didn't use AVX-512 components
-before thus unlikely has frequency drop issue.
-
-User space tools may want to further check by:
-
-$ perf stat --pid <pid> -e core_power.lvl2_turbo_license -- sleep 1
-
- Performance counter stats for process id '3558':
-
-     3,251,565,961      core_power.lvl2_turbo_license
-
-       1.004031387 seconds time elapsed
-
-Non-zero counter value confirms that the task causes frequency drop.
+Added AVX512_elapsed_ms in /proc/<pid>/status. Report it
+in Documentation/filesystems/proc.txt
 
 Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -85,86 +56,38 @@ Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
 ---
- arch/x86/kernel/fpu/xstate.c | 38 ++++++++++++++++++++++++++++++++++++
- fs/proc/array.c              |  5 +++++
- 2 files changed, 43 insertions(+)
+ Documentation/filesystems/proc.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 87a57b7642d3..c361de2bfb28 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -7,6 +7,7 @@
- #include <linux/cpu.h>
- #include <linux/mman.h>
- #include <linux/pkeys.h>
-+#include <linux/seq_file.h>
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 12a5e6e693b6..1bc5d1b1f70b 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -197,6 +197,7 @@ read the file /proc/PID/status:
+   Seccomp:        0
+   voluntary_ctxt_switches:        0
+   nonvoluntary_ctxt_switches:     1
++  AVX512_elapsed_ms:	1020
  
- #include <asm/fpu/api.h>
- #include <asm/fpu/internal.h>
-@@ -1245,3 +1246,40 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
+ This shows you nearly the same information you would get if you viewed it with
+ the ps  command.  In  fact,  ps  uses  the  proc  file  system  to  obtain its
+@@ -214,7 +215,7 @@ asynchronous manner and the value may not be very precise. To see a precise
+ snapshot of a moment, you can see /proc/<pid>/smaps file and scan page table.
+ It's slow but very precise.
  
- 	return 0;
- }
-+
-+/*
-+ * Report the amount of time elapsed in millisecond since last AVX512
-+ * use in the task.
-+ */
-+void avx512_state(struct seq_file *m, struct task_struct *task)
-+{
-+	unsigned long timestamp = task->thread.fpu.avx512_timestamp;
-+	long delta;
-+
-+	if (!timestamp)
-+		delta = -1;
-+	else {
-+		delta = (long)(jiffies - timestamp);
-+		/*
-+		 * Cap to LONG_MAX if time difference > LONG_MAX
-+		 */
-+		if (delta < 0)
-+			delta = LONG_MAX;
-+		delta = jiffies_to_msecs(delta);
-+	}
-+
-+	seq_put_decimal_ll(m, "AVX512_elapsed_ms:\t", delta);
-+	seq_putc(m, '\n');
-+}
-+
-+/*
-+ * Report CPU specific thread state
-+ */
-+void arch_task_state(struct seq_file *m, struct task_struct *task)
-+{
-+	/*
-+	 * Report AVX512 state if the processor and build option supported.
-+	 */
-+	if (cpu_feature_enabled(X86_FEATURE_AVX512F))
-+		avx512_state(m, task);
-+}
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 0ceb3b6b37e7..dd88c2219f08 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -392,6 +392,10 @@ static inline void task_core_dumping(struct seq_file *m, struct mm_struct *mm)
- 	seq_putc(m, '\n');
- }
+-Table 1-2: Contents of the status files (as of 4.8)
++Table 1-2: Contents of the status files (as of 5.0)
+ ..............................................................................
+  Field                       Content
+  Name                        filename of the executable
+@@ -275,6 +276,7 @@ Table 1-2: Contents of the status files (as of 4.8)
+  Mems_allowed_list           Same as previous, but in "list format"
+  voluntary_ctxt_switches     number of voluntary context switches
+  nonvoluntary_ctxt_switches  number of non voluntary context switches
++ AVX512_elapsed_ms           time elapsed since last AVX512 use in millisecond
+ ..............................................................................
  
-+void __weak arch_task_state(struct seq_file *m, struct task_struct *task)
-+{
-+}
-+
- int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 			struct pid *pid, struct task_struct *task)
- {
-@@ -414,6 +418,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 	task_cpus_allowed(m, task);
- 	cpuset_task_status_allowed(m, task);
- 	task_context_switch_counts(m, task);
-+	arch_task_state(m, task);
- 	return 0;
- }
- 
+ Table 1-3: Contents of the statm files (as of 2.6.8-rc3)
 -- 
 2.17.1
 
