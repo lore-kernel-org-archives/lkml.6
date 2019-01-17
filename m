@@ -5,112 +5,105 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974A0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E6BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB1720859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:02:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A950420859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 22:03:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9QL1chh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dhn0I3wj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfAQWCA (ORCPT
+        id S1727881AbfAQWDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 17:02:00 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33509 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbfAQWB4 (ORCPT
+        Thu, 17 Jan 2019 17:03:47 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39000 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfAQWDr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 17:01:56 -0500
-Received: by mail-pl1-f196.google.com with SMTP id z23so5374492plo.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 14:01:56 -0800 (PST)
+        Thu, 17 Jan 2019 17:03:47 -0500
+Received: by mail-pl1-f195.google.com with SMTP id 101so5351890pld.6
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 14:03:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=tgyzZ2qn4CP49J0i8O3gsF/sy9CXNfB2Ncc6bGQio3k=;
-        b=D9QL1chh5HqS2m6iVm2svhzJvsTUXRHJdyiXXH52luogDz6xTMtnjfiUl4UDquPl1r
-         dGBOMSFeiSrixyskIPd/vCeoKl05VN8ETrMbpVtW6r8d/U8ne/LVs7tMbOkfaPfLMJJM
-         ru3NcI+8tbJSq8ak47bt7qTP3ddAaq9rCjz+6RIn8gKr/BDM/L9eI0X/KU7vMso0hE93
-         aGgNxh93Mhu5LgNIsOJeAr8av2/HVoE03YcROeeIngq9HKj8SLgUu7PsnOqwqLRP8T97
-         FM9af68jaha3MnJub90m4DQoIieDKOtzeOWwdXvw+RCBjUMU5xGZ3qYurbzXqJSL5Pr8
-         /A2w==
+        bh=B00rvx8w1qaGLmnjIVj3ZrmlkxjPJYojZcbSv08jglA=;
+        b=Dhn0I3wjXpxaAoZqlX3fUvgHycKhvr7li4c3BoGjNWsajKQ2RVRRMaGWOjPKHX9Tu8
+         RGOxgg43rR5jLm85G0P2OY8zFDKCHiGFYv35wzKMpSq0DtY/X99SARcrieaYnOledOxi
+         6tkX3SqmVNe+EIRkZYuvTi4y63FxPVu13ACuCCexz5i8m1bzMGUBbwf8ACtXIEZdgvzC
+         TRUdIQ3OUNdhuRN+OeErx1KnV2u+IzOnXBNtW2Kl8ac0xvTJ46Uj1bXR8rgxoAW1eeiV
+         synpe2dJdgR0RLlxlhsWZWp6wPwITVduL3+ERCx4x7ROHjD22fWjKsLPGO0BuTaduw2E
+         EZiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tgyzZ2qn4CP49J0i8O3gsF/sy9CXNfB2Ncc6bGQio3k=;
-        b=b6apFPDHgvj1HFEopF+f0GqnmvtzGAJ6CdO/IYR3u8SM489G92nadhY2edMghzQ3Kc
-         z4dPxL2FzTNzJoonEyfB9CDsEUoWqI+v8K2sAPc7oyDlpnCgCpRIdIddbW7JpscHILV6
-         3ffWJxRuqvxG9B0exbRbPVH1JOHLs82kNFhlZkoDu7b65XMXhhpXQgSCiq5xfvY2r8lx
-         ilho6LUi/lraINvozivFZCrtQhd0D+jgwwOVY6vNhPSE8OmnuOMni2OPxhUmC+Crf1RS
-         LXDqNjlRAdxl8BTaYv0aKrBn56a0lt49VWiRFgMc88CccTbLzCQyVzDmr2NNIVPwzTg0
-         Fy6w==
-X-Gm-Message-State: AJcUukfJ/xp434T0+qhK654VTl4mIOPT+yTxtfvlMJIouEAHY8qebU+F
-        AoQTe9V3qM7aEa8ADaME8WE=
-X-Google-Smtp-Source: ALg8bN60185tcgJcobq0wnFnKzsFgoqzuIQXioKN3JQLA+Wa7fxTEobEaKDK4r1fSy9JKVJjiBb3SA==
-X-Received: by 2002:a17:902:2867:: with SMTP id e94mr16867120plb.264.1547762515663;
-        Thu, 17 Jan 2019 14:01:55 -0800 (PST)
+        bh=B00rvx8w1qaGLmnjIVj3ZrmlkxjPJYojZcbSv08jglA=;
+        b=CrxIi5LanguKgrTdgD4SYcmizlNpUcrw61GjF9a5SmfwY3dZBixD7XZWgII3jExF7a
+         gB655ipt+CGYVAt8f7PSAk/XSedqV+YS077c08itFS2zxVHaIWdmeezTH4obYXnN51cO
+         AWPDKsZ82KSJNfvIspWwDjCuyTeHikXP9yQ43uIFI/us2pa8DMoggZ8mrgwSxN59ldVf
+         NjA6xMJVQA5U8K5EWBdqcaEOuX9hgxHqlQtNYmWtPDpaOKJlD5r2/OjI9zWVi0qsac9b
+         GbeVpAh1/zDNXhzQAdI9uIg1IO9eLUI3mgSu42yBiyneiEX/cZE//+cgGiylWvPynhP4
+         oIPA==
+X-Gm-Message-State: AJcUukdjHUKg3c0UEJ8WSNJyVE9EvUKfgFDClCfxdAmPy9V+cKXiWng9
+        WwfGPu4vWs4/JKFFFSDeaLA=
+X-Google-Smtp-Source: ALg8bN4BHbJy2TFsS1m/s+uXmSeuezMFIY8qo1uORnZhlMZYuOJNY/m18LHYy+S82higTORgL0O5hQ==
+X-Received: by 2002:a17:902:e20b:: with SMTP id ce11mr16160537plb.251.1547762626464;
+        Thu, 17 Jan 2019 14:03:46 -0800 (PST)
 Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id 24sm10314479pfl.32.2019.01.17.14.01.55
+        by smtp.gmail.com with ESMTPSA id l22sm3705765pfj.179.2019.01.17.14.03.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 14:01:55 -0800 (PST)
-Date:   Thu, 17 Jan 2019 14:01:52 -0800
+        Thu, 17 Jan 2019 14:03:45 -0800 (PST)
+Date:   Thu, 17 Jan 2019 14:03:43 -0800
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
 To:     Stefan Agner <stefan@agner.ch>
 Cc:     timur@kernel.org, Xiubo.Lee@gmail.com, fabio.estevam@nxp.com,
         lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
         tiwai@suse.com, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] ASoC: imx-sgtl5000: lower log level for potential
- probe deferral cases
-Message-ID: <20190117220152.GC16918@Asurada-Nvidia.nvidia.com>
+Subject: Re: [PATCH 3/5] ASoC: imx-sgtl5000: don't print EPROBE_DEFER as error
+Message-ID: <20190117220342.GD16918@Asurada-Nvidia.nvidia.com>
 References: <20190117090640.12972-1-stefan@agner.ch>
- <20190117090640.12972-5-stefan@agner.ch>
+ <20190117090640.12972-3-stefan@agner.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117090640.12972-5-stefan@agner.ch>
+In-Reply-To: <20190117090640.12972-3-stefan@agner.ch>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 10:06:40AM +0100, Stefan Agner wrote:
-> Not finding the codec/SSI instance can be due to probe deferral.
-> Do not print error messages in those cases.
+On Thu, Jan 17, 2019 at 10:06:38AM +0100, Stefan Agner wrote:
+> Probe deferral is to be expected during normal operation, so avoid
+> printing an error when it is encountered.
 > 
 > Signed-off-by: Stefan Agner <stefan@agner.ch>
 
 Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
 > ---
->  sound/soc/fsl/imx-sgtl5000.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  sound/soc/fsl/imx-sgtl5000.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
 > diff --git a/sound/soc/fsl/imx-sgtl5000.c b/sound/soc/fsl/imx-sgtl5000.c
-> index 45969e6dfad7..b6cb80480b60 100644
+> index c29200cf755a..e1e20499b2f1 100644
 > --- a/sound/soc/fsl/imx-sgtl5000.c
 > +++ b/sound/soc/fsl/imx-sgtl5000.c
-> @@ -104,13 +104,13 @@ static int imx_sgtl5000_probe(struct platform_device *pdev)
+> @@ -156,7 +156,9 @@ static int imx_sgtl5000_probe(struct platform_device *pdev)
 >  
->  	ssi_pdev = of_find_device_by_node(ssi_np);
->  	if (!ssi_pdev) {
-> -		dev_err(&pdev->dev, "failed to find SSI platform device\n");
-> +		dev_dbg(&pdev->dev, "failed to find SSI platform device\n");
->  		ret = -EPROBE_DEFER;
+>  	ret = devm_snd_soc_register_card(&pdev->dev, &data->card);
+>  	if (ret) {
+> -		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+> +				ret);
 >  		goto fail;
 >  	}
->  	codec_dev = of_find_i2c_device_by_node(codec_np);
->  	if (!codec_dev) {
-> -		dev_err(&pdev->dev, "failed to find codec platform device\n");
-> +		dev_dbg(&pdev->dev, "failed to find codec platform device\n");
->  		ret = -EPROBE_DEFER;
->  		goto fail;
->  	}
+>  
 > -- 
 > 2.20.1
 > 
