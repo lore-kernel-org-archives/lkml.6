@@ -2,167 +2,312 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 944D9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA247C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 596F120856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547711892;
-	bh=k737BUtgiJSYQxUnNYSqndlyw5oWbBeoTcKQjicgsE0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Bg06sY2oUlzmNJPv+ZAGnP9f4e6kgv0m3b3PdWTeCWkTGRM9TS3q+PVRYpPPkf88K
-	 fl0+Xv1NGFi9k5ThIQc+1aNRC7ZNgBULDUWUd1+rlbenlbDE4d6RMPVz1+zkgvY+bG
-	 WF6oKv2uKZGy0riA37MYqeaQIWaONIsTXgi6HJMY=
+	by mail.kernel.org (Postfix) with ESMTP id 843E420866
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 07:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbfAQH6K (ORCPT
+        id S1728784AbfAQH6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 02:58:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726796AbfAQH6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 02:58:10 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6F6320851;
-        Thu, 17 Jan 2019 07:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547711889;
-        bh=k737BUtgiJSYQxUnNYSqndlyw5oWbBeoTcKQjicgsE0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=prZRNz75WgtRRIvSQejvI5H5982OVLJ6nN6joDf9kJFW493X9qfepdSgEtpaeu0XA
-         hEO6fbi1lBDZ+cZgkrWJaIQhlrxUOrnfeAdJq0rvl0BGqiJtBChE5rckr2pwaJhmhS
-         qTSpjj5n58eNW593gtXm3zDe7Z3+sulzopT84uHE=
-Date:   Thu, 17 Jan 2019 16:58:07 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andreas Ziegler <andreas.ziegler@fau.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tracing/uprobes: Fix output for multiple string
- arguments
-Message-Id: <20190117165807.64e95553ff397e7f73ba495b@kernel.org>
-In-Reply-To: <b5defce3-b52a-db20-bfd1-81eec9972fab@fau.de>
-References: <20190116084021.34b0beee@gandalf.local.home>
-        <20190116141629.5752-1-andreas.ziegler@fau.de>
-        <20190117150107.17f2c0c37e41126120c5eebb@kernel.org>
-        <b5defce3-b52a-db20-bfd1-81eec9972fab@fau.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Jan 2019 02:58:30 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:25148 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727426AbfAQH6a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 02:58:30 -0500
+X-IronPort-AV: E=Sophos;i="5.56,488,1539619200"; 
+   d="scan'208";a="52205163"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 17 Jan 2019 15:58:28 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 98EE24C47E61;
+        Thu, 17 Jan 2019 15:58:24 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 17 Jan 2019 15:58:31 +0800
+Date:   Thu, 17 Jan 2019 15:57:30 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Kairui Song <kasong@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <hpa@zytor.com>, <keescook@chromium.org>,
+        Baoquan He <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store
+ immovable memory
+Message-ID: <20190117075729.GC31097@localhost.localdomain>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+ <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
+ <CACPcB9dO8FxpqSeG2whJGpUT7TiuiSJFWNWcF_fkRQwdRHwVcA@mail.gmail.com>
+ <20190117062451.GA588@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190117062451.GA588@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 98EE24C47E61.ACFD1
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Jan 2019 08:40:05 +0100
-Andreas Ziegler <andreas.ziegler@fau.de> wrote:
+On Wed, Jan 16, 2019 at 03:28:52PM +0800, Kairui Song wrote:
+>On Mon, Jan 7, 2019 at 11:24 AM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+>>
+>> +
+>> +/* Determine RSDP, based on acpi_os_get_root_pointer(). */
+>> +static acpi_physical_address get_rsdp_addr(void)
+>> +{
+>> +       acpi_physical_address pa;
+>> +
+>> +       pa = get_acpi_rsdp();
+>> +
+>> +       if (!pa)
+>> +               pa = efi_get_rsdp_addr();
+>> +
+>> +       if (!pa)
+>> +               pa = bios_get_rsdp_addr();
+>> +
+>> +       return pa;
+>> +}
+>
+>acpi_rsdp might be provided by boot_params.acpi_rsdp_addr too,
+>it's introduced in ae7e1238e68f2a for Xen PVH guest and later move to
+>boot_params in e6e094e053af,
+>kexec could use it to pass RSDP to second kernel as well. Please check
+>it as well make sure it always works.
+>
 
-> On 17.01.19 07:01, Masami Hiramatsu wrote:
-> > On Wed, 16 Jan 2019 15:16:29 +0100
-> > Andreas Ziegler <andreas.ziegler@fau.de> wrote:
-> > 
-> >> When printing multiple uprobe arguments as strings the output for the
-> >> earlier arguments would also include all later string arguments.
-> >>
-> >> This is best explained in an example:
-> >>
-> >> Consider adding a uprobe to a function receiving two strings as
-> >> parameters which is at offset 0xa0 in strlib.so and we want to print
-> >> both parameters when the uprobe is hit (on x86_64):
-> >>
-> >> $ echo 'p:func /lib/strlib.so:0xa0 +0(%di):string +0(%si):string' > \
-> >>     /sys/kernel/debug/tracing/uprobe_events
-> >>
-> >> When the function is called as func("foo", "bar") and we hit the probe,
-> >> the trace file shows a line like the following:
-> >>
-> >>   [...] func: (0x7f7e683706a0) arg1="foobar" arg2="bar"
-> >>
-> >> Note the extra "bar" printed as part of arg1. This behaviour stacks up
-> >> for additional string arguments.
-> >>
-> >> The strings are stored in a dynamically growing part of the uprobe
-> >> buffer by fetch_store_string() after copying them from userspace via
-> >> strncpy_from_user(). The return value of strncpy_from_user() is then
-> >> directly used as the required size for the string. However, this does
-> >> not take the terminating null byte into account as the documentation
-> >> for strncpy_from_user() cleary states that it "[...] returns the
-> >> length of the string (not including the trailing NUL)" even though the
-> >> null byte will be copied to the destination.
-> >>
-> >> Therefore, subsequent calls to fetch_store_string() will overwrite
-> >> the terminating null byte of the most recently fetched string with
-> >> the first character of the current string, leading to the
-> >> "accumulation" of strings in earlier arguments in the output.
-> >>
-> >> Fix this by incrementing the return value of strncpy_from_user() by
-> >> one if we did not hit the maximum buffer size.
-> >>
-> > 
-> > Yeah, I had eventually same conclusion. However, you also have to increse
-> > the return value of fetch_store_strlen() too. (And I found another issue)
-> > 
-> 
-> I don't think we need to increase that since the documentation for
-> strnlen_user() says that it "[r]eturns the size of the string
-> INCLUDING the terminating NUL." so its return value will already be
-> one more than that of strncpy_from_user().
+Hi Kairui,
 
-Ah, I got it.
-Hmm, in that case, I have to update my patch in the previous mail.
-Anyway,
+I saw the parsing code has been added to kernel, but I didn't see
+where to fill in the 'acpi_rsdp_addr'. If only you(KEXEC) use it,
+I can add "#ifdef CONFIG_KEXEC", but you said Xen will use it also,
+so I didn't add ifdef to control it. I was trying to do as below:
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+static inline acpi_physical_address get_boot_params_rsdp(void)
+{
+        return boot_params->acpi_rsdp_addr;
+}
 
-Thank you!!
+static acpi_physical_address get_rsdp_addr(void)
+{
+	bool boot_params_rsdp_exist;
+        acpi_physical_address pa;
 
-> 
-> Thanks,
-> 
-> Andreas
-> 
-> > Could you fix fetch_store_strlen in the same patch?
-> > 
-> > Thank you,
-> > 
-> >> Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
-> >> ---
-> >> v2: removed a wrong check for (ret > 0)
-> >>
-> >>  kernel/trace/trace_uprobe.c | 7 +++++++
-> >>  1 file changed, 7 insertions(+)
-> >>
-> >> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> >> index e335576b9411..3a1d5ab6b4ba 100644
-> >> --- a/kernel/trace/trace_uprobe.c
-> >> +++ b/kernel/trace/trace_uprobe.c
-> >> @@ -160,6 +160,13 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
-> >>  	if (ret >= 0) {
-> >>  		if (ret == maxlen)
-> >>  			dst[ret - 1] = '\0';
-> >> +		else
-> >> +			/*
-> >> +			 * Include the terminating null byte. In this case it
-> >> +			 * was copied by strncpy_from_user but not accounted
-> >> +			 * for in ret.
-> >> +			 */
-> >> +			ret++;
-> >>  		*(u32 *)dest = make_data_loc(ret, (void *)dst - base);
-> >>  	}
-> >>
-> >> --
-> >> 2.17.1
-> >>
-> > 
-> > 
-> 
+        pa = get_acpi_rsdp();
+
+        if (!pa)
+                pa = get_boot_params_rsdp();
+
+        if (!pa) {
+                pa = efi_get_rsdp_addr();
+		boot_params_rsdp_exist = false;
+	}
+	else
+		boot_params_rsdp_exist = true;
+
+        if (!pa)
+                pa = bios_get_rsdp_addr();
+
+	if (pa && !boot_params_rsdp_exist)
+		boot_params.acpi_rsdp_addr = pa;
+
+        return pa;
+}
+
+At the same time, I notice kernel only parses it when
+"#ifdef CONFIG_ACPI", we should keep sync with kernel, but I think
+we are parsing SRAT, CONFIG_ACPI is needed sure, so I am going to
+update the define of EARLY_SRAT_PARSE:
+
+config EARLY_SRAT_PARSE
+        bool "EARLY SRAT parsing"
+        def_bool y
+        depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE && ACPI
+
+Boris, how do you think the update for the new acpi_rsdp_addr?
+If I misunderstand something, please let me know.
+
+Thanks,
+Chao Fan
+
+>> +
+>> +/* Compute SRAT address from RSDP. */
+>> +static struct acpi_table_header *get_acpi_srat_table(void)
+>> +{
+>> +       acpi_physical_address acpi_table;
+>> +       acpi_physical_address root_table;
+>> +       struct acpi_table_header *header;
+>> +       struct acpi_table_rsdp *rsdp;
+>> +       u32 num_entries;
+>> +       char arg[10];
+>> +       u8 *entry;
+>> +       u32 size;
+>> +       u32 len;
+>> +
+>> +       rsdp = (struct acpi_table_rsdp *)(long)get_rsdp_addr();
+>> +       if (!rsdp)
+>> +               return NULL;
+>> +
+>> +       /* Get RSDT or XSDT from RSDP. */
+>> +       if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
+>> +           !strncmp(arg, "rsdt", 4)) &&
+>> +           rsdp->xsdt_physical_address &&
+>> +           rsdp->revision > 1) {
+>> +               root_table = rsdp->xsdt_physical_address;
+>> +               size = ACPI_XSDT_ENTRY_SIZE;
+>> +       } else {
+>> +               root_table = rsdp->rsdt_physical_address;
+>> +               size = ACPI_RSDT_ENTRY_SIZE;
+>> +       }
+>> +
+>> +       /* Get ACPI root table from RSDT or XSDT.*/
+>> +       if (!root_table)
+>> +               return NULL;
+>> +       header = (struct acpi_table_header *)(long)root_table;
+>> +
+>> +       len = header->length;
+>> +       if (len < sizeof(struct acpi_table_header) + size)
+>> +               return NULL;
+>> +
+>> +       num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
+>> +       entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+>> +
+>> +       while (num_entries--) {
+>> +               u64 address64;
+>> +
+>> +               if (size == ACPI_RSDT_ENTRY_SIZE)
+>> +                       acpi_table =  *ACPI_CAST_PTR(u32, entry);
+>> +               else {
+>> +                       address64 = *(u64 *)entry;
+>> +                       acpi_table = address64;
+>> +               }
+>> +
+>> +               if (acpi_table) {
+>> +                       header = (struct acpi_table_header *)(long)acpi_table;
+>> +
+>> +                       if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
+>> +                               return header;
+>> +               }
+>> +               entry += size;
+>> +       }
+>> +       return NULL;
+>> +}
+>> +
+>> +/*
+>> + * According to ACPI table, filter the immovable memory regions
+>> + * and store them in immovable_mem[].
+>> + */
+>> +void get_immovable_mem(void)
+>> +{
+>> +       struct acpi_table_header *table_header;
+>> +       struct acpi_subtable_header *table;
+>> +       struct acpi_srat_mem_affinity *ma;
+>> +       char arg[MAX_ACPI_ARG_LENGTH];
+>> +       unsigned long table_end;
+>> +       int i = 0;
+>> +
+>> +       if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
+>> +           !strncmp(arg, "off", 3))
+>> +               return;
+>> +
+>> +       table_header = get_acpi_srat_table();
+>> +       if (!table_header)
+>> +               return;
+>> +
+>> +       table_end = (unsigned long)table_header + table_header->length;
+>> +       table = (struct acpi_subtable_header *)
+>> +               ((unsigned long)table_header + sizeof(struct acpi_table_srat));
+>> +
+>> +       while (((unsigned long)table) +
+>> +                      sizeof(struct acpi_subtable_header) < table_end) {
+>> +               if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+>> +                       ma = (struct acpi_srat_mem_affinity *)table;
+>> +                       if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+>> +                               immovable_mem[i].start = ma->base_address;
+>> +                               immovable_mem[i].size = ma->length;
+>> +                               i++;
+>> +                       }
+>> +
+>> +                       if (i >= MAX_NUMNODES*2) {
+>> +                               debug_putstr("Too many immovable memory regions, aborting.\n");
+>> +                               return;
+>> +                       }
+>> +               }
+>> +               table = (struct acpi_subtable_header *)
+>> +                       ((unsigned long)table + table->length);
+>> +       }
+>> +       num_immovable_mem = i;
+>> +}
+>> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+>> index 9ed9709d9947..b251572e77af 100644
+>> --- a/arch/x86/boot/compressed/kaslr.c
+>> +++ b/arch/x86/boot/compressed/kaslr.c
+>> @@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
+>>  #define KASLR_COMPRESSED_BOOT
+>>  #include "../../lib/kaslr.c"
+>>
+>> -struct mem_vector {
+>> -       unsigned long long start;
+>> -       unsigned long long size;
+>> -};
+>>
+>>  /* Only supporting at most 4 unusable memmap regions with kaslr */
+>>  #define MAX_MEMMAP_REGIONS     4
+>> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+>> index a1d5918765f3..b49748366a5b 100644
+>> --- a/arch/x86/boot/compressed/misc.h
+>> +++ b/arch/x86/boot/compressed/misc.h
+>> @@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
+>>                             unsigned long *output,
+>>                             unsigned long output_size,
+>>                             unsigned long *virt_addr);
+>> +struct mem_vector {
+>> +       unsigned long long start;
+>> +       unsigned long long size;
+>> +};
+>> +
+>>  /* cpuflags.c */
+>>  bool has_cpuflag(int flag);
+>>  #else
+>> @@ -116,3 +121,17 @@ static inline void console_init(void)
+>>  void set_sev_encryption_mask(void);
+>>
+>>  #endif
+>> +
+>> +/* acpi.c */
+>> +#ifdef CONFIG_RANDOMIZE_BASE
+>> +/* Amount of immovable memory regions */
+>> +int num_immovable_mem;
+>> +#endif
+>> +
+>> +#ifdef CONFIG_EARLY_SRAT_PARSE
+>> +void get_immovable_mem(void);
+>> +#else
+>> +static void get_immovable_mem(void)
+>> +{
+>> +}
+>> +#endif
+>> --
+>> 2.20.1
+>>
+>>
+>>
+>
+>
+>-- 
+>Best Regards,
+>Kairui Song
+>
+>
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
