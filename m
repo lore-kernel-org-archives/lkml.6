@@ -2,131 +2,135 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B57CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB8EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D006820855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547756860;
-	bh=2LN0b2pEyZcmNHx/q/HSwUHJ+OFapnXo/7ZJjzZgSMI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=S0qxhBxDTuCjrqPPE4BlopxS48ilPAjBuYhIPzAdSciCgA1NruDkwxJMIAZjSEsp2
-	 9igvrfnMGOwb5nh1IJTRdQPwMyIe5gypvMa1ZJ9TuPqLJZoylzsq91cXJOxe1Mv1hH
-	 epQIWREUkjR68l5sDa2x6CDcAWmeGYGSIbdMZGvA=
+	by mail.kernel.org (Postfix) with ESMTP id 0803620868
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 20:27:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="OX/yUElu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbfAQU1i (ORCPT
+        id S1729479AbfAQU14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 15:27:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729022AbfAQU1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 15:27:38 -0500
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D07132176F
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547756857;
-        bh=2LN0b2pEyZcmNHx/q/HSwUHJ+OFapnXo/7ZJjzZgSMI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RjgICbmexgMdczEI5OACEtqWYrFZScAk3TNsnCWB7HAFfpUE/dnYOD+L8aqyDzp/q
-         pUtFUO04b/Vl2vnMVdXza76G1+kJ3pc0Ew2Rk0mGuspUf65uwViCECbO2YBJaY2cF+
-         RBjmsnXEXihbcDSpk0FhvmsWkLZrKxigmduW03e4=
-Received: by mail-wm1-f53.google.com with SMTP id r24so1915762wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:27:36 -0800 (PST)
-X-Gm-Message-State: AJcUukcMM5uN14PegCgD+9ntRR3RqpdsU2lKipVUXL0N9ZoW5eWKGx1L
-        scQ3VDwDObVhUE/HPqxJ5qhVnPDsoRjrEqnQvdJUiw==
-X-Google-Smtp-Source: ALg8bN7MSKOP0/21JXOjltlAAmBKYzTwE1r2D511kHfTY2hy/nHrEn3VjDvfVUH8+mN/r8cEPsv6UJSR9F8F17gwNbw=
-X-Received: by 2002:a7b:c7c7:: with SMTP id z7mr14010272wmk.74.1547756855114;
- Thu, 17 Jan 2019 12:27:35 -0800 (PST)
+        Thu, 17 Jan 2019 15:27:56 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42639 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729022AbfAQU14 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 15:27:56 -0500
+Received: by mail-ot1-f67.google.com with SMTP id v23so12333417otk.9;
+        Thu, 17 Jan 2019 12:27:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y/HXYh0cHPauar+ArG9l18TsCCkBugX4KAFs+CO7+MA=;
+        b=OX/yUElubG+0ZNGnS/rZOB0Ag7XjykMrFyIwd07ERr/9qL1s0voYMx9KOqMF/yCKFw
+         CA/XnPCWBxXOlVNCuQE2bCsM3hQjqvP3u1gYGI5q6sXEP4EWvIDe5w6i+n6bW1qp+s/m
+         JcEYsOqzSB2j4/0nM3bb6VoCfa0/+XrVVvSIUjemtq6AJEEra4c0MHndaycGIzcGAWUs
+         /9rD8T7cVNVVqO0NEyrJSLLYT10PiTiwRCEbaiY2T0x2In/YF/2xiTExRPN6lqbTukdF
+         u7kzd+nKHFX6T3aN24tboK+PWmSlxIVcQyCWtQSpnu/ikijeIpPGVLeTToc4F1cYf7Gw
+         YUEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y/HXYh0cHPauar+ArG9l18TsCCkBugX4KAFs+CO7+MA=;
+        b=Q+QPffEQM0EeEXiZ6pbor5fG6XAh4U0jOFAJzzE7k+q5X6lfPWr5ONzRKJYV75QrnH
+         aJoYWjy1tZ+NXsVqEpbnNSXNrKgzhyEND+rVDqjPbBNIxrJpfUsalUamXOaYBAQf9ioS
+         3nI542pTq/3/OIqqIHekXHoowEllrJOvYT4s3pcgaYlMGUKxodR1QxM6blfTSeyqYZ4N
+         Sh/vg+S+JtZhPuYymapsK9JaR6P4p1KWZZQmD4vYj5IEsUL0ZD9xwr3KEn0fIr6bG/hO
+         YGUROjso7LchayNqQYGReNfLy3ISjK1Odd2uI1jXhqCgDk6c3OwRZkcdB84EvuTU5LEI
+         XxXw==
+X-Gm-Message-State: AJcUukedUgH8BbgUeUwDzfCXZWGAPPNFNjqf+SNMH8iRGeUW3KUqrtI8
+        Z5pdbqepnWn23TcaA3VY9sc1fdGsdeCs+J+haIM=
+X-Google-Smtp-Source: ALg8bN4/VpvMgwlr85nGQ7Y4Gg1u2L9beY6r1DqQczHxOsGQfRf3WxlIAWe730rU2hx4NtG9lzxbJgcUczCzacDg1mc=
+X-Received: by 2002:a9d:6a8e:: with SMTP id l14mr9462139otq.348.1547756875094;
+ Thu, 17 Jan 2019 12:27:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com> <20190117003259.23141-7-rick.p.edgecombe@intel.com>
-In-Reply-To: <20190117003259.23141-7-rick.p.edgecombe@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 17 Jan 2019 12:27:23 -0800
-X-Gmail-Original-Message-ID: <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
-Message-ID: <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
-Subject: Re: [PATCH 06/17] x86/alternative: use temporary mm for text poking
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
+References: <20190116165236.8330-1-jbrunet@baylibre.com> <CAFBinCBFge2tir-MXw+ojTxzW+7n9Uf4FzCahrw0MDzAYV2SSg@mail.gmail.com>
+ <f7289814e316ad5879848fb8c379db396f615828.camel@baylibre.com>
+In-Reply-To: <f7289814e316ad5879848fb8c379db396f615828.camel@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 17 Jan 2019 21:27:44 +0100
+Message-ID: <CAFBinCDhryOWHmRKp7GhWp2O+NpJziEgHoUE4HKVitTPDMrrBQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: meson: fix g12a buses
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 4:33 PM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
+Hi Jerome,
+
+On Thu, Jan 17, 2019 at 9:12 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
 >
-> From: Nadav Amit <namit@vmware.com>
 >
-> text_poke() can potentially compromise the security as it sets temporary
-> PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
-> from other cores accidentally or maliciously, if an attacker gains the
-> ability to write onto kernel memory.
+> On Thu, 2019-01-17 at 21:03 +0100, Martin Blumenstingl wrote:
+> > Hi Jerome,
+> >
+> > On Wed, Jan 16, 2019 at 5:52 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > [...]
+> > > -               aobus: bus@ff800000 {
+> > > -                       compatible = "simple-bus";
+> > > -                       reg = <0x0 0xff800000 0x0 0x100000>;
+> > are you sure about removing aobus?
+> > in your patch "arm64: dts: meson: g12a: add pinctrl support
+> > controllers" from [0] you're adding back an "rti" bus at the same
+> > memory address, except that it's size is 0x1000 instead of 0x100000
+>
+> Yes, I'm sure. The fact that the aobus region size is completly made up, for
+> all I know, is the reason
+>
+> >
+> > I don't have any G12A datasheet so it's hard for me to ACK / NACK this
+> > patch, here are some clues why I'm asking:
+> > - GXM's public datasheet lists the "RTI" region at 0xC8100000 -
+> > 0xC81FFFFF, we call it "aobus" in our .dtsi
+>
+> ... RTI region which will appear once i submit the clock controller
+I assume you're speaking of G12A and not about GXM:
+you already need it for your G12A pinctrl patches, which is why you
+add it in: [0]
 
-i think this may be sufficient, but barely.
+> Yes GXM (and GXBB, GXL or AXG) has the same made up region with nothing
+> matching in the datasheet, but it is bit late fix that now.
+looking at the datasheet: it seems that there's only a name mismatch
+(aobus in our .dtsi, "rti" in the datasheet)
+offset and size correspond with the datasheet
 
-> +       pte_clear(poking_mm, poking_addr, ptep);
-> +
-> +       /*
-> +        * __flush_tlb_one_user() performs a redundant TLB flush when PTI is on,
-> +        * as it also flushes the corresponding "user" address spaces, which
-> +        * does not exist.
-> +        *
-> +        * Poking, however, is already very inefficient since it does not try to
-> +        * batch updates, so we ignore this problem for the time being.
-> +        *
-> +        * Since the PTEs do not exist in other kernel address-spaces, we do
-> +        * not use __flush_tlb_one_kernel(), which when PTI is on would cause
-> +        * more unwarranted TLB flushes.
-> +        *
-> +        * There is a slight anomaly here: the PTE is a supervisor-only and
-> +        * (potentially) global and we use __flush_tlb_one_user() but this
-> +        * should be fine.
-> +        */
-> +       __flush_tlb_one_user(poking_addr);
-> +       if (cross_page_boundary) {
-> +               pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
-> +               __flush_tlb_one_user(poking_addr + PAGE_SIZE);
-> +       }
+> > - buildroot_openlinux_kernel_4.9_fbdev_20180706/kernel/aml-
+> > 4.9/arch/arm64/boot/dts/amlogic/mesong12a.dtsi
+> > also uses an aobus node as well as an io_aobus_base sub-node for the
+> > codec_io node (the latter is obviously not upstream)
+>
+> I know, but again, it does not map to anything in the doc, and it has been the
+> case for several SoC.
+OK, but we had incorrect documentation in the past. did you check this
+with someone from Amlogic?
 
-In principle, another CPU could still have the old translation.  Your
-mutex probably makes this impossible, but it makes me nervous.
-Ideally you'd use flush_tlb_mm_range(), but I guess you can't do that
-with IRQs off.  Hmm.  I think you should add an inc_mm_tlb_gen() here.
-Arguably, if you did that, you could omit the flushes, but maybe
-that's silly.
+I'm curious because there seem to be two different approaches here:
+1) hiubus name and offsets are being fixed within this patch
+2) aobus is being dropped here and re-introduced with a different name later on
 
-If we start getting new users of use_temporary_mm(), we should give
-some serious thought to the SMP semantics.
+approach 1) can also be used for the "rti" region (at least in my
+opinion, the patch doesn't explain why it can't be done):
+rename "aobus" to "rti" and change the size to either 0x1000 or 0xb000
+(both values can be found in mesong12a.dtsi from
+buildroot_openlinux_kernel_4.9_fbdev_20180706)
 
-Also, you're using PAGE_KERNEL.  Please tell me that the global bit
-isn't set in there.
 
---Andy
+Regards
+Martin
+
+
+[0] https://lore.kernel.org/patchwork/patch/1032981/
