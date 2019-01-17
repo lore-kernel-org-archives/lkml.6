@@ -6,67 +6,67 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B49DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FD0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 655AA2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:47:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECFCE2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:47:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729527AbfAQJrG (ORCPT
+        id S1729542AbfAQJrR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:47:06 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46634 "EHLO
+        Thu, 17 Jan 2019 04:47:17 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34926 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729108AbfAQJqP (ORCPT
+        by vger.kernel.org with ESMTP id S1728872AbfAQJqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:46:15 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0H9iCrj016021
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:46:14 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2n4pdpwp-1
+        Thu, 17 Jan 2019 04:46:05 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0H9iEg9041300
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:46:04 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2nt0mc3r-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:46:14 -0500
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:46:03 -0500
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <s1seetee@linux.vnet.ibm.com>;
-        Thu, 17 Jan 2019 09:46:12 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 17 Jan 2019 09:46:02 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 17 Jan 2019 09:46:09 -0000
+        Thu, 17 Jan 2019 09:45:59 -0000
 Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0H9k9Aw3998050
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0H9jw4L62521392
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Jan 2019 09:46:09 GMT
+        Thu, 17 Jan 2019 09:45:58 GMT
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E68E311C052;
-        Thu, 17 Jan 2019 09:46:08 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 6B12511C05B;
+        Thu, 17 Jan 2019 09:45:58 +0000 (GMT)
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A57A511C04A;
-        Thu, 17 Jan 2019 09:46:07 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0B36B11C04C;
+        Thu, 17 Jan 2019 09:45:57 +0000 (GMT)
 Received: from oc1548405160.ibm.com (unknown [9.124.35.202])
         by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 17 Jan 2019 09:46:07 +0000 (GMT)
+        Thu, 17 Jan 2019 09:45:56 +0000 (GMT)
 From:   Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         alexander.shishkin@linux.intel.com, jolsa@redhat.com,
         namhyung@kernel.org, linux-kernel@vger.kernel.org
 Cc:     s1seetee@linux.vnet.ibm.com
-Subject: [PATCH v2] perf scripts python: Add Python 3 support to netdev-times.py
-Date:   Thu, 17 Jan 2019 15:15:36 +0530
+Subject: [PATCH v2] perf scripts python: Add Python 3 support to failed-syscalls-by-pid.py
+Date:   Thu, 17 Jan 2019 15:15:32 +0530
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
 References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19011709-0008-0000-0000-000002B23615
+x-cbid: 19011709-0020-0000-0000-00000307A7E5
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011709-0009-0000-0000-0000221E5289
-Message-Id: <1547718344-27382-9-git-send-email-s1seetee@linux.vnet.ibm.com>
+x-cbparentid: 19011709-0021-0000-0000-00002158C862
+Message-Id: <1547718344-27382-5-git-send-email-s1seetee@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901170072
@@ -75,155 +75,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support both Python 2 and Python 3 in netdev-times.py. ``print``
-is now a function rather than a statement. This should have no
-functional change.
+Support both Python 2 and Python 3 in failed-syscalls-by-pid.py.
+``print`` is now a function rather than a statement. This should have
+no functional change.
+
+Fixes lambda syntax error.
 
 Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 Reviewed-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- tools/perf/scripts/python/netdev-times.py | 77 ++++++++++++++++---------------
- 1 file changed, 39 insertions(+), 38 deletions(-)
 
-diff --git a/tools/perf/scripts/python/netdev-times.py b/tools/perf/scripts/python/netdev-times.py
-index 9b2050f..c25965c 100644
---- a/tools/perf/scripts/python/netdev-times.py
-+++ b/tools/perf/scripts/python/netdev-times.py
-@@ -7,6 +7,7 @@
- # rx: show only rx chart
- # dev=: show only thing related to specified device
- # debug: work with debug mode. It shows buffer status.
+Please enter the commit message for your changes. Lines starting
+---
+ tools/perf/scripts/python/failed-syscalls-by-pid.py | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/tools/perf/scripts/python/failed-syscalls-by-pid.py b/tools/perf/scripts/python/failed-syscalls-by-pid.py
+index cafeff3..a174755 100644
+--- a/tools/perf/scripts/python/failed-syscalls-by-pid.py
++++ b/tools/perf/scripts/python/failed-syscalls-by-pid.py
+@@ -4,6 +4,7 @@
+ #
+ # Displays system-wide failed system call totals, broken down by pid.
+ # If a [comm] arg is specified, only syscalls called by [comm] are displayed.
 +from __future__ import print_function
  
  import os
  import sys
-@@ -61,12 +62,12 @@ def diff_msec(src, dst):
- def print_transmit(hunk):
- 	if dev != 0 and hunk['dev'].find(dev) < 0:
- 		return
--	print "%7s %5d %6d.%06dsec %12.3fmsec      %12.3fmsec" % \
-+	print("%7s %5d %6d.%06dsec %12.3fmsec      %12.3fmsec" % \
- 		(hunk['dev'], hunk['len'],
- 		nsecs_secs(hunk['queue_t']),
- 		nsecs_nsecs(hunk['queue_t'])/1000,
- 		diff_msec(hunk['queue_t'], hunk['xmit_t']),
--		diff_msec(hunk['xmit_t'], hunk['free_t']))
-+		diff_msec(hunk['xmit_t'], hunk['free_t'])))
- 
- # Format for displaying rx packet processing
- PF_IRQ_ENTRY= "  irq_entry(+%.3fmsec irq=%d:%s)"
-@@ -98,55 +99,55 @@ def print_receive(hunk):
- 	if show_hunk == 0:
- 		return
- 
--	print "%d.%06dsec cpu=%d" % \
--		(nsecs_secs(base_t), nsecs_nsecs(base_t)/1000, cpu)
-+	print("%d.%06dsec cpu=%d" % \
-+		(nsecs_secs(base_t), nsecs_nsecs(base_t)/1000, cpu))
- 	for i in range(len(irq_list)):
--		print PF_IRQ_ENTRY % \
-+		print(PF_IRQ_ENTRY % \
- 			(diff_msec(base_t, irq_list[i]['irq_ent_t']),
--			irq_list[i]['irq'], irq_list[i]['name'])
--		print PF_JOINT
-+			irq_list[i]['irq'], irq_list[i]['name']))
-+		print(PF_JOINT)
- 		irq_event_list = irq_list[i]['event_list']
- 		for j in range(len(irq_event_list)):
- 			irq_event = irq_event_list[j]
- 			if irq_event['event'] == 'netif_rx':
--				print PF_NET_RX % \
-+				print(PF_NET_RX % \
- 					(diff_msec(base_t, irq_event['time']),
--					irq_event['skbaddr'])
--				print PF_JOINT
--	print PF_SOFT_ENTRY % \
--		diff_msec(base_t, hunk['sirq_ent_t'])
--	print PF_JOINT
-+					irq_event['skbaddr']))
-+				print(PF_JOINT)
-+	print(PF_SOFT_ENTRY % \
-+		diff_msec(base_t, hunk['sirq_ent_t']))
-+	print(PF_JOINT)
- 	event_list = hunk['event_list']
- 	for i in range(len(event_list)):
- 		event = event_list[i]
- 		if event['event_name'] == 'napi_poll':
--			print PF_NAPI_POLL % \
--			    (diff_msec(base_t, event['event_t']), event['dev'])
-+			print(PF_NAPI_POLL % \
-+			    (diff_msec(base_t, event['event_t']), event['dev']))
- 			if i == len(event_list) - 1:
--				print ""
-+				print("")
- 			else:
--				print PF_JOINT
-+				print(PF_JOINT)
- 		else:
--			print PF_NET_RECV % \
-+			print(PF_NET_RECV % \
- 			    (diff_msec(base_t, event['event_t']), event['skbaddr'],
--				event['len'])
-+				event['len']))
- 			if 'comm' in event.keys():
--				print PF_WJOINT
--				print PF_CPY_DGRAM % \
-+				print(PF_WJOINT)
-+				print(PF_CPY_DGRAM % \
- 					(diff_msec(base_t, event['comm_t']),
--					event['pid'], event['comm'])
-+					event['pid'], event['comm']))
- 			elif 'handle' in event.keys():
--				print PF_WJOINT
-+				print(PF_WJOINT)
- 				if event['handle'] == "kfree_skb":
--					print PF_KFREE_SKB % \
-+					print(PF_KFREE_SKB % \
- 						(diff_msec(base_t,
- 						event['comm_t']),
--						event['location'])
-+						event['location']))
- 				elif event['handle'] == "consume_skb":
--					print PF_CONS_SKB % \
-+					print(PF_CONS_SKB % \
- 						diff_msec(base_t,
--							event['comm_t'])
--			print PF_JOINT
-+							event['comm_t']))
-+			print(PF_JOINT)
+@@ -32,7 +33,7 @@ if len(sys.argv) > 1:
+ syscalls = autodict()
  
  def trace_begin():
- 	global show_tx
-@@ -210,19 +211,19 @@ def trace_end():
- 			print_receive(receive_hunk_list[i])
- 	# display transmit hunks
- 	if show_tx:
--		print "   dev    len      Qdisc        " \
--			"       netdevice             free"
-+		print("   dev    len      Qdisc        " \
-+			"       netdevice             free")
- 		for i in range(len(tx_free_list)):
- 			print_transmit(tx_free_list[i])
- 	if debug:
--		print "debug buffer status"
--		print "----------------------------"
--		print "xmit Qdisc:remain:%d overflow:%d" % \
--			(len(tx_queue_list), of_count_tx_queue_list)
--		print "xmit netdevice:remain:%d overflow:%d" % \
--			(len(tx_xmit_list), of_count_tx_xmit_list)
--		print "receive:remain:%d overflow:%d" % \
--			(len(rx_skb_list), of_count_rx_skb_list)
-+		print("debug buffer status")
-+		print("----------------------------")
-+		print("xmit Qdisc:remain:%d overflow:%d" % \
-+			(len(tx_queue_list), of_count_tx_queue_list))
-+		print("xmit netdevice:remain:%d overflow:%d" % \
-+			(len(tx_xmit_list), of_count_tx_xmit_list))
-+		print("receive:remain:%d overflow:%d" % \
-+			(len(rx_skb_list), of_count_rx_skb_list))
+-	print "Press control+C to stop and show the summary"
++	print("Press control+C to stop and show the summary")
  
- # called from perf, when it finds a correspoinding event
- def irq__softirq_entry(name, context, cpu, sec, nsec, pid, comm, callchain, vec):
+ def trace_end():
+ 	print_error_totals()
+@@ -57,22 +58,22 @@ def syscalls__sys_exit(event_name, context, common_cpu,
+ 
+ def print_error_totals():
+     if for_comm is not None:
+-	    print "\nsyscall errors for %s:\n\n" % (for_comm),
++	    print("\nsyscall errors for %s:\n\n" % (for_comm)),
+     else:
+-	    print "\nsyscall errors:\n\n",
++	    print("\nsyscall errors:\n\n"),
+ 
+-    print "%-30s  %10s\n" % ("comm [pid]", "count"),
+-    print "%-30s  %10s\n" % ("------------------------------", \
+-                                 "----------"),
++    print("%-30s  %10s\n" % ("comm [pid]", "count")),
++    print("%-30s  %10s\n" % ("------------------------------", \
++                                 "----------")),
+ 
+     comm_keys = syscalls.keys()
+     for comm in comm_keys:
+ 	    pid_keys = syscalls[comm].keys()
+ 	    for pid in pid_keys:
+-		    print "\n%s [%d]\n" % (comm, pid),
++		    print("\n%s [%d]\n" % (comm, pid)),
+ 		    id_keys = syscalls[comm][pid].keys()
+ 		    for id in id_keys:
+-			    print "  syscall: %-16s\n" % syscall_name(id),
++			    print("  syscall: %-16s\n" % syscall_name(id)),
+ 			    ret_keys = syscalls[comm][pid][id].keys()
+-			    for ret, val in sorted(syscalls[comm][pid][id].iteritems(), key = lambda(k, v): (v, k),  reverse = True):
+-				    print "    err = %-20s  %10d\n" % (strerror(ret), val),
++			    for ret, val in sorted(syscalls[comm][pid][id].iteritems(), key = lambda k_v: (k_v[1], k_v[0]),  reverse = True):
++				    print("    err = %-20s  %10d\n" % (strerror(ret), val)),
 -- 
 1.8.3.1
 
