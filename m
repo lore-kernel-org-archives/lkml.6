@@ -2,58 +2,112 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74690C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4A2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D5DF20859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BC9820859
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 19:33:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Og5XyYXJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbfAQTd3 (ORCPT
+        id S1728963AbfAQTd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:33:29 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:59256 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfAQTd3 (ORCPT
+        Thu, 17 Jan 2019 14:33:57 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44221 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbfAQTd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 14:33:29 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5C07310170454;
-        Thu, 17 Jan 2019 11:33:28 -0800 (PST)
-Date:   Thu, 17 Jan 2019 11:33:27 -0800 (PST)
-Message-Id: <20190117.113327.372281269819882744.davem@davemloft.net>
-To:     f.fainelli@gmail.com
-Cc:     netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: Add helpers to determine if PHY
- driver is generic
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190115230936.28890-1-f.fainelli@gmail.com>
-References: <20190115230936.28890-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Thu, 17 Jan 2019 14:33:57 -0500
+Received: by mail-ot1-f67.google.com with SMTP id f18so12174949otl.11;
+        Thu, 17 Jan 2019 11:33:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tiMK4byqwhsiWqiYm01TCI6vfQdsfTjZo9dRLYEIraU=;
+        b=Og5XyYXJzVza1lKycEzMSszRaioM1/d+THTHunNJGR4q51a9L4p12gH7vTbWDnBtG7
+         xGVCN0/2ynn75VPOHOHpYhg8TFcRYL0Zgo2jU60tPZfXB6uOeHyKCf0KTrn+MEUuFuFA
+         Y6MxRKQ3HI8xI5J76z3F/xzNq431VaFm1pRf0X8KZblzceYCq5nNdz79h/mFVR30ZfAe
+         lwkjOJqW3ZQOJO9+1ycBfqS5wyaC/iu6o2ZgFV+grociut8xGM2OXvX9geKUz66bCmyG
+         n+aYCe8GU3AkUm6R+azJXgJk+CwlxuPH3sH9cIBm2pKOkiXXx5cI92AJyyysj1JfRUIY
+         HrGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tiMK4byqwhsiWqiYm01TCI6vfQdsfTjZo9dRLYEIraU=;
+        b=Nb1dq70+ItVFMhBxU7qKQ4j2RPLwmSg7/VWMTPlFjQBEWAr+dH7MpkVhqqnUCiA2Cy
+         OZgsrXPI8fFLatBZS8QOKBoAOtfZdeb5AFs1Pt4bIme4QwJ5+J3Kg7EHlchSp6HXPxVR
+         Sv9OAImVWCcHnE17+25x3wES5xktBkN5glMu8wTzwGh+R1FMR+68ol9LxYlkWwxX0ZbZ
+         Sctwupx3BTyWcq5gy6QhmYNwuYV4j4SpXiYPCF6P+nSR2iWfPHgBuOorhysmZkHDdWFc
+         pyWu4AZ7Ckutcwl6I6LnhbW3IRbKXpm9WWqgqxnwUY13rUdcPXdTatweEBM0nUCuj/Cf
+         xaRA==
+X-Gm-Message-State: AJcUukelKN1LhG9ctIjjJsoUQmcLY5Deq121CFzJAt7oB6qkMQDqXFdL
+        JwrX6y7VNXZkPl71expO7wI=
+X-Google-Smtp-Source: ALg8bN72s1EcYKvP6X1vzO5QTGIZC2HksL5fyB2RujTI7DpNpi6h6ynsE7MaSbdXUUcwS187xO3k0A==
+X-Received: by 2002:a9d:6a50:: with SMTP id h16mr9082498otn.95.1547753635943;
+        Thu, 17 Jan 2019 11:33:55 -0800 (PST)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id h25sm1064235otj.27.2019.01.17.11.33.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 11:33:55 -0800 (PST)
+Subject: Re: [PATCH] rtlwifi: rtl818x: fix indentation issue
+To:     Joe Perches <joe@perches.com>,
+        Colin King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ping-Ke Shih <pkshih@realtek.com>
+References: <20190117152859.6873-1-colin.king@canonical.com>
+ <e68c7ae7b0a863742df0f4457368a3a529ed47e5.camel@perches.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <284e7ef0-5820-021b-7b0c-2fc754440fe8@lwfinger.net>
+Date:   Thu, 17 Jan 2019 13:33:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <e68c7ae7b0a863742df0f4457368a3a529ed47e5.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 17 Jan 2019 11:33:28 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Tue, 15 Jan 2019 15:09:35 -0800
-
-> We are already checking in phy_detach() that the PHY driver is of
-> generic kind (1G or 10G) and we are going to make use of that in the SFP
-> layer as well for 1000BaseT SFP modules, so expose helper functions to
-> return that information.
+On 1/17/19 1:29 PM, Joe Perches wrote:
+> On Thu, 2019-01-17 at 15:28 +0000, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> There is a statement that is indented too deeply. Fix this.
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Thanks.
+> 
+>> diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8180/dev.c
+> []
+>> @@ -803,7 +803,7 @@ static void rtl8180_config_cardbus(struct ieee80211_hw *dev)
+>>   		rtl818x_iowrite16(priv, FEMR_SE, 0xffff);
+>>   	} else {
+>>   		reg16 = rtl818x_ioread16(priv, &priv->map->FEMR);
+>> -			reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
+>> +		reg16 |= (1 << 15) | (1 << 14) | (1 << 4);
+>>   		rtl818x_iowrite16(priv, &priv->map->FEMR, reg16);
+>>   	}
+> 
+> trivia:
+> 
+> It sure looks as if there could be some rather useful
+> conversions of magic bits to constants one day.
 
-Applied.
+How much work is warranted for this driver for a device that is not likely in 
+use anywhere in the wild? In addition, I'm not sure anyone knows what those bits 
+actually do, I certainly do not have a product sheet for that one.
+
+Larry
+
