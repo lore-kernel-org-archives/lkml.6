@@ -2,58 +2,61 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1ECDC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93FBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D59020652
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:16:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89D0D20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 16:16:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="IG2MXliY"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="PGrublSs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729077AbfAQQQI (ORCPT
+        id S1729097AbfAQQQO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:16:08 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34998 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729034AbfAQQQF (ORCPT
+        Thu, 17 Jan 2019 11:16:14 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:60842 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729034AbfAQQQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:16:05 -0500
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HGF5QQ019936
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:16:03 -0800
+        Thu, 17 Jan 2019 11:16:09 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HG7Lfs022259
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:16:09 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=pdPbn69kSGC2kKH2EgDsY36/33jU4yYXOPkfe9eLSak=;
- b=IG2MXliYjCXGzhRA9+cCkkA0pa8EF78wS5r0nibx8DfCvLbM4wMmStLXxqom2LNJoq0c
- OesVT6dXah6hYBanq54YuGT+jJrJ+OT0UEZgsALsmfBJxKTBfR5tEEvOdVcGDrbhShzk
- /D5fGBPWMDA101Uvix0MyL5Y6zJTCY+tU1c= 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=vi1xt4hu0A474PabdmnOFgaYB8WHKZ2kRwdV2m+DLWo=;
+ b=PGrublSsKT9rt8M+gNZbJzZg72ufwfMndTkxjzcjognnDPCr22g2Jd5K0cRgs87QFa1b
+ kPZo3JIFYZfLgyVMwfKyAtJu/6NPSnmIRMRGeBZw0UB+zBx/sXGIcQKjUtdVy1g497Ou
+ SkCbiRcoGJFy+B88rVvgvpy5FJP9DmR27ho= 
 Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2q2smw0q0p-8
+        by mx0a-00082601.pphosted.com with ESMTP id 2q2uta092u-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:16:03 -0800
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 08:16:09 -0800
 Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
+ mail.thefacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Thu, 17 Jan 2019 08:15:31 -0800
+ Thu, 17 Jan 2019 08:15:32 -0800
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 96A1D62E19BA; Thu, 17 Jan 2019 08:15:29 -0800 (PST)
+        id 13F4262E19D5; Thu, 17 Jan 2019 08:15:30 -0800 (PST)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
 To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+CC:     Arnaldo Carvalho de Melo <acme@redhat.com>, <peterz@infradead.org>,
         <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>
+        <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
+        David Ahern <dsahern@gmail.com>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v11 perf, bpf-next 0/9] reveal invisible bpf programs
-Date:   Thu, 17 Jan 2019 08:15:12 -0800
-Message-ID: <20190117161521.1341602-1-songliubraving@fb.com>
+Subject: [PATCH v11 perf, bpf-next 8/9] perf top: Synthesize BPF events for pre-existing loaded BPF programs
+Date:   Thu, 17 Jan 2019 08:15:20 -0800
+Message-ID: <20190117161521.1341602-9-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190117161521.1341602-1-songliubraving@fb.com>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
 X-FB-Internal: Safe
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -66,120 +69,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This set catches symbol for all bpf programs loaded/unloaded
-before/during/after perf-record run PERF_RECORD_KSYMBOL and
-PERF_RECORD_BPF_EVENT.
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT includes key information
-of a bpf program load and unload. They are sent through perf ringbuffer,
-and stored in perf.data. PERF_RECORD_KSYMBOL includes basic information
-for simple profiling. It is ON by default. PERF_RECORD_BPF_EVENT is
-used to gather more information of the bpf program. It is necessary for
-perf-annotate of bpf programs.
+So that we can resolve symbols and map names.
 
-Before this patch, perf-report will not be able to recover symbols of
-bpf programs once the programs are unloaded.
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-team@fb.com
+Cc: netdev@vger.kernel.org
+Link: https://lkml.kernel.org/n/tip-h3loibff6htedj43q7uinon0@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ tools/perf/builtin-top.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-This is to follow up Alexei's early effort [2] to show bpf programs via
-mmap events.
-
-Thanks,
-Song
-
-Changes v10 -> v11:
-1. Removed perf_ksymbol_get_name_f;
-2. Added BUILD_BUG_ON(BPF_TAG_SIZE % sizeof(u64)) to perf_event_bpf_event.
-
-Changes v9 -> v10:
-1. Added pr_debug() to show issue while synthesize BPF events;
-2. Fixed code style to match existing code.
-
-Changes v8 -> PATCH v9:
-1. Per suggestion by Arnaldo, recorded checks in perf_missing_features.
-
-Changes v7 -> PATCH v8:
-
-1. Fixed perf dump_stack to use stdout instead of stderr;
-2. Added module name [bpf] to /proc/kallsyms (9/9);
-3. Do not show warning "Couldn't synthesize bpf events." when the kernel
-   does not support proper sys_bpf call;
-4. Added Arnaldo's patch that synthesizes BPF events in perf-top.
-
-Changes v6 -> PATCH v7:
-1. Split "[3/7] introduce PERF_RECORD_BPF_EVENT" into two commits:
-     [3/8] introduce PERF_RECORD_BPF_EVENT
-     [5/8] emit PERF_RECORD_KSYMBOL for BPF program load/unload
-
-Changes v5 -> PATCH v6:
-1. Reduce len in PERF_RECORD_KSYMBOL from u64 to u32. Use the 32 free bits
-   for ksym_type (u16) and flags (u16).
-
-Changes v4 -> PATCH v5:
-1. Fixed build error reported by kbuild test bot.
-
-Changes v3 -> PATCH v4:
-1. Split information about bpf program  into PERF_RECORD_KSYMBOL (with
-   name, addr, len); and PERF_RECORD_BPF_EVENT PERF_RECORD_BPF_EVENT
-   (with id, tag);
-2. Split the implementation in kernel and user space.
-
-Changes v2 -> PATCH v3:
-1. Rebase on bpf-next tree, and on top of BPF sub program tag patches [1]
-   for latest information in bpf_prog_info.
-2. Complete handling and synthesizing PERF_RECORD_BPF_EVENT in perf.
-
-Changes v1 -> PATCH v2:
-1. Only 3 of the 5 patches in v1, to focus on ABI first;
-2. Generate PERF_RECORD_BPF_EVENT per bpf sub program instead of per prog;
-3. Modify PERF_RECORD_BPF_EVENT with more details (addr, len, name),
-   so that it can be used for basic profiling without calling sys_bpf.
-
-Changes RFC -> PATCH v1:
-1. In perf-record, poll vip events in a separate thread;
-2. Add tag to bpf prog name;
-3. Small refactorings.
-
-[1] https://patchwork.ozlabs.org/project/netdev/list/?series=81037
-[2] https://www.spinics.net/lists/netdev/msg524232.html
-
-Arnaldo Carvalho de Melo (1):
-  perf top: Synthesize BPF events for pre-existing loaded BPF programs
-
-Song Liu (8):
-  perf, bpf: Introduce PERF_RECORD_KSYMBOL
-  sync tools/include/uapi/linux/perf_event.h
-  perf, bpf: introduce PERF_RECORD_BPF_EVENT
-  sync tools/include/uapi/linux/perf_event.h
-  perf util: handle PERF_RECORD_KSYMBOL
-  perf util: handle PERF_RECORD_BPF_EVENT
-  perf tools: synthesize PERF_RECORD_* for loaded BPF programs
-  bpf: add module name [bpf] to ksymbols for bpf programs
-
- include/linux/filter.h                |   7 +
- include/linux/perf_event.h            |  14 ++
- include/uapi/linux/perf_event.h       |  53 +++++-
- kernel/bpf/core.c                     |   2 +-
- kernel/bpf/syscall.c                  |   2 +
- kernel/events/core.c                  | 213 ++++++++++++++++++++-
- kernel/kallsyms.c                     |   2 +-
- tools/include/uapi/linux/perf_event.h |  53 +++++-
- tools/perf/builtin-record.c           |   7 +
- tools/perf/builtin-top.c              |   7 +
- tools/perf/perf.h                     |   1 +
- tools/perf/util/Build                 |   2 +
- tools/perf/util/bpf-event.c           | 256 ++++++++++++++++++++++++++
- tools/perf/util/bpf-event.h           |  16 ++
- tools/perf/util/event.c               |  41 +++++
- tools/perf/util/event.h               |  36 ++++
- tools/perf/util/evsel.c               |  19 +-
- tools/perf/util/evsel.h               |   2 +
- tools/perf/util/machine.c             |  58 ++++++
- tools/perf/util/machine.h             |   3 +
- tools/perf/util/session.c             |   8 +
- tools/perf/util/tool.h                |   5 +-
- 22 files changed, 800 insertions(+), 7 deletions(-)
- create mode 100644 tools/perf/util/bpf-event.c
- create mode 100644 tools/perf/util/bpf-event.h
-
---
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index f64e312db787..5a486d4de56e 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -22,6 +22,7 @@
+ #include "perf.h"
+ 
+ #include "util/annotate.h"
++#include "util/bpf-event.h"
+ #include "util/config.h"
+ #include "util/color.h"
+ #include "util/drv_configs.h"
+@@ -1215,6 +1216,12 @@ static int __cmd_top(struct perf_top *top)
+ 
+ 	init_process_thread(top);
+ 
++	ret = perf_event__synthesize_bpf_events(&top->tool, perf_event__process,
++						&top->session->machines.host,
++						&top->record_opts);
++	if (ret < 0)
++		pr_warning("Couldn't synthesize bpf events.\n");
++
+ 	machine__synthesize_threads(&top->session->machines.host, &opts->target,
+ 				    top->evlist->threads, false,
+ 				    top->nr_threads_synthesize);
+-- 
 2.17.1
+
