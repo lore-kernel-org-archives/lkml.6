@@ -2,158 +2,136 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F29C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BF7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC20420856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3D6A20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 17:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547746963;
+	bh=/fwBpxhtjTfvfOBT09ylV2CYDXZ+KI+pdQRA4GC1Vk0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=GBw4eT9NyejsGgXhJtg18sBWqyR/dAupb5+WT9C/JRwUoC8cwljkXDr0mNpmn4V6D
+	 I0TB1oA/43Y9uuxPygrM3z0hfHMWXycs7/rDqi7j4EIdsr+4EcPVOZKZtpMySTxUJq
+	 paWv2h/UbD28vlODH1pqW9Jqhw7l4kQmz1s09pGM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbfAQRmR (ORCPT
+        id S1729400AbfAQRml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:42:17 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46240 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729176AbfAQRlo (ORCPT
+        Thu, 17 Jan 2019 12:42:41 -0500
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:36682 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725967AbfAQRmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:41:44 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HHY5l9071540
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:41:43 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2x1v8r1w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 12:41:42 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Thu, 17 Jan 2019 17:41:41 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 17 Jan 2019 17:41:38 -0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HHfbs221037196
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jan 2019 17:41:37 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B62502805E;
-        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A917B28064;
-        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 1/5] tpm: ppi: pass function revision ID to tpm_eval_dsm()
-Date:   Thu, 17 Jan 2019 12:41:31 -0500
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190117174135.2117937-1-stefanb@linux.ibm.com>
-References: <20190117174135.2117937-1-stefanb@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19011717-0064-0000-0000-000003984A7F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010425; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01147865; UDB=6.00597964; IPR=6.00928164;
- MB=3.00025175; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-17 17:41:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011717-0065-0000-0000-00003C1276E5
-Message-Id: <20190117174135.2117937-2-stefanb@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901170125
+        Thu, 17 Jan 2019 12:42:40 -0500
+Received: by mail-oi1-f172.google.com with SMTP id x23so6830296oix.3;
+        Thu, 17 Jan 2019 09:42:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4l33NxMborqisvl0/5peQNrXL5/jqVOWTyG/TbJwZME=;
+        b=cPrsR7BWZ/zHeobcQcCJDwdIWmzbPqmKK7KobwivDNYDlMPXXvg7ivsA2SuKj4P43K
+         G0oRZe7jNndJGBC5TpFGmpALehnozYKdbFcxG+cpu8fjMYW2Ljwq0pbz2a4jZAPAq3qt
+         1B7BT2Ea1Cwu8TcCRkwTowkx9Wh7t+DGyvxT57l5/G+8t9DwzDgPWbmYlYbH2LN8nrIi
+         FR4/qlkp6lxjU0ARoKpMFm8UQuTlHG1liVu+4ntydRzfVJVJc5DjOJkWRP3YW1ezDpH1
+         aFdGevS10GTgwtfRbh7Fxhj5G+LLr9T+E19tWlRKsbhPhPPwBk9aXfQw3DcnXLXaAt0W
+         S/Tg==
+X-Gm-Message-State: AJcUukf5Aqpbgd7/bwxeoNCKHVw6Iv8IlBDgrGzXh6IgCOOn7gZtdNaU
+        v5I5+4asOW/Uy79yDd/v2Z005dW9owAOSTB7Thc=
+X-Google-Smtp-Source: ALg8bN7ZCZU/M8Gzd8tnGaTDyfYGJojPLIitPj6v3VkC0twTsbGW6IJGM7rdOn0kPv0Uyd6CHY/HLFmXvHO4LC8BfTc=
+X-Received: by 2002:aca:195:: with SMTP id 143mr5537206oib.322.1547746959614;
+ Thu, 17 Jan 2019 09:42:39 -0800 (PST)
+MIME-Version: 1.0
+References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-13-keith.busch@intel.com>
+In-Reply-To: <20190116175804.30196-13-keith.busch@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 17 Jan 2019 18:42:28 +0100
+Message-ID: <CAJZ5v0gu0zcyZtHv4mDioS6j4WMsz_59bYdzuGtOPXfKVNOX+g@mail.gmail.com>
+Subject: Re: [PATCHv4 12/13] acpi/hmat: Register memory side cache attributes
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we will need to pass different function revision numbers
-to tpm_eval_dsm, convert this function now to take the function revision
-as an additional parameter.
+On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
+>
+> Register memory side cache attributes with the memory's node if HMAT
+> provides the side cache iniformation table.
+>
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+> ---
+>  drivers/acpi/hmat/hmat.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>
+> diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
+> index 45e20dc677f9..9efdd0a63a79 100644
+> --- a/drivers/acpi/hmat/hmat.c
+> +++ b/drivers/acpi/hmat/hmat.c
+> @@ -206,6 +206,7 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
+>                                    const unsigned long end)
+>  {
+>         struct acpi_hmat_cache *cache = (void *)header;
+> +       struct node_cache_attrs cache_attrs;
+>         u32 attrs;
+>
+>         if (cache->header.length < sizeof(*cache)) {
+> @@ -219,6 +220,37 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
+>                 cache->memory_PD, cache->cache_size, attrs,
+>                 cache->number_of_SMBIOShandles);
+>
+> +       cache_attrs.size = cache->cache_size;
+> +       cache_attrs.level = (attrs & ACPI_HMAT_CACHE_LEVEL) >> 4;
+> +       cache_attrs.line_size = (attrs & ACPI_HMAT_CACHE_LINE_SIZE) >> 16;
+> +
+> +       switch ((attrs & ACPI_HMAT_CACHE_ASSOCIATIVITY) >> 8) {
+> +       case ACPI_HMAT_CA_DIRECT_MAPPED:
+> +               cache_attrs.associativity = NODE_CACHE_DIRECT_MAP;
+> +               break;
+> +       case ACPI_HMAT_CA_COMPLEX_CACHE_INDEXING:
+> +               cache_attrs.associativity = NODE_CACHE_INDEXED;
+> +               break;
+> +       case ACPI_HMAT_CA_NONE:
+> +       default:
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Tested-by: David Safford <david.safford@ge.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm_ppi.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+This looks slightly odd as "default" covers the other case as well.
+Maybe say what other case is covered by "default" in particular in a
+comment?
 
-diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
-index 86dd8521feef..90b69aeadc99 100644
---- a/drivers/char/tpm/tpm_ppi.c
-+++ b/drivers/char/tpm/tpm_ppi.c
-@@ -38,12 +38,11 @@ static const guid_t tpm_ppi_guid =
- 
- static inline union acpi_object *
- tpm_eval_dsm(acpi_handle ppi_handle, int func, acpi_object_type type,
--	     union acpi_object *argv4)
-+	     union acpi_object *argv4, u64 rev)
- {
- 	BUG_ON(!ppi_handle);
- 	return acpi_evaluate_dsm_typed(ppi_handle, &tpm_ppi_guid,
--				       TPM_PPI_REVISION_ID,
--				       func, argv4, type);
-+				       rev, func, argv4, type);
- }
- 
- static ssize_t tpm_show_ppi_version(struct device *dev,
-@@ -62,7 +61,7 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
- 	struct tpm_chip *chip = to_tpm_chip(dev);
- 
- 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETREQ,
--			   ACPI_TYPE_PACKAGE, NULL);
-+			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID);
- 	if (!obj)
- 		return -ENXIO;
- 
-@@ -126,7 +125,7 @@ static ssize_t tpm_store_ppi_request(struct device *dev,
- 	}
- 
- 	obj = tpm_eval_dsm(chip->acpi_dev_handle, func, ACPI_TYPE_INTEGER,
--			   &argv4);
-+			   &argv4, TPM_PPI_REVISION_ID);
- 	if (!obj) {
- 		return -ENXIO;
- 	} else {
-@@ -170,7 +169,7 @@ static ssize_t tpm_show_ppi_transition_action(struct device *dev,
- 	if (strcmp(chip->ppi_version, "1.2") < 0)
- 		obj = &tmp;
- 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETACT,
--			   ACPI_TYPE_INTEGER, obj);
-+			   ACPI_TYPE_INTEGER, obj, TPM_PPI_REVISION_ID);
- 	if (!obj) {
- 		return -ENXIO;
- 	} else {
-@@ -196,7 +195,7 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
- 	struct tpm_chip *chip = to_tpm_chip(dev);
- 
- 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETRSP,
--			   ACPI_TYPE_PACKAGE, NULL);
-+			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID);
- 	if (!obj)
- 		return -ENXIO;
- 
-@@ -272,7 +271,8 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
- 	for (i = start; i <= end; i++) {
- 		tmp.integer.value = i;
- 		obj = tpm_eval_dsm(dev_handle, TPM_PPI_FN_GETOPR,
--				   ACPI_TYPE_INTEGER, &argv);
-+				   ACPI_TYPE_INTEGER, &argv,
-+				   TPM_PPI_REVISION_ID);
- 		if (!obj) {
- 			return -ENOMEM;
- 		} else {
--- 
-2.13.6
+> +               cache_attrs.associativity = NODE_CACHE_OTHER;
+> +               break;
+> +       }
+> +
+> +       switch ((attrs & ACPI_HMAT_WRITE_POLICY) >> 12) {
+> +       case ACPI_HMAT_CP_WB:
+> +               cache_attrs.write_policy = NODE_CACHE_WRITE_BACK;
+> +               break;
+> +       case ACPI_HMAT_CP_WT:
+> +               cache_attrs.write_policy = NODE_CACHE_WRITE_THROUGH;
+> +               break;
+> +       case ACPI_HMAT_CP_NONE:
+> +       default:
 
+And analogously here.
+
+> +               cache_attrs.write_policy = NODE_CACHE_WRITE_OTHER;
+> +               break;
+> +       }
+> +
+> +       node_add_cache(pxm_to_node(cache->memory_PD), &cache_attrs);
+>         return 0;
+>  }
+>
+> --
