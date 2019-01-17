@@ -4,44 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB9FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F356C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34A9120851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE8C820851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 23:17:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="JZAwXmoY"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="RXr2JzIr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfAQXRp (ORCPT
+        id S1727285AbfAQXRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 18:17:45 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:37254 "EHLO
+        Thu, 17 Jan 2019 18:17:55 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:36166 "EHLO
         mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727076AbfAQXRo (ORCPT
+        by vger.kernel.org with ESMTP id S1727019AbfAQXRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 18:17:44 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HNDWXT011466
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 15:17:42 -0800
+        Thu, 17 Jan 2019 18:17:54 -0500
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0HNFN41012735
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 15:17:53 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=VxKTSBhcMiX7Im063mreaOqNtB4COubIUusgpLvH83c=;
- b=JZAwXmoYTT328kP9dyJAwSkTxDN0MfsKrC2MD+5+RHyn8N6W0eCPlCOrKhXtF9eB5Ltv
- K7bM1xU7x8Wo65iaWf6txkthmaOfdJB+x5wpDQg99CuduVL5W0f1GiRtjg5yRbFKqBmY
- JJdLhDXzxJ7NK+RD3S3wW7XblbemwoRlH1I= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2q303vrnhk-2
+ content-type; s=facebook; bh=C2DagUQrToVBOlXFmrmNKwWs8EUdFsVTIbbGz7MLRyY=;
+ b=RXr2JzIrEJVk1JyahBFtaXCmiayRsuoupVoIPSER0V0JY9KjjBXm3wLA5vEw4vx8GAmf
+ boNKH7AIYMu5fGN8LnFixXyIvHHdlIPLjTJn83Ls5ogcAJJPN4IvQ2x4RZf9kl/qQwgF
+ Zi4/pS8bNgvjVh0VCbXzyH2cfNsItKRJhk0= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q32y5g1vc-18
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 15:17:42 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 15:17:53 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Thu, 17 Jan 2019 15:17:40 -0800
+ Thu, 17 Jan 2019 15:17:32 -0800
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 4195562E214C; Thu, 17 Jan 2019 15:17:32 -0800 (PST)
+        id 3449262E2174; Thu, 17 Jan 2019 15:17:32 -0800 (PST)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
@@ -50,16 +50,16 @@ CC:     Peter Zijlstra <peterz@infradead.org>, <acme@kernel.org>,
         <ast@kernel.org>, <daniel@iogearbox.net>, <kernel-team@fb.com>,
         Song Liu <songliubraving@fb.com>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH kallsyms, bpf 3/3] bpf: migrate symbols for BPF programs to kallsym_tree
-Date:   Thu, 17 Jan 2019 15:17:30 -0800
-Message-ID: <20190117231730.2413466-4-songliubraving@fb.com>
+Subject: [PATCH kallsyms, bpf 2/3] kallsyms: Introduce kallsym_tree for dynamic symbols
+Date:   Thu, 17 Jan 2019 15:17:29 -0800
+Message-ID: <20190117231730.2413466-3-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190117231730.2413466-1-songliubraving@fb.com>
 References: <20190117231730.2413466-1-songliubraving@fb.com>
 X-FB-Internal: Safe
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_08:,,
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_09:,,
  signatures=0
 X-Proofpoint-Spam-Reason: safe
 X-FB-Internal: Safe
@@ -70,453 +70,307 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-This patch migrates BPF program symbols from bpf_tree to kallsym_tree.
-Since kallsym_tree_add/del already calls perf_event_ksymbol(), this patch
-also removes unnecessary perf_event_bpf_emit_ksymbols().
+kallsym_tree is based on rbtree_latch. It is designed to hold dynamic
+kernel symbols like bpf program, ftrace kallsyms, etc.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- include/linux/bpf.h    |   7 +-
- include/linux/filter.h |  42 -----------
- kernel/bpf/core.c      | 167 +++++------------------------------------
- kernel/events/core.c   |  35 ---------
- kernel/extable.c       |   4 +-
- kernel/kallsyms.c      |  19 +----
- 6 files changed, 25 insertions(+), 249 deletions(-)
+ include/linux/kallsyms.h |  16 ++++
+ kernel/extable.c         |   2 +
+ kernel/kallsyms.c        | 188 ++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 205 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index e734f163bd0b..403e1f88a1fa 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -13,7 +13,7 @@
- #include <linux/file.h>
- #include <linux/percpu.h>
- #include <linux/err.h>
--#include <linux/rbtree_latch.h>
-+#include <linux/kallsyms.h>
- #include <linux/numa.h>
- #include <linux/wait.h>
+diff --git a/include/linux/kallsyms.h b/include/linux/kallsyms.h
+index 657a83b943f0..be83ac3d8228 100644
+--- a/include/linux/kallsyms.h
++++ b/include/linux/kallsyms.h
+@@ -11,6 +11,8 @@
+ #include <linux/stddef.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
++#include <linux/rbtree_latch.h>
++#include <uapi/linux/perf_event.h>
  
-@@ -307,8 +307,9 @@ struct bpf_prog_aux {
- 	bool offload_requested;
- 	struct bpf_prog **func;
- 	void *jit_data; /* JIT specific data. arch dependent */
--	struct latch_tree_node ksym_tnode;
--	struct list_head ksym_lnode;
+ #include <asm/sections.h>
+ 
+@@ -20,6 +22,20 @@
+ 
+ struct module;
+ 
++struct kallsym_node
++{
++	struct latch_tree_node kn_node;
++	unsigned long kn_addr;
++	unsigned long kn_len;
++	enum perf_record_ksymbol_type ksym_type;
++	void (*kn_names)(struct kallsym_node *kn, char *sym_name, char **mod_name);
++};
 +
-+	struct kallsym_node ktn;
++extern void kallsym_tree_add(struct kallsym_node *kn);
++extern void kallsym_tree_del(struct kallsym_node *kn);
 +
- 	const struct bpf_prog_ops *ops;
- 	struct bpf_map **used_maps;
- 	struct bpf_prog *prog;
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index d531d4250bff..61264a3f944c 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -932,23 +932,6 @@ static inline bool bpf_jit_kallsyms_enabled(void)
- 	return false;
- }
- 
--const char *__bpf_address_lookup(unsigned long addr, unsigned long *size,
--				 unsigned long *off, char *sym);
--bool is_bpf_text_address(unsigned long addr);
--int bpf_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
--		    char *sym);
--
--static inline const char *
--bpf_address_lookup(unsigned long addr, unsigned long *size,
--		   unsigned long *off, char **modname, char *sym)
--{
--	const char *ret = __bpf_address_lookup(addr, size, off, sym);
--
--	if (ret && modname)
--		*modname = NULL;
--	return ret;
--}
--
- void bpf_prog_kallsyms_add(struct bpf_prog *fp);
- void bpf_prog_kallsyms_del(struct bpf_prog *fp);
- void bpf_get_prog_name(const struct bpf_prog *prog, char *sym);
-@@ -975,31 +958,6 @@ static inline bool bpf_jit_kallsyms_enabled(void)
- 	return false;
- }
- 
--static inline const char *
--__bpf_address_lookup(unsigned long addr, unsigned long *size,
--		     unsigned long *off, char *sym)
--{
--	return NULL;
--}
--
--static inline bool is_bpf_text_address(unsigned long addr)
--{
--	return false;
--}
--
--static inline int bpf_get_kallsym(unsigned int symnum, unsigned long *value,
--				  char *type, char *sym)
--{
--	return -ERANGE;
--}
--
--static inline const char *
--bpf_address_lookup(unsigned long addr, unsigned long *size,
--		   unsigned long *off, char **modname, char *sym)
--{
--	return NULL;
--}
--
- static inline void bpf_prog_kallsyms_add(struct bpf_prog *fp)
++extern bool is_kallsym_tree_text_address(unsigned long addr);
++
+ static inline int is_kernel_inittext(unsigned long addr)
  {
- }
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 19c49313c709..e53912234a91 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -30,7 +30,6 @@
- #include <linux/bpf.h>
- #include <linux/btf.h>
- #include <linux/frame.h>
--#include <linux/rbtree_latch.h>
- #include <linux/kallsyms.h>
- #include <linux/rcupdate.h>
- #include <linux/perf_event.h>
-@@ -100,8 +99,6 @@ struct bpf_prog *bpf_prog_alloc(unsigned int size, gfp_t gfp_extra_flags)
- 	fp->aux->prog = fp;
- 	fp->jit_requested = ebpf_jit_enabled();
- 
--	INIT_LIST_HEAD_RCU(&fp->aux->ksym_lnode);
--
- 	return fp;
- }
- EXPORT_SYMBOL_GPL(bpf_prog_alloc);
-@@ -530,86 +527,38 @@ void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
- 		*sym = 0;
- }
- 
--static __always_inline unsigned long
--bpf_get_prog_addr_start(struct latch_tree_node *n)
--{
--	unsigned long symbol_start, symbol_end;
--	const struct bpf_prog_aux *aux;
--
--	aux = container_of(n, struct bpf_prog_aux, ksym_tnode);
--	bpf_get_prog_addr_region(aux->prog, &symbol_start, &symbol_end);
--
--	return symbol_start;
--}
--
--static __always_inline bool bpf_tree_less(struct latch_tree_node *a,
--					  struct latch_tree_node *b)
--{
--	return bpf_get_prog_addr_start(a) < bpf_get_prog_addr_start(b);
--}
--
--static __always_inline int bpf_tree_comp(void *key, struct latch_tree_node *n)
--{
--	unsigned long val = (unsigned long)key;
--	unsigned long symbol_start, symbol_end;
--	const struct bpf_prog_aux *aux;
--
--	aux = container_of(n, struct bpf_prog_aux, ksym_tnode);
--	bpf_get_prog_addr_region(aux->prog, &symbol_start, &symbol_end);
--
--	if (val < symbol_start)
--		return -1;
--	if (val >= symbol_end)
--		return  1;
--
--	return 0;
--}
--
--static const struct latch_tree_ops bpf_tree_ops = {
--	.less	= bpf_tree_less,
--	.comp	= bpf_tree_comp,
--};
--
--static DEFINE_SPINLOCK(bpf_lock);
--static LIST_HEAD(bpf_kallsyms);
--static struct latch_tree_root bpf_tree __cacheline_aligned;
--
--static void bpf_prog_ksym_node_add(struct bpf_prog_aux *aux)
--{
--	WARN_ON_ONCE(!list_empty(&aux->ksym_lnode));
--	list_add_tail_rcu(&aux->ksym_lnode, &bpf_kallsyms);
--	latch_tree_insert(&aux->ksym_tnode, &bpf_tree, &bpf_tree_ops);
--}
--
--static void bpf_prog_ksym_node_del(struct bpf_prog_aux *aux)
--{
--	if (list_empty(&aux->ksym_lnode))
--		return;
--
--	latch_tree_erase(&aux->ksym_tnode, &bpf_tree, &bpf_tree_ops);
--	list_del_rcu(&aux->ksym_lnode);
--}
- 
- static bool bpf_prog_kallsyms_candidate(const struct bpf_prog *fp)
- {
- 	return fp->jited && !bpf_prog_was_classic(fp);
- }
- 
--static bool bpf_prog_kallsyms_verify_off(const struct bpf_prog *fp)
-+static void bpf_kn_names(struct kallsym_node *kn, char *sym, char **modname)
- {
--	return list_empty(&fp->aux->ksym_lnode) ||
--	       fp->aux->ksym_lnode.prev == LIST_POISON2;
-+	struct bpf_prog_aux *aux = container_of(kn, struct bpf_prog_aux, ktn);
-+
-+	*modname = "eBPF-jit";
-+	bpf_get_prog_name(aux->prog, sym);
- }
- 
- void bpf_prog_kallsyms_add(struct bpf_prog *fp)
- {
-+	unsigned long sym_start, sym_end;
-+
- 	if (!bpf_prog_kallsyms_candidate(fp) ||
- 	    !capable(CAP_SYS_ADMIN))
- 		return;
- 
--	spin_lock_bh(&bpf_lock);
--	bpf_prog_ksym_node_add(fp->aux);
--	spin_unlock_bh(&bpf_lock);
-+	bpf_get_prog_addr_region(fp, &sym_start, &sym_end);
-+
-+	fp->aux->ktn.kn_addr = sym_start;
-+	fp->aux->ktn.kn_len = sym_end - sym_start;
-+	fp->aux->ktn.kn_names = bpf_kn_names;
-+#ifdef CONFIG_PERF_EVENTS
-+	fp->aux->ktn.ksym_type = PERF_RECORD_KSYMBOL_TYPE_BPF;
-+#endif
-+
-+	kallsym_tree_add(&fp->aux->ktn);
- }
- 
- void bpf_prog_kallsyms_del(struct bpf_prog *fp)
-@@ -617,85 +566,7 @@ void bpf_prog_kallsyms_del(struct bpf_prog *fp)
- 	if (!bpf_prog_kallsyms_candidate(fp))
- 		return;
- 
--	spin_lock_bh(&bpf_lock);
--	bpf_prog_ksym_node_del(fp->aux);
--	spin_unlock_bh(&bpf_lock);
--}
--
--static struct bpf_prog *bpf_prog_kallsyms_find(unsigned long addr)
--{
--	struct latch_tree_node *n;
--
--	if (!bpf_jit_kallsyms_enabled())
--		return NULL;
--
--	n = latch_tree_find((void *)addr, &bpf_tree, &bpf_tree_ops);
--	return n ?
--	       container_of(n, struct bpf_prog_aux, ksym_tnode)->prog :
--	       NULL;
--}
--
--const char *__bpf_address_lookup(unsigned long addr, unsigned long *size,
--				 unsigned long *off, char *sym)
--{
--	unsigned long symbol_start, symbol_end;
--	struct bpf_prog *prog;
--	char *ret = NULL;
--
--	rcu_read_lock();
--	prog = bpf_prog_kallsyms_find(addr);
--	if (prog) {
--		bpf_get_prog_addr_region(prog, &symbol_start, &symbol_end);
--		bpf_get_prog_name(prog, sym);
--
--		ret = sym;
--		if (size)
--			*size = symbol_end - symbol_start;
--		if (off)
--			*off  = addr - symbol_start;
--	}
--	rcu_read_unlock();
--
--	return ret;
--}
--
--bool is_bpf_text_address(unsigned long addr)
--{
--	bool ret;
--
--	rcu_read_lock();
--	ret = bpf_prog_kallsyms_find(addr) != NULL;
--	rcu_read_unlock();
--
--	return ret;
--}
--
--int bpf_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
--		    char *sym)
--{
--	struct bpf_prog_aux *aux;
--	unsigned int it = 0;
--	int ret = -ERANGE;
--
--	if (!bpf_jit_kallsyms_enabled())
--		return ret;
--
--	rcu_read_lock();
--	list_for_each_entry_rcu(aux, &bpf_kallsyms, ksym_lnode) {
--		if (it++ != symnum)
--			continue;
--
--		bpf_get_prog_name(aux->prog, sym);
--
--		*value = (unsigned long)aux->prog->bpf_func;
--		*type  = BPF_SYM_ELF_TYPE;
--
--		ret = 0;
--		break;
--	}
--	rcu_read_unlock();
--
--	return ret;
-+	kallsym_tree_del(&fp->aux->ktn);
- }
- 
- static atomic_long_t bpf_jit_current;
-@@ -806,8 +677,6 @@ void __weak bpf_jit_free(struct bpf_prog *fp)
- 
- 		bpf_jit_binary_unlock_ro(hdr);
- 		bpf_jit_binary_free(hdr);
--
--		WARN_ON_ONCE(!bpf_prog_kallsyms_verify_off(fp));
- 	}
- 
- 	bpf_prog_unlock_free(fp);
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 0a8dab322111..5f6ab55f77cf 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7790,31 +7790,6 @@ static void perf_event_bpf_output(struct perf_event *event, void *data)
- 	perf_output_end(&handle);
- }
- 
--static void perf_event_bpf_emit_ksymbols(struct bpf_prog *prog,
--					 enum perf_bpf_event_type type)
--{
--	bool unregister = type == PERF_BPF_EVENT_PROG_UNLOAD;
--	char sym[KSYM_NAME_LEN];
--	int i;
--
--	if (prog->aux->func_cnt == 0) {
--		bpf_get_prog_name(prog, sym);
--		perf_event_ksymbol(PERF_RECORD_KSYMBOL_TYPE_BPF,
--				   (u64)(unsigned long)prog->bpf_func,
--				   prog->jited_len, unregister, sym);
--	} else {
--		for (i = 0; i < prog->aux->func_cnt; i++) {
--			struct bpf_prog *subprog = prog->aux->func[i];
--
--			bpf_get_prog_name(subprog, sym);
--			perf_event_ksymbol(
--				PERF_RECORD_KSYMBOL_TYPE_BPF,
--				(u64)(unsigned long)subprog->bpf_func,
--				subprog->jited_len, unregister, sym);
--		}
--	}
--}
--
- void perf_event_bpf_event(struct bpf_prog *prog,
- 			  enum perf_bpf_event_type type,
- 			  u16 flags)
-@@ -7825,16 +7800,6 @@ void perf_event_bpf_event(struct bpf_prog *prog,
- 	    type >= PERF_BPF_EVENT_MAX)
- 		return;
- 
--	switch (type) {
--	case PERF_BPF_EVENT_PROG_LOAD:
--	case PERF_BPF_EVENT_PROG_UNLOAD:
--		if (atomic_read(&nr_ksymbol_events))
--			perf_event_bpf_emit_ksymbols(prog, type);
--		break;
--	default:
--		break;
--	}
--
- 	if (!atomic_read(&nr_bpf_events))
- 		return;
- 
+ 	if (addr >= (unsigned long)_sinittext
 diff --git a/kernel/extable.c b/kernel/extable.c
-index 5271e9b649b1..c7b7bd8e24f6 100644
+index 6a5b61ebc66c..5271e9b649b1 100644
 --- a/kernel/extable.c
 +++ b/kernel/extable.c
-@@ -135,7 +135,7 @@ int kernel_text_address(unsigned long addr)
- 	 * coming back from idle, or cpu on or offlining.
- 	 *
- 	 * is_module_text_address() as well as the kprobe slots
--	 * and is_bpf_text_address() require RCU to be watching.
-+	 * and is_kallsym_tree_text_address() require RCU to be watching.
- 	 */
- 	no_rcu = !rcu_is_watching();
+@@ -145,6 +145,8 @@ int kernel_text_address(unsigned long addr)
  
-@@ -151,8 +151,6 @@ int kernel_text_address(unsigned long addr)
+ 	if (is_module_text_address(addr))
+ 		goto out;
++	if (is_kallsym_tree_text_address(addr))
++		goto out;
+ 	if (is_ftrace_trampoline(addr))
  		goto out;
  	if (is_kprobe_optinsn_slot(addr) || is_kprobe_insn_slot(addr))
- 		goto out;
--	if (is_bpf_text_address(addr))
--		goto out;
- 	ret = 0;
- out:
- 	if (no_rcu)
 diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index 30611a5379fd..17bcc6815cf3 100644
+index 14934afa9e68..30611a5379fd 100644
 --- a/kernel/kallsyms.c
 +++ b/kernel/kallsyms.c
-@@ -426,8 +426,7 @@ int kallsyms_lookup_size_offset(unsigned long addr, unsigned long *symbolsize,
+@@ -24,6 +24,8 @@
+ #include <linux/filter.h>
+ #include <linux/ftrace.h>
+ #include <linux/compiler.h>
++#include <linux/spinlock.h>
++#include <linux/perf_event.h>
+ 
+ /*
+  * These will be re-linked against their real values
+@@ -48,6 +50,165 @@ extern const u16 kallsyms_token_index[] __weak;
+ 
+ extern const unsigned int kallsyms_markers[] __weak;
+ 
++static DEFINE_SPINLOCK(kallsym_lock);
++static struct latch_tree_root kallsym_tree __cacheline_aligned;
++
++static __always_inline unsigned long
++kallsym_node_addr(struct latch_tree_node *node)
++{
++	struct kallsym_node *kn;
++
++	kn = container_of(node, struct kallsym_node, kn_node);
++	return kn->kn_addr;
++}
++
++static __always_inline bool kallsym_tree_less(struct latch_tree_node *a,
++					      struct latch_tree_node *b)
++{
++	return kallsym_node_addr(a) < kallsym_node_addr(b);
++}
++
++static __always_inline int kallsym_tree_comp(void *key,
++					     struct latch_tree_node *n)
++{
++	unsigned long val = (unsigned long)key;
++	unsigned long sym_start, sym_end;
++	const struct kallsym_node *kn;
++
++	kn = container_of(n, struct kallsym_node, kn_node);
++	sym_start = kn->kn_addr;
++	sym_end = sym_start + kn->kn_len;
++
++	if (val < sym_start)
++		return -1;
++	if (val >= sym_end)
++		return 1;
++
++	return 0;
++}
++
++static const struct latch_tree_ops kallsym_tree_ops = {
++	.less = kallsym_tree_less,
++	.comp = kallsym_tree_comp,
++};
++
++void kallsym_tree_add(struct kallsym_node *kn)
++{
++	char namebuf[KSYM_NAME_LEN] = "";
++	char *modname = NULL;
++
++	spin_lock_irq(&kallsym_lock);
++	latch_tree_insert(&kn->kn_node, &kallsym_tree, &kallsym_tree_ops);
++	spin_unlock_irq(&kallsym_lock);
++
++	kn->kn_names(kn, namebuf, &modname);
++
++	if (modname) {
++		int len = strlen(namebuf);
++
++		snprintf(namebuf + len, sizeof(namebuf) - len, " [%s]", modname);
++	}
++
++	perf_event_ksymbol(kn->ksym_type, kn->kn_addr, kn->kn_len, false, namebuf);
++}
++
++void kallsym_tree_del(struct kallsym_node *kn)
++{
++	char namebuf[KSYM_NAME_LEN] = "";
++	char *modname = NULL;
++
++	kn->kn_names(kn, namebuf, &modname);
++
++	if (modname) {
++		int len = strlen(namebuf);
++
++		snprintf(namebuf + len, sizeof(namebuf) - len, " [%s]", modname);
++	}
++
++	perf_event_ksymbol(kn->ksym_type, kn->kn_addr, kn->kn_len, true, namebuf);
++
++	spin_lock_irq(&kallsym_lock);
++	latch_tree_erase(&kn->kn_node, &kallsym_tree, &kallsym_tree_ops);
++	spin_unlock_irq(&kallsym_lock);
++}
++
++static struct kallsym_node *kallsym_tree_find(unsigned long addr)
++{
++	struct kallsym_node *kn = NULL;
++	struct latch_tree_node *n;
++
++	n = latch_tree_find((void *)addr, &kallsym_tree, &kallsym_tree_ops);
++	if (n)
++		kn = container_of(n, struct kallsym_node, kn_node);
++
++	return kn;
++}
++
++static char *kallsym_tree_address_lookup(unsigned long addr, unsigned long *size,
++					 unsigned long *off, char **modname, char *sym)
++{
++	struct kallsym_node *kn;
++	char *ret = NULL;
++
++	rcu_read_lock();
++	kn = kallsym_tree_find(addr);
++	if (kn) {
++		kn->kn_names(kn, sym, modname);
++
++		ret = sym;
++		if (size)
++			*size = kn->kn_len;
++		if (off)
++			*off = addr - kn->kn_addr;
++	}
++	rcu_read_unlock();
++
++	return ret;
++}
++
++bool is_kallsym_tree_text_address(unsigned long addr)
++{
++	bool ret;
++
++	rcu_read_lock();
++	ret = kallsym_tree_find(addr) != NULL;
++	rcu_read_unlock();
++
++	return ret;
++}
++
++static int kallsym_tree_kallsym(unsigned int symnum, unsigned long *value, char *type,
++				char *sym, char *modname, int *exported)
++{
++	struct latch_tree_node *ltn;
++	int i, ret = -ERANGE;
++
++	rcu_read_lock();
++	for (i = 0, ltn = latch_tree_first(&kallsym_tree); i < symnum && ltn;
++	     i++, ltn = latch_tree_next(&kallsym_tree, ltn))
++		;
++
++	if (ltn) {
++		struct kallsym_node *kn;
++		char *mod;
++
++		kn = container_of(ltn, struct kallsym_node, kn_node);
++
++		kn->kn_names(kn, sym, &mod);
++		if (mod)
++			strlcpy(modname, mod, MODULE_NAME_LEN);
++		else
++			modname[0] = '\0';
++
++		*type = 't';
++		*exported = 0;
++		ret = 0;
++	}
++	rcu_read_unlock();
++
++	return ret;
++}
++
+ /*
+  * Expand a compressed symbol data into the resulting uncompressed string,
+  * if uncompressed string is too long (>= maxlen), it will be truncated,
+@@ -265,6 +426,7 @@ int kallsyms_lookup_size_offset(unsigned long addr, unsigned long *symbolsize,
  	if (is_ksym_addr(addr))
  		return !!get_symbol_pos(addr, symbolsize, offset);
  	return !!module_address_lookup(addr, symbolsize, offset, NULL, namebuf) ||
--	       !!kallsym_tree_address_lookup(addr, symbolsize, offset, NULL, namebuf) ||
--	       !!__bpf_address_lookup(addr, symbolsize, offset, namebuf);
-+	       !!kallsym_tree_address_lookup(addr, symbolsize, offset, NULL, namebuf);
++	       !!kallsym_tree_address_lookup(addr, symbolsize, offset, NULL, namebuf) ||
+ 	       !!__bpf_address_lookup(addr, symbolsize, offset, namebuf);
  }
  
- /*
-@@ -465,11 +464,6 @@ const char *kallsyms_lookup(unsigned long addr,
+@@ -300,6 +462,10 @@ const char *kallsyms_lookup(unsigned long addr,
+ 	/* See if it's in a module or a BPF JITed image. */
+ 	ret = module_address_lookup(addr, symbolsize, offset,
+ 				    modname, namebuf);
++	if (!ret)
++		ret = kallsym_tree_address_lookup(addr, symbolsize,
++						  offset, modname, namebuf);
++
  	if (!ret)
- 		ret = kallsym_tree_address_lookup(addr, symbolsize,
- 						  offset, modname, namebuf);
--
--	if (!ret)
--		ret = bpf_address_lookup(addr, symbolsize,
--					 offset, modname, namebuf);
--
- 	if (!ret)
- 		ret = ftrace_mod_address_lookup(addr, symbolsize,
- 						offset, modname, namebuf);
-@@ -674,15 +668,6 @@ static int get_ksymbol_ftrace_mod(struct kallsym_iter *iter)
+ 		ret = bpf_address_lookup(addr, symbolsize,
+ 					 offset, modname, namebuf);
+@@ -434,6 +600,7 @@ struct kallsym_iter {
+ 	loff_t pos;
+ 	loff_t pos_arch_end;
+ 	loff_t pos_mod_end;
++	loff_t pos_tree_end;
+ 	loff_t pos_ftrace_mod_end;
+ 	unsigned long value;
+ 	unsigned int nameoff; /* If iterating in core kernel symbols. */
+@@ -478,9 +645,24 @@ static int get_ksymbol_mod(struct kallsym_iter *iter)
  	return 1;
  }
  
--static int get_ksymbol_bpf(struct kallsym_iter *iter)
--{
--	strlcpy(iter->module_name, "bpf", MODULE_NAME_LEN);
--	iter->exported = 0;
--	return bpf_get_kallsym(iter->pos - iter->pos_ftrace_mod_end,
--			       &iter->value, &iter->type,
--			       iter->name) < 0 ? 0 : 1;
--}
--
- /* Returns space to next name. */
- static unsigned long get_ksymbol_core(struct kallsym_iter *iter)
++static int get_ksymbol_tree(struct kallsym_iter *iter)
++{
++	int ret = kallsym_tree_kallsym(iter->pos - iter->pos_mod_end,
++				       &iter->value, &iter->type,
++				       iter->name, iter->module_name,
++				       &iter->exported);
++
++	if (ret < 0) {
++		iter->pos_tree_end = iter->pos;
++		return 0;
++	}
++
++	return 1;
++}
++
+ static int get_ksymbol_ftrace_mod(struct kallsym_iter *iter)
  {
-@@ -735,7 +720,7 @@ static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
- 	    get_ksymbol_ftrace_mod(iter))
+-	int ret = ftrace_mod_get_kallsym(iter->pos - iter->pos_mod_end,
++	int ret = ftrace_mod_get_kallsym(iter->pos - iter->pos_tree_end,
+ 					 &iter->value, &iter->type,
+ 					 iter->name, iter->module_name,
+ 					 &iter->exported);
+@@ -545,6 +727,10 @@ static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
+ 	    get_ksymbol_mod(iter))
  		return 1;
  
--	return get_ksymbol_bpf(iter);
-+	return 0;
- }
- 
- /* Returns false if pos at or past end of file. */
++	if ((!iter->pos_tree_end || iter->pos_tree_end > pos) &&
++	    get_ksymbol_tree(iter))
++		return 1;
++
+ 	if ((!iter->pos_ftrace_mod_end || iter->pos_ftrace_mod_end > pos) &&
+ 	    get_ksymbol_ftrace_mod(iter))
+ 		return 1;
 -- 
 2.17.1
 
