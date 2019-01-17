@@ -2,178 +2,169 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE36C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D08FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 823EE20859
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4921E205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:21:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547738492;
+	bh=rfVhgYO/9Jz6NJBuNfSBUv6uW7LxHQBgi0UCGL2YdlA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ViFPOgfayY47OfU7Bjgp8cZwFmvmfV0kUMEc7NLloW4Hz2GodnnIO+k92+gAfBEqK
+	 bAbtxk58H6I4BDtUT7waFhuSqHZDHNs+4iVaIJ4S8953tzI/iVJqMzJK1wGqDloSPk
+	 jU31yA/VX1CVApBBEFKwrT3D+2GAo4MfzqNHILAc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbfAQPVO (ORCPT
+        id S1728410AbfAQPVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:21:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725970AbfAQPVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:21:13 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4AAC2811AC;
-        Thu, 17 Jan 2019 15:21:12 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3EBF85C557;
-        Thu, 17 Jan 2019 15:21:10 +0000 (UTC)
-Date:   Thu, 17 Jan 2019 10:21:08 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190117152108.GB3550@redhat.com>
-References: <20190112020228.GA5059@redhat.com>
- <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz>
- <20190114172124.GA3702@redhat.com>
- <20190115080759.GC29524@quack2.suse.cz>
- <20190116113819.GD26069@quack2.suse.cz>
- <20190116130813.GA3617@redhat.com>
- <5c6dc6ed-4c8d-bce7-df02-ee8b7785b265@nvidia.com>
+        Thu, 17 Jan 2019 10:21:30 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44259 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727306AbfAQPV3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:21:29 -0500
+Received: by mail-oi1-f194.google.com with SMTP id m6so6394203oig.11;
+        Thu, 17 Jan 2019 07:21:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gO0CRcGYzFQ3a4ks8/KW/sDVv+Nz1F5Jm24CDMNgFDM=;
+        b=ci9lTKCiW8AlmY1lot0S5jr8KBM4HL7GZFaHOPyiaxKI8UKO6DMbmHkgK2w7IWTXt/
+         dNOu+/Y57m0PSTjMzRimZRg9kI2DXS/XPl/BDOoc0Q6Q3qfgW25S3BDrUz08tFhyP345
+         VSr5XThZLPaJJFxpU2CpoHIdjpKo7h0viD7uXKFDW/hN0GdPRjDcAOVpBQjVnvY+zAvE
+         afnCKUNNT5uKtmGsHAGlohM4Szvn0bOkTYXtVm7EY1lqZy3YyBp2rKeDDbwXhhQBA026
+         /Z83XnXR/LdYv+1awUzXKNHddx8xKGxt9F/IkPR7FSakEYi/muMwBZo4d+JxYJbrqgv3
+         mgbQ==
+X-Gm-Message-State: AJcUukcqzTuUMGY8qf9HEDBAdTFZAV5g8qlYzOMffpL+f0J4cre6ryDb
+        3yDyA8M2+1W/QnJ1mzcN2E326iUWCLWBZcpB0KQ=
+X-Google-Smtp-Source: ALg8bN4dV+8tV9gxc+vINbtTgdtmZW9Wee2gDi6uyf9uehcf/xCJ3ZeP8cGX6j3dPv5tvCCqiJbha2VCFnpXLriGERs=
+X-Received: by 2002:aca:e715:: with SMTP id e21mr8039215oih.76.1547738488501;
+ Thu, 17 Jan 2019 07:21:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5c6dc6ed-4c8d-bce7-df02-ee8b7785b265@nvidia.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 17 Jan 2019 15:21:12 +0000 (UTC)
+References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-10-keith.busch@intel.com>
+In-Reply-To: <20190116175804.30196-10-keith.busch@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 17 Jan 2019 16:21:16 +0100
+Message-ID: <CAJZ5v0hFFZjMNr+_iRRvTE7XMsw1+2hOQDPuT6PD6UnAjjxoZw@mail.gmail.com>
+Subject: Re: [PATCHv4 09/13] acpi/hmat: Register performance attributes
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 09:42:25PM -0800, John Hubbard wrote:
-> On 1/16/19 5:08 AM, Jerome Glisse wrote:
-> > On Wed, Jan 16, 2019 at 12:38:19PM +0100, Jan Kara wrote:
-> >> On Tue 15-01-19 09:07:59, Jan Kara wrote:
-> >>> Agreed. So with page lock it would actually look like:
-> >>>
-> >>> get_page_pin()
-> >>> 	lock_page(page);
-> >>> 	wait_for_stable_page();
-> >>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> >>> 	unlock_page(page);
-> >>>
-> >>> And if we perform page_pinned() check under page lock, then if
-> >>> page_pinned() returned false, we are sure page is not and will not be
-> >>> pinned until we drop the page lock (and also until page writeback is
-> >>> completed if needed).
-> >>
-> >> After some more though, why do we even need wait_for_stable_page() and
-> >> lock_page() in get_page_pin()?
-> >>
-> >> During writepage page_mkclean() will write protect all page tables. So
-> >> there can be no new writeable GUP pins until we unlock the page as all such
-> >> GUPs will have to first go through fault and ->page_mkwrite() handler. And
-> >> that will wait on page lock and do wait_for_stable_page() for us anyway.
-> >> Am I just confused?
-> > 
-> > Yeah with page lock it should synchronize on the pte but you still
-> > need to check for writeback iirc the page is unlocked after file
-> > system has queue up the write and thus the page can be unlock with
-> > write back pending (and PageWriteback() == trye) and i am not sure
-> > that in that states we can safely let anyone write to that page. I
-> > am assuming that in some case the block device also expect stable
-> > page content (RAID stuff).
-> > 
-> > So the PageWriteback() test is not only for racing page_mkclean()/
-> > test_set_page_writeback() and GUP but also for pending write back.
-> 
-> 
-> That was how I thought it worked too: page_mkclean and a few other things
-> like page migration take the page lock, but writeback takes the lock, 
-> queues it up, then drops the lock, and writeback actually happens outside
-> that lock. 
-> 
-> So on the GUP end, some combination of taking the page lock, and 
-> wait_on_page_writeback(), is required in order to flush out the writebacks.
-> I think I just rephrased what Jerome said, actually. :)
-> 
-> 
-> > 
-> > 
-> >> That actually touches on another question I wanted to get opinions on. GUP
-> >> can be for read and GUP can be for write (that is one of GUP flags).
-> >> Filesystems with page cache generally have issues only with GUP for write
-> >> as it can currently corrupt data, unexpectedly dirty page etc.. DAX & memory
-> >> hotplug have issues with both (DAX cannot truncate page pinned in any way,
-> >> memory hotplug will just loop in kernel until the page gets unpinned). So
-> >> we probably want to track both types of GUP pins and page-cache based
-> >> filesystems will take the hit even if they don't have to for read-pins?
-> > 
-> > Yes the distinction between read and write would be nice. With the map
-> > count solution you can only increment the mapcount for GUP(write=true).
-> > With pin bias the issue is that a big number of read pin can trigger
-> > false positive ie you would do:
-> >     GUP(vaddr, write)
-> >         ...
-> >         if (write)
-> >             atomic_add(page->refcount, PAGE_PIN_BIAS)
-> >         else
-> >             atomic_inc(page->refcount)
-> > 
-> >     PUP(page, write)
-> >         if (write)
-> >             atomic_add(page->refcount, -PAGE_PIN_BIAS)
-> >         else
-> >             atomic_dec(page->refcount)
-> > 
-> > I am guessing false positive because of too many read GUP is ok as
-> > it should be unlikely and when it happens then we take the hit.
-> > 
-> 
-> I'm also intrigued by the point that read-only GUP is harmless, and we 
-> could just focus on the writeable case.
+On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
+>
+> Save the best performace access attributes and register these with the
+> memory's node if HMAT provides the locality table. While HMAT does make
+> it possible to know performance for all possible initiator-target
+> pairings, we export only the best pairings at this time.
+>
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+> ---
+>  drivers/acpi/hmat/Kconfig |  1 +
+>  drivers/acpi/hmat/hmat.c  | 34 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 35 insertions(+)
+>
+> diff --git a/drivers/acpi/hmat/Kconfig b/drivers/acpi/hmat/Kconfig
+> index a4034d37a311..20a0e96ba58a 100644
+> --- a/drivers/acpi/hmat/Kconfig
+> +++ b/drivers/acpi/hmat/Kconfig
+> @@ -2,6 +2,7 @@
+>  config ACPI_HMAT
+>         bool "ACPI Heterogeneous Memory Attribute Table Support"
+>         depends on ACPI_NUMA
+> +       select HMEM_REPORTING
 
-For filesystem anybody that just look at the page is fine, as it would
-not change its content thus the page would stay stable.
+If you want HMEM_REPORTING to be only set when ACPI_HMAT is set, then
+don't make HMEM_REPORTING user-selectable.
 
-> 
-> However, I'm rather worried about actually attempting it, because remember
-> that so far, each call site does no special tracking of each struct page. 
-> It just remembers that it needs to do a put_page(), not whether or
-> not that particular page was set up with writeable or read-only GUP. I mean,
-> sure, they often call set_page_dirty before put_page, indicating that it might
-> have been a writeable GUP call, but it seems sketchy to rely on that.
-> 
-> So actually doing this could go from merely lots of work, to K*(lots_of_work)...
+>         help
+>          Parses representation of the ACPI Heterogeneous Memory Attributes
+>          Table (HMAT) and set the memory node relationships and access
+> diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
+> index efb33c74d1a3..45e20dc677f9 100644
+> --- a/drivers/acpi/hmat/hmat.c
+> +++ b/drivers/acpi/hmat/hmat.c
+> @@ -23,6 +23,8 @@ struct memory_target {
+>         struct list_head node;
+>         unsigned int memory_pxm;
+>         unsigned long p_nodes[BITS_TO_LONGS(MAX_NUMNODES)];
+> +       bool hmem_valid;
+> +       struct node_hmem_attrs hmem;
+>  };
+>
+>  static __init struct memory_target *find_mem_target(unsigned int m)
+> @@ -108,6 +110,34 @@ static __init void hmat_update_access(u8 type, u32 value, u32 *best)
+>         }
+>  }
+>
+> +static __init void hmat_update_target(struct memory_target *t, u8 type,
+> +                                     u32 value)
+> +{
+> +       switch (type) {
+> +       case ACPI_HMAT_ACCESS_LATENCY:
+> +               t->hmem.read_latency = value;
+> +               t->hmem.write_latency = value;
+> +               break;
+> +       case ACPI_HMAT_READ_LATENCY:
+> +               t->hmem.read_latency = value;
+> +               break;
+> +       case ACPI_HMAT_WRITE_LATENCY:
+> +               t->hmem.write_latency = value;
+> +               break;
+> +       case ACPI_HMAT_ACCESS_BANDWIDTH:
+> +               t->hmem.read_bandwidth = value;
+> +               t->hmem.write_bandwidth = value;
+> +               break;
+> +       case ACPI_HMAT_READ_BANDWIDTH:
+> +               t->hmem.read_bandwidth = value;
+> +               break;
+> +       case ACPI_HMAT_WRITE_BANDWIDTH:
+> +               t->hmem.write_bandwidth = value;
+> +               break;
+> +       }
+> +       t->hmem_valid = true;
 
-I did a quick scan and most of the GUP user know wether they did a write
-GUP or not by the time they do put_page for instance all device knows
-that because they use that very information for the dma_page_unmap()
+What if 'type' is none of the above?  After all these values come from
+the firmware and that need not be correct.
 
-So wether the GUP was write or read only is available at the time of PUP.
+Do you still want to set hmem_valid in that case?
 
-If you do not feel comfortable you can leave it out for now.
-
-Cheers,
-Jérôme
+> +}
+> +
+>  static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+>                                       const unsigned long end)
+>  {
+> @@ -166,6 +196,8 @@ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+>                                         set_bit(p_node, t->p_nodes);
+>                         }
+>                 }
+> +               if (t && best)
+> +                       hmat_update_target(t, type, best);
+>         }
+>         return 0;
+>  }
+> @@ -267,6 +299,8 @@ static __init void hmat_register_targets(void)
+>                 m = pxm_to_node(t->memory_pxm);
+>                 for_each_set_bit(p, t->p_nodes, MAX_NUMNODES)
+>                         register_memory_node_under_compute_node(m, p, 0);
+> +               if (t->hmem_valid)
+> +                       node_set_perf_attrs(m, &t->hmem, 0);
+>                 kfree(t);
+>         }
+>  }
+> --
