@@ -2,84 +2,112 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBE5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5293C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FEF620657
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC0120657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 12:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfAQMdk (ORCPT
+        id S1727443AbfAQMfp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:33:40 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:42250 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725928AbfAQMdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 07:33:40 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B39B11A00BA;
-        Thu, 17 Jan 2019 13:33:38 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A5CB91A0023;
-        Thu, 17 Jan 2019 13:33:38 +0100 (CET)
-Received: from fsr-ub1464-019.ea.freescale.net (fsr-ub1464-019.ea.freescale.net [10.171.81.207])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 34E8C20637;
-        Thu, 17 Jan 2019 13:33:38 +0100 (CET)
-From:   Camelia Groza <camelia.groza@nxp.com>
-To:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        davem@davemloft.net, oss@buserror.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Camelia Groza <camelia.groza@nxp.com>
-Subject: [PATCH net] net: phy: add missing phy driver features
-Date:   Thu, 17 Jan 2019 14:33:33 +0200
-Message-Id: <1547728413-20233-1-git-send-email-camelia.groza@nxp.com>
-X-Mailer: git-send-email 1.9.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Thu, 17 Jan 2019 07:35:45 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36125 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725967AbfAQMfp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 07:35:45 -0500
+Received: by mail-qt1-f194.google.com with SMTP id t13so11093372qtn.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:35:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=p0hScYoFhCRJKP3vcEop4zuq7cql99V1whRlYIUpwhY=;
+        b=NKUNty56vUMjvJIbaBRYwGxS6zpgOgfhfzG+FretMN33Zj556MUQMQjtXRd7AYhPs5
+         HuuZyByKwaV2Ac6NRBvn46ICQl3yJ4yWrSm0FGp0a9/P7+bfLE5VU11QGv0OqzTOBJri
+         9mVIpnJ1Y9Rlo3QNwteVcpxk4sJ68UtbxidC3iMJyrj+Q8j/Cuds1F+YJayst79P4WaF
+         oCdlVwCsicKm9lJldtvog5aj2QN3aTgvb9wuoj8/Saph1AFAjRqUW2j4SbbOIqQ3zgA5
+         tfnrmk+v0Zda4WId7K+p7E2TjEuRYU1b8xYZDU1qBtST9dWKPaNFLs9qIQIy+0c2xIw5
+         7ZQg==
+X-Gm-Message-State: AJcUuke6CnaPixI+Fg6j09IpEps6SxAMKQLP07nN0FOEDI/xIWBmavsb
+        vW43GL6hT3RdBPdKmXo6XZ9xv/T8b2/vlo0TExLl+6OAaoM=
+X-Google-Smtp-Source: ALg8bN6pF7H3QR9yaBdlF8UnPjz6fuCZR37BKStUQtsXB4Cow3Es/b+zV/tgABQQsvWAh/yEGegTM7qFKi/c6vfFTG8=
+X-Received: by 2002:aed:3a69:: with SMTP id n96mr11448365qte.246.1547728544291;
+ Thu, 17 Jan 2019 04:35:44 -0800 (PST)
+MIME-Version: 1.0
+References: <20190114084734.3362-1-kai.heng.feng@canonical.com>
+ <nycvar.YFH.7.76.1901141217550.6626@cbobk.fhfr.pm> <663EE74C-02E8-49DB-A197-2022AFE2D863@canonical.com>
+ <2149AEF5-ABBF-4745-89F9-7FF9719251B5@canonical.com> <CAO-hwJLHm8b6X9kX1myz7xx1992VW2tVjdn6xw2n1MVX2dn0=g@mail.gmail.com>
+ <1897F291-4EB4-4E4B-87AA-3C16EF321340@canonical.com>
+In-Reply-To: <1897F291-4EB4-4E4B-87AA-3C16EF321340@canonical.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 17 Jan 2019 13:35:32 +0100
+Message-ID: <CAO-hwJ+OQAsJkJj2YRGOE=8NcXhS=XWwdfGSaLjY9Bdvcfn7BQ@mail.gmail.com>
+Subject: Re: [PATCH] HID: i2c-hid: Disable runtime PM on Goodix touchpad
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>, anisse@astier.eu
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The phy drivers for CS4340 and TN2020 are missing their
-features attributes. Add them.
+On Thu, Jan 17, 2019 at 12:41 PM Kai-Heng Feng
+<kai.heng.feng@canonical.com> wrote:
+>
+>
+>
+> > On Jan 17, 2019, at 16:06, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
+> >
+> > On Thu, Jan 17, 2019 at 6:02 AM Kai-Heng Feng
+> > <kai.heng.feng@canonical.com> wrote:
+> [snipped]
+> >> Goodix says the firmware needs at least 60ms to fully respond ON and
+> >> SLEEP command.
+> >
+> > I was about to say that this is not conformant to the specification.
+> > But looking at 7.2.8 SET_POWER of
+> > https://docs.microsoft.com/en-us/previous-versions/windows/hardware/design/dn642101(v=vs.85)
+> >
+> > They say:
+> > "The DEVICE must ensure that it transitions to the HOST specified
+> > Power State in under 1 second. "
+> > But in the RESPONSE paragraph: "The DEVICE shall not respond back
+> > after receiving the command. The DEVICE is mandated to enter that
+> > power state imminently."
+> >
+> > My interpretation was always that the device has to be in a ready
+> > state for new commands "immediately".
+> > However, the first sentence may suggest that the driver would block
+> > any command to the device before the 1 second timestamp.
+> >
+> >>
+> >> I’ll see if an 200ms autosuspend can solve all Goodix, LG and Raydium
+> >> touchpanels.
+> >
+> > We already have a I2C_HID_QUIRK_DELAY_AFTER_SLEEP quirk that delay
+> > operations after sleep by 20ms. Maybe we can keep the runtime PM but
+> > use the same timers to not confuse the hardware.
+>
+> Yes, but wouldn’t use pm_*_autosuspend() helpers can both solve the issue
+> and make the code more cleaner?
 
-Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
-Reported-by: Scott Wood <oss@buserror.net>
-Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
----
-This patch should be merged to 4.20 stable.
----
- drivers/net/phy/cortina.c    | 1 +
- drivers/net/phy/teranetics.c | 1 +
- 2 files changed, 2 insertions(+)
+You are probably correct :)
 
-diff --git a/drivers/net/phy/cortina.c b/drivers/net/phy/cortina.c
-index 8022cd3..1a4d04a 100644
---- a/drivers/net/phy/cortina.c
-+++ b/drivers/net/phy/cortina.c
-@@ -88,6 +88,7 @@ static int cortina_probe(struct phy_device *phydev)
- 	.phy_id		= PHY_ID_CS4340,
- 	.phy_id_mask	= 0xffffffff,
- 	.name		= "Cortina CS4340",
-+	.features       = PHY_10GBIT_FEATURES,
- 	.config_init	= gen10g_config_init,
- 	.config_aneg	= gen10g_config_aneg,
- 	.read_status	= cortina_read_status,
-diff --git a/drivers/net/phy/teranetics.c b/drivers/net/phy/teranetics.c
-index 22f3bdd..9124718 100644
---- a/drivers/net/phy/teranetics.c
-+++ b/drivers/net/phy/teranetics.c
-@@ -80,6 +80,7 @@ static int teranetics_match_phy_device(struct phy_device *phydev)
- 	.phy_id		= PHY_ID_TN2020,
- 	.phy_id_mask	= 0xffffffff,
- 	.name		= "Teranetics TN2020",
-+	.features       = PHY_10GBIT_FEATURES,
- 	.soft_reset	= gen10g_no_soft_reset,
- 	.aneg_done	= teranetics_aneg_done,
- 	.config_init    = gen10g_config_init,
--- 
-1.9.1
+I am not too familiar with the details of the runtime PM API, but if
+you can make this a barrier to prevent the host to call too many
+suspends/resumes in a row, that would be nice.
+And we might be able to ditch I2C_HID_QUIRK_DELAY_AFTER_SLEEP and
+I2C_HID_QUIRK_NO_RUNTIME_PM.
 
+Adding the involved people in the thread.
+
+Cheers,
+Benjamin
