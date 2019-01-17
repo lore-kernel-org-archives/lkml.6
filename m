@@ -2,122 +2,134 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81139C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE64C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5902220856
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F08120851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 08:00:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nYGS+/Tq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbfAQIAj (ORCPT
+        id S1729276AbfAQIAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:00:39 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34414 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727491AbfAQIAj (ORCPT
+        Thu, 17 Jan 2019 03:00:48 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:52886 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbfAQIAs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:00:39 -0500
-X-UUID: ea431d14c2c54d268671b5d4f52924a8-20190117
-X-UUID: ea431d14c2c54d268671b5d4f52924a8-20190117
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 153089909; Thu, 17 Jan 2019 16:00:34 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 17 Jan 2019 16:00:32 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 17 Jan 2019 16:00:32 +0800
-Message-ID: <1547712032.5318.17.camel@mtksdaap41>
-Subject: Re: [PATCH 1/3] mailbox: Add ability for clients to abort data in
- channel
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date:   Thu, 17 Jan 2019 16:00:32 +0800
-In-Reply-To: <CABb+yY0JfRbdVb_3wqxve1pYH0ZpFNrA2Kr6qovBruzhbeFRuw@mail.gmail.com>
-References: <20190116050435.11624-1-ck.hu@mediatek.com>
-         <20190116050435.11624-2-ck.hu@mediatek.com>
-         <CABb+yY0JfRbdVb_3wqxve1pYH0ZpFNrA2Kr6qovBruzhbeFRuw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 17 Jan 2019 03:00:48 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0H7rmsf024693;
+        Thu, 17 Jan 2019 08:00:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=BDM0Pqg3+g5RUeFfvlcXyYh6lh1jjjEGwMhySrdQMfQ=;
+ b=nYGS+/Tq26EfePiWdrp9dQtOMvMQp5FdSlTgbL9xb/EVUwaMHpbDuVCF5S2EOgcjjg/7
+ 8DE+HAs7e7h2nyqEHi5GU6b2h0tBYUptuO4kzjZfmerqzHNlDmxr8Cqy3Qg2IYsuY2wg
+ /DtRfjyfKzhIzCG0RUI8oULglKNd1xg+V/h+wwVVxEavDHwir+DoULV4A39KEFQ7bs3w
+ 3gN/pTYfo9sBcLcI9ZZWUcpw9dbOX0HsayGPpz1D85fP7c2rgCP7jipd68rAa5aWCW3r
+ n567KaMGdSWmq55ZgGeBV9EUUk8tcaPHI7veD0xLi0S76VXav+OApn4pqlgnrUU8slp4 3Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2pybjsec4b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 08:00:28 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0H80MTP006153
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 08:00:22 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0H80Gfi018697;
+        Thu, 17 Jan 2019 08:00:16 GMT
+Received: from kadam (/41.202.241.2)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 17 Jan 2019 00:00:15 -0800
+Date:   Thu, 17 Jan 2019 10:59:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ching Huang <ching2048@areca.com.tw>
+Cc:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hch@infradead.org, colin.king@canonical.com
+Subject: Re: [PATCH 2/3] scsi: arcmsr: Fix suspend/resume of
+ ACB_ADAPTER_TYPE_B part 2
+Message-ID: <20190117070227.GM4504@kadam>
+References: <1547696703.4339.21.camel@Centos6.3-64>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 0AE1DE8F454E571EC2C12497B1F87F8F86732474482BE7D983F49524CDF2F1912000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547696703.4339.21.camel@Centos6.3-64>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9138 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=940
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901170059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jassi:
+On Thu, Jan 17, 2019 at 11:45:03AM +0800, Ching Huang wrote:
+> >From Ching Huang <ching2048@areca.com.tw>
+> 
+> Fix suspend/resume of ACB_ADAPTER_TYPE_B part 2.
+> 
 
-On Wed, 2019-01-16 at 10:22 -0600, Jassi Brar wrote:
-> On Tue, Jan 15, 2019 at 11:07 PM CK Hu <ck.hu@mediatek.com> wrote:
-> >
-> > This patch supplies a new framework API, mbox_abort_channel(), and
-> > a new controller interface, abort_data().
-> >
-> > For some client's application, it need to clean up the data in channel
-> > but keep the channel so it could send data to channel later.
-> >
-> > Signed-off-by: CK Hu <ck.hu@mediatek.com>
-> > ---
-> >  drivers/mailbox/mailbox.c          | 23 +++++++++++++++++++++++
-> >  include/linux/mailbox_client.h     |  1 +
-> >  include/linux/mailbox_controller.h |  4 ++++
-> >  3 files changed, 28 insertions(+)
-> >
-> > diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> > index c6a7d4582dc6..281647162c76 100644
-> > --- a/drivers/mailbox/mailbox.c
-> > +++ b/drivers/mailbox/mailbox.c
-> > @@ -428,6 +428,29 @@ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
-> >  }
-> >  EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
-> >
-> > +/**
-> > + * mbox_abort_channel - The client abort all data in a mailbox
-> > + *                     channel by this call.
-> > + * @chan: The mailbox channel to be aborted.
-> > + */
-> > +void mbox_abort_channel(struct mbox_chan *chan)
-> > +{
-> > +       unsigned long flags;
-> > +
-> > +       if (!chan || !chan->cl)
-> > +               return;
-> > +
-> > +       if (chan->mbox->ops->abort_data)
-> > +               chan->mbox->ops->abort_data(chan);
-> > +
-> > +       /* The queued TX requests are simply aborted, no callbacks are made */
-> > +       spin_lock_irqsave(&chan->lock, flags);
-> > +       chan->cl = NULL;
-> > +       chan->active_req = NULL;
-> > +       spin_unlock_irqrestore(&chan->lock, flags);
-> > +}
-> >
-> Why not just release and then request channel again ?
-> mbox_abort_channel() is just a copy of mbox_free_channel() and if the
-> abort can sleep, that is more reason to just do that.
+What does this look like from a user perspective?  Does it fail every
+time or does it only fail sometimes?
 
-The cursor may change position 300 times in one second, so I still
-concern the processing time. Request and free channel looks too heavy to
-do 300 times per second. Conceptually, I just want to clean up the
-channel rather than free and request it, so they are somewhat different.
-I say it may sleep because mbox_abort_channel() is a copy of
-mbox_free_channel(). I could change it to 'must not sleep' because
-Mediatek controller does not sleep in abort callback.
+What's the bug exactly?
 
-Regards,
-CK
+There is no Fixes tag...
+
+> Signed-off-by: Ching Huang <ching2048@areca.com.tw>
+> ---
+> 
+> diff --git a/drivers/scsi/arcmsr/arcmsr.h b/drivers/scsi/arcmsr/arcmsr.h
+> index a94c513..b98c632 100755
+> --- a/drivers/scsi/arcmsr/arcmsr.h
+> +++ b/drivers/scsi/arcmsr/arcmsr.h
+> @@ -508,9 +508,9 @@ struct MessageUnit_A
+>  struct MessageUnit_B
+>  {
+>  	uint32_t	post_qbuffer[ARCMSR_MAX_HBB_POSTQUEUE];
+> -	uint32_t	done_qbuffer[ARCMSR_MAX_HBB_POSTQUEUE];
+> +	volatile uint32_t	done_qbuffer[ARCMSR_MAX_HBB_POSTQUEUE];
+
+There is a well known rule of thumb that when someone uses "volatile"
+in the kernel it means there is a locking problem...  Is this __iomem or
+something?
+
+>  	uint32_t	postq_index;
+> -	uint32_t	doneq_index;
+> +	volatile uint32_t	doneq_index;
+>  	uint32_t	__iomem *drv2iop_doorbell;
+>  	uint32_t	__iomem *drv2iop_doorbell_mask;
+>  	uint32_t	__iomem *iop2drv_doorbell;
+> diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+> index 5736434..88053b1 100755
+> --- a/drivers/scsi/arcmsr/arcmsr_hba.c
+> +++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+> @@ -1113,7 +1113,11 @@ static int arcmsr_resume(struct pci_dev *pdev)
+>  	switch (acb->adapter_type) {
+>  	case ACB_ADAPTER_TYPE_B: {
+>  		struct MessageUnit_B *reg = acb->pmuB;
+> -		reg->post_qbuffer[0] = 0;
+> +		uint32_t i;
+> +		for (i = 0; i < ARCMSR_MAX_HBB_POSTQUEUE; i++) {
+> +			reg->post_qbuffer[i] = 0;
+> +			reg->done_qbuffer[i] = 0;
+> +		}
+
+Is this cause by patch 1 changing the zalloc to regular alloc??  If so
+then it should be folded into that patch instead of sent separately.
+
+regards,
+dan carpenter
+
 
