@@ -2,108 +2,99 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AA7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6009EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8186620851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547737618;
-	bh=bi0jT3sSfGkmPZz1x8nu2vzvP+BhjpkQhNeb96KS24s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qwVRcv37YRU7Im1N1TkfEg27hJLcUIpog+69dU9YT+G/yaAfu6CevAS+nngExB5F9
-	 2Eau1T8VYGaYaSyoLWJBXutx39izFm/3upUA8mM3FzZ0H65l7knSCMMJ+zltoRsjXo
-	 LxPG9+N0jtWDoq7GdJO2Mvjp/B/33XQ5BQGdAFAo=
+	by mail.kernel.org (Postfix) with ESMTP id 2F3E120851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 15:07:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n3upj/q5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GLFI0x/V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbfAQPG4 (ORCPT
+        id S1728410AbfAQPHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 10:06:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728059AbfAQPG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 10:06:56 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 17 Jan 2019 10:07:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34892 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726916AbfAQPHW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 10:07:22 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 62D126081E; Thu, 17 Jan 2019 15:07:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547737641;
+        bh=B94wqvUG1zQiQ7J/DXu6pKDX2bWVrpTumpBEZo9Wp8U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=n3upj/q5AHlbdPJ8EHdOfiGoHJSfGM87KCD1c1f1VfoS+2G9AV0i9fP+qKasiEocy
+         mxOjSmJ97A36w/9Su610VExcfFEv+fFSP7cKjZfmDjOY42BJT5VyHGDWBwHQeEtedk
+         ShF/p2RXRLgPNwjgf3S18Xdo+VSCrhIJ4tJoSuWI=
+Received: from [192.168.1.100] (unknown [157.45.228.214])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D69E20851;
-        Thu, 17 Jan 2019 15:06:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547737615;
-        bh=bi0jT3sSfGkmPZz1x8nu2vzvP+BhjpkQhNeb96KS24s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g9PAk5QAO56mYe+R94VhyMnhqQg1T8cnCYRXbWRFurD7ReHRJoNQ2tV1IrD8HUEUh
-         hfx7hGFvNJ5ya4gGudRAGgZ0l5BDdBw6WRBNtlP76n9YL7IeD+R+ock5WADyjv0Cji
-         g76M6oCAQQalBlE5GLBILoEsz6dw4xA0LkeQxMpA=
-Date:   Thu, 17 Jan 2019 09:06:54 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ajay Kaher <akaher@vmware.com>
-Cc:     kys@microsoft.com, haiyangz@microsoft.com,
-        devel@linuxdriverproject.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jork Loeser <jloeser@microsoft.com>
-Subject: Re: [PATCH 3/3] PCI: hv: Use vPCI protocol version 1.2 for v4.9
-Message-ID: <20190117150654.GF158366@google.com>
-References: <1547758038-5255-1-git-send-email-akaher@vmware.com>
- <1547758038-5255-4-git-send-email-akaher@vmware.com>
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3F6A5606E1;
+        Thu, 17 Jan 2019 15:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547737640;
+        bh=B94wqvUG1zQiQ7J/DXu6pKDX2bWVrpTumpBEZo9Wp8U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GLFI0x/VM/jnJ/w/1V3u4xcNCtHIYPL1ZZVNLW+0TJi8ihJEV44fa1DcA5ITAKBvT
+         U+DJQiVvYOalcaD0XZuEYcclzmtQ5Pd10S8oyO4m9KhZcKLuYVlH9EK75hApzO7PkU
+         pKoiKCT+CwPnghjsYx3LETSIBKre0XGpr858qTzY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F6A5606E1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH] watchdog: qcom: Add suspend/resume support
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Brian Masney <masneyb@onstation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20190117091555.2018-1-saiprakash.ranjan@codeaurora.org>
+ <20190117093113.GA23389@basecamp>
+ <91108b9b-fe05-1068-b07e-872cb4cd4012@codeaurora.org>
+ <20190117112730.GA25198@basecamp>
+ <b9f573ec-3787-2b05-52e3-60f11c061dd7@codeaurora.org>
+ <20190117143044.GA30757@roeck-us.net>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <4bd782a4-1534-28bf-78d3-c14b677641b0@codeaurora.org>
+Date:   Thu, 17 Jan 2019 20:37:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547758038-5255-4-git-send-email-akaher@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190117143044.GA30757@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 02:17:18AM +0530, Ajay Kaher wrote:
-> Update the Hyper-V vPCI driver to use the Server-2016 version of the vPCI
-> protocol, fixing MSI creation and retargeting issues.
+Hi Guenter,
+
+On 1/17/2019 8:00 PM, Guenter Roeck wrote:
 > 
-> Replaced hv_tmp_cpu_nr_to_vp_nr() with vmbus_cpu_number_to_vp_number()
-> to make this patch compatibale for linux v4.9.
+> I personally very much prefer __maybe_unused over #ifdef, for the reasons
+> stated above. Other maintainers may think differently.
+> 
 
-s/compatibale for/compatible with/
+Thanks for making your preference clear. I will post the second version
+soon with the changes.
 
-This change (to make it compatible with v4.9) sounds like it should be
-in its own separate patch.  I don't see any use of
-hv_tmp_cpu_nr_to_vp_nr() being removed, so the changelog doesn't quite
-make sense.
-
-> Signed-off-by: Jork Loeser <jloeser@microsoft.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-
-I did not sign off on this; please remove.
-
-> Reviewed-by: K. Y. Srinivasan <kys@microsoft.com>
-> Acked-by: K. Y. Srinivasan <kys@microsoft.com>
-> Signed-off-by: Ajay Kaher <akaher@vmware.com>
-
-> + * struct hv_msi_desc2 - 1.2 version of hv_msi_desc
-> + * @vector:		IDT entry
-> + * @delivery_mode:	As defined in Intel's Programmer's
-> + *			Reference Manual, Volume 3, Chapter 8.
-> + * @vector_count:	Number of contiguous entries in the
-> + *			Interrupt Descriptor Table that are
-> + *			occupied by this Message-Signaled
-> + *			Interrupt. For "MSI", as first defined
-> + *			in PCI 2.2, this can be between 1 and
-> + *			32. For "MSI-X," as first defined in PCI
-> + *			3.0, this must be 1, as each MSI-X table
-> + *			entry would have its own descriptor.
-
-Please reflow these descriptions to take advantage of an 80 column
-width.  They are currently wrapped to fit in 50 columns, which is
-unnecessarily short.
-
-> +	default:
-> +		/* As we only negotiate protocol versions known to this driver,
-> +		 * this path should never hit. However, this is it not a hot
-> +		 * path so we print a message to aid future updates.
-> +		 */
-> +		dev_err(&hbus->hdev->device,
-> +			"Unexpected vPCI protocol, update driver.");
-
-Include the actual protocol version in the message?
+- Sai
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
