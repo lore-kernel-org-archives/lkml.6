@@ -2,114 +2,212 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5585C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D4BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8590420855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:14:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="idTX8LHZ"
+	by mail.kernel.org (Postfix) with ESMTP id C912520856
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 18:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547748885;
+	bh=YUoXJ+YfyP/8CGhuS8JfQatsoIOW6rsIMgb+J5JGTzs=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=lfcZqbC1OzzQDJcgw0bPkKoZn7kbp1HQAZr9IHFsoowm7P3VJg+QALHijMdeWzf1K
+	 UTpbScrjQzswLmmO2yRI2x+eR3i7w77IHcfDJiKhHjAuzMT+inkMR8QA4gOj7uMQFu
+	 cU6nea6ljtJbyrATFh/yLXZ4iHtY8JykFoKbPBqA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbfAQSOL (ORCPT
+        id S1728410AbfAQSOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 13:14:11 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35436 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbfAQSOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 13:14:10 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t200so2097455wmt.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 10:14:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=ykscII2ksBNyB/Hjd+f+Vn2Obzc7BvKpk00Ux9/48dY=;
-        b=idTX8LHZ8CxERMf+DA/UY4F4Rn4+V0awRVM0LO6N2FU0DpFk/ciy/xH4a2JO1dCYQa
-         JO9SVtiOk/8w/kfnJWB3qANrb8agrtc9lQdnPro3uqIlwX5Gla/IUIT227LTqDPLEVN5
-         eRJQjiu6n6mZg/Xfk6DGX2BEaMRR+Yb9za5k6ZAYZaJQK3UHSux6OyJQETYka2POfS+i
-         cpBqagzjtkxlSv7cCSHbmni9sonEaqCCEGMKExn/I9C9auOvinAKFMBufBG0gn1zSWps
-         H+1xWsXZPkMjHRPi+Ho3HmqCeXmRbXdZ5Hey1W9WwPVpA1t9Q2z36TLZb+TaJxyuFS9h
-         CZnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=ykscII2ksBNyB/Hjd+f+Vn2Obzc7BvKpk00Ux9/48dY=;
-        b=PUINvFSDsboCuzH0Khu3ZBuIvdRXObSRDg6NLf/u0ryuLLK4FlCMje3LpYRoRijCkF
-         NJBvP2KOD4gFS/qhnLD/nI5AXNl7Rm4l9FlUnq913rnosYkHlms7cTB4s7UiuGgucCtr
-         nVYcZmTCzV8tXmIN8jJ7dhfJKMlBXv85UlbMDKKrmBouSiBDFyQZX0Tr/qzCYIH/Nzwo
-         RwdEpJJ0z2s7pebU6bSFHj9D6R1BRLJkHEwH1mLIfHZUGg9TH38IGnbodJU+zBfP2o4P
-         j/q7KpJhBpitISvm6wdQSo0j236kdSVungtm6T6E79jYMISzu5+YSRHY3bMq3h6ldSNh
-         FYbA==
-X-Gm-Message-State: AJcUukfhz+DH4jD7g6sL+6tfav6pSAciarGV0Li0+kkixjoDkoVXMZy5
-        EjEiiSxSFeKrymZ8Fl1Wz09Cuw==
-X-Google-Smtp-Source: ALg8bN6ddt/5ZTwc41pOMsPMLu+R4ReEZJ+2EgW2MwUYFXlPJbClaf1jOaeveGEvKpxgeJAAp1Tndw==
-X-Received: by 2002:a1c:570d:: with SMTP id l13mr13183908wmb.139.1547748847669;
-        Thu, 17 Jan 2019 10:14:07 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id y13sm40912021wme.2.2019.01.17.10.14.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 10:14:07 -0800 (PST)
-Message-ID: <284838d9e1672f2d733e687cedbda1239eab5279.camel@baylibre.com>
-Subject: Re: [PATCH 4/4] arm64: dts: meson: g12a: add clk measure support
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
-Date:   Thu, 17 Jan 2019 19:14:05 +0100
-In-Reply-To: <20190117164838.8008-5-jbrunet@baylibre.com>
-References: <20190117164838.8008-1-jbrunet@baylibre.com>
-         <20190117164838.8008-5-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Jan 2019 13:14:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727306AbfAQSOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 13:14:42 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4DB620855;
+        Thu, 17 Jan 2019 18:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547748881;
+        bh=YUoXJ+YfyP/8CGhuS8JfQatsoIOW6rsIMgb+J5JGTzs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kbow17SJotJvNv252MQbz3snEhJum36zCrwT4c+vZ9RFItrJkEMg0p3gbQKX8rhcL
+         bLjFQRw1wpsn3aeGLvbew50xnyobZulWlImeLMkqYhheZTZ2iwOOukyzTY3mPq0Pkz
+         ky3Odhac+Nl71qzhpyupEEaAw5P6Wy7rOS6xC9Gc=
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Parav Pandit <parav@mellanox.com>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        cgroups <cgroups@vger.kernel.org>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: [PATCH rdma-next] IB/core: Simplify rdma cgroup registration
+Date:   Thu, 17 Jan 2019 20:14:15 +0200
+Message-Id: <20190117181415.28566-1-leon@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-17 at 17:48 +0100, Jerome Brunet wrote:
-> Add the clock measure device to the g12a SoC family
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-> b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-> index bd24de947a5b..0d3d3af8ea6f 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-> @@ -181,6 +181,11 @@
->  			status = "disabled";
->  		};
->  
-> +		clk_msr: clock-sensor@ffd18000 {
-> +			compatible = "amlogic,meson-g12a-clk-measure";
-> +			reg = <0x0 0xffd18000 0x0 0x10>;
-> +		};
-> +
+From: Parav Pandit <parav@mellanox.com>
 
-Hi Kevin,
-I just noticed that I hace misplaced this node if, like for the axg, we are
-ordering them by address
+RDMA cgroup registration routine always returns success,
+so simplify function to be void and run clang formatter
+over whole CONFIG_CGROUP_RDMA art of core_priv.h.
 
-It should be under the GIC node.
-Can you fix this on the fly or do you want me to resend ?
+This reduces unwinding error path for regular registration and
+future net namespace change functionality for rdma device.
 
-Cheers
-Jerome
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+----
+Sorry for resend, now with relevant people in TO and CC
+---
+ drivers/infiniband/core/cgroup.c    |  5 ++---
+ drivers/infiniband/core/core_priv.h | 17 +++++++++++------
+ drivers/infiniband/core/device.c    |  8 +-------
+ include/linux/cgroup_rdma.h         |  2 +-
+ kernel/cgroup/rdma.c                |  5 +----
+ 5 files changed, 16 insertions(+), 21 deletions(-)
 
->  		gic: interrupt-controller@ffc01000 {
->  			compatible = "arm,gic-400";
->  			reg = <0x0 0xffc01000 0 0x1000>,
+diff --git a/drivers/infiniband/core/cgroup.c b/drivers/infiniband/core/cgroup.c
+index 126ac5f99db7..388fd04e5f63 100644
+--- a/drivers/infiniband/core/cgroup.c
++++ b/drivers/infiniband/core/cgroup.c
+@@ -21,12 +21,11 @@
+  * Register with the rdma cgroup. Should be called before
+  * exposing rdma device to user space applications to avoid
+  * resource accounting leak.
+- * Returns 0 on success or otherwise failure code.
+  */
+-int ib_device_register_rdmacg(struct ib_device *device)
++void ib_device_register_rdmacg(struct ib_device *device)
+ {
+ 	device->cg_device.name = device->name;
+-	return rdmacg_register_device(&device->cg_device);
++	rdmacg_register_device(&device->cg_device);
+ }
 
+ /**
+diff --git a/drivers/infiniband/core/core_priv.h b/drivers/infiniband/core/core_priv.h
+index a3d14cb1f9d1..cda2db1add39 100644
+--- a/drivers/infiniband/core/core_priv.h
++++ b/drivers/infiniband/core/core_priv.h
+@@ -115,7 +115,7 @@ void ib_cache_cleanup_one(struct ib_device *device);
+ void ib_cache_release_one(struct ib_device *device);
+
+ #ifdef CONFIG_CGROUP_RDMA
+-int ib_device_register_rdmacg(struct ib_device *device);
++void ib_device_register_rdmacg(struct ib_device *device);
+ void ib_device_unregister_rdmacg(struct ib_device *device);
+
+ int ib_rdmacg_try_charge(struct ib_rdmacg_object *cg_obj,
+@@ -126,21 +126,26 @@ void ib_rdmacg_uncharge(struct ib_rdmacg_object *cg_obj,
+ 			struct ib_device *device,
+ 			enum rdmacg_resource_type resource_index);
+ #else
+-static inline int ib_device_register_rdmacg(struct ib_device *device)
+-{ return 0; }
++static inline void ib_device_register_rdmacg(struct ib_device *device)
++{
++}
+
+ static inline void ib_device_unregister_rdmacg(struct ib_device *device)
+-{ }
++{
++}
+
+ static inline int ib_rdmacg_try_charge(struct ib_rdmacg_object *cg_obj,
+ 				       struct ib_device *device,
+ 				       enum rdmacg_resource_type resource_index)
+-{ return 0; }
++{
++	return 0;
++}
+
+ static inline void ib_rdmacg_uncharge(struct ib_rdmacg_object *cg_obj,
+ 				      struct ib_device *device,
+ 				      enum rdmacg_resource_type resource_index)
+-{ }
++{
++}
+ #endif
+
+ static inline bool rdma_is_upper_dev_rcu(struct net_device *dev,
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index fe06c65e8039..f8e6b13fd6a6 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -605,12 +605,7 @@ int ib_register_device(struct ib_device *device, const char *name)
+
+ 	device->index = __dev_new_index();
+
+-	ret = ib_device_register_rdmacg(device);
+-	if (ret) {
+-		dev_warn(&device->dev,
+-			 "Couldn't register device with rdma cgroup\n");
+-		goto dev_cleanup;
+-	}
++	ib_device_register_rdmacg(device);
+
+ 	ret = ib_device_register_sysfs(device);
+ 	if (ret) {
+@@ -633,7 +628,6 @@ int ib_register_device(struct ib_device *device, const char *name)
+
+ cg_cleanup:
+ 	ib_device_unregister_rdmacg(device);
+-dev_cleanup:
+ 	cleanup_device(device);
+ out:
+ 	mutex_unlock(&device_mutex);
+diff --git a/include/linux/cgroup_rdma.h b/include/linux/cgroup_rdma.h
+index e94290b29e99..ef1bae2983f3 100644
+--- a/include/linux/cgroup_rdma.h
++++ b/include/linux/cgroup_rdma.h
+@@ -39,7 +39,7 @@ struct rdmacg_device {
+  * APIs for RDMA/IB stack to publish when a device wants to
+  * participate in resource accounting
+  */
+-int rdmacg_register_device(struct rdmacg_device *device);
++void rdmacg_register_device(struct rdmacg_device *device);
+ void rdmacg_unregister_device(struct rdmacg_device *device);
+
+ /* APIs for RDMA/IB stack to charge/uncharge pool specific resources */
+diff --git a/kernel/cgroup/rdma.c b/kernel/cgroup/rdma.c
+index d3bbb757ee49..1d75ae7f1cb7 100644
+--- a/kernel/cgroup/rdma.c
++++ b/kernel/cgroup/rdma.c
+@@ -313,10 +313,8 @@ EXPORT_SYMBOL(rdmacg_try_charge);
+  * If IB stack wish a device to participate in rdma cgroup resource
+  * tracking, it must invoke this API to register with rdma cgroup before
+  * any user space application can start using the RDMA resources.
+- * Returns 0 on success or EINVAL when table length given is beyond
+- * supported size.
+  */
+-int rdmacg_register_device(struct rdmacg_device *device)
++void rdmacg_register_device(struct rdmacg_device *device)
+ {
+ 	INIT_LIST_HEAD(&device->dev_node);
+ 	INIT_LIST_HEAD(&device->rpools);
+@@ -324,7 +322,6 @@ int rdmacg_register_device(struct rdmacg_device *device)
+ 	mutex_lock(&rdmacg_mutex);
+ 	list_add_tail(&device->dev_node, &rdmacg_devices);
+ 	mutex_unlock(&rdmacg_mutex);
+-	return 0;
+ }
+ EXPORT_SYMBOL(rdmacg_register_device);
+
+--
+2.19.1
 
