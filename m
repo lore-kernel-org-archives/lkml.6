@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A439C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4BEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9391205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A3F1205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 02:47:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="ndMWNJb7"
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="RlZ8R1JK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfAQCqx (ORCPT
+        id S1727272AbfAQCr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 21:46:53 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:32918 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfAQCqx (ORCPT
+        Wed, 16 Jan 2019 21:47:28 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36519 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfAQCr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 21:46:53 -0500
-Received: by mail-qk1-f196.google.com with SMTP id d15so5201137qkj.0;
-        Wed, 16 Jan 2019 18:46:53 -0800 (PST)
+        Wed, 16 Jan 2019 21:47:28 -0500
+Received: by mail-qt1-f194.google.com with SMTP id t13so9792876qtn.3;
+        Wed, 16 Jan 2019 18:47:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=jms.id.au; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=B4j/WuweH0wMxL+RODpScBf2L4ITsa+/ZzunIai8Y/4=;
-        b=ndMWNJb7QvWxiFN6aMSNgjChjftJHxNGb2N5am20Zt7XOu4JU3cOpXldQSBFcxRaft
-         3kDybIQBtpZONmus/afJeaEQI9SzC8nZ92FcyabaKSlvn4mPt411lr9giwyRi+2ep/EF
-         WnCM2PZqx/MobKE62RRhgqsT9EsPsNS9PQvG8=
+        bh=jhUYHlWsp4dPPCUUpYGivzzrUbq5nG0j5/GyKUMF+SE=;
+        b=RlZ8R1JKHdUHs1UOia+dTIgj4dWHMJN220b4Zfmw0OoGXX8CW3WsSHtH0CX5n7YaAO
+         sTQaJ2V+dzEYl+w6UmgRjlJxlhxBYs35b/WqWxYZZr6pdHoMPvwLaKNQNpjtmlRprC2Z
+         4zP4XW0CJFhAiVlfjnCgmx3s9vQsgZ9yY8b7I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=B4j/WuweH0wMxL+RODpScBf2L4ITsa+/ZzunIai8Y/4=;
-        b=j1abaY9L6XZ4qH/+x0UnyIkYjAHA9jKSub+v577yvZHpmwxMQoI1FP25SflMJ0MhB6
-         EeC3aa7RSJ5AuFq+anRJNS9W2zJS1fDM0C9c2G09fcQC5VG6FrUMWkLeJUcjNwNvD2H/
-         3yb/CdkL0vZuj34qigKLdaqoZS67m/T1ISA52lL1xvZlp0XrPT2tSYEHNoBpgNPqk+Xv
-         rqdd2D91bHPiM0bWbIIqbJg2jogRyTV4dC38DMuBKoDN1d7rPiOTrx55+clyaFV7ROQd
-         7Q4yLLUzOpspuAzg9zL/sAaWceyawMcD15PVVZIcklCgytjp4AokyUJd0mE7U67NEl5F
-         TXiA==
-X-Gm-Message-State: AJcUukctl/l8TuFDRIY9pqaNq8/WQ7fariWrF51O/w2uA48GfsqKoX3G
-        N5hVg4SFqR3+sQxh8qMrDodQjNs8VyXhJOebMLI=
-X-Google-Smtp-Source: ALg8bN4g6CHYobJ+o57LHwHQTioIoweDmYs1sEQbf7J1qINqKMWVyLA9iuNyxJeLx02SEqS/s3dBOJQ5a+0tigglcWI=
-X-Received: by 2002:a37:781:: with SMTP id 123mr9208486qkh.231.1547693212458;
- Wed, 16 Jan 2019 18:46:52 -0800 (PST)
+        bh=jhUYHlWsp4dPPCUUpYGivzzrUbq5nG0j5/GyKUMF+SE=;
+        b=iyZIZfc4UZxRxaAF23HayG/COMLwB1aC0TSRm1910UyOaDmPkdBiLMZ58UeK6xYLNu
+         Ro4DhpzP9q7yTwX24hEhdBtb4+ISyGxxG9iJuGLtddYxOuhUMePQHoGUyHsXKtS1tQXi
+         3YriTZ4ysOG46dvMmAqTzLb40klaim9rpXDtUFAfEUJ5CbZBFrZthl7vwysxNRUXodnQ
+         dskzxv6x8g5xLmTquuk2Ho6Ba4THUI4gwx/rEugVOR8cLB9MIbs6VJv80WGGuidOiZCO
+         wsCQkeuyfF/MxE75kwpx4z5HyHrlhO2tZvuNxYnpbccmr8Uoi+Bz6uocNJIFjMsKWA+p
+         4oOA==
+X-Gm-Message-State: AJcUukfjlInB9dZhqWk3f2rcetgHZxS8DxQEj9Ong4j0pFV7Cw76Dd2e
+        9lPtWAEp8R6f4Ed4Y20mugdVs6BFZov+Imatf0xIoIzQvgE=
+X-Google-Smtp-Source: ALg8bN5/9+t2WoEt4JnZeWiSXM/fyx3B4LuA6Q61b5VpQmLE39xvSZZiUASfk9dyCE7X8KzSY6olpwG7yy5+rcT1wTA=
+X-Received: by 2002:aed:2764:: with SMTP id n91mr9903046qtd.37.1547693246995;
+ Wed, 16 Jan 2019 18:47:26 -0800 (PST)
 MIME-Version: 1.0
-References: <20181217200405.2904551-1-vijaykhemka@fb.com>
-In-Reply-To: <20181217200405.2904551-1-vijaykhemka@fb.com>
+References: <20181217200405.2904551-1-vijaykhemka@fb.com> <20181217200405.2904551-2-vijaykhemka@fb.com>
+In-Reply-To: <20181217200405.2904551-2-vijaykhemka@fb.com>
 From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 17 Jan 2019 13:46:39 +1100
-Message-ID: <CACPK8XcbXso=13nRC3xM62RnWfEKnFcZpaBA4OAB7mad4mdGGg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] ARM: dts: aspeed: Add sensors devices for Facebook
+Date:   Thu, 17 Jan 2019 13:47:15 +1100
+Message-ID: <CACPK8Xe2SbmxoY+Fj3jr7eZ7qA9bqgSgpuS=L9iVcL+wu26_wQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] ARM: dts: aspeed: Add KCS support for LPC BMC
 To:     Vijay Khemka <vijaykhemka@fb.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -72,7 +72,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 18 Dec 2018 at 07:04, Vijay Khemka <vijaykhemka@fb.com> wrote:
 >
-> Added ADC and other sensor devices in Facebook Tiogapass device tree.
+> Added kcs device support for lpc BMC.
 >
 > Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
 
