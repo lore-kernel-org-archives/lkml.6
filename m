@@ -2,513 +2,131 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC50AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C592C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6989F20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B9D520657
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 11:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547725293;
-	bh=GRNxoYtkoPMnGHsJIv6SLDqNPqItxG8USx+IXOKwgHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TPG/H85Cy/gy8CSSu6FRZojHRfXby6xFwyj8IBh2n0WuKM5owuz8lfxPBgagE5jHd
-	 lNvw9wPKatvT0WB1gI1oiMrtVx+WVLQPxH6AuSxjkKmkxXg8CgYWaEE1wFks+rYcj2
-	 4zqQ+BQp7a8lPJVtRVVt5/ifTVC9NybDLLCltYPk=
+	s=default; t=1547725297;
+	bh=gx53DduPk2JfBCo6Dxdzn96H4LgZ4kZdsMWUS21VjG0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=2nrCLGRd+uJ7k/XyzPi6qr7pLR99PWcDi4PRWzT8dqcYyT/vBNldPQwGzYaXUeAxO
+	 nhMFLFCBBS0zqkLi5Rqz5zYeYrJeYTwPfHGHTcdcLL1fFpSLFAJv8Wl+pkRoKxDy+h
+	 qjquklkXH3lEdTNZXFAbNjhIQzmVHgEoO5aFOxns=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbfAQLlb (ORCPT
+        id S1729110AbfAQLle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 17 Jan 2019 06:41:34 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45598 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728989AbfAQLlb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 17 Jan 2019 06:41:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbfAQLla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:41:30 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6828F20657;
-        Thu, 17 Jan 2019 11:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547725288;
-        bh=GRNxoYtkoPMnGHsJIv6SLDqNPqItxG8USx+IXOKwgHY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xFje53YDTWi3jJIhP+Zww6lHqlJJ3CD8+Y71PWoMORxBDElKVZMsoFKA0dF+vGLRl
-         92Sly5lUKLAeTNRsuY3m55iTlaSQVjNhHykF7Z2u+kK2lozREDZwWD6GPwdXVHET3x
-         q7JGeB7feByi2FfS47wmptXdhtqPV5URjcJXRRMo=
-Date:   Thu, 17 Jan 2019 12:41:26 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.9.151
-Message-ID: <20190117114126.GB2003@kroah.com>
-References: <20190117114117.GA2003@kroah.com>
+Received: by mail-oi1-f195.google.com with SMTP id y1so5867778oie.12;
+        Thu, 17 Jan 2019 03:41:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xN4v/rkGke6+i/Qav13HjBnLjQRjemEO+ltzcFe4AUo=;
+        b=OSmAy/59dBI1bgyDBmrL49iAIfQ1EgS1FNlNmFd/5YUSjNE8TOguv+QJ8HOtJcpZHV
+         XPKAMkLP4EJeUKJShVJZxgiqeQnYxjaNaOHwCwnKKJACTUUehp2an1Rj6ZtxsvkHTexD
+         XvSd1cBuXXJdoaBraGvwmh9yyzInr3fcpvGSOKcIZ8QkuzOJiXZ+ort4fbqOeDokLN8r
+         Kyn7+7BT4Tlr3ordMswayigm0YdEv3ECyv8rW3BYqfpf9nzgVLC6uG0ty30Ya02FA76x
+         ISAkh1/V+9qKYLzkVZ2kvXJ4LRwB+CvxZgg/uxMzt+DCXIlSIAx4+ABGaDq543eVqda9
+         Rq9A==
+X-Gm-Message-State: AJcUukeu9S1UbiLsLmrei3Z7JKQmV/j6QdbN+555lnxXQ8OPJ+ySyjMq
+        veTvsvhNG8ZZuhUwt8ry4p/YqWfMex724yggujc=
+X-Google-Smtp-Source: ALg8bN4UQ/rpbV5cQBNhkg5p54E3HSCP5F7ElF7yDnIxmZsPlC6FJ4Q4g1QsWewezmj4aYuAijHbgKpTACnKXjBAfL4=
+X-Received: by 2002:aca:b642:: with SMTP id g63mr5392264oif.195.1547725290609;
+ Thu, 17 Jan 2019 03:41:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117114117.GA2003@kroah.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-6-keith.busch@intel.com>
+In-Reply-To: <20190116175804.30196-6-keith.busch@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 17 Jan 2019 12:41:19 +0100
+Message-ID: <CAJZ5v0jmkyrNBHzqHsOuWjLXF34tq83VnEhdBWrdFqxyiXC=cw@mail.gmail.com>
+Subject: Re: [PATCHv4 05/13] Documentation/ABI: Add new node sysfs attributes
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 0e7874951ac5..f1aeb98f9ace 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 9
--SUBLEVEL = 150
-+SUBLEVEL = 151
- EXTRAVERSION =
- NAME = Roaring Lionus
- 
-diff --git a/drivers/acpi/power.c b/drivers/acpi/power.c
-index 3a6c9b741b23..4f4c34892086 100644
---- a/drivers/acpi/power.c
-+++ b/drivers/acpi/power.c
-@@ -131,6 +131,23 @@ void acpi_power_resources_list_free(struct list_head *list)
- 	}
- }
- 
-+static bool acpi_power_resource_is_dup(union acpi_object *package,
-+				       unsigned int start, unsigned int i)
-+{
-+	acpi_handle rhandle, dup;
-+	unsigned int j;
-+
-+	/* The caller is expected to check the package element types */
-+	rhandle = package->package.elements[i].reference.handle;
-+	for (j = start; j < i; j++) {
-+		dup = package->package.elements[j].reference.handle;
-+		if (dup == rhandle)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
- 				 struct list_head *list)
- {
-@@ -150,6 +167,11 @@ int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
- 			err = -ENODEV;
- 			break;
- 		}
-+
-+		/* Some ACPI tables contain duplicate power resource references */
-+		if (acpi_power_resource_is_dup(package, start, i))
-+			continue;
-+
- 		err = acpi_add_power_resource(rhandle);
- 		if (err)
- 			break;
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index ef3016a467a0..8a93ca4d6840 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -6346,7 +6346,6 @@ static ssize_t do_rbd_remove(struct bus_type *bus,
- 	struct list_head *tmp;
- 	int dev_id;
- 	char opt_buf[6];
--	bool already = false;
- 	bool force = false;
- 	int ret;
- 
-@@ -6379,13 +6378,13 @@ static ssize_t do_rbd_remove(struct bus_type *bus,
- 		spin_lock_irq(&rbd_dev->lock);
- 		if (rbd_dev->open_count && !force)
- 			ret = -EBUSY;
--		else
--			already = test_and_set_bit(RBD_DEV_FLAG_REMOVING,
--							&rbd_dev->flags);
-+		else if (test_and_set_bit(RBD_DEV_FLAG_REMOVING,
-+					  &rbd_dev->flags))
-+			ret = -EINPROGRESS;
- 		spin_unlock_irq(&rbd_dev->lock);
- 	}
- 	spin_unlock(&rbd_dev_list_lock);
--	if (ret < 0 || already)
-+	if (ret)
- 		return ret;
- 
- 	if (force) {
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index 6f638bbc922d..00e8e675cbeb 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -461,9 +461,15 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		return i2cdev_ioctl_smbus(client, arg);
- 
- 	case I2C_RETRIES:
-+		if (arg > INT_MAX)
-+			return -EINVAL;
-+
- 		client->adapter->retries = arg;
- 		break;
- 	case I2C_TIMEOUT:
-+		if (arg > INT_MAX)
-+			return -EINVAL;
-+
- 		/* For historical reasons, user-space sets the timeout
- 		 * value in units of 10 ms.
- 		 */
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index 6c0bb38c4089..8d4d46f3fd16 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1828,6 +1828,13 @@ static const struct usb_device_id acm_ids[] = {
- 	.driver_info = IGNORE_DEVICE,
- 	},
- 
-+	{ USB_DEVICE(0x1bc7, 0x0021), /* Telit 3G ACM only composition */
-+	.driver_info = SEND_ZERO_PACKET,
-+	},
-+	{ USB_DEVICE(0x1bc7, 0x0023), /* Telit 3G ACM + ECM composition */
-+	.driver_info = SEND_ZERO_PACKET,
-+	},
-+
- 	/* control interfaces without any protocol set */
- 	{ USB_INTERFACE_INFO(USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM,
- 		USB_CDC_PROTO_NONE) },
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index cf378b1ed373..733479ddf8a7 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -240,7 +240,8 @@ static const struct usb_device_id usb_quirk_list[] = {
- 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
- 
- 	/* Corsair K70 RGB */
--	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
-+	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_DELAY_CTRL_MSG },
- 
- 	/* Corsair Strafe */
- 	{ USB_DEVICE(0x1b1c, 0x1b15), .driver_info = USB_QUIRK_DELAY_INIT |
-diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
-index 344ec8631481..13f2c051dbf2 100644
---- a/drivers/usb/storage/scsiglue.c
-+++ b/drivers/usb/storage/scsiglue.c
-@@ -251,8 +251,12 @@ static int slave_configure(struct scsi_device *sdev)
- 		if (!(us->fflags & US_FL_NEEDS_CAP16))
- 			sdev->try_rc_10_first = 1;
- 
--		/* assume SPC3 or latter devices support sense size > 18 */
--		if (sdev->scsi_level > SCSI_SPC_2)
-+		/*
-+		 * assume SPC3 or latter devices support sense size > 18
-+		 * unless US_FL_BAD_SENSE quirk is specified.
-+		 */
-+		if (sdev->scsi_level > SCSI_SPC_2 &&
-+		    !(us->fflags & US_FL_BAD_SENSE))
- 			us->fflags |= US_FL_SANE_SENSE;
- 
- 		/*
-diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
-index 0a86b3f3638e..c802aabcc58c 100644
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1284,6 +1284,18 @@ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xffff,
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_FIX_CAPACITY ),
- 
-+/*
-+ * Reported by Icenowy Zheng <icenowy@aosc.io>
-+ * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
-+ * that do not process read/write command if a long sense is requested,
-+ * so force to use 18-byte sense.
-+ */
-+UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
-+		"SMI",
-+		"SM3350 UFS-to-USB-Mass-Storage bridge",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_BAD_SENSE ),
-+
- /*
-  * Reported by Paul Hartman <paul.hartman+linux@gmail.com>
-  * This card reader returns "Illegal Request, Logical Block Address
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 49eeed25f200..a3046b6523c8 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -1118,10 +1118,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
- 
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf) {
-+	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE))) {
- 		free_xid(xid);
- 		return -EINVAL;
- 	}
-@@ -1456,10 +1456,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
- 
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf)
-+	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
- 		return -EINVAL;
- 
- 	max_num = (max_buf - sizeof(struct smb_hdr)) /
-diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
-index b2aff0c6f22c..b7885dc0d9bb 100644
---- a/fs/cifs/smb2file.c
-+++ b/fs/cifs/smb2file.c
-@@ -123,10 +123,10 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
- 
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf)
-+	if (max_buf < sizeof(struct smb2_lock_element))
- 		return -EINVAL;
- 
- 	max_num = max_buf / sizeof(struct smb2_lock_element);
-diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
-index cc26d4138d70..de133eeebc8a 100644
---- a/fs/cifs/transport.c
-+++ b/fs/cifs/transport.c
-@@ -301,7 +301,7 @@ smb_send_rqst(struct TCP_Server_Info *server, struct smb_rqst *rqst)
- 	if (rc < 0 && rc != -EINTR)
- 		cifs_dbg(VFS, "Error %d sending data on socket to server\n",
- 			 rc);
--	else
-+	else if (rc > 0)
- 		rc = 0;
- 
- 	return rc;
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 1008384d5ed5..9a13f86fed62 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1859,12 +1859,12 @@ int ext4_inline_data_fiemap(struct inode *inode,
- 	physical += (char *)ext4_raw_inode(&iloc) - iloc.bh->b_data;
- 	physical += offsetof(struct ext4_inode, i_block);
- 
--	if (physical)
--		error = fiemap_fill_next_extent(fieinfo, start, physical,
--						inline_len, flags);
- 	brelse(iloc.bh);
- out:
- 	up_read(&EXT4_I(inode)->xattr_sem);
-+	if (physical)
-+		error = fiemap_fill_next_extent(fieinfo, start, physical,
-+						inline_len, flags);
- 	return (error < 0 ? error : 0);
- }
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index f62eca8cbde0..4815be26b15f 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -2698,7 +2698,8 @@ static int ext4_writepages(struct address_space *mapping,
- 		 * We may need to convert up to one extent per block in
- 		 * the page and we may dirty the inode.
- 		 */
--		rsv_blocks = 1 + (PAGE_SIZE >> inode->i_blkbits);
-+		rsv_blocks = 1 + ext4_chunk_trans_blocks(inode,
-+						PAGE_SIZE >> inode->i_blkbits);
- 	}
- 
- 	/*
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 6810234b0b27..a6c7ace9cfd1 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4679,7 +4679,7 @@ static int ext4_commit_super(struct super_block *sb, int sync)
- 	ext4_superblock_csum_set(sb);
- 	if (sync)
- 		lock_buffer(sbh);
--	if (buffer_write_io_error(sbh)) {
-+	if (buffer_write_io_error(sbh) || !buffer_uptodate(sbh)) {
- 		/*
- 		 * Oh, dear.  A previous attempt to write the
- 		 * superblock failed.  This could happen because the
-diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
-index 102c84dcc11a..63eed9ac8fd7 100644
---- a/include/linux/sunrpc/svc.h
-+++ b/include/linux/sunrpc/svc.h
-@@ -291,9 +291,12 @@ struct svc_rqst {
- 	struct svc_cacherep *	rq_cacherep;	/* cache info */
- 	struct task_struct	*rq_task;	/* service thread */
- 	spinlock_t		rq_lock;	/* per-request lock */
-+	struct net		*rq_bc_net;	/* pointer to backchannel's
-+						 * net namespace
-+						 */
- };
- 
--#define SVC_NET(svc_rqst)	(svc_rqst->rq_xprt->xpt_net)
-+#define SVC_NET(rqst) (rqst->rq_xprt ? rqst->rq_xprt->xpt_net : rqst->rq_bc_net)
- 
- /*
-  * Rigorous type checking on sockaddr type conversions
-diff --git a/mm/slab.c b/mm/slab.c
-index 263dcda6897b..354a09deecff 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -682,8 +682,10 @@ static struct alien_cache *__alloc_alien_cache(int node, int entries,
- 	struct alien_cache *alc = NULL;
- 
- 	alc = kmalloc_node(memsize, gfp, node);
--	init_arraycache(&alc->ac, entries, batch);
--	spin_lock_init(&alc->lock);
-+	if (alc) {
-+		init_arraycache(&alc->ac, entries, batch);
-+		spin_lock_init(&alc->lock);
-+	}
- 	return alc;
- }
- 
-diff --git a/mm/util.c b/mm/util.c
-index 8c755d05d4e6..07f467206186 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -389,7 +389,7 @@ bool page_mapped(struct page *page)
- 		return true;
- 	if (PageHuge(page))
- 		return false;
--	for (i = 0; i < hpage_nr_pages(page); i++) {
-+	for (i = 0; i < (1 << compound_order(page)); i++) {
- 		if (atomic_read(&page[i]._mapcount) >= 0)
- 			return true;
- 	}
-diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-index 272c34551979..eea18a124e4f 100644
---- a/net/sunrpc/svc.c
-+++ b/net/sunrpc/svc.c
-@@ -1137,6 +1137,8 @@ void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...)
- static __printf(2,3) void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...) {}
- #endif
- 
-+extern void svc_tcp_prep_reply_hdr(struct svc_rqst *);
-+
- /*
-  * Common routine for processing the RPC request.
-  */
-@@ -1166,7 +1168,8 @@ svc_process_common(struct svc_rqst *rqstp, struct kvec *argv, struct kvec *resv)
- 	clear_bit(RQ_DROPME, &rqstp->rq_flags);
- 
- 	/* Setup reply header */
--	rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp);
-+	if (rqstp->rq_prot == IPPROTO_TCP)
-+		svc_tcp_prep_reply_hdr(rqstp);
- 
- 	svc_putu32(resv, rqstp->rq_xid);
- 
-@@ -1312,7 +1315,7 @@ svc_process_common(struct svc_rqst *rqstp, struct kvec *argv, struct kvec *resv)
- 	return 0;
- 
-  close:
--	if (test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
-+	if (rqstp->rq_xprt && test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
- 		svc_close_xprt(rqstp->rq_xprt);
- 	dprintk("svc: svc_process close\n");
- 	return 0;
-@@ -1439,10 +1442,10 @@ bc_svc_process(struct svc_serv *serv, struct rpc_rqst *req,
- 	dprintk("svc: %s(%p)\n", __func__, req);
- 
- 	/* Build the svc_rqst used by the common processing routine */
--	rqstp->rq_xprt = serv->sv_bc_xprt;
- 	rqstp->rq_xid = req->rq_xid;
- 	rqstp->rq_prot = req->rq_xprt->prot;
- 	rqstp->rq_server = serv;
-+	rqstp->rq_bc_net = req->rq_xprt->xprt_net;
- 
- 	rqstp->rq_addrlen = sizeof(req->rq_xprt->addr);
- 	memcpy(&rqstp->rq_addr, &req->rq_xprt->addr, rqstp->rq_addrlen);
-diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
-index 064f20bb845a..42ce3ed21637 100644
---- a/net/sunrpc/svc_xprt.c
-+++ b/net/sunrpc/svc_xprt.c
-@@ -510,10 +510,11 @@ static struct svc_xprt *svc_xprt_dequeue(struct svc_pool *pool)
-  */
- void svc_reserve(struct svc_rqst *rqstp, int space)
- {
-+	struct svc_xprt *xprt = rqstp->rq_xprt;
-+
- 	space += rqstp->rq_res.head[0].iov_len;
- 
--	if (space < rqstp->rq_reserved) {
--		struct svc_xprt *xprt = rqstp->rq_xprt;
-+	if (xprt && space < rqstp->rq_reserved) {
- 		atomic_sub((rqstp->rq_reserved - space), &xprt->xpt_reserved);
- 		rqstp->rq_reserved = space;
- 
-diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-index 33f599cb0936..fd7fbe91955e 100644
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -1195,7 +1195,7 @@ static int svc_tcp_sendto(struct svc_rqst *rqstp)
- /*
-  * Setup response header. TCP has a 4B record length field.
-  */
--static void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
-+void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
- {
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 0fd31cff483e..0fc05ebdf81a 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4841,6 +4841,13 @@ static void alc280_fixup_hp_9480m(struct hda_codec *codec,
- 	}
- }
- 
-+static void alc_fixup_disable_mic_vref(struct hda_codec *codec,
-+				  const struct hda_fixup *fix, int action)
-+{
-+	if (action == HDA_FIXUP_ACT_PRE_PROBE)
-+		snd_hda_codec_set_pin_target(codec, 0x19, PIN_VREFHIZ);
-+}
-+
- /* for hda_fixup_thinkpad_acpi() */
- #include "thinkpad_helper.c"
- 
-@@ -4947,6 +4954,7 @@ enum {
- 	ALC293_FIXUP_LENOVO_SPK_NOISE,
- 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
- 	ALC255_FIXUP_DELL_SPK_NOISE,
-+	ALC225_FIXUP_DISABLE_MIC_VREF,
- 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
- 	ALC295_FIXUP_DISABLE_DAC3,
- 	ALC280_FIXUP_HP_HEADSET_MIC,
-@@ -5605,6 +5613,12 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC255_FIXUP_DELL1_MIC_NO_PRESENCE
- 	},
-+	[ALC225_FIXUP_DISABLE_MIC_VREF] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc_fixup_disable_mic_vref,
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
-+	},
- 	[ALC225_FIXUP_DELL1_MIC_NO_PRESENCE] = {
- 		.type = HDA_FIXUP_VERBS,
- 		.v.verbs = (const struct hda_verb[]) {
-@@ -5614,7 +5628,7 @@ static const struct hda_fixup alc269_fixups[] = {
- 			{}
- 		},
- 		.chained = true,
--		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
-+		.chain_id = ALC225_FIXUP_DISABLE_MIC_VREF
- 	},
- 	[ALC280_FIXUP_HP_HEADSET_MIC] = {
- 		.type = HDA_FIXUP_FUNC,
+On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
+>
+> Add entries for memory initiator and target node class attributes.
+>
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+
+I would recommend combining this with the previous patch, as the way
+it is now I need to look at two patches at the time. :-)
+
+> ---
+>  Documentation/ABI/stable/sysfs-devices-node | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
+> index 3e90e1f3bf0a..a9c47b4b0eee 100644
+> --- a/Documentation/ABI/stable/sysfs-devices-node
+> +++ b/Documentation/ABI/stable/sysfs-devices-node
+> @@ -90,4 +90,27 @@ Date:                December 2009
+>  Contact:       Lee Schermerhorn <lee.schermerhorn@hp.com>
+>  Description:
+>                 The node's huge page size control/query attributes.
+> -               See Documentation/admin-guide/mm/hugetlbpage.rst
+> \ No newline at end of file
+> +               See Documentation/admin-guide/mm/hugetlbpage.rst
+> +
+> +What:          /sys/devices/system/node/nodeX/classY/
+> +Date:          December 2018
+> +Contact:       Keith Busch <keith.busch@intel.com>
+> +Description:
+> +               The node's relationship to other nodes for access class "Y".
+> +
+> +What:          /sys/devices/system/node/nodeX/classY/initiator_nodelist
+> +Date:          December 2018
+> +Contact:       Keith Busch <keith.busch@intel.com>
+> +Description:
+> +               The node list of memory initiators that have class "Y" access
+> +               to this node's memory. CPUs and other memory initiators in
+> +               nodes not in the list accessing this node's memory may have
+> +               different performance.
+
+This does not follow the general "one value per file" rule of sysfs (I
+know that there are other sysfs files with more than one value in
+them, but it is better to follow this rule as long as that makes
+sense).
+
+> +
+> +What:          /sys/devices/system/node/nodeX/classY/target_nodelist
+> +Date:          December 2018
+> +Contact:       Keith Busch <keith.busch@intel.com>
+> +Description:
+> +               The node list of memory targets that this initiator node has
+> +               class "Y" access. Memory accesses from this node to nodes not
+> +               in this list may have differet performance.
+> --
+
+Same here.
+
+And if you follow the recommendation given in the previous message
+(add "initiators" and "targets" subdirs under "classX"), you won't
+even need the two files above.
+
+And, of course, the symlinks part needs to be documented as well.  I
+guess you can follow the
+Documentation/ABI/testing/sysfs-devices-power_resources_D0 with that.
