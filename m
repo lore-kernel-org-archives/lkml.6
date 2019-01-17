@@ -2,248 +2,163 @@ Return-Path: <SRS0=R5eS=PZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABFE6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C4EC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C63820851
-	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BD7820851
+	for <linux-kernel@archiver.kernel.org>; Thu, 17 Jan 2019 09:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbfAQJab (ORCPT
+        id S1729006AbfAQJav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:30:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46590 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728823AbfAQJab (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:30:31 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0H9T9pe010461
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:30:29 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2n7751mq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 04:30:29 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Thu, 17 Jan 2019 09:30:20 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 17 Jan 2019 09:30:18 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0H9UHg360227724
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Jan 2019 09:30:17 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3ADB4A4040;
-        Thu, 17 Jan 2019 09:30:17 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A80DA406B;
-        Thu, 17 Jan 2019 09:30:17 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 17 Jan 2019 09:30:16 +0000 (GMT)
-From:   Thomas Richter <tmricht@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCHv2 3/3] perf report: s390 dump counter set data to file.
-Date:   Thu, 17 Jan 2019 10:30:03 +0100
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190117093003.96287-1-tmricht@linux.ibm.com>
-References: <20190117093003.96287-1-tmricht@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19011709-0012-0000-0000-000002E92FDD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011709-0013-0000-0000-000021204AF7
-Message-Id: <20190117093003.96287-4-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901170070
+        Thu, 17 Jan 2019 04:30:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52748 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728823AbfAQJau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:30:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 850F7AE86;
+        Thu, 17 Jan 2019 09:30:48 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8AFA61E1580; Thu, 17 Jan 2019 10:30:47 +0100 (CET)
+Date:   Thu, 17 Jan 2019 10:30:47 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190117093047.GB9378@quack2.suse.cz>
+References: <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz>
+ <20190114172124.GA3702@redhat.com>
+ <20190115080759.GC29524@quack2.suse.cz>
+ <20190116113819.GD26069@quack2.suse.cz>
+ <20190116130813.GA3617@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116130813.GA3617@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the new s390 PMU device cpum_cf_diag to extract
-the counter set diagnostic data. This data is available as event
-raw data and can be created with this command:
+On Wed 16-01-19 08:08:14, Jerome Glisse wrote:
+> On Wed, Jan 16, 2019 at 12:38:19PM +0100, Jan Kara wrote:
+> > On Tue 15-01-19 09:07:59, Jan Kara wrote:
+> > > Agreed. So with page lock it would actually look like:
+> > > 
+> > > get_page_pin()
+> > > 	lock_page(page);
+> > > 	wait_for_stable_page();
+> > > 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> > > 	unlock_page(page);
+> > > 
+> > > And if we perform page_pinned() check under page lock, then if
+> > > page_pinned() returned false, we are sure page is not and will not be
+> > > pinned until we drop the page lock (and also until page writeback is
+> > > completed if needed).
+> > 
+> > After some more though, why do we even need wait_for_stable_page() and
+> > lock_page() in get_page_pin()?
+> > 
+> > During writepage page_mkclean() will write protect all page tables. So
+> > there can be no new writeable GUP pins until we unlock the page as all such
+> > GUPs will have to first go through fault and ->page_mkwrite() handler. And
+> > that will wait on page lock and do wait_for_stable_page() for us anyway.
+> > Am I just confused?
+> 
+> Yeah with page lock it should synchronize on the pte but you still
+> need to check for writeback iirc the page is unlocked after file
+> system has queue up the write and thus the page can be unlock with
+> write back pending (and PageWriteback() == trye) and i am not sure
+> that in that states we can safely let anyone write to that page. I
+> am assuming that in some case the block device also expect stable
+> page content (RAID stuff).
+> 
+> So the PageWriteback() test is not only for racing page_mkclean()/
+> test_set_page_writeback() and GUP but also for pending write back.
 
-  [root@s35lp76 perf]# ./perf record -R -e '{rbd000,rbc000}' --
-                                 ~/mytests/facultaet 2500
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.009 MB perf.data ]
-  [root@s35lp76 perf]#
+But this is prevented by wait_for_stable_page() that is already present in
+->page_mkwrite() handlers. Look:
 
-The new event 0xbc000 generated this counter set diagnostic
-trace data. The data can be extracted using command:
+->writepage()
+  /* Page is locked here */
+  clear_page_dirty_for_io(page)
+    page_mkclean(page)
+      -> page tables get writeprotected
+    /* The following line will be added by our patches */
+    if (page_pinned(page)) -> bounce
+    TestClearPageDirty(page)
+  set_page_writeback(page);
+  unlock_page(page);
+  ...submit_io...
 
-  [root@s35lp76 perf]# ./perf report --stdio --itrace=d
-  #
-  # Total Lost Samples: 0
-  #
-  # Samples: 21  of events 'anon group { rbd000, rbc000 }'
-  # Event count (approx.): 21
-  #
-  #         Overhead  Command    Shared Object      Symbol
-  # ................  .........  .................  ........................
-  #
-    80.95%   0.00%  facultaet  facultaet          [.] facultaet
-     4.76%   0.00%  facultaet  [kernel.kallsyms]  [k] check_chain_key
-     4.76%   0.00%  facultaet  [kernel.kallsyms]  [k] ftrace_likely_update
-     4.76%   0.00%  facultaet  [kernel.kallsyms]  [k] lock_release
-     4.76%   0.00%  facultaet  libc-2.26.so       [.] _dl_addr
-  [root@s35lp76 perf]# ll aux*
-  -rw-r--r-- 1 root root 3408 Oct 16 12:40 aux.ctr.02
-  -rw-r--r-- 1 root root 4096 Oct 16 12:40 aux.smp.02
-  [root@s35lp76 perf]#
+IRQ
+  - IO completion
+  end_page_writeback()
 
-The files named aux.ctr.## contain the counter set diagnstic
-data and the files named aux.smp.## contain the sampling
-diagnostic data. ## stand for the CPU number the data was
-taken from.
+So if GUP happens before page_mkclean() writeprotects corresponding PTE
+(and these two actions are synchronized on the PTE lock), page_pinned()
+will see the increment and report the page as pinned.
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
----
- tools/perf/util/s390-cpumsf.c | 77 ++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 73 insertions(+), 4 deletions(-)
+If GUP happens after page_mkclean() writeprotects corresponding PTE, it
+will fault:
+  handle_mm_fault()
+    do_wp_page()
+      wp_page_shared()
+        do_page_mkwrite()
+          ->page_mkwrite() - that is block_page_mkwrite() or
+	    iomap_page_mkwrite() or whatever filesystem provides
+	  lock_page(page)
+          ... prepare page ...
+	  wait_for_stable_page(page) -> this blocks until IO completes
+	    if someone cares about pages not being modified while under IO.
 
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index 68b2570304ec..835249c77f56 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -162,6 +162,7 @@
- #include "auxtrace.h"
- #include "s390-cpumsf.h"
- #include "s390-cpumsf-kernel.h"
-+#include "s390-cpumcf-kernel.h"
- #include "config.h"
- 
- struct s390_cpumsf {
-@@ -184,8 +185,58 @@ struct s390_cpumsf_queue {
- 	struct auxtrace_buffer	*buffer;
- 	int			cpu;
- 	FILE			*logfile;
-+	FILE			*logfile_ctr;
- };
- 
-+/* Check if the raw data should be dumped to file. If this is the case and
-+ * the file to dump to has not been opened for writing, do so.
-+ *
-+ * Return 0 on success and greater zero on error so processing continues.
-+ */
-+static int s390_cpumcf_dumpctr(struct s390_cpumsf *sf,
-+			       struct perf_sample *sample)
-+{
-+	struct s390_cpumsf_queue *sfq;
-+	struct auxtrace_queue *q;
-+	int rc = 0;
-+
-+	if (!sf->use_logfile || sf->queues.nr_queues <= sample->cpu)
-+		return rc;
-+
-+	q = &sf->queues.queue_array[sample->cpu];
-+	sfq = q->priv;
-+	if (!sfq)		/* Queue not yet allocated */
-+		return rc;
-+
-+	if (!sfq->logfile_ctr) {
-+		char *name;
-+
-+		rc = (sf->logdir)
-+			? asprintf(&name, "%s/aux.ctr.%02x",
-+				 sf->logdir, sample->cpu)
-+			: asprintf(&name, "aux.ctr.%02x", sample->cpu);
-+		if (rc > 0)
-+			sfq->logfile_ctr = fopen(name, "w");
-+		if (sfq->logfile_ctr == NULL) {
-+			pr_err("Failed to open counter set log file %s, "
-+			       "continue...\n", name);
-+			rc = 1;
-+		}
-+		free(name);
-+	}
-+
-+	if (sfq->logfile_ctr) {
-+		/* See comment above for -4 */
-+		size_t n = fwrite(sample->raw_data, sample->raw_size - 4, 1,
-+				  sfq->logfile_ctr);
-+		if (n != 1) {
-+			pr_err("Failed to write counter set data\n");
-+			rc = 1;
-+		}
-+	}
-+	return rc;
-+}
-+
- /* Display s390 CPU measurement facility basic-sampling data entry */
- static bool s390_cpumsf_basic_show(const char *color, size_t pos,
- 				   struct hws_basic_entry *basic)
-@@ -792,7 +843,7 @@ static int s390_cpumsf_lost(struct s390_cpumsf *sf, struct perf_sample *sample)
- }
- 
- static int
--s390_cpumsf_process_event(struct perf_session *session __maybe_unused,
-+s390_cpumsf_process_event(struct perf_session *session,
- 			  union perf_event *event,
- 			  struct perf_sample *sample,
- 			  struct perf_tool *tool)
-@@ -801,6 +852,8 @@ s390_cpumsf_process_event(struct perf_session *session __maybe_unused,
- 					      struct s390_cpumsf,
- 					      auxtrace);
- 	u64 timestamp = sample->time;
-+	struct perf_evsel *ev_bc000;
-+
- 	int err = 0;
- 
- 	if (dump_trace)
-@@ -811,6 +864,16 @@ s390_cpumsf_process_event(struct perf_session *session __maybe_unused,
- 		return -EINVAL;
- 	}
- 
-+	if (event->header.type == PERF_RECORD_SAMPLE &&
-+	    sample->raw_size) {
-+		/* Handle event with raw data */
-+		ev_bc000 = perf_evlist__event2evsel(session->evlist, event);
-+		if (ev_bc000 &&
-+		    ev_bc000->attr.config == PERF_EVENT_CPUM_CF_DIAG)
-+			err = s390_cpumcf_dumpctr(sf, sample);
-+		return err;
-+	}
-+
- 	if (event->header.type == PERF_RECORD_AUX &&
- 	    event->aux.flags & PERF_AUX_FLAG_TRUNCATED)
- 		return s390_cpumsf_lost(sf, sample);
-@@ -891,9 +954,15 @@ static void s390_cpumsf_free_queues(struct perf_session *session)
- 		struct s390_cpumsf_queue *sfq = (struct s390_cpumsf_queue *)
- 						queues->queue_array[i].priv;
- 
--		if (sfq != NULL && sfq->logfile) {
--			fclose(sfq->logfile);
--			sfq->logfile = NULL;
-+		if (sfq != NULL) {
-+			if (sfq->logfile) {
-+				fclose(sfq->logfile);
-+				sfq->logfile = NULL;
-+			}
-+			if (sfq->logfile_ctr) {
-+				fclose(sfq->logfile_ctr);
-+				sfq->logfile_ctr = NULL;
-+			}
- 		}
- 		zfree(&queues->queue_array[i].priv);
- 	}
+> > That actually touches on another question I wanted to get opinions on. GUP
+> > can be for read and GUP can be for write (that is one of GUP flags).
+> > Filesystems with page cache generally have issues only with GUP for write
+> > as it can currently corrupt data, unexpectedly dirty page etc.. DAX & memory
+> > hotplug have issues with both (DAX cannot truncate page pinned in any way,
+> > memory hotplug will just loop in kernel until the page gets unpinned). So
+> > we probably want to track both types of GUP pins and page-cache based
+> > filesystems will take the hit even if they don't have to for read-pins?
+> 
+> Yes the distinction between read and write would be nice. With the map
+> count solution you can only increment the mapcount for GUP(write=true).
+
+Well, but if we track only pins for write, DAX or memory hotplug will not
+be able to use this mechanism. So at this point I'm more leaning towards
+tracking all pins. It will cost some performance needlessly for read pins
+and filesystems using page cache when bouncing such pages but it's not like
+writeback of pinned pages is some performance critical operation... But I
+wanted to spell this out so that people are aware of this.
+
+								Honza
 -- 
-2.14.3
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
