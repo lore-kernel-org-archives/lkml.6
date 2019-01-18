@@ -2,271 +2,198 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A32C1B0F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6161CC1B0F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9835A2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CDFF2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:19:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hcNAtJuw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fje5QZDn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLOqi8qG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729651AbfARVTF (ORCPT
+        id S1729669AbfARVTK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 16:19:05 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60322 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729600AbfARVTF (ORCPT
+        Fri, 18 Jan 2019 16:19:10 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41125 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729600AbfARVTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 16:19:05 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 631CC606E1; Fri, 18 Jan 2019 21:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547846343;
-        bh=QgeOATkdnY7BCYhojOoqJcH4VQtjejdiVYEV9pFjVME=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=hcNAtJuwJdUP6RR2L49jQGZqtysJXYFDJBTolDxSWQgN7tYyp2YsM9WbmynaySWl7
-         TTYFnAzA6oBeeqqNUkTDAiBxHjhW0qO2O6pIcojOnjh3Wz70JooGxR9jfuWgUQRfyO
-         Hs14W95y/fC/97GfbL5EOpaY7tANtyev4qa4q9PA=
-Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: lmark@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4C83A606E1;
-        Fri, 18 Jan 2019 21:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547846339;
-        bh=QgeOATkdnY7BCYhojOoqJcH4VQtjejdiVYEV9pFjVME=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=fje5QZDnoKVTgV7PYmO946JbhwtsJnFh3xAnKXfqG0BHOnbVZx3WjKrRla0B+Q+IH
-         yeAtI1tZgksMAjh3BgQYR+d7ah3hGHgxAmRNUshc2lwpDXojfBvoarBen1/st3su68
-         +ameuswAei2NnesC9PNSfPwjGHvECjNmXnmdTluk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C83A606E1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
-Date:   Fri, 18 Jan 2019 13:18:57 -0800 (PST)
-From:   Liam Mark <lmark@codeaurora.org>
-X-X-Sender: lmark@lmark-linux.qualcomm.com
-To:     "Andrew F. Davis" <afd@ti.com>
-cc:     labbott@redhat.com, sumit.semwal@linaro.org, arve@android.com,
-        tkjos@android.com, maco@android.com, joel@joelfernandes.org,
-        christian@brauner.io, devel@driverdev.osuosl.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, john.stultz@linaro.org
-Subject: Re: [PATCH 2/4] staging: android: ion: Restrict cache maintenance
- to dma mapped memory
-In-Reply-To: <69b18f39-8ce0-3c4d-3528-dfab8399f24f@ti.com>
-Message-ID: <alpine.DEB.2.10.1901181316380.9328@lmark-linux.qualcomm.com>
-References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org> <1547836667-13695-3-git-send-email-lmark@codeaurora.org> <69b18f39-8ce0-3c4d-3528-dfab8399f24f@ti.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        Fri, 18 Jan 2019 16:19:08 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u16so15648932otk.8;
+        Fri, 18 Jan 2019 13:19:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r5esMmal+EyiJjppc4XekprtxYgx+syUq4ePbtc3GRY=;
+        b=DLOqi8qGJPYy2B9LlOD7twGId6dll2zgIvXdBe+v5IOpB6af94v96wZrlQbHmcKMBy
+         HGwwuWDfeOXAYLUhk+mRRBNWfQxih4sp1P15kATLZU655N13CgbZ1w7WOjmbsJY6AlMo
+         DX9dvq4Wnhqs6+tuRF2A9L0pPNik1E/ajl/1g0Vx3tBR0ORwBj0vqzoWZC5b/iLxQsRL
+         k+BmhzpPdbHcExA9GoiadGa4Og9RnLrnnkTXBUO3sAkGCKs+4bZMFU6WuaHqwu9Uu/xp
+         d3jNKOGhp+l2besos3Wcy8dEmQ0o5cJqoMU1bgFddWt4joNO9yIF0z6+6oOYsf5OUZmp
+         5/ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r5esMmal+EyiJjppc4XekprtxYgx+syUq4ePbtc3GRY=;
+        b=jEbcqRVYuX+aQmPgOmimkbqpaijSlosEvJ5q6ymvwg8ANivHxONTWjCaxkLRzNH+Ds
+         lozRYNDihsRTtr4iDxGoeIG3DEI8gUZN2ZcPtPMRYDiHRoz3EQoL3VMBk4vPignkrw6I
+         SW1TMqgmatxyaBm1fSm3b9hOxcsyNPHNMuZoV9fTNZGiDqDJFcpjssi6VhZVkpigpEz4
+         YCpuP0jqhA/bpPu9lzPVW1HUfnNzL17MaI2/rSsHfxoBoLncGgraMslShnXoRP39xLAZ
+         Cxw78O/T1KeQCzDHpcjTRI0yWySZeWzj7pd6PxYx40PyZ2iEJbRwEzyd6QcV9xxsuQuT
+         /zEg==
+X-Gm-Message-State: AJcUukckeRPpPYdHJwpwryprWTVhiVFjChZEe3AJirNSWyElD286IqiK
+        4/5KQ/LZZ13TBhenxZd2INa+447pXVfB/1ewh0Q=
+X-Google-Smtp-Source: ALg8bN7yEDzZ/ik19/gC/B8WysQYlH9TYZjk95Wutj03C66M7F0hKU3UY5v8rkjW9jyqjmwyCU/rqYBtw/uEUaIsJvY=
+X-Received: by 2002:a9d:5d2:: with SMTP id 76mr12517903otd.78.1547846346709;
+ Fri, 18 Jan 2019 13:19:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="-2046127808-432817944-1547846339=:9328"
+References: <20190118194812.3319-1-martyn.welch@collabora.com> <20190118194812.3319-2-martyn.welch@collabora.com>
+In-Reply-To: <20190118194812.3319-2-martyn.welch@collabora.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 18 Jan 2019 19:18:55 -0200
+Message-ID: <CAOMZO5ASTUDfKkghXq5FftM8-XNztXCYpmdOU9CVfyX3pgKxxA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: imx6: Add support for Phytec phyBOARD
+ i.MX6UL Segin
+To:     Martyn Welch <martyn.welch@collabora.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        =?UTF-8?Q?Stefan_Riedm=C3=BCller?= <s.riedmueller@phytec.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Christian Hemp <c.hemp@phytec.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Martyn,
 
----2046127808-432817944-1547846339=:9328
-Content-Type: TEXT/PLAIN; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+On Fri, Jan 18, 2019 at 5:49 PM Martyn Welch <martyn.welch@collabora.com> wrote:
 
-On Fri, 18 Jan 2019, Andrew F. Davis wrote:
+> +       /*
+> +        * Set the minimum memory size here and
+> +        * let the bootloader set the real size.
+> +        */
+> +       memory {
 
-> On 1/18/19 12:37 PM, Liam Mark wrote:
-> > The ION begin_cpu_access and end_cpu_access functions use the
-> > dma_sync_sg_for_cpu and dma_sync_sg_for_device APIs to perform cache
-> > maintenance.
-> > 
-> > Currently it is possible to apply cache maintenance, via the
-> > begin_cpu_access and end_cpu_access APIs, to ION buffers which are not
-> > dma mapped.
-> > 
-> > The dma sync sg APIs should not be called on sg lists which have not been
-> > dma mapped as this can result in cache maintenance being applied to the
-> > wrong address. If an sg list has not been dma mapped then its dma_address
-> > field has not been populated, some dma ops such as the swiotlb_dma_ops ops
-> > use the dma_address field to calculate the address onto which to apply
-> > cache maintenance.
-> > 
-> > Also I don’t think we want CMOs to be applied to a buffer which is not
-> > dma mapped as the memory should already be coherent for access from the
-> > CPU. Any CMOs required for device access taken care of in the
-> > dma_buf_map_attachment and dma_buf_unmap_attachment calls.
-> > So really it only makes sense for begin_cpu_access and end_cpu_access to
-> > apply CMOs if the buffer is dma mapped.
-> > 
-> > Fix the ION begin_cpu_access and end_cpu_access functions to only apply
-> > cache maintenance to buffers which are dma mapped.
-> > 
-> > Fixes: 2a55e7b5e544 ("staging: android: ion: Call dma_map_sg for syncing and mapping")
-> > Signed-off-by: Liam Mark <lmark@codeaurora.org>
-> > ---
-> >  drivers/staging/android/ion/ion.c | 26 +++++++++++++++++++++-----
-> >  1 file changed, 21 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> > index 6f5afab7c1a1..1fe633a7fdba 100644
-> > --- a/drivers/staging/android/ion/ion.c
-> > +++ b/drivers/staging/android/ion/ion.c
-> > @@ -210,6 +210,7 @@ struct ion_dma_buf_attachment {
-> >  	struct device *dev;
-> >  	struct sg_table *table;
-> >  	struct list_head list;
-> > +	bool dma_mapped;
-> >  };
-> >  
-> >  static int ion_dma_buf_attach(struct dma_buf *dmabuf,
-> > @@ -231,6 +232,7 @@ static int ion_dma_buf_attach(struct dma_buf *dmabuf,
-> >  
-> >  	a->table = table;
-> >  	a->dev = attachment->dev;
-> > +	a->dma_mapped = false;
-> >  	INIT_LIST_HEAD(&a->list);
-> >  
-> >  	attachment->priv = a;
-> > @@ -261,12 +263,18 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
-> >  {
-> >  	struct ion_dma_buf_attachment *a = attachment->priv;
-> >  	struct sg_table *table;
-> > +	struct ion_buffer *buffer = attachment->dmabuf->priv;
-> >  
-> >  	table = a->table;
-> >  
-> > +	mutex_lock(&buffer->lock);
-> >  	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
-> > -			direction))
-> > +			direction)) {
-> > +		mutex_unlock(&buffer->lock);
-> >  		return ERR_PTR(-ENOMEM);
-> > +	}
-> > +	a->dma_mapped = true;
-> > +	mutex_unlock(&buffer->lock);
-> >  
-> >  	return table;
-> >  }
-> > @@ -275,7 +283,13 @@ static void ion_unmap_dma_buf(struct dma_buf_attachment *attachment,
-> >  			      struct sg_table *table,
-> >  			      enum dma_data_direction direction)
-> >  {
-> > +	struct ion_dma_buf_attachment *a = attachment->priv;
-> > +	struct ion_buffer *buffer = attachment->dmabuf->priv;
-> > +
-> > +	mutex_lock(&buffer->lock);
-> >  	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
-> > +	a->dma_mapped = false;
-> > +	mutex_unlock(&buffer->lock);
-> >  }
-> >  
-> >  static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
-> > @@ -346,8 +360,9 @@ static int ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
-> >  
-> >  	mutex_lock(&buffer->lock);
-> >  	list_for_each_entry(a, &buffer->attachments, list) {
-> 
-> When no devices are attached then buffer->attachments is empty and the
-> below does not run, so if I understand this patch correctly then what
-> you are protecting against is CPU access in the window after
-> dma_buf_attach but before dma_buf_map.
-> 
+Need to pass device_type = "memory";
 
-Yes
+> +               reg = <0x80000000 0x8000000>;
+> +       };
+> +&uart1 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_uart1>;
+> +       status = "okay";
+> +};
+> +
+> +&iomuxc {
+> +       pinctrl-names = "default";
 
-> This is the kind of thing that again makes me think a couple more
-> ordering requirements on DMA-BUF ops are needed. DMA-BUFs do not require
-> the backing memory to be allocated until map time, this is why the
-> dma_address field would still be null as you note in the commit message.
-> So why should the CPU be performing accesses on a buffer that is not
-> actually backed yet?
-> 
-> I can think of two solutions:
-> 
-> 1) Only allow CPU access (mmap, kmap, {begin,end}_cpu_access) while at
-> least one device is mapped.
-> 
+Uneeded line.
 
-Would be quite limiting to clients.
+> +
+> +       pinctrl_enet1: enet1grp {
+> +&iomuxc {
+> +       pinctrl_gpio_keys: gpio_keysgrp {
+> +               fsl,pins = <
+> +                       MX6UL_PAD_SNVS_TAMPER0__GPIO5_IO00      0x79
+> +               >;
+> +       };
+> +
+> +       pinctrl_user_leds: user_ledsgrp {
+> +               fsl,pins = <
+> +                       MX6UL_PAD_JTAG_MOD__GPIO1_IO10          0x79
+> +                       MX6UL_PAD_GPIO1_IO01__GPIO1_IO01        0x79
+> +               >;
+> +       };
+> +};
+> diff --git a/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts
+> new file mode 100644
+> index 000000000000..83cdf4fa10c0
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts
+> @@ -0,0 +1,96 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016 PHYTEC Messtechnik GmbH
+> + * Author: Christian Hemp <c.hemp@phytec.de>
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx6ul-phytec-pcl063.dtsi"
+> +#include "imx6ul-phytec-phyboard-segin.dtsi"
+> +#include "imx6ul-phytec-peb-eval-01.dtsi"
+> +
+> +/ {
+> +       model = "Phytec phyBOARD-Segin i.MX6 UltraLite Full Featured";
+> +       compatible = "phytec,imx6ul-pbacd10", "phytec,imx6ul-pcl063",
+> +                    "fsl,imx6ul";
 
-> 2) Treat the CPU access request like the a device map request and
-> trigger the allocation of backing memory just like if a device map had
-> come in.
-> 
+Better keep it in a single line?
 
-Which is, as you mention pretty much what we have now (though the buffer 
-is allocated even earlier).
+> +&ecspi3 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_ecspi3>;
+> +       cs-gpios = <&gpio1 20 GPIO_ACTIVE_HIGH>;
+> +       status = "okay";
+> +
+> +       spidev@0 {
+> +               compatible = "spidev";
 
-> I know the current Ion heaps (and most other DMA-BUF exporters) all do
-> the allocation up front so the memory is already there, but DMA-BUF was
-> designed with late allocation in mind. I have a use-case I'm working on
-> that finally exercises this DMA-BUF functionality and I would like to
-> have it export through ION. This patch doesn't prevent that, but seems
-> like it is endorsing the the idea that buffers always need to be backed,
-> even before device attach/map is has occurred.
-> 
+Doesn't the kernel complain about spidev dts nodes?
 
-I didn't interpret the DMA-buf contract as requiring the dma-map to be 
-called in order for a backing store to be provided, I interpreted it as 
-meaning there could be a backing store before the dma-map but at the 
-dma-map call the final backing store configuration would be decided 
-(perhaps involving migrating the memory to the final backing store).
-I will let the dma-buf experts correct me on that.
+> +};
+> diff --git a/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi
+> new file mode 100644
+> index 000000000000..bccabb84c9f6
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi
+> @@ -0,0 +1,330 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016 PHYTEC Messtechnik GmbH
+> + * Author: Christian Hemp <c.hemp@phytec.de>
+> + */
+> +
+> +/ {
+> +       model = "Phytec phyBOARD-Segin i.MX6 UltraLite";
+> +       compatible = "phytec,imx6ul-pbacd-10", "phytec,imx6ul-pcl063",
+> +                    "fsl,imx6ul";
 
-Limiting userspace clients to not be able to access buffers until after 
-they are dma-mapped seems unfortuntate to me, dma-mapping usually means a 
-change of ownership of the memory from the CPU to the device. So generally 
-while a buffer is dma mapped you have the device access it (though of 
-course it is supported for CPU to access to the buffer while dma mapped) 
-and then once the buffer is dma-unmapped the CPU can access it.  This is 
-how the DMA APIs are frequently used, and the changes above make ION align 
-more with the way the DMA APIs are used. Basically when the buffer is not 
-dma-mapped the CPU doesn't need to do any CMOs to access the buffer (and 
-ION ensures not CMOs are applied) but if the CPU does want to access the 
-buffer while it is dma mapped then ION ensures that the appropriate CMOs 
-are applied.
+Single line?
 
-It seems like a legitimate uses case to me to allow clients to access the 
-buffer before (and after) dma-mapping, example post processing of buffers.
+> +&i2c1 {
+> +       codec: tlv320@18 {
 
+Node names should be generic and label names specific, so:
 
-> Either of the above two solutions would need to target the DMA-BUF
-> framework,
-> 
-> Sumit,
-> 
-> Any comment?
-> 
-> Thanks,
-> Andrew
-> 
-> > -		dma_sync_sg_for_cpu(a->dev, a->table->sgl, a->table->nents,
-> > -				    direction);
-> > +		if (a->dma_mapped)
-> > +			dma_sync_sg_for_cpu(a->dev, a->table->sgl,
-> > +					    a->table->nents, direction);
-> >  	}
-> >  
-> >  unlock:
-> > @@ -369,8 +384,9 @@ static int ion_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
-> >  
-> >  	mutex_lock(&buffer->lock);
-> >  	list_for_each_entry(a, &buffer->attachments, list) {
-> > -		dma_sync_sg_for_device(a->dev, a->table->sgl, a->table->nents,
-> > -				       direction);
-> > +		if (a->dma_mapped)
-> > +			dma_sync_sg_for_device(a->dev, a->table->sgl,
-> > +					       a->table->nents, direction);
-> >  	}
-> >  	mutex_unlock(&buffer->lock);
-> >  
-> > 
-> 
+ tlv320: codec@18
 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
----2046127808-432817944-1547846339=:9328--
+> +               compatible = "ti,tlv320aic3007";
+> +               #sound-dai-cells = <0>;
+> +               reg = <0x18>;
+> +               AVDD-supply = <&reg_sound_3v3>;
+> +               IOVDD-supply = <&reg_sound_3v3>;
+> +               DRVDD-supply = <&reg_sound_3v3>;
+> +               DVDD-supply = <&reg_sound_1v8>;
+> +               status = "disabled";
+> +       };
+> +
+> +       stmpe: stmpe@44 {
+
+touchscreen@44
