@@ -2,185 +2,138 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E057C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C25C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F0A20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:13:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 766B320823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:13:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aq9bJpSe"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jsgyobrd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbfARSNE (ORCPT
+        id S1728974AbfARSNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:13:04 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:45968 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728683AbfARSND (ORCPT
+        Fri, 18 Jan 2019 13:13:51 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38308 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728818AbfARSNu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:13:03 -0500
-Received: by mail-vk1-f196.google.com with SMTP id n126so3255369vke.12
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 10:13:02 -0800 (PST)
+        Fri, 18 Jan 2019 13:13:50 -0500
+Received: by mail-ot1-f65.google.com with SMTP id e12so15202480otl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 10:13:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J32IDp9YkQnRqh2wZB2qisJnRhCbto/nhyLrG0nFb5Y=;
-        b=aq9bJpSeBElhGQs4ySBKE3ZOYCFsR/5AfswBY+sHI0CInQdDmE7ij0e8zqhIqGzsKd
-         SvPDS3Bsb5MocNA/ZanjITLLevPxmzUqs+TE501SzrFcm3UK/0WQ6+c3WfTzIuaSTwN1
-         mDHcdtryIeAzzQFd2PwySJl0KnoDIPIQ34a04=
+         :cc:content-transfer-encoding;
+        bh=50tTcE0fuv+y66xoAmFC9tV2dL8ySToAWd3FTLnwSjE=;
+        b=jsgyobrdU4BXohSCqb6qabVgjeP7kBbUolKAgqEnHpo9dfp/dIFNummRc+nOkLeEaI
+         qVX6vfpDy4sCjaVSJL7khpk/mbTLzt1K2Pwbm53Mh7/BbETTBgOCbRmCXhVuAnvl5CR6
+         EOr1CyhpC/Q3GlvbdA9yJkd0214I4nerQZxyU261MwbT8pq1meBs6bhZzRsgQqZPhJIT
+         wAch7R95q4S/BqaMydgCKH81ezesJLgDyGKD7c0k99bwp2c2CqkgVpNEq4P3Ahwqims0
+         Q2vO+gsdW/v5Tu2F9NaEUKc2BFKTzUnnon6yDqq0loWbdW1ly0VfECDev2bFIK9FCWri
+         +EAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J32IDp9YkQnRqh2wZB2qisJnRhCbto/nhyLrG0nFb5Y=;
-        b=RQBRpOv1rrcHWEKYdDHWOm+LtFCoINSboIllpGrEiqSxzmGm2uwBLi1tf+CxYkUeUc
-         JMryi9Ij8osYLUv5ES8q9ZYAlN99dreGHoyg94ln9d68k8LRx+YRPRLYdjRFHMIPs703
-         F7g5LCCY4fy2tcMQ/Li2fK1ib1lMdsUWTEADE3DBrVkbCi6OSl44mAUBsaeTT/1ghpsC
-         uJu0ka/fgG56XDA3ihyHmQlaTbsM/dNiw+GgWs9JP2ZbTxPq5hnDDwp/gPCO0ld2ISA4
-         LZrZDToZ4a0IjM5VPMg2QLaARLviu5m5HI4SRefvs9gU4z3sVHj5BTiNBET8UojlQIAM
-         +pjg==
-X-Gm-Message-State: AJcUukdqOTP2nIv0QyNoL826y9mNSPVSkS6bY8CPikhDyIfxDSfrb3V3
-        KznhnZ/OXQnjlvg+l9XGGryE39cvrZQ=
-X-Google-Smtp-Source: ALg8bN4P4ZzKN+w22//hNZ43k1f8QuybSnKqQ4S3itYvcom2H3R5Rfp4rH8PpoPTaQxqpzso95TXJg==
-X-Received: by 2002:a1f:d1c3:: with SMTP id i186mr7594104vkg.51.1547835181571;
-        Fri, 18 Jan 2019 10:13:01 -0800 (PST)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id l197sm79008261vke.18.2019.01.18.10.13.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 10:13:01 -0800 (PST)
-Received: by mail-vs1-f51.google.com with SMTP id b74so8937636vsd.9
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 10:13:01 -0800 (PST)
-X-Received: by 2002:a67:dd94:: with SMTP id i20mr8656894vsk.111.1547834800077;
- Fri, 18 Jan 2019 10:06:40 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=50tTcE0fuv+y66xoAmFC9tV2dL8ySToAWd3FTLnwSjE=;
+        b=LFxrghvDP3gAvDUstOOyGhrH9V7D1IM4E0m5mUW09Jwpg085Fld/IOa017MwW3z/Ae
+         v3+rnPWaqTNcy5mRPWtQ1XjKeeVuLYE7xNIlInUyqQoP1tRRFgpg5LkEya4Irl3tVK84
+         khbI0fvloiTftmOlnv4CxWIHZLNRsz218h3s3XOEWlQpifwnl72Wo0o2UxbvpUZOWxvQ
+         NB1e5P31rDmI60CkC1KZXt3lEhol28b94AnPH4ThQsifXJk7ksjjfDjl3OzSJvbONgB8
+         9e1meyXGXwzajM2f8lLq/M2xvUdnT/1p0En2JxwG8/ES1G2AKu2IuPkGn5hYX8s1Ptd4
+         7Ccg==
+X-Gm-Message-State: AJcUukfJItEX/raaMlwlTmzno8EOZLkmVtTBYpv0jyAUsq0ehNNCnQcE
+        U/0mj5H2OI7En9fmwwEHxP/n06T6eTcYzSZG2ti46Q==
+X-Google-Smtp-Source: ALg8bN4s9tWui8il2yF6KZdYFzR+t6HVekR0r2EN29zD8v9icHQuIEsuky9yZhQFGppDo4xWOhALRZZiwx+duPOXkeU=
+X-Received: by 2002:a9d:4595:: with SMTP id x21mr11945644ote.234.1547835230003;
+ Fri, 18 Jan 2019 10:13:50 -0800 (PST)
 MIME-Version: 1.0
-References: <20181220173026.3857-1-jcrouse@codeaurora.org> <20181220173026.3857-2-jcrouse@codeaurora.org>
-In-Reply-To: <20181220173026.3857-2-jcrouse@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 18 Jan 2019 10:06:27 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WjLB8TV80cMef9ZqYn7h3szJ6x67_6pL9FnM1Q+8i_2A@mail.gmail.com>
-Message-ID: <CAD=FV=WjLB8TV80cMef9ZqYn7h3szJ6x67_6pL9FnM1Q+8i_2A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] drm/msm/a6xx: Add support for an interconnect path
-To:     Jordan Crouse <jcrouse@codeaurora.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Clark <robdclark@gmail.com>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+References: <20190118134244.22253-1-brgl@bgdev.pl> <20190118134244.22253-9-brgl@bgdev.pl>
+ <20190118180148.GD6260@sirena.org.uk>
+In-Reply-To: <20190118180148.GD6260@sirena.org.uk>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 18 Jan 2019 19:13:38 +0100
+Message-ID: <CAMpxmJX8OmnDtOhQjWi9edX-4pHu1daKiDkRdNAVw-PZsz9UXA@mail.gmail.com>
+Subject: Re: [PATCH 08/13] regulator: max77650: add regulator support
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        Johan Hovold <johan@kernel.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Evan Green <evgreen@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-pm <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Thu, Dec 20, 2018 at 9:30 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
+pt., 18 sty 2019 o 19:01 Mark Brown <broonie@kernel.org> napisa=C5=82(a):
 >
-> Try to get the interconnect path for the GPU and vote for the maximum
-> bandwidth to support all frequencies. This is needed for performance.
-> Later we will want to scale the bandwidth based on the frequency to
-> also optimize for power but that will require some device tree
-> infrastructure that does not yet exist.
+> On Fri, Jan 18, 2019 at 02:42:39PM +0100, Bartosz Golaszewski wrote:
 >
-> v5: Remove hardcoded interconnect name and just use the default
-
-nit: ${SUBJECT} says v3, but this is v5.
-
-I'll put in my usual plug for considering "patman" to help post
-patches.  Even though it lives in the u-boot git repo it's still a gem
-for kernel work.
-<http://git.denx.de/?p=u-boot.git;a=blob;f=tools/patman/README>
-
-
-> @@ -85,6 +89,12 @@ static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
->                 dev_err(gmu->dev, "GMU set GPU frequency error: %d\n", ret);
+> > Add regulator support for max77650. We support all four variants of thi=
+s
+> > PMIC including non-linear voltage table for max77651 SBB1 rail.
 >
->         gmu->freq = gmu->gpu_freqs[index];
-> +
-> +       /*
-> +        * Eventually we will want to scale the path vote with the frequency but
-> +        * for now leave it at max so that the performance is nominal.
-> +        */
-> +       icc_set(gpu->icc_path, 0, MBps_to_icc(7216));
-
-You'll need to change icc_set() here to icc_set_bw() to match v13, AKA:
-
-- https://patchwork.kernel.org/patch/10766335/
-- https://lkml.kernel.org/r/20190116161103.6937-2-georgi.djakov@linaro.org
-
-
-> @@ -695,6 +707,9 @@ int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
->         if (ret)
->                 goto out;
+> Looks good, the ramping stuff might be a candidate for core (TBH I was
+> sure we'd got that implemented already but we don't seem to) but that
+> can be done later and the more complex one with non-linear steps does
+> feel like it might have to stay in the driver anyway.
 >
-> +       /* Set the bus quota to a reasonable value for boot */
-> +       icc_set(gpu->icc_path, 0, MBps_to_icc(3072));
-
-This will also need to change to icc_set_bw()
-
-
-> @@ -781,6 +798,9 @@ int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
->         /* Tell RPMh to power off the GPU */
->         a6xx_rpmh_stop(gmu);
+> A couple of small nits:
 >
-> +       /* Remove the bus vote */
-> +       icc_set(gpu->icc_path, 0, 0);
+> > +++ b/drivers/regulator/max77650-regulator.c
+> > @@ -0,0 +1,537 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2018 BayLibre SAS
+> > + * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Please make the entire header C++ style so it looks more intentional.
+>
 
-This will also need to change to icc_set_bw()
+Seems like there are more files in the kernel source using the mixed
+comment style for the SPDX identifier and I also prefer it over C++
+only. Would you mind if it stayed that way?
 
+> > +             for_each_child_of_node(dev->of_node, child) {
+> > +                     if (!of_node_name_eq(child, rdesc->desc.name))
+> > +                             continue;
+> > +
+> > +                     init_data =3D of_get_regulator_init_data(dev, chi=
+ld,
+> > +                                                            &rdesc->de=
+sc);
+> > +                     if (!init_data)
+> > +                             return -ENOMEM;
+> > +
+> > +                     config.of_node =3D child;
+> > +                     config.init_data =3D init_data;
+> > +             }
+>
+> You don't need to do this, the core will do it for you (it will actually
+> still do it even with the above, it'll only fall back to using
+> config->init_data if it's own lookup fails).
 
-I have the same questions for this series that I had in response to
-the email ("[v5 2/3] drm/msm/dpu: Integrate interconnect API in MDSS")
-<https://lkml.kernel.org/r/CAD=FV=XUeMTGH+CDwGs3PfK4igdQrCbwucw7_2ViBc4i7grvxg@mail.gmail.com>
+I added this loop specifically because the core would not pick up the
+init data from DT. What did I miss (some specific variable to assign)?
+I just noticed some other drivers do the same and thought it's the
+right thing to do.
 
-
-Copy / pasting here (with minor name changes) so folks don't have to
-follow links / search email.
-
-==
-
-I'm curious what the plan is for landing this series.   Rob / Gerogi:
-do you have any preference?  Options I'd imagine:
-
-A) Wait until interconnect lands (in 5.1?) and land this through
-msm-next in the version after (5.2?)
-
-B) Georgi provides an immutable branch for interconnect when his lands
-(assuming he's landing via pull request) and that gets pulled into the
-the relevant drm tree.
-
-C) Rob Acks this series and indicates that it should go in through
-Gerogi's tree (probably only works if Georgi plans to send a pull
-request).  If we're going this route then (IIUC) we'd want to land
-this in Gerogi's tree sooner rather than later so it can get some bake
-time?  NOTE: as per my prior reply, I believe Rob has already Acked
-this patch.
-
-
-Does anyone have a preference?  It's be nice if whoever is planning to
-land this could indicate whether they'd prefer Jordan send a new
-version to handle the API change or if the relevant maintainer can
-just do the fixup when the patch lands.
-
-
-Thanks!
-
-
--Doug
+Thanks,
+Bart
