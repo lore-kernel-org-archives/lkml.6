@@ -2,90 +2,217 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA14C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCEDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7797620873
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5DDF20873
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:39:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfARBfl (ORCPT
+        id S1726927AbfARBjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 20:35:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42224 "EHLO mx1.redhat.com"
+        Thu, 17 Jan 2019 20:39:48 -0500
+Received: from mga14.intel.com ([192.55.52.115]:25085 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfARBfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 20:35:41 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C205B23E6F4;
-        Fri, 18 Jan 2019 01:35:40 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-21.pek2.redhat.com [10.72.12.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5060B60BE5;
-        Fri, 18 Jan 2019 01:35:34 +0000 (UTC)
-Date:   Fri, 18 Jan 2019 09:35:30 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, dwmw2@infradead.org,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        ebiggers@google.com, nayna@linux.ibm.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH v3 0/2] let kexec_file_load use platform keyring to
- verify the kernel image
-Message-ID: <20190118013530.GA2814@dhcp-128-65.nay.redhat.com>
-References: <20190116101654.7288-1-kasong@redhat.com>
- <1547773684.4026.10.camel@linux.ibm.com>
+        id S1725981AbfARBjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 20:39:48 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 17:39:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
+   d="scan'208";a="119401500"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.37])
+  by orsmga003.jf.intel.com with ESMTP; 17 Jan 2019 17:39:46 -0800
+Date:   Fri, 18 Jan 2019 09:39:23 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] driver core: move device->knode_class to device_private
+Message-ID: <20190118013923.GA8975@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20190117055719.6161-1-richardw.yang@linux.intel.com>
+ <CAJZ5v0iskuHq=h6+_kFJ7QPQ3W3goQjPX1x5LdGe6xu312Q8Ag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547773684.4026.10.camel@linux.ibm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 18 Jan 2019 01:35:41 +0000 (UTC)
+In-Reply-To: <CAJZ5v0iskuHq=h6+_kFJ7QPQ3W3goQjPX1x5LdGe6xu312Q8Ag@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/17/19 at 08:08pm, Mimi Zohar wrote:
-> On Wed, 2019-01-16 at 18:16 +0800, Kairui Song wrote:
-> > This patch series adds a .platform_trusted_keys in system_keyring as the
-> > reference to .platform keyring in integrity subsystem, when platform
-> > keyring is being initialized it will be updated. So other component could
-> > use this keyring as well.
-> 
-> Remove "other component could use ...".
-> > 
-> > This patch series also let kexec_file_load use platform keyring as fall
-> > back if it failed to verify the image against secondary keyring, make it
-> > possible to load kernel signed by third part key if third party key is
-> > imported in the firmware.
-> 
-> This is the only reason for these patches.  Please remove "also".
-> 
-> > 
-> > After this patch kexec_file_load will be able to verify a signed PE
-> > bzImage using keys in platform keyring.
-> > 
-> > Tested in a VM with locally signed kernel with pesign and imported the
-> > cert to EFI's MokList variable.
-> 
-> It's taken so long for me to review/test this patch set due to a
-> regression in sanity_check_segment_list(), introduced somewhere
-> between 4.20 and 5.0.0-rc1.  The sgement overlap test - "if ((mend >
-> pstart) && (mstart < pend))" - fails, returning a -EINVAL.
-> 
-> Is anyone else seeing this?
+On Thu, Jan 17, 2019 at 10:38:13AM +0100, Rafael J. Wysocki wrote:
+>On Thu, Jan 17, 2019 at 6:57 AM Wei Yang <richardw.yang@linux.intel.com> wrote:
+>>
+>> As the description of struct device_private says, it stores data which
+>> is private to driver core. And it already has similar fields like:
+>> knode_parent, knode_driver, knode_driver and knode_bus. This look it is
+>> more proper to put knode_class together with those fields to make it
+>> private to driver core.
+>>
+>> This patch move device->knode_class to device_private to make it comply
+>> with code convention.
+>>
+>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>
+>As a rule, I'm not a big fan of changes like this, because the only
+>reason for doing it seems to be aesthetics and it may be problematic
+>for people doing various types of backports, live patching etc, but
+>this particular one makes sense to me.
 
-Mimi, should be this issue?  I have sent a fix for that.
-https://lore.kernel.org/lkml/20181228011247.GA9999@dhcp-128-65.nay.redhat.com/
+Rafael,
 
-Thanks
-Dave
+Thanks for your comment. 
+
+To be honest, I didn't realized the trouble it will introduce to backport and
+live patching. :-)
+
+>
+>> ---
+>>  drivers/base/base.h    |  4 ++++
+>>  drivers/base/class.c   | 12 ++++++++----
+>>  drivers/base/core.c    |  4 ++--
+>>  include/linux/device.h |  1 -
+>>  4 files changed, 14 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/base/base.h b/drivers/base/base.h
+>> index 7a419a7a6235..37329a668935 100644
+>> --- a/drivers/base/base.h
+>> +++ b/drivers/base/base.h
+>> @@ -60,6 +60,7 @@ struct driver_private {
+>>   * @knode_parent - node in sibling list
+>>   * @knode_driver - node in driver list
+>>   * @knode_bus - node in bus list
+>> + * @knode_class - node in class list
+>>   * @deferred_probe - entry in deferred_probe_list which is used to retry the
+>>   *     binding of drivers which were unable to get all the resources needed by
+>>   *     the device; typically because it depends on another driver getting
+>> @@ -74,6 +75,7 @@ struct device_private {
+>>         struct klist_node knode_parent;
+>>         struct klist_node knode_driver;
+>>         struct klist_node knode_bus;
+>> +       struct klist_node knode_class;
+>>         struct list_head deferred_probe;
+>>         struct device *device;
+>>  };
+>> @@ -83,6 +85,8 @@ struct device_private {
+>>         container_of(obj, struct device_private, knode_driver)
+>>  #define to_device_private_bus(obj)     \
+>>         container_of(obj, struct device_private, knode_bus)
+>> +#define to_device_private_class(obj)   \
+>> +       container_of(obj, struct device_private, knode_class)
+>>
+>>  /* initialisation functions */
+>>  extern int devices_init(void);
+>> diff --git a/drivers/base/class.c b/drivers/base/class.c
+>> index 54def4e02f00..df7fde599407 100644
+>> --- a/drivers/base/class.c
+>> +++ b/drivers/base/class.c
+>> @@ -119,14 +119,16 @@ static void class_put(struct class *cls)
+>>
+>>  static void klist_class_dev_get(struct klist_node *n)
+>>  {
+>> -       struct device *dev = container_of(n, struct device, knode_class);
+>> +       struct device_private *p = to_device_private_class(n);
+>> +       struct device *dev = p->device;
+>
+>the
+>
+>p = to_device_private_class(n)
+>dev = p->device
+>
+>pattern is repeated below for at least a couple of times.
+>
+>Care to add a static helper for this to reduce the code duplication somewhat?
+>
+
+Yep, this is reasonable. Let me put them in a helper.
+
+>>
+>>         get_device(dev);
+>>  }
+>>
+>>  static void klist_class_dev_put(struct klist_node *n)
+>>  {
+>> -       struct device *dev = container_of(n, struct device, knode_class);
+>> +       struct device_private *p = to_device_private_class(n);
+>> +       struct device *dev = p->device;
+>>
+>>         put_device(dev);
+>>  }
+>> @@ -277,7 +279,7 @@ void class_dev_iter_init(struct class_dev_iter *iter, struct class *class,
+>>         struct klist_node *start_knode = NULL;
+>>
+>>         if (start)
+>> -               start_knode = &start->knode_class;
+>> +               start_knode = &start->p->knode_class;
+>>         klist_iter_init_node(&class->p->klist_devices, &iter->ki, start_knode);
+>>         iter->type = type;
+>>  }
+>> @@ -298,13 +300,15 @@ EXPORT_SYMBOL_GPL(class_dev_iter_init);
+>>  struct device *class_dev_iter_next(struct class_dev_iter *iter)
+>>  {
+>>         struct klist_node *knode;
+>> +       struct device_private *p;
+>>         struct device *dev;
+>>
+>>         while (1) {
+>>                 knode = klist_next(&iter->ki);
+>>                 if (!knode)
+>>                         return NULL;
+>> -               dev = container_of(knode, struct device, knode_class);
+>> +               p = to_device_private_class(knode);
+>> +               dev = p->device;
+>>                 if (!iter->type || iter->type == dev->type)
+>>                         return dev;
+>>         }
+>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>> index 04bbcd779e11..a624d27d11c0 100644
+>> --- a/drivers/base/core.c
+>> +++ b/drivers/base/core.c
+>> @@ -1932,7 +1932,7 @@ int device_add(struct device *dev)
+>>         if (dev->class) {
+>>                 mutex_lock(&dev->class->p->mutex);
+>>                 /* tie the class to the device */
+>> -               klist_add_tail(&dev->knode_class,
+>> +               klist_add_tail(&dev->p->knode_class,
+>>                                &dev->class->p->klist_devices);
+>>
+>>                 /* notify any interfaces that the device is here */
+>> @@ -2069,7 +2069,7 @@ void device_del(struct device *dev)
+>>                         if (class_intf->remove_dev)
+>>                                 class_intf->remove_dev(dev, class_intf);
+>>                 /* remove the device from the class list */
+>> -               klist_del(&dev->knode_class);
+>> +               klist_del(&dev->p->knode_class);
+>>                 mutex_unlock(&dev->class->p->mutex);
+>>         }
+>>         device_remove_file(dev, &dev_attr_uevent);
+>> diff --git a/include/linux/device.h b/include/linux/device.h
+>> index 1b25c7a43f4c..040e97669f94 100644
+>> --- a/include/linux/device.h
+>> +++ b/include/linux/device.h
+>> @@ -1035,7 +1035,6 @@ struct device {
+>>         spinlock_t              devres_lock;
+>>         struct list_head        devres_head;
+>>
+>> -       struct klist_node       knode_class;
+>>         struct class            *class;
+>>         const struct attribute_group **groups;  /* optional groups */
+>>
+>> --
+>> 2.19.1
+>>
+
+-- 
+Wei Yang
+Help you, Help me
