@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F40C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6E6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960D82087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 156472087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbfAROw6 (ORCPT
+        id S1728292AbfAROxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:52:58 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48118 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:53:06 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48087 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727996AbfAROv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727745AbfAROv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 09:51:57 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 29AD222491; Fri, 18 Jan 2019 15:51:56 +0100 (CET)
+        id CFF2A22456; Fri, 18 Jan 2019 15:51:54 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C2AB620BAD;
-        Fri, 18 Jan 2019 15:51:44 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 00E6920CCB;
+        Fri, 18 Jan 2019 15:51:43 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 15/23] drm/sun4i: layer: Add tiled modifier support and helper
-Date:   Fri, 18 Jan 2019 15:51:25 +0100
-Message-Id: <20190118145133.21281-16-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 12/23] drm/sun4i: frontend: Add support for tiled YUV input mode configuration
+Date:   Fri, 18 Jan 2019 15:51:22 +0100
+Message-Id: <20190118145133.21281-13-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,67 +48,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces a list of supported modifiers for the driver, that
-includes the Allwinner tiled modifier, as well as a format_mod_supported
-callback.
+This introduces the data input mode definitions for the tiled YUV mode,
+that are used in the input mode helper if tiling is requested.
 
-The callback uses both the backend and frontend helpers to indicate
-per-format modifier support (including for the linear modifier).
+The modifier is passed to the helper from the framebuffer to determine
+if tiling is requested.
+
+Only semiplanar and planar YUV formats are supported for tiling mode.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_layer.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 14 ++++++++++----
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  2 ++
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-index 8cf8ca997b1d..c5a999ca1d72 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-@@ -114,6 +114,13 @@ static void sun4i_backend_layer_atomic_update(struct drm_plane *plane,
- 	sun4i_backend_layer_enable(backend, layer->id, true);
- }
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index 6219f5d0dc53..e950370792ce 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -191,19 +191,23 @@ sun4i_frontend_drm_format_to_input_fmt(const struct drm_format_info *format,
  
-+static bool sun4i_layer_format_mod_supported(struct drm_plane *plane,
-+					     uint32_t format, uint64_t modifier)
-+{
-+	return sun4i_backend_format_is_supported(format, modifier) ||
-+	       sun4i_frontend_format_is_supported(format, modifier);
-+}
+ static int
+ sun4i_frontend_drm_format_to_input_mode(const struct drm_format_info *format,
+-					u32 *val)
++					uint64_t modifier, u32 *val)
+ {
++	bool tiled = (modifier == DRM_FORMAT_MOD_ALLWINNER_TILED);
 +
- static const struct drm_plane_helper_funcs sun4i_backend_layer_helper_funcs = {
- 	.prepare_fb	= drm_gem_fb_prepare_fb,
- 	.atomic_disable	= sun4i_backend_layer_atomic_disable,
-@@ -127,6 +134,7 @@ static const struct drm_plane_funcs sun4i_backend_layer_funcs = {
- 	.disable_plane		= drm_atomic_helper_disable_plane,
- 	.reset			= sun4i_backend_layer_reset,
- 	.update_plane		= drm_atomic_helper_update_plane,
-+	.format_mod_supported	= sun4i_layer_format_mod_supported,
- };
+ 	switch (format->num_planes) {
+ 	case 1:
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED;
+ 		return 0;
  
- static const uint32_t sun4i_layer_formats[] = {
-@@ -157,6 +165,12 @@ static const uint32_t sun4i_layer_formats[] = {
- 	DRM_FORMAT_YVYU,
- };
+ 	case 2:
+-		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR;
++		*val = tiled ? SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_SEMIPLANAR
++			     : SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR;
+ 		return 0;
  
-+static const uint64_t sun4i_layer_modifiers[] = {
-+	DRM_FORMAT_MOD_LINEAR,
-+	DRM_FORMAT_MOD_ALLWINNER_TILED,
-+	DRM_FORMAT_MOD_INVALID
-+};
-+
- static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- 						struct sun4i_backend *backend,
- 						enum drm_plane_type type)
-@@ -173,7 +187,7 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- 				       &sun4i_backend_layer_funcs,
- 				       sun4i_layer_formats,
- 				       ARRAY_SIZE(sun4i_layer_formats),
--				       NULL, type, NULL);
-+				       sun4i_layer_modifiers, type, NULL);
+ 	case 3:
+-		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR;
++		*val = tiled ? SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_PLANAR
++			     : SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR;
+ 		return 0;
+ 
+ 	default:
+@@ -325,6 +329,7 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 	struct drm_plane_state *state = plane->state;
+ 	struct drm_framebuffer *fb = state->fb;
+ 	const struct drm_format_info *format = fb->format;
++	uint64_t modifier = fb->modifier;
+ 	u32 out_fmt_val;
+ 	u32 in_fmt_val, in_mod_val, in_ps_val;
+ 	unsigned int i;
+@@ -337,7 +342,8 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 		return ret;
+ 	}
+ 
+-	ret = sun4i_frontend_drm_format_to_input_mode(format, &in_mod_val);
++	ret = sun4i_frontend_drm_format_to_input_mode(format, modifier,
++						      &in_mod_val);
  	if (ret) {
- 		dev_err(drm->dev, "Couldn't initialize layer\n");
- 		return ERR_PTR(ret);
+ 		DRM_DEBUG_DRIVER("Invalid input mode\n");
+ 		return ret;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index c62735c2dc4b..6c4d7797bb8a 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -33,6 +33,8 @@
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR	(0 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED	(1 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR	(2 << 8)
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_PLANAR	(4 << 8)
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_SEMIPLANAR (6 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV444	(0 << 4)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422	(1 << 4)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV420	(2 << 4)
 -- 
 2.20.1
 
