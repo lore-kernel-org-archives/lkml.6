@@ -2,106 +2,158 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F0BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75D6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58F820652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:16:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C73220652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:16:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBLZH93G"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="xSETCPxc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727371AbfARNQS (ORCPT
+        id S1727564AbfARNQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:16:18 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43052 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfARNQS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:16:18 -0500
-Received: by mail-pl1-f193.google.com with SMTP id gn14so6352452plb.10;
-        Fri, 18 Jan 2019 05:16:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=D8DC5RbBkTd9slWSnPIMkEp2BPDFyQpE9Fz08jeK+UM=;
-        b=cBLZH93GeHksHcjlcZFmJ8sOugHEFH6BasuUHZK0HX3aAg4CcxGld6mLDmRqfiy2gu
-         OOSstNe3VzLGiBXMQqCgd7ZO1ZM532NsAEyW5XLletOUEtJE2/JfoEI955imxXbRn6rq
-         B9oY+t+BSD3NPdhDnPviWOktIpMeyw/Jfi6k8KS7r0mAtH9Tetzfg5t73qHwfA9c0FS6
-         rMMOpnDxoqVQ+udz8klMd7rRly8aMPpW0XK4fzuXbXxnBlBdECyM486NqczWJzq1DH9L
-         S+zNI7gpnvPA1anOUTARoTG6jCimNwot0nuVCW4hfn+bIgsrifjCmQ0g3cak1BmX9GuM
-         XmtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D8DC5RbBkTd9slWSnPIMkEp2BPDFyQpE9Fz08jeK+UM=;
-        b=cP1hTrJEoQxHDl2nT6LTRhQFKnLm4lj5fZ2nbNkjcq1I+6eSCqGM/TH6VzzIDeLL3i
-         gAwU3+a7naZ/jBQ4Zlv/GK3mXb+8uCk36LG8ouohan5zSoWgikAYZ6sRKKF5f4ip/JLf
-         dpTohx7nbV2HmcH8heodEDWSlCnnwA3Ka8/2K/+vYZUy/PS25InxeV9xTQV5Xh4qcXfe
-         rM46v+y+XKnO68pRzI3PQNu7mS8CpjAh0qJtfpoBVc1WbGAyz20cigLnZNOyVqO3wx6l
-         1UyRWKfhz9BFEaMNcZJVaQQigRN7EhJ5qfDYpT5uqsIZtH8/WfTqgQKlpsQBYdxi2hmk
-         DFoA==
-X-Gm-Message-State: AJcUukcKUVyvXE8gR18TSBCu9c+xxI7GZYG2HpJT6XzW7+ELskCkcETx
-        NhXQ8m+gEkdyFZsFoYG2IiQ=
-X-Google-Smtp-Source: ALg8bN7nJvBeV7vlXrc8IGty4+qyGlQBqWNngx0WZJ/SHOeehA27rEqy28UVSO3fxEBfcSVQ5CUJtA==
-X-Received: by 2002:a17:902:34a:: with SMTP id 68mr19472350pld.268.1547817376943;
-        Fri, 18 Jan 2019 05:16:16 -0800 (PST)
-Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
-        by smtp.gmail.com with ESMTPSA id d11sm8866196pgi.25.2019.01.18.05.16.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Jan 2019 05:16:16 -0800 (PST)
-Date:   Sat, 19 Jan 2019 00:16:11 +1100
-From:   Balbir Singh <bsingharora@gmail.com>
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCHv4 00/13] Heterogeneuos memory node attributes
-Message-ID: <20190118131611.GG26056@350D>
-References: <20190116175804.30196-1-keith.busch@intel.com>
- <20190117125821.GF26056@350D>
- <20190117154436.GB31543@localhost.localdomain>
+        Fri, 18 Jan 2019 08:16:31 -0500
+Received: from mail-eopbgr150078.outbound.protection.outlook.com ([40.107.15.78]:18592
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726593AbfARNQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 08:16:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XzGlpatmHvfWciMkKxkKen0GIBWgUeZlhiUfVJ4ZJzM=;
+ b=xSETCPxc+T+TrlRJ9FmrUw+DCQv2VeXXJEEmg5dRkgKOuJzpErmpRbb9QVwsQtjErDsxfXWANssnwBCDbBkrZ/ww8jjC/FNY86eU8P6mhbQJQ3mwQVhpVpnlBLrnIjBLKAFfnPg+ofexkraiSkk4VnEA7YTMG3pvW3DBKqxo51c=
+Received: from VI1PR04MB4704.eurprd04.prod.outlook.com (20.177.48.157) by
+ VI1PR04MB4783.eurprd04.prod.outlook.com (20.177.48.216) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.26; Fri, 18 Jan 2019 13:16:25 +0000
+Received: from VI1PR04MB4704.eurprd04.prod.outlook.com
+ ([fe80::e58a:8812:d380:2080]) by VI1PR04MB4704.eurprd04.prod.outlook.com
+ ([fe80::e58a:8812:d380:2080%2]) with mapi id 15.20.1537.018; Fri, 18 Jan 2019
+ 13:16:24 +0000
+From:   Viorel Suman <viorel.suman@nxp.com>
+To:     "robh@kernel.org" <robh@kernel.org>,
+        "nicoleotsuka@gmail.com" <nicoleotsuka@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "timur@kernel.org" <timur@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "viorel.suman@gmail.com" <viorel.suman@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
+Thread-Topic: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
+Thread-Index: AQHUrmKoQmEVxQazyE68ciNiNCuyvqWzo60AgAFfkwA=
+Date:   Fri, 18 Jan 2019 13:16:24 +0000
+Message-ID: <1547817384.11482.33.camel@nxp.com>
+References: <1547729177-14317-1-git-send-email-viorel.suman@nxp.com>
+         <20190117161804.GA5760@bogus>
+In-Reply-To: <20190117161804.GA5760@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=viorel.suman@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4783;6:S2dbYZiTFIHnXctzK0kauah9yNxce2yJYaZZlc9CBLvzqVpAMrFXCIOkBKhlk4udGArkyG2ffrDLXlZgScgXUe7C5m50wvEVeK+r+VB5ERpw43JjWZTVt/+Zg3xCZ87xdtJAqF/9bkzn5Y1ogA68HcWYcUXx4UjWibvE37zXowhdhGCpZDnuLsd3Cevnnj1l/jSivrX/vk3gUzL7qh0yJwqw63nkp4w8v54NLynSv3ERaUsyJDENExaoglfRHcDLT7W/qVWRI8lMScFSSzW4Ni5H+6pym/WDNA8FxgnIPpybeczECdJPeYmgMYSVloicjX1208lKtDOYe0Oo/QLC5H3AB8LHMxSkV+kuhMjVIe/QW35mtWhIdeGDl92oRK4x5r/lz85LRLQihT4/aCpxRkDbflWmDYZG/26qphfvknPBZLjOMHMc2M11D6675TLJJ3fH+boqV7lP1ujeoaA6Yw==;5:Ro3C0Z1Q3viq4pKF4Jo27Ea08CiYhP4cec/HNZj4f1ugNG1XeLPmE4CWdKcgJIVzHOfOi3JiBqrKO3u/bgD7Gzz0HLpAxXhRbXzfYNNgoF8fBW9xuV//VxApGi1x9bJ/ZNu14yD1caX0YzVxhxXBroE+LR+ZWrNyYEBu35J+KDrPtqaNUjOq3lfHemMYId8q2/MBKASvyYxpB2AbgmOa7g==;7:QjiF5HnOP2PDXEpLJLahJzIzR+s348OfYnopYrvEGftacU21KTFjmOQMcPZmIcWZk73ZmEly/xbx51GVIyDd/dsL2op7B0RwD927o6myasWZI9hkgFSP6xhDP04UxGDU0nyRMlIeNznYWQ5/ddH1pg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 61f32cbd-5171-4001-620c-08d67d4725c7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4783;
+x-ms-traffictypediagnostic: VI1PR04MB4783:
+x-microsoft-antispam-prvs: <VI1PR04MB4783F2857FFD3D8007C6D282929C0@VI1PR04MB4783.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0921D55E4F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(39860400002)(346002)(376002)(199004)(189003)(36756003)(110136005)(81166006)(102836004)(26005)(14444005)(68736007)(478600001)(103116003)(476003)(66066001)(6436002)(6506007)(2501003)(316002)(71190400001)(6116002)(8936002)(76176011)(2616005)(99286004)(8676002)(71200400001)(6486002)(3846002)(7416002)(25786009)(229853002)(446003)(305945005)(11346002)(54906003)(4326008)(486006)(6246003)(81156014)(44832011)(5660300001)(97736004)(186003)(105586002)(14454004)(6512007)(106356001)(39060400002)(2906002)(217873002)(7736002)(256004)(86362001)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4783;H:VI1PR04MB4704.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0XKewtE9nFhs44gqc91KZjOyxhMq+MM7GT+ybXE779fSPEFKtSqIjDUzmC+6nqm3WdiKfo5l56Ox0HdQy/8s0wdUBh195FHRnVNhVufLl8rmjJoGDfehEPStZHPshnOt4cY7h86y5FRqKOuJPGly3rf9gGTX9BSvrARROQyRkjJ+QuYLCJpmH4Y8TWHxPawkQGNiCzS0aHkL5+iwHDdZEwZHRH4EHaE0cYHcreKKnyypK125jXgzM3cDMnI15Jl/WQmOtch5stef8Lty6Wt2Qnu1T0Qv/s/2HvZEisikVqSV+jC9IKFnYv1bOE36avwt0OB/gUAy5E7RZqM5kp4rjEsfUW/H3wPLuugBDLR5DszeY3FkKL8EktviTUtzT+OWAWb+3McQJL2hpYq+5RZDN7soXxL8RkrBd/ZX5gPJcf0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <92DBA4F10D09D34EB93E4BAF7B64843A@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117154436.GB31543@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61f32cbd-5171-4001-620c-08d67d4725c7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jan 2019 13:16:24.8227
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4783
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 08:44:37AM -0700, Keith Busch wrote:
-> On Thu, Jan 17, 2019 at 11:58:21PM +1100, Balbir Singh wrote:
-> > On Wed, Jan 16, 2019 at 10:57:51AM -0700, Keith Busch wrote:
-> > > It had previously been difficult to describe these setups as memory
-> > > rangers were generally lumped into the NUMA node of the CPUs. New
-> > > platform attributes have been created and in use today that describe
-> > > the more complex memory hierarchies that can be created.
-> > > 
-> > 
-> > Could you please expand on this text -- how are these attributes
-> > exposed/consumed by both the kernel and user space?
-> > 
-> > > This series' objective is to provide the attributes from such systems
-> > > that are useful for applications to know about, and readily usable with
-> > > existing tools and libraries.
-> > 
-> > I presume these tools and libraries are numactl and mbind()?
-> 
-> Yes, and numactl is used the examples provided in both changelogs and
-> documentation in this series. Do you want to see those in the cover
-> letter as well?
-
-Not really, I was just reading through the cover letter and was curious
-
-Balbir Singh.
+SGkgUm9iLCBOaWNvbGluLCBBbGwsDQoNCk9uIEpvLCAyMDE5LTAxLTE3IGF0IDEwOjE4IC0wNjAw
+LCBSb2IgSGVycmluZyB3cm90ZToNCj4gT24gVGh1LCBKYW4gMTcsIDIwMTkgYXQgMTI6NDY6MjVQ
+TSArMDAwMCwgVmlvcmVsIFN1bWFuIHdyb3RlOg0KPiA+IA0KPiA+IFRoZSBwYXRjaHNldCBhZGRz
+IE5YUCBBdWRpbyBNaXhlciAoQVVETUlYKSBkZXZpY2UgYW5kIG1hY2hpbmUNCj4gPiBkcml2ZXJz
+IGFuZCByZWxhdGVkIERUIGJpbmRpbmdzIGRvY3VtZW50YXRpb24uDQo+ID4gDQo+ID4gQ2hhbmdl
+cyBzaW5jZSBWMjoNCj4gPiAxLiBNb3ZlZCAiZGFpcyIgbm9kZSBmcm9tIG1hY2hpbmUgZHJpdmVy
+IERUUyBub2RlIHRvIGRldmljZSBkcml2ZXINCj4gPiBEVFMgbm9kZQ0KPiA+IMKgIGFzIHN1Z2dl
+c3RlZCBieSBSb2IuDQo+IFRoYXQgd2FzIG5vdCB3aGF0IEkgc3VnZ2VzdGVkLiBZb3Ugc3RpbGwg
+aGF2ZSBhIHZpcnR1YWwgbm9kZSB3aGljaA0KPiBsb29rcyB0byBtZSB0byBiZSB1bm5lY2Vzc2Fy
+eS4NCg0KVG8gbWUgcmVtb3ZpbmcgdmlydHVhbCBub2RlIGltcGxpZXMgdGhhdCBBVURNSVggbWFj
+aGluZSBkcml2ZXIgKGlteC0NCmF1ZG1peC5jICsgdmlydHVhbCBub2RlKSBzaGFsbCBiZSByZW1v
+dmVkIGFuZCBtYWNoaW5lIGRyaXZlciBjb2RlDQptZXJnZWQgaW50byBkZXZpY2UgZHJpdmVyIChm
+c2xfYXVkbWl4LmMgKyBkZXZpY2Ugbm9kZSkgLSBwbGVhc2UgbGV0IG1lDQprbm93IGlmIG15IHVu
+ZGVyc3RhbmRpbmcgaXMgd3JvbmcuDQoNClRoZSBpbXBsaWNhdGlvbiBpcyB0aGF0IHRoaXMgbWFr
+ZXMgQVVETUlYIGRldmljZSBkcml2ZXIgYm91bmRlZCB0byBhDQpwYXJ0aWN1bGFyIERBSSB0eXBl
+IG9mIGludGVyZmFjZSAtIFNBSS4gVGhlIG9yaWdpbmFsIGludGVudGlvbiBpcyB0bw0Ka2VlcCBB
+VURNSVggZGV2aWNlIGRyaXZlciBEQUktYWdub3N0aWMuDQoNCkluZGVlZCwgY3VycmVudGx5IHRo
+ZSBjb25uZWN0aW9uIGJldHdlZW4gQVVETUlYIGFuZCBTQUkgSVAgYmxvY2tzIGluDQppLk1YOFFN
+IGFuZCBpLk1YOFFYUCBpcyBmaXhlZCBpbnNpZGUgdGhlIFNvQywgYnV0IG9uIG90aGVyIHBsYXRm
+b3JtcyB3ZQ0KbWF5IGV4cGVjdCBBVURNSVggdG8gYmUgY29ubmVjdGVkIGluc2lkZSB0aGUgU29D
+IHRvIG90aGVyIElQIGJsb2NrcyAtDQp0byBFU0FJIGludGVyZmFjZSBmb3IgaW5zdGFuY2UuDQoN
+CkF0IHRoaXMgbW9tZW50IGl0J3MgYSBiaXQgZGlmZmljdWx0IGZvciBtZSB0byBldmFsdWF0ZSBo
+b3cgY3JpdGljYWwgaXMNCnRvIGtlZXAgdGhlIGRldmljZSBkcml2ZXIgREFJLWFnbm9zdGljLCBz
+byBpZiB5b3UgdGhpbmsgaXQncyBiZXR0ZXIgdG8NCmdvIG5vdyB3aXRoIGEgU0FJIGJvdW5kZWQg
+QVVETUlYIGRldmljZSBkcml2ZXIgLSBwbGVhc2UgY29uZmlybSwgSSdsbA0KbWVyZ2UgbWFjaGlu
+ZSBkcml2ZXIgY29kZSBpbnRvIGRldmljZSBkcml2ZXIuDQoNClRoYW5rIHlvdSwNClZpb3JlbA0K
+DQo+IA0KPiA+IA0KPiA+IA0KPiA+IENoYW5nZXMgc2luY2UgVjE6DQo+ID4gMS4gT3JpZ2luYWwg
+cGF0Y2ggc3BsaXQgaW50byBkaXN0aW5jdCBwYXRjaGVzIGZvciB0aGUgZGV2aWNlIGRyaXZlcg0K
+PiA+IGFuZA0KPiA+IMKgIERUIGJpbmRpbmcgZG9jdW1lbnRhdGlvbi4NCj4gPiAyLiBSZXBsYWNl
+ZCBBTUlYIHdpdGggQVVETUlYIGluIGJvdGggY29kZSBhbmQgZmlsZSBuYW1lcyBhcyBpdA0KPiA+
+IGxvb2tzIG1vcmUNCj4gPiDCoCBSTS1jb21wbGlhbnQuDQo+ID4gMy4gUmVtb3ZlZCBwb2xhcml0
+eSBjb250cm9sIGZyb20gQ1BVIERBSSBkcml2ZXIgYXMgc3VnZ2VzdGVkIGJ5DQo+ID4gTmljb2xp
+bi4NCj4gPiA0LiBBZGRlZCBtYWNoaW5lIGRyaXZlciBhbmQgcmVsYXRlZCBEVCBiaW5kaW5nIGRv
+Y3VtZW50YXRpb24uDQo+ID4gDQo+ID4gVmlvcmVsIFN1bWFuICg0KToNCj4gPiDCoCBBU29DOiBm
+c2w6IEFkZCBBdWRpbyBNaXhlciBDUFUgREFJIGRyaXZlcg0KPiA+IMKgIEFTb0M6IGFkZCBmc2xf
+YXVkbWl4IERUIGJpbmRpbmcgZG9jdW1lbnRhdGlvbg0KPiA+IMKgIEFTb0M6IGZzbDogQWRkIEF1
+ZGlvIE1peGVyIG1hY2hpbmUgZHJpdmVyDQo+ID4gwqAgQVNvQzogYWRkIGlteC1hdWRtaXggRFQg
+YmluZGluZyBkb2N1bWVudGF0aW9uDQo+ID4gDQo+ID4gwqAuLi4vZGV2aWNldHJlZS9iaW5kaW5n
+cy9zb3VuZC9mc2wsYXVkbWl4LnR4dMKgwqDCoMKgwqDCoMKgfMKgwqA1MCArKw0KPiA+IMKgLi4u
+L2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQvaW14LWF1ZG1peC50eHTCoMKgwqDCoMKgwqDCoHzC
+oMKgMTggKw0KPiA+IMKgc291bmQvc29jL2ZzbC9LY29uZmlnwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfMKgwqAxNiArDQo+ID4gwqBz
+b3VuZC9zb2MvZnNsL01ha2VmaWxlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqA1ICsNCj4gPiDCoHNvdW5kL3NvYy9mc2wvZnNs
+X2F1ZG1peC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqB8IDU1MQ0KPiA+ICsrKysrKysrKysrKysrKysrKysrKw0KPiA+IMKgc291bmQvc29jL2ZzbC9m
+c2xfYXVkbWl4LmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoHwgMTAyICsrKysNCj4gPiDCoHNvdW5kL3NvYy9mc2wvaW14LWF1ZG1peC5jwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8IDMzNA0KPiA+ICsrKysr
+KysrKysrKysNCj4gPiDCoDcgZmlsZXMgY2hhbmdlZCwgMTA3NiBpbnNlcnRpb25zKCspDQo+ID4g
+wqBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3Mvc291bmQvZnNsLGF1ZG1peC50eHQNCj4gPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQvaW14LQ0KPiA+IGF1ZG1peC50eHQNCj4g
+PiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBzb3VuZC9zb2MvZnNsL2ZzbF9hdWRtaXguYw0KPiA+IMKg
+Y3JlYXRlIG1vZGUgMTAwNjQ0IHNvdW5kL3NvYy9mc2wvZnNsX2F1ZG1peC5oDQo+ID4gwqBjcmVh
+dGUgbW9kZSAxMDA2NDQgc291bmQvc29jL2ZzbC9pbXgtYXVkbWl4LmMNCj4gPiA=
