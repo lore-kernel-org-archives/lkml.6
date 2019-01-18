@@ -2,160 +2,135 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA51C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A804EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBA3020823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76CEA20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ldltjvKr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3SoNzHo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfARMiu (ORCPT
+        id S1727755AbfARMjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:38:50 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47961 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbfARMit (ORCPT
+        Fri, 18 Jan 2019 07:39:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39056 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727598AbfARMjG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:38:49 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190118123847euoutp01b498990d22ad9051956af068b7858e48~68ahpRrYM3016330163euoutp018
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 12:38:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190118123847euoutp01b498990d22ad9051956af068b7858e48~68ahpRrYM3016330163euoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1547815127;
-        bh=0Nlffo9/9fLiiva6jOfcHNyWlIzNzlAYadPT8KNkglA=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=ldltjvKrGMlRsFf6TtZH1rZt/LulRZyERVa7MmG/CkHZnXA/4JH+6YzSV8PKTA7DR
-         oiyhHZtFxvjd1XFnYqxDTluEnZ9QP4F+sqCCY083aO8L3q1/3jMHSPcWF2EqG1PBZG
-         8ELCGXoxPrMZS7wKiZ/yuMWzyedzkVHCG2NrlcmQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190118123847eucas1p28de0c7f237def5de1d7c25edbfe630c2~68ahPvbbN0733907339eucas1p2g;
-        Fri, 18 Jan 2019 12:38:47 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 18.DF.04294.6D8C14C5; Fri, 18
-        Jan 2019 12:38:46 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190118123845eucas1p25b20e2175991a620437c338a0001f03a~68agLKyRk0733107331eucas1p2d;
-        Fri, 18 Jan 2019 12:38:45 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190118123845eusmtrp258861f293db19d283c8d45ced43dc046~68af8jS1V1608016080eusmtrp2e;
-        Fri, 18 Jan 2019 12:38:45 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-dc-5c41c8d6c79d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 29.90.04128.5D8C14C5; Fri, 18
-        Jan 2019 12:38:45 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190118123845eusmtip2804082441d44cf6c3b57d4118a74034a~68afqRqU70627506275eusmtip2C;
-        Fri, 18 Jan 2019 12:38:45 +0000 (GMT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [GIT PULL] fbdev fixes for v5.0-rc3
-Message-ID: <2bb72d22-590c-958f-1dd1-fe44f264091b@samsung.com>
-Date:   Fri, 18 Jan 2019 13:38:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Fri, 18 Jan 2019 07:39:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so14880689wra.6;
+        Fri, 18 Jan 2019 04:39:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aX85GmsmDubEcW1ODoBzE9KC7HLoNTVrutlcQlqhvTY=;
+        b=I3SoNzHoFBY21vFTh0fLuNU2BYyb/VWh5Pn1bHWHJK5E+wVypb+/MhJzDl8sRO2HdS
+         tf83/k8pXPk+kOOb9bK4WsONW9VkLqdKQCmIBotmKwLc+JI+38mxFTwnwpX+qJHLoGu9
+         /2mYxfi73CT6F/KiaNCaBHKG/oSrwpXdHCFQxYVdmQKI26QCf4K68F0S3svm/iAeE21D
+         /DquVBXtwJIGjhhyT9Qna4eQd/q8xPQPduow1znxDY+dF8AT7p+aKIjJ/QhHAdesGGmN
+         UecpXv3wmR7N/tACyWWGoQZLD6xv+KC4lMUhkUK4kRGPynQmBr6NZxP5Bmttl9txW+R1
+         etjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aX85GmsmDubEcW1ODoBzE9KC7HLoNTVrutlcQlqhvTY=;
+        b=CjnFBhd/znIyiRQV0R5srB462XffJH2qmcBJiLmSs5GtQsmXpxKuDwRfvu1BmrcJE/
+         507ewbsriX3++vRZkDBNz+Ruk2OAV09HWIotIBfKGKlkXISfs5Rly5g3hVUY9MsYxLyb
+         lllQllHofAa+ogX+MNWKYn19vXUiAYXal6eVl8QwbZiJUAuiFX9QcCySFR36Z62FIhi8
+         m/6ZQjBJcz6Zrn+ZcSmVuXV2JTwR16B4VE+mwWg6SmdrvGXgaucvhzw2ro0+pFtTifvG
+         MUh1+BC9kcOTv70JB97Y5lzpq+0SjqOmHsD9ad+XcgTX3TpifhOE+GwzmA7qcxv2BmsD
+         6/wQ==
+X-Gm-Message-State: AJcUukfuE8uSnk0HxFijRXOZLorl+1XG3Lq2/sVsR4BwOMIFw201XKHa
+        Hm/nXKlg+TuWlzU9tMO3A6o=
+X-Google-Smtp-Source: ALg8bN43X0ADQ48EAymWM3mQSA6sKFx1wVRTOHxZZIb8eR1RLyI2WPyBEOXUBBACKI+Cf+tJEMWnAA==
+X-Received: by 2002:a5d:66c1:: with SMTP id k1mr15960189wrw.132.1547815143551;
+        Fri, 18 Jan 2019 04:39:03 -0800 (PST)
+Received: from localhost.localdomain ([151.15.254.62])
+        by smtp.gmail.com with ESMTPSA id e17sm141178212wri.36.2019.01.18.04.39.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 04:39:02 -0800 (PST)
+Date:   Fri, 18 Jan 2019 13:39:00 +0100
+From:   Juri Lelli <juri.lelli@gmail.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] drivers: Frequency constraint infrastructure
+Message-ID: <20190118123900.GJ14385@localhost.localdomain>
+References: <cover.1547197612.git.viresh.kumar@linaro.org>
+ <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
+ <20190117131631.GA14385@localhost.localdomain>
+ <CAJZ5v0jFqXGf_G2v1VNXSxyiDzgeFY8OKUFu2tQ8Wso3dBS+_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42LZduzned1rJxxjDD5sMbG48vU9m8WJvg+s
-        Fpd3zWGzeNT3lt2BxePEjN8sHve7jzN5fN4kF8AcxWWTkpqTWZZapG+XwJWx/sY5loIJfBUP
-        D7czNTB+4+pi5OSQEDCR2HlkLVsXIxeHkMAKRokPfTOZIZwvjBJHnh9hhXA+M0o8P/+UFabl
-        zswjTBCJ5YwSn2behHLeM0oc3LkQrEpEwEji84srYDazQILEl5ufmUFsNgEriYntqxhBbGEB
-        HYknK26A1fAK2EncvzEFzGYRUJU43LYd6CgODlGBCIn+M+oQJYISJ2c+YYEYKS+x/e0csFMl
-        BJ6zSUzZtZwZ4joXiaMvf7FB2MISr45vYYewZST+75zPBNEwnVHiza+lLBDOekaJNWeOMUFU
-        WUscPn6RFWQzs4CmxPpd+hBhR4lHR+cxgYQlBPgkbrwVhDiCT2LStunMEGFeiY42IYhqNYkN
-        yzawwazt2rkS6jQPidU3toC9LiQQK9EwdyXbBEaFWUhem4XktVkINyxgZF7FKJ5aWpybnlps
-        lJdarlecmFtcmpeul5yfu4kRmDpO/zv+ZQfjrj9JhxgFOBiVeHgnbHGIEWJNLCuuzD3EKMHB
-        rCTCy7XCMUaINyWxsiq1KD++qDQntfgQozQHi5I4bzXDg2ghgfTEktTs1NSC1CKYLBMHp1QD
-        4yy2OYdEO6q7/3As3DA5TyTmuxnH/pdea9rCL+fofbO4X/L1+2b9p3uEd0tvNF3P4HyhzPvi
-        tQ2Cs+8tVEp5sJsnWHnPhx8Vdk+N9R682PP+RR+/xO/Cy8lBH58cv/KJdeLc2VHHfe9E5csF
-        /9z3dNoFmUun5Oa9q+OOqC89HsViG7zqUbXovxAlluKMREMt5qLiRAAxuWDaGQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsVy+t/xe7pXTzjGGGzeomlx5et7NosTfR9Y
-        LS7vmsNm8ajvLbsDi8eJGb9ZPO53H2fy+LxJLoA5Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLP
-        yMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS9j/Y1zLAUT+CoeHm5namD8xtXFyMkhIWAicWfm
-        EaYuRi4OIYGljBLbZq1j62LkAErISBxfXwZRIyzx51oXG0TNW0aJk8svMIEkRASMJD6/uMIK
-        YjMLJEhsuj+VDcRmE7CSmNi+ihHEFhbQkXiy4gZYDa+AncT9G1PAbBYBVYnDbdvB6kUFIiRu
-        PexggagRlDg58wkLxEx1iT/zLjFD2PIS29/OYZ7AyD8LSdksJGWzkJQtYGRexSiSWlqcm55b
-        bKRXnJhbXJqXrpecn7uJERjg24793LKDsetd8CFGAQ5GJR7eF9scYoRYE8uKK3MPMUpwMCuJ
-        8HKtcIwR4k1JrKxKLcqPLyrNSS0+xGgKdPhEZinR5Hxg9OWVxBuaGppbWBqaG5sbm1koifOe
-        N6iMEhJITyxJzU5NLUgtgulj4uCUamCs1Tq7ck/3keTgFqv/Ld97nQ70F1Q+ev3GKzP/3anV
-        043r3lS+Nzt1meWh2w0302z5R4dnWactm/G/a/sEl/0ztNmPtjzIOqsxW1bcv2vPYbPD4Vvq
-        212/fdwnv/Ptsu2Lzn3/Fx80s3zzF543YdZne1Z0HbDoiUt2kF8qvGv2a94ezfPP5CMWKLEU
-        ZyQaajEXFScCAI8kMXiGAgAA
-X-CMS-MailID: 20190118123845eucas1p25b20e2175991a620437c338a0001f03a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190118123845eucas1p25b20e2175991a620437c338a0001f03a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190118123845eucas1p25b20e2175991a620437c338a0001f03a
-References: <CGME20190118123845eucas1p25b20e2175991a620437c338a0001f03a@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0jFqXGf_G2v1VNXSxyiDzgeFY8OKUFu2tQ8Wso3dBS+_w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 17/01/19 15:55, Rafael J. Wysocki wrote:
+> On Thu, Jan 17, 2019 at 2:16 PM Juri Lelli <juri.lelli@gmail.com> wrote:
+> >
+> > On 11/01/19 10:47, Rafael J. Wysocki wrote:
+> > > On Fri, Jan 11, 2019 at 10:18 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > This commit introduces the frequency constraint infrastructure, which
+> > > > provides a generic interface for parts of the kernel to constraint the
+> > > > working frequency range of a device.
+> > > >
+> > > > The primary users of this are the cpufreq and devfreq frameworks. The
+> > > > cpufreq framework already implements such constraints with help of
+> > > > notifier chains (for thermal and other constraints) and some local code
+> > > > (for user-space constraints). The devfreq framework developers have also
+> > > > shown interest [1] in such a framework, which may use it at a later
+> > > > point of time.
+> > > >
+> > > > The idea here is to provide a generic interface and get rid of the
+> > > > notifier based mechanism.
+> > > >
+> > > > Only one constraint is added for now for the cpufreq framework and the
+> > > > rest will follow after this stuff is merged.
+> > > >
+> > > > Matthias Kaehlcke was involved in the preparation of the first draft of
+> > > > this work and so I have added him as Co-author to the first patch.
+> > > > Thanks Matthias.
+> > > >
+> > > > FWIW, This doesn't have anything to do with the boot-constraints
+> > > > framework [2] I was trying to upstream earlier :)
+> > >
+> > > This is quite a bit of code to review, so it will take some time.
+> > >
+> > > One immediate observation is that it seems to do quite a bit of what
+> > > is done in the PM QoS framework, so maybe there is an opportunity for
+> > > some consolidation in there.
+> >
+> > Right, had the same impression. :-)
+> >
+> > I was also wondering how this new framework is dealing with
+> > constraints/request imposed/generated by the scheduler and related
+> > interfaces (thinking about schedutil and Patrick's util_clamp).
+> 
+> My understanding is that it is orthogonal to them, like adding extra
+> constraints on top of them etc.
 
-Hi Linus,
-
-Please pull fbdev fixes for v5.0-rc3 (please see the signed tag
-description for details).
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-The following changes since commit 399382f8018204407174f0229b4087d40e1cdc82:
-
-  drm/nouveau: fix incorrect FB_BACKLIGHT usage in Kconfig (2019-01-02 18:47:37 +0100)
-
-are available in the git repository at:
-
-  https://github.com/bzolnier/linux.git tags/fbdev-v5.0-rc3
-
-for you to fetch changes up to 890d14d2d4b57ff5a149309da3ed36c8a529987f:
-
-  fbdev: fbmem: convert CONFIG_FB_LOGO_CENTER into a cmd line option (2019-01-16 17:42:35 +0100)
-
-----------------------------------------------------------------
-fbdev fixes for v5.0-rc3:
-
-- fix stack memory leak in omap2fb driver (Vlad Tsyrklevich)
-
-- fix OF node name handling v4.20 regression in offb driver (Rob Herring)
-
-- convert CONFIG_FB_LOGO_CENTER config option added in v5.0-rc1 into
-  a kernel parameter (Peter Rosin)
-
-----------------------------------------------------------------
-Peter Rosin (1):
-      fbdev: fbmem: convert CONFIG_FB_LOGO_CENTER into a cmd line option
-
-Rob Herring (1):
-      fbdev: offb: Fix OF node name handling
-
-Vlad Tsyrklevich (1):
-      omap2fb: Fix stack memory disclosure
-
- Documentation/fb/fbcon.txt                      |  8 ++++++++
- drivers/video/fbdev/core/fbcon.c                |  7 +++++++
- drivers/video/fbdev/core/fbmem.c                | 19 ++++++++++---------
- drivers/video/fbdev/offb.c                      | 18 +++++++++---------
- drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |  2 ++
- drivers/video/logo/Kconfig                      |  9 ---------
- include/linux/fb.h                              |  1 +
- 7 files changed, 37 insertions(+), 27 deletions(-)
+Mmm, ok. But, if that is indeed the case, I now wonder why and how
+existing (or hopefully to be added soon) interfaces are not sufficient.
+I'm not against this proposal, just trying to understand if this might
+create unwanted, hard to manage, overlap.
