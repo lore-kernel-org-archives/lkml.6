@@ -3,27 +3,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F11C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D4AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D8DE2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24BA42087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbfAROxd (ORCPT
+        id S1727591AbfAROxc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:53:33 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47843 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:53:32 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47902 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727578AbfAROvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727732AbfAROvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 09:51:44 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A9D91209EF; Fri, 18 Jan 2019 15:51:41 +0100 (CET)
+        id B617C20A9B; Fri, 18 Jan 2019 15:51:42 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5DE1920797;
-        Fri, 18 Jan 2019 15:51:41 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 64AD620A9B;
+        Fri, 18 Jan 2019 15:51:42 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 02/23] drm/fourcc: Add format info helpers for checking YUV sub-sampling
-Date:   Fri, 18 Jan 2019 15:51:12 +0100
-Message-Id: <20190118145133.21281-3-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 06/23] drm/sun4i: Move the BT.601 CSC coefficients to the frontend
+Date:   Fri, 18 Jan 2019 15:51:16 +0100
+Message-Id: <20190118145133.21281-7-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,102 +48,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Display engine drivers often need to distinguish between different types of
-YUV sub-sampling. This introduces helpers to check for common sub-sampling
-ratios in their commonly-used denomination from the DRM format info.
+Both the backend and the frontend need the BT.601 CSC coefficients for
+YUV to RGB conversion. Since the backend has a dependency on the
+frontend (and not the other way round), move the coefficients there
+so that both can access them without having to duplicate them.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- include/drm/drm_fourcc.h | 75 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_backend.c  | 22 ----------------------
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 23 +++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  1 +
+ 3 files changed, 24 insertions(+), 22 deletions(-)
 
-diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index 01cd353d9302..b3d9d88ab290 100644
---- a/include/drm/drm_fourcc.h
-+++ b/include/drm/drm_fourcc.h
-@@ -185,6 +185,81 @@ drm_format_info_is_yuv_planar(const struct drm_format_info *info)
- 	return info->is_yuv && info->num_planes == 3;
- }
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index bbadc2ab9f4d..892197f52557 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -45,28 +45,6 @@ static const u32 sunxi_rgb2yuv_coef[12] = {
+ 	0x000001c1, 0x00003e88, 0x00003fb8, 0x00000808
+ };
  
-+/**
-+ * drm_format_info_is_yuv_sampling_410 - check that the format info matches a
-+ * YUV format with 4:1:0 sub-sampling
-+ * @info: format info
+-/*
+- * These coefficients are taken from the A33 BSP from Allwinner.
+- *
+- * The first three values of each row are coded as 13-bit signed fixed-point
+- * numbers, with 10 bits for the fractional part. The fourth value is a
+- * constant coded as a 14-bit signed fixed-point number with 4 bits for the
+- * fractional part.
+- *
+- * The values in table order give the following colorspace translation:
+- * G = 1.164 * Y - 0.391 * U - 0.813 * V + 135
+- * R = 1.164 * Y + 1.596 * V - 222
+- * B = 1.164 * Y + 2.018 * U + 276
+- *
+- * This seems to be a conversion from Y[16:235] UV[16:240] to RGB[0:255],
+- * following the BT601 spec.
+- */
+-static const u32 sunxi_bt601_yuv2rgb_coef[12] = {
+-	0x000004a7, 0x00001e6f, 0x00001cbf, 0x00000877,
+-	0x000004a7, 0x00000000, 0x00000662, 0x00003211,
+-	0x000004a7, 0x00000812, 0x00000000, 0x00002eb1,
+-};
+-
+ static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
+ {
+ 	int i;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index 7c7a5ea0cf58..045013efdc57 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -48,6 +48,29 @@ static const u32 sun4i_frontend_horz_coef[64] = {
+ 	0x03ff0000, 0x0000fd41, 0x01ff0000, 0x0000fe42,
+ };
+ 
++/*
++ * These coefficients are taken from the A33 BSP from Allwinner.
 + *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:1:0
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_410(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 4 && info->vsub == 4;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_sampling_411 - check that the format info matches a
-+ * YUV format with 4:1:1 sub-sampling
-+ * @info: format info
++ * The first three values of each row are coded as 13-bit signed fixed-point
++ * numbers, with 10 bits for the fractional part. The fourth value is a
++ * constant coded as a 14-bit signed fixed-point number with 4 bits for the
++ * fractional part.
 + *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:1:1
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_411(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 4 && info->vsub == 1;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_sampling_420 - check that the format info matches a
-+ * YUV format with 4:2:0 sub-sampling
-+ * @info: format info
++ * The values in table order give the following colorspace translation:
++ * G = 1.164 * Y - 0.391 * U - 0.813 * V + 135
++ * R = 1.164 * Y + 1.596 * V - 222
++ * B = 1.164 * Y + 2.018 * U + 276
 + *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:2:0
-+ * sub-sampling.
++ * This seems to be a conversion from Y[16:235] UV[16:240] to RGB[0:255],
++ * following the BT601 spec.
 + */
-+static inline bool
-+drm_format_info_is_yuv_sampling_420(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 2 && info->vsub == 2;
-+}
++const u32 sunxi_bt601_yuv2rgb_coef[12] = {
++	0x000004a7, 0x00001e6f, 0x00001cbf, 0x00000877,
++	0x000004a7, 0x00000000, 0x00000662, 0x00003211,
++	0x000004a7, 0x00000812, 0x00000000, 0x00002eb1,
++};
++EXPORT_SYMBOL(sunxi_bt601_yuv2rgb_coef);
 +
-+/**
-+ * drm_format_info_is_yuv_sampling_422 - check that the format info matches a
-+ * YUV format with 4:2:2 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:2:2
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_422(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 2 && info->vsub == 1;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_sampling_444 - check that the format info matches a
-+ * YUV format with 4:4:4 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:4:4
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_444(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 1 && info->vsub == 1;
-+}
-+
- const struct drm_format_info *__drm_format_info(u32 format);
- const struct drm_format_info *drm_format_info(u32 format);
- const struct drm_format_info *
+ static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
+ {
+ 	int i;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index ad146e8d8d70..3df2bd8a7a95 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -86,6 +86,7 @@ struct sun4i_frontend {
+ };
+ 
+ extern const struct of_device_id sun4i_frontend_of_table[];
++extern const u32 sunxi_bt601_yuv2rgb_coef[12];
+ 
+ int sun4i_frontend_init(struct sun4i_frontend *frontend);
+ void sun4i_frontend_exit(struct sun4i_frontend *frontend);
 -- 
 2.20.1
 
