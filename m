@@ -2,109 +2,72 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 832C9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C893C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFA120855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:45:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Lqot3MN3"
+	by mail.kernel.org (Postfix) with ESMTP id 03A7B20855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:47:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfARFpe (ORCPT
+        id S1727159AbfARFrH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 00:45:34 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34209 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfARFpe (ORCPT
+        Fri, 18 Jan 2019 00:47:07 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:37416 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbfARFrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 00:45:34 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w4so5857698plz.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 21:45:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=1GHCrIH/zhKjvR57yQojViA6vvVSllVOfQJXVhcIPV8=;
-        b=Lqot3MN3q/rP4POvMC+G9EZaYGDfxuBoX+U8QsEsosKnYg7V2G5vgPMewV1LuxoaWM
-         5I+GuZidL0D3+YAYzdtfP7zZWCRfRprwQRk9mtmuhiXW9WpEF7rlrpCg1puvAxHjbPDz
-         pLlMMlKTjZzaMPRCLvBiCERwMhZ2H6hFWarxQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1GHCrIH/zhKjvR57yQojViA6vvVSllVOfQJXVhcIPV8=;
-        b=IY2BqibJL1ktxMPGr+Odl6kbqdIJZzEPnv2TvwZoPaasMCqD2JJguLW36nLOHR/H8y
-         AjgeIv/wB0YkuKfcocJ1j0ucoZchTAsse5MMwA0rS0YubYfMqOZmuIZmy/2hYJzGoO9B
-         UoCKSKTSom0DsydH/ke439ObB9gGAeKTpHs4ZHguymbkZjkpeK67maD2FPV6J7uHUlsl
-         KBZ/xrQw7NI1HQdesWUqHjB1OAmzC9zVL/hWrcVCX7Ge5CagTDYB6lEIyIzHZjdWJi+y
-         MMkz/02wXrG0oCgxW+EM6KPsgZmelp6rPQpPajELfhX3vYpsuqNDNyffqTPvDoUdfajg
-         S6Pw==
-X-Gm-Message-State: AJcUukdtvw3L+rwyF3/wAs5+xCUKANrLnSpYZ0q7ehfVqYYTn+L9B+8o
-        BKq8Vxyx47MzGZuJp0i3UJysxQ==
-X-Google-Smtp-Source: ALg8bN44GgQV1V9GC6wrvd8U+o3O/82fe/Z1pfqaauYKt/Y4QTetQjEjHU7/dFD+dHBxlqs69iOZyg==
-X-Received: by 2002:a17:902:8a91:: with SMTP id p17mr18011684plo.316.1547790333630;
-        Thu, 17 Jan 2019 21:45:33 -0800 (PST)
-Received: from pramodku-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id l5sm476264pfi.56.2019.01.17.21.45.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 17 Jan 2019 21:45:33 -0800 (PST)
-From:   Pramod Kumar <pramod.kumar@broadcom.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Subject: [PATCH RFC 1/1] arm64: Use PSCI calls for CPU stop when hotplug is supported
-Date:   Fri, 18 Jan 2019 11:16:20 +0530
-Message-Id: <1547790380-6276-1-git-send-email-pramod.kumar@broadcom.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 18 Jan 2019 00:47:07 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 24A6814BA1BCB;
+        Thu, 17 Jan 2019 21:47:06 -0800 (PST)
+Date:   Thu, 17 Jan 2019 21:47:05 -0800 (PST)
+Message-Id: <20190117.214705.1465557777501427449.davem@davemloft.net>
+To:     jasowang@redhat.com
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jintack@cs.columbia.edu
+Subject: Re: [PATCH net V4] vhost: log dirty page correctly
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190116085442.3836-1-jasowang@redhat.com>
+References: <20190116085442.3836-1-jasowang@redhat.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 17 Jan 2019 21:47:06 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CPU hotplug is supported, ipi_cpu_stop should use PSCI cpudie
-call to stop the CPU. This call ensures L1/L2 cache flush,
-CPUs cache-cohenrecy setting w.r.to interconnect.
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 16 Jan 2019 16:54:42 +0800
 
-Apart from this, this gives control to f/w to reduce power consumption
-by take appropriate decesion on power rails for plugging-out core.
+> Vhost dirty page logging API is designed to sync through GPA. But we
+> try to log GIOVA when device IOTLB is enabled. This is wrong and may
+> lead to missing data after migration.
+> 
+> To solve this issue, when logging with device IOTLB enabled, we will:
+> 
+> 1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
+>    get HVA, for writable descriptor, get HVA through iovec. For used
+>    ring update, translate its GIOVA to HVA
+> 2) traverse the GPA->HVA mapping to get the possible GPA and log
+>    through GPA. Pay attention this reverse mapping is not guaranteed
+>    to be unique, so we should log each possible GPA in this case.
+> 
+> This fix the failure of scp to guest during migration. In -next, we
+> will probably support passing GIOVA->GPA instead of GIOVA->HVA.
+> 
+> Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
+> Reported-by: Jintack Lim <jintack@cs.columbia.edu>
+> Cc: Jintack Lim <jintack@cs.columbia.edu>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- arch/arm64/kernel/smp.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 1598d6f..360e52b 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -822,8 +822,13 @@ static void ipi_cpu_stop(unsigned int cpu)
- 	local_daif_mask();
- 	sdei_mask_local_cpu();
- 
-+#ifdef CONFIG_HOTPLUG_CPU
-+	if (cpu_ops[cpu]->cpu_die)
-+		cpu_ops[cpu]->cpu_die(cpu);
-+#else
- 	while (1)
- 		cpu_relax();
-+#endif
- }
- 
- #ifdef CONFIG_KEXEC_CORE
--- 
-1.9.1
-
+Applied and queued up for -stable.
