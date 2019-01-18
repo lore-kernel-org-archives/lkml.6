@@ -2,75 +2,142 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61323C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8152DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23DA52086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547826946;
-	bh=qUkhlJbgGuLbuL/lPsr8l8OS8S7KE2oYbF5rdX6KRSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=H1vhSmxlNLK4+GM6M3NHpk/RRudoMoN4EAIFERD2ARROD2NWCZ9BFpvLY294mwxEY
-	 cfHpfTCMiGb092PQn1ib5UYKilrhpsngtxeTgR+k0htlX7y25BNOmOL62zHM7S0Uhb
-	 NpInAtPxkWPjTp8FYthQq/5snTOTOGzhHzL4WmSk=
+	by mail.kernel.org (Postfix) with ESMTP id 531DB2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:56:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4lXJ3Od"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbfARPzo (ORCPT
+        id S1727796AbfARP4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:55:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727323AbfARPzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:55:44 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E7C92086D;
-        Fri, 18 Jan 2019 15:55:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547826943;
-        bh=qUkhlJbgGuLbuL/lPsr8l8OS8S7KE2oYbF5rdX6KRSU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o2hmcj4qE0NOFx+YSK+D8dtRcorwfUlGbzfE2US2aYFm6DnANKgsHqhS+Lfpo7L9L
-         EnbzI2iWBy2nUBQypETT2+kgVBwO8zuVGDNjvCy0WGzn+1DupQ7KD1jOJ+Dq5XghXF
-         22X+A0zV0t9G0yYmw3zdEy9tdI+dfsQvIRezexZE=
-Date:   Fri, 18 Jan 2019 16:55:41 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, rafael@kernel.org
-Subject: Re: [PATCH v2] driver core: move device->knode_class to
- device_private
-Message-ID: <20190118155541.GA5544@kroah.com>
-References: <20190117055719.6161-1-richardw.yang@linux.intel.com>
- <20190118023459.9972-1-richardw.yang@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118023459.9972-1-richardw.yang@linux.intel.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Fri, 18 Jan 2019 10:56:25 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43594 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727496AbfARP4Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:56:25 -0500
+Received: by mail-wr1-f66.google.com with SMTP id r10so15609544wrs.10
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 07:56:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=IlhRlfE+Zj+QzMvvfaa9gaqWOjCT6FCHLtgklD5DeaI=;
+        b=I4lXJ3OdiEBZv8daCMy3wONl/mhjKPP2EWdUYYZQz1UGTSV+vyV5H3mt1SK16cVUDe
+         Ruzbk1DO1SQTLEikNjpVwFXBxNQ+vE7wxwkPOsxc7UYHvQ3UGL63IaIXJyLGH9uR2hGy
+         wALyH3Gdj4ZJHVBvnNj6IrauZz5hZMJtAL1Ms=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IlhRlfE+Zj+QzMvvfaa9gaqWOjCT6FCHLtgklD5DeaI=;
+        b=EwusFuSKnhyOPX26J51Tg+ZJl4m2ThK7j2nYZSRZJaPxGL0+S+sqHlkzTJccJqJjfX
+         eDUkcH1ZwhBj412PhXL64hXVcxQr53LTVLcT3+Dm/EUsQbtHbfHtNRvnXxCwqJ/GFwSV
+         ZzN6u5prelluT84LCD9yYSwoWnTsFX9lV6Xirn1GDgVqVE3AchUk2x6ufDEua3sVbtBw
+         J1mD4cJzfSXCPrIVWuqv4F3JkzpxesF10wq4/rMluyYhfhHwAgWKcK1LNWq4v+Tnl2Tb
+         /vk4ZSuOY/XEbfdHYgFbnDL6cwubvhQbAkSd8joHBezEwT4H0A0/yoDVU2xubq++z5E7
+         ZcRg==
+X-Gm-Message-State: AJcUukeHODOFItyE1wrf8h+EaHPgcSv73VvsY3anET7oZ9Ekgy6M89PH
+        oESDsytkSqjB3z1A8LBCQhTaBjTS+I8=
+X-Google-Smtp-Source: ALg8bN4Etx2pQQP57EWD/UzyF3+z8U1tpKr6qhKJcm1pHlWdKstHNLI3zfhJF3TnbmyrAZyo4nxLYQ==
+X-Received: by 2002:a5d:4586:: with SMTP id p6mr16606884wrq.69.1547826983364;
+        Fri, 18 Jan 2019 07:56:23 -0800 (PST)
+Received: from localhost.localdomain ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id p12sm45656324wmi.5.2019.01.18.07.56.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 07:56:22 -0800 (PST)
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To:     linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH] venus: enc: fix enum_frameintervals
+Date:   Fri, 18 Jan 2019 17:56:06 +0200
+Message-Id: <20190118155606.21798-1-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 10:34:59AM +0800, Wei Yang wrote:
-> As the description of struct device_private says, it stores data which
-> is private to driver core. And it already has similar fields like:
-> knode_parent, knode_driver, knode_driver and knode_bus. This look it is
-> more proper to put knode_class together with those fields to make it
-> private to driver core.
-> 
-> This patch move device->knode_class to device_private to make it comply
-> with code convention.
-> 
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This ixes an issue when setting the encoder framerate because of
+missing precision. Now the frameinterval type is changed to
+TYPE_CONTINUOUS and step = 1. Also the math is changed when
+framerate property is called - the firmware side expects that
+the framerate one is 1 << 16 units.
 
-Thanks for this.  There are a number of other variables that should move
-into this structure, if you want to take a look into doing that.
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+---
+ drivers/media/platform/qcom/venus/venc.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-greg k-h
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index 32cff294582f..8c939af0a1f6 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -31,6 +31,7 @@
+ #include "venc.h"
+ 
+ #define NUM_B_FRAMES_MAX	4
++#define FRAMERATE_FACTOR	(1 << 16)
+ 
+ /*
+  * Three resons to keep MPLANE formats (despite that the number of planes
+@@ -581,7 +582,7 @@ static int venc_enum_frameintervals(struct file *file, void *fh,
+ 	struct venus_inst *inst = to_inst(file);
+ 	const struct venus_format *fmt;
+ 
+-	fival->type = V4L2_FRMIVAL_TYPE_STEPWISE;
++	fival->type = V4L2_FRMIVAL_TYPE_CONTINUOUS;
+ 
+ 	fmt = find_format(inst, fival->pixel_format,
+ 			  V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
+@@ -604,12 +605,12 @@ static int venc_enum_frameintervals(struct file *file, void *fh,
+ 	    fival->height < frame_height_min(inst))
+ 		return -EINVAL;
+ 
+-	fival->stepwise.min.numerator = 1;
++	fival->stepwise.min.numerator = FRAMERATE_FACTOR;
+ 	fival->stepwise.min.denominator = frate_max(inst);
+-	fival->stepwise.max.numerator = 1;
++	fival->stepwise.max.numerator = FRAMERATE_FACTOR;
+ 	fival->stepwise.max.denominator = frate_min(inst);
+ 	fival->stepwise.step.numerator = 1;
+-	fival->stepwise.step.denominator = frate_max(inst);
++	fival->stepwise.step.denominator = 1;
+ 
+ 	return 0;
+ }
+@@ -654,6 +655,7 @@ static int venc_set_properties(struct venus_inst *inst)
+ 	struct hfi_quantization quant;
+ 	struct hfi_quantization_range quant_range;
+ 	u32 ptype, rate_control, bitrate, profile = 0, level = 0;
++	u64 framerate;
+ 	int ret;
+ 
+ 	ret = venus_helper_set_work_mode(inst, VIDC_WORK_MODE_2);
+@@ -664,9 +666,14 @@ static int venc_set_properties(struct venus_inst *inst)
+ 	if (ret)
+ 		return ret;
+ 
++	framerate = inst->timeperframe.denominator * FRAMERATE_FACTOR;
++	framerate = DIV_ROUND_UP(framerate, inst->timeperframe.numerator);
++
+ 	ptype = HFI_PROPERTY_CONFIG_FRAME_RATE;
+ 	frate.buffer_type = HFI_BUFFER_OUTPUT;
+-	frate.framerate = inst->fps * (1 << 16);
++	frate.framerate = framerate;
++	if (frate.framerate > frate_max(inst))
++		frate.framerate = frate_max(inst);
+ 
+ 	ret = hfi_session_set_property(inst, ptype, &frate);
+ 	if (ret)
+-- 
+2.17.1
+
