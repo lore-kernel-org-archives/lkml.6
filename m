@@ -3,27 +3,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DE3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F4AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D4F2054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97D7E2054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbfAROpG (ORCPT
+        id S1728069AbfAROpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:45:06 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:46027 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:45:05 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45972 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727724AbfAROn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727709AbfAROn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 09:43:56 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 41377206A7; Fri, 18 Jan 2019 15:43:54 +0100 (CET)
+        id 0154F2243D; Fri, 18 Jan 2019 15:43:53 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4E62020AAA;
-        Fri, 18 Jan 2019 15:43:52 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 535EE20CC3;
+        Fri, 18 Jan 2019 15:43:51 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v5 15/23] drm/sun4i: layer: Add tiled modifier support and helper
-Date:   Fri, 18 Jan 2019 15:43:20 +0100
-Message-Id: <20190118144328.20649-16-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v5 11/23] drm/fourcc: Add definitions for Allwinner vendor and VPU tiled format
+Date:   Fri, 18 Jan 2019 15:43:16 +0100
+Message-Id: <20190118144328.20649-12-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
 References: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
@@ -48,67 +48,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces a list of supported modifiers for the driver, that
-includes the Allwinner tiled modifier, as well as a format_mod_supported
-callback.
-
-The callback uses both the backend and frontend helpers to indicate
-per-format modifier support (including for the linear modifier).
+This introduces specific definitions for vendor Allwinner and its
+associated tiled format modifier. This modifier is used for the output
+format of the VPU, that can be imported directly with the display
+engine hardware supported by the sun4i-drm driver.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_layer.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ include/uapi/drm/drm_fourcc.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-index 8cf8ca997b1d..c5a999ca1d72 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-@@ -114,6 +114,13 @@ static void sun4i_backend_layer_atomic_update(struct drm_plane *plane,
- 	sun4i_backend_layer_enable(backend, layer->id, true);
+diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+index 41106c835747..91d08a23f125 100644
+--- a/include/uapi/drm/drm_fourcc.h
++++ b/include/uapi/drm/drm_fourcc.h
+@@ -238,6 +238,8 @@ extern "C" {
+ #define DRM_FORMAT_MOD_VENDOR_VIVANTE 0x06
+ #define DRM_FORMAT_MOD_VENDOR_BROADCOM 0x07
+ #define DRM_FORMAT_MOD_VENDOR_ARM     0x08
++#define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
++
+ /* add more to the end as needed */
+ 
+ #define DRM_FORMAT_RESERVED	      ((1ULL << 56) - 1)
+@@ -667,6 +669,20 @@ extern "C" {
+  */
+ #define AFBC_FORMAT_MOD_BCH     (1ULL << 11)
+ 
++/*
++ * Allwinner tiled modifier
++ *
++ * This tiling mode is implemented by the VPU found on all Allwinner platforms,
++ * codenamed sunxi. It is associated with a YUV format that uses either 2 or 3
++ * planes.
++ *
++ * With this tiling, the luminance samples are disposed in tiles representing
++ * 32x32 pixels and the chrominance samples in tiles representing 32x64 pixels.
++ * The pixel order in each tile is linear and the tiles are disposed linearly,
++ * both in row-major order.
++ */
++#define DRM_FORMAT_MOD_ALLWINNER_TILED fourcc_mod_code(ALLWINNER, 1)
++
+ #if defined(__cplusplus)
  }
- 
-+static bool sun4i_layer_format_mod_supported(struct drm_plane *plane,
-+					     uint32_t format, uint64_t modifier)
-+{
-+	return sun4i_backend_format_is_supported(format, modifier) ||
-+	       sun4i_frontend_format_is_supported(format, modifier);
-+}
-+
- static const struct drm_plane_helper_funcs sun4i_backend_layer_helper_funcs = {
- 	.prepare_fb	= drm_gem_fb_prepare_fb,
- 	.atomic_disable	= sun4i_backend_layer_atomic_disable,
-@@ -127,6 +134,7 @@ static const struct drm_plane_funcs sun4i_backend_layer_funcs = {
- 	.disable_plane		= drm_atomic_helper_disable_plane,
- 	.reset			= sun4i_backend_layer_reset,
- 	.update_plane		= drm_atomic_helper_update_plane,
-+	.format_mod_supported	= sun4i_layer_format_mod_supported,
- };
- 
- static const uint32_t sun4i_layer_formats[] = {
-@@ -157,6 +165,12 @@ static const uint32_t sun4i_layer_formats[] = {
- 	DRM_FORMAT_YVYU,
- };
- 
-+static const uint64_t sun4i_layer_modifiers[] = {
-+	DRM_FORMAT_MOD_LINEAR,
-+	DRM_FORMAT_MOD_ALLWINNER_TILED,
-+	DRM_FORMAT_MOD_INVALID
-+};
-+
- static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- 						struct sun4i_backend *backend,
- 						enum drm_plane_type type)
-@@ -173,7 +187,7 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- 				       &sun4i_backend_layer_funcs,
- 				       sun4i_layer_formats,
- 				       ARRAY_SIZE(sun4i_layer_formats),
--				       NULL, type, NULL);
-+				       sun4i_layer_modifiers, type, NULL);
- 	if (ret) {
- 		dev_err(drm->dev, "Couldn't initialize layer\n");
- 		return ERR_PTR(ret);
+ #endif
 -- 
 2.20.1
 
