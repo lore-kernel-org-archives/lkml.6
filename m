@@ -2,127 +2,118 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC64EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6BAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8F492086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547810679;
-	bh=PUisAjVa3cv5X1Xh6/0uP915h1Husuc43o0Ccl7AMXQ=;
-	h=From:Date:Subject:To:Cc:List-ID:From;
-	b=MxGnJbM0PdBq+bNk9wYuC0G+3ojpcUYiKim5o3CxN1eGnZNu2Hx75oVYwZhHVulCL
-	 8QTteKgE5jXTlECdOpzPIuO3D36Fy+Ew/m8DQEVN2xCr+7ytMueUhGTelYH2xhCTYR
-	 4ky2QLzaABbx57grN9xYMWlcmA0gJ6OjKpKUeTM0=
+	by mail.kernel.org (Postfix) with ESMTP id 4A9EE2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:26:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ohsRJja8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbfARLYi (ORCPT
+        id S1727213AbfARL0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:24:38 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44650 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbfARLYh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:24:37 -0500
-Received: by mail-ot1-f68.google.com with SMTP id f18so14032150otl.11;
-        Fri, 18 Jan 2019 03:24:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=rbRF+RcGW7kmODdnnEmQMjVFOTRo3Te5UWzYrvsUTX4=;
-        b=Rhf/NATMbqsAMcilPhyf1aF6QY6Ivi9+FttShjOp8ERqbe0AOcIWrY1jYtIlujUGXm
-         21JPgNCi6BC0ux5cRLJ4FeHdxey4S4wb94gdJuQY+GXnM4WpGrZqkZ6cXq1EEEqoysNn
-         1M6crrtQL0bquNlp/Gphfn0U+vmfhr32+bMDsp9uVJM+F/XQytfe7+2zHnZC576VZGNT
-         nl2dTcjwJsjydtAu+YkfQpRWi+V6D/JpEtG1jrWbOjxA0w8eKeqsFkeLjwXMpu27xzRE
-         3keoxCN126CXF0Sly9wLesvywvwrzxOB0n7BrtvCd4AO+AB89Y2v4UU4XOgjB7HRgpDg
-         pOKw==
-X-Gm-Message-State: AJcUukcybuUt5rCdUlHi7YxFhVjtFHBMyFtHCL1f6QhTpMuvbBPVOj+m
-        l8S4uhDtRdKLglmKfuZ1gVP9jggrz9F+JQ1DOAg=
-X-Google-Smtp-Source: ALg8bN4gZduNZVppIjQrTuFafiC1SE9TWt9qzHWTQlYg6FB3zwVsojIkaFaRjo6NLY8xGuFYZ1TpY4RLlYMT2LoaCcM=
-X-Received: by 2002:a9d:5f06:: with SMTP id f6mr11826020oti.258.1547810676653;
- Fri, 18 Jan 2019 03:24:36 -0800 (PST)
+        Fri, 18 Jan 2019 06:26:36 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41052 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726722AbfARL0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 06:26:36 -0500
+Received: from zn.tnic (p200300EC2BCB1B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:1b00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7A5321EC0573;
+        Fri, 18 Jan 2019 12:26:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547810794;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Y1dNmCKWqwwtJDRAbEC9BU5YBAZMoZ0drcObkWF/4pg=;
+        b=ohsRJja87jWpheRc0vmMU0/7Nh6HaWXN1UsHHoNU2WeTk4FihXzM7euDltsX2dU9gftk4K
+        pDS+QocEq1hAy/HvMdQTnggpJS4ljJH+5Uj8rReGrB/F/x855D7JVXrGNbd9xhp9AQnGXN
+        1mYDAinBOWgv3qI7Wf4eQZEwdl859ik=
+Date:   Fri, 18 Jan 2019 12:26:28 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, dyoung@redhat.com, bhe@redhat.com,
+        kexec@lists.infradead.org, akpm@linux-foundation.org,
+        robert.moore@intel.com, erik.schmauss@intel.com,
+        rafael.j.wysocki@intel.com, lenb@kernel.org,
+        fanc.fnst@cn.fujitsu.com, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] acpi: store acpi_rsdp address for later kexec
+ usage
+Message-ID: <20190118112628.GC622@zn.tnic>
+References: <20190118111310.29589-1-kasong@redhat.com>
+ <20190118111310.29589-3-kasong@redhat.com>
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 18 Jan 2019 12:24:25 +0100
-Message-ID: <CAJZ5v0jiK=zLP4cUsw=y9ea7PLHHgy=xshAsHFhTgyDJH+kOiQ@mail.gmail.com>
-Subject: [GIT PULL] ACPI fixes for v5.0-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190118111310.29589-3-kasong@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Jan 18, 2019 at 07:13:09PM +0800, Kairui Song wrote:
+> Currently we have acpi_os_get_root_pointer as the universal function
+> to get RSDP address. But the function itself and some functions it
+> depends on are in .init section and make it not easy to retrieve the
+> RSDP value once kernel is initialized.
+> 
+> And for kexec, it need to retrive RSDP again if EFI is disabled, because
+> the second kernel will not be able get the RSDP value in such case, so
+> it expects either the user specify the RSDP value using kernel cmdline,
+> or kexec could retrive and pass the RSDP value using boot_params.
+> 
+> This patch stores the RSDP address when initialized is done, and
+> introduce an acpi_os_get_root_pointer_late for later kexec usage.
+> 
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+> ---
+>  drivers/acpi/osl.c   | 10 ++++++++++
+>  include/linux/acpi.h |  3 +++
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+> index f29e427d0d1d..6340d34d0df1 100644
+> --- a/drivers/acpi/osl.c
+> +++ b/drivers/acpi/osl.c
+> @@ -187,6 +187,16 @@ static int __init setup_acpi_rsdp(char *arg)
+>  	return kstrtoul(arg, 16, &acpi_rsdp);
+>  }
+>  early_param("acpi_rsdp", setup_acpi_rsdp);
+> +
+> +acpi_physical_address acpi_os_get_root_pointer_late(void) {
+> +	return acpi_rsdp;
+> +}
+> +
+> +static int __init acpi_store_root_pointer(void) {
+> +	acpi_rsdp = acpi_os_get_root_pointer();
+> +	return 0;
+> +}
 
-Please pull from the tag
+No, this is getting completely nuts: there's a bunch of functions which
+all end up returning boot_params's field except pvh_get_root_pointer().
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-5.0-rc3
+And now you're adding a late variant. And the cmdline paramater
+acpi_rsdp is in a CONFIG_KEXEC wrapper, and and...
 
-with top-most commit 11ee2a3808aebbec73096551a716dea03d417fcb
+Wait until Chao Fan's stuff is applied, then do your changes ontop
+an drop all that ifdeffery. We will make this RDSP thing enabled
+unconditionally so that there's no need for ifdeffery and function
+wrappers.
 
- Merge branch 'acpi-pci'
+Also, after Chao's stuff, you won't need to call
+acpi_os_get_root_pointer() because the early code would've done that.
 
-on top of commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8
+-- 
+Regards/Gruss,
+    Boris.
 
- Linux 5.0-rc2
-
-to receive ACPI fixes for 5.0-rc3.
-
-These fix an ACPI initialization ordering issue introduced in
-the 4.17 time frame and causing functional problems to appear on
-multiple systems and fix some fallout of the recent change to
-enable building kernels with ACPI support and without PCI.
-
-Specifics:
-
- - Restore the ACPI initialization ordering changed implicitly by the
-   module-level AML handling rework during the 4.17 development cycle
-   that caused the EC address space handler based on information from
-   ECDT to be set up before loading AML definition blocks, making it
-   effectively not accessible by AML on some systems that don't work
-   as expected any more (Rafael Wysocki).
-
- - Add direct dependencies on PCI to Kconfig in multiple places for
-   code that depends on both ACPI and PCI, but the PCI dependency
-   was implicitly satisfied by the ACPI dependency before, to prevent
-   invalid configurations from being created, for example by
-   randconfig (Sinan Kaya).
-
-Thanks!
-
-
----------------
-
-Rafael J. Wysocki (1):
-      ACPI: EC: Look for ECDT EC after calling acpi_load_tables()
-
-Sinan Kaya (8):
-      ACPI / LPSS: Make PCI dependency explicit
-      ata: pata_acpi: Make PCI dependency explicit
-      vga-switcheroo: make PCI dependency explicit
-      platform/x86: intel_ips: make PCI dependency explicit
-      platform/x86: intel_pmc: Make PCI dependency explicit
-      platform/x86: apple-gmux: Make PCI dependency explicit
-      x86/intel/lpss: Make PCI dependency explicit
-      drivers: thermal: int340x_thermal: Make PCI dependency explicit
-
----------------
-
- arch/x86/Kconfig                              |  2 +-
- drivers/acpi/Makefile                         |  3 ++-
- drivers/acpi/bus.c                            | 24 ++++++++++++------------
- drivers/acpi/internal.h                       |  4 ++++
- drivers/ata/Kconfig                           |  2 +-
- drivers/gpu/vga/Kconfig                       |  1 +
- drivers/platform/x86/Kconfig                  |  6 +++---
- drivers/thermal/intel/int340x_thermal/Kconfig |  2 +-
- 8 files changed, 25 insertions(+), 19 deletions(-)
+Good mailing practices for 400: avoid top-posting and trim the reply.
