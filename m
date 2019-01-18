@@ -1,103 +1,50 @@
 Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.8 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PHOTO_EDITING_FREEM,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79533C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF899C61CE3
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 484E22086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 884E52086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730280AbfASB1n (ORCPT
+        id S1730338AbfASB3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 20:27:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38688 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727422AbfASB1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 20:27:43 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EF9DBADFE;
-        Sat, 19 Jan 2019 01:27:41 +0000 (UTC)
-Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to sctop.py
-To:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
- <1547718344-27382-12-git-send-email-s1seetee@linux.vnet.ibm.com>
-From:   Tony Jones <tonyj@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
- mQGiBEkQmbwRBACDch7wo/RzlNt2HA8jLICsO2w8yOkJ7UTzHYNn3Q83Ro0qev2KokfE3EDw
- il+vam9CDR7jIDmswHqaMe0/O+UnZtO5PlDgylZcrwNwbBzHfm/KGejbi1RBGAoETrvcfwGi
- w83bR/aDnoRXY5Ho1uphQ05/065EMpbJOOBdn9qQ4wCgv2Q6C/QeYDGsxJPRO+20nLu5K00D
- /Rde4OTZ5biM+vb6ObTmgPNeiMrTwGpMokN7audIl7njwvD+lYrlgQjmDzcaPFz29rYWwT7g
- 6t6hcFgjpU1he/v3qxeQlTJoi2+u5Mqj42z//49h6DqNjT859Z/6h5IwKBo/EZC17iBIlS2G
- VXAstNiZASGiaIlONozWJ/GSjUaRA/9wZTV1nXF/+xX+qmc7SvTg1w6jWyjxVumQLoq2SeA4
- 1Sy5X2IATkAGCCjbeoQGnFdbOnHRSJdlTazObgwreqGPlPnIROpr9QESkfxsaCkDiZfpl0xk
- 6X069QMZBEwGAWILHYXL9UqlOjniZaU2BkVA11JEdBhyQorC8T/ji1edc7QaVG9ueSBKb25l
- cyA8dG9ueWpAc3VzZS5kZT6IYAQTEQIAIAUCSRCZvAIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheAAAoJELFYWyEf4koXGmYAoKCnbv9dhAB2vR6IvSJem1ws4HpfAJ9ZqTKiXcogBGfTPaJR
- GI9QhVUieLkCDQRJEJm8EAgAzr9Zd3v7B10ODtVc7XxbMe3W6o1FdClL9ZIgLv61zhWctafK
- DMu/MUSvxmYFq00pecD/SfX8oxArA02+sQ2E+/Zb4J7NAWIAxCfmy7VE0wDBrZH/hBapIx/L
- gVqYfZ9Rw+a4FXrlk1y8oQCwhvj+kWrm7V7olR0aPOy1NFGNUyTFSMj+pbmxiNOXdCxVUQe3
- UE1k9yA+mILjyaRanwkiCLCjNvRPL88Q017BdhVBWZmz8qhwXN/RrjCcDHsPX5O0ev68MLyu
- sh5mfukuvCqzW1Y3Ql+iwfwEw5lNmQGdoV9csg7JP7saDicSFO2KcZvMbvDMqtPFipdF5UWo
- fZKZ3wADBQf/b5cVNyb5i8QI0G7BPGBNn4VlQX5n66TsPBnrRNOi3MhTTVEBCp8s+jqUjJjX
- EjjA+O4hIm7Qqdsozurw7GlcQ0A06dIzO/1RUglZZMoC0JL43ZQmJ+3+yFrLjWgGH6ev6AOb
- YLH7ZujgAB5n0Hy2ZIChzsKLKbHptFtBvpDKB8updq+GunsY4oN3wGa67h9sHqDvjyp64Czg
- n8G5uGLwx3f/edbECKz5kPUSzChEk3suK742SEP01v4ra5WX88Hn81NjGByQMz9acJLdC7Ff
- LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
- AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
- liv+rwEesYGlGeGNaKHTJw==
-Message-ID: <ba5edf49-a143-7a8c-c3f9-c1d8c3ceed0e@suse.de>
-Date:   Fri, 18 Jan 2019 17:27:38 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 18 Jan 2019 20:29:52 -0500
+Received: from nordstromrack.com ([185.244.39.222]:44729 "EHLO prolighting.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729963AbfASB3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 20:29:51 -0500
+To:     linux-kernel@vger.kernel.org
+Subject: Shooting and Retouching
+Message-ID: <2f46486b55765d1ad636ad534c70566a@collinslake.com>
+Date:   Fri, 18 Jan 2019 10:07:22 +0100
+From:   "Jenna" <jennalkinteaerpandlop@verizon.net>
+Reply-To: peibaolan@aliyun.com
 MIME-Version: 1.0
-In-Reply-To: <1547718344-27382-12-git-send-email-s1seetee@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
+Want to shoot photos for your products and retouching also i needed?
 
-> +from __future__ import print_function
+We are studio special for photo shooting and retouching.
 
-Again, you don't need this.
+For your photos:
+White background, Optimized for Shopify, Retouching included
+Revisions accepted
 
+We can also give you dedicate editing service for your photos
 
-> -			print "\nsyscall events for %s:\n\n" % (for_comm),
-> +			print("\nsyscall events for %s:\n\n" % (for_comm)),
+Let me know if you need anything.
 
-same comments regarding trailing comma usage
+Thanks,
+Jenna
 
-$ git annotate tools/perf/scripts/python/sctop.py | grep thread
-2e7d1e3fb8043	(Arnaldo Carvalho de Melo	2010-10-25 18:39:20 -0200	11)import os, sys, thread, time
-47902f3611b39	(Tom Zanussi	2010-04-01 23:59:23 -0500	42)	thread.start_new_thread(print_syscall_totals, (interval,))
-
-The low level threading api has changed in the most recent Python versions.   I think you'll find you also need:
-
-@@ -8,7 +8,12 @@
- # will be refreshed every [interval] seconds.  The default interval is
- # 3 seconds.
-
--import os, sys, thread, time
-+import os, sys, time
-+
-+try:
-+        import thread
-+except ImportError:
-+        import _thread as thread
-
-
-
-Tony
