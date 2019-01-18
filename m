@@ -2,105 +2,90 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09918C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC843C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDADE20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:51:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wRz7gkXb"
+	by mail.kernel.org (Postfix) with ESMTP id 8482120855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:53:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfARCvI (ORCPT
+        id S1727001AbfARCxe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 21:51:08 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:43603 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfARCvH (ORCPT
+        Thu, 17 Jan 2019 21:53:34 -0500
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:36484 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfARCxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 21:51:07 -0500
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x0I2oeYm003630;
-        Fri, 18 Jan 2019 11:50:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x0I2oeYm003630
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547779842;
-        bh=1yQKC2/NLxoALDEYQCVUGmittS8HAoFkA3tzO41eZ+I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wRz7gkXblDEake5qNuvdooNwZjrlCvspnPv0ObVx/iQj9QcyowIQtPAR0xmcAXfH1
-         TAGqh3p68yDXvTF8kyL7zay/m7+6asSZ37mRcuP1IjCa9hNoDiJNTLAlygONvXDlNo
-         oCWfN2L4olOTHPsVPSc1o+sWhB8W+qWRTXaoEpo/0pUCNO7tYqus3KXm/xSjvc3+6+
-         PayXwaTEI0eYauUN9us6AdxxuMgQ5CNpHG2VQm76M9G/I1sVn6mPaqMRgUDibvOiem
-         3mBNk197Wxyf6lBIM2I4gKQ6kogPxTM1SGI80c87f9uIjdv9UrwoGPa4C1pMyuMip+
-         sRhOhwaJ5/O/A==
-X-Nifty-SrcIP: [209.85.217.44]
-Received: by mail-vs1-f44.google.com with SMTP id t17so7563386vsc.8;
-        Thu, 17 Jan 2019 18:50:41 -0800 (PST)
-X-Gm-Message-State: AJcUukeIsLysQjkzKfDzefnaG9iglMbStz/rvl07qMt+AZc7FvtGeiYi
-        YSfHEnlesZot4++j46Z1ZazMMpEtf+ck6llJDgg=
-X-Google-Smtp-Source: ALg8bN41c2mw6CErAw0XXhGvoTvCytzaHn7YT6XQlOW2YEr1Umc0fAJ2j01AFMEzCnP4FutT7gPYsien25DGh4gFg7U=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr6972963vsb.155.1547779840012;
- Thu, 17 Jan 2019 18:50:40 -0800 (PST)
+        Thu, 17 Jan 2019 21:53:34 -0500
+Received: by mail-pf1-f172.google.com with SMTP id b85so5821645pfc.3;
+        Thu, 17 Jan 2019 18:53:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M7BzZURXlPsa4cII/baSEe4psByFQkYhr7b0zz2Rrn4=;
+        b=eH2tLRTHs5qSn0AbC1/DCz+terPSN6p7YpjWK5haQ0dCRk9SZx0Ua7/cdnLWlgRznq
+         Ii2ap3hBX5sJvw1swNaCaW0aXtaiWlg3K3YhqZUZFDpwrkFQOl4WFTQFGDFm318QKw3A
+         Y89+hvCFfQvCVLbGFxcUBybIzJZ6Hh/M8D6HIcMPpmSOOtEoWHgxTv3lEJG/BFe4lrFK
+         eNprLpiwdeM630i+QU/GDAHBahXVaIIMbXcd0Xe9El6rVeaUsyMQ5sDAl/VTJ8mQvyM7
+         my5PjRzCywLbLt4gE/UWb0Xl4cqOS72Y/8ofyeLzJ5xt24gywXJ43Kh0pAQwpZ4AK1OZ
+         S8tA==
+X-Gm-Message-State: AJcUukdnaYSMG+dn8w4eMdTpPLXlYvhOre04H3oacvOnoLCmVSJd71Ep
+        j5mM1e142AoGQ3WwmqQNOPILXFF3
+X-Google-Smtp-Source: ALg8bN4+/XAs+h5ttFCqLMfIpliflqrFKJSSUrtM+SashTHW6l3bkcf86j+C/XCgkMx4Ii7ipzUZmw==
+X-Received: by 2002:a63:441e:: with SMTP id r30mr16133677pga.128.1547780012822;
+        Thu, 17 Jan 2019 18:53:32 -0800 (PST)
+Received: from asus.site ([2601:647:4000:5dd1:a41e:80b4:deb3:fb66])
+        by smtp.gmail.com with ESMTPSA id o1sm4467386pgn.63.2019.01.17.18.53.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 18:53:31 -0800 (PST)
+Subject: Re: [patch 1/9] block: Cleanup license notice
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Matias Bjorling <mb@lightnvm.io>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org
+References: <20190117231416.111952141@linutronix.de>
+ <20190117231500.874215239@linutronix.de>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <1ee7cf07-5077-a331-3aab-ae107df02ef2@acm.org>
+Date:   Thu, 17 Jan 2019 18:53:30 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <1547176954-17739-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1547176954-17739-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 18 Jan 2019 11:50:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATkYYaZ68dmYACfadp+sPVbxWJ3r2KdX-7wJdzaCsKD+A@mail.gmail.com>
-Message-ID: <CAK7LNATkYYaZ68dmYACfadp+sPVbxWJ3r2KdX-7wJdzaCsKD+A@mail.gmail.com>
-Subject: Re: [PATCH 0/3] powerpc: some header search path cleanups
-To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kvm-ppc@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190117231500.874215239@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+On 1/17/19 3:14 PM, Thomas Gleixner wrote:
+> Remove the imprecise and sloppy:
+> 
+>    "This files is licensed under the GPL."
+> 
+> license notice in the top level comment.
+> 
+> 1) The file already contains a SPDX license identifier which clearly
+>     states that the license of the file is GPL V2 only
+> 
+> 2) The notice resolves to GPL v1 or later for scanners which is just
+>     contrary to the intent of SPDX identifiers to provide clear and non
+>     ambiguous license information. Aside of that the value add of this
+>     notice is below zero,
 
+My intent was to release this under GPL v2, hence:
 
-On Fri, Jan 11, 2019 at 2:20 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> I am trying to get rid of crappy magic from Kbuild core makefiles.
->
-> Before that, I want to drop as many useless paths as possible.
-> Actually, many Makefiles are adding around pointless options.
->
-> This series cleans some powerpc Makefiles.
-> (only compile-tested by 0day bot)
-
-
-Could you apply this series to ppc tree if you are fine with it?
-
-
-
-
-
-> Masahiro Yamada (3):
->   KVM: powerpc: remove -I. header search paths
->   powerpc: remove redundant header search path additions
->   powerpc: math-emu: remove unneeded header search paths
->
->  arch/powerpc/Makefile          | 4 ++--
->  arch/powerpc/kvm/Makefile      | 5 -----
->  arch/powerpc/math-emu/Makefile | 2 +-
->  3 files changed, 3 insertions(+), 8 deletions(-)
->
-> --
-> 2.7.4
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
