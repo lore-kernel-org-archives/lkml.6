@@ -2,159 +2,117 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F027C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58D9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F238A20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 926E420850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:32:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="U3bMpzTX"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="YPCZUcup"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbfARQbS (ORCPT
+        id S1728476AbfARQcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:31:18 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53804 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727346AbfARQbS (ORCPT
+        Fri, 18 Jan 2019 11:32:11 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36557 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727490AbfARQcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:31:18 -0500
-Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E642153E;
-        Fri, 18 Jan 2019 17:31:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547829075;
-        bh=8hr+puCZKU3CkrjGCLHvQPZ4wsY5ygkfShhzYrcLtgQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U3bMpzTXF2MmTDhR/baQlxW7nGIo2hBsH4DFYjZ5dOBjLHZCnrq9vzD3TRDi44E7b
-         q5VhRRI3eqcc84O7OUXtLQ4xoFVUsukzjOlPdHjx82u9qdIOgH2vifv5oSQOsX8aPa
-         MNRLM45UrIycGtY/B+aHggs+RfHEdrAneQ5Wxpxs=
-Date:   Fri, 18 Jan 2019 11:31:06 -0500
-From:   Paul Elder <paul.elder@ideasonboard.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        b-liu@ti.com, rogerq@ti.com, balbi@kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] usb: gadget: add mechanism to specify an explicit
- status stage
-Message-ID: <20190118163106.GC7331@localhost.localdomain>
-References: <20190116050029.GA13084@localhost.localdomain>
- <Pine.LNX.4.44L0.1901160959290.1610-100000@iolanthe.rowland.org>
+        Fri, 18 Jan 2019 11:32:10 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g9so6584463plo.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:32:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VJQVSYfjj+xbs/VVNFWJJ8UsMZ+mUtGQYZPt6JxkRhs=;
+        b=YPCZUcupuz6x1zsmyyY3R6FK69GK1DwjQA9sJZHuZ6X9U16wbhVBAz6O7Crk93VXa9
+         sq9HNEYM6X3+d28+ESDNVlesMNSaaWyzqc1uklue7DIMUUyOwYu0vl5SP4Nb+I1pY0sz
+         0HYQ7Tb+vUrzzKrMmnUDq2Po3jzuzP4nUR4cc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VJQVSYfjj+xbs/VVNFWJJ8UsMZ+mUtGQYZPt6JxkRhs=;
+        b=Z6ggCPHTiQLfUX6qZ6H3cFowqEqYIUe8V+WzJnYpyBRTcdiZqXkIgNIgVAoilnN0CM
+         +/SuTE+TmAaGr9XWgdRZekq4YLZqeUiiQhGcsufQnD6k/O5mq7zLTAMmPlSn1a9pWfOh
+         siaRKXz7dCRn5IWXcMJFHCe8w/gtgEMW2zhyj94IrZjXmB6PwIoRTE8iZ3kf8HcBDr7P
+         zUYQcKwLb1Z4GeBODQPCIc17lYqvlwjA1d50erlNdQnYvcNqhktL9hC1N4EiYSi8HmXi
+         PgvgC+wJbtqzcILDXl9R562lRuJdAeMxnx/gmPMtAan3qW6j4Y+l7K4Z2CoX+BkHMGVS
+         rAWw==
+X-Gm-Message-State: AJcUukdwo311M43MbaOgqlxANFCoAxnjBe9xw/CZKf/LCd5g0kPLFrIZ
+        yFWSkx4DPDLeMTNU0xmvskHbOg==
+X-Google-Smtp-Source: ALg8bN7p7RQXpMtYRpMmmnAWrcYEqtZTyPQ09dQsUPhIA0d/o9rQIj6+kab6ufgEJkQSut3svZt41g==
+X-Received: by 2002:a17:902:4:: with SMTP id 4mr19958908pla.20.1547829128741;
+        Fri, 18 Jan 2019 08:32:08 -0800 (PST)
+Received: from jagan-XPS-13-9350.domain.name ([103.81.77.13])
+        by smtp.gmail.com with ESMTPSA id z13sm13967086pgf.84.2019.01.18.08.32.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 08:32:07 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v6 0/6] media/sun6i: Allwinner A64 CSI support 
+Date:   Fri, 18 Jan 2019 22:01:52 +0530
+Message-Id: <20190118163158.21418-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1901160959290.1610-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:06:53AM -0500, Alan Stern wrote:
-> On Wed, 16 Jan 2019, Paul Elder wrote:
-> 
-> > On Mon, Jan 14, 2019 at 10:24:44AM -0500, Alan Stern wrote:
-> > > On Mon, 14 Jan 2019, Paul Elder wrote:
-> > > 
-> > > > > > > Can you check your uvc
-> > > > > > > changes using dummy_hcd with the patch below?
-> > > > > > 
-> > > > > > I'm not sure what to make of the test results. I get the same results
-> > > > > > with or without the patch. Which I guess makes sense... in dummy_queue,
-> > > > > > this is getting hit when the uvc function driver tries to complete the
-> > > > > > delayed status:
-> > > > > > 
-> > > > > > 	req = usb_request_to_dummy_request(_req);
-> > > > > > 	if (!_req || !list_empty(&req->queue) || !_req->complete)
-> > > > > > 		return -EINVAL;
-> > > > > > 
-> > > > > > So the delayed/explicit status stage is never completed, afaict.
-> > > > > 
-> > > > > I presume you are hitting the !list_empty(&req->queue) test, yes?  The 
-> > > > > other two tests are trivial.
-> > > > 
-> > > > Yes, that is what's happening.
-> > > > 
-> > > > > Triggering the !list_empty() test means the request has already been
-> > > > > submitted and not yet completed.  This probably indicates there is a
-> > > > > bug in the uvc function driver code.
-> > > > 
-> > > > The uvc function driver works with musb, though :/
-> > > > 
-> > > > I compared the sequence of calls to the uvc setup, completion handler,
-> > > > and status stage sending, and for some reason dummy_hcd, after an OUT
-> > > > setup-completion-status sequence, calls a completion-status-completion
-> > > > sequence, and then goes on the the next request. musb simply goes on to
-> > > > the next request after the setup-completion-status sequence.
-> > > 
-> > > I don't quite understand.  There's a control-OUT transfer, the setup, 
-> > > data, and status transactions all complete normally, and then what 
-> > > happens?  What do you mean by "a completion-status-completion 
-> > > sequence"?  A more detailed description would help.
-> > > 
-> > 
-> > I meant the functions (procedures) in the function driver, so the setup
-> > handler (uvc_function_setup), the completion handler
-> > (uvc_function_ep0_complete), and the status sender (uvc_send_response),
-> > although the last one actually sends the data stage for control IN.
-> > So after the status is sent on the uvc gadget driver's end, its
-> > completion handler is called again without the setup handler being
-> > called beforehand and I cant figure out why.
-> 
-> Isn't this what you should expect?  Every usb_request, if it is queued
-> successfully, eventually gets a completion callback.  That promise is
-> made by every UDC driver; it's part of the gadget API.  So for a
-> control transfer with a data stage, you expect to have:
-> 
-> 	Setup handler called
-> 	Data-stage request submitted
-> 	Data-stage request completion callback
-> 	Status-stage request submitted
-> 	Status-stage request completion callback
-> 
-> Thus, two completion callbacks but only one setup callback.
+This is v6 set for previous version[1] series to support CSI on Allwinner A64.
 
-omg how did I not notice this :/
+Tested 640x480, 320x240, 720p, 1080p resolutions UYVY8_2X8 format.
 
-I guess I have to fix the uvc function driver so it works with that.
-musb doesn't call the status stage completion callback though; not that
-it does anything so it seems fine to me, but indeed the function driver
-has to be ready for it if it is called.
+Changes for v6:
+- set the mod rate in seett_power instead of probe
+Changes for v5:
+- Add mod_rate quirk for better handling clk_set code
+Changes for v4:
+- update the compatible string order
+- add proper commit message
+- included BPI-M64 patch
+- skipped amarula-a64 patch
+Changes for v3:
+- update dt-bindings for A64
+- set mod clock via csi driver
+- remove assign clocks from dtsi
+- remove i2c-gpio opendrian
+- fix avdd and dovdd supplies
+- remove vcc-csi pin group supply
 
-> > > > I commented out the paranoia block in dummy_timer, and dummy_hcd still
-> > > > does the extra completion, but it doesn't error out anymore. I doubt
-> > > > that's the/a solution though, especially since I get:
-> > > > 
-> > > > [   22.616577] uvcvideo: Failed to query (129) UVC probe control : -75 (exp. 26).
-> > > > [   22.624481] uvcvideo: Failed to initialize the device (-5).
-> > > > 
-> > > > Not sure if that's a result of dummy_hcd not supporting isochronous
-> > > > transfers or not.
-> > > > 
-> > > > I'm not sure where to continue investigating :/
-> > > 
-> > > Perhaps removing the "#if 0" protecting the dev_dbg line in 
-> > > dummy_queue() would provide some helpful output.
-> > 
-> > It did, but didn't get me much farther :/
-> > 
-> > > Another thing to check would be if the "implement an emulated 
-> > > single-request FIFO" in dummy_queue() is causing trouble.  There's no 
-> > > harm in replacing the long "if" condition with "if (0)".
-> > 
-> > That didn't change anything.
-> > 
-> > Although I did notice that the dummy_queue that calls the completion
-> > handler without the preceeding setup handler says that it's in the
-> > status stage (ep->status_stage == 1).
-> 
-> That is consistent with the events outlined above.
+[1] https://patchwork.kernel.org/cover/10738841/
 
+Jagan Teki (6):
+  dt-bindings: media: sun6i: Add A64 CSI compatible
+  media: sun6i: Add mod_rate quirk
+  media: sun6i: Add A64 CSI block support
+  arm64: dts: allwinner: a64: Add A64 CSI controller
+  arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
+  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Add HDF5640 camera module
 
-Thanks,
+ .../devicetree/bindings/media/sun6i-csi.txt   |  1 +
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 65 +++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 25 +++++++
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 31 +++++++--
+ 4 files changed, 118 insertions(+), 4 deletions(-)
 
-Paul
+-- 
+2.18.0.321.gffc6fa0e3
+
