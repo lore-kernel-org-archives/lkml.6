@@ -2,109 +2,105 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBE7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FD4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9659420855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:44:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C31B320855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:45:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SXS6zvSg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7BQ5nlc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbfARFoT (ORCPT
+        id S1727079AbfARFpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 00:44:19 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39686 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbfARFoT (ORCPT
+        Fri, 18 Jan 2019 00:45:01 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41927 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbfARFpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 00:44:19 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w6so5513598pgl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 21:44:18 -0800 (PST)
+        Fri, 18 Jan 2019 00:45:00 -0500
+Received: by mail-qt1-f194.google.com with SMTP id l12so14015031qtf.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 21:45:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=1GHCrIH/zhKjvR57yQojViA6vvVSllVOfQJXVhcIPV8=;
-        b=SXS6zvSgz61eGAv+AUSQPQ6wGd+cifI1ReG8IIAjkcfzVHY/3CovtB/8eydebQ4gIt
-         zSmEDiZIqGQpIePtIG19FbT36ChW54ES9DRZYdohs7GSnjD94HVMlmucXef3izKcnWI8
-         wTzAocoVkZC88/FlTk2jgcE8vDUqnsZenLBoM=
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=K7jidEG6XCSxGT14yIoxuvZR8WMNBOFPpBPWSPowOpg=;
+        b=h7BQ5nlc7kIT7UTjGCFHpNAxxwWMq6RVWgBO+UiZClyv2s1t9LCiyCVtq+dAGn/4Mi
+         5NX1KJju54EGVSsL83Ugp2JHwirFJyikpgYrTWnh92PW6nYt9zPvcnSt8/HCQv7aUAya
+         VnInMSRApdVGVs7e+oVle49+q9Ps30C9pRVj0xZwMtqwp74QfR+jd0By44EWCFRBAW0R
+         Xmm+a45RcIvBhENBn6AWhF/Arai4oQIevT4kBPd6J1jLVr+u0YhilwVX4q2+dJXZxtDs
+         sAt+F+Z6rMVBXUFyDf9+w/6K0Ks5A+Z+ssZ0exSqNYlCNn25a/6TLCwXoMlt0cBim0h6
+         0iiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1GHCrIH/zhKjvR57yQojViA6vvVSllVOfQJXVhcIPV8=;
-        b=XMQgjiceskNvhiegY799wrWVNxCu5PRpW5/QlEaGBVkGKYqb/e8NlfsmFHNssgxVfP
-         yM2/YT2QiSfP5Lslw+pd0fDy1ln8f3XiY7sEJ8ABDHMNsrwqe11N3qav0OVoFqb1sqf2
-         epcZECsc+ofVpT/TmCm8h/JNawQ15hOcRtDMJoBz4Shk/ll1yCuG5dzBSR+8CC1X1Pyu
-         3fqHdIPOlGvs2WYPv0b8URKI6J7CBSVTIeFvNELtHV1TjBNHwqI+b5zi/KToS13omMon
-         +QScQPZ8OIunoPLtQ90OblIEs4zpkJELnB4K1kYiDUC2Ysmq6mD8RedoUi5OqeXfQUep
-         B7Ww==
-X-Gm-Message-State: AJcUukdNS86KnzHs/E4zY2G8aAZ7HR1QT8WJ7ZsI+Pb8ZRTi+7522rkM
-        t9IQjU/NJhFc4ePjgtpaqpLRO8y2a5kykA==
-X-Google-Smtp-Source: ALg8bN49T6bfJ1cB6jKb8O0W5gsSDGCPeYkKhTQ8bC3uZz/f6qYeJnrPPuAyBV86a9zR6czQAf8k5Q==
-X-Received: by 2002:a63:68c4:: with SMTP id d187mr16071423pgc.11.1547790257873;
-        Thu, 17 Jan 2019 21:44:17 -0800 (PST)
-Received: from pramodku-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id 202sm4537444pfy.87.2019.01.17.21.44.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 17 Jan 2019 21:44:17 -0800 (PST)
-From:   Pramod Kumar <pramod.kumar@broadcom.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Subject: [PATCH INTERNAL RFC 1/1] arm64: Use PSCI calls for CPU stop when hotplug is supported
-Date:   Fri, 18 Jan 2019 11:15:00 +0530
-Message-Id: <1547790300-6190-1-git-send-email-pramod.kumar@broadcom.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=K7jidEG6XCSxGT14yIoxuvZR8WMNBOFPpBPWSPowOpg=;
+        b=fa/aDL5CXUIk4hFRlxImfcJ0ILRkj5rlYnig+7+nAcHOn9YYS6yswUVXiRd/kz0kz+
+         d8qj4qbIwMLfufpzFVcNrkOJvEXgD6+H9jnPpKbwtJwzmTp3GTZjE1dWKrF530ll873F
+         8EAdqsKw/LKaWrWpXYpk7SF+hEJ35QqF/SsUkxr/l8/5A7LUjYd7L0U9aU6WkJD63p3E
+         af1fJw3L8oEN4/cgueb8O3dnzZjapAON0zy/wigmyn9chvVMvt8SOXrF0s2lKAQoJqG6
+         pHu/yQi6O5JuBH3661GiIzKwSsgEh99EKuIPkJQf/yYcDGHF2YFoZ8ERnbRPoceJP75x
+         ckxQ==
+X-Gm-Message-State: AJcUuken1P4Hzb0ZDC14A1rY5IT5GeDW+Oy4h15+zogbP9mK/B+FtyxM
+        F3Rs+ZwDjIJaIJQ3R+LvcvQIuY1rvPDJJKsnzIQ=
+X-Google-Smtp-Source: ALg8bN5AQOHRRMjhB56PhxAZMZI6SqS31gDu3wjoFysQ4AIssGkH7XU9FiQl2MttdpfbCc1d/iySGk8rXyyuLzRBZ2w=
+X-Received: by 2002:ac8:13c5:: with SMTP id i5mr3596966qtj.365.1547790299600;
+ Thu, 17 Jan 2019 21:44:59 -0800 (PST)
+MIME-Version: 1.0
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 18 Jan 2019 15:44:48 +1000
+Message-ID: <CAPM=9ty7U8D_stQeAtxgEzS_eeR0VKnZKBzGDNJwaotcr_7KCg@mail.gmail.com>
+Subject: [git pull] drm nouveau TU102 hw support
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CPU hotplug is supported, ipi_cpu_stop should use PSCI cpudie
-call to stop the CPU. This call ensures L1/L2 cache flush,
-CPUs cache-cohenrecy setting w.r.to interconnect.
+Hi Linus,
 
-Apart from this, this gives control to f/w to reduce power consumption
-by take appropriate decesion on power rails for plugging-out core.
+This is a separate pull req for -fixes that just contains the patch to
+enable TU102 GPUs with nouveau (RTX 2080 Ti).
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- arch/arm64/kernel/smp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+It seems small enough to go in now rather than wait for merge.
 
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 1598d6f..360e52b 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -822,8 +822,13 @@ static void ipi_cpu_stop(unsigned int cpu)
- 	local_daif_mask();
- 	sdei_mask_local_cpu();
- 
-+#ifdef CONFIG_HOTPLUG_CPU
-+	if (cpu_ops[cpu]->cpu_die)
-+		cpu_ops[cpu]->cpu_die(cpu);
-+#else
- 	while (1)
- 		cpu_relax();
-+#endif
- }
- 
- #ifdef CONFIG_KEXEC_CORE
--- 
-1.9.1
+Dave.
 
+drm-fixes-2019-01-18-1:
+drm/nouveau: add TU102 support
+The following changes since commit df0219b4f9576c72b618db5edf7bb75c14829dbd:
+
+  Merge tag 'drm-misc-fixes-2019-01-17' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes (2019-01-18
+09:14:45 +1000)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-01-18-1
+
+for you to fetch changes up to 9420151d88ca35cd7f857774d90bfdca505a2cc1:
+
+  Merge branch 'linux-4.21' of git://github.com/skeggsb/linux into
+drm-fixes (2019-01-18 15:38:18 +1000)
+
+----------------------------------------------------------------
+drm/nouveau: add TU102 support
+
+----------------------------------------------------------------
+Ben Skeggs (1):
+      drm/nouveau/core: recognise TU102
+
+Dave Airlie (1):
+      Merge branch 'linux-4.21' of git://github.com/skeggsb/linux into drm-fixes
+
+ drivers/gpu/drm/nouveau/nvkm/engine/device/base.c | 33 +++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
