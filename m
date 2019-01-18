@@ -2,87 +2,124 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 946ECC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3FAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B442086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A94CE2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:07:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="mktDZBsk"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="N49JeN95"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfARPGz (ORCPT
+        id S1727862AbfARPHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:06:55 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:17190 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbfARPGz (ORCPT
+        Fri, 18 Jan 2019 10:07:00 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33057 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbfARPG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:06:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547824012;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Q2NdmbAHINCN199W6d1Pw6kjfFiIuOgi21lP12GaV98=;
-        b=mktDZBskO0FkjsxEOfSaatwJ6etzGgPnBzKFIMPUvzrASckJiADloQ86CJ/GkOWZlE
-        vibTKeSp+tv1b02ebny1DJzOFfKs254Yy32p58usnVDl2z5Wk4/5QjGw6RykdJT+Jtmo
-        o1upoOExdKV7wc2BKbKsjfQOKP1kJyBbQwcgOh2A1MYGi1qWUfmRdDrC/xMREXmaHTLX
-        pmhYoeQP/Vt2vhMohOniGGiMrEk2zHMZL/JRfUc+Xh/2b0l/f3wO4OY43TAOWGZiSaVv
-        KdF4G/WsBCH02NEAuODOWwHzGv0/QDPnKQ3sLQ3tUSjuB21pDeNr2hA9GXs+Jei7ccdt
-        47rw==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkG3XhC7INB4ZnqpLNoQOqb145tbQ=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:9cbf:d0e8:7fbb:717b]
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id t0203dv0IF6oANI
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 18 Jan 2019 16:06:50 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <20190115133558.GA29225@lst.de>
- <685f0c06-af1b-0bec-ac03-f9bf1f7a2b35@xenosoft.de>
- <20190115151732.GA2325@lst.de>
- <e9345547-4dc6-747a-29ec-6375dc8bfe83@xenosoft.de>
- <20190118083539.GA30479@lst.de>
- <871403f2-fa7d-de15-89eb-070432e15c69@xenosoft.de>
- <20190118112842.GA9115@lst.de>
- <a2ca0118-5915-8b1c-7cfa-71cb4b43eaa6@xenosoft.de>
- <20190118121810.GA13327@lst.de>
- <eceebeda-0e18-00f6-06e7-def2eb0aa961@xenosoft.de>
- <20190118125500.GA15657@lst.de>
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-Message-ID: <e11e61b1-6468-122e-fc2b-3b3f857186bb@xenosoft.de>
-Date:   Fri, 18 Jan 2019 16:06:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 18 Jan 2019 10:06:59 -0500
+Received: by mail-ed1-f68.google.com with SMTP id p6so11412558eds.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 07:06:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UG5RazuzYfJ1KO5e7eanUh1SuAeL9m8MpJpRXdF/EjI=;
+        b=N49JeN95ffAVpN0Ow+fFUGlTvlwLtCpmy1HYRnxnjCKlRGS44WCu3yPGlctAmvEjiq
+         ekQhs+NZRGsJ8iPgag+ukPujxhqsuhsxvO8PEv/bejj3PL8KPqJewYAfOb4ydeK1WzZV
+         g4QauCXm2d8BwCqpRRCDlMFqhcNgVNbk73mUE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UG5RazuzYfJ1KO5e7eanUh1SuAeL9m8MpJpRXdF/EjI=;
+        b=GGbZBARphRTzyRwfox8nXwYPlBVNB5Tq8wFGbfjcn7QRaRJ2h6aTC5sqvrFvH1eSS6
+         Pqdy4Mxiom5ZgUQ1e3muO+4McTUYQ5Zce+T5IWWeU3wlGCBhAblItKWl+OxZXV/vH3JK
+         Q0xCPYvrtL7kqgkU/J+RxuAy5xBTAl9v9i8KC7Rc+L26q8H5PrG0tYRzI+8WisuC1Jv2
+         CtrKbDVovQdBjnwCdGR6hd63eN7vCA7v4IvmWxKdoncrfyCHQdHs5phyGhZWB0URsH0j
+         oSJqrYM9fIDm0c6pCDvWEu0YxeChlkFOycstyKGtGakEWyYGkzEhgzSoIPtMWAsJwdIc
+         3wJA==
+X-Gm-Message-State: AJcUukcN7wk4QJ83FSRuhJbzs+fv6nI1rF8pnxQ/TusJ6bn3Fbt4oBAI
+        89s/Byof26O+2Mw9QpZV/OW7Lw==
+X-Google-Smtp-Source: ALg8bN6tueaa2pvZGhoOAOZG6+I0Vm4IMz1EZQT98HNrDp/g5KJB/PBzt7H+6aKin2LQ73MIm9iuSA==
+X-Received: by 2002:aa7:d487:: with SMTP id b7mr15699887edr.256.1547824017471;
+        Fri, 18 Jan 2019 07:06:57 -0800 (PST)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id i8-v6sm2260291eja.45.2019.01.18.07.06.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 07:06:56 -0800 (PST)
+Date:   Fri, 18 Jan 2019 16:06:50 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Elena Reshetova <elena.reshetova@intel.com>
+Cc:     mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        keescook@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH 0/5] sched refcount_t conversions
+Message-ID: <20190118150650.GA8790@andrea>
+References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190118125500.GA15657@lst.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Christoph,
+On Fri, Jan 18, 2019 at 02:27:25PM +0200, Elena Reshetova wrote:
+> I would really love finally to merge these old patches
+> (now rebased on top of linux-next/master as of last friday),
+> since as far as I remember none has raised any more concerns
+> on them.
+> 
+> refcount_t has been now successfully used in kernel in many places,
+> helped to detect bugs and mistakes in logic of refcounters.
+> 
+> This series, for scheduler and task struct specifically,
+> replaces atomic_t reference counters with the new refcount_t type
+> and API (see include/linux/refcount.h).
+> By doing this we prevent intentional or accidental
+> underflows or overflows that can lead to use-after-free vulnerabilities.
+> 
+> The patches are fully independent and can be cherry-picked separately.
+> More information about each conversion in each patch separately.
+> 
+> Elena Reshetova (5):
+>   sched: convert sighand_struct.count to refcount_t
+>   sched: convert signal_struct.sigcnt to refcount_t
+>   sched: convert numa_group.refcount to refcount_t
+>   sched/task_struct: convert task_struct.usage to refcount_t
+>   sched/task_struct: convert task_struct.stack_refcount to refcount_t
 
-I was able to compile 257002094bc5935dd63207a380d9698ab81f0775 from your 
-Git powerpc-dma.6-debug today.
+For the series, please feel free to add:
 
-Unfortunately I don't see any error messages (kernel ring buffer) and I 
-don't have a RS232 serial null modem cable to get them.
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-Cheers,
-Christian
+(You may still want to update the references to the 'refcount-vs-atomic'
+ doc. in the commit messages.)
 
+  Andrea
+
+
+> 
+>  fs/exec.c                        |  4 ++--
+>  fs/proc/task_nommu.c             |  2 +-
+>  include/linux/init_task.h        |  1 +
+>  include/linux/sched.h            |  5 +++--
+>  include/linux/sched/signal.h     |  5 +++--
+>  include/linux/sched/task.h       |  4 ++--
+>  include/linux/sched/task_stack.h |  2 +-
+>  init/init_task.c                 |  6 +++---
+>  kernel/fork.c                    | 24 ++++++++++++------------
+>  kernel/sched/fair.c              | 12 ++++++------
+>  10 files changed, 34 insertions(+), 31 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
