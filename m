@@ -2,81 +2,96 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB8CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E267C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C3BB20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46DAB20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:52:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ih8IquNq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbfARLsv (ORCPT
+        id S1727404AbfARLwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:48:51 -0500
-Received: from mga09.intel.com ([134.134.136.24]:4949 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbfARLsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:48:51 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 03:48:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="126844876"
-Received: from zhujianq-mobl.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.210.252])
-  by FMSMGA003.fm.intel.com with ESMTP; 18 Jan 2019 03:48:47 -0800
-Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
-        (envelope-from <fengguang.wu@intel.com>)
-        id 1gkSdi-0002Ut-Nk; Fri, 18 Jan 2019 19:48:46 +0800
-Date:   Fri, 18 Jan 2019 19:48:46 +0800
-From:   Fengguang Wu <fengguang.wu@intel.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        thomas.lendacky@amd.com, dave@sr71.net, linux-nvdimm@lists.01.org,
-        tiwai@suse.de, zwisler@kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@suse.com,
-        baiyaowei@cmss.chinamobile.com, ying.huang@intel.com,
-        bhelgaas@google.com, akpm@linux-foundation.org, bp@suse.de
-Subject: Re: [PATCH 0/4] Allow persistent memory to be used like normal RAM
-Message-ID: <20190118114846.hmmcagscyjeycyfy@wfg-t540p.sh.intel.com>
-References: <20190116181859.D1504459@viggo.jf.intel.com>
- <x49sgxr9rjd.fsf@segfault.boston.devel.redhat.com>
- <20190117164736.GC31543@localhost.localdomain>
- <x49pnsv8am1.fsf@segfault.boston.devel.redhat.com>
+        Fri, 18 Jan 2019 06:52:35 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55307 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbfARLwe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 06:52:34 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y139so4202046wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 03:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AeMLuAiaL8DBaAYq8DMslzU3bn8IjC2Xka68ZCyd56E=;
+        b=ih8IquNqAfrk14DWOz2OiY2RQ6AwwLSixsLYzimOXxuUU0W1g7BSZ46Fm0txNIdtjv
+         tANtbBOF892wJwzfxNpkYPVQXKD1aRpsf16PMIWI7iCm8+8AsPDf5+Nd8SxkWb0HPDop
+         5niSZjviopzAJBGLVaYbMi4L43WNaHnrIIinM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AeMLuAiaL8DBaAYq8DMslzU3bn8IjC2Xka68ZCyd56E=;
+        b=B26zw4jT06sneulZTLMnisVGGUAgb/WV6kNIEvbRBAzULWGc2S70ybKT2iXc0KMHiv
+         ArkAxqskZxqek8n+o3dyM71LINemcxVafe459Vxod2K6A/TAvXdRDFWjHEhmX4AZvaeX
+         G0EM3gZrcZIaSZk0L2nBz2MAO9r5JnknlJ7Faeo4Y6Yamx1cDwN4wx/EozdzjqGi9hHi
+         x9uYrvOM/7181S1k1F16HhsVPPHtgi5fP1MOZhDIJN0KJnFJSV4haJ7Pkv+LpPZoE1LC
+         KlYf1UD+DpWK5FjGBs7kAxwCJjbPqO89l4xIUexAeZAWUUPfj/jXNiX2AlXx4y6qfssr
+         8oMA==
+X-Gm-Message-State: AJcUukerrAqUETVty1lX92KLspiH6jFszovZlwiN4AvL5lmBXnRYMqVW
+        R8guHH+zSMoKRsTlZr+tERDO/g==
+X-Google-Smtp-Source: ALg8bN4QXTXgkTNHhewR2dQ7pT3mDoCnbhE6GERX8Li8/bnAjRgsXP1UY614jH+cpTPnWoJ1MCyoNg==
+X-Received: by 2002:a1c:7616:: with SMTP id r22mr15426157wmc.35.1547812353086;
+        Fri, 18 Jan 2019 03:52:33 -0800 (PST)
+Received: from localhost.localdomain (146-241-71-93.dyn.eolo.it. [146.241.71.93])
+        by smtp.gmail.com with ESMTPSA id i13sm75183049wrw.32.2019.01.18.03.52.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 03:52:32 -0800 (PST)
+From:   Paolo Valente <paolo.valente@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        broonie@kernel.org, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name, hurikhan77+bko@gmail.com,
+        Paolo Valente <paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX RFC 0/2] reverting two commits causing freezes
+Date:   Fri, 18 Jan 2019 12:52:17 +0100
+Message-Id: <20190118115219.63576-1-paolo.valente@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <x49pnsv8am1.fsf@segfault.boston.devel.redhat.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->With this patch set, an unmodified application would either use:
->
->1) whatever memory it happened to get
->2) only the faster dram (via numactl --membind=)
->3) only the slower pmem (again, via numactl --membind1)
->4) preferentially one or the other (numactl --preferred=)
+Hi Jens,
+a user reported a warning, followed by freezes, in case he increases
+nr_requests to more than 64 [1]. After reproducing the issues, I
+reverted the commit f0635b8a416e ("bfq: calculate shallow depths at
+init time"), plus the related commit bd7d4ef6a4c9 ("bfq-iosched:
+remove unused variable"). The problem went away.
 
-Yet another option:
-
-MemoryOptimizer -- hot page accounting and migration daemon
-https://github.com/intel/memory-optimizer
-
-Once PMEM NUMA nodes are available, we may run a user space daemon to
-walk page tables of virtual machines (EPT) or processes, collect the
-"accessed" bits to find out hot pages, and finally migrate hot pages
-to DRAM and cold pages to PMEM.
-
-In that scenario, only kernel and the migrate daemon need to be aware
-of the PMEM nodes. Unmodified virtual machines and processes can enjoy
-the added memory space w/o knowing whether it's using DRAM or PMEM.
+Maybe the assumption in commit f0635b8a416e ("bfq: calculate shallow
+depths at init time") does not hold true?
 
 Thanks,
-Fengguang
+Paolo
+
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=200813
+
+Paolo Valente (2):
+  Revert "bfq-iosched: remove unused variable"
+  Revert "bfq: calculate shallow depths at init time"
+
+ block/bfq-iosched.c | 116 ++++++++++++++++++++++----------------------
+ block/bfq-iosched.h |   6 +++
+ 2 files changed, 63 insertions(+), 59 deletions(-)
+
+--
+2.20.1
