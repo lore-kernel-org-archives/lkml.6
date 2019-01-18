@@ -2,172 +2,153 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80285C5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCB3C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8812087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2D4520850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:52:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gPuWsQiR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbfARRwU (ORCPT
+        id S1728725AbfARRwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:52:20 -0500
-Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:39375 "EHLO
-        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727323AbfARRwU (ORCPT
+        Fri, 18 Jan 2019 12:52:31 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:42492 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728698AbfARRw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:52:20 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id A85931C3584
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 17:52:17 +0000 (GMT)
-Received: (qmail 31737 invoked from network); 18 Jan 2019 17:52:17 -0000
-Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPA; 18 Jan 2019 17:52:17 -0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 03/22] mm, compaction: Remove last_migrated_pfn from compact_control
-Date:   Fri, 18 Jan 2019 17:51:17 +0000
-Message-Id: <20190118175136.31341-4-mgorman@techsingularity.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190118175136.31341-1-mgorman@techsingularity.net>
-References: <20190118175136.31341-1-mgorman@techsingularity.net>
+        Fri, 18 Jan 2019 12:52:29 -0500
+Received: by mail-ua1-f65.google.com with SMTP id d21so4950058uap.9
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:52:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HNip1d+gmnaVYee8c7IXM+XRAYIVovWHTmdMWrDOKy4=;
+        b=gPuWsQiRqzq9GH8wmLfvfPzJIufKcKWjUFDFJiFjvfNR5i1VT85Yya7d6T6MKY6iLj
+         2wlXA60h6UgzOzDVPba5T0ZH+T7XHTo6qkwBiR3u/FAE35e6GfeaiIc/JMDgwpxUArKl
+         DaNFPbi9fEYEVWz/gwMAYIlXs0tkOv45/muRk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HNip1d+gmnaVYee8c7IXM+XRAYIVovWHTmdMWrDOKy4=;
+        b=jXYwbgGfVq41kohmttByCwiuclQ7lEPo5Wi69O8Hv2GSHPgGQY6NwUWKV8DMoiQY0R
+         fviKwHdwTKnTZ0j/0uWccZ0HQKyhM/zehBsUXZJXYq+wI/RuFX8S/efastDCzw/E68p5
+         2x+NXJ43eTy0wWjxzb6NovR4FWG+2TIEqmjLX/U1G0OHsX8oFMqBshOf+ESkCsTDxSlk
+         iSRLZyjIv2QBfKji/9+V1fkq8RrL45dW2l/wjeuJeq0zvMdUgnsxQ7SukpQhoVXw/bhw
+         zE10jtn65gyrhm/Bth4NThLkyfnWqwn1jZsOTM2i04cu0CD0DlQF502YEcRLpJWGf+ru
+         7Nkw==
+X-Gm-Message-State: AJcUukcq9bVB6VEefYNMJ+RUB6YqvfNEqPI3NqQ5IAYrLEZYF54E6497
+        Pg/aYfhKWnfXyvKMB/mMOiQxtPaokZk=
+X-Google-Smtp-Source: ALg8bN4MCgH01WFkckYz2a6/QVFZvcfDuCnAoJXOeZlz39knUhkx3rs6H0WpBCN20PQXnKOAWRwl4A==
+X-Received: by 2002:ab0:740a:: with SMTP id r10mr5676829uap.14.1547833948328;
+        Fri, 18 Jan 2019 09:52:28 -0800 (PST)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id r130sm52831768vka.55.2019.01.18.09.52.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 09:52:26 -0800 (PST)
+Received: by mail-vs1-f46.google.com with SMTP id b74so8898470vsd.9
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:52:25 -0800 (PST)
+X-Received: by 2002:a67:dd94:: with SMTP id i20mr8631042vsk.111.1547833945530;
+ Fri, 18 Jan 2019 09:52:25 -0800 (PST)
+MIME-Version: 1.0
+References: <1547056325-1919-1-git-send-email-jshekhar@codeaurora.org> <1547056325-1919-3-git-send-email-jshekhar@codeaurora.org>
+In-Reply-To: <1547056325-1919-3-git-send-email-jshekhar@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 18 Jan 2019 09:52:12 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XUeMTGH+CDwGs3PfK4igdQrCbwucw7_2ViBc4i7grvxg@mail.gmail.com>
+Message-ID: <CAD=FV=XUeMTGH+CDwGs3PfK4igdQrCbwucw7_2ViBc4i7grvxg@mail.gmail.com>
+Subject: Re: [v5 2/3] drm/msm/dpu: Integrate interconnect API in MDSS
+To:     Jayant Shekhar <jshekhar@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Chandan Uddaraju <chandanu@codeaurora.org>,
+        nganji@codeaurora.org, Evan Green <evgreen@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The last_migrated_pfn field is a bit dubious as to whether it really helps
-but either way, the information from it can be inferred without increasing
-the size of compact_control so remove the field.
+Hi,
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/compaction.c | 25 +++++++++----------------
- mm/internal.h   |  1 -
- 2 files changed, 9 insertions(+), 17 deletions(-)
+On Wed, Jan 9, 2019 at 9:52 AM Jayant Shekhar <jshekhar@codeaurora.org> wrote:
+> @@ -127,7 +153,11 @@ static int dpu_mdss_enable(struct msm_mdss *mdss)
+>  {
+>         struct dpu_mdss *dpu_mdss = to_dpu_mdss(mdss);
+>         struct dss_module_power *mp = &dpu_mdss->mp;
+> -       int ret;
+> +       int ret, i;
+> +       u64 avg_bw = dpu_mdss->num_paths ? MAX_BW / dpu_mdss->num_paths : 0;
+> +
+> +       for (i = 0; i < dpu_mdss->num_paths; i++)
+> +               icc_set(dpu_mdss->path[i], avg_bw, kBps_to_icc(MAX_BW));
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index c15b4bbc9e9e..e59dd7a7564c 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -886,15 +886,6 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 		cc->nr_migratepages++;
- 		nr_isolated++;
- 
--		/*
--		 * Record where we could have freed pages by migration and not
--		 * yet flushed them to buddy allocator.
--		 * - this is the lowest page that was isolated and likely be
--		 * then freed by migration.
--		 */
--		if (!cc->last_migrated_pfn)
--			cc->last_migrated_pfn = low_pfn;
--
- 		/* Avoid isolating too much */
- 		if (cc->nr_migratepages == COMPACT_CLUSTER_MAX) {
- 			++low_pfn;
-@@ -918,7 +909,6 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 			}
- 			putback_movable_pages(&cc->migratepages);
- 			cc->nr_migratepages = 0;
--			cc->last_migrated_pfn = 0;
- 			nr_isolated = 0;
- 		}
- 
-@@ -1539,6 +1529,7 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 	enum compact_result ret;
- 	unsigned long start_pfn = zone->zone_start_pfn;
- 	unsigned long end_pfn = zone_end_pfn(zone);
-+	unsigned long last_migrated_pfn;
- 	const bool sync = cc->mode != MIGRATE_ASYNC;
- 
- 	cc->migratetype = gfpflags_to_migratetype(cc->gfp_mask);
-@@ -1584,7 +1575,7 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 			cc->whole_zone = true;
- 	}
- 
--	cc->last_migrated_pfn = 0;
-+	last_migrated_pfn = 0;
- 
- 	trace_mm_compaction_begin(start_pfn, cc->migrate_pfn,
- 				cc->free_pfn, end_pfn, sync);
-@@ -1593,12 +1584,14 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 
- 	while ((ret = compact_finished(zone, cc)) == COMPACT_CONTINUE) {
- 		int err;
-+		unsigned long start_pfn = cc->migrate_pfn;
- 
- 		switch (isolate_migratepages(zone, cc)) {
- 		case ISOLATE_ABORT:
- 			ret = COMPACT_CONTENDED;
- 			putback_movable_pages(&cc->migratepages);
- 			cc->nr_migratepages = 0;
-+			last_migrated_pfn = 0;
- 			goto out;
- 		case ISOLATE_NONE:
- 			/*
-@@ -1608,6 +1601,7 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 			 */
- 			goto check_drain;
- 		case ISOLATE_SUCCESS:
-+			last_migrated_pfn = start_pfn;
- 			;
- 		}
- 
-@@ -1639,8 +1633,7 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 				cc->migrate_pfn = block_end_pfn(
- 						cc->migrate_pfn - 1, cc->order);
- 				/* Draining pcplists is useless in this case */
--				cc->last_migrated_pfn = 0;
--
-+				last_migrated_pfn = 0;
- 			}
- 		}
- 
-@@ -1652,18 +1645,18 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 		 * compact_finished() can detect immediately if allocation
- 		 * would succeed.
- 		 */
--		if (cc->order > 0 && cc->last_migrated_pfn) {
-+		if (cc->order > 0 && last_migrated_pfn) {
- 			int cpu;
- 			unsigned long current_block_start =
- 				block_start_pfn(cc->migrate_pfn, cc->order);
- 
--			if (cc->last_migrated_pfn < current_block_start) {
-+			if (last_migrated_pfn < current_block_start) {
- 				cpu = get_cpu();
- 				lru_add_drain_cpu(cpu);
- 				drain_local_pages(zone);
- 				put_cpu();
- 				/* No more flushing until we migrate again */
--				cc->last_migrated_pfn = 0;
-+				last_migrated_pfn = 0;
- 			}
- 		}
- 
-diff --git a/mm/internal.h b/mm/internal.h
-index 867af5425432..f40d06d70683 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -188,7 +188,6 @@ struct compact_control {
- 	unsigned int nr_migratepages;	/* Number of pages to migrate */
- 	unsigned long free_pfn;		/* isolate_freepages search base */
- 	unsigned long migrate_pfn;	/* isolate_migratepages search base */
--	unsigned long last_migrated_pfn;/* Not yet flushed page being freed */
- 	struct zone *zone;
- 	unsigned long total_migrate_scanned;
- 	unsigned long total_free_scanned;
--- 
-2.16.4
+You'll need to change icc_set() here to icc_set_bw() to match v13, AKA:
 
+- https://patchwork.kernel.org/patch/10766335/
+- https://lkml.kernel.org/r/20190116161103.6937-2-georgi.djakov@linaro.org
+
+
+>         ret = msm_dss_enable_clk(mp->clk_config, mp->num_clk, true);
+>         if (ret)
+> @@ -140,12 +170,15 @@ static int dpu_mdss_disable(struct msm_mdss *mdss)
+>  {
+>         struct dpu_mdss *dpu_mdss = to_dpu_mdss(mdss);
+>         struct dss_module_power *mp = &dpu_mdss->mp;
+> -       int ret;
+> +       int ret, i;
+>
+>         ret = msm_dss_enable_clk(mp->clk_config, mp->num_clk, false);
+>         if (ret)
+>                 DPU_ERROR("clock disable failed, ret:%d\n", ret);
+>
+> +       for (i = 0; i < dpu_mdss->num_paths; i++)
+> +               icc_set(dpu_mdss->path[i], 0, 0);
+
+This will also need to change to icc_set_bw()
+
+
+I'm curious what the plan is for landing this series.  Sean / Rob /
+Gerogi: do you have any preference?  Options I'd imagine:
+
+A) Wait until interconnect lands (in 5.1?) and land this through
+drm-misc / msm-next in the version after (5.2?)
+
+B) Georgi provides an immutable branch for interconnect when his lands
+(assuming he's sending his stuff upstream via pull request) and that
+immutable branch gets merged into the the relevant drm tree.
+
+C) Sean and/or Rob Acks this series and indicates that it should go in
+through Gerogi's tree (probably only works if Georgi plans to send a
+pull request).  If we're going this route then (IIUC) we'd want to
+land this in Gerogi's tree sooner rather than later so it can get some
+bake time in linux-next (we've been baking it in Chrome OS for a
+while, but nice to see it in linux-next too).
+
+
+Does anyone have a preference?  It's be nice if whoever is planning to
+land this could indicate whether they'd prefer Jayant send a new
+version to handle the API change or if the relevant maintainer can
+just do the fixup when the patch lands.
+
+
+Thanks!
+
+-Doug
