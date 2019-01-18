@@ -2,137 +2,105 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADFFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C24B9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06AF620652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E16A20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:21:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S8KZYzgp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S8KZYzgp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfARFUh (ORCPT
+        id S1727094AbfARFVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 00:20:37 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:41017 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfARFUg (ORCPT
+        Fri, 18 Jan 2019 00:21:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38098 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbfARFVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 00:20:36 -0500
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0I5KYZN096133;
-        Fri, 18 Jan 2019 14:20:34 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Fri, 18 Jan 2019 14:20:34 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0I5KYqv096128;
-        Fri, 18 Jan 2019 14:20:34 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x0I5KYTi096127;
-        Fri, 18 Jan 2019 14:20:34 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201901180520.x0I5KYTi096127@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: INFO: rcu detected stall in =?ISO-2022-JP?B?bmRpc2NfYWxsb2Nfc2ti?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+ea7d9cb314b4ab49a18a@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Linux-MM <linux-mm@kvack.org>, Shakeel Butt <shakeelb@google.com>
+        Fri, 18 Jan 2019 00:21:54 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D0E2E6081E; Fri, 18 Jan 2019 05:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547788913;
+        bh=OeLXSwt9SPv0Z6ZKu2EPP4bCBvBvPgfOhjfBAKW0jxk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=S8KZYzgpFMOmugqF06l9+haMeTXkzvdm2t83F7P7ioFxwLBpVKRQUUVVXco6GRBbl
+         ig5769d2p+i3vPGljJn+gyTqcKstpiXvtJKHs3FmDzYRD0ZXdMAWFxbAf2tl+9Gn8m
+         b2Cxm+rSkJgZ3SLl8M1DnpDMfcRS6JXyNcNKJoKM=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 3604760585;
+        Fri, 18 Jan 2019 05:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547788913;
+        bh=OeLXSwt9SPv0Z6ZKu2EPP4bCBvBvPgfOhjfBAKW0jxk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=S8KZYzgpFMOmugqF06l9+haMeTXkzvdm2t83F7P7ioFxwLBpVKRQUUVVXco6GRBbl
+         ig5769d2p+i3vPGljJn+gyTqcKstpiXvtJKHs3FmDzYRD0ZXdMAWFxbAf2tl+9Gn8m
+         b2Cxm+rSkJgZ3SLl8M1DnpDMfcRS6JXyNcNKJoKM=
 MIME-Version: 1.0
-Date:   Fri, 18 Jan 2019 14:20:34 +0900
-References: <ea2bc542-38b2-8218-9eb7-4c4a05da36ea@i-love.sakura.ne.jp> <CACT4Y+Yy-bF07F7F8DoFY8=4LtLURRn1WsZzNZ9LN+N=vn7Tpw@mail.gmail.com>
-In-Reply-To: <CACT4Y+Yy-bF07F7F8DoFY8=4LtLURRn1WsZzNZ9LN+N=vn7Tpw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Fri, 18 Jan 2019 10:51:53 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-remoteproc@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        sricharan@codeaurora.org, linux-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v6] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+In-Reply-To: <CAD=FV=V2XoaDVy9hnh-S=jbzU-Di0KoD7gM2CxpZm3646k9ZjA@mail.gmail.com>
+References: <20190114192201.23779-1-sibis@codeaurora.org>
+ <CAD=FV=V2XoaDVy9hnh-S=jbzU-Di0KoD7gM2CxpZm3646k9ZjA@mail.gmail.com>
+Message-ID: <d3a814812039fdc7459656e2150e00a5@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov wrote:
-> On Sun, Jan 6, 2019 at 2:47 PM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> >
-> > On 2019/01/06 22:24, Dmitry Vyukov wrote:
-> > >> A report at 2019/01/05 10:08 from "no output from test machine (2)"
-> > >> ( https://syzkaller.appspot.com/text?tag=CrashLog&x=1700726f400000 )
-> > >> says that there are flood of memory allocation failure messages.
-> > >> Since continuous memory allocation failure messages itself is not
-> > >> recognized as a crash, we might be misunderstanding that this problem
-> > >> is not occurring recently. It will be nice if we can run testcases
-> > >> which are executed on bpf-next tree.
-> > >
-> > > What exactly do you mean by running test cases on bpf-next tree?
-> > > syzbot tests bpf-next, so it executes lots of test cases on that tree.
-> > > One can also ask for patch testing on bpf-next tree to test a specific
-> > > test case.
-> >
-> > syzbot ran "some tests" before getting this report, but we can't find from
-> > this report what the "some tests" are. If we could record all tests executed
-> > in syzbot environments before getting this report, we could rerun the tests
-> > (with manually examining where the source of memory consumption is) in local
-> > environments.
+On 2019-01-18 04:35, Doug Anderson wrote:
+> Hi,
 > 
-> Filed https://github.com/google/syzkaller/issues/917 for this.
+> On Mon, Jan 14, 2019 at 11:22 AM Sibi Sankar <sibis@codeaurora.org> 
+> wrote:
+>> +               mss_pil: remoteproc@4080000 {
+>> +                       compatible = "qcom,sdm845-mss-pil";
+>> +                       reg = <0x04080000 0x408>, <0x04180000 0x48>;
+> 
+> This will now need to be adjusted to:
+> 
+> reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
 
-Thanks. Here is what I would suggest.
+Yup, this was on my todo list after Bjorn
+posted out the patch
 
-Let syz-fuzzer write to /dev/kmsg . But don't directly write syz-program lines.
-Instead, just write the hash value of syz-program lines, and allow downloading
-syz-program lines from external URL. Also, use the first 12 characters of the
-hash value as comm name executing that syz-program lines. An example of console
-output would look something like below.
+> 
+> This fixes things up to deal with the patch ("arm64: dts: qcom:
+> sdm845: Increase address and size cells for soc"), AKA:
+> - https://patchwork.kernel.org/patch/10767511/
+> - 
+> https://lkml.kernel.org/r/20190117042940.25487-2-bjorn.andersson@linaro.org
+> 
+> 
+> -Doug
 
-
-  [$(uptime)][$(caller_info)] executing program #0123456789abcdef0123456789abcdef
-  [$(uptime)][$(caller_info)] $(kernel_messages_caused_by_0123456789abcdef0123456789abcdef_are_here)
-  [$(uptime)][$(caller_info)] executing program #456789abcdef0123456789abcdef0123
-  [$(uptime)][$(caller_info)] $(kernel_messages_caused_by_456789abcdef0123456789abcdef0123_and_0123456789abcdef0123456789abcdef_are_here)
-  [$(uptime)][$(caller_info)] executing program #89abcdef0123456789abcdef01234567
-  [$(uptime)][$(caller_info)] $(kernel_messages_caused_by_89abcdef0123456789abcdef01234567_456789abcdef0123456789abcdef0123_and_0123456789abcdef0123456789abcdef_are_here)
-  [$(uptime)][$(caller_info)] BUG: unable to handle kernel paging request at $(address)
-  [$(uptime)][$(caller_info)] CPU: $(cpu) PID: $(pid) Comm: syz#89abcdef0123 Not tainted $(version) #$(build)
-  [$(uptime)][$(caller_info)] $(backtrace_of_caller_info_is_here)
-  [$(uptime)][$(caller_info)] Kernel panic - not syncing: Fatal exception
-
-Then, we can build CrashLog by picking up all "executing program #" lines and
-"latest lines up to available space" from console output like below.
-
-  [$(uptime)][$(caller_info)] executing program #0123456789abcdef0123456789abcdef
-  [$(uptime)][$(caller_info)] executing program #456789abcdef0123456789abcdef0123
-  [$(uptime)][$(caller_info)] executing program #89abcdef0123456789abcdef01234567
-  [$(uptime)][$(caller_info)] $(kernel_messages_caused_by_89abcdef0123456789abcdef01234567_456789abcdef0123456789abcdef0123_and_0123456789abcdef0123456789abcdef_are_here)
-  [$(uptime)][$(caller_info)] BUG: unable to handle kernel paging request at $(address)
-  [$(uptime)][$(caller_info)] CPU: $(cpu) PID: $(pid) Comm: syz89abcdef0123 Not tainted $(version) #$(build)
-  [$(uptime)][$(caller_info)] $(backtrace_of_caller_info_is_here)
-  [$(uptime)][$(caller_info)] Kernel panic - not syncing: Fatal exception
-
-Then, we can understand that a crash happened when executing 89abcdef0123 and
-download 89abcdef0123456789abcdef01234567 for analysis. Also, we can download
-0123456789abcdef0123456789abcdef and 456789abcdef0123456789abcdef0123 as needed.
-
-Honestly, since lines which follows "$(date) executing program $(num):" line can
-become so long, it is difficult to find where previous/next kernel messages are.
-If only one-liner "executing program #" output is used, it is easy to find
-previous/next kernel messages.
-
-The program referenced by "executing program #" would be made downloadable via
-Web server or git repository. Maybe "executing program https://$server/$hash"
-for the former case. But repeating "https://$server/" part would be redundant.
-
-The question for me is, whether sysbot can detect hash collision with different
-syz-program lines before writing the hash value to /dev/kmsg, and retry by modifying
-syz-program lines in order to get a new hash value until collision is avoided.
-If it is difficult, simpler choice like current Unix time and PID could be used
-instead...
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
