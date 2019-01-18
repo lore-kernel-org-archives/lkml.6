@@ -7,156 +7,158 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C8AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E2BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E963C2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:44:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 026D02086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:44:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="HUWWzki7"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UrHguNnD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbfARNo0 (ORCPT
+        id S1728015AbfARNoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:44:26 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39453 "EHLO
+        Fri, 18 Jan 2019 08:44:30 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55918 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbfARNnL (ORCPT
+        with ESMTP id S1727707AbfARNo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:43:11 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y8so4525258wmi.4
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 05:43:11 -0800 (PST)
+        Fri, 18 Jan 2019 08:44:28 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y139so4510908wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 05:44:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f/KRarYfj/1Ot/ceWKaBAxhNsDNgQGntcu1QYSAIn/A=;
-        b=HUWWzki7QY8XTTdiXgnlWwU+7SovCBSG11aK9A2Mo+vbMn+NJRQUZuNoYlfkCbU7If
-         wtORLLa6/ZzHOMaJdq3JxcycqtcWlSGpqGd6hnqZGbmvbomb1QPWIFvtRfH1zPsLXxj/
-         EQ7Fzl4XXYijOB55zP6qjp5bXKnSsL33a3V4/0/TatIV2SOJdm1NkP5+QpwpeAE4ghqK
-         4n5QgS7m41MbHZ8uIcwsGFN8GA63RzjpUNsH8c4c6HJzn2z9Q1jEdZ9ST72fb64VUXVB
-         pn9nkt3c4X/q9xuc/PCJ8AF3bkwLY7coyqkEvkxDtk8GbyZvWLC54VUB962zYYPPM/uF
-         BqGw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=6xhP3iFZu+KY4p6uA7nxYzqv59edNtjKSfjSMfB8u+8=;
+        b=UrHguNnD28eUc06ATqkWwzWIuediGZIT8Dojl9XpKM6si+KEAo2f5PlG2pg95exakT
+         MLQxBCSC0qc93Qq2SzWaa+AwWlvX/zyeoXg1MayvY31RwVgkoOtordjOHMGHlSVZLPMg
+         S+KEoJ3I563xPNO/nG1AY7RFJKNM/VFPv1RIVXB7XTxWormA7mXAKRE377Hu+7b8ND0G
+         x+cdGEukxB69l9/3f2p86X01VUTaygkoyEsimE8CxVnUK2xV0N9EDoFujiLjJslz+/2m
+         djYhUUeDzLr4GTVaaFvF/pA6/hlj3MOTyhBmUnSpeZYF6POoYJXZ5vffMub2r9C0QT6Z
+         HMBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f/KRarYfj/1Ot/ceWKaBAxhNsDNgQGntcu1QYSAIn/A=;
-        b=BIt4pVQRDEsuAHZLsy2AnvdQE6AF5eNgQfrfUBFLR2lJs3ETAefK1JVozuElYT6sN2
-         EUorVMaVd8EjN3R3M5IpqKOFILtcgGBsTggFDRNkOE7kIX3YF2i0GQgjBEOF4lqJ1Dd4
-         nW2/g85+reUm5N4iQG7VhZKcCAAT54AshYJAQ78ItgEdrEh+yzfa98BeqNuO/voRpMSb
-         EiAkBsOR+QWw330LYMgMto913bYJdBEeg/4JV908pgt7nuRR+BmlFWdUGIB9gSUxXvkj
-         3piEYTRulxXHr3FuS+cfc3CkBIZVHOaO0lGYYpyvcFeeCQiHAKAEG0buwwjjjFyPlReI
-         +J0Q==
-X-Gm-Message-State: AJcUukdUaa60//Xz7ZyLIb1VBjvlSUP/tc7imZk+qX/5/zg2SMsXxfUM
-        zQg9JHNYzLEaQVGjZB12lqlmJg==
-X-Google-Smtp-Source: ALg8bN7cAHZJMZpcqo85p29mshJGwK9LI2Wy1crq7nT1awe7X7IsxEPXKOya9ZJUlddQFkkOt5hREg==
-X-Received: by 2002:a7b:c04e:: with SMTP id u14mr16018369wmc.113.1547818990421;
-        Fri, 18 Jan 2019 05:43:10 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id a132sm51033934wmh.5.2019.01.18.05.43.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 05:43:09 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 05/13] dt-bindings: leds: add DT bindings for max77650
-Date:   Fri, 18 Jan 2019 14:42:36 +0100
-Message-Id: <20190118134244.22253-6-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190118134244.22253-1-brgl@bgdev.pl>
-References: <20190118134244.22253-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6xhP3iFZu+KY4p6uA7nxYzqv59edNtjKSfjSMfB8u+8=;
+        b=kjUXHq3ejUXosQtSAGI5e4LCjAednD2v5ftAqmEOmNmYHIlbaVh3WUpHwpX+sQiofj
+         qLqqp/Ka9uwvmcEMLzjN2JqAL+LwA/50ycgoORhc3QTJPzpFUCZcsjxNYE0y+L1OHQo5
+         hL+8KdEE7ZIkN43LV10Zdeb7AIl2qA6uI6PeITXYCuowdhpWCjEEixz68gRk0Q+Zi2tx
+         EUOpCBqdY1nDleggN9Y5l3RqvupLRN8x/mAfs1hLW86rgthhUmQKfSseZ7Zm7d1XVccc
+         Xfyhnr37y300CPjBVlumAp0WpzO1XAIjhTrsSuDoz4Uj1Us/BGSL0O4TlCoZqlN2KfMv
+         GB1w==
+X-Gm-Message-State: AJcUukf0Cx04UUBrb0eLkKiOQ0MvhijMLfZKKefBpWZe+S7YCaH49NNQ
+        lcrfaaoWEesE/FCp9RSnll9ypg==
+X-Google-Smtp-Source: ALg8bN6q8pkGJRQqKhQVSRwKN5gJFmOp6G9FcYQc3pwLEAsOrr31MF/rkKFXCJD++LEhcH5RIccvsg==
+X-Received: by 2002:a1c:3d44:: with SMTP id k65mr15541959wma.76.1547819066534;
+        Fri, 18 Jan 2019 05:44:26 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id y13sm65912208wrn.73.2019.01.18.05.44.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 18 Jan 2019 05:44:25 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     corbet@lwn.net, hch@lst.de, m.szyprowski@samsung.com,
+        robin.murphy@arm.com
+Cc:     iommu@lists.linux-foundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v2] dma-debug: add dumping facility via debugfs
+Date:   Fri, 18 Jan 2019 13:44:18 +0000
+Message-Id: <1547819058-3552-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+While debugging a DMA mapping leak, I needed to access
+debug_dma_dump_mappings() but easily from user space.
 
-Add the DT binding document for the LEDs module of max77650.
+This patch adds a /sys/kernel/debug/dma-api/dump file which contain all
+current DMA mapping.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- .../bindings/leds/leds-max77650.txt           | 57 +++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+Changes since v1:
+- Use DEFINE_SHOW_ATTRIBUTE
+- Add Documentation
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.txt b/Documentation/devicetree/bindings/leds/leds-max77650.txt
-new file mode 100644
-index 000000000000..822b8893bc20
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-max77650.txt
-@@ -0,0 +1,57 @@
-+LED driver for MAX77650 PMIC from Maxim Integrated.
+ Documentation/DMA-API.txt |  3 +++
+ kernel/dma/debug.c        | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
+
+diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
+index e133ccd60228..78114ee63057 100644
+--- a/Documentation/DMA-API.txt
++++ b/Documentation/DMA-API.txt
+@@ -696,6 +696,9 @@ dma-api/disabled		This read-only file contains the character 'Y'
+ 				happen when it runs out of memory or if it was
+ 				disabled at boot time
+ 
++dma-api/dump			This read-only file contains current DMA
++				mappings.
 +
-+This module is part of the MAX77650 MFD device. For more details
-+see Documentation/devicetree/bindings/mfd/max77650.txt.
+ dma-api/error_count		This file is read-only and shows the total
+ 				numbers of errors found.
+ 
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index 23cf5361bcf1..b4827b1c9070 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -144,6 +144,7 @@ static struct dentry *num_free_entries_dent __read_mostly;
+ static struct dentry *min_free_entries_dent __read_mostly;
+ static struct dentry *nr_total_entries_dent __read_mostly;
+ static struct dentry *filter_dent           __read_mostly;
++static struct dentry *dump_dent             __read_mostly;
+ 
+ /* per-driver filter related state */
+ 
+@@ -840,6 +841,36 @@ static const struct file_operations filter_fops = {
+ 	.llseek = default_llseek,
+ };
+ 
++static int dump_show(struct seq_file *seq, void *v)
++{
++	int idx;
 +
-+The LED controller is represented as a sub-node of the PMIC node on
-+the device tree.
++	for (idx = 0; idx < HASH_SIZE; idx++) {
++		struct hash_bucket *bucket = &dma_entry_hash[idx];
++		struct dma_debug_entry *entry;
++		unsigned long flags;
 +
-+This device has three current sinks.
++		spin_lock_irqsave(&bucket->lock, flags);
 +
-+Required properties:
-+--------------------
-+- compatible:		Must be "maxim,max77650-leds"
-+- #address-cells:	Must be <1>.
-+- #size-cells:		Must be <0>.
++		list_for_each_entry(entry, &bucket->list, list) {
++			seq_printf(seq,
++				   "%s %s %s idx %d P=%llx N=%lx D=%llx L=%llx %s %s\n",
++				   dev_name(entry->dev),
++				   dev_driver_string(entry->dev),
++				   type2name[entry->type], idx,
++				   phys_addr(entry), entry->pfn,
++				   entry->dev_addr, entry->size,
++				   dir2name[entry->direction],
++				   maperr2str[entry->map_err_type]);
++		}
 +
-+Each LED is represented as a sub-node of the LED-controller node. Up to
-+three sub-nodes can be defined.
++		spin_unlock_irqrestore(&bucket->lock, flags);
++	}
++	return 0;
++}
 +
-+Required properties of the sub-node:
-+------------------------------------
++DEFINE_SHOW_ATTRIBUTE(dump);
 +
-+- reg:			Must be <0>, <1> or <2>.
+ static int dma_debug_fs_init(void)
+ {
+ 	dma_debug_dent = debugfs_create_dir("dma-api", NULL);
+@@ -894,6 +925,11 @@ static int dma_debug_fs_init(void)
+ 	if (!filter_dent)
+ 		goto out_err;
+ 
++	dump_dent = debugfs_create_file("dump", 0444,
++					dma_debug_dent, NULL, &dump_fops);
++	if (!dump_dent)
++		goto out_err;
 +
-+Optional properties of the sub-node:
-+------------------------------------
-+
-+- label:		See Documentation/devicetree/bindings/leds/common.txt
-+- linux,default-trigger: See Documentation/devicetree/bindings/leds/common.txt
-+
-+For more details, please refer to the generic GPIO DT binding document
-+<devicetree/bindings/gpio/gpio.txt>.
-+
-+Example:
-+--------
-+
-+	leds {
-+		compatible = "maxim,max77650-leds";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		led0 {
-+			reg = <0>;
-+			label = "max77650:blue:usr0";
-+		};
-+
-+		led1 {
-+			reg = <1>;
-+			label = "max77650:red:usr1";
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led2 {
-+			reg = <2>;
-+			label = "max77650:green:usr2";
-+		};
-+	};
+ 	return 0;
+ 
+ out_err:
 -- 
-2.19.1
+2.19.2
 
