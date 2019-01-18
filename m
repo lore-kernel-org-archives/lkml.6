@@ -2,146 +2,119 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A780BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11465C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC4920855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D714A20855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:33:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfARDdE (ORCPT
+        id S1727091AbfARDdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 22:33:04 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2193 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726858AbfARDdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 22:33:03 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 741ABC4626CA604BF220;
-        Fri, 18 Jan 2019 11:33:01 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
- 11:32:52 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <kvalo@codeaurora.org>,
-        <arend.vanspriel@broadcom.com>, <franky.lin@broadcom.com>,
-        <chi-hsien.lin@cypress.com>, <pkshih@realtek.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <ath10k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        <brcm80211-dev-list@cypress.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] wireless: remove unneeded semicolon
-Date:   Fri, 18 Jan 2019 11:32:15 +0800
-Message-ID: <20190118033215.5904-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 17 Jan 2019 22:33:13 -0500
+Received: from mail.windriver.com ([147.11.1.11]:45024 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfARDdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 22:33:12 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x0I3X2ne007638
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 17 Jan 2019 19:33:02 -0800 (PST)
+Received: from pek-jsun4-d1.corp.ad.wrs.com (128.224.155.96) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.50) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 17 Jan 2019 19:33:02 -0800
+From:   Jiwei Sun <jiwei.sun@windriver.com>
+To:     <linus.walleij@linaro.org>, <linux-arm-kernel@lists.infradead.org>
+CC:     <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH]spi: pl022: add a message state STATE_TIMEOUT for timeout transfer
+Date:   Fri, 18 Jan 2019 11:32:29 +0800
+Message-ID: <20190118033229.22553-1-jiwei.sun@windriver.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-remove unneeded semicolon
+When transfer timeout, give -EAGAIN to the message's status, and it can
+make the spi device driver choose repeated transimation or not. And if
+transfer timeout, output some useful information for tracing the issue.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
 ---
- drivers/net/wireless/ath/ath10k/wmi.h                     | 2 +-
- drivers/net/wireless/ath/ath6kl/init.c                    | 2 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c | 2 +-
- drivers/net/wireless/ray_cs.c                             | 2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c      | 6 +++---
- 5 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/spi/spi-pl022.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.h b/drivers/net/wireless/ath/ath10k/wmi.h
-index 2034ccc..021eb30 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi.h
-@@ -1986,7 +1986,7 @@ static inline const char *ath10k_wmi_phymode_str(enum wmi_phy_mode mode)
- 		/* no default handler to allow compiler to check that the
- 		 * enum is fully handled
- 		 */
--	};
-+	}
+diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
+index 0c793e31d60f..26684178786f 100644
+--- a/drivers/spi/spi-pl022.c
++++ b/drivers/spi/spi-pl022.c
+@@ -253,6 +253,7 @@
+ #define STATE_RUNNING			((void *) 1)
+ #define STATE_DONE			((void *) 2)
+ #define STATE_ERROR			((void *) -1)
++#define STATE_TIMEOUT			((void *) -2)
  
- 	return "<unknown>";
+ /*
+  * SSP State - Whether Enabled or Disabled
+@@ -1484,6 +1485,30 @@ static void do_interrupt_dma_transfer(struct pl022 *pl022)
+ 	writew(irqflags, SSP_IMSC(pl022->virtbase));
  }
-diff --git a/drivers/net/wireless/ath/ath6kl/init.c b/drivers/net/wireless/ath/ath6kl/init.c
-index 54132af..aa1c71a 100644
---- a/drivers/net/wireless/ath/ath6kl/init.c
-+++ b/drivers/net/wireless/ath/ath6kl/init.c
-@@ -1140,7 +1140,7 @@ static int ath6kl_fetch_fw_apin(struct ath6kl *ar, const char *name)
  
- 		len -= ie_len;
- 		data += ie_len;
--	};
-+	}
- 
- 	ret = 0;
- out:
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-index d64bf23..ec12986 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-@@ -315,7 +315,7 @@ static int brcmf_sdiod_skbuff_read(struct brcmf_sdio_dev *sdiodev,
- 		/* bail out as things are really fishy here */
- 		WARN(1, "invalid sdio function number: %d\n", func->num);
- 		err = -ENOMEDIUM;
--	};
-+	}
- 
- 	if (err == -ENOMEDIUM)
- 		brcmf_sdiod_change_state(sdiodev, BRCMF_SDIOD_NOMEDIUM);
-diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
-index 33ad875..b58bb7b 100644
---- a/drivers/net/wireless/ray_cs.c
-+++ b/drivers/net/wireless/ray_cs.c
-@@ -2211,7 +2211,7 @@ static void rx_data(struct net_device *dev, struct rcs __iomem *prcs,
- 			untranslate(local, skb, total_len);
- 		}
- 	} else { /* sniffer mode, so just pass whole packet */
--	};
-+	}
- 
- /************************/
- 	/* Now pick up the rest of the fragments if any */
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c
-index 1263b12..11f94b1 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c
-@@ -332,7 +332,7 @@ static void _rtl8723be_phy_set_txpower_by_rate_base(struct ieee80211_hw *hw,
- 				 "Invalid RateSection %d in Band 2.4G, Rf Path %d, %dTx in PHY_SetTxPowerByRateBase()\n",
- 				 rate_section, path, txnum);
- 			break;
--		};
-+		}
- 	} else {
- 		RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD,
- 			 "Invalid Band %d in PHY_SetTxPowerByRateBase()\n",
-@@ -374,7 +374,7 @@ static u8 _rtl8723be_phy_get_txpower_by_rate_base(struct ieee80211_hw *hw,
- 				 "Invalid RateSection %d in Band 2.4G, Rf Path %d, %dTx in PHY_GetTxPowerByRateBase()\n",
- 				 rate_section, path, txnum);
- 			break;
--		};
-+		}
- 	} else {
- 		RT_TRACE(rtlpriv, COMP_INIT, DBG_LOUD,
- 			 "Invalid Band %d in PHY_GetTxPowerByRateBase()\n",
-@@ -694,7 +694,7 @@ static u8 _rtl8723be_get_rate_section_index(u32 regaddr)
- 		else if (regaddr >= 0xE20 && regaddr <= 0xE4C)
- 			index = (u8)((regaddr - 0xE20) / 4);
- 		break;
--	};
-+	}
- 	return index;
- }
++static void print_current_status(struct pl022 *pl022)
++{
++	u32 read_cr0;
++	u16 read_cr1, read_dmacr, read_sr;
++
++	if (pl022->vendor->extended_cr)
++		read_cr0 = readl(SSP_CR0(pl022->virtbase));
++	else
++		read_cr0 = readw(SSP_CR0(pl022->virtbase));
++	read_cr1 = readw(SSP_CR1(pl022->virtbase));
++	read_dmacr = readw(SSP_DMACR(pl022->virtbase));
++	read_sr = readw(SSP_SR(pl022->virtbase));
++
++	dev_warn(&pl022->adev->dev, "spi-pl022 CR0: %x\n", read_cr0);
++	dev_warn(&pl022->adev->dev, "spi-pl022 CR1: %x\n", read_cr1);
++	dev_warn(&pl022->adev->dev, "spi-pl022 DMACR: %x\n", read_dmacr);
++	dev_warn(&pl022->adev->dev, "spi-pl022 SR: %x\n", read_sr);
++	dev_warn(&pl022->adev->dev,
++			"spi-pl022 exp_fifo_level/fifodepth: %u/%d\n",
++			pl022->exp_fifo_level,
++			pl022->vendor->fifodepth);
++
++}
++
+ static void do_polling_transfer(struct pl022 *pl022)
+ {
+ 	struct spi_message *message = NULL;
+@@ -1535,7 +1560,8 @@ static void do_polling_transfer(struct pl022 *pl022)
+ 			if (time_after(time, timeout)) {
+ 				dev_warn(&pl022->adev->dev,
+ 				"%s: timeout!\n", __func__);
+-				message->state = STATE_ERROR;
++				message->state = STATE_TIMEOUT;
++				print_current_status(pl022);
+ 				goto out;
+ 			}
+ 			cpu_relax();
+@@ -1553,6 +1579,8 @@ static void do_polling_transfer(struct pl022 *pl022)
+ 	/* Handle end of message */
+ 	if (message->state == STATE_DONE)
+ 		message->status = 0;
++	else if (message->state == STATE_TIMEOUT)
++		message->status = -EAGAIN;
+ 	else
+ 		message->status = -EIO;
  
 -- 
-2.7.0
-
+2.20.1
 
