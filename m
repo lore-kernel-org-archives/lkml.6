@@ -2,86 +2,75 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A94C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F5BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C320F20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547793029;
-	bh=33iNWEFUJBpnkcIxrThMX2VODTDZu2fOxvpZwMSwGnA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TPhP7Odjz9Xla2XbzBdoHETuyEeGQB/obP48LMnWKI1LFZ+8pB6QtuyEKJ6fERBQU
-	 A8xQl/pHPHFwikbZDULOjpeg74cYPqNQc98J7EPZj96fHzllS6j9vEs1cvl4d3QVla
-	 AnmSDFwEpyjfpCUQ8AllcTQDaOapRljnMwyNAZow=
+	by mail.kernel.org (Postfix) with ESMTP id 7C47120855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbfARGaW (ORCPT
+        id S1727202AbfARGgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 01:30:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33632 "EHLO mail.kernel.org"
+        Fri, 18 Jan 2019 01:36:21 -0500
+Received: from mga06.intel.com ([134.134.136.31]:27865 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbfARGaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 01:30:22 -0500
-Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE0A620855;
-        Fri, 18 Jan 2019 06:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547793021;
-        bh=33iNWEFUJBpnkcIxrThMX2VODTDZu2fOxvpZwMSwGnA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AWU3sKwYtc4TJjWSu+tb8nYc1LxsmNQ/7zjIG3axF8pQPuUO2ra9RH+PP9+6dYCR2
-         oq4UhPX/NL8x6kU8ORsGt3PAJcbs+9x9DlfOKMiHqws3pcW+wJlqPKFrfNk5v7nYv+
-         IRJc6E4exR+q0kVX1O4bF7/EEXxsQrWzkV67AJOc=
-Date:   Fri, 18 Jan 2019 14:30:17 +0800
-From:   Guo Ren <guoren@kernel.org>
-To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Cc:     ren_guo@c-sky.com, arnd@arndb.de, jrdr.linux@gmail.com,
-        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com
-Subject: Re: [PATCH] csky/kernel/entry: Remove duplicate heade
-Message-ID: <20190118063016.GA20463@guoren-Inspiron-7460>
-References: <20190117143004.GA2916@hp-pavilion-15-notebook-pc-brajeswar>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117143004.GA2916@hp-pavilion-15-notebook-pc-brajeswar>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726962AbfARGgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 01:36:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 22:36:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
+   d="scan'208";a="109201422"
+Received: from skl-d.bj.intel.com ([10.238.135.173])
+  by orsmga006.jf.intel.com with ESMTP; 17 Jan 2019 22:36:18 -0800
+From:   Luwei Kang <luwei.kang@intel.com>
+To:     kvm@vger.kernel.org
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH] KVM: x86: Sync the pending Posted-Interrupts
+Date:   Fri, 18 Jan 2019 14:34:00 +0800
+Message-Id: <1547793240-9157-1-git-send-email-luwei.kang@intel.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thx Brajeswar,
+Some Posted-Interrupts from passthrough devices may be lost or
+overwritten when the vCPU is in runnable state.
 
-Tested-by: Guo Ren <ren_guo@c-sky.com>
-Acked-by: Guo Ren <ren_guo@c-sky.com>
+The SN (Suppress Notification) of PID (Posted Interrupt Descriptor) will
+be set when the vCPU is preempted (vCPU in KVM_MP_STATE_RUNNABLE state
+but not running on physical CPU). If a posted interrupt coming at this
+time, the irq remmaping facility will set the bit of PIR (Posted
+Interrupt Requests) but ON (Outstanding Notification).
+So this interrupt can't be sync to APIC virtualization register and
+will not be handled by Guest because ON is zero.
 
-On Thu, Jan 17, 2019 at 08:00:04PM +0530, Brajeswar Ghosh wrote:
-> Remove duplicate headers which are included more than once
-> 
-> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
-> ---
->  arch/csky/kernel/entry.S | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/csky/kernel/entry.S b/arch/csky/kernel/entry.S
-> index 79f92b8606c8..f2081ddcc398 100644
-> --- a/arch/csky/kernel/entry.S
-> +++ b/arch/csky/kernel/entry.S
-> @@ -9,7 +9,6 @@
->  #include <asm/unistd.h>
->  #include <asm/asm-offsets.h>
->  #include <linux/threads.h>
-> -#include <asm/setup.h>
->  #include <asm/page.h>
->  #include <asm/thread_info.h>
->  
-> -- 
-> 2.17.1
-> 
+Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+---
+ arch/x86/kvm/vmx/vmx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f6915f1..820a03b 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6048,7 +6048,7 @@ static int vmx_sync_pir_to_irr(struct kvm_vcpu *vcpu)
+ 	bool max_irr_updated;
+ 
+ 	WARN_ON(!vcpu->arch.apicv_active);
+-	if (pi_test_on(&vmx->pi_desc)) {
++	if (!bitmap_empty((unsigned long *)vmx->pi_desc.pir, NR_VECTORS)) {
+ 		pi_clear_on(&vmx->pi_desc);
+ 		/*
+ 		 * IOMMU can write to PIR.ON, so the barrier matters even on UP.
+-- 
+1.8.3.1
+
