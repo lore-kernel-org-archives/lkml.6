@@ -2,104 +2,93 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4105BC07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B525EC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:51:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1142F2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:48:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IVd/VRzs"
+	by mail.kernel.org (Postfix) with ESMTP id 8AA2020883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:51:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbfARTss (ORCPT
+        id S1729348AbfARTvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:48:48 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:58710 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729206AbfARTsr (ORCPT
+        Fri, 18 Jan 2019 14:51:25 -0500
+Received: from smtprelay0036.hostedemail.com ([216.40.44.36]:53759 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729206AbfARTvZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:48:47 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0IJi1JN104691;
-        Fri, 18 Jan 2019 19:48:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=dUpyIyqvVNa/xZR/KMTTiG6nH4zSpELQFKQs3EkKJv4=;
- b=IVd/VRzsAxM0WyjHj6RUjlpHs74zGjPzvxliQI2rbEFL57wAZ5Fu9iRbGvYaN0TcScsv
- r9UG1KO20Mhn5l9pLPFlJyu+XXBaUVfv2nb6ritvgMYpvkHaXPwy0H+F4muOmTxbweyG
- at5jb9UFCO0XzQPFekjLP2J486inO+VoepnIpE3BAjd4MZwfGUFG93k3g9ODk3ZKRIdE
- qWElCFFPAPfOv0PMp0GujEhFiMHfYzaCxP4MDURFtQGjTpsLIZnugRUVco4QwEaGJ4CE
- LrpRf3mTGyeG/P8jH0bymKOfRJ/NuXoDk7WaXs0A0hbPV7Su1XBRLf9X+ZVYYDKkUmrH lA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2pybjp7buw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jan 2019 19:48:40 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0IJmdB0013377
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jan 2019 19:48:40 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0IJmdau011720;
-        Fri, 18 Jan 2019 19:48:39 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 18 Jan 2019 11:48:39 -0800
-Date:   Fri, 18 Jan 2019 14:48:53 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, daniel.m.jordan@oracle.com
-Subject: Re: [PATCH] workqueue: Try to catch flush_work() without INIT_WORK().
-Message-ID: <20190118194853.pgdkz2ugwrob3zun@ca-dmjordan1.us.oracle.com>
-References: <1547831098-7930-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547831098-7930-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9140 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=959
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901180142
+        Fri, 18 Jan 2019 14:51:25 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 7E9E8181D341B;
+        Fri, 18 Jan 2019 19:51:23 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: ball94_c0277c79591b
+X-Filterd-Recvd-Size: 2645
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 18 Jan 2019 19:51:22 +0000 (UTC)
+Message-ID: <d76c2a301d324239db09ccc7cd8421821ba93b87.camel@perches.com>
+Subject: Re: [PATCH] video/hdmi: Change strncpy() into memcpy() in
+ hdmi_spd_infoframe_init
+From:   Joe Perches <joe@perches.com>
+To:     Mathieu Malaterre <malat@debian.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 18 Jan 2019 11:51:20 -0800
+In-Reply-To: <20190118193248.535-1-malat@debian.org>
+References: <20190118193248.535-1-malat@debian.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 02:04:58AM +0900, Tetsuo Handa wrote:
-> syzbot found a flush_work() caller who forgot to call INIT_WORK()
-> because that work_struct was allocated by kzalloc(). But the message
+On Fri, 2019-01-18 at 20:32 +0100, Mathieu Malaterre wrote:
+> Using strncpy() is less than perfect since the destination buffers do not
+> need to be NUL terminated. Replace strncpy() with memcpy() to address a
+> warning triggered by gcc using W=1 and optimize the code a bit.
 > 
->   INFO: trying to register non-static key.
->   the code is fine but needs lockdep annotation.
->   turning off the locking correctness validator.
+> This commit removes the following warnings:
 > 
-> by lock_map_acquire() is failing to tell that INIT_WORK() is missing.
-> 
-> Since flush_work() without INIT_WORK() is a bug, and INIT_WORK() should
-> set ->func field to non-zero, let's warn if ->func field is zero.
-
-Agree that it's a good idea to catch this.  So the caller did flush_work
-without queueing it beforehand?  Out of curiosity, what situation leads to
-this?  Link to the report might be helpful.
-
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index 392be4b..a503ad9 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -2908,6 +2908,9 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
->  	if (WARN_ON(!wq_online))
->  		return false;
+>   drivers/video/hdmi.c:234:2: warning: 'strncpy' specified bound 8 equals destination size [-Wstringop-truncation]
+>   drivers/video/hdmi.c:235:2: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]
+[]
+> diff --git a/drivers/video/hdmi.c b/drivers/video/hdmi.c
+[]
+> @@ -231,8 +231,8 @@ int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
+>  	frame->version = 1;
+>  	frame->length = HDMI_SPD_INFOFRAME_SIZE;
 >  
-> +	if (WARN_ON(!work->func))
-> +		return false;
-> +
+> -	strncpy(frame->vendor, vendor, sizeof(frame->vendor));
+> -	strncpy(frame->product, product, sizeof(frame->product));
+> +	memcpy(frame->vendor, vendor, sizeof(frame->vendor));
+> +	memcpy(frame->product, product, sizeof(frame->product));
 
-__queue_work has a sanity check already for work, but using list_empty.  Seems
-slightly better to be consistent?
+This is not good.
+
+vendor can be any location and shorter than sizeof(frame->vendor)
+so this can copy from invalid memory locations.
+
+You probably want strscpy.
+
+This is called with at least "mediatek" and "broadcom", so perhaps
+it's better still to change the struct vendor size to something a
+bit larger.  Maybe change vendor[8] to vendor[16];
+
+include/linux/hdmi.h:struct hdmi_spd_infoframe {
+include/linux/hdmi.h-   enum hdmi_infoframe_type type;
+include/linux/hdmi.h-   unsigned char version;
+include/linux/hdmi.h-   unsigned char length;
+include/linux/hdmi.h-   char vendor[8];
+include/linux/hdmi.h-   char product[16];
+include/linux/hdmi.h-   enum hdmi_spd_sdi sdi;
+include/linux/hdmi.h-};
+
+
