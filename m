@@ -2,76 +2,166 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69894C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3034FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A91320896
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:35:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0848820823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfARIfl (ORCPT
+        id S1727535AbfARIgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:35:41 -0500
-Received: from verein.lst.de ([213.95.11.211]:42167 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726302AbfARIfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:35:41 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id F128268C8E; Fri, 18 Jan 2019 09:35:39 +0100 (CET)
-Date:   Fri, 18 Jan 2019 09:35:39 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Zigotzky <chzigotzky@xenosoft.de>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: use generic DMA mapping code in powerpc V4
-Message-ID: <20190118083539.GA30479@lst.de>
-References: <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de> <23284859-bf0a-9cd5-a480-2a7fd7802056@xenosoft.de> <075f70e3-7a4a-732f-b501-05a1a8e3c853@xenosoft.de> <b04d08ea-61f9-3212-b9a3-ad79e3b8bd05@xenosoft.de> <21f72a6a-9095-7034-f169-95e876228b2a@xenosoft.de> <27148ac2-2a92-5536-d886-2c0971ab43d9@xenosoft.de> <20190115133558.GA29225@lst.de> <685f0c06-af1b-0bec-ac03-f9bf1f7a2b35@xenosoft.de> <20190115151732.GA2325@lst.de> <e9345547-4dc6-747a-29ec-6375dc8bfe83@xenosoft.de>
+        Fri, 18 Jan 2019 03:36:15 -0500
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:50654 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726302AbfARIgP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:36:15 -0500
+Received: from [IPv6:2001:983:e9a7:1:3849:86c5:b8c2:266c] ([IPv6:2001:983:e9a7:1:3849:86c5:b8c2:266c])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id kPdLgbnH0axzfkPdMgoWDf; Fri, 18 Jan 2019 09:36:13 +0100
+Subject: Re: [PATCH v9 4/4] sound/usb: Use Media Controller API to share media
+ resources
+To:     shuah@kernel.org, mchehab@kernel.org, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <cover.1545154777.git.shuah@kernel.org>
+ <2fb40852e4035b2a58010ce7416448918f12804f.1545154778.git.shuah@kernel.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <b2fddc47-94c6-b7b3-8304-55905a3e278d@xs4all.nl>
+Date:   Fri, 18 Jan 2019 09:36:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9345547-4dc6-747a-29ec-6375dc8bfe83@xenosoft.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <2fb40852e4035b2a58010ce7416448918f12804f.1545154778.git.shuah@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfFRDcoRpH3m9+3CyhiacE8YLbGhfxXkFt7VdpmZ9F6h/DTUQ9gvRIpa02bBY4CPsIRmcDa4PEAATptLtuB50mctv0mnyjakgtZRAU+kILd7BHm6Nttuo
+ jUOKqc4cJH9SVTg7TzN5kfAex/l81OcgN5ZY1z2PCwXSrKkOyVy3h5+IkzJvUOGp48EPZ8BCcWohbSxiCCwp35+Z8TzJaxyOl8GUqsRIP86gh/ZzTmQ5PNYS
+ INLjqorCrmmIWX8mzR01+OtS7Pptqy064VLt0H9OBsy2Dck5a1EEvdavnLV+y4FWt3BTCUz9vTkgQKqcahoHDIpSRbddAgY1Rs7ybajxAc3YcwFHCc1cvYTb
+ doBxxBd3tmquodDMF2TBSpf2M/O/qihA6rF9dL+s2VaBtjviIw4Q7HuKw2+6ZUzcHQu6eqzr7s9q3x7U+2HKHRgX+a+gEJe7ZEAtAT0C9Qn3ljEXrd4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christian,
+On 12/18/18 6:59 PM, shuah@kernel.org wrote:
+> From: Shuah Khan <shuah@kernel.org>
+> 
+> Media Device Allocator API to allows multiple drivers share a media device.
+> This API solves a very common use-case for media devices where one physical
+> device (an USB stick) provides both audio and video. When such media device
+> exposes a standard USB Audio class, a proprietary Video class, two or more
+> independent drivers will share a single physical USB bridge. In such cases,
+> it is necessary to coordinate access to the shared resource.
+> 
+> Using this API, drivers can allocate a media device with the shared struct
+> device as the key. Once the media device is allocated by a driver, other
+> drivers can get a reference to it. The media device is released when all
+> the references are released.
+> 
+> Change the ALSA driver to use the Media Controller API to share media
+> resources with DVB, and V4L2 drivers on a AU0828 media device.
+> 
+> The Media Controller specific initialization is done after sound card is
+> registered. ALSA creates Media interface and entity function graph nodes
+> for Control, Mixer, PCM Playback, and PCM Capture devices.
+> 
+> snd_usb_hw_params() will call Media Controller enable source handler
+> interface to request the media resource. If resource request is granted,
+> it will release it from snd_usb_hw_free(). If resource is busy, -EBUSY is
+> returned.
+> 
+> Media specific cleanup is done in usb_audio_disconnect().
+> 
+> Signed-off-by: Shuah Khan <shuah@kernel.org>
+> ---
+>  sound/usb/Kconfig        |   4 +
+>  sound/usb/Makefile       |   2 +
+>  sound/usb/card.c         |  14 ++
+>  sound/usb/card.h         |   3 +
+>  sound/usb/media.c        | 321 +++++++++++++++++++++++++++++++++++++++
+>  sound/usb/media.h        |  74 +++++++++
+>  sound/usb/mixer.h        |   3 +
+>  sound/usb/pcm.c          |  29 +++-
+>  sound/usb/quirks-table.h |   1 +
+>  sound/usb/stream.c       |   2 +
+>  sound/usb/usbaudio.h     |   6 +
+>  11 files changed, 455 insertions(+), 4 deletions(-)
+>  create mode 100644 sound/usb/media.c
+>  create mode 100644 sound/usb/media.h
+> 
 
-can you check if the debug printks in this patch trigger?
+<snip>
 
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 355d16acee6d..e46c9b64ec0d 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -118,8 +118,11 @@ struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
- 			page = NULL;
- 		}
- 	}
--	if (!page)
-+	if (!page) {
- 		page = alloc_pages_node(dev_to_node(dev), gfp, page_order);
-+		if (!page)
-+			pr_warn("failed to allocate memory with gfp 0x%x\n", gfp);
-+	}
- 
- 	if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
- 		__free_pages(page, page_order);
-@@ -139,6 +142,10 @@ struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
- 		}
- 	}
- 
-+	if (!page) {
-+		pr_warn("failed to allocate DMA memory!\n");
-+		dump_stack();
-+	}
- 	return page;
- }
- 
+> +int snd_media_device_create(struct snd_usb_audio *chip,
+> +			struct usb_interface *iface)
+> +{
+> +	struct media_device *mdev;
+> +	struct usb_device *usbdev = interface_to_usbdev(iface);
+> +	int ret;
+> +
+> +	/* usb-audio driver is probed for each usb interface, and
+> +	 * there are multiple interfaces per device. Avoid calling
+> +	 * media_device_usb_allocate() each time usb_audio_probe()
+> +	 * is called. Do it only once.
+> +	 */
+> +	if (chip->media_dev)
+> +		goto snd_mixer_init;
+> +
+> +	mdev = media_device_usb_allocate(usbdev, KBUILD_MODNAME);
+> +	if (!mdev)
+> +		return -ENOMEM;
+> +
+> +	if (!media_devnode_is_registered(mdev->devnode)) {
+
+It looks like you missed my comment for v8:
+
+"You should first configure the media device before registering it."
+
+In other words, first create the media entities, and only then do you
+register the media device. Otherwise it will come up without any alsa
+entities, which are then added. So an application that immediately
+opens the media device upon creation will see a topology that is still
+in flux.
+
+> +		/* register media_device */
+> +		ret = media_device_register(mdev);
+> +		if (ret) {
+> +			media_device_delete(mdev, KBUILD_MODNAME);
+> +			dev_err(&usbdev->dev,
+> +				"Couldn't register media device. Error: %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* save media device - avoid lookups */
+> +	chip->media_dev = mdev;
+> +
+> +snd_mixer_init:
+> +	/* Create media entities for mixer and control dev */
+> +	ret = snd_media_mixer_init(chip);
+> +	if (ret) {
+> +		dev_err(&usbdev->dev,
+> +			"Couldn't create media mixer entities. Error: %d\n",
+> +			ret);
+> +
+> +		/* clear saved media_dev */
+> +		chip->media_dev = NULL;
+> +
+> +		return ret;
+> +	}
+> +	return 0;
+> +}
+
+I'll do some testing of this series on Monday.
+
+Regards,
+
+	Hans
