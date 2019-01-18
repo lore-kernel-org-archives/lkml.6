@@ -2,111 +2,96 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EC2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF868C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7346320883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:58:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547780286;
-	bh=sEfR3ok3RYwVP6HM0cIrTT7/A5Sy8ExwvvafJSQ/sgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rSr0QV6SgqPlLOBD+J6mfsNlGp2GpFNOVLVgThCMRIa6Qwl2qXsEYzTocctlrb2y/
-	 uZVd4o1XqyS3Ulk0ceFu0ZLIDVnDcW5tTbS6ZJTZaikyu90eFnCy7o0y5KtnI31bZW
-	 p0r6PCrSR3Eg9r2u1LcbxxZdsbhxpQ+UH8Uhm7XY=
+	by mail.kernel.org (Postfix) with ESMTP id 8DF0420873
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:58:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BR/2GLE5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Nb1SWz9z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfARC6E (ORCPT
+        id S1727090AbfARC6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 21:58:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726834AbfARC6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 21:58:03 -0500
-Received: from sol.localdomain (c-24-23-143-129.hsd1.ca.comcast.net [24.23.143.129])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 17 Jan 2019 21:58:51 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60818 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfARC6v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 21:58:51 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 914726085C; Fri, 18 Jan 2019 02:58:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547780330;
+        bh=CSkykrvA55vjxsZCmu5sLXiMDCi4xY1mk5bDpqWwcMI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=BR/2GLE5kjnm9wr8N9v9a2R+30dlysrr+Xs6LPPi24wlCiaNe3eGVaZkZea620yGX
+         cXY4rQmtxBpoO8J0nSRl5E4cglth7YtFl0A6z5eLuV3ZsrpgSXaq3xMTTpS3hb2e4k
+         SXdh4feyACzVUZ5I8YUr/o0nEgOo71oDRx4azVKU=
+Received: from [10.79.129.0] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D4AC20873;
-        Fri, 18 Jan 2019 02:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547780283;
-        bh=sEfR3ok3RYwVP6HM0cIrTT7/A5Sy8ExwvvafJSQ/sgc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0HMF2bYQ241btn0PHaEggxr8xcHiYsSf8qbrxK7Fxqr4+VuzVqiqR2xNdLehFkKUz
-         i8vwnMvF8fCMUppihukvcV1bJeiO+8lqFPILNdNXzvQRR+E1oLxGRW/XoMGLioqwuP
-         CMUp7FE3bXGzN3q58fCcJlp79yPh2gWUF7gz/6Yw=
-Date:   Thu, 17 Jan 2019 18:58:01 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, ard.biesheuvel@linaro.org,
-        jonathan.cameron@huawei.com
-Subject: Re: [PATCH V2 4/5] crypto: ctr - use template array registering API
- to simplify the code
-Message-ID: <20190118025800.GB737@sol.localdomain>
-References: <1547707683-45878-1-git-send-email-wangxiongfeng2@huawei.com>
- <1547707683-45878-5-git-send-email-wangxiongfeng2@huawei.com>
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7A76D605A0;
+        Fri, 18 Jan 2019 02:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547780329;
+        bh=CSkykrvA55vjxsZCmu5sLXiMDCi4xY1mk5bDpqWwcMI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Nb1SWz9zMPeWfrb/1qfQjUr/E1V/IifhFw6rMJ8IKG7uO9ydvLXqNTxuilcoodgYS
+         rKnzUyHCnoHKzlzRwkAhkJRvLXxX781zv76uMA88P8KAg1RSXEGeb0H/fBW7C+BQla
+         bmhW+R/NePvXnxrTXM+CiTyZuOs8s9Sh2yIthAKw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A76D605A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCHv2] watchdog: qcom: Add suspend/resume support
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20190117151942.6092-1-saiprakash.ranjan@codeaurora.org>
+ <20190117181603.GA14800@roeck-us.net>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <bae21498-32be-6842-adce-1fc5b9c7e263@codeaurora.org>
+Date:   Fri, 18 Jan 2019 08:28:44 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547707683-45878-5-git-send-email-wangxiongfeng2@huawei.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190117181603.GA14800@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 02:48:02PM +0800, Xiongfeng Wang wrote:
-> Use crypto template array registering API to simplify the code.
+On 1/17/2019 11:46 PM, Guenter Roeck wrote:
+> On Thu, Jan 17, 2019 at 08:49:42PM +0530, Sai Prakash Ranjan wrote:
+>> This adds the support for qcom watchdog suspend and resume
+>> when entering and exiting deep sleep states. Otherwise
+>> having watchdog active after suspend would result in unwanted
+>> crashes/resets if resume happens after a long time.
+>>
+>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 > 
-> Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
-> ---
->  crypto/ctr.c | 43 +++++++++++++++----------------------------
->  1 file changed, 15 insertions(+), 28 deletions(-)
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> diff --git a/crypto/ctr.c b/crypto/ctr.c
-> index 4c743a9..d9f9d65 100644
-> --- a/crypto/ctr.c
-> +++ b/crypto/ctr.c
-> @@ -171,12 +171,6 @@ static int crypto_ctr_create(struct crypto_template *tmpl, struct rtattr **tb)
->  	return err;
->  }
->  
-> -static struct crypto_template crypto_ctr_tmpl = {
-> -	.name = "ctr",
-> -	.create = crypto_ctr_create,
-> -	.module = THIS_MODULE,
-> -};
-> -
->  static int crypto_rfc3686_setkey(struct crypto_skcipher *parent,
->  				 const u8 *key, unsigned int keylen)
->  {
-> @@ -366,36 +360,29 @@ static int crypto_rfc3686_create(struct crypto_template *tmpl,
->  	goto out;
->  }
->  
-> -static struct crypto_template crypto_rfc3686_tmpl = {
-> -	.name = "rfc3686",
-> -	.create = crypto_rfc3686_create,
-> -	.module = THIS_MODULE,
-> +static struct crypto_template crypto_ctr_tmpls[] = {
-> +	{
-> +		.name = "ctr",
-> +		.create = crypto_ctr_create,
-> +		.module = THIS_MODULE,
-> +	}, {
-> +		.name = "rfc3686",
-> +		.create = crypto_rfc3686_create,
-> +		.module = THIS_MODULE,
-> +	},
->  };
->  
-> +
 
-If you resend please also remove the extra blank line here.
+Thanks Guenter. Should I send a v3 with your reviewed-by?
 
-- Eric
+- Sai
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
