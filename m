@@ -2,142 +2,124 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7809AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96851C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504B020883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:25:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 638F12086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:26:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TnhDOyU8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="R3WX6vR3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbfARIZk (ORCPT
+        id S1727537AbfARI0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:25:40 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:33654 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbfARIZk (ORCPT
+        Fri, 18 Jan 2019 03:26:09 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46214 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726309AbfARI0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:25:40 -0500
-Received: by mail-vs1-f65.google.com with SMTP id p74so7957192vsc.0;
-        Fri, 18 Jan 2019 00:25:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xfqq3e6qu7bc6iU64I4bUHm0HZdRoiEGbOYPlLEwVsg=;
-        b=GFgZOpGVdKlJjVWyb7WtzyRIBNpd5uZAIzvn8y2UDNM1HXxhaPQk3x98qu1sscXl6A
-         Pu9RuHNFP8SNHJohFVwzILkaF24r1nzwLiTKaDmGH7Ot3B8x+noM6+i/Z5/5ff8GcEzp
-         AjU+MJ4C+plYVkALg5Rkb6G1OKaU7ziP+dSSN1cOA8zE9x/V5Bj0SmgO9yMMfKLhRtPR
-         eVlTzkDYef7xqKT6HFbqyi6ubFl2QH9S4oKTaj7FhWSY3+mIHSaWTCEfyRHZkcau8yaO
-         DYc8fVRPP2ys7LXTGtXhKpATQE9tYAc7ELe6qAIx68nXJ1G2wA81dMdntY7M2wN9zN0d
-         f67Q==
-X-Gm-Message-State: AJcUukfmuCYSOVvrLAgt3ctDClTbxfXn1CqbS2bD8lAsGo2T4DcRpSne
-        Qq0un/QCgvTSN09QbR/kVW16mFkPDSgfe2vgbi5VRg==
-X-Google-Smtp-Source: ALg8bN7NOnvzKkyEhXPIKZacaStEuYFL3a4jTVbLTy+lCj7+RZf/79OWah6cYYtBZlQCuno3HcvXyH5LqatrndGyabk=
-X-Received: by 2002:a67:b60d:: with SMTP id d13mr7493738vsm.152.1547799938802;
- Fri, 18 Jan 2019 00:25:38 -0800 (PST)
+        Fri, 18 Jan 2019 03:26:09 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 84F7F605A0; Fri, 18 Jan 2019 08:26:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547799968;
+        bh=6mDZy73iN/Ttx97sfzAASuw/LjJA99QPTyUzBdq/J50=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TnhDOyU85VeiMLObC0qg2UcLeDvgyV9lIGNxO+sN4JVP4XmUdSBkmRAXuM5y1vBSp
+         DM6kk/ul4NhCdSxPaTXpVsrKzpUjoC4sEdQrA+xznMUjOxNvV1wd6By9h3ZtaXoLVq
+         1yil1Yb9AbTgC1Scg40nEIg+QUMqAeXwklb69z0E=
+Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9797605A0;
+        Fri, 18 Jan 2019 08:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547799967;
+        bh=6mDZy73iN/Ttx97sfzAASuw/LjJA99QPTyUzBdq/J50=;
+        h=From:To:Cc:Subject:Date:From;
+        b=R3WX6vR3nocDkykEfgT7q0qt0miW30qqx20KNzdC8bG1bCRv3grnbqgV1lHbWSmD1
+         lCOzdb0c/N47TdnxrtJPf5l8b3z7Sj5jT629fWfQjRuqdO+tJjYeQGQYOmafQ8LkgG
+         1WptvKNRBQnzB0r1jKLPhz+AweeFkDHmcmj/k4rw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9797605A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Subject: [PATCHv2 0/4] Add coresight support for SDM845 and MSM8996
+Date:   Fri, 18 Jan 2019 13:55:36 +0530
+Message-Id: <cover.1547798966.git.saiprakash.ranjan@codeaurora.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw> <1547790855-22120-2-git-send-email-masonccyang@mxic.com.tw>
-In-Reply-To: <1547790855-22120-2-git-send-email-masonccyang@mxic.com.tw>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jan 2019 09:25:26 +0100
-Message-ID: <CAMuHMdW21JEz+pZbU5bb2Jcn8xpopsZ5LbbYhh2iGZFqtWCeQg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+This patch series adds support for coresight on SDM845 and MSM8996. 
 
-On Fri, Jan 18, 2019 at 6:55 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
-> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
->
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+* Patch 1 adds device tree nodes for SDM845 coresight components.
 
-Thanks for the update!
+* Patch 2 adds device tree nodes for MSM8996 coresight components.
 
+* Patch 3 enables support for ETMv4.2 and enables SDM845 to make
+  use of same driver(etm4x).
 
-> --- /dev/null
-> +++ b/drivers/spi/spi-renesas-rpc.c
-> @@ -0,0 +1,800 @@
+* Patch 4 is a trivial removal of duplicate header file.
 
-> +static int rpc_spi_xfer_message(struct rpc_spi *rpc,
-> +                               struct spi_transfer *t)
+Patch 1 and 3 depends on below AOSS QMP patches by Bjorn:
+ https://patchwork.kernel.org/patch/10749469/ 
+ https://patchwork.kernel.org/patch/10749481/
+ https://patchwork.kernel.org/patch/10749479/
+ https://patchwork.kernel.org/patch/10749475/ 
 
-As "t" is not an arbitrary transfer, but the last transfer containing the
-actual data, I'd call it "last", or "data_xfer".
+This patch series has been tested on SDM845 MTP and MSM8996
+based Dragonboard 820c.
 
-> +{
-> +       int ret;
-> +
-> +       ret = rpc_spi_set_freq(rpc, t->speed_hz);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = rpc_spi_io_xfer(rpc,
-> +                             rpc->xfer_dir == SPI_MEM_DATA_OUT ?
-> +                             t->tx_buf : NULL,
-> +                             rpc->xfer_dir == SPI_MEM_DATA_IN ?
-> +                             t->rx_buf : NULL);
-> +
-> +       return ret;
-> +}
-> +
-> +static int rpc_spi_transfer_one_message(struct spi_controller *ctlr,
-> +                                       struct spi_message *msg)
-> +{
-> +       struct rpc_spi *rpc = spi_controller_get_devdata(ctlr);
-> +       struct spi_transfer *t;
+v2:
+ * Added coresight support for msm8996 based on Vivek's patch.
+   Cleaned up and added coresight cpu debug nodes for msm8996.
+ * Merged coresight dtsi file into sdm845.dtsi as suggested by Bjorn
+ * Addressed Mathieu's feedback about masking the minor version in
+   etm4_arch_supported() and added a comment for reason to bypass
+   the AMBA bus discovery method.
 
-Likewise.
+Sai Prakash Ranjan (3):
+  arm64: dts: qcom: sdm845: Add Coresight support
+  coresight: etm4x: Add support to enable ETMv4.2
+  arm64: dts: qcom: sdm845: Remove the duplicate header inclusion
 
-> +       int ret;
-> +
-> +       rpc_spi_transfer_setup(rpc, msg);
-> +
-> +       t = list_last_entry(&msg->transfers, struct spi_transfer,
-> +                           transfer_list);
-> +
-> +       ret = rpc_spi_xfer_message(rpc, t);
+Vivek Gautam (1):
+  arm64: dts: qcom: msm8996: Add Coresight support
 
-As this function is small, perhaps just inline it here?
-IMHO that makes the flow clearer.
-
-> +       if (ret)
-> +               goto out;
-> +
-> +       msg->status = 0;
-> +       msg->actual_length = rpc->totalxferlen;
-> +out:
-> +       spi_finalize_current_message(ctlr);
-> +       return 0;
-> +}
-
-The rest looks good to me, thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         | 447 +++++++++++++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 448 +++++++++++++++++-
+ drivers/hwtracing/coresight/coresight-etm4x.c |   2 +-
+ drivers/hwtracing/coresight/coresight-etm4x.h |   2 +-
+ 4 files changed, 896 insertions(+), 3 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
