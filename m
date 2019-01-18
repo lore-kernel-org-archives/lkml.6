@@ -3,123 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81659C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB41C5AC81
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C5EA20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6D7320823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbfARRXP (ORCPT
+        id S1728063AbfARRYW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:23:15 -0500
-Received: from atl4mhfb01.myregisteredsite.com ([209.17.115.55]:51266 "EHLO
-        atl4mhfb01.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727448AbfARRXP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:23:15 -0500
-Received: from atl4mhob12.registeredsite.com (atl4mhob12.registeredsite.com [209.17.115.50])
-        by atl4mhfb01.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id x0IHK0Lj025942
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 12:20:00 -0500
-Received: from mailpod.hostingplatform.com (atl4qobmail02pod2.registeredsite.com [10.30.77.36])
-        by atl4mhob12.registeredsite.com (8.14.4/8.14.4) with ESMTP id x0IHJw22006067
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 12:19:58 -0500
-Received: (qmail 1895 invoked by uid 0); 18 Jan 2019 17:19:58 -0000
-X-TCPREMOTEIP: 174.118.245.214
-X-Authenticated-UID: dclarke@blastwave.org
-Received: from unknown (HELO ?172.16.35.3?) (dclarke@blastwave.org@174.118.245.214)
-  by 0 with ESMTPA; 18 Jan 2019 17:19:58 -0000
-Subject: Re: [PATCH v2 00/29] y2038: add time64 syscalls
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Rich Felker <dalias@libc.org>,
-        David Miller <davem@davemloft.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-ia64@vger.kernel.org,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-References: <20190118161835.2259170-1-arnd@arndb.de>
- <be3863ae-d903-8e9e-5e6c-e4a58fac189d@blastwave.org>
- <CAK8P3a3xUpbk+Wpo5kdDtZ81jQuzEZH6jdmJJNeNM+acueg+Dw@mail.gmail.com>
-From:   Dennis Clarke <dclarke@blastwave.org>
-Message-ID: <37173869-7516-55c5-8e4a-0c7bef011a62@blastwave.org>
-Date:   Fri, 18 Jan 2019 12:19:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:65.0) Gecko/20100101
- Thunderbird/65.0
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3xUpbk+Wpo5kdDtZ81jQuzEZH6jdmJJNeNM+acueg+Dw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 18 Jan 2019 12:24:22 -0500
+Received: from mga02.intel.com ([134.134.136.20]:18749 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727448AbfARRYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:24:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 09:24:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
+   d="scan'208";a="115727686"
+Received: from irsmsx152.ger.corp.intel.com ([163.33.192.66])
+  by fmsmga007.fm.intel.com with ESMTP; 18 Jan 2019 09:24:20 -0800
+Received: from irsmsx102.ger.corp.intel.com ([169.254.2.65]) by
+ IRSMSX152.ger.corp.intel.com ([169.254.6.47]) with mapi id 14.03.0415.000;
+ Fri, 18 Jan 2019 17:24:19 +0000
+From:   "Reshetova, Elena" <elena.reshetova@intel.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+CC:     "mingo@redhat.com" <mingo@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: RE: [PATCH 1/5] sched: convert sighand_struct.count to refcount_t
+Thread-Topic: [PATCH 1/5] sched: convert sighand_struct.count to refcount_t
+Thread-Index: AQHUryk+/hLqHu17K0+WlS07ChGXxKW0/A2AgAAw1tA=
+Date:   Fri, 18 Jan 2019 17:24:19 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4B8723A@IRSMSX102.ger.corp.intel.com>
+References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
+ <1547814450-18902-2-git-send-email-elena.reshetova@intel.com>
+ <20190118125611.GA8205@andrea>
+In-Reply-To: <20190118125611.GA8205@andrea>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [163.33.239.181]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/19 12:14 PM, Arnd Bergmann wrote:
-> On Fri, Jan 18, 2019 at 5:57 PM Dennis Clarke <dclarke@blastwave.org> wrote:
->>
->> On 1/18/19 11:18 AM, Arnd Bergmann wrote:
->>> This is a minor update of the patches I posted last week, I
->>> would like to add this into linux-next now, but would still do
->>> changes if there are concerns about the contents. The first
->>> version did not see a lot of replies, which could mean that
->>> either everyone is happy with it, or that it was largely ignored.
->>>
->>> See also the article at https://lwn.net/Articles/776435/.
->>
->> I would be happy to read "Approaching the kernel year-2038 end game"
->> however it is behind a pay wall.  Perhaps it may be best to just
->> host interesting articles about open source idea elsewhere.
+> Hi Elena,
+
+Hi!
+
 > 
-> It's a short summary of the current state.
+> [...]
+> 
+> > **Important note for maintainers:
+> >
+> > Some functions from refcount_t API defined in lib/refcount.c
+> > have different memory ordering guarantees than their atomic
+> > counterparts.
+> > The full comparison can be seen in
+> > https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
+> > in state to be merged to the documentation tree.
+> 
+> Just a remark to point out that that document got merged, even though
+> in a different location/format: c.f.,
+> 
+>   b6e859f6cdd1 ("docs: refcount_t documentation")
+> 
 
-Oh, I pay. Also to FSF and other places however I was merely ranting
-very very quietly that so much open source is becoming commercialized
-in so many ways.  Sort of expected really.
+Ups, indeed, forgot that we merged the docs. It has been long time that 
+these patches has been sitting in my old repo. 
 
-Pardon my little rant .. I will go back to hacking OpenSSL 1.1.1a and
-trying to get Apache httpd 2.4.38 release running cleanly.
-
-Dennis
-
-
-
+Best Regards,
+Elena.
