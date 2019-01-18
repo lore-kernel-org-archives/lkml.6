@@ -2,137 +2,144 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4EBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C84CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 124AA20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:04:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 031B420855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfARIEC (ORCPT
+        id S1727363AbfARIGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:04:02 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:33313 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbfARIEC (ORCPT
+        Fri, 18 Jan 2019 03:06:01 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45345 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbfARIGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:04:02 -0500
-Received: by mail-vk1-f194.google.com with SMTP id d201so2896419vka.0;
-        Fri, 18 Jan 2019 00:04:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ccUkt6LqB58uFT+Lx+JRMzBjE5OeTm+9Ao7mTHrVgFk=;
-        b=c6aaHbtkKrzDppComCQCChyNVOYM6fZAVtJOPwY+b2GUaay6cG1WELSVuuIuLaDQS1
-         RR5IijFMk9DoaU6rRbaMEY2xFtL9A0NxLW9u8+9GX5xowbokyiJ0/BoQkmuAN3F1BYX2
-         rYQq2jcs77qdpQ3bZ8HBy3pW+7ulbxs28aZpjr1iXXEqnmYDAl/90+Lomq6UGLodXqob
-         N3Ljo2l9z2KUAbNIEl9muun361EbEgF43jtmPwvKhrSu0ZovH6NaQ8pNq4cPbiPIWjPM
-         pNy+smz2gcPU8Q0L3Gq5flubSQOcuMhptfb9K4Qto6eJGKDnbE2mzj39/0v5UNJE2vbg
-         9cWg==
-X-Gm-Message-State: AJcUukfx6SmRuN0L6iRXAiFPwN/Aa8C5ZTFjOf67B4yV79VLHfP9NhIM
-        cDKKP+uol8KHXO5yorDfG7ySramRLudQs+VSFHM=
-X-Google-Smtp-Source: ALg8bN6wpmm4GpWH0VByLffjMnnQ4bEQnolNyKS2frBicfnKBqD4XD93hMrq9HIKxZiW0iNA140j3pGF9ICH2cY/lQc=
-X-Received: by 2002:a1f:a414:: with SMTP id n20mr6991022vke.83.1547798640676;
- Fri, 18 Jan 2019 00:04:00 -0800 (PST)
+        Fri, 18 Jan 2019 03:06:00 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gkPA1-0002fI-DN; Fri, 18 Jan 2019 09:05:53 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gkPA0-000151-NJ; Fri, 18 Jan 2019 09:05:52 +0100
+Date:   Fri, 18 Jan 2019 09:05:52 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        Sean Wang <sean.wang@kernel.org>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/5] pwm: mediatek: add a property "mediatek,num-pwms"
+Message-ID: <20190118080552.ppwgxboh3gt3nasv@pengutronix.de>
+References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-References: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw> <1547790855-22120-3-git-send-email-masonccyang@mxic.com.tw>
-In-Reply-To: <1547790855-22120-3-git-send-email-masonccyang@mxic.com.tw>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jan 2019 09:03:49 +0100
-Message-ID: <CAMuHMdXiW=4qgZGFqvwGHL7V3ZHfQ2EJ2B96dG14B-jh5+XqOw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] dt-bindings: spi: Document Renesas R-Car Gen3
- RPC-IF controller bindings
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+Hello,
 
-On Fri, Jan 18, 2019 at 6:55 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
-> Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
->
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+just realized another issue while looking up a driver detail ...
 
-Thanks for the update!
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> @@ -0,0 +1,37 @@
-> +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-> +----------------------------------------------------------
+On Fri, Jan 18, 2019 at 11:24:41AM +0800, Ryder Lee wrote:
+> This adds a property "mediatek,num-pwms" to avoid having an endless
+> list of compatibles with no differences for the same driver.
+> 
+> Thus, the driver should have backwards compatibility to older DTs.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+> Changes since v1: add some checks for backwards compatibility.
+> ---
+>  drivers/pwm/pwm-mediatek.c | 27 ++++++++++++++++++---------
+>  1 file changed, 18 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+> index eb6674c..81b7e5e 100644
+> --- a/drivers/pwm/pwm-mediatek.c
+> +++ b/drivers/pwm/pwm-mediatek.c
+> @@ -55,7 +55,7 @@ enum {
+>  };
+>  
+>  struct mtk_pwm_platform_data {
+> -	unsigned int num_pwms;
+> +	unsigned int num_pwms;	/* it should not be used in the future SoCs */
+>  	bool pwm45_fixup;
+>  	bool has_clks;
+>  };
+> @@ -226,27 +226,36 @@ static void mtk_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  
+>  static int mtk_pwm_probe(struct platform_device *pdev)
+>  {
+> -	const struct mtk_pwm_platform_data *data;
+> +	struct device_node *np = pdev->dev.of_node;
+>  	struct mtk_pwm_chip *pc;
+>  	struct resource *res;
+> -	unsigned int i;
+> +	unsigned int i, num_pwms;
+>  	int ret;
+>  
+>  	pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
+>  	if (!pc)
+>  		return -ENOMEM;
+>  
+> -	data = of_device_get_match_data(&pdev->dev);
+> -	if (data == NULL)
+> -		return -EINVAL;
+> -	pc->soc = data;
+> +	pc->soc = of_device_get_match_data(&pdev->dev);
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	pc->regs = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(pc->regs))
+>  		return PTR_ERR(pc->regs);
+>  
+> -	for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
+> +	/* Check if we have set 'num-pwms' in DTs. */
+> +	ret = of_property_read_u32(np, "mediatek,num-pwms", &num_pwms);
+> +	if (ret < 0) {
+> +		/* If no, fallback to use SoC data for backwards compatibility. */
+> +		if (pc->soc->num_pwms) {
+> +			num_pwms = pc->soc->num_pwms;
+> +		} else {
+> +			dev_err(&pdev->dev, "failed to get pwm number: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
 > +
-> +Required properties:
-> +- compatible: should be
+> +	for (i = 0; i < num_pwms + 2 && pc->soc->has_clks; i++) {
+>  		pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
 
-    compatible: should be an SoC-specific compatible value, followed by
-    "renesas,rcar-gen3-rpc" as a fallback.
+If a dt contains
 
-    Examples of the latter are:
-      - "renesas,r8a7795-rpc" (R-Car H3).
+	mediatek,num-pwms = <17>;
 
-This makes it future-proof, in case the RPC on a specific SoC version needs
-to be handled specially. We already know that is the case for R-Car V3M.
+you're accessing pc->clks[18] which is an out-of-bounds access, so
+better check the limit or allocate the clks array dynamically.
 
-> +- #address-cells: should be 1
-> +- #size-cells: should be 0
-> +- reg: should contain three register areas:
-> +       first for the base address of rpc-if registers,
-> +       second for the direct mapping read mode and
-> +       third for the write buffer area.
-> +- reg-names: should contain "regs", "dirmap" and "wbuf"
-> +- clock-names: should contain "rpc"
-> +- clocks: should contain 1 entries for the module's clock
-> +
-> +Example:
-> +
-> +       rpc: rpc@ee200000 {
-> +               compatible = "renesas,rcar-gen3-rpc";
-
-compatible = "renesas,r8a7795-rpc," renesas,rcar-gen3-rpc";
-
-> +               reg = <0 0xee200000 0 0x7fff>, <0 0x08000000 0 0x4000000>,
-> +                     <0 0xee208000 0 0x100>;
-> +               reg-names = "regs", "dirmap", "<wbuf>;
-> +               clocks = <&cpg CPG_MOD 917>;
-> +               power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-> +               resets = <&cpg 917>;
-> +               clock-names = "rpc";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               flash@0 {
-> +                       compatible = "jedec,spi-nor";
-> +                       reg = <0>;
-> +                       spi-max-frequency = <40000000>;
-> +                       spi-tx-bus-width = <1>;
-> +                       spi-rx-bus-width = <1>;
-> +               };
-> +       };
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Best regards
+Uwe
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
