@@ -2,69 +2,71 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838ADC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB983C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E1520855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:52:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547801552;
-	bh=SSS1Bg31ZLlUzMEJLUPLDers4LV6638WZGHx/HadjMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qdJVxtDdQ82G6dkw5YE9ZsZrVeZqiSfFz+7qN5A2ukTQDwHgZEWRNoJxM7ccl8fGo
-	 M+nvuHqRRxTWQYMcjg4YIkIrJtWiurJNT1FVtNhTRioHegmUnBDYkLddjtmPdT1w4d
-	 h4fRAiaQKHj2tocdk1g6A5yz+hQV93yOPTMRE3Ic=
+	by mail.kernel.org (Postfix) with ESMTP id B52C520855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:52:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbfARIwa (ORCPT
+        id S1727537AbfARIwe convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:52:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52840 "EHLO mail.kernel.org"
+        Fri, 18 Jan 2019 03:52:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35063 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbfARIw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:52:29 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6746520855;
-        Fri, 18 Jan 2019 08:52:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547801548;
-        bh=SSS1Bg31ZLlUzMEJLUPLDers4LV6638WZGHx/HadjMk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wVz+3/lW0duTpkaIEMYZuCYEmmy7aEf7aC6RrwyfJskUYRRI6oSAcMRkqphjWyFE8
-         Uul97XCau/grtrAOo6eJ14qp52tmHoWMIwDXMQ24fuc23vhCWRncNNYFkf16uAPW4n
-         z16UU/Sz4R7Fa60dL8YRySCg1+kBYFVCXl22Ryw4=
-Date:   Fri, 18 Jan 2019 09:52:26 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] USB: EHCI: ehci-mv: add MODULE_DEVICE_TABLE
-Message-ID: <20190118085226.GB9572@kroah.com>
-References: <20190114201608.17514-1-lkundrak@v3.sk>
+        id S1727533AbfARIwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:52:33 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 28405207AC; Fri, 18 Jan 2019 09:52:31 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CE625206DC;
+        Fri, 18 Jan 2019 09:52:30 +0100 (CET)
+Date:   Fri, 18 Jan 2019 09:52:30 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        "linux-stable # v4 . 20" <stable@vger.kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: Re: [PATCH] mtd: rawnand: denali: get ->setup_data_interface()
+ working again
+Message-ID: <20190118095230.5f097e9e@xps13>
+In-Reply-To: <1547789438-11899-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1547789438-11899-1-git-send-email-yamada.masahiro@socionext.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190114201608.17514-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 09:16:08PM +0100, Lubomir Rintel wrote:
-> This fixes autoloading the module by the OF compatible string.
+Hi Masahiro,
+
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Fri, 18 Jan
+2019 14:30:38 +0900:
+
+> Commit 7a08dbaedd36 ("mtd: rawnand: Move ->setup_data_interface() to
+> nand_controller_ops") missed to invert the if-conditonal for denali.
+> Since then, the Denali NAND driver cannnot invoke setup_data_interface.
 > 
-> Fixes: 813e18b18a87 ("USB: EHCI: ehci-mv: add DT support")
-> Cc: stable@vger.kernel.org # v4.19+
+> Fixes: 7a08dbaedd36 ("mtd: rawnand: Move ->setup_data_interface() to nand_controller_ops")
+> Cc: linux-stable <stable@vger.kernel.org> # v4.20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
 
-Wait, why 4.19?  813e18b18a87 is in 4.20, not 4.19, so why would this
-matter to 4.19 at all?
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-thanks,
 
-greg k-h
+Thanks,
+Miquèl
