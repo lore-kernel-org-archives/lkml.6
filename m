@@ -2,146 +2,124 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA84C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CED1DC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9424620823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:36:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="RzNmViVD"
+	by mail.kernel.org (Postfix) with ESMTP id 99BEF2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547833050;
+	bh=dUbG0GyyPYOxbc8f/aP21xgHaDPPptDs3kmwixzfWZU=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=gUea7o559jl3sJTt0EnxtpFgGoZfrOJOWIA/wIWA8AWGTUWh+/oZ//DZpzKAskuDi
+	 q/n6EhwO4TGtYdXm/EoTzaoorNHj+XK/qsYrdOZNVQLEJvobvvA254PNs79dMpjtfw
+	 BRbu/W2pqR38YIRJdmp7Vfi3TS+UjL0j3X60V4Pw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbfARRgM (ORCPT
+        id S1728500AbfARRh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:36:12 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36535 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727795AbfARRgM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:36:12 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b85so6927687pfc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:36:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bKSIFPBF+v78PFDhVKvKQmlvYTfQ3KGZScyZBkJNyYA=;
-        b=RzNmViVDZ6s3sPiW8khVjfgCqssaD0LbgUC01YUT3P/a5TMHIQLq1XwbMo3ZEK6WF7
-         2M22D963crPSZ4FkSFUru+ipDN4+35hNKFrsyLc2Ltj+uFQK1l8kcqlWiW6DzALSt5EZ
-         zkYinm3hCpxdpHZQPq3Bku9PHFk4TOmaL/796JKq+XMGmk3sAz29njyLxW5LvWlxQkvU
-         FoPWN8n5Hv7Hd3CpzyX9+RY0UzDY7nlzXyZsPZF6XOQSTyHJfStic+bt6PbRMjoPPUs8
-         49L0Byrx+TxF2liUSRbG8HPRAQLnNESWuVJKKPUbVP2PieDNKO26+HaW+ktOseYLpbHa
-         3uaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bKSIFPBF+v78PFDhVKvKQmlvYTfQ3KGZScyZBkJNyYA=;
-        b=Hw30uLzB+ZttOCtBP7IMnWSwuPQCPDSgY3q5yi04CL3PP0eKDLp1ELxB1ZN8xtr0pE
-         JqaQB8hnADlycXRY13scPHUFTr13aNaHKQ0G1NzdZN1IlNc6cr1Jz+DHXEt4TXxrHHM0
-         Iv4N3mwNBG+gh4eRoAMDyluPmltMievrCzpVlD2Qd8x3SUM2vfk2QwgcBkVv7/F3OGB0
-         FCvcCQnMbhDZ2hddLf3mLROPMRI3+yJz4w5slzcju+GN2KnHtUDziZxOCorf5l5+u4jb
-         LQrGmqnnLxY3s74ZRUgoQcGC4onJyQF6kqBWH2MtdR2s8w6e6SdsFLrUVmGDtw1SbNKq
-         WnxQ==
-X-Gm-Message-State: AJcUukcEnxnhKLkPpifQfhtckUBBIb3bdYsOm7EraH8fVaR6jtGz8coP
-        G6uf1Vhmhgv1jhXVUm/Ep9uAhg==
-X-Google-Smtp-Source: ALg8bN6WJQUSS1F/PUYr83VMHwRnUptYxZkVBOWfekzvKPsLmqP7Xd+GZcnQUZ0//hz7KeuGEspUVQ==
-X-Received: by 2002:a63:6b05:: with SMTP id g5mr18113653pgc.15.1547832970989;
-        Fri, 18 Jan 2019 09:36:10 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id z191sm6069460pgd.74.2019.01.18.09.36.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 09:36:10 -0800 (PST)
-Subject: Re: [PATCH BUGFIX RFC 0/2] reverting two commits causing freezes
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        'Paolo Valente' via bfq-iosched 
-        <bfq-iosched@googlegroups.com>, oleksandr@natalenko.name,
-        hurikhan77+bko@gmail.com
-References: <20190118115219.63576-1-paolo.valente@linaro.org>
- <c3b182a2-7f82-2860-436b-c1d59d6661ff@kernel.dk>
- <D212BCED-49BD-47F0-AF7F-0CCDBC82D131@linaro.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c71255da-c142-8ea1-2dc4-840a6581689b@kernel.dk>
-Date:   Fri, 18 Jan 2019 10:36:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 18 Jan 2019 12:37:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727795AbfARRh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:37:28 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 620122086D;
+        Fri, 18 Jan 2019 17:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547833047;
+        bh=dUbG0GyyPYOxbc8f/aP21xgHaDPPptDs3kmwixzfWZU=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=z0L2kYXXRbFDWMAB0rTEyhj2caq+EUaxVI0RHQKCNVVJuU2lBKQ58DTe//NhKTR1z
+         5ye04ysyIFq9XNys2/Aw10fQViWGoCbAbprO6hoiLPvs6jFplW0GA5qWKfDJMw3ycO
+         E4zmBoJCcUOi2mZ2XUWONlsbs0ZF6Xw234gkOI+o=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <D212BCED-49BD-47F0-AF7F-0CCDBC82D131@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: Fixes tag needs some work in the clk tree
+User-Agent: alot/0.8
+In-Reply-To: <878szi3zp6.fsf@concordia.ellerman.id.au>
+References: <20190116083440.11b6839c@canb.auug.org.au> <154767815973.169631.1738587342757192096@swboyd.mtv.corp.google.com> <CAOMZO5DSbVpha=1_s5K+-vodD+N1fGnj41_UKmvqxDOPhxXwfg@mail.gmail.com> <154775054438.169631.5111867106558251203@swboyd.mtv.corp.google.com> <878szi3zp6.fsf@concordia.ellerman.id.au>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Fabio Estevam <festevam@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>
+Message-ID: <154783304655.169631.12906027462791855701@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 18 Jan 2019 09:37:26 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/19 10:24 AM, Paolo Valente wrote:
-> 
-> 
->> Il giorno 18 gen 2019, alle ore 14:35, Jens Axboe <axboe@kernel.dk> ha scritto:
->>
->> On 1/18/19 4:52 AM, Paolo Valente wrote:
->>> Hi Jens,
->>> a user reported a warning, followed by freezes, in case he increases
->>> nr_requests to more than 64 [1]. After reproducing the issues, I
->>> reverted the commit f0635b8a416e ("bfq: calculate shallow depths at
->>> init time"), plus the related commit bd7d4ef6a4c9 ("bfq-iosched:
->>> remove unused variable"). The problem went away.
->>
->> For reverts, please put the justification into the actual revert
->> commit. With this series, if applied as-is, we'd have two patches
->> in the tree that just says "revert X" without any hint as to why
->> that was done.
->>
-> 
-> I forget to say explicitly that these patches were meant only to give
-> you and anybody else something concrete to test and check.
-> 
-> With me you're as safe as houses, in terms of amount of comments in
-> final patches :)
+Quoting Michael Ellerman (2019-01-18 04:41:41)
+> Stephen Boyd <sboyd@kernel.org> writes:
+>=20
+> > Quoting Fabio Estevam (2019-01-16 17:25:21)
+> >> On Wed, Jan 16, 2019 at 10:44 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >>=20
+> >> > Ok sure. Does this matter to scripts? Is it documented in
+> >> > Documentation/process/submitting-patches.rst? I've seen both types, =
+one
+> >>=20
+> >> From Documentation/process/submitting-patches.rst"
+> >>=20
+> >> "If your patch fixes a bug in a specific commit, e.g. you found an iss=
+ue using
+> >> ``git bisect``, please use the 'Fixes:' tag with the first 12 characte=
+rs of
+> >> the SHA-1 ID, and the one line summary.  For example::
+> >>=20
+> >> Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdata()=
+")"
+> >
+> > Yes but 'one line summary' is not clear to me. Does it mean the summary
+> > line? Or the one line summary on one line regardless of commit message
+> > column wrapping? Sorry to be pedantic but I can see how this can be
+> > misunderstood.
+>=20
+> Yeah "one line summary" is referring to the subject of the commit.
+>=20
+> So it doesn't explicitly say not to split it across lines, it probably
+> should.
+>=20
+> eg: ?
 
-It's almost an example of the classic case of "if you want a real
-solution to a problem, post a knowingly bad and half assed solution".
-That always gets people out of the woodwork :-)
+Yes, thanks!
 
->>> Maybe the assumption in commit f0635b8a416e ("bfq: calculate shallow
->>> depths at init time") does not hold true?
->>
->> It apparently doesn't! But let's try and figure this out instead of
->> blindly reverting it.
-> 
-> Totally agree.
-> 
->> OK, I think I see it. For the sched_tags
->> case, when we grow the requests, we allocate a new set. Hence any
->> old cache would be stale at that point.
->>
-> 
-> ok
-> 
->> How about something like this? It still keeps the code of having
->> to update this out of the hot IO path, and only calls it when we
->> actually change the depths.
->>
-> 
-> Looks rather clean and efficient.
-> 
->> Totally untested...
->>
-> 
-> It seems to work here too.
+>=20
+> diff --git a/Documentation/process/submitting-patches.rst b/Documentation=
+/process/submitting-patches.rst
+> index 30dc00a364e8..12a283ba3929 100644
+> --- a/Documentation/process/submitting-patches.rst
+> +++ b/Documentation/process/submitting-patches.rst
+> @@ -186,6 +186,8 @@ If your patch fixes a bug in a specific commit, e.g. =
+you found an issue using
+> =20
+>         Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvd=
+ata()")
+> =20
+> +To ease parsing of the 'Fixes:' tag please don't split it across multipl=
+e lines.
+> +
+>  The following ``git config`` settings can be used to add a pretty format=
+ for
+>  outputting the above style in the ``git log`` or ``git show`` commands::
+> =20
+>=20
 
-OK good, I've posted it "officially" now.
- 
--- 
-Jens Axboe
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+
+Do you have a patch for checkpatch too? Maybe Joe can solve my problem.
 
