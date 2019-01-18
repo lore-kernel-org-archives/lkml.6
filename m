@@ -2,157 +2,167 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AD5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B90EC5ACD3
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C022820850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:07:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HU9kyzdL"
+	by mail.kernel.org (Postfix) with ESMTP id EC9492086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbfARRHv (ORCPT
+        id S1728461AbfARRIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:07:51 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40999 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728062AbfARRHu (ORCPT
+        Fri, 18 Jan 2019 12:08:06 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:37143 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728062AbfARRIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:07:50 -0500
-Received: by mail-wr1-f68.google.com with SMTP id x10so15892618wrs.8
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:07:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=gyQDSAb68RQOHEAGcpAMGbpY6osDtgIRCykF1IhHNwM=;
-        b=HU9kyzdLG8Vdjse4wbAw07vOaJh5Si9/j3EQ7hPP6b7u4jYzJlRmo3MCmEQcCJvE0L
-         7yJxYZkvpWXG2dLi2D6UO67yRGR6drNNVltyvlQ7rKp9J18InsoWD/DMPREGkJ9fgPIT
-         hnLAokuARJ1ILwmuwuX6PHhtfXT9avcdZKzNs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=gyQDSAb68RQOHEAGcpAMGbpY6osDtgIRCykF1IhHNwM=;
-        b=PJP46mxRiqhT5eoMm72lKZ1KDAXv0/KqR0NIj9cjn+3eVleN6yaaeeffkgVGVSXbpI
-         yGLpH3nblZ4Y2ky3MxwM79Y9mIZ5ZBsDrW0wyRpRDhroEMVSk86oxoPkKcGFWerps6Br
-         bzmZTbH76aMtSwZ8FyMdbLh55I3Q+eMhBvAZUP39ccPoQrxlg24t5UVcyZtn3A88J6/7
-         qd8FZx4uB62OeBIogQoKYkdndNehC0J/1nL1iELjaL5dhBAGHAwdFx8bADrPDBmfp6kH
-         mjKj1NG3aeoT9vzx7Lx3cEGL/msa0OukCWN/3o4FSM5C9lbjRwjKVsj5fzjCTiIr5FQL
-         hxqA==
-X-Gm-Message-State: AJcUukeUujRvyvpHEjo0KkLB+jPzaK9GbfdJ4pwTAe2EppcTjA1TSOl1
-        pGO/sxi40EVYU/Rouh+g+7eooA==
-X-Google-Smtp-Source: ALg8bN5EylvmxpjyZO21ODhJecUJgPePdb6Esjc7d7KidoZEyVpZ3bhG09iXX2QpyiTnOV0M637J3A==
-X-Received: by 2002:adf:c5d3:: with SMTP id v19mr17306869wrg.30.1547831268180;
-        Fri, 18 Jan 2019 09:07:48 -0800 (PST)
-Received: from [192.168.43.112] ([37.162.17.17])
-        by smtp.gmail.com with ESMTPSA id s1sm123543555wro.9.2019.01.18.09.07.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 09:07:47 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
-Date:   Fri, 18 Jan 2019 18:07:45 +0100
-Cc:     Andrea Righi <righi.andrea@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
-        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F576C256-A032-4E62-99EA-F60162B6E069@linaro.org>
-References: <20190118103127.325-1-righi.andrea@gmail.com>
- <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Fri, 18 Jan 2019 12:08:05 -0500
+X-Originating-IP: 141.70.45.131
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id D9D6524000A;
+        Fri, 18 Jan 2019 17:08:01 +0000 (UTC)
+Date:   Fri, 18 Jan 2019 18:08:01 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Hartman <ghartman@google.com>,
+        Alistair Strachan <strachan@google.com>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Christian Brauner <christian@brauner.io>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/wait: introduce wait_event_freezable_hrtimeout
+Message-ID: <20190118170801.GA4537@hle-laptop.local>
+References: <20190117224135.GC8100@hle-laptop.local>
+ <20190118151941.GB187589@google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
+Content-Disposition: inline
+In-Reply-To: <20190118151941.GB187589@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--tThc/1wpZn/ma/RB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Il giorno 18 gen 2019, alle ore 17:35, Josef Bacik =
-<josef@toxicpanda.com> ha scritto:
+Hi Joel,
+
+Thanks for your review.
+
+> I believe these should be 2 patches. In the first patch you introduce the
+> new API, in the second one you would simplify the VSOC driver.
 >=20
-> On Fri, Jan 18, 2019 at 11:31:24AM +0100, Andrea Righi wrote:
->> This is a redesign of my old cgroup-io-throttle controller:
->> https://lwn.net/Articles/330531/
->>=20
->> I'm resuming this old patch to point out a problem that I think is =
-still
->> not solved completely.
->>=20
->> =3D Problem =3D
->>=20
->> The io.max controller works really well at limiting synchronous I/O
->> (READs), but a lot of I/O requests are initiated outside the context =
-of
->> the process that is ultimately responsible for its creation (e.g.,
->> WRITEs).
->>=20
->> Throttling at the block layer in some cases is too late and we may =
-end
->> up slowing down processes that are not responsible for the I/O that
->> is being processed at that level.
+> In fact, in one part of the patch you are using wait_event_freezable which
+> already exists so that's unrelated to the new API you are adding.
+
+Agree, I will split the patch for the v2.
+
+> > +/*
+> > + * like wait_event_hrtimeout() -- except it uses TASK_INTERRUPTIBLE to=
+ avoid
+> > + * increasing load and is freezable.
+> > + */
+> > +#define wait_event_freezable_hrtimeout(wq_head, condition, timeout)		\
 >=20
-> How so?  The writeback threads are per-cgroup and have the cgroup =
-stuff set
-> properly.  So if you dirty a bunch of pages, they are associated with =
-your
-> cgroup, and then writeback happens and it's done in the writeback =
-thread
-> associated with your cgroup and then that is throttled.  Then you are =
-throttled
-> at balance_dirty_pages() because the writeout is taking longer.
+> You should document the variable names in the header comments.
+
+Agree. This comment was copy/pasted from wait_event_freezable_timeout,
+should I fix it there as well?
+
+> Also, this new API appears to conflict with definition of 'freezable' in
+> wait_event_freezable I think,
 >=20
-
-IIUC, Andrea described this problem: certain processes in a certain =
-group dirty a
-lot of pages, causing write back to start.  Then some other blameless
-process in the same group experiences very high latency, in spite of
-the fact that it has to do little I/O.
-
-Does your blk_cgroup_congested() stuff solves this issue?
-
-Or simply I didn't get what Andrea meant at all :)
-
-Thanks,
-Paolo
-
-> I introduced the blk_cgroup_congested() stuff for paths that it's not =
-easy to
-> clearly tie IO to the thing generating the IO, such as readahead and =
-such.  If
-> you are running into this case that may be something worth using.  =
-Course it
-> only works for io.latency now but there's no reason you can't add =
-support to it
-> for io.max or whatever.
+> wait_event_freezable - sleep or freeze until condition is true.
 >=20
->>=20
->> =3D Proposed solution =3D
->>=20
->> The main idea of this controller is to split I/O measurement and I/O
->> throttling: I/O is measured at the block layer for READS, at page =
-cache
->> (dirty pages) for WRITEs, and processes are limited while they're
->> generating I/O at the VFS level, based on the measured I/O.
->>=20
+> wait_event_freezable_hrtimeout - sleep but make sure freezer is not block=
+ed.
+> (your API)
 >=20
-> This is what blk_cgroup_congested() is meant to accomplish, I would =
-suggest
-> looking into that route and simply changing the existing io controller =
-you are
-> using to take advantage of that so it will actually throttle things.  =
-Then just
-> sprinkle it around the areas where we indirectly generate IO.  Thanks,
+> It seems to me these are 2 different definitions of 'freezing' (or I coul=
+d be
+> completely confused). But in the first case it calls try_to_freeze after
+> schedule(). In the second case (your new API), it calls freezable_schedul=
+e().
 >=20
-> Josef
+> So I am wondering why is there this difference in the 'meaning of freezab=
+le'.
+> In the very least, any such subtle differences should be documented in the
+> header comments IMO.
 
+It appears that freezable_schedule() and schedule(); try_to_freeze() are
+almost identical:
+
+    static inline void freezable_schedule(void)
+    {
+        freezer_do_not_count();
+        schedule();
+        freezer_count();
+    }
+
+and
+
+    static inline void freezer_do_not_count(void)
+    {
+        current->flags |=3D PF_FREEZER_SKIP;
+    }
+
+    static inline void freezer_count(void)
+    {
+        current->flags &=3D ~PF_FREEZER_SKIP;
+        /*
+         * If freezing is in progress, the following paired with smp_mb()
+         * in freezer_should_skip() ensures that either we see %true
+         * freezing() or freezer_should_skip() sees !PF_FREEZER_SKIP.
+         */
+        smp_mb();
+        try_to_freeze();
+    }
+
+as far as I understand this code, freezable_schedule() avoids blocking the
+freezer during the schedule() call, but in the end try_to_freeze() is still
+called so the result is the same, right?
+
+I wonder why wait_event_freezable is not calling freezable_schedule().
+
+That being said, I am not sure that the try_to_freeze() call does anything
+in the vsoc case because there is no call to set_freezable() so the thread
+still has PF_NOFREEZE...
+
+regards,
+ Hugo
+
+--=20
+                Hugo Lefeuvre (hle)    |    www.owl.eu.com
+RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
+ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
+
+--tThc/1wpZn/ma/RB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlxCB+oACgkQZYVUZx9w
+0DQUSAf8CZqbI4QMqVaVcLJct4ZWr0WwA9yzwPjUd6sX2C4e8m2HxUqEb0wNA3ll
+zDwb8drU31yGYSw5CuVufTmdZ9r5etWtI2ZmVX3DHyJJhnxwaHg8xUKhJI05NvXP
+sAXoisn6NrJwqLeAGAJHG6pXsOC964mafKKxGhXzCRaQ7LERZsLe3gIE5eY8N1vI
+RXPrIpirhjXsLgvQ5mveDeZ1mXDZ+ThygLR6OLhi8zdbiqpRHZGzF+tUwpT0+Gyy
+L/0mrNNny1HPAOugANwHL73bHKhCmCI9zt9SJY3f7dbW5p6vPMRt/GKq1a77F2Zl
+5M6YRrnVUukcy2cW67KuLiB2smE9sA==
+=UZWB
+-----END PGP SIGNATURE-----
+
+--tThc/1wpZn/ma/RB--
