@@ -2,123 +2,93 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA42C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2733BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2ED220896
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B736A20896
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:56:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fJNMA9M1"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="XJfpt0c3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbfARMz4 (ORCPT
+        id S1727856AbfARM4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:55:56 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51696 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfARMzz (ORCPT
+        Fri, 18 Jan 2019 07:56:20 -0500
+Received: from mail-ed1-f44.google.com ([209.85.208.44]:37915 "EHLO
+        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfARM4T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:55:55 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0ICtmxA029338;
-        Fri, 18 Jan 2019 06:55:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547816148;
-        bh=3sG7OW1OYoA862WFpuBhQaQvpPEZfIvVz7qnFiyJYoM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=fJNMA9M1Pl6MgBK2Phm3hPXNKUW9lktMZhPF+ikUAXXYYPg2L+1fGLMtRbO6IvI9T
-         gdDOSwh5uSBRzxBrViHbGQS+GWEG1OmLJWFvlgLlstQkmUSM1szPg+T9ZN789tB8Dj
-         yUkp3sL/Yjwe4FQEMs9ABnunPIZ+lNCh9c6Q2NZU=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0ICtlZY015237
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Jan 2019 06:55:48 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 18
- Jan 2019 06:55:47 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 18 Jan 2019 06:55:47 -0600
-Received: from [172.22.105.109] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0ICtlZc001129;
-        Fri, 18 Jan 2019 06:55:47 -0600
-Subject: Re: [PATCH v4 1/4] can: m_can: Create a m_can platform framework
-To:     Wolfgang Grandegger <wg@grandegger.com>, <mkl@pengutronix.de>,
-        <davem@davemloft.net>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190117200601.16416-1-dmurphy@ti.com>
- <aa72c1a7-ee16-dbde-0b75-96f9632ec431@ti.com>
- <641ae2ce-def9-6032-b8dc-cc71311bc993@grandegger.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <82d9f82c-1da6-2374-062b-538840afcc44@ti.com>
-Date:   Fri, 18 Jan 2019 06:55:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 18 Jan 2019 07:56:19 -0500
+Received: by mail-ed1-f44.google.com with SMTP id h50so11055446ede.5
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 04:56:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=t+3BHkjGp9zr2zQT2PFcN2GOfV8n4YxVKqjrZKzxlAU=;
+        b=XJfpt0c3B9UFoOeaBDAHJewGVWH0PN1XuJZdn0Dagc5083CZc0Z/0Hrx/YTJR5GChK
+         /yYmcpLiHv21s00LJtmtKfyW4zQ613K/QmqNg/XF5017sVVmxDRVcAqp8y5saFpJYEqn
+         Ozocdh4nR7bI1xYZhY25qhGJMf9flQiQOrA4U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t+3BHkjGp9zr2zQT2PFcN2GOfV8n4YxVKqjrZKzxlAU=;
+        b=De22WSQP5Sam+MVQYIqzxyZV4kqmbEk8KGxiRsx0AeRQuLHSdjlODTGu8gJZtVz+nG
+         8cXEz6j/svh7hDcKYNAgF27s5LfGTflUL/+xWnDRv3bXl/88qvHs5JxiB/NyRV8CRV5b
+         m7b12FP1JUsyiYZCyZKdsstFvguPqhtr+euvdPYUvtcyWlkR8q9eJJQpJF3HYkavuUwE
+         V7+YxavDQOJZ+lmmDli5HPgPRK47Ew5Mwr18QINIf7vVg9tlz3UO+yjLbEm3XNcS39fn
+         m71j6J8w1J6mBIfGO/8fQZ4dpEczyYVonDy5gxLrSAKQEYiNLSlCLBA1izi3OTLIjbSB
+         yCwA==
+X-Gm-Message-State: AJcUukfIIoV/sTdySgUjVJuFqVpR8K+WzT9SGdcrKyYM3v/wDggmEMA3
+        MvkpRPjKPQk8DrDpPxKHTIVm9w==
+X-Google-Smtp-Source: ALg8bN6bmKQW7QP33XCo6Co8NUg5MrxePxYtNYM7ymhFhCAsu5CozLB2LHQRDMwXB6EJDA6iD+aoIQ==
+X-Received: by 2002:a17:906:881:: with SMTP id n1-v6mr14457564eje.7.1547816177931;
+        Fri, 18 Jan 2019 04:56:17 -0800 (PST)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id n29sm7259275edd.40.2019.01.18.04.56.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 04:56:17 -0800 (PST)
+Date:   Fri, 18 Jan 2019 13:56:11 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Elena Reshetova <elena.reshetova@intel.com>
+Cc:     mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        keescook@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH 1/5] sched: convert sighand_struct.count to refcount_t
+Message-ID: <20190118125611.GA8205@andrea>
+References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
+ <1547814450-18902-2-git-send-email-elena.reshetova@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <641ae2ce-def9-6032-b8dc-cc71311bc993@grandegger.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547814450-18902-2-git-send-email-elena.reshetova@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wolfgang
+Hi Elena,
 
-On 1/18/19 12:56 AM, Wolfgang Grandegger wrote:
-> Hello Dan,
-> 
-> Am 17.01.19 um 21:08 schrieb Dan Murphy:
->> Wolfgang
->>
->> On 1/17/19 2:05 PM, Dan Murphy wrote:
->>> Create a m_can platform framework that peripherial
->>> devices can register to and use common code and register sets.
->>> The peripherial devices may provide read/write and configuration
->>> support of the IP.
->>>
->>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>> ---
->>>  drivers/net/can/m_can/m_can.c          |   6 +
->>>  drivers/net/can/m_can/m_can_platform.c | 209 +++++++++++++++++++++++++
->>>  drivers/net/can/m_can/m_can_platform.h | 163 +++++++++++++++++++
->>>  3 files changed, 378 insertions(+)
->>>  create mode 100644 drivers/net/can/m_can/m_can_platform.c
->>>  create mode 100644 drivers/net/can/m_can/m_can_platform.h
->>>
-> 
-> ... snip ...
-> 
->> This patch set is working for the TCAN and at least boots on io-mapped devices.
->> We have a couple of customers who are looking at using this implementation and we would like to
->> start moving this patch set along in the review.
->>
->> I did not put a change log in here as there have been no comments for the last 3 patch sets I sent.
->>
->> This v4 squashes a few bugs I found during testing across all the files.
-> 
-> OK, after a very busy week I will try to find time for the review...
-> finally.
-> 
+[...]
 
-Thanks.  I anticipate a v5 as we debug the io mapped code and continue to test the TCAN code.
-
-Dan
-
-> Thanks,
+> **Important note for maintainers:
 > 
-> Wolfgang.
-> 
+> Some functions from refcount_t API defined in lib/refcount.c
+> have different memory ordering guarantees than their atomic
+> counterparts.
+> The full comparison can be seen in
+> https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
+> in state to be merged to the documentation tree.
 
+Just a remark to point out that that document got merged, even though
+in a different location/format: c.f.,
 
--- 
-------------------
-Dan Murphy
+  b6e859f6cdd1 ("docs: refcount_t documentation")
+
+  Andrea
