@@ -2,138 +2,65 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D357CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00ACCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A88AA2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:19:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C968D2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfARJTf (ORCPT
+        id S1727223AbfARJTo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 04:19:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39050 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbfARJTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 04:19:34 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2E9F87F6B2;
-        Fri, 18 Jan 2019 09:19:34 +0000 (UTC)
-Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 420DF600C0;
-        Fri, 18 Jan 2019 09:19:16 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
-        dyoung@redhat.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
-Subject: [PATCH v4 2/2] kexec, KEYS: Make use of platform keyring for signature verify
-Date:   Fri, 18 Jan 2019 17:17:33 +0800
-Message-Id: <20190118091733.29940-3-kasong@redhat.com>
-In-Reply-To: <20190118091733.29940-1-kasong@redhat.com>
-References: <20190118091733.29940-1-kasong@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 18 Jan 2019 09:19:34 +0000 (UTC)
+        Fri, 18 Jan 2019 04:19:44 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:50823 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfARJTn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 04:19:43 -0500
+Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 3AAC7CF2C3;
+        Fri, 18 Jan 2019 10:27:28 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] Bluetooth: hci_uart: Add a local variable to store the
+ result of h4_recv_buf()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190111065514.GA26542@myunghoj-Precision-5530>
+Date:   Fri, 18 Jan 2019 10:19:41 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <09FCB21A-2184-4CDB-8BF0-75C403DF39F9@holtmann.org>
+References: <20190111065514.GA26542@myunghoj-Precision-5530>
+To:     Myungho Jung <mhjungk@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch let kexec_file_load makes use of .platform keyring as fall
-back if it failed to verify a PE signed image against secondary or
-builtin keyring, make it possible to verify kernel image signed with
-preboot keys as well.
+Hi Myungho,
 
-This commit adds a VERIFY_USE_PLATFORM_KEYRING similar to previous
-VERIFY_USE_SECONDARY_KEYRING indicating that verify_pkcs7_signature
-should verify the signature using platform keyring. Also, decrease
-the error message log level when verification failed with -ENOKEY,
-so that if called tried multiple time with different keyring it
-won't generate extra noises.
+> In h4_recv(), if h4_recv_buf() returns error and h4_recv() is
+> asynchronously called again before setting rx_skb to NULL, ERR_PTR will
+> be dereferenced in h4_recv_buf(). Check return value in a local variable
+> before writing to rx_skb.
+> 
+> Reported-by: syzbot+017a32f149406df32703@syzkaller.appspotmail.com
+> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+> ---
+> drivers/bluetooth/hci_h4.c | 11 +++++++----
+> 1 file changed, 7 insertions(+), 4 deletions(-)
 
-Signed-off-by: Kairui Song <kasong@redhat.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Tested-by: Mimi Zohar <zohar@linux.ibm.com>
----
- arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
- certs/system_keyring.c            | 13 ++++++++++++-
- include/linux/verification.h      |  1 +
- 3 files changed, 23 insertions(+), 4 deletions(-)
+patch has been applied to bluetooth-next tree.
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 7d97e432cbbc..2c007abd3d40 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -534,9 +534,16 @@ static int bzImage64_cleanup(void *loader_data)
- #ifdef CONFIG_KEXEC_BZIMAGE_VERIFY_SIG
- static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
- {
--	return verify_pefile_signature(kernel, kernel_len,
--				       VERIFY_USE_SECONDARY_KEYRING,
--				       VERIFYING_KEXEC_PE_SIGNATURE);
-+	int ret;
-+	ret = verify_pefile_signature(kernel, kernel_len,
-+				      VERIFY_USE_SECONDARY_KEYRING,
-+				      VERIFYING_KEXEC_PE_SIGNATURE);
-+	if (ret == -ENOKEY && IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING)) {
-+		ret = verify_pefile_signature(kernel, kernel_len,
-+					      VERIFY_USE_PLATFORM_KEYRING,
-+					      VERIFYING_KEXEC_PE_SIGNATURE);
-+	}
-+	return ret;
- }
- #endif
- 
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 4690ef9cda8a..7085c286f4bd 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -240,11 +240,22 @@ int verify_pkcs7_signature(const void *data, size_t len,
- #else
- 		trusted_keys = builtin_trusted_keys;
- #endif
-+	} else if (trusted_keys == VERIFY_USE_PLATFORM_KEYRING) {
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+		trusted_keys = platform_trusted_keys;
-+#else
-+		trusted_keys = NULL;
-+#endif
-+		if (!trusted_keys) {
-+			ret = -ENOKEY;
-+			pr_devel("PKCS#7 platform keyring is not available\n");
-+			goto error;
-+		}
- 	}
- 	ret = pkcs7_validate_trust(pkcs7, trusted_keys);
- 	if (ret < 0) {
- 		if (ret == -ENOKEY)
--			pr_err("PKCS#7 signature not signed with a trusted key\n");
-+			pr_devel("PKCS#7 signature not signed with a trusted key\n");
- 		goto error;
- 	}
- 
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index cfa4730d607a..018fb5f13d44 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -17,6 +17,7 @@
-  * should be used.
-  */
- #define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
-+#define VERIFY_USE_PLATFORM_KEYRING  ((struct key *)2UL)
- 
- /*
-  * The use to which an asymmetric key is being put.
--- 
-2.20.1
+Can you actually fix all callers of h4_recv_buf since they all suffer from the same issue.
+
+Regards
+
+Marcel
 
