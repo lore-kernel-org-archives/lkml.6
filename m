@@ -2,111 +2,99 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54221C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB83FC43613
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270372086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72AE22086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:07:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f2QUHo4p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfARUAg (ORCPT
+        id S1729416AbfARUHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 15:00:36 -0500
-Received: from ivanoab6.miniserver.com ([5.153.251.140]:41138 "EHLO
-        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729238AbfARUAf (ORCPT
+        Fri, 18 Jan 2019 15:07:13 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44590 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729371AbfARUHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 15:00:35 -0500
-Received: from [192.168.17.6] (helo=smaug.kot-begemot.co.uk)
-        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1gkaJc-0005P5-OR; Fri, 18 Jan 2019 20:00:33 +0000
-Received: from [192.168.15.6]
-        by smaug.kot-begemot.co.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1gkaJa-0001jn-4F; Fri, 18 Jan 2019 20:00:32 +0000
-Subject: Re: [PATCH] um: Remove duplicate headers
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        yuehaibing@huawei.com, jdike@addtoit.com,
-        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jrdr.linux@gmail.com, brajeswar.linux@gmail.com
-References: <5c41e99b.1c69fb81.f240b.506a@mx.google.com>
- <dfdf5e70-f782-d90e-1059-a524a5e72b7d@cambridgegreys.com>
- <4621128.kXzvTGAT2u@blindfold>
-From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Message-ID: <d9f525fb-847f-312e-43e7-c80b65936680@cambridgegreys.com>
-Date:   Fri, 18 Jan 2019 20:00:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 18 Jan 2019 15:07:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bHjbrvtdU6CrPUk89GCBDU4LVJNmWhYTlrCLtZRBcPs=; b=f2QUHo4pL53dLQi/z9+sCmeX9
+        8vkB/UO6buu/oSkxnfyfJbqUmenZSS+tEzn2TwWVU5noLLGQzD4m4D16omnnjAetqPT18QqppelAa
+        1Nr/bVapfNNXCTz3gsQPy6vFEUYjjqbtiO7k4z1lMO3pcSF5pn6zvaJ2Lf4rQjZCBXnsL3i8iDU/k
+        Z1LmlGuIuJeHhWcdewajoxGqIJMH3zzs7yRK8jKi+EwTMk0o4bcOO+0n2doRZcfjgoGVvAA9EW4o1
+        yEpPtgNJ17UJVjCNyu2APMWcRHzYNz2GncrrtMz1NA/8hnnM9zsLclfo5wcTQCujRDuVg++6UTN7G
+        iC+7t1pFQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gkaPs-00012H-4n; Fri, 18 Jan 2019 20:07:00 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A5F25201955B8; Fri, 18 Jan 2019 21:06:57 +0100 (CET)
+Date:   Fri, 18 Jan 2019 21:06:57 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     James Morse <james.morse@arm.com>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SRINIVAS <srinivas.eeda@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: Question about qspinlock nest
+Message-ID: <20190118200657.GE27931@hirez.programming.kicks-ass.net>
+References: <e784a592-5dec-b0b3-6c70-d9ef775621d5@oracle.com>
+ <910e9fb6-d0df-4711-fe2b-244b3c20eb82@redhat.com>
+ <d06126a1-1db8-f937-2084-2c1234b6f56f@arm.com>
+ <20190110201217.GH2861@worktop.programming.kicks-ass.net>
+ <a270215d-ec5a-8b8a-3786-c0480b640abc@arm.com>
+ <20190114131613.GB10486@hirez.programming.kicks-ass.net>
+ <830db851-d5cb-4081-8d72-e3f3a0a282df@arm.com>
+ <20190118100229.GB27931@hirez.programming.kicks-ass.net>
+ <abf2dfe7-e148-b011-764d-b9effa573d5d@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <4621128.kXzvTGAT2u@blindfold>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Clacks-Overhead: GNU Terry Pratchett
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abf2dfe7-e148-b011-764d-b9effa573d5d@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jan 18, 2019 at 09:50:12AM -0500, Waiman Long wrote:
+> On 01/18/2019 05:02 AM, Peter Zijlstra wrote:
+> >
+> >> e.g. We can't take an SError during the SError handler.
+> >>
+> >> But we can take this SError/NMI on another CPU while the first one is still
+> >> running the handler.
+> >>
+> >> These multiple NMIlike notifications mean having multiple locks/fixmap-slots,
+> >> one per notification. This is where the qspinlock node limit comes in, as we
+> >> could have more than 4 contexts.
+> > Right; so Waiman was going to do a patch that reverts to test-and-set or
+> > something along those lines once we hit the queue limit, which seems
+> > like a good way out. Actually hitting that nesting level should be
+> > exceedingly rare.
+> 
+> Yes, I am working on a patch to support arbitrary levels of nesting. It
+> is easy for PV qspinlock as lock stealing is supported.
+> 
+> For native qspinlock, we cannot do lock stealing without incurring a
+> certain amount of overhead in the regular slowpath code. It was up to
+> 10% in my own testing. So I am exploring an alternative that can do the
+> job without incurring any noticeable performance degradation in the
+> slowpath. I ran into a race condition which I am still trying to find
+> out where that comes from. Hopefully, I will have something to post next
+> week.
 
-
-On 18/01/2019 19:42, Richard Weinberger wrote:
-> Am Freitag, 18. Januar 2019, 20:23:07 CET schrieb Anton Ivanov:
->>
->> On 18/01/2019 14:58, Sabyasachi Gupta wrote:
->>> Remove sys/socket.h and sys/uio.h which are included more than once
->>>
->>> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
->>> ---
->>>    arch/um/drivers/vector_user.c | 2 --
->>>    1 file changed, 2 deletions(-)
->>>
->>> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
->>> index d2c17dd..c863921 100644
->>> --- a/arch/um/drivers/vector_user.c
->>> +++ b/arch/um/drivers/vector_user.c
->>> @@ -23,7 +23,6 @@
->>>    #include <netinet/ether.h>
->>>    #include <linux/if_ether.h>
->>>    #include <linux/if_packet.h>
->>> -#include <sys/socket.h>
->>>    #include <sys/wait.h>
->>>    #include <sys/uio.h>
->>>    #include <linux/virtio_net.h>
->>> @@ -31,7 +30,6 @@
->>>    #include <stdlib.h>
->>>    #include <os.h>
->>>    #include <um_malloc.h>
->>> -#include <sys/uio.h>
->>>    #include "vector_user.h"
->>>    
->>>    #define ID_GRE 0
->>>
->>
->> Hi Sabyasachi,
->>
->> I believe we have an identical patch enqueued already from a couple of
->> weeks back.
-> 
-> Hmm, did I miss that one in patchwork?
-> 
-> Thanks,
-> //richard
-> 
-> 
-> 
-> _______________________________________________
-> linux-um mailing list
-> linux-um@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-um
-> 
-https://patchwork.ozlabs.org/patch/1020163/
-
-A.
+Where does the overhead come from? Surely that's not just checking that
+bound?
