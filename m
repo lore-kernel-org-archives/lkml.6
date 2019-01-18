@@ -2,459 +2,577 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB626C1B0FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F95C1B0F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7394F20657
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3034E20449
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:03:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VaBVfZ40"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbfARVCy (ORCPT
+        id S1729579AbfARVDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 16:02:54 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:52478 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729438AbfARVCy (ORCPT
+        Fri, 18 Jan 2019 16:03:50 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44840 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729502AbfARVDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 16:02:54 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id EC33572CA5E;
-        Fri, 18 Jan 2019 23:59:14 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 66DB04A4A14;
-        Fri, 18 Jan 2019 23:59:14 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3] akcipher: Introduce verify_rsa/verify for public key algorithms
-Date:   Fri, 18 Jan 2019 23:58:46 +0300
-Message-Id: <20190118205846.20309-1-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
+        Fri, 18 Jan 2019 16:03:49 -0500
+Received: by mail-pg1-f196.google.com with SMTP id t13so6604394pgr.11
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 13:03:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=x6DyQHjEDOzZ8KnXxJNvcugEBrO9YcB10yGkQYrK3KE=;
+        b=VaBVfZ40tXsSwgOuLWTJG6I7wPqdMwulaPQBWb+9hofrnc6vT7rRI/AVzyK9SRXf65
+         Et9OkNPJLWg7ksoX1zixcUnMtGL36lWglf9mESNl2Kmr63FZcR3MKlKtK6SSFzV4rHO4
+         huIX1gF20yO8Md4wlt//0Mu9dnCWz4KVl9TxU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=x6DyQHjEDOzZ8KnXxJNvcugEBrO9YcB10yGkQYrK3KE=;
+        b=dBoOouOrZY0OXX64Sc3vHXAOiFQiLxZni/KVPsIz3PUa/oTbVaaXqjd05kCKh1WaPO
+         16I7RDd6CTXIyxXf34xBxT0D3VtZfh+b6W2mLvfiyJsN9DWMa912DyUCOVzTJXgwgANf
+         ILJU7h8Uh6N9+MPRLtUKTuX3bQMdguyxrnFIRGOnqf0J30qMvWCIzUjsABz4T1OApwrb
+         2SXryD13r+KOYroizx+ZHqEXGBEJVR1DiEZLTYWcLDvOR2apf4rEttO4c1Ua5U4yhKZ1
+         mBkYkwX6SK7Di3CNMgVTjo0nBAKxdgVA0IGIM5bH5W4rXqLWVtJaU1302ECjRBp1Dn9W
+         bDOg==
+X-Gm-Message-State: AJcUukcOzmej2InaDik0V385Q3ATXMrNRAT86MowYMa9MePFtzjYPulY
+        OzP7W7WmJquDwQpBa4T7nIobdQ==
+X-Google-Smtp-Source: ALg8bN7bYejywjz6hQPOLjbezUpMCBghgZwqyp+zlg/E5qWhN9ASIOaD3Tk/TCcrg+bD2aCUlTvKKg==
+X-Received: by 2002:a63:4706:: with SMTP id u6mr18343035pga.95.1547845428236;
+        Fri, 18 Jan 2019 13:03:48 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id b9sm6680336pfi.118.2019.01.18.13.03.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 13:03:46 -0800 (PST)
+Date:   Fri, 18 Jan 2019 13:03:46 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v7 4/4] Bluetooth: btqca: inject command complete event
+ during fw download
+Message-ID: <20190118210346.GA261387@google.com>
+References: <c34d44c656cf38a25dbfc9c6a1dd8106@codeaurora.org>
+ <20190110204328.GA261387@google.com>
+ <fc3430d2ba5e049883f91ff56aac0dbd@codeaurora.org>
+ <20190111231229.GI261387@google.com>
+ <5ef0fa1eca4a278ce31c88ef34c7c649@codeaurora.org>
+ <20190115012002.GP261387@google.com>
+ <6889ee31f9700659109c7b772bef76d9@codeaurora.org>
+ <20190116195716.GR261387@google.com>
+ <4641fce775b6d38b58ae8b70dd622d53@codeaurora.org>
+ <7B2D2E74-925A-4C70-9641-2B7EA5721B4B@holtmann.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7B2D2E74-925A-4C70-9641-2B7EA5721B4B@holtmann.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previous akcipher .verify() just `decrypts' (using RSA encrypt which is
-using public key) signature to uncover message hash, which was then
-compared in upper level public_key_verify_signature() with the expected
-hash value, which itself was never passed into verify().
+Hi Marcel,
 
-This approach was incompatible with EC-DSA family of algorithms,
-because, to verify a signature EC-DSA algorithm also needs a hash value
-as input; then it's used (together with a signature divided into halves
-`r||s') to produce a witness value, which is then compared with `r' to
-determine if the signature is correct. Thus, for EC-DSA, nor
-requirements of .verify() itself, nor its output expectations in
-public_key_verify_signature() wasn't sufficient.
+On Fri, Jan 18, 2019 at 09:57:14AM +0100, Marcel Holtmann wrote:
+> Hi Balakrishna,
+> 
+> >>> On 2019-01-15 06:50, Matthias Kaehlcke wrote:
+> >>> > On Mon, Jan 14, 2019 at 09:21:25PM +0530, Balakrishna Godavarthi wrote:
+> >>> > > On 2019-01-12 04:42, Matthias Kaehlcke wrote:
+> >>> > > > On Fri, Jan 11, 2019 at 07:53:43PM +0530, Balakrishna Godavarthi wrote:
+> >>> > > > > Hi Matthias,
+> >>> > > > >
+> >>> > > > > On 2019-01-11 02:13, Matthias Kaehlcke wrote:
+> >>> > > > > > Hi Balakrishna,
+> >>> > > > > >
+> >>> > > > > > On Thu, Jan 10, 2019 at 08:30:43PM +0530, Balakrishna Godavarthi wrote:
+> >>> > > > > > > Hi Matthias,
+> >>> > > > > > >
+> >>> > > > > > > On 2019-01-03 03:45, Matthias Kaehlcke wrote:
+> >>> > > > > > > > On Mon, Dec 31, 2018 at 11:34:46AM +0530, Balakrishna Godavarthi wrote:
+> >>> > > > > > > > > Hi Marcel,
+> >>> > > > > > > > >
+> >>> > > > > > > > > On 2018-12-30 13:40, Marcel Holtmann wrote:
+> >>> > > > > > > > > > Hi Balakrishna,
+> >>> > > > > > > > > >
+> >>> > > > > > > > > > > > > Latest qualcomm chips are not sending an command complete event for
+> >>> > > > > > > > > > > > > every firmware packet sent to chip. They only respond with a vendor
+> >>> > > > > > > > > > > > > specific event for the last firmware packet. This optimization will
+> >>> > > > > > > > > > > > > decrease the BT ON time. Due to this we are seeing a timeout error
+> >>> > > > > > > > > > > > > message logs on the console during firmware download. Now we are
+> >>> > > > > > > > > > > > > injecting a command complete event once we receive an vendor
+> >>> > > > > > > > > > > > > specific
+> >>> > > > > > > > > > > > > event for the last RAM firmware packet.
+> >>> > > > > > > > > > > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> >>> > > > > > > > > > > > > ---
+> >>> > > > > > > > > > > > > drivers/bluetooth/btqca.c | 39
+> >>> > > > > > > > > > > > > ++++++++++++++++++++++++++++++++++++++-
+> >>> > > > > > > > > > > > > drivers/bluetooth/btqca.h |  3 +++
+> >>> > > > > > > > > > > > > 2 files changed, 41 insertions(+), 1 deletion(-)
+> >>> > > > > > > > > > > > > diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> >>> > > > > > > > > > > > > index ec9e03a6b778..0b533f65f652 100644
+> >>> > > > > > > > > > > > > --- a/drivers/bluetooth/btqca.c
+> >>> > > > > > > > > > > > > +++ b/drivers/bluetooth/btqca.c
+> >>> > > > > > > > > > > > > @@ -144,6 +144,7 @@ static void qca_tlv_check_data(struct
+> >>> > > > > > > > > > > > > rome_config *config,
+> >>> > > > > > > > > > > > > 		 * In case VSE is skipped, only the last segment is acked.
+> >>> > > > > > > > > > > > > 		 */
+> >>> > > > > > > > > > > > > 		config->dnld_mode = tlv_patch->download_mode;
+> >>> > > > > > > > > > > > > +		config->dnld_type = config->dnld_mode;
+> >>> > > > > > > > > > > > > 		BT_DBG("Total Length           : %d bytes",
+> >>> > > > > > > > > > > > > 		       le32_to_cpu(tlv_patch->total_size));
+> >>> > > > > > > > > > > > > @@ -264,6 +265,31 @@ static int qca_tlv_send_segment(struct
+> >>> > > > > > > > > > > > > hci_dev *hdev, int seg_size,
+> >>> > > > > > > > > > > > > 	return err;
+> >>> > > > > > > > > > > > > }
+> >>> > > > > > > > > > > > > +static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
+> >>> > > > > > > > > > > > > +{
+> >>> > > > > > > > > > > > > +	struct hci_event_hdr *hdr;
+> >>> > > > > > > > > > > > > +	struct hci_ev_cmd_complete *evt;
+> >>> > > > > > > > > > > > > +	struct sk_buff *skb;
+> >>> > > > > > > > > > > > > +
+> >>> > > > > > > > > > > > > +	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
+> >>> > > > > > > > > > > > > +	if (!skb)
+> >>> > > > > > > > > > > > > +		return -ENOMEM;
+> >>> > > > > > > > > > > > > +
+> >>> > > > > > > > > > > > > +	hdr = skb_put(skb, sizeof(*hdr));
+> >>> > > > > > > > > > > > > +	hdr->evt = HCI_EV_CMD_COMPLETE;
+> >>> > > > > > > > > > > > > +	hdr->plen = sizeof(*evt) + 1;
+> >>> > > > > > > > > > > > > +
+> >>> > > > > > > > > > > > > +	evt = skb_put(skb, sizeof(*evt));
+> >>> > > > > > > > > > > > > +	evt->ncmd = 1;
+> >>> > > > > > > > > > > > > +	evt->opcode = HCI_OP_NOP;
+> >>> > > > > > > >
+> >>> > > > > > > > After looking a bit more at it I realize HCI_OP_NOP is not a good
+> >>> > > > > > > > value in this case:
+> >>> > > > > > > >
+> >>> > > > > > > > static void hci_cmd_complete_evt(...)
+> >>> > > > > > > > {
+> >>> > > > > > > >   ...
+> >>> > > > > > > >
+> >>> > > > > > > >   if (*opcode != HCI_OP_NOP)
+> >>> > > > > > > >     cancel_delayed_work(&hdev->cmd_timer);
+> >>> > > > > > > >
+> >>> > > > > > > >   ...
+> >>> > > > > > > > }
+> >>> > > > > > > >
+> >>> > > > > > > > https://elixir.bootlin.com/linux/v4.19/source/net/bluetooth/hci_event.c#L3351
+> >>> > > > > > > >
+> >>> > > > > > > > Cancelling the command timeout is precisely what we want. Not sure why
+> >>> > > > > > > > the patch with HCI_OP_NOP makes the timeouts go away in most cases
+> >>> > > > > > > > (but not e.g. when inserting an msleep(1000) after downloading the
+> >>> > > > > > > > NVM.
+> >>> > > > > > > >
+> >>> > > > > > > > I suggest to pass the opcode of the command to be completed.
+> >>> > > > > > > >
+> >>> > > > > > > > > > > > > +
+> >>> > > > > > > > > > > > > +	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
+> >>> > > > > > > > > > > > > +
+> >>> > > > > > > > > > > > > +	hci_skb_pkt_type(skb) = HCI_EVENT_PKT;
+> >>> > > > > > > > > > > > > +
+> >>> > > > > > > > > > > > > +	return hci_recv_frame(hdev, skb);
+> >>> > > > > > > > > > > > > +}
+> >>> > > > > > > > > > > > > +
+> >>> > > > > > > > > > > > > static int qca_download_firmware(struct hci_dev *hdev,
+> >>> > > > > > > > > > > > > 				  struct rome_config *config)
+> >>> > > > > > > > > > > > > {
+> >>> > > > > > > > > > > > > @@ -297,11 +323,22 @@ static int
+> >>> > > > > > > > > > > > > qca_download_firmware(struct hci_dev *hdev,
+> >>> > > > > > > > > > > > > 		ret = qca_tlv_send_segment(hdev, segsize, segment,
+> >>> > > > > > > > > > > > > 					    config->dnld_mode);
+> >>> > > > > > > > > > > > > 		if (ret)
+> >>> > > > > > > > > > > > > -			break;
+> >>> > > > > > > > > > > > > +			goto out;
+> >>> > > > > > > > > > > > > 		segment += segsize;
+> >>> > > > > > > > > > > > > 	}
+> >>> > > > > > > > > > > > > +	/* Latest qualcomm chipsets are not sending a command
+> >>> > > > > > > > > > > > > complete event
+> >>> > > > > > > > > > > > > +	 * for every fw packet sent. They only respond with a
+> >>> > > > > > > > > > > > > vendor specific
+> >>> > > > > > > > > > > > > +	 * event for the last packet. This optimization in the chip will
+> >>> > > > > > > > > > > > > +	 * decrease the BT in initialization time. Here we will
+> >>> > > > > > > > > > > > > inject a command
+> >>> > > > > > > > > > > > > +	 * complete event to avoid a command timeout error message.
+> >>> > > > > > > > > > > > > +	 */
+> >>> > > > > > > > > > > > > +	if ((config->dnld_type == ROME_SKIP_EVT_VSE_CC ||
+> >>> > > > > > > > > > > > > +	    config->dnld_type == ROME_SKIP_EVT_VSE))
+> >>> > > > > > > > > > > > > +		return qca_inject_cmd_complete_event(hdev);
+> >>> > > > > > > > > > > > > +
+> >>> > > > > > > > > > > > have you actually considered using __hci_cmd_send in that case. It is
+> >>> > > > > > > > > > > > allowed for vendor OGF to use that command. I see you actually do use
+> >>> > > > > > > > > > > > it and now I am failing to understand what this is for.
+> >>> > > > > > > > > > > [Bala]: thanks for reviewing the change.
+> >>> > > > > > > > > > >
+> >>> > > > > > > > > > > __hci_cmd_send() can be used only to send the command to the chip.
+> >>> > > > > > > > > > > it will not wait for the response for the command sent.
+> >>> > > > > > > > > > >
+> >>> > > > > > > > > > > as you know that every vendor command sent to chip will respond with
+> >>> > > > > > > > > > > vendor specific event and command complete event.
+> >>> > > > > > > > > > > but in our case chip will only respond with vendor specific event
+> >>> > > > > > > > > > > only. so we are injecting command complete event.
+> >>> > > > > > > > > >
+> >>> > > > > > > > > > and __hci_cmd_sync_ev is also not working for you? However since you
+> >>> > > > > > > > > > are not waiting for the vendor event anyway and just injecting
+> >>> > > > > > > > > > cmd_complete, I wonder what’s the difference in just using
+> >>> > > > > > > > > > __hci_cmd_send and not bothering to wait or inject at all. I am
+> >>> > > > > > > > > > failing to see where this injection makes a difference.
+> >>> > > > > > > > > >
+> >>> > > > > > > > > > For me it is a big difference if we are injecting one event like in
+> >>> > > > > > > > > > the case of Intel compared to injecting one for every command. It will
+> >>> > > > > > > > > > show a wrong picture in btmon and that is a bad idea.
+> >>> > > > > > > > > >
+> >>> > > > > > > > > > Regards
+> >>> > > > > > > > > >
+> >>> > > > > > > > > > Marcel
+> >>> > > > > > > > >
+> >>> > > > > > > > > [Bala]: here is the use case, when ever we download the fw packets
+> >>> > > > > > > > > i.e. RAM
+> >>> > > > > > > > > image, for every command sent(i.e. fw packet) from
+> >>> > > > > > > > > the host chip will respond with an vendor specific event and command
+> >>> > > > > > > > > complete event.
+> >>> > > > > > > > >
+> >>> > > > > > > > > the above is taking more time to setup the BT device. then we came
+> >>> > > > > > > > > up with
+> >>> > > > > > > > > solution where we enable flags in fw file (i.e. RAM image header)
+> >>> > > > > > > > > whether to wait for event to be received or sent the total packets
+> >>> > > > > > > > > and wait
+> >>> > > > > > > > > for the events for the last packet.
+> >>> > > > > > > > >
+> >>> > > > > > > > > So currently we are handling both the cases in the code. i.e wait
+> >>> > > > > > > > > for event
+> >>> > > > > > > > > for all packet or wait for an event for the last packet.
+> >>> > > > > > > > >
+> >>> > > > > > > > > but in the second case i.e. wait for event for the last packet sent,
+> >>> > > > > > > > > we are
+> >>> > > > > > > > > only receiving an vendor specific event from chip which holds the
+> >>> > > > > > > > > status of
+> >>> > > > > > > > > fw download.
+> >>> > > > > > > > >
+> >>> > > > > > > > > so as __hci_cmd_sync_ev() requires an command complete event. so we
+> >>> > > > > > > > > are
+> >>> > > > > > > > > injecting it after the vendor specific event received for the last
+> >>> > > > > > > > > packet.
+> >>> > > > > > > > >
+> >>> > > > > > > > > This helps to overcome 0xfc00 timeout error logging on console.
+> >>> > > > > > > >
+> >>> > > > > > > > Some more details:
+> >>> > > > > > > >
+> >>> > > > > > > > The timeout error is actually from reading the 'SoC version', which
+> >>> > > > > > > > uses the same command code as the firmware download
+> >>> > > > > > > > (EDL_PATCH_CMD_OPCODE). Without reading the 'SoC version' it would be
+> >>> > > > > > > > from the command to write the first firmware segment.
+> >>> > > > > > > >
+> >>> > > > > > > > If the download of a firmware binary takes >= 2s (HCI_CMD_TIMEOUT) the
+> >>> > > > > > > > timeout would still occur. If necessary this could be mitigated by
+> >>> > > > > > > > injecting some command complete events during the firmware download,
+> >>> > > > > > > > though I expect Marcel wouldn't be overly happy with that, since it
+> >>> > > > > > > > would affect btmon even more.
+> >>> > > > > > > >
+> >>> > > > > > > > Regards
+> >>> > > > > > > >
+> >>> > > > > > > > Matthias
+> >>> > > > > > >
+> >>> > > > > > > [Bala]: Basically every vendor specific command we sent to chip,
+> >>> > > > > > > chip should respond with an vendor specific event followed by an
+> >>> > > > > > > command
+> >>> > > > > > > complete event
+> >>> > > > > > > or some times it will only respond with an command complete event.
+> >>> > > > > > > but in any case command complete event is mandatory to all the
+> >>> > > > > > > command we
+> >>> > > > > > > sent to the chip.
+> >>> > > > > >
+> >>> > > > > > Is this ("command complete event is mandatory to all the command we
+> >>> > > > > > sent to the chip") a description of what the chip actually does, or
+> >>> > > > > > what it should be doing according to the spec?
+> >>> > > > > >
+> >>> > > > > > As mentioned earlier, the timeout we see originates from reading the
+> >>> > > > > > SoC version:
+> >>> > > > > >
+> >>> > > > > > diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> >>> > > > > > index 0b533f65f652fc..1e484e61799571 100644
+> >>> > > > > > --- a/drivers/bluetooth/btqca.c
+> >>> > > > > > +++ b/drivers/bluetooth/btqca.c
+> >>> > > > > > @@ -400,6 +400,10 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t
+> >>> > > > > > baudrate,
+> >>> > > > > >                 return err;
+> >>> > > > > >         }
+> >>> > > > > >
+> >>> > > > > > +       printk("DBG: ZZZzzzzzzz\n");
+> >>> > > > > > +       msleep(2500);
+> >>> > > > > > +       printk("DBG: good morning!\n");
+> >>> > > > > > +
+> >>> > > > > >         /* Download NVM configuration */
+> >>> > > > > >         config.type = TLV_TYPE_NVM;
+> >>> > > > > >         if (soc_type == QCA_WCN3990)
+> >>> > > > > >
+> >>> > > > > > When you boot with this patch you'll see something like this:
+> >>> > > > > >
+> >>> > > > > > [   15.531365] DBG: reading SoC version
+> >>> > > > > > [   15.544963] DBG: ZZZzzzzzzz
+> >>> > > > > > [   17.590282] Bluetooth: hci0: command 0xfc00 tx timeout
+> >>> > > > > > [   18.099110] DBG: good morning!
+> >>> > > > > >
+> >>> > > > >
+> >>> > > > > [Bala]: my previous analysis were wrong. thanks for pointing me to the
+> >>> > > > > correct issue.
+> >>> > > > >         i am able to see timeout after version command.(used some
+> >>> > > > > sleep)
+> >>> > > > >         here is the reason for it.
+> >>> > > > >
+> >>> > > > >         01 00 fc 01 19 (we send the command to chip to request
+> >>> > > > > version)
+> >>> > > > >         04 ff 0e 00 02 0a 00 00 00 01 00 01 02 14 02 01 40(chip will
+> >>> > > > > respond
+> >>> > > > > with the vendor specific event payload will be chip version)
+> >>> > > > >         04 0e 04 01 00 00 00(command complete event)
+> >>> > > > >
+> >>> > > > >        issue is with command complete event. ideally command
+> >>> > > > > complete event
+> >>> > > > > payload holds the command for which chip sends command complete event.
+> >>> > > > >
+> >>> > > > >        breaking the command
+> >>> > > > >
+> >>> > > > >        04 : event packet (fixed)
+> >>> > > > >        0e : command complete event(fixed)
+> >>> > > > >        04 : size of the payload,
+> >>> > > > >
+> >>> > > > >        01 : no of commands in the payload
+> >>> > > > >        00 : OCF (opocde lsb)
+> >>> > > > >        00 : OGF (opcode msb)
+> >>> > > > >        00 : status of command executed,
+> >>> > > > >
+> >>> > > > >       payload is form byte 4 to byte 7. which hold the command i.e
+> >>> > > > > opcode
+> >>> > > > >       form the above response opcode is 0x0000. ideally this should be
+> >>> > > > > 0xfc00
+> >>> > > > >       because the command complete response from the chip is for the
+> >>> > > > > command
+> >>> > > > > 0xfc00.
+> >>> > > > >
+> >>> > > > >       Checked with Chip firmware dev team for the reason, it was an
+> >>> > > > > limitation or an bug in the chip ROM firmware
+> >>> > > > >       in the current chipset, which is fixed in the coming chipset.
+> >>> > > > >
+> >>> > > > >       so we expect the command 0xfc00 but recevuies 0x00. so that is
+> >>> > > > > the
+> >>> > > > > reason we see an timeouts.
+> >>> > > > >       for all the vendor commands we receive 0x0000 in the command
+> >>> > > > > complete
+> >>> > > > > event.
+> >>> > > >
+> >>> > > > Thanks for your analysis.
+> >>> > > >
+> >>> > > > It is unfortunate (though not unexpected) that this is a problem in
+> >>> > > > the ROM were we can't fix it, but at least the FW team is aware of it
+> >>> > > > and fixed it for future hardware.
+> >>> > > >
+> >>> > > > >       if comes a new question how are we not seeing an 0xfc00 when
+> >>> > > > > we inject
+> >>> > > > > an command complete event.
+> >>> > > > >       i experimented this patch, when i inject the command complete
+> >>> > > > > event
+> >>> > > > > from the soc version still i can see the command timeouts.
+> >>> > > >
+> >>> > > > I don't see command timeouts when injecting a command complete event
+> >>> > > > after reading the SoC version. I suspect you still use patch which
+> >>> > > > injects a command complete event with HCI_OP_NOP, which is precisely
+> >>> > > > what the chip does ...
+> >>> > > >
+> >>> > > [Bala]: i am seeing command timeout after injecting cc event after
+> >>> > > read
+> >>> > > version request.
+> >>> > >
+> >>> > > > >       The reason for no timeouts error, we are injecting an command
+> >>> > > > > complete
+> >>> > > > > after last packet sent out, so this injection helps
+> >>> > > > >       .bin file to speed out it download part, so as the bin is dumped
+> >>> > > > > fastly we send an HCI RESET Comamnd where we recevie an command
+> >>> > > > > complete
+> >>> > > > > event
+> >>> > > > >       with non zero opcode which is cancelling the command timeout
+> >>> > > > > timer.
+> >>> > > > >
+> >>> > > > >       when we inject command complete event, in short we are
+> >>> > > > > completing
+> >>> > > > > setup process in less than 2 seconds(command timeout timer value),
+> >>> > > > >       so before 2 seconds we are sending an HCI RESET command whose
+> >>> > > > > command
+> >>> > > > > complete event opcode value is an non zero (which cancels the command
+> >>> > > > > timeout timer)
+> >>> > > >
+> >>> > > > I agree that HCI_RESET cancels the command timeout timer if it is sent
+> >>> > > > before the 2s timout expires, but I have doubts on the part about
+> >>> > > > command complete events.
+> >>> > > >
+> >>> > > > In my observations there are no command timeouts if a command complete
+> >>> > > > (with opcode != HCI_OP_NOP) is injected after the firmware download,
+> >>> > > > even if a 3s sleep is added before sending the HCI_RESET.
+> >>> > > >
+> >>> > >
+> >>> > > [Bala]: add sleep before sending HCI reset, oxfc00 timeout observed.
+> >>> >
+> >>> > Please double check your setup. Are you 100% sure you are not still
+> >>> > sending HCI_OP_NOP as opcode?
+> >>> >
+> >>> [Bala]: sorry i am injecting the HCI_OP_NOP, so that is the reason we have
+> >>> an timeouts.
+> >>>        yes if the opcode 0x42 injected, no timeouts are observed.
+> >> Please don't use 0x42 (at least not as literal) when you respin, I
+> >> only chose this value to illustrate that it's really the injected
+> >> command which cancels the timer. You might want to add a
+> >> QCA_HCI_OP_DUMMY or similar, to make clear that the value doesn't
+> >> matter (as long as it isn't an actual opcode). With a define I don't
+> >> really care if you use 0x01, 0x42 or any other non-opcode value.
+> > 
+> > [Bala]: will not use 0x42, will use an opcode 0xfc00.
+> > 
+> >>> > This is the diff I use for debugging on top of your patchset:
+> >>> >
+> >>> > diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> >>> > index 0b533f65f652fc..5bb9e0ca7c348b 100644
+> >>> > --- a/drivers/bluetooth/btqca.c
+> >>> > +++ b/drivers/bluetooth/btqca.c
+> >>> > @@ -27,6 +27,8 @@
+> >>> >
+> >>> >  #define VERSION "0.1"
+> >>> >
+> >>> > +static int qca_inject_cmd_complete_event(struct hci_dev *hdev);
+> >>> > +
+> >>> >  int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
+> >>> >  {
+> >>> >  	struct sk_buff *skb;
+> >>> > @@ -84,6 +86,11 @@ int qca_read_soc_version(struct hci_dev *hdev, u32
+> >>> > *soc_version)
+> >>> >  	if (*soc_version == 0)
+> >>> >  		err = -EILSEQ;
+> >>> >
+> >>> > +	qca_inject_cmd_complete_event(hdev);
+> >>> > +	printk("DBG: ZZZzzzzzzz\n");
+> >>> > +	msleep(2500);
+> >>> > +	printk("DBG: good morning!\n");
+> >>> > +
+> >>> >  out:
+> >>> >  	kfree_skb(skb);
+> >>> >  	if (err)
+> >>> > @@ -281,7 +288,7 @@ static int qca_inject_cmd_complete_event(struct
+> >>> > hci_dev *hdev)
+> >>> >
+> >>> >  	evt = skb_put(skb, sizeof(*evt));
+> >>> >  	evt->ncmd = 1;
+> >>> > -	evt->opcode = HCI_OP_NOP;
+> >>> > +	evt->opcode = 0x42;
+> >>> >
+> >>> >  	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
+> >>> >
+> >>> > diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> >>> > index f12555f23a49a0..c87ac1823439ab 100644
+> >>> > --- a/net/bluetooth/hci_event.c
+> >>> > +++ b/net/bluetooth/hci_event.c
+> >>> > @@ -3348,8 +3348,11 @@ static void hci_cmd_complete_evt(struct hci_dev
+> >>> > *hdev, struct sk_buff *skb,
+> >>> >  		break;
+> >>> >  	}
+> >>> >
+> >>> > -	if (*opcode != HCI_OP_NOP)
+> >>> > +	if (*opcode != HCI_OP_NOP) {
+> >>> > +		printk("DBG: cancelling command timer (opcode = 0x%02x)\n",
+> >>> > +		       *opcode);
+> >>> >  		cancel_delayed_work(&hdev->cmd_timer);
+> >>> > +	}
+> >>> >
+> >>> >  	if (ev->ncmd && !test_bit(HCI_RESET, &hdev->flags))
+> >>> >  		atomic_set(&hdev->cmd_cnt, 1);
+> >>> >
+> >>> >
+> >>> > With that I see:
+> >>> >
+> >>> > [   18.725417] Bluetooth: hci0: setting up wcn3990
+> >>> > [   18.860381] DBG: ZZZzzzzzzz
+> >>> > [   18.863332] DBG: cancelling command timer (opcode = 0x42)
+> >>> > [   21.427085] DBG: good morning!
+> >>> >
+> >>> >
+> >>> > The timer is clearly cancelled by the injected command (opcode 0x42)
+> >>> > and no timeout occurs. I wouldn't expect you to see anything vastly
+> >>> > different.
+> >>> >
+> >>> > Cheers
+> >>> >
+> >>> > Matthias
+> >>> [Bala]: I think it would be better if we inject a command complete event
+> >>> after we
+> >>>        receive the version data.  instead of injecting in between firmware
+> >>> download.
+> >>>        this change will be only for wcn3990.
+> >> At first sight that doesn't sound like a bad idea if we want to inject
+> >> a single command complete event. However the NVM download times out
+> >> unless the command(s) of the TLV download is completed:
+> >> [   21.789452] Bluetooth: hci0: QCA Downloading qca/crnv21.bin
+> >> [   21.797675] Bluetooth: hci0: Send segment 0, size 243
+> >> [   23.605597] Bluetooth: hci0: command 0xfc00 tx timeout
+> >> So we should inject one command complete event after reading the SoC
+> >> version and another after downloading the TLV file. An event after
+> >> downloading the NVM file seems optional, since the HCI reset
+> >> immediately after will cancel the timer anyway.
+> >> Cheers
+> >> Matthias
+> > 
+> > [Bala]: sure will inject at cc event after the version command and also after the downloading TLV.
+> 
+> I am still not convinced that this is all needed. Can not just wake
+> up by waiting for the correct event. On the Intel side we actually
+> wait for the firmware download event to come in before continuing.
 
-Make improved .verify() call which gets hash value as parameter and
-produce complete signature check without any output besides status.
+Without event injection at all we'd get timeout errors and
+unnecessarily delay the firmware download, so I think at least this
+part is needed in one way or the other.
 
-RSA-centric drivers have replaced verify() with verify_rsa() which
-have old semantic and which they still should implement (if they want
-pkcs1pad to work). If akcipher have .verify_rsa() callback, it will be
-used for a partial verification, which then is finished in
-crypto_akcipher_verify().
+There are multiple options for where/when to inject the events.
 
-Now for the top level verification only crypto_akcipher_verify() needs
-to be called.
+For reading the 'SoC version' I just learned that the controller
+actually sends a command complete event, however the opcode is
+HCI_OP_NOP, hence the command timer is not cancelled.
 
-For pkcs1pad crypto_akcipher_verify_rsa() is introduced which directly
-calls .verify_rsa() for its backend. Without this api PKCS1 can not be
-implemented.
+Instead of just injecting the event after/at the end of
+read_soc_version() I guess we could either forge the opcode in
+qca_recv_frame() (to be created), or send the command to read the
+version with __hci_cmd_sync() and inject the cmd complete event in
+qca_dequeue(), analogously to what intel_dequeue() does.
 
-Tested on x86_64.
+For the firmware download the same __hci_cmd_sync() + qca_dequeue()
+approach could be used, however that would result in an injected event
+for each FW segment, which we probably don't want.
+IIUC Marcel suggests the QCA driver could do something similar to
+intel_recv_event(), which detects a vendor specific event that
+indicates that the firmware download is completed. I don't know if
+there is such an event, Balakrishna might know.
 
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
----
+Marcel, is the above overall correct, and if so, do you have
+preferences where multiple solutions exist?
 
-This should be applied over cryptodev tree.
+One doubt I have is if there is really much gain from the added
+complexity in the described solutions, vs. just injecting the event as
+done in Balakrishna's current patch, but I might be missing some
+important details.
 
-Changes since v2:
-- `output` is factored out from public_key_verify_signature() into
-  crypto_akcipher_verify().
-- in crypto_akcipher_verify_rsa() -ENOSYS error is added for robustness (if,
-  in the future, some RSA driver will not implement this api).
-- api descriptions are updated to be more clear.
+Please bear with me if I got it all wrong, I'm learning about the
+Bluetooth subsystem on the fly ;-)
 
-Changes since v1:
-- complete rework to the different approach and should be treated as
-  a new patch.
+Thanks
 
- crypto/akcipher.c                             | 60 +++++++++++++++++++++++++++
- crypto/asymmetric_keys/public_key.c           | 32 ++------------
- crypto/rsa-pkcs1pad.c                         |  4 +-
- crypto/rsa.c                                  |  2 +-
- crypto/testmgr.c                              | 43 ++++++++++---------
- drivers/crypto/caam/caampkc.c                 |  2 +-
- drivers/crypto/ccp/ccp-crypto-rsa.c           |  2 +-
- drivers/crypto/qat/qat_common/qat_asym_algs.c |  2 +-
- include/crypto/akcipher.h                     | 34 ++++++++++-----
- 9 files changed, 117 insertions(+), 64 deletions(-)
-
-diff --git a/crypto/akcipher.c b/crypto/akcipher.c
-index 0cbeae137e0a..95f207b2eb12 100644
---- a/crypto/akcipher.c
-+++ b/crypto/akcipher.c
-@@ -25,6 +25,66 @@
- #include <crypto/internal/akcipher.h>
- #include "internal.h"
- 
-+/**
-+ * crypto_akcipher_verify() - Invoke public key signature verification
-+ *
-+ * Function invokes the specific public key signature verification operation
-+ * for a given public key algorithm.
-+ *
-+ * @req:	asymmetric key request
-+ * @digest:	expected hash value
-+ * @digest_len:	hash length
-+ *
-+ * Return: zero on verification success; error code in case of error.
-+ */
-+int crypto_akcipher_verify(struct akcipher_request *req,
-+			   const unsigned char *digest, unsigned int digest_len)
-+{
-+	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
-+	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+	struct crypto_alg *calg = tfm->base.__crt_alg;
-+	int ret;
-+
-+	if (WARN_ON(!digest || !digest_len) ||
-+	    WARN_ON(req->dst || req->dst_len))
-+		return -EINVAL;
-+
-+	crypto_stats_get(calg);
-+	if (alg->verify_rsa) {
-+		struct scatterlist output_sg;
-+		void *output;
-+		unsigned int outlen;
-+
-+		outlen = crypto_akcipher_maxsize(tfm);
-+		ret = -EKEYREJECTED;
-+		if (WARN_ON(outlen < digest_len))
-+			goto out;
-+		ret = -ENOMEM;
-+		output = kmalloc(outlen, GFP_KERNEL);
-+		if (!output)
-+			goto out;
-+		sg_init_one(&output_sg, output, outlen);
-+		akcipher_request_set_crypt(req, req->src, &output_sg,
-+					   req->src_len, outlen);
-+
-+		/* Perform the verification calculation.  This doesn't actually
-+		 * do the verification, but rather calculates the hash expected
-+		 * by the signature and returns that to us.
-+		 */
-+		ret = crypto_akcipher_verify_rsa(req);
-+		if (!ret &&
-+		    (req->dst_len != digest_len ||
-+		     memcmp(digest, output, digest_len)))
-+			ret = -EKEYREJECTED;
-+		kfree(output);
-+	} else
-+		ret = alg->verify(req, digest, digest_len);
-+out:
-+	crypto_stats_akcipher_verify(ret, calg);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(crypto_akcipher_verify);
-+
- #ifdef CONFIG_NET
- static int crypto_akcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index f5d85b47fcc6..73724f74d124 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -227,10 +227,8 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	struct crypto_wait cwait;
- 	struct crypto_akcipher *tfm;
- 	struct akcipher_request *req;
--	struct scatterlist sig_sg, digest_sg;
-+	struct scatterlist sig_sg;
- 	char alg_name[CRYPTO_MAX_ALG_NAME];
--	void *output;
--	unsigned int outlen;
- 	int ret;
- 
- 	pr_devel("==>%s()\n", __func__);
-@@ -263,36 +261,14 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	if (ret)
- 		goto error_free_req;
- 
--	ret = -ENOMEM;
--	outlen = crypto_akcipher_maxsize(tfm);
--	output = kmalloc(outlen, GFP_KERNEL);
--	if (!output)
--		goto error_free_req;
--
- 	sg_init_one(&sig_sg, sig->s, sig->s_size);
--	sg_init_one(&digest_sg, output, outlen);
--	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
--				   outlen);
-+	akcipher_request_set_crypt(req, &sig_sg, NULL, sig->s_size, 0);
- 	crypto_init_wait(&cwait);
- 	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
- 				      CRYPTO_TFM_REQ_MAY_SLEEP,
- 				      crypto_req_done, &cwait);
--
--	/* Perform the verification calculation.  This doesn't actually do the
--	 * verification, but rather calculates the hash expected by the
--	 * signature and returns that to us.
--	 */
--	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
--	if (ret)
--		goto out_free_output;
--
--	/* Do the actual verification step. */
--	if (req->dst_len != sig->digest_size ||
--	    memcmp(sig->digest, output, sig->digest_size) != 0)
--		ret = -EKEYREJECTED;
--
--out_free_output:
--	kfree(output);
-+	ret = crypto_wait_req(crypto_akcipher_verify(req, sig->digest,
-+						     sig->digest_size), &cwait);
- error_free_req:
- 	akcipher_request_free(req);
- error_free_tfm:
-diff --git a/crypto/rsa-pkcs1pad.c b/crypto/rsa-pkcs1pad.c
-index 0a6680ca8cb6..88728ffb6b69 100644
---- a/crypto/rsa-pkcs1pad.c
-+++ b/crypto/rsa-pkcs1pad.c
-@@ -551,7 +551,7 @@ static int pkcs1pad_verify(struct akcipher_request *req)
- 				   req_ctx->out_sg, req->src_len,
- 				   ctx->key_size);
- 
--	err = crypto_akcipher_verify(&req_ctx->child_req);
-+	err = crypto_akcipher_verify_rsa(&req_ctx->child_req);
- 	if (err != -EINPROGRESS && err != -EBUSY)
- 		return pkcs1pad_verify_complete(req, err);
- 
-@@ -675,7 +675,7 @@ static int pkcs1pad_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	inst->alg.encrypt = pkcs1pad_encrypt;
- 	inst->alg.decrypt = pkcs1pad_decrypt;
- 	inst->alg.sign = pkcs1pad_sign;
--	inst->alg.verify = pkcs1pad_verify;
-+	inst->alg.verify_rsa = pkcs1pad_verify;
- 	inst->alg.set_pub_key = pkcs1pad_set_pub_key;
- 	inst->alg.set_priv_key = pkcs1pad_set_priv_key;
- 	inst->alg.max_size = pkcs1pad_get_max_size;
-diff --git a/crypto/rsa.c b/crypto/rsa.c
-index 4167980c243d..42df7d0c915c 100644
---- a/crypto/rsa.c
-+++ b/crypto/rsa.c
-@@ -354,7 +354,7 @@ static struct akcipher_alg rsa = {
- 	.encrypt = rsa_enc,
- 	.decrypt = rsa_dec,
- 	.sign = rsa_sign,
--	.verify = rsa_verify,
-+	.verify_rsa = rsa_verify,
- 	.set_priv_key = rsa_set_priv_key,
- 	.set_pub_key = rsa_set_pub_key,
- 	.max_size = rsa_max_size,
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index e4f3f5f688e7..eb2adcf606d2 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -2275,13 +2275,12 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	if (err)
- 		goto free_req;
- 
--	err = -ENOMEM;
--	out_len_max = crypto_akcipher_maxsize(tfm);
--
- 	/*
- 	 * First run test which do not require a private key, such as
- 	 * encrypt or verify.
- 	 */
-+	err = -ENOMEM;
-+	out_len_max = crypto_akcipher_maxsize(tfm);
- 	outbuf_enc = kzalloc(out_len_max, GFP_KERNEL);
- 	if (!outbuf_enc)
- 		goto free_req;
-@@ -2310,33 +2309,39 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	sg_init_table(src_tab, 2);
- 	sg_set_buf(&src_tab[0], xbuf[0], 8);
- 	sg_set_buf(&src_tab[1], xbuf[0] + 8, m_size - 8);
--	sg_init_one(&dst, outbuf_enc, out_len_max);
--	akcipher_request_set_crypt(req, src_tab, &dst, m_size,
--				   out_len_max);
-+	if (vecs->siggen_sigver_test)
-+		akcipher_request_set_crypt(req, src_tab, NULL, m_size, 0);
-+	else {
-+		sg_init_one(&dst, outbuf_enc, out_len_max);
-+		akcipher_request_set_crypt(req, src_tab, &dst, m_size,
-+					   out_len_max);
-+	}
- 	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
- 				      crypto_req_done, &wait);
- 
- 	err = crypto_wait_req(vecs->siggen_sigver_test ?
- 			      /* Run asymmetric signature verification */
--			      crypto_akcipher_verify(req) :
-+			      crypto_akcipher_verify(req, c, c_size) :
- 			      /* Run asymmetric encrypt */
- 			      crypto_akcipher_encrypt(req), &wait);
- 	if (err) {
- 		pr_err("alg: akcipher: %s test failed. err %d\n", op, err);
- 		goto free_all;
- 	}
--	if (req->dst_len != c_size) {
--		pr_err("alg: akcipher: %s test failed. Invalid output len\n",
--		       op);
--		err = -EINVAL;
--		goto free_all;
--	}
--	/* verify that encrypted message is equal to expected */
--	if (memcmp(c, outbuf_enc, c_size)) {
--		pr_err("alg: akcipher: %s test failed. Invalid output\n", op);
--		hexdump(outbuf_enc, c_size);
--		err = -EINVAL;
--		goto free_all;
-+	if (!vecs->siggen_sigver_test) {
-+		if (req->dst_len != c_size) {
-+			pr_err("alg: akcipher: %s test failed. Invalid output len\n",
-+			       op);
-+			err = -EINVAL;
-+			goto free_all;
-+		}
-+		/* verify that encrypted message is equal to expected */
-+		if (memcmp(c, outbuf_enc, c_size)) {
-+			pr_err("alg: akcipher: %s test failed. Invalid output\n", op);
-+			hexdump(outbuf_enc, c_size);
-+			err = -EINVAL;
-+			goto free_all;
-+		}
- 	}
- 
- 	/*
-diff --git a/drivers/crypto/caam/caampkc.c b/drivers/crypto/caam/caampkc.c
-index 77ab28a2811a..e06b4c9a89e2 100644
---- a/drivers/crypto/caam/caampkc.c
-+++ b/drivers/crypto/caam/caampkc.c
-@@ -995,7 +995,7 @@ static struct akcipher_alg caam_rsa = {
- 	.encrypt = caam_rsa_enc,
- 	.decrypt = caam_rsa_dec,
- 	.sign = caam_rsa_dec,
--	.verify = caam_rsa_enc,
-+	.verify_rsa = caam_rsa_enc,
- 	.set_pub_key = caam_rsa_set_pub_key,
- 	.set_priv_key = caam_rsa_set_priv_key,
- 	.max_size = caam_rsa_max_size,
-diff --git a/drivers/crypto/ccp/ccp-crypto-rsa.c b/drivers/crypto/ccp/ccp-crypto-rsa.c
-index 05850dfd7940..fc669b1bb328 100644
---- a/drivers/crypto/ccp/ccp-crypto-rsa.c
-+++ b/drivers/crypto/ccp/ccp-crypto-rsa.c
-@@ -215,7 +215,7 @@ static struct akcipher_alg ccp_rsa_defaults = {
- 	.encrypt = ccp_rsa_encrypt,
- 	.decrypt = ccp_rsa_decrypt,
- 	.sign = ccp_rsa_decrypt,
--	.verify = ccp_rsa_encrypt,
-+	.verify_rsa = ccp_rsa_encrypt,
- 	.set_pub_key = ccp_rsa_setpubkey,
- 	.set_priv_key = ccp_rsa_setprivkey,
- 	.max_size = ccp_rsa_maxsize,
-diff --git a/drivers/crypto/qat/qat_common/qat_asym_algs.c b/drivers/crypto/qat/qat_common/qat_asym_algs.c
-index 320e7854b4ee..a6c7ff572970 100644
---- a/drivers/crypto/qat/qat_common/qat_asym_algs.c
-+++ b/drivers/crypto/qat/qat_common/qat_asym_algs.c
-@@ -1301,7 +1301,7 @@ static struct akcipher_alg rsa = {
- 	.encrypt = qat_rsa_enc,
- 	.decrypt = qat_rsa_dec,
- 	.sign = qat_rsa_dec,
--	.verify = qat_rsa_enc,
-+	.verify_rsa = qat_rsa_enc,
- 	.set_pub_key = qat_rsa_setpubkey,
- 	.set_priv_key = qat_rsa_setprivkey,
- 	.max_size = qat_rsa_max_size,
-diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
-index 2d690494568c..286f529024ba 100644
---- a/include/crypto/akcipher.h
-+++ b/include/crypto/akcipher.h
-@@ -55,10 +55,14 @@ struct crypto_akcipher {
-  *		algorithm. In case of error, where the dst_len was insufficient,
-  *		the req->dst_len will be updated to the size required for the
-  *		operation
-- * @verify:	Function performs a sign operation as defined by public key
-- *		algorithm. In case of error, where the dst_len was insufficient,
-- *		the req->dst_len will be updated to the size required for the
-- *		operation
-+ * @verify_rsa:	Function performs a partial verify operation as defined by RSA
-+ *		algorithm producing signature in the output. In case of error,
-+ *		where the dst_len was insufficient, the req->dst_len will be
-+ *		updated to the size required for the operation. All RSA
-+ *		implementations that could be PKCS1 padded should implement that.
-+ * @verify:	Function performs a complete verify operation as defined by public
-+ *		key algorithm, returning verification status. Requires digest
-+ *		value as input parameter.
-  * @encrypt:	Function performs an encrypt operation as defined by public key
-  *		algorithm. In case of error, where the dst_len was insufficient,
-  *		the req->dst_len will be updated to the size required for the
-@@ -91,7 +95,9 @@ struct crypto_akcipher {
-  */
- struct akcipher_alg {
- 	int (*sign)(struct akcipher_request *req);
--	int (*verify)(struct akcipher_request *req);
-+	int (*verify_rsa)(struct akcipher_request *req);
-+	int (*verify)(struct akcipher_request *req, const u8 *digest,
-+		      unsigned int digest_len);
- 	int (*encrypt)(struct akcipher_request *req);
- 	int (*decrypt)(struct akcipher_request *req);
- 	int (*set_pub_key)(struct crypto_akcipher *tfm, const void *key,
-@@ -343,24 +349,26 @@ static inline int crypto_akcipher_sign(struct akcipher_request *req)
- }
- 
- /**
-- * crypto_akcipher_verify() - Invoke public key verify operation
-+ * crypto_akcipher_verify_rsa() - Invoke partial RSA verify operation
-  *
-- * Function invokes the specific public key verify operation for a given
-- * public key algorithm
-+ * Function invokes partial verify operation for a RSA algorithm
-  *
-  * @req:	asymmetric key request
-  *
-+ * Note: this should only be used by RSA wrappers such as PKCS1.
-+ *
-  * Return: zero on success; error code in case of error
-  */
--static inline int crypto_akcipher_verify(struct akcipher_request *req)
-+static inline int crypto_akcipher_verify_rsa(struct akcipher_request *req)
- {
- 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
- 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
- 	struct crypto_alg *calg = tfm->base.__crt_alg;
--	int ret;
-+	int ret = -ENOSYS;
- 
- 	crypto_stats_get(calg);
--	ret = alg->verify(req);
-+	if (alg->verify_rsa)
-+		ret = alg->verify_rsa(req);
- 	crypto_stats_akcipher_verify(ret, calg);
- 	return ret;
- }
-@@ -406,4 +414,8 @@ static inline int crypto_akcipher_set_priv_key(struct crypto_akcipher *tfm,
- 
- 	return alg->set_priv_key(tfm, key, keylen);
- }
-+
-+int crypto_akcipher_verify(struct akcipher_request *req,
-+			   const unsigned char *digest,
-+			   unsigned int digest_len);
- #endif
--- 
-2.11.0
-
+Matthias
