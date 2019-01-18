@@ -2,130 +2,134 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 315D2C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A48C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:04:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081242087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE8EB20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:04:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X7IeL9GG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hO0rdoEf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfARG43 (ORCPT
+        id S1727226AbfARHEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 01:56:29 -0500
-Received: from mailproxy01.manitu.net ([217.11.48.65]:59590 "EHLO
-        mailproxy01.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbfARG42 (ORCPT
+        Fri, 18 Jan 2019 02:04:41 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60640 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfARHEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 01:56:28 -0500
-Received: from [192.168.178.20] (aftr-88-217-180-118.dynamic.mnet-online.de [88.217.180.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wg@grandegger.com)
-        by mailproxy01.manitu.net (Postfix) with ESMTPSA id 0228512600A4;
-        Fri, 18 Jan 2019 07:56:25 +0100 (CET)
-Subject: Re: [PATCH v4 1/4] can: m_can: Create a m_can platform framework
-To:     Dan Murphy <dmurphy@ti.com>, mkl@pengutronix.de,
-        davem@davemloft.net
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190117200601.16416-1-dmurphy@ti.com>
- <aa72c1a7-ee16-dbde-0b75-96f9632ec431@ti.com>
-From:   Wolfgang Grandegger <wg@grandegger.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=wg@grandegger.com; prefer-encrypt=mutual; keydata=
- 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
- 8QEfHnPzgykCs2DOOQ==
-Message-ID: <641ae2ce-def9-6032-b8dc-cc71311bc993@grandegger.com>
-Date:   Fri, 18 Jan 2019 07:56:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 18 Jan 2019 02:04:41 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 889876085C; Fri, 18 Jan 2019 07:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547795079;
+        bh=YUOHSqKMaevgPNmykeclViTfddduB4i6ykqJgNiPR9E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X7IeL9GGLwH6zE3/G9WBh4Wgge1xyxxhoLYGUICPj56zkCgaC0s8A1CCWdtkfdRJT
+         OGmboRFmKP3ztbPIPPmin/gxO38MOcoKWJ8erggbULP+631agnUlWJ5QNIXEUXIJHX
+         mGdN3HGCYjugK/qDlICHU9jf/pd3EIqS2gwpRweU=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D4EE860591;
+        Fri, 18 Jan 2019 07:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547795078;
+        bh=YUOHSqKMaevgPNmykeclViTfddduB4i6ykqJgNiPR9E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hO0rdoEfPkHmNxRPYTAkPRvQ7i155vK2Dy5ieQO8jl5OaSKof05QlkV3fTqB3Lxpg
+         r9FOOZWjJXa0u3n5d0HE/AoE0DoZVn/Bh5mJf0KZYqwOKxQ1/U7UopScYr+IXr7bFc
+         r8Bz3n07FGmVXG9tUUan87aB/ROC4K7KHAR18osc=
 MIME-Version: 1.0
-In-Reply-To: <aa72c1a7-ee16-dbde-0b75-96f9632ec431@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Fri, 18 Jan 2019 12:34:38 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ramon Fried <ramon.fried@gmail.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-owner@vger.kernel.org,
+        "<Brian Norris>" <briannorris@chromium.org>
+Subject: Re: [PATCH] remoteproc: qcom_q6v5: don't auto boot remote processor
+In-Reply-To: <20180529042047.GE2259@tuxbook-pro>
+References: <20180524192141.20323-1-ramon.fried@gmail.com>
+ <20180529042047.GE2259@tuxbook-pro>
+Message-ID: <e554b7e525554d49d193ff1f8ca51359@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dan,
-
-Am 17.01.19 um 21:08 schrieb Dan Murphy:
-> Wolfgang
+On 2018-05-29 09:50, Bjorn Andersson wrote:
+> On Thu 24 May 12:21 PDT 2018, Ramon Fried wrote:
 > 
-> On 1/17/19 2:05 PM, Dan Murphy wrote:
->> Create a m_can platform framework that peripherial
->> devices can register to and use common code and register sets.
->> The peripherial devices may provide read/write and configuration
->> support of the IP.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> Sometimes that rmtfs userspace module is not brought
+>> up fast enough and the modem crashes.
+>> disabling automated boot in the driver and triggering
+>> the boot from user-space sovles the problem.
+>> 
+>> Signed-off-by: Ramon Fried <ramon.fried@gmail.com>
+> 
+> Thanks for your patch Ramon. While this nudges the behavior to make
+> things work slightly better I think we need to describe the explicit
+> dependency between the mss firmware and the existence of rmtfs.
+> 
+> As our remoteprocs are essentially always-on I would prefer that they
+> start "automatically" and not through use of the sysfs interface.
+> 
+> But we're at the point where this is a real problem on 410, 820 and 
+> 845,
+> so we have to come up with some way to tie these pieces together. If
+> your patch suits that solution I will happily take it.
+> 
+> Regards,
+> Bjorn
+
+After experimenting with in kernel solutions for
+three revisions and observing problems on graceful
+shutdown usecase, switching to controlling the
+remoteproc mss through rmtfs seems to solve all
+the known issues.
+
+https://patchwork.kernel.org/patch/10662395/
+
+we should probably get this merged in, now that
+we are planning to start/stop mss through
+rmtfs.
+
+
+Acked-by: Sibi Sankar <sibis@codeaurora.org>
+
+> 
 >> ---
->>  drivers/net/can/m_can/m_can.c          |   6 +
->>  drivers/net/can/m_can/m_can_platform.c | 209 +++++++++++++++++++++++++
->>  drivers/net/can/m_can/m_can_platform.h | 163 +++++++++++++++++++
->>  3 files changed, 378 insertions(+)
->>  create mode 100644 drivers/net/can/m_can/m_can_platform.c
->>  create mode 100644 drivers/net/can/m_can/m_can_platform.h
->>
+>>  drivers/remoteproc/qcom_q6v5_pil.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>> 
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c 
+>> b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index cbbafdcaaecb..719ee96445b3 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -1133,6 +1133,8 @@ static int q6v5_probe(struct platform_device 
+>> *pdev)
+>>  		return -ENOMEM;
+>>  	}
+>> 
+>> +	rproc->auto_boot = false;
+>> +
+>>  	qproc = (struct q6v5 *)rproc->priv;
+>>  	qproc->dev = &pdev->dev;
+>>  	qproc->rproc = rproc;
+>> --
+>> 2.17.0
+>> 
 
-... snip ...
-
-> This patch set is working for the TCAN and at least boots on io-mapped devices.
-> We have a couple of customers who are looking at using this implementation and we would like to
-> start moving this patch set along in the review.
-> 
-> I did not put a change log in here as there have been no comments for the last 3 patch sets I sent.
-> 
-> This v4 squashes a few bugs I found during testing across all the files.
-
-OK, after a very busy week I will try to find time for the review...
-finally.
-
-Thanks,
-
-Wolfgang.
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
