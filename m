@@ -2,164 +2,164 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1335C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 395ACC5AC81
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 785C32087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0463520896
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NAG128z8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kuyqGigJ"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="q2YTYHAA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729387AbfARTqy (ORCPT
+        id S1729406AbfARTq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:46:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49152 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728738AbfARTqx (ORCPT
+        Fri, 18 Jan 2019 14:46:57 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:35794 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729390AbfARTq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:46:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4C73660300; Fri, 18 Jan 2019 19:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547840812;
-        bh=eGcBpykVPOxIcYXrCRGq1rIK4SKjJ5g1FyeaVda2ZVs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NAG128z8npNzegdopPKGdGU7fSUhfkTcRi5Tzq1TtjTMOLeqxxSQ0zTcyeCLKcp5I
-         he7uRiX8Ag8AQKcvv0Z2ccc/UoTNuwXeNGMkreAqtaHmvChmk/gv6FIWaHzuamZspc
-         Gf98FlCKjBaa5N5KLc5izFHbm1AaeNr2u93R32po=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 5FF4F605A0;
-        Fri, 18 Jan 2019 19:46:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547840811;
-        bh=eGcBpykVPOxIcYXrCRGq1rIK4SKjJ5g1FyeaVda2ZVs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kuyqGigJqnnHDm/Q7nwzeTpiBXjCRJxggbevwJpCcqnZ8A/YPMLKWBREbUKUdWmhG
-         p4z/sfvE4qMwjCIrekT/NtCg+ZL2amcV9vGoKvXU1eaapwPWZsN20wGEHtn/MuxgSY
-         Z1Y1T5N8qvuZ8OT+l09NHHSZOCZadliPypO0d4Bg=
+        Fri, 18 Jan 2019 14:46:56 -0500
+Received: by mail-yb1-f194.google.com with SMTP id h81so4493596ybg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 11:46:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MFkcxqAcXhot3Os245eF1rc0vQAiphWw86ob1UWQ9h0=;
+        b=q2YTYHAAegi5ptaW78J05ZOkXWPUaP3nvoYIDGyPcsUcbCbJg8idaTsTUpijPRP+bV
+         9cAqUzZqRV1rI/m2somnCk2rleXm8+UkiSLvbuQzucLY4IdhjwoPWQVnKSwPrjOwFKpH
+         tnI5aiz4RsJKcBxDcjqxh/EzebqevKOWpnBOhH21Fq7msty5LD8IhF8/yY7PTXqW5kXG
+         1SwMZOax2F3rU+4mKAQ+7W3nHxJoTOd5XTEsZriHJdoAm1/uRRLRp/3SG4dVIv7nEItv
+         Fp0P/RfxDYt9ofH3FdC9nVL3bxUqLrb/82KXRUCP4A3mcu68SaTSA6H3v3gT+n0BXmyh
+         xQcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MFkcxqAcXhot3Os245eF1rc0vQAiphWw86ob1UWQ9h0=;
+        b=ksmcs/lbfz5zIGLla3b036R22jp5ENYHhSkwdaAB/k+dmWKpMmER9wJK3v6Rv7tzwr
+         PL+wzzG76UufncAwVL2af0GFlMrjXVScfr5+GMBch51oNSNQe1ZvIyR6pyV0pK+eZ3Gs
+         0OFA/a4l9r1WIVNm/qqbTgdZMpmdR06yXRyEmE+BBgnfEBAxZ8EbgP8ZhDaJKMJ1yxOf
+         w+afFjhKUONwSUZUfNVbyDG34DApO3aqCONAwkwXrDXCBJbERyOarcun9dOHG4Iv5AqE
+         fsrEc0g9Q3u8VxY9G93EFRlPaOQo7d/Am5uGXV6Zcf/0atxFojRbXaX1MC9pa7MuTC7L
+         HPfw==
+X-Gm-Message-State: AJcUukefqOVVbtm6fgmF2enl21r4GssmCgQ6TBcA9rxjG5a56GyetqFP
+        Xru9gPeRhbEUq15BrI85NjHhxQ==
+X-Google-Smtp-Source: ALg8bN6m9pyw019l3NyFDRtB3Jbj1HQTOZmWtGGhk7w7RzDYhpY1hoQXXRnmzRkQj5dAq7ZLd61nyA==
+X-Received: by 2002:a5b:986:: with SMTP id c6mr7783379ybq.444.1547840815335;
+        Fri, 18 Jan 2019 11:46:55 -0800 (PST)
+Received: from localhost ([2620:10d:c091:180::1:45d9])
+        by smtp.gmail.com with ESMTPSA id s35sm2380502ywa.19.2019.01.18.11.46.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 11:46:54 -0800 (PST)
+Date:   Fri, 18 Jan 2019 14:46:53 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Andrea Righi <righi.andrea@gmail.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
+        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
+Message-ID: <20190118194652.gg5j2yz3h2llecpj@macbook-pro-91.dhcp.thefacebook.com>
+References: <20190118103127.325-1-righi.andrea@gmail.com>
+ <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
+ <20190118184403.GB1535@xps-13>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 19 Jan 2019 01:16:51 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ramon Fried <ramon.fried@gmail.com>,
-        linux-remoteproc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom_q6v5: don't auto boot remote processor
-In-Reply-To: <CA+ASDXNMS1n+zBDPi4zbyDYjuEs4n-oFH2QfytvzRpnbK5-_ZQ@mail.gmail.com>
-References: <20180524192141.20323-1-ramon.fried@gmail.com>
- <20180529042047.GE2259@tuxbook-pro>
- <e554b7e525554d49d193ff1f8ca51359@codeaurora.org>
- <CA+ASDXNMS1n+zBDPi4zbyDYjuEs4n-oFH2QfytvzRpnbK5-_ZQ@mail.gmail.com>
-Message-ID: <31da3e8d35c2b47041536c996efe484c@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118184403.GB1535@xps-13>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-19 00:05, Brian Norris wrote:
-> On Thu, Jan 17, 2019 at 11:04 PM Sibi Sankar <sibis@codeaurora.org> 
-> wrote:
->> On 2018-05-29 09:50, Bjorn Andersson wrote:
->> > On Thu 24 May 12:21 PDT 2018, Ramon Fried wrote:
+On Fri, Jan 18, 2019 at 07:44:03PM +0100, Andrea Righi wrote:
+> On Fri, Jan 18, 2019 at 11:35:31AM -0500, Josef Bacik wrote:
+> > On Fri, Jan 18, 2019 at 11:31:24AM +0100, Andrea Righi wrote:
+> > > This is a redesign of my old cgroup-io-throttle controller:
+> > > https://lwn.net/Articles/330531/
+> > > 
+> > > I'm resuming this old patch to point out a problem that I think is still
+> > > not solved completely.
+> > > 
+> > > = Problem =
+> > > 
+> > > The io.max controller works really well at limiting synchronous I/O
+> > > (READs), but a lot of I/O requests are initiated outside the context of
+> > > the process that is ultimately responsible for its creation (e.g.,
+> > > WRITEs).
+> > > 
+> > > Throttling at the block layer in some cases is too late and we may end
+> > > up slowing down processes that are not responsible for the I/O that
+> > > is being processed at that level.
+> > 
+> > How so?  The writeback threads are per-cgroup and have the cgroup stuff set
+> > properly.  So if you dirty a bunch of pages, they are associated with your
+> > cgroup, and then writeback happens and it's done in the writeback thread
+> > associated with your cgroup and then that is throttled.  Then you are throttled
+> > at balance_dirty_pages() because the writeout is taking longer.
 > 
-> Whoa, bringing up a 7-month old patch? Nice.
-> 
->> >> Sometimes that rmtfs userspace module is not brought
->> >> up fast enough and the modem crashes.
->> >> disabling automated boot in the driver and triggering
->> >> the boot from user-space sovles the problem.
->> >>
->> >> Signed-off-by: Ramon Fried <ramon.fried@gmail.com>
->> >
->> > Thanks for your patch Ramon. While this nudges the behavior to make
->> > things work slightly better I think we need to describe the explicit
->> > dependency between the mss firmware and the existence of rmtfs.
->> >
->> > As our remoteprocs are essentially always-on I would prefer that they
->> > start "automatically" and not through use of the sysfs interface.
->> >
->> > But we're at the point where this is a real problem on 410, 820 and
->> > 845,
->> > so we have to come up with some way to tie these pieces together. If
->> > your patch suits that solution I will happily take it.
->> >
->> > Regards,
->> > Bjorn
->> 
->> After experimenting with in kernel solutions for
->> three revisions and observing problems on graceful
->> shutdown usecase,
-> 
-> What exactly were the problems again? e.g., what were the deficiencies
-> with having the remoteproc device listen for the REMOTEFS_QMI_SVC_ID
-> service again? Sorry, but I sort of dropped off on reviewing that
-> stuff, and now I see this. I'd mildly prefer something that is
-> actually automatic, but if I'm missing some aspects, I'd like to hear
-> that. (And, I'd like to see them explained in the commit message, if
-> this is ever to be merged.)
+> Right, writeback is per-cgroup and slowing down writeback affects only
+> that specific cgroup, but, there are cases where other processes from
+> other cgroups may require to wait on that writeback to complete before
+> doing I/O (for example an fsync() to a file shared among different
+> cgroups). In this case we may end up blocking cgroups that shouldn't be
+> blocked, that looks like a priority-inversion problem. This is the
+> problem that I'm trying to address.
 
-bringing down the modem after the RMTFS server
-goes down leaves the modem in limbo (It has a few
-pending rmtfs transactions that cannot go through)
-which results in sysmon graceful shutdown failing.
-And we have to do a modem force-stop to proceed
-which we want to avoid in graceful shutdown cases.
-This is overcome by starting rproc mss from rmtfs
-after REMOTEFS_QMI service is up and stopping
-rproc mss from rmtfs on SIGKILL/SIGINT and other
-program error signals before bringing down the
-RMTFS_QMI service i.e before exiting the rmtfs
-server loop.
+Well this case is a misconfiguration, you shouldn't be sharing files between
+cgroups.  But even if you are, fsync() is synchronous, we should be getting the
+context from the process itself and thus should have its own rules applied.
+There's nothing we can do for outstanding IO, but that shouldn't be that much.
+That would need to be dealt with on a per-contoller basis.
 
 > 
->> switching to controlling the
->> remoteproc mss through rmtfs seems to solve all
->> the known issues.
+> > 
+> > I introduced the blk_cgroup_congested() stuff for paths that it's not easy to
+> > clearly tie IO to the thing generating the IO, such as readahead and such.  If
+> > you are running into this case that may be something worth using.  Course it
+> > only works for io.latency now but there's no reason you can't add support to it
+> > for io.max or whatever.
 > 
-> How so? It explicitly does NOT help at all if RMTFS crashes.
-> Because...who's going to stop the modem in that case? (It works if you
-> automatically respawn a new RMTFS daemon, to toggle the modem. But
-> that's kind of cheating, and you can do that anyway, even without this
-> patch.) On the contrary, your patch *would* resolve that, since the
-> modem would notice when the RMTFS server goes away, and it would stop
-> itself.
+> IIUC blk_cgroup_congested() is used in readahead I/O (and swap with
+> memcg), something like this: if the cgroup is already congested don't
+> generate extra I/O due to readahead. Am I right?
 
-yeah we would want to mimic what the kernel
-patch did with the exception of stopping modem
-before bringing down the rmtfs server (not toggle
-rproc state but start on rmtfs service up and stop
-before rmtfs server exit). So in that case we would
-not want the modem to auto-boot.
+Yeah, but that's just how it's currently used, it can be used any which way we
+feel like.
 
 > 
->> https://patchwork.kernel.org/patch/10662395/
->> 
->> we should probably get this merged in, now that
->> we are planning to start/stop mss through
->> rmtfs.
+> > 
+> > > 
+> > > = Proposed solution =
+> > > 
+> > > The main idea of this controller is to split I/O measurement and I/O
+> > > throttling: I/O is measured at the block layer for READS, at page cache
+> > > (dirty pages) for WRITEs, and processes are limited while they're
+> > > generating I/O at the VFS level, based on the measured I/O.
+> > > 
+> > 
+> > This is what blk_cgroup_congested() is meant to accomplish, I would suggest
+> > looking into that route and simply changing the existing io controller you are
+> > using to take advantage of that so it will actually throttle things.  Then just
+> > sprinkle it around the areas where we indirectly generate IO.  Thanks,
 > 
-> Sorry, who's planning to stop mss through rmtfs? Did I miss something?
+> Absolutely, I can probably use blk_cgroup_congested() as a method to
+> determine when a cgroup should be throttled (instead of doing my own
+> I/O measuring), but to prevent the "slow writeback slowing down other
+> cgroups" issue I still need to apply throttling when pages are dirtied
+> in page cache.
 
-I have a working patch which I'll soon send
-upstream for review, after it clears the internal
-reviews/processes
+Again this is just a fuckup from a configuration stand point.  The argument
+could be made that sync() is probably broken here, but I think the right
+solution here is to just pass the cgroup context along with the writeback
+information and use that if it's set instead.  Thanks,
 
-> 
-> Brian
-
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Josef
