@@ -2,104 +2,84 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F00C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E2AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A3720855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65110214C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:23:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Hs8xxZVL"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MaO13wyC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfAREWA (ORCPT
+        id S1727080AbfAREXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 23:22:00 -0500
-Received: from mail-pg1-f180.google.com ([209.85.215.180]:41658 "EHLO
-        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfAREV7 (ORCPT
+        Thu, 17 Jan 2019 23:23:36 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44884 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfAREXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 23:21:59 -0500
-Received: by mail-pg1-f180.google.com with SMTP id m1so5418518pgq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:21:59 -0800 (PST)
+        Thu, 17 Jan 2019 23:23:36 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e11so5740948plt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:23:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SIlPpI+xqS202WJQwxgXFlRMI+IiYvgdSwwPnhOt1vw=;
-        b=Hs8xxZVLRQ9nKfqbEBWalOdJOZ0Hk+sU4EhCfHyDwPgrBLl9WZcfwtuWXsCENnGGDv
-         EzdOJoz96Z+8/4g8M+xeJw8exnEM4+DhyuGRFr0RmvWqh3bUMPDHauMD8eWyaKNQRXvL
-         Yd1GpiCx5CoypLq0Jywfkts+AnIwN2kd3gxf+2n1IKI1y+S+H8lSc6KLQN+y55dww2R0
-         muSvuQGmIN3P/KNu4nEfts3/ljXCDlFzPrXYe4oj8FPJvyi70fmnJdG478+jt23ZQXuY
-         L87CaIilL0DLPHD/cYFDZ5e5orl8mVxm8tq4DvUzIfITC0N9yss9g1kpdtgX0z2geYWt
-         cscA==
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=lkyUh9icSEKOoKzJdnqtktOdVMrgPrWedNRK3nkMezA=;
+        b=MaO13wyCdWwhnawBbm4ve7FF5FpVb7kVh6+cZesvH30M+nkS3k/Q2w3V6yRq6J41IR
+         M2g2R94lvqnxaY5a1gUT6QDVRQv3TEcXuHl9wbH7rdXOAY1SoON9GRV7q9sqiTvojlhC
+         Z+aBhMjWYo1SDgHXbTMHFbMI8BWrSFX7fT91E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SIlPpI+xqS202WJQwxgXFlRMI+IiYvgdSwwPnhOt1vw=;
-        b=rsfd8Ahk+8kYXk7EVMV/koxR/YYCSUGqZ9hCEq7Ca/B+LKnq5a9La8Y1AJnhmhdqOl
-         nbDD8QXAdvKlBeAEUl0Nxw1Y0Trht5jXAXGa4bcXr/V5zhlu0hze0utF6stfX2EJ4kLC
-         duSGjhuXPRZZtcO5hiKPPN2clRtSN/mSYDnD4kaHZhJ/Oi/QFeGhSaenB9HaETbjk7L2
-         CrRys1ohmoKF5P2Rt8Y8xUFKtIz9ExH4wUJk1u41uwc9AVxHGoADBzXY5K5NBstgS2Ko
-         x4DMZPEk1o2xoQKtNknYoX2Bcw1C34QvgTVTcBc9TYjnQNkfUE2lmNyUylL1Eno+NG6y
-         LkdA==
-X-Gm-Message-State: AJcUukdhpRZjIFiI8gK8mCZKPaGraHdFqk02T9+Ss2fJEkqnwVk25AXM
-        Iw+J0Ko6ooY8ryY/BrL8zQdhpg==
-X-Google-Smtp-Source: ALg8bN4c3Y07fVwXyCnpJpKZUPR2XjNjuG6XBD3jMBm0kgc6/t6SIk+UE7rqgBlbPCyAf3spiK2ysQ==
-X-Received: by 2002:a62:4d81:: with SMTP id a123mr18312631pfb.122.1547785318942;
-        Thu, 17 Jan 2019 20:21:58 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id z186sm4285907pfz.119.2019.01.17.20.21.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 20:21:57 -0800 (PST)
-Subject: Re: [patch 1/9] block: Cleanup license notice
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Matias Bjorling <mb@lightnvm.io>,
-        Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org
-References: <20190117231416.111952141@linutronix.de>
- <20190117231500.874215239@linutronix.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c66207a9-c18c-cd54-fd2a-1703c7bf1b57@kernel.dk>
-Date:   Thu, 17 Jan 2019 21:21:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190117231500.874215239@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lkyUh9icSEKOoKzJdnqtktOdVMrgPrWedNRK3nkMezA=;
+        b=bLiVUbGfXvYTdqBimOZtlE3TxreFyFovgWIJ6qEyXKkN0sFbwQ8bQ+LHUi2lABZFx8
+         T27Mug3E7Ozu1HRxFZqkNSirjPUXc73+4YKZP0BCOWRtwrq4LUfEMaNfNhnRp1qlQKgo
+         Sf37YKU2MwIhCxAvmyradnwEQvhGtoxsnAmFg1eCQaQop9nZzQWGdL/wWXyMwB3EW3EX
+         AO3f6jpbkQQk3otbTn6o38NYT0T7myVYiEzp+qOxd4jpTIsFOt/TMWqOtQrUhz/+WUPh
+         tBy1ZI5DJHWyO2u/VsTgaUvdTx9qYQEtHMWSPvYkCtaB83t7Gr6z5+biWIcJVMwR5UjR
+         NIeg==
+X-Gm-Message-State: AJcUukcC6Ba/A9vG9wDPyDLWJtySpV+9usXMVy8aiQDmfr0Wnb+SSVAT
+        vU/udoJSwugFHvt5YuwvPsWyWQ==
+X-Google-Smtp-Source: ALg8bN7BQHSNE42r7oE7vtISOSH1+C1FDA5Sz2z/shhdLGBd9Nft8N4KdD3bTC0EVW3tYj6GJ4erGg==
+X-Received: by 2002:a17:902:1105:: with SMTP id d5mr17166964pla.47.1547785415103;
+        Thu, 17 Jan 2019 20:23:35 -0800 (PST)
+Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id l19sm7339642pfi.71.2019.01.17.20.23.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 17 Jan 2019 20:23:34 -0800 (PST)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH 0/3] Add IPROC PCIe new features
+Date:   Fri, 18 Jan 2019 09:53:20 +0530
+Message-Id: <1547785403-32268-1-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 4:14 PM, Thomas Gleixner wrote:
-> Remove the imprecise and sloppy:
-> 
->   "This files is licensed under the GPL."
-> 
-> license notice in the top level comment.
-> 
-> 1) The file already contains a SPDX license identifier which clearly
->    states that the license of the file is GPL V2 only
-> 
-> 2) The notice resolves to GPL v1 or later for scanners which is just
->    contrary to the intent of SPDX identifiers to provide clear and non
->    ambiguous license information. Aside of that the value add of this
->    notice is below zero,
+Add changes related to IPROC PCIe RC IP new features.
 
-Applied, thanks Thomas.
+This patch set is based on Linux-5.0-rc2.
+
+Srinath Mannam (3):
+  PCI: iproc: Add feature to set order mode
+  PCI: iproc: CRS state check in config request
+  PCI: iproc: Add PCIe 32bit outbound memory configuration
+
+ drivers/pci/controller/pcie-iproc.c | 172 +++++++++++++++++++++++++++++++++++-
+ drivers/pci/controller/pcie-iproc.h |  16 ++++
+ 2 files changed, 184 insertions(+), 4 deletions(-)
 
 -- 
-Jens Axboe
+2.7.4
 
