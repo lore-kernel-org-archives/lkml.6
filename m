@@ -4,65 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AF4C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 453ECC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C961A20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1619120850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547836714;
-	bh=d5J5t9FXK8oeQQD/QiK+BIMuETv1kXCwjlnsZZBWWSI=;
+	s=default; t=1547836722;
+	bh=WujtxIxWZhngtsgNvOeA3IGo6G2z0J0gWlWLDOpYpEA=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=pm/UNyqJzqQ+q0ePv7yjYkoBIe0Anb9xIjbh15e150krpCJ1KUyf4v4QyMDmZTYRw
-	 /tTChlMttGfiReHAJRgpteHLUJAwlfo8GbiGMGAgEXlhdAUjLiksFk2Vxh9rhhe6wG
-	 tJv9prUcj/mM2Six0tW1N9gDdkEKu0cHzoSfs740=
+	b=zz3n3nz2Qpo/kAsWNRg6DjhMMvae+3rMQkXhZO2OJDMpdaS6992YE4oNg1OztiS3V
+	 maE5EAYiXwhanP/MCSzkZNgEcgfbDzgypWWpwvo0VTbhHSG49lMNSSYuUE5UnDenw/
+	 ZWxhceTsl5J7jCh6z803DjemHIcVSrIovzVMe3fM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbfARSid (ORCPT
+        id S1729228AbfARSik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:38:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57200 "EHLO
+        Fri, 18 Jan 2019 13:38:40 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57472 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728457AbfARSic (ORCPT
+        with ESMTP id S1728892AbfARSik (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:38:32 -0500
+        Fri, 18 Jan 2019 13:38:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=9UNSHtRuci4KSnGoEUyqO/pL52dBoZeZX8e6vDT7oSw=; b=v6cbDwpbFZJs
-        m5z8lnffc2huRp1OmU7leSccx8zmUFZivi6dEAT4cxP1z3KV/kOo/0tGH5kK+WWrcLklcnQmj0RX5
-        R8HmYkkHpwdbOB05jOrQVDkSkjODpHoqV/LUIUho+7i5F98ZvG+A7JPmrioj7ZXnw4hTUhXspaEL0
-        BX9mQ=;
+        List-Archive; bh=uJieKdrlp6ST1KiMNE5sJbLwX3+lEkHzn3TtMmxbQKQ=; b=ZrKaRuISR8id
+        l6CAb45GujHb+39sS3JdHA0xD3iAfi4ABKlWhhzocNsZnVzy9A04D9y46DDytmozDZJHlqRufhH3u
+        mnjAezFcguOl1Fb9IKYhUz9oD+CZ1c8NB/J9p9E+tCCR00EFdjjRnQnLJSxUgXv/NMyMSQQN3kEbj
+        dxbnY=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gkZ2B-0005M0-Ki; Fri, 18 Jan 2019 18:38:27 +0000
+        id 1gkZ2D-0005M7-Hx; Fri, 18 Jan 2019 18:38:29 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3D8ED11276E7; Fri, 18 Jan 2019 18:38:27 +0000 (GMT)
+        id 1E65F11276E7; Fri, 18 Jan 2019 18:38:29 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicoleotsuka@gmail.com" <nicoleotsuka@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: fsl_sai: Remove expensive print in irq handler" to the asoc tree
-In-Reply-To:  <20190118142623.17720-1-daniel.baluta@nxp.com>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Mark Brown <broonie@kernel.org>, perex@perex.cz,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, tiwai@suse.com,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: soc-core: remove error due to probe deferral" to the asoc tree
+In-Reply-To:  <20190118095504.22397-1-stefan@agner.ch>
 X-Patchwork-Hint: ignore
-Message-Id: <20190118183827.3D8ED11276E7@debutante.sirena.org.uk>
-Date:   Fri, 18 Jan 2019 18:38:27 +0000 (GMT)
+Message-Id: <20190118183829.1E65F11276E7@debutante.sirena.org.uk>
+Date:   Fri, 18 Jan 2019 18:38:29 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_sai: Remove expensive print in irq handler
+   ASoC: soc-core: remove error due to probe deferral
 
 has been applied to the asoc tree at
 
@@ -95,54 +87,35 @@ to this mail.
 Thanks,
 Mark
 
-From e412fcb0db5c44a3450ca678b281ea9332e6bf82 Mon Sep 17 00:00:00 2001
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Fri, 18 Jan 2019 14:26:46 +0000
-Subject: [PATCH] ASoC: fsl_sai: Remove expensive print in irq handler
+From 7c7e2d6a9ca3c74ba7ed4da2a75916b2f9ae38f0 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Fri, 18 Jan 2019 10:55:04 +0100
+Subject: [PATCH] ASoC: soc-core: remove error due to probe deferral
 
-When stopping audio, ASoC will first stop DMA then CPU DAI.
-Sometimes there is a delay between DMA stop and CPU DAI stop, which
-triggers an underrun error. Now, because of the delay introduced
-by dev_err another underrun error will occur causing a vicious circle
-making impossible to stop CPU DAI.
+Deferred probes shouldn't cause error messages in the boot log, so
+change the dev_err() to the more harmless dev_info().
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_sai.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/soc-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index 4163f2cfc06f..db9e0872f73d 100644
---- a/sound/soc/fsl/fsl_sai.c
-+++ b/sound/soc/fsl/fsl_sai.c
-@@ -62,10 +62,10 @@ static irqreturn_t fsl_sai_isr(int irq, void *devid)
- 		dev_dbg(dev, "isr: Start of Tx word detected\n");
- 
- 	if (flags & FSL_SAI_CSR_SEF)
--		dev_warn(dev, "isr: Tx Frame sync error detected\n");
-+		dev_dbg(dev, "isr: Tx Frame sync error detected\n");
- 
- 	if (flags & FSL_SAI_CSR_FEF) {
--		dev_warn(dev, "isr: Transmit underrun detected\n");
-+		dev_dbg(dev, "isr: Transmit underrun detected\n");
- 		/* FIFO reset for safety */
- 		xcsr |= FSL_SAI_CSR_FR;
- 	}
-@@ -96,10 +96,10 @@ static irqreturn_t fsl_sai_isr(int irq, void *devid)
- 		dev_dbg(dev, "isr: Start of Rx word detected\n");
- 
- 	if (flags & FSL_SAI_CSR_SEF)
--		dev_warn(dev, "isr: Rx Frame sync error detected\n");
-+		dev_dbg(dev, "isr: Rx Frame sync error detected\n");
- 
- 	if (flags & FSL_SAI_CSR_FEF) {
--		dev_warn(dev, "isr: Receive overflow detected\n");
-+		dev_dbg(dev, "isr: Receive overflow detected\n");
- 		/* FIFO reset for safety */
- 		xcsr |= FSL_SAI_CSR_FR;
- 	}
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 0462b3ec977a..98bb05f6ed56 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -903,8 +903,8 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+ 	for (i = 0; i < rtd->num_codecs; i++) {
+ 		codec_dais[i] = snd_soc_find_dai(&codecs[i]);
+ 		if (!codec_dais[i]) {
+-			dev_err(card->dev, "ASoC: CODEC DAI %s not registered\n",
+-				codecs[i].dai_name);
++			dev_info(card->dev, "ASoC: CODEC DAI %s not registered\n",
++				 codecs[i].dai_name);
+ 			goto _err_defer;
+ 		}
+ 		snd_soc_rtdcom_add(rtd, codec_dais[i]->component);
 -- 
 2.20.1
 
