@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA57C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B956C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB612086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5928B20883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbfARIN5 (ORCPT
+        id S1727752AbfARIOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:13:57 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2263 "EHLO huawei.com"
+        Fri, 18 Jan 2019 03:14:25 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2198 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727548AbfARINy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:13:54 -0500
+        id S1727579AbfARIN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:13:57 -0500
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BCE2E4515032667C957B;
-        Fri, 18 Jan 2019 16:13:49 +0800 (CST)
+        by Forcepoint Email with ESMTP id DB2BD670F80899C2A5C3;
+        Fri, 18 Jan 2019 16:13:54 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 18 Jan 2019 16:13:43 +0800
+ 14.3.408.0; Fri, 18 Jan 2019 16:13:44 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
@@ -32,9 +32,9 @@ CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
         Yunsheng Lin <linyunsheng@huawei.com>,
         Peng Li <lipeng321@huawei.com>
-Subject: [PATCH net-next 08/12] net: hns3: fix user configuration loss for ethtool -L
-Date:   Fri, 18 Jan 2019 16:13:10 +0800
-Message-ID: <1547799194-38212-9-git-send-email-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 11/12] net: hns3: do reinitialization while ETS configuration changed
+Date:   Fri, 18 Jan 2019 16:13:13 +0800
+Message-ID: <1547799194-38212-12-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
 References: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
@@ -47,217 +47,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ethtool -L option with the combined parameter is for changing the number of
-multi-purpose channels of the specified network device. Under the current
-scheme, the user configuration information will be lost after the reset or
-TC information changed.
+When the ETS information is changed, the network device needs to be
+re-initialized, otherwise the information such as the receiving queue
+will be incorrect.
 
-This patch fixes this issue. By default, this configuration is set to the
-minimum between the number of queues for each enabled TCs and the maximum
-number support available in the hardware. When there is a user
-configuration, regardless of the reset or TC information change, it should
-keep the user's configuration while it is under the hardware limits,
-otherwise set to the maximum number support available in the hardware.
-
-Fixes: 09f2af6405b8 ("net: hns3: add support to modify tqps number")
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  1 +
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 54 ++++------------------
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 40 ++++++++++++++--
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  1 +
- 4 files changed, 47 insertions(+), 49 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c         | 14 +-------------
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c  | 17 +++++++++++++++++
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |  4 ++--
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h |  2 ++
+ 4 files changed, 22 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index 36eab37..81d1585 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -500,6 +500,7 @@ struct hnae3_tc_info {
- struct hnae3_knic_private_info {
- 	struct net_device *netdev; /* Set by KNIC client when init instance */
- 	u16 rss_size;		   /* Allocated RSS queues */
-+	u16 req_rss_size;
- 	u16 rx_buf_len;
- 	u16 num_desc;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 0bda9bd..10cc865 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -3728,7 +3728,6 @@ static int hns3_client_setup_tc(struct hnae3_handle *handle, u8 tc)
+ {
+ 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
+ 	struct net_device *ndev = kinfo->netdev;
+-	bool if_running;
+ 	int ret;
  
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 17b1e33..55a456f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -1068,14 +1068,14 @@ static int hclge_map_tqps_to_func(struct hclge_dev *hdev, u16 func_id,
+ 	if (tc > HNAE3_MAX_TC)
+@@ -3737,24 +3736,13 @@ static int hns3_client_setup_tc(struct hnae3_handle *handle, u8 tc)
+ 	if (!ndev)
+ 		return -ENODEV;
+ 
+-	if_running = netif_running(ndev);
+-
+-	if (if_running) {
+-		(void)hns3_nic_net_stop(ndev);
+-		msleep(100);
+-	}
+-
+ 	ret = (kinfo->dcb_ops && kinfo->dcb_ops->map_update) ?
+ 		kinfo->dcb_ops->map_update(handle) : -EOPNOTSUPP;
+ 	if (ret)
+-		goto err_out;
++		return ret;
+ 
+ 	ret = hns3_nic_set_real_num_queue(ndev);
+ 
+-err_out:
+-	if (if_running)
+-		(void)hns3_nic_net_open(ndev);
+-
  	return ret;
  }
  
--static int  hclge_assign_tqp(struct hclge_vport *vport)
-+static int  hclge_assign_tqp(struct hclge_vport *vport, u16 num_tqps)
- {
- 	struct hnae3_knic_private_info *kinfo = &vport->nic.kinfo;
- 	struct hclge_dev *hdev = vport->back;
- 	int i, alloced;
- 
- 	for (i = 0, alloced = 0; i < hdev->num_tqps &&
--	     alloced < kinfo->num_tqps; i++) {
-+	     alloced < num_tqps; i++) {
- 		if (!hdev->htqp[i].alloced) {
- 			hdev->htqp[i].q.handle = &vport->nic;
- 			hdev->htqp[i].q.tqp_index = alloced;
-@@ -1085,7 +1085,9 @@ static int  hclge_assign_tqp(struct hclge_vport *vport)
- 			alloced++;
- 		}
- 	}
--	vport->alloc_tqps = kinfo->num_tqps;
-+	vport->alloc_tqps = alloced;
-+	kinfo->rss_size = min_t(u16, hdev->rss_size_max,
-+				vport->alloc_tqps / hdev->tm_info.num_tc);
- 
- 	return 0;
- }
-@@ -1100,17 +1102,13 @@ static int hclge_knic_setup(struct hclge_vport *vport,
- 
- 	kinfo->num_desc = num_desc;
- 	kinfo->rx_buf_len = hdev->rx_buf_len;
--	kinfo->num_tc = min_t(u16, num_tqps, hdev->tm_info.num_tc);
--	kinfo->rss_size
--		= min_t(u16, hdev->rss_size_max, num_tqps / kinfo->num_tc);
--	kinfo->num_tqps = kinfo->rss_size * kinfo->num_tc;
- 
--	kinfo->tqp = devm_kcalloc(&hdev->pdev->dev, kinfo->num_tqps,
-+	kinfo->tqp = devm_kcalloc(&hdev->pdev->dev, num_tqps,
- 				  sizeof(struct hnae3_queue *), GFP_KERNEL);
- 	if (!kinfo->tqp)
- 		return -ENOMEM;
- 
--	ret = hclge_assign_tqp(vport);
-+	ret = hclge_assign_tqp(vport, num_tqps);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+index f6323b2..4ec0b9c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+@@ -222,6 +222,16 @@ static int hclge_ieee_setets(struct hnae3_handle *h, struct ieee_ets *ets)
  	if (ret)
- 		dev_err(&hdev->pdev->dev, "fail to assign TQPs %d.\n", ret);
- 
-@@ -7532,25 +7530,6 @@ static void hclge_get_tqps_and_rss_info(struct hnae3_handle *handle,
- 	*max_rss_size = hdev->rss_size_max;
- }
- 
--static void hclge_release_tqp(struct hclge_vport *vport)
--{
--	struct hnae3_knic_private_info *kinfo = &vport->nic.kinfo;
--	struct hclge_dev *hdev = vport->back;
--	int i;
--
--	for (i = 0; i < kinfo->num_tqps; i++) {
--		struct hclge_tqp *tqp =
--			container_of(kinfo->tqp[i], struct hclge_tqp, q);
--
--		tqp->q.handle = NULL;
--		tqp->q.tqp_index = 0;
--		tqp->alloced = false;
--	}
--
--	devm_kfree(&hdev->pdev->dev, kinfo->tqp);
--	kinfo->tqp = NULL;
--}
--
- static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
-@@ -7565,24 +7544,11 @@ static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
- 	u32 *rss_indir;
- 	int ret, i;
- 
--	/* Free old tqps, and reallocate with new tqp number when nic setup */
--	hclge_release_tqp(vport);
--
--	ret = hclge_knic_setup(vport, new_tqps_num, kinfo->num_desc);
--	if (ret) {
--		dev_err(&hdev->pdev->dev, "setup nic fail, ret =%d\n", ret);
--		return ret;
--	}
--
--	ret = hclge_map_tqp_to_vport(hdev, vport);
--	if (ret) {
--		dev_err(&hdev->pdev->dev, "map vport tqp fail, ret =%d\n", ret);
--		return ret;
--	}
-+	kinfo->req_rss_size = new_tqps_num;
- 
--	ret = hclge_tm_schd_init(hdev);
-+	ret = hclge_tm_vport_map_update(hdev);
- 	if (ret) {
--		dev_err(&hdev->pdev->dev, "tm schd init fail, ret =%d\n", ret);
-+		dev_err(&hdev->pdev->dev, "tm vport map fail, ret =%d\n", ret);
  		return ret;
- 	}
  
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 8c57950..fb8596a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -517,14 +517,27 @@ static void hclge_tm_vport_tc_info_update(struct hclge_vport *vport)
- {
- 	struct hnae3_knic_private_info *kinfo = &vport->nic.kinfo;
- 	struct hclge_dev *hdev = vport->back;
-+	u16 max_rss_size;
- 	u8 i;
- 
- 	vport->bw_limit = hdev->tm_info.pg_info[0].bw_limit;
--	kinfo->num_tc =
--		min_t(u16, kinfo->num_tqps, hdev->tm_info.num_tc);
--	kinfo->rss_size
--		= min_t(u16, hdev->rss_size_max,
--			kinfo->num_tqps / kinfo->num_tc);
-+	kinfo->num_tc = min_t(u16, vport->alloc_tqps, hdev->tm_info.num_tc);
-+	max_rss_size = min_t(u16, hdev->rss_size_max,
-+			     vport->alloc_tqps / kinfo->num_tc);
++	if (map_changed) {
++		ret = hclge_notify_client(hdev, HNAE3_DOWN_CLIENT);
++		if (ret)
++			return ret;
 +
-+	if (kinfo->req_rss_size != kinfo->rss_size && kinfo->req_rss_size &&
-+	    kinfo->req_rss_size <= max_rss_size) {
-+		dev_info(&hdev->pdev->dev, "rss changes from %d to %d\n",
-+			 kinfo->rss_size, kinfo->req_rss_size);
-+		kinfo->rss_size = kinfo->req_rss_size;
-+	} else if (kinfo->rss_size > max_rss_size ||
-+		   (!kinfo->req_rss_size && kinfo->rss_size < max_rss_size)) {
-+		dev_info(&hdev->pdev->dev, "rss changes from %d to %d\n",
-+			 kinfo->rss_size, max_rss_size);
-+		kinfo->rss_size = max_rss_size;
++		ret = hclge_notify_client(hdev, HNAE3_UNINIT_CLIENT);
++		if (ret)
++			return ret;
 +	}
 +
-+	kinfo->num_tqps = kinfo->num_tc * kinfo->rss_size;
- 	vport->qs_offset = hdev->tm_info.num_tc * vport->vport_id;
- 	vport->dwrr = 100;  /* 100 percent as init */
- 	vport->alloc_rss_size = kinfo->rss_size;
-@@ -1334,3 +1347,20 @@ int hclge_tm_schd_init(struct hclge_dev *hdev)
+ 	hclge_tm_schd_info_update(hdev, num_tc);
  
- 	return hclge_tm_init_hw(hdev);
+ 	ret = hclge_ieee_ets_to_tm_info(hdev, ets);
+@@ -232,6 +242,13 @@ static int hclge_ieee_setets(struct hnae3_handle *h, struct ieee_ets *ets)
+ 		ret = hclge_client_setup_tc(hdev);
+ 		if (ret)
+ 			return ret;
++		ret = hclge_notify_client(hdev, HNAE3_INIT_CLIENT);
++		if (ret)
++			return ret;
++
++		ret = hclge_notify_client(hdev, HNAE3_UP_CLIENT);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return hclge_tm_dwrr_cfg(hdev);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 450094c..97683a7 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2401,8 +2401,8 @@ static void hclge_misc_irq_uninit(struct hclge_dev *hdev)
+ 	hclge_free_vector(hdev, 0);
  }
-+
-+int hclge_tm_vport_map_update(struct hclge_dev *hdev)
-+{
-+	struct hclge_vport *vport = hdev->vport;
-+	int ret;
-+
-+	hclge_tm_vport_tc_info_update(vport);
-+
-+	ret = hclge_vport_q_to_qs_map(hdev, vport);
-+	if (ret)
-+		return ret;
-+
-+	if (!(hdev->flag & HCLGE_FLAG_DCB_ENABLE))
-+		return 0;
-+
-+	return hclge_tm_bp_setup(hdev);
-+}
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index b6496a4..898163c4 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -142,6 +142,7 @@ struct hclge_port_shapping_cmd {
- 				       (HCLGE_TM_SHAP_##string##_LSH))
  
- int hclge_tm_schd_init(struct hclge_dev *hdev);
-+int hclge_tm_vport_map_update(struct hclge_dev *hdev);
- int hclge_pause_setup_hw(struct hclge_dev *hdev);
- int hclge_tm_schd_mode_hw(struct hclge_dev *hdev);
- void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
+-static int hclge_notify_client(struct hclge_dev *hdev,
+-			       enum hnae3_reset_notify_type type)
++int hclge_notify_client(struct hclge_dev *hdev,
++			enum hnae3_reset_notify_type type)
+ {
+ 	struct hnae3_client *client = hdev->nic_client;
+ 	u16 i;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 6615b85..279ed2d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -878,4 +878,6 @@ void hclge_vport_stop(struct hclge_vport *vport);
+ int hclge_set_vport_mtu(struct hclge_vport *vport, int new_mtu);
+ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf);
+ u16 hclge_covert_handle_qid_global(struct hnae3_handle *handle, u16 queue_id);
++int hclge_notify_client(struct hclge_dev *hdev,
++			enum hnae3_reset_notify_type type);
+ #endif
 -- 
 2.7.4
 
