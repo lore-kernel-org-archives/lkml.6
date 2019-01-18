@@ -2,148 +2,352 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 957F4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAACC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8D320652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C8B120883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:22:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Ep4AD88c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbfARNVN (ORCPT
+        id S1727471AbfARNWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:21:13 -0500
-Received: from foss.arm.com ([217.140.101.70]:56942 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfARNVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:21:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 603EC80D;
-        Fri, 18 Jan 2019 05:21:12 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C64F3F5C1;
-        Fri, 18 Jan 2019 05:21:09 -0800 (PST)
-Subject: Re: [PATCH v5 07/14] qcom: spmi-gpio: add support for hierarchical
- IRQ chip
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        shawnguo@kernel.org, dianders@chromium.org,
-        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
-        niklas.cassel@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20190117003234.22127-1-masneyb@onstation.org>
- <20190117003234.22127-8-masneyb@onstation.org>
- <e9234c48-9fce-1ec4-48f1-dff134559eed@arm.com>
- <20190118124221.GB32143@basecamp>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <94b2b50f-b0e7-3e5c-5ee5-c8df80d6f042@arm.com>
-Date:   Fri, 18 Jan 2019 13:21:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+        Fri, 18 Jan 2019 08:22:49 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:60372 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfARNWt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 08:22:49 -0500
+Received: from mailhost.synopsys.com (unknown [10.12.135.161])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 8956424E22F5;
+        Fri, 18 Jan 2019 05:22:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1547817768; bh=wuv6xVNTK0LxcNtfORDSZmilI4MQyhCJyxN2BTAkD/4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=Ep4AD88cAQNzwMpDuk0npIRe51FjOmXWkpUC/myv9AgLN9TSL/IRoAH0YXUr7Ri2p
+         78q/+HgLBGjsWdKVuPKd8VBgrgt3qBxp5QRzA6DcUoBEdlg9WffGCYdqT3JN0ew7uJ
+         3nzBhlLjIZSoYJtYqFWzLYJpT0rJddc0SPgiGM/LQyViTr9x9N7qR2x843csXScSwa
+         hY9Fo0f3WiIbAVwZslPdm9+l4heoI/mHUjLwPPtym6VvUicMW0jeo2NU9vVhToPSEG
+         qaZFwTFQgC+IrTo6jwoNgFo+49nkCOUYaNZjK375Y+gBHSCg4TPAOv0HF4YnkWwu+1
+         2aXc1W8+HUAIQ==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id B1EC0A00F9;
+        Fri, 18 Jan 2019 13:22:47 +0000 (UTC)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 18 Jan 2019 05:21:43 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 18 Jan 2019 14:21:40 +0100
+Received: from [10.107.19.24] (10.107.19.24) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 18 Jan 2019 14:21:40 +0100
+Subject: Re: [PATCH 1/1] net: stmmac: implement the SIOCGHWTSTAMP ioctl
+To:     Artem Panfilov <panfilov.artyom@gmail.com>
+CC:     Tema <panfilovartyom@gmail.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "Jose Abreu" <jose.abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190117191536.24699-1-panfilov.artyom@gmail.com>
+From:   Jose Abreu <jose.abreu@synopsys.com>
+Message-ID: <c0404f52-e875-ffb4-dcf4-05b4b5c4579b@synopsys.com>
+Date:   Fri, 18 Jan 2019 13:21:37 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190118124221.GB32143@basecamp>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190117191536.24699-1-panfilov.artyom@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.24]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/01/2019 12:42, Brian Masney wrote:
-> Hi Marc,
-> 
-> On Thu, Jan 17, 2019 at 11:32:01AM +0000, Marc Zyngier wrote:
->>>  static int pmic_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
->>>  {
->>>  	struct pmic_gpio_state *state = gpiochip_get_data(chip);
->>> -	struct pmic_gpio_pad *pad;
->>> +	struct irq_fwspec fwspec;
->>>  
->>> -	pad = state->ctrl->desc->pins[pin].drv_data;
->>> +	fwspec.fwnode = state->fwnode;
->>> +	fwspec.param_count = 2;
->>> +	fwspec.param[0] = pin + PMIC_GPIO_PHYSICAL_OFFSET;
->>> +	fwspec.param[1] = IRQ_TYPE_NONE;
->>
->> In my experience, IRQ_TYPE_NONE is rarely a good thing, unless you
->> expect the trigger information to be found by some other mean. I guess
->> that's one of the reasons why everything falls back to level in the SPMI
->> driver...
-> 
-> I'm not sure how to determine what trigger to put here. I thought that
-> it would be up to the caller of request_any_context_irq() to explicitly
-> set the expected trigger type when a GPIO is used, which will overwrite
-> IRQ_TYPE_NONE with the proper trigger type.
+Hello Artem,
 
-The main issue is that IRQ_TYPE_NONE is a bit loosely defined, and
-mostly means "keep whatever was there before", which is a bit like
-rolling a dice each time you allocate an interrupt.
+Please specify in patch subject whether this is for -net or
+-net-next. More comments inline.
+
+On 1/17/2019 7:15 PM, Artem Panfilov wrote:
+> From: Tema <panfilovartyom@gmail.com>
+> 
+> This patch adds support for the SIOCGHWTSTAMP ioctl which enables user
+> processes to read the current hwtstamp_config settings
+> non-destructively.
+
+I think you should only save the config structure *after*
+validating the parameters. i.e. use a local config and save it in
+priv only if ret == 0.
 
 > 
-> For example, I've tested the hierarchical IRQ domains with gpio-keys and
-> when the gpio property is used, devm_request_any_context_irq() is called
-> with the flags IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING. This calls
-> __setup_irq(), which will call irq_set_type() and overwrite the trigger
-> type.
+> Signed-off-by: Artem Panfilov <panfilov.artyom@gmail.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  2 +
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 77 ++++++++++++-------
+>  2 files changed, 52 insertions(+), 27 deletions(-)
 > 
-> irq_set_type() is only called when the IRQ is not shared, so I'm not
-> sure if this would work as expected with a shared IRQ.
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+> index 63e1064b27a2..f9b42b0c20f4 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+> @@ -28,6 +28,7 @@
+>  #include <linux/pci.h>
+>  #include "common.h"
+>  #include <linux/ptp_clock_kernel.h>
+> +#include <linux/net_tstamp.h>
+>  #include <linux/reset.h>
+>  
+>  struct stmmac_resources {
+> @@ -174,6 +175,7 @@ struct stmmac_priv {
+>  	unsigned int mode;
+>  	unsigned int chain_mode;
+>  	int extend_desc;
+> +	struct hwtstamp_config tstamp_config;
+>  	struct ptp_clock *ptp_clock;
+>  	struct ptp_clock_info ptp_clock_ops;
+>  	unsigned int default_addend;
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 5afba69981cf..a6dc40a70428 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -534,7 +534,7 @@ static void stmmac_get_rx_hwtstamp(struct stmmac_priv *priv, struct dma_desc *p,
+>  }
+>  
+>  /**
+> - *  stmmac_hwtstamp_ioctl - control hardware timestamping.
+> + *  stmmac_hwtstamp_set - control hardware timestamping.
+>   *  @dev: device pointer.
+>   *  @ifr: An IOCTL specific structure, that can contain a pointer to
+>   *  a proprietary structure used to pass information to the driver.
+> @@ -544,10 +544,10 @@ static void stmmac_get_rx_hwtstamp(struct stmmac_priv *priv, struct dma_desc *p,
+>   *  Return Value:
+>   *  0 on success and an appropriate -ve integer on failure.
+>   */
+> -static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+> +static int stmmac_hwtstamp_set(struct net_device *dev, struct ifreq *ifr)
+>  {
+>  	struct stmmac_priv *priv = netdev_priv(dev);
+> -	struct hwtstamp_config config;
+> +	struct hwtstamp_config *config =  &priv->tstamp_config;
+>  	struct timespec64 now;
+>  	u64 temp = 0;
+>  	u32 ptp_v2 = 0;
+> @@ -572,31 +572,31 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  		return -EOPNOTSUPP;
+>  	}
+>  
+> -	if (copy_from_user(&config, ifr->ifr_data,
+> +	if (copy_from_user(config, ifr->ifr_data,
+>  			   sizeof(struct hwtstamp_config)))
 
-I'd suggest you force the type to a "safe" value such as rising edge,
-and let the irq_set_type() call do the right thing, assuming you've
-plugged the issue in the core SPMI driver.
+Please use "sizeof(*config)" instead. It makes the code more
+readable and occupy less characters.
+
+>  		return -EFAULT;
+>  
+>  	netdev_dbg(priv->dev, "%s config flags:0x%x, tx_type:0x%x, rx_filter:0x%x\n",
+> -		   __func__, config.flags, config.tx_type, config.rx_filter);
+> +		   __func__, config->flags, config->tx_type, config->rx_filter);
+>  
+>  	/* reserved for future extensions */
+> -	if (config.flags)
+> +	if (config->flags)
+>  		return -EINVAL;
+>  
+> -	if (config.tx_type != HWTSTAMP_TX_OFF &&
+> -	    config.tx_type != HWTSTAMP_TX_ON)
+> +	if (config->tx_type != HWTSTAMP_TX_OFF &&
+> +	    config->tx_type != HWTSTAMP_TX_ON)
+>  		return -ERANGE;
+>  
+>  	if (priv->adv_ts) {
+> -		switch (config.rx_filter) {
+> +		switch (config->rx_filter) {
+>  		case HWTSTAMP_FILTER_NONE:
+>  			/* time stamp no incoming packet at all */
+> -			config.rx_filter = HWTSTAMP_FILTER_NONE;
+> +			config->rx_filter = HWTSTAMP_FILTER_NONE;
+>  			break;
+>  
+>  		case HWTSTAMP_FILTER_PTP_V1_L4_EVENT:
+>  			/* PTP v1, UDP, any kind of event packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_EVENT;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_EVENT;
+>  			/* take time stamp for all event messages */
+>  			if (xmac)
+>  				snap_type_sel = PTP_GMAC4_TCR_SNAPTYPSEL_1;
+> @@ -609,7 +609,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  
+>  		case HWTSTAMP_FILTER_PTP_V1_L4_SYNC:
+>  			/* PTP v1, UDP, Sync packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_SYNC;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_SYNC;
+>  			/* take time stamp for SYNC messages only */
+>  			ts_event_en = PTP_TCR_TSEVNTENA;
+>  
+> @@ -619,7 +619,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  
+>  		case HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ:
+>  			/* PTP v1, UDP, Delay_req packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ;
+>  			/* take time stamp for Delay_Req messages only */
+>  			ts_master_en = PTP_TCR_TSMSTRENA;
+>  			ts_event_en = PTP_TCR_TSEVNTENA;
+> @@ -630,7 +630,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  
+>  		case HWTSTAMP_FILTER_PTP_V2_L4_EVENT:
+>  			/* PTP v2, UDP, any kind of event packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_EVENT;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_EVENT;
+>  			ptp_v2 = PTP_TCR_TSVER2ENA;
+>  			/* take time stamp for all event messages */
+>  			if (xmac)
+> @@ -644,7 +644,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  
+>  		case HWTSTAMP_FILTER_PTP_V2_L4_SYNC:
+>  			/* PTP v2, UDP, Sync packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_SYNC;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_SYNC;
+>  			ptp_v2 = PTP_TCR_TSVER2ENA;
+>  			/* take time stamp for SYNC messages only */
+>  			ts_event_en = PTP_TCR_TSEVNTENA;
+> @@ -655,7 +655,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  
+>  		case HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ:
+>  			/* PTP v2, UDP, Delay_req packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ;
+>  			ptp_v2 = PTP_TCR_TSVER2ENA;
+>  			/* take time stamp for Delay_Req messages only */
+>  			ts_master_en = PTP_TCR_TSMSTRENA;
+> @@ -667,7 +667,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  
+>  		case HWTSTAMP_FILTER_PTP_V2_EVENT:
+>  			/* PTP v2/802.AS1 any layer, any kind of event packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_EVENT;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_EVENT;
+>  			ptp_v2 = PTP_TCR_TSVER2ENA;
+>  			/* take time stamp for all event messages */
+>  			if (xmac)
+> @@ -682,7 +682,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  
+>  		case HWTSTAMP_FILTER_PTP_V2_SYNC:
+>  			/* PTP v2/802.AS1, any layer, Sync packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_SYNC;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_SYNC;
+>  			ptp_v2 = PTP_TCR_TSVER2ENA;
+>  			/* take time stamp for SYNC messages only */
+>  			ts_event_en = PTP_TCR_TSEVNTENA;
+> @@ -694,7 +694,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  
+>  		case HWTSTAMP_FILTER_PTP_V2_DELAY_REQ:
+>  			/* PTP v2/802.AS1, any layer, Delay_req packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_DELAY_REQ;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_DELAY_REQ;
+>  			ptp_v2 = PTP_TCR_TSVER2ENA;
+>  			/* take time stamp for Delay_Req messages only */
+>  			ts_master_en = PTP_TCR_TSMSTRENA;
+> @@ -708,7 +708,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  		case HWTSTAMP_FILTER_NTP_ALL:
+>  		case HWTSTAMP_FILTER_ALL:
+>  			/* time stamp any incoming packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_ALL;
+> +			config->rx_filter = HWTSTAMP_FILTER_ALL;
+>  			tstamp_all = PTP_TCR_TSENALL;
+>  			break;
+>  
+> @@ -716,18 +716,18 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  			return -ERANGE;
+>  		}
+>  	} else {
+> -		switch (config.rx_filter) {
+> +		switch (config->rx_filter) {
+>  		case HWTSTAMP_FILTER_NONE:
+> -			config.rx_filter = HWTSTAMP_FILTER_NONE;
+> +			config->rx_filter = HWTSTAMP_FILTER_NONE;
+>  			break;
+>  		default:
+>  			/* PTP v1, UDP, any kind of event packet */
+> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_EVENT;
+> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_EVENT;
+>  			break;
+>  		}
+>  	}
+> -	priv->hwts_rx_en = ((config.rx_filter == HWTSTAMP_FILTER_NONE) ? 0 : 1);
+> -	priv->hwts_tx_en = config.tx_type == HWTSTAMP_TX_ON;
+> +	priv->hwts_rx_en = ((config->rx_filter == HWTSTAMP_FILTER_NONE) ? 0 : 1);
+> +	priv->hwts_tx_en = config->tx_type == HWTSTAMP_TX_ON;
+>  
+>  	if (!priv->hwts_tx_en && !priv->hwts_rx_en)
+>  		stmmac_config_hw_tstamping(priv, priv->ptpaddr, 0);
+> @@ -765,7 +765,28 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
+>  				(u32)now.tv_sec, now.tv_nsec);
+>  	}
+>  
+> -	return copy_to_user(ifr->ifr_data, &config,
+> +	return copy_to_user(ifr->ifr_data, config,
+> +			    sizeof(struct hwtstamp_config)) ? -EFAULT : 0;
+
+sizeof(*config) also.
+
+> +}
+> +
+> +/**
+> + *  stmmac_hwtstamp_get - read hardware timestamping.
+> + *  @dev: device pointer.
+> + *  @ifr: An IOCTL specific structure, that can contain a pointer to
+> + *  a proprietary structure used to pass information to the driver.
+> + *  Description:
+> + *  This function obtain the current hardware timestamping settings
+> +    as requested.
+> + */
+> +static int stmmac_hwtstamp_get(struct net_device *dev, struct ifreq *ifr)
+> +{
+> +	struct stmmac_priv *priv = netdev_priv(dev);
+> +	struct hwtstamp_config *config = &priv->tstamp_config;
+> +
+> +	if (!(priv->dma_cap.time_stamp || priv->dma_cap.atime_stamp))
+> +		return -EOPNOTSUPP;
+> +
+> +	return copy_to_user(ifr->ifr_data, config,
+>  			    sizeof(struct hwtstamp_config)) ? -EFAULT : 0;
+
+sizeof(*config).
+
+>  }
+>  
+> @@ -3767,7 +3788,9 @@ static int stmmac_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+>  		ret = phy_mii_ioctl(dev->phydev, rq, cmd);
+>  		break;
+>  	case SIOCSHWTSTAMP:
+> -		ret = stmmac_hwtstamp_ioctl(dev, rq);
+> +		ret = stmmac_hwtstamp_set(dev, rq);
+
+Missing break.
 
 Thanks,
+Jose Miguel Abreu
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> +	case SIOCGHWTSTAMP:
+> +		ret = stmmac_hwtstamp_get(dev, rq);
+>  		break;
+>  	default:
+>  		break;
+> 
