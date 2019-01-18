@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F359BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0398C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD9D20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73E8F20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547820286;
-	bh=OpkSoja5OoTfoUrO7AMhjTJIQbUNeloJ8kj8dQ5tuEM=;
+	s=default; t=1547820291;
+	bh=dW0UcxR3oDf5wSHJQAAAcQzu3ibwQX5VlQ9GMMZrbRY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rWZXDNVeVdq8dKTQcXghbNaK19bu/sYwppQ+p07lREphDfw7NZp73kwyTjR6RM0Ba
-	 QbTaCOtcjXJcvvhV9TVmZOw2Ne+reUuxolDKRDbuEe+TA8Pqb9CHYiSOIAB/afSuK/
-	 a46DSFBJcCtYZrOfthJ2gu7mP9rix2/uPPmrQFIs=
+	b=AC4BWZY1U4+bvaU3nQfjci4rOQUy42FQK60XZWtX/yFL3TPXWv+lD03heGnjpkBSa
+	 qJIVOPSJSnSloq8/SIlQNnMVh6QqX6XKGvcxGmFYSWYTtjOyFQpCNPG4owvSVoqP0T
+	 7jQzCuBSq7Y97N5cGXiTEN0vbj8lgHBc1EqkWQfg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbfAROEp (ORCPT
+        id S1727837AbfAROEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:04:45 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36172 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbfAROEn (ORCPT
+        Fri, 18 Jan 2019 09:04:50 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42082 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727404AbfAROEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:04:43 -0500
-Received: by mail-lf1-f68.google.com with SMTP id a16so10568123lfg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 06:04:41 -0800 (PST)
+        Fri, 18 Jan 2019 09:04:44 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so10558553lfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 06:04:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cVF/+rdzQVmDvcOxbIn7hLVP8/m/t64C/jXS8/amg08=;
-        b=kib+mKN2iMt+SC3cr4MkhQp/2PL+OZRh39UXrQvIiU5NriO44p25wSb4Jp2xma70b1
-         GS/JeAAgxYEN0KF0NPixoaiV7yEqjwQGfjIMOtJ1edu7pUZPKW3MSXnxgBXgAy/qxxjh
-         XDWlGrNNHepSGfaSJyApR+zN8VnobJbBs+Xz50c+xwdArQX1xsVYfcV/1HZBJcfE/i2P
-         gQl7kKMftDC2070S+CQDsNb68bAnwAWty4NnilvB7wDwwvU/9H+AzWjVFey6nD3De8KY
-         RxY+3dDX2mYO0B4BNMubqJW2PeFSa36C2iRBVALL3YfRmxz8AjXRJLt6Y/DsWX0FKj+R
-         iwmw==
-X-Gm-Message-State: AJcUukeQd8Re/G3S9K46huPcT/4kIDICr7Th8qsAT7WcUayXNPDiXTAU
-        wces+YeRyKpQUQlzka7gFqc=
-X-Google-Smtp-Source: ALg8bN5VHtjHufGJDP70XS1DLwgcclDu4iucZkN6BBJ2OgpQrlnqRayI53u2/+HkbgEl4GhkgbfLrw==
-X-Received: by 2002:a19:a9d2:: with SMTP id s201mr12312768lfe.154.1547820281063;
+        bh=edUxdz3ce3gWnciU4XX+2JLaYdCsYRbrNsJxn6e+a2w=;
+        b=eKdwabdmA+DxmsyxDFPXlaCFW03UswE+cjH4YbDqpNwHOqNNf+AhBbHJTdfy/3mhZ8
+         nQ8JaftSHsuLA6yZEY22038e7tXoTiDuRcJ1WwKxhSBOUIJF9yKURPVT4x0dftxLOB3w
+         HGHP/LI1nFJoIElSl+tOFtLWKGpazhpaVNR+3vtct7U0sEP8a8bHYWoCNLp717RCA2K4
+         4yW5M7WO1W9W/UPE+RldQJtKc9kQkpsFtw43YMHxXEaudKW/9M2QqSFhKpGUVd92v4I2
+         A9kIRpjAyznL8cvEqIoe5cHSdY4QGVLWrvu4w7tDrm4g91tstPZ9G0FWaXWB3IOxBqgr
+         jVhQ==
+X-Gm-Message-State: AJcUuke+wXuUF0L1FND6AbSduNrivPk27skibQFb6g+V09QphHwa/yJb
+        pTRrw4sXx6yYtWuWQsWSJDU=
+X-Google-Smtp-Source: ALg8bN4Y0esAGk6MK7TV6Wmr5WDkdlU1+vuYa3x5Df7EzCNJYZeGRXCIBufLugzWN9j0rwsKUUrAyw==
+X-Received: by 2002:a19:4287:: with SMTP id p129mr13239723lfa.135.1547820281776;
         Fri, 18 Jan 2019 06:04:41 -0800 (PST)
 Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id d10sm816549lfa.71.2019.01.18.06.04.35
+        by smtp.gmail.com with ESMTPSA id z9sm797530lfj.79.2019.01.18.06.04.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Fri, 18 Jan 2019 06:04:39 -0800 (PST)
 Received: from johan by xi.terra with local (Exim 4.91)
         (envelope-from <johan@xi.terra>)
-        id 1gkUlB-0002WA-Gq; Fri, 18 Jan 2019 15:04:37 +0100
+        id 1gkUlB-0002W0-BQ; Fri, 18 Jan 2019 15:04:37 +0100
 From:   Johan Hovold <johan@kernel.org>
 To:     Palmer Dabbelt <palmer@sifive.com>
 Cc:     Albert Ou <aou@eecs.berkeley.edu>, Andreas Schwab <schwab@suse.de>,
@@ -59,9 +59,9 @@ Cc:     Albert Ou <aou@eecs.berkeley.edu>, Andreas Schwab <schwab@suse.de>,
         Anup Patel <anup@brainfault.org>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5/5] riscv: use for_each_of_cpu_node iterator
-Date:   Fri, 18 Jan 2019 15:03:08 +0100
-Message-Id: <20190118140308.9599-6-johan@kernel.org>
+Subject: [PATCH 3/5] riscv: fix riscv_of_processor_hartid() comment
+Date:   Fri, 18 Jan 2019 15:03:06 +0100
+Message-Id: <20190118140308.9599-4-johan@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118140308.9599-1-johan@kernel.org>
 References: <20190118140308.9599-1-johan@kernel.org>
@@ -72,60 +72,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new for_each_of_cpu_node() helper to iterate over cpu nodes
-instead of open coding. Note that this will allow matching also on the
-node name instead of the (for FDT) deprecated device_type property.
+The riscv_of_processor_hartid() helper returns -ENODEV when the
+specified node isn't an enabled and valid RISC-V hart node.
+
+Also drop the unnecessary parenthesis around errno defines.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- arch/riscv/kernel/cpufeature.c | 5 +++--
- arch/riscv/kernel/smpboot.c    | 4 ++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ arch/riscv/kernel/cpu.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 4891fd62b95e..e7a4701f0256 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -28,7 +28,7 @@ bool has_fpu __read_mostly;
+diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+index 11ba67f010e7..974d374fd36b 100644
+--- a/arch/riscv/kernel/cpu.c
++++ b/arch/riscv/kernel/cpu.c
+@@ -17,8 +17,8 @@
+ #include <asm/smp.h>
  
- void riscv_fill_hwcap(void)
+ /*
+- * Returns the hart ID of the given device tree node, or -1 if the device tree
+- * node isn't a RISC-V hart.
++ * Returns the hart ID of the given device tree node, or -ENODEV if the node
++ * isn't an enabled and valid RISC-V hart node.
+  */
+ int riscv_of_processor_hartid(struct device_node *node)
  {
--	struct device_node *node = NULL;
-+	struct device_node *node;
- 	const char *isa;
- 	size_t i;
- 	static unsigned long isa2hwcap[256] = {0};
-@@ -46,9 +46,10 @@ void riscv_fill_hwcap(void)
- 	 * We don't support running Linux on hertergenous ISA systems.  For
- 	 * now, we just check the ISA of the first "okay" processor.
- 	 */
--	while ((node = of_find_node_by_type(node, "cpu")))
-+	for_each_of_cpu_node(node) {
- 		if (riscv_of_processor_hartid(node) >= 0)
- 			break;
-+	}
- 	if (!node) {
- 		pr_warn("Unable to find \"cpu\" devicetree entry\n");
- 		return;
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 18cda0e8cf94..6e2813257e03 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -50,12 +50,12 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+@@ -27,34 +27,34 @@ int riscv_of_processor_hartid(struct device_node *node)
  
- void __init setup_smp(void)
- {
--	struct device_node *dn = NULL;
-+	struct device_node *dn;
- 	int hart;
- 	bool found_boot_cpu = false;
- 	int cpuid = 1;
+ 	if (!of_device_is_compatible(node, "riscv")) {
+ 		pr_warn("Found incompatible CPU\n");
+-		return -(ENODEV);
++		return -ENODEV;
+ 	}
  
--	while ((dn = of_find_node_by_type(dn, "cpu"))) {
-+	for_each_of_cpu_node(dn) {
- 		hart = riscv_of_processor_hartid(dn);
- 		if (hart < 0)
- 			continue;
+ 	if (of_property_read_u32(node, "reg", &hart)) {
+ 		pr_warn("Found CPU without hart ID\n");
+-		return -(ENODEV);
++		return -ENODEV;
+ 	}
+ 	if (hart >= NR_CPUS) {
+ 		pr_info("Found hart ID %d, which is above NR_CPUs.  Disabling this hart\n", hart);
+-		return -(ENODEV);
++		return -ENODEV;
+ 	}
+ 
+ 	if (of_property_read_string(node, "status", &status)) {
+ 		pr_warn("CPU with hartid=%d has no \"status\" property\n", hart);
+-		return -(ENODEV);
++		return -ENODEV;
+ 	}
+ 	if (strcmp(status, "okay")) {
+ 		pr_info("CPU with hartid=%d has a non-okay status of \"%s\"\n", hart, status);
+-		return -(ENODEV);
++		return -ENODEV;
+ 	}
+ 
+ 	if (of_property_read_string(node, "riscv,isa", &isa)) {
+ 		pr_warn("CPU with hartid=%d has no \"riscv,isa\" property\n", hart);
+-		return -(ENODEV);
++		return -ENODEV;
+ 	}
+ 	if (isa[0] != 'r' || isa[1] != 'v') {
+ 		pr_warn("CPU with hartid=%d has an invalid ISA of \"%s\"\n", hart, isa);
+-		return -(ENODEV);
++		return -ENODEV;
+ 	}
+ 
+ 	return hart;
 -- 
 2.20.1
 
