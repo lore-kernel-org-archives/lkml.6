@@ -5,103 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CA0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A8AC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E23A2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:22:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64C6F20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfARKWm (ORCPT
+        id S1727020AbfARKWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 05:22:42 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33397 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbfARKWm (ORCPT
+        Fri, 18 Jan 2019 05:22:48 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48982 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfARKWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 05:22:42 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gkRIO-0001vk-GG; Fri, 18 Jan 2019 11:22:40 +0100
-Message-ID: <1547806960.2626.9.camel@pengutronix.de>
-Subject: Re: [PATCH 4/4] irq: imx: irqsteer: add multi output interrupts
- support
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Date:   Fri, 18 Jan 2019 11:22:40 +0100
-In-Reply-To: <AM0PR04MB42111D634F28492434AA9309809C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1547797668-30342-1-git-send-email-aisheng.dong@nxp.com>
-         <1547797668-30342-5-git-send-email-aisheng.dong@nxp.com>
-         <1547801609.2626.5.camel@pengutronix.de>
-         <AM0PR04MB42111D634F28492434AA9309809C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Fri, 18 Jan 2019 05:22:48 -0500
+Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gkRIP-0003vY-3J; Fri, 18 Jan 2019 11:22:41 +0100
+Date:   Fri, 18 Jan 2019 11:22:39 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Michael Schmitz <schmitzmic@gmail.com>
+cc:     netdev@vger.kernel.org, andrew@lunn.ch, fthain@telegraphics.com.au,
+        geert@linux-m68k.org, f.fainelli@gmail.com,
+        linux-m68k@vger.kernel.org, Michael.Karcher@fu-berlin.de,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Subject: Re: [v4,1/9] net-next: phy: new Asix Electronics PHY driver
+In-Reply-To: <1524103526-12240-2-git-send-email-schmitzmic@gmail.com>
+Message-ID: <alpine.DEB.2.21.1901181121101.1647@nanos.tec.linutronix.de>
+References: <1524103526-12240-2-git-send-email-schmitzmic@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 18.01.2019, 09:54 +0000 schrieb Aisheng Dong:
-> > > > From: Lucas Stach [mailto:l.stach@pengutronix.de]
-> > Sent: Friday, January 18, 2019 4:53 PM
-> > Am Freitag, den 18.01.2019, 07:53 +0000 schrieb Aisheng Dong:
-> > > One irqsteer channel can support up to 8 output interrupts.
-> > 
-> > This has been discussed when upstreaming the driver. The controller may
-> > support multiple output IRQs, but only one them is actually used depending on
-> > the CHANCTRL config. There is no use in hooking up all the output IRQs in DT, if
-> > only one of them is actually used. Some of the outputs may not even be visible
-> > to the Linux system, but may belong to a Cortex M4 subsystem. All of those
-> > configurations can be described in DT by changing the upstream interrupt and
-> > "fsl,channel" in a coherent way.
-> > 
-> > Please correct me if my understanding is totally wrong.
-> 
-> I'm afraid your understanding of CHAN seems wrong.
-> (Binding doc of that property needs change as well).
-> 
-> On QXP DC SS, the IRQSTEER supports 512 interrupts with 8 interrupt output
-> Conntected to GIC.
-> The current driver does not support it as it assumes only one interrupt output used.
+Michael,
 
-Okay, so let's take a step back. The description in the QXP RM is
-actually better than what I've seen until now. Still it's totally
-confusing that the "channel" terminology used with different meanings
-in docs. Let's try to avoid this as much as possible.
+On Thu, 19 Apr 2018, Michael Schmitz wrote:
 
-So to get things straight: Each irqsteer controller has a number of IRQ
-groups. All the input IRQs of one group are ORed together to form on
-output IRQ. Depending on the SoC integration, a group can contain 32 or
-64 IRQs, where DCSS irqsteer on MX8M and the big 512 input controllers
-on QXP and QM both use 64 IRQs per group. You are claiming that the
-smaller controllers on both QXP am QM have only 32 IRQs per group,
-right?
+> --- /dev/null
+> +++ b/drivers/net/phy/asix.c
+> @@ -0,0 +1,63 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Driver for Asix PHYs
+> + *
+> + * Author: Michael Schmitz <schmitzmic@gmail.com>
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General  Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + *
+> + */
 
-So the only change that is needed is that the driver needs to know the
-number of input IRQs per group, with a default of 64 to not break DT
-compatibility.
+This license information is broken. The SPDX license identifier and the
+boiler plate text are contradicting. The SPDX id is GPL v2 only and the
+boiler plate says v2 or later.
 
-Also if the connection between IRQ group and output IRQ is fixed, the
-driver should be more clever about handling the chained IRQ. If you
-know which of the upstream IRQs fired you only need to look at the 32
-or 64 IRQ status registers of that specific group, not all of them.
+Please decide which version you want and fix ASAP. If you fix that up
+please add a Fixes: tag and cc stable. While at it please remove the boiler
+plate text as the SPDX id is sufficient and the boiler plate is redundant
+information.
 
-Can you please clarify what the CHANCTRL setting changes in this setup?
+See Documentation/process/license-rules.txt
 
-Regards,
-Lucas
+Thanks,
+
+        tglx
