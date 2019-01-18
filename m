@@ -2,197 +2,212 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C08C1B0FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA4FC5AE5E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00A6D2054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:39:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FgXCjUE0"
+	by mail.kernel.org (Postfix) with ESMTP id 8E07E20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730037AbfARWjE (ORCPT
+        id S1729908AbfARWnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 17:39:04 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39509 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729983AbfARWjE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 17:39:04 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w6so6710195pgl.6
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 14:39:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:user-agent
-         :in-reply-to:references:cc:to:message-id:from:date;
-        bh=I5SeoIlMVFQnmqo5kTGPoB9ahRptz+mc9GjJJ9ZvPk0=;
-        b=FgXCjUE00oRLqKq+4laK23/RN34iNRQP4fSdU5PCmvVzIYmexQdR+8yTtlceOnDzRh
-         YOIKkgdLbRVQneS+JVGAD1S29hReunrl1W2wleJ1aGMRZK9mV2ZSP2w4srSCPc9hTxUZ
-         rNMEqCK+0ji3dS1539tH9Rq6LEnf4WQcKqng0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
-        bh=I5SeoIlMVFQnmqo5kTGPoB9ahRptz+mc9GjJJ9ZvPk0=;
-        b=e5a2W68NVo1N7miwBpKRjLd5EUhOIFd77dn6jzGgnjH5ju91jDcp4jZY8ieyKa+cm1
-         zdk2oofUBcASX1ypQZjpIOoZ6ahOsfOUa/ori7Xz5IuXAnSvsmXlAKLZhO7fwbbweSLX
-         zMkb3ubnHjXJo37JnAX5Ghk4a82gUM2/jmK/t200+2h5u73fHM8EwBC9B2lAIID/q/6j
-         4Q24YpiAI6n29DIREX+kWxsoQ5OkYXNBAdTFLUsS7GKKCognzOEp3Y29pDjAkDmEseNw
-         Zq7mE2gBA3qdwA/j1O2YlyMXlNhXsMRiB1WCLguggfZf6JDmbvCxqi3ThCsICtheC1ND
-         /pMQ==
-X-Gm-Message-State: AJcUukfAAud7L4FQkABfsZRofnWiYwY0IZwICoiOCiaouUxfFyYdVgRR
-        NX78r1Ew8r85opRbs0yVW9rwWA==
-X-Google-Smtp-Source: ALg8bN4IbL4DwHqGVWJnoGwKFAepuJN/8WU50MKXZWI+jOS+YTW+zbVEPV5SD+yPanPTTKSSSj7QJg==
-X-Received: by 2002:a63:557:: with SMTP id 84mr19077204pgf.411.1547851143095;
-        Fri, 18 Jan 2019 14:39:03 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id v12sm5919314pgg.41.2019.01.18.14.39.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Jan 2019 14:39:02 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 7/8] phy: qcom-qmp: Move UFS phy to phy_poweron/off
-User-Agent: alot/0.8
-In-Reply-To: <20190111230129.127037-8-evgreen@chromium.org>
-References: <20190111230129.127037-1-evgreen@chromium.org> <20190111230129.127037-8-evgreen@chromium.org>
-Cc:     Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        linux-kernel@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-Message-ID: <154785114149.169631.5500002081507832594@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-Date:   Fri, 18 Jan 2019 14:39:01 -0800
+        Fri, 18 Jan 2019 17:43:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729792AbfARWnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 17:43:23 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9BB53356E5;
+        Fri, 18 Jan 2019 22:43:22 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D80DF60851;
+        Fri, 18 Jan 2019 22:43:14 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>
+Cc:     Eric Paris <eparis@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak59 V4] audit: add syscall information to CONFIG_CHANGE records
+Date:   Fri, 18 Jan 2019 17:42:48 -0500
+Message-Id: <dc7ef993460ee145eb5cc897ba6e2d84db50bafc.1547826963.git.rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 18 Jan 2019 22:43:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2019-01-11 15:01:28)
-> For UFS, move the actual firing up of the PHY to phy_poweron and
-> phy_poweroff callbacks, rather than init/exit. UFS calls
-> phy_poweroff during suspend, so now all clocks and regulators for
-> the phy can be powered down during suspend.
->=20
-> Signed-off-by: Evan Green <evgreen@chromium.org>
->=20
-> ---
->=20
->  drivers/phy/qualcomm/phy-qcom-qmp.c | 82 ++++++++---------------------
->  1 file changed, 23 insertions(+), 59 deletions(-)
->=20
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/p=
-hy-qcom-qmp.c
-> index eb1cac8f0fd4e..7766c6384d0a8 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> @@ -1224,7 +1223,6 @@ static int qcom_qmp_phy_init(struct phy *phy)
->         int ret;
-> =20
->         dev_vdbg(qmp->dev, "Initializing QMP phy\n");
-> -
->         if (cfg->has_ufsphy_reset) {
->                 /*
->                  * Get UFS reset, which is delayed until now to avoid a
+Tie syscall information to all CONFIG_CHANGE calls since they are all a
+result of user actions.
 
-Nitpick: Drop this hunk.
+Exclude user records from syscall context:
+Since the function audit_log_common_recv_msg() is shared by a number of
+AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
+and since the AUDIT_CONFIG_CHANGE message type has been converted to a
+syscall accompanied record type, special-case the AUDIT_USER_* range of
+messages so they remain standalone records.
 
-> @@ -1360,7 +1353,6 @@ static int qcom_qmp_phy_exit(struct phy *phy)
-> =20
->         /* Put PHY into POWER DOWN state: active low */
->         qphy_clrbits(qphy->pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
-> -
->         if (cfg->has_lane_rst)
->                 reset_control_assert(qphy->lane_rst);
-> =20
+See: https://github.com/linux-audit/audit-kernel/issues/59
+See: https://github.com/linux-audit/audit-kernel/issues/50
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+Changelog:
+v4:
+- rebase on v5.0-rc1
+- remove audit_log_config_change_alt() and call
+  audit_log_common_recv_msg() directly
+- remove audit_tree_log_remove_rule() change superceded by patch v3-3/4
 
-And this hunk.
+Passes audit-testsuite, no issues identified with ausearch-test.
 
-> @@ -1371,44 +1363,6 @@ static int qcom_qmp_phy_exit(struct phy *phy)
->         return 0;
->  }
-> =20
-> -static int qcom_qmp_phy_poweron(struct phy *phy)
-> -{
-> -       struct qmp_phy *qphy =3D phy_get_drvdata(phy);
-> -       struct qcom_qmp *qmp =3D qphy->qmp;
-> -       const struct qmp_phy_cfg *cfg =3D qmp->cfg;
-> -       void __iomem *pcs =3D qphy->pcs;
-> -       void __iomem *status;
-> -       unsigned int mask, val;
-> -       int ret =3D 0;
-> -
-> -       if (cfg->type !=3D PHY_TYPE_UFS)
-> -               return 0;
-> -
-> -       /*
-> -        * For UFS PHY that has not software reset control, serdes start
-> -        * should only happen when UFS driver explicitly calls phy_power_=
-on
-> -        * after it deasserts software reset.
-> -        */
-> -       if (cfg->no_pcs_sw_reset && !qmp->phy_initialized &&
-> -           (qmp->init_count !=3D 0)) {
-> -               /* start SerDes and Phy-Coding-Sublayer */
-> -               qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], cfg->start_=
-ctrl);
-> -
-> -               status =3D pcs + cfg->regs[QPHY_PCS_READY_STATUS];
-> -               mask =3D cfg->mask_pcs_ready;
-> -
-> -               ret =3D readl_poll_timeout(status, val, !(val & mask), 1,
-> -                                        PHY_INIT_COMPLETE_TIMEOUT);
+ kernel/audit.c          | 27 ++++++++++++++++++---------
+ kernel/audit_fsnotify.c |  2 +-
+ kernel/audit_watch.c    |  2 +-
+ kernel/auditfilter.c    |  2 +-
+ 4 files changed, 21 insertions(+), 12 deletions(-)
 
-So we never need to poll this bit anymore?
-
-> -               if (ret) {
-> -                       dev_err(qmp->dev, "phy initialization timed-out\n=
-");
-> -                       return ret;
-> -               }
-> -               qmp->phy_initialized =3D true;
-> -       }
-> -
-> -       return ret;
-> -}
-> -
->  static int qcom_qmp_phy_set_mode(struct phy *phy,
->                                  enum phy_mode mode, int submode)
->  {
-> @@ -1658,9 +1612,15 @@ static int phy_pipe_clk_register(struct qcom_qmp *=
-qmp, struct device_node *np)
->  }
-> =20
->  static const struct phy_ops qcom_qmp_phy_gen_ops =3D {
-> -       .init           =3D qcom_qmp_phy_init,
-> -       .exit           =3D qcom_qmp_phy_exit,
-> -       .power_on       =3D qcom_qmp_phy_poweron,
-> +       .init           =3D qcom_qmp_phy_enable,
-> +       .exit           =3D qcom_qmp_phy_disable,
-> +       .set_mode       =3D qcom_qmp_phy_set_mode,
-> +       .owner          =3D THIS_MODULE,
-> +};
-> +
-> +static const struct phy_ops qcom_qmp_ufs_ops =3D {
-> +       .power_on       =3D qcom_qmp_phy_enable,
-> +       .power_off      =3D qcom_qmp_phy_disable,
->         .set_mode       =3D qcom_qmp_phy_set_mode,
->         .owner          =3D THIS_MODULE,
->  };
-
-So the UFS and the non-UFS phys will use the same single function, but
-the callers of the phys will see that phy_power_on() powers on the phy
-for UFS but does nothing for non-UFS devices? Do the users of this
-common phy call the API differently between drivers? Kishon, is there
-guidance on how phys are supposed to be used by drivers?
+diff --git a/kernel/audit.c b/kernel/audit.c
+index d412fb4ae6d5..ca55ccb46b76 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -396,7 +396,7 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
+ 	struct audit_buffer *ab;
+ 	int rc = 0;
+ 
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
++	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONFIG_CHANGE);
+ 	if (unlikely(!ab))
+ 		return rc;
+ 	audit_log_format(ab, "op=set %s=%u old=%u ", function_name, new, old);
+@@ -1053,7 +1053,8 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
+ 	return err;
+ }
+ 
+-static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
++static void audit_log_common_recv_msg(struct audit_context *context,
++					struct audit_buffer **ab, u16 msg_type)
+ {
+ 	uid_t uid = from_kuid(&init_user_ns, current_uid());
+ 	pid_t pid = task_tgid_nr(current);
+@@ -1063,7 +1064,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+ 		return;
+ 	}
+ 
+-	*ab = audit_log_start(NULL, GFP_KERNEL, msg_type);
++	*ab = audit_log_start(context, GFP_KERNEL, msg_type);
+ 	if (unlikely(!*ab))
+ 		return;
+ 	audit_log_format(*ab, "pid=%d uid=%u ", pid, uid);
+@@ -1071,6 +1072,11 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+ 	audit_log_task_context(*ab);
+ }
+ 
++static inline void audit_log_user_recv_msg(struct audit_buffer **ab, u16 msg_type)
++{
++	audit_log_common_recv_msg(NULL, ab, msg_type);
++}
++
+ int is_audit_feature_set(int i)
+ {
+ 	return af.features & AUDIT_FEATURE_TO_MASK(i);
+@@ -1338,7 +1344,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+ 				if (err)
+ 					break;
+ 			}
+-			audit_log_common_recv_msg(&ab, msg_type);
++			audit_log_user_recv_msg(&ab, msg_type);
+ 			if (msg_type != AUDIT_USER_TTY)
+ 				audit_log_format(ab, " msg='%.*s'",
+ 						 AUDIT_MESSAGE_TEXT_MAX,
+@@ -1361,7 +1367,8 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+ 		if (nlmsg_len(nlh) < sizeof(struct audit_rule_data))
+ 			return -EINVAL;
+ 		if (audit_enabled == AUDIT_LOCKED) {
+-			audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
++			audit_log_common_recv_msg(audit_context(), &ab,
++						  AUDIT_CONFIG_CHANGE);
+ 			audit_log_format(ab, " op=%s audit_enabled=%d res=0",
+ 					 msg_type == AUDIT_ADD_RULE ?
+ 						"add_rule" : "remove_rule",
+@@ -1376,7 +1383,8 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+ 		break;
+ 	case AUDIT_TRIM:
+ 		audit_trim_trees();
+-		audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
++		audit_log_common_recv_msg(audit_context(), &ab,
++					  AUDIT_CONFIG_CHANGE);
+ 		audit_log_format(ab, " op=trim res=1");
+ 		audit_log_end(ab);
+ 		break;
+@@ -1406,8 +1414,8 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+ 		/* OK, here comes... */
+ 		err = audit_tag_tree(old, new);
+ 
+-		audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
+-
++		audit_log_common_recv_msg(audit_context(), &ab,
++					  AUDIT_CONFIG_CHANGE);
+ 		audit_log_format(ab, " op=make_equiv old=");
+ 		audit_log_untrustedstring(ab, old);
+ 		audit_log_format(ab, " new=");
+@@ -1474,7 +1482,8 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+ 		old.enabled = t & AUDIT_TTY_ENABLE;
+ 		old.log_passwd = !!(t & AUDIT_TTY_LOG_PASSWD);
+ 
+-		audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
++		audit_log_common_recv_msg(audit_context(), &ab,
++					  AUDIT_CONFIG_CHANGE);
+ 		audit_log_format(ab, " op=tty_set old-enabled=%d new-enabled=%d"
+ 				 " old-log_passwd=%d new-log_passwd=%d res=%d",
+ 				 old.enabled, s.enabled, old.log_passwd,
+diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+index cf4512a33675..37ae95cfb7f4 100644
+--- a/kernel/audit_fsnotify.c
++++ b/kernel/audit_fsnotify.c
+@@ -127,7 +127,7 @@ static void audit_mark_log_rule_change(struct audit_fsnotify_mark *audit_mark, c
+ 
+ 	if (!audit_enabled)
+ 		return;
+-	ab = audit_log_start(NULL, GFP_NOFS, AUDIT_CONFIG_CHANGE);
++	ab = audit_log_start(audit_context(), GFP_NOFS, AUDIT_CONFIG_CHANGE);
+ 	if (unlikely(!ab))
+ 		return;
+ 	audit_log_session_info(ab);
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 20ef9ba134b0..e8d1adeb2223 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -242,7 +242,7 @@ static void audit_watch_log_rule_change(struct audit_krule *r, struct audit_watc
+ 
+ 	if (!audit_enabled)
+ 		return;
+-	ab = audit_log_start(NULL, GFP_NOFS, AUDIT_CONFIG_CHANGE);
++	ab = audit_log_start(audit_context(), GFP_NOFS, AUDIT_CONFIG_CHANGE);
+ 	if (!ab)
+ 		return;
+ 	audit_log_session_info(ab);
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index bf309f2592c4..26a80a9d43a9 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1091,7 +1091,7 @@ static void audit_log_rule_change(char *action, struct audit_krule *rule, int re
+ 	if (!audit_enabled)
+ 		return;
+ 
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
++	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONFIG_CHANGE);
+ 	if (!ab)
+ 		return;
+ 	audit_log_session_info(ab);
+-- 
+1.8.3.1
 
