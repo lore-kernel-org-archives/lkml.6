@@ -2,82 +2,70 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 226A8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314BCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A2020850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E4C20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:54:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akjH+2eW"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lue99LFx";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DT782eNi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfARDxv (ORCPT
+        id S1727077AbfARDyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 22:53:51 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37383 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfARDxu (ORCPT
+        Thu, 17 Jan 2019 22:54:13 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44684 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfARDyN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 22:53:50 -0500
-Received: by mail-pg1-f193.google.com with SMTP id c25so5400301pgb.4;
-        Thu, 17 Jan 2019 19:53:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7yhRch6FR1X0atml6/N3oFIVRlkdBvqnao2ux+lG9kY=;
-        b=akjH+2eWJp+159BLzoIqxs6OSGZ/iV3uC0DA6rs3FLF1pYSm5f2IqhlR4FxvhewwTp
-         jiwSjqQYO3kt2LuqAVk/NuFSx0L5m57F3VjXP9EbJ5S7Xf96H9dNXIkuSEYqKCwsx+bw
-         wpSkfUAMWq65uzPu9yDvS3I+9xD47IpG+kpLt+Q1wYJHjWReONj+UUF1Oe3KK09Q5SMH
-         KdTXmRVyljMPbbxOYiGWaB7aNHQf28ut12Iyj9gvzFjcOMSchFb1tqtLD+hS+PyeX38d
-         VKQQPVVCXtLtpOsASePsV9qGOcNpFa1u3Maw+2ovbtNR+vIsq7Spo30VCwOmwH3lARwL
-         zYaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7yhRch6FR1X0atml6/N3oFIVRlkdBvqnao2ux+lG9kY=;
-        b=lkBqx+a/+EN2V4B/i2OVcXVUmJQ0xtEv6mZxjiZGLWCzwFT82+BWqgxuJJbPOz1G8c
-         k4burtb0n8Rz2zoeQadmq5es9NZJvGEtX88Z/DpI9cDYesti1Xr7bM6+DLxQiY1vPce3
-         6E5Oj1Df41RaW82KMGJvzKsr+JwjKhm2eXnIANFNcupfxkxEGKKy+Svlsy+3iGm1Ff6z
-         DiUwQUXOyiGfyKa1i7DDfT+gTn0vdc6BI+hv/mdiEEbpRP0SP5/ss4Qgo9C8sop85inF
-         6p3tXefGPbM6fKA27M5cZaXa/G83At22+9v37eW0kKQ4MxnzIZwHdYBm+R0oPWsNGgP7
-         SvNw==
-X-Gm-Message-State: AJcUukfv585mvNajLzLQDxcEmDmZzz0ToafeDDXS8iO7ksUOHMALc3YU
-        lHSZkzyd0BxCNEaXht9Mvw+St3kQ
-X-Google-Smtp-Source: ALg8bN6kpFtPikooXqnq3ypqTXw2kfkZv2UM/0Kf9AJL3fT3PGNuNVJBeWV4Q72EJKj16gYP44ZIJg==
-X-Received: by 2002:a62:68c5:: with SMTP id d188mr18217276pfc.194.1547783629598;
-        Thu, 17 Jan 2019 19:53:49 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p7sm4954066pfa.22.2019.01.17.19.53.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 19:53:48 -0800 (PST)
-Subject: Re: [PATCHv2] watchdog: qcom: Add suspend/resume support
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20190117151942.6092-1-saiprakash.ranjan@codeaurora.org>
- <20190117181603.GA14800@roeck-us.net>
- <bae21498-32be-6842-adce-1fc5b9c7e263@codeaurora.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <a10264b5-74a2-2d80-a523-2ab1f4ca02b9@roeck-us.net>
-Date:   Thu, 17 Jan 2019 19:53:45 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 17 Jan 2019 22:54:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 510866081E; Fri, 18 Jan 2019 03:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547783652;
+        bh=NlFfjr87qCIIPD1hOrjKVzbXYhAmAHTSTQiPHZhX57w=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=lue99LFxBkj8crAQ5dkuErYGLBlsrbgHicDuod5KxefBre6EE+JlgcFluA4FkmCae
+         oviVHJ2cP7P7Ce2khGGd0fQQ73bIChC1TFiMKpsj2p3V8+3vel2SJv+Lb7/ES2ucLh
+         WHno15ZQ1v5W9/4iY28cf60d/Q+K6D0lLpj1w2r8=
+Received: from [10.79.128.224] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B584760734;
+        Fri, 18 Jan 2019 03:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547783651;
+        bh=NlFfjr87qCIIPD1hOrjKVzbXYhAmAHTSTQiPHZhX57w=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DT782eNivilCdxHmrEmMJyHc5lpOBFl1YHp9NOPMbfHS9pJHY44dWTluLGrw/ZgC1
+         L4UxFztao6YQ2nDG/8Z0j8q/MeNjVqWe2OL/sZoyS/VYRnIgzxjCW9iDy6nIEmRHw8
+         wiCbg16sskq/qDsPdDHx/qOa5XwJEMaFMLhzjwww=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B584760734
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v11 0/9] Add power domain driver for corners on
+ msm8996/sdm845
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        MSM <linux-arm-msm@vger.kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190110040209.6028-1-rnayak@codeaurora.org>
+ <90f8bfec-f1dd-6031-9d98-468b29627a2f@free.fr>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <6da2a843-c8d9-70f6-733d-e4bbb3947f04@codeaurora.org>
+Date:   Fri, 18 Jan 2019 09:24:07 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <bae21498-32be-6842-adce-1fc5b9c7e263@codeaurora.org>
+In-Reply-To: <90f8bfec-f1dd-6031-9d98-468b29627a2f@free.fr>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -86,23 +74,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 6:58 PM, Sai Prakash Ranjan wrote:
-> On 1/17/2019 11:46 PM, Guenter Roeck wrote:
->> On Thu, Jan 17, 2019 at 08:49:42PM +0530, Sai Prakash Ranjan wrote:
->>> This adds the support for qcom watchdog suspend and resume
->>> when entering and exiting deep sleep states. Otherwise
->>> having watchdog active after suspend would result in unwanted
->>> crashes/resets if resume happens after a long time.
->>>
->>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->>
->> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->>
-> 
-> Thanks Guenter. Should I send a v3 with your reviewed-by?
-> 
 
-I add it to my watchdog-next branch and Wim will pick it up from there.
-No need to resend.
 
-Guenter
+On 1/17/2019 8:33 PM, Marc Gonzalez wrote:
+> On 10/01/2019 05:02, Rajendra Nayak wrote:
+> 
+>> Rajendra Nayak (9):
+>>    dt-bindings: opp: Introduce opp-level bindings
+>>    OPP: Add support for parsing the 'opp-level' property
+>>    dt-bindings: power: Add qcom rpm power domain driver bindings
+>>    soc: qcom: rpmpd: Add a Power domain driver to model corners
+>>    soc: qcom: rpmpd: Add support for get/set performance state
+>>    arm64: dts: msm8996: Add rpmpd device node
+>>    soc: qcom: rpmhpd: Add RPMh power domain driver
+>>    arm64: dts: sdm845: Add rpmh powercontroller node
+>>    soc: qcom: rpmhpd: Mark mx as a parent for cx
+>>
+>>   Documentation/devicetree/bindings/opp/opp.txt |   3 +
+>>   .../devicetree/bindings/power/qcom,rpmpd.txt  | 145 +++++++
+>>   arch/arm64/boot/dts/qcom/msm8996.dtsi         |  34 ++
+>>   arch/arm64/boot/dts/qcom/sdm845.dtsi          |  51 +++
+> 
+> Whenever I see these patches adding support for msm8996 (aka sdm820) and sdm845
+> simultaneously, I think to myself: "Why is sdm835 being left out? It was released
+> between sdm820 and sdm845, it cannot be /that/ different."
+
+It isn't that different, and it should be quite straight forward to add support for it
+with the rpmpd driver (the rpmhpd is for platforms sdm845 and beyond which use rpmh)
+
+When I started working on these patches, support for sdm835 upstream was non-existent
+so I started off with what was the better supported one which was the 820 (msm8996).
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
