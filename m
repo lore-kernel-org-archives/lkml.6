@@ -2,237 +2,91 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BC9C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1968C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01EC920823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A484620823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547832540;
+	bh=2siYX7/y5FZ7VUQHcrz6CCCX+G6ycROtSDFIm9TdxRY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DI51RUu94WIYS4dWkGkSWo/NzFnHJxJ0YGhetwxyt5aHEaL8bwYkfDohg0IHNxs4o
+	 rSsiXVdkSte4UwJAG6OXgreo35fpu/lVEs8J3ZKkZFHXyLeozRZgIFgs2kAQivOxyJ
+	 3OtLKDF3SLGnrouc3ec2KEE0DWWLaXJlVDWNwixU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbfARR1e (ORCPT
+        id S1728049AbfARR27 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:27:34 -0500
-Received: from foss.arm.com ([217.140.101.70]:35352 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727285AbfARR1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:27:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C50880D;
-        Fri, 18 Jan 2019 09:27:33 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 474043F7BE;
-        Fri, 18 Jan 2019 09:27:31 -0800 (PST)
-Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        daniel.thompson@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        Oleg Nesterov <oleg@redhat.com>, joel@joelfernandes.org
-References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
- <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
- <20190118163556.GB3578@e103592.cambridge.arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <2bdc47ca-5aa0-24a2-b7fe-7b59158698e2@arm.com>
-Date:   Fri, 18 Jan 2019 17:27:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 18 Jan 2019 12:28:59 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53434 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbfARR26 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:28:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2siYX7/y5FZ7VUQHcrz6CCCX+G6ycROtSDFIm9TdxRY=; b=V4wK1Opz0rnKfoS5guYfC7Gc2
+        fW4QKXf299Lh8YaPPq0WR5+POWQF1HgN3WQ0U0xWoK9G2vqEHBR/Nq3xXwZbBvoIiL7mBeMjJa/wm
+        0smO44bu/ucUwRY1GhoqnGiku7NTv+Ak1nHoLFnUAlf9mMdW731p59l9BbRRq082895/8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gkXwt-0005Eu-Lq; Fri, 18 Jan 2019 17:28:55 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id EC3C911276E7; Fri, 18 Jan 2019 17:28:54 +0000 (GMT)
+Date:   Fri, 18 Jan 2019 17:28:54 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH 2/2] regulator: lochnagar: Remove redundant MODULE_ALIAS
+Message-ID: <20190118172854.GC6260@sirena.org.uk>
+References: <20190118113631.23706-1-ckeepax@opensource.cirrus.com>
+ <20190118113631.23706-2-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-In-Reply-To: <20190118163556.GB3578@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="FsscpQKzF/jJk6ya"
+Content-Disposition: inline
+In-Reply-To: <20190118113631.23706-2-ckeepax@opensource.cirrus.com>
+X-Cookie: You can't get there from here.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--FsscpQKzF/jJk6ya
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 18/01/2019 16:35, Dave Martin wrote:
-> On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
->> Instead disabling interrupts by setting the PSR.I bit, use a priority
->> higher than the one used for interrupts to mask them via PMR.
->>
->> When using PMR to disable interrupts, the value of PMR will be used
->> instead of PSR.[DAIF] for the irqflags.
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> Cc: Oleg Nesterov <oleg@redhat.com>
->> ---
->>  arch/arm64/include/asm/efi.h      |  11 ++++
->>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
->>  2 files changed, 106 insertions(+), 28 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
->> index 7ed3208..134ff6e 100644
->> --- a/arch/arm64/include/asm/efi.h
->> +++ b/arch/arm64/include/asm/efi.h
->> @@ -44,6 +44,17 @@
->>  
->>  #define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
->>  
->> +#define arch_efi_save_flags(state_flags)		\
->> +	do {						\
->> +		(state_flags) =	read_sysreg(daif);	\
->> +	} while (0)
->> +
->> +#define arch_efi_restore_flags(state_flags)		\
->> +	do {						\
->> +		write_sysreg(state_flags, daif);	\
->> +	} while (0)
->> +
->> +
-> 
-> Randomly commenting a few minor nits as I glance down my mailbox...
-> 
-> There's no need to protect single statements with do { } while(0).
-> 
-> Just protect an expression statement that could be misparsed with ( ).
-> 
-> ->
-> 
-> #define arch_efi_save_flags(state_flags) ((state_flags) = read_sysreg(daif))
+On Fri, Jan 18, 2019 at 11:36:31AM +0000, Charles Keepax wrote:
+> The module alias has no effect as the driver can only be loaded through
+> device tree at this time.
 
-For the efi_save_flags(), I wanted to avoid it getting used as an
-expression.
+It also does no harm...
 
-Would casting the assignment expression to (void) be acceptable?
+--FsscpQKzF/jJk6ya
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> #define arch_efi_restore_flags(state_flags) write_sysreg(state_flags, daif)
+-----BEGIN PGP SIGNATURE-----
 
-For this one, write_sysreg() is already a statement, so yes, I
-definitely don't need a do { } while (0) here.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxCDNYACgkQJNaLcl1U
+h9CyNgf9FotB1DQahteUKuvmJNNjQOuUk1YtGJV7SJf4O0FOqoMKgz8u9H3lskOe
+jEwLl/+i4HwFT5x29q8vWsu+Xqz3lLMLpEdX+WddYQyYR1ASN6gHY39R9TKUQwEl
+lJ4sPGGjzVydY35NQh0AqN67tLVdLIS++iSEfa4Rm9+iyF1XkqS+U5YhHFBvXslj
+yYRUZ3ljNE/qSqdyqR1XAGsNL9dsJ9tZJSSiFFaLQo4jJQZCMU0yF0e8TbbrKeDI
+pssN3dsowW9UUe0oEcRBpLjLAXVMgf5la/ljxc+z8R6VvD3EPom/zQZfni1xGErI
+t5Ssyze4VIS5nbEekdUPYa0n9Ns/2w==
+=JtL2
+-----END PGP SIGNATURE-----
 
-> 
-> [...]
-> 
->> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
->> index 24692ed..fa3b06f 100644
->> --- a/arch/arm64/include/asm/irqflags.h
->> +++ b/arch/arm64/include/asm/irqflags.h
->> @@ -18,7 +18,9 @@
->>  
->>  #ifdef __KERNEL__
->>  
->> +#include <asm/alternative.h>
->>  #include <asm/ptrace.h>
->> +#include <asm/sysreg.h>
->>  
->>  /*
->>   * Aarch64 has flags for masking: Debug, Asynchronous (serror), Interrupts and
->> @@ -36,47 +38,96 @@
-> 
-> [...]
-> 
->>  /*
->> + * Having two ways to control interrupt status is a bit complicated. Some
->> + * locations like exception entries will have PSR.I bit set by the architecture
->> + * while PMR is unmasked.
->> + * We need the irqflags to represent that interrupts are disabled in such cases.
->> + *
->> + * For this, we lower the value read from PMR when the I bit is set so it is
->> + * considered as an irq masking priority. (With PMR, lower value means masking
->> + * more interrupts).
->> + */
->> +#define _get_irqflags(daif_bits, pmr)					\
->> +({									\
->> +	unsigned long flags;						\
->> +									\
->> +	BUILD_BUG_ON(GIC_PRIO_IRQOFF < (GIC_PRIO_IRQON & ~PSR_I_BIT));	\
->> +	asm volatile(ALTERNATIVE(					\
->> +		"mov	%0, %1\n"					\
->> +		"nop\n"							\
->> +		"nop",							\
->> +		"and	%0, %1, #" __stringify(PSR_I_BIT) "\n"		\
->> +		"mvn	%0, %0\n"					\
->> +		"and	%0, %0, %2",					\
->> +		ARM64_HAS_IRQ_PRIO_MASKING)				\
->> +		: "=&r" (flags)						\
->> +		: "r" (daif_bits), "r" (pmr)				\
->> +		: "memory");						\
->> +									\
->> +	flags;								\
->> +})
-> 
-> Nit: does this need to be a macro?
-> 
-> ({ ... }) is mildly gross and it's preferable to avoid it if the code
-> works just as well without...
-> 
-> pmr would need to be passed as a pointer, with "r" (*pmr) in the asm,
-> but I think it would compile down to precisely the same code.
-> 
-
-The only motivation for it to be a macro was to be able to #undef it
-after its use.
-
-But with Catalin's suggestion, looks like we can makes things simple and
-avoid having a separate macro/function.
-
->> +
->> +/*
->>   * Save the current interrupt enable state.
->>   */
->>  static inline unsigned long arch_local_save_flags(void)
->>  {
->> -	unsigned long flags;
->> -	asm volatile(
->> -		"mrs	%0, daif		// arch_local_save_flags"
->> -		: "=r" (flags)
->> +	unsigned long daif_bits;
->> +	unsigned long pmr; // Only used if alternative is on
->> +
->> +	daif_bits = read_sysreg(daif);
->> +
->> +	// Get PMR
->> +	asm volatile(ALTERNATIVE(
->> +			"nop",
->> +			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1),
->> +			ARM64_HAS_IRQ_PRIO_MASKING)
->> +		: "=&r" (pmr)
-> 
-> Why earlyclobber?
->>>  		:
->>  		: "memory");
-> 
-> [...]
-> 
->> @@ -85,16 +136,32 @@ static inline unsigned long arch_local_save_flags(void)
-> 
-> [...]
-> 
->>  static inline int arch_irqs_disabled_flags(unsigned long flags)
->>  {
->> -	return flags & PSR_I_BIT;
->> +	int res;
->> +
->> +	asm volatile(ALTERNATIVE(
->> +			"and	%w0, %w1, #" __stringify(PSR_I_BIT) "\n"
->> +			"nop",
->> +			"cmp	%w1, #" __stringify(GIC_PRIO_IRQOFF) "\n"
->> +			"cset	%w0, ls",
->> +			ARM64_HAS_IRQ_PRIO_MASKING)
->> +		: "=&r" (res)
-> 
-> Why earlyclobber?  %0 is not written before the reading of any input
-> argument so far as I can see, in either alternative.
-> 
-
-I didn't really understand what the earlyclobber semantic was, thanks
-for explaining it.
-
-Thanks,
-
--- 
-Julien Thierry
+--FsscpQKzF/jJk6ya--
