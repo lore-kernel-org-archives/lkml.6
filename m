@@ -2,201 +2,98 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3269C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BB3C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 948162086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B235A2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729231AbfARTA1 (ORCPT
+        id S1729282AbfARTBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:00:27 -0500
-Received: from mga14.intel.com ([192.55.52.115]:33139 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728989AbfARTAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:00:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 11:00:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="128924203"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga001.jf.intel.com with ESMTP; 18 Jan 2019 11:00:24 -0800
-Message-ID: <8d8c0ca38f329986084e6a8a4971fb4b3a1727ee.camel@linux.intel.com>
-Subject: Re: [driver-core PATCH v9 1/9] driver core: Establish order of
- operations for device_add and device_del via bitflag
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, mcgrof@kernel.org,
-        linux-nvdimm@lists.01.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
-        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
-        dave.jiang@intel.com, bvanassche@acm.org
-Date:   Fri, 18 Jan 2019 11:00:24 -0800
-In-Reply-To: <20190118155425.GB5009@kroah.com>
-References: <154466182249.9126.3905559325944768059.stgit@ahduyck-desk1.jf.intel.com>
-         <154466189880.9126.10737761541647369077.stgit@ahduyck-desk1.jf.intel.com>
-         <20190118155425.GB5009@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
+        Fri, 18 Jan 2019 14:01:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49592 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728583AbfARTBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 14:01:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1BDA3ADAA;
+        Fri, 18 Jan 2019 19:01:19 +0000 (UTC)
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Josh Snyder <joshs@netflix.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Chinner <david@fromorbit.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+References: <20190110070355.GJ27534@dastard>
+ <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
+ <20190110122442.GA21216@nautica>
+ <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
+ <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com>
+ <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+ <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
+ <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
+ <20190116054613.GA11670@nautica>
+ <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
+ <20190116063430.GA22938@nautica>
+ <CA+t-nXTfdo07EBvVo+mu8SRhrVyB=mEPLDQikHfpJue1jALJtQ@mail.gmail.com>
+ <a056deb7-9c11-612e-2b3a-6482acca4ff6@suse.cz>
+ <CAHk-=wi0MXm4zTC6jjS1TBfbHW_sQq_OcyfeLBNGJ29m88pt+g@mail.gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <362c8696-b308-53b7-2014-261530b4abcb@suse.cz>
+Date:   Fri, 18 Jan 2019 19:58:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wi0MXm4zTC6jjS1TBfbHW_sQq_OcyfeLBNGJ29m88pt+g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-01-18 at 16:54 +0100, Greg KH wrote:
-> On Wed, Dec 12, 2018 at 04:44:58PM -0800, Alexander Duyck wrote:
-> > Add an additional bit flag to the device struct named "dead".
-> > 
-> > This additional flag provides a guarantee that when a device_del is
-> > executed on a given interface an async worker will not attempt to attach
-> > the driver following the earlier device_del call. Previously this
-> > guarantee was not present and could result in the device_del call
-> > attempting to remove a driver from an interface only to have the async
-> > worker attempt to probe the driver later when it finally completes the
-> > asynchronous probe call.
-> > 
-> > One additional change added was that I pulled the check for dev->driver
-> > out of the __device_attach_driver call and instead placed it in the
-> > __device_attach_async_helper call. This was motivated by the fact that the
-> > only other caller of this, __device_attach, had already taken the
-> > device_lock() and checked for dev->driver. Instead of testing for this
-> > twice in this path it makes more sense to just consolidate the dev->dead
-> > and dev->driver checks together into one set of checks.
-> > 
-> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/base/core.c    |   11 +++++++++++
-> >  drivers/base/dd.c      |   22 +++++++++++-----------
-> >  include/linux/device.h |    5 +++++
-> >  3 files changed, 27 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index 0073b09bb99f..950e25495726 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -2080,6 +2080,17 @@ void device_del(struct device *dev)
-> >  	struct kobject *glue_dir = NULL;
-> >  	struct class_interface *class_intf;
-> >  
-> > +	/*
-> > +	 * Hold the device lock and set the "dead" flag to guarantee that
-> > +	 * the update behavior is consistent with the other bitfields near
-> > +	 * it and that we cannot have an asynchronous probe routine trying
-> > +	 * to run while we are tearing out the bus/class/sysfs from
-> > +	 * underneath the device.
-> > +	 */
-> > +	device_lock(dev);
-> > +	dev->dead = true;
-> > +	device_unlock(dev);
-> > +
-> >  	/* Notify clients of device removal.  This call must come
-> >  	 * before dpm_sysfs_remove().
-> >  	 */
-> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> > index 88713f182086..74c194ac99df 100644
-> > --- a/drivers/base/dd.c
-> > +++ b/drivers/base/dd.c
-> > @@ -731,15 +731,6 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
-> >  	bool async_allowed;
-> >  	int ret;
-> >  
-> > -	/*
-> > -	 * Check if device has already been claimed. This may
-> > -	 * happen with driver loading, device discovery/registration,
-> > -	 * and deferred probe processing happens all at once with
-> > -	 * multiple threads.
-> > -	 */
-> > -	if (dev->driver)
-> > -		return -EBUSY;
-> > -
-> >  	ret = driver_match_device(drv, dev);
-> >  	if (ret == 0) {
-> >  		/* no match */
-> > @@ -774,6 +765,15 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
-> >  
-> >  	device_lock(dev);
-> >  
-> > +	/*
-> > +	 * Check if device has already been removed or claimed. This may
-> > +	 * happen with driver loading, device discovery/registration,
-> > +	 * and deferred probe processing happens all at once with
-> > +	 * multiple threads.
-> > +	 */
-> > +	if (dev->dead || dev->driver)
-> > +		goto out_unlock;
-> > +
-> >  	if (dev->parent)
-> >  		pm_runtime_get_sync(dev->parent);
-> >  
-> > @@ -784,7 +784,7 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
-> >  
-> >  	if (dev->parent)
-> >  		pm_runtime_put(dev->parent);
-> > -
-> > +out_unlock:
-> >  	device_unlock(dev);
-> >  
-> >  	put_device(dev);
-> > @@ -897,7 +897,7 @@ static int __driver_attach(struct device *dev, void *data)
-> >  	if (dev->parent && dev->bus->need_parent_lock)
-> >  		device_lock(dev->parent);
-> >  	device_lock(dev);
-> > -	if (!dev->driver)
-> > +	if (!dev->dead && !dev->driver)
-> >  		driver_probe_device(drv, dev);
-> >  	device_unlock(dev);
-> >  	if (dev->parent && dev->bus->need_parent_lock)
-> > diff --git a/include/linux/device.h b/include/linux/device.h
-> > index 1b25c7a43f4c..f73dad81e811 100644
-> > --- a/include/linux/device.h
-> > +++ b/include/linux/device.h
-> > @@ -957,6 +957,10 @@ struct dev_links_info {
-> >   *              device.
-> >   * @dma_coherent: this particular device is dma coherent, even if the
-> >   *		architecture supports non-coherent devices.
-> > + * @dead:	This device is currently either in the process of or has
-> > + *		been removed from the system. Any asynchronous events
-> > + *		scheduled for this device should exit without taking any
-> > + *		action.
-> >   *
-> >   * At the lowest level, every device in a Linux system is represented by an
-> >   * instance of struct device. The device structure contains the information
-> > @@ -1051,6 +1055,7 @@ struct device {
-> >      defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
-> >  	bool			dma_coherent:1;
-> >  #endif
-> > +	bool			dead:1;
+On 1/18/19 5:49 AM, Linus Torvalds wrote:
+> On Fri, Jan 18, 2019 at 9:45 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> Or maybe we could resort to the 5.0-rc1 page table check (that is now being
+>> reverted) but only in cases when we are not allowed the page cache residency
+>> check? Or would that be needlessly complicated?
 > 
-> This really should live in the struct device_private structure, as
-> nothing outside of the driver core should care about this, or touch it.
+> I think it would  be good fallback semantics, but I'm not sure it's
+> worth it. Have you tried writing a patch for it? I don't think you'd
+> want to do the check *when* you find a hole, so you'd have to do it
+> upfront and then pass the cached data down with the private pointer
+> (or have a separate "struct mm_walk" structure, perhaps?
 > 
-> A number of other bitfields should also move there as well, your's isn't
-> the only one that I missed this for.
-> 
-> So can you make that quick change, and rebase (you needed to for patch 2
-> anyway), and resend so I can get this into my -next tree for people to
-> start testing and basing their work on?
-> 
-> sorry this has taken so long, and thanks for sticking with it.
-> 
-> greg k-h
+> So I suspect we're better off with the patch we have. But if somebody
+> *wants* to try to do that fancier patch, and it doesn't look
+> horrendous, I think it might be the "quality" solution.
 
-Okay. I will try to work it into my schedule and hopefully have the
-updated patches ready sometime early next week.
+I thought to drop the idea because of leaking that page has been
+evicted, but then I realized there are other ways to check for that
+anyway in /proc. So I'll try, but probably not until after next week. If
+somebody else wants to, they are welcome. As you say, the current
+solution should be ok, so that would be a patch on top anyway, for
+bisectability etc.
 
-Thanks.
+Vlastimil
 
-- Alex
+>               Linus
+> 
 
