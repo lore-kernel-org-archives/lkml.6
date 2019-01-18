@@ -2,91 +2,84 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB0CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74735C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A453F20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:43:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJDplZm7"
+	by mail.kernel.org (Postfix) with ESMTP id 4D38020855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:44:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbfARKnV (ORCPT
+        id S1727134AbfARKoB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 05:43:21 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42722 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfARKnU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 05:43:20 -0500
-Received: by mail-ot1-f68.google.com with SMTP id v23so13951646otk.9
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 02:43:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K3fS0669xseaoyP2fKku7tvDoFkSyo+RmEdYhFaN15A=;
-        b=EJDplZm7ON7P+AFr4fUFNalSmfK8zEGd8AGEs08SxnMCJKG7+z8OzYOlpY3WUm0Oph
-         eFJ6/pyIrY3c66nXgfclBo4qlUZayZ9D77of0hAeAuPOCSUaxCSCqW555KlLyT1QW/6y
-         D5hEAddxPdS3iujFKt1AseI0WQxE1FMWe8P9UF06kMDDRBufJkmhmYg2M2MxPXOkktjr
-         zlMAB+PzSv8Wj1W+YlzguOks8SC6k0Iuuy6VgE53z5utNudW3sglpnSi7MzjaanHpYGs
-         LEo2y9niFAGggENfo/LX4iBl3sQj9WSVWHWKFB/NLF7ezvOBLCXHVe/U5Fk0+lEOWw3m
-         +Sbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K3fS0669xseaoyP2fKku7tvDoFkSyo+RmEdYhFaN15A=;
-        b=CW//glgVvNKzwD0coUs66RMqA7D7/AR1BAJAp8uUeOyM6rDHwCG77u0xhNwFrwEKb7
-         dnznJQcEw4jNHah0o2+kQhJ5uLBt0GpBWHWB1V1FOlPJ9LAJjmQSHhj1RJPDpsAhLMuS
-         kjtGg9Vk+TgrqEP0eR+a3/BcHGIXNZQG1uGVahN83idaudhSnTOYMBW20jtwEtlbBXe1
-         kSfTF4aiNYkb9OBbMalEfa6Q/1Dy5Msa1E6ULZQ1TXKuFPjR9Bnb9bJhAILGi7WAR4qh
-         oR42JX07ga6737460vfasDHLTMydsrnOMMxWfmYXrauREEBTGwYrOIKfDjWSyjhUSHeK
-         XSZQ==
-X-Gm-Message-State: AJcUukffWtYSlHqIsnGqYwyFFW2Gf65pzV6LOd4jmp8sgTWeCAph6Zog
-        T3vYOdeonXLb/kE92u0FtKDUehD4QVFXCeqmr7o=
-X-Google-Smtp-Source: ALg8bN6BTZK939tM5y3fQw6xFtf5tWAkPr33tFIrLscbwy6tALhffuGoqvHOxOnlMrLpyyvzRbkrWcmPsI1Rvxq7rWs=
-X-Received: by 2002:a9d:7e87:: with SMTP id m7mr12215243otp.225.1547808200059;
- Fri, 18 Jan 2019 02:43:20 -0800 (PST)
+        Fri, 18 Jan 2019 05:44:01 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54454 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725982AbfARKoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 05:44:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B3E1EBD;
+        Fri, 18 Jan 2019 02:44:00 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B4453F557;
+        Fri, 18 Jan 2019 02:44:00 -0800 (PST)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id AEEB4682081; Fri, 18 Jan 2019 10:43:58 +0000 (GMT)
+Date:   Fri, 18 Jan 2019 10:43:58 +0000
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
+Subject: Re: linux-next: build warning after merge of the mali-dp tree
+Message-ID: <20190118104358.GG20661@e110455-lin.cambridge.arm.com>
+References: <20190118112811.091dd962@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190118090656.14201-1-stefan@agner.ch> <20190118090656.14201-5-stefan@agner.ch>
-In-Reply-To: <20190118090656.14201-5-stefan@agner.ch>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 18 Jan 2019 08:43:10 -0200
-Message-ID: <CAOMZO5BSxm2D3u7ns8G8EEi+jHG3EX+6Q52Sk-1cptJ0ATVL=Q@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2 5/5] ASoC: imx-spdif: don't print
- EPROBE_DEFER as error
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     timur@kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190118112811.091dd962@canb.auug.org.au>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 7:07 AM Stefan Agner <stefan@agner.ch> wrote:
->
-> Probe deferral is to be expected during normal operation, so avoid
-> printing an error when it is encountered.
->
-> Removing the goto would not be strictly necessary. However, if
-> code gets added later, the cleanup in the EPROBE_DEFER case likely
-> would get missed.
->
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+On Fri, Jan 18, 2019 at 11:28:11AM +1100, Stephen Rothwell wrote:
+> Hi Liviu,
+> 
+> After merging the mali-dp tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/gpu/drm/arm/display/komeda/komeda_dev.c: In function 'komeda_parse_dt':
+> drivers/gpu/drm/arm/display/komeda/komeda_dev.c:52:26: warning: unused variable 'pdev' [-Wunused-variable]
+>   struct platform_device *pdev = to_platform_device(dev);
+>                           ^~~~
+> 
+> Introduced by commit
+> 
+>   7e8d4fcf8daf ("drm: arm/komeda: Remove IRQ parsing from initial series")
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Argh, sorry about that! I'll get it fixed!
+
+Thanks for reporting it,
+Liviu
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
