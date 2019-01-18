@@ -2,261 +2,209 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4376AC07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4F9C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158412087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:23:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB2B52087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:27:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="fqPum37O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbfARSXt (ORCPT
+        id S1728933AbfARS1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:23:49 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36232 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728454AbfARSXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:23:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04F0980D;
-        Fri, 18 Jan 2019 10:23:48 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C24DE3F6A8;
-        Fri, 18 Jan 2019 10:23:45 -0800 (PST)
-Date:   Fri, 18 Jan 2019 18:23:43 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     mark.rutland@arm.com, daniel.thompson@linaro.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, christoffer.dall@arm.com,
-        james.morse@arm.com, Oleg Nesterov <oleg@redhat.com>,
-        joel@joelfernandes.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-Message-ID: <20190118182341.GD3578@e103592.cambridge.arm.com>
-References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
- <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
- <20190118163556.GB3578@e103592.cambridge.arm.com>
- <2bdc47ca-5aa0-24a2-b7fe-7b59158698e2@arm.com>
+        Fri, 18 Jan 2019 13:27:08 -0500
+Received: from mail-eopbgr680080.outbound.protection.outlook.com ([40.107.68.80]:40721
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728454AbfARS1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 13:27:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JPpJb9U4YKQTIcaQVmyJZsiS/8WhTB2r1Q5JuXtM4lw=;
+ b=fqPum37Owj3B/osL7yGH8yD40qbl0YJi9n1IVpAnuJJeqqZExv8fs7qIzAYhSi0qJw9toroWtVrU6KirqCVcNV1XT+61ALQ1KPcFnkXCQrkPRQgYN0EDSSw9ZlO5sj4YVWvsTrup51uZIZbjmgkQsvxWSr6zejc5R+xbC4W/If8=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB1276.namprd12.prod.outlook.com (10.168.237.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.18; Fri, 18 Jan 2019 18:27:01 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::9dfd:2b7b:1999:aff2]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::9dfd:2b7b:1999:aff2%2]) with mapi id 15.20.1537.018; Fri, 18 Jan 2019
+ 18:27:01 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "Moger, Babu" <Babu.Moger@amd.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "ravi.v.shankar@intel.com" <ravi.v.shankar@intel.com>,
+        "sai.praneeth.prakhya@intel.com" <sai.praneeth.prakhya@intel.com>,
+        "arshiya.hayatkhan.pathan@intel.com" 
+        <arshiya.hayatkhan.pathan@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: [PATCH v5 00/13] selftests/resctrl: Add resctrl selftest
+Thread-Topic: [PATCH v5 00/13] selftests/resctrl: Add resctrl selftest
+Thread-Index: AQHUr1tntay3ljQsrE+k59/cQMyLeg==
+Date:   Fri, 18 Jan 2019 18:27:01 +0000
+Message-ID: <20190118182646.16594-1-babu.moger@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0401CA0014.namprd04.prod.outlook.com
+ (2603:10b6:803:21::24) To DM5PR12MB2471.namprd12.prod.outlook.com
+ (2603:10b6:4:b5::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1276;20:pyqtWsNbWNFw3TNlzskl6fd2/Cbad/0jVHQNba+MIJTtLugWRVcnKFoC++OxNXZ6VOqNH6KX+zNlIgMHdsryvJxdvnKVWd24xg6V1uaW7s7sdQq1zm/TkePvqhbVslpHQhpEa73Lrx24PDYvLmqIu3KdMHuY6oV9esL6EKVRY6vs5EdK+gVZ5hyknhsD413miFyJauSWFeF8/sL/95fpxL+4BXzxstdvowx7NPZMuiIM0Z7p7maFUXchgorJmkeB
+x-ms-office365-filtering-correlation-id: ffe9abc5-b685-41ee-c1e1-08d67d7289ce
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1276;
+x-ms-traffictypediagnostic: DM5PR12MB1276:
+x-microsoft-antispam-prvs: <DM5PR12MB12762E08F9A64547E1785F0B959C0@DM5PR12MB1276.namprd12.prod.outlook.com>
+x-forefront-prvs: 0921D55E4F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(136003)(376002)(346002)(366004)(396003)(39860400002)(199004)(189003)(54534003)(14444005)(305945005)(3846002)(53936002)(6512007)(54906003)(110136005)(4326008)(99286004)(102836004)(6486002)(8676002)(25786009)(476003)(6306002)(7736002)(316002)(6436002)(2616005)(106356001)(486006)(386003)(68736007)(186003)(2906002)(50226002)(81156014)(81166006)(52116002)(26005)(71200400001)(6506007)(97736004)(478600001)(8936002)(2501003)(71190400001)(72206003)(966005)(1076003)(256004)(66066001)(7416002)(2201001)(105586002)(36756003)(86362001)(6116002)(14454004)(5660300001)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1276;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: iyN2R1Zu2d2ni7PmpdAgFuYaLWquIgi3gg+3bkFvLltNvfuQRa9iAntMbGb2TgSQXROhL2bZhcRIo4pOBHCsf7YZi4kiRBRYVTtbcu+iiOme5l8H2+MQJMcPEQct5fF4ALLjdduaMoMnUveIMUZganvIBU1QwZNpfB2UfCsDp6unI1fcGzJ88luuUtbfss7UxVfE77oPyOb25Tf5h/oAY3tibjkIhgZ9imOTiof6r9obExixwsAN+qad6nzcfho8pWwHCQKWXvtoF24vEs3JoLuBWIMTgIBVZGMP10H+s87NORUwrZObZjIYev8Nyf5/MP3GX0s6UpXHkGApnZRv88v6BN/9aKntZTyy4E9tT5sofAOToMz4/TAEDtGI0MowRmQP9EQg8AQg7j/wPlaJ0OLA5h1HQf79L/4je1KD2Mk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2bdc47ca-5aa0-24a2-b7fe-7b59158698e2@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffe9abc5-b685-41ee-c1e1-08d67d7289ce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jan 2019 18:27:00.3151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1276
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 05:27:29PM +0000, Julien Thierry wrote:
-> 
-> 
-> On 18/01/2019 16:35, Dave Martin wrote:
-> > On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
-> >> Instead disabling interrupts by setting the PSR.I bit, use a priority
-> >> higher than the one used for interrupts to mask them via PMR.
-> >>
-> >> When using PMR to disable interrupts, the value of PMR will be used
-> >> instead of PSR.[DAIF] for the irqflags.
-> >>
-> >> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> >> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >> Cc: Will Deacon <will.deacon@arm.com>
-> >> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> >> Cc: Oleg Nesterov <oleg@redhat.com>
-> >> ---
-> >>  arch/arm64/include/asm/efi.h      |  11 ++++
-> >>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
-> >>  2 files changed, 106 insertions(+), 28 deletions(-)
-> >>
-> >> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
-> >> index 7ed3208..134ff6e 100644
-> >> --- a/arch/arm64/include/asm/efi.h
-> >> +++ b/arch/arm64/include/asm/efi.h
-> >> @@ -44,6 +44,17 @@
-> >>  
-> >>  #define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
-> >>  
-> >> +#define arch_efi_save_flags(state_flags)		\
-> >> +	do {						\
-> >> +		(state_flags) =	read_sysreg(daif);	\
-> >> +	} while (0)
-> >> +
-> >> +#define arch_efi_restore_flags(state_flags)		\
-> >> +	do {						\
-> >> +		write_sysreg(state_flags, daif);	\
-> >> +	} while (0)
-> >> +
-> >> +
-> > 
-> > Randomly commenting a few minor nits as I glance down my mailbox...
-> > 
-> > There's no need to protect single statements with do { } while(0).
-> > 
-> > Just protect an expression statement that could be misparsed with ( ).
-> > 
-> > ->
-> > 
-> > #define arch_efi_save_flags(state_flags) ((state_flags) = read_sysreg(daif))
-> 
-> For the efi_save_flags(), I wanted to avoid it getting used as an
-> expression.
-> 
-> Would casting the assignment expression to (void) be acceptable?
+With more and more resctrl features are being added by Intel, AMD
+and ARM, a test tool is becoming more and more useful to validate
+that both hardware and software functionalities work as expected.
 
-Yep, that's a common way of achieving that, so
+We introduce resctrl selftest to cover resctrl features on both
+X86 and ARM architectures. It first implements MBM (Memory Bandwidth
+Monitoring) and MBA (Memory Bandwidth Allocation) tests. We can enhance
+the selftest tool to include more functionality tests in future.
 
-	((void)((state_flags) = read_sysreg(daif)))
+There is an existing resctrl test suite 'intel_cmt_cat'. But the major
+purpose of the tool is to test Intel(R) RDT hardware via writing and
+reading MSR registers. It does access resctrl file system; but the
+functionalities are very limited. And it doesn't support automatic test
+and a lot of manual verifications are involved.
 
-should be OK.
+So the selftest tool we are introducing here provides a convenient
+tool which does automatic resctrl testing, is easily available in kernel
+tree, and will be extended to AMD QoS and ARM MPAM.
 
-> > #define arch_efi_restore_flags(state_flags) write_sysreg(state_flags, daif)
-> 
-> For this one, write_sysreg() is already a statement, so yes, I
-> definitely don't need a do { } while (0) here.
-> 
-> > 
-> > [...]
-> > 
-> >> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
-> >> index 24692ed..fa3b06f 100644
-> >> --- a/arch/arm64/include/asm/irqflags.h
-> >> +++ b/arch/arm64/include/asm/irqflags.h
-> >> @@ -18,7 +18,9 @@
-> >>  
-> >>  #ifdef __KERNEL__
-> >>  
-> >> +#include <asm/alternative.h>
-> >>  #include <asm/ptrace.h>
-> >> +#include <asm/sysreg.h>
-> >>  
-> >>  /*
-> >>   * Aarch64 has flags for masking: Debug, Asynchronous (serror), Interrupts and
-> >> @@ -36,47 +38,96 @@
-> > 
-> > [...]
-> > 
-> >>  /*
-> >> + * Having two ways to control interrupt status is a bit complicated. Some
-> >> + * locations like exception entries will have PSR.I bit set by the architecture
-> >> + * while PMR is unmasked.
-> >> + * We need the irqflags to represent that interrupts are disabled in such cases.
-> >> + *
-> >> + * For this, we lower the value read from PMR when the I bit is set so it is
-> >> + * considered as an irq masking priority. (With PMR, lower value means masking
-> >> + * more interrupts).
-> >> + */
-> >> +#define _get_irqflags(daif_bits, pmr)					\
-> >> +({									\
-> >> +	unsigned long flags;						\
-> >> +									\
-> >> +	BUILD_BUG_ON(GIC_PRIO_IRQOFF < (GIC_PRIO_IRQON & ~PSR_I_BIT));	\
-> >> +	asm volatile(ALTERNATIVE(					\
-> >> +		"mov	%0, %1\n"					\
-> >> +		"nop\n"							\
-> >> +		"nop",							\
-> >> +		"and	%0, %1, #" __stringify(PSR_I_BIT) "\n"		\
-> >> +		"mvn	%0, %0\n"					\
-> >> +		"and	%0, %0, %2",					\
-> >> +		ARM64_HAS_IRQ_PRIO_MASKING)				\
-> >> +		: "=&r" (flags)						\
-> >> +		: "r" (daif_bits), "r" (pmr)				\
-> >> +		: "memory");						\
-> >> +									\
-> >> +	flags;								\
-> >> +})
-> > 
-> > Nit: does this need to be a macro?
-> > 
-> > ({ ... }) is mildly gross and it's preferable to avoid it if the code
-> > works just as well without...
-> > 
-> > pmr would need to be passed as a pointer, with "r" (*pmr) in the asm,
-> > but I think it would compile down to precisely the same code.
-> > 
-> 
-> The only motivation for it to be a macro was to be able to #undef it
-> after its use.
-> 
-> But with Catalin's suggestion, looks like we can makes things simple and
-> avoid having a separate macro/function.
+The selftest tool is in tools/testing/selftests/resctrl in order to have
+generic test code for all architectures.
 
-Fair enough.  This wasn't a big deal in any case.
+Changelog:
+v5:=20
+- Based the v4 patches submitted by Fenghua Yu and added changes to support
+  AMD.
+- Changed the function name get_sock_num to get_resource_id. Intel uses
+  socket number for schemata and AMD uses l3 index id. To generalize change=
+d
+  the function name to get_resource_id.
+- Added the code to detect vendor.
+- Disabled the few tests for AMD where the test results are not clear.
+  Also AMD does not have IMC.
+- Fixed few compile issues.
+- Some cleanup to make each patch independent.
+- Tested the patches on AMD system. Fenghua, Need your help to test on
+  Intel box. Please feel free to change and resubmit if something
+   broken.
+- Here is the link for previous version.
+  https://lore.kernel.org/lkml/1545438038-75107-1-git-send-email-fenghua.yu=
+@intel.com/
 
-> 
-> >> +
-> >> +/*
-> >>   * Save the current interrupt enable state.
-> >>   */
-> >>  static inline unsigned long arch_local_save_flags(void)
-> >>  {
-> >> -	unsigned long flags;
-> >> -	asm volatile(
-> >> -		"mrs	%0, daif		// arch_local_save_flags"
-> >> -		: "=r" (flags)
-> >> +	unsigned long daif_bits;
-> >> +	unsigned long pmr; // Only used if alternative is on
-> >> +
-> >> +	daif_bits = read_sysreg(daif);
-> >> +
-> >> +	// Get PMR
-> >> +	asm volatile(ALTERNATIVE(
-> >> +			"nop",
-> >> +			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1),
-> >> +			ARM64_HAS_IRQ_PRIO_MASKING)
-> >> +		: "=&r" (pmr)
-> > 
-> > Why earlyclobber?
-> >>>  		:
-> >>  		: "memory");
-> > 
-> > [...]
-> > 
-> >> @@ -85,16 +136,32 @@ static inline unsigned long arch_local_save_flags(void)
-> > 
-> > [...]
-> > 
-> >>  static inline int arch_irqs_disabled_flags(unsigned long flags)
-> >>  {
-> >> -	return flags & PSR_I_BIT;
-> >> +	int res;
-> >> +
-> >> +	asm volatile(ALTERNATIVE(
-> >> +			"and	%w0, %w1, #" __stringify(PSR_I_BIT) "\n"
-> >> +			"nop",
-> >> +			"cmp	%w1, #" __stringify(GIC_PRIO_IRQOFF) "\n"
-> >> +			"cset	%w0, ls",
-> >> +			ARM64_HAS_IRQ_PRIO_MASKING)
-> >> +		: "=&r" (res)
-> > 
-> > Why earlyclobber?  %0 is not written before the reading of any input
-> > argument so far as I can see, in either alternative.
-> > 
-> 
-> I didn't really understand what the earlyclobber semantic was, thanks
-> for explaining it.
+v4:=20
+- address comments from Balu and Randy
+- Add CAT and CQM tests
 
-It basically means "you can't put any input argument in the same
-register, because it can get overwritten by some output argument before
-use".
+v3:
+- Change code based on comments from Babu Moger
+- Remove some unnessary code and use pipe to communicate b/w processes
 
-When unsure, it's safer to include "&", but it may cause the compiler to
-allocate registers suboptimally.
+v2:
+- Change code based on comments from Babu Moger
+- Clean up other places.
 
-In the above,
 
-	"mov %w0, #" __stringify(PSR_I_BIT) "\n"
-	"and %w0, %w0, %w1"
+Arshiya Hayatkhan Pathan (4):
+  selftests/resctrl: Add MBM test
+  selftests/resctrl: Add MBA test
+  selftests/resctrl Add Cache QoS Monitoring (CQM) selftest
+  selftests/resctrl: Add Cache Allocation Technology (CAT) selftest
 
-would require the earlyclobber, so that the compiler can't allocate the
-same register for %0 and %1.
+Babu Moger (3):
+  selftests/resctrl: Add vendor detection mechanism
+  selftests/resctrl: Use cache index3 id for AMD schemata masks
+  selftests/resctrl: Disable MBA and MBM tests for AMD
 
-But in your code, allocating the same register looks safe.  (Don't take
-my word for it, though!)
+Fenghua Yu (2):
+  selftests/resctrl: Add README for resctrl tests
+  selftests/resctrl: Add the test in MAINTAINERS
 
-Cheers
----Dave
+Sai Praneeth Prakhya (4):
+  selftests/resctrl: Add basic resctrl file system operations and data
+  selftests/resctrl: Read memory bandwidth from perf IMC counter and
+    from resctrl file system
+  selftests/resctrl: Add callback to start a benchmark
+  selftests/resctrl: Add built in benchmark
+
+ MAINTAINERS                                     |   1 +
+ tools/testing/selftests/resctrl/Makefile        |  16 +
+ tools/testing/selftests/resctrl/README          |  53 ++
+ tools/testing/selftests/resctrl/cache.c         | 275 +++++++++
+ tools/testing/selftests/resctrl/cat_test.c      | 243 ++++++++
+ tools/testing/selftests/resctrl/cqm_test.c      | 169 ++++++
+ tools/testing/selftests/resctrl/fill_buf.c      | 198 +++++++
+ tools/testing/selftests/resctrl/mba_test.c      | 174 ++++++
+ tools/testing/selftests/resctrl/mbm_test.c      | 146 +++++
+ tools/testing/selftests/resctrl/resctrl.h       | 117 ++++
+ tools/testing/selftests/resctrl/resctrl_tests.c | 243 ++++++++
+ tools/testing/selftests/resctrl/resctrl_val.c   | 727 ++++++++++++++++++++=
+++++
+ tools/testing/selftests/resctrl/resctrlfs.c     | 649 ++++++++++++++++++++=
++
+ 13 files changed, 3011 insertions(+)
+ create mode 100644 tools/testing/selftests/resctrl/Makefile
+ create mode 100644 tools/testing/selftests/resctrl/README
+ create mode 100644 tools/testing/selftests/resctrl/cache.c
+ create mode 100644 tools/testing/selftests/resctrl/cat_test.c
+ create mode 100644 tools/testing/selftests/resctrl/cqm_test.c
+ create mode 100644 tools/testing/selftests/resctrl/fill_buf.c
+ create mode 100644 tools/testing/selftests/resctrl/mba_test.c
+ create mode 100644 tools/testing/selftests/resctrl/mbm_test.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrl.h
+ create mode 100644 tools/testing/selftests/resctrl/resctrl_tests.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrl_val.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrlfs.c
+
+--=20
+1.8.3.1
+
