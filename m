@@ -2,235 +2,105 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9E1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E9AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F5120823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 626D220823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:53:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KBXZJ1xr"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Et070cH1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LNIV/M4J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbfARLwk (ORCPT
+        id S1727505AbfARLxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:52:40 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50898 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbfARLwi (ORCPT
+        Fri, 18 Jan 2019 06:53:48 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53182 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfARLxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:52:38 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n190so4263197wmd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 03:52:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=T27H7ztOcp7A/3V22IUmBI8925liW6dEWx0lFYpzxQM=;
-        b=KBXZJ1xr/Gu0llfl5PqSk6cW/UpSN10BkwwI+mbh83BYmn3Od9x+bRjey4zR/RiNqU
-         VGKn1Zjq6+69gkWbvt4PvxyX/aiEEnwU6peo0Rt5njglMFdxEZMoVYF/y1eEPsbM+1Ts
-         oUvCpdXtySPwkRZ7eC80EX7yqjPvMh3HpMhB4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=T27H7ztOcp7A/3V22IUmBI8925liW6dEWx0lFYpzxQM=;
-        b=fEpUlEhYkSFIF1ZXtzmsiIxCIOuqtul32f/JM7FpfCU2TdDM4Y6thZoyQfY9oJbXQE
-         9+eGJTDbJoSegRG0pdXULNyzLjxm9So/FgKmb0/FVOa2GQEXaOhgHNJ1P2O+7kH/bvrW
-         gnzvTLwnUR15SbK5X9RQz/qMPuKCW0DV+b2HhvsSK9vY4hoqmdYqju2n1eNH0qPjw12f
-         PbGqoY0LDESJ6HAqhvzo5fdsf++40hnHY+8YVwgjGZXLIkcfurBYHGS/d/WuYdY0jrbW
-         1OzBe4vacwh7jK5rD++PwCfSXgkA1xRfuHtx85FjOZxg8wzBxHjf5U9FReYSdM97tWuC
-         V8dQ==
-X-Gm-Message-State: AJcUukcymGa55NxFWu3ASeenFdouTHCjL9p3mM8z6Rc2L+RH/CP7zHhe
-        MMZFDZVw8ITV0KUfRLCzDG2q4qmsGA9B1Q==
-X-Google-Smtp-Source: ALg8bN6daXGHkjgeAObO/TRteINYs9FQMD40/CShcIJ9lWRnn40t3epdsBj1ZfA5b9exKRWu52boOg==
-X-Received: by 2002:a1c:9a0d:: with SMTP id c13mr15884561wme.41.1547812355617;
-        Fri, 18 Jan 2019 03:52:35 -0800 (PST)
-Received: from localhost.localdomain (146-241-71-93.dyn.eolo.it. [146.241.71.93])
-        by smtp.gmail.com with ESMTPSA id i13sm75183049wrw.32.2019.01.18.03.52.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 03:52:35 -0800 (PST)
-From:   Paolo Valente <paolo.valente@linaro.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, hurikhan77+bko@gmail.com,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX RFC 2/2] Revert "bfq: calculate shallow depths at init time"
-Date:   Fri, 18 Jan 2019 12:52:19 +0100
-Message-Id: <20190118115219.63576-3-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190118115219.63576-1-paolo.valente@linaro.org>
-References: <20190118115219.63576-1-paolo.valente@linaro.org>
+        Fri, 18 Jan 2019 06:53:48 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 78E846084F; Fri, 18 Jan 2019 11:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547812427;
+        bh=5pVPmFdQ3w2BGxaeu0magkeFtuoC9f4C2CrM52TYAzI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Et070cH1hI1/9PRKE7GCYZCNczeDnwcISg6ZwqwFN+Z/qV/dRSJc/FiD6xk9oCOXb
+         fMbVkhba6OeYDG06bzZPuzBF03RCwhYqXAEDSpfCtXgItjjJbeYjSfQkrCWLkTs0bl
+         pPzCZqCBLNQVYZvfDzgpBtNxiacytE93YnCOGwmM=
+Received: from [10.79.129.0] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9A5146053B;
+        Fri, 18 Jan 2019 11:53:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547812426;
+        bh=5pVPmFdQ3w2BGxaeu0magkeFtuoC9f4C2CrM52TYAzI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LNIV/M4JkJiVdnvn42KYtyWY1fuNnOQckn0b4msCvaP70DskszhcNj5mAuLxVl3Is
+         DnMgmIAZXIPaitUWdxWp6UAEIfhyZCUI2ZpjBelKTsAdTPioTKohDR+Yurzfr6nShR
+         LH2vQyfWjMqe+44Z+xAiFuuyL7w+3T2n3MEetPJI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A5146053B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: Need help: how to locate failure from irq_chip subsystem
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-mm@kvack.org, linux-pm@vger.kernel.org,
+        kernelnewbies@kernelnewbies.org
+References: <CAOuPNLj4QzNDt0npZn2LhZTFgDNJ1CsWPw3=wvUuxnGtQW308g@mail.gmail.com>
+ <bceb32be-d508-c2a4-fa81-ab8b90323d3f@codeaurora.org>
+ <CAOuPNLiNtPFksCuZF_vL6+YuLG0i0umzQhMCyEN69h9tySn2Vw@mail.gmail.com>
+ <57ff3437-47b5-fe92-d576-084ce26aa5d8@codeaurora.org>
+ <CAOuPNLjjd67FnjaHbJj_auD-EWnbc+6sc+hcT_HE6fjeKhEQrw@mail.gmail.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <1ffe2b68-c87b-aa19-08af-b811063b3310@codeaurora.org>
+Date:   Fri, 18 Jan 2019 17:23:42 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOuPNLjjd67FnjaHbJj_auD-EWnbc+6sc+hcT_HE6fjeKhEQrw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit f0635b8a416e3b99dc6fd9ac3ce534764869d0c8.
----
- block/bfq-iosched.c | 117 +++++++++++++++++++++-----------------------
- 1 file changed, 57 insertions(+), 60 deletions(-)
+On 1/18/2019 4:50 PM, Pintu Agarwal wrote:
+>>>> Could you please tell which QCOM SoC this board is based on?
+>>>>
+>>>
+>>> Snapdragon 845 with kernel 4.9.x
+>>> I want to know from which subsystem it is triggered:drivers/soc/qcom/
+>>>
+>>
+>> Irqchip driver is "drivers/irqchip/irq-gic-v3.c". The kernel you are
+>> using is msm-4.9 I suppose or some other kernel?
+>>
+> Yes, I am using customized version of msm-4.9 kernel based on Android.
+> And yes the irqchip driver is: irq-gic-v3, which I can see from config.
+> 
+> But, what I wanted to know is, how to find out which driver module
+> (hopefully under: /drivers/soc/qcom/) that register with this
+> irq_chip, is getting triggered at the time of crash ?
+> So, that I can implement irq_hold function for it, which is the cause of crash.
+> 
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 8cc3032b66de..92214d58510c 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -520,6 +520,54 @@ static struct request *bfq_choose_req(struct bfq_data *bfqd,
- 	}
- }
- 
-+/*
-+ * See the comments on bfq_limit_depth for the purpose of
-+ * the depths set in the function. Return minimum shallow depth we'll use.
-+ */
-+static unsigned int bfq_update_depths(struct bfq_data *bfqd,
-+				      struct sbitmap_queue *bt)
-+{
-+	unsigned int i, j, min_shallow = UINT_MAX;
-+	bfqd->sb_shift = bt->sb.shift;
-+
-+	/*
-+	 * In-word depths if no bfq_queue is being weight-raised:
-+	 * leaving 25% of tags only for sync reads.
-+	 *
-+	 * In next formulas, right-shift the value
-+	 * (1U<<bfqd->sb_shift), instead of computing directly
-+	 * (1U<<(bfqd->sb_shift - something)), to be robust against
-+	 * any possible value of bfqd->sb_shift, without having to
-+	 * limit 'something'.
-+	 */
-+	/* no more than 50% of tags for async I/O */
-+	bfqd->word_depths[0][0] = max((1U<<bfqd->sb_shift)>>1, 1U);
-+	/*
-+	 * no more than 75% of tags for sync writes (25% extra tags
-+	 * w.r.t. async I/O, to prevent async I/O from starving sync
-+	 * writes)
-+	 */
-+	bfqd->word_depths[0][1] = max(((1U<<bfqd->sb_shift) * 3)>>2, 1U);
-+
-+	/*
-+	 * In-word depths in case some bfq_queue is being weight-
-+	 * raised: leaving ~63% of tags for sync reads. This is the
-+	 * highest percentage for which, in our tests, application
-+	 * start-up times didn't suffer from any regression due to tag
-+	 * shortage.
-+	 */
-+	/* no more than ~18% of tags for async I/O */
-+	bfqd->word_depths[1][0] = max(((1U<<bfqd->sb_shift) * 3)>>4, 1U);
-+	/* no more than ~37% of tags for sync writes (~20% extra tags) */
-+	bfqd->word_depths[1][1] = max(((1U<<bfqd->sb_shift) * 6)>>4, 1U);
-+
-+	for (i = 0; i < 2; i++)
-+		for (j = 0; j < 2; j++)
-+			min_shallow = min(min_shallow, bfqd->word_depths[i][j]);
-+
-+	return min_shallow;
-+}
-+
- /*
-  * Async I/O can easily starve sync I/O (both sync reads and sync
-  * writes), by consuming all tags. Similarly, storms of sync writes,
-@@ -529,11 +577,20 @@ static struct request *bfq_choose_req(struct bfq_data *bfqd,
-  */
- static void bfq_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
- {
-+	struct blk_mq_tags *tags = blk_mq_tags_from_data(data);
- 	struct bfq_data *bfqd = data->q->elevator->elevator_data;
-+	struct sbitmap_queue *bt;
- 
- 	if (op_is_sync(op) && !op_is_write(op))
- 		return;
- 
-+	bt = &tags->bitmap_tags;
-+
-+	if (unlikely(bfqd->sb_shift != bt->sb.shift)) {
-+		unsigned int min_shallow = bfq_update_depths(bfqd, bt);
-+		sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, min_shallow);
-+	}
-+
- 	data->shallow_depth =
- 		bfqd->word_depths[!!bfqd->wr_busy_queues][op_is_sync(op)];
- 
-@@ -5295,65 +5352,6 @@ void bfq_put_async_queues(struct bfq_data *bfqd, struct bfq_group *bfqg)
- 	__bfq_put_async_bfqq(bfqd, &bfqg->async_idle_bfqq);
- }
- 
--/*
-- * See the comments on bfq_limit_depth for the purpose of
-- * the depths set in the function. Return minimum shallow depth we'll use.
-- */
--static unsigned int bfq_update_depths(struct bfq_data *bfqd,
--				      struct sbitmap_queue *bt)
--{
--	unsigned int i, j, min_shallow = UINT_MAX;
--	bfqd->sb_shift = bt->sb.shift;
--
--	/*
--	 * In-word depths if no bfq_queue is being weight-raised:
--	 * leaving 25% of tags only for sync reads.
--	 *
--	 * In next formulas, right-shift the value
--	 * (1U<<bfqd->sb_shift), instead of computing directly
--	 * (1U<<(bfqd->sb_shift - something)), to be robust against
--	 * any possible value of bfqd->sb_shift, without having to
--	 * limit 'something'.
--	 */
--	/* no more than 50% of tags for async I/O */
--	bfqd->word_depths[0][0] = max((1U<<bfqd->sb_shift)>>1, 1U);
--	/*
--	 * no more than 75% of tags for sync writes (25% extra tags
--	 * w.r.t. async I/O, to prevent async I/O from starving sync
--	 * writes)
--	 */
--	bfqd->word_depths[0][1] = max(((1U<<bfqd->sb_shift) * 3)>>2, 1U);
--
--	/*
--	 * In-word depths in case some bfq_queue is being weight-
--	 * raised: leaving ~63% of tags for sync reads. This is the
--	 * highest percentage for which, in our tests, application
--	 * start-up times didn't suffer from any regression due to tag
--	 * shortage.
--	 */
--	/* no more than ~18% of tags for async I/O */
--	bfqd->word_depths[1][0] = max(((1U<<bfqd->sb_shift) * 3)>>4, 1U);
--	/* no more than ~37% of tags for sync writes (~20% extra tags) */
--	bfqd->word_depths[1][1] = max(((1U<<bfqd->sb_shift) * 6)>>4, 1U);
--
--	for (i = 0; i < 2; i++)
--		for (j = 0; j < 2; j++)
--			min_shallow = min(min_shallow, bfqd->word_depths[i][j]);
--
--	return min_shallow;
--}
--
--static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
--{
--	struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
--	struct blk_mq_tags *tags = hctx->sched_tags;
--	unsigned int min_shallow;
--
--	min_shallow = bfq_update_depths(bfqd, &tags->bitmap_tags);
--	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, min_shallow);
--	return 0;
--}
--
- static void bfq_exit_queue(struct elevator_queue *e)
- {
- 	struct bfq_data *bfqd = e->elevator_data;
-@@ -5773,7 +5771,6 @@ static struct elevator_type iosched_bfq_mq = {
- 		.requests_merged	= bfq_requests_merged,
- 		.request_merged		= bfq_request_merged,
- 		.has_work		= bfq_has_work,
--		.init_hctx		= bfq_init_hctx,
- 		.init_sched		= bfq_init_queue,
- 		.exit_sched		= bfq_exit_queue,
- 	},
+Hmm, since this is a bootup crash, *initcall_debug* should help.
+Add "initcall_debug ignore_loglevel" to kernel commandline and
+check the last log before crash.
+
+- Sai
+
 -- 
-2.20.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
