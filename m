@@ -2,167 +2,117 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B90EC5ACD3
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7C0C64E88
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9492086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:08:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C19220850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:10:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Z3+fpPkq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbfARRIG (ORCPT
+        id S1728321AbfARRKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:08:06 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:37143 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728062AbfARRIF (ORCPT
+        Fri, 18 Jan 2019 12:10:47 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33902 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727986AbfARRKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:08:05 -0500
-X-Originating-IP: 141.70.45.131
-Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id D9D6524000A;
-        Fri, 18 Jan 2019 17:08:01 +0000 (UTC)
-Date:   Fri, 18 Jan 2019 18:08:01 +0100
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Greg Hartman <ghartman@google.com>,
-        Alistair Strachan <strachan@google.com>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/wait: introduce wait_event_freezable_hrtimeout
-Message-ID: <20190118170801.GA4537@hle-laptop.local>
-References: <20190117224135.GC8100@hle-laptop.local>
- <20190118151941.GB187589@google.com>
+        Fri, 18 Jan 2019 12:10:47 -0500
+Received: by mail-qk1-f195.google.com with SMTP id q8so8489601qke.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:10:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=K+GzCAD5JsR2eGoi0Tbut5ZM+Ap7mhc0BwhnUoPeXpI=;
+        b=Z3+fpPkquX2HK49B7MytRdfIHj847IiGNe4sKqS2UJHboymqb5ts+19NoYVtYlEkbH
+         cwKcT6b8wyfJiWXm205uEH4PdqYFQZtkuLQw9XhjyJOIpHBFurP+6HKK7+GNInIrRs/g
+         kmQ7S0eZg+XMU90qsVpi2rQbOn444LLvRlG2HfUhWth27l5cEtsftNeC0bcSBjdUqovJ
+         tsoKRVWbbjz1u+iqroPTov0egXt5UBFF7UdiZKm56nQzvkAWkrZKrSVxK2F8v6VeD0IW
+         EbsHB8rcSn4w1x81XtNA98+NJnLNTH4WnA5muqQg9KauXlfS0tb35kXxQw/FMDjuiUy6
+         HGMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K+GzCAD5JsR2eGoi0Tbut5ZM+Ap7mhc0BwhnUoPeXpI=;
+        b=SjAxCN5qytE391aTY46gr97wwAjXlLscmPW9iJMg7hQyZx4pW/Lm0twV1eBL9/npSs
+         i+etOoZQZ0K5lO4giWW/2G2OarIccrYk4giuWfvfIlHWu2OzSe2PVOrqv//x9+MRpgKA
+         9qbF0fSuSNKOVzRt320S+8Umxg0kxK87bfk9eIrEzbQLR+q7pRNJPO12eKKMVmwCu7Bm
+         roY2IFMxGGTlR6h6Ol01Q9dugXUD2eZRddOm5b8trfzc3iRUo54BvOL5x4invxLAnJMp
+         Zs0hfSSWmE0u6cyHCZyGHKa21UuX70SXEaH0kJi3OCDqFzAmZcjmDEUbPDaCtN+Hpsza
+         Ep6Q==
+X-Gm-Message-State: AJcUukeviRxvIOfb3tu/fakjv8yC7eVmD9Y38asQOJ+t6jJGpwcng1qx
+        E6EdRLxA+AwaZ3OwoelA3WaB8SvGaTNUhg==
+X-Google-Smtp-Source: ALg8bN6p1tRTi+S63c0oiFPifO7S8m74wh5lbdIfzyzLtncXi9/XcsGhORcqt3u4xm/5j2cyNtinYg==
+X-Received: by 2002:a37:5dc3:: with SMTP id r186mr15851811qkb.90.1547831445780;
+        Fri, 18 Jan 2019 09:10:45 -0800 (PST)
+Received: from ovpn-124-227.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u67sm54293253qki.22.2019.01.18.09.10.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 09:10:45 -0800 (PST)
+Subject: Re: [PATCH v2] rbtree: fix the red root
+To:     Esme <esploit@protonmail.ch>
+Cc:     "dgilbert@interlog.com" <dgilbert@interlog.com>,
+        David Lechner <david@lechnology.com>,
+        Michel Lespinasse <walken@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "joeypabalinas@gmail.com" <joeypabalinas@gmail.com>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190111181600.GJ6310@bombadil.infradead.org>
+ <864d6b85-3336-4040-7c95-7d9615873777@lechnology.com>
+ <b1033d96-ebdd-e791-650a-c6564f030ce1@lca.pw>
+ <8v11ZOLyufY7NLAHDFApGwXOO_wGjVHtsbw1eiZ__YvI9EZCDe_4FNmlp0E-39lnzGQHhHAczQ6Q6lQPzVU2V6krtkblM8IFwIXPHZCuqGE=@protonmail.ch>
+ <c6265fc0-4089-9d1a-ba7c-b267b847747e@interlog.com>
+ <UKsodHRZU8smIdO2MHHL4Yzde_YB4iWX43TaHI1uY2tMo4nii4ucbaw4XC31XIY-Pe4oEovjF62qbkeMsIMTrvT1TdCCP4Fs_fxciAzXYVc=@protonmail.ch>
+ <ad591828-76e8-324b-6ab8-dc87e4390f64@interlog.com>
+ <GBn2paWQ0Uy0COgTeJsgmC18Faw0x_yNIog8gpuC5TJ4kCn_IUH1EnHJW0mQeo3Qy5MMcpMzyw9Yer3lxyWYgtk5TJx8I3sJK4oVlIJh38s=@protonmail.ch>
+ <dac115ca-d6ed-dfc0-161a-8e51a7f93e00@lca.pw>
+ <V43yC74oVMPrFb5L6QvYmFx60e29_vCM12jAOjNpWyrsRbIkKjpDRS9uyMCAwOtLpoHKJkM1CVJ50oXG0n23vBvsAluprgSNas3aCeSP7rs=@protonmail.ch>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <86889aee-2e9c-a686-cfe9-dde27249da53@lca.pw>
+Date:   Fri, 18 Jan 2019 12:10:43 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
-Content-Disposition: inline
-In-Reply-To: <20190118151941.GB187589@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <V43yC74oVMPrFb5L6QvYmFx60e29_vCM12jAOjNpWyrsRbIkKjpDRS9uyMCAwOtLpoHKJkM1CVJ50oXG0n23vBvsAluprgSNas3aCeSP7rs=@protonmail.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Joel,
+On 1/16/19 9:37 AM, Esme wrote:
+> I have been off but back now, I had fetch'd current again and the diagnostics look a bit different, maybe I just got lucky.  Instead of fork'ng the test case (which is fairly aggressive in any case), interacting from the serial port with sig-int ^C tend's to trigger enough to hit something.  I'll get the page_owner sorted soon.
+> 
+> How I'm running;
+> 
+> qemu-system-x86_64 -kernel /home/files/dl/linux//arch/x86/boot/bzImage -append console=ttyS0 root=/dev/sda debug earlyprintk=serial slub_debug=QUZFP page_owner=on -hda stretch.img -net user,hostfwd=tcp::10021-:22 -net nic -enable-kvm -nographic -m 2G -smp 2
+> 
+> It's somewhat random I guess that in the last two CPU context dump's printed out, we see RAX and CR2 off by 4 from one another.
+> 
+> root@syzkaller:~# gcc -o test3 test3.c
+> [  392.754148] ata1: lost interrupt (Status 0x50)
+> [  392.754478] ata1.00: exception Emask 0x0 SAct 0x0 SErr 0x0 action 0x6 frozen
+> [  392.759687] ata1.00: failed command: READ DMA
+> [  392.761902] ata1.00: cmd c8/00:86:00:00:00/00:00:00:00:00/e0 tag 0 dma 68608 out
+> [  392.761902]          res 40/00:01:00:00:00/00:00:00:00:00/a0 Emask 0x4 (timeout)
+> [  392.768541] ata1.00: status: { DRDY }
+> [  392.769532] ata1: soft resetting link
+> [  392.937942] ata1.00: configured for MWDMA2
+> [  392.945624] ata1: EH complete
 
-Thanks for your review.
-
-> I believe these should be 2 patches. In the first patch you introduce the
-> new API, in the second one you would simplify the VSOC driver.
->=20
-> In fact, in one part of the patch you are using wait_event_freezable which
-> already exists so that's unrelated to the new API you are adding.
-
-Agree, I will split the patch for the v2.
-
-> > +/*
-> > + * like wait_event_hrtimeout() -- except it uses TASK_INTERRUPTIBLE to=
- avoid
-> > + * increasing load and is freezable.
-> > + */
-> > +#define wait_event_freezable_hrtimeout(wq_head, condition, timeout)		\
->=20
-> You should document the variable names in the header comments.
-
-Agree. This comment was copy/pasted from wait_event_freezable_timeout,
-should I fix it there as well?
-
-> Also, this new API appears to conflict with definition of 'freezable' in
-> wait_event_freezable I think,
->=20
-> wait_event_freezable - sleep or freeze until condition is true.
->=20
-> wait_event_freezable_hrtimeout - sleep but make sure freezer is not block=
-ed.
-> (your API)
->=20
-> It seems to me these are 2 different definitions of 'freezing' (or I coul=
-d be
-> completely confused). But in the first case it calls try_to_freeze after
-> schedule(). In the second case (your new API), it calls freezable_schedul=
-e().
->=20
-> So I am wondering why is there this difference in the 'meaning of freezab=
-le'.
-> In the very least, any such subtle differences should be documented in the
-> header comments IMO.
-
-It appears that freezable_schedule() and schedule(); try_to_freeze() are
-almost identical:
-
-    static inline void freezable_schedule(void)
-    {
-        freezer_do_not_count();
-        schedule();
-        freezer_count();
-    }
-
-and
-
-    static inline void freezer_do_not_count(void)
-    {
-        current->flags |=3D PF_FREEZER_SKIP;
-    }
-
-    static inline void freezer_count(void)
-    {
-        current->flags &=3D ~PF_FREEZER_SKIP;
-        /*
-         * If freezing is in progress, the following paired with smp_mb()
-         * in freezer_should_skip() ensures that either we see %true
-         * freezing() or freezer_should_skip() sees !PF_FREEZER_SKIP.
-         */
-        smp_mb();
-        try_to_freeze();
-    }
-
-as far as I understand this code, freezable_schedule() avoids blocking the
-freezer during the schedule() call, but in the end try_to_freeze() is still
-called so the result is the same, right?
-
-I wonder why wait_event_freezable is not calling freezable_schedule().
-
-That being said, I am not sure that the try_to_freeze() call does anything
-in the vsoc case because there is no call to set_freezable() so the thread
-still has PF_NOFREEZE...
-
-regards,
- Hugo
-
---=20
-                Hugo Lefeuvre (hle)    |    www.owl.eu.com
-RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
-ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
-
---tThc/1wpZn/ma/RB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlxCB+oACgkQZYVUZx9w
-0DQUSAf8CZqbI4QMqVaVcLJct4ZWr0WwA9yzwPjUd6sX2C4e8m2HxUqEb0wNA3ll
-zDwb8drU31yGYSw5CuVufTmdZ9r5etWtI2ZmVX3DHyJJhnxwaHg8xUKhJI05NvXP
-sAXoisn6NrJwqLeAGAJHG6pXsOC964mafKKxGhXzCRaQ7LERZsLe3gIE5eY8N1vI
-RXPrIpirhjXsLgvQ5mveDeZ1mXDZ+ThygLR6OLhi8zdbiqpRHZGzF+tUwpT0+Gyy
-L/0mrNNny1HPAOugANwHL73bHKhCmCI9zt9SJY3f7dbW5p6vPMRt/GKq1a77F2Zl
-5M6YRrnVUukcy2cW67KuLiB2smE9sA==
-=UZWB
------END PGP SIGNATURE-----
-
---tThc/1wpZn/ma/RB--
+While you are gathering page_owner (or kdump), it might be useful to use virtio
+storage driver instead of legacy IDE here, as looks like this ATA was busted.
