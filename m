@@ -2,109 +2,117 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F247EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1D8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C31302086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 844202086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:54:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="amwtGCvK"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KAAlsxC8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ngxCCfk1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfAREtw (ORCPT
+        id S1727062AbfAREyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 23:49:52 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43227 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfAREtv (ORCPT
+        Thu, 17 Jan 2019 23:54:53 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52416 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbfAREyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 23:49:51 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q2-v6so10504007lji.10
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:49:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Gqf9qHHa0eKIHV+14V27XEKAlPK94YNO0a+RM1lW6M0=;
-        b=amwtGCvKbkeY8xeTsPStBlygztpu7+NzIWZeZMInmmPPgYzP70KMKK+wXQun03oZTL
-         4gaqpdKCC94C/fIW4letO9lVl33BumTvbRz3lEu44trR3vQ/1GBqPj4MtSJ6uCOREp/d
-         /2WdUfwUpfb1hyWXK5ciVRMxO8irBXFtrq4F0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gqf9qHHa0eKIHV+14V27XEKAlPK94YNO0a+RM1lW6M0=;
-        b=GaC0415dFXd7S39+73HK29B5gAu8a39BI7JmX64Q+SH48qcpeCNWa6Tv8VIqpdYFSG
-         MajbDqJmk/OxZnB3scZHjkHp7it9lamgVELRPq3/Vr3LBGYpGqSMOSlm6zAUvt0mik/R
-         sjl7Ezr5T7tLz151U1ttjqsL68g9dgT2DNaGnDU7PJ9ewnI33q8R2f73UBZCK5NSvVjK
-         4dYQdjt5WRQ2KCBWwbqXFag09cQPQ8ltNPddILf1bUrlQzt3ggRoNy+8w4hmDqQL9309
-         jGpPj+ces6X2j82+zYTiPyN3jntpset3mNBoBBLPTfxfG+y9Yb6yK3us6YagOsu5f4ld
-         gXIA==
-X-Gm-Message-State: AJcUukckAOb14ZNTHgUtfyKYhjHgogevZ5ZInAAmolstxFOaYIi8FVGJ
-        Jby/nED8qARnYlYYt/7bJosIN6xA5dE=
-X-Google-Smtp-Source: ALg8bN7+Cch9u7JbVT2XEexAn7qSFZgByyldXwe5U3/wf+khoyRs6VQcj8nrPBnWJPFtjQ4O/tXC+g==
-X-Received: by 2002:a2e:86ca:: with SMTP id n10-v6mr10873945ljj.49.1547786989102;
-        Thu, 17 Jan 2019 20:49:49 -0800 (PST)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm550448lje.78.2019.01.17.20.49.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 20:49:47 -0800 (PST)
-Received: by mail-lf1-f45.google.com with SMTP id a8so9541001lfk.5
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:49:47 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr11103285lff.16.1547786987162;
- Thu, 17 Jan 2019 20:49:47 -0800 (PST)
+        Thu, 17 Jan 2019 23:54:53 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A661260866; Fri, 18 Jan 2019 04:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547787291;
+        bh=h0zMAbmVWt1w7lKXYYOPzJ6G7O5PNxyoNVxjN11o7Cg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KAAlsxC8tyjkDSeJRrNtm4UQYt52ZF55UFoyJdfwqtX59sJjiVxrJIo3q9E0h6WmM
+         SxIPJuxelcs05oYFUXdEAIuXWZfamR0uKg6Dsgn8DRXpDLnWSDd9SzJrfNAalWaTP5
+         tv5sZVk5eRk082kYf4gvwcOwHuyYoO7X5k4s6OUI=
+Received: from [10.79.128.224] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 77E2C602FC;
+        Fri, 18 Jan 2019 04:54:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547787290;
+        bh=h0zMAbmVWt1w7lKXYYOPzJ6G7O5PNxyoNVxjN11o7Cg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ngxCCfk1BQ7nkQUDSkMhUGJSuwb/tJnI78J8zITMjNTMXXtguWfZ6u69aYyFYSkgO
+         sPgOH4ECMidHyqp08zH3cwE2wcOGsvsPphGw7gRP4bjY4xWol0P4P53AQj58xoVmIF
+         SA85Xj1jw41DEPBvkoglDdWUQuoYDG/DlLe3aabI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77E2C602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v11 4/9] soc: qcom: rpmpd: Add a Power domain driver to
+ model corners
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
+        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
+        mka@chromium.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        henryc.chen@mediatek.com
+References: <20190110040209.6028-1-rnayak@codeaurora.org>
+ <20190110040209.6028-5-rnayak@codeaurora.org>
+ <20190117174254.GA17273@roeck-us.net>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <ac10a4b9-96fe-0e62-a831-9b3ebe67de23@codeaurora.org>
+Date:   Fri, 18 Jan 2019 10:24:45 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
- <20190110122442.GA21216@nautica> <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
- <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
- <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net> <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
- <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
- <20190116063430.GA22938@nautica> <CA+t-nXTfdo07EBvVo+mu8SRhrVyB=mEPLDQikHfpJue1jALJtQ@mail.gmail.com>
- <a056deb7-9c11-612e-2b3a-6482acca4ff6@suse.cz>
-In-Reply-To: <a056deb7-9c11-612e-2b3a-6482acca4ff6@suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 18 Jan 2019 16:49:30 +1200
-X-Gmail-Original-Message-ID: <CAHk-=wi0MXm4zTC6jjS1TBfbHW_sQq_OcyfeLBNGJ29m88pt+g@mail.gmail.com>
-Message-ID: <CAHk-=wi0MXm4zTC6jjS1TBfbHW_sQq_OcyfeLBNGJ29m88pt+g@mail.gmail.com>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Josh Snyder <joshs@netflix.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190117174254.GA17273@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 9:45 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> Or maybe we could resort to the 5.0-rc1 page table check (that is now being
-> reverted) but only in cases when we are not allowed the page cache residency
-> check? Or would that be needlessly complicated?
+[]..
 
-I think it would  be good fallback semantics, but I'm not sure it's
-worth it. Have you tried writing a patch for it? I don't think you'd
-want to do the check *when* you find a hole, so you'd have to do it
-upfront and then pass the cached data down with the private pointer
-(or have a separate "struct mm_walk" structure, perhaps?
+>>
+>> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+>> index fcbf8a2e4080..df5cd9fa0d5e 100644
+>> --- a/drivers/soc/qcom/Kconfig
+>> +++ b/drivers/soc/qcom/Kconfig
+>> @@ -98,6 +98,15 @@ config QCOM_RPMH
+>>   	  of hardware components aggregate requests for these resources and
+>>   	  help apply the aggregated state on the resource.
+>>   
+>> +config QCOM_RPMPD
+>> +	bool "Qualcomm RPM Power domain driver"
+>> +	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
+> 
+> Since this is bool, but the dependent configurations are tristate,
+> configurations such as arm64:allmodconfig result in
+> 
+> CONFIG_QCOM_RPMPD=y
+> CONFIG_MFD_QCOM_RPM=m
+> CONFIG_QCOM_SMD_RPM=m
+> 
+> This in turn results in
+> 
+>     arm-linux-gnueabi-ld: drivers/soc/qcom/rpmpd.o: in function `rpmpd_send_enable':
+>>> rpmpd.c:(.text+0x64): undefined reference to `qcom_rpm_smd_write'
+>     arm-linux-gnueabi-ld: drivers/soc/qcom/rpmpd.o: in function `rpmpd_power_on':
+>     rpmpd.c:(.text+0x408): undefined reference to `qcom_rpm_smd_write'
+>>> arm-linux-gnueabi-ld: rpmpd.c:(.text+0x460): undefined reference to `qcom_rpm_smd_write'
+> 
+> as reported by 0day.
 
-So I suspect we're better off with the patch we have. But if somebody
-*wants* to try to do that fancier patch, and it doesn't look
-horrendous, I think it might be the "quality" solution.
+Thanks for reporting this, the QCOM_RPMPD dependency on MFD_QCOM_RPM was removed
+by a patch on top from Bjorn [1]. I have posted a fix now [2] to make QCOM_RPMPD
+depend on QCOM_SMD_RPM=y
 
-              Linus
+[1] https://lkml.org/lkml/2019/1/17/5
+[2] https://lkml.org/lkml/2019/1/17/1043
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
