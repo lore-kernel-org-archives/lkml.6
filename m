@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E52FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C8AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E12A82086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E963C2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:44:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="CJO7XVo4"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="HUWWzki7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbfARNnM (ORCPT
+        id S1728012AbfARNo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:43:12 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52802 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727638AbfARNnI (ORCPT
+        Fri, 18 Jan 2019 08:44:26 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39453 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbfARNnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:43:08 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m1so4546907wml.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 05:43:07 -0800 (PST)
+        Fri, 18 Jan 2019 08:43:11 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y8so4525258wmi.4
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 05:43:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Br82eUdliRcYW5k5XdaEofZ+bBn9gd9M92yB3kYlbF0=;
-        b=CJO7XVo4nJzuLOlQCd76suu7u1tTTgUJ1nukNUyCNXyfJ43s7gxFUD9kSS+d+Kwx3q
-         2zyAF97Qq4Et3vmYiniLNWOEJ83f6ZAjuj9F6B4v+S1O3TNNLKq9rNrWABPO3RXd4fsi
-         lDFEAmFMBmoN2VfBdlaG8NiIR/c9RFF0lMEx6cdVUEjykDZke7CCmcTxXEVrggrOpf1T
-         szM8hSGOpwftvp522xYtxCkuYmv7VS7VZMNDsQaNcudxINy9JOzGAPOBCuV7n4c4BJKI
-         r0qpCaipoUsdCd11YHtx3uDhH0hUrGtNWMpVVOcgAYb3/5SDuZZLSqvWeBR7y6ogrlnP
-         xpzg==
+        bh=f/KRarYfj/1Ot/ceWKaBAxhNsDNgQGntcu1QYSAIn/A=;
+        b=HUWWzki7QY8XTTdiXgnlWwU+7SovCBSG11aK9A2Mo+vbMn+NJRQUZuNoYlfkCbU7If
+         wtORLLa6/ZzHOMaJdq3JxcycqtcWlSGpqGd6hnqZGbmvbomb1QPWIFvtRfH1zPsLXxj/
+         EQ7Fzl4XXYijOB55zP6qjp5bXKnSsL33a3V4/0/TatIV2SOJdm1NkP5+QpwpeAE4ghqK
+         4n5QgS7m41MbHZ8uIcwsGFN8GA63RzjpUNsH8c4c6HJzn2z9Q1jEdZ9ST72fb64VUXVB
+         pn9nkt3c4X/q9xuc/PCJ8AF3bkwLY7coyqkEvkxDtk8GbyZvWLC54VUB962zYYPPM/uF
+         BqGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Br82eUdliRcYW5k5XdaEofZ+bBn9gd9M92yB3kYlbF0=;
-        b=hBNRUBJ9lVNPG3xqA+wBu2ap2ok5Ppyc/YjcY2/EF2wg6f1ViL2g5cyvTT2PcTE28r
-         JVVzTabZjWVvlIu2Q4u3viePBnaVVuSeaYYwoszRP/5PsAPJ8iVJN43HOXpMxGpmk6t8
-         wmxlXq+fUo7ybvCX+yx859wWU96p8kHQ5H7QuPnqKiqZJyc5z80sfIGiiF83WV1s6MFG
-         QlqSY//jaG3bSmy+6OHcRrMs8qgQ558DuhhGmz1mV44UsdZ+xjstYJSDirEUZqS6wxzZ
-         ATiuwv2Cj9K2oldpBIK5b8pt8HGNbcINz50FCYnxWqd6oDzbQaCKgK4M+LlOOmwrEfIm
-         rErw==
-X-Gm-Message-State: AJcUukd7H3z0IzWCiwGB/ATrXDyVfxML+30l4uBsjLLu43TL2IVJk+qQ
-        mZH7VNzVZeVeFGxKacCixY+ziQ==
-X-Google-Smtp-Source: ALg8bN79rgtueAh2YoeFOEiapjNWpk3EUz91OIu1yf/VDdDVtSpYFM2Ha0rmYbxCr0sT7T58n1p1mg==
-X-Received: by 2002:a1c:ca15:: with SMTP id a21mr14772914wmg.132.1547818986398;
-        Fri, 18 Jan 2019 05:43:06 -0800 (PST)
+        bh=f/KRarYfj/1Ot/ceWKaBAxhNsDNgQGntcu1QYSAIn/A=;
+        b=BIt4pVQRDEsuAHZLsy2AnvdQE6AF5eNgQfrfUBFLR2lJs3ETAefK1JVozuElYT6sN2
+         EUorVMaVd8EjN3R3M5IpqKOFILtcgGBsTggFDRNkOE7kIX3YF2i0GQgjBEOF4lqJ1Dd4
+         nW2/g85+reUm5N4iQG7VhZKcCAAT54AshYJAQ78ItgEdrEh+yzfa98BeqNuO/voRpMSb
+         EiAkBsOR+QWw330LYMgMto913bYJdBEeg/4JV908pgt7nuRR+BmlFWdUGIB9gSUxXvkj
+         3piEYTRulxXHr3FuS+cfc3CkBIZVHOaO0lGYYpyvcFeeCQiHAKAEG0buwwjjjFyPlReI
+         +J0Q==
+X-Gm-Message-State: AJcUukdUaa60//Xz7ZyLIb1VBjvlSUP/tc7imZk+qX/5/zg2SMsXxfUM
+        zQg9JHNYzLEaQVGjZB12lqlmJg==
+X-Google-Smtp-Source: ALg8bN7cAHZJMZpcqo85p29mshJGwK9LI2Wy1crq7nT1awe7X7IsxEPXKOya9ZJUlddQFkkOt5hREg==
+X-Received: by 2002:a7b:c04e:: with SMTP id u14mr16018369wmc.113.1547818990421;
+        Fri, 18 Jan 2019 05:43:10 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id a132sm51033934wmh.5.2019.01.18.05.43.05
+        by smtp.gmail.com with ESMTPSA id a132sm51033934wmh.5.2019.01.18.05.43.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 05:43:05 -0800 (PST)
+        Fri, 18 Jan 2019 05:43:09 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -71,9 +71,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 02/13] dt-bindings: regulator: add DT bindings for max77650
-Date:   Fri, 18 Jan 2019 14:42:33 +0100
-Message-Id: <20190118134244.22253-3-brgl@bgdev.pl>
+Subject: [PATCH 05/13] dt-bindings: leds: add DT bindings for max77650
+Date:   Fri, 18 Jan 2019 14:42:36 +0100
+Message-Id: <20190118134244.22253-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190118134244.22253-1-brgl@bgdev.pl>
 References: <20190118134244.22253-1-brgl@bgdev.pl>
@@ -86,59 +86,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add the DT binding document for max77650 regulators.
+Add the DT binding document for the LEDs module of max77650.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- .../bindings/regulator/max77650-regulator.txt | 41 +++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/max77650-regulator.txt
+ .../bindings/leds/leds-max77650.txt           | 57 +++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
 
-diff --git a/Documentation/devicetree/bindings/regulator/max77650-regulator.txt b/Documentation/devicetree/bindings/regulator/max77650-regulator.txt
+diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.txt b/Documentation/devicetree/bindings/leds/leds-max77650.txt
 new file mode 100644
-index 000000000000..f1cbe813c30f
+index 000000000000..822b8893bc20
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/max77650-regulator.txt
-@@ -0,0 +1,41 @@
-+Regulator driver for MAX77650 PMIC from Maxim Integrated.
++++ b/Documentation/devicetree/bindings/leds/leds-max77650.txt
+@@ -0,0 +1,57 @@
++LED driver for MAX77650 PMIC from Maxim Integrated.
 +
 +This module is part of the MAX77650 MFD device. For more details
 +see Documentation/devicetree/bindings/mfd/max77650.txt.
 +
-+The regulator controller is represented as a sub-node of the PMIC node
-+on the device tree.
++The LED controller is represented as a sub-node of the PMIC node on
++the device tree.
 +
-+The device has a single LDO regulator and a SIMO buck-boost regulator with
-+three independent power rails.
++This device has three current sinks.
 +
 +Required properties:
 +--------------------
-+- compatible:		Must be "maxim,max77650-regulator"
++- compatible:		Must be "maxim,max77650-leds"
++- #address-cells:	Must be <1>.
++- #size-cells:		Must be <0>.
 +
-+Each rail must be instantiated under the regulators subnode of the top PMIC
-+node. Up to four regulators can be defined. For standard regulator properties
-+refer to Documentation/devicetree/bindings/regulator/regulator.txt.
++Each LED is represented as a sub-node of the LED-controller node. Up to
++three sub-nodes can be defined.
 +
-+Available regulator compatible strings are: "ldo", "sbb0", "sbb1", "sbb2".
++Required properties of the sub-node:
++------------------------------------
++
++- reg:			Must be <0>, <1> or <2>.
++
++Optional properties of the sub-node:
++------------------------------------
++
++- label:		See Documentation/devicetree/bindings/leds/common.txt
++- linux,default-trigger: See Documentation/devicetree/bindings/leds/common.txt
++
++For more details, please refer to the generic GPIO DT binding document
++<devicetree/bindings/gpio/gpio.txt>.
 +
 +Example:
 +--------
 +
-+	regulators {
-+		compatible = "maxim,max77650-regulator";
++	leds {
++		compatible = "maxim,max77650-leds";
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+		max77650_ldo: regulator@0 {
-+			regulator-compatible = "ldo";
-+			regulator-name = "max77650-ldo";
-+			regulator-min-microvolt = <1350000>;
-+			regulator-max-microvolt = <2937500>;
++		led0 {
++			reg = <0>;
++			label = "max77650:blue:usr0";
 +		};
 +
-+		max77650_sbb0: regulator@1 {
-+			regulator-compatible = "sbb0";
-+			regulator-name = "max77650-sbb0";
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <1587500>;
++		led1 {
++			reg = <1>;
++			label = "max77650:red:usr1";
++			linux,default-trigger = "heartbeat";
++		};
++
++		led2 {
++			reg = <2>;
++			label = "max77650:green:usr2";
 +		};
 +	};
 -- 
