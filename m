@@ -2,349 +2,141 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C42C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C635C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FE42086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:07:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="FqGBXvaX"
+	by mail.kernel.org (Postfix) with ESMTP id 1534B2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:08:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbfARBHd (ORCPT
+        id S1726859AbfARBI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 20:07:33 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:33592 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfARBHd (ORCPT
+        Thu, 17 Jan 2019 20:08:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41150 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726124AbfARBI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 20:07:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1547773650; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Omx15frAzVyJadifK39eZ16uWs9JSfFkiSFAT6zYU5E=;
-        b=FqGBXvaXhmCXUjYeAdj8WO/ayVTHPfE+zGjg5eaHxzY0soHFZDC/NP2PZFb20LAelnkZRH
-        rEw4jFm76ZyNEaASn35GpF+Jsj9lvtDCpyIX7HArMlFpOBP11tRX3w7BIYPc5qLFu5qVpv
-        6V8nYcrjWwObICPVKvUNdumOi3iz3lY=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>
-Cc:     linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 8/8] mtd: rawnand: jz4780-bch: Add support for the JZ4725B
-Date:   Thu, 17 Jan 2019 22:06:34 -0300
-Message-Id: <20190118010634.27399-8-paul@crapouillou.net>
-In-Reply-To: <20190118010634.27399-1-paul@crapouillou.net>
-References: <20190118010634.27399-1-paul@crapouillou.net>
+        Thu, 17 Jan 2019 20:08:28 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0I17RKs107593
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:08:26 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q33yr9vh5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:08:26 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 18 Jan 2019 01:08:23 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 18 Jan 2019 01:08:18 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0I18HQb2621796
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Jan 2019 01:08:17 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 22D23A405E;
+        Fri, 18 Jan 2019 01:08:17 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2C8FAA4040;
+        Fri, 18 Jan 2019 01:08:15 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.118])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 18 Jan 2019 01:08:15 +0000 (GMT)
+Subject: Re: [PATCH v3 0/2] let kexec_file_load use platform keyring to
+ verify the kernel image
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        Dave Young <dyoung@redhat.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Date:   Thu, 17 Jan 2019 20:08:04 -0500
+In-Reply-To: <20190116101654.7288-1-kasong@redhat.com>
+References: <20190116101654.7288-1-kasong@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011801-4275-0000-0000-00000300B4F5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011801-4276-0000-0000-0000380EDB78
+Message-Id: <1547773684.4026.10.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901180006
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the backend code for the jz4780-bch driver to support the JZ4725B
-SoC from Ingenic.
+On Wed, 2019-01-16 at 18:16 +0800, Kairui Song wrote:
+> This patch series adds a .platform_trusted_keys in system_keyring as the
+> reference to .platform keyring in integrity subsystem, when platform
+> keyring is being initialized it will be updated. So other component could
+> use this keyring as well.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/mtd/nand/raw/Makefile              |   2 +-
- drivers/mtd/nand/raw/jz4725b_bch.c         | 234 +++++++++++++++++++++++++++++
- drivers/mtd/nand/raw/jz4780_bch_common.c   |   1 +
- drivers/mtd/nand/raw/jz4780_bch_internal.h |   1 +
- 4 files changed, 237 insertions(+), 1 deletion(-)
- create mode 100644 drivers/mtd/nand/raw/jz4725b_bch.c
+Remove "other component could use ...".
+> 
+> This patch series also let kexec_file_load use platform keyring as fall
+> back if it failed to verify the image against secondary keyring, make it
+> possible to load kernel signed by third part key if third party key is
+> imported in the firmware.
 
-diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
-index 6dacc9cf38d5..99cc9317a218 100644
---- a/drivers/mtd/nand/raw/Makefile
-+++ b/drivers/mtd/nand/raw/Makefile
-@@ -47,7 +47,7 @@ obj-$(CONFIG_MTD_NAND_VF610_NFC)	+= vf610_nfc.o
- obj-$(CONFIG_MTD_NAND_RICOH)		+= r852.o
- obj-$(CONFIG_MTD_NAND_JZ4740)		+= jz4740_nand.o
- obj-$(CONFIG_MTD_NAND_JZ4780)		+= jz4780_nand.o jz4780_bch_common.o \
--					   jz4780_bch.o
-+					   jz4780_bch.o jz4725b_bch.o
- obj-$(CONFIG_MTD_NAND_GPMI_NAND)	+= gpmi-nand/
- obj-$(CONFIG_MTD_NAND_XWAY)		+= xway_nand.o
- obj-$(CONFIG_MTD_NAND_BCM47XXNFLASH)	+= bcm47xxnflash/
-diff --git a/drivers/mtd/nand/raw/jz4725b_bch.c b/drivers/mtd/nand/raw/jz4725b_bch.c
-new file mode 100644
-index 000000000000..54f9c5796e83
---- /dev/null
-+++ b/drivers/mtd/nand/raw/jz4725b_bch.c
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * JZ4780 backend code for the jz4780-bch driver
-+ *
-+ * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
-+ *
-+ * Based on jz4780_bch.c
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/iopoll.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/device.h>
-+
-+#include "jz4780_bch.h"
-+#include "jz4780_bch_internal.h"
-+
-+#define BCH_BHCR			0x0
-+#define BCH_BHCSR			0x4
-+#define BCH_BHCCR			0x8
-+#define BCH_BHCNT			0xc
-+#define BCH_BHDR			0x10
-+#define BCH_BHPAR0			0x14
-+#define BCH_BHERR0			0x28
-+#define BCH_BHINT			0x24
-+#define BCH_BHINTES			0x3c
-+#define BCH_BHINTEC			0x40
-+#define BCH_BHINTE			0x38
-+
-+#define BCH_BHCR_BSEL_SHIFT		2
-+#define BCH_BHCR_BSEL_MASK		(0x1 << BCH_BHCR_BSEL_SHIFT)
-+#define BCH_BHCR_ENCE			BIT(3)
-+#define BCH_BHCR_INIT			BIT(1)
-+#define BCH_BHCR_BCHE			BIT(0)
-+
-+#define BCH_BHCNT_DEC_COUNT_SHIFT	16
-+#define BCH_BHCNT_DEC_COUNT_MASK	(0x3ff << BCH_BHCNT_DEC_COUNT_SHIFT)
-+#define BCH_BHCNT_ENC_COUNT_SHIFT	0
-+#define BCH_BHCNT_ENC_COUNT_MASK	(0x3ff << BCH_BHCNT_ENC_COUNT_SHIFT)
-+
-+#define BCH_BHERR_INDEX0_SHIFT		0
-+#define BCH_BHERR_INDEX0_MASK		(0x1fff << BCH_BHERR_INDEX0_SHIFT)
-+#define BCH_BHERR_INDEX1_SHIFT		16
-+#define BCH_BHERR_INDEX1_MASK		(0x1fff << BCH_BHERR_INDEX1_SHIFT)
-+
-+#define BCH_BHINT_ERRC_SHIFT		28
-+#define BCH_BHINT_ERRC_MASK		(0xf << BCH_BHINT_ERRC_SHIFT)
-+#define BCH_BHINT_TERRC_SHIFT		16
-+#define BCH_BHINT_TERRC_MASK		(0x7f << BCH_BHINT_TERRC_SHIFT)
-+#define BCH_BHINT_ALL_0			BIT(5)
-+#define BCH_BHINT_ALL_F			BIT(4)
-+#define BCH_BHINT_DECF			BIT(3)
-+#define BCH_BHINT_ENCF			BIT(2)
-+#define BCH_BHINT_UNCOR			BIT(1)
-+#define BCH_BHINT_ERR			BIT(0)
-+
-+/* Timeout for BCH calculation/correction. */
-+#define BCH_TIMEOUT_US			100000
-+
-+static void jz4725b_bch_init(struct jz4780_bch *bch,
-+			     struct jz4780_bch_params *params, bool encode)
-+{
-+	u32 reg;
-+
-+	/* Clear interrupt status. */
-+	writel(readl(bch->base + BCH_BHINT), bch->base + BCH_BHINT);
-+
-+	/* Initialise and enable BCH. */
-+	writel(0x1f, bch->base + BCH_BHCCR);
-+	writel(BCH_BHCR_BCHE, bch->base + BCH_BHCSR);
-+
-+	if (params->strength == 8)
-+		writel(BCH_BHCR_BSEL_MASK, bch->base + BCH_BHCSR);
-+	else
-+		writel(BCH_BHCR_BSEL_MASK, bch->base + BCH_BHCCR);
-+
-+	if (encode)
-+		writel(BCH_BHCR_ENCE, bch->base + BCH_BHCSR);
-+	else
-+		writel(BCH_BHCR_ENCE, bch->base + BCH_BHCCR);
-+
-+	writel(BCH_BHCR_INIT, bch->base + BCH_BHCSR);
-+
-+	/* Set up BCH count register. */
-+	reg = params->size << BCH_BHCNT_ENC_COUNT_SHIFT;
-+	reg |= (params->size + params->bytes) << BCH_BHCNT_DEC_COUNT_SHIFT;
-+	writel(reg, bch->base + BCH_BHCNT);
-+}
-+
-+static void jz4725b_bch_disable(struct jz4780_bch *bch)
-+{
-+	writel(readl(bch->base + BCH_BHINT), bch->base + BCH_BHINT);
-+	writel(BCH_BHCR_BCHE, bch->base + BCH_BHCCR);
-+}
-+
-+static void jz4725b_bch_write_data(struct jz4780_bch *bch, const u8 *buf,
-+				   size_t size)
-+{
-+	while (size--)
-+		writeb(*buf++, bch->base + BCH_BHDR);
-+}
-+
-+static void jz4725b_bch_read_parity(struct jz4780_bch *bch, u8 *buf,
-+				    size_t size)
-+{
-+	size_t size32 = size / sizeof(u32);
-+	size_t size8 = size % sizeof(u32);
-+	u32 *dest32;
-+	u8 *dest8;
-+	u32 val, offset = 0;
-+
-+	dest32 = (u32 *)buf;
-+	while (size32--) {
-+		*dest32++ = readl(bch->base + BCH_BHPAR0 + offset);
-+		offset += sizeof(u32);
-+	}
-+
-+	dest8 = (u8 *)dest32;
-+	val = readl(bch->base + BCH_BHPAR0 + offset);
-+	switch (size8) {
-+	case 3:
-+		dest8[2] = (val >> 16) & 0xff;
-+	case 2:
-+		dest8[1] = (val >> 8) & 0xff;
-+	case 1:
-+		dest8[0] = val & 0xff;
-+		break;
-+	}
-+}
-+
-+static bool jz4725b_bch_wait_complete(struct jz4780_bch *bch, unsigned int irq,
-+				     u32 *status)
-+{
-+	u32 reg;
-+	int ret;
-+
-+	/*
-+	 * While we could use interrupts here and sleep until the operation
-+	 * completes, the controller works fairly quickly (usually a few
-+	 * microseconds) and so the overhead of sleeping until we get an
-+	 * interrupt quite noticeably decreases performance.
-+	 */
-+	ret = readl_poll_timeout(bch->base + BCH_BHINT, reg,
-+				 (reg & irq) == irq, 0, BCH_TIMEOUT_US);
-+	if (ret)
-+		return false;
-+
-+	if (status)
-+		*status = reg;
-+
-+	writel(reg, bch->base + BCH_BHINT);
-+	return true;
-+}
-+
-+static int jz4725b_calculate(struct jz4780_bch *bch,
-+			     struct jz4780_bch_params *params,
-+			     const u8 *buf, u8 *ecc_code)
-+{
-+	int ret = 0;
-+
-+	mutex_lock(&bch->lock);
-+	jz4725b_bch_init(bch, params, true);
-+	jz4725b_bch_write_data(bch, buf, params->size);
-+
-+	if (jz4725b_bch_wait_complete(bch, BCH_BHINT_ENCF, NULL)) {
-+		jz4725b_bch_read_parity(bch, ecc_code, params->bytes);
-+	} else {
-+		dev_err(bch->dev, "timed out while calculating ECC\n");
-+		ret = -ETIMEDOUT;
-+	}
-+
-+	jz4725b_bch_disable(bch);
-+	mutex_unlock(&bch->lock);
-+	return ret;
-+}
-+
-+static int jz4725b_correct(struct jz4780_bch *bch,
-+			   struct jz4780_bch_params *params,
-+			   u8 *buf, u8 *ecc_code)
-+{
-+	u32 reg, errors, bit;
-+	unsigned int i;
-+	int ret = 0;
-+
-+	mutex_lock(&bch->lock);
-+
-+	jz4725b_bch_init(bch, params, false);
-+	jz4725b_bch_write_data(bch, buf, params->size);
-+	jz4725b_bch_write_data(bch, ecc_code, params->bytes);
-+
-+	if (!jz4725b_bch_wait_complete(bch, BCH_BHINT_DECF, &reg)) {
-+		dev_err(bch->dev, "timed out while correcting data\n");
-+		ret = -ETIMEDOUT;
-+		goto out;
-+	}
-+
-+	if (reg & (BCH_BHINT_ALL_F | BCH_BHINT_ALL_0)) {
-+		/* Data and ECC is all 0xff or 0x00 - nothing to correct */
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	if (reg & BCH_BHINT_UNCOR) {
-+		/* Uncorrectable ECC error */
-+		ret = -EBADMSG;
-+		goto out;
-+	}
-+
-+	errors = (reg & BCH_BHINT_ERRC_MASK) >> BCH_BHINT_ERRC_SHIFT;
-+
-+	/* Correct any detected errors. */
-+	for (i = 0; i < errors; i++) {
-+		if (i & 1) {
-+			bit = (reg & BCH_BHERR_INDEX1_MASK) >> BCH_BHERR_INDEX1_SHIFT;
-+		} else {
-+			reg = readl(bch->base + BCH_BHERR0 + (i * 4));
-+			bit = (reg & BCH_BHERR_INDEX0_MASK) >> BCH_BHERR_INDEX0_SHIFT;
-+		}
-+
-+		buf[(bit >> 3)] ^= BIT(bit & 0x7);
-+	}
-+
-+out:
-+	jz4725b_bch_disable(bch);
-+	mutex_unlock(&bch->lock);
-+	return ret;
-+}
-+
-+const struct jz4780_bch_ops jz4780_bch_jz4725b_ops = {
-+	.disable = jz4725b_bch_disable,
-+	.calculate = jz4725b_calculate,
-+	.correct = jz4725b_correct,
-+};
-diff --git a/drivers/mtd/nand/raw/jz4780_bch_common.c b/drivers/mtd/nand/raw/jz4780_bch_common.c
-index 573b079e6cbe..5b5ab4e66c49 100644
---- a/drivers/mtd/nand/raw/jz4780_bch_common.c
-+++ b/drivers/mtd/nand/raw/jz4780_bch_common.c
-@@ -152,6 +152,7 @@ static int jz4780_bch_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id jz4780_bch_dt_match[] = {
-+	{ .compatible = "ingenic,jz4725b-bch", .data = &jz4780_bch_jz4725b_ops},
- 	{ .compatible = "ingenic,jz4780-bch", .data = &jz4780_bch_jz4780_ops },
- 	{},
- };
-diff --git a/drivers/mtd/nand/raw/jz4780_bch_internal.h b/drivers/mtd/nand/raw/jz4780_bch_internal.h
-index 7162e4f872f4..cc12b782a8d9 100644
---- a/drivers/mtd/nand/raw/jz4780_bch_internal.h
-+++ b/drivers/mtd/nand/raw/jz4780_bch_internal.h
-@@ -29,6 +29,7 @@ struct jz4780_bch {
- 	struct mutex lock;
- };
- 
-+extern const struct jz4780_bch_ops jz4780_bch_jz4725b_ops;
- extern const struct jz4780_bch_ops jz4780_bch_jz4780_ops;
- 
- #endif /* __DRIVERS_MTD_NAND_JZ4780_BCH_INTERNAL_H__ */
--- 
-2.11.0
+This is the only reason for these patches.  Please remove "also".
+
+> 
+> After this patch kexec_file_load will be able to verify a signed PE
+> bzImage using keys in platform keyring.
+> 
+> Tested in a VM with locally signed kernel with pesign and imported the
+> cert to EFI's MokList variable.
+
+It's taken so long for me to review/test this patch set due to a
+regression in sanity_check_segment_list(), introduced somewhere
+between 4.20 and 5.0.0-rc1.  The sgement overlap test - "if ((mend >
+pstart) && (mstart < pend))" - fails, returning a -EINVAL.
+
+Is anyone else seeing this?
+
+Mimi
+
+
+> 
+> Kairui Song (2):
+>   integrity, KEYS: add a reference to platform keyring
+>   kexec, KEYS: Make use of platform keyring for signature verify
+> 
+> Update from V2:
+>   - Use IS_ENABLED in kexec_file_load to judge if platform_trusted_keys
+>     should be used for verifying image as suggested by Mimi Zohar
+> 
+> Update from V1:
+>   - Make platform_trusted_keys static, and update commit message as suggested
+>     by Mimi Zohar
+>   - Always check if platform keyring is initialized before use it
+> 
+> Kairui Song (2):
+>   integrity, KEYS: add a reference to platform keyring
+>   kexec, KEYS: Make use of platform keyring for signature verify
+> 
+>  arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
+>  certs/system_keyring.c            | 22 +++++++++++++++++++++-
+>  include/keys/system_keyring.h     |  5 +++++
+>  include/linux/verification.h      |  1 +
+>  security/integrity/digsig.c       |  6 ++++++
+>  5 files changed, 43 insertions(+), 4 deletions(-)
+> 
 
