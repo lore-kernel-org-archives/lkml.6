@@ -2,111 +2,106 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD9AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D815C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7A8B2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D577D20855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:20:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="mw3CDa1K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uw7rlftL"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bqy0cdFY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbfARHUf (ORCPT
+        id S1727430AbfARHUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 02:20:35 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:54077 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727279AbfARHUf (ORCPT
+        Fri, 18 Jan 2019 02:20:51 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43608 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbfARHUu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 02:20:35 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 373377EDF;
-        Fri, 18 Jan 2019 02:20:34 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 18 Jan 2019 02:20:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=9FH1WPeyUAogrW92tsxLk3pJ3xC
-        GJrngi7qugByCJ7w=; b=mw3CDa1KOBgj9f0UzeRvSEak5ze+cZkDgU96OUW3Mp0
-        +Sq+y1gLD2+EA4MQUjRsvWsI9KBPf1lfrvJezIjiikcO9qabPuEjc47OixlmN0pJ
-        9flV1Ks09Uexpdwdn4OrErHjisqmYinQjUAKYgGz96CGAxbCBdIgdG2cGoFPR5ht
-        ZUbEqYpreAL54136pkUvmhGPIfJ8uPqXvVHXCxMAhasmUKwYnPoAul4WOI8sjPqx
-        khQ5G+SqMN+jx7qpUtreUgbIXzcuthrWlsjDozvLstbwk1ELivxQMq+y586DkRZ1
-        i9OMnAZZoWTJcEf79prfwi6b9NNIAjLWqcLsoDr7Btg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=9FH1WP
-        eyUAogrW92tsxLk3pJ3xCGJrngi7qugByCJ7w=; b=uw7rlftLBSkhFcFVb6V+wF
-        L9pYlDZzHJTGgYEiOjxUJKj+3rV37gK7RMKOPutEoBiNnsadek2VoROj4pDsMcYE
-        X93HKm91yNqTtY7VG5iij9uFlAx9YrqZowa9Mm1FNqDTfUCFJfeL2RcGGX3JkGYL
-        +vMBPc/DdmMq33yRnmit5PBD8C+TTxFG+/6Dhv5mRihRfBQtZi4BYieifDsa7+R2
-        +tpxReM3NdvQk/R/1akCnJCeVvII2szM8BGMpYroxFrFwUDcNf63aJZlN984VHLG
-        BpEiT3DdxEgE9fY/zOKiNxk8S4sXRotry23tlE+YCgdoXxVxIN+d1FrIAsK+7c0Q
-        ==
-X-ME-Sender: <xms:QX5BXIlOEbzgdz7WwqI9T8q3MoJ-s8vBkDfEKPaP8gII_TajEDiQuA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrgeelgddutdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
-    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftd
-    dtmdenucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefi
-    rhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrke
-    elrddutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtgho
-    mhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:QX5BXIasKiS23CEDa1zHQ2AwLklAPL7LUiKIb50LMA9hSwHnRmlVUw>
-    <xmx:QX5BXPgHVlXGVHBTqB7BJPaaRcTXpckIdSKAETkEcCOKVyANZeivEg>
-    <xmx:QX5BXOyAtDELFDPcll_WuxDYm-2w29Fjy-Nv_EqGxUodtZlqS_oKkA>
-    <xmx:Qn5BXE2hI68d0U3D-0l0H3MBLPnhM5DeV7XBPrfua--xVC5JowfLZg>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F0D8610087;
-        Fri, 18 Jan 2019 02:20:32 -0500 (EST)
-Date:   Fri, 18 Jan 2019 08:20:31 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Federico Vaga <federico.vaga@vaga.pv.it>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: doc: stable-api-nonsense missing link
-Message-ID: <20190118072031.GH11050@kroah.com>
-References: <3122599.2K0FN2NGh9@harkonnen>
- <20190117151953.2ab38ecc@lwn.net>
+        Fri, 18 Jan 2019 02:20:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=M0/OiNC9ecv0z60I4ZUNlIm8L/rcWMOBU38ZVDfxiG8=; b=bqy0cdFYLnVOFhtZAHSGm5Aud
+        tQreOmoN3PM83is+L1iyRnihnu/BYH1YhnyNbre21u57ZEUgI4eMwRaTAx1oh14P0U4NqTsKshQbn
+        SEYuUtrFJFzduckHcAKEvWwYAJSOB6HvQjI6FuiD/upbzBqzqqG73aRrRTqd2qOzIah0F/AnGfwJT
+        +u0Gni9DZL/S8CFAOt8xNo+QOMHNuE7VPv7C1BvYZ8p7GQ0EofOS+D1gCficuZohYUL0s7VyzcRyr
+        7jPKcEdD3mzXSQ4Ns6me7WKuqgeTiqxoVR1Os1uQCngiy3lOa1NC5Z7TCu2pXQk6ravkwSmjgDToc
+        G6H+pA+/g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gkOSF-0003Lt-1t; Fri, 18 Jan 2019 07:20:39 +0000
+Date:   Thu, 17 Jan 2019 23:20:38 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Patrick =?iso-8859-1?Q?St=E4hlin?= <me@packi.ch>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Alan Kao <alankao@andestech.com>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Anup Patel <anup@brainfault.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Clark <michaeljclark@mac.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Andreas Schwab <schwab@suse.de>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zong Li <zongbox@gmail.com>
+Subject: Re: [PATCH v2 1/8] RISC-V: Do not wait indefinitely in __cpu_up
+Message-ID: <20190118072038.GA5171@infradead.org>
+References: <1546940318-9752-1-git-send-email-atish.patra@wdc.com>
+ <1546940318-9752-2-git-send-email-atish.patra@wdc.com>
+ <20190115135125.GA28946@infradead.org>
+ <1995e941-a8cf-c12e-71ae-7b50cf6c0ca5@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117151953.2ab38ecc@lwn.net>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <1995e941-a8cf-c12e-71ae-7b50cf6c0ca5@wdc.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 03:19:53PM -0700, Jonathan Corbet wrote:
-> On Thu, 17 Jan 2019 23:14:08 +0100
-> Federico Vaga <federico.vaga@vaga.pv.it> wrote:
+On Thu, Jan 17, 2019 at 06:35:39PM -0800, Atish Patra wrote:
+> On 1/15/19 5:51 AM, Christoph Hellwig wrote:
+> > >   void *__cpu_up_stack_pointer[NR_CPUS];
+> > >   void *__cpu_up_task_pointer[NR_CPUS];
+> > > +static DECLARE_COMPLETION(cpu_running);
+> > >   void __init smp_prepare_boot_cpu(void)
+> > >   {
+> > > @@ -81,6 +82,7 @@ void __init setup_smp(void)
+> > >   int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+> > >   {
+> > > +	int ret = 0;
+> > >   	int hartid = cpuid_to_hartid_map(cpu);
+> > >   	tidle->thread_info.cpu = cpu;
+> > > @@ -96,10 +98,15 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+> > >   		  task_stack_page(tidle) + THREAD_SIZE);
+> > >   	WRITE_ONCE(__cpu_up_task_pointer[hartid], tidle);
+> > > -	while (!cpu_online(cpu))
+> > > -		cpu_relax();
+> > > +	wait_for_completion_timeout(&cpu_running,
+> > > +					    msecs_to_jiffies(1000));
+> > 
+> > Having a global completion here worries me.  I bet we have some higher
+> > level serialization, but can we comment or even better lockdep assert on
+> > that?
+> > 
 > 
-> > in this document
-> > 
-> > Documentation/process/stable-api-nonsense.rst
-> > 
-> > there is this note:
-> > 
-> > <insert link to leech comment from Andrew and Linus here>
-> > 
-> > Is it possible to get it fixed with the proper link? I searched for it without 
-> > success. If that comment is impossible to find I will send a patch to remove 
-> > that note, but first I wanted to ask you if you know where to get it.
+> Yes. It is serialized from smp.c in smp_init(). It brings one cpu online
+> at a time for preset_cpu mask.
 > 
-> That sounds like a question for Greg (copied).  Given that this document
-> predates the Git era, though, I suspect that whatever reference that was
-> meant to be is long since lost.
+> Do we still need a lockdep assert ?
 
-It was referring to an email thread about this topic that happened at
-the time I wrote the document.  Let me try to dig through my archives,
-but given that it was written well over a decade ago, I don't know if I
-will be able to find it easily...
-
-thanks,
-
-greg k-h
+I guess the real lock is through cpu_hotplug_lock.  And yes, a comment
+or even better lockdep assert would be good.
