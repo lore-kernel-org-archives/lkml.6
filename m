@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E10C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3F6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:44:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F84D2054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B85A22146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbfAROoA (ORCPT
+        id S1727794AbfAROn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:44:00 -0500
+        Fri, 18 Jan 2019 09:43:59 -0500
 Received: from mail.bootlin.com ([62.4.15.54]:45806 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbfAROnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:43:55 -0500
+        id S1727634AbfAROnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:43:52 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 374702074A; Fri, 18 Jan 2019 15:43:52 +0100 (CET)
+        id 20DAD20A7D; Fri, 18 Jan 2019 15:43:50 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8E366209EF;
-        Fri, 18 Jan 2019 15:43:50 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id CEF1A207A3;
+        Fri, 18 Jan 2019 15:43:49 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v5 08/23] drm/sun4i: frontend: Add support for packed YUV422 input formats
-Date:   Fri, 18 Jan 2019 15:43:13 +0100
-Message-Id: <20190118144328.20649-9-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v5 05/23] drm/sun4i: frontend: Determine input format based on colorspace
+Date:   Fri, 18 Jan 2019 15:43:10 +0100
+Message-Id: <20190118144328.20649-6-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
 References: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
@@ -48,86 +48,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces support for packed YUV formats with 4:2:2 sampling using
-the frontend. Definitions are introduced for the data format and pixel
-sequence input format register values.
+Since all the RGB input formats have the same value for the DATA_FMT
+field of the INPUT_FMT register, we can group them when the format is
+known to be RGB. Here, we assume that a non-YUV format is RGB, because
+the hardware does not support any other colorspace than RGB and YUV.
+
+Use the DRM format info structure to check whether the format uses a
+YUV colorspace.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 22 ++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  5 +++++
- 2 files changed, 27 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index bf37a4ea81c5..1946dd9e58d9 100644
+index dd5af3019099..7c7a5ea0cf58 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -133,6 +133,8 @@ sun4i_frontend_drm_format_to_input_fmt(const struct drm_format_info *format,
+@@ -108,14 +108,12 @@ static int
+ sun4i_frontend_drm_format_to_input_fmt(const struct drm_format_info *format,
+ 				       u32 *val)
  {
- 	if (!format->is_yuv)
+-	switch (format->format) {
+-	case DRM_FORMAT_XRGB8888:
++	if (!format->is_yuv)
  		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
-+	else if (drm_format_info_is_yuv_sampling_422(format))
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422;
- 	else
+-		return 0;
+-
+-	default:
++	else
  		return -EINVAL;
- 
-@@ -160,10 +162,26 @@ sun4i_frontend_drm_format_to_input_sequence(const struct drm_format_info *format
- 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX;
- 		return 0;
- 
-+	case DRM_FORMAT_UYVY:
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY;
-+		return 0;
+-	}
 +
-+	case DRM_FORMAT_VYUY:
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY;
-+		return 0;
-+
- 	case DRM_FORMAT_XRGB8888:
- 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB;
- 		return 0;
++	return 0;
+ }
  
-+	case DRM_FORMAT_YUYV:
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV;
-+		return 0;
-+
-+	case DRM_FORMAT_YVYU:
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU;
-+		return 0;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -187,7 +205,11 @@ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
- 
- static const uint32_t sun4i_frontend_formats[] = {
- 	DRM_FORMAT_BGRX8888,
-+	DRM_FORMAT_UYVY,
-+	DRM_FORMAT_VYUY,
- 	DRM_FORMAT_XRGB8888,
-+	DRM_FORMAT_YUYV,
-+	DRM_FORMAT_YVYU,
- };
- 
- bool sun4i_frontend_format_is_supported(uint32_t fmt, uint64_t modifier)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index 17b46ecf7d9e..e287a71a0db9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -27,7 +27,12 @@
- 
- #define SUN4I_FRONTEND_INPUT_FMT_REG		0x04c
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED	(1 << 8)
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422	(1 << 4)
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB		(5 << 4)
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY		0
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV		1
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY		2
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU		3
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX		0
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB		1
- 
+ static int
 -- 
 2.20.1
 
