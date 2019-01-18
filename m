@@ -2,167 +2,199 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93028C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DFCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F4920855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72D9D20855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:00:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYQi/M10"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbfARH7e (ORCPT
+        id S1727436AbfARIAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 02:59:34 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52771 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbfARH7e (ORCPT
+        Fri, 18 Jan 2019 03:00:36 -0500
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:45045 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfARIAf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 02:59:34 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gkP3m-0001Xc-KE; Fri, 18 Jan 2019 08:59:26 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gkP3l-0007kZ-J5; Fri, 18 Jan 2019 08:59:25 +0100
-Date:   Fri, 18 Jan 2019 08:59:25 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        Sean Wang <sean.wang@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 1/5] pwm: mediatek: add a property "mediatek,num-pwms"
-Message-ID: <20190118075925.noilab6glzm3cig6@pengutronix.de>
-References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
+        Fri, 18 Jan 2019 03:00:35 -0500
+Received: by mail-lj1-f177.google.com with SMTP id k19-v6so10809595lji.11;
+        Fri, 18 Jan 2019 00:00:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CquQiRt0SoSbb2VUuWFwF4qNFQ3WPGTFJPlZGC5XVek=;
+        b=SYQi/M10sQATFffroDBGfFJdxgOIwAgBJq9OqwSTYANJxFZ/TbpIdbTYXIH5ca5/mo
+         spStlefWIhFwVXjFn3DRJuF8itRsSCFcLDwG0gqn8v3gfwZFwx6JCD4Meh8CJYZTy7AA
+         SqbNhwVJaaU75UEbxJNs+O9x/pmUdtACLfK5ELhXEQrrJpaF/+geJE7VuW9Trd13cgfa
+         n3K+x1610HcmsUlYIbRaQv0o//N1a4hpsxcxoFIpPwcgzRCE7KtJaBh7qNeDoDXgc+g+
+         QDpd3WAzqy1xBwVNQ/LuZX/G82tvxyXmsTl/D8KueWB3YPxI2bLPM81XUIXu8LdDQAYd
+         bT5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CquQiRt0SoSbb2VUuWFwF4qNFQ3WPGTFJPlZGC5XVek=;
+        b=q6Ql8eUjfG8ad5/RfV8qjV9j5rKuG+FJNIoS+Mj0bJOGB/4OO7nEpGuWCxwq3Y4zZx
+         W5kk4e5ZUak788sWZpAt/oXkTcYmaYWSfDtN1JS4piIB7wNrUbh3t9QBA+I851DVjU4K
+         qE8wtWGJpWgKl1W7d6lU9VMusi2R6d3ndkcy9vKAolqshylB60WngaxzTJhVy/Vd6w81
+         YF3KglHfgUxlWM30GztiNE0EnvyrIldQrUdFDB2OiLTILC1w9xnwCHcg/EsFXS7Xu6aj
+         /nlUPUbKK1HBFGhSP/lYVpG/YL5HvFVgJSsOKw7WQiOsqggwJqpcsRxOn5ui2DBArewU
+         JCGQ==
+X-Gm-Message-State: AJcUukcnkoi00xUb+Fx7nlfwWRZbR/4WtWfoimGVeS5M4auU/+3h24XG
+        lqjZUyPuwNpp9aEGdSavfPL631UB7Khjja8N15P695M0
+X-Google-Smtp-Source: ALg8bN4ASNm7hDXW+0b4+yc4pBHjidS4V4mFVcQCpO/If6p40Ob7QqvEAIqmKlXOycwkMGYzk+QmWSqiD2iDWh5fVt8=
+X-Received: by 2002:a2e:20f:: with SMTP id 15-v6mr11682597ljc.172.1547798432266;
+ Fri, 18 Jan 2019 00:00:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20190117231416.111952141@linutronix.de> <20190117231501.068505479@linutronix.de>
+In-Reply-To: <20190117231501.068505479@linutronix.de>
+From:   =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
+Date:   Fri, 18 Jan 2019 09:00:20 +0100
+Message-ID: <CAAUqJDs6VoE-pTQ9Sk0eTV1+Z+20WFh3hxQTkNAxePkVZDgtpg@mail.gmail.com>
+Subject: Re: [patch 3/9] crypto: morus - Cleanup license mess
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+pi 18. 1. 2019 o 0:15 Thomas Gleixner <tglx@linutronix.de> nap=C3=ADsal(a):
+> Precise and non-ambiguous license information is important. The recently
+> added morus header files have a SPDX license identifier, which is nice, b=
+ut
+> at the same time they have a contradictionary license boiler plate text.
+>
+>   SPDX-License-Identifier: GPL-2.0
+>
+> versus
+>
+>   * This program is free software; you can redistribute it and/or modify =
+it
+>   * under the terms of the GNU General Public License as published by the=
+ Free
+>   * Software Foundation; either version 2 of the License, or (at your opt=
+ion)
+>   * any later version
+>
+> Oh well.
+>
+> As the other morus related files are licensed under the GPL v2 or later,
+> it's assumed that the boiler plate code is correct, but the SPDX license
+> identifier is wrong.
+>
+> Fix the SPDX identifier and remove the boiler plate as it is redundant.
 
-On Fri, Jan 18, 2019 at 11:24:41AM +0800, Ryder Lee wrote:
-> This adds a property "mediatek,num-pwms" to avoid having an endless
-> list of compatibles with no differences for the same driver.
-> 
-> Thus, the driver should have backwards compatibility to older DTs.
+Thanks, I must have copy-pasted the bits from somewhere and didn't
+notice the discrepancy...
 
-I still think Thierry should bless "num-pwms" without vendor prefix.
+>
+> Fixes: 56e8e57fc3a7 ("crypto: morus - Add common SIMD glue code for MORUS=
+")
+> Fixes: 396be41f16fd ("crypto: morus - Add generic MORUS AEAD implementati=
+ons")
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ondrej Mosnacek <omosnacek@gmail.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: linux-crypto@vger.kernel.org
 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Acked-by: Ondrej Mosnacek <omosnacek@gmail.com>
+(feel free to keep the ack also if you decide to switch to the "GPL-2.0+" f=
+orm)
+
 > ---
-> Changes since v1: add some checks for backwards compatibility.
+>
+> P.S.: This patch is part of a larger cleanup, but independent of other
+>       patches and is intended to be picked up by the maintainer directly.
+>
 > ---
->  drivers/pwm/pwm-mediatek.c | 27 ++++++++++++++++++---------
->  1 file changed, 18 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-> index eb6674c..81b7e5e 100644
-> --- a/drivers/pwm/pwm-mediatek.c
-> +++ b/drivers/pwm/pwm-mediatek.c
-> @@ -55,7 +55,7 @@ enum {
->  };
->  
->  struct mtk_pwm_platform_data {
-
-Unrelated to this patch: This name is bad. This struct is not used as
-platform_data and so should better be named mtk_pwm_of_data. While at
-criticizing existing stuff: I'd prefer pwm_mediatek as common prefix to
-match the filename.
-
-> -	unsigned int num_pwms;
-> +	unsigned int num_pwms;	/* it should not be used in the future SoCs */
-
-I'd drop this comment in favour of a runtime warning.
-
->  	bool pwm45_fixup;
->  	bool has_clks;
->  };
-> @@ -226,27 +226,36 @@ static void mtk_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
->  
->  static int mtk_pwm_probe(struct platform_device *pdev)
->  {
-> -	const struct mtk_pwm_platform_data *data;
-> +	struct device_node *np = pdev->dev.of_node;
->  	struct mtk_pwm_chip *pc;
->  	struct resource *res;
-> -	unsigned int i;
-> +	unsigned int i, num_pwms;
->  	int ret;
->  
->  	pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
->  	if (!pc)
->  		return -ENOMEM;
->  
-> -	data = of_device_get_match_data(&pdev->dev);
-> -	if (data == NULL)
-> -		return -EINVAL;
-> -	pc->soc = data;
-> +	pc->soc = of_device_get_match_data(&pdev->dev);
-
-This might return NULL which ...
-
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	pc->regs = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(pc->regs))
->  		return PTR_ERR(pc->regs);
->  
-> -	for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
-> +	/* Check if we have set 'num-pwms' in DTs. */
-> +	ret = of_property_read_u32(np, "mediatek,num-pwms", &num_pwms);
-> +	if (ret < 0) {
-> +		/* If no, fallback to use SoC data for backwards compatibility. */
-> +		if (pc->soc->num_pwms) {
-
-... here then results in a NULL pointer dereference. I think you want
-
-		if (pc->soc)
-
-here.
-
-> +			num_pwms = pc->soc->num_pwms;
-> +		} else {
-> +			dev_err(&pdev->dev, "failed to get pwm number: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < num_pwms + 2 && pc->soc->has_clks; i++) {
->  		pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
->  		if (IS_ERR(pc->clks[i])) {
->  			dev_err(&pdev->dev, "clock: %s fail: %ld\n",
-> @@ -260,7 +269,7 @@ static int mtk_pwm_probe(struct platform_device *pdev)
->  	pc->chip.dev = &pdev->dev;
->  	pc->chip.ops = &mtk_pwm_ops;
->  	pc->chip.base = -1;
-> -	pc->chip.npwm = data->num_pwms;
-> +	pc->chip.npwm = num_pwms;
->  
->  	ret = pwmchip_add(&pc->chip);
->  	if (ret < 0) {
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> ---
+>  include/crypto/morus1280_glue.h |    7 +------
+>  include/crypto/morus640_glue.h  |    7 +------
+>  include/crypto/morus_common.h   |    7 +------
+>  3 files changed, 3 insertions(+), 18 deletions(-)
+>
+> --- a/include/crypto/morus1280_glue.h
+> +++ b/include/crypto/morus1280_glue.h
+> @@ -1,15 +1,10 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>  /*
+>   * The MORUS-1280 Authenticated-Encryption Algorithm
+>   *   Common glue skeleton -- header file
+>   *
+>   * Copyright (c) 2016-2018 Ondrej Mosnacek <omosnacek@gmail.com>
+>   * Copyright (C) 2017-2018 Red Hat, Inc. All rights reserved.
+> - *
+> - * This program is free software; you can redistribute it and/or modify =
+it
+> - * under the terms of the GNU General Public License as published by the=
+ Free
+> - * Software Foundation; either version 2 of the License, or (at your opt=
+ion)
+> - * any later version.
+>   */
+>
+>  #ifndef _CRYPTO_MORUS1280_GLUE_H
+> --- a/include/crypto/morus640_glue.h
+> +++ b/include/crypto/morus640_glue.h
+> @@ -1,15 +1,10 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>  /*
+>   * The MORUS-640 Authenticated-Encryption Algorithm
+>   *   Common glue skeleton -- header file
+>   *
+>   * Copyright (c) 2016-2018 Ondrej Mosnacek <omosnacek@gmail.com>
+>   * Copyright (C) 2017-2018 Red Hat, Inc. All rights reserved.
+> - *
+> - * This program is free software; you can redistribute it and/or modify =
+it
+> - * under the terms of the GNU General Public License as published by the=
+ Free
+> - * Software Foundation; either version 2 of the License, or (at your opt=
+ion)
+> - * any later version.
+>   */
+>
+>  #ifndef _CRYPTO_MORUS640_GLUE_H
+> --- a/include/crypto/morus_common.h
+> +++ b/include/crypto/morus_common.h
+> @@ -1,15 +1,10 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>  /*
+>   * The MORUS Authenticated-Encryption Algorithm
+>   *   Common definitions
+>   *
+>   * Copyright (c) 2016-2018 Ondrej Mosnacek <omosnacek@gmail.com>
+>   * Copyright (C) 2017-2018 Red Hat, Inc. All rights reserved.
+> - *
+> - * This program is free software; you can redistribute it and/or modify =
+it
+> - * under the terms of the GNU General Public License as published by the=
+ Free
+> - * Software Foundation; either version 2 of the License, or (at your opt=
+ion)
+> - * any later version.
+>   */
+>
+>  #ifndef _CRYPTO_MORUS_COMMON_H
+>
+>
