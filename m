@@ -2,185 +2,147 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7C2C5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AF4C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EABE220850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l0xfzVJF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IcbAiLnw"
+	by mail.kernel.org (Postfix) with ESMTP id C961A20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547836714;
+	bh=d5J5t9FXK8oeQQD/QiK+BIMuETv1kXCwjlnsZZBWWSI=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=pm/UNyqJzqQ+q0ePv7yjYkoBIe0Anb9xIjbh15e150krpCJ1KUyf4v4QyMDmZTYRw
+	 /tTChlMttGfiReHAJRgpteHLUJAwlfo8GbiGMGAgEXlhdAUjLiksFk2Vxh9rhhe6wG
+	 tJv9prUcj/mM2Six0tW1N9gDdkEKu0cHzoSfs740=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbfARSiG (ORCPT
+        id S1729173AbfARSid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:38:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36122 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729126AbfARSiE (ORCPT
+        Fri, 18 Jan 2019 13:38:33 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57200 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728457AbfARSic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:38:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 75F5A608EA; Fri, 18 Jan 2019 18:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547836682;
-        bh=t2obj2KYN0yWx1JS1XYvQGTnqXCVaTHFozGLl/GXT1c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l0xfzVJF2V2ZNjHP09urtk+t1zstnBVt9lI+lzj3qQ+kIsj/mKRrHrKEuEeM8FI5B
-         3zi5XDYb0g89hsVgBn/D0iGwLOS55uecbapPDfAGq/vqEdWutTkMx/dIKzq0gc+8Mn
-         y+XHNEO0XsoSqXvSas0gsbrTi19Mz9SUml413lA8=
-Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: lmark@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 716BE6087D;
-        Fri, 18 Jan 2019 18:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547836681;
-        bh=t2obj2KYN0yWx1JS1XYvQGTnqXCVaTHFozGLl/GXT1c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IcbAiLnweMFMJqHN3VgoNmdQ5Rk7v90GLk1FOKhs+0/ofS2R7VhqTvb3Xa+fSR7WV
-         4Fu7GnWBRxL0SSPsGyQhAOiYFzLLDVgfaXu42Nj3y+yJy8vhkY6Wj89eduXnHq2LhQ
-         euW5cjP1mdTZXcUnL7+YnVkLAUqvvUa38pkEKD0A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 716BE6087D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
-From:   Liam Mark <lmark@codeaurora.org>
-To:     labbott@redhat.com, sumit.semwal@linaro.org
-Cc:     arve@android.com, tkjos@android.com, maco@android.com,
-        joel@joelfernandes.org, christian@brauner.io,
-        devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        afd@ti.com, john.stultz@linaro.org,
-        Liam Mark <lmark@codeaurora.org>
-Subject: [PATCH 2/4] staging: android: ion: Restrict cache maintenance to dma mapped memory
-Date:   Fri, 18 Jan 2019 10:37:45 -0800
-Message-Id: <1547836667-13695-3-git-send-email-lmark@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
-References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 18 Jan 2019 13:38:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=9UNSHtRuci4KSnGoEUyqO/pL52dBoZeZX8e6vDT7oSw=; b=v6cbDwpbFZJs
+        m5z8lnffc2huRp1OmU7leSccx8zmUFZivi6dEAT4cxP1z3KV/kOo/0tGH5kK+WWrcLklcnQmj0RX5
+        R8HmYkkHpwdbOB05jOrQVDkSkjODpHoqV/LUIUho+7i5F98ZvG+A7JPmrioj7ZXnw4hTUhXspaEL0
+        BX9mQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gkZ2B-0005M0-Ki; Fri, 18 Jan 2019 18:38:27 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 3D8ED11276E7; Fri, 18 Jan 2019 18:38:27 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nicoleotsuka@gmail.com" <nicoleotsuka@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: fsl_sai: Remove expensive print in irq handler" to the asoc tree
+In-Reply-To:  <20190118142623.17720-1-daniel.baluta@nxp.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190118183827.3D8ED11276E7@debutante.sirena.org.uk>
+Date:   Fri, 18 Jan 2019 18:38:27 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ION begin_cpu_access and end_cpu_access functions use the
-dma_sync_sg_for_cpu and dma_sync_sg_for_device APIs to perform cache
-maintenance.
+The patch
 
-Currently it is possible to apply cache maintenance, via the
-begin_cpu_access and end_cpu_access APIs, to ION buffers which are not
-dma mapped.
+   ASoC: fsl_sai: Remove expensive print in irq handler
 
-The dma sync sg APIs should not be called on sg lists which have not been
-dma mapped as this can result in cache maintenance being applied to the
-wrong address. If an sg list has not been dma mapped then its dma_address
-field has not been populated, some dma ops such as the swiotlb_dma_ops ops
-use the dma_address field to calculate the address onto which to apply
-cache maintenance.
+has been applied to the asoc tree at
 
-Also I don’t think we want CMOs to be applied to a buffer which is not
-dma mapped as the memory should already be coherent for access from the
-CPU. Any CMOs required for device access taken care of in the
-dma_buf_map_attachment and dma_buf_unmap_attachment calls.
-So really it only makes sense for begin_cpu_access and end_cpu_access to
-apply CMOs if the buffer is dma mapped.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Fix the ION begin_cpu_access and end_cpu_access functions to only apply
-cache maintenance to buffers which are dma mapped.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Fixes: 2a55e7b5e544 ("staging: android: ion: Call dma_map_sg for syncing and mapping")
-Signed-off-by: Liam Mark <lmark@codeaurora.org>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From e412fcb0db5c44a3450ca678b281ea9332e6bf82 Mon Sep 17 00:00:00 2001
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+Date: Fri, 18 Jan 2019 14:26:46 +0000
+Subject: [PATCH] ASoC: fsl_sai: Remove expensive print in irq handler
+
+When stopping audio, ASoC will first stop DMA then CPU DAI.
+Sometimes there is a delay between DMA stop and CPU DAI stop, which
+triggers an underrun error. Now, because of the delay introduced
+by dev_err another underrun error will occur causing a vicious circle
+making impossible to stop CPU DAI.
+
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/staging/android/ion/ion.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ sound/soc/fsl/fsl_sai.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 6f5afab7c1a1..1fe633a7fdba 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -210,6 +210,7 @@ struct ion_dma_buf_attachment {
- 	struct device *dev;
- 	struct sg_table *table;
- 	struct list_head list;
-+	bool dma_mapped;
- };
+diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+index 4163f2cfc06f..db9e0872f73d 100644
+--- a/sound/soc/fsl/fsl_sai.c
++++ b/sound/soc/fsl/fsl_sai.c
+@@ -62,10 +62,10 @@ static irqreturn_t fsl_sai_isr(int irq, void *devid)
+ 		dev_dbg(dev, "isr: Start of Tx word detected\n");
  
- static int ion_dma_buf_attach(struct dma_buf *dmabuf,
-@@ -231,6 +232,7 @@ static int ion_dma_buf_attach(struct dma_buf *dmabuf,
+ 	if (flags & FSL_SAI_CSR_SEF)
+-		dev_warn(dev, "isr: Tx Frame sync error detected\n");
++		dev_dbg(dev, "isr: Tx Frame sync error detected\n");
  
- 	a->table = table;
- 	a->dev = attachment->dev;
-+	a->dma_mapped = false;
- 	INIT_LIST_HEAD(&a->list);
- 
- 	attachment->priv = a;
-@@ -261,12 +263,18 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
- {
- 	struct ion_dma_buf_attachment *a = attachment->priv;
- 	struct sg_table *table;
-+	struct ion_buffer *buffer = attachment->dmabuf->priv;
- 
- 	table = a->table;
- 
-+	mutex_lock(&buffer->lock);
- 	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
--			direction))
-+			direction)) {
-+		mutex_unlock(&buffer->lock);
- 		return ERR_PTR(-ENOMEM);
-+	}
-+	a->dma_mapped = true;
-+	mutex_unlock(&buffer->lock);
- 
- 	return table;
- }
-@@ -275,7 +283,13 @@ static void ion_unmap_dma_buf(struct dma_buf_attachment *attachment,
- 			      struct sg_table *table,
- 			      enum dma_data_direction direction)
- {
-+	struct ion_dma_buf_attachment *a = attachment->priv;
-+	struct ion_buffer *buffer = attachment->dmabuf->priv;
-+
-+	mutex_lock(&buffer->lock);
- 	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
-+	a->dma_mapped = false;
-+	mutex_unlock(&buffer->lock);
- }
- 
- static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
-@@ -346,8 +360,9 @@ static int ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
- 
- 	mutex_lock(&buffer->lock);
- 	list_for_each_entry(a, &buffer->attachments, list) {
--		dma_sync_sg_for_cpu(a->dev, a->table->sgl, a->table->nents,
--				    direction);
-+		if (a->dma_mapped)
-+			dma_sync_sg_for_cpu(a->dev, a->table->sgl,
-+					    a->table->nents, direction);
+ 	if (flags & FSL_SAI_CSR_FEF) {
+-		dev_warn(dev, "isr: Transmit underrun detected\n");
++		dev_dbg(dev, "isr: Transmit underrun detected\n");
+ 		/* FIFO reset for safety */
+ 		xcsr |= FSL_SAI_CSR_FR;
  	}
+@@ -96,10 +96,10 @@ static irqreturn_t fsl_sai_isr(int irq, void *devid)
+ 		dev_dbg(dev, "isr: Start of Rx word detected\n");
  
- unlock:
-@@ -369,8 +384,9 @@ static int ion_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
+ 	if (flags & FSL_SAI_CSR_SEF)
+-		dev_warn(dev, "isr: Rx Frame sync error detected\n");
++		dev_dbg(dev, "isr: Rx Frame sync error detected\n");
  
- 	mutex_lock(&buffer->lock);
- 	list_for_each_entry(a, &buffer->attachments, list) {
--		dma_sync_sg_for_device(a->dev, a->table->sgl, a->table->nents,
--				       direction);
-+		if (a->dma_mapped)
-+			dma_sync_sg_for_device(a->dev, a->table->sgl,
-+					       a->table->nents, direction);
+ 	if (flags & FSL_SAI_CSR_FEF) {
+-		dev_warn(dev, "isr: Receive overflow detected\n");
++		dev_dbg(dev, "isr: Receive overflow detected\n");
+ 		/* FIFO reset for safety */
+ 		xcsr |= FSL_SAI_CSR_FR;
  	}
- 	mutex_unlock(&buffer->lock);
- 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project
+2.20.1
 
