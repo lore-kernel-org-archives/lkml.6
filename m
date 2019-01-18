@@ -2,190 +2,132 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7F4C43613
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA56C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97AFE2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 744702086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbfARQ5h (ORCPT
+        id S1728096AbfARRBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:57:37 -0500
-Received: from foss.arm.com ([217.140.101.70]:34578 "EHLO foss.arm.com"
+        Fri, 18 Jan 2019 12:01:20 -0500
+Received: from foss.arm.com ([217.140.101.70]:34696 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbfARQ5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:57:36 -0500
+        id S1727491AbfARRBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:01:20 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D947180D;
-        Fri, 18 Jan 2019 08:57:35 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E684A3F7BE;
-        Fri, 18 Jan 2019 08:57:33 -0800 (PST)
-Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        daniel.thompson@linaro.org, marc.zyngier@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        Oleg Nesterov <oleg@redhat.com>, joel@joelfernandes.org
-References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
- <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
- <20190118160920.GF118707@arrakis.emea.arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <0af2d75e-9a61-e53b-b2df-3d08d3f63d9c@arm.com>
-Date:   Fri, 18 Jan 2019 16:57:32 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E08F980D;
+        Fri, 18 Jan 2019 09:01:19 -0800 (PST)
+Received: from localhost (unknown [10.37.6.11])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7951E3F7BE;
+        Fri, 18 Jan 2019 09:01:19 -0800 (PST)
+Date:   Fri, 18 Jan 2019 17:01:17 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Steven Price <Steven.Price@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Grant Likely <Grant.Likely@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [Linux-eng] [RFC 0/3] Abstract empty functions with STUB_UNLESS
+ macro
+Message-ID: <20190118170117.GC8120@e119886-lin.cambridge.arm.com>
+References: <1547827230-55132-1-git-send-email-andrew.murray@arm.com>
+ <20190118163736.6lczivagpsdnm7ju@e5254000004ec.dyn.armlinux.org.uk>
+ <20190118164425.GC3578@e103592.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190118160920.GF118707@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118164425.GC3578@e103592.cambridge.arm.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Catalin,
+On Fri, Jan 18, 2019 at 04:44:25PM +0000, Dave Martin wrote:
+> On Fri, Jan 18, 2019 at 04:37:36PM +0000, Russell King - ARM Linux admin wrote:
+> > On Fri, Jan 18, 2019 at 04:00:27PM +0000, Andrew Murray wrote:
+> > > A common pattern found in header files is a function declaration dependent
+> > > on a CONFIG_ option being enabled, followed by an empty function for when
+> > > that option isn't enabled. This boilerplate code can often take up a lot
+> > > of space and impact code readability.
+> > > 
+> > > This series introduces a STUB_UNLESS macro that simplifies header files as
+> > > follows:
+> > > 
+> > > STUB_UNLESS(CONFIG_FOO, [body], prototype)
+> > 
+> > Can you explain the desire to make the second argument optional,
+> > rather than having the mandatory arguments first and the optional body
+> > last?  It will mean more lines at each site, but I don't think that's
+> > a bad thing:
 
-On 18/01/2019 16:09, Catalin Marinas wrote:
-> Hi Julien,
-> 
-> On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
->> + * Having two ways to control interrupt status is a bit complicated. Some
->> + * locations like exception entries will have PSR.I bit set by the architecture
->> + * while PMR is unmasked.
->> + * We need the irqflags to represent that interrupts are disabled in such cases.
->> + *
->> + * For this, we lower the value read from PMR when the I bit is set so it is
->> + * considered as an irq masking priority. (With PMR, lower value means masking
->> + * more interrupts).
->> + */
->> +#define _get_irqflags(daif_bits, pmr)					\
->> +({									\
->> +	unsigned long flags;						\
->> +									\
->> +	BUILD_BUG_ON(GIC_PRIO_IRQOFF < (GIC_PRIO_IRQON & ~PSR_I_BIT));	\
->> +	asm volatile(ALTERNATIVE(					\
->> +		"mov	%0, %1\n"					\
->> +		"nop\n"							\
->> +		"nop",							\
->> +		"and	%0, %1, #" __stringify(PSR_I_BIT) "\n"		\
->> +		"mvn	%0, %0\n"					\
->> +		"and	%0, %0, %2",					\
->> +		ARM64_HAS_IRQ_PRIO_MASKING)				\
-> 
-> Can you write the last two instructions as a single:
-> 
-> 		bic	%0, %2, %0
+My intent was to make the function prototype look like an ordinary prototype
+but with all this special macro stuff on the preceding line. Much like this:
 
-Yes, makes sense. Although we won't need it anymore with your suggestion
-below.
+> > 
+> > STUB_UNLESS(CONFIG_HAVE_HW_BREAKPOINT,
+> > void hw_breakpoint_thread_switch(struct task_struct *next));
 
-> 
->> +		: "=&r" (flags)						\
->> +		: "r" (daif_bits), "r" (pmr)				\
->> +		: "memory");						\
->> +									\
->> +	flags;								\
->> +})
->> +
->> +/*
->>   * Save the current interrupt enable state.
->>   */
->>  static inline unsigned long arch_local_save_flags(void)
->>  {
->> -	unsigned long flags;
->> -	asm volatile(
->> -		"mrs	%0, daif		// arch_local_save_flags"
->> -		: "=r" (flags)
->> +	unsigned long daif_bits;
->> +	unsigned long pmr; // Only used if alternative is on
->> +
->> +	daif_bits = read_sysreg(daif);
->> +
->> +	// Get PMR
-> 
-> Nitpick: don't use C++ (or arm asm) comment style in C code.
+Besides the extra ')' at the end it looks like a normal prototype. I felt this
+may be important as existing tooling (ctags etc) might have a better chance of
+recognising it and it wouldn't be so alien to new developers. I feared that if
+the 'prototype' argument was in the middle then it would get lost in all the
+other arguments and be less readable as a prototype.
 
-Noted.
+> > 
+> > STUB_UNLESS(CONFIG_CPU_FREQ,
+> > struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu), return NULL);
+> > 
+> > or:
+> > 
+> > STUB_UNLESS(CONFIG_CPU_FREQ,
+> > struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu),
+> > 	return NULL);
+
+As you indicate here, it's possible to spread this to three lines and keep the
+readability of the prototype - though I was keen to condense it to as few lines
+as possible (I was probably putting too much focus on the diff stat).
+
+> > 
+> > Seems to be more readable in terms of the flow.
+> 
+> Hmmm, looking at that, I probably prefer that too.
+
+Feedback I've had so far suggests that there is a preference to putting the
+optional argument at the end, I have no objection to this.
 
 > 
->> +	asm volatile(ALTERNATIVE(
->> +			"nop",
->> +			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1),
->> +			ARM64_HAS_IRQ_PRIO_MASKING)
->> +		: "=&r" (pmr)
->>  		:
->>  		: "memory");
->> +
->> +	return _get_irqflags(daif_bits, pmr);
->> +}
+> In the unlikely case that <body> uses the function arguments it would be
+> quite confusing to have the body before the function prototype.
 > 
-> I find this confusing spread over two inline asm statements. IIUC, you
-> want something like below (it could be written as inline asm but I need
-> to understand it first):
+> If we can keep this down to two lines so much the better, but still
+> seems fine.
+
+This is the compromise - having the optional argument after the prototype
+will likely result in wrapping to the next line as prototypes tend to be
+long. Perhaps this is more readable.
+
 > 
-> 	daif_bits = read_sysreg(daif);
-> 
-> 	if (system_uses_irq_prio_masking()) {
-> 		pmr = read_gicreg(ICC_PMR_EL1);
-> 		flags = pmr & ~(daif_bits & PSR_I_BIT);
-> 	} else {
-> 		flags = daif_bits;
-> 	}
-> 
-> 	return flags;
-> 
-> In the case where the interrupts are disabled at the PSR level, is the
-> PMR value still relevant? Could we just return the GIC_PRIO_IRQOFF?
-> Something like:
-> 
-> 	flags = read_sysreg(daif);
-> 
-> 	if (system_uses_irq_prio_masking())
-> 		flags = flags & PSR_I_BIT ?
-> 			GIC_PRIO_IRQOFF : read_gicreg(ICC_PMR_EL1);
-> 
+> Provided we don't end up needing a trailing comma in the void case, to
+> supply the empty body argument, that is.
 
-You're right, returning GIC_PRIO_IRQOFF should be good enough (it is
-actually what happens in this version because GIC_PRIO_IRQOFF ==
-GIC_PRIO_IRQON & ~PSR_I_BIT happens to be true). Your suggestion would
-make things easier to reason about. Maybe something like:
-
-
-static inline unsigned long arch_local_save_flags(void)
-{
-	unsigned long daif_bits;
-	unsigned long prio_off = GIC_PRIO_IRQOFF;
-
-	daif_bits = read_sysreg(daif);
-
-	asm volatile(ALTERNATIVE(
-		"mov	%0, %1\n"
-		"nop\n"
-		"nop",
-		"mrs	%0, SYS_ICC_PMR_EL1\n"
-		"ands	%1, %1, PSR_I_BIT\n"
-		"csel	%0, %0, %2, eq")
-	: "=&r" (flags)
-	: "r" (daif_bits), "r" (prio_off)
-	: "memory");
-
-	return flags;
-}
-
-(Looks like it removes one nop from the alternative as well, unless I
-messed up something)
-
-Does that seem better to you?
+No this isn't necessary.
 
 Thanks,
 
--- 
-Julien Thierry
+Andrew Murray
+
+> 
+> Cheers
+> ---Dave
