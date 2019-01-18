@@ -2,83 +2,98 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C65C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A12C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D75D620855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71DAA20855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:51:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="rO0HGKRU"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V5Jl5jW+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfARCr3 (ORCPT
+        id S1726980AbfARCvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 21:47:29 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43574 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfARCr3 (ORCPT
+        Thu, 17 Jan 2019 21:51:02 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41406 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbfARCvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 21:47:29 -0500
-Received: by mail-pf1-f194.google.com with SMTP id w73so5800663pfk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 18:47:28 -0800 (PST)
+        Thu, 17 Jan 2019 21:51:01 -0500
+Received: by mail-vs1-f66.google.com with SMTP id t17so7563762vsc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 18:51:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Os4/lrR4FDyW4kqiyHnEagj4yEUM1GPwMYoR/Eb8uUQ=;
-        b=rO0HGKRUy7MSA22tXUw6KP3CpxcHYzkt8EbTKWSJFTMnYVvUBIOOtEkIgx5oXE/AEo
-         6096lAC43uWtDzktRXfXuHE59zLJN2ivlchQLAyUblHpStRYSG1CB5D0NJYNb4AHla7x
-         HrB0nodQ1hZx3m2MXdXbUVYQAmIIuqDL1JUimFg7vuxH9EGKVeVksQDc+ZvFEjGjkx/R
-         1+mdhn1bd0DVR96I4Ce5+LNLxpaj093k8iexFAxFyxCP4ngVvcLHC8nwWR0NR7gPyfGF
-         eMiGE0SRCBaotPui9mNI37tYq9dCcSpOWqDYImc4rVaG8fV9ZgQSfJPZnez41UiOLVOb
-         Rqcg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h7wFAMQ1TwFUAHZNZ7eC0jGMmupcHkRoHMn4VkWMquI=;
+        b=V5Jl5jW+Gn19LSA4e5cxDNdyBXJntk9BSv/YhOE8tTFcj8A8nL9jryIUuDWp6R+P8D
+         E98lb3qtniehQZeH3MJ66UGoWaP+S4laOQYIFTQCrd0qobDOVhGEjHNdxXLXRDsXQzkn
+         YQs2zbEl3XM3jFRIj86cNP5vLy+p+27w6cNJQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Os4/lrR4FDyW4kqiyHnEagj4yEUM1GPwMYoR/Eb8uUQ=;
-        b=kFEK+5TuNx3zR3dDdJN3bKS/N0FT+RiCetdE9PPCUQKldbDRztyUCCLyYya1wmd40i
-         9GntC6J3ecp6qs3ErLgkOyRfFNxivQTj+fzM0NuF0afNoUEBL9NyPjBDFgNv1GPv+/st
-         e45RfgcQGWPx25icLr86sKrMxCV0Mp9hENLY9BFFyYdWJgg9SecBrBW+BbZYQevucgkR
-         kbOxhx1lb/9gGN9L/JEK1Pu33M+pL1SFl7aLayz4U4rvY3/KttWO2GdYyPdxJQDztp0A
-         k1+uc0ZQcLGpav+X7HjoT5wG1cpLUSVRxPFYjiwtoBSSQ+gKZ3y0kMUh0rjl2PUAc2gh
-         1xmQ==
-X-Gm-Message-State: AJcUukfKwJuCn82y3gLBmtXFcTaZjm1Kh5mwv4qmSzpSB5rVv9yYIf04
-        JrlBDcSzu4gbSqEPzZpe4VTPww==
-X-Google-Smtp-Source: ALg8bN7NUFBHhPYg+pV7y9t+NycL7TuLeSdUfoezt0HxMESb0R1beIMm/3VLXt46tDB6A/p6OqrjVQ==
-X-Received: by 2002:a62:6b8a:: with SMTP id g132mr17659342pfc.201.1547779648340;
-        Thu, 17 Jan 2019 18:47:28 -0800 (PST)
-Received: from [192.168.0.79] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
-        by smtp.gmail.com with ESMTPSA id k129sm4185795pgk.29.2019.01.17.18.47.26
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h7wFAMQ1TwFUAHZNZ7eC0jGMmupcHkRoHMn4VkWMquI=;
+        b=tkV9591jI6XZ2P3YoMfLBlOOntfSmcxb7Fbg0zp92mnwydeW/pEgYUR0BmbXhXBdeC
+         u/pubaaIHzL/nXuVtmlMejwQZN23iK7U/ual9iolcdJVyUbzPuaBsyuF92/F9n2OmSBq
+         Wcs6ewg9lztyGNEQVuF+owODDZXD230RI4e4sOl7/pt051o7c/oZBfsW4jerYzFBY1/g
+         V6nsVHHf4QpHqiCpw2XccI68zez69753CSo/nSYQvGo5fJg3bN5bnybQ8WBAPUJaqGwH
+         T63m73s+KyNkgI4jKElHE38Cr6H0KRTQVb3O4OZfJ0X8rCSGwy5I1sWpD/ah1ReZaXRt
+         xrXg==
+X-Gm-Message-State: AJcUukcgIE1wAa2Gi1Bw6c7j6VlLtYsaceEXl0S4h+617n17+DaYlRoI
+        Cc+Xlpz5b6PkZr/wcfykAzufxPAyVkQ=
+X-Google-Smtp-Source: ALg8bN7LqzrmxXr5eqw2+jjTsVDbOQ+rxMuw8IRRNLrwaJDBhWbPo5weFnCU6lQIpyhuqCqdMO4Rfg==
+X-Received: by 2002:a67:4909:: with SMTP id w9mr6965398vsa.189.1547779860349;
+        Thu, 17 Jan 2019 18:51:00 -0800 (PST)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id 188sm23682570vkr.25.2019.01.17.18.50.58
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 18:47:27 -0800 (PST)
-Subject: [PATCH v2 0/3] scsi: arcmsr: Fix suspend/resume of
- ACB_ADAPTER_TYPE_B part 2
-From:   Ching Huang <ching2048@areca.com.tw>
-To:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     dan.carpenter@oracle.com, hch@infradead.org,
-        colin.king@canonical.com
+        Thu, 17 Jan 2019 18:50:59 -0800 (PST)
+Received: by mail-vs1-f48.google.com with SMTP id n10so7548802vso.13
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 18:50:58 -0800 (PST)
+X-Received: by 2002:a67:da93:: with SMTP id w19mr7025064vsj.144.1547779858569;
+ Thu, 17 Jan 2019 18:50:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20190114184255.258318-1-mka@chromium.org>
+In-Reply-To: <20190114184255.258318-1-mka@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 17 Jan 2019 18:50:46 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Xac6FCx=scgm5BCBsHFgtvqBpHT1ziKzrOWR2y7+J-_A@mail.gmail.com>
+Message-ID: <CAD=FV=Xac6FCx=scgm5BCBsHFgtvqBpHT1ziKzrOWR2y7+J-_A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sdm845: Add CPU topology
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
-Date:   Fri, 18 Jan 2019 10:47:25 +0800
-Message-ID: <1547779645.4532.9.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series are against to mkp's 5.1/scsi-queue.
+Hi,
 
-1. Due to dma_zalloc_coherent will be phase out, so use dma_alloc_coherent instead.
-2. For ACB_ADAPTER_TYPE_B controller, the read/write after hibernate and resume may
-got 'isr get an illegal ccb command' in log/messages sometimes. This patch fix it.
-3. Update driver version to v1.40.00.10-20190116
----
+On Mon, Jan 14, 2019 at 10:43 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> The 8 CPU cores of the SDM845 are organized in two clusters of 4 big
+> ("gold") and 4 little ("silver") cores. Add a cpu-map node to the DT
+> that describes this topology.
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 38 ++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
 
+Looks right to me and matches bindings examples.
 
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
