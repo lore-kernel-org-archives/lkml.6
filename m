@@ -2,108 +2,167 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730A5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93028C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4777120855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F4920855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfARH5l (ORCPT
+        id S1727299AbfARH7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 02:57:41 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:36958 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbfARH5l (ORCPT
+        Fri, 18 Jan 2019 02:59:34 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52771 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbfARH7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 02:57:41 -0500
-Received: by mail-vs1-f65.google.com with SMTP id n13so7923488vsk.4;
-        Thu, 17 Jan 2019 23:57:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2etTsr6eABn9rr4OAtp4qwGzvi48gpko/JR6dDrfj6U=;
-        b=uJnGAruL4XXvbWGzQweFaR8Q5hM7uR/073dmqFJSymM8bXBiC7QplGcjClvlE7evlu
-         1NcziqP2dJpjEyxhCcD2+OgXlvxrW2w2LjFHu+3NoyrVwFaidv3aWiqixQbM3xOdhgwS
-         n5GuLDQIj6OubnbPt2pirRsQq/4X7JsBYbR+DtNA8g7XenxZTHbbL8tiPaHGauxdQBD2
-         pHEdkIw55CmOttrBi3gd6pEB4Y5gFc/wLtt+ULTtGSdVZ+9rs7BNQ5W9oRLM2vd1xzvr
-         NQjw2fdqm6m+E/YkTwdkps54T91W5K2IQ8ocHEBzmNRU6qE2Xpu3ZBBS+wqtgybUJIE0
-         9wUA==
-X-Gm-Message-State: AJcUukcGnMbbAZ96VtCCoSfMB3kBtXMiZKxP4rNphkbqhk5GyHK4lzdj
-        EpkP+YyXD+RxhGclD2rAb28O4nkB1318nP7abok=
-X-Google-Smtp-Source: ALg8bN6tQccVpfMr2BeJmL6Uah6hNrTBtHaqVDmuLqfUFD8RHIVJDKP8qS+SP3yy8L28QJjI4FSdcQyCCnOgKGKPB5c=
-X-Received: by 2002:a67:d119:: with SMTP id u25mr6703849vsi.63.1547798260103;
- Thu, 17 Jan 2019 23:57:40 -0800 (PST)
+        Fri, 18 Jan 2019 02:59:34 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gkP3m-0001Xc-KE; Fri, 18 Jan 2019 08:59:26 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gkP3l-0007kZ-J5; Fri, 18 Jan 2019 08:59:25 +0100
+Date:   Fri, 18 Jan 2019 08:59:25 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        Sean Wang <sean.wang@kernel.org>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/5] pwm: mediatek: add a property "mediatek,num-pwms"
+Message-ID: <20190118075925.noilab6glzm3cig6@pengutronix.de>
+References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-References: <20190114135144.26096-1-geert+renesas@glider.be> <CAK7LNASdA+5_pdTjr1dY-cKGSDq804Huc_CX_8-Gg+ypFCmajQ@mail.gmail.com>
-In-Reply-To: <CAK7LNASdA+5_pdTjr1dY-cKGSDq804Huc_CX_8-Gg+ypFCmajQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jan 2019 08:57:27 +0100
-Message-ID: <CAMuHMdWGbJwWXMK7f10n2zPSiMEj7EHJfiK0Pj4ABHHu3f4sdw@mail.gmail.com>
-Subject: Re: [PATCH 00/12] selftests: Miscellaneous fixes
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Shuah Khan <shuah@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
+Hello,
 
-On Fri, Jan 18, 2019 at 5:15 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> On Mon, Jan 14, 2019 at 10:52 PM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > This patch series contains several build fixes and cleanups for issues I
-> > encountered when trying to cross-build an rtctest binary in a separate
-> > output directory (like I use for all my kernel builds).
->
-> Geert,
-> Thanks for working on this!
->
-> My fundamental question is,
-> why did tools/ opt out Kbuild?
+On Fri, Jan 18, 2019 at 11:24:41AM +0800, Ryder Lee wrote:
+> This adds a property "mediatek,num-pwms" to avoid having an endless
+> list of compatibles with no differences for the same driver.
+> 
+> Thus, the driver should have backwards compatibility to older DTs.
 
-Good question.  I think it originally started as a separate small project.
+I still think Thierry should bless "num-pwms" without vendor prefix.
 
-> I think lots of mess comes in
-> in order to support
->   cd tools/gpio; make
->
-> instead of
->
->   make tools/gpio/
->
-> Lots of files are duplicated in tools/build/
-> in order to invent a different build system for tools/
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+> Changes since v1: add some checks for backwards compatibility.
+> ---
+>  drivers/pwm/pwm-mediatek.c | 27 ++++++++++++++++++---------
+>  1 file changed, 18 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+> index eb6674c..81b7e5e 100644
+> --- a/drivers/pwm/pwm-mediatek.c
+> +++ b/drivers/pwm/pwm-mediatek.c
+> @@ -55,7 +55,7 @@ enum {
+>  };
+>  
+>  struct mtk_pwm_platform_data {
 
-I agree switching to kbuild would be the best solution.
-Unfortunately my kbuild foo is not strong enough...
+Unrelated to this patch: This name is bad. This struct is not used as
+platform_data and so should better be named mtk_pwm_of_data. While at
+criticizing existing stuff: I'd prefer pwm_mediatek as common prefix to
+match the filename.
 
-Thanks!
+> -	unsigned int num_pwms;
+> +	unsigned int num_pwms;	/* it should not be used in the future SoCs */
 
-Gr{oetje,eeting}s,
+I'd drop this comment in favour of a runtime warning.
 
-                        Geert
+>  	bool pwm45_fixup;
+>  	bool has_clks;
+>  };
+> @@ -226,27 +226,36 @@ static void mtk_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  
+>  static int mtk_pwm_probe(struct platform_device *pdev)
+>  {
+> -	const struct mtk_pwm_platform_data *data;
+> +	struct device_node *np = pdev->dev.of_node;
+>  	struct mtk_pwm_chip *pc;
+>  	struct resource *res;
+> -	unsigned int i;
+> +	unsigned int i, num_pwms;
+>  	int ret;
+>  
+>  	pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
+>  	if (!pc)
+>  		return -ENOMEM;
+>  
+> -	data = of_device_get_match_data(&pdev->dev);
+> -	if (data == NULL)
+> -		return -EINVAL;
+> -	pc->soc = data;
+> +	pc->soc = of_device_get_match_data(&pdev->dev);
+
+This might return NULL which ...
+
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	pc->regs = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(pc->regs))
+>  		return PTR_ERR(pc->regs);
+>  
+> -	for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
+> +	/* Check if we have set 'num-pwms' in DTs. */
+> +	ret = of_property_read_u32(np, "mediatek,num-pwms", &num_pwms);
+> +	if (ret < 0) {
+> +		/* If no, fallback to use SoC data for backwards compatibility. */
+> +		if (pc->soc->num_pwms) {
+
+... here then results in a NULL pointer dereference. I think you want
+
+		if (pc->soc)
+
+here.
+
+> +			num_pwms = pc->soc->num_pwms;
+> +		} else {
+> +			dev_err(&pdev->dev, "failed to get pwm number: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < num_pwms + 2 && pc->soc->has_clks; i++) {
+>  		pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
+>  		if (IS_ERR(pc->clks[i])) {
+>  			dev_err(&pdev->dev, "clock: %s fail: %ld\n",
+> @@ -260,7 +269,7 @@ static int mtk_pwm_probe(struct platform_device *pdev)
+>  	pc->chip.dev = &pdev->dev;
+>  	pc->chip.ops = &mtk_pwm_ops;
+>  	pc->chip.base = -1;
+> -	pc->chip.npwm = data->num_pwms;
+> +	pc->chip.npwm = num_pwms;
+>  
+>  	ret = pwmchip_add(&pc->chip);
+>  	if (ret < 0) {
+
+Best regards
+Uwe
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
