@@ -2,128 +2,68 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82087C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F68C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0CA2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:12:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547838731;
-	bh=OlbwiYNH5rDIXXiez5bIwPddtjsFVLPd/UkGBdo/cGk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EjXSeSxZkGEKb049XVU5gOjmLsYWXcBOY0ZEcozWtTdfcj37HkOHfW3lKIh3FNuMz
-	 0+g6vS+q+5LCMrv3A+UC8tpFmXdGbuzXXTbV5KImF287Fel5HA9wALmGER2aHJTpWu
-	 9DRCdlh3M2lQzYowJOrIIwYhBWeYWY8clgAS9wMk=
+	by mail.kernel.org (Postfix) with ESMTP id 7D76F2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:12:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbfARTMJ (ORCPT
+        id S1729318AbfARTMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:12:09 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57280 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729115AbfARTMJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:12:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iTfN4IZcke/gzOJ1Ua6kwNvEgiE6Jf880CODCiJIqDc=; b=qn6Fc6he6I6Xu6gKHw6ISt2ou
-        iKfVa0KkOLy+eWiA+z+y9sCV+BtiA5d//191cgG9MvzfGNkP4OH+zuP5fzguN/bzBhz6cMSrpC58I
-        t5K0WoenlGVBrV6eABTSN3vbvchF1trkGS0UY8qlUzAJK2hK8I2ETYSvIu7Y7viIxjPCA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gkZYh-0005XH-FC; Fri, 18 Jan 2019 19:12:03 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 09C7A11276E7; Fri, 18 Jan 2019 19:12:03 +0000 (GMT)
-Date:   Fri, 18 Jan 2019 19:12:03 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     kernel@martin.sperl.org
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi@vger.kernel.org
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
- instead run teardown delayed
-Message-ID: <20190118191202.GG6260@sirena.org.uk>
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
- <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org>
- <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
- <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org>
- <20190115192619.GG5522@sirena.org.uk>
- <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org>
- <20190115212539.GK5522@sirena.org.uk>
- <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org>
+        Fri, 18 Jan 2019 14:12:33 -0500
+Received: from foss.arm.com ([217.140.101.70]:36766 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729115AbfARTMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 14:12:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C2B6EBD;
+        Fri, 18 Jan 2019 11:12:32 -0800 (PST)
+Received: from [10.1.25.172] (DESKTOP-VLO843J.cambridge.arm.com [10.1.25.172])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2CF603F6A8;
+        Fri, 18 Jan 2019 11:12:30 -0800 (PST)
+Subject: Re: kmemleak panic
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
+References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
+ <20190118143434.GE118707@arrakis.emea.arm.com>
+ <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a2e474ec-51f4-c006-b64a-8851d852621d@arm.com>
+Date:   Fri, 18 Jan 2019 19:12:25 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="XaUbO9McV5wPQijU"
-Content-Disposition: inline
-In-Reply-To: <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org>
-X-Cookie: You can't get there from here.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019-01-18 3:36 pm, Marc Gonzalez wrote:
+> Unable to handle kernel paging request at virtual address ffffffc021e00000
 
---XaUbO9McV5wPQijU
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I can't help but notice that you seem to get the same address in 4 
+different logs - if it really is that deterministic then that's quite 
+the boon for debugging (FWIW my first thought is that it looks a lot 
+like a phys_to_virt() of something bogus). I've never used kmemleak 
+myself, but looking at where it's crashing it appears to think that that 
+address is a valid object - if I'm reading the docs correctly then I 
+guess the "dump" command ought to be able to tell you where it thinks 
+that object came from.
 
-On Fri, Jan 18, 2019 at 06:11:31PM +0100, kernel@martin.sperl.org wrote:
-
-> Does something like this looks acceptable?
-
-> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-> index ec210286567c..677fc5025033 100644
-> --- a/include/linux/spi/spi.h
-> +++ b/include/linux/spi/spi.h
-> @@ -288,6 +288,21 @@ static inline void spi_unregister_driver(struct spi_=
-driver *sdrv)
->  	module_driver(__spi_driver, spi_register_driver, \
->  			spi_unregister_driver)
->=20
-> +/* define SPI Controller states in the state machine */
-> +enum spi_controller_state {
-> +	SPI_CONTROLLER_STATE_SHUTDOWN		=3D 0,
-> +	SPI_CONTROLLER_STATE_IDLE		=3D 1,
-> +	SPI_CONTROLLER_STATE_IN_PROCESS		=3D 2,
-> +	SPI_CONTROLLER_STATE_IN_TRANSFER	=3D 3,
-> +};
-
-Yes, it does!
-
-> SPI_CONTROLLER_MODE_EXCLUSIVE could replace the bus_lock_flag.
-> I am also not sure of the =E2=80=9Cconvention=E2=80=9D of memory mode (i.e
-> using mem_ops). Is it maybe implicitly spi_bus_locked - i.e
-> typically only a single device?
-
-Yes, it does - we're basically handing over the entire SPI bus to
-another bit of hardware that will do memory mapped flash access so we
-can't really have anything else trying to do SPI operations at the same
-time.
-
---XaUbO9McV5wPQijU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxCJQIACgkQJNaLcl1U
-h9CDdQf+I7iveblkgIuqYYemfISQk+f97Jh7CYalr7//EB65ABrPeVKbeWdEWNEd
-O3lQckS5I1XBelmk78Kw1keMvy7yev5LKvadKyXMIS/HPOaCaC8GnuVQ039Zk0iX
-tIeK/uCe2Its32BjZ5b0WbDt68JInIEpf7iuqTQs7hVDmvmx2TovvbXdSkoaqkpU
-qx8wkH0+sxeLLqBelfzvsy7J3ETSRd+c6Je3gCH9Jk15qYO8x+XdY6PRL+3Pz5zs
-U3gVWY8cwTD4v7tORNPNi0W8oB01KoXcrk7cvCUteYS3nSVn2h5GKO05IDrDlhAO
-+5qJMOnCzhhWFsctQcfxD0kQI+tBCA==
-=0ySs
------END PGP SIGNATURE-----
-
---XaUbO9McV5wPQijU--
+Robin.
