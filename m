@@ -2,97 +2,122 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6534EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A30C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF9220873
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:01:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="uheASdiz"
+	by mail.kernel.org (Postfix) with ESMTP id CDD2620873
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:03:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfARDBz (ORCPT
+        id S1727011AbfARDDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 22:01:55 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44496 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfARDBx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 22:01:53 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e11so5654701plt.11
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 19:01:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZqoXXRFbL8LOG168WUI36YcQoZy1XNTlv6gJAPqhUBQ=;
-        b=uheASdiz6dEOFlkfiYGvugmTs/dB65fqRv+ESmJ8rgZmsYT9Yvuxpk1pHftqJD0hsU
-         EhqP577sUOTCgf1u6pHrkzn8qU6hlM7dojRMQy/RKEWUdq918clNVkC/kAufQ2UHM1Gs
-         Y7T+6pk5zfg9xCuFjF5qlMcXPLYgE0DPPaciL+5mSfnIbOTHuYDqdgM30SiXvaLv+y+V
-         s/dXl2XhRL7C9jTEJJHen4M/6XYOiEDlqwYqgM1H7ML42v0ee/8fq//R16GF4IGzy/Df
-         +nrryu4l28KFcOz6RDvDRXPjdEiIZMXtpB2KMnxAwAalWjFOLclLMqlwqoaWa4LoCWlA
-         pu1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZqoXXRFbL8LOG168WUI36YcQoZy1XNTlv6gJAPqhUBQ=;
-        b=cNAEpNThQP6jlTba4aA11mfV1VJ7wPsJ+dql4SO7JJVxd4y98q7iqX4zk6D1PjxEVc
-         0hg1s5I3c6n/9ByA585Tc1J5qpDYf/qezB//TBj4Yh0rJyvanSjYXw7UXA9zEI5gQ0tQ
-         yo9kgGIWTSPMWwoUz/1sDJNsIrTMKSEHJMjFUK/kDtT4ET9GgYDcIlREOM1M/2xm/8BH
-         IjO5kDae2MmLpZWIgF5azo075uliesLS3nKWmc/Y9KtCDVALSYYN8kN9itao2vOUsB9a
-         G6X/QjwPgYcJwT9ZtqXZperVBpZIWxFDZ92pLLaX+nIQ+hUXoCX4nmoAT3ytbG9un4k3
-         79fQ==
-X-Gm-Message-State: AJcUukeyme9TvixBB83AsE1cB/+e9gHi6/SBCONbsNunyTbLtClKBy84
-        PWkAe2U/KuT+pmqlKVmJJDrsQw==
-X-Google-Smtp-Source: ALg8bN6PLc5phI3fRdBEwZdUBKj6aaNSOiIzYspd4qBbi3RJ+QNoLhzVVT+Lg/VQwenkRZXibb+wLg==
-X-Received: by 2002:a17:902:7687:: with SMTP id m7mr17357284pll.187.1547780512578;
-        Thu, 17 Jan 2019 19:01:52 -0800 (PST)
-Received: from [192.168.0.79] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
-        by smtp.gmail.com with ESMTPSA id r187sm10506737pfc.63.2019.01.17.19.01.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 19:01:52 -0800 (PST)
-Subject: [PATCH v2 3/3] scsi: arcmsr: Update driver version to
- v1.40.00.10-20190116
-From:   Ching Huang <ching2048@areca.com.tw>
-To:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     dan.carpenter@oracle.com, hch@infradead.org,
-        colin.king@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Date:   Fri, 18 Jan 2019 11:01:49 +0800
-Message-ID: <1547780509.4532.22.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
-Content-Transfer-Encoding: 7bit
+        Thu, 17 Jan 2019 22:03:37 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53684 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726818AbfARDDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 22:03:37 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 734322572CD53C6EF25F;
+        Fri, 18 Jan 2019 11:03:34 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
+ 11:03:28 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <trond.myklebust@hammerspace.com>, <anna.schumaker@netapp.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] nfs: remove unneeded semicolon
+Date:   Fri, 18 Jan 2019 11:03:22 +0800
+Message-ID: <20190118030322.15464-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From Ching Huang <ching2048@areca.com.tw>
+remove unneeded semicolon
 
-Update driver version to v1.40.00.10-20190116.
-
-Signed-off-by: Ching Huang <ching2048@areca.com.tw>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
+ fs/nfs/nfs4proc.c  | 4 ++--
+ fs/nfs/nfs4state.c | 2 +-
+ fs/nfs/super.c     | 6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/scsi/arcmsr/arcmsr.h b/drivers/scsi/arcmsr/arcmsr.h
-index a94c513..9220bcf 100755
---- a/drivers/scsi/arcmsr/arcmsr.h
-+++ b/drivers/scsi/arcmsr/arcmsr.h
-@@ -49,7 +49,7 @@ struct device_attribute;
- #define ARCMSR_MAX_OUTSTANDING_CMD	1024
- #define ARCMSR_DEFAULT_OUTSTANDING_CMD	128
- #define ARCMSR_MIN_OUTSTANDING_CMD	32
--#define ARCMSR_DRIVER_VERSION		"v1.40.00.10-20181217"
-+#define ARCMSR_DRIVER_VERSION		"v1.40.00.10-20190116"
- #define ARCMSR_SCSI_INITIATOR_ID	255
- #define ARCMSR_MAX_XFER_SECTORS		512
- #define ARCMSR_MAX_XFER_SECTORS_B	4096
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 557a5d6..54da1bf 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -6670,7 +6670,7 @@ static void nfs4_handle_setlk_error(struct nfs_server *server, struct nfs4_lock_
+ 	case -NFS4ERR_STALE_STATEID:
+ 		lsp->ls_seqid.flags &= ~NFS_SEQID_CONFIRMED;
+ 		nfs4_schedule_lease_recovery(server->nfs_client);
+-	};
++	}
+ }
+ 
+ static int _nfs4_do_setlk(struct nfs4_state *state, int cmd, struct file_lock *fl, int recovery_type)
+@@ -8414,7 +8414,7 @@ static int _nfs4_proc_create_session(struct nfs_client *clp,
+ 	case -EACCES:
+ 	case -EAGAIN:
+ 		goto out;
+-	};
++	}
+ 
+ 	clp->cl_seqid++;
+ 	if (!status) {
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 02488b5..2f8774d 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1131,7 +1131,7 @@ static void nfs_increment_seqid(int status, struct nfs_seqid *seqid)
+ 		case -NFS4ERR_MOVED:
+ 			/* Non-seqid mutating errors */
+ 			return;
+-	};
++	}
+ 	/*
+ 	 * Note: no locking needed as we are guaranteed to be first
+ 	 * on the sequence list
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 22ce3c8..6dbc810 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1561,7 +1561,7 @@ static int nfs_parse_mount_options(char *raw,
+ 					dfprintk(MOUNT, "NFS:   invalid "
+ 							"lookupcache argument\n");
+ 					return 0;
+-			};
++			}
+ 			break;
+ 		case Opt_fscache_uniq:
+ 			if (nfs_get_option_str(args, &mnt->fscache_uniq))
+@@ -1594,7 +1594,7 @@ static int nfs_parse_mount_options(char *raw,
+ 				dfprintk(MOUNT, "NFS:	invalid	"
+ 						"local_lock argument\n");
+ 				return 0;
+-			};
++			}
+ 			break;
+ 
+ 		/*
+@@ -2512,7 +2512,7 @@ static void nfs_get_cache_cookie(struct super_block *sb,
+ 		if (mnt_s->fscache_key) {
+ 			uniq = mnt_s->fscache_key->key.uniquifier;
+ 			ulen = mnt_s->fscache_key->key.uniq_len;
+-		};
++		}
+ 	} else
+ 		return;
+ 
+-- 
+2.7.0
 
 
