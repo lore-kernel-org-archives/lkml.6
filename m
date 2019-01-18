@@ -2,110 +2,142 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 459C6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D592C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F4A820855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBA1B2054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:13:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kDrzDLgy"
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="RXYp9C+J";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dD30X1VT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfARFKP (ORCPT
+        id S1727009AbfARFN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 00:10:15 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:47000 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfARFKP (ORCPT
+        Fri, 18 Jan 2019 00:13:58 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:60529 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726381AbfARFN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 00:10:15 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w7so5458268pgp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 21:10:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=OqwwRYEBTtVEUmI5mtBxmnkd21H2Z+IIwB9uA7XBDXo=;
-        b=kDrzDLgyBTGbpwn7c8/OsBkY0PIV11UyxEAW6v2MCY9FNdlDPflF6C/GGfioOmKOvW
-         +vtkIR0hi10j+5XCYUskxsuNbpgWCZPKfONwjqOj/GixqTOxYzjjfz8wd+wSgCAIPO4E
-         7WnP5/8Ryd+MF9fYLA8gF3eB8tqKEuzSwHylg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=OqwwRYEBTtVEUmI5mtBxmnkd21H2Z+IIwB9uA7XBDXo=;
-        b=QZUKPyAnX57vM3KvwNZMz9HMkMyFuA6kPH76Qaa9Am6zFigJrDyfSJnFThqVIRhx1n
-         DJl1ZewJh0l76qslSYIdj/FL8yt1cil9cSpUO8hmffUpypOURxenxaKtV9CL9YUx+UyU
-         5F8piOHCqmooiocgLJGcQ9P9EmjzcSDWDE2lrB9PnnBMoE8g90U0uq6tnELbwKW8OqnO
-         E0DBfAHeFoU8YqH1eO4vajV////6ThZ7u1T98l7ay4vuOB8FNSUfYNFRfvoz4vAbjhKu
-         yKIvFuEXd+PCaYW9B9n99uoDL3DCiHbSLeO1fW5GCd9/xhE1V4qnmdOsh9aQ+x4UYA6y
-         cfjg==
-X-Gm-Message-State: AJcUukdM1pQovi6HgcUhGxrYRWo/8vhohC523pg0jZxmPJR6Hd9fM8aP
-        e7FxaSlmo9y0ub4e67+RaGb+FQ==
-X-Google-Smtp-Source: ALg8bN7/kaVqB04oJzCi6YbeLKIS9lqCqWDET4+wiSltPBbRCcDIj2GTxtzrDoPPYFEx28z3ciGCww==
-X-Received: by 2002:a63:fb4c:: with SMTP id w12mr16264319pgj.321.1547788213525;
-        Thu, 17 Jan 2019 21:10:13 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id 15sm6102297pfr.55.2019.01.17.21.10.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 21:10:12 -0800 (PST)
-Date:   Fri, 18 Jan 2019 10:40:10 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        kgene@kernel.org, rjw@rjwysocki.net,
+        Fri, 18 Jan 2019 00:13:57 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 203C9259AB;
+        Fri, 18 Jan 2019 00:13:56 -0500 (EST)
+Received: from web6 ([10.202.2.216])
+  by compute4.internal (MEProxy); Fri, 18 Jan 2019 00:13:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        message-id:from:to:cc:mime-version:content-transfer-encoding
+        :content-type:subject:in-reply-to:date:references; s=fm1; bh=B/7
+        CgNU5s94c/1EaCMbOA6ixXBS4qhF3PsyR2LzWL7U=; b=RXYp9C+JP0uTj8++2Jb
+        4LKF4XSlvTbaEQv5YKVWnBb3omf7yyLCQ77YAb9MnaTIgev9OvA4cnpgkychacMY
+        3t0bmkdmvrUEOmUMn7t8qxogxn+N5GSY3YMpfjSsbDVnxzcA1GhslF2lOwP4nrao
+        nCf0bhlBio1N3H7AgEzn7xqSyGQmVlPnPqKmSIeXGxTE8sAa6FRHJQ3EGwD6ir/f
+        u+YqUX4Tn0rAw1Q821ChyTgLvjDQprcwxdlEqRWTHjx+hi3IH0UtMyF4OdOrL72c
+        ErXk2BFUvno7PbIF1v735K42KiFhfhxHRTWkCczqSVc/ViC3RPWAxYsO1FcncV6/
+        b0A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=B/7CgNU5s94c/1EaCMbOA6ixXBS4qhF3PsyR2LzWL
+        7U=; b=dD30X1VT7T5ZAuVN0Tn16AbaFIdglCogLoTOOecOPEQfx1c++628p9Ota
+        nG/4pTXkcOCW7g1HOF6LlW3ItiphvY5Vwbl/fW5FtnDasZWakK8nTPi6Ji7nTlqW
+        5WiNudaGD/omXspAvh2BZUIIeBVE4U88U4DYIHT2/5C5h9hEwlXdrMViDbDRL/dL
+        WEChh6FO1J6IBkmCMDJgSApeqIXqNELwe53ftVs6wPGvP3p0cBwMo/vL0Qra3AbG
+        ebzA07bTkGd9ZvXtSz9nYMCAAuEFzBGOpNMe5LvUbkt48DYr8CF2iAYELNZzDWbX
+        D8msEMekwHWjC3MGzehOzYMDVwbGg==
+X-ME-Sender: <xms:k2BBXHkGVzJQL260bklIiKfXWg-EvPpLsptRckMK3lqRfzEp54W_sg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrgeelgdejjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffhvfgggfgtof
+    fujgfffhesthejredtredtjeenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceo
+    rghnughrvgifsegrjhdrihgurdgruheqnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnh
+    gurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:k2BBXPFsjyVZ5P7AMBaVKleEO89bZMHupub_Nis--mKK7Y0ntK7m6g>
+    <xmx:k2BBXIrVyAenT_Udlkfe3mzynKmp8JtZPGndmgyMvUqLzr4Hb4fdDg>
+    <xmx:k2BBXD7xk1aEGteMZ4WCXMTYJtbG2OlVAz_x5uGefYNkkz7qJRs7ag>
+    <xmx:lGBBXKXLjrfQlxyzi0UonxsoVzJ9A4OvZ9DanZWXvwTjdt7zbMBERA>
+Received: by mailuser.nyi.internal (Postfix, from userid 99)
+        id C148B429B; Fri, 18 Jan 2019 00:13:54 -0500 (EST)
+Message-Id: <1547788434.2065387.1637728584.1098F843@webmail.messagingengine.com>
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     Stefan Schaeckeler <schaecsn@gmx.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>, Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] cpufreq: s5pv210: Defer probe if getting regulators
- fail
-Message-ID: <20190118051010.4ed2ntv2mxfeaoot@vireshk-i7>
-References: <20190113195754.30525-1-pawel.mikolaj.chmiel@gmail.com>
- <CAJKOXPfvR6vATPiWbef_JiSJX78PkJxRXjF2xK7EYr5B3e8HbA@mail.gmail.com>
+        linux-aspeed@lists.ozlabs.org, linux-edac@vger.kernel.org
+Cc:     Stefan M Schaeckeler <sschaeck@cisco.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJKOXPfvR6vATPiWbef_JiSJX78PkJxRXjF2xK7EYr5B3e8HbA@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-36e4bfd3
+Subject: Re: [PATCH v2 2/2] dt-bindings: edac: Aspeed AST2500
+In-Reply-To: <1547743097-5236-3-git-send-email-schaecsn@gmx.net>
+Date:   Fri, 18 Jan 2019 15:43:54 +1030
+References: <1547743097-5236-1-git-send-email-schaecsn@gmx.net>
+ <1547743097-5236-3-git-send-email-schaecsn@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-01-19, 08:51, Krzysztof Kozlowski wrote:
-> On Sun, 13 Jan 2019 at 20:58, Paweł Chmiel
-> <pawel.mikolaj.chmiel@gmail.com> wrote:
-> >
-> > There is possibility, that when probing driver, regulators are not yet
-> > initialized. In this case we should return EPROBE_DEFER and wait till
-> > they're initialized, since they're required currently for cpufreq driver
-> > to work. Also move regulator initialization code at beginning of probe,
-> > so we can defer as fast as posibble.
-> >
-> > Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> > ---
-> > Changes from v3:
-> >   - Zero dmc_base pointers after unmapping them
-> >   - If getting vddarm regulator fails just return, no need to do goto
-> >     jump which would do the same
-> >
-> > Changes from v2:
-> >   - Handle all error paths in probe
-> >
-> > Changes from v1:
-> >   - Fix compilation error
-> >   - Reorganize code so it's smaller
+On Fri, 18 Jan 2019, at 03:08, Stefan Schaeckeler wrote:
+> From: Stefan M Schaeckeler <sschaeck@cisco.com>
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Add support for EDAC on the Aspeed AST2500 SoC.
+> 
+> Signed-off-by: Stefan M Schaeckeler <sschaeck@cisco.com>
 
-Applied, thanks.
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
--- 
-viresh
+> ---
+>  .../bindings/edac/aspeed-sdram-edac.txt       | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/edac/aspeed-sdram-
+> edac.txt b/Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
+> new file mode 100644
+> index 000000000000..6a0f3d90d682
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
+> @@ -0,0 +1,25 @@
+> +Aspeed AST2500 SoC EDAC node
+> +
+> +The Aspeed AST2500 SoC supports DDR3 and DDR4 memory with and without 
+> ECC (error
+> +correction check).
+> +
+> +The memory controller supports SECDED (single bit error correction, 
+> double bit
+> +error detection) and single bit error auto scrubbing by reserving 8 
+> bits for
+> +every 64 bit word (effectively reducing available memory to 8/9).
+> +
+> +Note, the bootloader must configure ECC mode in the memory controller.
+> +
+> +
+> +Required properties:
+> +- compatible: should be "aspeed,ast2500-sdram-edac"
+> +- reg:        sdram controller register set should be <0x1e6e0000 
+> 0x174>
+> +- interrupts: should be AVIC interrupt #0
+> +
+> +
+> +Example:
+> +
+> +	edac: sdram@1e6e0000 {
+> +		compatible = "aspeed,ast2500-sdram-edac";
+> +		reg = <0x1e6e0000 0x174>;
+> +		interrupts = <0>;
+> +	};
+> -- 
+> 2.19.1
+> 
