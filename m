@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07C4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61526C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB58B2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C8FE2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:51:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbfAROvu (ORCPT
+        id S1727992AbfAROvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:51:50 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47927 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:51:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47984 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727517AbfAROvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:51:45 -0500
+        id S1727745AbfAROvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:51:46 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 31A4820C58; Fri, 18 Jan 2019 15:51:43 +0100 (CET)
+        id 5323820DCD; Fri, 18 Jan 2019 15:51:44 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A41A120BCD;
-        Fri, 18 Jan 2019 15:51:42 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 30EB420C2D;
+        Fri, 18 Jan 2019 15:51:43 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 07/23] drm/sun4i: frontend: Configure and enable YUV to RGB CSC when needed
-Date:   Fri, 18 Jan 2019 15:51:17 +0100
-Message-Id: <20190118145133.21281-8-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 09/23] drm/sun4i: frontend: Add support for semi-planar YUV input formats
+Date:   Fri, 18 Jan 2019 15:51:19 +0100
+Message-Id: <20190118145133.21281-10-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,76 +48,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In prevision of adding support for YUV formats, set the YUV to RGB
-colorspace conversion coefficients if required and don't bypass the
-CSC engine when converting.
+Semi-planar YUV formats use two distinct planes, one for luminance and
+one for chrominance. To add support for them, we need to configure the
+second line stride and buffer address registers to setup the second YUV
+plane.
 
-The BT601 coefficients from the A33 BSP are copied over from the backend
-code. Because of module inter-dependency, we can't have the frontend use
-these coefficients from the backend directly.
+New definitions are introduced to configure the input format register
+for the YUV420 and YUV422 semi-planar formats.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 23 +++++++++++++++++++++--
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  2 ++
- 2 files changed, 23 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 50 +++++++++++++++++++++++---
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  6 ++++
+ drivers/gpu/drm/sun4i/sun4i_layer.c    |  4 +++
+ 3 files changed, 55 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 045013efdc57..bf37a4ea81c5 100644
+index 1946dd9e58d9..f262069d348f 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -213,6 +213,8 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
- 	const struct drm_format_info *format = fb->format;
- 	u32 out_fmt_val;
- 	u32 in_fmt_val, in_mod_val, in_ps_val;
-+	unsigned int i;
-+	u32 bypass;
- 	int ret;
+@@ -119,11 +119,23 @@ void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD0_REG,
+ 		     fb->pitches[0]);
  
- 	ret = sun4i_frontend_drm_format_to_input_fmt(format, &in_fmt_val);
-@@ -250,9 +252,26 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
- 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE1_REG, 0x400);
- 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE1_REG, 0x400);
- 
-+	/*
-+	 * Checking the input format is sufficient since we currently only
-+	 * support RGB output formats to the backend. If YUV output formats
-+	 * ever get supported, an YUV input and output would require bypassing
-+	 * the CSC engine too.
-+	 */
-+	if (format->is_yuv) {
-+		/* Setup the CSC engine for YUV to RGB conversion. */
-+		bypass = 0;
++	if (fb->format->num_planes > 1)
++		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD1_REG,
++			     fb->pitches[1]);
 +
-+		for (i = 0; i < ARRAY_SIZE(sunxi_bt601_yuv2rgb_coef); i++)
-+			regmap_write(frontend->regs,
-+				     SUN4I_FRONTEND_CSC_COEF_REG(i),
-+				     sunxi_bt601_yuv2rgb_coef[i]);
-+	} else {
-+		bypass = SUN4I_FRONTEND_BYPASS_CSC_EN;
+ 	/* Set the physical address of the buffer in memory */
+ 	paddr = drm_fb_cma_get_gem_addr(fb, state, 0);
+ 	paddr -= PHYS_OFFSET;
+-	DRM_DEBUG_DRIVER("Setting buffer address to %pad\n", &paddr);
++	DRM_DEBUG_DRIVER("Setting buffer #0 address to %pad\n", &paddr);
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_BUF_ADDR0_REG, paddr);
++
++	if (fb->format->num_planes > 1) {
++		paddr = drm_fb_cma_get_gem_addr(fb, state, 1);
++		paddr -= PHYS_OFFSET;
++		DRM_DEBUG_DRIVER("Setting buffer #1 address to %pad\n", &paddr);
++		regmap_write(frontend->regs, SUN4I_FRONTEND_BUF_ADDR1_REG,
++			     paddr);
 +	}
-+
- 	regmap_update_bits(frontend->regs, SUN4I_FRONTEND_BYPASS_REG,
--			   SUN4I_FRONTEND_BYPASS_CSC_EN,
--			   SUN4I_FRONTEND_BYPASS_CSC_EN);
-+			   SUN4I_FRONTEND_BYPASS_CSC_EN, bypass);
+ }
+ EXPORT_SYMBOL(sun4i_frontend_update_buffer);
  
- 	regmap_write(frontend->regs, SUN4I_FRONTEND_INPUT_FMT_REG,
- 		     in_mod_val | in_fmt_val | in_ps_val);
+@@ -133,6 +145,8 @@ sun4i_frontend_drm_format_to_input_fmt(const struct drm_format_info *format,
+ {
+ 	if (!format->is_yuv)
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
++	else if (drm_format_info_is_yuv_sampling_420(format))
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV420;
+ 	else if (drm_format_info_is_yuv_sampling_422(format))
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422;
+ 	else
+@@ -145,12 +159,18 @@ static int
+ sun4i_frontend_drm_format_to_input_mode(const struct drm_format_info *format,
+ 					u32 *val)
+ {
+-	if (format->num_planes == 1)
++	switch (format->num_planes) {
++	case 1:
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED;
+-	else
+-		return -EINVAL;
++		return 0;
+ 
+-	return 0;
++	case 2:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR;
++		return 0;
++
++	default:
++		return -EINVAL;
++	}
+ }
+ 
+ static int
+@@ -162,6 +182,22 @@ sun4i_frontend_drm_format_to_input_sequence(const struct drm_format_info *format
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX;
+ 		return 0;
+ 
++	case DRM_FORMAT_NV12:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UV;
++		return 0;
++
++	case DRM_FORMAT_NV16:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UV;
++		return 0;
++
++	case DRM_FORMAT_NV21:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VU;
++		return 0;
++
++	case DRM_FORMAT_NV61:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VU;
++		return 0;
++
+ 	case DRM_FORMAT_UYVY:
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY;
+ 		return 0;
+@@ -205,6 +241,10 @@ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
+ 
+ static const uint32_t sun4i_frontend_formats[] = {
+ 	DRM_FORMAT_BGRX8888,
++	DRM_FORMAT_NV12,
++	DRM_FORMAT_NV16,
++	DRM_FORMAT_NV21,
++	DRM_FORMAT_NV61,
+ 	DRM_FORMAT_UYVY,
+ 	DRM_FORMAT_VYUY,
+ 	DRM_FORMAT_XRGB8888,
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index 3df2bd8a7a95..17b46ecf7d9e 100644
+index e287a71a0db9..2f9e3f84e2ff 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -35,6 +35,8 @@
- #define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_BGRX8888	1
- #define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_XRGB8888	2
+@@ -22,17 +22,23 @@
+ #define SUN4I_FRONTEND_BYPASS_CSC_EN			BIT(1)
  
-+#define SUN4I_FRONTEND_CSC_COEF_REG(c)		(0x070 + (0x4 * (c)))
-+
- #define SUN4I_FRONTEND_CH0_INSIZE_REG		0x100
- #define SUN4I_FRONTEND_INSIZE(h, w)			((((h) - 1) << 16) | (((w) - 1)))
+ #define SUN4I_FRONTEND_BUF_ADDR0_REG		0x020
++#define SUN4I_FRONTEND_BUF_ADDR1_REG		0x024
  
+ #define SUN4I_FRONTEND_LINESTRD0_REG		0x040
++#define SUN4I_FRONTEND_LINESTRD1_REG		0x044
+ 
+ #define SUN4I_FRONTEND_INPUT_FMT_REG		0x04c
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED	(1 << 8)
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR	(2 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422	(1 << 4)
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV420	(2 << 4)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB		(5 << 4)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY		0
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV		1
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY		2
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU		3
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UV		0
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VU		1
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX		0
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB		1
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
+index 29631e0efde3..185ef38649aa 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_layer.c
++++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
+@@ -138,6 +138,10 @@ static const uint32_t sun4i_layer_formats[] = {
+ 	DRM_FORMAT_RGBA4444,
+ 	DRM_FORMAT_RGB888,
+ 	DRM_FORMAT_RGB565,
++	DRM_FORMAT_NV12,
++	DRM_FORMAT_NV16,
++	DRM_FORMAT_NV21,
++	DRM_FORMAT_NV61,
+ 	DRM_FORMAT_UYVY,
+ 	DRM_FORMAT_VYUY,
+ 	DRM_FORMAT_XRGB8888,
 -- 
 2.20.1
 
