@@ -2,386 +2,227 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89371C65C16
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC982C65C14
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4226B20657
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:19:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A6AB20657
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:20:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYPxZMOk"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZBCXI76N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729482AbfARUTs (ORCPT
+        id S1729462AbfARUUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 15:19:48 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:43487 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729340AbfARUTr (ORCPT
+        Fri, 18 Jan 2019 15:20:51 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49986 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729381AbfARUUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 15:19:47 -0500
-Received: by mail-qk1-f194.google.com with SMTP id z18so8772377qkj.10;
-        Fri, 18 Jan 2019 12:19:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fCTcUIA2eg9rekWKl1AkKrLwPNlRI1McPWwryVLof64=;
-        b=lYPxZMOkMNCpI7rlynEnq9zTFL7CKNahGHpOn7AnjmNaavmSDkp6GqcNfVAYze5ZD7
-         rZzYTYCdlGJdTW1wHvyileEUGLbvOi9eYXNF8afn9KQehyH94xiv6XqS8/8400MMIOY0
-         xexl0T25KHBg1CBOB9x/FWGp3EqWRS/4bsiH/IVY/P2+uhu25recm/V/Nz0mUYyfyF7u
-         2lovHT+8vDFUfObHAiYotOon6tvGpKUU2s1GToltOkZ12sFO4809XFqM4QOG20zMAMuS
-         9QfiH+OHQ9eqCtfnvPJ/WaDR26yiv4VpwaMe/tdUShKNmScAh+5dHzE8weJmfUaQTL4h
-         U2Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fCTcUIA2eg9rekWKl1AkKrLwPNlRI1McPWwryVLof64=;
-        b=U/Onb3gX2luS0PmpUqsFYJ4gBrTAemfqrMPrrnRStYpmX/Zmgj31+gomTUQWw4oyoZ
-         FIROfV0JFGjEe02HVFBoaOmSQnedeGAg96jJgy2yfN3Qq2bYEbWHiUrkPektxDBepZDs
-         lp7DRkvHg/c366rTWiciuY8KsLQod/sdFNWU/6g7rtGOvQ5qHsDhex/XK3ReT+SbKuwJ
-         SwN2VtV8LuEADFrrVx28emANV/9bigimcN2p7EnZiiDWBGGozAvEtF/g5y+1T+eOPj5o
-         VYQwac6qmE7q1q28KNuR6vs8BrD7YYUTkFv/3w8cTvWHoR6Omx9KR/3zGAlvuiZR6CSV
-         +a4Q==
-X-Gm-Message-State: AJcUukc9S0BDH1Utviay8laHTSjySmjKQJj9x+SVOi8T0jOMDIUWp0mR
-        1eFrvOD87B/NOmRT/+Mwj8w=
-X-Google-Smtp-Source: ALg8bN6unSvsNlGtmqavX5b2uiM3XQ6ogirKDSV0IH+Dq4csaDYjXZOmnaG0NdfZMWJfCvqDioXi7g==
-X-Received: by 2002:a37:4eca:: with SMTP id c193mr16287830qkb.37.1547842785889;
-        Fri, 18 Jan 2019 12:19:45 -0800 (PST)
-Received: from renatolg ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id p8sm61581835qtk.70.2019.01.18.12.19.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Jan 2019 12:19:45 -0800 (PST)
-From:   Renato Lui Geh <renatogeh@gmail.com>
-X-Google-Original-From: Renato Lui Geh <renatogeh@renatolg>
-Date:   Fri, 18 Jan 2019 18:19:40 -0200
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Giuliano Augusto Faulin Belinassi <giuliano.belinassi@usp.br>,
-        StefanSerban.Popa@analog.com, alexandru.Ardelean@analog.com,
-        lars@metafoo.de, knaack.h@gmx.de, Michael.Hennerich@analog.com,
-        Renato Geh <renatogeh@gmail.com>, giuliano.belinassi@gmail.com,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        kernel-usp@googlegroups.com
-Subject: Re: [PATCH 1/2] staging: iio: ad7780: Add gain & filter gpio support
-Message-ID: <20190118201820.mlwxeso2odpecdsf@renatolg>
-References: <cover.1543428366.git.giuliano.belinassi@usp.br>
- <231cbc909b892a0ebe172460d34e9eeb9cfa3003.1543428366.git.giuliano.belinassi@usp.br>
- <1543490289.11186.22.camel@analog.com>
- <CAEFO=4AQe0B0inmE=w2T+xaFkKgPwnHLP7XkT30TjFV_AEKGbg@mail.gmail.com>
- <20181201172341.4c353eae@archlinux>
+        Fri, 18 Jan 2019 15:20:51 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0IKKgJ3020110;
+        Fri, 18 Jan 2019 14:20:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547842842;
+        bh=aufRV8DxPBlCH1R+TJXTjW299Jj7QbDj1aFMqdBqcdQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZBCXI76NjRC3K0DYdc6kgHzAw9g/dvybIkh0XvXF3ilConZl3qujLISbMW7lIUDvT
+         a3wWS8bFzFw4k+11aPUo/tSkknGthHroPUAVUuTWONWDSOLBwwW3h6p3xhZpJQfC49
+         pBgKVPb6CBysx1tS05Dk7aGtMN3Aa6t1I2KKjjbw=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0IKKgHG060324
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Jan 2019 14:20:42 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 18
+ Jan 2019 14:20:42 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 18 Jan 2019 14:20:42 -0600
+Received: from [172.22.84.228] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0IKKfKX012468;
+        Fri, 18 Jan 2019 14:20:41 -0600
+Subject: Re: [PATCH 2/4] staging: android: ion: Restrict cache maintenance to
+ dma mapped memory
+To:     Liam Mark <lmark@codeaurora.org>, <labbott@redhat.com>,
+        <sumit.semwal@linaro.org>
+CC:     <arve@android.com>, <tkjos@android.com>, <maco@android.com>,
+        <joel@joelfernandes.org>, <christian@brauner.io>,
+        <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
+        <john.stultz@linaro.org>
+References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
+ <1547836667-13695-3-git-send-email-lmark@codeaurora.org>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <69b18f39-8ce0-3c4d-3528-dfab8399f24f@ti.com>
+Date:   Fri, 18 Jan 2019 14:20:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181201172341.4c353eae@archlinux>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1547836667-13695-3-git-send-email-lmark@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 1/18/19 12:37 PM, Liam Mark wrote:
+> The ION begin_cpu_access and end_cpu_access functions use the
+> dma_sync_sg_for_cpu and dma_sync_sg_for_device APIs to perform cache
+> maintenance.
+> 
+> Currently it is possible to apply cache maintenance, via the
+> begin_cpu_access and end_cpu_access APIs, to ION buffers which are not
+> dma mapped.
+> 
+> The dma sync sg APIs should not be called on sg lists which have not been
+> dma mapped as this can result in cache maintenance being applied to the
+> wrong address. If an sg list has not been dma mapped then its dma_address
+> field has not been populated, some dma ops such as the swiotlb_dma_ops ops
+> use the dma_address field to calculate the address onto which to apply
+> cache maintenance.
+> 
+> Also I don’t think we want CMOs to be applied to a buffer which is not
+> dma mapped as the memory should already be coherent for access from the
+> CPU. Any CMOs required for device access taken care of in the
+> dma_buf_map_attachment and dma_buf_unmap_attachment calls.
+> So really it only makes sense for begin_cpu_access and end_cpu_access to
+> apply CMOs if the buffer is dma mapped.
+> 
+> Fix the ION begin_cpu_access and end_cpu_access functions to only apply
+> cache maintenance to buffers which are dma mapped.
+> 
+> Fixes: 2a55e7b5e544 ("staging: android: ion: Call dma_map_sg for syncing and mapping")
+> Signed-off-by: Liam Mark <lmark@codeaurora.org>
+> ---
+>  drivers/staging/android/ion/ion.c | 26 +++++++++++++++++++++-----
+>  1 file changed, 21 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+> index 6f5afab7c1a1..1fe633a7fdba 100644
+> --- a/drivers/staging/android/ion/ion.c
+> +++ b/drivers/staging/android/ion/ion.c
+> @@ -210,6 +210,7 @@ struct ion_dma_buf_attachment {
+>  	struct device *dev;
+>  	struct sg_table *table;
+>  	struct list_head list;
+> +	bool dma_mapped;
+>  };
+>  
+>  static int ion_dma_buf_attach(struct dma_buf *dmabuf,
+> @@ -231,6 +232,7 @@ static int ion_dma_buf_attach(struct dma_buf *dmabuf,
+>  
+>  	a->table = table;
+>  	a->dev = attachment->dev;
+> +	a->dma_mapped = false;
+>  	INIT_LIST_HEAD(&a->list);
+>  
+>  	attachment->priv = a;
+> @@ -261,12 +263,18 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
+>  {
+>  	struct ion_dma_buf_attachment *a = attachment->priv;
+>  	struct sg_table *table;
+> +	struct ion_buffer *buffer = attachment->dmabuf->priv;
+>  
+>  	table = a->table;
+>  
+> +	mutex_lock(&buffer->lock);
+>  	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
+> -			direction))
+> +			direction)) {
+> +		mutex_unlock(&buffer->lock);
+>  		return ERR_PTR(-ENOMEM);
+> +	}
+> +	a->dma_mapped = true;
+> +	mutex_unlock(&buffer->lock);
+>  
+>  	return table;
+>  }
+> @@ -275,7 +283,13 @@ static void ion_unmap_dma_buf(struct dma_buf_attachment *attachment,
+>  			      struct sg_table *table,
+>  			      enum dma_data_direction direction)
+>  {
+> +	struct ion_dma_buf_attachment *a = attachment->priv;
+> +	struct ion_buffer *buffer = attachment->dmabuf->priv;
+> +
+> +	mutex_lock(&buffer->lock);
+>  	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
+> +	a->dma_mapped = false;
+> +	mutex_unlock(&buffer->lock);
+>  }
+>  
+>  static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
+> @@ -346,8 +360,9 @@ static int ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
+>  
+>  	mutex_lock(&buffer->lock);
+>  	list_for_each_entry(a, &buffer->attachments, list) {
 
-Sorry for the (extremely) late reply.
+When no devices are attached then buffer->attachments is empty and the
+below does not run, so if I understand this patch correctly then what
+you are protecting against is CPU access in the window after
+dma_buf_attach but before dma_buf_map.
 
-Comments inline.
+This is the kind of thing that again makes me think a couple more
+ordering requirements on DMA-BUF ops are needed. DMA-BUFs do not require
+the backing memory to be allocated until map time, this is why the
+dma_address field would still be null as you note in the commit message.
+So why should the CPU be performing accesses on a buffer that is not
+actually backed yet?
 
-Renato
+I can think of two solutions:
 
-On 12/01, Jonathan Cameron wrote:
->On Thu, 29 Nov 2018 11:02:46 -0200
->Giuliano Augusto Faulin Belinassi <giuliano.belinassi@usp.br> wrote:
->
->> Hi
->
->A few follow ups from me having read the result in patch 2.
->
->Jonathan
->>
->> On Thu, Nov 29, 2018 at 9:18 AM Popa, Stefan Serban
->> <StefanSerban.Popa@analog.com> wrote:
->> >
->> > On Mi, 2018-11-28 at 16:15 -0200, Giuliano Belinassi wrote:
->> > > Previously, the AD7780 driver only supported gpio for the 'powerdown'
->> > > pin. This commit adds suppport for the 'gain' and 'filter' pin.
->> > >
->> > > Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
->> > > ---
->> > > Changes in v2:
->> > >     - Now this patch is part of the patchset that aims to remove ad7780
->> > > out of staging. https://marc.info/?l=linux-iio&m=154282349808890&w=2
->> > >     - Also, now it reads voltage and filter values from the userspace
->> > > instead of gpio pin states.
->> >
->> > Hello,
->> > Please see bellow.
->> >
->> > >
->> > >  drivers/staging/iio/adc/ad7780.c       | 78 ++++++++++++++++++++++++--
->> > >  include/linux/iio/adc/ad_sigma_delta.h |  5 ++
->> > >  2 files changed, 79 insertions(+), 4 deletions(-)
->> > >
->> > > diff --git a/drivers/staging/iio/adc/ad7780.c
->> > > b/drivers/staging/iio/adc/ad7780.c
->> > > index c4a85789c2db..05979a79fda3 100644
->> > > --- a/drivers/staging/iio/adc/ad7780.c
->> > > +++ b/drivers/staging/iio/adc/ad7780.c
->> > > @@ -39,6 +39,12 @@
->> > >  #define AD7170_PATTERN               (AD7780_PAT0 | AD7170_PAT2)
->> > >  #define AD7170_PATTERN_MASK  (AD7780_PAT0 | AD7780_PAT1 |
->> > > AD7170_PAT2)
->> > >
->> > > +#define AD7780_GAIN_GPIO     0
->> > > +#define AD7780_FILTER_GPIO   1
->> > > +
->> > > +#define AD7780_GAIN_MIDPOINT 64
->> > > +#define AD7780_FILTER_MIDPOINT       13350
->> > > +
->> > >  struct ad7780_chip_info {
->> > >       struct iio_chan_spec    channel;
->> > >       unsigned int            pattern_mask;
->> > > @@ -50,6 +56,8 @@ struct ad7780_state {
->> > >       const struct ad7780_chip_info   *chip_info;
->> > >       struct regulator                *reg;
->> > >       struct gpio_desc                *powerdown_gpio;
->> > > +     struct gpio_desc                *gain_gpio;
->> > > +     struct gpio_desc                *filter_gpio;
->> > >       unsigned int    gain;
->> > >
->> > >       struct ad_sigma_delta sd;
->> > > @@ -115,18 +123,65 @@ static int ad7780_read_raw(struct iio_dev
->> > > *indio_dev,
->> > >       return -EINVAL;
->> > >  }
->> > >
->> > > +static int ad7780_write_raw(struct iio_dev *indio_dev,
->> > > +                         struct iio_chan_spec const *chan,
->> > > +                         int val,
->> > > +                         int val2,
->> > > +                         long m)
->> > > +{
->> > > +     struct ad7780_state *st = iio_priv(indio_dev);
->> > > +     const struct ad7780_chip_info *chip_info = st->chip_info;
->> > > +     int uvref, gain;
->> > > +     unsigned int full_scale;
->> > > +
->> > > +     if (!chip_info->is_ad778x)
->> > > +             return 0;
->> > > +
->> > > +     switch (m) {
->> > > +     case IIO_CHAN_INFO_SCALE:
->> > > +             if (val != 0)
->> > > +                     return -EINVAL;
->> > > +
->> > > +             uvref = regulator_get_voltage(st->reg);
->> >
->> > regulator_get_voltage() has already been called in the probe function and
->> > the result is stored in st->int_vref_mv.
->>
->> This was removed in commit  9eae69ddbc4717a0bd702eddac76c7848773bf71
->> because the value was not being updated. But I agree if the vref
->> voltage is not going to change at all after the initialization, then
->> this value should be kept in memory.
+1) Only allow CPU access (mmap, kmap, {begin,end}_cpu_access) while at
+least one device is mapped.
 
-Why wouldn't the vref voltage not change after initialization? Shouldn't
-we keep reading and updating this in read_raw?
->>
->> > My suggestion would be to use a local vref variable declared as unsigned
->> > int. It is my fault that I haven't explained correctly in the previous
->> > email, but you need to multiply vref_mv with 1000000LL in order to get the
->> > right precision: vref = st->int_vref_mv * 1000000LL. Afterwards you will be
->> > able to perform the divisions.
+2) Treat the CPU access request like the a device map request and
+trigger the allocation of backing memory just like if a device map had
+come in.
 
-Shouldn't we read vref inside read_raw in order to get up-to-date
-readings on voltage values? Or should we keep reading from a cached
-value?
->>
->> Thanks for this info! :-)
->> Shouldn't we store this in uV (microVolts)? This will yield a more
->> accurate result after the multiplication.
->>
->> > > +
->> > > +             if (uvref < 0)
->> > > +                     return uvref;
->> > > +
->> > > +             full_scale = 1 << (chip_info->channel.scan_type.realbits
->> > > - 1);
->> > > +             gain = DIV_ROUND_CLOSEST(uvref, full_scale);
->> > > +             gain = DIV_ROUND_CLOSEST(gain, val2);
->> > > +
->> > > +             gpiod_set_value(st->gain_gpio, gain <
->> > > AD7780_GAIN_MIDPOINT ? 0 : 1);
->> >
->> > Once the gain is set, you can store it in st->gain variable.
->>
->> Yes, we forgot it.
->>
->> >
->> > > +     case IIO_CHAN_INFO_SAMP_FREQ:
->> > > +             if (val2 != 0)
->> > > +                     return -EINVAL;
->comment I raised in patch 2 about the odd preciseness of insisting
->no decimal places, but matching any value based on a threshold on the
->whole number part.
+I know the current Ion heaps (and most other DMA-BUF exporters) all do
+the allocation up front so the memory is already there, but DMA-BUF was
+designed with late allocation in mind. I have a use-case I'm working on
+that finally exercises this DMA-BUF functionality and I would like to
+have it export through ION. This patch doesn't prevent that, but seems
+like it is endorsing the the idea that buffers always need to be backed,
+even before device attach/map is has occurred.
 
-I see. I thought the filter input was in mHz. So should I compare
-1000*val with AD7780_FILTER_MIDPOINT?
->
->I'd also expect to see read_raw support for this.
->
->> > > +
->> > > +             gpiod_set_value(st->filter_gpio, val <
->> > > AD7780_FILTER_MIDPOINT ? 0 : 1);
->> >
->> > This is probably fine, although I am not a big fan of the ternary operator.
->> > A simple if else statement would do. However, I don't feel strongly about
->> > it, so feel free to disagree.
->> >
->> > > +     break;
->> > > +     }
->> > > +
->> > > +     return 0;
->> > > +}
->> > > +
->> > >  static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
->> > >                                    unsigned int raw_sample)
->> > >  {
->> > >       struct ad7780_state *st = ad_sigma_delta_to_ad7780(sigma_delta);
->> > >       const struct ad7780_chip_info *chip_info = st->chip_info;
->> > > +     int val;
->> > >
->> > >       if ((raw_sample & AD7780_ERR) ||
->> > >           ((raw_sample & chip_info->pattern_mask) != chip_info-
->> > > >pattern))
->> > >               return -EIO;
->> > >
->> > >       if (chip_info->is_ad778x) {
->> > > -             if (raw_sample & AD7780_GAIN)
->> > > +             val = raw_sample & AD7780_GAIN;
->> > > +
->> > > +             if (val != gpiod_get_value(st->gain_gpio))
->> > > +                     return -EIO;
->> >
->> > It is not obvious to me what is the point of this check. Maybe you can add
->> > a comment?
+Either of the above two solutions would need to target the DMA-BUF
+framework,
 
-If I'm not mistaken, we had agreed earlier to remove this altogether, as
-having a redundancy check could potentially slow down reading.
->>
->> It seems to be a redundancy check. It is getting the 32-bits
->> raw_output, getting the bit that represents the GAIN value and
->> checking if the pin is set accordingly (see Figure 22 of datasheet,
->> page 13). Is this correct? If yes we add a comment explaining this.
->>
->> >
->> > > +
->> > > +             if (val)
->> > >                       st->gain = 1;
->> > >               else
->> > >                       st->gain = 128;
->> >
->> > Do we still need this? I am not convinced.
->> No, I don't think so. Thanks for pointing this out :-)
->>
->> >
->> > > @@ -141,18 +196,20 @@ static const struct ad_sigma_delta_info
->> > > ad7780_sigma_delta_info = {
->> > >       .has_registers = false,
->> > >  };
->> > >
->> > > -#define AD7780_CHANNEL(bits, wordsize) \
->> > > +#define AD7170_CHANNEL(bits, wordsize) \
->> > >       AD_SD_CHANNEL_NO_SAMP_FREQ(1, 0, 0, bits, 32, wordsize - bits)
->> > > +#define AD7780_CHANNEL(bits, wordsize) \
->> > > +     AD_SD_CHANNEL_GAIN_FILTER(1, 0, 0, bits, 32, wordsize - bits)
->> > >
->> > >  static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
->> > >       [ID_AD7170] = {
->> > > -             .channel = AD7780_CHANNEL(12, 24),
->> > > +             .channel = AD7170_CHANNEL(12, 24),
->> > >               .pattern = AD7170_PATTERN,
->> > >               .pattern_mask = AD7170_PATTERN_MASK,
->> > >               .is_ad778x = false,
->> > >       },
->> > >       [ID_AD7171] = {
->> > > -             .channel = AD7780_CHANNEL(16, 24),
->> > > +             .channel = AD7170_CHANNEL(16, 24),
->> > >               .pattern = AD7170_PATTERN,
->> > >               .pattern_mask = AD7170_PATTERN_MASK,
->> > >               .is_ad778x = false,
->> > > @@ -173,6 +230,7 @@ static const struct ad7780_chip_info
->> > > ad7780_chip_info_tbl[] = {
->> > >
->> > >  static const struct iio_info ad7780_info = {
->> > >       .read_raw = ad7780_read_raw,
->> > > +     .write_raw = ad7780_write_raw,
->> > >  };
->> > >
->> > >  static int ad7780_probe(struct spi_device *spi)
->> > > @@ -222,6 +280,18 @@ static int ad7780_probe(struct spi_device *spi)
->> > >               goto error_disable_reg;
->> > >       }
->> > >
->> > > +     if (st->chip_info->is_ad778x) {
->> > > +             st->gain_gpio = devm_gpiod_get_optional(&spi->dev,
->> > > +                                                     "gain",
->> > > +                                                     GPIOD_OUT_HIGH);
->> > > +             if (IS_ERR(st->gain_gpio)) {
->> >
->> > if the GPIO is optional, then we should continue in case of -ENODEV.
->> >
->> > Shouldn't we have a devm_gpiod_get_optional() call also for filter_gpio?
->I had to check this one...
->
-> * This is equivalent to gpiod_get(), except that when no GPIO was assigned to
-> * the requested function it will return NULL. This is convenient for drivers
-> * that need to handle optional GPIOs.
->
->So nope, it shouldn't return -ENODEV;  unlike the clock equivalent which
->IIRC does...
->
->> >
->> > > +                     ret = PTR_ERR(st->gain_gpio);
->> > > +                     dev_err(&spi->dev, "Failed to request gain GPIO:
->> > > %d\n",
->> > > +                             ret);
->> > > +                     goto error_disable_reg;
->> > > +             }
->> > > +     }
->> > > +
->> > >       ret = ad_sd_setup_buffer_and_trigger(indio_dev);
->> > >       if (ret)
->> > >               goto error_disable_reg;
->> > > diff --git a/include/linux/iio/adc/ad_sigma_delta.h
->> > > b/include/linux/iio/adc/ad_sigma_delta.h
->> > > index 730ead1a46df..6cadab6fd5fd 100644
->> > > --- a/include/linux/iio/adc/ad_sigma_delta.h
->> > > +++ b/include/linux/iio/adc/ad_sigma_delta.h
->> > > @@ -173,6 +173,11 @@ int ad_sd_validate_trigger(struct iio_dev
->> > > *indio_dev, struct iio_trigger *trig);
->> > >       __AD_SD_CHANNEL(_si, _channel, -1, _address, _bits, \
->> > >               _storagebits, _shift, NULL, IIO_VOLTAGE, 0)
->> > >
->> > > +#define AD_SD_CHANNEL_GAIN_FILTER(_si, _channel, _address, _bits, \
->> > > +     _storagebits, _shift) \
->> > > +     __AD_SD_CHANNEL(_si, _channel, -1, _address, _bits, \
->> > > +             _storagebits, _shift, NULL, IIO_VOLTAGE,
->> > > BIT(IIO_CHAN_INFO_RAW))
->> > > +
->> > >  #define AD_SD_TEMP_CHANNEL(_si, _address, _bits, _storagebits, _shift) \
->> > >       __AD_SD_CHANNEL(_si, 0, -1, _address, _bits, \
->> > >               _storagebits, _shift, NULL, IIO_TEMP, \
->> >
->> > --
->> > You received this message because you are subscribed to the Google Groups "Kernel USP" group.
->> > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-usp+unsubscribe@googlegroups.com.
->> > To post to this group, send email to kernel-usp@googlegroups.com.
->> > To view this discussion on the web visit https://groups.google.com/d/msgid/kernel-usp/1543490289.11186.22.camel%40analog.com.
->> > For more options, visit https://groups.google.com/d/optout.
->
+Sumit,
+
+Any comment?
+
+Thanks,
+Andrew
+
+> -		dma_sync_sg_for_cpu(a->dev, a->table->sgl, a->table->nents,
+> -				    direction);
+> +		if (a->dma_mapped)
+> +			dma_sync_sg_for_cpu(a->dev, a->table->sgl,
+> +					    a->table->nents, direction);
+>  	}
+>  
+>  unlock:
+> @@ -369,8 +384,9 @@ static int ion_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
+>  
+>  	mutex_lock(&buffer->lock);
+>  	list_for_each_entry(a, &buffer->attachments, list) {
+> -		dma_sync_sg_for_device(a->dev, a->table->sgl, a->table->nents,
+> -				       direction);
+> +		if (a->dma_mapped)
+> +			dma_sync_sg_for_device(a->dev, a->table->sgl,
+> +					       a->table->nents, direction);
+>  	}
+>  	mutex_unlock(&buffer->lock);
+>  
+> 
