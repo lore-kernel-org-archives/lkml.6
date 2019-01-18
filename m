@@ -2,132 +2,318 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA56C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF3AC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 744702086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9CB120883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:02:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547830934;
+	bh=Ot5cdfyQMABjJwcJZHgUJM4MwtexVl6jjbIAr2zDRRg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OlEp1t/MsDmqlfFTJwfkqcBnroS30JaGmdUJemlFl817h/bANGvSmldEUiSUjGHU2
+	 cECydIhUGlKE4kG/WvnqiSRGtlI1VFse9u35sCsTEeCKzN5XjfUx+Vzkm8IpeY8vjW
+	 N7tICH5fNjbFe+08SrYFK+oHzip2h+je/VjK9UWM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbfARRBU (ORCPT
+        id S1728237AbfARRCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:01:20 -0500
-Received: from foss.arm.com ([217.140.101.70]:34696 "EHLO foss.arm.com"
+        Fri, 18 Jan 2019 12:02:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727491AbfARRBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:01:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E08F980D;
-        Fri, 18 Jan 2019 09:01:19 -0800 (PST)
-Received: from localhost (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7951E3F7BE;
-        Fri, 18 Jan 2019 09:01:19 -0800 (PST)
-Date:   Fri, 18 Jan 2019 17:01:17 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Steven Price <Steven.Price@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Grant Likely <Grant.Likely@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [Linux-eng] [RFC 0/3] Abstract empty functions with STUB_UNLESS
- macro
-Message-ID: <20190118170117.GC8120@e119886-lin.cambridge.arm.com>
-References: <1547827230-55132-1-git-send-email-andrew.murray@arm.com>
- <20190118163736.6lczivagpsdnm7ju@e5254000004ec.dyn.armlinux.org.uk>
- <20190118164425.GC3578@e103592.cambridge.arm.com>
+        id S1727491AbfARRCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:02:11 -0500
+Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59A8F2086D;
+        Fri, 18 Jan 2019 17:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547830930;
+        bh=Ot5cdfyQMABjJwcJZHgUJM4MwtexVl6jjbIAr2zDRRg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OwGovXuSsWawVeBne2vP5Vqh9q26GYQU6KDrnZeYsgcg3/yK8Ufr7oAX33xDhVVB3
+         3/OesJ834dsJtKd8WA1rCJz9HJ+Pn6LDpkNi2qZOq89ESONZqtEmViiwDF61bAMKTd
+         nVK95OHCz+NV9the8WKR2IwMLo5WsLgjMnFEvCXs=
+Date:   Sat, 19 Jan 2019 01:02:03 +0800
+From:   Guo Ren <guoren@kernel.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
+Subject: Re: [PATCH] irqchip/irq-csky-mpintc: Add triger type and priority
+ setting
+Message-ID: <20190118170203.GA22247@guoren-Inspiron-7460>
+References: <1547570199-25944-1-git-send-email-guoren@kernel.org>
+ <9c531bec-263c-070d-fed8-d953b42aa185@arm.com>
+ <20190118062811.GA19835@guoren-Inspiron-7460>
+ <bb80062f-28ac-b41c-5d56-90ede82037a2@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190118164425.GC3578@e103592.cambridge.arm.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <bb80062f-28ac-b41c-5d56-90ede82037a2@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 04:44:25PM +0000, Dave Martin wrote:
-> On Fri, Jan 18, 2019 at 04:37:36PM +0000, Russell King - ARM Linux admin wrote:
-> > On Fri, Jan 18, 2019 at 04:00:27PM +0000, Andrew Murray wrote:
-> > > A common pattern found in header files is a function declaration dependent
-> > > on a CONFIG_ option being enabled, followed by an empty function for when
-> > > that option isn't enabled. This boilerplate code can often take up a lot
-> > > of space and impact code readability.
-> > > 
-> > > This series introduces a STUB_UNLESS macro that simplifies header files as
-> > > follows:
-> > > 
-> > > STUB_UNLESS(CONFIG_FOO, [body], prototype)
+On Fri, Jan 18, 2019 at 09:32:03AM +0000, Marc Zyngier wrote:
+> On 18/01/2019 06:28, Guo Ren wrote:
+> > Thx Marc,
 > > 
-> > Can you explain the desire to make the second argument optional,
-> > rather than having the mandatory arguments first and the optional body
-> > last?  It will mean more lines at each site, but I don't think that's
-> > a bad thing:
-
-My intent was to make the function prototype look like an ordinary prototype
-but with all this special macro stuff on the preceding line. Much like this:
-
+> > On Thu, Jan 17, 2019 at 05:17:45PM +0000, Marc Zyngier wrote:
+> >> Hi Guo,
+> >>
+> >> On 15/01/2019 16:36, guoren@kernel.org wrote:
+> >>> From: Guo Ren <ren_guo@c-sky.com>
+> >>>
+> >>> Support 4 triger types:
+> >>>  - IRQ_TYPE_LEVEL_HIGH
+> >>>  - IRQ_TYPE_LEVEL_LOW
+> >>>  - IRQ_TYPE_EDGE_RISING
+> >>>  - IRQ_TYPE_EDGE_FALLING
+> >>>
+> >>> Support 0-255 priority setting for each irq.
+> >>>
+> >>> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> >>> ---
+> >>>  .../bindings/interrupt-controller/csky,mpintc.txt  | 24 ++++++-
+> >>>  drivers/irqchip/irq-csky-mpintc.c                  | 78 +++++++++++++++++++++-
+> >>>  2 files changed, 99 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> >>> index ab921f1..364b789 100644
+> >>> --- a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> >>> +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> >>> @@ -11,6 +11,14 @@ Interrupt number definition:
+> >>>   16-31  : private  irq, and we use 16 as the co-processor timer.
+> >>>   31-1024: common irq for soc ip.
+> >>>  
+> >>> +Interrupt triger mode:
+> >>> +  IRQ_TYPE_LEVEL_HIGH (default)
+> >>> +  IRQ_TYPE_LEVEL_LOW
+> >>> +  IRQ_TYPE_EDGE_RISING
+> >>> +  IRQ_TYPE_EDGE_FALLING
+> >>> +
+> >>> +Interrupt priority range: 0-255
+> >>> +
+> >>>  =============================
+> >>>  intc node bindings definition
+> >>>  =============================
+> >>> @@ -26,7 +34,7 @@ intc node bindings definition
+> >>>  	- #interrupt-cells
+> >>>  		Usage: required
+> >>>  		Value type: <u32>
+> >>> -		Definition: must be <1>
+> >>> +		Definition: could be <1> or <2>
+> >>>  	- interrupt-controller:
+> >>>  		Usage: required
+> >>>  
+> >>> @@ -35,6 +43,18 @@ Examples:
+> >>>  
+> >>>  	intc: interrupt-controller {
+> >>>  		compatible = "csky,mpintc";
+> >>> -		#interrupt-cells = <1>;
+> >>> +		#interrupt-cells = <2>;
+> >>>  		interrupt-controller;
+> >>>  	};
+> >>> +
+> >>> +	0: device-example {
+> >>> +		...
+> >>> +		interrupts = <33 IRQ_TYPE_EDGE_RISING>;
+> >>> +		interrupt-parent = <&intc>;
+> >>> +	};
+> >>> +
+> >>> +	1: device-example {
+> >>> +		...
+> >>> +		interrupts = <34 ((priority << 4) | IRQ_TYPE_EDGE_RISING)>;
+> >>> +		interrupt-parent = <&intc>;
+> >>> +	};
+> >>> diff --git a/drivers/irqchip/irq-csky-mpintc.c b/drivers/irqchip/irq-csky-mpintc.c
+> >>> index c67c961..9edc6d3 100644
+> >>> --- a/drivers/irqchip/irq-csky-mpintc.c
+> >>> +++ b/drivers/irqchip/irq-csky-mpintc.c
+> >>> @@ -29,9 +29,12 @@ static void __iomem *INTCL_base;
+> >>>  
+> >>>  #define INTCG_ICTLR	0x0
+> >>>  #define INTCG_CICFGR	0x100
+> >>> +#define INTCG_CIPRTR	0x200
+> >>>  #define INTCG_CIDSTR	0x1000
+> >>>  
+> >>>  #define INTCL_PICTLR	0x0
+> >>> +#define INTCL_CFGR	0x14
+> >>> +#define INTCL_PRTR	0x20
+> >>>  #define INTCL_SIGR	0x60
+> >>>  #define INTCL_HPPIR	0x68
+> >>>  #define INTCL_RDYIR	0x6c
+> >>> @@ -73,6 +76,78 @@ static void csky_mpintc_eoi(struct irq_data *d)
+> >>>  	writel_relaxed(d->hwirq, reg_base + INTCL_CACR);
+> >>>  }
+> >>>  
+> >>> +static int csky_mpintc_set_type(struct irq_data *d, unsigned int type)
+> >>> +{
+> >>> +	unsigned int priority, triger;
+> >>
+> >> nit: s/triger/trigger/ everywhere.
+> > Ok
 > > 
-> > STUB_UNLESS(CONFIG_HAVE_HW_BREAKPOINT,
-> > void hw_breakpoint_thread_switch(struct task_struct *next));
-
-Besides the extra ')' at the end it looks like a normal prototype. I felt this
-may be important as existing tooling (ctags etc) might have a better chance of
-recognising it and it wouldn't be so alien to new developers. I feared that if
-the 'prototype' argument was in the middle then it would get lost in all the
-other arguments and be less readable as a prototype.
-
+> >>
+> >>> +	unsigned int offset, bit_offset;
+> >>> +	void __iomem *reg_base;
+> >>> +
+> >>> +	/*
+> >>> +	 * type Bit field: | 32 - 12  |  11 - 4  |   3 - 0    |
+> >>> +	 *                   reserved   priority   triger type
+> >>> +	 */
+> >>> +	triger	 = type & IRQ_TYPE_SENSE_MASK;
+> >>> +	priority = (type >> 4) & 0xff;
+> >>
+> >> Definitely not. The Linux API to set the trigger does not carry any
+> >> priority information, nor should it. Priorities should be set
+> >> statically, and no driver should ever be able to change it.
+> > Currently priority in dts is:
 > > 
-> > STUB_UNLESS(CONFIG_CPU_FREQ,
-> > struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu), return NULL);
+> > 	interrupts = <34 ((priority << 4) | IRQ_TYPE_EDGE_RISING)>;
 > > 
-> > or:
+> > change it to:
 > > 
-> > STUB_UNLESS(CONFIG_CPU_FREQ,
-> > struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu),
-> > 	return NULL);
-
-As you indicate here, it's possible to spread this to three lines and keep the
-readability of the prototype - though I was keen to condense it to as few lines
-as possible (I was probably putting too much focus on the diff stat).
-
+> > 	interrupts = <34 IRQ_TYPE_EDGE_RISING priority>;
 > > 
-> > Seems to be more readable in terms of the flow.
 > 
-> Hmmm, looking at that, I probably prefer that too.
-
-Feedback I've had so far suggests that there is a preference to putting the
-optional argument at the end, I have no objection to this.
-
-> 
-> In the unlikely case that <body> uses the function arguments it would be
-> quite confusing to have the body before the function prototype.
-> 
-> If we can keep this down to two lines so much the better, but still
-> seems fine.
-
-This is the compromise - having the optional argument after the prototype
-will likely result in wrapping to the next line as prototypes tend to be
-long. Perhaps this is more readable.
+> I don't think you need to change the DT format, as this is quite painful
+> for users.
+I'll keep this style and I think it's good place to set priority.
 
 > 
-> Provided we don't end up needing a trailing comma in the void case, to
-> supply the empty body argument, that is.
-
-No this isn't necessary.
-
-Thanks,
-
-Andrew Murray
+> > Implement csky own csky_irq_domain_xlate_cells() ...
+> > 
+> > int csky_irq_domain_xlate_cells(struct irq_domain *d, struct device_node *ctrlr,
+> > 			const u32 *intspec, unsigned int intsize,
+> > 			irq_hw_number_t *out_hwirq, unsigned int *out_type)
+> > {
+> > 	if (WARN_ON(intsize < 1))
+> > 		return -EINVAL;
+> > 	*out_hwirq = intspec[0];
+> > 	if (intsize > 1)
+> > 		*out_type = intspec[1] & IRQ_TYPE_SENSE_MASK;
+> > 	else
+> > 		*out_type = IRQ_TYPE_NONE;
+> > 
+> > 	if (intsize > 2)
+> > 		setup_priority(d->hwirq, intspec[2]);
+> 
+> That's still a problem. Linux doesn't expect interrupts to have
+> different priorities. All interrupts are equal in that respect, and
+> interrupt nesting is not something we expect.
+> 
+> I'd be more confident if you programmed a default priority at boot time,
+> and completely ignored the DT information.
+The priority for us is to setup a watchdog or NMI style interrupt.
+Mostly users don't need care about priority setting and just keep as
+default 0. See my "PATCH V2", we can continue talk there.
 
 > 
-> Cheers
-> ---Dave
+> > 
+> > 	return 0;
+> > }
+> > Hmm?
+> > 
+> >>
+> >>> +
+> >>> +	switch (triger) {
+> >>> +	case IRQ_TYPE_LEVEL_HIGH:
+> >>> +		triger = 0;
+> >>> +		break;
+> >>> +	case IRQ_TYPE_LEVEL_LOW:
+> >>> +		triger = 1;
+> >>> +		break;
+> >>> +	case IRQ_TYPE_EDGE_RISING:
+> >>> +		triger = 2;
+> >>> +		break;
+> >>> +	case IRQ_TYPE_EDGE_FALLING:
+> >>> +		triger = 3;
+> >>
+> >> Can you define some macros that represent these magic values?
+> > OK.
+> >>
+> >>> +		break;
+> >>> +	default:
+> >>> +		triger = 0;
+> >>> +		break;
+> >>
+> >> If you get an invalid combination, you shouldn't blindly accept it, but
+> >> instead return an error.
+> > OK.
+> > 
+> >>
+> >>> +	}
+> >>> +
+> >>> +	if (d->hwirq < COMM_IRQ_BASE) {
+> >>> +		reg_base = this_cpu_read(intcl_reg);
+> >>
+> >> Are you guaranteed to be in a non-preemptible section here? I can see
+> >> things going wrong if not.
+> > 
+> > ???
+> > In percpu-def.h, I see this_cpu_read is safe() for preemption or
+> > interrupt.
+> 
+> Sorry, I wasn't clear, see below.
+> 
+> > What's the wrong with preemption?
+> 
+> The problem is that if the driver calls irq_set_type() on a per-CPU
+> interrupt without preemption being disabled, it can be preempted at any
+> point and migrated anywhere before the call to this_cpu_read() takes
+> place. This means you can never know which CPU you've programmed.
+> 
+> One possible approach is to mandate these interrupts to be only changed
+> in non-preemptible context, which is what the various ARM GICs do for
+> their per-CPU interrupts.
+Wow... Thank you for reminding! In "PATCH V2", I set them in irq_enable.
+Please have a look.
+
+> 
+> > 
+> >>> +
+> >>> +		if (triger) {
+> >>> +			offset = ((d->hwirq * 2) / 32) * 4;
+> >>> +			bit_offset = (d->hwirq * 2) % 32;
+> >>
+> >> This needs to be turned into a set of macros so that the non-percpu code
+> >> can reuse it.
+> > 
+> > 
+> > #define IRQ_OFFSET(irq) \
+> > 	((irq < COMM_IRQ_BASE) ? irq : irq - COMM_IRQ_BASE) 
+> > 
+> > #define TRIG_VAL(trigger, irq) \
+> > 	(trigger << ((IRQ_OFFSET(irq) * 2) % 32))
+> > 
+> > #define TRIG_VAL_MSK(irq) \
+> > 	(3 << ((IRQ_OFFSET(irq) * 2) % 32))
+> > 
+> > #define TRIG_BASE(irq) \
+> > 	((((IRQ_OFFSET(irq) * 2) / 32) * 4) + \
+> > 	((irq < COMM_IRQ_BASE) ? this_cpu_read(intcl_reg) : INTCG_base))
+> > 
+> > tmp = readl_relaxed(TRIG_BASE(d->hwirq)) & (~TRIG_VAL_MSK(d->hwirq));
+> > writel_relaxed(tmp | TRIG_VAL(triger, d->hwirq), TRIG_BASE(d->hwirq));
+> > 
+> > Hmm?
+> 
+> I was only looking for something that abstract the offsets, such as:
+> 
+> #define BYTE_OFFSET(i) (((i) * 2) / 32) * 4)
+> #define BIT_OFFSET(i)  ((i) * 2) % 32)
+> 
+> and keep the rest of the structure as is.
+Ok.
+
+Best Regards
+ Guo Ren
