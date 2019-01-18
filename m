@@ -2,104 +2,129 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA6BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC2FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09C9D20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F8E520823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:06:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dEm2KVZB"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="MmGZ6yBu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pfW1Pq3L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfARNFg (ORCPT
+        id S1727827AbfARNGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:05:36 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35457 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfARNFf (ORCPT
+        Fri, 18 Jan 2019 08:06:53 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:50571 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726952AbfARNGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:05:35 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so15008273wrb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 05:05:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IGEYkrqPTO24Yuc9eocs/hY5nllEGzkfq9emuvq8Gio=;
-        b=dEm2KVZB5cxpLHfuaK6Dh4OAk7nC+5q4DwoWZ5vCwIoDY70tXasm3lPYREyiAzY8M5
-         ryWnM9cHOAHYVn7GXxFoaFF6sg2wGMm7w3GgFXsBpjKz/Iwtu7rx8gXtYAWpBDXIBJ6a
-         KVJIovoSS2bL7FQtEGlfTG4pNrv3QsOQ/C2AI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IGEYkrqPTO24Yuc9eocs/hY5nllEGzkfq9emuvq8Gio=;
-        b=s7dEvoBQAXiw+AJeWRf2RI5zCXrENLU54XhkovOcwwiNWa0l8t24m5yGeq/4liUhf3
-         Mfhq7ZADw+p6zSWh4ugJQp5fRqFvSeg7N4Aqq8QhNqRzJ2+pksyi9hsSfAv0gWcYR30b
-         WGywokSyevF7TEt/QRlGbdD8i40Er6T7/JQxP1/vMhobtR+xWr2EfR7ACs1qDk8Nw5sG
-         End4GsaIogXNW/hxqw6aWBrhKi+u2Dq9nn5lwnSSBLlKPxOBhb4LOkwX8mb8LQmojhFv
-         7RrJVnVDqb6BPLDLk05RLW00xZcJ1kUmkboIhPtIxW4a4DKUyI6fSLRInuIvPTdD+osp
-         XQ4g==
-X-Gm-Message-State: AJcUukfhLUXEDqxjp+dmWjEuYI76WsArVd7UPvtkejP3E2biIxUF8IRW
-        XlRsXwBSqLr8voBXPfsuY0d4uXOTYHk=
-X-Google-Smtp-Source: ALg8bN4MqGHXzI3kuvhkVNKKcLNqY6IDlH5hvYoHlArNLFmkRU+kslIWROxGT6xGFhCTgYI09oU78Q==
-X-Received: by 2002:adf:dd06:: with SMTP id a6mr17214160wrm.2.1547816734132;
-        Fri, 18 Jan 2019 05:05:34 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id a12sm79510174wrm.45.2019.01.18.05.05.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 05:05:32 -0800 (PST)
-Subject: Re: [PATCH v4 0/2] arm64: dts: qcom: sdm845: Fix DMA allocations for
- devices with IOMMU
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190117042940.25487-1-bjorn.andersson@linaro.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <7e662602-73dd-2ac6-4e49-ce92f1d157d2@linaro.org>
-Date:   Fri, 18 Jan 2019 13:05:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 18 Jan 2019 08:06:53 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 846AD28F4B;
+        Fri, 18 Jan 2019 08:06:51 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Fri, 18 Jan 2019 08:06:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=7zPrEcHCUbuM7hhUe7azWpqIsHg
+        d1XucZkVE/odsv18=; b=MmGZ6yBu0DwLneSivnkH5TKMjVXM3d8TEgz6XoYKeaI
+        S5Ky7r3uJXVr9CXcbFis7Fw5tK2VgfHsMhzSrOFZSeZ19PN8q+h9CedQyBOGupLI
+        lXS1OZZJ9z8AEj3oYs5YxGDsBewYx2hmhUq8zpZtsvGluNKcP41J+VypAvis93/l
+        4f7Y8x9544EPIvvvnviUGjAz2DRLLvnKl2YPJoGbXX1uH+wnw2K/9FJzp/BpSO6Q
+        hmhHKE0CojC7T0izkNNvsysQnRDN5dH1phRFsh5zlOKBOnRBoFmOBOWWgFf3qoRw
+        zdZygjBn4YMuFbkfdK7U6TriNuQDP7IMxIePVtBkKUA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=7zPrEc
+        HCUbuM7hhUe7azWpqIsHgd1XucZkVE/odsv18=; b=pfW1Pq3L+byH/joLyW3o4I
+        txrzVOEOIZge+W1I/uOYut+M59WSFKWQxYhorKIKOqDJtYuxas6Xe35RbDI+/jZD
+        ApfebSO49fFq7oLhctkzma8d5eyMwV6REkZf6O5TNdCaYCbHB9qYvN5vFJM83es+
+        DB8tCWf1R5wRSPttSva8EypmnKqTiiQ9J7t0L9iRBFj5xgy0vCGgzVFKFnYF8k3H
+        jh3Gxh3G5KIWUiU5CovVk7iCeEDLfE5E03ugL3Z7lG9t2H/9eOWskK0c3n+fkOoS
+        NfsGxSwjYOY1UDmJa7RP8fo2sIooxlW5LO71I0RQXUbza73CuDzlEHTkVPnKEZdQ
+        ==
+X-ME-Sender: <xms:as9BXO1uaRn-P1xiMo4kBH14hqMoKpb3M8SyjN_25xJFSFvZcvJ-Cg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrhedtgdehtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttd
+    dmnecujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhr
+    vghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekle
+    druddtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
+    necuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:as9BXKZaZ0V513yQcWsTNDRdtVSdGqDyt69C4gA6cKdbPCPkfqxQuQ>
+    <xmx:as9BXO4lTDcnWnlhDeWvbtJRFFsiSIUWm1j0kA57h2aYAKJro1K3YA>
+    <xmx:as9BXJhZ95SnhmgOndqdTsTsZtNWLGD-8FxHd6XjE2GHUHm1yQ0MRg>
+    <xmx:a89BXAfNqWMmSrcq7ZWKOqu6mdE2X2PbZ5rtQdj6lTmQUXsnMH40Pg>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 3535D1027C;
+        Fri, 18 Jan 2019 08:06:50 -0500 (EST)
+Date:   Fri, 18 Jan 2019 14:06:48 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Will Deacon <will.deacon@arm.com>, Willy Tarreau <w@1wt.eu>
+Subject: Re: [PATCH 1/8] lkdtm: change snprintf to scnprintf for possible
+ overflow
+Message-ID: <20190118130648.GA27209@kroah.com>
+References: <20190112152844.26550-1-w@1wt.eu>
+ <CAGXu5jJvWC0=zym11noj7tOjkDFYvn+wNimwSjcmiWnrCoOVVA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190117042940.25487-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJvWC0=zym11noj7tOjkDFYvn+wNimwSjcmiWnrCoOVVA@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 17/01/2019 04:29, Bjorn Andersson wrote:
-> These patches extends the size cells of the soc bus and define the dma-ranges,
-> so that DMA allocations for devices with IOMMU attached will get valid IOVAs.
+On Tue, Jan 15, 2019 at 12:47:34PM -0800, Kees Cook wrote:
+> On Sat, Jan 12, 2019 at 7:28 AM Willy Tarreau <w@1wt.eu> wrote:
+> >
+> > From: Silvio Cesare <silvio.cesare@gmail.com>
+> >
+> > Change snprintf to scnprintf. There are generally two cases where using
+> > snprintf causes problems.
+> >
+> > 1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
+> > In this case, if snprintf would have written more characters than what the
+> > buffer size (SIZE) is, then size will end up larger than SIZE. In later
+> > uses of snprintf, SIZE - size will result in a negative number, leading
+> > to problems. Note that size might already be too large by using
+> > size = snprintf before the code reaches a case of size += snprintf.
+> >
+> > 2) If size is ultimately used as a length parameter for a copy back to user
+> > space, then it will potentially allow for a buffer overflow and information
+> > disclosure when size is greater than SIZE. When the size is used to index
+> > the buffer directly, we can have memory corruption. This also means when
+> > size = snprintf... is used, it may also cause problems since size may become
+> > large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
+> > configuration.
+> >
+> > The solution to these issues is to use scnprintf which returns the number of
+> > characters actually written to the buffer, so the size variable will never
+> > exceed SIZE.
+> >
+> > Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+> > Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > Cc: Greg KH <greg@kroah.com>
+> > Signed-off-by: Willy Tarreau <w@1wt.eu>
 > 
-> Changes since v3:
-> - Split patch in two
-> - Rewrote commit message from scratch
+> It looks like these are going via individual trees. Greg, can you
+> please take this into your drivers-misc tree for lkdtm?
 > 
-> Bjorn Andersson (2):
->    arm64: dts: qcom: sdm845: Increase address and size cells for soc
->    arm64: dts: qcom: sdm845: Extend ranges and describe DMA space
-> 
->   arch/arm64/boot/dts/qcom/sdm845.dtsi | 301 ++++++++++++++-------------
->   1 file changed, 151 insertions(+), 150 deletions(-)
-> 
+> Acked-by: Kees Cook <keescook@chromium.org>
 
-Thanks for the fix, finally managed to get both fastrpc and ufs working 
-together with iommu!
+Will do, thanks.
 
-
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+greg k-h
