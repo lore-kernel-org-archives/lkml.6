@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1200CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D423DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5A02087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A402087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:16:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbfAROQS (ORCPT
+        id S1727528AbfAROQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:16:18 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44639 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:16:40 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44704 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727337AbfAROQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:16:17 -0500
+        id S1727178AbfAROQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:16:39 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A314A207B0; Fri, 18 Jan 2019 15:16:15 +0100 (CET)
+        id CFA92207B0; Fri, 18 Jan 2019 15:16:36 +0100 (CET)
 Received: from localhost (alyon-652-1-26-46.w109-213.abo.wanadoo.fr [109.213.9.46])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DECB120712;
-        Fri, 18 Jan 2019 15:16:14 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 703E52074A;
+        Fri, 18 Jan 2019 15:16:36 +0100 (CET)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -35,13 +35,13 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v4 2/4] clk: mvebu: armada-37xx-tbg: fix error message
+Subject: Re: [PATCH v4 3/4] clk: mvebu: armada-37xx-tbg: fill the device entry when registering the clocks
 References: <20190108161940.4814-1-miquel.raynal@bootlin.com>
-        <20190108161940.4814-3-miquel.raynal@bootlin.com>
-Date:   Fri, 18 Jan 2019 15:16:13 +0100
-In-Reply-To: <20190108161940.4814-3-miquel.raynal@bootlin.com> (Miquel
-        Raynal's message of "Tue, 8 Jan 2019 17:19:38 +0100")
-Message-ID: <875zumnj9u.fsf@FE-laptop>
+        <20190108161940.4814-4-miquel.raynal@bootlin.com>
+Date:   Fri, 18 Jan 2019 15:16:36 +0100
+In-Reply-To: <20190108161940.4814-4-miquel.raynal@bootlin.com> (Miquel
+        Raynal's message of "Tue, 8 Jan 2019 17:19:39 +0100")
+Message-ID: <871s5anj97.fsf@FE-laptop>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -54,8 +54,19 @@ Hi Miquel,
  
  On mar., janv. 08 2019, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-> The error message should state that the driver failed to get the
-> parent clock, not the opposite.
+> So far the clk_hw_register_fixed_factor() calls are not providing any
+> device structure. While doing so is harmless for regular use, the
+> missing device structure may be a problem for suspend to RAM support.
+>
+> Since, device links have been added to clocks, links created during
+> probe will enforce the suspend/resume orders. When the device is
+> missing during the registration, no link can be established, hence the
+> order between parent and child clocks are not enforced.
+>
+> Adding the device structure here will create a link between the 4 TBG
+> clocks (registered by this driver) and:
+> * their parent clock: XTAL,
+> * their child clocks: several 'periph' clock.
 >
 > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
@@ -66,22 +77,26 @@ Thanks,
 Gregory
 
 > ---
->  drivers/clk/mvebu/armada-37xx-tbg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/mvebu/armada-37xx-tbg.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
-> index ee272d4d8c24..77b978c55ef6 100644
+> index 77b978c55ef6..da3a08e419d6 100644
 > --- a/drivers/clk/mvebu/armada-37xx-tbg.c
 > +++ b/drivers/clk/mvebu/armada-37xx-tbg.c
-> @@ -98,7 +98,7 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
->  
->  	parent = clk_get(dev, NULL);
->  	if (IS_ERR(parent)) {
-> -		dev_err(dev, "Could get the clock parent\n");
-> +		dev_err(dev, "Could not get the clock parent\n");
->  		return -EINVAL;
+> @@ -116,8 +116,10 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
+>  		name = tbg[i].name;
+>  		mult = tbg_get_mult(reg, &tbg[i]);
+>  		div = tbg_get_div(reg, &tbg[i]);
+> -		hw_tbg_data->hws[i] = clk_hw_register_fixed_factor(NULL, name,
+> -						parent_name, 0, mult, div);
+> +		hw_tbg_data->hws[i] = clk_hw_register_fixed_factor(dev, name,
+> +								   parent_name,
+> +								   0, mult,
+> +								   div);
+>  		if (IS_ERR(hw_tbg_data->hws[i]))
+>  			dev_err(dev, "Can't register TBG clock %s\n", name);
 >  	}
->  	parent_name = __clk_get_name(parent);
 > -- 
 > 2.19.1
 >
