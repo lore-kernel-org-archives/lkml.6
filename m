@@ -2,83 +2,105 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC480C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67B7C5AC81
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CCD92086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B48E2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:41:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547833269;
+	bh=EneCs9KTwSjiBYmTIPk0sZ/bWAPfYpTjLgRgW/oX4lM=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=Jto0XXvUBGkPJDUGXuJGbvcdgdXV6AdcNT4FHbdnMXjI9osn5FTs2c/g0U15S+LGs
+	 bFhiwVoVeMHGW/5yPpFs9ch7Sj42ACuB3RC2pG+DkFGI2zQiRmnCS4LHp8TX9np0o/
+	 mQAOIupn6R+wlh2XW0TDi7/iGSqWB0479dQU75oM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbfARRlB convert rfc822-to-8bit (ORCPT
+        id S1728586AbfARRlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:41:01 -0500
-Received: from mga09.intel.com ([134.134.136.24]:32115 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727940AbfARRlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:41:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 09:40:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="312983981"
-Received: from irsmsx152.ger.corp.intel.com ([163.33.192.66])
-  by fmsmga005.fm.intel.com with ESMTP; 18 Jan 2019 09:40:57 -0800
-Received: from irsmsx102.ger.corp.intel.com ([169.254.2.65]) by
- IRSMSX152.ger.corp.intel.com ([169.254.6.47]) with mapi id 14.03.0415.000;
- Fri, 18 Jan 2019 17:40:57 +0000
-From:   "Reshetova, Elena" <elena.reshetova@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: RE: [PATCH 0/5] sched refcount_t conversions
-Thread-Topic: [PATCH 0/5] sched refcount_t conversions
-Thread-Index: AQHUryk8nIpvQnacJEKv36LRANRZEaW1ME0AgAAbG1A=
-Date:   Fri, 18 Jan 2019 17:40:56 +0000
-Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4B872B2@IRSMSX102.ger.corp.intel.com>
-References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
- <20190118160312.GF14054@worktop.programming.kicks-ass.net>
-In-Reply-To: <20190118160312.GF14054@worktop.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [163.33.239.181]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 18 Jan 2019 12:41:07 -0500
+Received: from casper.infradead.org ([85.118.1.10]:53844 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbfARRlH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:41:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ck+8stJAPuL59pFfoIZ5YFiXrfWVwKJM8M57fNVuv1g=; b=esrUyl2QOJl+vRYqlODGkjsclk
+        vgISMLeMYS0eSTqT5bXCebM+hq7Q8zk4E6gpjc/Ovp7jOXOlItysuNjGFGSrTtwa37TR6e649QFUE
+        WpIq1v/HYr5bpzWm3oYYb8+YosZzhiUvC0w6SsddE9XUoKhoEGDTbF6JYntPZyAlAy04eYy6B+J9c
+        RiEPunxGxTHbu7Tnxw1wjGF6frXACfFa5bOE0OrBYqUps2Su5/Tj1saoVeZD7Ywf9X8Y6viy7QIAT
+        r6G2ppBzxONJo/uMssWyDKKGk6ZGhuZ+aPLqz4ph9p0bLBMqlOLbvput3r/4lziC78sSF0MtHvEh1
+        FxGbuV2Q==;
+Received: from 189.27.24.74.dynamic.adsl.gvt.net.br ([189.27.24.74] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gkY8e-0007iB-HB; Fri, 18 Jan 2019 17:41:05 +0000
+Date:   Fri, 18 Jan 2019 15:40:58 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL for v5.0-rc3] media fixes
+Message-ID: <20190118154058.12fda86a@coco.lan>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
-> On Fri, Jan 18, 2019 at 02:27:25PM +0200, Elena Reshetova wrote:
-> > Elena Reshetova (5):
-> >   sched: convert sighand_struct.count to refcount_t
-> >   sched: convert signal_struct.sigcnt to refcount_t
-> 
-> These should really be seen by Oleg (bounced) and I'll await his reply.
-> 
-> >   sched: convert numa_group.refcount to refcount_t
-> >   sched/task_struct: convert task_struct.usage to refcount_t
-> >   sched/task_struct: convert task_struct.stack_refcount to refcount_t
-> 
-> Those are ok and I'll queue them.
+Please pull from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v5.0-1
 
-Thank you Peter! 
+for:
 
-Best Regards,
-Elena
+- A regression fix at v4l2 core, with affects multi-plane streams;
+- a fix at vim2m driver.
+
+Thanks!
+Mauro
+
+
+The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+
+  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v5.0-1
+
+for you to fetch changes up to 240809ef6630a4ce57c273c2d79ffb657cd361eb:
+
+  media: vim2m: only cancel work if it is for right context (2019-01-16 11:13:25 -0500)
+
+----------------------------------------------------------------
+media fixes for v5.0-rc3
+
+----------------------------------------------------------------
+Hans Verkuil (1):
+      media: vim2m: only cancel work if it is for right context
+
+Sakari Ailus (2):
+      media: v4l: ioctl: Validate num_planes before using it
+      media: v4l: ioctl: Validate num_planes for debug messages
+
+Thierry Reding (1):
+      media: v4l2-ioctl: Clear only per-plane reserved fields
+
+ drivers/media/platform/vim2m.c       |  4 +++-
+ drivers/media/v4l2-core/v4l2-ioctl.c | 24 +++++++++++++++++++-----
+ 2 files changed, 22 insertions(+), 6 deletions(-)
+
