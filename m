@@ -2,91 +2,109 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1968C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B0AC5AC81
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A484620823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547832540;
-	bh=2siYX7/y5FZ7VUQHcrz6CCCX+G6ycROtSDFIm9TdxRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=DI51RUu94WIYS4dWkGkSWo/NzFnHJxJ0YGhetwxyt5aHEaL8bwYkfDohg0IHNxs4o
-	 rSsiXVdkSte4UwJAG6OXgreo35fpu/lVEs8J3ZKkZFHXyLeozRZgIFgs2kAQivOxyJ
-	 3OtLKDF3SLGnrouc3ec2KEE0DWWLaXJlVDWNwixU=
+	by mail.kernel.org (Postfix) with ESMTP id C910520823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:30:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISDp5SI1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfARR27 (ORCPT
+        id S1728260AbfARRaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:28:59 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53434 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbfARR26 (ORCPT
+        Fri, 18 Jan 2019 12:30:03 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40606 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbfARRaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:28:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2siYX7/y5FZ7VUQHcrz6CCCX+G6ycROtSDFIm9TdxRY=; b=V4wK1Opz0rnKfoS5guYfC7Gc2
-        fW4QKXf299Lh8YaPPq0WR5+POWQF1HgN3WQ0U0xWoK9G2vqEHBR/Nq3xXwZbBvoIiL7mBeMjJa/wm
-        0smO44bu/ucUwRY1GhoqnGiku7NTv+Ak1nHoLFnUAlf9mMdW731p59l9BbRRq082895/8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gkXwt-0005Eu-Lq; Fri, 18 Jan 2019 17:28:55 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id EC3C911276E7; Fri, 18 Jan 2019 17:28:54 +0000 (GMT)
-Date:   Fri, 18 Jan 2019 17:28:54 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH 2/2] regulator: lochnagar: Remove redundant MODULE_ALIAS
-Message-ID: <20190118172854.GC6260@sirena.org.uk>
-References: <20190118113631.23706-1-ckeepax@opensource.cirrus.com>
- <20190118113631.23706-2-ckeepax@opensource.cirrus.com>
+        Fri, 18 Jan 2019 12:30:02 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so16018076wrt.7;
+        Fri, 18 Jan 2019 09:30:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PyVbBL0mW/TEEmZTs3dNnnVQ8377kJ8dXSHGfjBfTsw=;
+        b=ISDp5SI1SSCrWv+tDcrCIzP+rHmaCzMDquTSb0GXJv3wst91aagvvh8cI6S/TbeQCF
+         lYusuqIoFpZoUaOjcQCa/hKqkkrPpcv0iSLX1wCCE2HE8vY7csgsyMc+OymLbkMuqG1r
+         M31sarRASwFmcQDHjgZugWWGaFf9Jnxm9rS1240Tz9hRZLEEav29Laj9zeWKHnEHINXO
+         ByOjEu9LDNmqaZH74IXZhiM7LpAvUUaNWdGXr0sUJt0oON142yNM6Fk4JYwp9EJ09/DV
+         qMDVsWTXfQi7/256WumO8gxsuAhTUGUQfv9DtRQO0cyp4C0OC0GDqVWJOhggiX/v5vfV
+         kLsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PyVbBL0mW/TEEmZTs3dNnnVQ8377kJ8dXSHGfjBfTsw=;
+        b=eA06WFVqHv1RfHfPxGjwQ/ksbF3zPHyIjAdMRI7a7wqiddD8yUk54lzX05Z1Y8ddnB
+         kLYprUuvUNWwXEhG2gYfxp1u43ElctZ8c6lvuGAq50Nh3wfsBJ041axErTOpwUbODvdG
+         1j10yKqOOMMzjSOzOqIIUiEiV7Fx1N/R+5V+hw+D2C4bMrSzTBVk48lwo6k/jXLEiUnZ
+         SFV2+8E0nWNdVnzwhqWM6u30LqD7p9dwfHCxsblhP9UpPhMmOvKM1u7Q+Aqnmup3+B+B
+         29CKYSHhwk8nVTHprjFw8MfizfO4yOcuHzXAyS9vSxPqm/KPwqqpSmkFBrrPSXZBQFut
+         Chxg==
+X-Gm-Message-State: AJcUukcbqTqQ1CMeqKBAuLWZ5vP4TT9bKW9mMxrj6qQLrFNJ1OlB+cNu
+        qJ9QVCTKkJ1TyBDktN4+1ntrGyCw1Z0=
+X-Google-Smtp-Source: ALg8bN5/hHDTMAhOglw/OFlDM/U8DvA9/GZLtA+kCKmkaN0XVS4YvvZyho26EfzpmjA+a4UtHmBy5g==
+X-Received: by 2002:a5d:558a:: with SMTP id i10mr16849438wrv.287.1547832099666;
+        Fri, 18 Jan 2019 09:21:39 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id c13sm94318861wrb.38.2019.01.18.09.21.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 09:21:38 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] drm: rcar-du: Fix build error
+Date:   Fri, 18 Jan 2019 10:21:25 -0700
+Message-Id: <20190118172125.32504-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="FsscpQKzF/jJk6ya"
-Content-Disposition: inline
-In-Reply-To: <20190118113631.23706-2-ckeepax@opensource.cirrus.com>
-X-Cookie: You can't get there from here.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On arm{32,64} allyesconfig builds:
 
---FsscpQKzF/jJk6ya
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c:40:1: error: incomplete result type 'enum drm_mode_status' in function definition
+drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c:47:10: error: incomplete definition of type 'struct drm_display_mode'
+drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c:48:10: error: use of undeclared identifier 'MODE_CLOCK_HIGH'
+drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c:50:9: error: use of undeclared identifier 'MODE_OK'
 
-On Fri, Jan 18, 2019 at 11:36:31AM +0000, Charles Keepax wrote:
-> The module alias has no effect as the driver can only be loaded through
-> device tree at this time.
+After the removal of drmP.h from this file and its removal from
+bridge/dw_hdmi.h, these types are not defined anymore, as they
+were implicitly coming into that file through drm_crtc.h.
 
-It also does no harm...
+Fixes: 428747ae5cca ("drm: remove include of drmP.h from bridge/dw_hdmi.h")
+Fixes: 9a47db8e7a9d ("drm: rcar-du: Remove inclusion of drmP.h")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---FsscpQKzF/jJk6ya
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+index 0fb25113f19c..452461dc96f2 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
++++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+@@ -12,6 +12,7 @@
+ #include <linux/platform_device.h>
+ 
+ #include <drm/bridge/dw_hdmi.h>
++#include <drm/drm_modes.h>
+ 
+ #define RCAR_HDMI_PHY_OPMODE_PLLCFG	0x06	/* Mode of operation and PLL dividers */
+ #define RCAR_HDMI_PHY_PLLCURRGMPCTRL	0x10	/* PLL current and Gmp (conductance) */
+-- 
+2.20.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxCDNYACgkQJNaLcl1U
-h9CyNgf9FotB1DQahteUKuvmJNNjQOuUk1YtGJV7SJf4O0FOqoMKgz8u9H3lskOe
-jEwLl/+i4HwFT5x29q8vWsu+Xqz3lLMLpEdX+WddYQyYR1ASN6gHY39R9TKUQwEl
-lJ4sPGGjzVydY35NQh0AqN67tLVdLIS++iSEfa4Rm9+iyF1XkqS+U5YhHFBvXslj
-yYRUZ3ljNE/qSqdyqR1XAGsNL9dsJ9tZJSSiFFaLQo4jJQZCMU0yF0e8TbbrKeDI
-pssN3dsowW9UUe0oEcRBpLjLAXVMgf5la/ljxc+z8R6VvD3EPom/zQZfni1xGErI
-t5Ssyze4VIS5nbEekdUPYa0n9Ns/2w==
-=JtL2
------END PGP SIGNATURE-----
-
---FsscpQKzF/jJk6ya--
