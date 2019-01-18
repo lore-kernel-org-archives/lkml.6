@@ -2,270 +2,298 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA475C1B0F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7C2C1B0F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 735E82087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:28:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HWZA3Mbq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BaBeC6i4"
+	by mail.kernel.org (Postfix) with ESMTP id 99D7A2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbfARU2m (ORCPT
+        id S1729479AbfARUbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 15:28:42 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53344 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729403AbfARU2m (ORCPT
+        Fri, 18 Jan 2019 15:31:39 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37601 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729403AbfARUbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 15:28:42 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 323EF607F4; Fri, 18 Jan 2019 20:28:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547843321;
-        bh=BaQ22/QWS4m7cffl7/gSm8jurI50FSIKoBXRU6Y7Xdc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HWZA3MbqDanaUeT3i9Xjj8F/4oHqJWKyY0FnMEk+tL+JobjhhnJtQcFoSUv47N17j
-         LQ6PyJlRC5A1I3scoQbSFs437rkJEZaxNTdkOGN2pk3Whsgxn8aOVHuJAdRUBnuqWf
-         GbvZGeeQ0KNFcnd8Ece5w3P43mXjGbWGetu6VRb0=
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 99B2A6021A;
-        Fri, 18 Jan 2019 20:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547843319;
-        bh=BaQ22/QWS4m7cffl7/gSm8jurI50FSIKoBXRU6Y7Xdc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BaBeC6i4cpNVyXQgg9VwWBFFg8S5vN3nBtADh2g53/cLqS8iNkMxZqFFrMbTZF+xc
-         HQ8+R6AL9KKha19VVl4L6TTXBqoqhGxa0CdeqCvI5YoRisQfq6sO6RwILCErntgq5T
-         tUqkfDNtXTE6rjHW1+1zFYtIgr6x7B/9gtOD2B44=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99B2A6021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Fri, 18 Jan 2019 13:28:35 -0700
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        dianders@chromium.org, dri-devel@lists.freedesktop.org,
-        bjorn.andersson@linaro.org, Rob Clark <robdclark@gmail.com>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, andy.gross@linaro.org,
-        Colin Ian King <colin.king@canonical.com>,
-        Stephen Boyd <swboyd@chromium.org>, georgi.djakov@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [Freedreno] [PATCH v6] drm/msm/a6xx: Add support for an
- interconnect path
-Message-ID: <20190118202835.GD4140@jcrouse1-lnx.qualcomm.com>
-Mail-Followup-To: freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Jonathan Marek <jonathan@marek.ca>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org,
-        Sharat Masetty <smasetty@codeaurora.org>, dianders@chromium.org,
-        dri-devel@lists.freedesktop.org, bjorn.andersson@linaro.org,
-        Rob Clark <robdclark@gmail.com>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, andy.gross@linaro.org,
-        Colin Ian King <colin.king@canonical.com>,
-        Stephen Boyd <swboyd@chromium.org>, georgi.djakov@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1547843058-27933-1-git-send-email-jcrouse@codeaurora.org>
+        Fri, 18 Jan 2019 15:31:38 -0500
+Received: by mail-qt1-f194.google.com with SMTP id t33so16658343qtt.4
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 12:31:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q/YMRxDKd7FKMnvlINhw9uqVLAtVZg+TmfCwOlM5qck=;
+        b=mj1ipHI5kLjijNr/ZKz7Iy2H50B6EX3YToyo/VIPvY3ja1aJ6Likx3HG/wSEPAwBXj
+         Cq+RWZNHmjKYQNGAjRyP5dxN3x2Yg7TUKG47pnBJJ1fdzUlD8JIQLYzSAUniZS+szQBx
+         LjLbFcZ16GP4A3uu4wqT9Ab9zsGZQCX9/Yopy/hBWofaalSfEMAw82c1OYbrbREcfgS+
+         6DdcUn30BbkKHoRZjAg6zo+e/tUBzHcFcmoeXsSbtKYAcC4STkLcRULeS0+FVyg930sI
+         hWsCWadDc/Y7nXcGLFT4cY3hmspFuH22jVsBUoHyWrlIKwgaVEntiypo9fMnmBPqQE+8
+         BDcg==
+X-Gm-Message-State: AJcUukerVNL2ttTM93zV0OgoGwVWu3adUtRsnTR9Qx8zUorr4KBAkH01
+        u70ZvixzZM3n03z1DW58B06v3g==
+X-Google-Smtp-Source: ALg8bN5yj8BqaRYMB0KkkEPsTQk/K+NnX1CaiInS3uZ3G+h531r1wV6+IUlh/MdhVS+eUjxSoj8ukA==
+X-Received: by 2002:a0c:f143:: with SMTP id y3mr17392935qvl.21.1547843496967;
+        Fri, 18 Jan 2019 12:31:36 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::fb21? ([2601:602:9800:dae6::fb21])
+        by smtp.gmail.com with ESMTPSA id c17sm76875340qtb.14.2019.01.18.12.31.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 12:31:35 -0800 (PST)
+Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
+ map/unmap
+To:     "Andrew F. Davis" <afd@ti.com>, Liam Mark <lmark@codeaurora.org>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>
+References: <20190111180523.27862-1-afd@ti.com>
+ <20190111180523.27862-14-afd@ti.com>
+ <alpine.DEB.2.10.1901140910130.23879@lmark-linux.qualcomm.com>
+ <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
+ <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
+ <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com>
+ <b6cb5596-6beb-73e0-0d8c-d9a13466d626@redhat.com>
+ <99ca0b08-02bd-64fd-d43c-c330f0d11639@ti.com>
+ <alpine.DEB.2.10.1901161441280.10666@lmark-linux.qualcomm.com>
+ <7620534f-b749-76f9-0f53-f73e3f12e9a9@ti.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <fd33986f-ec26-c028-32c2-19c8cc0aba15@redhat.com>
+Date:   Fri, 18 Jan 2019 12:31:34 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547843058-27933-1-git-send-email-jcrouse@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <7620534f-b749-76f9-0f53-f73e3f12e9a9@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 01:24:18PM -0700, Jordan Crouse wrote:
-> Try to get the interconnect path for the GPU and vote for the maximum
-> bandwidth to support all frequencies. This is needed for performance.
-> Later we will want to scale the bandwidth based on the frequency to
-> also optimize for power but that will require some device tree
-> infrastructure that does not yet exist.
+On 1/17/19 8:13 AM, Andrew F. Davis wrote:
+> On 1/16/19 4:48 PM, Liam Mark wrote:
+>> On Wed, 16 Jan 2019, Andrew F. Davis wrote:
+>>
+>>> On 1/15/19 1:05 PM, Laura Abbott wrote:
+>>>> On 1/15/19 10:38 AM, Andrew F. Davis wrote:
+>>>>> On 1/15/19 11:45 AM, Liam Mark wrote:
+>>>>>> On Tue, 15 Jan 2019, Andrew F. Davis wrote:
+>>>>>>
+>>>>>>> On 1/14/19 11:13 AM, Liam Mark wrote:
+>>>>>>>> On Fri, 11 Jan 2019, Andrew F. Davis wrote:
+>>>>>>>>
+>>>>>>>>> Buffers may not be mapped from the CPU so skip cache maintenance
+>>>>>>>>> here.
+>>>>>>>>> Accesses from the CPU to a cached heap should be bracketed with
+>>>>>>>>> {begin,end}_cpu_access calls so maintenance should not be needed
+>>>>>>>>> anyway.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>>>>>>>> ---
+>>>>>>>>>    drivers/staging/android/ion/ion.c | 7 ++++---
+>>>>>>>>>    1 file changed, 4 insertions(+), 3 deletions(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/drivers/staging/android/ion/ion.c
+>>>>>>>>> b/drivers/staging/android/ion/ion.c
+>>>>>>>>> index 14e48f6eb734..09cb5a8e2b09 100644
+>>>>>>>>> --- a/drivers/staging/android/ion/ion.c
+>>>>>>>>> +++ b/drivers/staging/android/ion/ion.c
+>>>>>>>>> @@ -261,8 +261,8 @@ static struct sg_table *ion_map_dma_buf(struct
+>>>>>>>>> dma_buf_attachment *attachment,
+>>>>>>>>>          table = a->table;
+>>>>>>>>>    -    if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
+>>>>>>>>> -            direction))
+>>>>>>>>> +    if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
+>>>>>>>>> +                  direction, DMA_ATTR_SKIP_CPU_SYNC))
+>>>>>>>>
+>>>>>>>> Unfortunately I don't think you can do this for a couple reasons.
+>>>>>>>> You can't rely on {begin,end}_cpu_access calls to do cache
+>>>>>>>> maintenance.
+>>>>>>>> If the calls to {begin,end}_cpu_access were made before the call to
+>>>>>>>> dma_buf_attach then there won't have been a device attached so the
+>>>>>>>> calls
+>>>>>>>> to {begin,end}_cpu_access won't have done any cache maintenance.
+>>>>>>>>
+>>>>>>>
+>>>>>>> That should be okay though, if you have no attachments (or all
+>>>>>>> attachments are IO-coherent) then there is no need for cache
+>>>>>>> maintenance. Unless you mean a sequence where a non-io-coherent device
+>>>>>>> is attached later after data has already been written. Does that
+>>>>>>> sequence need supporting?
+>>>>>>
+>>>>>> Yes, but also I think there are cases where CPU access can happen before
+>>>>>> in Android, but I will focus on later for now.
+>>>>>>
+>>>>>>> DMA-BUF doesn't have to allocate the backing
+>>>>>>> memory until map_dma_buf() time, and that should only happen after all
+>>>>>>> the devices have attached so it can know where to put the buffer. So we
+>>>>>>> shouldn't expect any CPU access to buffers before all the devices are
+>>>>>>> attached and mapped, right?
+>>>>>>>
+>>>>>>
+>>>>>> Here is an example where CPU access can happen later in Android.
+>>>>>>
+>>>>>> Camera device records video -> software post processing -> video device
+>>>>>> (who does compression of raw data) and writes to a file
+>>>>>>
+>>>>>> In this example assume the buffer is cached and the devices are not
+>>>>>> IO-coherent (quite common).
+>>>>>>
+>>>>>
+>>>>> This is the start of the problem, having cached mappings of memory that
+>>>>> is also being accessed non-coherently is going to cause issues one way
+>>>>> or another. On top of the speculative cache fills that have to be
+>>>>> constantly fought back against with CMOs like below; some coherent
+>>>>> interconnects behave badly when you mix coherent and non-coherent access
+>>>>> (snoop filters get messed up).
+>>>>>
+>>>>> The solution is to either always have the addresses marked non-coherent
+>>>>> (like device memory, no-map carveouts), or if you really want to use
+>>>>> regular system memory allocated at runtime, then all cached mappings of
+>>>>> it need to be dropped, even the kernel logical address (area as painful
+>>>>> as that would be).
+>>>>>
+>>>>
+>>>> I agree it's broken, hence my desire to remove it :)
+>>>>
+>>>> The other problem is that uncached buffers are being used for
+>>>> performance reason so anything that would involve getting
+>>>> rid of the logical address would probably negate any performance
+>>>> benefit.
+>>>>
+>>>
+>>> I wouldn't go as far as to remove them just yet.. Liam seems pretty
+>>> adamant that they have valid uses. I'm just not sure performance is one
+>>> of them, maybe in the case of software locks between devices or
+>>> something where there needs to be a lot of back and forth interleaved
+>>> access on small amounts of data?
+>>>
+>>
+>> I wasn't aware that ARM considered this not supported, I thought it was
+>> supported but they advised against it because of the potential performance
+>> impact.
+>>
 > 
-> v6: use icc_set_bw() instead of icc_set()
-> v5: Remove hardcoded interconnect name and just use the default
-> v4: Don't use a port string at all to skip the need for names in the DT
-> v3: Use macros and change port string per Georgi Djakov
+> Not sure what you mean by "this" being not supported, do you mean mixed
+> attribute mappings? If so, it will certainly cause problems, and the
+> problems will change from platform to platform, avoid at all costs is my
+> understanding of ARM's position.
 > 
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+>> This is after all supported in the DMA APIs and up until now devices have
+>> been successfully commercializing with this configurations, and I think
+>> they will continue to commercialize with these configurations for quite a
+>> while.
+>>
+> 
+> Use of uncached memory mappings are almost always wrong in my experience
+> and are used to work around some bug or because the user doesn't want to
+> implement proper CMOs. Counter examples welcome.
+> 
+>> It would be really unfortunate if support was removed as I think that
+>> would drive clients away from using upstream ION.
+>>
+> 
+> I'm not petitioning to remove support, but at very least lets reverse
+> the ION_FLAG_CACHED flag. Ion should hand out cached normal memory by
+> default, to get uncached you should need to add a flag to your
+> allocation command pointing out you know what you are doing.
+> 
 
-In my excitement I forgot to mention that this depends on:
+I thought about doing that, the problem is it becomes an ABI break for
+existing users which I really didn't want to do again. If it
+ends up being the last thing we do before moving out of staging,
+I'd consider doing it.
 
-https://patchwork.kernel.org/patch/10766335/
+>>>>>> ION buffer is allocated.
+>>>>>>
+>>>>>> //Camera device records video
+>>>>>> dma_buf_attach
+>>>>>> dma_map_attachment (buffer needs to be cleaned)
+>>>>>
+>>>>> Why does the buffer need to be cleaned here? I just got through reading
+>>>>> the thread linked by Laura in the other reply. I do like +Brian's
+>>>>> suggestion of tracking if the buffer has had CPU access since the last
+>>>>> time and only flushing the cache if it has. As unmapped heaps never get
+>>>>> CPU mapped this would never be the case for unmapped heaps, it solves my
+>>>>> problem.
+>>>>>
+>>>>>> [camera device writes to buffer]
+>>>>>> dma_buf_unmap_attachment (buffer needs to be invalidated)
+>>>>>
+>>>>> It doesn't know there will be any further CPU access, it could get freed
+>>>>> after this for all we know, the invalidate can be saved until the CPU
+>>>>> requests access again.
+>>>>>
+>>>>>> dma_buf_detach  (device cannot stay attached because it is being sent
+>>>>>> down
+>>>>>> the pipeline and Camera doesn't know the end of the use case)
+>>>>>>
+>>>>>
+>>>>> This seems like a broken use-case, I understand the desire to keep
+>>>>> everything as modular as possible and separate the steps, but at this
+>>>>> point no one owns this buffers backing memory, not the CPU or any
+>>>>> device. I would go as far as to say DMA-BUF should be free now to
+>>>>> de-allocate the backing storage if it wants, that way it could get ready
+>>>>> for the next attachment, which may change the required backing memory
+>>>>> completely.
+>>>>>
+>>>>> All devices should attach before the first mapping, and only let go
+>>>>> after the task is complete, otherwise this buffers data needs copied off
+>>>>> to a different location or the CPU needs to take ownership in-between.
+>>>>>
+>>>>
+>>>> Maybe it's broken but it's the status quo and we spent a good
+>>>> amount of time at plumbers concluding there isn't a great way
+>>>> to fix it :/
+>>>>
+>>>
+>>> Hmm, guess that doesn't prove there is not a great way to fix it either.. :/
+>>>
+>>> Perhaps just stronger rules on sequencing of operations? I'm not saying
+>>> I have a good solution either, I just don't see any way forward without
+>>> some use-case getting broken, so better to fix now over later.
+>>>
+>>
+>> I can see the benefits of Android doing things the way they do, I would
+>> request that changes we make continue to support Android, or we find a way
+>> to convice them to change, as they are the main ION client and I assume
+>> other ION clients in the future will want to do this as well.
+>>
+> 
+> Android may be the biggest user today (makes sense, Ion come out of the
+> Android project), but that can change, and getting changes into Android
+> will be easier that the upstream kernel once Ion is out of staging.
+> 
+> Unlike some other big ARM vendors, we (TI) do not primarily build mobile
+> chips targeting Android, our core offerings target more traditional
+> Linux userspaces, and I'm guessing others will start to do the same as
+> ARM tries to push more into desktop, server, and other spaces again.
+> 
+>> I am concerned that if you go with a solution which enforces what you
+>> mention above, and bring ION out of staging that way, it will make it that
+>> much harder to solve this for Android and therefore harder to get
+>> Android clients to move to the upstream ION (and get everybody off their
+>> vendor modified Android versions).
+>>
+> 
+> That would be an Android problem, reducing functionality in upstream to
+> match what some evil vendor trees do to support Android is not the way
+> forward on this. At least for us we are going to try to make all our
+> software offerings follow proper buffer ownership (including our Android
+> offering).
+> 
 
-> ---
-> 
->  drivers/gpu/drm/msm/Kconfig             |  1 +
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c   | 20 ++++++++++++++++++++
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  9 +++++++++
->  drivers/gpu/drm/msm/msm_gpu.h           |  3 +++
->  4 files changed, 33 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-> index cf549f1..78c9e5a5 100644
-> --- a/drivers/gpu/drm/msm/Kconfig
-> +++ b/drivers/gpu/drm/msm/Kconfig
-> @@ -5,6 +5,7 @@ config DRM_MSM
->  	depends on ARCH_QCOM || SOC_IMX5 || (ARM && COMPILE_TEST)
->  	depends on OF && COMMON_CLK
->  	depends on MMU
-> +	depends on INTERCONNECT || !INTERCONNECT
->  	select QCOM_MDT_LOADER if ARCH_QCOM
->  	select REGULATOR
->  	select DRM_KMS_HELPER
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> index 5beb83d..c48fe46 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -2,6 +2,7 @@
->  /* Copyright (c) 2017-2018 The Linux Foundation. All rights reserved. */
->  
->  #include <linux/clk.h>
-> +#include <linux/interconnect.h>
->  #include <linux/pm_opp.h>
->  #include <soc/qcom/cmd-db.h>
->  
-> @@ -84,6 +85,9 @@ bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu)
->  
->  static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
->  {
-> +	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
-> +	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> +	struct msm_gpu *gpu = &adreno_gpu->base;
->  	int ret;
->  
->  	gmu_write(gmu, REG_A6XX_GMU_DCVS_ACK_OPTION, 0);
-> @@ -106,6 +110,12 @@ static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
->  		dev_err(gmu->dev, "GMU set GPU frequency error: %d\n", ret);
->  
->  	gmu->freq = gmu->gpu_freqs[index];
-> +
-> +	/*
-> +	 * Eventually we will want to scale the path vote with the frequency but
-> +	 * for now leave it at max so that the performance is nominal.
-> +	 */
-> +	icc_set_bw(gpu->icc_path, 0, MBps_to_icc(7216));
->  }
->  
->  void a6xx_gmu_set_freq(struct msm_gpu *gpu, unsigned long freq)
-> @@ -705,6 +715,8 @@ int a6xx_gmu_reset(struct a6xx_gpu *a6xx_gpu)
->  
->  int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
->  {
-> +	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> +	struct msm_gpu *gpu = &adreno_gpu->base;
->  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
->  	int status, ret;
->  
-> @@ -720,6 +732,9 @@ int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
->  	if (ret)
->  		goto out;
->  
-> +	/* Set the bus quota to a reasonable value for boot */
-> +	icc_set_bw(gpu->icc_path, 0, MBps_to_icc(3072));
-> +
->  	a6xx_gmu_irq_enable(gmu);
->  
->  	/* Check to see if we are doing a cold or warm boot */
-> @@ -760,6 +775,8 @@ bool a6xx_gmu_isidle(struct a6xx_gmu *gmu)
->  
->  int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
->  {
-> +	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> +	struct msm_gpu *gpu = &adreno_gpu->base;
->  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
->  	u32 val;
->  
-> @@ -806,6 +823,9 @@ int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
->  	/* Tell RPMh to power off the GPU */
->  	a6xx_rpmh_stop(gmu);
->  
-> +	/* Remove the bus vote */
-> +	icc_set_bw(gpu->icc_path, 0, 0);
-> +
->  	clk_bulk_disable_unprepare(gmu->nr_clocks, gmu->clocks);
->  
->  	pm_runtime_put_sync(gmu->dev);
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> index 2e4372e..91a98c8 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -18,6 +18,7 @@
->   */
->  
->  #include <linux/ascii85.h>
-> +#include <linux/interconnect.h>
->  #include <linux/kernel.h>
->  #include <linux/pm_opp.h>
->  #include <linux/slab.h>
-> @@ -747,6 +748,11 @@ static int adreno_get_pwrlevels(struct device *dev,
->  
->  	DBG("fast_rate=%u, slow_rate=27000000", gpu->fast_rate);
->  
-> +	/* Check for an interconnect path for the bus */
-> +	gpu->icc_path = of_icc_get(dev, NULL);
-> +	if (IS_ERR(gpu->icc_path))
-> +		gpu->icc_path = NULL;
-> +
->  	return 0;
->  }
->  
-> @@ -788,10 +794,13 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
->  
->  void adreno_gpu_cleanup(struct adreno_gpu *adreno_gpu)
->  {
-> +	struct msm_gpu *gpu = &adreno_gpu->base;
->  	unsigned int i;
->  
->  	for (i = 0; i < ARRAY_SIZE(adreno_gpu->info->fw); i++)
->  		release_firmware(adreno_gpu->fw[i]);
->  
-> +	icc_put(gpu->icc_path);
-> +
->  	msm_gpu_cleanup(&adreno_gpu->base);
->  }
-> diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-> index efb49bb..2f13592a 100644
-> --- a/drivers/gpu/drm/msm/msm_gpu.h
-> +++ b/drivers/gpu/drm/msm/msm_gpu.h
-> @@ -19,6 +19,7 @@
->  #define __MSM_GPU_H__
->  
->  #include <linux/clk.h>
-> +#include <linux/interconnect.h>
->  #include <linux/regulator/consumer.h>
->  
->  #include "msm_drv.h"
-> @@ -119,6 +120,8 @@ struct msm_gpu {
->  	struct clk *ebi1_clk, *core_clk, *rbbmtimer_clk;
->  	uint32_t fast_rate;
->  
-> +	struct icc_path *icc_path;
-> +
->  	/* Hang and Inactivity Detection:
->  	 */
->  #define DRM_MSM_INACTIVE_PERIOD   66 /* in ms (roughly four frames) */
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> Freedreno mailing list
-> Freedreno@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/freedreno
+I don't think this is reducing functionality, it's about not breaking
+what already works. There is some level of Android testing on a mainline
+tree (hikey boards). I would say if we can come to an agreement on
+a correct API, we could always merge the 'correct' version out of
+staging and keep a legacy driver around for some time as a transition.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Laura
