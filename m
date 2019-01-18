@@ -2,93 +2,85 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EE1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1C8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0922087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:02:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547812978;
-	bh=K3Ld0OfkCukyjdKpPmE6NCAdmDijhMtDnvwbjIp3eDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=oYZyTCNsXHJqXvfbKyznNHQBpk3r9KFK0brqTmZ4BJ6bJSRJ2WsHjwjr0d/7PHJLs
-	 tmLPx6NwYnW96vDPUeIpa1sOKyZerBkcKdLXgi3JIQJ0gG2NdY9AUchdixq/DaznW4
-	 M78ELa8hqO3LoAYtcP6dl02SN79DUzC+aKd8B+nM=
+	by mail.kernel.org (Postfix) with ESMTP id 157202086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:04:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfARMC5 (ORCPT
+        id S1727429AbfARME0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:02:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfARMC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:02:56 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49DB02086D;
-        Fri, 18 Jan 2019 12:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547812975;
-        bh=K3Ld0OfkCukyjdKpPmE6NCAdmDijhMtDnvwbjIp3eDk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wm2rHe6FIIrzpaiFmyNwbrMvSeYMcxOq8qL0C9K7YvA8zLoVqyQRqH9qWIuKRHcmz
-         mZouISAt0KqqpPiCYE5CKdq/wF6uC9gAzJZDK07r9+eKNxcR9qC3Xqzfu21FMSZJSz
-         D785X1bImKzwAR3+QVRh0YdNfSgj0ZIYgijLd6EQ=
-Date:   Fri, 18 Jan 2019 13:02:53 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     zhe.he@windriver.com
-Cc:     jslaby@suse.com, andriy.shevchenko@linux.intel.com,
-        bigeasy@linutronix.de, Jisheng.Zhang@synaptics.com,
-        darwin.dingel@alliedtelesis.co.nz, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial: 8250: Fix serial8250 initialization crash
-Message-ID: <20190118120253.GB5532@kroah.com>
-References: <1547715619-181299-1-git-send-email-zhe.he@windriver.com>
+        Fri, 18 Jan 2019 07:04:26 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55792 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727230AbfARMEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 07:04:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59CED80D;
+        Fri, 18 Jan 2019 04:04:25 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A4E43F557;
+        Fri, 18 Jan 2019 04:04:22 -0800 (PST)
+Subject: Re: [PATCHv2 2/4] arm64: dts: qcom: msm8996: Add Coresight support
+To:     saiprakash.ranjan@codeaurora.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
+        david.brown@linaro.org, vivek.gautam@codeaurora.org,
+        dianders@chromium.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com
+Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <cover.1547798966.git.saiprakash.ranjan@codeaurora.org>
+ <552e408950525b1bac39d05b8b4f2ae1975397e0.1547798966.git.saiprakash.ranjan@codeaurora.org>
+ <1311e78a-21f6-6470-7861-39b3499974ce@arm.com>
+ <6543ad5c-bbcf-b3ec-332c-115e8e3d0825@codeaurora.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <1b7d4c2f-98f7-4b80-4e32-6e0fe5c906ce@arm.com>
+Date:   Fri, 18 Jan 2019 12:04:20 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547715619-181299-1-git-send-email-zhe.he@windriver.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <6543ad5c-bbcf-b3ec-332c-115e8e3d0825@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 05:00:19PM +0800, zhe.he@windriver.com wrote:
-> From: He Zhe <zhe.he@windriver.com>
-> 
-> The initialization code of interrupt backoff work might reference NULL
-> pointer and cause the following crash, if no port was found.
-> 
-> [   10.017727] CPU 0 Unable to handle kernel paging request at virtual address 000001b0, epc == 807088e0, ra == 8070863c
-> ---- snip ----
-> [   11.704470] [<807088e0>] serial8250_register_8250_port+0x318/0x4ac
-> [   11.747251] [<80708d74>] serial8250_probe+0x148/0x1c0
-> [   11.789301] [<80728450>] platform_drv_probe+0x40/0x94
-> [   11.830515] [<807264f8>] really_probe+0xf8/0x318
-> [   11.870876] [<80726b7c>] __driver_attach+0x110/0x12c
-> [   11.910960] [<80724374>] bus_for_each_dev+0x78/0xcc
-> [   11.951134] [<80725958>] bus_add_driver+0x200/0x234
-> [   11.989756] [<807273d8>] driver_register+0x84/0x148
-> [   12.029832] [<80d72f84>] serial8250_init+0x138/0x198
-> [   12.070447] [<80100e6c>] do_one_initcall+0x5c/0x2a0
-> [   12.110104] [<80d3a208>] kernel_init_freeable+0x370/0x484
-> [   12.150722] [<80a49420>] kernel_init+0x10/0xf8
-> [   12.191517] [<8010756c>] ret_from_kernel_thread+0x14/0x1c
-> 
-> This patch makes sure the initialization code can be reached only if a port
-> is found.
-> 
-> Fixes: commit 6d7f677a2afa ("serial: 8250: Rate limit serial port rx interrupts during input overruns")
+Hi,
 
-No need for the "commit" in this string, this can just be written as:
+On 18/01/2019 11:48, Sai Prakash Ranjan wrote:
+> Hi Suzuki,
+> 
+> On 1/18/2019 4:27 PM, Suzuki K Poulose wrote:
+>>
+>> If you want to use the scatter-gather mode, you must add
+>> "arm,scatter-gather"
+>> property to the node here.
+>>
+>> Have you tested the scatter-gather mode on the chip ? Does that work at
+>> all ?
+>> Note: You could try this by setting a buffer_size > 1M for the ETR and use
+>> it as a sink from the sysfs mode.
+>>
+> 
+> Yes the chip supports scatter-gather mode[1]. But is it required in
+> dt node since it's an optional property?
 
-Fixes: 6d7f677a2afa ("serial: 8250: Rate limit serial port rx interrupts during input overruns")
+If you would like to use the scatter-gather mode, you must specify it
+explicitly. We have had some other boards with broken scatter-gather
+mode integration which causes mysterious issues when used. So we have
+a white-list approach for enabling the scatter-gather mode in the driver.
 
-thanks,
+So, if you have tested to make sure that the mode works fine with a recent
+kernel version (v4.19 onwards), you may want to add the property.
 
-greg k-h
+Suzuki
+
