@@ -2,117 +2,146 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63A3C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BD6C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BFC420850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547836736;
-	bh=GUVyqtBpAh1ueQ2iabQj9cqbDh2ZtFLfmIpv9HE5i7A=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=DgiSxmVnvbqwcWH5wsAZtnm+eE5R9xn/orD1GQxO3ayBeubI4cmVVxbAspF2Rlukv
-	 1tp0jrC5FAlNJu42O8jdgHufsxYxEvnuHQvrcadlUByOTzpRyPRRu+Rurne3M2j+ye
-	 m7vC9ikxKN05mroRnDXc8vU5+LEsM3e6gC4yD/qQ=
+	by mail.kernel.org (Postfix) with ESMTP id B2C0F20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:44:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBN4i9jv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbfARSiy (ORCPT
+        id S1728862AbfARSoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:38:54 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57890 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728892AbfARSix (ORCPT
+        Fri, 18 Jan 2019 13:44:08 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43955 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728592AbfARSoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:38:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=DZOSWtEhi0IVv6gv4mzuWFnN0gAwCNuVSO53P1JmmiA=; b=URHnV5Qesb6R
-        sBs/8ujc3WrY4znkCaSSZzKBcRNbPP7ILtf+EfUn9qJT9B0khH+AdNywQ+k8XJ7szMgOrFya5dlEU
-        +3Jrhkp12Swh4I30G4cv/JeAAljkxnM9vLlzlpI8dmo1MbOT7js4D0P3SN57t10c5i/oQYlXq1AYK
-        AVwW0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gkZ2V-0005N6-B8; Fri, 18 Jan 2019 18:38:47 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id F098211276E7; Fri, 18 Jan 2019 18:38:46 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: lochnagar: Add missing MODULE_DEVICE_TABLE" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190118183846.F098211276E7@debutante.sirena.org.uk>
-Date:   Fri, 18 Jan 2019 18:38:46 +0000 (GMT)
+        Fri, 18 Jan 2019 13:44:07 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so16236621wrs.10;
+        Fri, 18 Jan 2019 10:44:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=npe1ieDjm263/B2NTZOjdeR5wj0sxGNNGEfjAzD1woc=;
+        b=BBN4i9jvq4T9ua/h6BIwPQ6Tas91zEMg8YA3pqH2l8xC6HXoFmIP84Kbx1KLdS4P20
+         8BVOdZitziQH8R4fm+wQPWoa8+PHLH+ETWUrlcgOzPuU/4dSzCW+ObjBs89T/3LAernF
+         LNjaYox9ts1aicVguoKMGHLOR4d8n7rrM4syQsvJKh9s5U12r9syV97T9P3r8wufaNla
+         pEL/TeTGTaxe4oGhJxy3M5bMvqQ4QIZk0W0SAs0ouyIYNNGW6Hu30YBoe5demoXLz7aJ
+         ZWT2Vt9dxkt0BQLVb0y9t8wE9HGi/RUk7VIWGW+3SqSVrouABvf9k3sblEeJHcUcjmZF
+         jvVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=npe1ieDjm263/B2NTZOjdeR5wj0sxGNNGEfjAzD1woc=;
+        b=Ylm2yy6PkhzRF+tk7ayIsDcFBx/F7xqJXaAwiN426bhRAf8SEs157zXySHvAb6svRU
+         Kq4xMryeYOluNVnoKe0rClK8F6Rp7yBLe8ryOf0gV8f6ib/1ffohpOTbpRanewaEvsz9
+         eQGI2E2QJyf1Qr7zBj7ZGajSHxIRLxThpUp5sUgz5rC6+KEOLpHfrYTj/Ds/wfh6UwrA
+         Hw6qia+i6jbh9uc7CKXzVoenqOf8nDfO9kPZUtewnrhyNbye2MzMPt6+i+3gyiqGqiKN
+         0Nww7sKM5yiP+vcyaodDjGF3m0w6ieILtwuPDeoumJlDULXx2POV5DImKTalcqw54ELt
+         ugPQ==
+X-Gm-Message-State: AJcUukce7Qb5Ic0YkHF//x8v5j2w7ZDCFt6jWy65mBV8JJCRJpZ5TFkZ
+        LXTEdHp/3bJtWSDpqq0NKw==
+X-Google-Smtp-Source: ALg8bN4hqbCz6HtcimI/ggEjNGZxdwAj1jIyC5/xpJbVh1Inpi6/mp8WuAibGwkYUM7TiV3xkIdRjA==
+X-Received: by 2002:adf:b243:: with SMTP id y3mr18331382wra.184.1547837044764;
+        Fri, 18 Jan 2019 10:44:04 -0800 (PST)
+Received: from localhost (host89-130-dynamic.43-79-r.retail.telecomitalia.it. [79.43.130.89])
+        by smtp.gmail.com with ESMTPSA id g188sm52222185wmf.32.2019.01.18.10.44.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 10:44:04 -0800 (PST)
+Date:   Fri, 18 Jan 2019 19:44:03 +0100
+From:   Andrea Righi <righi.andrea@gmail.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
+        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
+Message-ID: <20190118184403.GB1535@xps-13>
+References: <20190118103127.325-1-righi.andrea@gmail.com>
+ <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, Jan 18, 2019 at 11:35:31AM -0500, Josef Bacik wrote:
+> On Fri, Jan 18, 2019 at 11:31:24AM +0100, Andrea Righi wrote:
+> > This is a redesign of my old cgroup-io-throttle controller:
+> > https://lwn.net/Articles/330531/
+> > 
+> > I'm resuming this old patch to point out a problem that I think is still
+> > not solved completely.
+> > 
+> > = Problem =
+> > 
+> > The io.max controller works really well at limiting synchronous I/O
+> > (READs), but a lot of I/O requests are initiated outside the context of
+> > the process that is ultimately responsible for its creation (e.g.,
+> > WRITEs).
+> > 
+> > Throttling at the block layer in some cases is too late and we may end
+> > up slowing down processes that are not responsible for the I/O that
+> > is being processed at that level.
+> 
+> How so?  The writeback threads are per-cgroup and have the cgroup stuff set
+> properly.  So if you dirty a bunch of pages, they are associated with your
+> cgroup, and then writeback happens and it's done in the writeback thread
+> associated with your cgroup and then that is throttled.  Then you are throttled
+> at balance_dirty_pages() because the writeout is taking longer.
 
-   regulator: lochnagar: Add missing MODULE_DEVICE_TABLE
+Right, writeback is per-cgroup and slowing down writeback affects only
+that specific cgroup, but, there are cases where other processes from
+other cgroups may require to wait on that writeback to complete before
+doing I/O (for example an fsync() to a file shared among different
+cgroups). In this case we may end up blocking cgroups that shouldn't be
+blocked, that looks like a priority-inversion problem. This is the
+problem that I'm trying to address.
 
-has been applied to the regulator tree at
+> 
+> I introduced the blk_cgroup_congested() stuff for paths that it's not easy to
+> clearly tie IO to the thing generating the IO, such as readahead and such.  If
+> you are running into this case that may be something worth using.  Course it
+> only works for io.latency now but there's no reason you can't add support to it
+> for io.max or whatever.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+IIUC blk_cgroup_congested() is used in readahead I/O (and swap with
+memcg), something like this: if the cgroup is already congested don't
+generate extra I/O due to readahead. Am I right?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> 
+> > 
+> > = Proposed solution =
+> > 
+> > The main idea of this controller is to split I/O measurement and I/O
+> > throttling: I/O is measured at the block layer for READS, at page cache
+> > (dirty pages) for WRITEs, and processes are limited while they're
+> > generating I/O at the VFS level, based on the measured I/O.
+> > 
+> 
+> This is what blk_cgroup_congested() is meant to accomplish, I would suggest
+> looking into that route and simply changing the existing io controller you are
+> using to take advantage of that so it will actually throttle things.  Then just
+> sprinkle it around the areas where we indirectly generate IO.  Thanks,
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Absolutely, I can probably use blk_cgroup_congested() as a method to
+determine when a cgroup should be throttled (instead of doing my own
+I/O measuring), but to prevent the "slow writeback slowing down other
+cgroups" issue I still need to apply throttling when pages are dirtied
+in page cache.
 
 Thanks,
-Mark
-
-From 692f8b56bb6afa06895d2723a033822994c1fe59 Mon Sep 17 00:00:00 2001
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Fri, 18 Jan 2019 11:36:30 +0000
-Subject: [PATCH] regulator: lochnagar: Add missing MODULE_DEVICE_TABLE
-
-Add the missing MODULE_DEVICE_TABLE and remove the comma from the
-separator on the end of the of_device_id array.
-
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/lochnagar-regulator.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
-index 5a89e6d4b9a6..2c0743e65eaf 100644
---- a/drivers/regulator/lochnagar-regulator.c
-+++ b/drivers/regulator/lochnagar-regulator.c
-@@ -232,8 +232,9 @@ static const struct of_device_id lochnagar_of_match[] = {
- 		.compatible = "cirrus,lochnagar2-vddcore",
- 		.data = &lochnagar_regulators[LOCHNAGAR_VDDCORE],
- 	},
--	{},
-+	{}
- };
-+MODULE_DEVICE_TABLE(of, lochnagar_of_match);
- 
- static int lochnagar_regulator_probe(struct platform_device *pdev)
- {
--- 
-2.20.1
-
+-Andrea
