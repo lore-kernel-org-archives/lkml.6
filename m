@@ -2,228 +2,188 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D99C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A73C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 535A720823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35EDB20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:41:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="G62gHBXQ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="l01Mo2t0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfARJkW (ORCPT
+        id S1727115AbfARJlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 04:40:22 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39544 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfARJkW (ORCPT
+        Fri, 18 Jan 2019 04:41:12 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47155 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbfARJlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 04:40:22 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y8so3802737wmi.4
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 01:40:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2g01vzvh25Lt4673ekLv7gDNOBuQNnSj4waDHEZZ+4E=;
-        b=G62gHBXQS6LgipwQEHkiVZnzsia9Tq/AdBFsnVmv0WBXI3sQiWBT+w1OzQzPGo50AP
-         9u+/boTk8TNLgEhfIngu+ReH7xn816PUHrWzoB+EruTvifKGjIXMpB6AjCbrcaFoUun7
-         XQ6R34olJ2REUdqpIjNVWt4NZDWRRalDayLJ1h5zG2G8uHhTI7PKe19xFuGvFPJVEn1k
-         tPZf/DjWhkH+25QEnwK+Vvwp9ugWMC20PFVzERi6mQmP7qTsIMJ74KjmtZut3G2XAKe7
-         r/luwg86Qw/zrlc2iU5w6pzA2j4vT8cmCBpcS/lJMYfq/plQEP6UGGTwmgqVsECowsCT
-         DvOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2g01vzvh25Lt4673ekLv7gDNOBuQNnSj4waDHEZZ+4E=;
-        b=Nqp9VVcfbuvP5v6E7+J5ZKFq2WAyaMn7JY0UJV9XaPi7fShBEOnCGwA1gZQn8i+RHv
-         TiSMklRL2rKabvYSariUvVzlChzx4qMrhpC1nbnyWpQeZTY+h5Ojj5mF2e39LAApMqME
-         Ic1UKdQE+5CxZHtcwyV7RacSurLwV29T+Ex0BmCp8PeyvcPJ6FLQchFpDnbx3iezH+mW
-         1vb7s1QFdx5T0wU+2u8PP1xBVwDOjZQMS9+a3JSwPFOMX1E21zJV01lvWBtJs4QJ74ws
-         2Sn3VCHEwcjSDVUHOYP+n8hCZEecVOVoAT7iYO9ldtrIDRxh3Xpr7VtGiwlMn0qaGMMz
-         j1Nw==
-X-Gm-Message-State: AJcUukeKyhPHeF0aDIT3AHL7j0Ap6/u3RtNaH3WFIU6qES4exg4wzDA4
-        WpTB7lBd419sjCrFL7WSv+yEbg==
-X-Google-Smtp-Source: ALg8bN6gZ7c4HUb174a/I5Cmy6psqBOkt4sH/AbCY44cke7XVzwl7zkfGmNzu8H5rb9UrGRxCJVLvQ==
-X-Received: by 2002:a1c:1d81:: with SMTP id d123mr14597568wmd.112.1547804418438;
-        Fri, 18 Jan 2019 01:40:18 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t12sm86309396wrr.65.2019.01.18.01.40.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 01:40:17 -0800 (PST)
-Subject: Re: [PATCH 2/8] drm/meson: add HDMI div40 TMDS mode
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent.pinchart@ideasonboard.com
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20190115123315.11069-1-narmstrong@baylibre.com>
- <CGME20190115123329epcas2p238b0b8a9f449f96991e02b34c54741ca@epcas2p2.samsung.com>
- <20190115123315.11069-3-narmstrong@baylibre.com>
- <5103b2e8-2f73-da18-a043-fa45d6e2c139@samsung.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <bdd3ec10-1f9f-324c-aed0-6eab30fe518b@baylibre.com>
-Date:   Fri, 18 Jan 2019 10:40:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 18 Jan 2019 04:41:11 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190118094110euoutp01c36cd7b7e3de5fc9adee666b1edafba5~65-cQWHWV0047100471euoutp01F
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:41:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190118094110euoutp01c36cd7b7e3de5fc9adee666b1edafba5~65-cQWHWV0047100471euoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1547804470;
+        bh=RGXq9RGEUurKx6PSdc+PYxtxsJ/5Q+IzJ0gAyNc2HLA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=l01Mo2t0ms1SFfSsdjgkqBnA66WN5rFy5Ge9+h1XUSklDC8Af5G/C/d7MaHXHPsx0
+         FDDlwWK6iTovy90/C0q2C+KP6fyqi4NxkmPj1+/X1W8ZDtYo1ZE7MuSGcayBHQOqG3
+         L8++ALPHZhIOF4ElFX1sY5bZ8WfVBILW+prbX200=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190118094109eucas1p1ab05532f8165610dc474362bdee7bbd6~65-blkck73063730637eucas1p10;
+        Fri, 18 Jan 2019 09:41:09 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id EE.48.04294.53F914C5; Fri, 18
+        Jan 2019 09:41:09 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190118094108eucas1p183dbb93b33e288b5b6043f4f5bd4bdcb~65-aoCgiY2366223662eucas1p1V;
+        Fri, 18 Jan 2019 09:41:08 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190118094108eusmtrp2b5babbdfd476b5ba54a20f3cc44585d3~65-aX1NnO3211632116eusmtrp29;
+        Fri, 18 Jan 2019 09:41:08 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-bc-5c419f35d876
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 84.C9.04128.43F914C5; Fri, 18
+        Jan 2019 09:41:08 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190118094107eusmtip2a3234dfbecca364b28e7d316014cb1d2~65-ZyivDv2009320093eusmtip2h;
+        Fri, 18 Jan 2019 09:41:07 +0000 (GMT)
+Subject: Re: [PATCH 3/3] videobuf2: replace a layering violation with
+ dma_map_resource
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Pawel Osciak <pawel@osciak.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Russell King <linux@armlinux.org.uk>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <f4222474-0515-c0a2-ef5e-523b56869210@samsung.com>
+Date:   Fri, 18 Jan 2019 10:41:06 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <5103b2e8-2f73-da18-a043-fa45d6e2c139@samsung.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190117172152.GA32292@lst.de>
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyyUcRzHfe+5e+5xOT0O+YymdVtZEmm1nkaGWT1bs/qnraLVxTPk5+5B
+        ZNWtVmGGoeJx+bWWXyt1IV0ro+UyHeqWrpI0PyMpFCdTnj2U/16fz/v9+bV9CEzxWuJMRMUl
+        Muo4VYwSl4kb2yyd23aVBoRu17xdS1XXPhdRZc0+lPHiVymlG+iRUCa9Fqey7jVIqNZrTxD1
+        e3ZRQt3WLYioj+0eVMGEReq/hjb1vMJoXU0GTj+4dYHON1ciuquwHNGP32lwemD+C06PmGZx
+        Oru+BtHTOtdDsmMy33AmJiqZUXv5nZRFfr5jFCfkO6aUaAwiDSq1y0TWBJA74eZ8L8pEMkJB
+        ViEwT2WJeEFBziDI4ShBmEbQq+kRrVQ8KcyQCkIlgvKGPlwIJhFwMwtLLoKwJ4/Az+H9fIED
+        qYShMSPiGSOLMCi4k8AzTnpD5kQmzrOc9IO2648xnsXkJhgf6hDzbRzJULhskgkWO2gvGhTz
+        bE16wF1t13LLDfBwQosJ7ATvB0uX97RIwdJyQOAgMPV2SgW2hzFD/TKvhz+PeL9siS8huFrI
+        SYUgC0GDtgkXXD7wzPBKwi+EkVugTu8lpANgNLsS49NA2oJ5wk7YwRbyGm8sp+WQfkUhuDcD
+        Z7j7b2xL92ssFym5VZdxq67hVl3D/Z9bhsQ1yIlJYmMjGHZHHHPGk1XFsklxEZ5h8bE6tPRp
+        HYuGmSakXzjVikgCKW3kufX+oQqJKplNjW1FQGBKB7mOCwhVyMNVqWcZdfwJdVIMw7YiF0Ks
+        dJKnWfWHKMgIVSITzTAJjHpFFRHWzhq0T/VW7TvXnO3W31+xxwZGo4u3O1qZw+6ftkqZcTCe
+        X+j/JTcHzR2tG2wKCIzMOUe/OR741L3zpetA1Yu9G8fZ6FLjsPJgoqvzbnrMog1JG7P3d+rE
+        pr9XoKyBWrm+3qWvumgr6i6RTI0U/viQHTyp/5aXvq55PqQs2ORWfPhThlLMRqq83TE1q/oL
+        ED7+omUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsVy+t/xe7om8x1jDG7s57FYufook8WC/dYW
+        Z5vesFtsenyN1eLyrjlsFj0btrJaHJq6l9Hi9/d/rBbLNv1hsrh7Usdiytuf7A7cHpevXWT2
+        2LSqk81j85J6j8k3ljN6nJ+xkNFj980GNo/Hv16yeTy//J3No2/LKkaPz5vkArii9GyK8ktL
+        UhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIerj3LUjBZtGJe
+        w3GmBsb5gl2MnBwSAiYSe2d0sncxcnEICSxllNhwfy8bREJG4uS0BlYIW1jiz7UuNoiit4wS
+        M479Zexi5OAQFoiQ+PrMHaRGREBJ4umrs4wgNcwCs5klTlxaxgLR0MAk0b11IdhUNgFDia63
+        XWA2r4CdxLFpu5lBbBYBVYnXT0+zgNiiAjESs570sUPUCEqcnPkELM4poCOxbs55RhCbWUBd
+        4s+8S8wQtrzE9rdzoGxxiVtP5jNNYBSahaR9FpKWWUhaZiFpWcDIsopRJLW0ODc9t9hIrzgx
+        t7g0L10vOT93EyMwlrcd+7llB2PXu+BDjAIcjEo8vC+2OcQIsSaWFVfmHmKU4GBWEuHdNMsx
+        Rog3JbGyKrUoP76oNCe1+BCjKdBzE5mlRJPzgWkmryTe0NTQ3MLS0NzY3NjMQkmc97xBZZSQ
+        QHpiSWp2ampBahFMHxMHp1QDo79ZQMaWg9fsDh/uELo99UJayu6vFuft7j9+eX9LUlvX7dUc
+        q3cmnmzb//fh7eNOnnZOsmv06rYH7RVQupfie23Gl4cL1hRceXB3tyDD4doLYrc4XGJN2Gcv
+        tlgV7p+5/KC7maqm6+rJiwVeveP73qMzcZKStFZbSLriAnX+Wyw6gW+bDyje1VNiKc5INNRi
+        LipOBADq0Yzi+wIAAA==
+X-CMS-MailID: 20190118094108eucas1p183dbb93b33e288b5b6043f4f5bd4bdcb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190111181812epcas2p1eeb68a16701631513eaf297073f7299f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190111181812epcas2p1eeb68a16701631513eaf297073f7299f
+References: <20190111181731.11782-1-hch@lst.de>
+        <CGME20190111181812epcas2p1eeb68a16701631513eaf297073f7299f@epcas2p1.samsung.com>
+        <20190111181731.11782-4-hch@lst.de>
+        <6f8892ac-c2aa-10df-c74f-ba032bf75160@samsung.com>
+        <20190117172152.GA32292@lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrzej,
+Hi Christoph,
 
-On 18/01/2019 10:13, Andrzej Hajda wrote:
-> On 15.01.2019 13:33, Neil Armstrong wrote:
->> Add support for TMDS Clock > 3.4GHz for HDMI2.0 display modes.
+On 2019-01-17 18:21, Christoph Hellwig wrote:
+> On Mon, Jan 14, 2019 at 01:42:26PM +0100, Marek Szyprowski wrote:
+>> On 2019-01-11 19:17, Christoph Hellwig wrote:
+>>> vb2_dc_get_userptr pokes into arm direct mapping details to get the
+>>> resemblance of a dma address for a a physical address that does is
+>>> not backed by a page struct.  Not only is this not portable to other
+>>> architectures with dma direct mapping offsets, but also not to uses
+>>> of IOMMUs of any kind.  Switch to the proper dma_map_resource /
+>>> dma_unmap_resource interface instead.
+>>>
+>>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> There are checks for IOMMU presence in other places in vb2-dma-contig,
+>> so it was used only when no IOMMU is available, but I agree that the
+>> hacky code should be replaced by a generic code if possible.
 >>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/gpu/drm/meson/meson_dw_hdmi.c | 23 +++++++++++++++++++----
->>  1 file changed, 19 insertions(+), 4 deletions(-)
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >>
->> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
->> index 807111ebfdd9..3d8decb77019 100644
->> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
->> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
->> @@ -365,7 +365,8 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
->>  	unsigned int wr_clk =
->>  		readl_relaxed(priv->io_base + _REG(VPU_HDMI_SETTING));
->>  
->> -	DRM_DEBUG_DRIVER("%d:\"%s\"\n", mode->base.id, mode->name);
->> +	DRM_DEBUG_DRIVER("%d:\"%s\" div%d\n", mode->base.id, mode->name,
->> +			 mode->clock > 340000 ? 40 : 10);
->>  
->>  	/* Enable clocks */
->>  	regmap_update_bits(priv->hhi, HHI_HDMI_CLK_CNTL, 0xffff, 0x100);
->> @@ -385,9 +386,17 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
->>  	/* Enable normal output to PHY */
->>  	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_BIST_CNTL, BIT(12));
->>  
->> -	/* TMDS pattern setup (TOFIX pattern for 4k2k scrambling) */
->> -	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0x001f001f);
->> -	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23, 0x001f001f);
->> +	/* TMDS pattern setup (TOFIX Handle the YUV420 case) */
->> +	if (mode->clock > 340000) {
->> +		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0);
->> +		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
->> +				  0x03ff03ff);
->> +	} else {
->> +		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01,
->> +				  0x001f001f);
->> +		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
->> +				  0x001f001f);
->> +	}
-> 
-> 
->     val = mode->clock > 340000 ? 0x03ff03ff : 0x001f001f;
->     dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, val);
-> 
->     dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23, val);
-> 
-> 
-> The best would be to replace these magic values with descriptive macros.
+>> V4L2 pipeline works fine on older Exynos-based boards with CMA and IOMMU
+>> disabled.
+> Do you know if these rely on the offsets?  E.g. would they still work
+> with the patch below applied on top.  That would keep the map_resource
+> semantics as-is as solve the issue pointed out by Robin for now.
 
-In fact, these are patterns, not sure how to describe them ? it's like a plain number, the value has it's own meaning.
+AFAIK that code was only used for sharing buffers between hardware
+modules that are a part of the same SoC, usually implemented as platform
+devices. AFAIR this never worked for devices on different buses. So far
+I wasn't aware on ANY which would require an offset for the DMA access.
 
+The first version of videobuf2-dc code even incorrectly used paddr
+instead of dma_addr as a buffer 'address' returned to the client
+drivers, because in case of those SoC this was exactly the same (see
+commits 472af2b05bdefcaee7e754e22cbf131110017ad6 and
+ba7fcb0c954921534707f08ebc4d8beeb2eb17e7).
 
-Neil
-> 
-> 
-> Regards
-> 
-> Andrzej
-> 
-> 
->>  
->>  	/* Load TMDS pattern */
->>  	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_CNTL, 0x1);
->> @@ -413,6 +422,8 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
->>  	/* Disable clock, fifo, fifo_wr */
->>  	regmap_update_bits(priv->hhi, HHI_HDMI_PHY_CNTL1, 0xf, 0);
->>  
->> +	dw_hdmi_set_high_tmds_clock_ratio(hdmi);
->> +
->>  	msleep(100);
->>  
->>  	/* Reset PHY 3 times in a row */
->> @@ -562,6 +573,10 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
->>  		mode->vdisplay, mode->vsync_start,
->>  		mode->vsync_end, mode->vtotal, mode->type, mode->flags);
->>  
->> +	/* If sink max TMDS clock, we reject the mode */
->> +	if (mode->clock > connector->display_info.max_tmds_clock)
->> +		return MODE_BAD;
->> +
->>  	/* Check against non-VIC supported modes */
->>  	if (!vic) {
->>  		status = meson_venc_hdmi_supported_mode(mode);
-> 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
+> If not I can only think of a flag to bypass the offseting for now, but
+> that would be pretty ugly.  Or go for the long-term solution of
+> discovering the relationship between the two devices, as done by the
+> PCIe P2P code..
+>
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 8e0359b04957..25bd19974223 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -359,7 +359,7 @@ EXPORT_SYMBOL(dma_direct_map_sg);
+>  dma_addr_t dma_direct_map_resource(struct device *dev, phys_addr_t paddr,
+>  		size_t size, enum dma_data_direction dir, unsigned long attrs)
+>  {
+> -	dma_addr_t dma_addr = phys_to_dma(dev, paddr);
+> +	dma_addr_t dma_addr = paddr;
+>  
+>  	if (unlikely(!dma_direct_possible(dev, dma_addr, size))) {
+>  		report_addr(dev, dma_addr, size);
+>
+>
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
