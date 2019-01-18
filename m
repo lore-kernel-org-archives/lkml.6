@@ -3,61 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CAFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7F4C43613
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3DD22086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:57:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97AFE2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbfARQ5b (ORCPT
+        id S1728101AbfARQ5h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:57:31 -0500
-Received: from atl4mhob17.registeredsite.com ([209.17.115.110]:54084 "EHLO
-        atl4mhob17.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727587AbfARQ5a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:57:30 -0500
-Received: from mailpod.hostingplatform.com (atl4qobmail01pod2.registeredsite.com [10.30.77.35])
-        by atl4mhob17.registeredsite.com (8.14.4/8.14.4) with ESMTP id x0IGvRL3001869
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 11:57:27 -0500
-Received: (qmail 46093 invoked by uid 0); 18 Jan 2019 16:57:27 -0000
-X-TCPREMOTEIP: 174.118.245.214
-X-Authenticated-UID: dclarke@blastwave.org
-Received: from unknown (HELO ?172.16.35.3?) (dclarke@blastwave.org@174.118.245.214)
-  by 0 with ESMTPA; 18 Jan 2019 16:57:26 -0000
-Subject: Re: [PATCH v2 00/29] y2038: add time64 syscalls
-To:     Arnd Bergmann <arnd@arndb.de>, y2038@lists.linaro.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     mattst88@gmail.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
-        deller@gmx.de, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
-        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
-        deepa.kernel@gmail.com, ebiederm@xmission.com,
-        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20190118161835.2259170-1-arnd@arndb.de>
-From:   Dennis Clarke <dclarke@blastwave.org>
-Message-ID: <be3863ae-d903-8e9e-5e6c-e4a58fac189d@blastwave.org>
-Date:   Fri, 18 Jan 2019 11:57:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:65.0) Gecko/20100101
- Thunderbird/65.0
+        Fri, 18 Jan 2019 11:57:37 -0500
+Received: from foss.arm.com ([217.140.101.70]:34578 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727489AbfARQ5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 11:57:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D947180D;
+        Fri, 18 Jan 2019 08:57:35 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E684A3F7BE;
+        Fri, 18 Jan 2019 08:57:33 -0800 (PST)
+Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        daniel.thompson@linaro.org, marc.zyngier@arm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        Oleg Nesterov <oleg@redhat.com>, joel@joelfernandes.org
+References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
+ <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
+ <20190118160920.GF118707@arrakis.emea.arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <0af2d75e-9a61-e53b-b2df-3d08d3f63d9c@arm.com>
+Date:   Fri, 18 Jan 2019 16:57:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190118161835.2259170-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190118160920.GF118707@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,18 +51,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/19 11:18 AM, Arnd Bergmann wrote:
-> This is a minor update of the patches I posted last week, I
-> would like to add this into linux-next now, but would still do
-> changes if there are concerns about the contents. The first
-> version did not see a lot of replies, which could mean that
-> either everyone is happy with it, or that it was largely ignored.
+Hi Catalin,
+
+On 18/01/2019 16:09, Catalin Marinas wrote:
+> Hi Julien,
 > 
-> See also the article at https://lwn.net/Articles/776435/.
+> On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
+>> + * Having two ways to control interrupt status is a bit complicated. Some
+>> + * locations like exception entries will have PSR.I bit set by the architecture
+>> + * while PMR is unmasked.
+>> + * We need the irqflags to represent that interrupts are disabled in such cases.
+>> + *
+>> + * For this, we lower the value read from PMR when the I bit is set so it is
+>> + * considered as an irq masking priority. (With PMR, lower value means masking
+>> + * more interrupts).
+>> + */
+>> +#define _get_irqflags(daif_bits, pmr)					\
+>> +({									\
+>> +	unsigned long flags;						\
+>> +									\
+>> +	BUILD_BUG_ON(GIC_PRIO_IRQOFF < (GIC_PRIO_IRQON & ~PSR_I_BIT));	\
+>> +	asm volatile(ALTERNATIVE(					\
+>> +		"mov	%0, %1\n"					\
+>> +		"nop\n"							\
+>> +		"nop",							\
+>> +		"and	%0, %1, #" __stringify(PSR_I_BIT) "\n"		\
+>> +		"mvn	%0, %0\n"					\
+>> +		"and	%0, %0, %2",					\
+>> +		ARM64_HAS_IRQ_PRIO_MASKING)				\
+> 
+> Can you write the last two instructions as a single:
+> 
+> 		bic	%0, %2, %0
 
-I would be happy to read "Approaching the kernel year-2038 end game"
-however it is behind a pay wall.  Perhaps it may be best to just
-host interesting articles about open source idea elsewhere.
+Yes, makes sense. Although we won't need it anymore with your suggestion
+below.
 
-Dennis Clarke
+> 
+>> +		: "=&r" (flags)						\
+>> +		: "r" (daif_bits), "r" (pmr)				\
+>> +		: "memory");						\
+>> +									\
+>> +	flags;								\
+>> +})
+>> +
+>> +/*
+>>   * Save the current interrupt enable state.
+>>   */
+>>  static inline unsigned long arch_local_save_flags(void)
+>>  {
+>> -	unsigned long flags;
+>> -	asm volatile(
+>> -		"mrs	%0, daif		// arch_local_save_flags"
+>> -		: "=r" (flags)
+>> +	unsigned long daif_bits;
+>> +	unsigned long pmr; // Only used if alternative is on
+>> +
+>> +	daif_bits = read_sysreg(daif);
+>> +
+>> +	// Get PMR
+> 
+> Nitpick: don't use C++ (or arm asm) comment style in C code.
 
+Noted.
+
+> 
+>> +	asm volatile(ALTERNATIVE(
+>> +			"nop",
+>> +			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1),
+>> +			ARM64_HAS_IRQ_PRIO_MASKING)
+>> +		: "=&r" (pmr)
+>>  		:
+>>  		: "memory");
+>> +
+>> +	return _get_irqflags(daif_bits, pmr);
+>> +}
+> 
+> I find this confusing spread over two inline asm statements. IIUC, you
+> want something like below (it could be written as inline asm but I need
+> to understand it first):
+> 
+> 	daif_bits = read_sysreg(daif);
+> 
+> 	if (system_uses_irq_prio_masking()) {
+> 		pmr = read_gicreg(ICC_PMR_EL1);
+> 		flags = pmr & ~(daif_bits & PSR_I_BIT);
+> 	} else {
+> 		flags = daif_bits;
+> 	}
+> 
+> 	return flags;
+> 
+> In the case where the interrupts are disabled at the PSR level, is the
+> PMR value still relevant? Could we just return the GIC_PRIO_IRQOFF?
+> Something like:
+> 
+> 	flags = read_sysreg(daif);
+> 
+> 	if (system_uses_irq_prio_masking())
+> 		flags = flags & PSR_I_BIT ?
+> 			GIC_PRIO_IRQOFF : read_gicreg(ICC_PMR_EL1);
+> 
+
+You're right, returning GIC_PRIO_IRQOFF should be good enough (it is
+actually what happens in this version because GIC_PRIO_IRQOFF ==
+GIC_PRIO_IRQON & ~PSR_I_BIT happens to be true). Your suggestion would
+make things easier to reason about. Maybe something like:
+
+
+static inline unsigned long arch_local_save_flags(void)
+{
+	unsigned long daif_bits;
+	unsigned long prio_off = GIC_PRIO_IRQOFF;
+
+	daif_bits = read_sysreg(daif);
+
+	asm volatile(ALTERNATIVE(
+		"mov	%0, %1\n"
+		"nop\n"
+		"nop",
+		"mrs	%0, SYS_ICC_PMR_EL1\n"
+		"ands	%1, %1, PSR_I_BIT\n"
+		"csel	%0, %0, %2, eq")
+	: "=&r" (flags)
+	: "r" (daif_bits), "r" (prio_off)
+	: "memory");
+
+	return flags;
+}
+
+(Looks like it removes one nop from the alternative as well, unless I
+messed up something)
+
+Does that seem better to you?
+
+Thanks,
+
+-- 
+Julien Thierry
