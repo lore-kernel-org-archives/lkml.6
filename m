@@ -6,92 +6,118 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FCAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E07C3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4D920823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B02B820823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:43:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbfARLnc (ORCPT
+        id S1727559AbfARLnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:43:32 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36437 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbfARLnc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:43:32 -0500
-Received: by mail-io1-f67.google.com with SMTP id m19so10457895ioh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 03:43:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iQMzALn4iJTKfRphe8KZrjvPoA5PieogVTEyw3GtY04=;
-        b=eFjUNbRXLNuYb1hsRRmGbp/pou+Rf1bqpm0jJRHCpcOZ0zwYucmULC5Xfto/KVIy6u
-         DHQ2Llwkj3BRnq+RVMgQLLbvTGzHAg5ndyGcEIbOQS6Te+65z6OnRJC60OSc/NZ0C/+n
-         usm7EhYxR+KfnSczYB9pXt2a7kjbz/u7pTjjkeKWr/5Ysd5chaZcZeQqVK4bYG94tzAs
-         P9ifhnA1ZVCcqqycCWj+kHCnBVNnf2KbYbKv3c07zAnMHmkMYEBdvFdwlJXZumDD3O8q
-         5RMSMa4r9w2CDpGCqj6tPoPymVTzzWbpgMBl3m41gpz2IcjXr+08HrtmLlHAsKFdlnnV
-         bPhA==
-X-Gm-Message-State: AJcUukfyDTbyfZLKdM84vBh72+IZ+AVX4S70ABCqTnHirPYP3RYdnmav
-        /a+19/LFD0fYNIziHgBibVLV2d6oX+yLTiTTS9tYKg==
-X-Google-Smtp-Source: ALg8bN6hkXD9ktoPhcV8A4KD/oXim0fCthUk+A125dQ+w8jPhq/eIVjPTjN968A9T/H8WXGHTtJJCiCeiLlkpxK48Jo=
-X-Received: by 2002:a6b:b502:: with SMTP id e2mr9250629iof.43.1547811811315;
- Fri, 18 Jan 2019 03:43:31 -0800 (PST)
+        Fri, 18 Jan 2019 06:43:37 -0500
+Received: from foss.arm.com ([217.140.101.70]:55476 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727517AbfARLnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 06:43:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5880A80D;
+        Fri, 18 Jan 2019 03:43:36 -0800 (PST)
+Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65C8C3F557;
+        Fri, 18 Jan 2019 03:43:34 -0800 (PST)
+Subject: Re: [Xen-devel] [PATCH v2] drm/xen-front: Make shmem backed display
+ buffer coherent
+To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     "jgross@suse.com" <jgross@suse.com>,
+        Oleksandr Andrushchenko <andr2000@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "daniel.vetter@intel.com" <daniel.vetter@intel.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+References: <20190115140420.4652-1-andr2000@gmail.com>
+ <20190116063002.jq3aas6ofhaogmyk@sirius.home.kraxel.org>
+ <20190116063631.GA10881@infradead.org>
+ <042fe794-dec6-6d9d-5b68-6f142790f5c7@epam.com>
+ <20190117091815.GA7090@infradead.org>
+ <1cfc5cb4-e481-5d71-29df-958db76fb681@epam.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <2ed681b9-c8d4-ea27-6b8b-e399ed034bda@arm.com>
+Date:   Fri, 18 Jan 2019 11:43:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190118111310.29589-1-kasong@redhat.com> <20190118111310.29589-3-kasong@redhat.com>
- <20190118112628.GC622@zn.tnic>
-In-Reply-To: <20190118112628.GC622@zn.tnic>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Fri, 18 Jan 2019 19:43:20 +0800
-Message-ID: <CACPcB9dTm_2UCRord01oW+mmoPYY7dFTHj7qFrMxOnhPx3Ov3w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] acpi: store acpi_rsdp address for later kexec usage
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        kexec@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robert Moore <robert.moore@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1cfc5cb4-e481-5d71-29df-958db76fb681@epam.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 7:26 PM Borislav Petkov <bp@alien8.de> wrote:
+(+ Stefano)
 
-> No, this is getting completely nuts: there's a bunch of functions which
-> all end up returning boot_params's field except pvh_get_root_pointer().
->
-> And now you're adding a late variant. And the cmdline paramater
-> acpi_rsdp is in a CONFIG_KEXEC wrapper, and and...
->
-> Wait until Chao Fan's stuff is applied, then do your changes ontop
-> an drop all that ifdeffery. We will make this RDSP thing enabled
-> unconditionally so that there's no need for ifdeffery and function
-> wrappers.
->
-> Also, after Chao's stuff, you won't need to call
-> acpi_os_get_root_pointer() because the early code would've done that.
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+Hi,
 
-Good suggestion, will wait for Chao's update then.
+Sorry for jumping late in the conversation.
 
+On 18/01/2019 09:40, Oleksandr Andrushchenko wrote:
+> On 1/17/19 11:18 AM, Christoph Hellwig wrote:
+>> On Wed, Jan 16, 2019 at 06:43:29AM +0000, Oleksandr Andrushchenko wrote:
+>>>> This whole issue keeps getting more and more confusing.
+>>> Well, I don't really do DMA here, but instead the buffers in
+>>> question are shared with other Xen domain, so effectively it
+>>> could be thought of some sort of DMA here, where the "device" is
+>>> that remote domain. If the buffers are not flushed then the
+>>> remote part sees some inconsistency which in my case results
+>>> in artifacts on screen while displaying the buffers.
+>>> When buffers are allocated via DMA API then there are no artifacts;
+>>> if buffers are allocated with shmem + DMA mapping then there are no
+>>> artifacts as well.
+>>> The only offending use-case is when I use shmem backed buffers,
+>>> but do not flush them
+>> The right answer would be to implement cache maintainance hooks for
+>> this case in the Xen arch code.  These would basically look the same
+>> as the low-level cache maintainance used by the DMA ops, but without
+>> going through the DMA mapping layer, in fact they should probably
+>> reuse the same low-level assembly routines.
+>>
+>> I don't think this is the first usage of such Xen buffer sharing, so
+>> what do the other users do?
+> I'll have to get even deeper into it. Initially I
+> looked at the code, but didn't find anything useful.
+> Or maybe I have just overlooked obvious things there
+ From Xen on Arm ABI:
 
---
-Best Regards,
-Kairui Song
+"All memory which is shared with other entities in the system
+(including the hypervisor and other guests) must reside in memory
+which is mapped as Normal Inner Write-Back Outer Write-Back Inner-Shareable.
+This applies to:
+   - hypercall arguments passed via a pointer to guest memory.
+   - memory shared via the grant table mechanism (including PV I/O
+     rings etc).
+   - memory shared with the hypervisor (struct shared_info, struct
+     vcpu_info, the grant table, etc).
+"
+
+So you should not need any cache maintenance here. Can you provide more details 
+on the memory attribute you use for memory shared in both the backend and frontend?
+
+Cheers,
+
+> 
+> Thank you,
+> Oleksandr
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xenproject.org
+> https://lists.xenproject.org/mailman/listinfo/xen-devel
+> 
+
+-- 
+Julien Grall
