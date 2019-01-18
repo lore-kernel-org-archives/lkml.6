@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F130C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5CFC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E443620855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C33420855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:02:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTrREv6Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LGv8lZ6V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbfARIBg (ORCPT
+        id S1727429AbfARICU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:01:36 -0500
-Received: from mail-lf1-f45.google.com ([209.85.167.45]:39056 "EHLO
-        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbfARIBf (ORCPT
+        Fri, 18 Jan 2019 03:02:20 -0500
+Received: from mail-lj1-f171.google.com ([209.85.208.171]:38891 "EHLO
+        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbfARICT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:01:35 -0500
-Received: by mail-lf1-f45.google.com with SMTP id n18so9801944lfh.6;
-        Fri, 18 Jan 2019 00:01:34 -0800 (PST)
+        Fri, 18 Jan 2019 03:02:19 -0500
+Received: by mail-lj1-f171.google.com with SMTP id c19-v6so10864702lja.5;
+        Fri, 18 Jan 2019 00:02:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=Q1A/ERqRkb8HYuG2x3CL6B3TQY/QFcUAvI4jNtRrkj4=;
-        b=iTrREv6QGmRjVGTcmo3wBRdP5fbZkarHvxkOlQ5aVJ2m5dZk+1mvIbAQgpNGM6uUw5
-         XgvpcKrLhP7IKTAP+YOhaQJNfTbwjU07uIIR7mED5QaoHDTCfXy0cUHgXDh8BwZhNSEq
-         hwVX4BxLTSB1bblV9N4irWOpYFNmZbyUgHtnuZLdw0z63MFgTcgS8bb+A4tPzUpc3/7A
-         l+bYlB3l9ebZNkvawaG3evOXfJxrB7uaPJjZIx4kKoVFfdOPPJisRYbDDzdEIFcdT5Mw
-         ZhOWjqfKkjSCA8K15v2+yWrbmz2PyRElYFKoPOPyh27aV9tVoR75aV/n6LsdDzee/uZH
-         nXtA==
+        bh=pf+orFAXU0UsxrI5UFtFzCZJ+tqvHhNURJ6yVZSS9js=;
+        b=LGv8lZ6VDZL2GQj6WzeY6L19mATdsIlGldN5qMjbKmCFZgmvuPh+fB+C6zgQ2k69Nt
+         HUQ+e/Jcodtm5kL2ZAD+fLfwzFyvtYZ75cTvZUDnUzlvGE2pt8rMtOv2ccw4GsYuHJM+
+         LirOfc2UxqDlcAsldVv5V7vr9I3UWZAN6DGbRiDP7+1npXGwbBI1OfkkaMq8L5d+I2jJ
+         nexvbBKPb5VusKaDb6lHHKmiIF10zbGca0iSL2CsTvKTvbou0LmetGqlrp9N8cio9dC2
+         T7MO+b3BdRuBAEhvNSddfmCe2K/BQhkkvF32P3L+2x8WB4cimJDZ2GXMbe9eH2Ski0sz
+         d9Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Q1A/ERqRkb8HYuG2x3CL6B3TQY/QFcUAvI4jNtRrkj4=;
-        b=UvDOxiJt+3+Mioji0dDfNgF3VWpLS/kA9aUVhRImypO87WV1njODzOeT7Kb6P34Ekt
-         40dTuMrcGZ+0w46TyBqAOptYfOHbLG62udpgb802oEZi6S0//TYfv96MYFOzBIuIJfGo
-         J6SvGrylAalmcFVzjbGQQPgoxIXYWPRirkERERg8yKPvdBRQwzkYhFUt/dyn3W1VIpBL
-         dlBcWPvygSAfyPPVjGkXJFGXAsfaapCtAYRFd61cfKUYwumROKfavGKT7Mw/QOR9CBRP
-         M718rhqwU+CL7Zl0/NdNJaLLfEUVeaUt0EGZxcke8BmTXO+JpVS1jklUkLbKaCfDU5sz
-         GUrQ==
-X-Gm-Message-State: AJcUukc2aDFjtPrtbhnhzbJ5uQrKdb556JxK62OYD60Y5lLZgshscWBp
-        f4IWsff/5wAkqTCvdRvuwYFT3r9b+7UPZWjdsOM=
-X-Google-Smtp-Source: ALg8bN6tAm23h9Q+D/AZyj4hBKGWtf8lSx0tgf3iXvumx0xgsLjV4oBIil5KBvpM2XLSHRoWadV0ZlpxJ19K8FQziCU=
-X-Received: by 2002:a19:2395:: with SMTP id j143mr11915090lfj.107.1547798493630;
- Fri, 18 Jan 2019 00:01:33 -0800 (PST)
+        bh=pf+orFAXU0UsxrI5UFtFzCZJ+tqvHhNURJ6yVZSS9js=;
+        b=mgXN33ovAryfAF0xYxblQTbev2qKEFzFhH5uiiMitkUkKJGmTmzaxBGnKNbsodQ9ge
+         eNS/4uHLkSsObAb3J/iWHzFByNvE4VKt+/Q1JFzs8kMf6jAL3Sfafi+XPJPpFNFF/QIx
+         5l/EDgVCML2D4v+Ra6nVlZqPZ12U9tZY7vBi+rLUkhdpKJ3a9yY0MWQ+A/p/ooPwCRPb
+         QsiiIM2Z2y437tBGqIDAcVrSwyLHHxLgOP3XC3ed0Hcoq43SDvLa5Z6eNA9DIvyEElKv
+         X5wWrZHu+bh1TYYC8AZrFrXbeLqb5CoqGEMJ7vG9DQC3jtVbIhzK4MG9bbtFB7CzXjER
+         AV8w==
+X-Gm-Message-State: AJcUukd0L8B0tjjaZZUXWYtES3ur6iPL+Fnd0BcLYoNoTo/g027LHnoh
+        pYPk4y4uZzyyJXfYCwMcnqaJCdRzTfRJe6GCUZY=
+X-Google-Smtp-Source: ALg8bN7ReaKKmO8lJAADvJPCYRa4VFT0az+fcgpuZJHjZ8OHhAxrxt8F8qK59/FmunH6kwwisnu6IuN9h3iWeMvkrdQ=
+X-Received: by 2002:a2e:9c52:: with SMTP id t18-v6mr10176181ljj.149.1547798537950;
+ Fri, 18 Jan 2019 00:02:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117231416.111952141@linutronix.de> <20190117231501.162093731@linutronix.de>
-In-Reply-To: <20190117231501.162093731@linutronix.de>
+References: <20190117231416.111952141@linutronix.de> <20190117231501.254152158@linutronix.de>
+In-Reply-To: <20190117231501.254152158@linutronix.de>
 From:   =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
-Date:   Fri, 18 Jan 2019 09:01:22 +0100
-Message-ID: <CAAUqJDu99D=gS5UabQXz1bDMjwiSUNpdW=MVrFcBLXcy_TzWbA@mail.gmail.com>
-Subject: Re: [patch 4/9] crypto: aegis - Convert to SPDX license identifiers
+Date:   Fri, 18 Jan 2019 09:02:06 +0100
+Message-ID: <CAAUqJDufgoZMhPia5M6cc+V5tijX+huzncnd3LSp=DVhXy80Nw@mail.gmail.com>
+Subject: Re: [patch 5/9] crypto: morus - Convert to SPDX license identifiers
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -96,19 +96,18 @@ orm)
 >       patches and is intended to be picked up by the maintainer directly.
 >
 > ---
->  crypto/aegis128.c  |    6 +-----
->  crypto/aegis128l.c |    6 +-----
->  crypto/aegis256.c  |    6 +-----
->  3 files changed, 3 insertions(+), 15 deletions(-)
+>  crypto/morus1280.c |    6 +-----
+>  crypto/morus640.c  |    6 +-----
+>  2 files changed, 2 insertions(+), 10 deletions(-)
 >
-> --- a/crypto/aegis128.c
-> +++ b/crypto/aegis128.c
+> --- a/crypto/morus1280.c
+> +++ b/crypto/morus1280.c
 > @@ -1,13 +1,9 @@
 > +// SPDX-License-Identifier: GPL-2.0-or-later
 >  /*
->   * The AEGIS-128 Authenticated-Encryption Algorithm
+>   * The MORUS-1280 Authenticated-Encryption Algorithm
 >   *
->   * Copyright (c) 2017-2018 Ondrej Mosnacek <omosnacek@gmail.com>
+>   * Copyright (c) 2016-2018 Ondrej Mosnacek <omosnacek@gmail.com>
 >   * Copyright (C) 2017-2018 Red Hat, Inc. All rights reserved.
 > - *
 > - * This program is free software; you can redistribute it and/or modify =
@@ -120,15 +119,15 @@ ion)
 > - * any later version.
 >   */
 >
->  #include <crypto/algapi.h>
-> --- a/crypto/aegis128l.c
-> +++ b/crypto/aegis128l.c
+>  #include <asm/unaligned.h>
+> --- a/crypto/morus640.c
+> +++ b/crypto/morus640.c
 > @@ -1,13 +1,9 @@
 > +// SPDX-License-Identifier: GPL-2.0-or-later
 >  /*
->   * The AEGIS-128L Authenticated-Encryption Algorithm
+>   * The MORUS-640 Authenticated-Encryption Algorithm
 >   *
->   * Copyright (c) 2017-2018 Ondrej Mosnacek <omosnacek@gmail.com>
+>   * Copyright (c) 2016-2018 Ondrej Mosnacek <omosnacek@gmail.com>
 >   * Copyright (C) 2017-2018 Red Hat, Inc. All rights reserved.
 > - *
 > - * This program is free software; you can redistribute it and/or modify =
@@ -140,26 +139,6 @@ ion)
 > - * any later version.
 >   */
 >
->  #include <crypto/algapi.h>
-> --- a/crypto/aegis256.c
-> +++ b/crypto/aegis256.c
-> @@ -1,13 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
->  /*
->   * The AEGIS-256 Authenticated-Encryption Algorithm
->   *
->   * Copyright (c) 2017-2018 Ondrej Mosnacek <omosnacek@gmail.com>
->   * Copyright (C) 2017-2018 Red Hat, Inc. All rights reserved.
-> - *
-> - * This program is free software; you can redistribute it and/or modify =
-it
-> - * under the terms of the GNU General Public License as published by the=
- Free
-> - * Software Foundation; either version 2 of the License, or (at your opt=
-ion)
-> - * any later version.
->   */
->
->  #include <crypto/algapi.h>
+>  #include <asm/unaligned.h>
 >
 >
