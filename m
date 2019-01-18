@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5429C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6231EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD48F2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D142087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbfAROxn (ORCPT
+        id S1727859AbfAROxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:53:43 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47831 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:53:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47854 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727542AbfAROvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:51:43 -0500
+        id S1727584AbfAROvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:51:44 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 69169209C0; Fri, 18 Jan 2019 15:51:41 +0100 (CET)
+        id EA7E120A2E; Fri, 18 Jan 2019 15:51:41 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1AB9D207B6;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9C587207B6;
         Fri, 18 Jan 2019 15:51:41 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 01/23] drm/fourcc: Add format info helpers for checking YUV planes disposition
-Date:   Fri, 18 Jan 2019 15:51:11 +0100
-Message-Id: <20190118145133.21281-2-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 03/23] drm/sun4i: backend: Use explicit fourcc helpers for packed YUV422 check
+Date:   Fri, 18 Jan 2019 15:51:13 +0100
+Message-Id: <20190118145133.21281-4-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,77 +48,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is often useful to check whether the DRM format info retrieved from
-the DRM framebuffer matches a specific YUV planes disposition.
+Checking for the number of planes is not sufficient to en ensure that
+the format is a packed YUV422.
 
-This introduces helpers to quickly check that a provided format info
-matches a YUV format with a specific disposition, in commonly-used
-terminology.
-
-The intent of providing helpers taking the format info instead of the
-fourcc alone is to avoid the overhead of iterating through all formats
-when the whole format info structure is available. As a result, these
-helpers are very simple so they are made inline.
+Use explicit fourcc helpers for the check instead.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- include/drm/drm_fourcc.h | 42 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_backend.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index bcb389f04618..01cd353d9302 100644
---- a/include/drm/drm_fourcc.h
-+++ b/include/drm/drm_fourcc.h
-@@ -143,6 +143,48 @@ struct drm_format_name_buf {
- 	char str[32];
- };
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index 9e9255ee59cd..bbadc2ab9f4d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -245,7 +245,8 @@ static int sun4i_backend_update_yuv_format(struct sun4i_backend *backend,
+ 			   SUN4I_BACKEND_ATTCTL_REG0_LAY_YUVEN);
  
-+/**
-+ * drm_format_info_is_yuv_packed - check that the format info matches a YUV
-+ * format with data laid in a single plane
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a packed YUV format.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_packed(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->num_planes == 1;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_semiplanar - check that the format info matches a YUV
-+ * format with data laid in two planes (luminance and chrominance)
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a semiplanar YUV format.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_semiplanar(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->num_planes == 2;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_planar - check that the format info matches a YUV
-+ * format with data laid in three planes (one for each YUV component)
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a planar YUV format.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_planar(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->num_planes == 3;
-+}
-+
- const struct drm_format_info *__drm_format_info(u32 format);
- const struct drm_format_info *drm_format_info(u32 format);
- const struct drm_format_info *
+ 	/* TODO: Add support for the multi-planar YUV formats */
+-	if (format->num_planes == 1)
++	if (drm_format_info_is_yuv_packed(format) &&
++	    drm_format_info_is_yuv_sampling_422(format))
+ 		val |= SUN4I_BACKEND_IYUVCTL_FBFMT_PACKED_YUV422;
+ 	else
+ 		DRM_DEBUG_DRIVER("Unsupported YUV format (0x%x)\n", fmt);
 -- 
 2.20.1
 
