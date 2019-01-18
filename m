@@ -2,222 +2,168 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E577C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488D0C5AE5E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF86920823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0734D20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:28:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eLRvCfr9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SpS1WvEK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ryqn7UI8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730121AbfARX1x (ORCPT
+        id S1730164AbfARX24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 18:27:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37004 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729780AbfARX1x (ORCPT
+        Fri, 18 Jan 2019 18:28:56 -0500
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:43573 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729780AbfARX2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 18:27:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A7B136081E; Fri, 18 Jan 2019 23:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547854071;
-        bh=OiUV1qeagEbwOeJE3C1sCGOlMM6LWQBJhQHXXsYtRFs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eLRvCfr9ftUObVweJ801Yjlv70KT7H2h/exnMXChRnbgm6WjjZBV4WG2YMqj0TruQ
-         x0wLIG+pjOkxbn436CozPw4FK+DwVcbnbRZCKditQMIr15cy1805E2BueEHSZP3ZKc
-         qLmjOoo0Mgvz3b+96yY7Aj8cejzT6Q0FHgsY8zaA=
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CC5B360388;
-        Fri, 18 Jan 2019 23:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547854070;
-        bh=OiUV1qeagEbwOeJE3C1sCGOlMM6LWQBJhQHXXsYtRFs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SpS1WvEKvVoFvCwQhhSk4e3sGGKz/NuiykcYLlyOY8WTJYMZdPcrzDVQa9mc/VaFv
-         b0GOva/xJI/8vQKgLp1CO1XULTPNxFVB51FY0OBexEnjlakph0iwzCfzr2q7LU71TT
-         zwQ8MBpon+CcohCok8SNflLlData2nsqO+LOvFl8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC5B360388
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Fri, 18 Jan 2019 16:27:47 -0700
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     freedreno@lists.freedesktop.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v6] drm/msm/a6xx: Add support for an interconnect path
-Message-ID: <20190118232746.GF4140@jcrouse1-lnx.qualcomm.com>
-Mail-Followup-To: Evan Green <evgreen@chromium.org>,
-        freedreno@lists.freedesktop.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <1547843058-27933-1-git-send-email-jcrouse@codeaurora.org>
- <CAE=gft6RWRkSZCOrKu=qqTerfmXRW5_kNt2NG4xdfxtTn6KxYA@mail.gmail.com>
+        Fri, 18 Jan 2019 18:28:55 -0500
+Received: by mail-pl1-f178.google.com with SMTP id gn14so6980105plb.10;
+        Fri, 18 Jan 2019 15:28:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LMgc9euKG4vaUInL1j5FFNgCuUfgfJc1iMpxvXuGAO0=;
+        b=Ryqn7UI8AT2EiOaSIkXS3rcquV7NvF0COjzDMMbx6DyLBRr9b3V3nGg63eUc4aYC/Y
+         1qIDimG6zpBU3SUTvFALQvKQZOhcDDCKGOKGlymIwYDBpdpgjcr4tU88VJiJXmfQWzvM
+         QS3dW37UvLR7zLrdR8KqxM+8JeTJ6cey1h7DpP0hXmshJCPPpztCDt0yr4JSHOa/SBLi
+         5jUIzBZGQ0s6GufkPBERYhcox8adIdbfRIX1TbYjP9RFMFjqoZBQHlywMF46mpQEUKGt
+         POPrSa8CoPPFmF2pQ2OG39S/n+7/QduEpN7BgggailBKm7mp8ormSOGEVIkpMHeEnzsn
+         l3+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LMgc9euKG4vaUInL1j5FFNgCuUfgfJc1iMpxvXuGAO0=;
+        b=A80WUlsKCaSjFqu69fB7Ig1jy5Pfp+Rm/chuAKBE2RLoAkGkdyWGMKQ7x8LWhMYPXi
+         d8r+Wl7alWs1XpFLU+hm5EZ3ABAJrgHK7mxU21zoreA21Keib2EUax1ah02En4lEFM28
+         iC/7pfZPGkM3JhQcKvGGDiO0Yn8EWBgQnZ8PXLp2VSrLjp/eVEeEeJ5XeKf3oT+hHnw6
+         GWsiVplGyoN0ARt5J78qhudgWvjVdlTXmFU6QBeWO9ibN+0Fjue/YrT+jgOTcR0aOhv0
+         t8Lqw9MkPIeAY+6oSCmUERbZmrQ6rwRL82VOJDkpwLAqdOGcw35zSiOvQPWrcU98LrXv
+         I99A==
+X-Gm-Message-State: AJcUukffNXOTdWKtQMLX4ZKk10BiflFsnqTBJYOjZYjUpe67vVVk7LVU
+        hoyaObk+YPNqAwGEYcx8Mp8=
+X-Google-Smtp-Source: ALg8bN7Aoe5YbpPvWnYyr8PUon+H3B9bN9Sd6TSwE9hVFIM8ZlM/eMk7K9IOG8iA9Rusp2bgH4ud+A==
+X-Received: by 2002:a17:902:108a:: with SMTP id c10mr21193228pla.131.1547854134362;
+        Fri, 18 Jan 2019 15:28:54 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:5ed2])
+        by smtp.gmail.com with ESMTPSA id k15sm9617966pfb.147.2019.01.18.15.28.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 15:28:53 -0800 (PST)
+Date:   Fri, 18 Jan 2019 15:28:51 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Roman Gushchin <guro@fb.com>,
+        YueHaibing <yuehaibing@huawei.com>, Yonghong Song <yhs@fb.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Sean Young <sean@mess.org>, Jiri Benc <jbenc@redhat.com>,
+        David Calavera <david.calavera@gmail.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>,
+        David Ahern <dsahern@gmail.com>,
+        Petar Penkov <ppenkov@stanford.edu>,
+        Sandipan Das <sandipan@linux.ibm.com>,
+        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Taeung Song <treeze.taeung@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        okash.khawaja@gmail.com, netdev@vger.kernel.org
+Subject: Re: [patch 8/9] tools: bpftool: Cleanup license mess
+Message-ID: <20190118232849.jec4mipctsupgggn@ast-mbp.dhcp.thefacebook.com>
+References: <20190117231416.111952141@linutronix.de>
+ <20190117231501.560475279@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAE=gft6RWRkSZCOrKu=qqTerfmXRW5_kNt2NG4xdfxtTn6KxYA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190117231501.560475279@linutronix.de>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 03:04:34PM -0800, Evan Green wrote:
-> On Fri, Jan 18, 2019 at 12:24 PM Jordan Crouse <jcrouse@codeaurora.org> wrote:
-> >
-> > Try to get the interconnect path for the GPU and vote for the maximum
-> > bandwidth to support all frequencies. This is needed for performance.
-> > Later we will want to scale the bandwidth based on the frequency to
-> > also optimize for power but that will require some device tree
-> > infrastructure that does not yet exist.
-> >
-> > v6: use icc_set_bw() instead of icc_set()
-> > v5: Remove hardcoded interconnect name and just use the default
-> > v4: Don't use a port string at all to skip the need for names in the DT
-> > v3: Use macros and change port string per Georgi Djakov
-> >
-> > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> > ---
-> >
-> >  drivers/gpu/drm/msm/Kconfig             |  1 +
-> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c   | 20 ++++++++++++++++++++
-> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  9 +++++++++
-> >  drivers/gpu/drm/msm/msm_gpu.h           |  3 +++
-> >  4 files changed, 33 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-> > index cf549f1..78c9e5a5 100644
-> > --- a/drivers/gpu/drm/msm/Kconfig
-> > +++ b/drivers/gpu/drm/msm/Kconfig
-> > @@ -5,6 +5,7 @@ config DRM_MSM
-> >         depends on ARCH_QCOM || SOC_IMX5 || (ARM && COMPILE_TEST)
-> >         depends on OF && COMMON_CLK
-> >         depends on MMU
-> > +       depends on INTERCONNECT || !INTERCONNECT
-> >         select QCOM_MDT_LOADER if ARCH_QCOM
-> >         select REGULATOR
-> >         select DRM_KMS_HELPER
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > index 5beb83d..c48fe46 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > @@ -2,6 +2,7 @@
-> >  /* Copyright (c) 2017-2018 The Linux Foundation. All rights reserved. */
-> >
-> >  #include <linux/clk.h>
-> > +#include <linux/interconnect.h>
-> >  #include <linux/pm_opp.h>
-> >  #include <soc/qcom/cmd-db.h>
-> >
-> > @@ -84,6 +85,9 @@ bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu)
-> >
-> >  static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
-> >  {
-> > +       struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
-> > +       struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> > +       struct msm_gpu *gpu = &adreno_gpu->base;
-> >         int ret;
-> >
-> >         gmu_write(gmu, REG_A6XX_GMU_DCVS_ACK_OPTION, 0);
-> > @@ -106,6 +110,12 @@ static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
-> >                 dev_err(gmu->dev, "GMU set GPU frequency error: %d\n", ret);
-> >
-> >         gmu->freq = gmu->gpu_freqs[index];
-> > +
-> > +       /*
-> > +        * Eventually we will want to scale the path vote with the frequency but
-> > +        * for now leave it at max so that the performance is nominal.
-> > +        */
-> > +       icc_set_bw(gpu->icc_path, 0, MBps_to_icc(7216));
-> >  }
-> >
-> >  void a6xx_gmu_set_freq(struct msm_gpu *gpu, unsigned long freq)
-> > @@ -705,6 +715,8 @@ int a6xx_gmu_reset(struct a6xx_gpu *a6xx_gpu)
-> >
-> >  int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
-> >  {
-> > +       struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> > +       struct msm_gpu *gpu = &adreno_gpu->base;
-> >         struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
-> >         int status, ret;
-> >
-> > @@ -720,6 +732,9 @@ int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
-> >         if (ret)
-> >                 goto out;
-> >
-> > +       /* Set the bus quota to a reasonable value for boot */
-> > +       icc_set_bw(gpu->icc_path, 0, MBps_to_icc(3072));
+On Fri, Jan 18, 2019 at 12:14:24AM +0100, Thomas Gleixner wrote:
+> Precise and non-ambiguous license information is important. The recent
+> relicensing of the bpftools introduced a license conflict.
 > 
-> Does the comment mention boot because this resume call happens during
-> init?
+> The files have now:
+> 
+>      SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause
+> 
+> and
+> 
+>      * This program is free software; you can redistribute it and/or
+>      * modify it under the terms of the GNU General Public License
+>      * as published by the Free Software Foundation; either version
+>      * 2 of the License, or (at your option) any later version
+> 
+> Amazingly about 20 people acked that change and neither they nor the
+> committer noticed. Oh well.
+> 
+> Digging deeper: The files were imported from the iproute2 repository with
+> the GPL V2 or later boiler plate text in commit b66e907cfee2 ("tools:
+> bpftool: copy JSON writer from iproute2 repository")
+> 
+> Looking at the iproute2 repository at
+> 
+>   git://git.kernel.org/pub/scm/network/iproute2/iproute2.git
+> 
+> the following commit is the equivivalent:
+> 
+>   commit d9d8c839 ("json_writer: add SPDX Identifier (GPL-2/BSD-2)")
+> 
+> That commit explicitly removes the boiler plate and relicenses the code
+> uner GPL-2.0-only and BSD-2-Clause. As Steven wrote the original code and
+> also the relicensing commit, it's assumed that the relicensing was intended
+> to do exaclty that. Just the kernel side update failed to remove the boiler
+> plate. Do so now.
+> 
+> Fixes: 907b22365115 ("tools: bpftool: dual license all files")
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: YueHaibing <yuehaibing@huawei.com>
+> Cc: Yonghong Song <yhs@fb.com>
+> Cc: Stanislav Fomichev <sdf@google.com>
+> Cc: Sean Young <sean@mess.org>
+> Cc: Jiri Benc <jbenc@redhat.com>
+> Cc: David Calavera <david.calavera@gmail.com>
+> Cc: Andrey Ignatov <rdna@fb.com>
+> Cc: Joe Stringer <joe@wand.net.nz>
+> Cc: David Ahern <dsahern@gmail.com>
+> Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Cc: Petar Penkov <ppenkov@stanford.edu>
+> Cc: Sandipan Das <sandipan@linux.ibm.com>
+> Cc: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+> Cc: Stephen Hemminger <stephen@networkplumber.org>
+> Cc: John Fastabend <john.fastabend@gmail.com>
+> Cc: Taeung Song <treeze.taeung@gmail.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Quentin Monnet <quentin.monnet@netronome.com>
+> CC: okash.khawaja@gmail.com
+> Cc: netdev@vger.kernel.org
+> ---
+> 
+> P.S.: This patch is part of a larger cleanup, but independent of other
+>       patches and is intended to be picked up by the maintainer directly.
 
-Correct. Boot refers to the GMU in this context.
+Applied this patch to bpf tree.
+Sorry about this mess.
 
-> How come this number is different from the one in __a6xx_gmu_set_freq?
-
-If you never request a bus quota from the kernel the sucker is horribly
-painfully slow. I'm not sure if that is just the default reset value of
-the registers or if the bootloader is doing something. In any event
-the GMU doesn't always initialize if you try to bring it up with the
-default bus settings so we set it to a "reasonable" quota for the 
-init sequence. I admit I didn't come up with these numbers on my own;
-some poor anonymous soul debugged this on the downstream kernel and
-I just stole the same parameters.
-
-As for _a6xx_gmu_set_freq() eventually we'll agree on a way to communicate
-the bus bandwidth in the opp settings and we'll be able to adjust the quota
-based on the frequency to save power so that's why the code is organized the way
-it is so that a6xx_gmu_set_freq() won't have to be massively changed later.
-
-> Also, you're setting an average bandwidth of 0, I
-> guess you don't know really what your average is, and the hardware is
-> fine with that setting. Is that true?
-
-Yes, we only set the instantaneous bandwidth.
-
-> -Evan
-
-Jordan
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
