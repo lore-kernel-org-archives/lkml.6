@@ -2,99 +2,100 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3484C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813FAC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C844D2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D4A920883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbfARRmg convert rfc822-to-8bit (ORCPT
+        id S1728524AbfARRpT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:42:36 -0500
-Received: from mga03.intel.com ([134.134.136.65]:55386 "EHLO mga03.intel.com"
+        Fri, 18 Jan 2019 12:45:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59898 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728000AbfARRmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:42:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 09:42:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="126909419"
-Received: from irsmsx104.ger.corp.intel.com ([163.33.3.159])
-  by FMSMGA003.fm.intel.com with ESMTP; 18 Jan 2019 09:42:33 -0800
-Received: from irsmsx102.ger.corp.intel.com ([169.254.2.65]) by
- IRSMSX104.ger.corp.intel.com ([169.254.5.101]) with mapi id 14.03.0415.000;
- Fri, 18 Jan 2019 17:41:32 +0000
-From:   "Reshetova, Elena" <elena.reshetova@intel.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-CC:     "mingo@redhat.com" <mingo@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-Subject: RE: [PATCH 0/5] sched refcount_t conversions
-Thread-Topic: [PATCH 0/5] sched refcount_t conversions
-Thread-Index: AQHUryk8nIpvQnacJEKv36LRANRZEaW1II0AgAArGOA=
-Date:   Fri, 18 Jan 2019 17:41:32 +0000
-Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4B872C9@IRSMSX102.ger.corp.intel.com>
-References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
- <20190118150650.GA8790@andrea>
-In-Reply-To: <20190118150650.GA8790@andrea>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [163.33.239.181]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727940AbfARRpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:45:18 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 36296578;
+        Fri, 18 Jan 2019 17:45:17 +0000 (UTC)
+Received: from redhat.com (ovpn-123-236.rdu2.redhat.com [10.10.123.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C3A0104811E;
+        Fri, 18 Jan 2019 17:45:15 +0000 (UTC)
+Date:   Fri, 18 Jan 2019 12:45:13 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     lsf-pc@lists.linux-foundation.org
+Cc:     linux-mm@kvack.org, Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        linux-kernel@vger.kernel.org
+Subject: [LSF/MM TOPIC] NUMA, memory hierarchy and device memory
+Message-ID: <20190118174512.GA3060@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 18 Jan 2019 17:45:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Fri, Jan 18, 2019 at 02:27:25PM +0200, Elena Reshetova wrote:
-> > I would really love finally to merge these old patches
-> > (now rebased on top of linux-next/master as of last friday),
-> > since as far as I remember none has raised any more concerns
-> > on them.
-> >
-> > refcount_t has been now successfully used in kernel in many places,
-> > helped to detect bugs and mistakes in logic of refcounters.
-> >
-> > This series, for scheduler and task struct specifically,
-> > replaces atomic_t reference counters with the new refcount_t type
-> > and API (see include/linux/refcount.h).
-> > By doing this we prevent intentional or accidental
-> > underflows or overflows that can lead to use-after-free vulnerabilities.
-> >
-> > The patches are fully independent and can be cherry-picked separately.
-> > More information about each conversion in each patch separately.
-> >
-> > Elena Reshetova (5):
-> >   sched: convert sighand_struct.count to refcount_t
-> >   sched: convert signal_struct.sigcnt to refcount_t
-> >   sched: convert numa_group.refcount to refcount_t
-> >   sched/task_struct: convert task_struct.usage to refcount_t
-> >   sched/task_struct: convert task_struct.stack_refcount to refcount_t
-> 
-> For the series, please feel free to add:
-> 
-> Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Hi, i would like to discuss about NUMA API and its short comings when
+it comes to memory hierarchy (from fast HBM, to slower persistent
+memory through regular memory) and also device memory (which can have
+its own hierarchy).
 
-Thank you for your review!
+I have proposed a patch to add a new memory topology model to the
+kernel for application to be able to get that informations, it
+also included a set of new API to bind/migrate process range [1].
+Note that this model also support device memory.
 
-Best Regards,
-Elena
+So far device memory support is achieve through device specific ioctl
+and this forbid some scenario like device memory interleaving accross
+multiple devices for a range. It also make the whole userspace more
+complex as program have to mix and match multiple device specific API
+on top of NUMA API.
+
+While memory hierarchy can be more or less expose through the existing
+NUMA API by creating node for non-regular memory [2], i do not see this
+as a satisfying solution. Moreover such scheme does not work for device
+memory that might not even be accessible by CPUs.
+
+
+Hence i would like to discuss few points:
+    - What proof people wants to see this as problem we need to solve ?
+    - How to build concensus to move forward on this ?
+    - What kind of syscall API people would like to see ?
+
+People to discuss this topic:
+    Dan Williams <dan.j.williams@intel.com>
+    Dave Hansen <dave.hansen@intel.com>
+    Felix Kuehling <Felix.Kuehling@amd.com>
+    John Hubbard <jhubbard@nvidia.com>
+    Jonathan Cameron <jonathan.cameron@huawei.com>
+    Keith Busch <keith.busch@intel.com>
+    Mel Gorman <mgorman@techsingularity.net>
+    Michal Hocko <mhocko@kernel.org>
+    Paul Blinzer <Paul.Blinzer@amd.com>
+
+Probably others, sorry if i miss anyone from previous discussions.
+
+Cheers,
+Jérôme
+
+[1] https://lkml.org/lkml/2018/12/3/1072
+[2] https://lkml.org/lkml/2018/12/10/1112
