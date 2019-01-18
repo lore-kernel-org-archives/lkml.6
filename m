@@ -3,155 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44680C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27388C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBB92086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:52:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F200521738
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:53:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfARQwJ convert rfc822-to-8bit (ORCPT
+        id S1728185AbfARQw6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:52:09 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58379 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbfARQwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:52:08 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3BF76207A3; Fri, 18 Jan 2019 17:52:06 +0100 (CET)
-Received: from localhost (alyon-652-1-26-46.w109-213.abo.wanadoo.fr [109.213.9.46])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 28F1A2074A;
-        Fri, 18 Jan 2019 17:51:54 +0100 (CET)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v3 00/15] Bring suspend to RAM support to PCIe Aardvark driver
-References: <20190108162441.5278-1-miquel.raynal@bootlin.com>
-Date:   Fri, 18 Jan 2019 17:51:52 +0100
-In-Reply-To: <20190108162441.5278-1-miquel.raynal@bootlin.com> (Miquel
-        Raynal's message of "Tue, 8 Jan 2019 17:24:25 +0100")
-Message-ID: <87va2llxhz.fsf@FE-laptop>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 18 Jan 2019 11:52:58 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:44498 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727481AbfARQw6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 11:52:58 -0500
+Received: (qmail 4237 invoked by uid 2102); 18 Jan 2019 11:52:57 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 18 Jan 2019 11:52:57 -0500
+Date:   Fri, 18 Jan 2019 11:52:57 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Paul Elder <paul.elder@ideasonboard.com>
+cc:     laurent.pinchart@ideasonboard.com,
+        <kieran.bingham@ideasonboard.com>, <b-liu@ti.com>, <rogerq@ti.com>,
+        <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 4/6] usb: gadget: add mechanism to specify an explicit
+ status stage
+In-Reply-To: <20190118163106.GC7331@localhost.localdomain>
+Message-ID: <Pine.LNX.4.44L0.1901181148100.1425-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquel,
- 
- On mar., janv. 08 2019, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+On Fri, 18 Jan 2019, Paul Elder wrote:
 
-> Hello,
->
-> As part of an effort to bring suspend to RAM support to Armada 3700
-> SoCs (main target: ESPRESSObin), this series handles the work around
-> the PCIe IP.
->
-> First, more configuration is done in the 'setup' helper as inspired
-> from the U-Boot driver. This is needed to entirely initialize the IP
-> during future resume operation (patch 1).
->
-> Then, reset GPIO, PHY and clock support are introduced (patch 2-4). As
-> current device trees do not provide the corresponding properties, not
-> finding one of these properties is not an error and just produces a
-> warning. However, if the property is present, an error during PHY
-> initialization will fail the probe of the driver.
->
-> Note: To be sure the clock will be resumed before this driver, a first
-> series adding links between clocks and consumers has been submitted,
-> see [1]. Anyway, having the clock series applied first is not needed.
->
-> Patch 5 adds suspend/resume hooks, re-using all the above.
->
-> Finally, bindings and device trees are updated to reflect the hardware
-> (patch 6-12). While the clock depends on the SoC, the reset GPIO and
-> the PHY depends on the board so the clock is added in the
-> armada-37xx.dtsi file while the two other properties are added in
-> armada-3720-espressobin.dts.
->
-> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2019-January/623885.html
->
-> Thanks,
-> Miquèl
->
->
-> Changes since v2:
-> =================
-> * Minor patches reordering.
-> * Added pinctrl patches from Gregory Clement fixing the PCIe pins. His
->   changes implied modifications in the DT/bindings patches adding PCIe
->   reset pin support.
+> > > I meant the functions (procedures) in the function driver, so the setup
+> > > handler (uvc_function_setup), the completion handler
+> > > (uvc_function_ep0_complete), and the status sender (uvc_send_response),
+> > > although the last one actually sends the data stage for control IN.
+> > > So after the status is sent on the uvc gadget driver's end, its
+> > > completion handler is called again without the setup handler being
+> > > called beforehand and I cant figure out why.
+> > 
+> > Isn't this what you should expect?  Every usb_request, if it is queued
+> > successfully, eventually gets a completion callback.  That promise is
+> > made by every UDC driver; it's part of the gadget API.  So for a
+> > control transfer with a data stage, you expect to have:
+> > 
+> > 	Setup handler called
+> > 	Data-stage request submitted
+> > 	Data-stage request completion callback
+> > 	Status-stage request submitted
+> > 	Status-stage request completion callback
+> > 
+> > Thus, two completion callbacks but only one setup callback.
+> 
+> omg how did I not notice this :/
+> 
+> I guess I have to fix the uvc function driver so it works with that.
+> musb doesn't call the status stage completion callback though; not that
+> it does anything so it seems fine to me, but indeed the function driver
+> has to be ready for it if it is called.
 
-Actually these patches are not in this series. You propably meant that
-this series is depend on these patches.
+musb _has_ to call the status-stage completion callback.  As just one
+reason, if the explicit_status flag isn't set then that callback is
+responsible for deallocating the status request.  Without it, the
+status request will leak.
 
-If needed, for peoaple who wanted to test this series, the pinctrl
-changes are now in linux-next and also in pinctrl/for-next.
+Alan Stern
 
-Gregpry
-
-> * Added a new patch that enlarges the PIO timeout of the driver
->   (explanations in the commit log).
-> * With the timeout changed, removed the "experimental delay" that was
->   needed at resume time before accessing any register.
->
-> Changes since v1:
-> =================
-> * Change the capitalization in commit titles to follow the PCI
->   subsystem rules.
-> * Added Suggested-by tag to the patch adding PHY support and to the
->   patch adding the PHY property in the DT.
-> * Added Rob's Reviewed-by tags on bindings.
-> * I am following the discussion about calling functions that might
->   sleep in a NOIRQ context. As there is no real problem yet (as per my
->   understanding), I did not change anything on this regard.
->
->
-> Miquel Raynal (15):
->   PCI: aardvark: Enlarge PIO timeout
->   PCI: aardvark: Configure more registers in the configuration helper
->   PCI: aardvark: Add clock support
->   PCI: aardvark: Add PHY support
->   PCI: aardvark: Add PCIe warm reset support
->   PCI: aardvark: Add external reset GPIO support
->   PCI: aardvark: Add suspend to RAM support
->   dt-bindings: PCI: aardvark: Describe the clocks property
->   dt-bindings: PCI: aardvark: Describe the PHY property
->   dt-bindings: PCI: aardvark: Describe the PCIe endpoint card reset pins
->   dt-bindings: PCI: aardvark: Describe the reset-gpios property
->   ARM64: dts: marvell: armada-37xx: declare PCIe clock
->   ARM64: dts: marvell: armada-3720-espressobin: declare PCIe PHY
->   ARM64: dts: marvell: armada-37xx: declare PCIe reset pin
->   ARM64: dts: marvell: armada-3720-espressobin: declare PCIe warm reset
->     pin
->
->  .../devicetree/bindings/pci/aardvark-pci.txt  |  14 ++
->  .../dts/marvell/armada-3720-espressobin.dts   |   3 +
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  10 +
->  drivers/pci/controller/pci-aardvark.c         | 217 +++++++++++++++++-
->  4 files changed, 243 insertions(+), 1 deletion(-)
->
-> -- 
-> 2.19.1
->
-
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
