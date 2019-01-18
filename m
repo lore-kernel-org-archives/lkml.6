@@ -2,143 +2,133 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16256C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941ABC5AE5E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D60AD20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FCD920652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:11:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=appneta.com header.i=@appneta.com header.b="eHmoKibS"
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="sTRidzAj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730109AbfARXKp (ORCPT
+        id S1730122AbfARXLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 18:10:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34922 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730070AbfARXKn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 18:10:43 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so6987649plo.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 15:10:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=appneta.com; s=google;
-        h=from:content-transfer-encoding:mime-version:subject:message-id:date
-         :cc:to;
-        bh=3NBLiWeI767q1TVxnrvkR8PYADKw1iZnw2EZwD82DSA=;
-        b=eHmoKibS04ayzHt63FYwU1AkoNnz88eGi+J27StrTEiZqXql+oNLRoxT8u9H1IHwU2
-         GIixmJUhW6PRTqSLWtX3CaLw/WCEkzEdwbH9DbXdGzw+aElhQLtRNBFge7jrolD8hk2Y
-         ms/bf96YtA1d6fAZpJjrqQs3rYhKI2HqFDnK4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=3NBLiWeI767q1TVxnrvkR8PYADKw1iZnw2EZwD82DSA=;
-        b=INBDulLhfljglEy+Hftr9vCUcqI+n9VloIFBee1eFKPjZLpQ9+andRJXhUPLaeZtbP
-         6CM0ENftjLvDK2Oj5Ih0BxxNtKrlZUrIPrwbsjZvpcSTKRNQGzXBJkQ8I6zsHsrDaEDA
-         fAlgYv6Z5/mM4ii16ButfUGkIgIPCPwSOF+d7CUJWN8d64LiFijb8srNS6DzolioqbXV
-         TXxMkpViCZaaOmDiBHUxfPgNXbqQuqwbj6Tlf2xCKaDShDztLylJa3ie/gclI/zyGrsq
-         zGaD6Na7kpXdd87QM+d0aqDjPzJKwsckmlMjaON8IYYeeaVZdaTqR9uCR1ZdNnZcF85I
-         OzHA==
-X-Gm-Message-State: AJcUukf0k6UW0hW9ZNQaF95pFpRpjmrLSLo6V5DMVOpSxOAHVHk/UaIg
-        nn6cjdj1s/IThOv/P6fxL+Y4ig==
-X-Google-Smtp-Source: ALg8bN5Jb5CQZwH10Z5PoZW6o4uuDA/mj9s+5+G3aYKuIPZgUXyVQDqszzzM7yJ2T/qJgkSv5IQKpg==
-X-Received: by 2002:a17:902:b282:: with SMTP id u2mr21211497plr.89.1547853042296;
-        Fri, 18 Jan 2019 15:10:42 -0800 (PST)
-Received: from jltm109.jaalam.net ([209.139.228.33])
-        by smtp.gmail.com with ESMTPSA id p7sm8312963pfa.22.2019.01.18.15.10.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 15:10:41 -0800 (PST)
-From:   Fred Klassen <fklassen@appneta.com>
-Content-Type: text/plain;
-        charset=us-ascii
+        Fri, 18 Jan 2019 18:11:43 -0500
+Received: from mail-eopbgr10125.outbound.protection.outlook.com ([40.107.1.125]:55773
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729847AbfARXLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 18:11:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CVF4AGDPcSuX9U/YUHkUaZ2xyyIHZO3EuhJdOj53Up8=;
+ b=sTRidzAjMfqn4cZrX1Z9qjyLsMRV3HK+pcdI/y93D06mJZkGaHlm43MwGiwat1p5QYhdFRcfQ9n+nKc0/kTX7uP+Rz4+zh+dX9zSRTlNb+y98TyiC2cEN32x8RGaRRl2J+J4cLeryi/G+BberLNGFMV/qusGg0dF1qU8EHodBfw=
+Received: from AM6PR02MB4470.eurprd02.prod.outlook.com (20.177.191.218) by
+ AM6PR02MB3767.eurprd02.prod.outlook.com (52.134.113.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.26; Fri, 18 Jan 2019 23:11:38 +0000
+Received: from AM6PR02MB4470.eurprd02.prod.outlook.com
+ ([fe80::e5f3:a239:2ec4:4453]) by AM6PR02MB4470.eurprd02.prod.outlook.com
+ ([fe80::e5f3:a239:2ec4:4453%6]) with mapi id 15.20.1537.018; Fri, 18 Jan 2019
+ 23:11:38 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Peter Rosin <peda@axentia.se>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: [PATCH] drm/bridge: lvds-encoder: remove surplus NULL checks
+Thread-Topic: [PATCH] drm/bridge: lvds-encoder: remove surplus NULL checks
+Thread-Index: AQHUr4Mq4Jg55lDhA0SXDBbXaZHCFw==
+Date:   Fri, 18 Jan 2019 23:11:38 +0000
+Message-ID: <20190118231129.8281-1-peda@axentia.se>
+References: <be258481-b3e4-8051-abb2-ca430ecc2836@samsung.com>
+In-Reply-To: <be258481-b3e4-8051-abb2-ca430ecc2836@samsung.com>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.11.0
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1PR05CA0200.eurprd05.prod.outlook.com
+ (2603:10a6:3:f9::24) To AM6PR02MB4470.eurprd02.prod.outlook.com
+ (2603:10a6:20b:60::26)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR02MB3767;6:s3Sgay6tPliM1+sUKusdRt/OwYFU5rGjsNUhWiWr8ao9mm8LDjUdkxbxoo/23xNjlC1yiKYNK5PdBJeFytfLBQEfB+yigDIwYHgEeM1UT07Cp7IobODBan+g26/hJFmhwCypY3HM+/Kz6rhwqERHbNvwCX/yY8sd/An1Xwoy7yx2TT41OXUJ/ddKbbsNTwEeALAyMY8q5yjASktf7DyNGlfWpeLrBXn4PG5brF1MUCkuo3BPr/1lU5mr0w1uI83WkFiFLwBvnoVq6xRedOr+3SvUPzMBGv4ddGL2NJpg31MMHQfReHMUJEsR409aKk3zJJEKE2SJzw+Qyiw6VXF/l3fWasvgGBKZTjQtNjxN8ErQfS0B6hIhKaajqRgWFAOIw9ydu395+bin2Y6AzkV8C4gEw8TSK2+Fi9hHLHaTJj40ZZG8FQUXIhLAad0BYpJ9Ieib1XqpoRw0gQU4XcAzTg==;5:X4jagrAw6HKU0FSx3qydrLRIyZ/OpqYd7g9Dg93KbYmGqTTmrWTPjOat6gG+bx1lAepu19tJgQFLTWjzQoop+bdGceD9JZEn4DSpM20Wo+2xRm8411eVQXOb4ABY7NGXcNfOJ9TRlGWxpQwYDsiEFXB6PiWhs+oWMoW1diTAQi1rbGBl5yf/ITsgj2L9sYouYF6S3Q0mEIQXDeQpEOkPrA==;7:zDMltorczdSHzigEMXdogbL5a7k3Bp2bi3F8S5f9Ex5/IQ05/sUXoV+wR11GKaO/aBkpw1aHm8anpjv+kIR3lopDCSPRKx25DaPof8ohAc0J9Sld06+hnXURf6hlBxQBRZJAOHKYFk55An1psuzDgw==
+x-ms-office365-filtering-correlation-id: 1ab2840f-9807-40e7-1c40-08d67d9a4c81
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR02MB3767;
+x-ms-traffictypediagnostic: AM6PR02MB3767:
+x-microsoft-antispam-prvs: <AM6PR02MB376789F6AAB3D5634F7D7199BC9C0@AM6PR02MB3767.eurprd02.prod.outlook.com>
+x-forefront-prvs: 0921D55E4F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(346002)(396003)(376002)(136003)(366004)(199004)(189003)(6512007)(52116002)(102836004)(105586002)(106356001)(36756003)(3846002)(76176011)(6486002)(6116002)(5640700003)(50226002)(8936002)(186003)(25786009)(8676002)(66066001)(6436002)(81166006)(508600001)(6916009)(97736004)(81156014)(14454004)(1076003)(71200400001)(71190400001)(486006)(2906002)(2351001)(476003)(26005)(54906003)(386003)(53936002)(2501003)(4326008)(316002)(11346002)(6506007)(68736007)(7736002)(446003)(256004)(74482002)(305945005)(2616005)(99286004)(86362001)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR02MB3767;H:AM6PR02MB4470.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: JRQgyQXFbMEonX+nm+NLmF+99s6o0yD9Dbr2R18Sk/xmCZeGxm5GdzwKAn/LKT0bHsAq0x2r6xsdtxZlO4rG0kUfWMxptRrQftI0tWnkSceLvZypxEJnVLTxhzwtnZ2XRJBlVazCCkxI+nhc8SzbhiDU0R1/5/ps9h9CEbxvlfZ+CXeknip6SB6nGW8G81Uu2pcSuTWUFcKwD5GAXgXL6jc8vkRptxt8dRGcJlQaBsj19HC4Ct9pR9iJOhvHLvexD9HTg2t2bZXaiVyfivaPpfHMXAyQOnQgNPfacOXYki8/xWC7BispJAyZhTBcdl4OqdU4BbtNyhjn1jW4TkT9rgQSgZ2RVexp6IcIeo0+Z1U2kTgZnPlwwZ7QmFksC2/HCSvdMRK6TmO4KCWmu7yhS2BJxyTkdWTiWWhmeyaZz1g=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: [PATCH] ipmi: Prevent use-after-free in deliver_response
-Message-Id: <09133030-238B-475F-94BC-B48827812714@appneta.com>
-Date:   Fri, 18 Jan 2019 15:10:39 -0800
-Cc:     stable@vger.kernel.org
-To:     "Corey Minyard (supporter:IPMI SUBSYSTEM)" <minyard@acm.org>,
-        "Arnd Bergmann (supporter:CHAR and MISC DRIVERS)" <arnd@arndb.de>,
-        "Greg Kroah-Hartman (supporter:CHAR and MISC DRIVERS)" 
-        <gregkh@linuxfoundation.org>,
-        "moderated list:IPMI SUBSYSTEM" 
-        <openipmi-developer@lists.sourceforge.net>,
-        open list <linux-kernel@vger.kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+MIME-Version: 1.0
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ab2840f-9807-40e7-1c40-08d67d9a4c81
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jan 2019 23:11:37.6895
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR02MB3767
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some IPMI modules (e.g. ibmpex_msg_handler()) will have ipmi_usr_hdlr
-handlers that call ipmi_free_recv_msg() directly. This will essentially
-kfree(msg), leading to use-after-free.
+The gpio API explicitly allows skipping the NULL check, precisely to
+allow for neat support for optional gpios. Which is exactly what is at
+play here.
 
-This does not happen in the ipmi_devintf module, which will queue the
-message and run ipmi_free_recv_msg() later.
-
- BUG: KASAN: use-after-free in deliver_response+0x12f/0x1b0
- Read of size 8 at addr ffff888a7bf20018 by task ksoftirqd/3/27
- CPU: 3 PID: 27 Comm: ksoftirqd/3 Tainted: G           O      =
-4.19.11-amd64-ani99-debug #12.0.1.601133+pv
- Hardware name: AppNeta r1000/X11SPW-TF, BIOS 2.1a-AP 09/17/2018
- Call Trace:
-  dump_stack+0x92/0xeb
-  print_address_description+0x73/0x290
-  kasan_report+0x258/0x380
-  deliver_response+0x12f/0x1b0
-  ? ipmi_free_recv_msg+0x50/0x50
-  deliver_local_response+0xe/0x50
-  handle_one_recv_msg+0x37a/0x21d0
-  handle_new_recv_msgs+0x1ce/0x440
-  ...
-
- Allocated by task 9885:
-  kasan_kmalloc+0xa0/0xd0
-  kmem_cache_alloc_trace+0x116/0x290
-  ipmi_alloc_recv_msg+0x28/0x70
-  i_ipmi_request+0xb4a/0x1640
-  ipmi_request_settime+0x1b8/0x1e0
-  ...
-
- Freed by task 27:
-  __kasan_slab_free+0x12e/0x180
-  kfree+0xe9/0x280
-  deliver_response+0x122/0x1b0
-  deliver_local_response+0xe/0x50
-  handle_one_recv_msg+0x37a/0x21d0
-  handle_new_recv_msgs+0x1ce/0x440
-  tasklet_action_common.isra.19+0xc4/0x250
-  __do_softirq+0x11f/0x51f
-
-Fixes: e86ee2d44b4 ("ipmi: Rework locking and shutdown for hot remove")
-Signed-off-by: Fred Klassen <fklassen@appneta.com>
-
+Reported-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/char/ipmi/ipmi_msghandler.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/lvds-encoder.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c =
-b/drivers/char/ipmi/ipmi_msghandler.c
-index 7fc9612070a1..fbf93c2d6c05 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -883,7 +883,7 @@ static int deliver_response(struct ipmi_smi *intf, =
-struct ipmi_recv_msg *msg)
+diff --git a/drivers/gpu/drm/bridge/lvds-encoder.c b/drivers/gpu/drm/bridge=
+/lvds-encoder.c
+index 36d8557bc097..584007eaf6e1 100644
+--- a/drivers/gpu/drm/bridge/lvds-encoder.c
++++ b/drivers/gpu/drm/bridge/lvds-encoder.c
+@@ -36,8 +36,7 @@ static void lvds_encoder_enable(struct drm_bridge *bridge=
+)
+ 							 struct lvds_encoder,
+ 							 bridge);
 =20
- 		if (user) {
- 			user->handler->ipmi_recv_hndl(msg, =
-user->handler_data);
--			release_ipmi_user(msg->user, index);
-+			release_ipmi_user(user, index);
- 		} else {
- 			/* User went away, give up. */
- 			ipmi_free_recv_msg(msg);
+-	if (lvds_encoder->powerdown_gpio)
+-		gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 0);
++	gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 0);
+ }
+=20
+ static void lvds_encoder_disable(struct drm_bridge *bridge)
+@@ -46,8 +45,7 @@ static void lvds_encoder_disable(struct drm_bridge *bridg=
+e)
+ 							 struct lvds_encoder,
+ 							 bridge);
+=20
+-	if (lvds_encoder->powerdown_gpio)
+-		gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 1);
++	gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 1);
+ }
+=20
+ static struct drm_bridge_funcs funcs =3D {
 --=20
 2.11.0
 
