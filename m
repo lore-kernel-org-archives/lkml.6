@@ -2,107 +2,113 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8EFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857A2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CBA520883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 524942087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbfARPtV (ORCPT
+        id S1727803AbfARPtj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:49:21 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47025 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfARPtU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:49:20 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0IFmxLv1253423
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 18 Jan 2019 07:48:59 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0IFmxMT1253420;
-        Fri, 18 Jan 2019 07:48:59 -0800
-Date:   Fri, 18 Jan 2019 07:48:59 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiaxun Yang <tipbot@zytor.com>
-Message-ID: <tip-0237199186e7a4aa5310741f0a6498a20c820fd7@git.kernel.org>
-Cc:     suravee.suthikulpanit@amd.com, jiaxun.yang@flygoat.com,
-        tglx@linutronix.de, x86@kernel.org, linux-kernel@vger.kernel.org,
-        sherry.hurwitz@amd.com, mingo@redhat.com, bp@suse.de,
-        mingo@kernel.org, thomas.lendacky@amd.com, hpa@zytor.com
-Reply-To: bp@suse.de, mingo@kernel.org, thomas.lendacky@amd.com,
-          hpa@zytor.com, tglx@linutronix.de, jiaxun.yang@flygoat.com,
-          suravee.suthikulpanit@amd.com, x86@kernel.org,
-          sherry.hurwitz@amd.com, linux-kernel@vger.kernel.org,
-          mingo@redhat.com
-In-Reply-To: <20181120030018.5185-1-jiaxun.yang@flygoat.com>
-References: <20181120030018.5185-1-jiaxun.yang@flygoat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/CPU/AMD: Set the CPB bit unconditionally on F17h
-Git-Commit-ID: 0237199186e7a4aa5310741f0a6498a20c820fd7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 18 Jan 2019 10:49:39 -0500
+Received: from muru.com ([72.249.23.125]:34218 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726902AbfARPtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:49:39 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 10E758120;
+        Fri, 18 Jan 2019 15:49:44 +0000 (UTC)
+Date:   Fri, 18 Jan 2019 07:49:34 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Eyal Reizer <eyalr@ti.com>, linux-wireless@vger.kernel.org,
+        Ricardo Salveti <rsalveti@rsalveti.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Jan Kiszka <jan.kiszka@web.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
+Message-ID: <20190118154934.GW5544@atomide.com>
+References: <20190116113723.15668-1-ulf.hansson@linaro.org>
+ <20190116154311.GP5544@atomide.com>
+ <CADYN=9L-x2Ar5COE3mJRZz_V-7TNOF__8Rh4Hq7YJ=PoHFrR3Q@mail.gmail.com>
+ <877ef2ou3p.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <877ef2ou3p.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0237199186e7a4aa5310741f0a6498a20c820fd7
-Gitweb:     https://git.kernel.org/tip/0237199186e7a4aa5310741f0a6498a20c820fd7
-Author:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-AuthorDate: Tue, 20 Nov 2018 11:00:18 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Fri, 18 Jan 2019 16:44:03 +0100
+* Kalle Valo <kvalo@codeaurora.org> [190118 15:37]:
+> Anders Roxell <anders.roxell@linaro.org> writes:
+> 
+> > On Wed, 16 Jan 2019 at 16:43, Tony Lindgren <tony@atomide.com> wrote:
+> >>
+> >> * Ulf Hansson <ulf.hansson@linaro.org> [190116 11:37]:
+> >> > During "wlan-up", we are programming the FW into the WiFi-chip. However,
+> >> > re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
+> >> > is made in-between the programmings.
+> >> >
+> >> > To conform to this requirement and to fix the regression in a simple way,
+> >> > let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
+> >> > (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
+> >> > current code is to treat this scenario as an error, but unfortunate this
+> >> > doesn't work as expected, so let's fix this.
+> >> >
+> >> > The other part is to guarantee that a power cycle of the SDIO card has been
+> >> > completed when wl12xx_sdio_power_on() returns, as to allow the FW
+> >> > programming to succeed. However, relying solely on runtime PM to deal with
+> >> > this isn't sufficient. For example, userspace may prevent runtime suspend
+> >> > via sysfs for the device that represents the SDIO card, leading to that the
+> >> > mmc core also keeps it powered on. For this reason, let's instead do a
+> >> > brute force power cycle in wl12xx_sdio_power_on().
+> >> >
+> >> > Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
+> >> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >> > ---
+> >> >
+> >> > Changes in v2:
+> >> >       - Keep the SDIO host claimed when calling mmc_hw_reset().
+> >> >       - Add a fixes tag.
+> >>
+> >> This v2 version works for me as tested with:
+> >>
+> >> # while [ 1 ]; do ifconfig wlan0 down; ifconfig wlan0 up; done
+> >> [  181.364990] wlcore: down
+> >> [  182.116424] wlcore: firmware booted (Rev 6.3.10.0.141)
+> >> [  182.151641] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
+> >> [  182.166778] wlcore: down
+> >> [  182.773132] wlcore: firmware booted (Rev 6.3.10.0.141)
+> >> [  182.811096] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
+> >> ...
+> >>
+> >> Thanks for fixing this issue properly, and feel free to add:
+> >>
+> >> Tested-by: Tony Lindgren <tony@atomide.com>
+> >
+> > Tested-by: Anders Roxell <anders.roxell@linaro.org>
+> >
+> > I tested it on a hikey-6220, and it worked.
+> 
+> So what's the conclusion, can I take this patch? I see that this didn't
+> help with Jan but as Tony and Anders provided positive test results I'm
+> inclined to take this now and Jan's problem can be fixed with another
+> patch. Do everyone agree?
 
-x86/CPU/AMD: Set the CPB bit unconditionally on F17h
+Sounds good to me, seems like there is another separate issue
+lurking around somewhere.
 
-Some F17h models do not have CPB set in CPUID even though the CPU
-supports it. Set the feature bit unconditionally on all F17h.
+Regards,
 
- [ bp: Rewrite commit message and patch. ]
-
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Sherry Hurwitz <sherry.hurwitz@amd.com>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181120030018.5185-1-jiaxun.yang@flygoat.com
----
- arch/x86/kernel/cpu/amd.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 69f6bbb41be0..01004bfb1a1b 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -819,11 +819,9 @@ static void init_amd_bd(struct cpuinfo_x86 *c)
- static void init_amd_zn(struct cpuinfo_x86 *c)
- {
- 	set_cpu_cap(c, X86_FEATURE_ZEN);
--	/*
--	 * Fix erratum 1076: CPB feature bit not being set in CPUID. It affects
--	 * all up to and including B1.
--	 */
--	if (c->x86_model <= 1 && c->x86_stepping <= 1)
-+
-+	/* Fix erratum 1076: CPB feature bit not being set in CPUID. */
-+	if (!cpu_has(c, X86_FEATURE_CPB))
- 		set_cpu_cap(c, X86_FEATURE_CPB);
- }
- 
+Tony
