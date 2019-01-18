@@ -2,186 +2,104 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB20EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA6BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA94720823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:04:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09C9D20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:05:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dEm2KVZB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfARNEC (ORCPT
+        id S1727791AbfARNFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:04:02 -0500
-Received: from mgwkm01.jp.fujitsu.com ([202.219.69.168]:39337 "EHLO
-        mgwkm01.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfARNEA (ORCPT
+        Fri, 18 Jan 2019 08:05:36 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35457 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfARNFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:04:00 -0500
-X-Greylist: delayed 675 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Jan 2019 08:04:00 EST
-Received: from kw-mxauth.gw.nic.fujitsu.com (unknown [192.168.231.132]) by mgwkm01.jp.fujitsu.com with smtp
-         id 60e7_fa2d_c6fa3fe0_eb21_4e52_8f22_f2484bfdf17d;
-        Fri, 18 Jan 2019 21:52:42 +0900
-Received: from g01jpfmpwkw01.exch.g01.fujitsu.local (g01jpfmpwkw01.exch.g01.fujitsu.local [10.0.193.38])
-        by kw-mxauth.gw.nic.fujitsu.com (Postfix) with ESMTP id 76AD9AC00B2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 21:52:41 +0900 (JST)
-Received: from G01JPEXCHKW16.g01.fujitsu.local (G01JPEXCHKW16.g01.fujitsu.local [10.0.194.55])
-        by g01jpfmpwkw01.exch.g01.fujitsu.local (Postfix) with ESMTP id ADF696923F9;
-        Fri, 18 Jan 2019 21:52:40 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw16 ([10.0.194.55]) with mapi id 14.03.0415.000; Fri, 18 Jan 2019
- 21:52:40 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     "'catalin.marinas@arm.com'" <catalin.marinas@arm.com>,
-        "'will.deacon@arm.com'" <will.deacon@arm.com>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-CC:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-Subject: [PATCH] arm64 memory accesses may cause undefined fault on
- Fujitsu-A64FX
-Thread-Topic: [PATCH] arm64 memory accesses may cause undefined fault on
- Fujitsu-A64FX
-Thread-Index: AdSvK6W0/Nm6810RQFa/OOuw1JbhXA==
-Date:   Fri, 18 Jan 2019 12:52:38 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A6A29FA8F@G01JPEXMBKW03>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 18 Jan 2019 08:05:35 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so15008273wrb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 05:05:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IGEYkrqPTO24Yuc9eocs/hY5nllEGzkfq9emuvq8Gio=;
+        b=dEm2KVZB5cxpLHfuaK6Dh4OAk7nC+5q4DwoWZ5vCwIoDY70tXasm3lPYREyiAzY8M5
+         ryWnM9cHOAHYVn7GXxFoaFF6sg2wGMm7w3GgFXsBpjKz/Iwtu7rx8gXtYAWpBDXIBJ6a
+         KVJIovoSS2bL7FQtEGlfTG4pNrv3QsOQ/C2AI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IGEYkrqPTO24Yuc9eocs/hY5nllEGzkfq9emuvq8Gio=;
+        b=s7dEvoBQAXiw+AJeWRf2RI5zCXrENLU54XhkovOcwwiNWa0l8t24m5yGeq/4liUhf3
+         Mfhq7ZADw+p6zSWh4ugJQp5fRqFvSeg7N4Aqq8QhNqRzJ2+pksyi9hsSfAv0gWcYR30b
+         WGywokSyevF7TEt/QRlGbdD8i40Er6T7/JQxP1/vMhobtR+xWr2EfR7ACs1qDk8Nw5sG
+         End4GsaIogXNW/hxqw6aWBrhKi+u2Dq9nn5lwnSSBLlKPxOBhb4LOkwX8mb8LQmojhFv
+         7RrJVnVDqb6BPLDLk05RLW00xZcJ1kUmkboIhPtIxW4a4DKUyI6fSLRInuIvPTdD+osp
+         XQ4g==
+X-Gm-Message-State: AJcUukfhLUXEDqxjp+dmWjEuYI76WsArVd7UPvtkejP3E2biIxUF8IRW
+        XlRsXwBSqLr8voBXPfsuY0d4uXOTYHk=
+X-Google-Smtp-Source: ALg8bN4MqGHXzI3kuvhkVNKKcLNqY6IDlH5hvYoHlArNLFmkRU+kslIWROxGT6xGFhCTgYI09oU78Q==
+X-Received: by 2002:adf:dd06:: with SMTP id a6mr17214160wrm.2.1547816734132;
+        Fri, 18 Jan 2019 05:05:34 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id a12sm79510174wrm.45.2019.01.18.05.05.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 05:05:32 -0800 (PST)
+Subject: Re: [PATCH v4 0/2] arm64: dts: qcom: sdm845: Fix DMA allocations for
+ devices with IOMMU
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190117042940.25487-1-bjorn.andersson@linaro.org>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <7e662602-73dd-2ac6-4e49-ce92f1d157d2@linaro.org>
+Date:   Fri, 18 Jan 2019 13:05:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-MML: disable
+In-Reply-To: <20190117042940.25487-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gc29tZSB2YXJpYW50cyBvZiB0aGUgRnVqaXRzdS1BNjRGWCBjb3JlcyB2
-ZXIoMS4wLCAxLjEpLCANCm1lbW9yeSBhY2Nlc3NlcyBtYXkgY2F1c2UgdW5k
-ZWZpbmVkIGZhdWx0IChEYXRhIGFib3J0LCBERlNDPTBiMTExMTExKS4NClRo
-aXMgcHJvYmxlbSB3aWxsIGJlIGZpeGVkIGJ5IG5leHQgdmVyc2lvbiBvZiBG
-dWppdHN1LUE2NEZYLg0KSSB3b3VsZCBsaWtlIHRvIHBvc3QgYSB3b3JrYXJv
-dW5kIHRvIGF2b2lkIHRoaXMgcHJvYmxlbSANCm9uIGV4aXN0aW5nIHZlcnNp
-b24uDQpUaGUgd29ya2Fyb3VuZCBpcyB0byByZXBsYWNlIHRoZSBmYXVsdCBo
-YW5kbGVyIGZvciBEYXRhIGFib3J0DQpERlNDPTBiMTExMTExIHdpdGggYSBu
-ZXcgb25lIHRvIGlnbm9yZSB0aGlzIHVuZGVmaW5lZCBmYXVsdCwgDQp3aGlj
-aCB3aWxsIG9ubHkgYWZmZWN0IHRoZSBGdWppdHN1LUE2NEZYLg0KDQpJIGhh
-dmUgdGVzdGVkIHRoaXMgcGF0Y2ggb24gQTY0RlggYW5kIFFFTVUoMi45LjAp
-LlRoZSB0ZXN0IHBhc3NlZC4NCkkgd2lsbCB0ZXN0IHRoaXMgcGF0Y2ggb24g
-VGh1bmRlclggYW5kIHJlcG9ydCB0aGUgcmVzdWx0Lg0KSSBmdWxseSBhcHBy
-ZWNpYXRlIHRoYXQgaWYgc29tZW9uZSBjYW4gdGVzdCB0aGlzIHBhdGNoIG9u
-IGRpZmZlcmVudCANCmNoaXBzIHRvIHZlcml0eSBubyBoYXJtZnVsIGVmZmVj
-dCBvbiBvdGhlciBjaGlwcy4NCg0KSWYgdGhlcmUgaXMgbm8gcHJvYmxlbSBv
-biBvdGhlciBjaGlwcywgcGxlYXNlIG1lcmdlIHRoaXMgcGF0Y2guDQoNCkJl
-bG93IGlzIG15IHBhdGNoIGJhc2VkIG9uIGxpbnV4LTUuMC1yYzIuDQoNClNp
-Z25lZC1vZmYtYnk6IExlaSBaaGFuZyA8emhhbmcubGVpQGpwLmZ1aml0c3Uu
-Y29tPg0KVGVzdGVkLWJ5OiBMZWkgWmhhbmcgPHpoYW5nLmxlaUBqcC5mdWpp
-dHN1LmNvbT4NCi0tLQ0KIERvY3VtZW50YXRpb24vYXJtNjQvc2lsaWNvbi1l
-cnJhdGEudHh0IHwgICAgMSArDQogYXJjaC9hcm02NC9LY29uZmlnICAgICAg
-ICAgICAgICAgICAgICAgfCAgIDEzICsrKysrKysrKysrKysNCiBhcmNoL2Fy
-bTY0L2luY2x1ZGUvYXNtL2NwdXR5cGUuaCAgICAgICB8ICAgIDQgKysrKw0K
-IGFyY2gvYXJtNjQvbW0vZmF1bHQuYyAgICAgICAgICAgICAgICAgIHwgICAy
-MyArKysrKysrKysrKysrKysrKysrKysrKw0KIDQgZmlsZXMgY2hhbmdlZCwg
-NDEgaW5zZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
-bi9hcm02NC9zaWxpY29uLWVycmF0YS50eHQgYi9Eb2N1bWVudGF0aW9uL2Fy
-bTY0L3NpbGljb24tZXJyYXRhLnR4dA0KaW5kZXggMWYwOWQwNC4uMjZkNjRl
-OSAxMDA2NDQNCi0tLSBhL0RvY3VtZW50YXRpb24vYXJtNjQvc2lsaWNvbi1l
-cnJhdGEudHh0DQorKysgYi9Eb2N1bWVudGF0aW9uL2FybTY0L3NpbGljb24t
-ZXJyYXRhLnR4dA0KQEAgLTgwLDMgKzgwLDQgQEAgc3RhYmxlIGtlcm5lbHMu
-DQogfCBRdWFsY29tbSBUZWNoLiB8IEZhbGtvciB2MSAgICAgICB8IEUxMDA5
-ICAgICAgICAgICB8IFFDT01fRkFMS09SX0VSUkFUVU1fMTAwOSAgICB8DQog
-fCBRdWFsY29tbSBUZWNoLiB8IFFERjI0MDAgSVRTICAgICB8IEUwMDY1ICAg
-ICAgICAgICB8IFFDT01fUURGMjQwMF9FUlJBVFVNXzAwNjUgICB8DQogfCBR
-dWFsY29tbSBUZWNoLiB8IEZhbGtvciB2ezEsMn0gICB8IEUxMDQxICAgICAg
-ICAgICB8IFFDT01fRkFMS09SX0VSUkFUVU1fMTA0MSAgICB8DQorfCBGdWpp
-dHN1ICAgICAgICB8IEE2NEZYICAgICAgICAgICB8IEUjMDEwMDAxICAgICAg
-ICB8IEZVSklUU1VfRVJSQVRVTV8wMTAwMDEgICAgICB8DQpkaWZmIC0tZ2l0
-IGEvYXJjaC9hcm02NC9LY29uZmlnIGIvYXJjaC9hcm02NC9LY29uZmlnDQpp
-bmRleCBhNDE2OGQzLi45YzA5YjJiIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02
-NC9LY29uZmlnDQorKysgYi9hcmNoL2FybTY0L0tjb25maWcNCkBAIC02NDMs
-NiArNjQzLDE5IEBAIGNvbmZpZyBRQ09NX0ZBTEtPUl9FUlJBVFVNX0UxMDQx
-DQogDQogCSAgSWYgdW5zdXJlLCBzYXkgWS4NCiANCitjb25maWcgRlVKSVRT
-VV9FUlJBVFVNXzAxMDAwMQ0KKwlib29sICJGdWppdHN1LUE2NEZYIGVycmF0
-dW0gRSMwMTAwMDE6IFVuZGVmaW5lZCBmYXVsdCBtYXkgb2NjdXIgd3Jvbmds
-eSINCisJZGVmYXVsdCB5DQorCWhlbHANCisJICBUaGlzIG9wdGlvbiBhZGRz
-IHdvcmthcm91bmQgZm9yIEZ1aml0c3UtQTY0RlggZXJyYXR1bSBFIzAxMDAw
-MS4NCisJICBPbiBzb21lIHZhcmlhbnRzIG9mIHRoZSBGdWppdHN1LUE2NEZY
-IGNvcmVzIHZlcigxLjAsIDEuMSksIG1lbW9yeSBhY2Nlc3Nlcw0KKwkgIG1h
-eSBjYXVzZSB1bmRlZmluZWQgZmF1bHQgKERhdGEgYWJvcnQsIERGU0M9MGIx
-MTExMTEpLg0KKwkgIFRoZSB3b3JrYXJvdW5kIGlzIHRvIHJlcGxhY2UgdGhl
-IGZhdWx0IGhhbmRsZXIgZm9yIERhdGEgYWJvcnQgREZTQz0wYjExMTExMQ0K
-KwkgIHdpdGggYSBuZXcgb25lIHRvIGlnbm9yZSB0aGlzIHVuZGVmaW5lZCBm
-YXVsdCwgd2hpY2ggd2lsbCBvbmx5IGFmZmVjdA0KKwkgIHRoZSBGdWppdHN1
-LUE2NEZYLg0KKw0KKwkgIElmIHVuc3VyZSwgc2F5IFkuDQorDQogZW5kbWVu
-dQ0KIA0KIA0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvaW5jbHVkZS9hc20v
-Y3B1dHlwZS5oIGIvYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9jcHV0eXBlLmgN
-CmluZGV4IDk1MWVkMWEuLjE2NmFhNTAgMTAwNjQ0DQotLS0gYS9hcmNoL2Fy
-bTY0L2luY2x1ZGUvYXNtL2NwdXR5cGUuaA0KKysrIGIvYXJjaC9hcm02NC9p
-bmNsdWRlL2FzbS9jcHV0eXBlLmgNCkBAIC03Niw2ICs3Niw3IEBADQogI2Rl
-ZmluZSBBUk1fQ1BVX0lNUF9CUkNNCQkweDQyDQogI2RlZmluZSBBUk1fQ1BV
-X0lNUF9RQ09NCQkweDUxDQogI2RlZmluZSBBUk1fQ1BVX0lNUF9OVklESUEJ
-CTB4NEUNCisjZGVmaW5lIEFSTV9DUFVfSU1QX0ZVSklUU1UJCTB4NDYNCiAN
-CiAjZGVmaW5lIEFSTV9DUFVfUEFSVF9BRU1fVjgJCTB4RDBGDQogI2RlZmlu
-ZSBBUk1fQ1BVX1BBUlRfRk9VTkRBVElPTgkJMHhEMDANCkBAIC0xMDQsNiAr
-MTA1LDggQEANCiAjZGVmaW5lIE5WSURJQV9DUFVfUEFSVF9ERU5WRVIJCTB4
-MDAzDQogI2RlZmluZSBOVklESUFfQ1BVX1BBUlRfQ0FSTUVMCQkweDAwNA0K
-IA0KKyNkZWZpbmUgRlVKVElTVV9DUFVfUEFSVF9BNjRGWAkJMHgwMDENCisN
-CiAjZGVmaW5lIE1JRFJfQ09SVEVYX0E1MyBNSURSX0NQVV9NT0RFTChBUk1f
-Q1BVX0lNUF9BUk0sIEFSTV9DUFVfUEFSVF9DT1JURVhfQTUzKQ0KICNkZWZp
-bmUgTUlEUl9DT1JURVhfQTU3IE1JRFJfQ1BVX01PREVMKEFSTV9DUFVfSU1Q
-X0FSTSwgQVJNX0NQVV9QQVJUX0NPUlRFWF9BNTcpDQogI2RlZmluZSBNSURS
-X0NPUlRFWF9BNzIgTUlEUl9DUFVfTU9ERUwoQVJNX0NQVV9JTVBfQVJNLCBB
-Uk1fQ1BVX1BBUlRfQ09SVEVYX0E3MikNCkBAIC0xMjIsNiArMTI1LDcgQEAN
-CiAjZGVmaW5lIE1JRFJfUUNPTV9LUllPIE1JRFJfQ1BVX01PREVMKEFSTV9D
-UFVfSU1QX1FDT00sIFFDT01fQ1BVX1BBUlRfS1JZTykNCiAjZGVmaW5lIE1J
-RFJfTlZJRElBX0RFTlZFUiBNSURSX0NQVV9NT0RFTChBUk1fQ1BVX0lNUF9O
-VklESUEsIE5WSURJQV9DUFVfUEFSVF9ERU5WRVIpDQogI2RlZmluZSBNSURS
-X05WSURJQV9DQVJNRUwgTUlEUl9DUFVfTU9ERUwoQVJNX0NQVV9JTVBfTlZJ
-RElBLCBOVklESUFfQ1BVX1BBUlRfQ0FSTUVMKQ0KKyNkZWZpbmUgTUlEUl9G
-VUpJVFNVX0E2NEZYIE1JRFJfQ1BVX01PREVMKEFSTV9DUFVfSU1QX0ZVSklU
-U1UsIEZVSlRJU1VfQ1BVX1BBUlRfQTY0RlgpDQogDQogI2lmbmRlZiBfX0FT
-U0VNQkxZX18NCiANCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L21tL2ZhdWx0
-LmMgYi9hcmNoL2FybTY0L21tL2ZhdWx0LmMNCmluZGV4IGVmYjdiMmMuLmM0
-NjViMmYgMTAwNjQ0DQotLS0gYS9hcmNoL2FybTY0L21tL2ZhdWx0LmMNCisr
-KyBiL2FyY2gvYXJtNjQvbW0vZmF1bHQuYw0KQEAgLTY2Niw2ICs2NjYsMjUg
-QEAgc3RhdGljIGludCBkb19zZWEodW5zaWduZWQgbG9uZyBhZGRyLCB1bnNp
-Z25lZCBpbnQgZXNyLCBzdHJ1Y3QgcHRfcmVncyAqcmVncykNCiAJcmV0dXJu
-IDA7DQogfQ0KIA0KK3N0YXRpYyBib29sIGRvX2JhZF9pZ25vcmVfZmlyc3Qg
-PSBGQUxTRTsNCitzdGF0aWMgaW50IGRvX2JhZF9pZ25vcmUodW5zaWduZWQg
-bG9uZyBhZGRyLCB1bnNpZ25lZCBpbnQgZXNyLCBzdHJ1Y3QgcHRfcmVncyAq
-cmVncykNCit7DQorCWlmIChkb19iYWRfaWdub3JlX2ZpcnN0ID09IFRSVUUp
-DQorCQlyZXR1cm4gMDsNCisJaWYgKGRvX2JhZF9pZ25vcmVfZmlyc3QgPT0g
-RkFMU0UpIHsNCisJCXVuc2lnbmVkIGludCBjdXJyZW50X2NwdV9taWRyID0g
-cmVhZF9jcHVpZF9pZCgpOw0KKwkJY29uc3Qgc3RydWN0IG1pZHJfcmFuZ2Ug
-ZnVqaXRzdV9hNjRmeF9taWRyX3JhbmdlID0gew0KKwkJCU1JRFJfRlVKSVRT
-VV9BNjRGWCwgTUlEUl9DUFVfVkFSX1JFVigwLCAwKSwgTUlEUl9DUFVfVkFS
-X1JFVigxLCAwKQ0KKwkJfTsNCisNCisJCWlmIChpc19taWRyX2luX3Jhbmdl
-KGN1cnJlbnRfY3B1X21pZHIsICZmdWppdHN1X2E2NGZ4X21pZHJfcmFuZ2Up
-ID09IFRSVUUpIHsNCisJCQlkb19iYWRfaWdub3JlX2ZpcnN0ID0gVFJVRTsN
-CisJCQlyZXR1cm4gMDsNCisJCX0NCisJfQ0KKwlyZXR1cm4gMTsgLyogImZh
-dWx0IiBzYW1lIGFzIGRvX2JhZCAqLw0KK30NCisNCiBzdGF0aWMgY29uc3Qg
-c3RydWN0IGZhdWx0X2luZm8gZmF1bHRfaW5mb1tdID0gew0KIAl7IGRvX2Jh
-ZCwJCVNJR0tJTEwsIFNJX0tFUk5FTCwJInR0YnIgYWRkcmVzcyBzaXplIGZh
-dWx0Igl9LA0KIAl7IGRvX2JhZCwJCVNJR0tJTEwsIFNJX0tFUk5FTCwJImxl
-dmVsIDEgYWRkcmVzcyBzaXplIGZhdWx0Igl9LA0KQEAgLTczMCw3ICs3NDks
-MTEgQEAgc3RhdGljIGludCBkb19zZWEodW5zaWduZWQgbG9uZyBhZGRyLCB1
-bnNpZ25lZCBpbnQgZXNyLCBzdHJ1Y3QgcHRfcmVncyAqcmVncykNCiAJeyBk
-b19iYWQsCQlTSUdLSUxMLCBTSV9LRVJORUwsCSJ1bmtub3duIDYwIgkJCX0s
-DQogCXsgZG9fYmFkLAkJU0lHS0lMTCwgU0lfS0VSTkVMLAkic2VjdGlvbiBk
-b21haW4gZmF1bHQiCQl9LA0KIAl7IGRvX2JhZCwJCVNJR0tJTEwsIFNJX0tF
-Uk5FTCwJInBhZ2UgZG9tYWluIGZhdWx0IgkJfSwNCisjaWZkZWYJQ09ORklH
-X0ZVSklUU1VfRVJSQVRVTV8wMTAwMDENCisJeyBkb19iYWRfaWdub3JlLAlT
-SUdLSUxMLCBTSV9LRVJORUwsCSJ1bmtub3duIDYzIgkJCX0sDQorI2Vsc2UN
-CiAJeyBkb19iYWQsCQlTSUdLSUxMLCBTSV9LRVJORUwsCSJ1bmtub3duIDYz
-IgkJCX0sDQorI2VuZGlmDQogfTsNCiANCiBpbnQgaGFuZGxlX2d1ZXN0X3Nl
-YShwaHlzX2FkZHJfdCBhZGRyLCB1bnNpZ25lZCBpbnQgZXNyKSANCi0tLQ0K
-DQpCZXN0IHJlZ2FyZHMsDQpMZWkgWmhhbmcNCnpoYW5nLmxlaUBqcC5mdWpp
-dHN1LmNvbQ0K
+
+
+On 17/01/2019 04:29, Bjorn Andersson wrote:
+> These patches extends the size cells of the soc bus and define the dma-ranges,
+> so that DMA allocations for devices with IOMMU attached will get valid IOVAs.
+> 
+> Changes since v3:
+> - Split patch in two
+> - Rewrote commit message from scratch
+> 
+> Bjorn Andersson (2):
+>    arm64: dts: qcom: sdm845: Increase address and size cells for soc
+>    arm64: dts: qcom: sdm845: Extend ranges and describe DMA space
+> 
+>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 301 ++++++++++++++-------------
+>   1 file changed, 151 insertions(+), 150 deletions(-)
+> 
+
+Thanks for the fix, finally managed to get both fastrpc and ufs working 
+together with iommu!
+
+
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
