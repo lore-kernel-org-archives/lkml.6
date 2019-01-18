@@ -2,126 +2,212 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7E8C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E22C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F16020823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:03:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4351C20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:04:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aU1RNtXI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="btomFqtr"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q8ilU4Va"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbfARLDp (ORCPT
+        id S1727271AbfARLEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:03:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39990 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfARLDp (ORCPT
+        Fri, 18 Jan 2019 06:04:23 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35541 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726919AbfARLEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:03:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4ACF260585; Fri, 18 Jan 2019 11:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547809424;
-        bh=PhjT21x99jC/rTs24SyBERZkJQM6E90FddkK6U6LlsQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aU1RNtXIFHOOrxfJWlmrS6kntKEy3PrcJQAO5/HLVI9Rkvze7ip6X4sWej7ZqtQfB
-         L0dDmA442FSPQizgl2hfcvGGAeEzKuR9HenaRKG249yty7lMmL+lS1oNctV1MAp3O0
-         k1z6Sqhk6b5SfPUlBli+vPfYrGVg8utSQyMiVwAo=
-Received: from [10.79.129.0] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3E7FB6055C;
-        Fri, 18 Jan 2019 11:03:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547809423;
-        bh=PhjT21x99jC/rTs24SyBERZkJQM6E90FddkK6U6LlsQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=btomFqtr28zFI9ZOzrC55JgNXBbfBN7n2m3JyKmL3y8XxJqPIJQ1kdprppIXV6N95
-         sDNVvtN6RdNtPYmKMi3gUwKtCVYewSm43Wg8KnfrlS0+ncOLvkrWT2s6bSFCOdn5f9
-         ssjAGjfnXXb/8MgfZ+eijBL79jSyuXIsIRShkeTU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3E7FB6055C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: Need help: how to locate failure from irq_chip subsystem
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-mm@kvack.org, linux-pm@vger.kernel.org,
-        kernelnewbies@kernelnewbies.org
-References: <CAOuPNLj4QzNDt0npZn2LhZTFgDNJ1CsWPw3=wvUuxnGtQW308g@mail.gmail.com>
- <bceb32be-d508-c2a4-fa81-ab8b90323d3f@codeaurora.org>
- <CAOuPNLiNtPFksCuZF_vL6+YuLG0i0umzQhMCyEN69h9tySn2Vw@mail.gmail.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <57ff3437-47b5-fe92-d576-084ce26aa5d8@codeaurora.org>
-Date:   Fri, 18 Jan 2019 16:33:38 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAOuPNLiNtPFksCuZF_vL6+YuLG0i0umzQhMCyEN69h9tySn2Vw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 18 Jan 2019 06:04:23 -0500
+Received: by mail-wm1-f68.google.com with SMTP id t200so4122261wmt.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 03:04:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=REsuoknvb/3a2B+SDLFUMAUKbWrBKWE0r2peyl8vGtg=;
+        b=Q8ilU4VaiYC5KjBHvv91+MzS+PG8Axat78nK4i7W+o5D98gCncPk87LRZh2li+zcQU
+         0IpLWpQ6zgDg5i2HMnZ5jGVUuRGvb+2+9i0nJInd/4NkOlb86PcL9UFjK/3Uj92aAIUT
+         dz4MbIlDrwI2vjcLH6e4cKZ636/X6uTk4fpvA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=REsuoknvb/3a2B+SDLFUMAUKbWrBKWE0r2peyl8vGtg=;
+        b=NX8yoxqxSpVXyY8sawAzCHBKadOz+e03TWI4LoRno8X3YsJiE0k7+AsQ4CJfpqr1wS
+         S66CdmIaLKkPxIH8VvWvzJbrspfb5F1pjLR1KtasvSwq1ol/eJvOAE1fe115KhwRIeGB
+         x93BEwVJqANv1/oNQzegU494a5+vQhM3moJNiP1u+MkKJLWeW4LGfUqOLeaVy/O357ap
+         hPar3REG8ng5gZTnu5cfkj2T/UpvJr8Eht+9IuFyRDnvu5Qkh000JvVgoK10Scj8arnm
+         O3vweJKP1CBKDztgXmvm88/Oe4IUNGNsImkzNcKKmTYrY/+lPtcHt3v0eYuqggtd0z8w
+         7JqA==
+X-Gm-Message-State: AJcUukfkqDA9ywSdMnZx+CdfVJwvKstMfAwwhkyOCyaECpXY1qHBtJDu
+        Q/fxF8nEfFt2Cb3ldSGJ7kC6tdP/LCw1fA==
+X-Google-Smtp-Source: ALg8bN5GjOjIRX+1e3K1hASeTLWxOxJCs1bsEEnHXwOlYW6vC7Xw++9fidSAyrAMIk3HAZAbkmOVIw==
+X-Received: by 2002:a7b:c5cc:: with SMTP id n12mr15364676wmk.149.1547809460341;
+        Fri, 18 Jan 2019 03:04:20 -0800 (PST)
+Received: from [192.168.0.101] (146-241-71-93.dyn.eolo.it. [146.241.71.93])
+        by smtp.gmail.com with ESMTPSA id u204sm69011822wmu.30.2019.01.18.03.04.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 03:04:19 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <20190118103127.325-1-righi.andrea@gmail.com>
+Date:   Fri, 18 Jan 2019 12:04:17 +0100
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E5872191-EE96-442E-B668-DD148157E665@linaro.org>
+References: <20190118103127.325-1-righi.andrea@gmail.com>
+To:     Andrea Righi <righi.andrea@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/2019 4:18 PM, Pintu Agarwal wrote:
-> On Fri, Jan 18, 2019 at 3:54 PM Sai Prakash Ranjan
-> <saiprakash.ranjan@codeaurora.org> wrote:
->>
->> Hi Pintu-san,
->>
->> On 1/18/2019 3:38 PM, Pintu Agarwal wrote:
->>> Hi All,
->>>
->>> Currently, I am trying to debug a boot up crash on some qualcomm
->>> snapdragon arm64 board with kernel 4.9.
->>> I could find the cause of the failure, but I am unable to locate from
->>> which subsystem/drivers this is getting triggered.
->>> If you have any ideas or suggestions to locate the issue, please let me know.
->>>
->>> This is the snapshot of crash logs:
->>> [    6.907065] Unable to handle kernel NULL pointer dereference at
->>> virtual address 00000000
->>> [    6.973938] PC is at 0x0
->>> [    6.976503] LR is at __ipipe_ack_fasteoi_irq+0x28/0x38
->>> [    7.151078] Process qmp_aop (pid: 24, stack limit = 0xfffffffbedc18000)
->>> [    7.242668] [<          (null)>]           (null)
->>> [    7.247416] [<ffffff9469f8d2e0>] __ipipe_dispatch_irq+0x78/0x340
->>> [    7.253469] [<ffffff9469e81564>] __ipipe_grab_irq+0x5c/0xd0
->>> [    7.341538] [<ffffff9469e81d68>] gic_handle_irq+0xc0/0x154
->>>
->>> [    6.288581] [PINTU]: __ipipe_ack_fasteoi_irq - called
->>> [    6.293698] [PINTU]: __ipipe_ack_fasteoi_irq:
->>> desc->irq_data.chip->irq_hold is NULL
->>>
->>> When I check, I found that the irq_hold implementation is missing in
->>> one of the irq_chip driver (expected by ipipe), which I am supposed to
->>> implement.
->>>
->>> But I am unable to locate which irq_chip driver.
->>> If there are any good techniques to locate this in kernel, please help.
->>>
->>
->> Could you please tell which QCOM SoC this board is based on?
->>
-> 
-> Snapdragon 845 with kernel 4.9.x
-> I want to know from which subsystem it is triggered:drivers/soc/qcom/
-> 
 
-Irqchip driver is "drivers/irqchip/irq-gic-v3.c". The kernel you are 
-using is msm-4.9 I suppose or some other kernel?
 
-- Sai
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> Il giorno 18 gen 2019, alle ore 11:31, Andrea Righi =
+<righi.andrea@gmail.com> ha scritto:
+>=20
+> This is a redesign of my old cgroup-io-throttle controller:
+> https://lwn.net/Articles/330531/
+>=20
+> I'm resuming this old patch to point out a problem that I think is =
+still
+> not solved completely.
+>=20
+> =3D Problem =3D
+>=20
+> The io.max controller works really well at limiting synchronous I/O
+> (READs), but a lot of I/O requests are initiated outside the context =
+of
+> the process that is ultimately responsible for its creation (e.g.,
+> WRITEs).
+>=20
+> Throttling at the block layer in some cases is too late and we may end
+> up slowing down processes that are not responsible for the I/O that
+> is being processed at that level.
+>=20
+> =3D Proposed solution =3D
+>=20
+> The main idea of this controller is to split I/O measurement and I/O
+> throttling: I/O is measured at the block layer for READS, at page =
+cache
+> (dirty pages) for WRITEs, and processes are limited while they're
+> generating I/O at the VFS level, based on the measured I/O.
+>=20
+
+Hi Andrea,
+what the about the case where two processes are dirtying the same
+pages?  Which will be charged?
+
+Thanks,
+Paolo
+
+> =3D Example =3D
+>=20
+> Here's a trivial example: create 2 cgroups, set an io.max limit of
+> 10MB/s, run a write-intensive workload on both and after a while, from =
+a
+> root cgroup, run "sync".
+>=20
+> # cat /proc/self/cgroup
+> 0::/cg1
+> # fio --rw=3Dwrite --bs=3D1M --size=3D32M --numjobs=3D16 --name=3Dseeker=
+ --time_based --runtime=3D30
+>=20
+> # cat /proc/self/cgroup
+> 0::/cg2
+> # fio --rw=3Dwrite --bs=3D1M --size=3D32M --numjobs=3D16 --name=3Dseeker=
+ --time_based --runtime=3D30
+>=20
+> - io.max controller:
+>=20
+> # echo "259:0 rbps=3D10485760 wbps=3D10485760" > =
+/sys/fs/cgroup/unified/cg1/io.max
+> # echo "259:0 rbps=3D10485760 wbps=3D10485760" > =
+/sys/fs/cgroup/unified/cg2/io.max
+>=20
+> # cat /proc/self/cgroup
+> 0::/
+> # time sync
+>=20
+> real	0m51,241s
+> user	0m0,000s
+> sys	0m0,113s
+>=20
+> Ideally "sync" should complete almost immediately, because the root
+> cgroup is unlimited and it's not doing any I/O at all, but instead =
+it's
+> blocked for more than 50 sec with io.max, because the writeback is
+> throttled to satisfy the io.max limits.
+>=20
+> - fsio controller:
+>=20
+> # echo "259:0 10 10" > /sys/fs/cgroup/unified/cg1/fsio.max_mbs
+> # echo "259:0 10 10" > /sys/fs/cgroup/unified/cg2/fsio.max_mbs
+>=20
+> [you can find details about the syntax in the documentation patch]
+>=20
+> # cat /proc/self/cgroup
+> 0::/
+> # time sync
+>=20
+> real	0m0,146s
+> user	0m0,003s
+> sys	0m0,001s
+>=20
+> =3D Questions =3D
+>=20
+> Q: Do we need another controller?
+> A: Probably no, I think it would be better to integrate this policy =
+(or
+>   something similar) in the current blkio controller, this is just to
+>   highlight the problem and get some ideas on how to address it.
+>=20
+> Q: What about proportional limits / latency?
+> A: It should be trivial to add latency-based limits if we integrate =
+this in the
+>   current I/O controller. About proportional limits (weights), they're
+>   strictly related to I/O scheduling and since this controller doesn't =
+touch
+>   I/O dispatching policies it's not trivial to implement proportional =
+limits
+>   (bandwidth limiting is definitely more straightforward).
+>=20
+> Q: Applying delays at the VFS layer doesn't prevent I/O spikes during
+>   writeback, right?
+> A: Correct, the tradeoff here is to tolerate I/O bursts during =
+writeback to
+>   avoid priority inversion problems in the system.
+>=20
+> Andrea Righi (3):
+>  fsio-throttle: documentation
+>  fsio-throttle: controller infrastructure
+>  fsio-throttle: instrumentation
+>=20
+> Documentation/cgroup-v1/fsio-throttle.txt | 142 +++++++++
+> block/blk-core.c                          |  10 +
+> include/linux/cgroup_subsys.h             |   4 +
+> include/linux/fsio-throttle.h             |  43 +++
+> include/linux/writeback.h                 |   7 +-
+> init/Kconfig                              |  11 +
+> kernel/cgroup/Makefile                    |   1 +
+> kernel/cgroup/fsio-throttle.c             | 501 =
+++++++++++++++++++++++++++++++
+> mm/filemap.c                              |  20 +-
+> mm/page-writeback.c                       |  14 +-
+> 10 files changed, 749 insertions(+), 4 deletions(-)
+>=20
+
