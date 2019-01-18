@@ -2,151 +2,106 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE5AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E4DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5BF42086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C09CD2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:59:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="WE8UyWZL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfARI5m (ORCPT
+        id S1726741AbfARI7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:57:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37542 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725784AbfARI5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:57:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DBA63AC96;
-        Fri, 18 Jan 2019 08:57:39 +0000 (UTC)
-Subject: Re: [PATCH 15/25] mm, compaction: Finish pageblock scanning on
- contention
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-16-mgorman@techsingularity.net>
- <ab29ee0b-6b01-c57e-7d7d-de540f06ce07@suse.cz>
- <20190117171122.GK27437@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <aa34f8da-a592-48b2-9e86-32a9433d55ce@suse.cz>
-Date:   Fri, 18 Jan 2019 09:57:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 18 Jan 2019 03:59:21 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:24702 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbfARI7U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:59:20 -0500
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x0I8wwUk013659;
+        Fri, 18 Jan 2019 17:58:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x0I8wwUk013659
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547801939;
+        bh=7H8mp7prq3bqUVJ/R9LGUpDmJZhaqNOMZZ9Z29Z9Mcw=;
+        h=From:Date:Subject:To:Cc:From;
+        b=WE8UyWZLpgdL6TBbwl8Xp/y+B8jLGN5p3AyALNmPqUiq/H2RbPyFApOHsUT3LtkwA
+         K2tz5KO2jBQEARpFx2i+NBfy7hfQ77REY9M5fbvxzVIlp0m++ozvBNDmUzxRLmAOIc
+         oVSi9LCqN9HZzPlOpDRy4eQ/0IIxzcvdMpgTbP+wV32P0YD1qUyokpqi9Am1O5FQXx
+         LpawcfchHaAyizeQdeKKEiHl+ZvbsVqqoCyriD7I8uxczj8q5jOq4XGdeIvwDuctB0
+         y5dhTOCYspc+2Nk6JrSH6zTMO4qPkO0LOh1EzoWd6/8gqi+ChMyB+sBI8V8EJ8hZN5
+         rMEUY+FcSZ9iw==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id n10so7953759vso.13;
+        Fri, 18 Jan 2019 00:58:59 -0800 (PST)
+X-Gm-Message-State: AJcUukdSOb8+WwNgfRFeO7xOVpmqU1apks42su2biRf62Twp2CXjsJnO
+        a1iJfL+qH8dic/eGPzO/ijqFLCGcbnjwYiZRC4I=
+X-Google-Smtp-Source: ALg8bN5pETRJJL3xnpwWK11OpcMVEsb1VUJY6lWaIST+lSa79T8K7XL78OfxU3oMZzmIMrVZ7+1cg5nbqbWMa5WiDuc=
+X-Received: by 2002:a67:5f03:: with SMTP id t3mr7357030vsb.155.1547801938012;
+ Fri, 18 Jan 2019 00:58:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190117171122.GK27437@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 18 Jan 2019 17:58:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATyx5DtopKfkS4ge=6F7e16qjvOr_1XOTvCZqaZKnPwxQ@mail.gmail.com>
+Message-ID: <CAK7LNATyx5DtopKfkS4ge=6F7e16qjvOr_1XOTvCZqaZKnPwxQ@mail.gmail.com>
+Subject: [Question] What is the license of scripts/basic/fixdep.c ?
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kai Germaschewski <kai.germaschewski@gmx.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jiri Olsa <jolsa@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 6:11 PM, Mel Gorman wrote:
-> On Thu, Jan 17, 2019 at 05:38:36PM +0100, Vlastimil Babka wrote:
->> > rate but also by the fact that the scanners do not meet for longer when
->> > pageblocks are actually used. Overall this is justified and completing
->> > a pageblock scan is very important for later patches.
->> > 
->> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
->> 
->> Acked-by: Vlastimil Babka <vbabka@suse.cz>
->> 
->> Some comments below.
->> 
-> 
-> Thanks
-> 
->> > @@ -538,18 +535,8 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
->> >  		 * recheck as well.
->> >  		 */
->> >  		if (!locked) {
->> > -			/*
->> > -			 * The zone lock must be held to isolate freepages.
->> > -			 * Unfortunately this is a very coarse lock and can be
->> > -			 * heavily contended if there are parallel allocations
->> > -			 * or parallel compactions. For async compaction do not
->> > -			 * spin on the lock and we acquire the lock as late as
->> > -			 * possible.
->> > -			 */
->> > -			locked = compact_trylock_irqsave(&cc->zone->lock,
->> > +			locked = compact_lock_irqsave(&cc->zone->lock,
->> >  								&flags, cc);
->> > -			if (!locked)
->> > -				break;
->> 
->> Seems a bit dangerous to continue compact_lock_irqsave() to return bool that
->> however now always returns true, and remove the safety checks that test the
->> result. Easy for somebody in the future to reintroduce some 'return false'
->> condition (even though the name now says lock and not trylock) and start
->> crashing. I would either change it to return void, or leave the checks in place.
->> 
-> 
-> I considered changing it from bool at the same time as "Rework
-> compact_should_abort as compact_check_resched". It turned out to be a
-> bit clumsy because the locked state must be explicitly updated in the
-> caller then. e.g.
-> 
-> locked = compact_lock_irqsave(...)
-> 
-> becomes
-> 
-> compact_lock_irqsave(...)
-> locked = true
-> 
-> I didn't think the result looked that great to be honest but maybe it's
-> worth revisiting as a cleanup patch like "Rework compact_should_abort as
-> compact_check_resched" on top.
-> 
->> > 
->> > @@ -1411,12 +1395,8 @@ static void isolate_freepages(struct compact_control *cc)
->> >  		isolate_freepages_block(cc, &isolate_start_pfn, block_end_pfn,
->> >  					freelist, false);
->> >  
->> > -		/*
->> > -		 * If we isolated enough freepages, or aborted due to lock
->> > -		 * contention, terminate.
->> > -		 */
->> > -		if ((cc->nr_freepages >= cc->nr_migratepages)
->> > -							|| cc->contended) {
->> 
->> Does it really make sense to continue in the case of free scanner, when we know
->> we will just return back the extra pages in the end? release_freepages() will
->> update the cached pfns, but the pageblock skip bit will stay, so we just leave
->> those pages behind. Unless finishing the block is important for the later
->> patches (as changelog mentions) even in the case of free scanner, but then we
->> can just skip the rest of it, as truly scanning it can't really help anything?
->> 
-> 
-> Finishing is important for later patches is one factor but not the only
-> factor. While we eventually return all pages, we do not know at this
-> point in time how many free pages are needed. Remember the migration
-> source isolates COMPACT_CLUSTER_MAX pages and then looks for migration
-> targets.  If the source isolates 32 pages, free might isolate more from
-> one pageblock but that's ok as the migration source may need more free
-> pages in the immediate future. It's less wasteful than it looks at first
-> glance (or second or even third glance).
-> 
-> However, if we isolated exactly enough targets, and the pageblock gets
-> marked skipped, then each COMPACT_CLUSTER_MAX isolation from the target
-> could potentially marge one new pageblock unnecessarily and increase
-> scanning+resets overall. That would be bad.
-> 
-> There still can be waste because we do not know in advance exactly how
-> many migration sources there will be -- sure, we could calculate it but
-> that involves scanning the source pageblock twice which is wasteful.
-> I did try estimating it based on the remaining number of pages in the
-> pageblock but the additional complexity did not appear to help.
-> 
-> Does that make sense?
+Hi.
 
-OK, thanks.
 
+The comment block of scripts/basic/fixdep.c says as follows:
+
+
+ * Author       Kai Germaschewski
+ * Copyright    2002 by Kai Germaschewski  <kai.germaschewski@gmx.de>
+ *
+ * This software may be used and distributed according to the terms
+ * of the GNU General Public License, incorporated herein by reference.
+
+
+
+It does not explicitly mention the version of GPL.
+
+In this case, I think the corresponding SPDX tag
+is GPL-1.0+ instead of GPL-2.0
+
+Is this correct?
+
+
+
+There could be another problem regarding of this.
+
+
+
+Commit 9f7ef9854e80 copied scripts/basic/fixdep.c
+to tools/build/fixdep.c, but it ripped off its license term.
+
+Later, it was tagged as GPL-2.0 by b24413180
+
+See 'git show  b24413180 -- tools/build/fixdep.c'
+
+
+Maybe tools/build/fixdep.c should be corrected to GPL-1.0+ ?
+
+
+-- 
+Best Regards
+Masahiro Yamada
