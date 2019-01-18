@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6904CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E07C4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BA7720883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB58B2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfAROvs (ORCPT
+        id S1727938AbfAROvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:51:48 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47903 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:51:50 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47927 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727735AbfAROvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727517AbfAROvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 09:51:45 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7588A20BA8; Fri, 18 Jan 2019 15:51:42 +0100 (CET)
+        id 31A4820C58; Fri, 18 Jan 2019 15:51:43 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 24EB120955;
+        by mail.bootlin.com (Postfix) with ESMTPSA id A41A120BCD;
         Fri, 18 Jan 2019 15:51:42 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 05/23] drm/sun4i: frontend: Determine input format based on colorspace
-Date:   Fri, 18 Jan 2019 15:51:15 +0100
-Message-Id: <20190118145133.21281-6-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 07/23] drm/sun4i: frontend: Configure and enable YUV to RGB CSC when needed
+Date:   Fri, 18 Jan 2019 15:51:17 +0100
+Message-Id: <20190118145133.21281-8-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,43 +48,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since all the RGB input formats have the same value for the DATA_FMT
-field of the INPUT_FMT register, we can group them when the format is
-known to be RGB. Here, we assume that a non-YUV format is RGB, because
-the hardware does not support any other colorspace than RGB and YUV.
+In prevision of adding support for YUV formats, set the YUV to RGB
+colorspace conversion coefficients if required and don't bypass the
+CSC engine when converting.
 
-Use the DRM format info structure to check whether the format uses a
-YUV colorspace.
+The BT601 coefficients from the A33 BSP are copied over from the backend
+code. Because of module inter-dependency, we can't have the frontend use
+these coefficients from the backend directly.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 23 +++++++++++++++++++++--
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  2 ++
+ 2 files changed, 23 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index dd5af3019099..7c7a5ea0cf58 100644
+index 045013efdc57..bf37a4ea81c5 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -108,14 +108,12 @@ static int
- sun4i_frontend_drm_format_to_input_fmt(const struct drm_format_info *format,
- 				       u32 *val)
- {
--	switch (format->format) {
--	case DRM_FORMAT_XRGB8888:
-+	if (!format->is_yuv)
- 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
--		return 0;
--
--	default:
-+	else
- 		return -EINVAL;
--	}
-+
-+	return 0;
- }
+@@ -213,6 +213,8 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 	const struct drm_format_info *format = fb->format;
+ 	u32 out_fmt_val;
+ 	u32 in_fmt_val, in_mod_val, in_ps_val;
++	unsigned int i;
++	u32 bypass;
+ 	int ret;
  
- static int
+ 	ret = sun4i_frontend_drm_format_to_input_fmt(format, &in_fmt_val);
+@@ -250,9 +252,26 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE1_REG, 0x400);
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE1_REG, 0x400);
+ 
++	/*
++	 * Checking the input format is sufficient since we currently only
++	 * support RGB output formats to the backend. If YUV output formats
++	 * ever get supported, an YUV input and output would require bypassing
++	 * the CSC engine too.
++	 */
++	if (format->is_yuv) {
++		/* Setup the CSC engine for YUV to RGB conversion. */
++		bypass = 0;
++
++		for (i = 0; i < ARRAY_SIZE(sunxi_bt601_yuv2rgb_coef); i++)
++			regmap_write(frontend->regs,
++				     SUN4I_FRONTEND_CSC_COEF_REG(i),
++				     sunxi_bt601_yuv2rgb_coef[i]);
++	} else {
++		bypass = SUN4I_FRONTEND_BYPASS_CSC_EN;
++	}
++
+ 	regmap_update_bits(frontend->regs, SUN4I_FRONTEND_BYPASS_REG,
+-			   SUN4I_FRONTEND_BYPASS_CSC_EN,
+-			   SUN4I_FRONTEND_BYPASS_CSC_EN);
++			   SUN4I_FRONTEND_BYPASS_CSC_EN, bypass);
+ 
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_INPUT_FMT_REG,
+ 		     in_mod_val | in_fmt_val | in_ps_val);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index 3df2bd8a7a95..17b46ecf7d9e 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -35,6 +35,8 @@
+ #define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_BGRX8888	1
+ #define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_XRGB8888	2
+ 
++#define SUN4I_FRONTEND_CSC_COEF_REG(c)		(0x070 + (0x4 * (c)))
++
+ #define SUN4I_FRONTEND_CH0_INSIZE_REG		0x100
+ #define SUN4I_FRONTEND_INSIZE(h, w)			((((h) - 1) << 16) | (((w) - 1)))
+ 
 -- 
 2.20.1
 
