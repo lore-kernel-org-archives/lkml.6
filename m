@@ -2,212 +2,295 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71107C1B0FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5DAC1B0FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 294D92054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56F812054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:31:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="S9Vm3z4B"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gRBg6j3m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730009AbfARW3V (ORCPT
+        id S1730026AbfARWbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 17:29:21 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38503 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729932AbfARW3U (ORCPT
+        Fri, 18 Jan 2019 17:31:05 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41336 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729932AbfARWbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 17:29:20 -0500
-Received: by mail-ot1-f65.google.com with SMTP id e12so15829198otl.5;
-        Fri, 18 Jan 2019 14:29:19 -0800 (PST)
+        Fri, 18 Jan 2019 17:31:05 -0500
+Received: by mail-pl1-f195.google.com with SMTP id u6so6925395plm.8
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 14:31:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xuPmhton+yX3VA6muOEeXBbfE8RTlQObRyhUQXHiKAI=;
-        b=S9Vm3z4BNCRj2UH7sKeYVNcKp749mkNvbKeIajajDIMj3p6qhIL8/xZ9wGNqq8rQHI
-         9cOgtQliDJKqYfxcb+bWc5xKVrqdjtegGvDFwUnoqK23PliOwg0LEeaI8tt+vGKSkXiD
-         dWf1kCtRn7nPdyMENuhdZlZFRKjeQGuIVQUxrZRN2EHYbtRCYh19JXf9kbgqXzfmNCX/
-         BbqGcNCwbg92n7WMHGmWEv+O6xy3YvlU0D2vJua0R0aaoY4P0rFOM7R592fWXHXhBr8W
-         cDvlB6wCTETA8hqyuN3c2VgOcawyaWtGFr9BLwjhLb7GwQHaiXc2VBBEC4ledKEY71R8
-         6AFw==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:user-agent
+         :in-reply-to:references:cc:to:message-id:from:date;
+        bh=Lon7pxiXPK4Kc0hwgz6kpt12oRXb/iCf600j1lywq3c=;
+        b=gRBg6j3m0ToSCYrx2rFR/n3GHZXlgDwjrTpn5F3CL5vCC5W7kWHhdM9NmE1w6ktyOT
+         yzgotACoGUHMN6cCrBc+mdzEpT+RkJ58NrXmx6GSKVlsbsxAn3D5eNJ8lsseZmMEAmo+
+         ZjcVLkWhv+HHm263JTTkAlhjM52uAzGKkV9g4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xuPmhton+yX3VA6muOEeXBbfE8RTlQObRyhUQXHiKAI=;
-        b=NKq/689Y6kSCItqOVP6AAomQe+isbQsBI2twVV8T/TyiBgE7uuqOUQ0W1Zwj2rLWpv
-         1Hr4duQIy32+8/t0hmtVbjS0bT/DrRnc10NuJfLOMMZVvw7SQ7A/6+amVKgcf8U1718L
-         /lN/mUZp/GPWhzEtm4PTRsn/3u9ieMKVbv7zX5Zf6IzWWUIlS2q0FGFBw1SuJuv8ZENS
-         NfbBB0tKma0fPtTvqUkz5JHvUMRM2ikzLc6HmTOGaOHm7muD4YKnLXvYyZSJDAn1j1J7
-         25dmMe+TZh2VsZOWY3LUCntyqdzX6cF+qzr8TZCgitcA3jVjDKZY6OlAQZBSxRACol/v
-         CtbA==
-X-Gm-Message-State: AJcUukcnlzcJ+V04/+nYZBuAQ1z7fdGgoajYFTqqTd+DAacrqIWYlng2
-        4m6C7WPVjwjv7nC28KmhAcY80dNd6n+7UcOX2TgThIfL
-X-Google-Smtp-Source: ALg8bN4d5HjHdtfOJ/6DIUBXOrk78hsXNjOMxJAiSXWGu4Ke5iRldaWx9dI1JkQakC2EzKqnce2wIn/ZBnn53shz6Vs=
-X-Received: by 2002:a9d:a48:: with SMTP id 66mr12962970otg.308.1547850559350;
- Fri, 18 Jan 2019 14:29:19 -0800 (PST)
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
+        bh=Lon7pxiXPK4Kc0hwgz6kpt12oRXb/iCf600j1lywq3c=;
+        b=TMGJPwI1rE4qOAUX/V2fN7Xr3z/mqhv0c6cn634BElgcCni3OXHDkGFgH9U4TFtwUS
+         p+cf+QScMLRniCamkkdzWIpTTF/nefZN36LPYfHNvOktNek/9gs7Tj0dRUfCKQFsbgk9
+         l3czFkYWTbWRHC4UIfFwV/8/PzPiuHZDDZOIwRj2Cy5AAjqbQB2Q0Ng2Gm+xW1gLEf8H
+         t4DHntdxJQ+FmWDJFSJynHGmcvZbEFXMj9FaM1nttSmawYlRtdLFhNzsB5WMeiYYsPz2
+         UrOAyCAA4IEyZNwasfO02L6puadxLbEtUTP6PD0fudufMU+sfDZWIzjEhbFbkZRkQJ8l
+         hHJw==
+X-Gm-Message-State: AJcUukdNdFXTkDuKKoSEf1LgrJGalaKp2mwqENeiVf5Orizsad+zdQU0
+        UWhILR9bLRNIx5LHvdNeYXfMkQ==
+X-Google-Smtp-Source: ALg8bN4t4omHQH9yqQ2q8Vu4vhtCNFGKgG8FYNlBVyIwSVydI+MLw1JI5+xV342K1Y0J9CSe0sBZzQ==
+X-Received: by 2002:a17:902:4222:: with SMTP id g31mr20741577pld.240.1547850664015;
+        Fri, 18 Jan 2019 14:31:04 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id n21sm8538958pfg.84.2019.01.18.14.31.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 14:31:03 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190113181808.5768-1-linux.amoon@gmail.com>
-In-Reply-To: <20190113181808.5768-1-linux.amoon@gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 18 Jan 2019 23:29:08 +0100
-Message-ID: <CAFBinCCD4o0cXEht_7bgV6moCK2WfVRvZq8UUZD3gDo-TaRKbQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: meson8b: odroidc1: Enable usb phy node
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Emiliano Ingrassia <ingrassia@epigenesys.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 5/8] scsi: ufs: qcom: Expose the reset controller for PHY
+User-Agent: alot/0.8
+In-Reply-To: <20190111230129.127037-6-evgreen@chromium.org>
+References: <20190111230129.127037-1-evgreen@chromium.org> <20190111230129.127037-6-evgreen@chromium.org>
+Cc:     Can Guo <cang@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <andy.gross@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+Message-ID: <154785066196.169631.9228316876601255899@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Fri, 18 Jan 2019 14:31:01 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anand,
+Quoting Evan Green (2019-01-11 15:01:26)
+> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> index 3aeadb14aae1e..db46f9a64b54c 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.c
+> +++ b/drivers/scsi/ufs/ufs-qcom.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/phy/phy.h>
+> +#include <linux/reset.h>
 
-thank you for this patch!
+Shouldn't this be <linux/reset-controller.h>?
 
-On Sun, Jan 13, 2019 at 7:18 PM Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Add missing vbus-supply link to phy controller for usb_phy0
-> and usb_phy1 nodes, this changes fixed the power issue
-> on usb ports usb, changes help fix usb reset warning.
-I trust you on the fact that GPIOAO_5 controls VBUS of USB0 and USB1
+> =20
+>  #include "ufshcd.h"
+>  #include "ufshcd-pltfrm.h"
+> @@ -255,11 +261,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba=
+ *hba)
+>         if (is_rate_B)
+>                 phy_set_mode(phy, PHY_MODE_UFS_HS_B);
+> =20
+> -       /* Assert PHY reset and apply PHY calibration values */
+> -       ufs_qcom_assert_reset(hba);
+> -       /* provide 1ms delay to let the reset pulse propagate */
+> -       usleep_range(1000, 1100);
+> -
+>         /* phy initialization - calibrate the phy */
+>         ret =3D phy_init(phy);
+>         if (ret) {
+> @@ -268,15 +269,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba=
+ *hba)
+>                 goto out;
+>         }
+> =20
+> -       /* De-assert PHY reset and start serdes */
+> -       ufs_qcom_deassert_reset(hba);
+> -
+> -       /*
+> -        * after reset deassertion, phy will need all ref clocks,
+> -        * voltage, current to settle down before starting serdes.
+> -        */
+> -       usleep_range(1000, 1100);
+> -
+>         /* power on phy - start serdes and phy's power and clocks */
+>         ret =3D phy_power_on(phy);
+>         if (ret) {
+> @@ -290,7 +282,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba =
+*hba)
+>         return 0;
+> =20
+>  out_disable_phy:
+> -       ufs_qcom_assert_reset(hba);
+>         phy_exit(phy);
+>  out:
+>         return ret;
+> @@ -554,21 +545,10 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, en=
+um ufs_pm_op pm_op)
+>                 ufs_qcom_disable_lane_clks(host);
+>                 phy_power_off(phy);
+> =20
+> -               /* Assert PHY soft reset */
+> -               ufs_qcom_assert_reset(hba);
+> -               goto out;
+> -       }
+> -
+> -       /*
+> -        * If UniPro link is not active, PHY ref_clk, main PHY analog pow=
+er
+> -        * rail and low noise analog power rail for PLL can be switched o=
+ff.
 
-to me the schematics are not 100% clear or I'm bad at interpreting them:
-- I'll refer to odroid-c1+_rev0.4_20150615.pdf
-- page 1 lists GPIOAO.BIT5 as input for the PWREN signal of the
-USB_OTG controller (usb0)
-- page 1 also shows a PWREN signal in the USB_HOST controller (usb1)
-but not it's input
-- based on your patch I assume that PWREN is the same signal for both
-USB controllers
+We lost this comment?
 
-> [  821.991470] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> [  825.243385] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> [  828.151310] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> [  830.991241] usb 1-1.2: reset high-speed USB device number 3 using dwc2
->
-> Fixes: 2eb79a4d15ff (ARM: dts: meson: enabling the USB Host controller on Odroid-C1/C1+ board)
-you already split your original patch into two, however I suggest
-splitting these patches differently:
-- this one (personally I would choose "ARM: dts: meson8b: odroidc1:
-fix USB VBUS supplies" as title), which contains the Fixes tag, adds
-the "usb_vbus" and references it in the "usb0" and "usb1" nodes
-- enables usb0_phy and usb0 as part of your second patch (I would call
-that "ARM: dts: meson8b: odroidc1: enable the OTG capable USB
-controller")
+> -        */
+> -       if (!ufs_qcom_is_link_active(hba)) {
+> +       } else if (!ufs_qcom_is_link_active(hba)) {
+>                 ufs_qcom_disable_lane_clks(host);
+> -               phy_power_off(phy);
 
-> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> Rebased on Kevin's amlogic/v5.0/fixes branch
->
-> [alarm@archl-c1t ~]$ lsusb -t
-> /:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=dwc2/1p, 480M
->     |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/4p, 480M
->         |__ Port 1: Dev 4, If 0, Class=Mass Storage, Driver=usb-storage, 480M
->         |__ Port 3: Dev 3, If 0, Class=Video, Driver=uvcvideo, 480M
->         |__ Port 3: Dev 3, If 1, Class=Video, Driver=uvcvideo, 480M
->         |__ Port 3: Dev 3, If 2, Class=Audio, Driver=snd-usb-audio, 480M
->         |__ Port 3: Dev 3, If 3, Class=Audio, Driver=snd-usb-audio, 480M
-> [alarm@archl-c1t ~]$
-> [alarm@archl-c1t ~]$ lsusb -v|egrep "^Bus|MaxPower"
-> Couldn't open device, some information will be missing
-> Bus 001 Device 003: ID 1b71:0056 Fushicai
->     MaxPower              500mA
-> Couldn't open device, some information will be missing
-> Bus 001 Device 004: ID 152d:0578 JMicron Technology Corp. / JMicron USA Technology Corp. JMS567 SATA 6Gb/s bridge
->     MaxPower               30mA
-> Couldn't open device, some information will be missing
-> Couldn't open device, some information will be missing
-> Bus 001 Device 002: ID 05e3:0610 Genesys Logic, Inc. 4-port hub
->     MaxPower              100mA
-> Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
->     MaxPower                0mA
-> ---
->  arch/arm/boot/dts/meson8b-odroidc1.dts | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
-> index 0f0a46ddf3ff..a49a8509b288 100644
-> --- a/arch/arm/boot/dts/meson8b-odroidc1.dts
-> +++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
-> @@ -83,6 +83,19 @@
->                 regulator-max-microvolt = <5000000>;
->         };
->
-> +       usb_vbus: regulator-usb-vbus {
-please add a comment here with some details about the regulator and
-add a hint that the signal in the schematics is called "PWREN"
+And now this looks similar to the above if statement, so can they be
+combined?
 
-> +               compatible = "regulator-fixed";
+> =20
+> -out:
+>         return ret;
+>  }
+> =20
+> @@ -578,21 +558,26 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enu=
+m ufs_pm_op pm_op)
+>         struct phy *phy =3D host->generic_phy;
+>         int err;
+> =20
+> -       err =3D phy_power_on(phy);
+> -       if (err) {
+> -               dev_err(hba->dev, "%s: failed enabling regs, err =3D %d\n=
+",
+> -                       __func__, err);
+> -               goto out;
+> -       }
+> +       if (ufs_qcom_is_link_off(hba)) {
+> +               err =3D phy_power_on(phy);
+> +               if (err) {
+> +                       dev_err(hba->dev, "%s: failed enabling regs, err =
+=3D %d\n",
+
+Not a problem with this translation, but I would expect this error to
+say something more like 'failed to power on phy' instead of 'enabling
+regs'.
+
+> +                               __func__, err);
+> +                       return err;
+> +               }
+> =20
+> -       err =3D ufs_qcom_enable_lane_clks(host);
+> -       if (err)
+> -               goto out;
+> +               err =3D ufs_qcom_enable_lane_clks(host);
+> +               if (err)
+> +                       return err;
+> =20
+> -       hba->is_sys_suspended =3D false;
+> +       } else if (!ufs_qcom_is_link_active(hba)) {
+> +               err =3D ufs_qcom_enable_lane_clks(host);
+> +               if (err)
+> +                       return err;
+> +       }
+> =20
+> -out:
+> -       return err;
+> +       hba->is_sys_suspended =3D false;
+> +       return 0;
+>  }
+> =20
+>  struct ufs_qcom_dev_params {
+> @@ -1118,8 +1103,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hb=
+a, bool on,
+>                 return 0;
+> =20
+>         if (on && (status =3D=3D POST_CHANGE)) {
+> -               phy_power_on(host->generic_phy);
+> -
+
+How is it ok to remove this call here?
+
+>                 /* enable the device ref clock for HS mode*/
+>                 if (ufshcd_is_hs_mode(&hba->pwr_info))
+>                         ufs_qcom_dev_ref_clk_ctrl(host, true);
+> @@ -1131,9 +1114,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hb=
+a, bool on,
+>                 if (!ufs_qcom_is_link_active(hba)) {
+>                         /* disable device ref_clk */
+>                         ufs_qcom_dev_ref_clk_ctrl(host, false);
+> -
+> -                       /* powering off PHY during aggressive clk gating =
+*/
+> -                       phy_power_off(host->generic_phy);
+
+And here?
+
+>                 }
+> =20
+>                 vote =3D host->bus_vote.min_bw_vote;
+> @@ -1147,6 +1127,39 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *h=
+ba, bool on,
+>         return err;
+>  }
+> =20
+> +static int
+> +ufs_qcom_reset_assert(struct reset_controller_dev *rcdev, unsigned long =
+id)
+> +{
+> +       struct ufs_qcom_host *host =3D rcdev_to_ufs_host(rcdev);
 > +
-> +               regulator-name = "USB_VBUS";
-> +               regulator-min-microvolt = <5000000>;
-> +               regulator-max-microvolt = <5000000>;
+> +       WARN_ON(id);
+
+Nitpick: Add a comment explaining that there's only one reset expected?
+
+> +       ufs_qcom_assert_reset(host->hba);
+> +       /* provide 1ms delay to let the reset pulse propagate */
+> +       usleep_range(1000, 1100);
+> +       return 0;
+> +}
 > +
-> +               vin-supply = <&p5v0>;
+> +static int
+> +ufs_qcom_reset_deassert(struct reset_controller_dev *rcdev, unsigned lon=
+g id)
+> +{
+> +       struct ufs_qcom_host *host =3D rcdev_to_ufs_host(rcdev);
 > +
-> +               gpio = <&gpio_ao GPIOAO_5 GPIO_ACTIVE_HIGH>;
-> +               enable-active-high;
-> +       };
+> +       WARN_ON(id);
+
+Same nitpick.
+
+> +       ufs_qcom_deassert_reset(host->hba);
 > +
->         tflash_vdd: regulator-tflash_vdd {
->                 /*
->                  * signal name from schematics: TFLASH_VDD_EN
-> @@ -293,8 +306,18 @@
->         pinctrl-names = "default";
->  };
->
-> +&usb0_phy {
-> +       status = "okay";
-> +       vbus-supply = <&usb_vbus>;
+> +       /*
+> +        * after reset deassertion, phy will need all ref clocks,
+> +        * voltage, current to settle down before starting serdes.
+> +        */
+> +       usleep_range(1000, 1100);
+> +       return 0;
+> +}
+> +
+> +const struct reset_control_ops ufs_qcom_reset_ops =3D {
+
+Can it be static?
+
+> +       .assert =3D ufs_qcom_reset_assert,
+> +       .deassert =3D ufs_qcom_reset_deassert,
 > +};
 > +
->  &usb1_phy {
->         status = "okay";
-> +       vbus-supply = <&usb_vbus>;
-> +};
-> +
-> +&usb0 {
-> +       status = "okay";
->  };
-I believe there's a problem with the usb/usb_phy nodes here. on my
-Odroid-C1 this results in:
-# cat /sys/kernel/debug/regulator/regulator_summary | grep USB_VBUS
-   USB_VBUS                      0    0      0 unknown  5000mV     0mA
- 5000mV  5000mV
-(open count is 0)
-
-if I move "vbus-supply" to the "usb1" node (just as an example) then I get:
-# cat /sys/kernel/debug/regulator/regulator_summary | grep USB_VBUS
-   USB_VBUS                      1    1      0 unknown  5000mV     0mA
- 5000mV  5000mV
-
-unfortunately neither your original patch nor the modified version
-seem to enable USB VBUS on my Odroid-C1.
-I have documented my findings already back in December, see "USB
-issues on Odroid-C1" [0]
-help on that would be highly appreciated :)
-
-on which board revision have you tested this patch?
-
-
-Regards
-Martin
-
-
-[0] http://lists.infradead.org/pipermail/linux-amlogic/2018-December/009451.html
+>  #define        ANDROID_BOOT_DEV_MAX    30
+>  static char android_boot_dev[ANDROID_BOOT_DEV_MAX];
+> =20
