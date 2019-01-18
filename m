@@ -2,83 +2,203 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AA3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F11CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD2D20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:06:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB1B320855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:06:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547805999;
+	bh=fHu+FdRCrwGokvR9MpNcl67V/HZ5A95FpaDxHSDemFM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=TKDg/Qk57kCCXAkLlBkiRXqXgGzPAP1kqkwua9VCFHlNmdSzCwc5G3Tzwvo2anFTF
+	 mtv+mr17w8SO4q/PNfkiH8vPPbJX12MjeCtnFFAJlbzUhj+iw7fXGmwF0EJj7P3+N9
+	 KGGaXtGFjOVUJVvYO7nvV+DREHQcPmA9d5fHoFHs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfARKGN (ORCPT
+        id S1727277AbfARKGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 05:06:13 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:48936 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfARKGM (ORCPT
+        Fri, 18 Jan 2019 05:06:37 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39313 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfARKGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 05:06:12 -0500
-Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gkR2L-0003iN-1l; Fri, 18 Jan 2019 11:06:05 +0100
-Date:   Fri, 18 Jan 2019 11:06:04 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Liming Sun <lsun@mellanox.com>
-cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Subject: Re: [PATCH v7 1/3] mmc: dw_mmc-bluefield: Add driver extension
-In-Reply-To: <1525805210-15246-1-git-send-email-lsun@mellanox.com>
-Message-ID: <alpine.DEB.2.21.1901181059100.1647@nanos.tec.linutronix.de>
-References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com> <1525805210-15246-1-git-send-email-lsun@mellanox.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 18 Jan 2019 05:06:37 -0500
+Received: by mail-oi1-f196.google.com with SMTP id i6so8551698oia.6
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 02:06:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qjSsv1H165uHCWRa88bMMW0DHBNTYFspTFebZSHgK4s=;
+        b=Excv/ANm3lXKBIVbPdbPxmCeouFrQ8x21uHF4UJcVT68lH/iUtYQbkFOqZyXwCOIa+
+         3+tnW4E3uRIzKL+LS/5pQ4McvEVVSBziuiQgqaCa3E8kVWij41MGuQpcxmR4uaSBupBt
+         pXQwKZhgvdVdSGcRhYZ4jIJep2n3CbvxPG06eMH8r6fDdA9y+lWyMwHvv8H/xXsSv1Ww
+         bE1pg8+diLrJIAhj+kD0IqQPRieATuVYM+A0TOrltinWPfSWToNlm98tPpnIdI1rvJNL
+         MaMdpQHIDMeBmorT2nxqQXUBMy8UHJ0chiiUXUC4znvJfdY95nnxRyf4ZgVq4gQbl03s
+         tcww==
+X-Gm-Message-State: AJcUukcacbY60nP080ubG/26q9JNbqLnA+eSPY6pu4l/bRQ/2MxQEEMV
+        wUpBCodGqwLtqiwXYnsxeH69XWU++5dSBgx48FO6zQ==
+X-Google-Smtp-Source: ALg8bN5nw+tIST+Akju15kyeMq/0E3gOsJvAhmn5vjGMZt7pG51OEFhTAIdnBqTOM7QZdKmMpM+p6P1/H/YZNypu1t8=
+X-Received: by 2002:aca:e715:: with SMTP id e21mr205026oih.76.1547805995871;
+ Fri, 18 Jan 2019 02:06:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20190117055719.6161-1-richardw.yang@linux.intel.com> <20190118023459.9972-1-richardw.yang@linux.intel.com>
+In-Reply-To: <20190118023459.9972-1-richardw.yang@linux.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 18 Jan 2019 11:06:23 +0100
+Message-ID: <CAJZ5v0i2z33wxxZkxrECe7yjuxE9EkhWi4g-sZB7Vv8jmnw+gQ@mail.gmail.com>
+Subject: Re: [PATCH v2] driver core: move device->knode_class to device_private
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Liming,
+On Fri, Jan 18, 2019 at 3:35 AM Wei Yang <richardw.yang@linux.intel.com> wrote:
+>
+> As the description of struct device_private says, it stores data which
+> is private to driver core. And it already has similar fields like:
+> knode_parent, knode_driver, knode_driver and knode_bus. This look it is
+> more proper to put knode_class together with those fields to make it
+> private to driver core.
+>
+> This patch move device->knode_class to device_private to make it comply
+> with code convention.
+>
+> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>
+> ---
+> v2: add a helper to get dev from klist_class
 
-On Tue, 8 May 2018, Liming Sun wrote:
-> index 0000000..54c3fbb
-> --- /dev/null
-> +++ b/drivers/mmc/host/dw_mmc-bluefield.c
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 Mellanox Technologies.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
+Looks better now.
 
-This license information is broken. The SPDX license identifier and the
-boiler plate text are contradicting. The SPDX id is GPL v2 only and the
-boiler plate says v2 or later.
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Please decide which version you want and fix ASAP. If you fix that up
-please add a Fixes: tag and cc stable. While at it please remove the boiler
-plate text as the SPDX id is sufficient and the boiler plate is redundant
-information.
-
-See Documentation/process/license-rules.txt
-
-Thanks,
-
-	tglx
+> ---
+>  drivers/base/base.h    |  4 ++++
+>  drivers/base/class.c   | 14 ++++++++++----
+>  drivers/base/core.c    |  4 ++--
+>  include/linux/device.h |  1 -
+>  4 files changed, 16 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/base/base.h b/drivers/base/base.h
+> index 7a419a7a6235..37329a668935 100644
+> --- a/drivers/base/base.h
+> +++ b/drivers/base/base.h
+> @@ -60,6 +60,7 @@ struct driver_private {
+>   * @knode_parent - node in sibling list
+>   * @knode_driver - node in driver list
+>   * @knode_bus - node in bus list
+> + * @knode_class - node in class list
+>   * @deferred_probe - entry in deferred_probe_list which is used to retry the
+>   *     binding of drivers which were unable to get all the resources needed by
+>   *     the device; typically because it depends on another driver getting
+> @@ -74,6 +75,7 @@ struct device_private {
+>         struct klist_node knode_parent;
+>         struct klist_node knode_driver;
+>         struct klist_node knode_bus;
+> +       struct klist_node knode_class;
+>         struct list_head deferred_probe;
+>         struct device *device;
+>  };
+> @@ -83,6 +85,8 @@ struct device_private {
+>         container_of(obj, struct device_private, knode_driver)
+>  #define to_device_private_bus(obj)     \
+>         container_of(obj, struct device_private, knode_bus)
+> +#define to_device_private_class(obj)   \
+> +       container_of(obj, struct device_private, knode_class)
+>
+>  /* initialisation functions */
+>  extern int devices_init(void);
+> diff --git a/drivers/base/class.c b/drivers/base/class.c
+> index 54def4e02f00..d8a6a5864c2e 100644
+> --- a/drivers/base/class.c
+> +++ b/drivers/base/class.c
+> @@ -117,16 +117,22 @@ static void class_put(struct class *cls)
+>                 kset_put(&cls->p->subsys);
+>  }
+>
+> +static struct device *klist_class_to_dev(struct klist_node *n)
+> +{
+> +       struct device_private *p = to_device_private_class(n);
+> +       return p->device;
+> +}
+> +
+>  static void klist_class_dev_get(struct klist_node *n)
+>  {
+> -       struct device *dev = container_of(n, struct device, knode_class);
+> +       struct device *dev = klist_class_to_dev(n);
+>
+>         get_device(dev);
+>  }
+>
+>  static void klist_class_dev_put(struct klist_node *n)
+>  {
+> -       struct device *dev = container_of(n, struct device, knode_class);
+> +       struct device *dev = klist_class_to_dev(n);
+>
+>         put_device(dev);
+>  }
+> @@ -277,7 +283,7 @@ void class_dev_iter_init(struct class_dev_iter *iter, struct class *class,
+>         struct klist_node *start_knode = NULL;
+>
+>         if (start)
+> -               start_knode = &start->knode_class;
+> +               start_knode = &start->p->knode_class;
+>         klist_iter_init_node(&class->p->klist_devices, &iter->ki, start_knode);
+>         iter->type = type;
+>  }
+> @@ -304,7 +310,7 @@ struct device *class_dev_iter_next(struct class_dev_iter *iter)
+>                 knode = klist_next(&iter->ki);
+>                 if (!knode)
+>                         return NULL;
+> -               dev = container_of(knode, struct device, knode_class);
+> +               dev = klist_class_to_dev(knode);
+>                 if (!iter->type || iter->type == dev->type)
+>                         return dev;
+>         }
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 04bbcd779e11..a624d27d11c0 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1932,7 +1932,7 @@ int device_add(struct device *dev)
+>         if (dev->class) {
+>                 mutex_lock(&dev->class->p->mutex);
+>                 /* tie the class to the device */
+> -               klist_add_tail(&dev->knode_class,
+> +               klist_add_tail(&dev->p->knode_class,
+>                                &dev->class->p->klist_devices);
+>
+>                 /* notify any interfaces that the device is here */
+> @@ -2069,7 +2069,7 @@ void device_del(struct device *dev)
+>                         if (class_intf->remove_dev)
+>                                 class_intf->remove_dev(dev, class_intf);
+>                 /* remove the device from the class list */
+> -               klist_del(&dev->knode_class);
+> +               klist_del(&dev->p->knode_class);
+>                 mutex_unlock(&dev->class->p->mutex);
+>         }
+>         device_remove_file(dev, &dev_attr_uevent);
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 1b25c7a43f4c..040e97669f94 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1035,7 +1035,6 @@ struct device {
+>         spinlock_t              devres_lock;
+>         struct list_head        devres_head;
+>
+> -       struct klist_node       knode_class;
+>         struct class            *class;
+>         const struct attribute_group **groups;  /* optional groups */
+>
+> --
+> 2.19.1
+>
