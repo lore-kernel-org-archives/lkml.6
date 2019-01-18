@@ -2,113 +2,99 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0052C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6293EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81CCB20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F99F20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:05:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547820302;
-	bh=jEBSzl58appSjU0nqrxGJx6uu4e5Df5edpmlJd7GOdE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zRTFKu4Cbflkn4dYksywm/KUCL2f53aNglh4IQtsvmCC1dwFh8RVBcbP/jsruZw1o
-	 9+stxOxkenTS1Ihufyrw5SPrBXsZulNwqmK5xbvYeNIvKOgboQfVNnqF4zBptvm/YW
-	 FFTmP+5x0aogZ3funO0l5L2j1IGRCdG0vRyyfK2Y=
+	s=default; t=1547820333;
+	bh=15A6WFFABatdOW/hKtz53DKsxRhQMpC14f7mQw/eYck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ke/ss+DWI9eo3X9wGrhB5h38QJzYyWjGVp8Hycf8TJLrqwuWvobWyVJZqu7I/xwb3
+	 OygaEkDtetGMt84ur+brUKdz8+QswxGkatJ1Mc7b6A6wmD96nOtCr+Pbly52Odem1G
+	 Syg0qTCywC+HkJtyyN2hLJByZvv+2ZsOb59IiL2w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfAROFB (ORCPT
+        id S1727686AbfAROFb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:05:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40695 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbfAROEk (ORCPT
+        Fri, 18 Jan 2019 09:05:31 -0500
+Received: from mail-yb1-f181.google.com ([209.85.219.181]:43436 "EHLO
+        mail-yb1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbfAROFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:04:40 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n18-v6so11727170lji.7
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 06:04:38 -0800 (PST)
+        Fri, 18 Jan 2019 09:05:31 -0500
+Received: by mail-yb1-f181.google.com with SMTP id t16so4357500ybk.10
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 06:05:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EVodwfdmivaXBlQW88UGOM7GWceRW1cuMpytLEsbEWY=;
+        b=HMfjSyfQyY/mc0+do0AfXFWHSYkQ7vUf/R2NuZMkhzryHN6hKjWx/ucJTBaruyiwND
+         DSKetDsyLFnFh16/chu8fOsTtJfERijCO8KYBZxQaW3Beej11iKkDvuYbAYtEVIZMhOl
+         tpnw7RczgWT6+AilTvEW8zoxE7NdVtO8/vyp87CwhMXJTVKaAUaZpgQwRzsOS3GiKDq6
+         wD3YKC7BlmVlC9chhWGYbaGNOIZfNAz0Tf0DGizjV152jrV+KCgM9LFS7QkilzWsVGHf
+         zb2pZKaWPLiTb1CnUIpyDiUdq4GL6FeZQxgPRib2TLBNbs51jhYVa9ZiLumeAbirgK95
+         rb1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cftGcUhp2hIXsQQzx8A/AHnCjsMjkAUMb50zkj+yZSs=;
-        b=jJk6cESLiQAGVNNa4JtLeY/LcH1rUpmGyGKsVYA7qYWznSn564SDU0oVaT1IgZ4riq
-         QNC+Ip5ArsrL+wW1ybGzpzcbQdwnZk+kv0yXw5Pga/JBnjB/m+xb8Muat9kYvr4wm3Rl
-         aSmG4dW84FjfUvUdvTsRiOh/SX00l0IMbcCKaqPaKycXbIQVpQqRofAUeqZ4ianhIbIS
-         fZGJMt/jYXvXD/HsUw+Q3SNgHDhPdWdmOPdiaaOiMNjuRF8kgfv10uuW5eOSf2xG2j/J
-         6mukmhvUG+eJBeE6Wdhrmn7GndtjwJolcdw4NNcvoqjghXXwo1x0Z+zCA9sDMYnsJ4Ls
-         hmGQ==
-X-Gm-Message-State: AJcUukeHQOCov4hE73u3SeuiB2sEMI8XHt76lYyIE/fWMuzhcNAVKDhn
-        IG/41Fco3ggvSDsDaP+Ct3Y=
-X-Google-Smtp-Source: ALg8bN5tYIZ/UQG+zxGyHjxBCq4l7Z8pL9JfunFn8k77LKgh4w0vXxESS+zGGhrcpqPtWVyXzoHY3w==
-X-Received: by 2002:a2e:6595:: with SMTP id e21-v6mr13144023ljf.123.1547820277864;
-        Fri, 18 Jan 2019 06:04:37 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id x21sm809550lfe.6.2019.01.18.06.04.35
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EVodwfdmivaXBlQW88UGOM7GWceRW1cuMpytLEsbEWY=;
+        b=TvBW4RaLoGbsxtH3fnM+eGr8JMfJGWWS443iT9RWRilHG7Pc/QtdD8/xt1AewP7IU7
+         KM8tyWxJUENFz0Mf3HbvJcYSwUTPwmJ6XnPYwU2HWFXmK8IE3xZpYUr3Ntym+xwJrsOT
+         TJaUONKOBkCatMeUY4CeLKj2hU4RodrsxVV2J9pwMRQPIiGrCrIOdYNUowdMg2BXnfsK
+         zUv3DX7wn3in2IcBtZC2r51RgsxMEJH6+OSlJnYWzMmnIBechaCDTyt4jxM6elht+Rjg
+         5XcQtinmxkhfooPkHOJS+gLl/r0BTG2Jns4N62DGStnxPu1ck/CxBTvzhEUmkn0+EZzN
+         uGLw==
+X-Gm-Message-State: AJcUukeXFtdeKGODqhAT8zwaPHCl82pEMGtfQbFmUxf1jtmp/h4G8w6u
+        zISv42xrdFcHg/mzmzdxBKsLjdsq
+X-Google-Smtp-Source: ALg8bN7uxeAGybkzjZp/WaLhh2Xr+XDU6sOsGdpd1ox47QC6ofpdfnINP1SengWp8NLrEHdgU90siA==
+X-Received: by 2002:a25:bbcc:: with SMTP id c12mr6367553ybk.82.1547820329767;
+        Fri, 18 Jan 2019 06:05:29 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:586f])
+        by smtp.gmail.com with ESMTPSA id k64sm1829439ywc.56.2019.01.18.06.05.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 06:04:35 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@xi.terra>)
-        id 1gkUlB-0002W5-Dv; Fri, 18 Jan 2019 15:04:37 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>, Andreas Schwab <schwab@suse.de>,
-        Atish Patra <atish.patra@wdc.com>,
-        Anup Patel <anup@brainfault.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4/5] riscv: treat cpu devicetree nodes without status as enabled
-Date:   Fri, 18 Jan 2019 15:03:07 +0100
-Message-Id: <20190118140308.9599-5-johan@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190118140308.9599-1-johan@kernel.org>
-References: <20190118140308.9599-1-johan@kernel.org>
+        Fri, 18 Jan 2019 06:05:28 -0800 (PST)
+Date:   Fri, 18 Jan 2019 06:05:26 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: workqueue: Is flush_work() without INIT_WORK() OK?
+Message-ID: <20190118140526.GB50184@devbig004.ftw2.facebook.com>
+References: <7d751e65-e695-e23b-9cec-ef3f44289a56@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d751e65-e695-e23b-9cec-ef3f44289a56@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Follow the Linux convention and treat devicetree nodes without a status
-property as enabled rather than disabled, while also allowing "ok" as a
-shorthand for "okay".
+Hello, Tetsuo.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- arch/riscv/kernel/cpu.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+On Fri, Jan 18, 2019 at 08:58:49PM +0900, Tetsuo Handa wrote:
+> 	struct work_struct work;
+> 	memset(&work, 0, sizeof(work));
+> 	flush_work(&work);
+> 
+> . Is this behavior defined as "safe and no-op"? If this should be "safe and no-op",
 
-diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-index 974d374fd36b..d1d9bfd5a89f 100644
---- a/arch/riscv/kernel/cpu.c
-+++ b/arch/riscv/kernel/cpu.c
-@@ -22,7 +22,7 @@
-  */
- int riscv_of_processor_hartid(struct device_node *node)
- {
--	const char *isa, *status;
-+	const char *isa;
- 	u32 hart;
- 
- 	if (!of_device_is_compatible(node, "riscv")) {
-@@ -39,12 +39,8 @@ int riscv_of_processor_hartid(struct device_node *node)
- 		return -ENODEV;
- 	}
- 
--	if (of_property_read_string(node, "status", &status)) {
--		pr_warn("CPU with hartid=%d has no \"status\" property\n", hart);
--		return -ENODEV;
--	}
--	if (strcmp(status, "okay")) {
--		pr_info("CPU with hartid=%d has a non-okay status of \"%s\"\n", hart, status);
-+	if (!of_device_is_available(node)) {
-+		pr_info("CPU with hartid=%d is not available\n", hart);
- 		return -ENODEV;
- 	}
- 
+Nope, that's a bug.
+
+> we need to check whether INIT_WORK() was called before starting lockdep checks
+> at __flush_work(). If this is not "safe and no-op", I want to emit a warning if
+> INIT_WORK() was not called.
+
+Sounds like a good idea.
+
+Thanks.
+
 -- 
-2.20.1
-
+tejun
