@@ -2,122 +2,104 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FDEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F00C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED8220855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8A3720855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:22:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="oG5OB19K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FhySyZFw"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Hs8xxZVL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfAREVP (ORCPT
+        id S1727112AbfAREWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 23:21:15 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:59705 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726902AbfAREVP (ORCPT
+        Thu, 17 Jan 2019 23:22:00 -0500
+Received: from mail-pg1-f180.google.com ([209.85.215.180]:41658 "EHLO
+        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfAREV7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 23:21:15 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 2BE4521ADD;
-        Thu, 17 Jan 2019 23:21:14 -0500 (EST)
-Received: from web6 ([10.202.2.216])
-  by compute4.internal (MEProxy); Thu, 17 Jan 2019 23:21:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        message-id:from:to:cc:mime-version:content-transfer-encoding
-        :content-type:references:date:in-reply-to:subject; s=fm1; bh=m9V
-        EIlsPUJt00+Jb74/la9I69I7E0UJYRsCp2QNRtBo=; b=oG5OB19KjjwCkg9aVNs
-        HVTm2eb8ZbNXU4ZpwzFkrQImrzjRLuj8LO1niVg5ZOy3PGpS7fwFJ+MIwUfXhPhB
-        mOwGjugIIppOol35NU6zfUMNKCHOo9ZpYejCb56EoH1KFZReNnaxWKQNxhJTaZSz
-        4wTjYaBcqGiCVOARPDi8pD9o4c7no9zgUONmgxryBjf6JbMvdCqj9pLi6sumDV3x
-        IQsVf7IrNX5AKSpZSBd/RwC3niykkatbdvZr7wbxMnaxItdYMYGeQX/tVG/HEVRw
-        LQ0F9W/pt+y44ykjlaBZ8TSmEY1XnHWFr6FiykpmVXv8WuGoluiQoqMdzKUDrXn3
-        avQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=m9VEIlsPUJt00+Jb74/la9I69I7E0UJYRsCp2QNRt
-        Bo=; b=FhySyZFw7t7GqpTwHw/DQ5vvJjjtU/tbtSVi9YVZ/og6ELh3be+DjJM6B
-        gxmaIP7yOgvvPx/1azZ5eQqKnwZQchefPWhjftWCrsxwjg5yElEUg/0WhhbWKtKp
-        S8oTNnRxn64TWJkXGo8EOU1YrUHBk66s5QgssB3mGVEpdg3pyQ2w2i+084on5XFc
-        Ir8mp52MNWv/RizXLF2urdyDmiPiV9Pq2yLS8VAosN+Ci2x+SlUoe08rEeeyUUNf
-        4QjXn56qY72h/+ZL/QZkqb8eWVdaeX8/xqf7O9ekS/BdZQh43h7MHK78mLvPM3Vl
-        tUSJPj16pT8P+yresBRLmbHv+bu8A==
-X-ME-Sender: <xms:OVRBXMDcb3mdRnHaga1R2g4qANad2gTgMIg2ETVVgIYH74dN1t44YA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrgeelgdeikecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffhvfgggfgtof
-    hfffgjufesthejredtredtjeenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceo
-    rghnughrvgifsegrjhdrihgurdgruheqnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnh
-    gurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:OVRBXK1qoPczqoQGfrGNuKZWw7T_yJOWQKSm4jOlnk2n4QcxCg8lAQ>
-    <xmx:OVRBXCXjn_vaA3S3yaqtftWEInbWegOglRUHMp58Dzkx7Rr9l6CPjQ>
-    <xmx:OVRBXEmU1h3z0pRYDZmCqcg7ZRjUSJLe0WstK7C8no9wTslOeBjyQA>
-    <xmx:OlRBXK-xS45LkojaaSuib_yZKftL2sz9PB6xtTV1DAoTT3TjjEh-lg>
-Received: by mailuser.nyi.internal (Postfix, from userid 99)
-        id BC8FD429B; Thu, 17 Jan 2019 23:21:12 -0500 (EST)
-Message-Id: <1547785272.2051152.1637704704.1926B2B5@webmail.messagingengine.com>
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     Vijay Khemka <vijaykhemka@fb.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+        Thu, 17 Jan 2019 23:21:59 -0500
+Received: by mail-pg1-f180.google.com with SMTP id m1so5418518pgq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:21:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SIlPpI+xqS202WJQwxgXFlRMI+IiYvgdSwwPnhOt1vw=;
+        b=Hs8xxZVLRQ9nKfqbEBWalOdJOZ0Hk+sU4EhCfHyDwPgrBLl9WZcfwtuWXsCENnGGDv
+         EzdOJoz96Z+8/4g8M+xeJw8exnEM4+DhyuGRFr0RmvWqh3bUMPDHauMD8eWyaKNQRXvL
+         Yd1GpiCx5CoypLq0Jywfkts+AnIwN2kd3gxf+2n1IKI1y+S+H8lSc6KLQN+y55dww2R0
+         muSvuQGmIN3P/KNu4nEfts3/ljXCDlFzPrXYe4oj8FPJvyi70fmnJdG478+jt23ZQXuY
+         L87CaIilL0DLPHD/cYFDZ5e5orl8mVxm8tq4DvUzIfITC0N9yss9g1kpdtgX0z2geYWt
+         cscA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SIlPpI+xqS202WJQwxgXFlRMI+IiYvgdSwwPnhOt1vw=;
+        b=rsfd8Ahk+8kYXk7EVMV/koxR/YYCSUGqZ9hCEq7Ca/B+LKnq5a9La8Y1AJnhmhdqOl
+         nbDD8QXAdvKlBeAEUl0Nxw1Y0Trht5jXAXGa4bcXr/V5zhlu0hze0utF6stfX2EJ4kLC
+         duSGjhuXPRZZtcO5hiKPPN2clRtSN/mSYDnD4kaHZhJ/Oi/QFeGhSaenB9HaETbjk7L2
+         CrRys1ohmoKF5P2Rt8Y8xUFKtIz9ExH4wUJk1u41uwc9AVxHGoADBzXY5K5NBstgS2Ko
+         x4DMZPEk1o2xoQKtNknYoX2Bcw1C34QvgTVTcBc9TYjnQNkfUE2lmNyUylL1Eno+NG6y
+         LkdA==
+X-Gm-Message-State: AJcUukdhpRZjIFiI8gK8mCZKPaGraHdFqk02T9+Ss2fJEkqnwVk25AXM
+        Iw+J0Ko6ooY8ryY/BrL8zQdhpg==
+X-Google-Smtp-Source: ALg8bN4c3Y07fVwXyCnpJpKZUPR2XjNjuG6XBD3jMBm0kgc6/t6SIk+UE7rqgBlbPCyAf3spiK2ysQ==
+X-Received: by 2002:a62:4d81:: with SMTP id a123mr18312631pfb.122.1547785318942;
+        Thu, 17 Jan 2019 20:21:58 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id z186sm4285907pfz.119.2019.01.17.20.21.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 20:21:57 -0800 (PST)
+Subject: Re: [patch 1/9] block: Cleanup license notice
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Matias Bjorling <mb@lightnvm.io>,
+        Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org
+References: <20190117231416.111952141@linutronix.de>
+ <20190117231500.874215239@linutronix.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c66207a9-c18c-cd54-fd2a-1703c7bf1b57@kernel.dk>
+Date:   Thu, 17 Jan 2019 21:21:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20190117231500.874215239@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: MessagingEngine.com Webmail Interface - ajax-36e4bfd3
-References: <20190117190830.824013-1-vijaykhemka@fb.com>
-Date:   Fri, 18 Jan 2019 14:51:12 +1030
-In-Reply-To: <20190117190830.824013-1-vijaykhemka@fb.com>
-Subject: Re: [PATCH] dt-bindings: aspeed-lpc: Make parameter optional
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vijay,
-
-On Fri, 18 Jan 2019, at 05:38, Vijay Khemka wrote:
-> Memory-region and flash phandle is not a required parameter, it is
-> optional to describe in device tree and needed only use basis.
+On 1/17/19 4:14 PM, Thomas Gleixner wrote:
+> Remove the imprecise and sloppy:
 > 
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
-> ---
->  Documentation/devicetree/bindings/mfd/aspeed-lpc.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+>   "This files is licensed under the GPL."
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt b/
-> Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-> index 34dd89087cff..ff0cb28903dd 100644
-> --- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-> @@ -135,6 +135,10 @@ Required properties:
->  - clocks:	contains a phandle to the syscon node describing the clocks.
->  		There should then be one cell representing the clock to use
->  
-> +Optional properties:
-> +These below properties are optional and required only if one need to use it
-> +through ioctl.
-
-I'd just say "Optional properties". Leave the description off, as we probably
-shouldn't be talking about ioctls and such in the bindings.
-
-Andrew
-
-> +
->  - memory-region: A phandle to a reserved_memory region to be used for the LPC
->  		to AHB mapping
->  
-> -- 
-> 2.17.1
+> license notice in the top level comment.
 > 
+> 1) The file already contains a SPDX license identifier which clearly
+>    states that the license of the file is GPL V2 only
+> 
+> 2) The notice resolves to GPL v1 or later for scanners which is just
+>    contrary to the intent of SPDX identifiers to provide clear and non
+>    ambiguous license information. Aside of that the value add of this
+>    notice is below zero,
+
+Applied, thanks Thomas.
+
+-- 
+Jens Axboe
+
