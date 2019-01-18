@@ -2,107 +2,98 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E565C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFA6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D011D20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547828264;
-	bh=5cImaw8sRDttPU09tqtvYoG6ACsIJ+zp9AlOZCGmqCM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=C69uxAxj1VfJNO8W5mfJO5kz8fnrfndzws6vCQ4gcvmVLK5+LHieby37mR8iAeOGj
-	 o4VhjFAVmKqbyAzRBrLEuCDpxWgc3zFlHxbo81dozWI3bxf+gOyI7pcOnB5K/beq2s
-	 FgCLHJzJVVAAzVZsL7QC69/1IEInllHC9Y0pMGdc=
+	by mail.kernel.org (Postfix) with ESMTP id D376220850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PWmHurCQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbfARQRn (ORCPT
+        id S1728176AbfARQUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:17:43 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:34837 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727694AbfARQRm (ORCPT
+        Fri, 18 Jan 2019 11:20:13 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:33984 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbfARQUL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:17:42 -0500
-Received: by mail-yw1-f66.google.com with SMTP id h32so5433097ywk.2;
-        Fri, 18 Jan 2019 08:17:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jxu0a1nkN3ZpzOxZbKmUrpD1yZ9zO9HuQcvnymZzhI0=;
-        b=jz72BFxjt22s+qMlTfP1yKEqVRPB4cfDgk/N/nj7blKvYgkPWP3VEgyg0DStL144Ci
-         Y6XYdYW0kyK4R2xkoyfThcbL7ufeBvSTiRZtmq1k1wowHcaQUqkt9efm3izvgfx3Si75
-         MrhJwiQqrbLUZUer7Xu0a9lhkKS6OSz69ApO+zA+N8cuI8TrPIm5KHyeCKszHPq72J7x
-         BGkkdmpSnHuyulZPo0PvEFMac2Ju7bvPqY15ueTozLBt/XvKiRifhygeGNv/7po6/oPL
-         OX9ddJAvoxnxl96g9+XnRAu5+ttXnU7SHF+Y08Pl8CxTHupiwi+F2vQdi+g6p0WsWSEK
-         h2lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jxu0a1nkN3ZpzOxZbKmUrpD1yZ9zO9HuQcvnymZzhI0=;
-        b=sHic7p4nB3Vs8iYutUt1r5xgJzpa1S03O2hHi5kSXOW5o6EdsSerYxqNs1d74dMfbH
-         sdChBAiJ9yRH1uoJ6Zf1myGXXk3OiexMBE8XLq0AQ0mW3wA+IlByeSMr1/103MQ9yPSa
-         AvQ9hp0CDUdsEe3FnKXBfT2GdeKVJpO5B/8ar7EgoqG2ugs+MOBga+hfqWTiSTRH5g6Q
-         bgiWK1UQe/4ZGD5Jx2uJf2HPn2rnP7jHzDEZfEV7J1eYgNvNzDnDlfFzjfR8cg3ZqbfP
-         1sr/TQdk3N6521c4pRNJzdDn79SAsCfCOLdY3zK3S51Y9VHqHPXhSAzMwJMov9sfzrRJ
-         fC/g==
-X-Gm-Message-State: AJcUukfEOWHsRLTDcWScUsCrFGGz3MM35kpUXYAAfwmmLKs8pa8mcN17
-        g/2yXqQUj4pkVEXSjvNfWuc=
-X-Google-Smtp-Source: ALg8bN5gjPBoTBrZDaCIGJ0U6pKNzT/2eYAjRT+vt8hYTU0Z/VaZe3PAeBSO31QpQjRqXllLV8G2Eg==
-X-Received: by 2002:a81:b101:: with SMTP id p1mr18804777ywh.454.1547828261525;
-        Fri, 18 Jan 2019 08:17:41 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::6:586f])
-        by smtp.gmail.com with ESMTPSA id w63sm1954895ywc.46.2019.01.18.08.17.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 08:17:40 -0800 (PST)
-Date:   Fri, 18 Jan 2019 08:17:39 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v6 0/5] sched/deadline: fix cpusets bandwidth accounting
-Message-ID: <20190118161739.GE50184@devbig004.ftw2.facebook.com>
-References: <20190117084739.17078-1-juri.lelli@redhat.com>
+        Fri, 18 Jan 2019 11:20:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xpKMkJb9W0ZAPps1pnRiR6Soxmr0tt+w6MkmCGfQp7E=; b=PWmHurCQr7NfqfAERvYUCuqLx
+        2h71SIKO2kj+KdnlGqJPCYdGJ774k7vDtuP0XVUe/soZn12dNk091W5Zl4oodTJLY5GejlImME/+h
+        gmiprxVkqkydKLzzRv9ZDgWLgsycSg/aOmFnrzHOe9DEiqi1lCd4tbzwijHZw171O83hT5FW9LZUl
+        /vG491lw6XeNMpRMYxvcp2Vx4pKGsoVSO4Xd1JEgk23pwFB4EGdiTn5RWNf1ZZHYt6WtF0zNbAar/
+        JgaV6kIRgI5D4Ju9CLyZuRMVqNIdeLCsk8FWSwUgPhGrIrFPNY2GJv0QnSRBTSKkkTUOiSmoAGUn7
+        CcEbVtFYg==;
+Received: from [89.200.44.227] (helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gkWsE-00049t-Jo; Fri, 18 Jan 2019 16:20:02 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DBEC6983816; Fri, 18 Jan 2019 17:19:59 +0100 (CET)
+Date:   Fri, 18 Jan 2019 17:19:59 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Clark Williams <williams@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Networking Development Mailing List 
+        <netdev@vger.kernel.org>
+Subject: Re: [PATCH/RFC] Make perf_event_open() propagate errors for use in
+ bpf_perf_event_open()
+Message-ID: <20190118161959.GI14054@worktop.programming.kicks-ass.net>
+References: <20190111155538.GX22483@kernel.org>
+ <20190118145237.GD27931@hirez.programming.kicks-ass.net>
+ <20190118150938.GN5823@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117084739.17078-1-juri.lelli@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190118150938.GN5823@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 09:47:34AM +0100, Juri Lelli wrote:
-> Hi,
+On Fri, Jan 18, 2019 at 12:09:38PM -0300, Arnaldo Carvalho de Melo wrote:
+> commit 1b3b3dee572d0b77a316ab6715091201be6832de
+> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date:   Fri Jan 11 13:20:20 2019 -0300
 > 
-> v6 of a series of patches, originally authored by Mathieu, with the intent
-> of fixing a long standing issue of SCHED_DEADLINE bandwidth accounting.
-> As originally reported by Steve [1], when hotplug and/or (certain)
-> cpuset reconfiguration operations take place, DEADLINE bandwidth
-> accounting information is lost since root domains are destroyed and
-> recreated.
-> 
-> Mathieu's approach is based on restoring bandwidth accounting info on
-> the newly created root domains by iterating through the (DEADLINE) tasks
-> belonging to the configured cpuset(s).
-> 
-> Apart from some minor refactoring needed to rebase the set on top of
-> Waiman Long's cpuset for cgroup series (now mainline), two changes worth
-> of notice:
+>     perf: Make perf_event_output() propagate the output() return
+>     
+>     For the original mode of operation it isn't needed, since we report back
+>     errors via PERF_RECORD_LOST records in the ring buffer, but for use in
+>     bpf_perf_event_output() it is convenient to return the errors, basically
+>     -ENOSPC.
+>     
+>     Currently bpf_perf_event_output() returns an error indication, the last
+>     thing it does, which is to push it to the ring buffer is that can fail
+>     and if so, this failure won't be reported back to its users, fix it.
+>     
+>     Reported-by: Jamal Hadi Salim <jhs@mojatatu.com>
+>     Tested-by: Jamal Hadi Salim <jhs@mojatatu.com>
+>     Cc: Adrian Hunter <adrian.hunter@intel.com>
+>     Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+>     Cc: Daniel Borkmann <daniel@iogearbox.net>
+>     Cc: Jiri Olsa <jolsa@kernel.org>
+>     Cc: Namhyung Kim <namhyung@kernel.org>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Link: https://lkml.kernel.org/r/20190111155538.GX22483@kernel.org
+>     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Generally looks good to me but can you please ask Waiman to take a
-look?
+/me hates on git-format :-)
 
-Thanks.
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
--- 
-tejun
