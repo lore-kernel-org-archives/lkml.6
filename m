@@ -2,153 +2,128 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BB6C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82087C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E8A62087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:09:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VM1GlNME"
+	by mail.kernel.org (Postfix) with ESMTP id 4F0CA2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547838731;
+	bh=OlbwiYNH5rDIXXiez5bIwPddtjsFVLPd/UkGBdo/cGk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EjXSeSxZkGEKb049XVU5gOjmLsYWXcBOY0ZEcozWtTdfcj37HkOHfW3lKIh3FNuMz
+	 0+g6vS+q+5LCMrv3A+UC8tpFmXdGbuzXXTbV5KImF287Fel5HA9wALmGER2aHJTpWu
+	 9DRCdlh3M2lQzYowJOrIIwYhBWeYWY8clgAS9wMk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729304AbfARTJf (ORCPT
+        id S1729288AbfARTMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:09:35 -0500
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:43273 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728803AbfARTJe (ORCPT
+        Fri, 18 Jan 2019 14:12:09 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57280 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729115AbfARTMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:09:34 -0500
-Received: by mail-oi1-f181.google.com with SMTP id u18so9766037oie.10
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 11:09:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=vdhZQF3Fgnjc42DW844YSt5cmBXIBDuDCgG4Gq6CWIU=;
-        b=VM1GlNME1aGk4Dz0mdEnkr8qNSJ2Pl7ZK2Y4v5M06t/bdI0zESvJqEhSx3e1CvoEif
-         tki5+0jINXsu9Bv05Mi3Jn5FNnfn7MBsi79TRTxcHELAOQxbYci8RU8MShYeegvqvZ+C
-         MVWlmuwalap+Z9l/tlFCD7FDzmBzY8SlZKV3iO0cgcAN+GDCEr7FIRZg30o0Bqy9HpKs
-         R03WvIcSY219dJCphbydbH48iNF7RICGve0to9mLEFIE50M1qqdCd2gXxN9IE4hmVXkp
-         3XMooVbxiuDzcHpcuL4WVlQ4hcUPvGNqT2RxEgZV47nCPHk2T3WXkJODYZa1bQ8H9ny9
-         JCbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=vdhZQF3Fgnjc42DW844YSt5cmBXIBDuDCgG4Gq6CWIU=;
-        b=itaGwYjxWHDPW45Y47VCekfp4K+aysLRXu0z6S+7buSnuKqSalhvbAi1H1DgXGNwZY
-         JED4uBlIRWbddaAErkEEN0R9V0D3FHs0ZmFbmU+/tWHvhvo8iF1jOdGwXFMLH8VVcyuW
-         UUJ+6KqYr804k/OebQHsSazUR1YTaJmmMFi8leSh7iQjrTJzK91+0Cf7LtPqh/yRDwMn
-         YLPme6gom0Bp1+wYZ2+b5E022QdEzn6KnMZQiy3aQdhW7u4RLKyd+o+4poqnvz15MOas
-         pfFKlRICfD+5FFDKQMe+nPYLAVuJAmtCASKXcY6pJYaxPK+PpIItw5oomGkGl6LebNjP
-         PzRg==
-X-Gm-Message-State: AJcUukcMl9HovjHHEwbH2ddchTRHJBLmqAo6nc7c8JspeWKRZa1M8zNR
-        arZGMHyqWHypH8fw0x+E4uTJy29yJU49t6NQPIBsSQ==
-X-Google-Smtp-Source: ALg8bN4dGdM1d/rKk0vQ88mH7a5iFS975akx5rjFqlkpLdSscRDAfWHScdDbIJkb1ZgKenxBWcoZlOAXKG4XeLi9aUo=
-X-Received: by 2002:aca:bcc6:: with SMTP id m189mr1461800oif.337.1547838573326;
- Fri, 18 Jan 2019 11:09:33 -0800 (PST)
+        Fri, 18 Jan 2019 14:12:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iTfN4IZcke/gzOJ1Ua6kwNvEgiE6Jf880CODCiJIqDc=; b=qn6Fc6he6I6Xu6gKHw6ISt2ou
+        iKfVa0KkOLy+eWiA+z+y9sCV+BtiA5d//191cgG9MvzfGNkP4OH+zuP5fzguN/bzBhz6cMSrpC58I
+        t5K0WoenlGVBrV6eABTSN3vbvchF1trkGS0UY8qlUzAJK2hK8I2ETYSvIu7Y7viIxjPCA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gkZYh-0005XH-FC; Fri, 18 Jan 2019 19:12:03 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 09C7A11276E7; Fri, 18 Jan 2019 19:12:03 +0000 (GMT)
+Date:   Fri, 18 Jan 2019 19:12:03 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     kernel@martin.sperl.org
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi@vger.kernel.org
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
+ instead run teardown delayed
+Message-ID: <20190118191202.GG6260@sirena.org.uk>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
+ <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org>
+ <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
+ <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org>
+ <20190115192619.GG5522@sirena.org.uk>
+ <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org>
+ <20190115212539.GK5522@sirena.org.uk>
+ <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org>
 MIME-Version: 1.0
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 18 Jan 2019 20:09:07 +0100
-Message-ID: <CAG48ez06mDExELyTYN7MZQ3FjGcLx9ASc5HnxW8NQbfTAPX=Qg@mail.gmail.com>
-Subject: [BUG] tiocsti() NULL dereference if ld->ops->receive_buf==NULL
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="XaUbO9McV5wPQijU"
+Content-Disposition: inline
+In-Reply-To: <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org>
+X-Cookie: You can't get there from here.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
 
-When a line discipline doesn't have a ->receive_buf handler, tiocsti()
-attempts to call a NULL pointer. Both tty_n_tracesink and
-spk_ttyio_ldisc_ops don't have such a handler.
+--XaUbO9McV5wPQijU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To reproduce, build a kernel with CONFIG_SPEAKUP=y and
-CONFIG_SPEAKUP_SYNTH_SOFT=y, set speakup.synth=soft in the kernel
-command line, and run the following code as root:
+On Fri, Jan 18, 2019 at 06:11:31PM +0100, kernel@martin.sperl.org wrote:
 
-=================
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <stdio.h>
-#include <err.h>
+> Does something like this looks acceptable?
 
-void do_ioctl(int fd, unsigned long cmd, void *arg) {
-  int res = ioctl(fd, cmd, arg);
-  if (res < 0) {
-    perror("ioctl");
-  } else {
-    printf("result %d\n", res);
-  }
-}
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index ec210286567c..677fc5025033 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -288,6 +288,21 @@ static inline void spi_unregister_driver(struct spi_=
+driver *sdrv)
+>  	module_driver(__spi_driver, spi_register_driver, \
+>  			spi_unregister_driver)
+>=20
+> +/* define SPI Controller states in the state machine */
+> +enum spi_controller_state {
+> +	SPI_CONTROLLER_STATE_SHUTDOWN		=3D 0,
+> +	SPI_CONTROLLER_STATE_IDLE		=3D 1,
+> +	SPI_CONTROLLER_STATE_IN_PROCESS		=3D 2,
+> +	SPI_CONTROLLER_STATE_IN_TRANSFER	=3D 3,
+> +};
 
-int main(void) {
-  int fd = open("/dev/tty1", O_RDWR);
-  if (fd == -1) err(1, "open");
+Yes, it does!
 
-  int disc = 26/*N_SPEAKUP*/;
-  do_ioctl(fd, TIOCSETD, &disc);
+> SPI_CONTROLLER_MODE_EXCLUSIVE could replace the bus_lock_flag.
+> I am also not sure of the =E2=80=9Cconvention=E2=80=9D of memory mode (i.e
+> using mem_ops). Is it maybe implicitly spi_bus_locked - i.e
+> typically only a single device?
 
-  char c = 'A';
-  do_ioctl(fd, TIOCSTI, &c);
+Yes, it does - we're basically handing over the entire SPI bus to
+another bit of hardware that will do memory mapped flash access so we
+can't really have anything else trying to do SPI operations at the same
+time.
 
-  return 0;
-}
-=================
+--XaUbO9McV5wPQijU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You should get this splat:
-=================
-[  124.609859] BUG: unable to handle kernel NULL pointer dereference
-at 0000000000000000
-[  124.613510] #PF error: [INSTR]
-[  124.614545] PGD 0 P4D 0
-[  124.615249] Oops: 0010 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN
-[...]
-[  124.620994] RIP: 0010:          (null)
-[  124.622016] Code: Bad RIP value.
-[  124.622884] RSP: 0018:ffff8881d6c37ae0 EFLAGS: 00010246
-[...]
-[  124.643743] Call Trace:
-[  124.644428]  ? tty_ioctl+0x5ec/0xbd0
-[  124.645404]  ? tty_vhangup+0x20/0x20
-[  124.646380]  ? preempt_count_add+0x8d/0xe0
-[  124.647476]  ? _raw_spin_lock_irqsave+0x9a/0xf0
-[  124.648702]  ? _raw_read_lock_irqsave+0x60/0x60
-[  124.649966]  ? __wake_up_common+0x4b/0x1d0
-[  124.651075]  ? preempt_count_sub+0x14/0xc0
-[  124.652180]  ? _raw_spin_unlock_irqrestore+0x20/0x40
-[  124.653508]  ? __wake_up_common_lock+0xd7/0x130
-[  124.654740]  ? __wake_up_common+0x1d0/0x1d0
-[  124.655870]  ? mutex_trylock+0x5f/0x90
-[  124.656897]  ? ldsem_up_read+0x13/0x40
-[  124.657940]  ? tty_write+0x2c7/0x450
-[  124.658902]  ? n_tty_open+0xd0/0xd0
-[  124.659868]  ? __vfs_write+0xc9/0x3b0
-[  124.660876]  ? __anon_vma_prepare+0x159/0x240
-[  124.662057]  ? preempt_count_add+0x8d/0xe0
-[  124.663170]  ? do_vfs_ioctl+0x134/0x8f0
-[  124.664220]  ? fsnotify+0x5ba/0x5e0
-[  124.665169]  ? __lru_cache_add+0xc4/0x100
-[  124.666255]  ? ioctl_preallocate+0x140/0x140
-[  124.667383]  ? __fsnotify_inode_delete+0x20/0x20
-[  124.668640]  ? vfs_write+0x120/0x230
-[  124.669613]  ? ksys_ioctl+0x70/0x80
-[  124.670570]  ? __x64_sys_ioctl+0x3d/0x50
-[  124.671634]  ? do_syscall_64+0x73/0x160
-[  124.672690]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  124.674099] Modules linked in: btrfs xor zstd_compress raid6_pq
-[  124.676617] CR2: 0000000000000000
-[  124.677523] ---[ end trace c5f555a92fe90edc ]---
-[  124.678753] RIP: 0010:          (null)
-[  124.679762] Code: Bad RIP value.
-[...]
-=================
+-----BEGIN PGP SIGNATURE-----
 
-I'm not familiar with the details of the TTY subsystem, so I'm not
-sure how this should be fixed.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxCJQIACgkQJNaLcl1U
+h9CDdQf+I7iveblkgIuqYYemfISQk+f97Jh7CYalr7//EB65ABrPeVKbeWdEWNEd
+O3lQckS5I1XBelmk78Kw1keMvy7yev5LKvadKyXMIS/HPOaCaC8GnuVQ039Zk0iX
+tIeK/uCe2Its32BjZ5b0WbDt68JInIEpf7iuqTQs7hVDmvmx2TovvbXdSkoaqkpU
+qx8wkH0+sxeLLqBelfzvsy7J3ETSRd+c6Je3gCH9Jk15qYO8x+XdY6PRL+3Pz5zs
+U3gVWY8cwTD4v7tORNPNi0W8oB01KoXcrk7cvCUteYS3nSVn2h5GKO05IDrDlhAO
++5qJMOnCzhhWFsctQcfxD0kQI+tBCA==
+=0ySs
+-----END PGP SIGNATURE-----
+
+--XaUbO9McV5wPQijU--
