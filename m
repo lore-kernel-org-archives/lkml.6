@@ -4,34 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59652C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3CAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 385422086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C722D2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:25:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfARDZR (ORCPT
+        id S1727162AbfARDZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 22:25:17 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:1063 "EHLO
+        Thu, 17 Jan 2019 22:25:22 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:60227 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727005AbfARDZF (ORCPT
+        with ESMTP id S1726901AbfARDZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 22:25:05 -0500
-X-UUID: 49bb935cc0e644c081eb622edc3e7d46-20190118
-X-UUID: 49bb935cc0e644c081eb622edc3e7d46-20190118
+        Thu, 17 Jan 2019 22:25:04 -0500
+X-UUID: 323e7fb21c334698aafc428e2f9ef677-20190118
+X-UUID: 323e7fb21c334698aafc428e2f9ef677-20190118
 Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <ryder.lee@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 942018162; Fri, 18 Jan 2019 11:24:55 +0800
+        with ESMTP id 1600500021; Fri, 18 Jan 2019 11:24:55 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
  mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 18 Jan 2019 11:24:48 +0800
+ 15.0.1395.4; Fri, 18 Jan 2019 11:24:47 +0800
 Received: from mtkslt306.mediatek.inc (10.21.14.136) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 18 Jan 2019 11:24:48 +0800
+ Transport; Fri, 18 Jan 2019 11:24:47 +0800
 From:   Ryder Lee <ryder.lee@mediatek.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 CC:     Matthias Brugger <matthias.bgg@gmail.com>,
@@ -42,12 +43,10 @@ CC:     Matthias Brugger <matthias.bgg@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v1 3/5] arm64: dts: mt7622: add a property "mediatek,num-pwms" for PWM
-Date:   Fri, 18 Jan 2019 11:24:43 +0800
-Message-ID: <2c4938513672887dbb9f2571059a2cf7076a0266.1547781007.git.ryder.lee@mediatek.com>
+Subject: [PATCH v1 1/5] pwm: mediatek: add a property "mediatek,num-pwms"
+Date:   Fri, 18 Jan 2019 11:24:41 +0800
+Message-ID: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
-References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -56,25 +55,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This add a property "mediatek,num-pwms" for PWM controller.
+This adds a property "mediatek,num-pwms" to avoid having an endless
+list of compatibles with no differences for the same driver.
+
+Thus, the driver should have backwards compatibility to older DTs.
 
 Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt7622.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v1: add some checks for backwards compatibility.
+---
+ drivers/pwm/pwm-mediatek.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-index 8fc4aa7..ab016cf 100644
---- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -436,6 +436,7 @@
- 			 <&pericfg CLK_PERI_PWM6_PD>;
- 		clock-names = "top", "main", "pwm1", "pwm2", "pwm3", "pwm4",
- 			      "pwm5", "pwm6";
-+		mediatek,num-pwms = <6>;
- 		status = "disabled";
- 	};
+diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+index eb6674c..81b7e5e 100644
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -55,7 +55,7 @@ enum {
+ };
  
+ struct mtk_pwm_platform_data {
+-	unsigned int num_pwms;
++	unsigned int num_pwms;	/* it should not be used in the future SoCs */
+ 	bool pwm45_fixup;
+ 	bool has_clks;
+ };
+@@ -226,27 +226,36 @@ static void mtk_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 
+ static int mtk_pwm_probe(struct platform_device *pdev)
+ {
+-	const struct mtk_pwm_platform_data *data;
++	struct device_node *np = pdev->dev.of_node;
+ 	struct mtk_pwm_chip *pc;
+ 	struct resource *res;
+-	unsigned int i;
++	unsigned int i, num_pwms;
+ 	int ret;
+ 
+ 	pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
+ 	if (!pc)
+ 		return -ENOMEM;
+ 
+-	data = of_device_get_match_data(&pdev->dev);
+-	if (data == NULL)
+-		return -EINVAL;
+-	pc->soc = data;
++	pc->soc = of_device_get_match_data(&pdev->dev);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pc->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(pc->regs))
+ 		return PTR_ERR(pc->regs);
+ 
+-	for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
++	/* Check if we have set 'num-pwms' in DTs. */
++	ret = of_property_read_u32(np, "mediatek,num-pwms", &num_pwms);
++	if (ret < 0) {
++		/* If no, fallback to use SoC data for backwards compatibility. */
++		if (pc->soc->num_pwms) {
++			num_pwms = pc->soc->num_pwms;
++		} else {
++			dev_err(&pdev->dev, "failed to get pwm number: %d\n", ret);
++			return ret;
++		}
++	}
++
++	for (i = 0; i < num_pwms + 2 && pc->soc->has_clks; i++) {
+ 		pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
+ 		if (IS_ERR(pc->clks[i])) {
+ 			dev_err(&pdev->dev, "clock: %s fail: %ld\n",
+@@ -260,7 +269,7 @@ static int mtk_pwm_probe(struct platform_device *pdev)
+ 	pc->chip.dev = &pdev->dev;
+ 	pc->chip.ops = &mtk_pwm_ops;
+ 	pc->chip.base = -1;
+-	pc->chip.npwm = data->num_pwms;
++	pc->chip.npwm = num_pwms;
+ 
+ 	ret = pwmchip_add(&pc->chip);
+ 	if (ret < 0) {
 -- 
 1.9.1
 
