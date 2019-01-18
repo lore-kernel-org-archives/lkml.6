@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4183BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2953DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 035AC208E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBD4B2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 01:07:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="LBB25re8"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="haeWqJJr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfARBGv (ORCPT
+        id S1726943AbfARBG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 20:06:51 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:60914 "EHLO
+        Thu, 17 Jan 2019 20:06:58 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:32858 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfARBGv (ORCPT
+        with ESMTP id S1725934AbfARBG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 20:06:51 -0500
+        Thu, 17 Jan 2019 20:06:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1547773608; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1547773614; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:references;
-        bh=XkFGTck7gvRx9HDUa+mp6ZYQi5+zkGojqrDNp5DwBA8=;
-        b=LBB25re8p1wwRvrmIVbXYDfref05JGqKyrdwTqxwagAgX9eQ4q72Wnt9kGP3GG1+dt0IKl
-        NBeT/XJWgVH18ZTDaJ/hOCB3fHN1QW93FnvCIp/8U2DU63fWda4afzSUDMhACXkfUSdB+l
-        SrRBGF6mi/SpZG0VFhIvujQyNC0dSfE=
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=JXr4LrdpYrvbx6eqNgw1hYdipnO5Jw08K5hEj1tp7cs=;
+        b=haeWqJJrrw5/ze4APaWsqVx+Ht3IC47cloF8H4GC1gE9a2F9Ra4hyprH+dlJUbXcjLKn+Q
+        XJAJvXqi5Zi6uf5DIfzgAyg2XusuB6fQ9avxQNl0JFkgXeNvFb9fk9OD4izZ3g5VlL6ZgA
+        hVFqLHMFTJtV+jKnTgMRAdEu1t+4/Zc=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -46,35 +46,49 @@ To:     David Woodhouse <dwmw2@infradead.org>,
 Cc:     linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
         Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 1/8] MIPS: DTS: CI20: Set BCH clock to 200 MHz
-Date:   Thu, 17 Jan 2019 22:06:27 -0300
-Message-Id: <20190118010634.27399-1-paul@crapouillou.net>
+Subject: [PATCH 2/8] dt-bindings: mtd: ingenic: Add compatible strings for the JZ4725B
+Date:   Thu, 17 Jan 2019 22:06:28 -0300
+Message-Id: <20190118010634.27399-2-paul@crapouillou.net>
+In-Reply-To: <20190118010634.27399-1-paul@crapouillou.net>
+References: <20190118010634.27399-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is currently done inside the jz4780-bch driver, but it really
-should be done here instead.
+Add compatible strings to probe the jz4780-nand and jz4780-bch drivers
+from devicetree on the JZ4725B SoC from Ingenic.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- arch/mips/boot/dts/ingenic/ci20.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
-index 50cff3cbcc6d..aa892ec54d0a 100644
---- a/arch/mips/boot/dts/ingenic/ci20.dts
-+++ b/arch/mips/boot/dts/ingenic/ci20.dts
-@@ -111,6 +111,9 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pins_nemc>;
+diff --git a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
+index 29ea5853ca91..8ebed442ac55 100644
+--- a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
+@@ -6,7 +6,9 @@ memory-controllers/ingenic,jz4780-nemc.txt), and thus NAND device nodes must
+ be children of the NEMC node.
  
-+		assigned-clocks = <&cgu JZ4780_CLK_BCH>;
-+		assigned-clock-rates = <200000000>;
-+
- 		nand@1 {
- 			reg = <1>;
+ Required NAND controller device properties:
+-- compatible: Should be set to "ingenic,jz4780-nand".
++- compatible: Should be one of:
++  * ingenic,jz4725b-nand
++  * ingenic,jz4780-nand
+ - reg: For each bank with a NAND chip attached, should specify a bank number,
+   an offset of 0 and a size of 0x1000000 (i.e. the whole NEMC bank).
+ 
+@@ -72,7 +74,9 @@ NAND devices. The following is a description of the device properties for a
+ BCH controller.
+ 
+ Required BCH properties:
+-- compatible: Should be set to "ingenic,jz4780-bch".
++- compatible: Should be one of:
++  * ingenic,jz4725b-bch
++  * ingenic,jz4780-bch
+ - reg: Should specify the BCH controller registers location and length.
+ - clocks: Clock for the BCH controller.
  
 -- 
 2.11.0
