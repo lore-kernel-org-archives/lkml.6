@@ -2,28 +2,28 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2833DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E09C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA472054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:43:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ECB72087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfAROnv (ORCPT
+        id S1727733AbfAROn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:43:51 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:45740 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:43:56 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45807 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727020AbfAROnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:43:51 -0500
+        id S1727633AbfAROnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:43:52 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E4052207B0; Fri, 18 Jan 2019 15:43:48 +0100 (CET)
+        id 6EDB820BBD; Fri, 18 Jan 2019 15:43:50 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 95815206A7;
-        Fri, 18 Jan 2019 15:43:48 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 15F21209EF;
+        Fri, 18 Jan 2019 15:43:50 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,10 +35,12 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v5 00/23] drm/sun4i: Support for linear and tiled YUV formats with the frontend
-Date:   Fri, 18 Jan 2019 15:43:05 +0100
-Message-Id: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v5 06/23] drm/sun4i: Move the BT.601 CSC coefficients to the frontend
+Date:   Fri, 18 Jan 2019 15:43:11 +0100
+Message-Id: <20190118144328.20649-7-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
+References: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,96 +48,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series implements support for YUV formats using the display engine
-frontend in the sun4i DRM driver, with various fixes along the way.
-Scaling is supported for every format handled by the frontend.
+Both the backend and the frontend need the BT.601 CSC coefficients for
+YUV to RGB conversion. Since the backend has a dependency on the
+frontend (and not the other way round), move the coefficients there
+so that both can access them without having to duplicate them.
 
-The tiling mode used by the VPU on Allwinner platforms is also supported
-by this series and a dedicated fourcc modifier is introduced, along with
-a specific ioctl for allocating tiled buffers.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_backend.c  | 22 ----------------------
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 23 +++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  1 +
+ 3 files changed, 24 insertions(+), 22 deletions(-)
 
-New common fourcc helpers are also introduced in this series, especially
-related to YUV formats.
-
-This was tested on the A33, A20 and A10 platforms and all supported
-features work properly on them. Framebuffer offsets and source
-positions are not supported at this point.
-
-Changes since v4:
-* Added support for the A10 SoC;
-* Rebased on latest drm-misc and removed merged patches;
-
-Changes since v3:
-* Made the BT.601 CSC coefficients common;
-* Moved the tiling mode comment next to the associated macro;
-* Added collected Acked-by tags.
-
-Changes since v2:
-* Removed DRM format helpers taking the format fourcc;
-* Passed the DRM format info structure when needed instead of iterating
-  through the list;
-* Removed the sun4i-specific ioctl for allocating tiled buffers, which
-  will be rebranded as a generic one in an upcoming patch;
-* Improved comment for X1 tiled offset and simplified its calculation;
-* Corrected author email and added SoB where needed;
-* Rebased on latest drm-misc next.
-
-Changes since v1:
-* Extended source selected cleanup to both YUV and video channels;
-* Split and reworded comment about backend scaling;
-* Sorted newly-introduced lists alphabetically;
-* Simplified functions to check if a format is supported;
-* Reworked frontend selection logic as discussed;
-* Made YUV helpers common, with fourcc and drm_info fashions;
-* Changed the CREATE_TILED ioctl flags to match the CREATE_DUMB ioctl;
-* Reworked YUV dimensions calculations to use drm_format_info;
-* Dropped MB32 part in modifier to match V4L2 definition name;
-* Improved the description of the tiling modifier;
-* Avoided splitting CSC coefficients to avoid introducing a new module;
-* Fixed building the driver as modules;
-* Various code simplifications and cleanups;
-* Split commits into logical changes.
-
-Maxime Ripard (5):
-  drm/sun4i: Move access control before setting the register as
-    documented
-  drm/sun4i: frontend: Add a quirk structure
-  drm/sun4i: Set the coef_rdy bit right after the coef have been set
-  drm/sun4i: Make COEF_RDY conditional
-  drm/sun4i: frontend: Move the FIR filter phases to our quirks
-
-Paul Kocialkowski (18):
-  drm/fourcc: Add format info helpers for checking YUV planes
-    disposition
-  drm/fourcc: Add format info helpers for checking YUV sub-sampling
-  drm/sun4i: backend: Use explicit fourcc helpers for packed YUV422
-    check
-  drm/sun4i: frontend: Pass DRM format info to input format helpers
-  drm/sun4i: frontend: Determine input format based on colorspace
-  drm/sun4i: Move the BT.601 CSC coefficients to the frontend
-  drm/sun4i: frontend: Configure and enable YUV to RGB CSC when needed
-  drm/sun4i: frontend: Add support for packed YUV422 input formats
-  drm/sun4i: frontend: Add support for semi-planar YUV input formats
-  drm/sun4i: frontend: Add support for planar YUV input formats
-  drm/fourcc: Add definitions for Allwinner vendor and VPU tiled format
-  drm/sun4i: frontend: Add support for tiled YUV input mode
-    configuration
-  drm/sun4i: Add buffer stride and offset configuration for tiling mode
-  drm/sun4i: frontend: Add and use helper for checking tiling support
-  drm/sun4i: layer: Add tiled modifier support and helper
-  drm/sun4i: drv: Allow framebuffer modifiers in mode config
-  drm/sun4i: frontend: Hook-in support for the A10, with specific quirks
-  drm/sun4i: frontend: Hook-in support for the A20
-
- drivers/gpu/drm/sun4i/sun4i_backend.c  |  25 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c      |   1 +
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 350 ++++++++++++++++++++++---
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  52 ++++
- drivers/gpu/drm/sun4i/sun4i_layer.c    |  28 +-
- include/drm/drm_fourcc.h               | 117 +++++++++
- include/uapi/drm/drm_fourcc.h          |  16 ++
- 7 files changed, 534 insertions(+), 55 deletions(-)
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index bbadc2ab9f4d..892197f52557 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -45,28 +45,6 @@ static const u32 sunxi_rgb2yuv_coef[12] = {
+ 	0x000001c1, 0x00003e88, 0x00003fb8, 0x00000808
+ };
+ 
+-/*
+- * These coefficients are taken from the A33 BSP from Allwinner.
+- *
+- * The first three values of each row are coded as 13-bit signed fixed-point
+- * numbers, with 10 bits for the fractional part. The fourth value is a
+- * constant coded as a 14-bit signed fixed-point number with 4 bits for the
+- * fractional part.
+- *
+- * The values in table order give the following colorspace translation:
+- * G = 1.164 * Y - 0.391 * U - 0.813 * V + 135
+- * R = 1.164 * Y + 1.596 * V - 222
+- * B = 1.164 * Y + 2.018 * U + 276
+- *
+- * This seems to be a conversion from Y[16:235] UV[16:240] to RGB[0:255],
+- * following the BT601 spec.
+- */
+-static const u32 sunxi_bt601_yuv2rgb_coef[12] = {
+-	0x000004a7, 0x00001e6f, 0x00001cbf, 0x00000877,
+-	0x000004a7, 0x00000000, 0x00000662, 0x00003211,
+-	0x000004a7, 0x00000812, 0x00000000, 0x00002eb1,
+-};
+-
+ static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
+ {
+ 	int i;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index 7c7a5ea0cf58..045013efdc57 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -48,6 +48,29 @@ static const u32 sun4i_frontend_horz_coef[64] = {
+ 	0x03ff0000, 0x0000fd41, 0x01ff0000, 0x0000fe42,
+ };
+ 
++/*
++ * These coefficients are taken from the A33 BSP from Allwinner.
++ *
++ * The first three values of each row are coded as 13-bit signed fixed-point
++ * numbers, with 10 bits for the fractional part. The fourth value is a
++ * constant coded as a 14-bit signed fixed-point number with 4 bits for the
++ * fractional part.
++ *
++ * The values in table order give the following colorspace translation:
++ * G = 1.164 * Y - 0.391 * U - 0.813 * V + 135
++ * R = 1.164 * Y + 1.596 * V - 222
++ * B = 1.164 * Y + 2.018 * U + 276
++ *
++ * This seems to be a conversion from Y[16:235] UV[16:240] to RGB[0:255],
++ * following the BT601 spec.
++ */
++const u32 sunxi_bt601_yuv2rgb_coef[12] = {
++	0x000004a7, 0x00001e6f, 0x00001cbf, 0x00000877,
++	0x000004a7, 0x00000000, 0x00000662, 0x00003211,
++	0x000004a7, 0x00000812, 0x00000000, 0x00002eb1,
++};
++EXPORT_SYMBOL(sunxi_bt601_yuv2rgb_coef);
++
+ static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
+ {
+ 	int i;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index ad146e8d8d70..3df2bd8a7a95 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -86,6 +86,7 @@ struct sun4i_frontend {
+ };
+ 
+ extern const struct of_device_id sun4i_frontend_of_table[];
++extern const u32 sunxi_bt601_yuv2rgb_coef[12];
+ 
+ int sun4i_frontend_init(struct sun4i_frontend *frontend);
+ void sun4i_frontend_exit(struct sun4i_frontend *frontend);
 -- 
 2.20.1
 
