@@ -2,123 +2,228 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B63AAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D99C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5966520855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 535A720823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 09:40:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=epam.com header.i=@epam.com header.b="CF7rZFyi"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="G62gHBXQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfARJkF (ORCPT
+        id S1727080AbfARJkW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 04:40:05 -0500
-Received: from mail-eopbgr50085.outbound.protection.outlook.com ([40.107.5.85]:37687
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725856AbfARJkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 04:40:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=epam.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1XWPmsgZ2qBJ/E5EarTyv7tZur171yNVb1UhAYC+NGY=;
- b=CF7rZFyiYEcl/2FgAefwu3tM8hq1aMsokOfKCtNw3xz//Ho4wkZEnJdkr1Mc8G1CAC8w49vcb25iW+cGQue33XCUKLhHPU1yX3If/3jxlFo4ln7rlDa3Wff8TlqkfoXVpvdOzdeaxb3N0lsVuomObREtmC1PeyA3qFNctpzfj/c=
-Received: from AM6PR03MB4327.eurprd03.prod.outlook.com (20.177.33.25) by
- AM6PR03MB4647.eurprd03.prod.outlook.com (20.177.35.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Fri, 18 Jan 2019 09:40:00 +0000
-Received: from AM6PR03MB4327.eurprd03.prod.outlook.com
- ([fe80::844b:fab6:64d8:2f37]) by AM6PR03MB4327.eurprd03.prod.outlook.com
- ([fe80::844b:fab6:64d8:2f37%3]) with mapi id 15.20.1516.019; Fri, 18 Jan 2019
- 09:40:00 +0000
-From:   Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Gerd Hoffmann <kraxel@redhat.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "daniel.vetter@intel.com" <daniel.vetter@intel.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "noralf@tronnes.org" <noralf@tronnes.org>
-Subject: Re: [PATCH v2] drm/xen-front: Make shmem backed display buffer
- coherent
-Thread-Topic: [PATCH v2] drm/xen-front: Make shmem backed display buffer
- coherent
-Thread-Index: AQHUrNs7IxVSN/1nuUaI+Ik1wHznAaWxcBsAgAAB0ICAAAHygIABvZOAgAGYZ4A=
-Date:   Fri, 18 Jan 2019 09:40:00 +0000
-Message-ID: <1cfc5cb4-e481-5d71-29df-958db76fb681@epam.com>
-References: <20190115140420.4652-1-andr2000@gmail.com>
- <20190116063002.jq3aas6ofhaogmyk@sirius.home.kraxel.org>
- <20190116063631.GA10881@infradead.org>
- <042fe794-dec6-6d9d-5b68-6f142790f5c7@epam.com>
- <20190117091815.GA7090@infradead.org>
-In-Reply-To: <20190117091815.GA7090@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Oleksandr_Andrushchenko@epam.com; 
-x-originating-ip: [85.223.209.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR03MB4647;6:bsQQ7uqCy1AEf81m4cRSaL5QKWtcsv4fXJ13rFVi4hZQ4zgTqYf2/rTBl3zhPKoWQc42YAJX7YPzJAtRT2Ifk3p944HrVIi0IQbVx9G8/myn/Mnd42gZfRxmp76ft4JmECEFBrubobw40mT5T8PsOVgzZ/lg7BduNv+8MzsI3XlZNm1oKRsrVAM4TRGbIgVvusuUe5/qhlXArJXtQ2X0HddZJU8m2wwJUXAjPoDSEf8SM5uaUNSrYQe/CBesVLuzG4/jI4rluV3p+uGC0xwuKZc1cOSRJDSYe0kx7HXso+77QcGBLqxdIn2Hbe8ax8rx25ZY/zXukW3kHJKwOQvsU1L0QreUpZXm8e8FLa23MkwV5V2Yz2ewQ9PRs+yYhBk9nA2DTS5945Aupghwcx6GirgBRgyJWyX69iBwr3rKAIYondnfCBeN10296P1fTwqBV0nuBSphZVjGZIaOAs9Phg==;5:eCRjh7qss0M5dFeuDB9OYmxN5czgMRYBqrIqp8Yr/OGCKUHHfzvD4arwzLd+kwt8ZSEB0PPRFZnpKYfR1mTBvs8hKddpDaMwoAQrl6aXWwNA0d4a6VaUFgt5gA0l58oyIUVxg4LPJ5M9unPedcjK8pTEdWfLUBRRweslH4vXTeeqJ91ZMQNOWdcldtbAUMqAxdcH+SVp0BJaWSI45f9Qbg==;7:Na1Lr26+MHJc83sAIh+R5JvNNiIMa34F0ErUxPtr1xWG3Mz9cTBl5lTkcV+YjueBH7tiYKr7J7Nl7GZzlUc68H0oNNzC/pCrGILiMwh5jHyr+MwZL9I2TDOIvGIr6hRonzTyZmqKzMYUGh6NpceQwQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f9d2decd-ab1b-4f4a-6085-08d67d28ea98
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR03MB4647;
-x-ms-traffictypediagnostic: AM6PR03MB4647:
-x-microsoft-antispam-prvs: <AM6PR03MB464771752C710306AF1AA7DDE79C0@AM6PR03MB4647.eurprd03.prod.outlook.com>
-x-forefront-prvs: 0921D55E4F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(346002)(396003)(39860400002)(189003)(199004)(2616005)(81166006)(53936002)(6916009)(81156014)(305945005)(36756003)(6512007)(8936002)(68736007)(7736002)(8676002)(256004)(5660300001)(106356001)(99286004)(14454004)(2906002)(72206003)(4326008)(3846002)(6116002)(102836004)(6246003)(478600001)(39060400002)(76176011)(486006)(71200400001)(316002)(54906003)(97736004)(80792005)(11346002)(31686004)(53546011)(66066001)(229853002)(25786009)(93886005)(7416002)(26005)(86362001)(186003)(6436002)(446003)(71190400001)(6486002)(6506007)(31696002)(105586002)(476003)(55236004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR03MB4647;H:AM6PR03MB4327.eurprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: epam.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eIt9vDrbhSvvZ3vmc5KDZZmxaqdUo8MePFPWzhDnuRaOhZVss4eojBr8ihTzjLde/NVkPF7t8ml7pIzv4t1w9WBlVCprWsJkFRlOIYEs3RJ2HoaugvocGbMxEVo4wp2HyJ60dhfn51f+ejv0QKew/Zam6mLk/+IcmI+7oMARJHSIuu0ayD5FiFf4jfP5E5Dtle02Pv20LTtAdW4Xb1EY01ow7MutRPgkFPqKizyT2+yrPkBvy5tjexj1XGlIer0uT4jMegw2rtwJ1sr03/TRxgL8+MnWHBiKEoV1yJXO+hglvKFYG1dQcuCkSY1n3bRXYSSMRm2TP7hGhHsBWQlw3QSb/bVt0SAo/4uOwcVthI+LFUa/qweAtAWJo7fSUuFhE7QOtVoPY16rS0/oOaq07jmZL5oDHb3WlLBeMtESv4U=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <204A5FE564B9DB4094A3E9EF25F30501@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 18 Jan 2019 04:40:22 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39544 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbfARJkW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 04:40:22 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y8so3802737wmi.4
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 01:40:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2g01vzvh25Lt4673ekLv7gDNOBuQNnSj4waDHEZZ+4E=;
+        b=G62gHBXQS6LgipwQEHkiVZnzsia9Tq/AdBFsnVmv0WBXI3sQiWBT+w1OzQzPGo50AP
+         9u+/boTk8TNLgEhfIngu+ReH7xn816PUHrWzoB+EruTvifKGjIXMpB6AjCbrcaFoUun7
+         XQ6R34olJ2REUdqpIjNVWt4NZDWRRalDayLJ1h5zG2G8uHhTI7PKe19xFuGvFPJVEn1k
+         tPZf/DjWhkH+25QEnwK+Vvwp9ugWMC20PFVzERi6mQmP7qTsIMJ74KjmtZut3G2XAKe7
+         r/luwg86Qw/zrlc2iU5w6pzA2j4vT8cmCBpcS/lJMYfq/plQEP6UGGTwmgqVsECowsCT
+         DvOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2g01vzvh25Lt4673ekLv7gDNOBuQNnSj4waDHEZZ+4E=;
+        b=Nqp9VVcfbuvP5v6E7+J5ZKFq2WAyaMn7JY0UJV9XaPi7fShBEOnCGwA1gZQn8i+RHv
+         TiSMklRL2rKabvYSariUvVzlChzx4qMrhpC1nbnyWpQeZTY+h5Ojj5mF2e39LAApMqME
+         Ic1UKdQE+5CxZHtcwyV7RacSurLwV29T+Ex0BmCp8PeyvcPJ6FLQchFpDnbx3iezH+mW
+         1vb7s1QFdx5T0wU+2u8PP1xBVwDOjZQMS9+a3JSwPFOMX1E21zJV01lvWBtJs4QJ74ws
+         2Sn3VCHEwcjSDVUHOYP+n8hCZEecVOVoAT7iYO9ldtrIDRxh3Xpr7VtGiwlMn0qaGMMz
+         j1Nw==
+X-Gm-Message-State: AJcUukeKyhPHeF0aDIT3AHL7j0Ap6/u3RtNaH3WFIU6qES4exg4wzDA4
+        WpTB7lBd419sjCrFL7WSv+yEbg==
+X-Google-Smtp-Source: ALg8bN6gZ7c4HUb174a/I5Cmy6psqBOkt4sH/AbCY44cke7XVzwl7zkfGmNzu8H5rb9UrGRxCJVLvQ==
+X-Received: by 2002:a1c:1d81:: with SMTP id d123mr14597568wmd.112.1547804418438;
+        Fri, 18 Jan 2019 01:40:18 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t12sm86309396wrr.65.2019.01.18.01.40.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 01:40:17 -0800 (PST)
+Subject: Re: [PATCH 2/8] drm/meson: add HDMI div40 TMDS mode
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent.pinchart@ideasonboard.com
+Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20190115123315.11069-1-narmstrong@baylibre.com>
+ <CGME20190115123329epcas2p238b0b8a9f449f96991e02b34c54741ca@epcas2p2.samsung.com>
+ <20190115123315.11069-3-narmstrong@baylibre.com>
+ <5103b2e8-2f73-da18-a043-fa45d6e2c139@samsung.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <bdd3ec10-1f9f-324c-aed0-6eab30fe518b@baylibre.com>
+Date:   Fri, 18 Jan 2019 10:40:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: epam.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9d2decd-ab1b-4f4a-6085-08d67d28ea98
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jan 2019 09:40:00.6741
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b41b72d0-4e9f-4c26-8a69-f949f367c91d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR03MB4647
+In-Reply-To: <5103b2e8-2f73-da18-a043-fa45d6e2c139@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMS8xNy8xOSAxMToxOCBBTSwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6DQo+IE9uIFdlZCwg
-SmFuIDE2LCAyMDE5IGF0IDA2OjQzOjI5QU0gKzAwMDAsIE9sZWtzYW5kciBBbmRydXNoY2hlbmtv
-IHdyb3RlOg0KPj4+IFRoaXMgd2hvbGUgaXNzdWUga2VlcHMgZ2V0dGluZyBtb3JlIGFuZCBtb3Jl
-IGNvbmZ1c2luZy4NCj4+IFdlbGwsIEkgZG9uJ3QgcmVhbGx5IGRvIERNQSBoZXJlLCBidXQgaW5z
-dGVhZCB0aGUgYnVmZmVycyBpbg0KPj4gcXVlc3Rpb24gYXJlIHNoYXJlZCB3aXRoIG90aGVyIFhl
-biBkb21haW4sIHNvIGVmZmVjdGl2ZWx5IGl0DQo+PiBjb3VsZCBiZSB0aG91Z2h0IG9mIHNvbWUg
-c29ydCBvZiBETUEgaGVyZSwgd2hlcmUgdGhlICJkZXZpY2UiIGlzDQo+PiB0aGF0IHJlbW90ZSBk
-b21haW4uIElmIHRoZSBidWZmZXJzIGFyZSBub3QgZmx1c2hlZCB0aGVuIHRoZQ0KPj4gcmVtb3Rl
-IHBhcnQgc2VlcyBzb21lIGluY29uc2lzdGVuY3kgd2hpY2ggaW4gbXkgY2FzZSByZXN1bHRzDQo+
-PiBpbiBhcnRpZmFjdHMgb24gc2NyZWVuIHdoaWxlIGRpc3BsYXlpbmcgdGhlIGJ1ZmZlcnMuDQo+
-PiBXaGVuIGJ1ZmZlcnMgYXJlIGFsbG9jYXRlZCB2aWEgRE1BIEFQSSB0aGVuIHRoZXJlIGFyZSBu
-byBhcnRpZmFjdHM7DQo+PiBpZiBidWZmZXJzIGFyZSBhbGxvY2F0ZWQgd2l0aCBzaG1lbSArIERN
-QSBtYXBwaW5nIHRoZW4gdGhlcmUgYXJlIG5vDQo+PiBhcnRpZmFjdHMgYXMgd2VsbC4NCj4+IFRo
-ZSBvbmx5IG9mZmVuZGluZyB1c2UtY2FzZSBpcyB3aGVuIEkgdXNlIHNobWVtIGJhY2tlZCBidWZm
-ZXJzLA0KPj4gYnV0IGRvIG5vdCBmbHVzaCB0aGVtDQo+IFRoZSByaWdodCBhbnN3ZXIgd291bGQg
-YmUgdG8gaW1wbGVtZW50IGNhY2hlIG1haW50YWluYW5jZSBob29rcyBmb3INCj4gdGhpcyBjYXNl
-IGluIHRoZSBYZW4gYXJjaCBjb2RlLiAgVGhlc2Ugd291bGQgYmFzaWNhbGx5IGxvb2sgdGhlIHNh
-bWUNCj4gYXMgdGhlIGxvdy1sZXZlbCBjYWNoZSBtYWludGFpbmFuY2UgdXNlZCBieSB0aGUgRE1B
-IG9wcywgYnV0IHdpdGhvdXQNCj4gZ29pbmcgdGhyb3VnaCB0aGUgRE1BIG1hcHBpbmcgbGF5ZXIs
-IGluIGZhY3QgdGhleSBzaG91bGQgcHJvYmFibHkNCj4gcmV1c2UgdGhlIHNhbWUgbG93LWxldmVs
-IGFzc2VtYmx5IHJvdXRpbmVzLg0KPg0KPiBJIGRvbid0IHRoaW5rIHRoaXMgaXMgdGhlIGZpcnN0
-IHVzYWdlIG9mIHN1Y2ggWGVuIGJ1ZmZlciBzaGFyaW5nLCBzbw0KPiB3aGF0IGRvIHRoZSBvdGhl
-ciB1c2VycyBkbz8NCkknbGwgaGF2ZSB0byBnZXQgZXZlbiBkZWVwZXIgaW50byBpdC4gSW5pdGlh
-bGx5IEkNCmxvb2tlZCBhdCB0aGUgY29kZSwgYnV0IGRpZG4ndCBmaW5kIGFueXRoaW5nIHVzZWZ1
-bC4NCk9yIG1heWJlIEkgaGF2ZSBqdXN0IG92ZXJsb29rZWQgb2J2aW91cyB0aGluZ3MgdGhlcmUN
-Cg0KVGhhbmsgeW91LA0KT2xla3NhbmRy
+Hi Andrzej,
+
+On 18/01/2019 10:13, Andrzej Hajda wrote:
+> On 15.01.2019 13:33, Neil Armstrong wrote:
+>> Add support for TMDS Clock > 3.4GHz for HDMI2.0 display modes.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/gpu/drm/meson/meson_dw_hdmi.c | 23 +++++++++++++++++++----
+>>  1 file changed, 19 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+>> index 807111ebfdd9..3d8decb77019 100644
+>> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
+>> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+>> @@ -365,7 +365,8 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+>>  	unsigned int wr_clk =
+>>  		readl_relaxed(priv->io_base + _REG(VPU_HDMI_SETTING));
+>>  
+>> -	DRM_DEBUG_DRIVER("%d:\"%s\"\n", mode->base.id, mode->name);
+>> +	DRM_DEBUG_DRIVER("%d:\"%s\" div%d\n", mode->base.id, mode->name,
+>> +			 mode->clock > 340000 ? 40 : 10);
+>>  
+>>  	/* Enable clocks */
+>>  	regmap_update_bits(priv->hhi, HHI_HDMI_CLK_CNTL, 0xffff, 0x100);
+>> @@ -385,9 +386,17 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+>>  	/* Enable normal output to PHY */
+>>  	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_BIST_CNTL, BIT(12));
+>>  
+>> -	/* TMDS pattern setup (TOFIX pattern for 4k2k scrambling) */
+>> -	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0x001f001f);
+>> -	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23, 0x001f001f);
+>> +	/* TMDS pattern setup (TOFIX Handle the YUV420 case) */
+>> +	if (mode->clock > 340000) {
+>> +		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0);
+>> +		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
+>> +				  0x03ff03ff);
+>> +	} else {
+>> +		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01,
+>> +				  0x001f001f);
+>> +		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
+>> +				  0x001f001f);
+>> +	}
+> 
+> 
+>     val = mode->clock > 340000 ? 0x03ff03ff : 0x001f001f;
+>     dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, val);
+> 
+>     dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23, val);
+> 
+> 
+> The best would be to replace these magic values with descriptive macros.
+
+In fact, these are patterns, not sure how to describe them ? it's like a plain number, the value has it's own meaning.
+
+
+Neil
+> 
+> 
+> Regards
+> 
+> Andrzej
+> 
+> 
+>>  
+>>  	/* Load TMDS pattern */
+>>  	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_CNTL, 0x1);
+>> @@ -413,6 +422,8 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+>>  	/* Disable clock, fifo, fifo_wr */
+>>  	regmap_update_bits(priv->hhi, HHI_HDMI_PHY_CNTL1, 0xf, 0);
+>>  
+>> +	dw_hdmi_set_high_tmds_clock_ratio(hdmi);
+>> +
+>>  	msleep(100);
+>>  
+>>  	/* Reset PHY 3 times in a row */
+>> @@ -562,6 +573,10 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+>>  		mode->vdisplay, mode->vsync_start,
+>>  		mode->vsync_end, mode->vtotal, mode->type, mode->flags);
+>>  
+>> +	/* If sink max TMDS clock, we reject the mode */
+>> +	if (mode->clock > connector->display_info.max_tmds_clock)
+>> +		return MODE_BAD;
+>> +
+>>  	/* Check against non-VIC supported modes */
+>>  	if (!vic) {
+>>  		status = meson_venc_hdmi_supported_mode(mode);
+> 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+
