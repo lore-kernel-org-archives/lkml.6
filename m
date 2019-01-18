@@ -2,69 +2,271 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C7EC1B0F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A32C1B0F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925172087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9835A2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:19:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hcNAtJuw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fje5QZDn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbfARVSI (ORCPT
+        id S1729651AbfARVTF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 16:18:08 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:47094 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729616AbfARVSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 16:18:07 -0500
-Received: from localhost.localdomain (ppp85-140-181-158.pppoe.mtu-net.ru [85.140.181.158])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 77C56540082;
-        Sat, 19 Jan 2019 00:18:04 +0300 (MSK)
-From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Felipe Balbi <balbi@kernel.org>
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: [PATCH] usb: dwc3: exynos: Fix error handling of clk_prepare_enable
-Date:   Sat, 19 Jan 2019 00:17:37 +0300
-Message-Id: <1547846257-19970-1-git-send-email-khoroshilov@ispras.ru>
-X-Mailer: git-send-email 2.7.4
+        Fri, 18 Jan 2019 16:19:05 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60322 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729600AbfARVTF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 16:19:05 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 631CC606E1; Fri, 18 Jan 2019 21:19:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547846343;
+        bh=QgeOATkdnY7BCYhojOoqJcH4VQtjejdiVYEV9pFjVME=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=hcNAtJuwJdUP6RR2L49jQGZqtysJXYFDJBTolDxSWQgN7tYyp2YsM9WbmynaySWl7
+         TTYFnAzA6oBeeqqNUkTDAiBxHjhW0qO2O6pIcojOnjh3Wz70JooGxR9jfuWgUQRfyO
+         Hs14W95y/fC/97GfbL5EOpaY7tANtyev4qa4q9PA=
+Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: lmark@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4C83A606E1;
+        Fri, 18 Jan 2019 21:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547846339;
+        bh=QgeOATkdnY7BCYhojOoqJcH4VQtjejdiVYEV9pFjVME=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=fje5QZDnoKVTgV7PYmO946JbhwtsJnFh3xAnKXfqG0BHOnbVZx3WjKrRla0B+Q+IH
+         yeAtI1tZgksMAjh3BgQYR+d7ah3hGHgxAmRNUshc2lwpDXojfBvoarBen1/st3su68
+         +ameuswAei2NnesC9PNSfPwjGHvECjNmXnmdTluk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C83A606E1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
+Date:   Fri, 18 Jan 2019 13:18:57 -0800 (PST)
+From:   Liam Mark <lmark@codeaurora.org>
+X-X-Sender: lmark@lmark-linux.qualcomm.com
+To:     "Andrew F. Davis" <afd@ti.com>
+cc:     labbott@redhat.com, sumit.semwal@linaro.org, arve@android.com,
+        tkjos@android.com, maco@android.com, joel@joelfernandes.org,
+        christian@brauner.io, devel@driverdev.osuosl.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-kernel@vger.kernel.org, john.stultz@linaro.org
+Subject: Re: [PATCH 2/4] staging: android: ion: Restrict cache maintenance
+ to dma mapped memory
+In-Reply-To: <69b18f39-8ce0-3c4d-3528-dfab8399f24f@ti.com>
+Message-ID: <alpine.DEB.2.10.1901181316380.9328@lmark-linux.qualcomm.com>
+References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org> <1547836667-13695-3-git-send-email-lmark@codeaurora.org> <69b18f39-8ce0-3c4d-3528-dfab8399f24f@ti.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: MULTIPART/MIXED; BOUNDARY="-2046127808-432817944-1547846339=:9328"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If clk_prepare_enable() fails in dwc3_exynos_probe(),
-exynos->clks[0] is left undisabled because of usage
-preincrement in while condition.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+---2046127808-432817944-1547846339=:9328
+Content-Type: TEXT/PLAIN; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Fixes: 9f2168367a0a ("usb: dwc3: exynos: Rework clock handling and prepare for new variants")
----
- drivers/usb/dwc3/dwc3-exynos.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, 18 Jan 2019, Andrew F. Davis wrote:
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index cb7fcd7c0ad8..e7f6cff27b9a 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -78,7 +78,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
- 	for (i = 0; i < exynos->num_clks; i++) {
- 		ret = clk_prepare_enable(exynos->clks[i]);
- 		if (ret) {
--			while (--i > 0)
-+			while (i-- > 0)
- 				clk_disable_unprepare(exynos->clks[i]);
- 			return ret;
- 		}
--- 
-2.7.4
+> On 1/18/19 12:37 PM, Liam Mark wrote:
+> > The ION begin_cpu_access and end_cpu_access functions use the
+> > dma_sync_sg_for_cpu and dma_sync_sg_for_device APIs to perform cache
+> > maintenance.
+> > 
+> > Currently it is possible to apply cache maintenance, via the
+> > begin_cpu_access and end_cpu_access APIs, to ION buffers which are not
+> > dma mapped.
+> > 
+> > The dma sync sg APIs should not be called on sg lists which have not been
+> > dma mapped as this can result in cache maintenance being applied to the
+> > wrong address. If an sg list has not been dma mapped then its dma_address
+> > field has not been populated, some dma ops such as the swiotlb_dma_ops ops
+> > use the dma_address field to calculate the address onto which to apply
+> > cache maintenance.
+> > 
+> > Also I don’t think we want CMOs to be applied to a buffer which is not
+> > dma mapped as the memory should already be coherent for access from the
+> > CPU. Any CMOs required for device access taken care of in the
+> > dma_buf_map_attachment and dma_buf_unmap_attachment calls.
+> > So really it only makes sense for begin_cpu_access and end_cpu_access to
+> > apply CMOs if the buffer is dma mapped.
+> > 
+> > Fix the ION begin_cpu_access and end_cpu_access functions to only apply
+> > cache maintenance to buffers which are dma mapped.
+> > 
+> > Fixes: 2a55e7b5e544 ("staging: android: ion: Call dma_map_sg for syncing and mapping")
+> > Signed-off-by: Liam Mark <lmark@codeaurora.org>
+> > ---
+> >  drivers/staging/android/ion/ion.c | 26 +++++++++++++++++++++-----
+> >  1 file changed, 21 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+> > index 6f5afab7c1a1..1fe633a7fdba 100644
+> > --- a/drivers/staging/android/ion/ion.c
+> > +++ b/drivers/staging/android/ion/ion.c
+> > @@ -210,6 +210,7 @@ struct ion_dma_buf_attachment {
+> >  	struct device *dev;
+> >  	struct sg_table *table;
+> >  	struct list_head list;
+> > +	bool dma_mapped;
+> >  };
+> >  
+> >  static int ion_dma_buf_attach(struct dma_buf *dmabuf,
+> > @@ -231,6 +232,7 @@ static int ion_dma_buf_attach(struct dma_buf *dmabuf,
+> >  
+> >  	a->table = table;
+> >  	a->dev = attachment->dev;
+> > +	a->dma_mapped = false;
+> >  	INIT_LIST_HEAD(&a->list);
+> >  
+> >  	attachment->priv = a;
+> > @@ -261,12 +263,18 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
+> >  {
+> >  	struct ion_dma_buf_attachment *a = attachment->priv;
+> >  	struct sg_table *table;
+> > +	struct ion_buffer *buffer = attachment->dmabuf->priv;
+> >  
+> >  	table = a->table;
+> >  
+> > +	mutex_lock(&buffer->lock);
+> >  	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
+> > -			direction))
+> > +			direction)) {
+> > +		mutex_unlock(&buffer->lock);
+> >  		return ERR_PTR(-ENOMEM);
+> > +	}
+> > +	a->dma_mapped = true;
+> > +	mutex_unlock(&buffer->lock);
+> >  
+> >  	return table;
+> >  }
+> > @@ -275,7 +283,13 @@ static void ion_unmap_dma_buf(struct dma_buf_attachment *attachment,
+> >  			      struct sg_table *table,
+> >  			      enum dma_data_direction direction)
+> >  {
+> > +	struct ion_dma_buf_attachment *a = attachment->priv;
+> > +	struct ion_buffer *buffer = attachment->dmabuf->priv;
+> > +
+> > +	mutex_lock(&buffer->lock);
+> >  	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
+> > +	a->dma_mapped = false;
+> > +	mutex_unlock(&buffer->lock);
+> >  }
+> >  
+> >  static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
+> > @@ -346,8 +360,9 @@ static int ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
+> >  
+> >  	mutex_lock(&buffer->lock);
+> >  	list_for_each_entry(a, &buffer->attachments, list) {
+> 
+> When no devices are attached then buffer->attachments is empty and the
+> below does not run, so if I understand this patch correctly then what
+> you are protecting against is CPU access in the window after
+> dma_buf_attach but before dma_buf_map.
+> 
 
+Yes
+
+> This is the kind of thing that again makes me think a couple more
+> ordering requirements on DMA-BUF ops are needed. DMA-BUFs do not require
+> the backing memory to be allocated until map time, this is why the
+> dma_address field would still be null as you note in the commit message.
+> So why should the CPU be performing accesses on a buffer that is not
+> actually backed yet?
+> 
+> I can think of two solutions:
+> 
+> 1) Only allow CPU access (mmap, kmap, {begin,end}_cpu_access) while at
+> least one device is mapped.
+> 
+
+Would be quite limiting to clients.
+
+> 2) Treat the CPU access request like the a device map request and
+> trigger the allocation of backing memory just like if a device map had
+> come in.
+> 
+
+Which is, as you mention pretty much what we have now (though the buffer 
+is allocated even earlier).
+
+> I know the current Ion heaps (and most other DMA-BUF exporters) all do
+> the allocation up front so the memory is already there, but DMA-BUF was
+> designed with late allocation in mind. I have a use-case I'm working on
+> that finally exercises this DMA-BUF functionality and I would like to
+> have it export through ION. This patch doesn't prevent that, but seems
+> like it is endorsing the the idea that buffers always need to be backed,
+> even before device attach/map is has occurred.
+> 
+
+I didn't interpret the DMA-buf contract as requiring the dma-map to be 
+called in order for a backing store to be provided, I interpreted it as 
+meaning there could be a backing store before the dma-map but at the 
+dma-map call the final backing store configuration would be decided 
+(perhaps involving migrating the memory to the final backing store).
+I will let the dma-buf experts correct me on that.
+
+Limiting userspace clients to not be able to access buffers until after 
+they are dma-mapped seems unfortuntate to me, dma-mapping usually means a 
+change of ownership of the memory from the CPU to the device. So generally 
+while a buffer is dma mapped you have the device access it (though of 
+course it is supported for CPU to access to the buffer while dma mapped) 
+and then once the buffer is dma-unmapped the CPU can access it.  This is 
+how the DMA APIs are frequently used, and the changes above make ION align 
+more with the way the DMA APIs are used. Basically when the buffer is not 
+dma-mapped the CPU doesn't need to do any CMOs to access the buffer (and 
+ION ensures not CMOs are applied) but if the CPU does want to access the 
+buffer while it is dma mapped then ION ensures that the appropriate CMOs 
+are applied.
+
+It seems like a legitimate uses case to me to allow clients to access the 
+buffer before (and after) dma-mapping, example post processing of buffers.
+
+
+> Either of the above two solutions would need to target the DMA-BUF
+> framework,
+> 
+> Sumit,
+> 
+> Any comment?
+> 
+> Thanks,
+> Andrew
+> 
+> > -		dma_sync_sg_for_cpu(a->dev, a->table->sgl, a->table->nents,
+> > -				    direction);
+> > +		if (a->dma_mapped)
+> > +			dma_sync_sg_for_cpu(a->dev, a->table->sgl,
+> > +					    a->table->nents, direction);
+> >  	}
+> >  
+> >  unlock:
+> > @@ -369,8 +384,9 @@ static int ion_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
+> >  
+> >  	mutex_lock(&buffer->lock);
+> >  	list_for_each_entry(a, &buffer->attachments, list) {
+> > -		dma_sync_sg_for_device(a->dev, a->table->sgl, a->table->nents,
+> > -				       direction);
+> > +		if (a->dma_mapped)
+> > +			dma_sync_sg_for_device(a->dev, a->table->sgl,
+> > +					       a->table->nents, direction);
+> >  	}
+> >  	mutex_unlock(&buffer->lock);
+> >  
+> > 
+> 
+
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+---2046127808-432817944-1547846339=:9328--
