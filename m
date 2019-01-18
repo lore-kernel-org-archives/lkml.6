@@ -2,199 +2,201 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAF6C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3269C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 269CC20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 948162086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbfARSx5 (ORCPT
+        id S1729231AbfARTA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:53:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33728 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728695AbfARSx4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:53:56 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IImpA4091453
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 13:53:55 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q3hm37gmq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 13:53:55 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 18 Jan 2019 18:53:54 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 18 Jan 2019 18:53:50 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0IIrnWw19792012
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Jan 2019 18:53:49 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8927CB205F;
-        Fri, 18 Jan 2019 18:53:49 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43F5EB2066;
-        Fri, 18 Jan 2019 18:53:49 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.140.225])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Jan 2019 18:53:49 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 54FD216C35B9; Fri, 18 Jan 2019 10:53:48 -0800 (PST)
-Date:   Fri, 18 Jan 2019 10:53:48 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Plain accesses and data races in the Linux Kernel Memory Model
-Reply-To: paulmck@linux.ibm.com
-References: <20190116213658.GA3984@andrea>
- <Pine.LNX.4.44L0.1901171121360.1207-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1901171121360.1207-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19011818-0072-0000-0000-000003EC236E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010431; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01148364; UDB=6.00598266; IPR=6.00928667;
- MB=3.00025190; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-18 18:53:53
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011818-0073-0000-0000-00004ADBD95E
-Message-Id: <20190118185348.GE4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=689 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901180135
+        Fri, 18 Jan 2019 14:00:27 -0500
+Received: from mga14.intel.com ([192.55.52.115]:33139 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728989AbfARTAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 14:00:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 11:00:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
+   d="scan'208";a="128924203"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga001.jf.intel.com with ESMTP; 18 Jan 2019 11:00:24 -0800
+Message-ID: <8d8c0ca38f329986084e6a8a4971fb4b3a1727ee.camel@linux.intel.com>
+Subject: Re: [driver-core PATCH v9 1/9] driver core: Establish order of
+ operations for device_add and device_del via bitflag
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, mcgrof@kernel.org,
+        linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, bvanassche@acm.org
+Date:   Fri, 18 Jan 2019 11:00:24 -0800
+In-Reply-To: <20190118155425.GB5009@kroah.com>
+References: <154466182249.9126.3905559325944768059.stgit@ahduyck-desk1.jf.intel.com>
+         <154466189880.9126.10737761541647369077.stgit@ahduyck-desk1.jf.intel.com>
+         <20190118155425.GB5009@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 02:43:54PM -0500, Alan Stern wrote:
-> On Wed, 16 Jan 2019, Andrea Parri wrote:
+On Fri, 2019-01-18 at 16:54 +0100, Greg KH wrote:
+> On Wed, Dec 12, 2018 at 04:44:58PM -0800, Alexander Duyck wrote:
+> > Add an additional bit flag to the device struct named "dead".
+> > 
+> > This additional flag provides a guarantee that when a device_del is
+> > executed on a given interface an async worker will not attempt to attach
+> > the driver following the earlier device_del call. Previously this
+> > guarantee was not present and could result in the device_del call
+> > attempting to remove a driver from an interface only to have the async
+> > worker attempt to probe the driver later when it finally completes the
+> > asynchronous probe call.
+> > 
+> > One additional change added was that I pulled the check for dev->driver
+> > out of the __device_attach_driver call and instead placed it in the
+> > __device_attach_async_helper call. This was motivated by the fact that the
+> > only other caller of this, __device_attach, had already taken the
+> > device_lock() and checked for dev->driver. Instead of testing for this
+> > twice in this path it makes more sense to just consolidate the dev->dead
+> > and dev->driver checks together into one set of checks.
+> > 
+> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/base/core.c    |   11 +++++++++++
+> >  drivers/base/dd.c      |   22 +++++++++++-----------
+> >  include/linux/device.h |    5 +++++
+> >  3 files changed, 27 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index 0073b09bb99f..950e25495726 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -2080,6 +2080,17 @@ void device_del(struct device *dev)
+> >  	struct kobject *glue_dir = NULL;
+> >  	struct class_interface *class_intf;
+> >  
+> > +	/*
+> > +	 * Hold the device lock and set the "dead" flag to guarantee that
+> > +	 * the update behavior is consistent with the other bitfields near
+> > +	 * it and that we cannot have an asynchronous probe routine trying
+> > +	 * to run while we are tearing out the bus/class/sysfs from
+> > +	 * underneath the device.
+> > +	 */
+> > +	device_lock(dev);
+> > +	dev->dead = true;
+> > +	device_unlock(dev);
+> > +
+> >  	/* Notify clients of device removal.  This call must come
+> >  	 * before dpm_sysfs_remove().
+> >  	 */
+> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> > index 88713f182086..74c194ac99df 100644
+> > --- a/drivers/base/dd.c
+> > +++ b/drivers/base/dd.c
+> > @@ -731,15 +731,6 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
+> >  	bool async_allowed;
+> >  	int ret;
+> >  
+> > -	/*
+> > -	 * Check if device has already been claimed. This may
+> > -	 * happen with driver loading, device discovery/registration,
+> > -	 * and deferred probe processing happens all at once with
+> > -	 * multiple threads.
+> > -	 */
+> > -	if (dev->driver)
+> > -		return -EBUSY;
+> > -
+> >  	ret = driver_match_device(drv, dev);
+> >  	if (ret == 0) {
+> >  		/* no match */
+> > @@ -774,6 +765,15 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+> >  
+> >  	device_lock(dev);
+> >  
+> > +	/*
+> > +	 * Check if device has already been removed or claimed. This may
+> > +	 * happen with driver loading, device discovery/registration,
+> > +	 * and deferred probe processing happens all at once with
+> > +	 * multiple threads.
+> > +	 */
+> > +	if (dev->dead || dev->driver)
+> > +		goto out_unlock;
+> > +
+> >  	if (dev->parent)
+> >  		pm_runtime_get_sync(dev->parent);
+> >  
+> > @@ -784,7 +784,7 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+> >  
+> >  	if (dev->parent)
+> >  		pm_runtime_put(dev->parent);
+> > -
+> > +out_unlock:
+> >  	device_unlock(dev);
+> >  
+> >  	put_device(dev);
+> > @@ -897,7 +897,7 @@ static int __driver_attach(struct device *dev, void *data)
+> >  	if (dev->parent && dev->bus->need_parent_lock)
+> >  		device_lock(dev->parent);
+> >  	device_lock(dev);
+> > -	if (!dev->driver)
+> > +	if (!dev->dead && !dev->driver)
+> >  		driver_probe_device(drv, dev);
+> >  	device_unlock(dev);
+> >  	if (dev->parent && dev->bus->need_parent_lock)
+> > diff --git a/include/linux/device.h b/include/linux/device.h
+> > index 1b25c7a43f4c..f73dad81e811 100644
+> > --- a/include/linux/device.h
+> > +++ b/include/linux/device.h
+> > @@ -957,6 +957,10 @@ struct dev_links_info {
+> >   *              device.
+> >   * @dma_coherent: this particular device is dma coherent, even if the
+> >   *		architecture supports non-coherent devices.
+> > + * @dead:	This device is currently either in the process of or has
+> > + *		been removed from the system. Any asynchronous events
+> > + *		scheduled for this device should exit without taking any
+> > + *		action.
+> >   *
+> >   * At the lowest level, every device in a Linux system is represented by an
+> >   * instance of struct device. The device structure contains the information
+> > @@ -1051,6 +1055,7 @@ struct device {
+> >      defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
+> >  	bool			dma_coherent:1;
+> >  #endif
+> > +	bool			dead:1;
 > 
-> > Can the compiler (maybe, it does?) transform, at the C or at the "asm"
-> > level, LB1's P0 in LB2's P0 (LB1 and LB2 are reported below)?
-> > 
-> > C LB1
-> > 
-> > {
-> > 	int *x = &a;
-> > }
-> > 
-> > P0(int **x, int *y)
-> > {
-> > 	int *r0;
-> > 
-> > 	r0 = rcu_dereference(*x);
-> > 	*r0 = 0;
-> > 	smp_wmb();
-> > 	WRITE_ONCE(*y, 1);
-> > }
-> > 
-> > P1(int **x, int *y, int *b)
-> > {
-> > 	int r0;
-> > 
-> > 	r0 = READ_ONCE(*y);
-> > 	rcu_assign_pointer(*x, b);
-> > }
-> > 
-> > exists (0:r0=b /\ 1:r0=1)
-> > 
-> > 
-> > C LB2
-> > 
-> > {
-> > 	int *x = &a;
-> > }
-> > 
-> > P0(int **x, int *y)
-> > {
-> > 	int *r0;
-> > 
-> > 	r0 = rcu_dereference(*x);
-> > 	if (*r0)
-> > 		*r0 = 0;
-> > 	smp_wmb();
-> > 	WRITE_ONCE(*y, 1);
-> > }
-> > 
-> > P1(int **x, int *y, int *b)
-> > {
-> > 	int r0;
-> > 
-> > 	r0 = READ_ONCE(*y);
-> > 	rcu_assign_pointer(*x, b);
-> > }
-> > 
-> > exists (0:r0=b /\ 1:r0=1)
-> > 
-> > LB1 and LB2 are data-race free, according to the patch; LB1's "exists"
-> > clause is not satisfiable, while LB2's "exists" clause is satisfiable.
+> This really should live in the struct device_private structure, as
+> nothing outside of the driver core should care about this, or touch it.
 > 
-> Umm.  Transforming
+> A number of other bitfields should also move there as well, your's isn't
+> the only one that I missed this for.
 > 
-> 	*r0 = 0;
+> So can you make that quick change, and rebase (you needed to for patch 2
+> anyway), and resend so I can get this into my -next tree for people to
+> start testing and basing their work on?
 > 
-> to
+> sorry this has taken so long, and thanks for sticking with it.
 > 
-> 	if (*r0 != 0)
-> 		*r0 = 0;
-> 
-> wouldn't work on Alpha if r0 was assigned from a plain read with no
-> memory barrier between.  But when r0 is assigned from an
-> rcu_dereference call, or if there's no indirection (as in "if (a != 0)
-> a = 0;"), the compiler is indeed allowed to perform this
-> transformation.
-> 
-> This means my definition of preserved writes was wrong; a write we 
-> thought had to be preserved could instead be transformed into a read.
-> 
-> This objection throws a serious monkey wrench into my approach.  For
-> one thing, it implies that (as in the example) we can't expect
-> smp_wmb() always to order plain writes.  For another, it means we have
-> to assume a lot more writes need not be preserved.
-> 
-> I don't know.  This may doom the effort to formalize dependencies to
-> plain accesses.  Or at least, those other than address dependencies
-> from marked reads.
+> greg k-h
 
-(Catching up, hello from Auckland!)
+Okay. I will try to work it into my schedule and hopefully have the
+updated patches ready sometime early next week.
 
-At this point, I am very much in favor of taking the simpler starting
-point.  If someone is using any sort of dependency from a plain access,
-all bets are off.  Similarly, if someone is using a control or data
-dependency even from a marked access, the later dependent access must
-be marked to guarantee ordering.
+Thanks.
 
-I believe that the transformation from "*r0 = 0" should be convincing.  ;-)
-
-							Thanx, Paul
+- Alex
 
