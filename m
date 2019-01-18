@@ -2,86 +2,106 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A52C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8BDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0B362086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:15:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 049902086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547799331;
+	bh=L5T+VUoRVK9QGkhtMHE1r7Lp9r2F5Vdf7brc3Ah+kLk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=yIhYJcQRQRj36f0hwZVSsfbJfIYdUnTCE3+Vjm/e4EIy/u+9KC50JE9v4bZ0yyvWZ
+	 jxJ7Y27gDj1BMi7w/0wQMDeQvElTTeHLp98tgYT7RvMCpgzQhAiWpZ3Chq1E+Y3D/d
+	 wN9oKUfIfpK1g012PfbXGPcxhu7mZ/KYxFdr7/Uw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbfARIPM (ORCPT
+        id S1727872AbfARIP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:15:12 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2259 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727271AbfARINw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:13:52 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9CC25DC2090BD91F56D8;
-        Fri, 18 Jan 2019 16:13:49 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 18 Jan 2019 16:13:41 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>
-Subject: [PATCH net-next 02/12] net: hns3: remove unused member in struct hns3_enet_ring
-Date:   Fri, 18 Jan 2019 16:13:04 +0800
-Message-ID: <1547799194-38212-3-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
-References: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
+        Fri, 18 Jan 2019 03:15:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727350AbfARIP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:15:27 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52C382086D;
+        Fri, 18 Jan 2019 08:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547799327;
+        bh=L5T+VUoRVK9QGkhtMHE1r7Lp9r2F5Vdf7brc3Ah+kLk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aBrLoI71wOr5l5G2dA82MZnrl1ntosfb+Npf08AnZNJko/btTHDchck2tlpR4DH9y
+         hmQXPxtFOG1+hpsfgXlRl9T8xyMHFEMBKpCPX5ZfcWx72V73A7JhvPqa36YkcNWCC3
+         FRqMfy3aa44+FDvg805ZelNeHFTMPcyVe2zTXpoo=
+Date:   Fri, 18 Jan 2019 09:15:17 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] memory: jz4780-nemc: Reduce size of const array
+Message-ID: <20190118091518.467087b8@bbrezillon>
+In-Reply-To: <20190117224550.18043-3-paul@crapouillou.net>
+References: <20190117224550.18043-1-paul@crapouillou.net>
+        <20190117224550.18043-3-paul@crapouillou.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The irq_init_flag field in struct hns3_enet_ring is unnecessary.
-This patch removes it.
+On Thu, 17 Jan 2019 19:45:49 -0300
+Paul Cercueil <paul@crapouillou.net> wrote:
 
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 1 -
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h | 1 -
- 2 files changed, 2 deletions(-)
+> The maximum value found in that array is 15, there's no need to store
+> these values as uint32_t, a uint8_t is enough.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index e0621ef..c6f2d72 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3208,7 +3208,6 @@ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
- 			tqp_vector->irq_init_flag = HNS3_VECTOR_NOT_INITED;
- 		}
- 
--		priv->ring_data[i].ring->irq_init_flag = HNS3_VECTOR_NOT_INITED;
- 		hns3_clear_ring_group(&tqp_vector->rx_group);
- 		hns3_clear_ring_group(&tqp_vector->tx_group);
- 		netif_napi_del(&priv->tqp_vector[i].napi);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index e55995e..f59ab73 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -412,7 +412,6 @@ struct hns3_enet_ring {
- 	unsigned char *va; /* first buffer address for current packet */
- 
- 	u32 flag;          /* ring attribute */
--	int irq_init_flag;
- 
- 	int numa_node;
- 	cpumask_t affinity_mask;
--- 
-2.7.4
+Is it really worth the additional cast you add in the code?
+
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/memory/jz4780-nemc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/memory/jz4780-nemc.c b/drivers/memory/jz4780-nemc.c
+> index bcf06adefc96..ef3f20e46590 100644
+> --- a/drivers/memory/jz4780-nemc.c
+> +++ b/drivers/memory/jz4780-nemc.c
+> @@ -161,7 +161,7 @@ static bool jz4780_nemc_configure_bank(struct jz4780_nemc *nemc,
+>  	 * Conversion of tBP and tAW cycle counts to values supported by the
+>  	 * hardware (round up to the next supported value).
+>  	 */
+> -	static const uint32_t convert_tBP_tAW[] = {
+> +	static const u8 convert_tBP_tAW[] = {
+>  		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>  
+>  		/* 11 - 12 -> 12 cycles */
+> @@ -232,7 +232,7 @@ static bool jz4780_nemc_configure_bank(struct jz4780_nemc *nemc,
+>  			return false;
+>  		}
+>  
+> -		smcr |= convert_tBP_tAW[cycles] << NEMC_SMCR_TBP_SHIFT;
+> +		smcr |= (u32)convert_tBP_tAW[cycles] << NEMC_SMCR_TBP_SHIFT;
+>  	}
+>  
+>  	if (of_property_read_u32(node, "ingenic,nemc-tAW", &val) == 0) {
+> @@ -244,7 +244,7 @@ static bool jz4780_nemc_configure_bank(struct jz4780_nemc *nemc,
+>  			return false;
+>  		}
+>  
+> -		smcr |= convert_tBP_tAW[cycles] << NEMC_SMCR_TAW_SHIFT;
+> +		smcr |= (u32)convert_tBP_tAW[cycles] << NEMC_SMCR_TAW_SHIFT;
+>  	}
+>  
+>  	if (of_property_read_u32(node, "ingenic,nemc-tSTRV", &val) == 0) {
 
