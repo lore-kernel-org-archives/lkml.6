@@ -2,164 +2,102 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 395ACC5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB68FC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0463520896
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:46:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="q2YTYHAA"
+	by mail.kernel.org (Postfix) with ESMTP id B3DD52087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbfARTq5 (ORCPT
+        id S1729414AbfARTsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:46:57 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:35794 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729390AbfARTq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:46:56 -0500
-Received: by mail-yb1-f194.google.com with SMTP id h81so4493596ybg.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 11:46:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MFkcxqAcXhot3Os245eF1rc0vQAiphWw86ob1UWQ9h0=;
-        b=q2YTYHAAegi5ptaW78J05ZOkXWPUaP3nvoYIDGyPcsUcbCbJg8idaTsTUpijPRP+bV
-         9cAqUzZqRV1rI/m2somnCk2rleXm8+UkiSLvbuQzucLY4IdhjwoPWQVnKSwPrjOwFKpH
-         tnI5aiz4RsJKcBxDcjqxh/EzebqevKOWpnBOhH21Fq7msty5LD8IhF8/yY7PTXqW5kXG
-         1SwMZOax2F3rU+4mKAQ+7W3nHxJoTOd5XTEsZriHJdoAm1/uRRLRp/3SG4dVIv7nEItv
-         Fp0P/RfxDYt9ofH3FdC9nVL3bxUqLrb/82KXRUCP4A3mcu68SaTSA6H3v3gT+n0BXmyh
-         xQcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MFkcxqAcXhot3Os245eF1rc0vQAiphWw86ob1UWQ9h0=;
-        b=ksmcs/lbfz5zIGLla3b036R22jp5ENYHhSkwdaAB/k+dmWKpMmER9wJK3v6Rv7tzwr
-         PL+wzzG76UufncAwVL2af0GFlMrjXVScfr5+GMBch51oNSNQe1ZvIyR6pyV0pK+eZ3Gs
-         0OFA/a4l9r1WIVNm/qqbTgdZMpmdR06yXRyEmE+BBgnfEBAxZ8EbgP8ZhDaJKMJ1yxOf
-         w+afFjhKUONwSUZUfNVbyDG34DApO3aqCONAwkwXrDXCBJbERyOarcun9dOHG4Iv5AqE
-         fsrEc0g9Q3u8VxY9G93EFRlPaOQo7d/Am5uGXV6Zcf/0atxFojRbXaX1MC9pa7MuTC7L
-         HPfw==
-X-Gm-Message-State: AJcUukefqOVVbtm6fgmF2enl21r4GssmCgQ6TBcA9rxjG5a56GyetqFP
-        Xru9gPeRhbEUq15BrI85NjHhxQ==
-X-Google-Smtp-Source: ALg8bN6m9pyw019l3NyFDRtB3Jbj1HQTOZmWtGGhk7w7RzDYhpY1hoQXXRnmzRkQj5dAq7ZLd61nyA==
-X-Received: by 2002:a5b:986:: with SMTP id c6mr7783379ybq.444.1547840815335;
-        Fri, 18 Jan 2019 11:46:55 -0800 (PST)
-Received: from localhost ([2620:10d:c091:180::1:45d9])
-        by smtp.gmail.com with ESMTPSA id s35sm2380502ywa.19.2019.01.18.11.46.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 11:46:54 -0800 (PST)
-Date:   Fri, 18 Jan 2019 14:46:53 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
-        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
-Message-ID: <20190118194652.gg5j2yz3h2llecpj@macbook-pro-91.dhcp.thefacebook.com>
-References: <20190118103127.325-1-righi.andrea@gmail.com>
- <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
- <20190118184403.GB1535@xps-13>
+        Fri, 18 Jan 2019 14:48:07 -0500
+Received: from muru.com ([72.249.23.125]:34284 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729262AbfARTsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 14:48:06 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 7597E8047;
+        Fri, 18 Jan 2019 19:48:12 +0000 (UTC)
+Date:   Fri, 18 Jan 2019 11:48:02 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+        paul@pwsan.com, sboyd@kernel.org, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, t-kristo@ti.com,
+        bcousson@baylibre.com, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org, Keerthy <j-keerthy@ti.com>
+Subject: Re: [Letux-kernel] [PATCH v3 3/3] arm: omap_hwmod disable ick
+ autoidling when a hwmod requires that
+Message-ID: <20190118194802.GZ5544@atomide.com>
+References: <20190116220429.9136-1-andreas@kemnade.info>
+ <20190116220429.9136-4-andreas@kemnade.info>
+ <20190118154807.GV5544@atomide.com>
+ <20190118181827.7163bee4@aktux>
+ <20190118183630.GX5544@atomide.com>
+ <20190118203832.3be7975e@aktux>
+ <20190118204204.44db353f@aktux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190118184403.GB1535@xps-13>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190118204204.44db353f@aktux>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 07:44:03PM +0100, Andrea Righi wrote:
-> On Fri, Jan 18, 2019 at 11:35:31AM -0500, Josef Bacik wrote:
-> > On Fri, Jan 18, 2019 at 11:31:24AM +0100, Andrea Righi wrote:
-> > > This is a redesign of my old cgroup-io-throttle controller:
-> > > https://lwn.net/Articles/330531/
-> > > 
-> > > I'm resuming this old patch to point out a problem that I think is still
-> > > not solved completely.
-> > > 
-> > > = Problem =
-> > > 
-> > > The io.max controller works really well at limiting synchronous I/O
-> > > (READs), but a lot of I/O requests are initiated outside the context of
-> > > the process that is ultimately responsible for its creation (e.g.,
-> > > WRITEs).
-> > > 
-> > > Throttling at the block layer in some cases is too late and we may end
-> > > up slowing down processes that are not responsible for the I/O that
-> > > is being processed at that level.
+* Andreas Kemnade <andreas@kemnade.info> [190118 19:42]:
+> On Fri, 18 Jan 2019 20:38:47 +0100
+> Andreas Kemnade <andreas@kemnade.info> wrote:
+> 
+> > Hi,
 > > 
-> > How so?  The writeback threads are per-cgroup and have the cgroup stuff set
-> > properly.  So if you dirty a bunch of pages, they are associated with your
-> > cgroup, and then writeback happens and it's done in the writeback thread
-> > associated with your cgroup and then that is throttled.  Then you are throttled
-> > at balance_dirty_pages() because the writeout is taking longer.
-> 
-> Right, writeback is per-cgroup and slowing down writeback affects only
-> that specific cgroup, but, there are cases where other processes from
-> other cgroups may require to wait on that writeback to complete before
-> doing I/O (for example an fsync() to a file shared among different
-> cgroups). In this case we may end up blocking cgroups that shouldn't be
-> blocked, that looks like a priority-inversion problem. This is the
-> problem that I'm trying to address.
-
-Well this case is a misconfiguration, you shouldn't be sharing files between
-cgroups.  But even if you are, fsync() is synchronous, we should be getting the
-context from the process itself and thus should have its own rules applied.
-There's nothing we can do for outstanding IO, but that shouldn't be that much.
-That would need to be dealt with on a per-contoller basis.
-
-> 
+> > On Fri, 18 Jan 2019 10:36:30 -0800
+> > Tony Lindgren <tony@atomide.com> wrote:
 > > 
-> > I introduced the blk_cgroup_congested() stuff for paths that it's not easy to
-> > clearly tie IO to the thing generating the IO, such as readahead and such.  If
-> > you are running into this case that may be something worth using.  Course it
-> > only works for io.latency now but there's no reason you can't add support to it
-> > for io.max or whatever.
-> 
-> IIUC blk_cgroup_congested() is used in readahead I/O (and swap with
-> memcg), something like this: if the cgroup is already congested don't
-> generate extra I/O due to readahead. Am I right?
-
-Yeah, but that's just how it's currently used, it can be used any which way we
-feel like.
-
-> 
+> > [...]
+> > > til the next workaround.
+> > >   
+> > > > That flags also causes the iclk being enabled/disabled
+> > > > manually.    
+> > > 
+> > > Yes but SWSUP_IDLE for the interface clock to me currently
+> > > just means:
+> > > 
+> > > "manually enable and disable ocp interface clock"
+> > >   
+> > well, if we want to manually disable it and not automatically,
+> > we have to disable autoidle or it will be automatically disabled.
 > > 
-> > > 
-> > > = Proposed solution =
-> > > 
-> > > The main idea of this controller is to split I/O measurement and I/O
-> > > throttling: I/O is measured at the block layer for READS, at page cache
-> > > (dirty pages) for WRITEs, and processes are limited while they're
-> > > generating I/O at the VFS level, based on the measured I/O.
-> > > 
+> > Disabling it manually when it is already auto-disabled (by autoidle) is
+> > just practically a no-op towards the clock.
 > > 
-> > This is what blk_cgroup_congested() is meant to accomplish, I would suggest
-> > looking into that route and simply changing the existing io controller you are
-> > using to take advantage of that so it will actually throttle things.  Then just
-> > sprinkle it around the areas where we indirectly generate IO.  Thanks,
-> 
-> Absolutely, I can probably use blk_cgroup_congested() as a method to
-> determine when a cgroup should be throttled (instead of doing my own
-> I/O measuring), but to prevent the "slow writeback slowing down other
-> cgroups" issue I still need to apply throttling when pages are dirtied
-> in page cache.
+> > > and with your changes it becomes:
+> > > 
+> > > "manually enable and disable ocp interface clock and block
+> > >  autoidle while in use".
+> > > 
+> > > So aren't we now changing the way things behave in general
+> > > for SWSUP_IDLE?
+> > >   
+> > Yes, we are, so proper testing is needed. But If I read those comments
+> > it was always intended this way but not fully implemented because it
+> > appeared to be more work like needing a usecounter (which my patchset
+> > also adds) for that autoidle flag.
+> > 
+> and there are quite few hwmods marked by this flag. 
+> And then there are those clocks marked by this flags (on am33xx) which
+> do not have that autoidle feature at all, so the risk is not too high.
 
-Again this is just a fuckup from a configuration stand point.  The argument
-could be made that sync() is probably broken here, but I think the right
-solution here is to just pass the cgroup context along with the writeback
-information and use that if it's set instead.  Thanks,
+Keerthy, can you please test this series on top of the
+related clock patches with your am335x PM test cases?
 
-Josef
+Regards,
+
+Tony
+
+
