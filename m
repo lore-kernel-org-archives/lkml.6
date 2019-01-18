@@ -2,107 +2,205 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30957C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCC5C5AC81
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020F620823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34FB720823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:24:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="TbShEl9B"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dw8SHWcc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbfARRY0 (ORCPT
+        id S1728386AbfARRYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:24:26 -0500
-Received: from mail-qt1-f177.google.com ([209.85.160.177]:46429 "EHLO
-        mail-qt1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbfARRYY (ORCPT
+        Fri, 18 Jan 2019 12:24:37 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38372 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727553AbfARRYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:24:24 -0500
-Received: by mail-qt1-f177.google.com with SMTP id y20so15965207qtm.13
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:24:23 -0800 (PST)
+        Fri, 18 Jan 2019 12:24:36 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v13so16013018wrw.5
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:24:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=lZ87AmTI1oQJ5sXff1dsD162tkB2dFUbVTnQFxv3BtQ=;
-        b=TbShEl9BC80tqkxWYSFwCY2ufjK+Civ0MP5jcClAH9JxgogYSBAsulNqmrKq7qLuRf
-         Qok+y+ma78lXAXtdorJHvqHZrgTnucXXX49E6gwY/cNC2+u/lmGD8jhTeWF/kvYSppUc
-         c5ClMr7OGS5el1eeKJQd2tEDwVy2qpJoIzUmI=
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LdL19VvuwiQZZQ+oXgplGPEqEZFpfJRXauSkt/RaFu0=;
+        b=dw8SHWcckTunJdkNoFnXE9/1uLqJo1Ul0ji/kVYmUGizIdZsq5AtLEVZKRZQmTU6q4
+         Oyle3luglOWNJhxQVbllJcj7mzXylQlO+0uFFT1bAt5XJ2X7BtYk+bOws30Z0VECps1h
+         /fxxUUxgJ1vl9h/rOz7i090tg2UzohxHLBq1I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=lZ87AmTI1oQJ5sXff1dsD162tkB2dFUbVTnQFxv3BtQ=;
-        b=Iut2mEOt+l7Z4mLnYdJAZ0jui1vSJt5eLZBwxUMF/zryl5ZWmVCKeUoTdGq+v4E6hB
-         Av256o/SguqFYoz80TPKOXuCGuwFf2hRyy1zngh/VepEWH4mSIa1OGgagGQ8187bVIF5
-         j8s2gWxVEApdmio4da3wSq/WW9tkXaBrDiEk0eLybEpu7YvMOnKzGpD3o5wMa9+qKe8O
-         ZcM6VgK4fjAAZ7oqhQzZT5d+naf1W/BObEvWHh/UJ3/euQfYj8mgmoDMATg3B78Az7/X
-         m7HJ8g8yc0aURWQn0EygSya+l17oOx11jjolo6rVcgonUfi0zwSHvWx3B5v9/zG7gIEd
-         89Yw==
-X-Gm-Message-State: AJcUukdJRIqOp/jfkW2l4LGhrIaHWKuByRvNJFiJK8eAX/fxB2T0Qgz1
-        FmpPHq+F18ptBatntyXSOy9AyA==
-X-Google-Smtp-Source: ALg8bN7QGmw8V4AGkCqQf6xPcnIaiE0tYYzZxK3PAgvj3Q8JR42WWY0rpJ++XtI5ngKMKgISWwtTZg==
-X-Received: by 2002:aed:3781:: with SMTP id j1mr16912136qtb.315.1547832262988;
-        Fri, 18 Jan 2019 09:24:22 -0800 (PST)
-Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id w184sm68657577qkw.90.2019.01.18.09.24.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Jan 2019 09:24:21 -0800 (PST)
-From:   Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date:   Fri, 18 Jan 2019 12:24:20 -0500 (EST)
-X-X-Sender: vince@macbook-air
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: perf: rdpmc bug when viewing all procs on remote cpu
-In-Reply-To: <20190118155814.GC14054@worktop.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1901181217180.5762@macbook-air>
-References: <alpine.DEB.2.21.1901101229010.3358@macbook-air> <alpine.DEB.2.21.1901101246340.3358@macbook-air> <alpine.DEB.2.21.1901101500030.3717@macbook-air> <alpine.DEB.2.21.1901111649580.6487@macbook-air> <20190118120149.GC27931@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1901180905090.5762@macbook-air> <20190118155814.GC14054@worktop.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LdL19VvuwiQZZQ+oXgplGPEqEZFpfJRXauSkt/RaFu0=;
+        b=guyrMOD3kqk5gNTPCKvWE1xKaWBb13I5d6GELMNIZ4sXgcFYLAM0B9mLZClrn87/My
+         YZcvVPaa2lqKML2vOnid/HKMR6qchXSVDXxMX59HnTAijqSDUljFaybwiokcuFX+fQqh
+         Y+Yl+PP5f+6yR+iadJffD0+dALObUrt4+0yn7GD+iuu+32lntlJoCnqy69dNFa+dcAFq
+         dlz2MTfQpFGd8b30wCI2ACf93N+QdwTSoLRqR4TG53L97wzgM4RubQYPd5v4MFi3k0Be
+         7u1nUMXkb3V46xqQ3RHLdqK1LMS6L4c2DLDtkS2JqiDfKLrqFf6BsXvlwU/7T5vus8Lg
+         9XrA==
+X-Gm-Message-State: AJcUukdzyO43/glhw8VvvP+d+2hltra5ZFb0ANNxlvwFA3GVX/C7VWpv
+        +3mXLRUNDj8eQ4icq1i/z5ECXw==
+X-Google-Smtp-Source: ALg8bN4Dl+CL/2xjoCyOnR1Xdx4SElgTQLwfilZORA/roIRlMyjSJyXcbf3BEXk5LyPL908EzT9JDw==
+X-Received: by 2002:adf:eec9:: with SMTP id a9mr17041395wrp.242.1547832274351;
+        Fri, 18 Jan 2019 09:24:34 -0800 (PST)
+Received: from [192.168.43.112] ([37.162.17.17])
+        by smtp.gmail.com with ESMTPSA id c129sm29970547wma.48.2019.01.18.09.24.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 09:24:33 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH BUGFIX RFC 0/2] reverting two commits causing freezes
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <c3b182a2-7f82-2860-436b-c1d59d6661ff@kernel.dk>
+Date:   Fri, 18 Jan 2019 18:24:31 +0100
+Cc:     linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        'Paolo Valente' via bfq-iosched 
+        <bfq-iosched@googlegroups.com>, oleksandr@natalenko.name,
+        hurikhan77+bko@gmail.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D212BCED-49BD-47F0-AF7F-0CCDBC82D131@linaro.org>
+References: <20190118115219.63576-1-paolo.valente@linaro.org>
+ <c3b182a2-7f82-2860-436b-c1d59d6661ff@kernel.dk>
+To:     Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Jan 2019, Peter Zijlstra wrote:
-> 
-> You can actually use rdpmc when you attach to a CPU, but you have to
-> ensure that the userspace component is guaranteed to run on that very
-> CPU (sched_setaffinity(2) comes to mind).
 
-unfortunately the HPC people using PAPI would probably be annoyed if we 
-started binding their threads to cores out from under them.
 
-> The best we could possibly do is put the (target, not current) cpu
-> number in the mmap page; but userspace should already know this, for it
-> created the event and therefore knows this already.
+> Il giorno 18 gen 2019, alle ore 14:35, Jens Axboe <axboe@kernel.dk> ha =
+scritto:
+>=20
+> On 1/18/19 4:52 AM, Paolo Valente wrote:
+>> Hi Jens,
+>> a user reported a warning, followed by freezes, in case he increases
+>> nr_requests to more than 64 [1]. After reproducing the issues, I
+>> reverted the commit f0635b8a416e ("bfq: calculate shallow depths at
+>> init time"), plus the related commit bd7d4ef6a4c9 ("bfq-iosched:
+>> remove unused variable"). The problem went away.
+>=20
+> For reverts, please put the justification into the actual revert
+> commit. With this series, if applied as-is, we'd have two patches
+> in the tree that just says "revert X" without any hint as to why
+> that was done.
+>=20
 
-one other thing the kernel would do is just disable rdpmc (setting index 
-to 0) in the case where the original perf_event_open() cpu paramater!=0
+I forget to say explicitly that these patches were meant only to give
+you and anybody else something concrete to test and check.
 
-though that would stop the case where we were on the same CPU from 
-working.
+With me you're as safe as houses, in terms of amount of comments in
+final patches :)
 
-The issue is currently if you're not careful the rdpmc() interface will 
-sometimes return plausible (but wrong) results for a cross-CPU rdpmc() 
-call, even if you are properly falling back to read() on ->index being 0.
-It's a bit surprising and it looks like it will take a decent amount of 
-userspace code to work around the issue, which cuts into the low-overhead 
-nature of rdpmc.
+>> Maybe the assumption in commit f0635b8a416e ("bfq: calculate shallow
+>> depths at init time") does not hold true?
+>=20
+> It apparently doesn't! But let's try and figure this out instead of
+> blindly reverting it.
 
-If the answer is simply this is the way the kernel is going to do it, 
-that's fine, I just have to add workarounds to PAPI and then get the 
-perf_even_open() manpage updated to make sure people are aware of the 
-issue.
+Totally agree.
 
-Vince
+> OK, I think I see it. For the sched_tags
+> case, when we grow the requests, we allocate a new set. Hence any
+> old cache would be stale at that point.
+>=20
 
+ok
+
+> How about something like this? It still keeps the code of having
+> to update this out of the hot IO path, and only calls it when we
+> actually change the depths.
+>=20
+
+Looks rather clean and efficient.
+
+> Totally untested...
+>=20
+
+It seems to work here too.
+
+Thanks,
+Paolo
+
+>=20
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index cd307767a134..b09589915667 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -5342,7 +5342,7 @@ static unsigned int bfq_update_depths(struct =
+bfq_data *bfqd,
+> 	return min_shallow;
+> }
+>=20
+> -static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int =
+index)
+> +static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
+> {
+> 	struct bfq_data *bfqd =3D hctx->queue->elevator->elevator_data;
+> 	struct blk_mq_tags *tags =3D hctx->sched_tags;
+> @@ -5350,6 +5350,11 @@ static int bfq_init_hctx(struct blk_mq_hw_ctx =
+*hctx, unsigned int index)
+>=20
+> 	min_shallow =3D bfq_update_depths(bfqd, &tags->bitmap_tags);
+> 	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, =
+min_shallow);
+> +}
+> +
+> +static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int =
+index)
+> +{
+> +	bfq_depth_updated(hctx);
+> 	return 0;
+> }
+>=20
+> @@ -5772,6 +5777,7 @@ static struct elevator_type iosched_bfq_mq =3D {
+> 		.requests_merged	=3D bfq_requests_merged,
+> 		.request_merged		=3D bfq_request_merged,
+> 		.has_work		=3D bfq_has_work,
+> +		.depth_updated		=3D bfq_depth_updated,
+> 		.init_hctx		=3D bfq_init_hctx,
+> 		.init_sched		=3D bfq_init_queue,
+> 		.exit_sched		=3D bfq_exit_queue,
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 3ba37b9e15e9..a047b297ade5 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -3101,6 +3101,8 @@ int blk_mq_update_nr_requests(struct =
+request_queue *q, unsigned int nr)
+> 		}
+> 		if (ret)
+> 			break;
+> +		if (q->elevator && q->elevator->type->ops.depth_updated)
+> +			q->elevator->type->ops.depth_updated(hctx);
+> 	}
+>=20
+> 	if (!ret)
+> diff --git a/include/linux/elevator.h b/include/linux/elevator.h
+> index 2e9e2763bf47..6e8bc53740f0 100644
+> --- a/include/linux/elevator.h
+> +++ b/include/linux/elevator.h
+> @@ -31,6 +31,7 @@ struct elevator_mq_ops {
+> 	void (*exit_sched)(struct elevator_queue *);
+> 	int (*init_hctx)(struct blk_mq_hw_ctx *, unsigned int);
+> 	void (*exit_hctx)(struct blk_mq_hw_ctx *, unsigned int);
+> +	void (*depth_updated)(struct blk_mq_hw_ctx *);
+>=20
+> 	bool (*allow_merge)(struct request_queue *, struct request *, =
+struct bio *);
+> 	bool (*bio_merge)(struct blk_mq_hw_ctx *, struct bio *);
+>=20
+> --=20
+> Jens Axboe
+>=20
 
