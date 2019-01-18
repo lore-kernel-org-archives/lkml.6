@@ -2,87 +2,137 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B31CC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9F5C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BD182054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:39:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 834D62054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfAROiu (ORCPT
+        id S1727749AbfAROjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:38:50 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:54112 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfAROiu (ORCPT
+        Fri, 18 Jan 2019 09:39:07 -0500
+Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:52558 "EHLO
+        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727576AbfAROjG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:38:50 -0500
-Received: from ramsan ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id Rqen1z00F3XaVaC01qentf; Fri, 18 Jan 2019 15:38:47 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gkVIF-0007kw-6y; Fri, 18 Jan 2019 15:38:47 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gkUlz-0007bY-2x; Fri, 18 Jan 2019 15:05:27 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nguyen An Hoan <na-hoan@jinso.co.jp>, linux-spi@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] eeprom: at25: SPI transfer improvements
-Date:   Fri, 18 Jan 2019 15:05:23 +0100
-Message-Id: <20190118140525.29189-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Fri, 18 Jan 2019 09:39:06 -0500
+Received: from mail.blacknight.com (unknown [81.17.254.11])
+        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id 43C011C3514
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 14:39:04 +0000 (GMT)
+Received: (qmail 7357 invoked from network); 18 Jan 2019 14:39:04 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Jan 2019 14:39:04 -0000
+Date:   Fri, 18 Jan 2019 14:39:02 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 24/25] mm, compaction: Capture a page under direct
+ compaction
+Message-ID: <20190118143902.GR27437@techsingularity.net>
+References: <20190104125011.16071-1-mgorman@techsingularity.net>
+ <20190104125011.16071-25-mgorman@techsingularity.net>
+ <d8a3dfc9-e4f6-ceb6-f29d-832bef14a14a@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <d8a3dfc9-e4f6-ceb6-f29d-832bef14a14a@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi all,
+On Fri, Jan 18, 2019 at 02:40:00PM +0100, Vlastimil Babka wrote:
+> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> 
+> Great, you crossed off this old TODO item, and didn't need pageblock isolation
+> to do that :D
+> 
 
-This patch series contains two improvements for the AT25 SPI EEPROM
-driver, related to SPI transfers.
+The TODO is not just old, it's ancient! The idea of capture was first
+floated in 2008! A version was proposed at https://lwn.net/Articles/301246/
+against 2.6.27-rc1-mm1.
 
-Changes compared to v1:
-  - Merge "off" and "offset" into a single variable instead of just
-    killing the cast, as suggested by Arnd,
-  - Add Acked-by,
-  - Dropped "[PATCH 3/3] eeprom: at25: Split writes in two SPI transfers
-    to optimize DMA", as this is better implemented in the SPI
-    controller driver (cfr. e.g. "[v2 PATCH 2/2] spi: sh-msiof: Use DMA
-    if possible",
-    https://lore.kernel.org/linux-renesas-soc/1547803771-9564-2-git-send-email-na-hoan@jinso.co.jp/)
+> I have just one worry...
+> 
+> > @@ -837,6 +873,12 @@ static inline void __free_one_page(struct page *page,
+> >  
+> >  continue_merging:
+> >  	while (order < max_order - 1) {
+> > +		if (compaction_capture(capc, page, order)) {
+> > +			if (likely(!is_migrate_isolate(migratetype)))
+> > +				__mod_zone_freepage_state(zone, -(1 << order),
+> > +								migratetype);
+> > +			return;
+> 
+> What about MIGRATE_CMA pageblocks and compaction for non-movable allocation,
+> won't that violate CMA expecteations?
+> And less critically, this will avoid the migratetype stealing decisions and
+> actions, potentially resulting in worse fragmentation avoidance?
+> 
 
-Tested on a Renesas Ebisu development board with R-Car E3 using MSIOF
-and a 25LC040 EEPROM.
+Both might be issues. How about this (untested)?
 
-Thanks!
-
-Geert Uytterhoeven (2):
-  eeprom: at25: Merge "off" and "offset" in at25_ee_write()
-  eeprom: at25: Use spi_message_init_with_transfers() instead of open
-    coding
-
- drivers/misc/eeprom/at25.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index fe089ac8a207..d61174bb0333 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -799,11 +799,26 @@ static inline struct capture_control *task_capc(struct zone *zone)
+ }
+ 
+ static inline bool
+-compaction_capture(struct capture_control *capc, struct page *page, int order)
++compaction_capture(struct capture_control *capc, struct page *page,
++		   int order, int migratetype)
+ {
+ 	if (!capc || order != capc->cc->order)
+ 		return false;
+ 
++	/* Do not accidentally pollute CMA or isolated regions*/
++	if (is_migrate_cma(migratetype) ||
++	    is_migrate_isolate(migratetype))
++		return false;
++
++	/*
++	 * Do not let lower order allocations polluate a movable pageblock.
++	 * This might let an unmovable request use a reclaimable pageblock
++	 * and vice-versa but no more than normal fallback logic which can
++	 * have trouble finding a high-order free page.
++	 */
++	if (order < pageblock_order && migratetype == MIGRATE_MOVABLE)
++		return false;
++
+ 	capc->page = page;
+ 	return true;
+ }
+@@ -815,7 +830,8 @@ static inline struct capture_control *task_capc(struct zone *zone)
+ }
+ 
+ static inline bool
+-compaction_capture(struct capture_control *capc, struct page *page, int order)
++compaction_capture(struct capture_control *capc, struct page *page,
++		   int order, int migratetype)
+ {
+ 	return false;
+ }
+@@ -870,7 +886,7 @@ static inline void __free_one_page(struct page *page,
+ 
+ continue_merging:
+ 	while (order < max_order - 1) {
+-		if (compaction_capture(capc, page, order)) {
++		if (compaction_capture(capc, page, order, migratetype)) {
+ 			if (likely(!is_migrate_isolate(migratetype)))
+ 				__mod_zone_freepage_state(zone, -(1 << order),
+ 								migratetype);
 
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Mel Gorman
+SUSE Labs
