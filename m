@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D4AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5429C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24BA42087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD48F2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfAROxc (ORCPT
+        id S1727623AbfAROxn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:53:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47902 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:53:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47831 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727732AbfAROvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:51:44 -0500
+        id S1727542AbfAROvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:51:43 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B617C20A9B; Fri, 18 Jan 2019 15:51:42 +0100 (CET)
+        id 69169209C0; Fri, 18 Jan 2019 15:51:41 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 64AD620A9B;
-        Fri, 18 Jan 2019 15:51:42 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1AB9D207B6;
+        Fri, 18 Jan 2019 15:51:41 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 06/23] drm/sun4i: Move the BT.601 CSC coefficients to the frontend
-Date:   Fri, 18 Jan 2019 15:51:16 +0100
-Message-Id: <20190118145133.21281-7-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 01/23] drm/fourcc: Add format info helpers for checking YUV planes disposition
+Date:   Fri, 18 Jan 2019 15:51:11 +0100
+Message-Id: <20190118145133.21281-2-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,98 +48,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both the backend and the frontend need the BT.601 CSC coefficients for
-YUV to RGB conversion. Since the backend has a dependency on the
-frontend (and not the other way round), move the coefficients there
-so that both can access them without having to duplicate them.
+It is often useful to check whether the DRM format info retrieved from
+the DRM framebuffer matches a specific YUV planes disposition.
+
+This introduces helpers to quickly check that a provided format info
+matches a YUV format with a specific disposition, in commonly-used
+terminology.
+
+The intent of providing helpers taking the format info instead of the
+fourcc alone is to avoid the overhead of iterating through all formats
+when the whole format info structure is available. As a result, these
+helpers are very simple so they are made inline.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_backend.c  | 22 ----------------------
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 23 +++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  1 +
- 3 files changed, 24 insertions(+), 22 deletions(-)
+ include/drm/drm_fourcc.h | 42 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index bbadc2ab9f4d..892197f52557 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -45,28 +45,6 @@ static const u32 sunxi_rgb2yuv_coef[12] = {
- 	0x000001c1, 0x00003e88, 0x00003fb8, 0x00000808
+diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
+index bcb389f04618..01cd353d9302 100644
+--- a/include/drm/drm_fourcc.h
++++ b/include/drm/drm_fourcc.h
+@@ -143,6 +143,48 @@ struct drm_format_name_buf {
+ 	char str[32];
  };
  
--/*
-- * These coefficients are taken from the A33 BSP from Allwinner.
-- *
-- * The first three values of each row are coded as 13-bit signed fixed-point
-- * numbers, with 10 bits for the fractional part. The fourth value is a
-- * constant coded as a 14-bit signed fixed-point number with 4 bits for the
-- * fractional part.
-- *
-- * The values in table order give the following colorspace translation:
-- * G = 1.164 * Y - 0.391 * U - 0.813 * V + 135
-- * R = 1.164 * Y + 1.596 * V - 222
-- * B = 1.164 * Y + 2.018 * U + 276
-- *
-- * This seems to be a conversion from Y[16:235] UV[16:240] to RGB[0:255],
-- * following the BT601 spec.
-- */
--static const u32 sunxi_bt601_yuv2rgb_coef[12] = {
--	0x000004a7, 0x00001e6f, 0x00001cbf, 0x00000877,
--	0x000004a7, 0x00000000, 0x00000662, 0x00003211,
--	0x000004a7, 0x00000812, 0x00000000, 0x00002eb1,
--};
--
- static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
- {
- 	int i;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 7c7a5ea0cf58..045013efdc57 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -48,6 +48,29 @@ static const u32 sun4i_frontend_horz_coef[64] = {
- 	0x03ff0000, 0x0000fd41, 0x01ff0000, 0x0000fe42,
- };
- 
-+/*
-+ * These coefficients are taken from the A33 BSP from Allwinner.
++/**
++ * drm_format_info_is_yuv_packed - check that the format info matches a YUV
++ * format with data laid in a single plane
++ * @info: format info
 + *
-+ * The first three values of each row are coded as 13-bit signed fixed-point
-+ * numbers, with 10 bits for the fractional part. The fourth value is a
-+ * constant coded as a 14-bit signed fixed-point number with 4 bits for the
-+ * fractional part.
-+ *
-+ * The values in table order give the following colorspace translation:
-+ * G = 1.164 * Y - 0.391 * U - 0.813 * V + 135
-+ * R = 1.164 * Y + 1.596 * V - 222
-+ * B = 1.164 * Y + 2.018 * U + 276
-+ *
-+ * This seems to be a conversion from Y[16:235] UV[16:240] to RGB[0:255],
-+ * following the BT601 spec.
++ * Returns:
++ * A boolean indicating whether the format info matches a packed YUV format.
 + */
-+const u32 sunxi_bt601_yuv2rgb_coef[12] = {
-+	0x000004a7, 0x00001e6f, 0x00001cbf, 0x00000877,
-+	0x000004a7, 0x00000000, 0x00000662, 0x00003211,
-+	0x000004a7, 0x00000812, 0x00000000, 0x00002eb1,
-+};
-+EXPORT_SYMBOL(sunxi_bt601_yuv2rgb_coef);
++static inline bool
++drm_format_info_is_yuv_packed(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->num_planes == 1;
++}
 +
- static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
- {
- 	int i;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index ad146e8d8d70..3df2bd8a7a95 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -86,6 +86,7 @@ struct sun4i_frontend {
- };
- 
- extern const struct of_device_id sun4i_frontend_of_table[];
-+extern const u32 sunxi_bt601_yuv2rgb_coef[12];
- 
- int sun4i_frontend_init(struct sun4i_frontend *frontend);
- void sun4i_frontend_exit(struct sun4i_frontend *frontend);
++/**
++ * drm_format_info_is_yuv_semiplanar - check that the format info matches a YUV
++ * format with data laid in two planes (luminance and chrominance)
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a semiplanar YUV format.
++ */
++static inline bool
++drm_format_info_is_yuv_semiplanar(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->num_planes == 2;
++}
++
++/**
++ * drm_format_info_is_yuv_planar - check that the format info matches a YUV
++ * format with data laid in three planes (one for each YUV component)
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a planar YUV format.
++ */
++static inline bool
++drm_format_info_is_yuv_planar(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->num_planes == 3;
++}
++
+ const struct drm_format_info *__drm_format_info(u32 format);
+ const struct drm_format_info *drm_format_info(u32 format);
+ const struct drm_format_info *
 -- 
 2.20.1
 
