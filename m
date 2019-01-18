@@ -6,52 +6,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAD6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00247C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FF9E205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C15B420883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbfARLgn (ORCPT
+        id S1727412AbfARLhJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:36:43 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:36654 "EHLO
+        Fri, 18 Jan 2019 06:37:09 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:36668 "EHLO
         mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726448AbfARLgn (ORCPT
+        by vger.kernel.org with ESMTP id S1727125AbfARLhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:36:43 -0500
+        Fri, 18 Jan 2019 06:37:08 -0500
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IBY9of006811;
-        Fri, 18 Jan 2019 05:36:33 -0600
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IBXtMt006762;
+        Fri, 18 Jan 2019 05:36:40 -0600
 Authentication-Results: ppops.net;
         spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2pyeh4utm6-1;
-        Fri, 18 Jan 2019 05:36:32 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 4FAD5611C8C1;
-        Fri, 18 Jan 2019 05:36:32 -0600 (CST)
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2pyeh4utme-1;
+        Fri, 18 Jan 2019 05:36:40 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 34195611C8BA;
+        Fri, 18 Jan 2019 05:36:42 -0600 (CST)
 Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
  (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
- 11:36:31 +0000
+ 11:36:39 +0000
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x0IBaVQL030977; Fri,
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x0IBaVQK030977; Fri,
  18 Jan 2019 11:36:31 GMT
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>,
         <patches@opensource.cirrus.com>
-Subject: [PATCH 2/2] regulator: lochnagar: Remove redundant MODULE_ALIAS
-Date:   Fri, 18 Jan 2019 11:36:31 +0000
-Message-ID: <20190118113631.23706-2-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 1/2] regulator: lochnagar: Add missing MODULE_DEVICE_TABLE
+Date:   Fri, 18 Jan 2019 11:36:30 +0000
+Message-ID: <20190118113631.23706-1-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190118113631.23706-1-ckeepax@opensource.cirrus.com>
-References: <20190118113631.23706-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=986 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1901180087
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,23 +57,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The module alias has no effect as the driver can only be loaded through
-device tree at this time.
+Add the missing MODULE_DEVICE_TABLE and remove the comma from the
+separator on the end of the of_device_id array.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- drivers/regulator/lochnagar-regulator.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/regulator/lochnagar-regulator.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
-index 4962d13659aab..41de3b715b4db 100644
+index 818d204105186..4962d13659aab 100644
 --- a/drivers/regulator/lochnagar-regulator.c
 +++ b/drivers/regulator/lochnagar-regulator.c
-@@ -280,4 +280,3 @@ module_platform_driver(lochnagar_regulator_driver);
- MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
- MODULE_DESCRIPTION("Regulator driver for Cirrus Logic Lochnagar Board");
- MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:lochnagar-regulator");
+@@ -232,8 +232,9 @@ static const struct of_device_id lochnagar_of_match[] = {
+ 		.compatible = "cirrus,lochnagar2-vddcore",
+ 		.data = &lochnagar_regulators[LOCHNAGAR_VDDCORE],
+ 	},
+-	{},
++	{}
+ };
++MODULE_DEVICE_TABLE(of, lochnagar_of_match);
+ 
+ static int lochnagar_regulator_probe(struct platform_device *pdev)
+ {
 -- 
 2.11.0
 
