@@ -2,124 +2,113 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9C0C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDD8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C79B20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:35:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="tIjSoPl2"
+	by mail.kernel.org (Postfix) with ESMTP id 4A68E20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbfARQfe (ORCPT
+        id S1728229AbfARQfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:35:34 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:39685 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727776AbfARQfe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:35:34 -0500
-Received: by mail-yb1-f193.google.com with SMTP id s17so4573780ybp.6
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:35:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=goW1Z0jvHsdrb1efjgnzxYsLnKmpr74zaTtESzdE3TE=;
-        b=tIjSoPl2crufU7iL8VGWE+B4GzYPKI0nj9xPJyPBwBD3uKkJgxSCf7N1JalfxM+MCk
-         jCNr0/9IYpsKBKcA4neuOLYyfeeSVev1PmMDF84r3m+CCjrWKySXmbciaHcGw/GxYV17
-         85wSekhP2/vApxYqtdicAWqvm1sjMXah7j2aEAL1o3tbW4ZJMW5ZTBjbXHGpjMfhI5tN
-         xV6x0QEnwqoOI10bK1I/zLjkitKKE3DShOLxws8zyiDow4XDIV98e3ejM2hez+sWsnBO
-         PcnjjZZm81DjPD3IMiRVcTa8SnMUSAkRye5BzIbMkqSbjoSftjRmHezAgSWOp0deLwHT
-         G60Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=goW1Z0jvHsdrb1efjgnzxYsLnKmpr74zaTtESzdE3TE=;
-        b=gXqeaaA3ka9J6mhUAp+e22vtegKW6K48u1rmbSjknhJCznkREJhDxPyCRyBVFUEGCG
-         cRyQXTT2aXC0WDq/jFk3zWz9EzJmq8bRLB8uWcgsrMZk4l5aeQ8rtUJ+92LxI4PWzCz1
-         XuosLOqI1pQJy4tGf1i4mTu/A0CEhkVmwFBh+8bRfvRQoFnMzsOI1R/QOVvUMb43hCHi
-         Mz4LicEVy0460DN4rHROMCwVh6XPravfxr2CEIF33F/qxHQjwrnSlkJYsSltrDgm4XWG
-         tmDGJMsMYQLju5bKba+KBbALr323rLXK2YQDh9qSs08HUYodLnSKbxmGMQkbwu0Cxqte
-         EX0w==
-X-Gm-Message-State: AJcUuke3HVNNSKlbFPfldcbMcI1EUbKiZqiEYq7vWK6aWLmhDeNxKa1n
-        0D1AbazHYZ5sgM4rgR3jnzZ4wA==
-X-Google-Smtp-Source: ALg8bN4LqSMUqSIubxs+eeY8ann6PlQ91Xe1dord5OagoviT2y+A7CQqPvW3m6/ilKCtHivtYPrD8g==
-X-Received: by 2002:a25:2046:: with SMTP id g67mr1648536ybg.259.1547829333177;
-        Fri, 18 Jan 2019 08:35:33 -0800 (PST)
-Received: from localhost ([2620:10d:c091:180::1:e09e])
-        by smtp.gmail.com with ESMTPSA id s185sm4611635yws.69.2019.01.18.08.35.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 08:35:32 -0800 (PST)
-Date:   Fri, 18 Jan 2019 11:35:31 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
-Message-ID: <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
-References: <20190118103127.325-1-righi.andrea@gmail.com>
+        Fri, 18 Jan 2019 11:35:47 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33760 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727491AbfARQfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 11:35:47 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B13F80D;
+        Fri, 18 Jan 2019 08:35:47 -0800 (PST)
+Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48AD83F557;
+        Fri, 18 Jan 2019 08:35:46 -0800 (PST)
+Subject: Re: [PATCH v3 3/7] arm64: kpti: move check for non-vulnerable CPUs to
+ a function
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        dave.martin@arm.com, shankerd@codeaurora.org,
+        linux-kernel@vger.kernel.org, ykaukab@suse.de,
+        julien.thierry@arm.com, mlangsdo@redhat.com, Steven.Price@arm.com,
+        stefan.wahren@i2se.com
+References: <20190109235544.2992426-1-jeremy.linton@arm.com>
+ <20190109235544.2992426-4-jeremy.linton@arm.com>
+ <553c4f17-b504-a7a2-51cf-9c0d6c5d7797@arm.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <26cdac8e-ff62-d35c-50ca-a50d86f6651b@arm.com>
+Date:   Fri, 18 Jan 2019 10:35:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118103127.325-1-righi.andrea@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <553c4f17-b504-a7a2-51cf-9c0d6c5d7797@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 11:31:24AM +0100, Andrea Righi wrote:
-> This is a redesign of my old cgroup-io-throttle controller:
-> https://lwn.net/Articles/330531/
-> 
-> I'm resuming this old patch to point out a problem that I think is still
-> not solved completely.
-> 
-> = Problem =
-> 
-> The io.max controller works really well at limiting synchronous I/O
-> (READs), but a lot of I/O requests are initiated outside the context of
-> the process that is ultimately responsible for its creation (e.g.,
-> WRITEs).
-> 
-> Throttling at the block layer in some cases is too late and we may end
-> up slowing down processes that are not responsible for the I/O that
-> is being processed at that level.
+Hi,
 
-How so?  The writeback threads are per-cgroup and have the cgroup stuff set
-properly.  So if you dirty a bunch of pages, they are associated with your
-cgroup, and then writeback happens and it's done in the writeback thread
-associated with your cgroup and then that is throttled.  Then you are throttled
-at balance_dirty_pages() because the writeout is taking longer.
-
-I introduced the blk_cgroup_congested() stuff for paths that it's not easy to
-clearly tie IO to the thing generating the IO, such as readahead and such.  If
-you are running into this case that may be something worth using.  Course it
-only works for io.latency now but there's no reason you can't add support to it
-for io.max or whatever.
-
+On 01/14/2019 05:32 AM, Suzuki K Poulose wrote:
+> Hi Jeremy,
 > 
-> = Proposed solution =
+> On 09/01/2019 23:55, Jeremy Linton wrote:
+>> From: Mian Yousaf Kaukab <ykaukab@suse.de>
+>>
+>> Add is_meltdown_safe() which is a whitelist of known safe cores.
+>>
+>> Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
+>> [Moved location of function]
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> ---
+>>   arch/arm64/kernel/cpufeature.c | 15 +++++++++++----
+>>   1 file changed, 11 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/cpufeature.c 
+>> b/arch/arm64/kernel/cpufeature.c
+>> index 4f272399de89..ab784d7a0083 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -947,8 +947,7 @@ has_useable_cnp(const struct 
+>> arm64_cpu_capabilities *entry, int scope)
+>>   #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>>   static int __kpti_forced; /* 0: not forced, >0: forced on, <0: 
+>> forced off */
+>> -static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities 
+>> *entry,
+>> -                int scope)
+>> +static bool is_cpu_meltdown_safe(void)
+>>   {
+>>       /* List of CPUs that are not vulnerable and don't need KPTI */
+>>       static const struct midr_range kpti_safe_list[] = {
+>> @@ -962,6 +961,15 @@ static bool unmap_kernel_at_el0(const struct 
+>> arm64_cpu_capabilities *entry,
+>>           MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+>>           { /* sentinel */ }
+>>       };
+>> +    if (is_midr_in_range_list(read_cpuid_id(), kpti_safe_list))
 > 
-> The main idea of this controller is to split I/O measurement and I/O
-> throttling: I/O is measured at the block layer for READS, at page cache
-> (dirty pages) for WRITEs, and processes are limited while they're
-> generating I/O at the VFS level, based on the measured I/O.
+> nit: Does it make sense to rename the list to "meltdown_safe_list", to 
+> match the
+> function name ?
 > 
+> Also also, you may do :
+> 
+>      return is_midr_in_range_list(read_cpuid_id(), kpti_safe_list);
+> 
+> Either way
+> 
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-This is what blk_cgroup_congested() is meant to accomplish, I would suggest
-looking into that route and simply changing the existing io controller you are
-using to take advantage of that so it will actually throttle things.  Then just
-sprinkle it around the areas where we indirectly generate IO.  Thanks,
+Hi, again.
 
-Josef
+Part of the delay in responding to this one, has been the fact that 
+originally meltodwn_safe() was being used in two places (which is why it 
+was broken out). But that isn't true anymore, and this patch is 
+effectively just fluff, so it seemed appropriate for the chopping block 
+too, which is what i'm planning.
