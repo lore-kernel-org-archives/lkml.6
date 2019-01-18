@@ -3,26 +3,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57544C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28580C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29FC52086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0281120850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbfARQUp (ORCPT
+        id S1728449AbfARQUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:20:45 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:34615 "EHLO
+        Fri, 18 Jan 2019 11:20:50 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:37539 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728162AbfARQUk (ORCPT
+        with ESMTP id S1728157AbfARQUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:20:40 -0500
+        Fri, 18 Jan 2019 11:20:46 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mzz6m-1h7x482Ucw-00x1wT; Fri, 18 Jan 2019 17:19:30 +0100
+ 1MMXYH-1gUEfJ1zt9-00JaaK; Fri, 18 Jan 2019 17:19:26 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
@@ -43,56 +43,56 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, mattst88@gmail.com,
         linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org, netdev@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 11/29] sparc64: fix sparc_ipc type conversion
-Date:   Fri, 18 Jan 2019 17:18:17 +0100
-Message-Id: <20190118161835.2259170-12-arnd@arndb.de>
+Subject: [PATCH v2 08/29] m68k: assign syscall number for seccomp
+Date:   Fri, 18 Jan 2019 17:18:14 +0100
+Message-Id: <20190118161835.2259170-9-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190118161835.2259170-1-arnd@arndb.de>
 References: <20190118161835.2259170-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:E0WLVEaCcQzfD09xtrq4A5jWMomm7adRfer83EpRAVfp369asuy
- x3/FJ1daGxLmHv7isfyBmmw9CiTpRNTIZF5Gr3d8LXmER0Y68fJAFAfjaBn0f4G0BGnMaQx
- x2SRX/iEk+wXVeqe10GMRlxV+Tfz1UGHqVsgCFYxSmbS+xtCO7zPPuk3cos5G9lUpWYPzzZ
- Cd+cyB2Mh1kEIhZmabg+A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:U8fLlZM0o6k=:bhl6IpqDxoJ6kbMGE/L2Hc
- CzXueO2oa5jGlTL6WLnsLYPOBF2mZVhxD5AP4llrcKg4Do2nFrxENghqjFTLAbPL1QsxZXc/b
- LnpyH8IuA+uVRH8S8x50ONY5YeJxq+2QhNxaH/wLHtFKi7z8USTpeeVUZCXlul0nja0gF6rOO
- LL1USYrfYH8u14o6qjYuV81dwO272SuobC89RmEf5pmmulouyOUgkcp/shSJww4iWgefqz74u
- 6U7B4Y+732hH50WeHW+jmK2UZNpQy29Zjoe2j/U7CTNx8BE+Gkr54u55/Lh2JunMk9s/og4TR
- dsMViyBx2kjJjkgEqxuWmHUTNlQu51BtfQLyRTAWbgOz01AACB59xRs8hgCJSfM1qdrhWxkWx
- b7Mf3ttpjFoH/yCzfhmqtBVJbePhcOvcZVDbx2TI+CZIobvf1sZQslNdYpNtm1VH178fbI+5B
- Ec2CtgMHKExKURICO74Kg//YVBx8XEU6LSNaZh7pucWUly+BVsVaNCdnU6hItAL/BM4GqJnT+
- w0oS45C/vBaPsuwz0142f3Y/62Xkn18OPu9YZUSlAzq7LM9Pe/9K5fmgYrLaC9FSDljZuydmq
- jykoWGCnNNUhJI5AYsoroGoYkVnN9Ec9lvj5OEb2n9u0Buc9VIYHXAq6knDPefHHxymWenmkD
- roYvKjwcBwNJpHKmEGmj7QZzsVbJDYDPSFwoNNBDl7fi9IWX3nVa1iRT0iAn7dyxgKUgZltdI
- hQ4oQT3HJwHWivAfkNceN5wG99AQRLWvlYiWXw==
+X-Provags-ID: V03:K1:nRQkc5WHlS8oJboXGUt0vN+cwluUfd5b8wUsgIrzs+HYZ+pMf1e
+ KlDPG6ImfC4yLsewd6iPI+rxWD///awveawa2T2cRrrteu+vOpqU7x36dzhwukK0qkhKGgi
+ 6o5FUnfGFritrX0fCrjK9/MfEMxotXN+yj5OkKo2LfCokW619AHEWExMDGl9I51wuC4xFe3
+ CUjbSuA8/BCbHi/kqsH9g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vBxfFgMxf5I=:aS8fZ2v0hh02AT1dmHdvFW
+ lRyqKsurUZ7vVeMKEvTzUDZ8tFvvIkP51ZhaQ+RwNLeOqJEA1iPkl9luZhApypQ++UbQ3xqOa
+ lvBreGoiZeF4Ice7paqarLxb2UlxHQCMz7JWmrDJ0B9h8pg5KuC0HqIbURXIWx7cSlHkDjJMP
+ qfYls++cG8D1Xf3zo8+GZ+tW2uq0g+3dbOeDCIOBx0H3lGxsCKeg70Nd9SwTJ+HSl1XiqW6nn
+ 20yiZ0QfaiNkHwgFjRu+PY0rq4GW+K3rBep6m2HG1R51LvvieEN0cY1tKTw1/GaJm2e5PfnkR
+ e5lJl3SpZMWIjzy9gROQblKMLJQfT6DAH07f0pwED+nCkZvXLn8FPESrhByXdKmXcOY4UVXSg
+ E2JHYWnb2ZsjJsJs+zUdkYaxzwCd9yAYm6wPPQTerjBWnCWQxGjDI19HgvkxcX9DsM6Rirh4+
+ esRABApRswGqjRWVQP1ythpoUfLFVdoXiIqofHjVyQOSTpMePzo5xo5aJFQ1px3+0MEOq6a1I
+ +zcXXMgIfA2HvbPIsgO7GsePc9iL7v+U1u4KoePnArNvO/GrFdnffdMq12kkc9iwfyf5dnn84
+ mxFdRAtGFF1vx1w1+dDhltYwOWJfph4V0BrbdHE7yLlNG1FEZGBHtZx3grnKdewiVh8NnrIlA
+ hyjLVPvQuAjts/wBHOIEL0jvVLXD4J+x6G2ZHn/vP6A3+gssJ6CIN+wFiqQwCBjzOnAcbw8Bo
+ WLUgq0iHMIFzke7PoXdi63gm9/beQ/Ri3hqeXA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__kernel_timespec and timespec are currently the same type, but once
-they are different, the type cast has to be changed here.
+Most architectures have assigned a numbers for the seccomp syscall
+even when they do not implement it.
+
+m68k is an exception here, so for consistency lets add the number.
+Unless CONFIG_SECCOMP is implemented, the system call just
+returns -ENOSYS.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/sparc/kernel/sys_sparc_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/m68k/kernel/syscalls/syscall.tbl | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
-index 274ed0b9b3e0..1c079e7bab09 100644
---- a/arch/sparc/kernel/sys_sparc_64.c
-+++ b/arch/sparc/kernel/sys_sparc_64.c
-@@ -344,7 +344,7 @@ SYSCALL_DEFINE6(sparc_ipc, unsigned int, call, int, first, unsigned long, second
- 			goto out;
- 		case SEMTIMEDOP:
- 			err = sys_semtimedop(first, ptr, (unsigned int)second,
--				(const struct timespec __user *)
-+				(const struct __kernel_timespec __user *)
- 					     (unsigned long) fifth);
- 			goto out;
- 		case SEMGET:
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 1a95c4a1bc0d..85779d6ef935 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -387,3 +387,4 @@
+ 377	common	preadv2				sys_preadv2
+ 378	common	pwritev2			sys_pwritev2
+ 379	common	statx				sys_statx
++380	common	seccomp				sys_seccomp
 -- 
 2.20.0
 
