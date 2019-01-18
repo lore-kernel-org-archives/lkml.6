@@ -3,1003 +3,175 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB288C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C33DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:35:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67F1E20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 099AA20855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:35:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbfAROfo convert rfc822-to-8bit (ORCPT
+        id S1727740AbfAROfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 18 Jan 2019 09:35:48 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48520 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727342AbfAROfo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 09:35:44 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:45425 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727568AbfAROfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:35:44 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 18AA4207AC; Fri, 18 Jan 2019 15:35:39 +0100 (CET)
-Received: from localhost (alyon-652-1-26-46.w109-213.abo.wanadoo.fr [109.213.9.46])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7CDF520712;
-        Fri, 18 Jan 2019 15:35:37 +0100 (CET)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Marek =?utf-8?Q?Beh=C3=BAn?= <marek.behun@nic.cz>
-Cc:     devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC] ARM64: dts: marvell: Add DTS file for Turris Mox
-References: <20181113134408.5681-1-marek.behun@nic.cz>
-Date:   Fri, 18 Jan 2019 15:35:35 +0100
-In-Reply-To: <20181113134408.5681-1-marek.behun@nic.cz> ("Marek
- =?utf-8?Q?Beh=C3=BAn=22's?=
-        message of "Tue, 13 Nov 2018 14:44:08 +0100")
-Message-ID: <87lg3im3t4.fsf@FE-laptop>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IEZfxP063983
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:35:43 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q3gjyrb0e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:35:43 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Fri, 18 Jan 2019 14:35:36 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 18 Jan 2019 14:35:30 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0IEZTYZ22937790
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Jan 2019 14:35:29 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A485AE05F;
+        Fri, 18 Jan 2019 14:35:29 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6428AE063;
+        Fri, 18 Jan 2019 14:35:27 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.136.27])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 18 Jan 2019 14:35:27 +0000 (GMT)
+Subject: Re: [PATCH v4 1/2] integrity, KEYS: add a reference to platform
+ keyring
+To:     Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, jwboyer@fedoraproject.org,
+        keyrings@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
+        zohar@linux.ibm.com, bauerman@linux.ibm.com, ebiggers@google.com,
+        nayna@linux.ibm.com, dyoung@redhat.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+References: <20190118091733.29940-1-kasong@redhat.com>
+ <20190118091733.29940-2-kasong@redhat.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Date:   Fri, 18 Jan 2019 09:35:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190118091733.29940-2-kasong@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19011814-0060-0000-0000-000002FBD6E9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010430; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000275; SDB=6.01148278; UDB=6.00598214; IPR=6.00928581;
+ MB=3.00025187; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-18 14:35:34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011814-0061-0000-0000-000047F882F3
+Message-Id: <3c7fa625-e77c-d6b4-35a4-8f8e9af60864@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901180105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
- 
- On mar., nov. 13 2018, Marek Behún <marek.behun@nic.cz> wrote:
 
-> This is a RFC, please do not merge.
->
-> This adds basic support for the Turris Mox board from CZ.NIC.
->
-> Turris Mox is as modular router based on the Armada 3720 SOC (same as
-> EspressoBin).
->
-> The basic module can be extended by different modules.
-> When those modules are connected, U-Boot has to let kernel know via
-> device-tree. Since modules can be connected in different order and
-> some modules can be connected multiple times (up to three 8-port
-> switch modules can be connected), using dtb overlays would result in
-> too files.
 
-What do you mean by too many files?
-
-The dtb overlays seems really matches your situation.
-Usually we have one dtb part by module and then we mix them together.
-
-Gregory
-
+On 01/18/2019 04:17 AM, Kairui Song wrote:
+> commit 9dc92c45177a ('integrity: Define a trusted platform keyring')
+> introduced a .platform keyring for storing preboot keys, used for
+> verifying kernel images' signature. Currently only IMA-appraisal is able
+> to use the keyring to verify kernel images that have their signature
+> stored in xattr.
 >
-> I therefore chose to put all the possible connected devices in one dts
-> and disable them. If U-Boot finds these modules, it fixes the device
-> tree accrodginly, by enabling some nodes (setting status to "okay") and
-> by setting some addresses and references.
+> This patch exposes the .platform keyring, making it accessible for
+> verifying PE signed kernel images as well.
 >
-> For example there are 6 switch nodes - three for 8-port switch module
-> and three for 4-port switch module. This is because another switch
-> (either 8-port or 4-port) can be connected to a 8-port switch, in DSA,
-> and interface names have to be defined (from lan1 to lan24).
->
-> Another way (for defining switch nodes) would have to be either:
->   - including a file where switch nodes are defined, which would need
->     #defining lan interface names (and some other things), and #undefing
->     them after the #include
->   - defining a macro for switch nodes
->   - have a separate DTBs for each possible configuration (this would
->     result in too many DTBs)
->   - not defining these nodes in device-tree at all, instead creating
->     them in U-Boot when patching the device-tree (I actually tried this,
->     but the resulting code in U-Boot was horrible)
->
-> Please let me know if doing it this way is acceptable, or if I should
-> try something different (and if yes, what?).
->
-> Signed-off-by: Marek Behún <marek.behun@nic.cz>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Gregory CLEMENT <gregory.clement@bootlin.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Andrew Lunn <andrew@lunn.ch>
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Tested-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
->  .../arm/marvell/armada-3720-turris-mox.txt    |   6 +
->  MAINTAINERS                                   |   1 +
->  arch/arm64/boot/dts/marvell/Makefile          |   1 +
->  .../dts/marvell/armada-3720-turris-mox.dts    | 838 ++++++++++++++++++
->  4 files changed, 846 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
->  create mode 100644 arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
+>   certs/system_keyring.c        | 9 +++++++++
+>   include/keys/system_keyring.h | 5 +++++
+>   security/integrity/digsig.c   | 6 ++++++
+>   3 files changed, 20 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt b/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
-> new file mode 100644
-> index 000000000000..408fc07a9bbf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
-> @@ -0,0 +1,6 @@
-> +CZ.NIC's Turris Mox SOHO router Device Tree Bindings
-> +----------------------------------------------------
-> +
-> +Required root node property:
-> +
-> +compatible: must contain "cznic,turris-mox"
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f6e60e7f6c11..81b57260b110 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1348,6 +1348,7 @@ ARM/CZ.NIC TURRIS MOX SUPPORT
->  M:	Marek Behun <marek.behun@nic.cz>
->  W:	http://mox.turris.cz
->  S:	Maintained
-> +F:	arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
->  F:	include/mfd/moxtet.h
->  F:	drivers/gpio/gpio-moxtet.c
->  F:	drivers/mfd/moxtet.c
-> diff --git a/arch/arm64/boot/dts/marvell/Makefile b/arch/arm64/boot/dts/marvell/Makefile
-> index 5633676fa9d0..51782b31b441 100644
-> --- a/arch/arm64/boot/dts/marvell/Makefile
-> +++ b/arch/arm64/boot/dts/marvell/Makefile
-> @@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_BERLIN) += berlin4ct-stb.dtb
->  # Mvebu SoC Family
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-db.dtb
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-espressobin.dtb
-> +dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-turris-mox.dtb
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-7040-db.dtb
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-8040-db.dtb
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-8040-mcbin.dtb
-> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts b/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
-> new file mode 100644
-> index 000000000000..1315c59ecef3
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
-> @@ -0,0 +1,838 @@
-> +// SPDX-License-Identifier: GPL-2.0+ or X11
-> +/*
-> + * Device Tree file for CZ.NIC Turris Mox Board
-> + * 2018 by Marek Behun <marek.behun@nic.cz>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include "armada-372x.dtsi"
-> +
-> +/ {
-> +	model = "CZ.NIC Turris Mox Board";
-> +	compatible = "cznic,turris-mox", "marvell,armada3720",
-> +		     "marvell,armada3710";
-> +
-> +	aliases {
-> +		spi0 = &spi0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x00000000 0x00000000 0x00000000 0x20000000>;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		red {
-> +			gpios = <&gpiosb 21 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +
-> +	gpio_keys {
-> +		compatible = "gpio-keys";
-> +
-> +		reset_button {
-> +			label = "reset";
-> +			linux,code = <BTN_MISC>;
-> +			gpios = <&gpiosb 20 GPIO_ACTIVE_LOW>;
-> +			debounce-interval = <60>;
-> +		};
-> +	};
-> +
-> +	exp_usb3_vbus: usb3-vbus {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usb3-vbus";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		enable-active-high;
-> +		regulator-always-on;
-> +		gpio = <&gpiosb 0 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	usb3_phy: usb3-phy {
-> +		compatible = "usb-nop-xceiv";
-> +		vcc-supply = <&exp_usb3_vbus>;
-> +	};
-> +
-> +	vsdc_reg: vsdc_reg {
-> +		compatible = "regulator-gpio";
-> +		regulator-name = "vsdc";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +
-> +		gpios = <&gpiosb 23 GPIO_ACTIVE_HIGH>;
-> +		gpios-states = <0>;
-> +		states = <1800000 0x1
-> +			  3300000 0x0>;
-> +		enable-active-high;
-> +	};
-> +
-> +	vsdio_reg: vsdio_reg {
-> +		compatible = "regulator-gpio";
-> +		regulator-name = "vsdio";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +
-> +		gpios = <&gpiosb 22 GPIO_ACTIVE_HIGH>;
-> +		gpios-states = <0>;
-> +		states = <1800000 0x1
-> +			  3300000 0x0>;
-> +		enable-active-high;
-> +	};
-> +
-> +	sdhci1_pwrseq: sdhci1_pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		reset-gpios = <&gpionb 19 GPIO_ACTIVE_HIGH>;
-> +		status = "okay";
-> +	};
-> +
-> +	sfp: sfp {
-> +		compatible = "sff,sfp+";
-> +		i2c-bus = <&i2c0>;
-> +		los-gpio = <&moxtet_sfp 0 GPIO_ACTIVE_HIGH>;
-> +		tx-fault-gpio = <&moxtet_sfp 1 GPIO_ACTIVE_HIGH>;
-> +		mod-def0-gpio = <&moxtet_sfp 2 GPIO_ACTIVE_LOW>;
-> +		tx-disable-gpio = <&moxtet_sfp 3 GPIO_ACTIVE_HIGH>;
-> +		rate-select0-gpio = <&moxtet_sfp 4 GPIO_ACTIVE_HIGH>;
-> +		status = "disabled";
-> +	};
-> +};
-> +
-> +&pinctrl_nb {
-> +	spi_cs1_pins: spi-cs1-pins {
-> +		groups = "spi_cs1";
-> +		function = "spi";
-> +	};
-> +
-> +	sdio0_pins: sdio0-pins {
-> +		groups = "sdio0";
-> +		function = "sdio";
-> +	};
-> +};
-> +
-> +&pinctrl_sb {
-> +	sdio_sb_pins: sdio-sb-pins {
-> +		groups = "sdio_sb";
-> +		function = "sdio";
-> +	};
-> +
-> +	smi_pins: smi-pins {
-> +		groups = "smi";
-> +		function = "smi";
-> +	};
-> +
-> +	pcie_pins: pcie1-pins {
-> +		groups = "pcie1";
-> +		function = "gpio";
-> +	};
-> +};
-> +
-> +&i2c0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c1_pins>;
-> +	status = "okay";
-> +
-> +	rtc@6f {
-> +		compatible = "microchip,mcp7940x";
-> +		reg = <0x6f>;
-> +	};
-> +};
-> +
-> +&pcie0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie_pins>;
-> +	status = "okay";
-> +	max-link-speed = <2>;
-> +	reset-gpio = <&gpiosb 3 GPIO_ACTIVE_HIGH>;
-> +
-> +	/* this shall be enabled by u-boot if the PCIe module is present */
-> +	status = "disabled";
-> +};
-> +
-> +&uart0 {
-> +	status = "okay";
-> +};
-> +
-> +&eth0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&rgmii_pins>;
-> +	phy-mode = "rgmii-id";
-> +	phy = <&phy1>;
-> +	status = "okay";
-> +};
-> +
-> +&eth1 {
-> +	phy-mode = "1000base-x";
-> +	managed = "in-band-status";
-> +};
-> +
-> +&mdio {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&smi_pins>;
-> +	status = "okay";
-> +
-> +	phy1: ethernet-phy@1 {
-> +		reg = <1>;
-> +	};
-> +
-> +	switch0@10 {
-> +		compatible = "marvell,mv88e6190";
-> +		reg = <0x10 0>;
-> +		dsa,member = <0 0>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch0phy1: switch0phy1@1 {
-> +				reg = <0x1>;
-> +			};
-> +
-> +			switch0phy2: switch0phy2@2 {
-> +				reg = <0x2>;
-> +			};
-> +
-> +			switch0phy3: switch0phy3@3 {
-> +				reg = <0x3>;
-> +			};
-> +
-> +			switch0phy4: switch0phy4@4 {
-> +				reg = <0x4>;
-> +			};
-> +
-> +			switch0phy5: switch0phy5@5 {
-> +				reg = <0x5>;
-> +			};
-> +
-> +			switch0phy6: switch0phy6@6 {
-> +				reg = <0x6>;
-> +			};
-> +
-> +			switch0phy7: switch0phy7@7 {
-> +				reg = <0x7>;
-> +			};
-> +
-> +			switch0phy8: switch0phy8@8 {
-> +				reg = <0x8>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan1";
-> +				phy-handle = <&switch0phy1>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan2";
-> +				phy-handle = <&switch0phy2>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan3";
-> +				phy-handle = <&switch0phy3>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan4";
-> +				phy-handle = <&switch0phy4>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "lan5";
-> +				phy-handle = <&switch0phy5>;
-> +			};
-> +
-> +			port@6 {
-> +				reg = <0x6>;
-> +				label = "lan6";
-> +				phy-handle = <&switch0phy6>;
-> +			};
-> +
-> +			port@7 {
-> +				reg = <0x7>;
-> +				label = "lan7";
-> +				phy-handle = <&switch0phy7>;
-> +			};
-> +
-> +			port@8 {
-> +				reg = <0x8>;
-> +				label = "lan8";
-> +				phy-handle = <&switch0phy8>;
-> +			};
-> +
-> +			port@9 {
-> +				reg = <0x9>;
-> +				label = "cpu";
-> +				ethernet = <&eth1>;
-> +			};
-> +
-> +			switch0port10: port@a {
-> +				reg = <0xa>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch1port9 &switch2port9>;
-> +				status = "disabled";
-> +			};
-> +
-> +			port-sfp@a {
-> +				reg = <0xa>;
-> +				label = "sfp";
-> +				sfp = <&sfp>;
-> +				phy-mode = "sgmii";
-> +				managed = "in-band-status";
-> +				status = "disabled";
-> +			};
-> +		};
-> +	};
-> +
-> +	switch0@2 {
-> +		compatible = "marvell,mv88e6085";
-> +		reg = <0x2 0>;
-> +		dsa,member = <0 0>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch0phy1_topaz: switch0phy1@11 {
-> +				reg = <0x11>;
-> +			};
-> +
-> +			switch0phy2_topaz: switch0phy2@12 {
-> +				reg = <0x12>;
-> +			};
-> +
-> +			switch0phy3_topaz: switch0phy3@13 {
-> +				reg = <0x13>;
-> +			};
-> +
-> +			switch0phy4_topaz: switch0phy4@14 {
-> +				reg = <0x14>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan1";
-> +				phy-handle = <&switch0phy1_topaz>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan2";
-> +				phy-handle = <&switch0phy2_topaz>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan3";
-> +				phy-handle = <&switch0phy3_topaz>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan4";
-> +				phy-handle = <&switch0phy4_topaz>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "cpu";
-> +				ethernet = <&eth1>;
-> +			};
-> +		};
-> +	};
-> +
-> +	switch1@11 {
-> +		compatible = "marvell,mv88e6190";
-> +		reg = <0x11 0>;
-> +		dsa,member = <0 1>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch1phy1: switch1phy1@1 {
-> +				reg = <0x1>;
-> +			};
-> +
-> +			switch1phy2: switch1phy2@2 {
-> +				reg = <0x2>;
-> +			};
-> +
-> +			switch1phy3: switch1phy3@3 {
-> +				reg = <0x3>;
-> +			};
-> +
-> +			switch1phy4: switch1phy4@4 {
-> +				reg = <0x4>;
-> +			};
-> +
-> +			switch1phy5: switch1phy5@5 {
-> +				reg = <0x5>;
-> +			};
-> +
-> +			switch1phy6: switch1phy6@6 {
-> +				reg = <0x6>;
-> +			};
-> +
-> +			switch1phy7: switch1phy7@7 {
-> +				reg = <0x7>;
-> +			};
-> +
-> +			switch1phy8: switch1phy8@8 {
-> +				reg = <0x8>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan9";
-> +				phy-handle = <&switch1phy1>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan10";
-> +				phy-handle = <&switch1phy2>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan11";
-> +				phy-handle = <&switch1phy3>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan12";
-> +				phy-handle = <&switch1phy4>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "lan13";
-> +				phy-handle = <&switch1phy5>;
-> +			};
-> +
-> +			port@6 {
-> +				reg = <0x6>;
-> +				label = "lan14";
-> +				phy-handle = <&switch1phy6>;
-> +			};
-> +
-> +			port@7 {
-> +				reg = <0x7>;
-> +				label = "lan15";
-> +				phy-handle = <&switch1phy7>;
-> +			};
-> +
-> +			port@8 {
-> +				reg = <0x8>;
-> +				label = "lan16";
-> +				phy-handle = <&switch1phy8>;
-> +			};
-> +
-> +			switch1port9: port@9 {
-> +				reg = <0x9>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch0port10>;
-> +			};
-> +
-> +			switch1port10: port@a {
-> +				reg = <0xa>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch2port9>;
-> +				status = "disabled";
-> +			};
-> +
-> +			port-sfp@a {
-> +				reg = <0xa>;
-> +				label = "sfp";
-> +				sfp = <&sfp>;
-> +				phy-mode = "sgmii";
-> +				managed = "in-band-status";
-> +				status = "disabled";
-> +			};
-> +		};
-> +	};
-> +
-> +	switch1@2 {
-> +		compatible = "marvell,mv88e6085";
-> +		reg = <0x2 0>;
-> +		dsa,member = <0 1>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch1phy1_topaz: switch1phy1@11 {
-> +				reg = <0x11>;
-> +			};
-> +
-> +			switch1phy2_topaz: switch1phy2@12 {
-> +				reg = <0x12>;
-> +			};
-> +
-> +			switch1phy3_topaz: switch1phy3@13 {
-> +				reg = <0x13>;
-> +			};
-> +
-> +			switch1phy4_topaz: switch1phy4@14 {
-> +				reg = <0x14>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan9";
-> +				phy-handle = <&switch1phy1_topaz>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan10";
-> +				phy-handle = <&switch1phy2_topaz>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan11";
-> +				phy-handle = <&switch1phy3_topaz>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan12";
-> +				phy-handle = <&switch1phy4_topaz>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch0port10>;
-> +			};
-> +		};
-> +	};
-> +
-> +	switch2@12 {
-> +		compatible = "marvell,mv88e6190";
-> +		reg = <0x12 0>;
-> +		dsa,member = <0 2>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch2phy1: switch2phy1@1 {
-> +				reg = <0x1>;
-> +			};
-> +
-> +			switch2phy2: switch2phy2@2 {
-> +				reg = <0x2>;
-> +			};
-> +
-> +			switch2phy3: switch2phy3@3 {
-> +				reg = <0x3>;
-> +			};
-> +
-> +			switch2phy4: switch2phy4@4 {
-> +				reg = <0x4>;
-> +			};
-> +
-> +			switch2phy5: switch2phy5@5 {
-> +				reg = <0x5>;
-> +			};
-> +
-> +			switch2phy6: switch2phy6@6 {
-> +				reg = <0x6>;
-> +			};
-> +
-> +			switch2phy7: switch2phy7@7 {
-> +				reg = <0x7>;
-> +			};
-> +
-> +			switch2phy8: switch2phy8@8 {
-> +				reg = <0x8>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan17";
-> +				phy-handle = <&switch2phy1>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan18";
-> +				phy-handle = <&switch2phy2>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan19";
-> +				phy-handle = <&switch2phy3>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan20";
-> +				phy-handle = <&switch2phy4>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "lan21";
-> +				phy-handle = <&switch2phy5>;
-> +			};
-> +
-> +			port@6 {
-> +				reg = <0x6>;
-> +				label = "lan22";
-> +				phy-handle = <&switch2phy6>;
-> +			};
-> +
-> +			port@7 {
-> +				reg = <0x7>;
-> +				label = "lan23";
-> +				phy-handle = <&switch2phy7>;
-> +			};
-> +
-> +			port@8 {
-> +				reg = <0x8>;
-> +				label = "lan24";
-> +				phy-handle = <&switch2phy8>;
-> +			};
-> +
-> +			switch2port9: port@9 {
-> +				reg = <0x9>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch1port10 &switch0port10>;
-> +			};
-> +
-> +			port-sfp@a {
-> +				reg = <0xa>;
-> +				label = "sfp";
-> +				sfp = <&sfp>;
-> +				phy-mode = "sgmii";
-> +				managed = "in-band-status";
-> +				status = "disabled";
-> +			};
-> +		};
-> +	};
-> +
-> +	switch2@2 {
-> +		compatible = "marvell,mv88e6085";
-> +		reg = <0x2 0>;
-> +		dsa,member = <0 2>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch2phy1_topaz: switch2phy1@11 {
-> +				reg = <0x11>;
-> +			};
-> +
-> +			switch2phy2_topaz: switch2phy2@12 {
-> +				reg = <0x12>;
-> +			};
-> +
-> +			switch2phy3_topaz: switch2phy3@13 {
-> +				reg = <0x13>;
-> +			};
-> +
-> +			switch2phy4_topaz: switch2phy4@14 {
-> +				reg = <0x14>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan17";
-> +				phy-handle = <&switch2phy1_topaz>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan18";
-> +				phy-handle = <&switch2phy2_topaz>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan19";
-> +				phy-handle = <&switch2phy3_topaz>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan20";
-> +				phy-handle = <&switch2phy4_topaz>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch1port10 &switch0port10>;
-> +			};
-> +		};
-> +	};
-> +
-> +};
-> +
-> +&sdhci0 {
-> +	wp-inverted;
-> +	bus-width = <4>;
-> +	cd-gpios = <&gpionb 10 GPIO_ACTIVE_HIGH>;
-> +	vqmmc-supply = <&vsdc_reg>;
-> +	marvell,pad-type = "sd";
-> +	status = "okay";
-> +};
-> +
-> +&sdhci1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdio0_pins &sdio_sb_pins>;
-> +	non-removable;
-> +	bus-width = <4>;
-> +	marvell,pad-type = "sd";
-> +	vqmmc-supply = <&vsdio_reg>;
-> +	mmc-pwrseq = <&sdhci1_pwrseq>;
-> +	status = "okay";
-> +};
-> +
-> +&spi0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&spi_quad_pins &spi_cs1_pins>;
-> +	assigned-clocks = <&nb_periph_clk 7>;
-> +	assigned-clock-parents = <&tbg 1>;
-> +	assigned-clock-rates = <20000000>;
-> +
-> +	spi-flash@0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "jedec,spi-nor";
-> +		reg = <0>;
-> +		spi-max-frequency = <20000000>;
-> +
-> +		partition@0 {
-> +			label = "secure-firmware";
-> +			reg = <0x0 0x20000>;
-> +		};
-> +
-> +		partition@20000 {
-> +			label = "u-boot";
-> +			reg = <0x20000 0x160000>;
-> +		};
-> +
-> +		partition@180000 {
-> +			label = "u-boot-env";
-> +			reg = <0x180000 0x10000>;
-> +		};
-> +
-> +		partition@190000 {
-> +			label = "Rescue system";
-> +			reg = <0x190000 0x660000>;
-> +		};
-> +
-> +		partition@7f0000 {
-> +			label = "dtb";
-> +			reg = <0x7f0000 0x10000>;
-> +		};
-> +	};
-> +
-> +	moxtet@1 {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		compatible = "cznic,moxtet";
-> +		reg = <1>;
-> +		devrst-gpio = <&gpiosb 2 GPIO_ACTIVE_LOW>;
-> +		spi-max-frequency = <10000000>;
-> +		spi-cpol;
-> +		spi-cpha;
-> +
-> +		moxtet_sfp: moxtet-sfp@0 {
-> +			compatible = "cznic,moxtet-gpio";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			reg = <0>;
-> +			moxtet,id = <1>;
-> +			moxtet,input-mask = <0x7>;
-> +			moxtet,output-mask = <0x3>;
-> +			status = "disabled";
-> +		};
-> +	};
-> +};
-> +
-> +&usb2 {
-> +	status = "okay";
-> +};
-> +
-> +&usb3 {
-> +	status = "okay";
-> +	usb-phy = <&usb3_phy>;
-> +};
-> -- 
-> 2.18.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 81728717523d..4690ef9cda8a 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -24,6 +24,9 @@ static struct key *builtin_trusted_keys;
+>   #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+>   static struct key *secondary_trusted_keys;
+>   #endif
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +static struct key *platform_trusted_keys;
+> +#endif
+>   
+>   extern __initconst const u8 system_certificate_list[];
+>   extern __initconst const unsigned long system_certificate_list_size;
+> @@ -265,4 +268,10 @@ int verify_pkcs7_signature(const void *data, size_t len,
+>   }
+>   EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
+>   
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +void __init set_platform_trusted_keys(struct key *keyring) {
+> +	platform_trusted_keys = keyring;
+> +}
+> +#endif
+> +
+>   #endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+> index 359c2f936004..9e1b7849b6aa 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -61,5 +61,10 @@ static inline struct key *get_ima_blacklist_keyring(void)
+>   }
+>   #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
+>   
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +
+> +extern void __init set_platform_trusted_keys(struct key* keyring);
+> +
+> +#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+>   
+>   #endif /* _KEYS_SYSTEM_KEYRING_H */
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index f45d6edecf99..bfabc2a8111d 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -89,6 +89,12 @@ static int __integrity_init_keyring(const unsigned int id, key_perm_t perm,
+>   		keyring[id] = NULL;
+>   	}
+>   
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +	if (id == INTEGRITY_KEYRING_PLATFORM) {
 
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Shouldn't it also check that keyring[id] is not NULL ?
+
+Thanks & Regards,
+     - Nayna
+
+> +		set_platform_trusted_keys(keyring[id]);
+> +	}
+> +#endif
+> +
+>   	return err;
+>   }
+>   
+
