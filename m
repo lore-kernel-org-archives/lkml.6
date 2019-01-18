@@ -2,103 +2,186 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CF8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB20EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10FAD20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:01:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547816472;
-	bh=LwWz5DEjqY1exz+w190/9lABtDyyXJb2rwYdsRiMoNY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xBSCohjtb+ZczlYJ5aQZWM+aU4/MraFJmeNIlHHsN4j8t1g1u9ByLN9QY7FonwdKf
-	 9wUlivRIIcDVP2ELTZlt3MHMwKb9jbMCEA1y3PavgR5+JEcwXiHRpf6YZerS3x1fZP
-	 8ELfbmemIV7qOXiSSXJBAQzPdP0RqeYSPcAkmfyM=
+	by mail.kernel.org (Postfix) with ESMTP id AA94720823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:04:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfARNBK (ORCPT
+        id S1727716AbfARNEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:01:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726952AbfARNBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:01:10 -0500
-Received: from quaco.ghostprotocols.net (unknown [189.40.100.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19AD720823;
-        Fri, 18 Jan 2019 13:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547816469;
-        bh=LwWz5DEjqY1exz+w190/9lABtDyyXJb2rwYdsRiMoNY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UBoEH/EzEkP5+++/nbWaSTYotWFNgfa+z9OEhFeQf96ZBZbW+dfQrpM+Hdxyorn3Y
-         w9PB1NTjrE4kYQVJgL2rLicUhJiI9HKmiq/Hqn26ImSwlEVO0UqcWTLgPAp3A0wcTn
-         scKgC/+jDO6Rt9BBJl83qlmSQKA9tun2Wac4KdGk=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6F38341AB5; Fri, 18 Jan 2019 10:01:06 -0300 (-03)
-Date:   Fri, 18 Jan 2019 10:01:06 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Andi Kleen <andi@firstfloor.org>, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf, script: Fix crash with printing mixed trace point
- and other events
-Message-ID: <20190118130106.GH5823@kernel.org>
-References: <20190117194834.21940-1-andi@firstfloor.org>
- <20190118094919.GA28346@krava>
- <20190118125920.GG5823@kernel.org>
+        Fri, 18 Jan 2019 08:04:02 -0500
+Received: from mgwkm01.jp.fujitsu.com ([202.219.69.168]:39337 "EHLO
+        mgwkm01.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfARNEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 08:04:00 -0500
+X-Greylist: delayed 675 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Jan 2019 08:04:00 EST
+Received: from kw-mxauth.gw.nic.fujitsu.com (unknown [192.168.231.132]) by mgwkm01.jp.fujitsu.com with smtp
+         id 60e7_fa2d_c6fa3fe0_eb21_4e52_8f22_f2484bfdf17d;
+        Fri, 18 Jan 2019 21:52:42 +0900
+Received: from g01jpfmpwkw01.exch.g01.fujitsu.local (g01jpfmpwkw01.exch.g01.fujitsu.local [10.0.193.38])
+        by kw-mxauth.gw.nic.fujitsu.com (Postfix) with ESMTP id 76AD9AC00B2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 21:52:41 +0900 (JST)
+Received: from G01JPEXCHKW16.g01.fujitsu.local (G01JPEXCHKW16.g01.fujitsu.local [10.0.194.55])
+        by g01jpfmpwkw01.exch.g01.fujitsu.local (Postfix) with ESMTP id ADF696923F9;
+        Fri, 18 Jan 2019 21:52:40 +0900 (JST)
+Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
+ g01jpexchkw16 ([10.0.194.55]) with mapi id 14.03.0415.000; Fri, 18 Jan 2019
+ 21:52:40 +0900
+From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+To:     "'catalin.marinas@arm.com'" <catalin.marinas@arm.com>,
+        "'will.deacon@arm.com'" <will.deacon@arm.com>,
+        "'linux-arm-kernel@lists.infradead.org'" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+CC:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+Subject: [PATCH] arm64 memory accesses may cause undefined fault on
+ Fujitsu-A64FX
+Thread-Topic: [PATCH] arm64 memory accesses may cause undefined fault on
+ Fujitsu-A64FX
+Thread-Index: AdSvK6W0/Nm6810RQFa/OOuw1JbhXA==
+Date:   Fri, 18 Jan 2019 12:52:38 +0000
+Message-ID: <8898674D84E3B24BA3A2D289B872026A6A29FA8F@G01JPEXMBKW03>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
+x-originating-ip: [10.18.70.198]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118125920.GG5823@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Jan 18, 2019 at 09:59:20AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Fri, Jan 18, 2019 at 10:49:19AM +0100, Jiri Olsa escreveu:
-> > On Thu, Jan 17, 2019 at 11:48:34AM -0800, Andi Kleen wrote:
-> > > From: Andi Kleen <ak@linux.intel.com>
-> 
-> > > perf script crashes currently when printing mixed trace points and other
-> > > events because the trace format does not handle events without trace
-> > > meta data. Add a simple check to avoid that.
-> 
-> > > % cat > test.c
-> > > main()
-> > > {
-> > >     printf("Hello world\n");
-> > > }
-> > > ^D
-> > > % gcc -g -o test test.c
-> > > % sudo perf probe -x test 'test.c:3'
-> > > % perf record -e '{cpu/cpu-cycles,period=10000/,probe_test:main}:S' ./test
-> > > % perf script
-> > > <segfault>
-> 
-> > > Signed-off-by: Andi Kleen <ak@linux.intel.com>
->  
-> > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> 
-> Thanks, tested and applied.
-> 
-> While testing I found something odd, the cycles events are not showing
-> the CPU and the probe events shows a "negative" CPU column,
-> investigating.
-
-The sample_type for those two events:
-
-[root@quaco wb]# perf evlist -v
-cpu/cpu-cycles,period=10000/: type: 4, size: 112, config: 0x3c, { sample_period, sample_freq }: 10000, sample_type: IP|TID|TIME|READ|IDENTIFIER, read_format: ID|GROUP, disabled: 1, mmap: 1, comm: 1, enable_on_exec: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1
-probe_libc:malloc: type: 2, size: 112, config: 0x790, sample_type: IP|TID|TIME|READ|CPU|PERIOD|RAW|IDENTIFIER, read_format: ID|GROUP, sample_id_all: 1, exclude_guest: 1
-# Tip: use 'perf evlist --trace-fields' to show fields for tracepoint events
-[root@quaco wb]#
-
-- Arnaldo
+T24gc29tZSB2YXJpYW50cyBvZiB0aGUgRnVqaXRzdS1BNjRGWCBjb3JlcyB2
+ZXIoMS4wLCAxLjEpLCANCm1lbW9yeSBhY2Nlc3NlcyBtYXkgY2F1c2UgdW5k
+ZWZpbmVkIGZhdWx0IChEYXRhIGFib3J0LCBERlNDPTBiMTExMTExKS4NClRo
+aXMgcHJvYmxlbSB3aWxsIGJlIGZpeGVkIGJ5IG5leHQgdmVyc2lvbiBvZiBG
+dWppdHN1LUE2NEZYLg0KSSB3b3VsZCBsaWtlIHRvIHBvc3QgYSB3b3JrYXJv
+dW5kIHRvIGF2b2lkIHRoaXMgcHJvYmxlbSANCm9uIGV4aXN0aW5nIHZlcnNp
+b24uDQpUaGUgd29ya2Fyb3VuZCBpcyB0byByZXBsYWNlIHRoZSBmYXVsdCBo
+YW5kbGVyIGZvciBEYXRhIGFib3J0DQpERlNDPTBiMTExMTExIHdpdGggYSBu
+ZXcgb25lIHRvIGlnbm9yZSB0aGlzIHVuZGVmaW5lZCBmYXVsdCwgDQp3aGlj
+aCB3aWxsIG9ubHkgYWZmZWN0IHRoZSBGdWppdHN1LUE2NEZYLg0KDQpJIGhh
+dmUgdGVzdGVkIHRoaXMgcGF0Y2ggb24gQTY0RlggYW5kIFFFTVUoMi45LjAp
+LlRoZSB0ZXN0IHBhc3NlZC4NCkkgd2lsbCB0ZXN0IHRoaXMgcGF0Y2ggb24g
+VGh1bmRlclggYW5kIHJlcG9ydCB0aGUgcmVzdWx0Lg0KSSBmdWxseSBhcHBy
+ZWNpYXRlIHRoYXQgaWYgc29tZW9uZSBjYW4gdGVzdCB0aGlzIHBhdGNoIG9u
+IGRpZmZlcmVudCANCmNoaXBzIHRvIHZlcml0eSBubyBoYXJtZnVsIGVmZmVj
+dCBvbiBvdGhlciBjaGlwcy4NCg0KSWYgdGhlcmUgaXMgbm8gcHJvYmxlbSBv
+biBvdGhlciBjaGlwcywgcGxlYXNlIG1lcmdlIHRoaXMgcGF0Y2guDQoNCkJl
+bG93IGlzIG15IHBhdGNoIGJhc2VkIG9uIGxpbnV4LTUuMC1yYzIuDQoNClNp
+Z25lZC1vZmYtYnk6IExlaSBaaGFuZyA8emhhbmcubGVpQGpwLmZ1aml0c3Uu
+Y29tPg0KVGVzdGVkLWJ5OiBMZWkgWmhhbmcgPHpoYW5nLmxlaUBqcC5mdWpp
+dHN1LmNvbT4NCi0tLQ0KIERvY3VtZW50YXRpb24vYXJtNjQvc2lsaWNvbi1l
+cnJhdGEudHh0IHwgICAgMSArDQogYXJjaC9hcm02NC9LY29uZmlnICAgICAg
+ICAgICAgICAgICAgICAgfCAgIDEzICsrKysrKysrKysrKysNCiBhcmNoL2Fy
+bTY0L2luY2x1ZGUvYXNtL2NwdXR5cGUuaCAgICAgICB8ICAgIDQgKysrKw0K
+IGFyY2gvYXJtNjQvbW0vZmF1bHQuYyAgICAgICAgICAgICAgICAgIHwgICAy
+MyArKysrKysrKysrKysrKysrKysrKysrKw0KIDQgZmlsZXMgY2hhbmdlZCwg
+NDEgaW5zZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
+bi9hcm02NC9zaWxpY29uLWVycmF0YS50eHQgYi9Eb2N1bWVudGF0aW9uL2Fy
+bTY0L3NpbGljb24tZXJyYXRhLnR4dA0KaW5kZXggMWYwOWQwNC4uMjZkNjRl
+OSAxMDA2NDQNCi0tLSBhL0RvY3VtZW50YXRpb24vYXJtNjQvc2lsaWNvbi1l
+cnJhdGEudHh0DQorKysgYi9Eb2N1bWVudGF0aW9uL2FybTY0L3NpbGljb24t
+ZXJyYXRhLnR4dA0KQEAgLTgwLDMgKzgwLDQgQEAgc3RhYmxlIGtlcm5lbHMu
+DQogfCBRdWFsY29tbSBUZWNoLiB8IEZhbGtvciB2MSAgICAgICB8IEUxMDA5
+ICAgICAgICAgICB8IFFDT01fRkFMS09SX0VSUkFUVU1fMTAwOSAgICB8DQog
+fCBRdWFsY29tbSBUZWNoLiB8IFFERjI0MDAgSVRTICAgICB8IEUwMDY1ICAg
+ICAgICAgICB8IFFDT01fUURGMjQwMF9FUlJBVFVNXzAwNjUgICB8DQogfCBR
+dWFsY29tbSBUZWNoLiB8IEZhbGtvciB2ezEsMn0gICB8IEUxMDQxICAgICAg
+ICAgICB8IFFDT01fRkFMS09SX0VSUkFUVU1fMTA0MSAgICB8DQorfCBGdWpp
+dHN1ICAgICAgICB8IEE2NEZYICAgICAgICAgICB8IEUjMDEwMDAxICAgICAg
+ICB8IEZVSklUU1VfRVJSQVRVTV8wMTAwMDEgICAgICB8DQpkaWZmIC0tZ2l0
+IGEvYXJjaC9hcm02NC9LY29uZmlnIGIvYXJjaC9hcm02NC9LY29uZmlnDQpp
+bmRleCBhNDE2OGQzLi45YzA5YjJiIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02
+NC9LY29uZmlnDQorKysgYi9hcmNoL2FybTY0L0tjb25maWcNCkBAIC02NDMs
+NiArNjQzLDE5IEBAIGNvbmZpZyBRQ09NX0ZBTEtPUl9FUlJBVFVNX0UxMDQx
+DQogDQogCSAgSWYgdW5zdXJlLCBzYXkgWS4NCiANCitjb25maWcgRlVKSVRT
+VV9FUlJBVFVNXzAxMDAwMQ0KKwlib29sICJGdWppdHN1LUE2NEZYIGVycmF0
+dW0gRSMwMTAwMDE6IFVuZGVmaW5lZCBmYXVsdCBtYXkgb2NjdXIgd3Jvbmds
+eSINCisJZGVmYXVsdCB5DQorCWhlbHANCisJICBUaGlzIG9wdGlvbiBhZGRz
+IHdvcmthcm91bmQgZm9yIEZ1aml0c3UtQTY0RlggZXJyYXR1bSBFIzAxMDAw
+MS4NCisJICBPbiBzb21lIHZhcmlhbnRzIG9mIHRoZSBGdWppdHN1LUE2NEZY
+IGNvcmVzIHZlcigxLjAsIDEuMSksIG1lbW9yeSBhY2Nlc3Nlcw0KKwkgIG1h
+eSBjYXVzZSB1bmRlZmluZWQgZmF1bHQgKERhdGEgYWJvcnQsIERGU0M9MGIx
+MTExMTEpLg0KKwkgIFRoZSB3b3JrYXJvdW5kIGlzIHRvIHJlcGxhY2UgdGhl
+IGZhdWx0IGhhbmRsZXIgZm9yIERhdGEgYWJvcnQgREZTQz0wYjExMTExMQ0K
+KwkgIHdpdGggYSBuZXcgb25lIHRvIGlnbm9yZSB0aGlzIHVuZGVmaW5lZCBm
+YXVsdCwgd2hpY2ggd2lsbCBvbmx5IGFmZmVjdA0KKwkgIHRoZSBGdWppdHN1
+LUE2NEZYLg0KKw0KKwkgIElmIHVuc3VyZSwgc2F5IFkuDQorDQogZW5kbWVu
+dQ0KIA0KIA0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvaW5jbHVkZS9hc20v
+Y3B1dHlwZS5oIGIvYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9jcHV0eXBlLmgN
+CmluZGV4IDk1MWVkMWEuLjE2NmFhNTAgMTAwNjQ0DQotLS0gYS9hcmNoL2Fy
+bTY0L2luY2x1ZGUvYXNtL2NwdXR5cGUuaA0KKysrIGIvYXJjaC9hcm02NC9p
+bmNsdWRlL2FzbS9jcHV0eXBlLmgNCkBAIC03Niw2ICs3Niw3IEBADQogI2Rl
+ZmluZSBBUk1fQ1BVX0lNUF9CUkNNCQkweDQyDQogI2RlZmluZSBBUk1fQ1BV
+X0lNUF9RQ09NCQkweDUxDQogI2RlZmluZSBBUk1fQ1BVX0lNUF9OVklESUEJ
+CTB4NEUNCisjZGVmaW5lIEFSTV9DUFVfSU1QX0ZVSklUU1UJCTB4NDYNCiAN
+CiAjZGVmaW5lIEFSTV9DUFVfUEFSVF9BRU1fVjgJCTB4RDBGDQogI2RlZmlu
+ZSBBUk1fQ1BVX1BBUlRfRk9VTkRBVElPTgkJMHhEMDANCkBAIC0xMDQsNiAr
+MTA1LDggQEANCiAjZGVmaW5lIE5WSURJQV9DUFVfUEFSVF9ERU5WRVIJCTB4
+MDAzDQogI2RlZmluZSBOVklESUFfQ1BVX1BBUlRfQ0FSTUVMCQkweDAwNA0K
+IA0KKyNkZWZpbmUgRlVKVElTVV9DUFVfUEFSVF9BNjRGWAkJMHgwMDENCisN
+CiAjZGVmaW5lIE1JRFJfQ09SVEVYX0E1MyBNSURSX0NQVV9NT0RFTChBUk1f
+Q1BVX0lNUF9BUk0sIEFSTV9DUFVfUEFSVF9DT1JURVhfQTUzKQ0KICNkZWZp
+bmUgTUlEUl9DT1JURVhfQTU3IE1JRFJfQ1BVX01PREVMKEFSTV9DUFVfSU1Q
+X0FSTSwgQVJNX0NQVV9QQVJUX0NPUlRFWF9BNTcpDQogI2RlZmluZSBNSURS
+X0NPUlRFWF9BNzIgTUlEUl9DUFVfTU9ERUwoQVJNX0NQVV9JTVBfQVJNLCBB
+Uk1fQ1BVX1BBUlRfQ09SVEVYX0E3MikNCkBAIC0xMjIsNiArMTI1LDcgQEAN
+CiAjZGVmaW5lIE1JRFJfUUNPTV9LUllPIE1JRFJfQ1BVX01PREVMKEFSTV9D
+UFVfSU1QX1FDT00sIFFDT01fQ1BVX1BBUlRfS1JZTykNCiAjZGVmaW5lIE1J
+RFJfTlZJRElBX0RFTlZFUiBNSURSX0NQVV9NT0RFTChBUk1fQ1BVX0lNUF9O
+VklESUEsIE5WSURJQV9DUFVfUEFSVF9ERU5WRVIpDQogI2RlZmluZSBNSURS
+X05WSURJQV9DQVJNRUwgTUlEUl9DUFVfTU9ERUwoQVJNX0NQVV9JTVBfTlZJ
+RElBLCBOVklESUFfQ1BVX1BBUlRfQ0FSTUVMKQ0KKyNkZWZpbmUgTUlEUl9G
+VUpJVFNVX0E2NEZYIE1JRFJfQ1BVX01PREVMKEFSTV9DUFVfSU1QX0ZVSklU
+U1UsIEZVSlRJU1VfQ1BVX1BBUlRfQTY0RlgpDQogDQogI2lmbmRlZiBfX0FT
+U0VNQkxZX18NCiANCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L21tL2ZhdWx0
+LmMgYi9hcmNoL2FybTY0L21tL2ZhdWx0LmMNCmluZGV4IGVmYjdiMmMuLmM0
+NjViMmYgMTAwNjQ0DQotLS0gYS9hcmNoL2FybTY0L21tL2ZhdWx0LmMNCisr
+KyBiL2FyY2gvYXJtNjQvbW0vZmF1bHQuYw0KQEAgLTY2Niw2ICs2NjYsMjUg
+QEAgc3RhdGljIGludCBkb19zZWEodW5zaWduZWQgbG9uZyBhZGRyLCB1bnNp
+Z25lZCBpbnQgZXNyLCBzdHJ1Y3QgcHRfcmVncyAqcmVncykNCiAJcmV0dXJu
+IDA7DQogfQ0KIA0KK3N0YXRpYyBib29sIGRvX2JhZF9pZ25vcmVfZmlyc3Qg
+PSBGQUxTRTsNCitzdGF0aWMgaW50IGRvX2JhZF9pZ25vcmUodW5zaWduZWQg
+bG9uZyBhZGRyLCB1bnNpZ25lZCBpbnQgZXNyLCBzdHJ1Y3QgcHRfcmVncyAq
+cmVncykNCit7DQorCWlmIChkb19iYWRfaWdub3JlX2ZpcnN0ID09IFRSVUUp
+DQorCQlyZXR1cm4gMDsNCisJaWYgKGRvX2JhZF9pZ25vcmVfZmlyc3QgPT0g
+RkFMU0UpIHsNCisJCXVuc2lnbmVkIGludCBjdXJyZW50X2NwdV9taWRyID0g
+cmVhZF9jcHVpZF9pZCgpOw0KKwkJY29uc3Qgc3RydWN0IG1pZHJfcmFuZ2Ug
+ZnVqaXRzdV9hNjRmeF9taWRyX3JhbmdlID0gew0KKwkJCU1JRFJfRlVKSVRT
+VV9BNjRGWCwgTUlEUl9DUFVfVkFSX1JFVigwLCAwKSwgTUlEUl9DUFVfVkFS
+X1JFVigxLCAwKQ0KKwkJfTsNCisNCisJCWlmIChpc19taWRyX2luX3Jhbmdl
+KGN1cnJlbnRfY3B1X21pZHIsICZmdWppdHN1X2E2NGZ4X21pZHJfcmFuZ2Up
+ID09IFRSVUUpIHsNCisJCQlkb19iYWRfaWdub3JlX2ZpcnN0ID0gVFJVRTsN
+CisJCQlyZXR1cm4gMDsNCisJCX0NCisJfQ0KKwlyZXR1cm4gMTsgLyogImZh
+dWx0IiBzYW1lIGFzIGRvX2JhZCAqLw0KK30NCisNCiBzdGF0aWMgY29uc3Qg
+c3RydWN0IGZhdWx0X2luZm8gZmF1bHRfaW5mb1tdID0gew0KIAl7IGRvX2Jh
+ZCwJCVNJR0tJTEwsIFNJX0tFUk5FTCwJInR0YnIgYWRkcmVzcyBzaXplIGZh
+dWx0Igl9LA0KIAl7IGRvX2JhZCwJCVNJR0tJTEwsIFNJX0tFUk5FTCwJImxl
+dmVsIDEgYWRkcmVzcyBzaXplIGZhdWx0Igl9LA0KQEAgLTczMCw3ICs3NDks
+MTEgQEAgc3RhdGljIGludCBkb19zZWEodW5zaWduZWQgbG9uZyBhZGRyLCB1
+bnNpZ25lZCBpbnQgZXNyLCBzdHJ1Y3QgcHRfcmVncyAqcmVncykNCiAJeyBk
+b19iYWQsCQlTSUdLSUxMLCBTSV9LRVJORUwsCSJ1bmtub3duIDYwIgkJCX0s
+DQogCXsgZG9fYmFkLAkJU0lHS0lMTCwgU0lfS0VSTkVMLAkic2VjdGlvbiBk
+b21haW4gZmF1bHQiCQl9LA0KIAl7IGRvX2JhZCwJCVNJR0tJTEwsIFNJX0tF
+Uk5FTCwJInBhZ2UgZG9tYWluIGZhdWx0IgkJfSwNCisjaWZkZWYJQ09ORklH
+X0ZVSklUU1VfRVJSQVRVTV8wMTAwMDENCisJeyBkb19iYWRfaWdub3JlLAlT
+SUdLSUxMLCBTSV9LRVJORUwsCSJ1bmtub3duIDYzIgkJCX0sDQorI2Vsc2UN
+CiAJeyBkb19iYWQsCQlTSUdLSUxMLCBTSV9LRVJORUwsCSJ1bmtub3duIDYz
+IgkJCX0sDQorI2VuZGlmDQogfTsNCiANCiBpbnQgaGFuZGxlX2d1ZXN0X3Nl
+YShwaHlzX2FkZHJfdCBhZGRyLCB1bnNpZ25lZCBpbnQgZXNyKSANCi0tLQ0K
+DQpCZXN0IHJlZ2FyZHMsDQpMZWkgWmhhbmcNCnpoYW5nLmxlaUBqcC5mdWpp
+dHN1LmNvbQ0K
