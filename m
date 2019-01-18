@@ -2,98 +2,94 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFA6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBB5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D376220850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PWmHurCQ"
+	by mail.kernel.org (Postfix) with ESMTP id 96B1720850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbfARQUN (ORCPT
+        id S1728334AbfARQUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:20:13 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:33984 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbfARQUL (ORCPT
+        Fri, 18 Jan 2019 11:20:36 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:49391 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728162AbfARQUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:20:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xpKMkJb9W0ZAPps1pnRiR6Soxmr0tt+w6MkmCGfQp7E=; b=PWmHurCQr7NfqfAERvYUCuqLx
-        2h71SIKO2kj+KdnlGqJPCYdGJ774k7vDtuP0XVUe/soZn12dNk091W5Zl4oodTJLY5GejlImME/+h
-        gmiprxVkqkydKLzzRv9ZDgWLgsycSg/aOmFnrzHOe9DEiqi1lCd4tbzwijHZw171O83hT5FW9LZUl
-        /vG491lw6XeNMpRMYxvcp2Vx4pKGsoVSO4Xd1JEgk23pwFB4EGdiTn5RWNf1ZZHYt6WtF0zNbAar/
-        JgaV6kIRgI5D4Ju9CLyZuRMVqNIdeLCsk8FWSwUgPhGrIrFPNY2GJv0QnSRBTSKkkTUOiSmoAGUn7
-        CcEbVtFYg==;
-Received: from [89.200.44.227] (helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gkWsE-00049t-Jo; Fri, 18 Jan 2019 16:20:02 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DBEC6983816; Fri, 18 Jan 2019 17:19:59 +0100 (CET)
-Date:   Fri, 18 Jan 2019 17:19:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Clark Williams <williams@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Networking Development Mailing List 
-        <netdev@vger.kernel.org>
-Subject: Re: [PATCH/RFC] Make perf_event_open() propagate errors for use in
- bpf_perf_event_open()
-Message-ID: <20190118161959.GI14054@worktop.programming.kicks-ass.net>
-References: <20190111155538.GX22483@kernel.org>
- <20190118145237.GD27931@hirez.programming.kicks-ass.net>
- <20190118150938.GN5823@kernel.org>
+        Fri, 18 Jan 2019 11:20:33 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1N4i3d-1hC3o90g59-011gmK; Fri, 18 Jan 2019 17:19:18 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, mattst88@gmail.com,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
+        deller@gmx.de, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
+        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
+        deepa.kernel@gmail.com, ebiederm@xmission.com,
+        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 02/29] ia64: add statx and io_pgetevents syscalls
+Date:   Fri, 18 Jan 2019 17:18:08 +0100
+Message-Id: <20190118161835.2259170-3-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190118161835.2259170-1-arnd@arndb.de>
+References: <20190118161835.2259170-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118150938.GN5823@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:iIDCS1VFnyKTHSdfnANmJaXoeSIZjJNeoIeNpmRgK3i74OpuB4O
+ eJR7+B640nWU7cI5HbePKVHdmMw6Q9RnL4odwsk7keaOXE1tspGbmTjF+YVFfrsjlCz+8Pk
+ c6LKkZNxB5SmFLtBapr7yXQckqoFa5ZTM5Ot72QtiDtCW3tiyH5ohmtPxlTlupzyYoxAsvM
+ 0njQaJNBq+N6Kmwm2u2RA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QhW8nqZCixw=:FEDmad82yIffa62QsVqnWE
+ uz1Wrim1T8l4l2nNLg7tI/QVN0sQNBVXDYm/NnsKLv7zs8LehTf6t5+qBRKo/0rh35CYACfnh
+ HyaRp8O9EjgYHn8q5sfTDpNC1EA1qlL2VgJV7uFhKZ42rkCb/kvXDCLTj6e4eLqMiLLHwkYgA
+ tg/kcev5qJ7IM9ob7D3yzCAq8ni94r1+4puI+m2IXISBpGYQAycFdcpnkAdl25Fp/ndfEZBg4
+ YXNQwxFdDSigpL4BqDznMEklcUn0WDgyBJuTIe9s/D6zDgeIZoI7nU3riAsN/dWuWcnbkNnyz
+ IId+DwROqDXieCnpGuBiZvOiLBS+urH6rgeCYekmDL8q7krWCyjHp4rvWFx7xcHD1o2VXsGot
+ 1a/8zGhBF+fqq58MrSp3TEn+6DOva3zIrSvk4tNapXtZZZprR8T75kOgPOvix1rgRrHk4ck8Q
+ XG9VJB2f13nJVdtAIWsqENy/zAmWNP8RmLku761b6Sj8zHabwSrP59tSyG90YiRFFrAcrZcBy
+ KgsrDJFq33B6rFnPLS6k8KrAwUkLaKXZp2tEwUEl7UxeFy3EamT5ORoeoTGvhxuO3ffTTWGuB
+ YHr09kc6nvgYBKaTNvTlODeNk5KwBw66kFtJmW65s3rJj0voBCtwT73q7zm1gdOPRYk7r4ur3
+ pOK6QqhYKoWR7gOjVF2r0tazZFTLqGupgU0ddYnvBi9U45R/Ja3Ea+uhLN5Vzw87BFZJr0JNI
+ ctK94+FmLls+QETWW952oM3gGqZ4wEKj7crFiQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 12:09:38PM -0300, Arnaldo Carvalho de Melo wrote:
-> commit 1b3b3dee572d0b77a316ab6715091201be6832de
-> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date:   Fri Jan 11 13:20:20 2019 -0300
-> 
->     perf: Make perf_event_output() propagate the output() return
->     
->     For the original mode of operation it isn't needed, since we report back
->     errors via PERF_RECORD_LOST records in the ring buffer, but for use in
->     bpf_perf_event_output() it is convenient to return the errors, basically
->     -ENOSPC.
->     
->     Currently bpf_perf_event_output() returns an error indication, the last
->     thing it does, which is to push it to the ring buffer is that can fail
->     and if so, this failure won't be reported back to its users, fix it.
->     
->     Reported-by: Jamal Hadi Salim <jhs@mojatatu.com>
->     Tested-by: Jamal Hadi Salim <jhs@mojatatu.com>
->     Cc: Adrian Hunter <adrian.hunter@intel.com>
->     Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
->     Cc: Daniel Borkmann <daniel@iogearbox.net>
->     Cc: Jiri Olsa <jolsa@kernel.org>
->     Cc: Namhyung Kim <namhyung@kernel.org>
->     Cc: Peter Zijlstra <peterz@infradead.org>
->     Link: https://lkml.kernel.org/r/20190111155538.GX22483@kernel.org
->     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+All architectures should implement these two, so assign numbers
+and hook them up on ia64.
 
-/me hates on git-format :-)
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/ia64/kernel/syscalls/syscall.tbl | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index e97caf51be42..52585281205b 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -335,3 +335,5 @@
+ 323	common	copy_file_range			sys_copy_file_range
+ 324	common	preadv2				sys_preadv2
+ 325	common	pwritev2			sys_pwritev2
++326	common	statx				sys_statx
++327	common	io_pgetevents			sys_io_pgetevents
+-- 
+2.20.0
 
