@@ -2,118 +2,99 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF96C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3484C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C822086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:41:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Y084zBb3"
+	by mail.kernel.org (Postfix) with ESMTP id C844D2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbfARRls (ORCPT
+        id S1728653AbfARRmg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:41:48 -0500
-Received: from mail.efficios.com ([167.114.142.138]:51872 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728000AbfARRlr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:41:47 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 29EEDA6DEE;
-        Fri, 18 Jan 2019 12:41:46 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id FaCSFrAu-05N; Fri, 18 Jan 2019 12:41:45 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 4416FA6DE0;
-        Fri, 18 Jan 2019 12:41:45 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 4416FA6DE0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1547833305;
-        bh=vxHNxRwrUsgH5AuaVvctZGNxnneoiXQrQlyOTKucT0w=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Y084zBb37KXnswUhAmAHU8PULv7qfOj8M/+3gRY7gC2BB/eAJIsYmzoT78PaW0o9g
-         BpF71MJgJO7BxtPwlYg9//Hvww4HKl5cE9z7LuDh9tuWhUZzK1NF0JMEdPNjhkUYtr
-         SVTBESwMgJLWbT5ndFou/2LP7nGqGvcRBX5BzBhuDjpKXXYqvpqk9BMKnhO7Znsp/5
-         XJfNKRIcPjBuZmRXOmKed59cho8Il+TChtMcMDXHM0XIwGuETZiLUJce2EJoGj90oz
-         OIZw7ctPb+P1KB4bqgcOjp1GyLPp121t2lW0Q3ogknsVkIix+3f5Kk6VZXdu5Ak/61
-         Z50sz1xvl11Vw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id JZHQE7bcdD03; Fri, 18 Jan 2019 12:41:45 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 2683BA6DDA;
-        Fri, 18 Jan 2019 12:41:45 -0500 (EST)
-Date:   Fri, 18 Jan 2019 12:41:45 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Carlos O'Donell <carlos@redhat.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1887968822.1146.1547833305059.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190115015148.32155-1-mathieu.desnoyers@efficios.com>
-References: <20190115015148.32155-1-mathieu.desnoyers@efficios.com>
-Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at C
- startup and thread creation (v5)
+        Fri, 18 Jan 2019 12:42:36 -0500
+Received: from mga03.intel.com ([134.134.136.65]:55386 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728000AbfARRmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:42:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 09:42:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
+   d="scan'208";a="126909419"
+Received: from irsmsx104.ger.corp.intel.com ([163.33.3.159])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Jan 2019 09:42:33 -0800
+Received: from irsmsx102.ger.corp.intel.com ([169.254.2.65]) by
+ IRSMSX104.ger.corp.intel.com ([169.254.5.101]) with mapi id 14.03.0415.000;
+ Fri, 18 Jan 2019 17:41:32 +0000
+From:   "Reshetova, Elena" <elena.reshetova@intel.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+CC:     "mingo@redhat.com" <mingo@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: RE: [PATCH 0/5] sched refcount_t conversions
+Thread-Topic: [PATCH 0/5] sched refcount_t conversions
+Thread-Index: AQHUryk8nIpvQnacJEKv36LRANRZEaW1II0AgAArGOA=
+Date:   Fri, 18 Jan 2019 17:41:32 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4B872C9@IRSMSX102.ger.corp.intel.com>
+References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
+ <20190118150650.GA8790@andrea>
+In-Reply-To: <20190118150650.GA8790@andrea>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [163.33.239.181]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3716 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3745)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v5)
-Thread-Index: llu+wX0M8PxIAlgKK5KtAmtbEJg5AA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jan 14, 2019, at 8:51 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+> On Fri, Jan 18, 2019 at 02:27:25PM +0200, Elena Reshetova wrote:
+> > I would really love finally to merge these old patches
+> > (now rebased on top of linux-next/master as of last friday),
+> > since as far as I remember none has raised any more concerns
+> > on them.
+> >
+> > refcount_t has been now successfully used in kernel in many places,
+> > helped to detect bugs and mistakes in logic of refcounters.
+> >
+> > This series, for scheduler and task struct specifically,
+> > replaces atomic_t reference counters with the new refcount_t type
+> > and API (see include/linux/refcount.h).
+> > By doing this we prevent intentional or accidental
+> > underflows or overflows that can lead to use-after-free vulnerabilities.
+> >
+> > The patches are fully independent and can be cherry-picked separately.
+> > More information about each conversion in each patch separately.
+> >
+> > Elena Reshetova (5):
+> >   sched: convert sighand_struct.count to refcount_t
+> >   sched: convert signal_struct.sigcnt to refcount_t
+> >   sched: convert numa_group.refcount to refcount_t
+> >   sched/task_struct: convert task_struct.usage to refcount_t
+> >   sched/task_struct: convert task_struct.stack_refcount to refcount_t
+> 
+> For the series, please feel free to add:
+> 
+> Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-[...]
+Thank you for your review!
 
-> diff --git a/sysdeps/unix/sysv/linux/rseq-sym.c
-> b/sysdeps/unix/sysv/linux/rseq-sym.c
-> new file mode 100644
-> index 0000000000..6856d0388a
-[...]
-> +/* volatile because fields can be read/updated by the kernel.  */
-> +__thread volatile struct rseq __rseq_abi = {
-> +  .cpu_id = RSEQ_CPU_ID_UNINITIALIZED,
-> +};
-> +
-> +/* volatile because refcount can be read/updated by signal handlers.  */
-> +__thread volatile uint32_t __rseq_refcount;
-
-Back to the weak vs non-weak question about those two symbols. I understand
-that tagging them as weak symbols has little effect on the dynamic loader
-when it loads libc.so. However, I'm worried about that happens when
-libc is statically linked into an application, and there happens to
-be more than one instance of those symbols (e.g. libc and another library
-define the same symbols, and both are statically linked into the same
-application). Isn't it a situation where tagging those symbols as "weak"
-becomes useful ?
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Best Regards,
+Elena
