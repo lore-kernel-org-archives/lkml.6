@@ -2,75 +2,92 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED6CC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36A2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A821204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C3D020823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:57:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfARK4u (ORCPT
+        id S1727488AbfARK5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 05:56:50 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:48478 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbfARK4u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 05:56:50 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gkRpP-00053D-7y; Fri, 18 Jan 2019 18:56:47 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gkRpN-00021e-HF; Fri, 18 Jan 2019 18:56:45 +0800
-Date:   Fri, 18 Jan 2019 18:56:45 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: testmgr - split akcipher tests by a key type
-Message-ID: <20190118105645.w7hpezhdsme7lzev@gondor.apana.org.au>
-References: <20190107175427.13261-1-vt@altlinux.org>
+        Fri, 18 Jan 2019 05:57:15 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54610 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbfARK5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 05:57:14 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA446EBD;
+        Fri, 18 Jan 2019 02:57:13 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F3D813F557;
+        Fri, 18 Jan 2019 02:57:10 -0800 (PST)
+Subject: Re: [PATCHv2 2/4] arm64: dts: qcom: msm8996: Add Coresight support
+To:     saiprakash.ranjan@codeaurora.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
+        david.brown@linaro.org, vivek.gautam@codeaurora.org,
+        dianders@chromium.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com
+Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <cover.1547798966.git.saiprakash.ranjan@codeaurora.org>
+ <552e408950525b1bac39d05b8b4f2ae1975397e0.1547798966.git.saiprakash.ranjan@codeaurora.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <1311e78a-21f6-6470-7861-39b3499974ce@arm.com>
+Date:   Fri, 18 Jan 2019 10:57:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190107175427.13261-1-vt@altlinux.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <552e408950525b1bac39d05b8b4f2ae1975397e0.1547798966.git.saiprakash.ranjan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 08:54:27PM +0300, Vitaly Chikunov wrote:
-> Before this, if akcipher_testvec have `public_key_vec' set to true
-> (i.e. having a public key) only sign/encrypt test is performed, but
-> verify/decrypt test is skipped.
-> 
-> With a public key we could do encrypt and verify, but to sign and decrypt
-> a private key is required.
-> 
-> This logic is correct for encrypt/decrypt tests (decrypt is skipped if
-> no private key). But incorrect for sign/verify tests - sign is performed
-> no matter if there is no private key, but verify is skipped if there is
-> a public key.
-> 
-> Rework `test_akcipher_one' to arrange tests properly depending on value
-> of `public_key_vec` and `siggen_sigver_test'.
-> 
-> No tests were missed since there is only one sign/verify test (which
-> have `siggen_sigver_test' set to true) and it has a private key, but
-> future tests could benefit from this improvement.
-> 
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> ---
->  crypto/testmgr.c | 86 +++++++++++++++++++++++++++++++++++++-------------------
->  1 file changed, 57 insertions(+), 29 deletions(-)
+Sai,
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+On 18/01/2019 08:25, Sai Prakash Ranjan wrote:
+> From: Vivek Gautam <vivek.gautam@codeaurora.org>
+> 
+> Enable coresight support by adding device nodes for the
+> available source, sinks and channel blocks on msm8996.
+> 
+> This also adds coresight cpu debug nodes.
+> 
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
+>   arch/arm64/boot/dts/qcom/msm8996.dtsi | 447 ++++++++++++++++++++++++++
+>   1 file changed, 447 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 99b7495455a6..96a16d5a258c 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+
+> +
+> +		etr@3028000 {
+> +			compatible = "arm,coresight-tmc", "arm,primecell";
+> +			reg = <0x3028000 0x1000>;
+> +
+> +			clocks = <&rpmcc RPM_QDSS_CLK>, <&rpmcc RPM_QDSS_A_CLK>;
+> +			clock-names = "apb_pclk", "atclk";
+
+If you want to use the scatter-gather mode, you must add "arm,scatter-gather"
+property to the node here.
+
+Have you tested the scatter-gather mode on the chip ? Does that work at all ?
+Note: You could try this by setting a buffer_size > 1M for the ETR and use
+it as a sink from the sysfs mode.
+
+Cheers
+Suzuki
