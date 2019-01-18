@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8146CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19061C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51B0F20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:32:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E08FF20883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:32:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BOT5yj4S"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="D+3a8+d+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbfARQc2 (ORCPT
+        id S1728811AbfARQcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:32:28 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40719 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728729AbfARQc1 (ORCPT
+        Fri, 18 Jan 2019 11:32:33 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46906 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728780AbfARQcb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:32:27 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u18so6574832plq.7
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:32:26 -0800 (PST)
+        Fri, 18 Jan 2019 11:32:31 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t13so6559639ply.13
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:32:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=i+sX38c9cSRrT/+P6z3U+yEFrwV+FCNRU4fj085KJck=;
-        b=BOT5yj4SiYAdnYRezu4yjMSiTlvfURCMj4ohbXl2IXk8ffciuJuhOqNxnM5mwP/O/F
-         eFs93GPSqS7yLA+UJuA3Rig58hAoh2HVBTJsq1cXCyD39afYxfsv2OChziv7DJIr/lzw
-         XaSSd95lZvgpuCrTtYfL21yFm8I3WSKr4sivk=
+        bh=/BsYwI4MGKscqtd4fapjUVq4zzWRiadQNZwYTiXxWLI=;
+        b=D+3a8+d+1MT0h2pdwphXLRMdk+66om07H04tXs+3CLjVZU5A/QqhvuGH2u2cPnResn
+         gR05lHVX9lO5yh4MbmYCbxoc2huvjEh9leunG39Xo7y9wF/5DU+Aa+FloS0CqVC2OhG5
+         6rhGOm5aYKv+RBykV4dAm7LPJDVHQPtyIavZY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=i+sX38c9cSRrT/+P6z3U+yEFrwV+FCNRU4fj085KJck=;
-        b=DMhDJ5OFrlha5uGGt3ug95W2gKxwyGDSnDRF7SlomPeyCH/7H2kyE2yT6lfMRw8QTO
-         dx02GWlvah8ZGvEksrr4kDeCU/llqZe9Ai9Q7+FAHRyhvO3lYDuvO5jeCStydDwxSCVh
-         nEmCW7F/Blrvh2ZOgV2R+5ZMrLaPMpMsjTKmDyM1J0zA8jp/1Z6fcDxHcmkKHkbY+O3V
-         QbP3L/fKbwFHh2pSmXMSgcbobWGVipvjPklo5yqYmj6PbPRxMY/XLoup+uqSYbX3fwk3
-         ywIk64IqNatfN9cFW32sKWhmSY+5hlKW21AtSipAueiTa4Sl0lhNJeeKZYkGE2a3ATLW
-         i+fQ==
-X-Gm-Message-State: AJcUukdgs3vK0nPTufGuKzgtXpG+8Lr3qxaFhfySpFLC+uf/wM3tSCKr
-        +ysHCdMRjEpwNG5oilsyzFTfGg==
-X-Google-Smtp-Source: ALg8bN6gUBJ+7iGXSQUxxUbdwmpgQGNe7/aliT7vjp+kpzoRLnlBQGxv5QF7w6rkQfdNmN7QooHqDQ==
-X-Received: by 2002:a17:902:7896:: with SMTP id q22mr20087932pll.280.1547829146030;
-        Fri, 18 Jan 2019 08:32:26 -0800 (PST)
+        bh=/BsYwI4MGKscqtd4fapjUVq4zzWRiadQNZwYTiXxWLI=;
+        b=keh+R4HjHGWgzjx4mnvBOkTOeaScdt8giYcpjqMkK9778T+vIWJlVcM6neXMqBXcl+
+         bJcuRLuRXKYomzVJlETEqFDFZMic03fVgoUaCY/P2vY13hGht4LZoR+iS26q9hgICqrs
+         DGmc6Sh7IbvdooLHw0EmS2x/PGM5A5CAAKuUpjJeukplBPtCLLX3E2RtlETvrLnTN8/E
+         JuUWhZ/13NUXXguZn4ujjEbD0XEanu0Lm/BIB+YmQNJ/KjlCEhSBgA4bN2ruwiqpIhHV
+         sEnbYUEeI6SnbPH+nf+dXxBKknMErDRAXAsR5VHaBJSbYhHVb64+/tWXRyP7V1HN4SYm
+         HKlg==
+X-Gm-Message-State: AJcUukd2n3C/qpYVVONjKUTp1Mbk9naNeKqI+U2fSV1oe3RS4JLDwMJY
+        e2hwmZwaZ4B2EN7ILbTmTbuKHw==
+X-Google-Smtp-Source: ALg8bN6mvpQp3YAX6GkW1M5KsfZsri3zQjDYciQGsdE6EzPzxtCuG2Y1UzZFFrJWaw+8/+vUvRXvkg==
+X-Received: by 2002:a17:902:3f81:: with SMTP id a1mr19680460pld.258.1547829150371;
+        Fri, 18 Jan 2019 08:32:30 -0800 (PST)
 Received: from jagan-XPS-13-9350.domain.name ([103.81.77.13])
-        by smtp.gmail.com with ESMTPSA id z13sm13967086pgf.84.2019.01.18.08.32.21
+        by smtp.gmail.com with ESMTPSA id z13sm13967086pgf.84.2019.01.18.08.32.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 08:32:25 -0800 (PST)
+        Fri, 18 Jan 2019 08:32:29 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -66,9 +66,9 @@ To:     Yong Deng <yong.deng@magewell.com>,
         linux-amarula@amarulasolutions.com,
         Michael Trimarchi <michael@amarulasolutions.com>
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 4/6] arm64: dts: allwinner: a64: Add A64 CSI controller
-Date:   Fri, 18 Jan 2019 22:01:56 +0530
-Message-Id: <20190118163158.21418-5-jagan@amarulasolutions.com>
+Subject: [PATCH v6 5/6] arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
+Date:   Fri, 18 Jan 2019 22:01:57 +0530
+Message-Id: <20190118163158.21418-6-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190118163158.21418-1-jagan@amarulasolutions.com>
 References: <20190118163158.21418-1-jagan@amarulasolutions.com>
@@ -79,54 +79,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add dts node details for Allwinner A64 CSI controller.
+Some camera modules have the SoC feeding a master clock to the sensor
+instead of having a standalone crystal. This clock signal is generated
+from the clock control unit and output from the CSI MCLK function of
+pin PE1.
 
-A64 CSI has similar features as like in H3, but the CSI_SCLK
-need to update it to 300MHz than default clock rate.
+Add a pinmux setting for it for camera sensors to reference.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 384c417cb7a2..89a0deb3fe6a 100644
+index 89a0deb3fe6a..dd5740bc3fc9 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -532,6 +532,12 @@
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
+@@ -538,6 +538,11 @@
+ 				function = "csi0";
+ 			};
  
-+			csi_pins: csi-pins {
-+				pins = "PE0", "PE2", "PE3", "PE4", "PE5", "PE6",
-+				       "PE7", "PE8", "PE9", "PE10", "PE11";
++			csi_mclk_pin: csi-mclk {
++				pins = "PE1";
 +				function = "csi0";
 +			};
 +
  			i2c0_pins: i2c0_pins {
  				pins = "PH0", "PH1";
  				function = "i2c0";
-@@ -899,6 +905,20 @@
- 			status = "disabled";
- 		};
- 
-+		csi: csi@1cb0000 {
-+			compatible = "allwinner,sun50i-a64-csi";
-+			reg = <0x01cb0000 0x1000>;
-+			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_CSI>,
-+				 <&ccu CLK_CSI_SCLK>,
-+				 <&ccu CLK_DRAM_CSI>;
-+			clock-names = "bus", "mod", "ram";
-+			resets = <&ccu RST_BUS_CSI>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&csi_pins>;
-+			status = "disabled";
-+		};
-+
- 		hdmi: hdmi@1ee0000 {
- 			compatible = "allwinner,sun50i-a64-dw-hdmi",
- 				     "allwinner,sun8i-a83t-dw-hdmi";
 -- 
 2.18.0.321.gffc6fa0e3
 
