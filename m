@@ -3,26 +3,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EA8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4A9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BAC72087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EECC2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbfAROwG (ORCPT
+        id S1728120AbfAROwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:52:06 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48123 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:52:19 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48191 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727997AbfAROv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:51:58 -0500
+        id S1727519AbfAROwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:52:18 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 59E69224C9; Fri, 18 Jan 2019 15:51:56 +0100 (CET)
+        id 9C19C2259E; Fri, 18 Jan 2019 15:52:16 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1710F20C04;
+        by mail.bootlin.com (Postfix) with ESMTPSA id E990C20E4A;
         Fri, 18 Jan 2019 15:51:45 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 16/23] drm/sun4i: drv: Allow framebuffer modifiers in mode config
-Date:   Fri, 18 Jan 2019 15:51:26 +0100
-Message-Id: <20190118145133.21281-17-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 19/23] drm/sun4i: Set the coef_rdy bit right after the coef have been set
+Date:   Fri, 18 Jan 2019 15:51:29 +0100
+Message-Id: <20190118145133.21281-20-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,27 +48,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the final step to indicate to the core that our driver
-supports framebuffer modifiers.
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
+The COEF_RDY bit is used to tell the hardware that new FIR filters
+coefficients have been written to the registers and that the hardware
+should take them into account starting next frame.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 9e4c375ccc96..93da837194cf 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -97,6 +97,7 @@ static int sun4i_drv_bind(struct device *dev)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index 6636b1998a76..7a1095b004d4 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -96,6 +96,10 @@ static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
+ 			     sun4i_frontend_vert_coef[i]);
  	}
  
- 	drm_mode_config_init(drm);
-+	drm->mode_config.allow_fb_modifiers = true;
++	regmap_write_bits(frontend->regs,
++			  SUN4I_FRONTEND_FRM_CTRL_REG,
++			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
++			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
+ }
  
- 	ret = component_bind_all(drm->dev, drm);
- 	if (ret) {
+ int sun4i_frontend_init(struct sun4i_frontend *frontend)
 -- 
 2.20.1
 
