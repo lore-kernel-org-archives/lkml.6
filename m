@@ -7,54 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FAEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EA7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1670B2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:15:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF9592086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:15:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OOyZK/XV"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pK8ELFG7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbfARQPD (ORCPT
+        id S1728137AbfARQPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:15:03 -0500
-Received: from mail-yw1-f74.google.com ([209.85.161.74]:54448 "EHLO
-        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbfARQPB (ORCPT
+        Fri, 18 Jan 2019 11:15:07 -0500
+Received: from mail-it1-f202.google.com ([209.85.166.202]:55536 "EHLO
+        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbfARQPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:15:01 -0500
-Received: by mail-yw1-f74.google.com with SMTP id f10so7128834ywc.21
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:15:00 -0800 (PST)
+        Fri, 18 Jan 2019 11:15:06 -0500
+Received: by mail-it1-f202.google.com with SMTP id j3so4137464itf.5
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:15:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=acKuHWDxCAo2HtjYv0zQtkcTtJK21uLYyRX29pjdtaY=;
-        b=OOyZK/XV1Jf2ajxcEWDA2gNbmCgZ01lv9jDs5rhxuE11ERFuA+qJCOuXhBuUgVc5Nm
-         AqgltZ82enjTRDDWDBYQW3yYdDVAjtLQbe8gpl8f5ZG8cJ1fCo8Q47CqvXoxANRYA1GV
-         Rk9yt7+262HG/5T6fv1J9FCZfMi30ksa9EeLFaa4skxzjylHpN4SbHb8osRYGDEKR6Hk
-         8Rmr/NW/00g9X5yLT7/66sPw6D7/7/vjCSmLWM+xz8owAj8Y1l9ifR6/QmwAHeN1H8tD
-         YTVbl1t7b8FB963/C0+dTasPIvpFm52jx3yZkI9m9i9gwICGMHbwu6kq3vapYIxrHXZ6
-         JtEQ==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=5LVynhbNulaKwqSUfCuVd5OKAuOmA6joY7YHWKe61BE=;
+        b=pK8ELFG73xxugBocSGDSUnJNvyIwt/ohjdBBzz0Lfb6JLLaL8FHzw/nzHvQXQp96m/
+         lBw4vsgTGxcinCLs7piaU+dxMdyYvqsJU78prIqb11Oi3n22vwAiANkZQHoZD5iFirxn
+         o9dEh8zlzHsTQ8HkJuvtU8RcM9/vSPaGo+YaDLVHZ07JnT1IKBA7QioWqxGWI1TfprLs
+         aOHwOOZV3JE6DCJghvuybtywai8beQYUqR86HH2xoEnPK31pKk4uY8a7onZs5XLHIAU8
+         W/LYw/QCyafekdnJ8Lq/cPg0PyMUrDJjHVr/apGUdtV939ItwCapB1N0RKTbw79hrx08
+         Zy6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=acKuHWDxCAo2HtjYv0zQtkcTtJK21uLYyRX29pjdtaY=;
-        b=RWr979Awhip5hl4KtbuyqBVzI3m0bRBTaeUKzeJxGcARCUgnlPxDVoBUUyQZdsqfVv
-         rmiuBAVfpUm5ZkM2Wh5uMlU35yNlVMPJCwZgIirkfmWBbNQz5ca0J+Q3VynYlPDaDcfQ
-         S9DBuNHX7+yO7nHOk7l1x6HDR8R7+Jsx0lkI9wAsx2681qtxzKrjXo4fmorOIxDW9gtf
-         ydtcdTLUt6fcLW6Kv4/v9jZ/WUwyiBedt0llrgl2MCN5SyQahqCDSZPxg17bLjSrjmd2
-         c/KqIA62o04AMcCW870T/Hid2mAhSh8PB2ELnuDGuJw3/kKZsZe1W4KbBZF0LeqecQbs
-         gYAA==
-X-Gm-Message-State: AJcUukeBNM5nYYYGCz0IfRlnaqygB8d4wcvnD676scjQeIvAny5J3qgh
-        z5dvzTnojNloyyCX/tze03Nls6KqPQ==
-X-Google-Smtp-Source: ALg8bN6WwyE31vQy/QLWcGSt63VbxDzoBHIcTgnWRt/U+D9i0B2yEe0Epxbgaf+avn6IqoKxIxVeqO2moA==
-X-Received: by 2002:a81:52c7:: with SMTP id g190mr9425001ywb.4.1547828100227;
- Fri, 18 Jan 2019 08:15:00 -0800 (PST)
-Date:   Fri, 18 Jan 2019 17:14:38 +0100
-Message-Id: <20190118161440.220134-1-jannh@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=5LVynhbNulaKwqSUfCuVd5OKAuOmA6joY7YHWKe61BE=;
+        b=n0JCmkQitCldVWgzw6ChFXWxMVPPOjRXgsREHR3lBIJbWABS7pa4lsb2RYvfhgMFxz
+         CwuKg91nA7dRpyM7WrT7xHbd2W2/SkCdue+s4/zaycwDcjNtUZmJkGKqNP+1KgnBlgwy
+         J/rC2xByjeEkpL0ytWnVwInS4vlVpV23ctRQRFtqt/ujux/zVnCkNnmgN3mKRResgDPR
+         B6RNiHfPhT3OuP5LE8Rb5VsD5rMYAegA2ZkDRJlqYxgQDD4W9E9yPhVHHeHdMNTXWjBX
+         eFRkU1CrAqBwYCdo0AHgXY02mwsN7WjPEObVokWfLs4ZMAqbaUT6Ih/vrXGBr7FCm3uD
+         QlDQ==
+X-Gm-Message-State: AJcUukffvpez08sOENVq7FeAH85iONZlcLGvsxMfClssoYSbikmpJOAL
+        C5dNTBGp3i2ekPNfs8ClCOlgrsJanw==
+X-Google-Smtp-Source: ALg8bN6Q1AsznvuU/aVkHTxiuYPcSwkewBljenfXIaGdUzU3IdByf4DK+AhQ0a2HYCjsb/Zk9KuyMFgz6g==
+X-Received: by 2002:a24:5f49:: with SMTP id r70mr648398itb.22.1547828105167;
+ Fri, 18 Jan 2019 08:15:05 -0800 (PST)
+Date:   Fri, 18 Jan 2019 17:14:39 +0100
+In-Reply-To: <20190118161440.220134-1-jannh@google.com>
+Message-Id: <20190118161440.220134-2-jannh@google.com>
 Mime-Version: 1.0
+References: <20190118161440.220134-1-jannh@google.com>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
-Subject: [PATCH v4 1/3] fs: hoist EFSCORRUPTED definition into uapi header
+Subject: [PATCH v4 2/3] fs: don't let getdents return bogus names
 From:   Jann Horn <jannh@google.com>
 To:     Richard Henderson <rth@twiddle.net>,
         Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
@@ -75,86 +79,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Multiple filesystems can already return EFSCORRUPTED errors to userspace;
-however, so far, definitions of EFSCORRUPTED were in filesystem-private
-headers.
+When you e.g. run `find` on a directory for which getdents returns
+"filenames" that contain slashes, `find` passes those "filenames" back to
+the kernel, which then interprets them as paths. That could conceivably
+cause userspace to do something bad when accessing something like an
+untrusted USB stick, but I'm not aware of any specific example.
 
-I wanted to use EUCLEAN to indicate data corruption in the VFS layer;
-Dave Chinner says that I should instead hoist the definitions of
-EFSCORRUPTED into the UAPI header and then use EFSCORRUPTED.
+Instead of returning bogus filenames to userspace, return -EUCLEAN.
 
-This patch is marked for stable backport because it is a prerequisite for
-the following patch.
-
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Cc: stable@vger.kernel.org
-Suggested-by: Dave Chinner <david@fromorbit.com>
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
- fs/ext2/ext2.h                   | 1 -
- fs/ext4/ext4.h                   | 1 -
- fs/xfs/xfs_linux.h               | 1 -
- include/linux/jbd2.h             | 1 -
- include/uapi/asm-generic/errno.h | 1 +
- 5 files changed, 1 insertion(+), 4 deletions(-)
+I ordered this fix before the refactoring one so that it can easily be
+backported.
 
-diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-index e770cd100a6a..7fafc19e5aa0 100644
---- a/fs/ext2/ext2.h
-+++ b/fs/ext2/ext2.h
-@@ -369,7 +369,6 @@ struct ext2_inode {
-  */
- #define	EXT2_VALID_FS			0x0001	/* Unmounted cleanly */
- #define	EXT2_ERROR_FS			0x0002	/* Errors detected */
--#define	EFSCORRUPTED			EUCLEAN	/* Filesystem is corrupted */
+changed in v2:
+ - move bogus_dirent_name() out of the #ifdef (kbuild test robot)
+changed in v3:
+ - change calling convention (Al Viro)
+ - comment fix
+changed in v4:
+ - use EFSCORRUPTED instead of EUCLEAN (Dave Chinner)
+
+ arch/alpha/kernel/osf_sys.c |  4 ++++
+ fs/readdir.c                | 35 +++++++++++++++++++++++++++++++++++
+ include/linux/fs.h          |  2 ++
+ 3 files changed, 41 insertions(+)
+
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index 792586038808..db1c2144d477 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -40,6 +40,7 @@
+ #include <linux/vfs.h>
+ #include <linux/rcupdate.h>
+ #include <linux/slab.h>
++#include <linux/fs.h>
  
+ #include <asm/fpu.h>
+ #include <asm/io.h>
+@@ -117,6 +118,9 @@ osf_filldir(struct dir_context *ctx, const char *name, int namlen,
+ 	unsigned int reclen = ALIGN(NAME_OFFSET + namlen + 1, sizeof(u32));
+ 	unsigned int d_ino;
+ 
++	buf->error = check_dirent_name(name, namlen);
++	if (unlikely(buf->error))
++		return -EFSCORRUPTED;
+ 	buf->error = -EINVAL;	/* only used if we fail */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+diff --git a/fs/readdir.c b/fs/readdir.c
+index 2f6a4534e0df..58088510bb9c 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -64,6 +64,26 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
+ }
+ EXPORT_SYMBOL(iterate_dir);
+ 
++/*
++ * Most filesystems don't filter out bogus directory entry names, and userspace
++ * can get very confused by such names. Behave as if a filesystem error had
++ * happened while reading directory entries.
++ */
++int check_dirent_name(const char *name, int namlen)
++{
++	if (namlen == 0) {
++		pr_err_once("%s: filesystem returned bogus empty name\n",
++			    __func__);
++		return -EFSCORRUPTED;
++	}
++	if (memchr(name, '/', namlen)) {
++		pr_err_once("%s: filesystem returned bogus name '%*pEhp' (contains slash)\n",
++			    __func__, namlen, name);
++		return -EFSCORRUPTED;
++	}
++	return 0;
++}
++
  /*
-  * Mount flags
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 185a05d3257e..9397e97fc15b 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3247,6 +3247,5 @@ extern const struct iomap_ops ext4_iomap_ops;
- #endif	/* __KERNEL__ */
+  * Traditional linux readdir() handling..
+  *
+@@ -98,6 +118,9 @@ static int fillonedir(struct dir_context *ctx, const char *name, int namlen,
  
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+ 	if (buf->result)
+ 		return -EINVAL;
++	buf->result = check_dirent_name(name, namlen);
++	if (unlikely(buf->result))
++		return -EFSCORRUPTED;
+ 	d_ino = ino;
+ 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+ 		buf->result = -EOVERFLOW;
+@@ -173,6 +196,9 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+ 	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
+ 		sizeof(long));
  
- #endif	/* _EXT4_H */
-diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-index edbd5a210df2..36e5c6549f15 100644
---- a/fs/xfs/xfs_linux.h
-+++ b/fs/xfs/xfs_linux.h
-@@ -125,7 +125,6 @@ typedef __u32			xfs_nlink_t;
++	buf->error = check_dirent_name(name, namlen);
++	if (unlikely(buf->error))
++		return -EFSCORRUPTED;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+@@ -259,6 +285,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
+ 		sizeof(u64));
  
- #define ENOATTR		ENODATA		/* Attribute not found */
- #define EWRONGFS	EINVAL		/* Mount with wrong filesystem type */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
++	buf->error = check_dirent_name(name, namlen);
++	if (unlikely(buf->error))
++		return -EFSCORRUPTED;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+@@ -358,6 +387,9 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
  
- #define SYNCHRONIZE()	barrier()
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 0f919d5fe84f..1d0da9c78216 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1640,6 +1640,5 @@ static inline tid_t  jbd2_get_latest_transaction(journal_t *journal)
- #endif	/* __KERNEL__ */
+ 	if (buf->result)
+ 		return -EINVAL;
++	buf->result = check_dirent_name(name, namlen);
++	if (unlikely(buf->result))
++		return -EFSCORRUPTED;
+ 	d_ino = ino;
+ 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+ 		buf->result = -EOVERFLOW;
+@@ -427,6 +459,9 @@ static int compat_filldir(struct dir_context *ctx, const char *name, int namlen,
+ 	int reclen = ALIGN(offsetof(struct compat_linux_dirent, d_name) +
+ 		namlen + 2, sizeof(compat_long_t));
  
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
++	buf->error = check_dirent_name(name, namlen);
++	if (unlikely(buf->error))
++		return -EFSCORRUPTED;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 811c77743dad..e14329741e3a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1730,6 +1730,8 @@ struct dir_context {
+ 	loff_t pos;
+ };
  
- #endif	/* _LINUX_JBD2_H */
-diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generic/errno.h
-index cf9c51ac49f9..5ddebc1bf951 100644
---- a/include/uapi/asm-generic/errno.h
-+++ b/include/uapi/asm-generic/errno.h
-@@ -98,6 +98,7 @@
- #define	EINPROGRESS	115	/* Operation now in progress */
- #define	ESTALE		116	/* Stale file handle */
- #define	EUCLEAN		117	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		118	/* Not a XENIX named type file */
- #define	ENAVAIL		119	/* No XENIX semaphores available */
- #define	EISNAM		120	/* Is a named type file */
++int check_dirent_name(const char *name, int namlen);
++
+ struct block_device_operations;
+ 
+ /* These macros are for out of kernel modules to test that
 -- 
 2.20.1.321.g9e740568ce-goog
 
