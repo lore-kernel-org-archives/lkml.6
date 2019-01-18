@@ -2,137 +2,84 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9F5C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA362C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834D62054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC9142054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547822513;
+	bh=C92em26+svT85O4T+VYVTgy00gG1KI8CJpSZO2Ie2CY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hgjMNU9wRJC26zHbabMEcOdqsbzzAXXzvYd0cOtcDvCPxhNbs7uL3LgoPl8OmNt4P
+	 9Rt0r+p8UNciDb9TfM6LGevrIFBLvcBMdoahk0fTdn0tyWeUb5X6ScaukHtqHJGlEs
+	 7VFN0MUHguZumu+tvRDwGDyIH0ZgTHC36tbZuYR8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfAROjH (ORCPT
+        id S1727607AbfAROlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:39:07 -0500
-Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:52558 "EHLO
-        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727576AbfAROjG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:39:06 -0500
-Received: from mail.blacknight.com (unknown [81.17.254.11])
-        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id 43C011C3514
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 14:39:04 +0000 (GMT)
-Received: (qmail 7357 invoked from network); 18 Jan 2019 14:39:04 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Jan 2019 14:39:04 -0000
-Date:   Fri, 18 Jan 2019 14:39:02 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 24/25] mm, compaction: Capture a page under direct
- compaction
-Message-ID: <20190118143902.GR27437@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-25-mgorman@techsingularity.net>
- <d8a3dfc9-e4f6-ceb6-f29d-832bef14a14a@suse.cz>
+        Fri, 18 Jan 2019 09:41:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727020AbfAROlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:41:51 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB94B2054F;
+        Fri, 18 Jan 2019 14:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547822510;
+        bh=C92em26+svT85O4T+VYVTgy00gG1KI8CJpSZO2Ie2CY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZRznJryS+gnirPNTjNmuwpV621IE1D6QQ2d6ijidsPwyth7UK5gT48oPvEzqdMsbi
+         XAHKm+o2DE/cIZsMV9Oc0YVJ9dXu/fq0RLu7XL6AQwGOHQq79JzlfKSVVb2mXW8IIj
+         MdkkBkyzaS105aoQWK9IvXYvnTHX1Mg6Ya0J/pPo=
+Date:   Fri, 18 Jan 2019 08:41:49 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Add IPROC PCIe new features
+Message-ID: <20190118144149.GA25249@google.com>
+References: <1547785403-32268-1-git-send-email-srinath.mannam@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d8a3dfc9-e4f6-ceb6-f29d-832bef14a14a@suse.cz>
+In-Reply-To: <1547785403-32268-1-git-send-email-srinath.mannam@broadcom.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 02:40:00PM +0100, Vlastimil Babka wrote:
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+On Fri, Jan 18, 2019 at 09:53:20AM +0530, Srinath Mannam wrote:
+> Add changes related to IPROC PCIe RC IP new features.
 > 
-> Great, you crossed off this old TODO item, and didn't need pageblock isolation
-> to do that :D
+> This patch set is based on Linux-5.0-rc2.
 > 
+> Srinath Mannam (3):
+>   PCI: iproc: Add feature to set order mode
 
-The TODO is not just old, it's ancient! The idea of capture was first
-floated in 2008! A version was proposed at https://lwn.net/Articles/301246/
-against 2.6.27-rc1-mm1.
+Since this apparently refers to a PCIe feature, the subject should use the
+exact terminology used in the PCIe spec.
 
-> I have just one worry...
+>   PCI: iproc: CRS state check in config request
+
+This subject should start with a verb, not "CRS".
+
+>   PCI: iproc: Add PCIe 32bit outbound memory configuration
 > 
-> > @@ -837,6 +873,12 @@ static inline void __free_one_page(struct page *page,
-> >  
-> >  continue_merging:
-> >  	while (order < max_order - 1) {
-> > +		if (compaction_capture(capc, page, order)) {
-> > +			if (likely(!is_migrate_isolate(migratetype)))
-> > +				__mod_zone_freepage_state(zone, -(1 << order),
-> > +								migratetype);
-> > +			return;
+>  drivers/pci/controller/pcie-iproc.c | 172 +++++++++++++++++++++++++++++++++++-
+>  drivers/pci/controller/pcie-iproc.h |  16 ++++
+>  2 files changed, 184 insertions(+), 4 deletions(-)
 > 
-> What about MIGRATE_CMA pageblocks and compaction for non-movable allocation,
-> won't that violate CMA expecteations?
-> And less critically, this will avoid the migratetype stealing decisions and
-> actions, potentially resulting in worse fragmentation avoidance?
+> -- 
+> 2.7.4
 > 
-
-Both might be issues. How about this (untested)?
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index fe089ac8a207..d61174bb0333 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -799,11 +799,26 @@ static inline struct capture_control *task_capc(struct zone *zone)
- }
- 
- static inline bool
--compaction_capture(struct capture_control *capc, struct page *page, int order)
-+compaction_capture(struct capture_control *capc, struct page *page,
-+		   int order, int migratetype)
- {
- 	if (!capc || order != capc->cc->order)
- 		return false;
- 
-+	/* Do not accidentally pollute CMA or isolated regions*/
-+	if (is_migrate_cma(migratetype) ||
-+	    is_migrate_isolate(migratetype))
-+		return false;
-+
-+	/*
-+	 * Do not let lower order allocations polluate a movable pageblock.
-+	 * This might let an unmovable request use a reclaimable pageblock
-+	 * and vice-versa but no more than normal fallback logic which can
-+	 * have trouble finding a high-order free page.
-+	 */
-+	if (order < pageblock_order && migratetype == MIGRATE_MOVABLE)
-+		return false;
-+
- 	capc->page = page;
- 	return true;
- }
-@@ -815,7 +830,8 @@ static inline struct capture_control *task_capc(struct zone *zone)
- }
- 
- static inline bool
--compaction_capture(struct capture_control *capc, struct page *page, int order)
-+compaction_capture(struct capture_control *capc, struct page *page,
-+		   int order, int migratetype)
- {
- 	return false;
- }
-@@ -870,7 +886,7 @@ static inline void __free_one_page(struct page *page,
- 
- continue_merging:
- 	while (order < max_order - 1) {
--		if (compaction_capture(capc, page, order)) {
-+		if (compaction_capture(capc, page, order, migratetype)) {
- 			if (likely(!is_migrate_isolate(migratetype)))
- 				__mod_zone_freepage_state(zone, -(1 << order),
- 								migratetype);
-
--- 
-Mel Gorman
-SUSE Labs
