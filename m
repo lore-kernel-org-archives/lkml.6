@@ -2,157 +2,100 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84418C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FB1C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5483F20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:08:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAF4320855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:09:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GP/PM6Kz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbfARKH7 (ORCPT
+        id S1727399AbfARKJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 05:07:59 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:47431 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726309AbfARKH7 (ORCPT
+        Fri, 18 Jan 2019 05:09:01 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:38707 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbfARKJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 05:07:59 -0500
-Received: from [IPv6:2001:983:e9a7:1:3849:86c5:b8c2:266c] ([IPv6:2001:983:e9a7:1:3849:86c5:b8c2:266c])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id kR42gcVMZaxzfkR43gp1Th; Fri, 18 Jan 2019 11:07:57 +0100
-Subject: Re: [PATCH] media: fsl-viu: Use proper check for presence of
- {out,in}_be32()
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1528451328-21316-1-git-send-email-geert@linux-m68k.org>
- <5948eb0d-410d-5bc6-a0f3-ffcaa4b3f975@xs4all.nl>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <d30d5bcd-8719-ac59-adf5-08c9576be759@xs4all.nl>
-Date:   Fri, 18 Jan 2019 11:07:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 18 Jan 2019 05:09:00 -0500
+Received: by mail-vs1-f68.google.com with SMTP id x64so8078555vsa.5;
+        Fri, 18 Jan 2019 02:08:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=n+bIrCa8NP47kNy2c+LBCkgyAzNBjMr/5OaE8AJS908=;
+        b=GP/PM6KzhJ5mgHy2MpFiP6V/3Z8fWtWIr7ui26qnGnpyJsgMQsmhG9DPGZJPiGsE8y
+         E8MnNBGPBrwMqH5IUF6GdeVgCv8Si72pSI2Oivu5uZfmtkFisV4SbfFKsbgs1iLEVvkd
+         NbO61JySwPVYSS87fy+jBN2JeaLp5F1nWMOnzyxBvAzEmF+lgIRl7Ix/dydoLUjbYutS
+         Es4zpm7QZHGaurBWOubVTy5C/RKcyl7jX091TgKXES0m3tv4NeZpXVcBFdX04m7C479m
+         K+kSbxTk/G5nK0KdyEaFtf2PcAKTvtX9kjgVgq2Gy4lnOSn/d+hhqei9GQUyPqZM7U54
+         Gs4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=n+bIrCa8NP47kNy2c+LBCkgyAzNBjMr/5OaE8AJS908=;
+        b=eYpVrxW8BHBbCjhEH7RV8ycyDNJxgEIl/hz89xAeI7d6YmdXZCtzyvxEt2PDo33EXO
+         Z4VLZ1GjWRbO3ptdJa54mhgV/9zDFHu/SKdcTqfEXwlpfxW8WuHgYyfx2DWbF39NEJ0u
+         qJaqALIGirODtGWzBX0J0UwdNfF8NKr4dDeEitwV5SOP0M+Lcgs37iLFQm/OOZgVSI4B
+         /lOdjJJL79C1hBow/tPYScIIQhMjZmL5q7wcArJ/E4aP8RyWGPzzhcVpmkFAGB6aaCG9
+         rGxRpO7o6bOIdDydDQKMQPY6JiZksCaVOwWAFxkVhRhSibEo0fS9lSOls6/8pqfIHg22
+         SNjw==
+X-Gm-Message-State: AJcUukev1sLlvGmizijyHtNjBZxzhhJqEEfMsi1jSP/jpQtr/r/gpK0Y
+        RH4RDUkgWqewH32w/WUTgLfbUVQoorSTBjZx/G4CpuuX5Pk=
+X-Google-Smtp-Source: ALg8bN5YAP4roDEn+VCrnUhEOEhDQm7xkOO6as2Vt9tet88KRpdW6e+snTl+r440Vp8Jgg3+wEYVTqV3MCJNe50mcQQ=
+X-Received: by 2002:a67:f793:: with SMTP id j19mr6892160vso.196.1547806139093;
+ Fri, 18 Jan 2019 02:08:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <5948eb0d-410d-5bc6-a0f3-ffcaa4b3f975@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfJBvqnim0n3FiepnZVYwwrxC+M3BQzdtCudOApnWUjDDxJHXRO6ocF531m8WbV7oAY+a9B3lvJc1eh03fcE/X2Oid16NbmqAM/zASprMRO71/5FUA0At
- jrVePY8qwNTe19vrznBTOCWa5R1Jscq/lNsTrkBL7nDfdJ+brQ7gbpmhn5yqqOLtoU8TKyPdQTSAvB54HT8D4unFXaZMlUg4DelmxUMbD5kRWRAmAPbcPxqo
- bJh5FomLJdagmQu7y+R9SWw7IDPyumNMnX8sFPrWRA4AZFF2CyizL3zGSU4mFOrPubimBIa/KAgS6pseyquHvrFsNQGtG695JF00Z8NCE8ZkZAORAEXcQnPY
- PJGtGiY52ejVRUJQN9JkFPNLcK1oaNt/x37fZP9otTTCl7q6kRkfgE37sVtGX8x8f2rFqF9rUcLXCCoJtzUHH9j7txzxq6oyKxF2gKAFBAwwOFY30/YY9WAl
- EtuRMmTqwv2CimFlpCxy6Nc409fs8IwdxaBSo4G2PZBTDO60F8Ko8p4+aTLRGKUJA/hLkHpc9IiOr65I
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Fri, 18 Jan 2019 15:38:48 +0530
+Message-ID: <CAOuPNLj4QzNDt0npZn2LhZTFgDNJ1CsWPw3=wvUuxnGtQW308g@mail.gmail.com>
+Subject: Need help: how to locate failure from irq_chip subsystem
+To:     open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-mm@kvack.org, linux-pm@vger.kernel.org,
+        kernelnewbies@kernelnewbies.org, Pintu Kumar <pintu.ping@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Hi All,
 
-This patch is still in my patchwork todo list, and I wonder who will pick this up,
-especially the change to arch/powerpc/include/asm/io.h.
+Currently, I am trying to debug a boot up crash on some qualcomm
+snapdragon arm64 board with kernel 4.9.
+I could find the cause of the failure, but I am unable to locate from
+which subsystem/drivers this is getting triggered.
+If you have any ideas or suggestions to locate the issue, please let me know.
 
-Wouldn't it be easier to just fix this in fsl-viu.c only by doing this:
+This is the snapshot of crash logs:
+[    6.907065] Unable to handle kernel NULL pointer dereference at
+virtual address 00000000
+[    6.973938] PC is at 0x0
+[    6.976503] LR is at __ipipe_ack_fasteoi_irq+0x28/0x38
+[    7.151078] Process qmp_aop (pid: 24, stack limit = 0xfffffffbedc18000)
+[    7.242668] [<          (null)>]           (null)
+[    7.247416] [<ffffff9469f8d2e0>] __ipipe_dispatch_irq+0x78/0x340
+[    7.253469] [<ffffff9469e81564>] __ipipe_grab_irq+0x5c/0xd0
+[    7.341538] [<ffffff9469e81d68>] gic_handle_irq+0xc0/0x154
 
-#ifndef CONFIG_PPC
-#ifndef out_be32
-#define out_be32(v, a)  iowrite32be(a, (void __iomem *)v)
-#endif
-#ifndef in_be32
-#define in_be32(a)      ioread32be((void __iomem *)a)
-#endif
-#endif
+[    6.288581] [PINTU]: __ipipe_ack_fasteoi_irq - called
+[    6.293698] [PINTU]: __ipipe_ack_fasteoi_irq:
+desc->irq_data.chip->irq_hold is NULL
 
-Basically just your patch, but without removing #ifndef CONFIG_PPC.
+When I check, I found that the irq_hold implementation is missing in
+one of the irq_chip driver (expected by ipipe), which I am supposed to
+implement.
 
-That way there is no need to touch arch/powerpc/include/asm/io.h.
+But I am unable to locate which irq_chip driver.
+If there are any good techniques to locate this in kernel, please help.
 
-Regards,
 
-	Hans
-
-On 6/15/18 10:10 AM, Hans Verkuil wrote:
-> On 08/06/18 11:48, Geert Uytterhoeven wrote:
->> When compile-testing on m68k or microblaze:
->>
->>     drivers/media/platform/fsl-viu.c:41:1: warning: "out_be32" redefined
->>     drivers/media/platform/fsl-viu.c:42:1: warning: "in_be32" redefined
->>
->> Fix this by replacing the check for PowerPC by checks for the presence
->> of {out,in}_be32().
->>
->> As PowerPC implements the be32 accessors using inline functions instead
->> of macros, identity definions are added for all accessors to make the
->> above checks work.
->>
->> Fixes: 29d750686331a1a9 ("media: fsl-viu: allow building it with COMPILE_TEST")
->> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> 
-> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-> 
-> Should this go through the media tree or powerpc tree? Either way works for me.
-> 
-> Regards,
-> 
-> 	Hans
-> 
->> ---
->> Compile-tested on m68k, microblaze, and powerpc.
->> Assembler output before/after compared for powerpc.
->> ---
->>  arch/powerpc/include/asm/io.h    | 14 ++++++++++++++
->>  drivers/media/platform/fsl-viu.c |  4 +++-
->>  2 files changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
->> index e0331e7545685c5f..3741183ae09349f1 100644
->> --- a/arch/powerpc/include/asm/io.h
->> +++ b/arch/powerpc/include/asm/io.h
->> @@ -222,6 +222,20 @@ static inline void out_be64(volatile u64 __iomem *addr, u64 val)
->>  #endif
->>  #endif /* __powerpc64__ */
->>  
->> +#define in_be16 in_be16
->> +#define in_be32 in_be32
->> +#define in_be64 in_be64
->> +#define in_le16 in_le16
->> +#define in_le32 in_le32
->> +#define in_le64 in_le64
->> +
->> +#define out_be16 out_be16
->> +#define out_be32 out_be32
->> +#define out_be64 out_be64
->> +#define out_le16 out_le16
->> +#define out_le32 out_le32
->> +#define out_le64 out_le64
->> +
->>  /*
->>   * Low level IO stream instructions are defined out of line for now
->>   */
->> diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
->> index e41510ce69a40815..5d5e030c9c980647 100644
->> --- a/drivers/media/platform/fsl-viu.c
->> +++ b/drivers/media/platform/fsl-viu.c
->> @@ -37,8 +37,10 @@
->>  #define VIU_VERSION		"0.5.1"
->>  
->>  /* Allow building this driver with COMPILE_TEST */
->> -#ifndef CONFIG_PPC
->> +#ifndef out_be32
->>  #define out_be32(v, a)	iowrite32be(a, (void __iomem *)v)
->> +#endif
->> +#ifndef in_be32
->>  #define in_be32(a)	ioread32be((void __iomem *)a)
->>  #endif
->>  
->>
-> 
-> 
-
+Thanks,
+Pintu
