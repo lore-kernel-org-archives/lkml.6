@@ -2,164 +2,483 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAC9C1B0F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124BFC1B0F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83FCA20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBD4820449
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:04:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nlUyHR5x"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bwmxd1bh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbfARVE3 (ORCPT
+        id S1729622AbfARVEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 16:04:29 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44310 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729587AbfARVE2 (ORCPT
+        Fri, 18 Jan 2019 16:04:45 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43558 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729534AbfARVEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 16:04:28 -0500
-Received: by mail-ed1-f67.google.com with SMTP id y56so12182583edd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 13:04:26 -0800 (PST)
+        Fri, 18 Jan 2019 16:04:44 -0500
+Received: by mail-qt1-f194.google.com with SMTP id i7so16737355qtj.10
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 13:04:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5QByEDELBxRUvxZKpacNujFAcACoIYllmifRxnqUMz8=;
-        b=nlUyHR5xZQjUoA5+h5+sPpxvW7D4URdLNIbTZrlJ8fa0oArc/kQiEeC0BWnBq4n7Ev
-         UWE2F2Uq41HzqjHd8h37XMjsUUcREOKNVyIXzTR2vaxnzDcpIATEhYQ4ui7kZGqShsIc
-         KTkAYzLMJLgrOnl26eMBtmZkJALCuD8B/Cs+Q=
+        bh=vBylrqdgHBJ86yA9AY68rbaAZeZ4ZnX27yJg1slGXVs=;
+        b=Bwmxd1bh9K+fx9Xvald5Bjj5IJ7B6ZrY+VeR5Bt4cN6A1uIkbCGV6FA6ZxnukMJlpZ
+         bMufCURq+q7YBIHvpZf47/Pp7pSBGVR7izBacfD0/TLg4RYgPslfuHLMDNu5pfFCGpZu
+         rfQXRldrr3EFJIMewi2jALZWJ9DIRlSpuPR5U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5QByEDELBxRUvxZKpacNujFAcACoIYllmifRxnqUMz8=;
-        b=dCJ9y96lm8lbncX5N3jb4mAEW4/EV8N9m9yt5f1vtASpqFzDx44Di4W2rySXsZcNXr
-         s022j3VrLMZTra1Ln6YJUOYhE+LcUNxuSkLLkKn3u4CaoOHH6qX2lbAinPC5Xwroqsb8
-         HtDdOixBTnKCLjBqFS/GMY8A45WCe8UuAEk7qydo3uymq00igtziLQQQl07mHs2rrpk+
-         WD9zSetu/Bw2KyzHT0a0lGh/kvpzY82eyUxUb8czgB6TkJs4yYtq74aqGBONCX1GJDqp
-         LSwBYRcBVPws0hi6OrvRjGJpPYLHIwWuzTLRvcXxdCVNoVaxm4bUKuPJoCYO5uYMACS7
-         ZIQg==
-X-Gm-Message-State: AJcUukfzE1VSnVYaxrAIYx6eEXYdBJEDiBpt92iPB584id/Ex1Mi0SmE
-        7NKe57Dm/NpY92MJRUv4It/MkBspwsc=
-X-Google-Smtp-Source: ALg8bN7xNhNmbyVjVwqM9Wn6Xm+3eKnmVwjbawxdCNWbBvpnMclRf2zg3NVcQq23ZBWu9m3S3VBUmA==
-X-Received: by 2002:a50:88c1:: with SMTP id d59mr17554508edd.200.1547845465607;
-        Fri, 18 Jan 2019 13:04:25 -0800 (PST)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id d5sm7243120edb.48.2019.01.18.13.04.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 13:04:24 -0800 (PST)
-Received: by mail-ed1-f52.google.com with SMTP id o10so12185468edt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 13:04:24 -0800 (PST)
-X-Received: by 2002:a50:b487:: with SMTP id w7mr17576524edd.72.1547845464009;
- Fri, 18 Jan 2019 13:04:24 -0800 (PST)
+        bh=vBylrqdgHBJ86yA9AY68rbaAZeZ4ZnX27yJg1slGXVs=;
+        b=CaWtavr0zFgMOsXopF6OHo6bq9cruFAYCBtQhfhJ0eOggNdejpWtpz4eoM4pF2ruUI
+         pM0O/87tPYk3vgRIhSMRKnSJlemLnq+Q+6RPi7A9c6QXZSSs9nJgC044FEswjrhOo7my
+         HFApnc0TkiW+Ny2PlAjZ+NXNT3EYepSche2wZA7C1wm20MJ4SLHTQ8oNgIgIsaiabk0C
+         LYAtVQUUcHAKkbm4mT6ze7kBqhR1TnCBw8MhKoRpGKt/+UtgOs+C+IoBlBPtiIVmkh7/
+         14f1Z7HAspfsKIRuxJV9NUccgqOubP+kgJ5HziLrjqaIQx3VeSGgrpnVyVU89hhG8ciH
+         LAdw==
+X-Gm-Message-State: AJcUukd3uxvydVnzHEqesX6nW8pzg8PCo31ClrBYNlT1akVWoXWftsQ6
+        T8h0Ga9WkFDpY/1iKcTsV9FyQ+Z5C9ZrnU/4vicV/A==
+X-Google-Smtp-Source: ALg8bN58UdN67orS7Y67gY8EWR1h7Q2ObY2L53fa75xCkGxVyRHM8xPL0Qz6DX74ZEUNv/ZLpUx8MJ0NLZbIY9EyC7E=
+X-Received: by 2002:a0c:8425:: with SMTP id l34mr1952900qva.101.1547845482560;
+ Fri, 18 Jan 2019 13:04:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20180524192141.20323-1-ramon.fried@gmail.com> <20180529042047.GE2259@tuxbook-pro>
- <e554b7e525554d49d193ff1f8ca51359@codeaurora.org> <CA+ASDXNMS1n+zBDPi4zbyDYjuEs4n-oFH2QfytvzRpnbK5-_ZQ@mail.gmail.com>
- <31da3e8d35c2b47041536c996efe484c@codeaurora.org>
-In-Reply-To: <31da3e8d35c2b47041536c996efe484c@codeaurora.org>
-From:   Brian Norris <briannorris@chromium.org>
-Date:   Fri, 18 Jan 2019 13:04:11 -0800
-X-Gmail-Original-Message-ID: <CA+ASDXPAVfX=EiOKY_t-OoQFuKssbqiK4fAUstOdvO0=69kskg@mail.gmail.com>
-Message-ID: <CA+ASDXPAVfX=EiOKY_t-OoQFuKssbqiK4fAUstOdvO0=69kskg@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: qcom_q6v5: don't auto boot remote processor
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ramon Fried <ramon.fried@gmail.com>,
-        linux-remoteproc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-kernel-owner@vger.kernel.org
+References: <20190108052606.59426-1-pihsun@chromium.org> <20190108052606.59426-4-pihsun@chromium.org>
+In-Reply-To: <20190108052606.59426-4-pihsun@chromium.org>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Fri, 18 Jan 2019 13:04:31 -0800
+Message-ID: <CANMq1KBeKNvLOHvisPnaO-MZYtG3UQ3OWMAJVyNG0YshMF3WMA@mail.gmail.com>
+Subject: Re: [RFC v2 3/6] remoteproc: move IPI interface into separate file.
+To:     Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sibi,
+Hi,
 
-On Fri, Jan 18, 2019 at 11:46 AM Sibi Sankar <sibis@codeaurora.org> wrote:
-> On 2019-01-19 00:05, Brian Norris wrote:
-> > On Thu, Jan 17, 2019 at 11:04 PM Sibi Sankar <sibis@codeaurora.org>
-> >> After experimenting with in kernel solutions for
-> >> three revisions and observing problems on graceful
-> >> shutdown usecase,
-> >
-> > What exactly were the problems again? e.g., what were the deficiencies
-> > with having the remoteproc device listen for the REMOTEFS_QMI_SVC_ID
-> > service again? Sorry, but I sort of dropped off on reviewing that
-> > stuff, and now I see this. I'd mildly prefer something that is
-> > actually automatic, but if I'm missing some aspects, I'd like to hear
-> > that. (And, I'd like to see them explained in the commit message, if
-> > this is ever to be merged.)
+On Mon, Jan 7, 2019 at 9:26 PM Pi-Hsun Shih <pihsun@chromium.org> wrote:
 >
-> bringing down the modem after the RMTFS server
-> goes down leaves the modem in limbo (It has a few
-> pending rmtfs transactions that cannot go through)
-> which results in sysmon graceful shutdown failing.
-
-Makes sense. Probably should be described in a re-send of this patch,
-if we're going with that.
-
-> And we have to do a modem force-stop to proceed
-> which we want to avoid in graceful shutdown cases.
-
-Shouldn't you do the "force-stop" in the kernel too? e.g., if rmtfs
-daemon dies without doing a properly-timed stop, then we should still
-force a stop in the kernel, no? Basically, why not do both mechanisms:
-REMOTEFS_QMI_SVC-activated start/stop in the kernel, and manual stop
-(and start? this likely might still be redundant) in the daemon?
-
-> This is overcome by starting rproc mss from rmtfs
-> after REMOTEFS_QMI service is up and stopping
-> rproc mss from rmtfs on SIGKILL/SIGINT and other
-> program error signals before bringing down the
-> RMTFS_QMI service i.e before exiting the rmtfs
-> server loop.
-
-That's still not really a sure-fire way of doing things. For one, you
-can't catch SIGKILL. Similarly, you can't really clean up from OOM,
-segfault, etc. So it would still be helpful to hook into the QMI
-service notifications in the kernel, I think.
-
-> >> switching to controlling the
-> >> remoteproc mss through rmtfs seems to solve all
-> >> the known issues.
-> >
-> > How so? It explicitly does NOT help at all if RMTFS crashes.
-> > Because...who's going to stop the modem in that case? (It works if you
-> > automatically respawn a new RMTFS daemon, to toggle the modem. But
-> > that's kind of cheating, and you can do that anyway, even without this
-> > patch.) On the contrary, your patch *would* resolve that, since the
-> > modem would notice when the RMTFS server goes away, and it would stop
-> > itself.
+> Move the IPI interface into a separate file mtk_scp_ipi.c, so the things
+> that use the interface only can depend on the module only.
 >
-> yeah we would want to mimic what the kernel
-> patch did with the exception of stopping modem
-> before bringing down the rmtfs server (not toggle
-> rproc state but start on rmtfs service up and stop
-> before rmtfs server exit). So in that case we would
-> not want the modem to auto-boot.
+> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+> ---
+> Changes from v1:
+>  - Resolved conflict because of change in Patch 2.
+> ---
+>  drivers/remoteproc/Makefile      |   2 +-
+>  drivers/remoteproc/mtk_common.h  |  73 +++++++++++++++
+>  drivers/remoteproc/mtk_scp.c     | 154 +------------------------------
 
-See above. You can't really mimic what the kernel patch was doing
-completely. You can try (which is probably a good idea), but you
-should still have some fallback in the kernel, I expect.
+The fact that you remove a bunch of stuff from mtk_scp.c makes me
+think that we should probably reorganize the patches. The series here
+shows the history of how we developed this, but for upstreaming
+purpose, we want independent, small-ish patches.
 
-> >> https://patchwork.kernel.org/patch/10662395/
-> >>
-> >> we should probably get this merged in, now that
-> >> we are planning to start/stop mss through
-> >> rmtfs.
-> >
-> > Sorry, who's planning to stop mss through rmtfs? Did I miss something?
+Maybe 2/6 should contain just basic mtk_scp code with no IPI. 3/6 IPI
+only, and _maybe_ 4/6 rpmsg should be folded into 3/6?
+
+Thanks,
+
+>  drivers/remoteproc/mtk_scp_ipi.c | 108 ++++++++++++++++++++++
+>  4 files changed, 183 insertions(+), 154 deletions(-)
+>  create mode 100644 drivers/remoteproc/mtk_common.h
+>  create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
 >
-> I have a working patch which I'll soon send
-> upstream for review, after it clears the internal
-> reviews/processes
-
-OK.
-
-Brian
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 98e3498dbbe0e2..16b3e5e7a81c8e 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -10,7 +10,7 @@ remoteproc-y                          += remoteproc_sysfs.o
+>  remoteproc-y                           += remoteproc_virtio.o
+>  remoteproc-y                           += remoteproc_elf_loader.o
+>  obj-$(CONFIG_IMX_REMOTEPROC)           += imx_rproc.o
+> -obj-$(CONFIG_MTK_SCP)                  += mtk_scp.o
+> +obj-$(CONFIG_MTK_SCP)                  += mtk_scp.o mtk_scp_ipi.o
+>  obj-$(CONFIG_OMAP_REMOTEPROC)          += omap_remoteproc.o
+>  obj-$(CONFIG_WKUP_M3_RPROC)            += wkup_m3_rproc.o
+>  obj-$(CONFIG_DA8XX_REMOTEPROC)         += da8xx_remoteproc.o
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> new file mode 100644
+> index 00000000000000..e97287a4eb25cc
+> --- /dev/null
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -0,0 +1,73 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (c) 2018 MediaTek Inc.
+> +
+> +#ifndef __RPROC_MTK_COMMON_H
+> +#define __RPROC_MTK_COMMON_H
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/remoteproc.h>
+> +
+> +#define MT8183_SW_RSTN                 0x0
+> +#define MT8183_SW_RSTN_BIT             BIT(0)
+> +#define MT8183_SCP_TO_HOST             0x1C
+> +#define MT8183_SCP_IPC_INT_BIT         BIT(0)
+> +#define MT8183_SCP_WDT_INT_BIT         BIT(8)
+> +#define MT8183_HOST_TO_SCP             0x28
+> +#define MT8183_HOST_IPC_INT_BIT                BIT(0)
+> +#define MT8183_SCP_SRAM_PDN            0x402C
+> +
+> +#define SCP_FW_VER_LEN         32
+> +
+> +struct scp_run {
+> +       u32 signaled;
+> +       s8 fw_ver[SCP_FW_VER_LEN];
+> +       u32 dec_capability;
+> +       u32 enc_capability;
+> +       wait_queue_head_t wq;
+> +};
+> +
+> +struct scp_ipi_desc {
+> +       scp_ipi_handler_t handler;
+> +       const char *name;
+> +       void *priv;
+> +};
+> +
+> +struct mtk_scp {
+> +       struct device *dev;
+> +       struct rproc *rproc;
+> +       struct clk *clk;
+> +       void __iomem *reg_base;
+> +       void __iomem *sram_base;
+> +       size_t sram_size;
+> +
+> +       struct share_obj *recv_buf;
+> +       struct share_obj *send_buf;
+> +       struct scp_run run;
+> +       struct mutex scp_mutex; /* for protecting mtk_scp data structure */
+> +       struct scp_ipi_desc ipi_desc[SCP_IPI_MAX];
+> +       bool ipi_id_ack[SCP_IPI_MAX];
+> +       wait_queue_head_t ack_wq;
+> +
+> +       void __iomem *cpu_addr;
+> +       phys_addr_t phys_addr;
+> +       size_t dram_size;
+> +};
+> +
+> +/**
+> + * struct share_obj - SRAM buffer shared with
+> + *                   AP and SCP
+> + *
+> + * @id:                IPI id
+> + * @len:       share buffer length
+> + * @share_buf: share buffer data
+> + */
+> +struct share_obj {
+> +       s32 id;
+> +       u32 len;
+> +       u8 share_buf[288];
+> +};
+> +
+> +#endif
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 6e2e17a227d018..3e84c696523436 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -13,163 +13,11 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/remoteproc.h>
+>
+> +#include "mtk_common.h"
+>  #include "remoteproc_internal.h"
+>
+> -#define MT8183_SW_RSTN                 0x0
+> -#define MT8183_SW_RSTN_BIT             BIT(0)
+> -#define MT8183_SCP_TO_HOST             0x1C
+> -#define MT8183_SCP_IPC_INT_BIT         BIT(0)
+> -#define MT8183_SCP_WDT_INT_BIT         BIT(8)
+> -#define MT8183_HOST_TO_SCP             0x28
+> -#define MT8183_HOST_IPC_INT_BIT                BIT(0)
+> -#define MT8183_SCP_SRAM_PDN            0x402C
+> -
+> -#define SCP_FW_VER_LEN         32
+> -
+>  #define MAX_CODE_SIZE 0x500000
+>
+> -struct scp_run {
+> -       u32 signaled;
+> -       s8 fw_ver[SCP_FW_VER_LEN];
+> -       u32 dec_capability;
+> -       u32 enc_capability;
+> -       wait_queue_head_t wq;
+> -};
+> -
+> -struct scp_ipi_desc {
+> -       scp_ipi_handler_t handler;
+> -       const char *name;
+> -       void *priv;
+> -};
+> -
+> -struct mtk_scp {
+> -       struct device *dev;
+> -       struct rproc *rproc;
+> -       struct clk *clk;
+> -       void __iomem *reg_base;
+> -       void __iomem *sram_base;
+> -       size_t sram_size;
+> -
+> -       struct share_obj *recv_buf;
+> -       struct share_obj *send_buf;
+> -       struct scp_run run;
+> -       struct mutex scp_mutex; /* for protecting mtk_scp data structure */
+> -       struct scp_ipi_desc ipi_desc[SCP_IPI_MAX];
+> -       bool ipi_id_ack[SCP_IPI_MAX];
+> -       wait_queue_head_t ack_wq;
+> -
+> -       void __iomem *cpu_addr;
+> -       phys_addr_t phys_addr;
+> -       size_t dram_size;
+> -};
+> -
+> -/**
+> - * struct share_obj - SRAM buffer shared with
+> - *                   AP and SCP
+> - *
+> - * @id:                IPI id
+> - * @len:       share buffer length
+> - * @share_buf: share buffer data
+> - */
+> -struct share_obj {
+> -       s32 id;
+> -       u32 len;
+> -       u8 share_buf[288];
+> -};
+> -
+> -int scp_ipi_register(struct platform_device *pdev,
+> -                    enum scp_ipi_id id,
+> -                    scp_ipi_handler_t handler,
+> -                    const char *name,
+> -                    void *priv)
+> -{
+> -       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> -       struct scp_ipi_desc *ipi_desc;
+> -
+> -       if (!scp) {
+> -               dev_err(&pdev->dev, "scp device is not ready\n");
+> -               return -EPROBE_DEFER;
+> -       }
+> -
+> -       if (WARN(id < 0 ||  id >= SCP_IPI_MAX || handler == NULL,
+> -           "register scp ipi id %d with invalid arguments\n", id))
+> -               return -EINVAL;
+> -
+> -       ipi_desc = scp->ipi_desc;
+> -       ipi_desc[id].name = name;
+> -       ipi_desc[id].handler = handler;
+> -       ipi_desc[id].priv = priv;
+> -
+> -       return 0;
+> -}
+> -EXPORT_SYMBOL_GPL(scp_ipi_register);
+> -
+> -int scp_ipi_send(struct platform_device *pdev,
+> -                enum scp_ipi_id id,
+> -                void *buf,
+> -                unsigned int len,
+> -                unsigned int wait)
+> -{
+> -       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> -       struct share_obj *send_obj = scp->send_buf;
+> -       unsigned long timeout;
+> -       int ret;
+> -
+> -       if (WARN(id <= SCP_IPI_INIT || id >= SCP_IPI_MAX ||
+> -           len > sizeof(send_obj->share_buf) || !buf,
+> -           "failed to send ipi message\n"))
+> -               return -EINVAL;
+> -
+> -       ret = clk_prepare_enable(scp->clk);
+> -       if (ret) {
+> -               dev_err(scp->dev, "failed to enable clock\n");
+> -               return ret;
+> -       }
+> -
+> -       mutex_lock(&scp->scp_mutex);
+> -
+> -        /* Wait until SCP receives the last command */
+> -       timeout = jiffies + msecs_to_jiffies(2000);
+> -       do {
+> -               if (time_after(jiffies, timeout)) {
+> -                       dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
+> -                       ret = -EIO;
+> -                       mutex_unlock(&scp->scp_mutex);
+> -                       goto clock_disable;
+> -               }
+> -       } while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
+> -
+> -       memcpy(send_obj->share_buf, buf, len);
+> -       send_obj->len = len;
+> -       send_obj->id = id;
+> -
+> -       scp->ipi_id_ack[id] = false;
+> -       /* send the command to SCP */
+> -       writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
+> -
+> -       mutex_unlock(&scp->scp_mutex);
+> -
+> -       if (wait) {
+> -               /* wait for SCP's ACK */
+> -               timeout = msecs_to_jiffies(wait);
+> -               ret = wait_event_timeout(scp->ack_wq,
+> -                                        scp->ipi_id_ack[id],
+> -                                        timeout);
+> -               scp->ipi_id_ack[id] = false;
+> -               if (WARN(!ret,
+> -                        "scp ipi %d ack time out !", id))
+> -                       ret = -EIO;
+> -               else
+> -                       ret = 0;
+> -       }
+> -
+> -clock_disable:
+> -       clk_disable_unprepare(scp->clk);
+> -
+> -       return ret;
+> -}
+> -EXPORT_SYMBOL_GPL(scp_ipi_send);
+> -
+>  struct platform_device *scp_get_plat_device(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+> diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+> new file mode 100644
+> index 00000000000000..3aa18a387056d3
+> --- /dev/null
+> +++ b/drivers/remoteproc/mtk_scp_ipi.c
+> @@ -0,0 +1,108 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (c) 2018 MediaTek Inc.
+> +
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_data/mtk_scp.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "mtk_common.h"
+> +
+> +int scp_ipi_register(struct platform_device *pdev,
+> +                    enum scp_ipi_id id,
+> +                    scp_ipi_handler_t handler,
+> +                    const char *name,
+> +                    void *priv)
+> +{
+> +       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +       struct scp_ipi_desc *ipi_desc;
+> +
+> +       if (!scp) {
+> +               dev_err(&pdev->dev, "scp device is not ready\n");
+> +               return -EPROBE_DEFER;
+> +       }
+> +
+> +       if (WARN(id < 0 ||  id >= SCP_IPI_MAX || handler == NULL,
+> +           "register scp ipi id %d with invalid arguments\n", id))
+> +               return -EINVAL;
+> +
+> +       ipi_desc = scp->ipi_desc;
+> +       ipi_desc[id].name = name;
+> +       ipi_desc[id].handler = handler;
+> +       ipi_desc[id].priv = priv;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(scp_ipi_register);
+> +
+> +int scp_ipi_send(struct platform_device *pdev,
+> +                enum scp_ipi_id id,
+> +                void *buf,
+> +                unsigned int len,
+> +                unsigned int wait)
+> +{
+> +       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +       struct share_obj *send_obj = scp->send_buf;
+> +       unsigned long timeout;
+> +       int ret;
+> +
+> +       if (WARN(id <= SCP_IPI_INIT || id >= SCP_IPI_MAX ||
+> +           len > sizeof(send_obj->share_buf) || !buf,
+> +           "failed to send ipi message\n"))
+> +               return -EINVAL;
+> +
+> +       ret = clk_prepare_enable(scp->clk);
+> +       if (ret) {
+> +               dev_err(scp->dev, "failed to enable clock\n");
+> +               return ret;
+> +       }
+> +
+> +       mutex_lock(&scp->scp_mutex);
+> +
+> +        /* Wait until SCP receives the last command */
+> +       timeout = jiffies + msecs_to_jiffies(2000);
+> +       do {
+> +               if (time_after(jiffies, timeout)) {
+> +                       dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
+> +                       ret = -EIO;
+> +                       mutex_unlock(&scp->scp_mutex);
+> +                       goto clock_disable;
+> +               }
+> +       } while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
+> +
+> +       memcpy(send_obj->share_buf, buf, len);
+> +       send_obj->len = len;
+> +       send_obj->id = id;
+> +
+> +       scp->ipi_id_ack[id] = false;
+> +       /* send the command to SCP */
+> +       writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
+> +
+> +       mutex_unlock(&scp->scp_mutex);
+> +
+> +       if (wait) {
+> +               /* wait for SCP's ACK */
+> +               timeout = msecs_to_jiffies(wait);
+> +               ret = wait_event_timeout(scp->ack_wq,
+> +                                        scp->ipi_id_ack[id],
+> +                                        timeout);
+> +               scp->ipi_id_ack[id] = false;
+> +               if (WARN(!ret,
+> +                        "scp ipi %d ack time out !", id))
+> +                       ret = -EIO;
+> +               else
+> +                       ret = 0;
+> +       }
+> +
+> +clock_disable:
+> +       clk_disable_unprepare(scp->clk);
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(scp_ipi_send);
+> +
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("MediaTek scp IPI interface");
+> --
+> 2.20.1.97.g81188d93c3-goog
+>
