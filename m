@@ -2,123 +2,162 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D940CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FBBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B18492087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FF202087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:41:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="TLEc9M/d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbfARNkD (ORCPT
+        id S1727537AbfARNlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:40:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40234 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727017AbfARNkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:40:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 88C70AD04;
-        Fri, 18 Jan 2019 13:40:01 +0000 (UTC)
-Subject: Re: [PATCH 24/25] mm, compaction: Capture a page under direct
- compaction
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-25-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <d8a3dfc9-e4f6-ceb6-f29d-832bef14a14a@suse.cz>
-Date:   Fri, 18 Jan 2019 14:40:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 18 Jan 2019 08:41:42 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35945 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbfARNll (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 08:41:41 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u4so15118882wrp.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 05:41:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LZqp/7AgmH73m5EL9rfJzVcjOT6ajbwFOtYRf1lXupE=;
+        b=TLEc9M/diHF88vbfjdmgO+GUHKdU2Me4Y0zXs7HPcr4qBKcgYm5o0EKv6UzKZ9baqa
+         8yqyhwNBzY28wGGLoLW3z+qurM7nCRUJTw9jedh6B02GG2/VJgwmw2LoGB7TAr595Qg/
+         Upun5iKc1RTV2OE4GzKxaitQ3DwOzTW11g/9WxAgqZuN/LieAxv7mBUXwnucAbwOpZkd
+         9wC5wz/E9o8CqyZlu3zOAr54oTaq/5k12jmNFDZFXX8NqJRmeqh5z5qvqNRkyqyq7K5u
+         lAjdDuxPXKM/ssX36UPvLlswdDP+/S8Da6utgmhDT3PFX5imOXlLg7co1yKlV0X4ahL7
+         s/tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LZqp/7AgmH73m5EL9rfJzVcjOT6ajbwFOtYRf1lXupE=;
+        b=ceZ1r3L9BDSINO6aortogweXZJDbda/DD3WV0rdbHXgQlzAmgEXKWPeMAT+ZsETTlX
+         hbJvYd2+HLTdURUhB9lr4NJ7o5ilAtsvhgrxBbP0oWkCHjZmE+hW5GxOynwCXpEUakN3
+         yw4pi7SZ9AkuCYv7qdbZYHnZ357POJKs4YcXE5/wD2W79MkVchyjsPhBVZYH5gxAI0BZ
+         TP+nvgQbe1vpUpO/h+lVv4GlOc/GIA3GW15Ct/TNyA3jqxwI+d7PWFwAS68Y6cewLJGM
+         eS9IVj2JpSdhst6w20QOBwGXr3DjU3X+qQyfRZwhn/VgRBVwxtAdz53bvON/N4FnKBio
+         yyDg==
+X-Gm-Message-State: AJcUukdpQWOFJpR7vdJNdYuZle6F9UP/jQ9ROlCFbMnGxK9LmFxM/hoC
+        vwNKpoGXM7EtCirtdIrxjnvp5Q==
+X-Google-Smtp-Source: ALg8bN4KRAiDvtErBTun5lxOMdTYnW7fTz0UDbh0scYQe/+YG4oA+eKJHnydeAjq3dQvVX7se9ZKXA==
+X-Received: by 2002:a05:6000:1251:: with SMTP id j17mr16169399wrx.315.1547818899789;
+        Fri, 18 Jan 2019 05:41:39 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id u204sm69552301wmu.30.2019.01.18.05.41.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 05:41:39 -0800 (PST)
+Date:   Fri, 18 Jan 2019 14:41:36 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     hch@lst.de, m.szyprowski@samsung.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-debug: add dumping facility via debugfs
+Message-ID: <20190118134136.GA1078@Red>
+References: <1547646265-9414-1-git-send-email-clabbe@baylibre.com>
+ <2f43688f-9c08-a9c4-6175-caa3d2e40261@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190104125011.16071-25-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f43688f-9c08-a9c4-6175-caa3d2e40261@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/4/19 1:50 PM, Mel Gorman wrote:
-> Compaction is inherently race-prone as a suitable page freed during
-> compaction can be allocated by any parallel task. This patch uses a
-> capture_control structure to isolate a page immediately when it is freed
-> by a direct compactor in the slow path of the page allocator. The intent
-> is to avoid redundant scanning.
+On Wed, Jan 16, 2019 at 06:10:13PM +0000, Robin Murphy wrote:
+> On 16/01/2019 13:44, Corentin Labbe wrote:
+> > While debugging a DMA mapping leak, I needed to access
+> > debug_dma_dump_mappings() but easily from user space.
+> > 
+> > This patch adds a /sys/kernel/debug/dma-api/dump file which contain all
+> > current DMA mapping.
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >   kernel/dma/debug.c | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+> >   1 file changed, 47 insertions(+)
+> > 
+> > diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> > index 23cf5361bcf1..9253382f5729 100644
+> > --- a/kernel/dma/debug.c
+> > +++ b/kernel/dma/debug.c
+> > @@ -144,6 +144,7 @@ static struct dentry *num_free_entries_dent __read_mostly;
+> >   static struct dentry *min_free_entries_dent __read_mostly;
+> >   static struct dentry *nr_total_entries_dent __read_mostly;
+> >   static struct dentry *filter_dent           __read_mostly;
+> > +static struct dentry *dump_dent             __read_mostly;
+> >   
+> >   /* per-driver filter related state */
+> >   
+> > @@ -840,6 +841,47 @@ static const struct file_operations filter_fops = {
+> >   	.llseek = default_llseek,
+> >   };
+> >   
+> > +static int dump_read(struct seq_file *seq, void *v)
+> > +{
+> > +	int idx;
+> > +
+> > +	for (idx = 0; idx < HASH_SIZE; idx++) {
+> > +		struct hash_bucket *bucket = &dma_entry_hash[idx];
+> > +		struct dma_debug_entry *entry;
+> > +		unsigned long flags;
+> > +
+> > +		spin_lock_irqsave(&bucket->lock, flags);
+> > +
+> > +		list_for_each_entry(entry, &bucket->list, list) {
+> > +			seq_printf(seq,
+> > +				   "%s %s %s idx %d P=%llx N=%lx D=%llx L=%llx %s %s\n",
+> > +				   dev_name(entry->dev),
+> > +				   dev_driver_string(entry->dev),
+> > +				   type2name[entry->type], idx,
+> > +				   phys_addr(entry), entry->pfn,
+> > +				   entry->dev_addr, entry->size,
+> > +				   dir2name[entry->direction],
+> > +				   maperr2str[entry->map_err_type]);
+> > +		}
+> > +
+> > +		spin_unlock_irqrestore(&bucket->lock, flags);
+> > +	}
+> > +	return 0;
+> > +}
 > 
->                                         4.20.0                 4.20.0
->                                selective-v2r15          capture-v2r15
-> Amean     fault-both-1         0.00 (   0.00%)        0.00 *   0.00%*
-> Amean     fault-both-3      2624.85 (   0.00%)     2594.49 (   1.16%)
-> Amean     fault-both-5      3842.66 (   0.00%)     4088.32 (  -6.39%)
-> Amean     fault-both-7      5459.47 (   0.00%)     5936.54 (  -8.74%)
-> Amean     fault-both-12     9276.60 (   0.00%)    10160.85 (  -9.53%)
-> Amean     fault-both-18    14030.73 (   0.00%)    13908.92 (   0.87%)
-> Amean     fault-both-24    13298.10 (   0.00%)    16819.86 * -26.48%*
-> Amean     fault-both-30    17648.62 (   0.00%)    17901.74 (  -1.43%)
-> Amean     fault-both-32    19161.67 (   0.00%)    18621.32 (   2.82%)
+> It's a shame that this is pretty much a duplication of 
+> debug_dma_dump_mappings(), but there seems no straightforward way to 
+> define one in terms of the other :/
 > 
-> Latency is only moderately affected but the devil is in the details.
-> A closer examination indicates that base page fault latency is much
-> reduced but latency of huge pages is increased as it takes creater care
-> to succeed. Part of the "problem" is that allocation success rates
-> are close to 100% even when under pressure and compaction gets harder
+> (although given that we'd rather not have that weird external interface 
+> anyway, maybe "now you can use debugfs instead" might be justification 
+> enough for cleaning it up...)
 > 
->                                    4.20.0                 4.20.0
->                           selective-v2r15          capture-v2r15
-> Percentage huge-1         0.00 (   0.00%)        0.00 (   0.00%)
-> Percentage huge-3        99.95 (   0.00%)       99.98 (   0.03%)
-> Percentage huge-5        98.83 (   0.00%)       98.01 (  -0.84%)
-> Percentage huge-7        96.78 (   0.00%)       98.30 (   1.58%)
-> Percentage huge-12       98.85 (   0.00%)       97.76 (  -1.10%)
-> Percentage huge-18       97.52 (   0.00%)       99.05 (   1.57%)
-> Percentage huge-24       97.07 (   0.00%)       99.34 (   2.35%)
-> Percentage huge-30       96.59 (   0.00%)       99.08 (   2.58%)
-> Percentage huge-32       95.94 (   0.00%)       99.03 (   3.22%)
+> > +
+> > +static int dump_open(struct inode *inode, struct file *file)
+> > +{
+> > +	return single_open(file, dump_read, inode->i_private);
+> > +}
+> > +
+> > +static const struct file_operations dump_fops = {
+> > +	.owner = THIS_MODULE,
+> > +	.open = dump_open,
+> > +	.read = seq_read,
+> > +	.llseek = seq_lseek,
+> > +	.release = single_release,
+> > +};
+> > +
 > 
-> And scan rates are reduced as expected by 10% for the migration
-> scanner and 37% for the free scanner indicating that there is
-> less redundant work.
+> DEFINE_SHOW_ATTRIBUTE()?
 > 
-> Compaction migrate scanned    20338945.00    18133661.00
-> Compaction free scanned       12590377.00     7986174.00
-> 
-> The impact on 2-socket is much larger albeit not presented. Under
-> a different workload that fragments heavily, the allocation latency
-> is reduced by 26% while the success rate goes from 63% to 80%
-> 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-Great, you crossed off this old TODO item, and didn't need pageblock isolation
-to do that :D
+I will use it
 
-I have just one worry...
-
-> @@ -837,6 +873,12 @@ static inline void __free_one_page(struct page *page,
->  
->  continue_merging:
->  	while (order < max_order - 1) {
-> +		if (compaction_capture(capc, page, order)) {
-> +			if (likely(!is_migrate_isolate(migratetype)))
-> +				__mod_zone_freepage_state(zone, -(1 << order),
-> +								migratetype);
-> +			return;
-
-What about MIGRATE_CMA pageblocks and compaction for non-movable allocation,
-won't that violate CMA expecteations?
-And less critically, this will avoid the migratetype stealing decisions and
-actions, potentially resulting in worse fragmentation avoidance?
-
-> +		}
->  		buddy_pfn = __find_buddy_pfn(pfn, order);
->  		buddy = page + (buddy_pfn - pfn);
->  
+Thanks
