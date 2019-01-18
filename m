@@ -2,132 +2,144 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D971C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4FDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E7502087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:18:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="TGrFiAaS"
+	by mail.kernel.org (Postfix) with ESMTP id 58AD32086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547799525;
+	bh=bcoCVOEuGBTUydYBKwhs/F2p0ZrUgb38cu/2QlFES0c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=EZGEhOU7sAEusVvBmJn3ZM3Vu8mKd/mc/celYc19EhzR0PfMYWiCjLYbDVqUI4BeB
+	 vwKHd6CoPSpGw0rI1qk+QTKOmL+nY777VAMFLnfEPl0wIZ6YsXDN7/eIJ0WCNwE4sc
+	 6d0P0RzIeHqV9nom/RCc4Agzfs+5S+LlGr5ZVyW4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbfARISe (ORCPT
+        id S1727566AbfARISn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:18:34 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38391 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfARISd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:18:33 -0500
-Received: by mail-lj1-f195.google.com with SMTP id c19-v6so10900384lja.5
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 00:18:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IvVPDY9Dhhic8xmJkgBkDUufVkXKkhvA16uSmsDo93c=;
-        b=TGrFiAaSxI1kctS5W8CXd+FCo0tbhGm96Fjw0fZb2u+WF8lj1/tXMuaPOvzLtScrJL
-         qu8PhwC9CmbTqNeGGRIUFpTOOm17QfTx2dyqNXjosYyLiHN18pd36V96qrXn7iNL+IBM
-         7Nqxj3dFp/CpLFFi/yvn0VnSSigneQJbvkv879uFmgTDqq94Fgqdm1dJmd+JC6laK4F2
-         bbhJH4mSTiKQj5+cBWJl7DdP6Z4YDPBr8+UUtImwc3GC19fCrSQHQWKq0Ty9H16N52+H
-         C7yLwRMtb9B3D7AO6JNwHtmtAyv4ZQekccRDqQ1bJKyr9frT0EIgMSC6xe6o64qr80bE
-         jlww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IvVPDY9Dhhic8xmJkgBkDUufVkXKkhvA16uSmsDo93c=;
-        b=hclKNFFnzK6USYdZ+GDNXDVjqTA4Mt8jusRZlY6gWJb5qt+CRvd4NQgk6z3C39hmtm
-         wicUOr3t5nUW0JAV/9gFF8JCAS1RfOBdy8Mo4qdHdw3WGJ1osdR3QdYUSEaSea9YktUA
-         PRhlC4THpD8+YC5AYwu4hwkncwBwtE6vRytUOUxTz1eSHDuz5NAoARuDVwDc3d4nj5ow
-         wyoxx+3/cQ+ADxun89mnIPDRhGCEFEmbI96FU6dGVvrGzgGDHDr8AEz1/YcHeNtC4Xzs
-         c2TeU0utM7LnLqZ5zQf3S70IwVWqmnKYWenyiFmKzW7muKSQ65sm4qu5gvX1CR6IuqPy
-         Xe9g==
-X-Gm-Message-State: AJcUukejSLRRkOdJMKkrI5LM1J7TtKJ7a7KHA2itpzFbfyGE7pvfTJj3
-        MsEsifKAI8m6p6nEwAAtsyZsxw==
-X-Google-Smtp-Source: ALg8bN5yxl9FF8e8CDyGyTVdgIkQqyeiYI/+5tEkHkZ3MWxc32GfuKUXTUdeawd5lGmmcBq7YE/z0g==
-X-Received: by 2002:a2e:9dcb:: with SMTP id x11-v6mr12324551ljj.158.1547799511419;
-        Fri, 18 Jan 2019 00:18:31 -0800 (PST)
-Received: from [192.168.0.199] ([31.173.87.239])
-        by smtp.gmail.com with ESMTPSA id q3sm663867lff.42.2019.01.18.00.18.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 00:18:30 -0800 (PST)
-Subject: Re: [PATCH v6 2/2] dt-bindings: spi: Document Renesas R-Car Gen3
- RPC-IF controller bindings
-To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw>
- <1547790855-22120-3-git-send-email-masonccyang@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <784eb633-138a-b30f-6899-5e0d3cbe6f44@cogentembedded.com>
-Date:   Fri, 18 Jan 2019 11:18:17 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 18 Jan 2019 03:18:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727371AbfARISn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:18:43 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBC482087E;
+        Fri, 18 Jan 2019 08:18:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547799522;
+        bh=bcoCVOEuGBTUydYBKwhs/F2p0ZrUgb38cu/2QlFES0c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KfyJPkxGio58EbpfwFy46OxtvhVFOP6QznZYowOD4rAz9wxW8X+4uanugRUkI/ESa
+         J3NY1kHUl0GFFaFW1VWIUm5T7iviq27mRYD6py09CyrrzElWKCI3gNdeOpl5jcjkbk
+         yTYFGUku56gEUHu+2iiapoK6PI3jKueJySmvdBTU=
+Date:   Fri, 18 Jan 2019 09:18:32 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] memory: jz4780_nemc: Add support for the JZ4725B
+Message-ID: <20190118091832.733b78f4@bbrezillon>
+In-Reply-To: <20190117224550.18043-4-paul@crapouillou.net>
+References: <20190117224550.18043-1-paul@crapouillou.net>
+        <20190117224550.18043-4-paul@crapouillou.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1547790855-22120-3-git-send-email-masonccyang@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On Thu, 17 Jan 2019 19:45:50 -0300
+Paul Cercueil <paul@crapouillou.net> wrote:
 
-On 18.01.2019 8:54, Mason Yang wrote:
-
-> Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
+> Add support for the JZ4725B SoC from Ingenic.
 > 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+
+I don't know anything about the JZ4725B constraints but the code looks
+good, so
+
+Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+
 > ---
->   .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 37 ++++++++++++++++++++++
->   1 file changed, 37 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>  drivers/memory/jz4780-nemc.c | 24 +++++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> new file mode 100644
-> index 0000000..9b5001e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> @@ -0,0 +1,37 @@
-> +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-> +----------------------------------------------------------
+> diff --git a/drivers/memory/jz4780-nemc.c b/drivers/memory/jz4780-nemc.c
+> index ef3f20e46590..c472a22d6df5 100644
+> --- a/drivers/memory/jz4780-nemc.c
+> +++ b/drivers/memory/jz4780-nemc.c
+> @@ -44,9 +44,14 @@
+>  #define NEMC_NFCSR_NFCEn(n)	BIT((((n) - 1) << 1) + 1)
+>  #define NEMC_NFCSR_TNFEn(n)	BIT(16 + (n) - 1)
+>  
+> +struct jz_soc_info {
+> +	u8 tas_tah_cycles_max;
+> +};
 > +
-> +Required properties:
-> +- compatible: should be "renesas,rcar-gen3-rpc"
-> +- #address-cells: should be 1
-> +- #size-cells: should be 0
-> +- reg: should contain three register areas:
-> +	first for the base address of rpc-if registers,
-> +	second for the direct mapping read mode and
-> +	third for the write buffer area.
-> +- reg-names: should contain "regs", "dirmap" and "wbuf"
-> +- clock-names: should contain "rpc"
-> +- clocks: should contain 1 entries for the module's clock
+>  struct jz4780_nemc {
+>  	spinlock_t lock;
+>  	struct device *dev;
+> +	const struct jz_soc_info *soc_info;
+>  	void __iomem *base;
+>  	struct clk *clk;
+>  	uint32_t clk_period;
+> @@ -202,7 +207,7 @@ static bool jz4780_nemc_configure_bank(struct jz4780_nemc *nemc,
+>  	if (of_property_read_u32(node, "ingenic,nemc-tAS", &val) == 0) {
+>  		smcr &= ~NEMC_SMCR_TAS_MASK;
+>  		cycles = jz4780_nemc_ns_to_cycles(nemc, val);
+> -		if (cycles > 15) {
+> +		if (cycles > nemc->soc_info->tas_tah_cycles_max) {
+>  			dev_err(nemc->dev, "tAS %u is too high (%u cycles)\n",
+>  				val, cycles);
+>  			return false;
+> @@ -214,7 +219,7 @@ static bool jz4780_nemc_configure_bank(struct jz4780_nemc *nemc,
+>  	if (of_property_read_u32(node, "ingenic,nemc-tAH", &val) == 0) {
+>  		smcr &= ~NEMC_SMCR_TAH_MASK;
+>  		cycles = jz4780_nemc_ns_to_cycles(nemc, val);
+> -		if (cycles > 15) {
+> +		if (cycles > nemc->soc_info->tas_tah_cycles_max) {
+>  			dev_err(nemc->dev, "tAH %u is too high (%u cycles)\n",
+>  				val, cycles);
+>  			return false;
+> @@ -278,6 +283,10 @@ static int jz4780_nemc_probe(struct platform_device *pdev)
+>  	if (!nemc)
+>  		return -ENOMEM;
+>  
+> +	nemc->soc_info = device_get_match_data(dev);
+> +	if (!nemc->soc_info)
+> +		return -EINVAL;
 > +
-> +Example:
+>  	spin_lock_init(&nemc->lock);
+>  	nemc->dev = dev;
+>  
+> @@ -370,8 +379,17 @@ static int jz4780_nemc_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static const struct jz_soc_info jz4725b_soc_info = {
+> +	.tas_tah_cycles_max = 7,
+> +};
 > +
-> +	rpc: rpc@ee200000 {
-> +		compatible = "renesas,rcar-gen3-rpc";
-> +		reg = <0 0xee200000 0 0x7fff>, <0 0x08000000 0 0x4000000>,
+> +static const struct jz_soc_info jz4780_soc_info = {
+> +	.tas_tah_cycles_max = 15,
+> +};
+> +
+>  static const struct of_device_id jz4780_nemc_dt_match[] = {
+> -	{ .compatible = "ingenic,jz4780-nemc" },
+> +	{ .compatible = "ingenic,jz4725b-nemc", .data = &jz4725b_soc_info, },
+> +	{ .compatible = "ingenic,jz4780-nemc", .data = &jz4780_soc_info, },
+>  	{},
+>  };
+>  
 
-    s/0x7fff/0x8000/. -- that's size, not limit. But in reality, 0x200 would 
-be enough.
-
-> +		      <0 0xee208000 0 0x100>;
-> +		reg-names = "regs", "dirmap", "<wbuf>;
-
-    Why <>?
-
-MBR, Sergei
