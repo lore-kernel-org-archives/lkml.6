@@ -2,116 +2,168 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87E4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF463C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2C552054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB2EB2054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbfAROoh (ORCPT
+        id S1727971AbfAROo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:44:37 -0500
-Received: from mga07.intel.com ([134.134.136.100]:57816 "EHLO mga07.intel.com"
+        Fri, 18 Jan 2019 09:44:29 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45877 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727707AbfAROoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:44:30 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 06:44:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="115697668"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga007.fm.intel.com with SMTP; 18 Jan 2019 06:44:25 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 18 Jan 2019 16:44:24 +0200
-Date:   Fri, 18 Jan 2019 16:44:24 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        id S1727707AbfAROn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:43:56 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3585A20BAD; Fri, 18 Jan 2019 15:43:54 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CBCA920CE0;
+        Fri, 18 Jan 2019 15:43:51 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Sean Paul <sean@poorly.run>,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        'Hans Verkuil' <hans.verkuil@cisco.com>
-Subject: Re: [PATCH 1/6] include/drm: color_mgmt: Add enum labels
-Message-ID: <20190118144424.GL20097@intel.com>
-References: <1544789421-5265-1-git-send-email-c.manszewski@samsung.com>
- <CGME20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6@eucas1p2.samsung.com>
- <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
- <20190117194722.GJ20097@intel.com>
- <b9cfbae1-b24e-96bf-f3b0-ff6d25cd16bb@samsung.com>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v5 13/23] drm/sun4i: Add buffer stride and offset configuration for tiling mode
+Date:   Fri, 18 Jan 2019 15:43:18 +0100
+Message-Id: <20190118144328.20649-14-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
+References: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b9cfbae1-b24e-96bf-f3b0-ff6d25cd16bb@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 03:34:18PM +0100, Andrzej Hajda wrote:
-> +CC: Hans
-> 
-> On 17.01.2019 20:47, Ville Syrjälä wrote:
-> > On Fri, Dec 14, 2018 at 01:10:16PM +0100, Christoph Manszewski wrote:
-> >> Range setting makes sense for YCbCr and RGB buffers. Current
-> >> drm_color_range enum labels suggest use with YCbCr buffers.
-> >> Create enum labels without colorspace specification.
-> >>
-> >> Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
-> >> ---
-> >>  include/drm/drm_color_mgmt.h | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/include/drm/drm_color_mgmt.h b/include/drm/drm_color_mgmt.h
-> >> index 90ef9996d9a4..52f6d5221a0d 100644
-> >> --- a/include/drm/drm_color_mgmt.h
-> >> +++ b/include/drm/drm_color_mgmt.h
-> >> @@ -62,6 +62,8 @@ enum drm_color_range {
-> >>  	DRM_COLOR_YCBCR_LIMITED_RANGE,
-> >>  	DRM_COLOR_YCBCR_FULL_RANGE,
-> >>  	DRM_COLOR_RANGE_MAX,
-> >> +	DRM_COLOR_LIMITED_RANGE = DRM_COLOR_YCBCR_LIMITED_RANGE,
-> >> +	DRM_COLOR_FULL_RANGE = DRM_COLOR_YCBCR_FULL_RANGE,
-> > These enum values don't mean anything really. The strings are what
-> > matter for the uapi.
-> >
-> > The default for YCbCr needs to be limited range, the default for RGB
-> > needs to be full range. So I think this would really require a separate
-> > prop for each.
-> >
-> > But is there an actual usecase for this stuff?
-> 
-> 
-> Yes, for example HDMI path (Display Controller and HDMI encoder) in
-> Exynos5433 works on RGB buffers and do not perform any conversion if the
-> output is also RGB, on the other side CEA861 specs says that in case of
-> CEA modes output RGB should be in limited range, in case of non CEA
-> modes it should be full range.
-> 
-> The idea was to allow userspace to check (atomic_check) which ranges are
-> acceptable in given mode and to set desired one if possible.
-> 
-> Any better solution is welcome?
+This introduces stride and offset configuration for the VPU tiling mode.
+Stride is calculated differently than it is for linear formats and an
+offset is calculated, for which new register definitions are introduced.
 
-i915 has the "Broadcast RGB" property for the CEA-861 stuff.
-You don't have a way to implement that?
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 49 ++++++++++++++++++++++++--
+ drivers/gpu/drm/sun4i/sun4i_frontend.h | 19 ++++++++++
+ 2 files changed, 65 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index e950370792ce..6ede40aab515 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -126,21 +126,64 @@ void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
+ {
+ 	struct drm_plane_state *state = plane->state;
+ 	struct drm_framebuffer *fb = state->fb;
++	unsigned int strides[3] = {};
++
+ 	dma_addr_t paddr;
+ 	bool swap;
+ 
++	if (fb->modifier == DRM_FORMAT_MOD_ALLWINNER_TILED) {
++		unsigned int width = state->src_w >> 16;
++		unsigned int offset;
++
++		strides[0] = SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[0]);
++
++		/*
++		 * The X1 offset is the offset to the bottom-right point in the
++		 * end tile, which is the final pixel (at offset width - 1)
++		 * within the end tile (with a 32-byte mask).
++		 */
++		offset = (width - 1) & (32 - 1);
++
++		regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF0_REG,
++			     SUN4I_FRONTEND_TB_OFF_X1(offset));
++
++		if (fb->format->num_planes > 1) {
++			strides[1] =
++				SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[1]);
++
++			regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF1_REG,
++				     SUN4I_FRONTEND_TB_OFF_X1(offset));
++		}
++
++		if (fb->format->num_planes > 2) {
++			strides[2] =
++				SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[2]);
++
++			regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF2_REG,
++				     SUN4I_FRONTEND_TB_OFF_X1(offset));
++		}
++	} else {
++		strides[0] = fb->pitches[0];
++
++		if (fb->format->num_planes > 1)
++			strides[1] = fb->pitches[1];
++
++		if (fb->format->num_planes > 2)
++			strides[2] = fb->pitches[2];
++	}
++
+ 	/* Set the line width */
+ 	DRM_DEBUG_DRIVER("Frontend stride: %d bytes\n", fb->pitches[0]);
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD0_REG,
+-		     fb->pitches[0]);
++		     strides[0]);
+ 
+ 	if (fb->format->num_planes > 1)
+ 		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD1_REG,
+-			     fb->pitches[1]);
++			     strides[1]);
+ 
+ 	if (fb->format->num_planes > 2)
+ 		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD2_REG,
+-			     fb->pitches[2]);
++			     strides[2]);
+ 
+ 	/* Some planar formats require chroma channel swapping by hand. */
+ 	swap = sun4i_frontend_format_chroma_requires_swap(fb->format->format);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index 6c4d7797bb8a..235109199b9d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -25,10 +25,29 @@
+ #define SUN4I_FRONTEND_BUF_ADDR1_REG		0x024
+ #define SUN4I_FRONTEND_BUF_ADDR2_REG		0x028
+ 
++#define SUN4I_FRONTEND_TB_OFF0_REG		0x030
++#define SUN4I_FRONTEND_TB_OFF1_REG		0x034
++#define SUN4I_FRONTEND_TB_OFF2_REG		0x038
++#define SUN4I_FRONTEND_TB_OFF_X1(x1)			((x1) << 16)
++#define SUN4I_FRONTEND_TB_OFF_Y0(y0)			((y0) << 8)
++#define SUN4I_FRONTEND_TB_OFF_X0(x0)			(x0)
++
+ #define SUN4I_FRONTEND_LINESTRD0_REG		0x040
+ #define SUN4I_FRONTEND_LINESTRD1_REG		0x044
+ #define SUN4I_FRONTEND_LINESTRD2_REG		0x048
+ 
++/*
++ * In tiled mode, the stride is defined as the distance between the start of the
++ * end line of the current tile and the start of the first line in the next
++ * vertical tile.
++ *
++ * Tiles are represented in row-major order, thus the end line of current tile
++ * starts at: 31 * 32 (31 lines of 32 cols), the next vertical tile starts at:
++ * 32-bit-aligned-width * 32 and the distance is:
++ * 32 * (32-bit-aligned-width - 31).
++ */
++#define SUN4I_FRONTEND_LINESTRD_TILED(stride)		(((stride) - 31) * 32)
++
+ #define SUN4I_FRONTEND_INPUT_FMT_REG		0x04c
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR	(0 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED	(1 << 8)
 -- 
-Ville Syrjälä
-Intel
+2.20.1
+
