@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45873C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0839C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2093D2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B2EA2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfAROwF (ORCPT
+        id S1728168AbfAROwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:52:05 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48107 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:52:32 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48253 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbfAROv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:51:58 -0500
+        id S1727490AbfAROw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:52:29 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 20A24224C7; Fri, 18 Jan 2019 15:51:56 +0100 (CET)
+        id 0CB0720E4A; Fri, 18 Jan 2019 15:52:27 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7EA0C207A3;
-        Fri, 18 Jan 2019 15:51:44 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 38F0E20C3F;
+        Fri, 18 Jan 2019 15:51:46 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 14/23] drm/sun4i: frontend: Add and use helper for checking tiling support
-Date:   Fri, 18 Jan 2019 15:51:24 +0100
-Message-Id: <20190118145133.21281-15-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 20/23] drm/sun4i: Make COEF_RDY conditional
+Date:   Fri, 18 Jan 2019 15:51:30 +0100
+Message-Id: <20190118145133.21281-21-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,60 +48,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces a helper to check whether a frontend input format
-supports tiling mode. This helper is used when tiling is requested in
-the frontend format support helper.
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Only semiplanar and planar YUV formats are supported by the hardware.
+The COEF_RDY bit isn't found in all the SoCs featuring some variant of the
+frontend.
 
+Add it to our quirks structure.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 9 +++++----
+ drivers/gpu/drm/sun4i/sun4i_frontend.h | 1 +
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 6ede40aab515..1153539f3aef 100644
+index 7a1095b004d4..86c5033102b9 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -121,6 +121,26 @@ static bool sun4i_frontend_format_chroma_requires_swap(uint32_t fmt)
+@@ -96,10 +96,11 @@ static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
+ 			     sun4i_frontend_vert_coef[i]);
  	}
+ 
+-	regmap_write_bits(frontend->regs,
+-			  SUN4I_FRONTEND_FRM_CTRL_REG,
+-			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
+-			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
++	if (frontend->data->has_coef_rdy)
++		regmap_write_bits(frontend->regs,
++				  SUN4I_FRONTEND_FRM_CTRL_REG,
++				  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
++				  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
  }
  
-+static bool sun4i_frontend_format_supports_tiling(uint32_t fmt)
-+{
-+	switch (fmt) {
-+	case DRM_FORMAT_NV12:
-+	case DRM_FORMAT_NV16:
-+	case DRM_FORMAT_NV21:
-+	case DRM_FORMAT_NV61:
-+	case DRM_FORMAT_YUV411:
-+	case DRM_FORMAT_YUV420:
-+	case DRM_FORMAT_YUV422:
-+	case DRM_FORMAT_YVU420:
-+	case DRM_FORMAT_YVU422:
-+	case DRM_FORMAT_YVU411:
-+		return true;
-+
-+	default:
-+		return false;
-+	}
-+}
-+
- void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
- 				  struct drm_plane *plane)
- {
-@@ -355,7 +375,9 @@ bool sun4i_frontend_format_is_supported(uint32_t fmt, uint64_t modifier)
- {
- 	unsigned int i;
+ int sun4i_frontend_init(struct sun4i_frontend *frontend)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index 01e68bb11c98..e332bc1c6b68 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -114,6 +114,7 @@ struct reset_control;
  
--	if (modifier != DRM_FORMAT_MOD_LINEAR)
-+	if (modifier == DRM_FORMAT_MOD_ALLWINNER_TILED)
-+		return sun4i_frontend_format_supports_tiling(fmt);
-+	else if (modifier != DRM_FORMAT_MOD_LINEAR)
- 		return false;
+ struct sun4i_frontend_data {
+ 	bool	has_coef_access_ctrl;
++	bool	has_coef_rdy;
+ };
  
- 	for (i = 0; i < ARRAY_SIZE(sun4i_frontend_formats); i++)
+ struct sun4i_frontend {
 -- 
 2.20.1
 
