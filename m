@@ -2,93 +2,107 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B525EC07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18829C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA2020883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:51:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDCB520883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbfARTvZ (ORCPT
+        id S1729365AbfARTxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:51:25 -0500
-Received: from smtprelay0036.hostedemail.com ([216.40.44.36]:53759 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729206AbfARTvZ (ORCPT
+        Fri, 18 Jan 2019 14:53:38 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34677 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729206AbfARTxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:51:25 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 7E9E8181D341B;
-        Fri, 18 Jan 2019 19:51:23 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: ball94_c0277c79591b
-X-Filterd-Recvd-Size: 2645
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 18 Jan 2019 19:51:22 +0000 (UTC)
-Message-ID: <d76c2a301d324239db09ccc7cd8421821ba93b87.camel@perches.com>
-Subject: Re: [PATCH] video/hdmi: Change strncpy() into memcpy() in
- hdmi_spd_infoframe_init
-From:   Joe Perches <joe@perches.com>
-To:     Mathieu Malaterre <malat@debian.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 18 Jan 2019 11:51:20 -0800
-In-Reply-To: <20190118193248.535-1-malat@debian.org>
-References: <20190118193248.535-1-malat@debian.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Fri, 18 Jan 2019 14:53:37 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q8so8779735qke.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 11:53:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XfD1BP8f6Ut8p4xliuONXRawCNEWzUDQY9J8wpycFa4=;
+        b=NxYqUVSv27A5nJpC6hQeIDjKt3xUL0CPRAW1gXgC+eC/rufOD6r7gUb8lSdE6pvAy3
+         eQO+jKl6Wz8IaO+D5EHuyPg1882o83EcJ1YmXAB5ljx8M21DFhL6r4V2QxRcUdhV61Sx
+         4vMCwfuEf5hvKBO33Zmjza862CZ1dFpOv7NFPZFphZFjw5AB4S/tyhVTzB9qvgqRJgmW
+         qTtIISuMtRkE8LHjK22S9pvFGJ8Ee48weXP3KIzOYWJjAD6a4bOscQYc+yO/x63m8tFs
+         l8cNv7boxn9gVGFzZYfsFPb6Uaq/wREWOWUv8eHbR6pReFyQoZ5Athe26uWGxRfeXUVO
+         YIMQ==
+X-Gm-Message-State: AJcUukdCroZbRjDCN7zIjV91O6203NY4D7prejAGh2Ul9ke7AuFu/t3N
+        uCfOSDcNGXs6l7rsblmaXnQleQ==
+X-Google-Smtp-Source: ALg8bN4bs7giSU0qQx6vrfAZHSPWzgv1schj+KNC2SKSGPuPx6hgD3UMzHNjKklX0MJskfzSAVhrTQ==
+X-Received: by 2002:a37:3293:: with SMTP id y141mr15227376qky.132.1547841216510;
+        Fri, 18 Jan 2019 11:53:36 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::fb21? ([2601:602:9800:dae6::fb21])
+        by smtp.gmail.com with ESMTPSA id e29sm35243800qtc.74.2019.01.18.11.53.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 11:53:35 -0800 (PST)
+Subject: Re: [PATCH 11/14] staging: android: ion: Allow heap name to be null
+To:     "Andrew F. Davis" <afd@ti.com>,
+        Brian Starkey <Brian.Starkey@arm.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        nd <nd@arm.com>
+References: <20190111180523.27862-1-afd@ti.com>
+ <20190111180523.27862-12-afd@ti.com>
+ <20190116152807.phyq5pqrmbkj6oxk@DESKTOP-E1NTVVP.localdomain>
+ <39453e0a-2db8-3a59-1909-e02caa9afa31@ti.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <042dd3b1-9a41-2a76-270d-1c992d782c40@redhat.com>
+Date:   Fri, 18 Jan 2019 11:53:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <39453e0a-2db8-3a59-1909-e02caa9afa31@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-01-18 at 20:32 +0100, Mathieu Malaterre wrote:
-> Using strncpy() is less than perfect since the destination buffers do not
-> need to be NUL terminated. Replace strncpy() with memcpy() to address a
-> warning triggered by gcc using W=1 and optimize the code a bit.
+On 1/16/19 9:12 AM, Andrew F. Davis wrote:
+> On 1/16/19 9:28 AM, Brian Starkey wrote:
+>> Hi Andrew,
+>>
+>> On Fri, Jan 11, 2019 at 12:05:20PM -0600, Andrew F. Davis wrote:
+>>> The heap name can be used for debugging but otherwise does not seem
+>>> to be required and no other part of the code will fail if left NULL
+>>> except here. We can make it required and check for it at some point,
+>>> for now lets just prevent this from causing a NULL pointer exception.
+>>
+>> I'm not so keen on this one. In the "new" API with heap querying, the
+>> name string is the only way to identify the heap. I think Laura
+>> mentioned at XDC2017 that it was expected that userspace should use
+>> the strings to find the heap they want.
+>>
 > 
-> This commit removes the following warnings:
+> Right now the names are only for debug. I accidentally left the name
+> null once and got a kernel crash. This is the only spot where it is
+> needed so I fixed it up. The other option is to make the name mandatory
+> and properly error out, I don't want to do that right now until the
+> below discussion is had to see if names really do matter or not.
 > 
->   drivers/video/hdmi.c:234:2: warning: 'strncpy' specified bound 8 equals destination size [-Wstringop-truncation]
->   drivers/video/hdmi.c:235:2: warning: 'strncpy' specified bound 16 equals destination size [-Wstringop-truncation]
-[]
-> diff --git a/drivers/video/hdmi.c b/drivers/video/hdmi.c
-[]
-> @@ -231,8 +231,8 @@ int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
->  	frame->version = 1;
->  	frame->length = HDMI_SPD_INFOFRAME_SIZE;
->  
-> -	strncpy(frame->vendor, vendor, sizeof(frame->vendor));
-> -	strncpy(frame->product, product, sizeof(frame->product));
-> +	memcpy(frame->vendor, vendor, sizeof(frame->vendor));
-> +	memcpy(frame->product, product, sizeof(frame->product));
 
-This is not good.
+Yes, the heap names are part of the query API and are the expected
+way to identify individual heaps for the API at the moment so having
+a null heap name is incorrect. The heap name seemed like the best way
+to identify heaps to userspace but if you have an alternative proposal
+I'd be interested.
 
-vendor can be any location and shorter than sizeof(frame->vendor)
-so this can copy from invalid memory locations.
+Thanks,
+Laura
 
-You probably want strscpy.
-
-This is called with at least "mediatek" and "broadcom", so perhaps
-it's better still to change the struct vendor size to something a
-bit larger.  Maybe change vendor[8] to vendor[16];
-
-include/linux/hdmi.h:struct hdmi_spd_infoframe {
-include/linux/hdmi.h-   enum hdmi_infoframe_type type;
-include/linux/hdmi.h-   unsigned char version;
-include/linux/hdmi.h-   unsigned char length;
-include/linux/hdmi.h-   char vendor[8];
-include/linux/hdmi.h-   char product[16];
-include/linux/hdmi.h-   enum hdmi_spd_sdi sdi;
-include/linux/hdmi.h-};
+> 
 
 
