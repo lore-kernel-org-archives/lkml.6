@@ -2,97 +2,137 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D40C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B64C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C72E2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:42:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="unWnQRzA"
+	by mail.kernel.org (Postfix) with ESMTP id 2D2542086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfARMmX (ORCPT
+        id S1727724AbfARMpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:42:23 -0500
-Received: from onstation.org ([52.200.56.107]:59690 "EHLO onstation.org"
+        Fri, 18 Jan 2019 07:45:14 -0500
+Received: from ozlabs.org ([203.11.71.1]:39189 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727708AbfARMmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:42:23 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727497AbfARMpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 07:45:14 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 42F1F14D;
-        Fri, 18 Jan 2019 12:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1547815342;
-        bh=lvgYTUkIJwuxIngth9Zpmb590KKOWErzxArQCZSRYTU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=unWnQRzA5yRAMhpIN5ASgklVtC6SODpeEQ+j+n1teVuMlh0Pbse9A5BLwNnF9S2U+
-         Sx/XfdOGN1VhZjAeLz4qnXjBhUoz5kz8WwRJ0Pm1vXiThuhKcDlDEZ+H6E6n6pfbvs
-         FWlOI5HRmpQomzvOIi/sEI7K5xxagnGrny3GKctU=
-Date:   Fri, 18 Jan 2019 07:42:21 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        shawnguo@kernel.org, dianders@chromium.org,
-        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
-        niklas.cassel@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 07/14] qcom: spmi-gpio: add support for hierarchical
- IRQ chip
-Message-ID: <20190118124221.GB32143@basecamp>
-References: <20190117003234.22127-1-masneyb@onstation.org>
- <20190117003234.22127-8-masneyb@onstation.org>
- <e9234c48-9fce-1ec4-48f1-dff134559eed@arm.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 43h0yt13J2z9sBn;
+        Fri, 18 Jan 2019 23:45:10 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>, Jason@zx2c4.com,
+        christophe.leroy@c-s.fr, dan.carpenter@oracle.com,
+        fbarrat@linux.ibm.com, leitao@debian.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        maddy@linux.vnet.ibm.com
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-5.0-3 tag
+Date:   Fri, 18 Jan 2019 23:45:09 +1100
+Message-ID: <875zum3zje.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9234c48-9fce-1ec4-48f1-dff134559eed@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Thu, Jan 17, 2019 at 11:32:01AM +0000, Marc Zyngier wrote:
-> >  static int pmic_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
-> >  {
-> >  	struct pmic_gpio_state *state = gpiochip_get_data(chip);
-> > -	struct pmic_gpio_pad *pad;
-> > +	struct irq_fwspec fwspec;
-> >  
-> > -	pad = state->ctrl->desc->pins[pin].drv_data;
-> > +	fwspec.fwnode = state->fwnode;
-> > +	fwspec.param_count = 2;
-> > +	fwspec.param[0] = pin + PMIC_GPIO_PHYSICAL_OFFSET;
-> > +	fwspec.param[1] = IRQ_TYPE_NONE;
-> 
-> In my experience, IRQ_TYPE_NONE is rarely a good thing, unless you
-> expect the trigger information to be found by some other mean. I guess
-> that's one of the reasons why everything falls back to level in the SPMI
-> driver...
+Hi Linus,
 
-I'm not sure how to determine what trigger to put here. I thought that
-it would be up to the caller of request_any_context_irq() to explicitly
-set the expected trigger type when a GPIO is used, which will overwrite
-IRQ_TYPE_NONE with the proper trigger type.
+Please pull some more powerpc fixes for 5.0:
 
-For example, I've tested the hierarchical IRQ domains with gpio-keys and
-when the gpio property is used, devm_request_any_context_irq() is called
-with the flags IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING. This calls
-__setup_irq(), which will call irq_set_type() and overwrite the trigger
-type.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-irq_set_type() is only called when the IRQ is not shared, so I'm not
-sure if this would work as expected with a shared IRQ.
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-Brian
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-5.0-3
+
+for you to fetch changes up to 7bea7ac0ca0121798f3618d16201ca4dc4e67a00:
+
+  powerpc/syscalls: Fix syscall tracing (2019-01-15 21:32:25 +1100)
+
+- ------------------------------------------------------------------
+powerpc fixes for 5.0 #3
+
+A couple of weeks of fixes.
+
+There's one fix for an oops on Power9 machines with Open CAPI adapters.
+
+And a fix for probable memory corruption in some of the new NPU code, caught by
+smatch though and not seen in the wild.
+
+Plus a few other minor fixes.
+
+There's one non-fix which is the perf_regs change. That was sent during the
+merge window but I accidentally only merged the first of two patches in the
+series. It's been in linux-next so hopefully doesn't conflict with anything in
+acme's tree.
+
+Thanks to:
+ Alexey Kardashevskiy, Andrew Donnellan, Breno Leitao, Christian Lamparter,
+ Christophe Leroy, Dan Carpenter, Frederic Barrat, Greg Kurz, Jason A.
+ Donenfeld, Madhavan Srinivasan.
+
+- ------------------------------------------------------------------
+Breno Leitao (1):
+      powerpc/tm: Limit TM code inside PPC_TRANSACTIONAL_MEM
+
+Christophe Leroy (1):
+      powerpc/8xx: fix setting of pagetable for Abatron BDI debug tool.
+
+Dan Carpenter (1):
+      powerpc/powernv/npu: Allocate enough memory in pnv_try_setup_npu_table_group()
+
+Frederic Barrat (1):
+      powerpc/powernv/npu: Fix oops in pnv_try_setup_npu_table_group()
+
+Jason A. Donenfeld (1):
+      powerpc/pseries: Fix build break due to pnv_npu2_init()
+
+Madhavan Srinivasan (1):
+      powerpc/perf: Update perf_regs structure to include MMCRA
+
+Michael Ellerman (2):
+      powerpc/4xx/ocm: Fix fix for phys_addr_t printf warnings
+      powerpc/syscalls: Fix syscall tracing
+
+
+ arch/powerpc/include/uapi/asm/perf_regs.h       | 1 +
+ arch/powerpc/kernel/head_8xx.S                  | 3 ++-
+ arch/powerpc/kernel/signal_64.c                 | 7 ++++---
+ arch/powerpc/kernel/trace/ftrace.c              | 7 -------
+ arch/powerpc/perf/perf_regs.c                   | 6 ++++++
+ arch/powerpc/platforms/4xx/ocm.c                | 6 +++---
+ arch/powerpc/platforms/powernv/npu-dma.c        | 2 +-
+ arch/powerpc/platforms/powernv/pci-ioda.c       | 3 ++-
+ arch/powerpc/platforms/pseries/pci.c            | 2 ++
+ tools/arch/powerpc/include/uapi/asm/perf_regs.h | 1 +
+ tools/perf/arch/powerpc/include/perf_regs.h     | 3 ++-
+ tools/perf/arch/powerpc/util/perf_regs.c        | 1 +
+ 12 files changed, 25 insertions(+), 17 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJcQcoIAAoJEFHr6jzI4aWA4SkP/ibxCnRlUIJUmMZSD7qeQan9
+iV8Duht2BXjUrTrhU2F8PQ20SeKi9Bp5mMUJ96fh0bOeuc+VK375x4bqKyXb1buP
+L/zMEDQFWtKOYRE/8wMsA3xdD7x69z/E7gpzEJMEX9SpWALTRBrMiSI3adqLM4vI
+ri17SPIJxvJQ85qGOymBWWgN7FSjIXtOm8Dlp2aSJ3rTi6AirQQXIdbZtl9fMtgv
+cu7mmF7Vs6BvyThUSPUvCSY6ilWVOcwNV/Zg9KVwMpCHh07U9cbWNv6bp0sa64j0
+yavmIYZeRflTEJ7NI6EzBMCws0nNBytWfxWkSeSobQT2Rnpx3ColMMAy035E+EGU
+NVxrbrV9J4PtDo87RWUNGLSodUNgcg6rW/Zhvlt5PpSh4WOQopOYKmWS1tYqLP9S
+o1EEkZ/vrAkM0syPBrdgMEV2Qzz5xuE7LOZPZNCeQyfUUGeUgLuc77i1BVjcBQ/4
+/5PmkHdMw3iG65UJ1IGT4GLHiHmjWyZqrdCw0/bpHaIlNaC5/Jx3ZenJdVbTiEhv
+h5c3+cWZPk6ILfvFqzrUuRJVM3Z3Ta4+uHA9yruQZZOgfkx8CADDxsSwSMhYqa6R
+R7zVVoQO6JdwRlrwPe35IzppAiWjVrUJMOqbbGBp2/YcpEpUw2tMJDeFhSglrYQL
+YFZw+ENrBcoqwduu0xDI
+=BgXi
+-----END PGP SIGNATURE-----
