@@ -2,352 +2,143 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAACC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09D7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C8B120883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:22:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Ep4AD88c"
+	by mail.kernel.org (Postfix) with ESMTP id 7945D2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbfARNWt (ORCPT
+        id S1727393AbfARN33 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:22:49 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:60372 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfARNWt (ORCPT
+        Fri, 18 Jan 2019 08:29:29 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59762 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727115AbfARN33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:22:49 -0500
-Received: from mailhost.synopsys.com (unknown [10.12.135.161])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 8956424E22F5;
-        Fri, 18 Jan 2019 05:22:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1547817768; bh=wuv6xVNTK0LxcNtfORDSZmilI4MQyhCJyxN2BTAkD/4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=Ep4AD88cAQNzwMpDuk0npIRe51FjOmXWkpUC/myv9AgLN9TSL/IRoAH0YXUr7Ri2p
-         78q/+HgLBGjsWdKVuPKd8VBgrgt3qBxp5QRzA6DcUoBEdlg9WffGCYdqT3JN0ew7uJ
-         3nzBhlLjIZSoYJtYqFWzLYJpT0rJddc0SPgiGM/LQyViTr9x9N7qR2x843csXScSwa
-         hY9Fo0f3WiIbAVwZslPdm9+l4heoI/mHUjLwPPtym6VvUicMW0jeo2NU9vVhToPSEG
-         qaZFwTFQgC+IrTo6jwoNgFo+49nkCOUYaNZjK375Y+gBHSCg4TPAOv0HF4YnkWwu+1
-         2aXc1W8+HUAIQ==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id B1EC0A00F9;
-        Fri, 18 Jan 2019 13:22:47 +0000 (UTC)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 18 Jan 2019 05:21:43 -0800
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 18 Jan 2019 14:21:40 +0100
-Received: from [10.107.19.24] (10.107.19.24) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 18 Jan 2019 14:21:40 +0100
-Subject: Re: [PATCH 1/1] net: stmmac: implement the SIOCGHWTSTAMP ioctl
-To:     Artem Panfilov <panfilov.artyom@gmail.com>
-CC:     Tema <panfilovartyom@gmail.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "Jose Abreu" <jose.abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190117191536.24699-1-panfilov.artyom@gmail.com>
-From:   Jose Abreu <jose.abreu@synopsys.com>
-Message-ID: <c0404f52-e875-ffb4-dcf4-05b4b5c4579b@synopsys.com>
-Date:   Fri, 18 Jan 2019 13:21:37 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 18 Jan 2019 08:29:29 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IDSB87068980
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:29:27 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q3cxqen8x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:29:27 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Fri, 18 Jan 2019 13:29:25 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 18 Jan 2019 13:29:22 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0IDTLYA64225510
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Jan 2019 13:29:21 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A677A4054;
+        Fri, 18 Jan 2019 13:29:21 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1F9FA405B;
+        Fri, 18 Jan 2019 13:29:20 +0000 (GMT)
+Received: from [9.145.184.65] (unknown [9.145.184.65])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 18 Jan 2019 13:29:20 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v1] iommu/s390: Declare s390 iommu reserved regions
+To:     Robin Murphy <robin.murphy@arm.com>, gerald.schaefer@de.ibm.com
+Cc:     linux-s390@vger.kernel.org, walling@linux.ibm.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+References: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
+ <cc070df1-e7dc-8cce-f443-879e0e5e2903@arm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Fri, 18 Jan 2019 14:29:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190117191536.24699-1-panfilov.artyom@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <cc070df1-e7dc-8cce-f443-879e0e5e2903@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.19.24]
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011813-0012-0000-0000-000002E9C8D7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011813-0013-0000-0000-00002120E938
+Message-Id: <3cd790d6-aa6f-e817-27ce-56d7a9b6b6e5@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901180096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Artem,
-
-Please specify in patch subject whether this is for -net or
--net-next. More comments inline.
-
-On 1/17/2019 7:15 PM, Artem Panfilov wrote:
-> From: Tema <panfilovartyom@gmail.com>
+On 17/01/2019 14:02, Robin Murphy wrote:
+> On 15/01/2019 17:37, Pierre Morel wrote:
+>> The s390 iommu can only allow DMA transactions between the zPCI device
+>> entries start_dma and end_dma.
+>>
+>> Let's declare the regions before start_dma and after end_dma as
+>> reserved regions using the appropriate callback in iommu_ops.
+>>
+>> The reserved region may later be retrieved from sysfs or from
+>> the vfio iommu internal interface.
 > 
-> This patch adds support for the SIOCGHWTSTAMP ioctl which enables user
-> processes to read the current hwtstamp_config settings
-> non-destructively.
-
-I think you should only save the config structure *after*
-validating the parameters. i.e. use a local config and save it in
-priv only if ret == 0.
-
+> For this particular case, I think the best solution is to give VFIO the 
+> ability to directly interrogate the domain geometry (which s390 appears 
+> to set correctly already). The idea of reserved regions was really for 
+> 'unexpected' holes inside the usable address space - using them to also 
+> describe places that are entirely outside that address space rather 
+> confuses things IMO.
 > 
-> Signed-off-by: Artem Panfilov <panfilov.artyom@gmail.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  2 +
->  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 77 ++++++++++++-------
->  2 files changed, 52 insertions(+), 27 deletions(-)
+> Furthermore, even if we *did* end up going down the route of actively 
+> reserving addresses beyond the usable aperture, it doesn't seem sensible 
+> for individual drivers to do it themselves when the core API already 
+> describes the relevant information generically.
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> index 63e1064b27a2..f9b42b0c20f4 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> @@ -28,6 +28,7 @@
->  #include <linux/pci.h>
->  #include "common.h"
->  #include <linux/ptp_clock_kernel.h>
-> +#include <linux/net_tstamp.h>
->  #include <linux/reset.h>
->  
->  struct stmmac_resources {
-> @@ -174,6 +175,7 @@ struct stmmac_priv {
->  	unsigned int mode;
->  	unsigned int chain_mode;
->  	int extend_desc;
-> +	struct hwtstamp_config tstamp_config;
->  	struct ptp_clock *ptp_clock;
->  	struct ptp_clock_info ptp_clock_ops;
->  	unsigned int default_addend;
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 5afba69981cf..a6dc40a70428 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -534,7 +534,7 @@ static void stmmac_get_rx_hwtstamp(struct stmmac_priv *priv, struct dma_desc *p,
->  }
->  
->  /**
-> - *  stmmac_hwtstamp_ioctl - control hardware timestamping.
-> + *  stmmac_hwtstamp_set - control hardware timestamping.
->   *  @dev: device pointer.
->   *  @ifr: An IOCTL specific structure, that can contain a pointer to
->   *  a proprietary structure used to pass information to the driver.
-> @@ -544,10 +544,10 @@ static void stmmac_get_rx_hwtstamp(struct stmmac_priv *priv, struct dma_desc *p,
->   *  Return Value:
->   *  0 on success and an appropriate -ve integer on failure.
->   */
-> -static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
-> +static int stmmac_hwtstamp_set(struct net_device *dev, struct ifreq *ifr)
->  {
->  	struct stmmac_priv *priv = netdev_priv(dev);
-> -	struct hwtstamp_config config;
-> +	struct hwtstamp_config *config =  &priv->tstamp_config;
->  	struct timespec64 now;
->  	u64 temp = 0;
->  	u32 ptp_v2 = 0;
-> @@ -572,31 +572,31 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  		return -EOPNOTSUPP;
->  	}
->  
-> -	if (copy_from_user(&config, ifr->ifr_data,
-> +	if (copy_from_user(config, ifr->ifr_data,
->  			   sizeof(struct hwtstamp_config)))
+> Robin.
 
-Please use "sizeof(*config)" instead. It makes the code more
-readable and occupy less characters.
+Robin,
 
->  		return -EFAULT;
->  
->  	netdev_dbg(priv->dev, "%s config flags:0x%x, tx_type:0x%x, rx_filter:0x%x\n",
-> -		   __func__, config.flags, config.tx_type, config.rx_filter);
-> +		   __func__, config->flags, config->tx_type, config->rx_filter);
->  
->  	/* reserved for future extensions */
-> -	if (config.flags)
-> +	if (config->flags)
->  		return -EINVAL;
->  
-> -	if (config.tx_type != HWTSTAMP_TX_OFF &&
-> -	    config.tx_type != HWTSTAMP_TX_ON)
-> +	if (config->tx_type != HWTSTAMP_TX_OFF &&
-> +	    config->tx_type != HWTSTAMP_TX_ON)
->  		return -ERANGE;
->  
->  	if (priv->adv_ts) {
-> -		switch (config.rx_filter) {
-> +		switch (config->rx_filter) {
->  		case HWTSTAMP_FILTER_NONE:
->  			/* time stamp no incoming packet at all */
-> -			config.rx_filter = HWTSTAMP_FILTER_NONE;
-> +			config->rx_filter = HWTSTAMP_FILTER_NONE;
->  			break;
->  
->  		case HWTSTAMP_FILTER_PTP_V1_L4_EVENT:
->  			/* PTP v1, UDP, any kind of event packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_EVENT;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_EVENT;
->  			/* take time stamp for all event messages */
->  			if (xmac)
->  				snap_type_sel = PTP_GMAC4_TCR_SNAPTYPSEL_1;
-> @@ -609,7 +609,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  
->  		case HWTSTAMP_FILTER_PTP_V1_L4_SYNC:
->  			/* PTP v1, UDP, Sync packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_SYNC;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_SYNC;
->  			/* take time stamp for SYNC messages only */
->  			ts_event_en = PTP_TCR_TSEVNTENA;
->  
-> @@ -619,7 +619,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  
->  		case HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ:
->  			/* PTP v1, UDP, Delay_req packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ;
->  			/* take time stamp for Delay_Req messages only */
->  			ts_master_en = PTP_TCR_TSMSTRENA;
->  			ts_event_en = PTP_TCR_TSEVNTENA;
-> @@ -630,7 +630,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  
->  		case HWTSTAMP_FILTER_PTP_V2_L4_EVENT:
->  			/* PTP v2, UDP, any kind of event packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_EVENT;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_EVENT;
->  			ptp_v2 = PTP_TCR_TSVER2ENA;
->  			/* take time stamp for all event messages */
->  			if (xmac)
-> @@ -644,7 +644,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  
->  		case HWTSTAMP_FILTER_PTP_V2_L4_SYNC:
->  			/* PTP v2, UDP, Sync packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_SYNC;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_SYNC;
->  			ptp_v2 = PTP_TCR_TSVER2ENA;
->  			/* take time stamp for SYNC messages only */
->  			ts_event_en = PTP_TCR_TSEVNTENA;
-> @@ -655,7 +655,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  
->  		case HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ:
->  			/* PTP v2, UDP, Delay_req packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ;
->  			ptp_v2 = PTP_TCR_TSVER2ENA;
->  			/* take time stamp for Delay_Req messages only */
->  			ts_master_en = PTP_TCR_TSMSTRENA;
-> @@ -667,7 +667,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  
->  		case HWTSTAMP_FILTER_PTP_V2_EVENT:
->  			/* PTP v2/802.AS1 any layer, any kind of event packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_EVENT;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_EVENT;
->  			ptp_v2 = PTP_TCR_TSVER2ENA;
->  			/* take time stamp for all event messages */
->  			if (xmac)
-> @@ -682,7 +682,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  
->  		case HWTSTAMP_FILTER_PTP_V2_SYNC:
->  			/* PTP v2/802.AS1, any layer, Sync packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_SYNC;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_SYNC;
->  			ptp_v2 = PTP_TCR_TSVER2ENA;
->  			/* take time stamp for SYNC messages only */
->  			ts_event_en = PTP_TCR_TSEVNTENA;
-> @@ -694,7 +694,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  
->  		case HWTSTAMP_FILTER_PTP_V2_DELAY_REQ:
->  			/* PTP v2/802.AS1, any layer, Delay_req packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V2_DELAY_REQ;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V2_DELAY_REQ;
->  			ptp_v2 = PTP_TCR_TSVER2ENA;
->  			/* take time stamp for Delay_Req messages only */
->  			ts_master_en = PTP_TCR_TSMSTRENA;
-> @@ -708,7 +708,7 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  		case HWTSTAMP_FILTER_NTP_ALL:
->  		case HWTSTAMP_FILTER_ALL:
->  			/* time stamp any incoming packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_ALL;
-> +			config->rx_filter = HWTSTAMP_FILTER_ALL;
->  			tstamp_all = PTP_TCR_TSENALL;
->  			break;
->  
-> @@ -716,18 +716,18 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  			return -ERANGE;
->  		}
->  	} else {
-> -		switch (config.rx_filter) {
-> +		switch (config->rx_filter) {
->  		case HWTSTAMP_FILTER_NONE:
-> -			config.rx_filter = HWTSTAMP_FILTER_NONE;
-> +			config->rx_filter = HWTSTAMP_FILTER_NONE;
->  			break;
->  		default:
->  			/* PTP v1, UDP, any kind of event packet */
-> -			config.rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_EVENT;
-> +			config->rx_filter = HWTSTAMP_FILTER_PTP_V1_L4_EVENT;
->  			break;
->  		}
->  	}
-> -	priv->hwts_rx_en = ((config.rx_filter == HWTSTAMP_FILTER_NONE) ? 0 : 1);
-> -	priv->hwts_tx_en = config.tx_type == HWTSTAMP_TX_ON;
-> +	priv->hwts_rx_en = ((config->rx_filter == HWTSTAMP_FILTER_NONE) ? 0 : 1);
-> +	priv->hwts_tx_en = config->tx_type == HWTSTAMP_TX_ON;
->  
->  	if (!priv->hwts_tx_en && !priv->hwts_rx_en)
->  		stmmac_config_hw_tstamping(priv, priv->ptpaddr, 0);
-> @@ -765,7 +765,28 @@ static int stmmac_hwtstamp_ioctl(struct net_device *dev, struct ifreq *ifr)
->  				(u32)now.tv_sec, now.tv_nsec);
->  	}
->  
-> -	return copy_to_user(ifr->ifr_data, &config,
-> +	return copy_to_user(ifr->ifr_data, config,
-> +			    sizeof(struct hwtstamp_config)) ? -EFAULT : 0;
+I already posted a patch retrieving the geometry through 
+VFIO_IOMMU_GET_INFO using a specific capability for the geometry [1], 
+and AFAIU, Alex did not agree with this.
 
-sizeof(*config) also.
+What is different in what you propose?
 
-> +}
-> +
-> +/**
-> + *  stmmac_hwtstamp_get - read hardware timestamping.
-> + *  @dev: device pointer.
-> + *  @ifr: An IOCTL specific structure, that can contain a pointer to
-> + *  a proprietary structure used to pass information to the driver.
-> + *  Description:
-> + *  This function obtain the current hardware timestamping settings
-> +    as requested.
-> + */
-> +static int stmmac_hwtstamp_get(struct net_device *dev, struct ifreq *ifr)
-> +{
-> +	struct stmmac_priv *priv = netdev_priv(dev);
-> +	struct hwtstamp_config *config = &priv->tstamp_config;
-> +
-> +	if (!(priv->dma_cap.time_stamp || priv->dma_cap.atime_stamp))
-> +		return -EOPNOTSUPP;
-> +
-> +	return copy_to_user(ifr->ifr_data, config,
->  			    sizeof(struct hwtstamp_config)) ? -EFAULT : 0;
-
-sizeof(*config).
-
->  }
->  
-> @@ -3767,7 +3788,9 @@ static int stmmac_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
->  		ret = phy_mii_ioctl(dev->phydev, rq, cmd);
->  		break;
->  	case SIOCSHWTSTAMP:
-> -		ret = stmmac_hwtstamp_ioctl(dev, rq);
-> +		ret = stmmac_hwtstamp_set(dev, rq);
-
-Missing break.
+@Alex: I was hoping that this patch goes in your direction. What do you 
+think?
 
 Thanks,
-Jose Miguel Abreu
+Pierre
 
-> +	case SIOCGHWTSTAMP:
-> +		ret = stmmac_hwtstamp_get(dev, rq);
->  		break;
->  	default:
->  		break;
+[1]: https://lore.kernel.org/patchwork/patch/1030369/
+
 > 
+>>
+>> This seems to me related with the work Shameer has started on
+>> vfio_iommu_type1 so I add Alex and Shameer to the CC list.
+>>
+>>
+>> Pierre Morel (1):
+>>    iommu/s390: Declare s390 iommu reserved regions
+>>
+>>   drivers/iommu/s390-iommu.c | 29 +++++++++++++++++++++++++++++
+>>   1 file changed, 29 insertions(+)
+>>
+> 
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
