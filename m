@@ -2,117 +2,127 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1D8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C24C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 844202086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:54:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 190F92086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:55:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KAAlsxC8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ngxCCfk1"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TAG5o0xZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbfAREyx (ORCPT
+        id S1727117AbfAREzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 23:54:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52416 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbfAREyx (ORCPT
+        Thu, 17 Jan 2019 23:55:17 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33573 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbfAREzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 23:54:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A661260866; Fri, 18 Jan 2019 04:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547787291;
-        bh=h0zMAbmVWt1w7lKXYYOPzJ6G7O5PNxyoNVxjN11o7Cg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KAAlsxC8tyjkDSeJRrNtm4UQYt52ZF55UFoyJdfwqtX59sJjiVxrJIo3q9E0h6WmM
-         SxIPJuxelcs05oYFUXdEAIuXWZfamR0uKg6Dsgn8DRXpDLnWSDd9SzJrfNAalWaTP5
-         tv5sZVk5eRk082kYf4gvwcOwHuyYoO7X5k4s6OUI=
-Received: from [10.79.128.224] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 77E2C602FC;
-        Fri, 18 Jan 2019 04:54:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547787290;
-        bh=h0zMAbmVWt1w7lKXYYOPzJ6G7O5PNxyoNVxjN11o7Cg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ngxCCfk1BQ7nkQUDSkMhUGJSuwb/tJnI78J8zITMjNTMXXtguWfZ6u69aYyFYSkgO
-         sPgOH4ECMidHyqp08zH3cwE2wcOGsvsPphGw7gRP4bjY4xWol0P4P53AQj58xoVmIF
-         SA85Xj1jw41DEPBvkoglDdWUQuoYDG/DlLe3aabI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77E2C602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v11 4/9] soc: qcom: rpmpd: Add a Power domain driver to
- model corners
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
-        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
-        mka@chromium.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        henryc.chen@mediatek.com
-References: <20190110040209.6028-1-rnayak@codeaurora.org>
- <20190110040209.6028-5-rnayak@codeaurora.org>
- <20190117174254.GA17273@roeck-us.net>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <ac10a4b9-96fe-0e62-a831-9b3ebe67de23@codeaurora.org>
-Date:   Fri, 18 Jan 2019 10:24:45 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 17 Jan 2019 23:55:17 -0500
+Received: by mail-lf1-f68.google.com with SMTP id i26so9572286lfc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:55:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XLyFz/NJZgEoOZrZ2eJV4Pp3mn+Ctdtd9w409+4P7/w=;
+        b=TAG5o0xZtljWmnIHysbz45KQ7BDCtWjH7oSSuTR+4rp7IloXFuWN64OzjwO9g3M932
+         sV0vlIJjAPfriDu66S9TRVu7irEbS5njMc5vCW3OHJdctjaAIqba392tFmtTx78fLJ86
+         qgUbCJUPuKNG5XdI5ww/WGlqXQZ2cfDACqWcc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XLyFz/NJZgEoOZrZ2eJV4Pp3mn+Ctdtd9w409+4P7/w=;
+        b=mujuNXbA9WtA62ox/y2/rSGkZ1hNt98HC9Mmaf1zJosj8F0wQsJSx1EUPc7RG4U4/n
+         uZ2Tb2K4uJEiNJ7hHfWOBz/jnf/ZazaYvu7e733LRvV0nJ9NQz5CASQUdVmWBAwda6kl
+         R6Wg/P8vk6gqM2Nxk0OhxXa9OGXWI1E9kqTbUuvNgv1lLAMCa3BCmr6EwGfVPZ5fbeC1
+         fdiqHZKgTdkz7X7RJ7XGWmGY/fzetSUGkgQ+2sTFKiEjZTSWd0Btvlcy0Q+y+YfJCH06
+         1i/CsqHDfQIpHmshod6CAa9/UAPgjTnqcInkkMXA0j1rwvk9KZ4K+CW81ojWr2AkZ7uX
+         PDDA==
+X-Gm-Message-State: AJcUukcUVgUHhNIVw16hsN3VFNFVJsWRCbEbHyPV4D39G379AKZMTWqJ
+        HNHtgbQ04bGgbFS7PYg8FkDgyGLTYoE=
+X-Google-Smtp-Source: ALg8bN7zF05+AP67zFzHM89kj/R73x+N0tZizbrkZlx+oLIEV7gZpjBT07lRSCgThBaNYFqKrr+m6g==
+X-Received: by 2002:a19:789:: with SMTP id 131mr12368847lfh.11.1547787314853;
+        Thu, 17 Jan 2019 20:55:14 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id p23sm608564lfh.47.2019.01.17.20.55.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 20:55:13 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id a16so9535062lfg.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 20:55:12 -0800 (PST)
+X-Received: by 2002:a19:982:: with SMTP id 124mr11265403lfj.138.1547787311695;
+ Thu, 17 Jan 2019 20:55:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190117174254.GA17273@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
+ <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+ <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net> <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
+ <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm> <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm> <20190116213708.GN6310@bombadil.infradead.org>
+ <CAHk-=wjciBwJo5JHcvUO+JAC13TUME1PH=ftsaNt+0RC-3PCSw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjciBwJo5JHcvUO+JAC13TUME1PH=ftsaNt+0RC-3PCSw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 18 Jan 2019 16:54:54 +1200
+X-Gmail-Original-Message-ID: <CAHk-=wg_MZgBvbH3cC9DT5MD694=SYO3+ns_2VnaiyV93vDMRQ@mail.gmail.com>
+Message-ID: <CAHk-=wg_MZgBvbH3cC9DT5MD694=SYO3+ns_2VnaiyV93vDMRQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[]..
+On Thu, Jan 17, 2019 at 4:51 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, Jan 17, 2019 at 9:37 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > Your patch 3/3 just removes the test.  Am I right in thinking that it
+> > doesn't need to be *moved* because the existing test after !PageUptodate
+> > catches it?
+>
+> That's the _hope_.
+>
+> That's the simplest patch I can come up with as a potential solution.
+> But it's possible that there's some nasty performance regression
+> because somebody really relies on not even triggering read-ahead, and
+> we might need to do some totally different thing.
 
->>
->> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
->> index fcbf8a2e4080..df5cd9fa0d5e 100644
->> --- a/drivers/soc/qcom/Kconfig
->> +++ b/drivers/soc/qcom/Kconfig
->> @@ -98,6 +98,15 @@ config QCOM_RPMH
->>   	  of hardware components aggregate requests for these resources and
->>   	  help apply the aggregated state on the resource.
->>   
->> +config QCOM_RPMPD
->> +	bool "Qualcomm RPM Power domain driver"
->> +	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
-> 
-> Since this is bool, but the dependent configurations are tristate,
-> configurations such as arm64:allmodconfig result in
-> 
-> CONFIG_QCOM_RPMPD=y
-> CONFIG_MFD_QCOM_RPM=m
-> CONFIG_QCOM_SMD_RPM=m
-> 
-> This in turn results in
-> 
->     arm-linux-gnueabi-ld: drivers/soc/qcom/rpmpd.o: in function `rpmpd_send_enable':
->>> rpmpd.c:(.text+0x64): undefined reference to `qcom_rpm_smd_write'
->     arm-linux-gnueabi-ld: drivers/soc/qcom/rpmpd.o: in function `rpmpd_power_on':
->     rpmpd.c:(.text+0x408): undefined reference to `qcom_rpm_smd_write'
->>> arm-linux-gnueabi-ld: rpmpd.c:(.text+0x460): undefined reference to `qcom_rpm_smd_write'
-> 
-> as reported by 0day.
+Oh, and somebody should probably check that there isn't some simple
+way to just avoid that readahead code entirely.
 
-Thanks for reporting this, the QCOM_RPMPD dependency on MFD_QCOM_RPM was removed
-by a patch on top from Bjorn [1]. I have posted a fix now [2] to make QCOM_RPMPD
-depend on QCOM_SMD_RPM=y
+In particular, right now we skip readahead for at least these cases:
 
-[1] https://lkml.org/lkml/2019/1/17/5
-[2] https://lkml.org/lkml/2019/1/17/1043
+        /* no read-ahead */
+        if (!ra->ra_pages)
+                return;
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+        if (blk_cgroup_congested())
+                return;
+
+and I don't think we need to worry about the cgroup congestion case -
+if the attack has to also congest its cgroup with IO, I think they
+have bigger problems.
+
+And I think 'ra_pages' can be zero only in the presence of IO errors,
+but I might be wrong. It would be good if somebody double-checks that.
+
+               Linus
