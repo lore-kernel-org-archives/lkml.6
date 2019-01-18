@@ -2,108 +2,118 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADA4C1B0F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77939C1B0F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B35C22086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:44:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="LHOK2FHS"
+	by mail.kernel.org (Postfix) with ESMTP id 3AEA32086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 20:44:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfARUoT (ORCPT
+        id S1729599AbfARUog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 15:44:19 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35594 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729471AbfARUoS (ORCPT
+        Fri, 18 Jan 2019 15:44:36 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34307 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729569AbfARUof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 15:44:18 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s198so6604781pgs.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 12:44:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GjchyRdYhLAWsw5KQxaMj7ccbSp+3qcEIdr5776TWsc=;
-        b=LHOK2FHSeR4niUoa2jt0heKMjyOjyS7diRaX/xa2GWUj32L6oIios6dEsNCgJVaMGq
-         98Kk+Ws17asA+dbwF05ch6LxdP2D2dO166edj38RocwjvxhsfVh160XcHfDrQHAS9HS7
-         6pA3d1+ZfdxSQ+4GyWQ4UpINnk/Mcy9e+By0qrF+kDX/I0boHWu+NIHg8QE93Wi3PpSa
-         uwFXbWWohIL284go/cg/o7RcKPBhcz4ZtMYBDeIKgm/+qm4ui0+wVRZkDUvF0a/85lrE
-         EOqLarFcfTtRVyo8gqoa4jsQLA4mvirOyrNH68WeD7qPgkGHMY+B/xH4SSQ6nMMQUo/6
-         4+VA==
+        Fri, 18 Jan 2019 15:44:35 -0500
+Received: by mail-qt1-f195.google.com with SMTP id r14so16787244qtp.1;
+        Fri, 18 Jan 2019 12:44:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GjchyRdYhLAWsw5KQxaMj7ccbSp+3qcEIdr5776TWsc=;
-        b=X6m897A+HB+WKD470FjVk/AkzWrsG0AXPfJDHXk4UtPDZ5/q3R6wyXJ88iIrqOMayw
-         Mfbd2jMe+uydKQNwveijdpWbUzlLPrNJprNm1/+9edfOgeYyDOAcx8xEZbjIz/klaScM
-         ZuPAx/Ijn2/eyJhj/RFD7fA5HCwGsPlVyQ3H8QNJmrz+5z7ssm8Ep7NlN4yXcYL+pUyu
-         ATNt+bE25uGlV4nbBfznAiN3N2zxAaVaJPGZTVE4Ew2yCTAnCCluIFleSw9fRFktwtle
-         3Dn+f1AX4tWOkzcIbxnHZV+dvtLmAn9nDAvif/eF6l1ZTuIaGzkywbbAn2jeovVqD/g+
-         RznQ==
-X-Gm-Message-State: AJcUukfTBGCU6ZnHnbxap+dbMqskYuMk0AkQ4Zi7CZ6Ova+OGiGptl8Y
-        NUvFi1gbfVB6+tUg1rggkK4LCA==
-X-Google-Smtp-Source: ALg8bN75d2A7vFU5PncOyJAf1X4eKFFRRVfxaiJyiqLoqeCDwgIRUbEIoG0wQZ4t3/b407jH8EBGyA==
-X-Received: by 2002:a63:f515:: with SMTP id w21mr19062235pgh.220.1547844258032;
-        Fri, 18 Jan 2019 12:44:18 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id m3sm12784083pfi.102.2019.01.18.12.44.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Jan 2019 12:44:17 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gkazw-0002f7-Hn; Fri, 18 Jan 2019 13:44:16 -0700
-Date:   Fri, 18 Jan 2019 13:44:16 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Leon Romanovsky <leon@kernel.org>
-Cc:     Doug Ledford <dledford@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Parav Pandit <parav@mellanox.com>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        cgroups <cgroups@vger.kernel.org>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: [PATCH rdma-next] IB/core: Simplify rdma cgroup registration
-Message-ID: <20190118204416.GA7101@ziepe.ca>
-References: <20190117181415.28566-1-leon@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ORQ5TPnixziDIHsuvdhJc04sEDyDC/r90DJmiSnzeTU=;
+        b=mT5Fq8haOw39l3SAJ+CmF45vyC9jpJwSF4//CAyZ2N67+F2rfBYOlb1s6uICMn22Xa
+         GDpkJaIvPEFvUYYgFDTYlTD9BWzSaSZk2Q67fjt4Chx1n4/cZvZfwfwrwKJ+sHE7q4u8
+         1nxN+0/5k+au8ihqPtf+s7NS8eKz/08My0DL7Nv3Dek9ObBsdBNGE1LzoMtNoRCOpNpM
+         dAlBCaWI4RwQx4NdTnZL+OnHel/RhYiwP/Xro7Je4MQCPa0Mg1inRcYaXwjsVfW8gd49
+         +1WWujpsrJny6GPdicKQ5MFd6LVOm7oIOj4KUW/mJLC/xS2VCIlQwLLzpQuVZtNt30IZ
+         b5zA==
+X-Gm-Message-State: AJcUukfiNmnSf1eEa3alHL+65BvLTEoP3fU70HFcxW1m/yBS8T/ZItSI
+        kAzp3K6dUfi38UOhezhIaY3gZ12GTBYfbw0U2Rw=
+X-Google-Smtp-Source: ALg8bN4ggcJ9u9iUb42HjHwnUQYctSfqKH3E3MdNfQhsEyd2ovYbbCJ8aRRYCcgq2HtqlmRxO9eWK6dWZp4WMFrZjzM=
+X-Received: by 2002:a0c:d992:: with SMTP id y18mr17616058qvj.161.1547844273008;
+ Fri, 18 Jan 2019 12:44:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117181415.28566-1-leon@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-30-arnd@arndb.de>
+ <CALCETrXqM5mhvwreN5y-9K99h1j9rs9MAVK-cNLC54s1fdHA6w@mail.gmail.com>
+ <CAK8P3a0V+xboaGAF2nqrYtpjXXA7y0LcvCKi4ngLTus1D_XZBA@mail.gmail.com> <CALCETrWPj6dHEyo=AELoVjXGsiwuSpRp17x3CEWBHvp7i3cy+Q@mail.gmail.com>
+In-Reply-To: <CALCETrWPj6dHEyo=AELoVjXGsiwuSpRp17x3CEWBHvp7i3cy+Q@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 18 Jan 2019 21:44:16 +0100
+Message-ID: <CAK8P3a3bGF9iL6fZyyGS1p6vw56FHNMuosVBShX=MTptb6g4Hw@mail.gmail.com>
+Subject: Re: [PATCH v2 29/29] y2038: add 64-bit time_t syscalls to all 32-bit architectures
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 08:14:15PM +0200, Leon Romanovsky wrote:
-> From: Parav Pandit <parav@mellanox.com>
-> 
-> RDMA cgroup registration routine always returns success,
-> so simplify function to be void and run clang formatter
-> over whole CONFIG_CGROUP_RDMA art of core_priv.h.
-> 
-> This reduces unwinding error path for regular registration and
-> future net namespace change functionality for rdma device.
-> 
-> Signed-off-by: Parav Pandit <parav@mellanox.com>
-> Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-> Acked-by: Tejun Heo <tj@kernel.org>
-> ---
->  drivers/infiniband/core/cgroup.c    |  5 ++---
->  drivers/infiniband/core/core_priv.h | 17 +++++++++++------
->  drivers/infiniband/core/device.c    |  8 +-------
->  include/linux/cgroup_rdma.h         |  2 +-
->  kernel/cgroup/rdma.c                |  5 +----
->  5 files changed, 16 insertions(+), 21 deletions(-)
+On Fri, Jan 18, 2019 at 8:53 PM Andy Lutomirski <luto@kernel.org> wrote:
+> I think we have two issues if we reuse those numbers for new syscalls.
+> First, I'd really like to see new syscalls be numbered consistently
+> everywhere, or at least on all x86 variants, and we can't on x32
+> because they mean something else.  Perhaps more importantly, due to
+> what is arguably a rather severe bug, issuing a native x86_64 syscall
+> (x32 bit clear) with nr in the range 512..547 does *not* return
+> -ENOSYS on a kernel with x32 enabled.  Instead it does something that
+> is somewhat arbitrary.  With my patch applied, it will return -ENOSYS,
+> but old kernels will still exist, and this will break syscall probing.
+>
+> Can we perhaps just start the consistent numbers above 547 or maybe
+> block out 512..547 in the new regime?
 
-Applied to for-next
+I'm definitely fine with not reusing them ever, and jumping from 511 to
+548 when we get there on all architectures, if you think that helps.
 
-Thanks,
-Jason
+While we could also jump to 548 *now*, I think that would be a
+bit wasteful. Syscall numbers are fairly cheap, but not entirely
+free, especially when you consider architectures like mips that
+have an upper bound of 1000 syscalls before they have to get
+inventive.
+
+     Arnd
