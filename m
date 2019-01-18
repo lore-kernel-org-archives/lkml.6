@@ -2,125 +2,136 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95EAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDDEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8DB220883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547799822;
-	bh=K7VO4sQhq9Lz/cT7sxYUU6aQfIt/J4uyoa54bfE9ZNI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=tZc18TJxSVMEFg+ldxWWHpL0DHAQ8gehVH8V/Bi0LcOX0tvj/+DV72fP+RzTIWthl
-	 uzTKgqakCVF9rvZH6134sQK84UNOg+S0zEHv0iF+6bBYhqlf2nXlaOy76Mmckvxsip
-	 ZOqyAU3V4rN69NPjUD/LjozD6t/BlCJp8B5gaCeQ=
+	by mail.kernel.org (Postfix) with ESMTP id 6CD282086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:23:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="NStDoSwR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbfARIXl (ORCPT
+        id S1727683AbfARIX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:23:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727332AbfARIXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:23:40 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0D632086D;
-        Fri, 18 Jan 2019 08:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547799819;
-        bh=K7VO4sQhq9Lz/cT7sxYUU6aQfIt/J4uyoa54bfE9ZNI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TJTLspX2ht0ZK6L4AV1a55UC44H7nGO+55iUj+hroq9SXpq+KKgNnz9yzNUe0BLLl
-         sO5cYfS9zSBgWne1iP4RxDZhh7p4eFTobSDc8Sa1gj0DGfS9zF0DdXtxXMB+Nh9kNa
-         5MoBJkbtOdUvpB3x7kOZTYjEB+K1UWoFMvvXXMgQ=
-Date:   Fri, 18 Jan 2019 17:23:34 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "deneen.t.dock@intel.com" <deneen.t.dock@intel.com>
-Subject: Re: [PATCH 17/17] module: Prevent module removal racing with
- text_poke()
-Message-Id: <20190118172334.d7b1bcd580c3f6c4ed388160@kernel.org>
-In-Reply-To: <B48C6E93-AD57-4FF8-BBE8-887A5E965793@vmware.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-        <20190117003259.23141-18-rick.p.edgecombe@intel.com>
-        <20190117165422.d33d1af83db8716e24960a3c@kernel.org>
-        <B48C6E93-AD57-4FF8-BBE8-887A5E965793@vmware.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
+        Fri, 18 Jan 2019 03:23:57 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44575 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727497AbfARIX4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:23:56 -0500
+Received: by mail-lf1-f66.google.com with SMTP id z13so9831663lfe.11
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 00:23:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0SJSH6bRMwHp7RYCoARq1uayXqt1+9KD9XSAanMXm5s=;
+        b=NStDoSwR4lZoklec+1xfN9wJBQtVLHEHs79uK3qqhgFCRfFD7FVzm4FLI4YuVRo87g
+         RB2PQIdE7WaVFFzDhDPtyqag+njVDGUCT5emScC7CI/AJCoEuyeHMBzZ3kDjFOV9dxhz
+         g0mg/7eqMJEJOjaI2WDRYyzIgjCOfGxbUaik6fmgtq32KH7m9rR+4ncOL/PG6fStgpuL
+         Z6vXrj5K6EUloOsvJ47e/ubBGd3VTcUxOzdPoI8RZyHgAMh+iRaE5blhvISSOHfxf0zd
+         9NVFLhUvjVYzzXz6xL+3NpvGn+A6QPSLHOLI87+DwroPrtUMhEcI8ECNDbs69fIXZX7I
+         uWNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0SJSH6bRMwHp7RYCoARq1uayXqt1+9KD9XSAanMXm5s=;
+        b=sA28zBvhdsz/vOlsFYqz1o1JE/Y+6An8WfJPulVGHIpU9qtE8O7IeOshQULvKqbBsT
+         Q4RiMYXhHH/6KinrN0dIlyHaGppkobt77q89QxQM8ukPhqGvuKT1DOS2hdgvPO/GMukY
+         ZS5xLO1/V9DvbfUNJoqhSY41ap60IHIewZiyaKo1oABhSs5G76S1pb3kJjVoEX6laks7
+         b8015KJZI3DWzh6az/ATRnV6iFukhAlIxDHmBjlBODNQrTMwKIsZyMiDMrbxJ9rmLzXi
+         YXiP5PI9xevio9H/lAlvCQokj2TEplnzLnvxK3Z5hMSIsAEJA8JUjskuJ1nKJVPSbWXJ
+         BlZQ==
+X-Gm-Message-State: AJcUukfdyAV5rzElzp7NfIyKYYL28kmaTSrawR8S7wFiGbv2SndPMSEe
+        BtPJqMhAUnYI/OOKW3HU+JgxYw==
+X-Google-Smtp-Source: ALg8bN4hOoDacLNurKvmhF7eDPeHuNSme1TlaKyPN/plT6NUA2CJRa/tnyMWDWZiwyVmMr9IY+ThoQ==
+X-Received: by 2002:a19:982:: with SMTP id 124mr11597098lfj.138.1547799834695;
+        Fri, 18 Jan 2019 00:23:54 -0800 (PST)
+Received: from [192.168.0.199] ([31.173.87.239])
+        by smtp.gmail.com with ESMTPSA id p21sm690912lfj.10.2019.01.18.00.23.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 00:23:53 -0800 (PST)
+Subject: Re: [PATCH v6 2/2] dt-bindings: spi: Document Renesas R-Car Gen3
+ RPC-IF controller bindings
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw>
+ <1547790855-22120-3-git-send-email-masonccyang@mxic.com.tw>
+ <8367577a-9717-92e3-cbc8-8dee52876bcb@gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e3843856-fe6b-dfea-ffbe-07398aabc4cf@cogentembedded.com>
+Date:   Fri, 18 Jan 2019 11:23:40 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <8367577a-9717-92e3-cbc8-8dee52876bcb@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Jan 2019 18:07:03 +0000
-Nadav Amit <namit@vmware.com> wrote:
+Hello!
 
-> > On Jan 16, 2019, at 11:54 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > On Wed, 16 Jan 2019 16:32:59 -0800
-> > Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
-> > 
-> >> From: Nadav Amit <namit@vmware.com>
-> >> 
-> >> It seems dangerous to allow code modifications to take place
-> >> concurrently with module unloading. So take the text_mutex while the
-> >> memory of the module is freed.
-> > 
-> > At that point, since the module itself is removed from module list,
-> > it seems no actual harm. Or would you have any concern?
+On 18.01.2019 9:16, Marek Vasut wrote:
+
+>> Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
+>>
+>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+>> ---
+>>   .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 37 ++++++++++++++++++++++
+>>   1 file changed, 37 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> new file mode 100644
+>> index 0000000..9b5001e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> @@ -0,0 +1,37 @@
+>> +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
+>> +----------------------------------------------------------
+>> +
+>> +Required properties:
+>> +- compatible: should be "renesas,rcar-gen3-rpc"
+>> +- #address-cells: should be 1
+>> +- #size-cells: should be 0
+>> +- reg: should contain three register areas:
+>> +	first for the base address of rpc-if registers,
+>> +	second for the direct mapping read mode and
+>> +	third for the write buffer area.
+>> +- reg-names: should contain "regs", "dirmap" and "wbuf"
+>> +- clock-names: should contain "rpc"
+>> +- clocks: should contain 1 entries for the module's clock
+>> +
+>> +Example:
+>> +
+>> +	rpc: rpc@ee200000 {
+>> +		compatible = "renesas,rcar-gen3-rpc";
+>> +		reg = <0 0xee200000 0 0x7fff>, <0 0x08000000 0 0x4000000>,
 > 
-> So it appears that you are right and all the users of text_poke() and
-> text_poke_bp() do install module notifiers, and remove the module from their
-> internal data structure when they are done (*). As long as they prevent
-> text_poke*() to be called concurrently (e.g., using jump_label_lock()),
-> everything is fine.
+> 0x7fff should be 0x8000 , right ?
+
+    Even 0x200.
+
 > 
-> Having said that, the question is whether you “trust” text_poke*() users to
-> do so. text_poke() description does not day explicitly that you need to
-> prevent modules from being removed.
+>> +		      <0 0xee208000 0 0x100>;
 > 
-> What do you say?
+> Isn't the write buffer part of the RPC-IF register set ?
 
-I agreed, but in that case, this is just a fool proof. I think we should
-prevent this kind of bug by review, and should comment it on text_poke(),
-instead of locking text_mutex.
+    No, if you look into the manual.
 
-What I thought was even if we take text_mutex here, such user can modify
-the (released) module code right after we exit this section.
-
-Maybe we'd better make text_poke() more smart?
-
-> (*) I am not sure about kgdb, but it probably does not matter much
-
-I think we don't need to care about kgdb. It is a tool which should be able
-to shoot your feet and we can not prevent it. Only expert can avoid it. :)
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+MBR, Sergei
