@@ -3,27 +3,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECE5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E1BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5815D2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23BA92054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:45:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbfAROpg (ORCPT
+        id S1727856AbfAROpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:45:36 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:45807 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:45:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45764 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727664AbfAROny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:43:54 -0500
+        id S1727415AbfAROnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:43:51 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 06F9120DCD; Fri, 18 Jan 2019 15:43:52 +0100 (CET)
+        id 67A0020955; Fri, 18 Jan 2019 15:43:49 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 518FC20A9B;
-        Fri, 18 Jan 2019 15:43:50 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1CF60206A7;
+        Fri, 18 Jan 2019 15:43:49 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v5 07/23] drm/sun4i: frontend: Configure and enable YUV to RGB CSC when needed
-Date:   Fri, 18 Jan 2019 15:43:12 +0100
-Message-Id: <20190118144328.20649-8-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v5 02/23] drm/fourcc: Add format info helpers for checking YUV sub-sampling
+Date:   Fri, 18 Jan 2019 15:43:07 +0100
+Message-Id: <20190118144328.20649-3-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
 References: <20190118144328.20649-1-paul.kocialkowski@bootlin.com>
@@ -48,75 +48,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In prevision of adding support for YUV formats, set the YUV to RGB
-colorspace conversion coefficients if required and don't bypass the
-CSC engine when converting.
-
-The BT601 coefficients from the A33 BSP are copied over from the backend
-code. Because of module inter-dependency, we can't have the frontend use
-these coefficients from the backend directly.
+Display engine drivers often need to distinguish between different types of
+YUV sub-sampling. This introduces helpers to check for common sub-sampling
+ratios in their commonly-used denomination from the DRM format info.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 23 +++++++++++++++++++++--
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  2 ++
- 2 files changed, 23 insertions(+), 2 deletions(-)
+ include/drm/drm_fourcc.h | 75 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 045013efdc57..bf37a4ea81c5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -213,6 +213,8 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
- 	const struct drm_format_info *format = fb->format;
- 	u32 out_fmt_val;
- 	u32 in_fmt_val, in_mod_val, in_ps_val;
-+	unsigned int i;
-+	u32 bypass;
- 	int ret;
+diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
+index 01cd353d9302..b3d9d88ab290 100644
+--- a/include/drm/drm_fourcc.h
++++ b/include/drm/drm_fourcc.h
+@@ -185,6 +185,81 @@ drm_format_info_is_yuv_planar(const struct drm_format_info *info)
+ 	return info->is_yuv && info->num_planes == 3;
+ }
  
- 	ret = sun4i_frontend_drm_format_to_input_fmt(format, &in_fmt_val);
-@@ -250,9 +252,26 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
- 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE1_REG, 0x400);
- 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE1_REG, 0x400);
- 
-+	/*
-+	 * Checking the input format is sufficient since we currently only
-+	 * support RGB output formats to the backend. If YUV output formats
-+	 * ever get supported, an YUV input and output would require bypassing
-+	 * the CSC engine too.
-+	 */
-+	if (format->is_yuv) {
-+		/* Setup the CSC engine for YUV to RGB conversion. */
-+		bypass = 0;
++/**
++ * drm_format_info_is_yuv_sampling_410 - check that the format info matches a
++ * YUV format with 4:1:0 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:1:0
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_410(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 4 && info->vsub == 4;
++}
 +
-+		for (i = 0; i < ARRAY_SIZE(sunxi_bt601_yuv2rgb_coef); i++)
-+			regmap_write(frontend->regs,
-+				     SUN4I_FRONTEND_CSC_COEF_REG(i),
-+				     sunxi_bt601_yuv2rgb_coef[i]);
-+	} else {
-+		bypass = SUN4I_FRONTEND_BYPASS_CSC_EN;
-+	}
++/**
++ * drm_format_info_is_yuv_sampling_411 - check that the format info matches a
++ * YUV format with 4:1:1 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:1:1
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_411(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 4 && info->vsub == 1;
++}
 +
- 	regmap_update_bits(frontend->regs, SUN4I_FRONTEND_BYPASS_REG,
--			   SUN4I_FRONTEND_BYPASS_CSC_EN,
--			   SUN4I_FRONTEND_BYPASS_CSC_EN);
-+			   SUN4I_FRONTEND_BYPASS_CSC_EN, bypass);
- 
- 	regmap_write(frontend->regs, SUN4I_FRONTEND_INPUT_FMT_REG,
- 		     in_mod_val | in_fmt_val | in_ps_val);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index 3df2bd8a7a95..17b46ecf7d9e 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -35,6 +35,8 @@
- #define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_BGRX8888	1
- #define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_XRGB8888	2
- 
-+#define SUN4I_FRONTEND_CSC_COEF_REG(c)		(0x070 + (0x4 * (c)))
++/**
++ * drm_format_info_is_yuv_sampling_420 - check that the format info matches a
++ * YUV format with 4:2:0 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:2:0
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_420(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 2 && info->vsub == 2;
++}
 +
- #define SUN4I_FRONTEND_CH0_INSIZE_REG		0x100
- #define SUN4I_FRONTEND_INSIZE(h, w)			((((h) - 1) << 16) | (((w) - 1)))
- 
++/**
++ * drm_format_info_is_yuv_sampling_422 - check that the format info matches a
++ * YUV format with 4:2:2 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:2:2
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_422(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 2 && info->vsub == 1;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_444 - check that the format info matches a
++ * YUV format with 4:4:4 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:4:4
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_444(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 1 && info->vsub == 1;
++}
++
+ const struct drm_format_info *__drm_format_info(u32 format);
+ const struct drm_format_info *drm_format_info(u32 format);
+ const struct drm_format_info *
 -- 
 2.20.1
 
