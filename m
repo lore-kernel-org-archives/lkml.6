@@ -2,120 +2,157 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UPPERCASE_50_75 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C40C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AD5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95592086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:06:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C022820850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:07:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HU9kyzdL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbfARRGX (ORCPT
+        id S1728434AbfARRHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:06:23 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:51030 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728346AbfARRGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:06:22 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 8058613F8B5;
-        Fri, 18 Jan 2019 18:05:51 +0100 (CET)
-Subject: Re: kmemleak panic
-To:     Qian Cai <cai@lca.pw>, Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
- <20190118143434.GE118707@arrakis.emea.arm.com>
- <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
- <5fe89adc-c95b-ca89-d043-c380e2ba8cb3@lca.pw>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <8edcc205-0e55-7988-5729-7b75e47e9b32@free.fr>
-Date:   Fri, 18 Jan 2019 18:05:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <5fe89adc-c95b-ca89-d043-c380e2ba8cb3@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 18 Jan 2019 12:07:51 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40999 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728062AbfARRHu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:07:50 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x10so15892618wrs.8
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:07:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=gyQDSAb68RQOHEAGcpAMGbpY6osDtgIRCykF1IhHNwM=;
+        b=HU9kyzdLG8Vdjse4wbAw07vOaJh5Si9/j3EQ7hPP6b7u4jYzJlRmo3MCmEQcCJvE0L
+         7yJxYZkvpWXG2dLi2D6UO67yRGR6drNNVltyvlQ7rKp9J18InsoWD/DMPREGkJ9fgPIT
+         hnLAokuARJ1ILwmuwuX6PHhtfXT9avcdZKzNs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=gyQDSAb68RQOHEAGcpAMGbpY6osDtgIRCykF1IhHNwM=;
+        b=PJP46mxRiqhT5eoMm72lKZ1KDAXv0/KqR0NIj9cjn+3eVleN6yaaeeffkgVGVSXbpI
+         yGLpH3nblZ4Y2ky3MxwM79Y9mIZ5ZBsDrW0wyRpRDhroEMVSk86oxoPkKcGFWerps6Br
+         bzmZTbH76aMtSwZ8FyMdbLh55I3Q+eMhBvAZUP39ccPoQrxlg24t5UVcyZtn3A88J6/7
+         qd8FZx4uB62OeBIogQoKYkdndNehC0J/1nL1iELjaL5dhBAGHAwdFx8bADrPDBmfp6kH
+         mjKj1NG3aeoT9vzx7Lx3cEGL/msa0OukCWN/3o4FSM5C9lbjRwjKVsj5fzjCTiIr5FQL
+         hxqA==
+X-Gm-Message-State: AJcUukeUujRvyvpHEjo0KkLB+jPzaK9GbfdJ4pwTAe2EppcTjA1TSOl1
+        pGO/sxi40EVYU/Rouh+g+7eooA==
+X-Google-Smtp-Source: ALg8bN5EylvmxpjyZO21ODhJecUJgPePdb6Esjc7d7KidoZEyVpZ3bhG09iXX2QpyiTnOV0M637J3A==
+X-Received: by 2002:adf:c5d3:: with SMTP id v19mr17306869wrg.30.1547831268180;
+        Fri, 18 Jan 2019 09:07:48 -0800 (PST)
+Received: from [192.168.43.112] ([37.162.17.17])
+        by smtp.gmail.com with ESMTPSA id s1sm123543555wro.9.2019.01.18.09.07.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 09:07:47 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
+Date:   Fri, 18 Jan 2019 18:07:45 +0100
+Cc:     Andrea Righi <righi.andrea@gmail.com>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
+        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F576C256-A032-4E62-99EA-F60162B6E069@linaro.org>
+References: <20190118103127.325-1-righi.andrea@gmail.com>
+ <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/01/2019 17:14, Qian Cai wrote:
 
-> This looks like something different from the original "invalid PFNs from
-> pfn_to_online_page()" issue. What's your .config ?
 
-Here's my defconfig:
+> Il giorno 18 gen 2019, alle ore 17:35, Josef Bacik =
+<josef@toxicpanda.com> ha scritto:
+>=20
+> On Fri, Jan 18, 2019 at 11:31:24AM +0100, Andrea Righi wrote:
+>> This is a redesign of my old cgroup-io-throttle controller:
+>> https://lwn.net/Articles/330531/
+>>=20
+>> I'm resuming this old patch to point out a problem that I think is =
+still
+>> not solved completely.
+>>=20
+>> =3D Problem =3D
+>>=20
+>> The io.max controller works really well at limiting synchronous I/O
+>> (READs), but a lot of I/O requests are initiated outside the context =
+of
+>> the process that is ultimately responsible for its creation (e.g.,
+>> WRITEs).
+>>=20
+>> Throttling at the block layer in some cases is too late and we may =
+end
+>> up slowing down processes that are not responsible for the I/O that
+>> is being processed at that level.
+>=20
+> How so?  The writeback threads are per-cgroup and have the cgroup =
+stuff set
+> properly.  So if you dirty a bunch of pages, they are associated with =
+your
+> cgroup, and then writeback happens and it's done in the writeback =
+thread
+> associated with your cgroup and then that is throttled.  Then you are =
+throttled
+> at balance_dirty_pages() because the writeout is taking longer.
+>=20
 
-# CONFIG_SWAP is not set
-CONFIG_NO_HZ_IDLE=y
-CONFIG_HIGH_RES_TIMERS=y
-CONFIG_PREEMPT=y
-CONFIG_IKCONFIG=y
-CONFIG_IKCONFIG_PROC=y
-CONFIG_LOG_BUF_SHIFT=20
-CONFIG_BLK_DEV_INITRD=y
-CONFIG_ARCH_QCOM=y
-# CONFIG_EFI is not set
-# CONFIG_SUSPEND is not set
-CONFIG_PM=y
-# CONFIG_MQ_IOSCHED_DEADLINE is not set
-# CONFIG_MQ_IOSCHED_KYBER is not set
-CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-CONFIG_DEVTMPFS=y
-CONFIG_DEVTMPFS_MOUNT=y
-# CONFIG_BLK_DEV is not set
-# CONFIG_INPUT_KEYBOARD is not set
-# CONFIG_INPUT_MOUSE is not set
-# CONFIG_SERIO_SERPORT is not set
-CONFIG_VT_HW_CONSOLE_BINDING=y
-CONFIG_LEGACY_PTY_COUNT=16
-CONFIG_SERIAL_8250=y
-CONFIG_SERIAL_MSM=y
-CONFIG_SERIAL_MSM_CONSOLE=y
-CONFIG_SERIAL_DEV_BUS=y
-# CONFIG_HW_RANDOM is not set
-# CONFIG_HWMON is not set
-CONFIG_REGULATOR=y
-CONFIG_REGULATOR_FIXED_VOLTAGE=y
-CONFIG_REGULATOR_QCOM_SMD_RPM=y
-# CONFIG_HID is not set
-# CONFIG_USB_SUPPORT is not set
-# CONFIG_COMMON_CLK_XGENE is not set
-CONFIG_COMMON_CLK_QCOM=y
-# CONFIG_QCOM_A53PLL is not set
-# CONFIG_QCOM_CLK_APCS_MSM8916 is not set
-CONFIG_QCOM_CLK_SMD_RPM=y
-CONFIG_MSM_GCC_8998=y
-CONFIG_HWSPINLOCK=y
-CONFIG_HWSPINLOCK_QCOM=y
-CONFIG_MAILBOX=y
-CONFIG_QCOM_APCS_IPC=y
-CONFIG_RPMSG_QCOM_GLINK_RPM=y
-CONFIG_RPMSG_QCOM_GLINK_SMEM=y
-CONFIG_RPMSG_QCOM_SMD=y
-CONFIG_RPMSG_VIRTIO=y
-CONFIG_QCOM_COMMAND_DB=y
-CONFIG_QCOM_SMEM=y
-CONFIG_QCOM_SMD_RPM=y
-CONFIG_TMPFS=y
-CONFIG_DEBUG_INFO=y
-CONFIG_DEBUG_KERNEL=y
-CONFIG_DEBUG_KMEMLEAK=y
-CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE=4000
-CONFIG_FUNCTION_TRACER=y
+IIUC, Andrea described this problem: certain processes in a certain =
+group dirty a
+lot of pages, causing write back to start.  Then some other blameless
+process in the same group experiences very high latency, in spite of
+the fact that it has to do little I/O.
+
+Does your blk_cgroup_congested() stuff solves this issue?
+
+Or simply I didn't get what Andrea meant at all :)
+
+Thanks,
+Paolo
+
+> I introduced the blk_cgroup_congested() stuff for paths that it's not =
+easy to
+> clearly tie IO to the thing generating the IO, such as readahead and =
+such.  If
+> you are running into this case that may be something worth using.  =
+Course it
+> only works for io.latency now but there's no reason you can't add =
+support to it
+> for io.max or whatever.
+>=20
+>>=20
+>> =3D Proposed solution =3D
+>>=20
+>> The main idea of this controller is to split I/O measurement and I/O
+>> throttling: I/O is measured at the block layer for READS, at page =
+cache
+>> (dirty pages) for WRITEs, and processes are limited while they're
+>> generating I/O at the VFS level, based on the measured I/O.
+>>=20
+>=20
+> This is what blk_cgroup_congested() is meant to accomplish, I would =
+suggest
+> looking into that route and simply changing the existing io controller =
+you are
+> using to take advantage of that so it will actually throttle things.  =
+Then just
+> sprinkle it around the areas where we indirectly generate IO.  Thanks,
+>=20
+> Josef
+
