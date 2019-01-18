@@ -2,77 +2,87 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5ED7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96175C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9192120823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C69C20883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547811827;
-	bh=1rWIyOeVV4VcpL0e+/AT8D891MmJYlLZjBnUt/t3DsE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:List-ID:From;
-	b=h1vlDqRHi6NfaEiT0FosphT5h37LEPfyecABHAFMvIoPSPGb9JplLz64Cgx2PmoUr
-	 AypYiWmkzPOqL9HYfBiaPBPPuqrSwEwAAV8HTnP7S+voBtVhZE7Fp6EXor11iUPrJI
-	 z9RDzqC/Mi/w69YoANBaUm8SGogM9xJNmEjABx7M=
+	s=default; t=1547811926;
+	bh=jVcWQBi9YSzjt7qYvO+JdecqQDz4uLGpMUW7PkX0mOM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=P7xE51jcnhaDq043Vvqf/r16a8/VklLD81cZmuj5Ls9C3l8tP/VfCJqihkGGaCIOQ
+	 SppxPr6tsiOLwVj+AXOQp5kUEVYF2nKkTPgL6cOgMl4nGl7p5/edgzEFRvIEzmNgsP
+	 d1pNsWFbQGG3Mej1Q119IRYUVCjQuUIXEVCnKsG0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbfARLnp (ORCPT
+        id S1727343AbfARLpY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:43:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727201AbfARLnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:43:45 -0500
-Received: from localhost.localdomain (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25D952087E;
-        Fri, 18 Jan 2019 11:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547811824;
-        bh=1rWIyOeVV4VcpL0e+/AT8D891MmJYlLZjBnUt/t3DsE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:From;
-        b=J6gj4jCl8otaPSOuqb1S+1ULVlsEiE5pgsp+oRFKIe2cJ61amGosHSTxK2l0t4Lm1
-         6CATmWfxODfWrEQ53/zRnGgwsKAX2AUVmHuKnjd8rY8J+AcQyupfpBMdKkh67a7cop
-         4ES84zlOUUEORCvg4nqOv8aJ5mPH6uBz+FpoKAtw=
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-kernel@vger.kernel.org,
-        "linux-stable # v4 . 20" <stable@vger.kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: mtd: rawnand: denali: get ->setup_data_interface() working again
-Date:   Fri, 18 Jan 2019 12:43:36 +0100
-Message-Id: <20190118114336.21970-1-bbrezillon@kernel.org>
-X-Mailer: git-send-email 2.17.1
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: d311e0c27b8fcc27f707f8cac48cd8bdc4155224
-In-Reply-To: <1547789438-11899-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 18 Jan 2019 06:45:24 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37457 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727115AbfARLpY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 06:45:24 -0500
+Received: by mail-ot1-f68.google.com with SMTP id s13so14122199otq.4;
+        Fri, 18 Jan 2019 03:45:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jVcWQBi9YSzjt7qYvO+JdecqQDz4uLGpMUW7PkX0mOM=;
+        b=lySoSEgdXrMWo47a0wNZYVCUyqEna4+sPbmnaZN8xgh1bKodOaDD4fXtSDYhkdCwJh
+         Ic/t/ggWSa5ss4i18MJQtxNVte9+OwG4DNuthbHldpUOpqcUINtfo0IxWVJyyId5ak7F
+         nlFlW+Cx2iVew/c9//bNfdlSdnguoWWViwOz0w1nzBfVA4xYTXyGsVzQA6VFDJJZ5yOS
+         yHvCfia6WP8/b8X8XuiZQfqgTYLby7D/KcaY1auazKDBqR3zEHBaOG2rT0ojcyo/pxGt
+         CUrqUG6qRBd5ChsC1R197ZEPQ34VqX3nAV+LpzbYT67+3Ia1JAs7IEsDIleyg01PRODV
+         IZnA==
+X-Gm-Message-State: AJcUuken/4Gg8yf9sCg+JMTj0tHaegRpbOWm2VpDUOu5QpQfQ5D4qICI
+        1QBnCLFFqMS73KjVf4yGQ5iL9k7W88zjilV+J7rbCDgucso=
+X-Google-Smtp-Source: ALg8bN7q2jmNIcoyyD5ZLQmz1zYpQMsvYtQgk7zm85J2PT4iQb2O7UtR4ziXgW8Kb7EDvoOjpu+wH3fOkKLxy7h5qyw=
+X-Received: by 2002:a9d:588c:: with SMTP id x12mr11805369otg.139.1547811923427;
+ Fri, 18 Jan 2019 03:45:23 -0800 (PST)
+MIME-Version: 1.0
+References: <20190117161722.3945-1-okaya@kernel.org> <20190117163722.GE5023@zn.tnic>
+ <c0fa174a-2e7b-2ef2-4913-167934c68c06@kernel.org> <20190117215631.GF5023@zn.tnic>
+ <CAJZ5v0hHFASeJb8z8QwQkh-tCs409pnaywtWcqLP5K5ZDGhTsw@mail.gmail.com> <20190117220959.GG5023@zn.tnic>
+In-Reply-To: <20190117220959.GG5023@zn.tnic>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 18 Jan 2019 12:45:12 +0100
+Message-ID: <CAJZ5v0iR=0ZoS_=KpTRefZ+fdZOKAAH1PSxfS0cfyS+zx39Hgw@mail.gmail.com>
+Subject: Re: [for-next][PATCH] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI
+ is enabled
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sinan Kaya <okaya@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-01-18 at 05:30:38 UTC, Masahiro Yamada wrote:
-> Commit 7a08dbaedd36 ("mtd: rawnand: Move ->setup_data_interface() to
-> nand_controller_ops") missed to invert the if-conditonal for denali.
-> Since then, the Denali NAND driver cannnot invoke setup_data_interface.
-> 
-> Fixes: 7a08dbaedd36 ("mtd: rawnand: Move ->setup_data_interface() to nand_controller_ops")
-> Cc: linux-stable <stable@vger.kernel.org> # v4.20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+On Thu, Jan 17, 2019 at 11:10 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Thu, Jan 17, 2019 at 11:05:43PM +0100, Rafael J. Wysocki wrote:
+> > I have patches for intel_ips and intel_pmc_ipc queued up (will be
+> > pushed for -rc3), plus some others.
+>
+> Yeah, I saw the patchset and applied some of them locally so that I be
+> able to do randconfig builds. Do you have a branch somewhere which I can
+> merge locally for testing?
 
-Applied to http://git.infradead.org/linux-mtd.git mtd/fixes, thanks.
-
-Boris
+You can pull the tag I've just pushed to Linus:
+https://lore.kernel.org/lkml/CAJZ5v0jiK=zLP4cUsw=y9ea7PLHHgy=xshAsHFhTgyDJH+kOiQ@mail.gmail.com/T/#u
