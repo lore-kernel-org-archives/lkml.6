@@ -6,110 +6,166 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD6BC07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0492C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 980A620850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C2CA20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbfARSFx (ORCPT
+        id S1728739AbfARSJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:05:53 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:35349 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728822AbfARSFw (ORCPT
+        Fri, 18 Jan 2019 13:09:21 -0500
+Received: from mail-sh.amlogic.com ([58.32.228.43]:49862 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728274AbfARSJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:05:52 -0500
-Received: from oxbsltgw66.schlund.de ([212.227.220.204]) by
- mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MxEYY-1h8x5s34zQ-00xZ54; Fri, 18 Jan 2019 19:05:36 +0100
-Date:   Fri, 18 Jan 2019 19:05:35 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Jeremy Linton <jeremy.linton@arm.com>, marc.zyngier@arm.com
-Cc:     mlangsdo@redhat.com, suzuki.poulose@arm.com,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        julien.thierry@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, steven.price@arm.com,
-        ykaukab@suse.de, dave.martin@arm.com, shankerd@codeaurora.org
-Message-ID: <575913854.422488.1547834735236@email.ionos.de>
-In-Reply-To: <c99f5da9-259c-3fc5-6150-7327ba0ff429@arm.com>
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
- <884332236.499392.1547581848222@email.ionos.de>
- <c99f5da9-259c-3fc5-6150-7327ba0ff429@arm.com>
-Subject: Re: [PATCH v3 0/7] arm64: add system vulnerability sysfs entries
+        Fri, 18 Jan 2019 13:09:21 -0500
+Received: from [192.168.0.111] (223.166.104.240) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1591.10; Sat, 19 Jan
+ 2019 02:10:02 +0800
+Subject: Re: [PATCH] arm64: dts: meson: fix g12a buses
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Victor Wan <victor.wan@amlogic.com>
+References: <20190116165236.8330-1-jbrunet@baylibre.com>
+ <CAFBinCBFge2tir-MXw+ojTxzW+7n9Uf4FzCahrw0MDzAYV2SSg@mail.gmail.com>
+ <f7289814e316ad5879848fb8c379db396f615828.camel@baylibre.com>
+ <CAFBinCDhryOWHmRKp7GhWp2O+NpJziEgHoUE4HKVitTPDMrrBQ@mail.gmail.com>
+ <ba1f56258e7873041a0f75996e376170563c9e6e.camel@baylibre.com>
+ <CAFBinCAdJu2C-LWspiHR4vVr=PUD2HGNi4zz+CSJP96ZE4GoJw@mail.gmail.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <98166e2c-f5f8-55b9-6acb-7374bf10d80c@amlogic.com>
+Date:   Sat, 19 Jan 2019 02:09:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAFBinCAdJu2C-LWspiHR4vVr=PUD2HGNi4zz+CSJP96ZE4GoJw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:ZoURWHSIlPpYkd2EnWsFsQ8SWv7CpPvZNTMHt3wz4UaeaNhZEzy
- iOxccCipZ7wm6wnJigp1k7fjQ/OlSNWmcFbQ1tv9x4nZldlWSLYK9BH8HiG8YYrBq9qrkRy
- mq26uzJRV5RmsCaC1AvbuiVLReROd831julPROi4BzrS0glCoJCud/CBXrfNBJXDOUwrIHO
- bff2QxmS9bCKRRNhFgnqA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:31AmI8rdDIA=:pxW8TEtyU2nbIAidssiwFi
- YMzQ4SGC9vu8nYoFOEsnvBQcyAbiXYtoupCbhexv/xnMgXO3w6ndIB7iwjcL1oYv2sCVpxW2O
- qwyqslyuCVjY3GdyjZkmryCZx/Sa6OqMaAmd3ILL9RiwxOfs6M805K7IRLEpICCfGcxYRyT30
- N95+/tP41X72suqOGnJ5z+KaRRYHfHQKC85Hu/jlCWF6rWmRlao7WrboLRyx6gibTi0S2MkRX
- XS1Cpo7/+xloCxcQwDEO399e1VKIXp7lYn+zBpEf7qfDlPgyAbAscMvhw7Yme5kCET+2W2Pcv
- JLKu4TDsrF+ehYgrS7w/+k1dpifsqecntIgNlyN4+b6xVGo4q+uXjHTf5JG7d04AX0s5k4Zmi
- Nm+7Cvp0S55+00k+GBXtHkXMecWh9Oqgl+aUPgmuh8ptISkp6vAXLIM8Nau3fCHg6ZlbZik5k
- kKarDXnMOx0IcPs0ILhskBRWLJWw2ibfCRJSHf4i4Y3t8H10iXa6KuPndMknt7zZZ4lxQWCtS
- q495UWDGsJC1iKHVyvMM2Pmbcq+pBj9Mv6lwCu5blPZ8l6Fb1GRLeIpCPxXMszv7hLF61oFv4
- e3jNRJ7i4A/qPcmBQzd7B/mt+uYsdEbhMw17ucUSzAejeUqa3vW4vGWKmpWNqIuHCvYup7KVS
- GJmbb3CybBRh55jfH4jsO0Kvb/fsS2Q4vC+iizSxaW0nEUeudLvIQ8Uc4PVSi6v22uspEY/Kj
- 1PbNSvwNfuVh8Y0O5ZbbfrC8cUzOblJHDTLd2PHSuV+KC2sAsoles5LKKec=
+X-Originating-IP: [223.166.104.240]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh.amlogic.com
+ (10.18.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-> Jeremy Linton <jeremy.linton@arm.com> hat am 15. Januar 2019 um 22:21 geschrieben:
-> 
-> 
-> Hi,
-> 
-> On 01/15/2019 01:50 PM, Stefan Wahren wrote:
-> > Hi Jeremy,
-> > 
-> >> Jeremy Linton <jeremy.linton@arm.com> hat am 10. Januar 2019 um 00:55 geschrieben:
-> >>
-> >>
-> >> Arm64 machines should be displaying a human readable
-> >> vulnerability status to speculative execution attacks in
-> >> /sys/devices/system/cpu/vulnerabilities
-> >>
-> >> This series enables that behavior by providing the expected
-> >> functions. Those functions expose the cpu errata and feature
-> >> states, as well as whether firmware is responding appropriately
-> >> to display the overall machine status. This means that in a
-> >> heterogeneous machine we will only claim the machine is mitigated
-> >> or safe if we are confident all booted cores are safe or
-> >> mitigated.
-> >>
-> > 
-> > i applied this v3 series and Marc's v2 series.
-> > 
-> > Now i'm getting the following on a Raspberry Pi 3 B+ :
-> > 
-> > meltdown:Not affected
-> > spec_store_bypass:Not affected
-> > spectre_v1:Mitigation: __user pointer sanitization
-> > 
-> > So the entries l1tf and spectre_v2 disappeared.
-> 
-> Yes, the l1tf entry should be gone.
-> 
-> I believe there is a problem with the "1/2 advertise.." patch in that 
-> the 'arm64_requested_vuln_attrs |=' line needs to be hoisted  to the top 
-> of check_branch_predictor() and the '__spectrev2_safe = false' line 
-> needs to be hoisted 6 lines immediately above "/* Fallback to firmware 
-> detection*/"
+Hi Martin and Jerome,
 
-a snippet or a new version would be nice
+On 2019/1/18 5:20, Martin Blumenstingl wrote:
+> On Thu, Jan 17, 2019 at 9:39 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>>
+>> On Thu, 2019-01-17 at 21:27 +0100, Martin Blumenstingl wrote:
+>>> OK, but we had incorrect documentation in the past. did you check this
+>>> with someone from Amlogic?
+>>>
+>>> I'm curious because there seem to be two different approaches here:
+>>> 1) hiubus name and offsets are being fixed within this patch
+>>> 2) aobus is being dropped here and re-introduced with a different name later
+>>> on
+>>>
+>>
+>> because hiu exist and aobus does not, for which both the name and size was
+>> wrong
+>>
+>>> approach 1) can also be used for the "rti" region (at least in my
+>>> opinion, the patch doesn't explain why it can't be done):
+>>
+>> THe patch remove aobus (instead of fixing name and size) because, of the
+>> multiple region documented covered by this 'made region', I did not anticipate
+>> which one will be required and I did not want to add them all.
+>>
+>> Better to add them as needed, which is want I done for pinctrl as you pointed
+>> out
+>>
+>>> rename "aobus" to "rti" and change the size to either 0x1000 or 0xb000
+>>> (both values can be found in mesong12a.dtsi from
+>>> buildroot_openlinux_kernel_4.9_fbdev_20180706)
+>>
+>> RTI is added here:
+>> https://lkml.kernel.org/r/20190117103151.3349-1-jbrunet@baylibre.com
+>>
+>> I don't really understand the problem ? result is the same
+> the actual problem is "me" as I have conflicting information:
+> - Amlogic's buildroot kernel (for G12A) uses similar bus definitions
+> as the GX SoCs (for which there are public datasheets) - this is how
+> Jianxin added it to meson-g12a.dtsi originally
+> - this patch does it different - but cannot check if this is correct
+> (no public datasheet is available for G12A or AXG) nor do I have a
+> "big picture" of upcoming changes
+> 
+> Cc'ing Jianxin: can you please review Jerome's patch and give some
+> more details on the memory map on G12A so further contributions can be
+> reviewed easier?
+> 
+1. "aobus: bus@ff800000" describes the following registers:
+ahb	ao_reg	reserved	980	FF80B000
+ahb	ao_reg	ao_mailbox	4	FF80A000
+ahb	ao_reg	sar_adc		4	FF809000
+ahb	ao_reg	ir_dec		4	FF808000
+ahb	ao_reg	pwm_ab		4	FF807000
+ahb	ao_reg	i2c_s		4	FF806000
+ahb	ao_reg	i2c_m		4	FF805000
+ahb	ao_reg	uart2		4	FF804000
+ahb	ao_reg	uart		4	FF803000
+ahb	ao_reg	pwm_cd		4	FF802000
+ahb	ao_reg	reserved	4	FF801000
+ahb	ao_reg	rti		4	FF800000
+
+
+2. "cbus: bus@ffd00000" describes the following registers:
+capb3	cbus	reserved	872	FFD26000	FFDFFFFF
+capb3	cbus	sc		4	FFD25000	FFD25FFF
+capb3	cbus	uart0		4	FFD24000	FFD24FFF
+capb3	cbus	uart1		4	FFD23000	FFD23FFF
+capb3	cbus	uart2		4	FFD22000	FFD22FFF
+capb3	cbus	reserved	4	FFD21000	FFD21FFF
+capb3	cbus	reserved	4	FFD20000	FFD20FFF
+capb3	cbus	i2c_m0		4	FFD1F000	FFD1FFFF
+capb3	cbus	i2c_m1		4	FFD1E000	FFD1EFFF
+capb3	cbus	i2c_m2		4	FFD1D000	FFD1DFFF
+capb3	cbus	i2c_m3		4	FFD1C000	FFD1CFFF
+capb3	cbus	pwm_ab		4	FFD1B000	FFD1BFFF
+capb3	cbus	pwm_cd		4	FFD1A000	FFD1AFFF
+capb3	cbus	pwm_ef		4	FFD19000	FFD19FFF
+capb3	cbus	msr_clk		4	FFD18000	FFD18FFF
+capb3	cbus	reserved	4	FFD17000	FFD17FFF
+capb3	cbus	reserved	4	FFD16000	FFD16FFF
+capb3	cbus	spicc_1		4	FFD15000	FFD15FFF
+capb3	cbus	spifc		4	FFD14000	FFD14FFF
+capb3	cbus	spicc_0		4	FFD13000	FFD13FFF
+capb3	cbus	reserved	4	FFD12000	FFD12FFF
+capb3	cbus	reserved	4	FFD11000	FFD11FFF
+capb3	cbus	reserved	4	FFD10000	FFD10FFF
+capb3	cbus	isa		4	FFD0F000	FFD0FFFF
+capb3	cbus	parser		4	FFD0E000	FFD0EFFF
+capb3	cbus	reserved	4	FFD0D000	FFD0DFFF
+capb3	cbus	sana		4	FFD0C000	FFD0CFFF
+capb3	cbus	stream		4	FFD0B000	FFD0BFFF
+capb3	cbus	async_fifo	4	FFD0A000	FFD0AFFF
+capb3	cbus	async_fifo2	4	FFD09000	FFD09FFF
+capb3	cbus	assist		4	FFD08000	FFD08FFF
+capb3	cbus	mipi_dsi_host	4	FFD07000	FFD07FFF
+capb3	cbus	stb		4	FFD06000	FFD06FFF
+capb3	cbus	aififo		4	FFD05000	FFD05FFF
+capb3	cbus	reserved	4	FFD04000	FFD04FFF
+capb3	cbus	reserved	4	FFD03000	FFD03FFF
+capb3	cbus	reserved	4	FFD02000	FFD02FFF
+capb3	cbus	reset		4	FFD01000	FFD01FFF
+capb3	cbus	reserved	4	FFD00000	FFD00FFF
+
+3. In public data sheet, I can only found memory map about sub-regions of each bus. 
+And no information about the bus itself.
 
 > 
-> That should re-enable the spectre_v2 entry.
+> Regards
+> Martin
+> 
+> .
+> 
+
