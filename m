@@ -2,78 +2,117 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 755F7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB99DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 509AD20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:54:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A137520850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:56:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbfARHyv (ORCPT
+        id S1727330AbfARH4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 02:54:51 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41632 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727167AbfARHyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 02:54:51 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B421AA94EEA23E961D84;
-        Fri, 18 Jan 2019 15:54:48 +0800 (CST)
-Received: from [127.0.0.1] (10.63.139.185) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
- 15:54:38 +0800
-Subject: Re: [PATCH 3/4] crypto: hisilicon: Add HiSilicon ZIP accelerator
- support
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-References: <1545465105-133138-1-git-send-email-wangzhou1@hisilicon.com>
- <1545465105-133138-4-git-send-email-wangzhou1@hisilicon.com>
- <20190111060859.k647ltxukywjmi3l@gondor.apana.org.au>
- <5C383908.4090107@hisilicon.com> <5C3F3BDF.6070409@hisilicon.com>
- <20190118045546.hs37a2isfnvxgm7j@gondor.apana.org.au>
-CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-crypto@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-From:   Zhou Wang <wangzhou1@hisilicon.com>
-Message-ID: <5C418659.30904@hisilicon.com>
-Date:   Fri, 18 Jan 2019 15:55:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Fri, 18 Jan 2019 02:56:41 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:45324 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbfARH4k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 02:56:40 -0500
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 1D2963A677E
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:48:43 +0100 (CET)
+X-Originating-IP: 141.70.45.131
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 1A6C2FF807;
+        Fri, 18 Jan 2019 07:48:38 +0000 (UTC)
+Date:   Fri, 18 Jan 2019 08:48:37 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Hartman <ghartman@google.com>,
+        linux-kernel@vger.kernel.org,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>,
+        Alistair Strachan <strachan@google.com>,
+        Christian Brauner <christian@brauner.io>
+Subject: Re: [PATCH] sched/wait: introduce wait_event_freezable_hrtimeout
+Message-ID: <20190118074837.GA6288@hle-laptop.local>
+References: <20190117224135.GC8100@hle-laptop.local>
+ <20190118071752.GG11050@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190118045546.hs37a2isfnvxgm7j@gondor.apana.org.au>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.63.139.185]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Disposition: inline
+In-Reply-To: <20190118071752.GG11050@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/18 12:55, Herbert Xu wrote:
-> On Wed, Jan 16, 2019 at 10:12:47PM +0800, Zhou Wang wrote:
->>
->> A stupid question: how do we test scomp alg?
->>
->> It seems we can not use general comp API, e.g. crypto_alloc_comp
->> to do this.
->>
->> Could you give me any clue about this?
-> 
-> scomp algorithms are allocated through crypto_alloc_acomp.
 
-A little strange, but let me try firstly.
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-However, another question is that seems other subsystems in kernel,
-e.g. zswap still use crypto_alloc_comp. So we'd better register this
-ZIP engine using both cryto_alloc_comp and scomp/acomp interface to
-make it compatible with other subsystems?
+Hi Greg,
 
-Best,
-Zhou
+> > introduce wait_event_freezable_hrtimeout, an interruptible and freezable
+> > version of wait_event_hrtimeout.
+> >=20
+> > simplify handle_vsoc_cond_wait (drivers/staging/android/vsoc.c) using t=
+his
+> > newly added helper and remove useless includes.
+> >=20
+> > Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
+> > ---
+> >  drivers/staging/android/vsoc.c | 69 +++++-----------------------------
+> >  include/linux/wait.h           | 25 ++++++++++--
+>=20
+> code in drivers/staging/ should be self-contained, and not, if at all
+> possible, ever force additional changes on "core" kernel code.
+>=20
+> Are you sure that the vsoc code can't use one of the current wait
+> macros?
 
-> 
-> Thanks,
-> 
+As far as I know there is no macro implementing freezable wait with high
+resolution timeout.
 
+> Why is it so special and unique that no one else in the kernel
+> has ever needed this before it came along?
+
+many wait_event_X() (_exclusive, _interruptible, _timeout) functions have a
+freezable counterpart. wait_event_hrtimeout() doesn't, probably because it
+is relatively new (and seemingly quite unused).
+
+If there is a wait_event_hrtimeout() function, it makes sense to me to have
+wait_event_freezable_hrtimeout().
+
+--=20
+                Hugo Lefeuvre (hle)    |    www.owl.eu.com
+RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
+ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlxBhMsACgkQZYVUZx9w
+0DQaCwf9FZoalsr7SE0nvxKs/14uvlBjDEcKthGwUW69WZAuX89ky3QAAgiyxidi
+Xj2cHGyFD5EKpAEsed2SSrlCpH5tmES/GfzX3DR1Y24z9NVTr7ZDZFXke8kvxxJH
+tPN2pCdKyrsfNscdIURc1MzpdGM6FbvJc6H1IpznnrvQ+eBs95F75QTH+dz1qDlU
+mL/lpGIgrGShZO/0hsfV1e3bAfb/lnQgzMJi25VlHNJJTIhHG2hO2z7MC9DlNnFp
+jjgMbF98b5cfXVPvHAbM4OcttK22bKFrKAcyCeyrF+UFt5g+yd0OOiflK92LKS8V
+8skLd5Byvz1Oqbm7WFC3zQTeOJerng==
+=cxkH
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
