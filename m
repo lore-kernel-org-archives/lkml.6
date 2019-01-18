@@ -6,105 +6,68 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A31F5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43734C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73CAC20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:09:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A1BE20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:10:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l6uFPO04"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NwdUTf7P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbfARQJw (ORCPT
+        id S1727983AbfARQKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:09:52 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:33702 "EHLO
+        Fri, 18 Jan 2019 11:10:00 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:33722 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfARQJw (ORCPT
+        with ESMTP id S1726902AbfARQJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:09:52 -0500
+        Fri, 18 Jan 2019 11:09:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iX8VW9HjgFXT7Ii2QEevfwIhExiKmVnAFwBnYZ0K2tw=; b=l6uFPO04/Q7PWBF7g0c1NObHQ
-        yQON4kjC6prOLFimKVoHYoVe1+V5Q4SURU8gSlcZlnysvOF35N1tH2175YsULIrkAC7D/RaRy3gqI
-        tuzJxrbKyI9WfIg9gpDof1ebaKrcVJwKJhqRqxClqK12ed3oJdj3kxFBCUJajfCG4mmA9qUjT5FqN
-        BP2JNY4mC0h5wX8Qhigv0CrED03BkQrZ5aSORzYdOdHhoGWrmirfJXrC/3CQsLo58HsiibqmrBLve
-        G8q45iJr6X83/0tp6ASSnHPxeSr5NVJokZGK73TO6piKipLSMvLVEkqRG4gbyPXosCWxBdazxdVWW
-        Vtz2uOONQ==;
+         bh=HZ9qWuMFoqsHC+kBQ6LZRGT7fQPeNSw5ZvnMf2yU0lo=; b=NwdUTf7PbwQo2Gt2vxydKLoPi
+        J29G41OtRo5opF2t60wdpZyj1NIck2/XcPaHKVK2WrFcqbVdc4u5k5v9QFHAUk2/0Uxd+me6JaRcw
+        2yXcLkYSwb9+AiODpbGRCu3Cgs5Ba2n63DUo4l92Ao8xMgjFXbtvOOJ5Cq4O3PjVFd5BA7UBX8s/V
+        vXV+IXAh4V+DQeRzdbGn/m0I58KXanqglho2shPjC39uQwMi+FH7iZWIQbbDZzoKsXY7AT3bIouFg
+        GZs2H/03C5UAt05K0R5Qb4zd5daRGyNz9UhmgLBIHW1R4DxWZUmrX4EhlybxA0E7uAGPBDTTpisDF
+        79uCGZHyg==;
 Received: from [89.200.44.227] (helo=worktop.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gkWiJ-00043T-5Z; Fri, 18 Jan 2019 16:09:47 +0000
+        id 1gkWiJ-00043V-5Z; Fri, 18 Jan 2019 16:09:47 +0000
 Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 065D99818FF; Fri, 18 Jan 2019 16:58:15 +0100 (CET)
-Date:   Fri, 18 Jan 2019 16:58:14 +0100
+        id 6EBF0983826; Fri, 18 Jan 2019 17:03:12 +0100 (CET)
+Date:   Fri, 18 Jan 2019 17:03:12 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vince Weaver <vincent.weaver@maine.edu>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: perf: rdpmc bug when viewing all procs on remote cpu
-Message-ID: <20190118155814.GC14054@worktop.programming.kicks-ass.net>
-References: <alpine.DEB.2.21.1901101229010.3358@macbook-air>
- <alpine.DEB.2.21.1901101246340.3358@macbook-air>
- <alpine.DEB.2.21.1901101500030.3717@macbook-air>
- <alpine.DEB.2.21.1901111649580.6487@macbook-air>
- <20190118120149.GC27931@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1901180905090.5762@macbook-air>
+To:     Elena Reshetova <elena.reshetova@intel.com>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, keescook@chromium.org,
+        tglx@linutronix.de, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 0/5] sched refcount_t conversions
+Message-ID: <20190118160312.GF14054@worktop.programming.kicks-ass.net>
+References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1901180905090.5762@macbook-air>
+In-Reply-To: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 09:09:04AM -0500, Vince Weaver wrote:
-> On Fri, 18 Jan 2019, Peter Zijlstra wrote:
-> 
-> > On Fri, Jan 11, 2019 at 04:52:22PM -0500, Vince Weaver wrote:
-> > > On Thu, 10 Jan 2019, Vince Weaver wrote:
-> > > 
-> > > > On Thu, 10 Jan 2019, Vince Weaver wrote:
-> > > > 
-> > > > > On Thu, 10 Jan 2019, Vince Weaver wrote:
-> > > > > 
-> > > > > > However if you create an all-process attached to CPU event:
-> > > > > > 	perf_event_open(attr, -1, X, -1, 0);
-> > > > > > the mmap event index is set as if this were a valid event and so the rdpmc
-> > > > > > succeeds even though it shouldn't (we're trying to read an event value
-> > > > > > on a remote cpu with a local rdpmc).
-> > > 
-> > > so on further looking at the code, it doesn't appear that rdpmc events are 
-> > > explicitly marked as unavailable in the attach-cpu or attach-pid case, 
-> > > it's just by luck the check for PERF_EVENT_STATE_ACTIVE catches most of 
-> > > the cases?
-> > > 
-> > > should an explicit check be added to zero out userpg->index in cases where 
-> > > the event being measured is running on a different core?
-> > 
-> > And how would we konw? We don't know what CPU will be observing the
-> > mmap().
-> > 
-> > RDPMC fundamentally only makes sense on 'self' (either task or CPU).
-> 
-> so is this a "don't do that then" thing and I should have PAPI 
-> userspace avoid using rdpmc() whenever a proc/cpu was attached to?
+On Fri, Jan 18, 2019 at 02:27:25PM +0200, Elena Reshetova wrote:
+> Elena Reshetova (5):
+>   sched: convert sighand_struct.count to refcount_t
+>   sched: convert signal_struct.sigcnt to refcount_t
 
-You can actually use rdpmc when you attach to a CPU, but you have to
-ensure that the userspace component is guaranteed to run on that very
-CPU (sched_setaffinity(2) comes to mind).
+These should really be seen by Oleg (bounced) and I'll await his reply.
 
-> Or is there a way to have the kernel indicate this?  Does the kernel track 
-> current CPU and original CPU of the mmap and could zero out the index 
-> field in this case?  Or would that add too much overhead?
+>   sched: convert numa_group.refcount to refcount_t
+>   sched/task_struct: convert task_struct.usage to refcount_t
+>   sched/task_struct: convert task_struct.stack_refcount to refcount_t
 
-Impossible I'm afraid. Memory is not associated with a CPU; it's
-contents is the same whatever CPU reads from it.
-
-The best we could possibly do is put the (target, not current) cpu
-number in the mmap page; but userspace should already know this, for it
-created the event and therefore knows this already.
+Those are ok and I'll queue them.
