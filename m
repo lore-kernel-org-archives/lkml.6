@@ -2,73 +2,70 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60818C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87423C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BBA02086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:58:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547812686;
-	bh=NKR55ThJJiCmkl0muRUs79kvWNd8vOraK9CNFEv95ec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FLNmH2U7NfF9bl9Tk0E36zKHwIhFb2WlTLAg/dQ4jZCL4NDadz+spHC9R0kNoKPsA
-	 I3UZPxlA1KlzfoLG5hC5GekcG0ztwrTGnEv8Eig72KdpiM6bCPs9vpdiVfHqBMfeeI
-	 max/LJipeQzCM1bV9hC/Vuckd4+ffkUYzVJ9TynQ=
+	by mail.kernel.org (Postfix) with ESMTP id 585C52086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:58:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbfARL6E (ORCPT
+        id S1727458AbfARL6y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:58:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37574 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfARL6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:58:03 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B081D2086D;
-        Fri, 18 Jan 2019 11:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547812683;
-        bh=NKR55ThJJiCmkl0muRUs79kvWNd8vOraK9CNFEv95ec=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fNx4yys1IfMpP8Tm12V2cciPic1TaR9zzwHoeVaqrxT22ODm/wFaOqM8vVWt1/qnb
-         53WrIIHsrOWRDJw3Eyss02M4X23MRIbbNyAJ2NV6Ckk429niNrjqOMm4twVQevK9Hb
-         ZfcCJK9OfmSlnsL2oTdomTscozhu0VwIyLxtsj4o=
-Date:   Fri, 18 Jan 2019 12:58:00 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] PHY: For 5.0 -rc
-Message-ID: <20190118115800.GA20431@kroah.com>
-References: <20190118092812.26148-1-kishon@ti.com>
+        Fri, 18 Jan 2019 06:58:54 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:29414 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfARL6y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 06:58:54 -0500
+Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0IBwovq050151;
+        Fri, 18 Jan 2019 20:58:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
+ Fri, 18 Jan 2019 20:58:50 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0IBwnEs050146
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 18 Jan 2019 20:58:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+To:     Tejun Heo <tj@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: workqueue: Is flush_work() without INIT_WORK() OK?
+Message-ID: <7d751e65-e695-e23b-9cec-ef3f44289a56@i-love.sakura.ne.jp>
+Date:   Fri, 18 Jan 2019 20:58:49 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118092812.26148-1-kishon@ti.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 02:58:12PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Greg,
-> 
-> Please find the PHY pull request for 5.0 -rc below.
-> 
-> It fixes a build issue in ahci platform driver caused due to a patch
-> merged in libahci_platform.c before a dependent patch merged in PHY.
-> The ahci platform driver patch was merged after -rc1.
-> 
-> Others are relatively minor fixes seen only on error scenarios. Please
-> find the complete list of changes in the tag message below.
-> 
-> Let me know if I have to make any modifications.
+Hello, Tejun.
 
-Now pulled in, thanks.
+syzbot is reporting "INFO: trying to register non-static key in __flush_work"
+at https://syzkaller.appspot.com/bug?id=a5954455fcfa51c29ca2ab55b203076337e1c770 ,
+and I think that the caller is passing a work_struct allocated by kzalloc() to
+flush_work().
 
-greg k-h
+But I can't judge which problem (the caller side or the WQ side) without knowing
+the behavior of
+
+	struct work_struct work;
+	memset(&work, 0, sizeof(work));
+	flush_work(&work);
+
+. Is this behavior defined as "safe and no-op"? If this should be "safe and no-op",
+we need to check whether INIT_WORK() was called before starting lockdep checks
+at __flush_work(). If this is not "safe and no-op", I want to emit a warning if
+INIT_WORK() was not called.
