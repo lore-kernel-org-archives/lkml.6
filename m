@@ -2,149 +2,137 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01840C5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B7CC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D27F020823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5529720823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:31:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547832674;
+	bh=+kqyZIlnO3ixeb2SUutOIYXVyPLGTVBMNSP9HOFSdvs=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=a/z/gr/48THGGknrgbu4lOGtBod38Fr8BhvX3kBejoNvBWgAv9+KtYeyAnVxyzm4i
+	 1tsc7aksTTtqHIBJ3x2aqn7LOCzoMMSMLLwQiEn9uQF6j3/L5je5aj8Lx7Q7xg0pKv
+	 ZmM2eYRrgMUoKd7psUgaos0unOJJMwHHFwYckGSk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbfARRaI (ORCPT
+        id S1728485AbfARRbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:30:08 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35406 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727285AbfARRaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:30:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8321780D;
-        Fri, 18 Jan 2019 09:30:07 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7005A3F7BE;
-        Fri, 18 Jan 2019 09:30:05 -0800 (PST)
-Date:   Fri, 18 Jan 2019 17:30:02 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        daniel.thompson@linaro.org, marc.zyngier@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        Oleg Nesterov <oleg@redhat.com>, joel@joelfernandes.org
-Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-Message-ID: <20190118173002.GA247921@arrakis.emea.arm.com>
-References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
- <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
- <20190118160920.GF118707@arrakis.emea.arm.com>
- <0af2d75e-9a61-e53b-b2df-3d08d3f63d9c@arm.com>
+        Fri, 18 Jan 2019 12:31:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727527AbfARRbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:31:12 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CFB320823;
+        Fri, 18 Jan 2019 17:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547832671;
+        bh=+kqyZIlnO3ixeb2SUutOIYXVyPLGTVBMNSP9HOFSdvs=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=xgq2HtOYS33MJZMhob4YFIv2ge93HM7Uji8PLiKi58FVWjOH1PsCciLXC7dLQiZmi
+         l414MOJU22WmyVe979GbG5s82r3v4SDmJig7r1n3GnjIMP6mWM4ZHISJUgHEvNySOE
+         G8wYNF+IQM+LeDq4vWfzRvfqKH8XBaKNjnTK5+C4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0af2d75e-9a61-e53b-b2df-3d08d3f63d9c@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
+User-Agent: alot/0.8
+In-Reply-To: <bec06415e980f18d5d3407d498cad372dc3abd1b.camel@v3.sk>
+References: <20190116093505.1920945-1-lkundrak@v3.sk> <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com> <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk> <154768138798.169631.18317264971847478148@swboyd.mtv.corp.google.com> <bec06415e980f18d5d3407d498cad372dc3abd1b.camel@v3.sk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+To:     Lubomir Rintel <lkundrak@v3.sk>,
+        Michael Turquette <mturquette@baylibre.com>
+Message-ID: <154783267051.169631.3197836544646625747@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 18 Jan 2019 09:31:10 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 04:57:32PM +0000, Julien Thierry wrote:
-> On 18/01/2019 16:09, Catalin Marinas wrote:
-> > On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
-> >> +	asm volatile(ALTERNATIVE(
-> >> +			"nop",
-> >> +			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1),
-> >> +			ARM64_HAS_IRQ_PRIO_MASKING)
-> >> +		: "=&r" (pmr)
-> >>  		:
-> >>  		: "memory");
-> >> +
-> >> +	return _get_irqflags(daif_bits, pmr);
-> >> +}
-> > 
-> > I find this confusing spread over two inline asm statements. IIUC, you
-> > want something like below (it could be written as inline asm but I need
-> > to understand it first):
-> > 
-> > 	daif_bits = read_sysreg(daif);
-> > 
-> > 	if (system_uses_irq_prio_masking()) {
-> > 		pmr = read_gicreg(ICC_PMR_EL1);
-> > 		flags = pmr & ~(daif_bits & PSR_I_BIT);
-> > 	} else {
-> > 		flags = daif_bits;
-> > 	}
-> > 
-> > 	return flags;
-> > 
-> > In the case where the interrupts are disabled at the PSR level, is the
-> > PMR value still relevant? Could we just return the GIC_PRIO_IRQOFF?
-> > Something like:
-> > 
-> > 	flags = read_sysreg(daif);
-> > 
-> > 	if (system_uses_irq_prio_masking())
-> > 		flags = flags & PSR_I_BIT ?
-> > 			GIC_PRIO_IRQOFF : read_gicreg(ICC_PMR_EL1);
-> > 
-> 
-> You're right, returning GIC_PRIO_IRQOFF should be good enough (it is
-> actually what happens in this version because GIC_PRIO_IRQOFF ==
-> GIC_PRIO_IRQON & ~PSR_I_BIT happens to be true).
+Quoting Lubomir Rintel (2019-01-17 01:47:55)
+> On Wed, 2019-01-16 at 15:29 -0800, Stephen Boyd wrote:
+> > Quoting Lubomir Rintel (2019-01-16 09:26:31)
+> > > On Wed, 2019-01-16 at 08:37 -0800, Stephen Boyd wrote:
+> > > >=20
+> > > > Is it a critical clk that should never be turned off?
+> > >=20
+> > > I don't think it is. It is entirely plausible to have no use for the
+> > > "security processor", and in that case it's just okay to keep the clo=
+ck
+> > > disabled.
+> >=20
+> > So does the firmware/bootloader leave the clk enabled out of boot and we
+> > shouldn't really touch the on/off bits of the clk hardware from the
+> > kernel?
+>=20
+> I think so.
+>=20
+> > Or do we want to actively manage this clk from a driver
+> > somewhere in the kernel?
+>=20
+> The olpc_apsp driver actually manages this clock, but that might turn
+> out to be the wrong thing to do. It currently only works if the driver
+> is built-in and thus the clock is always kept enabled.
+>=20
+> I'm now somewhat more confused that I believed myself to be when
+> sending the patch. Perhaps you could help me understand things a bit
+> more:
+>=20
+> 1.) What's the principal difference between CLK_IGNORE_UNUSED and
+> CLK_IS_CRITICAL? Is it that the CLK_IGNORE_UNUSED clocks are permitted=20
+> to be disabled by a driver, but an attempt to disable CLK_IS_CRITICAL
+> is a bug?
 
-This wasn't entirely clear to me, I got confused by:
+Yes. CLK_IGNORE_UNUSED is a workaround for two opposing forces. The
+first being the lack of a way for the clk framework to "hand off" the
+state of a clk to clk consumers after late init and the second being the
+desire to save power by disabling unused clocks.
 
-+       BUILD_BUG_ON(GIC_PRIO_IRQOFF < (GIC_PRIO_IRQON & ~PSR_I_BIT));  \
+>=20
+> 2.) Perhaps it makes sense to disable the SP on the machines that don't
+> utilize it even if firmware keeps it enabled? Would it make sense to
+> make the clk driver use the  "protected-clocks" DT property for this?
 
-and I thought there isn't necessarily an equality between the two.
+I don't think so. The protected-clocks property lists clks that
+shouldn't be touched by the OS. Critical clks in theory are still
+touched because the framework turns them on once, in case they're not
+already enabled. That's sort of a weird implementation detail that some
+drivers rely on. We haven't had a situation where drivers shouldn't
+read/write clk registers but also mark them as critical. I would think
+that we just wouldn't register those clks with the kernel because they
+would never be used.
 
-> Your suggestion would
-> make things easier to reason about. Maybe something like:
-> 
-> 
-> static inline unsigned long arch_local_save_flags(void)
-> {
-> 	unsigned long daif_bits;
-> 	unsigned long prio_off = GIC_PRIO_IRQOFF;
-> 
-> 	daif_bits = read_sysreg(daif);
-> 
-> 	asm volatile(ALTERNATIVE(
-> 		"mov	%0, %1\n"
-> 		"nop\n"
-> 		"nop",
-> 		"mrs	%0, SYS_ICC_PMR_EL1\n"
-> 		"ands	%1, %1, PSR_I_BIT\n"
-> 		"csel	%0, %0, %2, eq")
-> 	: "=&r" (flags)
-> 	: "r" (daif_bits), "r" (prio_off)
-> 	: "memory");
-> 
-> 	return flags;
-> }
+Does having this clk actually matter? Maybe it can just be removed
+instead? Put another way, is it saving any power to manage the clk from
+the kernel?
 
-It looks fine. If you turn the BUILD_BUG_ON into a !=, you could
-probably simplify the asm a bit (though the number of instructions
-generated would probably be the same). Untested:
+>=20
+> ----8<----
+>=20
+> Here's some more context for the SP on the MMP2:
+>=20
+> The SP is a small PJ1 core. It starts when the platform is powered on
+> and eventually brings up the large PJ4 core.
+>=20
+> On the OLPC machine, the first stage firmware (cforth) starts running
+> on the SP, configures the DRAM, starts the boot firmware (openfirmware)
+> on the main PJ4 core and then enters a loop that bit-bangs the PS/2
+> protocol on the attached keyboard/touchpad.
+>=20
+> It is entirely possible that on some boards the SP is not used for
+> anything but the bringup of the bootloader on the main core.
+>=20
+> SP is sometimes referred to as WTM, "wireless trusted module", but it's
+> not clear to me why is it the case. There's no documentation.
+>=20
 
-static inline unsigned long arch_local_save_flags(void)
-{
-	unsigned long flags;
+Ok. Thanks for the background.
 
-	flags = read_sysreg(daif);
-
-	asm volatile(ALTERNATIVE(
-		"nop",
-		"bic	%0, %1, %2")
-	: "=&r" (flags)
-	: "r" (flags & PSR_I_BIT), "r" (GIC_PRIO_IRQOFF)
-	: "memory");
-
-	return flags;
-}
-
--- 
-Catalin
