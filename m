@@ -2,96 +2,102 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF868C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA07C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF0420873
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07E0E20896
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:58:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BR/2GLE5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Nb1SWz9z"
+	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="QH/nbSrG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfARC6v (ORCPT
+        id S1727122AbfARC6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 21:58:51 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60818 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfARC6v (ORCPT
+        Thu, 17 Jan 2019 21:58:55 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43300 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfARC6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 21:58:51 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 914726085C; Fri, 18 Jan 2019 02:58:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547780330;
-        bh=CSkykrvA55vjxsZCmu5sLXiMDCi4xY1mk5bDpqWwcMI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BR/2GLE5kjnm9wr8N9v9a2R+30dlysrr+Xs6LPPi24wlCiaNe3eGVaZkZea620yGX
-         cXY4rQmtxBpoO8J0nSRl5E4cglth7YtFl0A6z5eLuV3ZsrpgSXaq3xMTTpS3hb2e4k
-         SXdh4feyACzVUZ5I8YUr/o0nEgOo71oDRx4azVKU=
-Received: from [10.79.129.0] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7A76D605A0;
-        Fri, 18 Jan 2019 02:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547780329;
-        bh=CSkykrvA55vjxsZCmu5sLXiMDCi4xY1mk5bDpqWwcMI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Nb1SWz9zMPeWfrb/1qfQjUr/E1V/IifhFw6rMJ8IKG7uO9ydvLXqNTxuilcoodgYS
-         rKnzUyHCnoHKzlzRwkAhkJRvLXxX781zv76uMA88P8KAg1RSXEGeb0H/fBW7C+BQla
-         bmhW+R/NePvXnxrTXM+CiTyZuOs8s9Sh2yIthAKw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A76D605A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCHv2] watchdog: qcom: Add suspend/resume support
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20190117151942.6092-1-saiprakash.ranjan@codeaurora.org>
- <20190117181603.GA14800@roeck-us.net>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <bae21498-32be-6842-adce-1fc5b9c7e263@codeaurora.org>
-Date:   Fri, 18 Jan 2019 08:28:44 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190117181603.GA14800@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Thu, 17 Jan 2019 21:58:54 -0500
+Received: by mail-pf1-f194.google.com with SMTP id w73so5813536pfk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 18:58:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K4VpzqOOpFHSKfG6lkiV1ToMp9cD2QVH4F/ND1wf9NQ=;
+        b=QH/nbSrGQ/A75EADukmRuF1tQn2+B+X14yho9ytOmOpitNcLlJOlqfbTlafIyQtq0E
+         5QwVpWnl+pVwD5AETrTdLXL/bQNf88y+ZEN94rDxieRVDVgbpOjF9qEWJf2K9KO/6vnH
+         BEN2LCuGZa8IJCnf6bhKS2sUMhP9z9XgzTdBwR9byeGPztiPdK8W/jOYnXxWrrM2K3TS
+         bTL9i2lNcHoCvACoqTBeFSBIE0suDYXe/J1XYGQ2X8Xt/dnD2JiM9NsFAzyw5xfeu1Vz
+         dyqPjivNYk+XyAevXdyB3MDk8wtZFFmLA+uvc3TDn7H3HkqzeNa81/Ee/LRWOCEa93Gu
+         gWgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K4VpzqOOpFHSKfG6lkiV1ToMp9cD2QVH4F/ND1wf9NQ=;
+        b=XD7u8MY7hZC8lJ1jSIPrpXQ03SSCYVtlqcLpv6yEsATzKyo+zsWbRGoiUiYhklUOFF
+         aD1YjT1O6MUFc7J0MSbVKxUVuhzmk9aY1zni4M/rU8I3Kjt3LLqGtO7ihFFo2QN3z2dE
+         EKnhEy3ZnUuXmyheZDuDkExO3ixSzgj1P4B0shjgizJ3G8YNbhtab8Okkj8kM5ezFbR2
+         orCQMWtewS1dMpLOICrgVyduTISYm0vhFUn5287VBlGuegY8qIAnRjWlo7Sb2VbBxqcI
+         pbl5iw1/a7KbBc6tJnrlpWAubF0LAMWSr7tHRVQvQQ9GEU6ncpMGe8ViPQiOySzu2PYH
+         JS/w==
+X-Gm-Message-State: AJcUukdlu/tKzHLhkMk0FnVg96JHRBeL79FJRU7BFv1Oex58SJm8/lok
+        OekkYJA/MIluCHogLRY1TceEVg==
+X-Google-Smtp-Source: ALg8bN4Ny1fg/tE288LKcy+Dgm0VqIGEkfPU96o6d0bRBskkJ07OUrNhGeA9LVad9Hz4ZdwFXhzONw==
+X-Received: by 2002:a63:d157:: with SMTP id c23mr15813305pgj.170.1547780334009;
+        Thu, 17 Jan 2019 18:58:54 -0800 (PST)
+Received: from [192.168.0.79] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
+        by smtp.gmail.com with ESMTPSA id u29sm3938054pgn.23.2019.01.17.18.58.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 18:58:53 -0800 (PST)
+Subject: [PATCH v2 2/3] scsi: arcmsr: Fix suspend/resume of
+ ACB_ADAPTER_TYPE_B part 2
+From:   Ching Huang <ching2048@areca.com.tw>
+To:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@oracle.com, hch@infradead.org,
+        colin.king@canonical.com
+Content-Type: text/plain; charset="UTF-8"
+Date:   Fri, 18 Jan 2019 10:58:51 +0800
+Message-ID: <1547780331.4532.19.camel@Centos6.3-64>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/2019 11:46 PM, Guenter Roeck wrote:
-> On Thu, Jan 17, 2019 at 08:49:42PM +0530, Sai Prakash Ranjan wrote:
->> This adds the support for qcom watchdog suspend and resume
->> when entering and exiting deep sleep states. Otherwise
->> having watchdog active after suspend would result in unwanted
->> crashes/resets if resume happens after a long time.
->>
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> 
+From Ching Huang <ching2048@areca.com.tw>
 
-Thanks Guenter. Should I send a v3 with your reviewed-by?
+For ACB_ADAPTER_TYPE_B controller, the read/write after hibernate and resume may
+got 'isr get an illegal ccb command' in log/messages sometimes. This patch fix it.
 
-- Sai
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Signed-off-by: Ching Huang <ching2048@areca.com.tw>
+---
+
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 5736434..88053b1 100755
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -1113,7 +1113,11 @@ static int arcmsr_resume(struct pci_dev *pdev)
+ 	switch (acb->adapter_type) {
+ 	case ACB_ADAPTER_TYPE_B: {
+ 		struct MessageUnit_B *reg = acb->pmuB;
+-		reg->post_qbuffer[0] = 0;
++		uint32_t i;
++		for (i = 0; i < ARCMSR_MAX_HBB_POSTQUEUE; i++) {
++			reg->post_qbuffer[i] = 0;
++			reg->done_qbuffer[i] = 0;
++		}
+ 		reg->postq_index = 0;
+ 		reg->doneq_index = 0;
+ 		break;
+
+
