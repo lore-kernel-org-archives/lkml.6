@@ -2,110 +2,148 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AD6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957F4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CD520883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:20:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E8D320652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:21:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfARNUZ (ORCPT
+        id S1727619AbfARNVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:20:25 -0500
-Received: from nov-007-i650.relay.mailchannels.net ([46.232.183.204]:33404
-        "EHLO nov-007-i650.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727100AbfARNUY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:20:24 -0500
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 245F0BE0A20;
-        Fri, 18 Jan 2019 13:12:00 +0000 (UTC)
-Received: from srv17.tophost.ch (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTPA id B7CE8BE0724;
-        Fri, 18 Jan 2019 13:11:56 +0000 (UTC)
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from srv17.tophost.ch (srv17.tophost.ch [193.33.128.155])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
-        by 0.0.0.0:2500 (trex/5.15.2);
-        Fri, 18 Jan 2019 13:12:00 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
-X-MailChannels-Auth-Id: novatrend
-X-Continue-Abaft: 7520c95450af670d_1547817119922_413462037
-X-MC-Loop-Signature: 1547817119922:2121460126
-X-MC-Ingress-Time: 1547817119921
-Received: from [80.219.231.201] (port=59124 helo=jzen.bitron.ch)
-        by srv17.tophost.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <j@bitron.ch>)
-        id 1gkTwA-0002In-1q; Fri, 18 Jan 2019 14:11:54 +0100
-From:   =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
-Subject: [RESEND PATCH v2 0/1] Add prctl to kill descendants on exit
-Date:   Fri, 18 Jan 2019 14:11:29 +0100
-Message-Id: <20190118131130.42209-1-j@bitron.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181127225408.7553-1-j@bitron.ch>
-References: <20181127225408.7553-1-j@bitron.ch>
+        Fri, 18 Jan 2019 08:21:13 -0500
+Received: from foss.arm.com ([217.140.101.70]:56942 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726593AbfARNVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 08:21:13 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 603EC80D;
+        Fri, 18 Jan 2019 05:21:12 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C64F3F5C1;
+        Fri, 18 Jan 2019 05:21:09 -0800 (PST)
+Subject: Re: [PATCH v5 07/14] qcom: spmi-gpio: add support for hierarchical
+ IRQ chip
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190117003234.22127-1-masneyb@onstation.org>
+ <20190117003234.22127-8-masneyb@onstation.org>
+ <e9234c48-9fce-1ec4-48f1-dff134559eed@arm.com>
+ <20190118124221.GB32143@basecamp>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <94b2b50f-b0e7-3e5c-5ee5-c8df80d6f042@arm.com>
+Date:   Fri, 18 Jan 2019 13:21:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-AuthUser: juerg@bitron.ch
+In-Reply-To: <20190118124221.GB32143@basecamp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a new prctl to kill all descendant processes on exit.
-See commit message for details of the prctl.
+On 18/01/2019 12:42, Brian Masney wrote:
+> Hi Marc,
+> 
+> On Thu, Jan 17, 2019 at 11:32:01AM +0000, Marc Zyngier wrote:
+>>>  static int pmic_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
+>>>  {
+>>>  	struct pmic_gpio_state *state = gpiochip_get_data(chip);
+>>> -	struct pmic_gpio_pad *pad;
+>>> +	struct irq_fwspec fwspec;
+>>>  
+>>> -	pad = state->ctrl->desc->pins[pin].drv_data;
+>>> +	fwspec.fwnode = state->fwnode;
+>>> +	fwspec.param_count = 2;
+>>> +	fwspec.param[0] = pin + PMIC_GPIO_PHYSICAL_OFFSET;
+>>> +	fwspec.param[1] = IRQ_TYPE_NONE;
+>>
+>> In my experience, IRQ_TYPE_NONE is rarely a good thing, unless you
+>> expect the trigger information to be found by some other mean. I guess
+>> that's one of the reasons why everything falls back to level in the SPMI
+>> driver...
+> 
+> I'm not sure how to determine what trigger to put here. I thought that
+> it would be up to the caller of request_any_context_irq() to explicitly
+> set the expected trigger type when a GPIO is used, which will overwrite
+> IRQ_TYPE_NONE with the proper trigger type.
 
-This is a replacement of PR_SET_PDEATHSIG_PROC I proposed last year [1].
-In the following discussion, Oleg suggested this approach.
+The main issue is that IRQ_TYPE_NONE is a bit loosely defined, and
+mostly means "keep whatever was there before", which is a bit like
+rolling a dice each time you allocate an interrupt.
 
-The motivation for this is to provide a lightweight mechanism to prevent
-stray processes. There is also a related Bugzilla entry [2].
+> 
+> For example, I've tested the hierarchical IRQ domains with gpio-keys and
+> when the gpio property is used, devm_request_any_context_irq() is called
+> with the flags IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING. This calls
+> __setup_irq(), which will call irq_set_type() and overwrite the trigger
+> type.
+> 
+> irq_set_type() is only called when the IRQ is not shared, so I'm not
+> sure if this would work as expected with a shared IRQ.
 
-PID namespaces can also be used to prevent stray processes, of course.
-However, they are not quite as lightweight as they typically also
-require a new mount namespace to be able to mount a new /proc.  And they
-require CAP_SYS_ADMIN.  User namespaces can help to gain CAP_SYS_ADMIN,
-however, that further increases the overhead and the other effects of
-the user namespace may not be desired.
+I'd suggest you force the type to a "safe" value such as rising edge,
+and let the irq_set_type() call do the right thing, assuming you've
+plugged the issue in the core SPMI driver.
 
-PID 1 in PID namespaces also exhibits non-standard signal behavior
-(SIGNAL_UNKILLABLE) [3].
+Thanks,
 
-Changes in v2:
-  - Use bool instead of bitfield to avoid race with
-    PR_SET_CHILD_SUBREAPER
-
-[1] https://lkml.kernel.org/lkml/20170929123058.48924-1-j@bitron.ch/
-[2] https://bugzilla.kernel.org/show_bug.cgi?id=43300
-[3] https://lkml.kernel.org/lkml/20180803144021.56920-2-j@bitron.ch/
-
-Jürg Billeter (1):
-  prctl: add PR_{GET,SET}_KILL_DESCENDANTS_ON_EXIT
-
- fs/exec.c                    |  6 ++++++
- include/linux/sched/signal.h |  3 +++
- include/uapi/linux/prctl.h   |  4 ++++
- kernel/exit.c                | 12 ++++++++++++
- kernel/sys.c                 | 11 +++++++++++
- security/apparmor/lsm.c      |  1 +
- security/selinux/hooks.c     |  3 +++
- 7 files changed, 40 insertions(+)
-
+	M.
 -- 
-2.20.1
-
+Jazz is not dead. It just smells funny...
