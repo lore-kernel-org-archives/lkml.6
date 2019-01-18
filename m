@@ -2,57 +2,98 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3FCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0EFCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8495320855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA93E2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfARFwI (ORCPT
+        id S1727132AbfARFyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 00:52:08 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:37446 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726461AbfARFwH (ORCPT
+        Fri, 18 Jan 2019 00:54:47 -0500
+Received: from twhmllg3.macronix.com ([122.147.135.201]:18039 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbfARFyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 00:52:07 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 072C414BA1ABB;
-        Thu, 17 Jan 2019 21:52:06 -0800 (PST)
-Date:   Thu, 17 Jan 2019 21:52:06 -0800 (PST)
-Message-Id: <20190117.215206.1603047313373138789.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sb1000: fix a couple of indentation issues
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190117001301.29948-1-colin.king@canonical.com>
-References: <20190117001301.29948-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 17 Jan 2019 21:52:07 -0800 (PST)
+        Fri, 18 Jan 2019 00:54:47 -0500
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG3.macronix.com with ESMTP id x0I5sG8m033201;
+        Fri, 18 Jan 2019 13:54:16 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
+Subject: [PATCH v6 0/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI driver
+Date:   Fri, 18 Jan 2019 13:54:13 +0800
+Message-Id: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG3.macronix.com x0I5sG8m033201
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 17 Jan 2019 00:13:01 +0000
+Hi Mark,
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is an if statement and a return statement that are incorrectly
-> indented. Fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+v6 patch is accroding to Geert, Marek and Sergei's comments:
+1) spi_controller for new code. 
+2) "renesas,rcar-gen3-rpc" instead of "renesas,r8a77995-rpc".
+3) patch external address read mode w/o u64 readq().
+4) patch dts for write buffer & drop "renesas,rpc-mode".
+5) coding style and so on.
 
-Applied to net-next.
+v5 patch is accroding to Sergei's comments:
+1) Read 6 bytes ID from Sergei's patch.
+2) regmap_update_bits()
+3) C++ style comment
+
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match()
+2) Drop unused RPC registers
+3) Use ilog2() instead of fls()
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
+
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned()
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
+
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM,
+3) add RPC module software reset,
+4) add regmap,
+5) other coding style and so on.
+
+thanks for your review.
+
+best regards,
+Mason
+
+Mason Yang (2):
+  spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+  dt-bindings: spi: Document Renesas R-Car Gen3 RPC-IF controller
+    bindings
+
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  37 +
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 800 +++++++++++++++++++++
+ 4 files changed, 844 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+
+-- 
+1.9.1
+
