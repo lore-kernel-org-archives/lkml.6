@@ -4,34 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A30C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AC8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD2620873
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 105E120873
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfARDDh (ORCPT
+        id S1727029AbfARDF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 22:03:37 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53684 "EHLO huawei.com"
+        Thu, 17 Jan 2019 22:05:26 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2192 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726818AbfARDDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 22:03:37 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 734322572CD53C6EF25F;
-        Fri, 18 Jan 2019 11:03:34 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
- 11:03:28 +0800
+        id S1725934AbfARDFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 22:05:25 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 06F043EE8B63D2C38C6C;
+        Fri, 18 Jan 2019 11:05:24 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
+ 11:05:17 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <trond.myklebust@hammerspace.com>, <anna.schumaker@netapp.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+To:     <davem@davemloft.net>, <isdn@linux-pingi.de>,
+        <keescook@chromium.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] nfs: remove unneeded semicolon
-Date:   Fri, 18 Jan 2019 11:03:22 +0800
-Message-ID: <20190118030322.15464-1-yuehaibing@huawei.com>
+Subject: [PATCH net-next] isdn: remove unneeded semicolon
+Date:   Fri, 18 Jan 2019 11:05:11 +0800
+Message-ID: <20190118030511.16000-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -46,77 +47,82 @@ remove unneeded semicolon
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- fs/nfs/nfs4proc.c  | 4 ++--
- fs/nfs/nfs4state.c | 2 +-
- fs/nfs/super.c     | 6 +++---
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/isdn/hisax/netjet.c      | 6 +++---
+ drivers/isdn/hisax/q931.c        | 2 +-
+ drivers/isdn/hisax/st5481.h      | 2 +-
+ drivers/isdn/isdnloop/isdnloop.c | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 557a5d6..54da1bf 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -6670,7 +6670,7 @@ static void nfs4_handle_setlk_error(struct nfs_server *server, struct nfs4_lock_
- 	case -NFS4ERR_STALE_STATEID:
- 		lsp->ls_seqid.flags &= ~NFS_SEQID_CONFIRMED;
- 		nfs4_schedule_lease_recovery(server->nfs_client);
+diff --git a/drivers/isdn/hisax/netjet.c b/drivers/isdn/hisax/netjet.c
+index e932a15..d7b011c8 100644
+--- a/drivers/isdn/hisax/netjet.c
++++ b/drivers/isdn/hisax/netjet.c
+@@ -332,7 +332,7 @@ static int make_raw_data_56k(struct BCState *bcs) {
+ 			bitcnt = 0;
+ 		}
+ 		val >>= 1;
 -	};
 +	}
- }
- 
- static int _nfs4_do_setlk(struct nfs4_state *state, int cmd, struct file_lock *fl, int recovery_type)
-@@ -8414,7 +8414,7 @@ static int _nfs4_proc_create_session(struct nfs_client *clp,
- 	case -EACCES:
- 	case -EAGAIN:
- 		goto out;
+ 	fcs = PPP_INITFCS;
+ 	for (i = 0; i < bcs->tx_skb->len; i++) {
+ 		val = bcs->tx_skb->data[i];
+@@ -415,7 +415,7 @@ static void read_raw(struct BCState *bcs, u_int *buf, int cnt) {
+ 	else { // it's 56K
+ 		mask = 0x7f;
+ 		bits = 7;
 -	};
 +	}
- 
- 	clp->cl_seqid++;
- 	if (!status) {
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 02488b5..2f8774d 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1131,7 +1131,7 @@ static void nfs_increment_seqid(int status, struct nfs_seqid *seqid)
- 		case -NFS4ERR_MOVED:
- 			/* Non-seqid mutating errors */
+ 	for (i = 0; i < cnt; i++) {
+ 		val = bcs->channel ? ((*p >> 8) & 0xff) : (*p & 0xff);
+ 		p++;
+@@ -623,7 +623,7 @@ void netjet_fill_dma(struct BCState *bcs)
+ 	else { // it's 56k
+ 		if (make_raw_data_56k(bcs))
  			return;
 -	};
 +	}
- 	/*
- 	 * Note: no locking needed as we are guaranteed to be first
- 	 * on the sequence list
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 22ce3c8..6dbc810 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1561,7 +1561,7 @@ static int nfs_parse_mount_options(char *raw,
- 					dfprintk(MOUNT, "NFS:   invalid "
- 							"lookupcache argument\n");
- 					return 0;
+ 	if (bcs->cs->debug & L1_DEB_HSCX)
+ 		debugl1(bcs->cs, "tiger fill_dma2: c%d %4lx", bcs->channel,
+ 			bcs->Flag);
+diff --git a/drivers/isdn/hisax/q931.c b/drivers/isdn/hisax/q931.c
+index 298c8db..6b8c3fb 100644
+--- a/drivers/isdn/hisax/q931.c
++++ b/drivers/isdn/hisax/q931.c
+@@ -598,7 +598,7 @@ prcalling(char *dest, u_char *p)
+ 		dp += prbits(dp, *++p, 8, 8);
+ 		*dp++ = '\n';
+ 		l--;
+-	};
++	}
+ 	p++;
+ 
+ 	dp += sprintf(dp, "    number digits ");
+diff --git a/drivers/isdn/hisax/st5481.h b/drivers/isdn/hisax/st5481.h
+index 8cd2d82..b421b86 100644
+--- a/drivers/isdn/hisax/st5481.h
++++ b/drivers/isdn/hisax/st5481.h
+@@ -512,7 +512,7 @@ static inline const char *ST5481_CMD_string(int evt)
+ 	case ST5481_CMD_AR10: return "AR10";
+ 	case ST5481_CMD_ARL: return "ARL";
+ 	case ST5481_CMD_PDN: return "PDN";
+-	};
++	}
+ 
+ 	sprintf(s, "0x%x", evt);
+ 	return s;
+diff --git a/drivers/isdn/isdnloop/isdnloop.c b/drivers/isdn/isdnloop/isdnloop.c
+index a4597e9..f4253d4 100644
+--- a/drivers/isdn/isdnloop/isdnloop.c
++++ b/drivers/isdn/isdnloop/isdnloop.c
+@@ -72,7 +72,7 @@ isdnloop_bchan_send(isdnloop_card *card, int ch)
+ 				printk(KERN_WARNING "isdnloop: no rcard, skb dropped\n");
+ 				dev_kfree_skb(skb);
+ 
 -			};
 +			}
- 			break;
- 		case Opt_fscache_uniq:
- 			if (nfs_get_option_str(args, &mnt->fscache_uniq))
-@@ -1594,7 +1594,7 @@ static int nfs_parse_mount_options(char *raw,
- 				dfprintk(MOUNT, "NFS:	invalid	"
- 						"local_lock argument\n");
- 				return 0;
--			};
-+			}
- 			break;
- 
- 		/*
-@@ -2512,7 +2512,7 @@ static void nfs_get_cache_cookie(struct super_block *sb,
- 		if (mnt_s->fscache_key) {
- 			uniq = mnt_s->fscache_key->key.uniquifier;
- 			ulen = mnt_s->fscache_key->key.uniq_len;
--		};
-+		}
- 	} else
- 		return;
- 
+ 			cmd.command = ISDN_STAT_BSENT;
+ 			cmd.parm.length = len;
+ 			card->interface.statcallb(&cmd);
 -- 
 2.7.0
 
