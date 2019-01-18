@@ -2,69 +2,114 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDE8C5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD6BC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610A520850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:05:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547834722;
-	bh=aZU4xQjIiZ61NSXL3KZHvyEE/y9LVGgYrkrj9GG0YZo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=l0orWz8Zr7EwfpmDL0bxwawyo5ReDvEM6UzWjxtGVXlrTxFzlaWkQgq7UXMs3Ygl7
-	 b6es5/R1sWJCCHBeNiFpBQi/cHhzjpC+uIjlOl5b4tm/oei5P3b1b6ywCPRfvovzC5
-	 FyCfswOkwEqheWrmXNZTads6bs90TuPvy5stpptg=
+	by mail.kernel.org (Postfix) with ESMTP id 980A620850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 18:05:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbfARSFU (ORCPT
+        id S1728923AbfARSFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:05:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728708AbfARSFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:05:04 -0500
-Subject: Re: [GIT PULL] fbdev fixes for v5.0-rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547834703;
-        bh=aZU4xQjIiZ61NSXL3KZHvyEE/y9LVGgYrkrj9GG0YZo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=vMlln4pUlIKBXGOKPIPKURR5cCEu5necedfRyztaN6SevlE7L7A6u1X+ZfydlbkqI
-         xGBOypIBk7Ej/6pf9sfcIcCzMdG6GlZPMD0BWyy9s3Rk/nDjuxPxBult3ZYVz5wrss
-         gJ20Io8LNkY0Y38kLlfUxD1HubzfQ+yFOrfllYxk=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <2bb72d22-590c-958f-1dd1-fe44f264091b@samsung.com>
-References: <CGME20190118123845eucas1p25b20e2175991a620437c338a0001f03a@eucas1p2.samsung.com>
- <2bb72d22-590c-958f-1dd1-fe44f264091b@samsung.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <2bb72d22-590c-958f-1dd1-fe44f264091b@samsung.com>
-X-PR-Tracked-Remote: https://github.com/bzolnier/linux.git tags/fbdev-v5.0-rc3
-X-PR-Tracked-Commit-Id: 890d14d2d4b57ff5a149309da3ed36c8a529987f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2a8cbf2a02784efc02f7093000010e20c4ebc9ea
-Message-Id: <154783470366.23992.7424098240864824163.pr-tracker-bot@kernel.org>
-Date:   Fri, 18 Jan 2019 18:05:03 +0000
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
+        Fri, 18 Jan 2019 13:05:53 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:35349 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728822AbfARSFw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 13:05:52 -0500
+Received: from oxbsltgw66.schlund.de ([212.227.220.204]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MxEYY-1h8x5s34zQ-00xZ54; Fri, 18 Jan 2019 19:05:36 +0100
+Date:   Fri, 18 Jan 2019 19:05:35 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Jeremy Linton <jeremy.linton@arm.com>, marc.zyngier@arm.com
+Cc:     mlangsdo@redhat.com, suzuki.poulose@arm.com,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        julien.thierry@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, steven.price@arm.com,
+        ykaukab@suse.de, dave.martin@arm.com, shankerd@codeaurora.org
+Message-ID: <575913854.422488.1547834735236@email.ionos.de>
+In-Reply-To: <c99f5da9-259c-3fc5-6150-7327ba0ff429@arm.com>
+References: <20190109235544.2992426-1-jeremy.linton@arm.com>
+ <884332236.499392.1547581848222@email.ionos.de>
+ <c99f5da9-259c-3fc5-6150-7327ba0ff429@arm.com>
+Subject: Re: [PATCH v3 0/7] arm64: add system vulnerability sysfs entries
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:ZoURWHSIlPpYkd2EnWsFsQ8SWv7CpPvZNTMHt3wz4UaeaNhZEzy
+ iOxccCipZ7wm6wnJigp1k7fjQ/OlSNWmcFbQ1tv9x4nZldlWSLYK9BH8HiG8YYrBq9qrkRy
+ mq26uzJRV5RmsCaC1AvbuiVLReROd831julPROi4BzrS0glCoJCud/CBXrfNBJXDOUwrIHO
+ bff2QxmS9bCKRRNhFgnqA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:31AmI8rdDIA=:pxW8TEtyU2nbIAidssiwFi
+ YMzQ4SGC9vu8nYoFOEsnvBQcyAbiXYtoupCbhexv/xnMgXO3w6ndIB7iwjcL1oYv2sCVpxW2O
+ qwyqslyuCVjY3GdyjZkmryCZx/Sa6OqMaAmd3ILL9RiwxOfs6M805K7IRLEpICCfGcxYRyT30
+ N95+/tP41X72suqOGnJ5z+KaRRYHfHQKC85Hu/jlCWF6rWmRlao7WrboLRyx6gibTi0S2MkRX
+ XS1Cpo7/+xloCxcQwDEO399e1VKIXp7lYn+zBpEf7qfDlPgyAbAscMvhw7Yme5kCET+2W2Pcv
+ JLKu4TDsrF+ehYgrS7w/+k1dpifsqecntIgNlyN4+b6xVGo4q+uXjHTf5JG7d04AX0s5k4Zmi
+ Nm+7Cvp0S55+00k+GBXtHkXMecWh9Oqgl+aUPgmuh8ptISkp6vAXLIM8Nau3fCHg6ZlbZik5k
+ kKarDXnMOx0IcPs0ILhskBRWLJWw2ibfCRJSHf4i4Y3t8H10iXa6KuPndMknt7zZZ4lxQWCtS
+ q495UWDGsJC1iKHVyvMM2Pmbcq+pBj9Mv6lwCu5blPZ8l6Fb1GRLeIpCPxXMszv7hLF61oFv4
+ e3jNRJ7i4A/qPcmBQzd7B/mt+uYsdEbhMw17ucUSzAejeUqa3vW4vGWKmpWNqIuHCvYup7KVS
+ GJmbb3CybBRh55jfH4jsO0Kvb/fsS2Q4vC+iizSxaW0nEUeudLvIQ8Uc4PVSi6v22uspEY/Kj
+ 1PbNSvwNfuVh8Y0O5ZbbfrC8cUzOblJHDTLd2PHSuV+KC2sAsoles5LKKec=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 18 Jan 2019 13:38:44 +0100:
+Hi,
 
-> https://github.com/bzolnier/linux.git tags/fbdev-v5.0-rc3
+> Jeremy Linton <jeremy.linton@arm.com> hat am 15. Januar 2019 um 22:21 geschrieben:
+> 
+> 
+> Hi,
+> 
+> On 01/15/2019 01:50 PM, Stefan Wahren wrote:
+> > Hi Jeremy,
+> > 
+> >> Jeremy Linton <jeremy.linton@arm.com> hat am 10. Januar 2019 um 00:55 geschrieben:
+> >>
+> >>
+> >> Arm64 machines should be displaying a human readable
+> >> vulnerability status to speculative execution attacks in
+> >> /sys/devices/system/cpu/vulnerabilities
+> >>
+> >> This series enables that behavior by providing the expected
+> >> functions. Those functions expose the cpu errata and feature
+> >> states, as well as whether firmware is responding appropriately
+> >> to display the overall machine status. This means that in a
+> >> heterogeneous machine we will only claim the machine is mitigated
+> >> or safe if we are confident all booted cores are safe or
+> >> mitigated.
+> >>
+> > 
+> > i applied this v3 series and Marc's v2 series.
+> > 
+> > Now i'm getting the following on a Raspberry Pi 3 B+ :
+> > 
+> > meltdown:Not affected
+> > spec_store_bypass:Not affected
+> > spectre_v1:Mitigation: __user pointer sanitization
+> > 
+> > So the entries l1tf and spectre_v2 disappeared.
+> 
+> Yes, the l1tf entry should be gone.
+> 
+> I believe there is a problem with the "1/2 advertise.." patch in that 
+> the 'arm64_requested_vuln_attrs |=' line needs to be hoisted  to the top 
+> of check_branch_predictor() and the '__spectrev2_safe = false' line 
+> needs to be hoisted 6 lines immediately above "/* Fallback to firmware 
+> detection*/"
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2a8cbf2a02784efc02f7093000010e20c4ebc9ea
+a snippet or a new version would be nice
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+> 
+> That should re-enable the spectre_v2 entry.
