@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D423DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CEDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0A402087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADD872087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbfAROQk (ORCPT
+        id S1727567AbfAROQx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:16:40 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44704 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:16:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44735 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727178AbfAROQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:16:39 -0500
+        id S1727234AbfAROQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:16:53 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CFA92207B0; Fri, 18 Jan 2019 15:16:36 +0100 (CET)
+        id AB378207B0; Fri, 18 Jan 2019 15:16:50 +0100 (CET)
 Received: from localhost (alyon-652-1-26-46.w109-213.abo.wanadoo.fr [109.213.9.46])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 703E52074A;
-        Fri, 18 Jan 2019 15:16:36 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1671B207AC;
+        Fri, 18 Jan 2019 15:16:49 +0100 (CET)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -35,13 +35,13 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v4 3/4] clk: mvebu: armada-37xx-tbg: fill the device entry when registering the clocks
+Subject: Re: [PATCH v4 4/4] clk: mvebu: armada-37xx-xtal: fill the device entry when registering the clock
 References: <20190108161940.4814-1-miquel.raynal@bootlin.com>
-        <20190108161940.4814-4-miquel.raynal@bootlin.com>
-Date:   Fri, 18 Jan 2019 15:16:36 +0100
-In-Reply-To: <20190108161940.4814-4-miquel.raynal@bootlin.com> (Miquel
-        Raynal's message of "Tue, 8 Jan 2019 17:19:39 +0100")
-Message-ID: <871s5anj97.fsf@FE-laptop>
+        <20190108161940.4814-5-miquel.raynal@bootlin.com>
+Date:   Fri, 18 Jan 2019 15:16:49 +0100
+In-Reply-To: <20190108161940.4814-5-miquel.raynal@bootlin.com> (Miquel
+        Raynal's message of "Tue, 8 Jan 2019 17:19:40 +0100")
+Message-ID: <87won2m4oe.fsf@FE-laptop>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -54,7 +54,7 @@ Hi Miquel,
  
  On mar., janv. 08 2019, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-> So far the clk_hw_register_fixed_factor() calls are not providing any
+> So far the clk_hw_register_fixed_factor() call was not providing any
 > device structure. While doing so is harmless for regular use, the
 > missing device structure may be a problem for suspend to RAM support.
 >
@@ -63,10 +63,8 @@ Hi Miquel,
 > missing during the registration, no link can be established, hence the
 > order between parent and child clocks are not enforced.
 >
-> Adding the device structure here will create a link between the 4 TBG
-> clocks (registered by this driver) and:
-> * their parent clock: XTAL,
-> * their child clocks: several 'periph' clock.
+> Adding the device structure here will create a link between the XTAL
+> clock (this one) and the four TBG clocks that are derived from it.
 >
 > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
@@ -77,26 +75,23 @@ Thanks,
 Gregory
 
 > ---
->  drivers/clk/mvebu/armada-37xx-tbg.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/clk/mvebu/armada-37xx-xtal.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
-> index 77b978c55ef6..da3a08e419d6 100644
-> --- a/drivers/clk/mvebu/armada-37xx-tbg.c
-> +++ b/drivers/clk/mvebu/armada-37xx-tbg.c
-> @@ -116,8 +116,10 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
->  		name = tbg[i].name;
->  		mult = tbg_get_mult(reg, &tbg[i]);
->  		div = tbg_get_div(reg, &tbg[i]);
-> -		hw_tbg_data->hws[i] = clk_hw_register_fixed_factor(NULL, name,
-> -						parent_name, 0, mult, div);
-> +		hw_tbg_data->hws[i] = clk_hw_register_fixed_factor(dev, name,
-> +								   parent_name,
-> +								   0, mult,
-> +								   div);
->  		if (IS_ERR(hw_tbg_data->hws[i]))
->  			dev_err(dev, "Can't register TBG clock %s\n", name);
->  	}
+> diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
+> index e9e306d4e9af..0e74bcd83d1a 100644
+> --- a/drivers/clk/mvebu/armada-37xx-xtal.c
+> +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
+> @@ -57,7 +57,8 @@ static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
+>  		rate = 25000000;
+>  
+>  	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
+> -	xtal_hw = clk_hw_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
+> +	xtal_hw = clk_hw_register_fixed_rate(&pdev->dev, xtal_name, NULL, 0,
+> +					     rate);
+>  	if (IS_ERR(xtal_hw))
+>  		return PTR_ERR(xtal_hw);
+>  	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, xtal_hw);
 > -- 
 > 2.19.1
 >
