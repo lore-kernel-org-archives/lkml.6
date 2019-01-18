@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA718C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3404C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7856B20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:03:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7278A20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:03:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFTqonkv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EooudYQj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfARODq (ORCPT
+        id S1727628AbfARODp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:03:46 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51462 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbfARODp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 09:03:45 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b11so4618462wmj.1;
-        Fri, 18 Jan 2019 06:03:43 -0800 (PST)
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50281 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbfARODn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:03:43 -0500
+Received: by mail-wm1-f68.google.com with SMTP id n190so4631504wmd.0;
+        Fri, 18 Jan 2019 06:03:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=w7Ai0hltg2jalPdM8DZ6LIbqR1s61sezTuxMf4F3h7I=;
-        b=VFTqonkvdFADx/zms1yRuBIFRbi79hFhXVsaEYJbVAkJWYqlTgDLYefVjgziLNb0P8
-         w1Ngu+7kXmZOoh//mKJQjG16H7DsWZwj2kbsCP6o9U8l9dCzwFzNt1Po4QaShTYja1bg
-         lKJjHw/93AjrUTgdLb3+plwvo1qv3l2RsaSSbzYhnS5KYs5SVlc23D8CSbzyiQPRMsZ9
-         kOHI5oT5kyIoZfGG56NMDuhJEhbdSswcm4ZTWtIPFrOcP1TBidNYhDANZJbG0YsfR0rn
-         TrS2V5pnK3EFGIGQR/hydt4IyO6SaKQjT6aVV5IlHMXX/T/TMylS4rTB8pD8FHUfMy7g
-         y/ZA==
+        bh=52hWXrVesE9hsYVcvtF6fWpIkVgqCxxIYdkUhzqrpz8=;
+        b=EooudYQjYAyQVnH01dtyFpFmvjNbyz5EvGFVvYLY2VvATnvqjEY01XCZ1/PHkmq60T
+         QUJOoHTJt1i2OPCZY1HELOGT1zMHL8Rq7uJO04W60uPo8soxOXurj27qP/ft7/xOsCVK
+         2m33r5yQfb2cisVOxJeAdyQG01mF9iaollNmF2ZTNFpGMAzxv0DAacaUI1Hl3yjYYT9P
+         5teW7gk/TBZevv7h6mPHeukCTwj0aUTQYxIX3BK54iJ8ufSlmLpjVOjp9jPO5yEtsvYo
+         KKnPEcRiwNllQygPHuJRja4IHRRqNcvYowloif1boMaajzcx7WW82vGu/g56RH1Ed4Ej
+         JxYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=w7Ai0hltg2jalPdM8DZ6LIbqR1s61sezTuxMf4F3h7I=;
-        b=rJviwlOVK5SCunIMniwKZpQSaPiGhbOJcYKf78HpzkR4vKXYT1e8VYy4+I1msda/xk
-         WXtV5buTlrdLYa32AhYs8gX6GDeSK/NoK7udK5Zv9apQxpl+kMXeV8jd9dX0K83hqk+e
-         BosWVkclbio4fCjQniZHKR7a3N+hPG1KCckdcnjHB2Dw1CF7RqOdnRDj/qlL3juuxoWo
-         pef8c/iq3F9xTk4Tvo34k9t9e4+kDMjiG3cpMfQuZoqrMVdeZkilw627X1dTXT1/xDwq
-         uNgK4Kk5GF3D+DGHCCqjc7XRZ25Q7zP6oV7HdTQbWPLO95ErfDzBbYmi7cYtznCPAVN4
-         MY/Q==
-X-Gm-Message-State: AJcUukfcAJn/mJuOc3hKnxwhZI8e0j4RQ15gfJCi1eV7qv6VeOvOQ2Xu
-        XH+j7mVNhkC15qxjDSPgMps=
-X-Google-Smtp-Source: ALg8bN61yhfhaVfJZB5OHdnPNJtooAJF3HS3D61o39/mudIqtH5joxBW5n45rul7F23Wn10eDdFLpg==
-X-Received: by 2002:a1c:8548:: with SMTP id h69mr14987483wmd.11.1547820222613;
-        Fri, 18 Jan 2019 06:03:42 -0800 (PST)
+        bh=52hWXrVesE9hsYVcvtF6fWpIkVgqCxxIYdkUhzqrpz8=;
+        b=fq1frvln0LetXNV/1pqR/Gf71CTLy1+UAWBg/TXTmUoKVw9Nlx9xp85kwK/dMXxaFr
+         cMxLYMMKv/K5sQvfdIw8+HgCaOJ7GUw1lF1yqcnotU+O2PRiWJSejHBQp9hJ6GfRiF+k
+         77CQ9ODvBTrSqMQsCpRv23xxXGzHmZ00PL5traKFewtYCsDXAWPPUaeKbSJr8/EfDGV5
+         cU3vtFyYuisQ67PA+mEsRyF27lZF+e1EfRR1w8PL3L+YLNFxSb2DhTp0q/kpTdI0a1tr
+         xCW/IKjzSb9tjx1aD4EWRZAnprtIl3noOfBMugpUwibHUf69YZuvTSYsaCimwDAsNTG2
+         f/+Q==
+X-Gm-Message-State: AJcUukf8zTV9nvc60Q8ZuSh0alZr4tzrr1aVFdMvZlphEAcSWREAkzCa
+        PUV9Ky1+RY1kAQggO4F0FwM=
+X-Google-Smtp-Source: ALg8bN4ZpocWfDxw4K8mJso8mLxXVLfgDK3T6BJUwS3dX+JelgVMkM1ikufi55+U9o4Fbgn1Vzrzig==
+X-Received: by 2002:a1c:f319:: with SMTP id q25mr15832227wmq.151.1547820221550;
+        Fri, 18 Jan 2019 06:03:41 -0800 (PST)
 Received: from Red.local ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id g197sm8464676wmd.29.2019.01.18.06.03.41
+        by smtp.googlemail.com with ESMTPSA id g197sm8464676wmd.29.2019.01.18.06.03.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 06:03:42 -0800 (PST)
+        Fri, 18 Jan 2019 06:03:41 -0800 (PST)
 From:   Corentin Labbe <clabbe.montjoie@gmail.com>
 To:     jdelvare@suse.com, linux@roeck-us.net
 Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
         Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH 6/7] hwmon: adm1029: Fix function alignment
-Date:   Fri, 18 Jan 2019 15:03:28 +0100
-Message-Id: <20190118140329.18970-7-clabbe.montjoie@gmail.com>
+Subject: [PATCH 5/7] hwmon: adm1029: Fix Logical continuations should be on the previous line checkpatch warning
+Date:   Fri, 18 Jan 2019 15:03:27 +0100
+Message-Id: <20190118140329.18970-6-clabbe.montjoie@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190118140329.18970-1-clabbe.montjoie@gmail.com>
 References: <20190118140329.18970-1-clabbe.montjoie@gmail.com>
@@ -73,38 +73,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fix the "Alignment should match open parenthesis" checkpatch
-warning.
+This patchs fix the "Logical continuations should be on the previous line" checkpatch warning.
 
 Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 ---
- drivers/hwmon/adm1029.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hwmon/adm1029.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/hwmon/adm1029.c b/drivers/hwmon/adm1029.c
-index 4339f6b864a1..e9fe4fc3489e 100644
+index f9f4f1f4a4c7..4339f6b864a1 100644
 --- a/drivers/hwmon/adm1029.c
 +++ b/drivers/hwmon/adm1029.c
-@@ -203,8 +203,8 @@ show_fan_div(struct device *dev, struct device_attribute *devattr, char *buf)
- 	return sprintf(buf, "%d\n", DIV_FROM_REG(data->fan_div[attr->index]));
- }
+@@ -131,8 +131,7 @@ static struct adm1029_data *adm1029_update_device(struct device *dev)
+ 	 * Use the "cache" Luke, don't recheck values
+ 	 * if there are already checked not a long time later
+ 	 */
+-	if (time_after(jiffies, data->last_updated + HZ * 2)
+-	 || !data->valid) {
++	if (time_after(jiffies, data->last_updated + HZ * 2) || !data->valid) {
+ 		int nr;
  
--static ssize_t set_fan_div(struct device *dev,
--	    struct device_attribute *devattr, const char *buf, size_t count)
-+static ssize_t set_fan_div(struct device *dev, struct device_attribute *devattr,
-+			   const char *buf, size_t count)
- {
- 	struct adm1029_data *data = dev_get_drvdata(dev);
- 	struct i2c_client *client = data->client;
-@@ -322,7 +322,7 @@ static int adm1029_detect(struct i2c_client *client,
- 	temp_devices_installed = i2c_smbus_read_byte_data(client,
- 					ADM1029_REG_TEMP_DEVICES_INSTALLED);
+ 		dev_dbg(&client->dev, "Updating adm1029 data\n");
+@@ -182,9 +181,9 @@ show_fan(struct device *dev, struct device_attribute *devattr, char *buf)
+ 	struct adm1029_data *data = adm1029_update_device(dev);
+ 	u16 val;
+ 
+-	if (data->fan[attr->index] == 0
+-	    || (data->fan_div[attr->index] & 0xC0) == 0
+-	    || data->fan[attr->index] == 255) {
++	if (data->fan[attr->index] == 0 ||
++	    (data->fan_div[attr->index] & 0xC0) == 0 ||
++	    data->fan[attr->index] == 255) {
+ 		return sprintf(buf, "0\n");
+ 	}
+ 
+@@ -325,8 +324,8 @@ static int adm1029_detect(struct i2c_client *client,
  	nb_fan_support = i2c_smbus_read_byte_data(client,
--						ADM1029_REG_NB_FAN_SUPPORT);
-+						  ADM1029_REG_NB_FAN_SUPPORT);
+ 						ADM1029_REG_NB_FAN_SUPPORT);
  	/* 0x41 is Analog Devices */
- 	if (man_id != 0x41 || (temp_devices_installed & 0xf9) != 0x01 ||
- 	    nb_fan_support != 0x03)
+-	if (man_id != 0x41 || (temp_devices_installed & 0xf9) != 0x01
+-	    || nb_fan_support != 0x03)
++	if (man_id != 0x41 || (temp_devices_installed & 0xf9) != 0x01 ||
++	    nb_fan_support != 0x03)
+ 		return -ENODEV;
+ 
+ 	if ((chip_id & 0xF0) != 0x00) {
 -- 
 2.19.2
 
