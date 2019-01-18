@@ -2,205 +2,137 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCC5C5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C89C07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34FB720823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:24:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dw8SHWcc"
+	by mail.kernel.org (Postfix) with ESMTP id 05DCB20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbfARRYh (ORCPT
+        id S1728433AbfARRZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:24:37 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38372 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbfARRYg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:24:36 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so16013018wrw.5
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:24:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=LdL19VvuwiQZZQ+oXgplGPEqEZFpfJRXauSkt/RaFu0=;
-        b=dw8SHWcckTunJdkNoFnXE9/1uLqJo1Ul0ji/kVYmUGizIdZsq5AtLEVZKRZQmTU6q4
-         Oyle3luglOWNJhxQVbllJcj7mzXylQlO+0uFFT1bAt5XJ2X7BtYk+bOws30Z0VECps1h
-         /fxxUUxgJ1vl9h/rOz7i090tg2UzohxHLBq1I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=LdL19VvuwiQZZQ+oXgplGPEqEZFpfJRXauSkt/RaFu0=;
-        b=guyrMOD3kqk5gNTPCKvWE1xKaWBb13I5d6GELMNIZ4sXgcFYLAM0B9mLZClrn87/My
-         YZcvVPaa2lqKML2vOnid/HKMR6qchXSVDXxMX59HnTAijqSDUljFaybwiokcuFX+fQqh
-         Y+Yl+PP5f+6yR+iadJffD0+dALObUrt4+0yn7GD+iuu+32lntlJoCnqy69dNFa+dcAFq
-         dlz2MTfQpFGd8b30wCI2ACf93N+QdwTSoLRqR4TG53L97wzgM4RubQYPd5v4MFi3k0Be
-         7u1nUMXkb3V46xqQ3RHLdqK1LMS6L4c2DLDtkS2JqiDfKLrqFf6BsXvlwU/7T5vus8Lg
-         9XrA==
-X-Gm-Message-State: AJcUukdzyO43/glhw8VvvP+d+2hltra5ZFb0ANNxlvwFA3GVX/C7VWpv
-        +3mXLRUNDj8eQ4icq1i/z5ECXw==
-X-Google-Smtp-Source: ALg8bN4Dl+CL/2xjoCyOnR1Xdx4SElgTQLwfilZORA/roIRlMyjSJyXcbf3BEXk5LyPL908EzT9JDw==
-X-Received: by 2002:adf:eec9:: with SMTP id a9mr17041395wrp.242.1547832274351;
-        Fri, 18 Jan 2019 09:24:34 -0800 (PST)
-Received: from [192.168.43.112] ([37.162.17.17])
-        by smtp.gmail.com with ESMTPSA id c129sm29970547wma.48.2019.01.18.09.24.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 09:24:33 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH BUGFIX RFC 0/2] reverting two commits causing freezes
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <c3b182a2-7f82-2860-436b-c1d59d6661ff@kernel.dk>
-Date:   Fri, 18 Jan 2019 18:24:31 +0100
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        'Paolo Valente' via bfq-iosched 
-        <bfq-iosched@googlegroups.com>, oleksandr@natalenko.name,
-        hurikhan77+bko@gmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D212BCED-49BD-47F0-AF7F-0CCDBC82D131@linaro.org>
-References: <20190118115219.63576-1-paolo.valente@linaro.org>
- <c3b182a2-7f82-2860-436b-c1d59d6661ff@kernel.dk>
-To:     Jens Axboe <axboe@kernel.dk>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Fri, 18 Jan 2019 12:25:02 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35284 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727553AbfARRZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:25:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E78980D;
+        Fri, 18 Jan 2019 09:25:01 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A744D3F7BE;
+        Fri, 18 Jan 2019 09:24:58 -0800 (PST)
+Date:   Fri, 18 Jan 2019 17:24:56 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] arm64: replace -pg with CC_FLAGS_FTRACE in
+ Makefiles
+Message-ID: <20190118172455.GF12256@lakrids.cambridge.arm.com>
+References: <20190118163736.6A99268CEB@newverein.lst.de>
+ <20190118163904.CD7BA68CEB@newverein.lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118163904.CD7BA68CEB@newverein.lst.de>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Torsten,
 
+On Fri, Jan 18, 2019 at 05:39:04PM +0100, Torsten Duwe wrote:
+> Ftrace instrumentation might also be introduced by
+> -fpatchable-function-entry, not only -pg. Ensure the Makefiles are
+> flexible to filter out the respective flags in "notrace" directories.
 
-> Il giorno 18 gen 2019, alle ore 14:35, Jens Axboe <axboe@kernel.dk> ha =
-scritto:
->=20
-> On 1/18/19 4:52 AM, Paolo Valente wrote:
->> Hi Jens,
->> a user reported a warning, followed by freezes, in case he increases
->> nr_requests to more than 64 [1]. After reproducing the issues, I
->> reverted the commit f0635b8a416e ("bfq: calculate shallow depths at
->> init time"), plus the related commit bd7d4ef6a4c9 ("bfq-iosched:
->> remove unused variable"). The problem went away.
->=20
-> For reverts, please put the justification into the actual revert
-> commit. With this series, if applied as-is, we'd have two patches
-> in the tree that just says "revert X" without any hint as to why
-> that was done.
->=20
+I think this is a cleanup regardless of whether we use
+-fpatchable-function-entry.
 
-I forget to say explicitly that these patches were meant only to give
-you and anybody else something concrete to test and check.
+Can we please give this a more complete description, e.g.
 
-With me you're as safe as houses, in terms of amount of comments in
-final patches :)
+| Currently arm64 makefiles assume that ftrace will use '-pg', and remove
+| this flag specifically, rather than the contents of $(CC_FLAGS_FTRACE).
+| 
+| In preparation for arm64 supporting ftrace built on other compiler
+| options, let's have the arm64 makefiles remove the $(CC_FLAGS_FTRACE)
+| flags, whatever these may be, rather than assuming '-pg'. 
+|
+| There should be no functional change as a result of this patch.
 
->> Maybe the assumption in commit f0635b8a416e ("bfq: calculate shallow
->> depths at init time") does not hold true?
->=20
-> It apparently doesn't! But let's try and figure this out instead of
-> blindly reverting it.
+> 
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+> 
+> ---
+>  arch/arm64/kernel/Makefile            |    6 +++---
+>  drivers/firmware/efi/libstub/Makefile |    3 ++-
 
-Totally agree.
+This misses arch/arm64/lib/Makefile and mm/kasan/makefile.
 
-> OK, I think I see it. For the sched_tags
-> case, when we grow the requests, we allocate a new set. Hence any
-> old cache would be stale at that point.
->=20
+Could we please split this into three patches, addressing:
 
-ok
+* arm64
+* efistub
+* kasan
 
-> How about something like this? It still keeps the code of having
-> to update this out of the hot IO path, and only calls it when we
-> actually change the depths.
->=20
+... since those have distinct maintainers. All those patches can be part
+of this series, but having them as separate patches is a bit nicer for
+review.
 
-Looks rather clean and efficient.
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -7,9 +7,9 @@ CPPFLAGS_vmlinux.lds	:= -DTEXT_OFFSET=$(
+>  AFLAGS_head.o		:= -DTEXT_OFFSET=$(TEXT_OFFSET)
+>  CFLAGS_armv8_deprecated.o := -I$(src)
+>  
+> -CFLAGS_REMOVE_ftrace.o = -pg
+> -CFLAGS_REMOVE_insn.o = -pg
+> -CFLAGS_REMOVE_return_address.o = -pg
+> +CFLAGS_REMOVE_ftrace.o = $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_insn.o = $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_return_address.o = $(CC_FLAGS_FTRACE)
+>  
+>  # Object file lists.
+>  obj-y			:= debug-monitors.o entry.o irq.o fpsimd.o		\
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -16,7 +16,8 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__K
+>  
+>  # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+>  # disable the stackleak plugin
+> -cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie \
+> +cflags-$(CONFIG_ARM64)		:= $(filter-out $(CC_FLAGS_FTRACE)\
+> +				  ,$(KBUILD_CFLAGS)) -fpie \
+>  				   $(DISABLE_STACKLEAK_PLUGIN)
 
-> Totally untested...
->=20
+Why do we need to swtich to using filter-out. AFAICT, subst works just fine.
 
-It seems to work here too.
+To keepthis legible, it would be nicer to split it like:
+
+cflags-$(CONFIG_ARM64)			:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+					   -fpie $(DISABLE_STACKLEAK_PLUGIN)
+
+>  cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
+>  				   -fno-builtin -fpic \
+
+Please clean up this instance too, at least for consistency.
 
 Thanks,
-Paolo
-
->=20
-> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-> index cd307767a134..b09589915667 100644
-> --- a/block/bfq-iosched.c
-> +++ b/block/bfq-iosched.c
-> @@ -5342,7 +5342,7 @@ static unsigned int bfq_update_depths(struct =
-bfq_data *bfqd,
-> 	return min_shallow;
-> }
->=20
-> -static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int =
-index)
-> +static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
-> {
-> 	struct bfq_data *bfqd =3D hctx->queue->elevator->elevator_data;
-> 	struct blk_mq_tags *tags =3D hctx->sched_tags;
-> @@ -5350,6 +5350,11 @@ static int bfq_init_hctx(struct blk_mq_hw_ctx =
-*hctx, unsigned int index)
->=20
-> 	min_shallow =3D bfq_update_depths(bfqd, &tags->bitmap_tags);
-> 	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, =
-min_shallow);
-> +}
-> +
-> +static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int =
-index)
-> +{
-> +	bfq_depth_updated(hctx);
-> 	return 0;
-> }
->=20
-> @@ -5772,6 +5777,7 @@ static struct elevator_type iosched_bfq_mq =3D {
-> 		.requests_merged	=3D bfq_requests_merged,
-> 		.request_merged		=3D bfq_request_merged,
-> 		.has_work		=3D bfq_has_work,
-> +		.depth_updated		=3D bfq_depth_updated,
-> 		.init_hctx		=3D bfq_init_hctx,
-> 		.init_sched		=3D bfq_init_queue,
-> 		.exit_sched		=3D bfq_exit_queue,
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 3ba37b9e15e9..a047b297ade5 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -3101,6 +3101,8 @@ int blk_mq_update_nr_requests(struct =
-request_queue *q, unsigned int nr)
-> 		}
-> 		if (ret)
-> 			break;
-> +		if (q->elevator && q->elevator->type->ops.depth_updated)
-> +			q->elevator->type->ops.depth_updated(hctx);
-> 	}
->=20
-> 	if (!ret)
-> diff --git a/include/linux/elevator.h b/include/linux/elevator.h
-> index 2e9e2763bf47..6e8bc53740f0 100644
-> --- a/include/linux/elevator.h
-> +++ b/include/linux/elevator.h
-> @@ -31,6 +31,7 @@ struct elevator_mq_ops {
-> 	void (*exit_sched)(struct elevator_queue *);
-> 	int (*init_hctx)(struct blk_mq_hw_ctx *, unsigned int);
-> 	void (*exit_hctx)(struct blk_mq_hw_ctx *, unsigned int);
-> +	void (*depth_updated)(struct blk_mq_hw_ctx *);
->=20
-> 	bool (*allow_merge)(struct request_queue *, struct request *, =
-struct bio *);
-> 	bool (*bio_merge)(struct blk_mq_hw_ctx *, struct bio *);
->=20
-> --=20
-> Jens Axboe
->=20
-
+Mark.
