@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D7FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E95C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E3202086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15A2B20883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:14:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfARLNz (ORCPT
+        id S1727455AbfARLOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:13:55 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48102 "EHLO mx1.redhat.com"
+        Fri, 18 Jan 2019 06:14:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40580 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbfARLNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:13:55 -0500
+        id S1726722AbfARLOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 06:14:07 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2C8380F9F;
-        Fri, 18 Jan 2019 11:13:54 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6FF0BA6DE0;
+        Fri, 18 Jan 2019 11:14:07 +0000 (UTC)
 Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 53D021048106;
-        Fri, 18 Jan 2019 11:13:44 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 69B37101960A;
+        Fri, 18 Jan 2019 11:13:55 +0000 (UTC)
 From:   Kairui Song <kasong@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
@@ -36,58 +36,74 @@ Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         rafael.j.wysocki@intel.com, lenb@kernel.org,
         fanc.fnst@cn.fujitsu.com, linux-acpi@vger.kernel.org,
         Kairui Song <kasong@redhat.com>
-Subject: [PATCH v3 1/3] x86, kexec_file_load: Don't setup EFI info if EFI runtime is not enabled
-Date:   Fri, 18 Jan 2019 19:13:08 +0800
-Message-Id: <20190118111310.29589-2-kasong@redhat.com>
+Subject: [PATCH v3 2/3] acpi: store acpi_rsdp address for later kexec usage
+Date:   Fri, 18 Jan 2019 19:13:09 +0800
+Message-Id: <20190118111310.29589-3-kasong@redhat.com>
 In-Reply-To: <20190118111310.29589-1-kasong@redhat.com>
 References: <20190118111310.29589-1-kasong@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 18 Jan 2019 11:13:55 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 18 Jan 2019 11:14:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently with "efi=noruntime" in kernel command line, calling
-kexec_file_load will raise below problem:
+Currently we have acpi_os_get_root_pointer as the universal function
+to get RSDP address. But the function itself and some functions it
+depends on are in .init section and make it not easy to retrieve the
+RSDP value once kernel is initialized.
 
-[   97.967067] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-[   97.967894] #PF error: [normal kernel read fault]
-...
-[   97.980456] Call Trace:
-[   97.980724]  efi_runtime_map_copy+0x28/0x30
-[   97.981267]  bzImage64_load+0x688/0x872
-[   97.981794]  arch_kexec_kernel_image_load+0x6d/0x70
-[   97.982441]  kimage_file_alloc_init+0x13e/0x220
-[   97.983035]  __x64_sys_kexec_file_load+0x144/0x290
-[   97.983586]  do_syscall_64+0x55/0x1a0
-[   97.983962]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+And for kexec, it need to retrive RSDP again if EFI is disabled, because
+the second kernel will not be able get the RSDP value in such case, so
+it expects either the user specify the RSDP value using kernel cmdline,
+or kexec could retrive and pass the RSDP value using boot_params.
 
-When efi runtime is not enabled, efi memmap is not mapped, so just skip
-EFI info setup.
+This patch stores the RSDP address when initialized is done, and
+introduce an acpi_os_get_root_pointer_late for later kexec usage.
 
-Suggested-by: Dave Young <dyoung@redhat.com>
 Signed-off-by: Kairui Song <kasong@redhat.com>
 ---
- arch/x86/kernel/kexec-bzimage64.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/osl.c   | 10 ++++++++++
+ include/linux/acpi.h |  3 +++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 2c007abd3d40..097f52fb02e3 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -167,6 +167,9 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
- 	struct efi_info *current_ei = &boot_params.efi_info;
- 	struct efi_info *ei = &params->efi_info;
- 
-+	if (!efi_enabled(EFI_RUNTIME_SERVICES))
-+		return 0;
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index f29e427d0d1d..6340d34d0df1 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -187,6 +187,16 @@ static int __init setup_acpi_rsdp(char *arg)
+ 	return kstrtoul(arg, 16, &acpi_rsdp);
+ }
+ early_param("acpi_rsdp", setup_acpi_rsdp);
 +
- 	if (!current_ei->efi_memmap_size)
- 		return 0;
++acpi_physical_address acpi_os_get_root_pointer_late(void) {
++	return acpi_rsdp;
++}
++
++static int __init acpi_store_root_pointer(void) {
++	acpi_rsdp = acpi_os_get_root_pointer();
++	return 0;
++}
++late_initcall(acpi_store_root_pointer);
+ #endif
  
+ acpi_physical_address __init acpi_os_get_root_pointer(void)
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 87715f20b69a..226f2572eb8e 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -892,6 +892,9 @@ static inline void arch_reserve_mem_area(acpi_physical_address addr,
+ {
+ }
+ #endif /* CONFIG_X86 */
++#ifdef CONFIG_KEXEC
++acpi_physical_address acpi_os_get_root_pointer_late(void);
++#endif
+ #else
+ #define acpi_os_set_prepare_sleep(func, pm1a_ctrl, pm1b_ctrl) do { } while (0)
+ #endif
 -- 
 2.20.1
 
