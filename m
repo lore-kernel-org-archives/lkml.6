@@ -2,98 +2,97 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D70C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6534EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4BF20873
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AF9220873
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 03:01:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TbWCtv7E";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hckWqWdg"
+	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="uheASdiz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfARDAY (ORCPT
+        id S1727005AbfARDBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 22:00:24 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34294 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfARDAX (ORCPT
+        Thu, 17 Jan 2019 22:01:55 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44496 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbfARDBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 22:00:23 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A4EED60854; Fri, 18 Jan 2019 03:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547780422;
-        bh=Kmvy6jmyxSGe+B72xwSc13kkWmiV6lSKDp4kebtGVJ4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TbWCtv7E85S6XtslDss10MqTAO1JDTkZhPWhBHTOcKv5aB/d0Mjbl2XJkHo/b/OlF
-         4Z6C3EWwuXera0IcvKTWwEtgfQgEJjCGDbuQ/t9JQAj+foBOA22vpMLbOfQoPOZc6g
-         e7X63Hm3zteO438m5DMSG7VDmOHJIaP5I3g/dNMo=
-Received: from [10.79.129.0] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8E7D1605A0;
-        Fri, 18 Jan 2019 03:00:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547780421;
-        bh=Kmvy6jmyxSGe+B72xwSc13kkWmiV6lSKDp4kebtGVJ4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hckWqWdgfYwfwLvwqSGWza7/stYyIoEqaxCFU+Ppg4r1LNzmM9PQkh4tbuSjcxCTw
-         CJdWh55xasiY37a+87aWTbRQ9oB8eVfkSW9QCGHuoxSdU6393Q6VxOr7NJc/bTjBPf
-         0AAdukb77/fM6xemB4hct4fb7sgF6YWwnjlJyIgI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E7D1605A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 1/3] arm64: dts: qcom: sdm845: Add Coresight support
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <cover.1547054308.git.saiprakash.ranjan@codeaurora.org>
- <a13ad49d3ae8d9a5a972027283b7212ab19f97d0.1547054308.git.saiprakash.ranjan@codeaurora.org>
- <20190113072319.GB28907@builder>
- <5724d2d4-39df-a923-5f94-b53c40a84fd3@codeaurora.org>
- <20190117195027.GA12955@builder>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <c7c33640-ae2c-eacf-0c91-a7537b5f16c1@codeaurora.org>
-Date:   Fri, 18 Jan 2019 08:30:15 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190117195027.GA12955@builder>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Thu, 17 Jan 2019 22:01:53 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e11so5654701plt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 19:01:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZqoXXRFbL8LOG168WUI36YcQoZy1XNTlv6gJAPqhUBQ=;
+        b=uheASdiz6dEOFlkfiYGvugmTs/dB65fqRv+ESmJ8rgZmsYT9Yvuxpk1pHftqJD0hsU
+         EhqP577sUOTCgf1u6pHrkzn8qU6hlM7dojRMQy/RKEWUdq918clNVkC/kAufQ2UHM1Gs
+         Y7T+6pk5zfg9xCuFjF5qlMcXPLYgE0DPPaciL+5mSfnIbOTHuYDqdgM30SiXvaLv+y+V
+         s/dXl2XhRL7C9jTEJJHen4M/6XYOiEDlqwYqgM1H7ML42v0ee/8fq//R16GF4IGzy/Df
+         +nrryu4l28KFcOz6RDvDRXPjdEiIZMXtpB2KMnxAwAalWjFOLclLMqlwqoaWa4LoCWlA
+         pu1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZqoXXRFbL8LOG168WUI36YcQoZy1XNTlv6gJAPqhUBQ=;
+        b=cNAEpNThQP6jlTba4aA11mfV1VJ7wPsJ+dql4SO7JJVxd4y98q7iqX4zk6D1PjxEVc
+         0hg1s5I3c6n/9ByA585Tc1J5qpDYf/qezB//TBj4Yh0rJyvanSjYXw7UXA9zEI5gQ0tQ
+         yo9kgGIWTSPMWwoUz/1sDJNsIrTMKSEHJMjFUK/kDtT4ET9GgYDcIlREOM1M/2xm/8BH
+         IjO5kDae2MmLpZWIgF5azo075uliesLS3nKWmc/Y9KtCDVALSYYN8kN9itao2vOUsB9a
+         G6X/QjwPgYcJwT9ZtqXZperVBpZIWxFDZ92pLLaX+nIQ+hUXoCX4nmoAT3ytbG9un4k3
+         79fQ==
+X-Gm-Message-State: AJcUukeyme9TvixBB83AsE1cB/+e9gHi6/SBCONbsNunyTbLtClKBy84
+        PWkAe2U/KuT+pmqlKVmJJDrsQw==
+X-Google-Smtp-Source: ALg8bN6PLc5phI3fRdBEwZdUBKj6aaNSOiIzYspd4qBbi3RJ+QNoLhzVVT+Lg/VQwenkRZXibb+wLg==
+X-Received: by 2002:a17:902:7687:: with SMTP id m7mr17357284pll.187.1547780512578;
+        Thu, 17 Jan 2019 19:01:52 -0800 (PST)
+Received: from [192.168.0.79] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
+        by smtp.gmail.com with ESMTPSA id r187sm10506737pfc.63.2019.01.17.19.01.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 19:01:52 -0800 (PST)
+Subject: [PATCH v2 3/3] scsi: arcmsr: Update driver version to
+ v1.40.00.10-20190116
+From:   Ching Huang <ching2048@areca.com.tw>
+To:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@oracle.com, hch@infradead.org,
+        colin.king@canonical.com
+Content-Type: text/plain; charset="UTF-8"
+Date:   Fri, 18 Jan 2019 11:01:49 +0800
+Message-ID: <1547780509.4532.22.camel@Centos6.3-64>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/2019 1:20 AM, Bjorn Andersson wrote:
-> 
-> There seems to be some variations of this, but we try to keep everything
-> sorted in sdm845.dtsi to avoid having to jump around between the various
-> files. So please merge it into sdm845.dtsi (sorted by address).
-> 
+From Ching Huang <ching2048@areca.com.tw>
 
-Sure will do it.
+Update driver version to v1.40.00.10-20190116.
 
-Thanks,
-Sai
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Signed-off-by: Ching Huang <ching2048@areca.com.tw>
+---
+
+diff --git a/drivers/scsi/arcmsr/arcmsr.h b/drivers/scsi/arcmsr/arcmsr.h
+index a94c513..9220bcf 100755
+--- a/drivers/scsi/arcmsr/arcmsr.h
++++ b/drivers/scsi/arcmsr/arcmsr.h
+@@ -49,7 +49,7 @@ struct device_attribute;
+ #define ARCMSR_MAX_OUTSTANDING_CMD	1024
+ #define ARCMSR_DEFAULT_OUTSTANDING_CMD	128
+ #define ARCMSR_MIN_OUTSTANDING_CMD	32
+-#define ARCMSR_DRIVER_VERSION		"v1.40.00.10-20181217"
++#define ARCMSR_DRIVER_VERSION		"v1.40.00.10-20190116"
+ #define ARCMSR_SCSI_INITIATOR_ID	255
+ #define ARCMSR_MAX_XFER_SECTORS		512
+ #define ARCMSR_MAX_XFER_SECTORS_B	4096
+
+
