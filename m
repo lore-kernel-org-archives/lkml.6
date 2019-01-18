@@ -2,169 +2,153 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD80EC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FCEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BDD820883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:35:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A04222087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 13:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="xSVSBBBZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BckBCcwY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfARNfd (ORCPT
+        id S1727519AbfARNfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:35:33 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44097 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbfARNfd (ORCPT
+        Fri, 18 Jan 2019 08:35:40 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34971 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbfARNfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:35:33 -0500
-Received: by mail-pg1-f195.google.com with SMTP id t13so6069250pgr.11
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 05:35:32 -0800 (PST)
+        Fri, 18 Jan 2019 08:35:39 -0500
+Received: by mail-qk1-f193.google.com with SMTP id w204so8049898qka.2;
+        Fri, 18 Jan 2019 05:35:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0XfBUH0h6UMegExJfFNoxqar+AsBx1JRamqr0+nxNYQ=;
-        b=xSVSBBBZMkxQKk2R2c552R4GY5GXtThhAu3xsEcMscb6Ba9xW00NLul3tHaOcshrR+
-         RmkVgoqsf2KhLlhs3S6eOyIa6Z3Vi+iFHiQ/uKhtkTCCblMWpyiNDmdrRQuRobkF/7zc
-         dmVudXPhXQ1iSI5UlLUmOVlUK/0Sbe9pTGWsaagZMHQq/837Y8vXg27tWb0lWEeP5zgJ
-         KT8KpAJ6TLpnWPdZTrCaxOC7VpN2AP91GwY96g0uhh2xQVOyj97EYnLpVYpsv/KmkFQS
-         sqajQDZ4wscBoDY12KMCgJzTKjwoHt7X6d+QPxHp+rG7WkZsBeGiLUxo/oE4kODz/Zzm
-         Vl2A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lq/IqQ19vCoxyFTJyD7jgLHanmIgXYLNCjQ21ue7X5o=;
+        b=BckBCcwYbzZX4bCIQzPCghFxc694z/6pdhAgN6B+I5hJwJujt3h5yoPnntcg780Pro
+         fpuk9Dk5FN508uPjlLX+RLcZg+IY7f8QcN/bnChTnUcfl4UznU0Cjs3EFoSdd9zM/YSa
+         AEn4X0ZL5CMJn/C5488qjel/dil+4h/636woYWmAy0AP58GOEv/cOiyo+WWj1NIaH+uF
+         GRRtQj72KC34iyBKe+5mOhGfHyRdR7GsXchvgCYtZ5nBbyL2F+I24V7NKeJlGMb8H7m8
+         Q1Ja3Aehy4kW6Z5d1KCzVYxvuGD3Vis2IVDor0CCSLkqU7GKN5VVrQkuHBT3OCwFS8Ug
+         pVaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0XfBUH0h6UMegExJfFNoxqar+AsBx1JRamqr0+nxNYQ=;
-        b=YyBJHj7ENCIDaotRC4tsmH0dmU+9Wzy+pB0JByNOKDM2sGSz11Sajp5YBKhCcnUK/d
-         zfGD9nQrzrX1cLzfzZyexoJ/gpZufgE7bFziwzpKRiodZ7ZPNEGY781qybROq6glw/F4
-         6Raia8DkdsjYTtx7eejcaaUkpd3DGmXsYnYat/NTb3twbGAH6hAYgxo34ReocJ982Td/
-         p+ZI1a6MYf02BBh4oPjMvW8VmTNQsanMaqI9RxvRb0DQbS035k+RbJNYF0xxYk7iOcET
-         sPGNt+q5hQc4lNkp1Kpz5rxwdE9YkkdGtWaW+deLpWDYh3o+iohhGoh6EiJ7Q5PfBYmY
-         38aw==
-X-Gm-Message-State: AJcUukeJT/Yq5Qqf524AsxL037v3HaCwwBqaW1kmLfE3ybmMPTUAQ3Ww
-        ANctYPfDTnkaMqJGWdlselhr2w==
-X-Google-Smtp-Source: ALg8bN657NAG2e9wuKo26Z+vlGdKTIfVboS5bVlKmFVyVfjp/4JQD3cbb2nU+sSA+XsFler5+zjJ4A==
-X-Received: by 2002:a63:8e43:: with SMTP id k64mr17551699pge.346.1547818532211;
-        Fri, 18 Jan 2019 05:35:32 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id m19sm12315464pgn.35.2019.01.18.05.35.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 05:35:30 -0800 (PST)
-Subject: Re: [PATCH BUGFIX RFC 0/2] reverting two commits causing freezes
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, hurikhan77+bko@gmail.com
-References: <20190118115219.63576-1-paolo.valente@linaro.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c3b182a2-7f82-2860-436b-c1d59d6661ff@kernel.dk>
-Date:   Fri, 18 Jan 2019 06:35:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lq/IqQ19vCoxyFTJyD7jgLHanmIgXYLNCjQ21ue7X5o=;
+        b=kK2UVkBCtrDYhBPzzcEpPYRRKaBSwIjzWuoZp9ok+wBbKxXYpzQV2jw3JlexaFTRz7
+         Z86qKVYrQq3oGIyAeFEyqdxwz4HsM795MhLaHOyFGu6NZkpW8+d6feQQOIo4r+p+J2Sw
+         3rjCMI4kNjEY6lptsUULYe2oNQaX+cTk2OJU+dSdXMWO9DU9MeQjxrKa72SiOUk81J+a
+         xDo+sGDqkx8HsfVC4IS6zvAYj1eX/BfcjjsBwpIRjHcNm9UUu/4QvM7ylAccdUgPD98R
+         ctHtbCdbWtE+5oUosH2kIlCKnHOEWnpjrVg9GqxMDvZsCWbcx4W5B5FZHhIOUsBQY+6N
+         iZaA==
+X-Gm-Message-State: AJcUukdOCLl4LnlIg0Wammmp1Bkj8t+IJ3MLoQkZgLnhZhlNdtOGPsAs
+        xRPPdaQmXXktyoBnvU1Ln/Y=
+X-Google-Smtp-Source: ALg8bN57zDHLgJRzng0hZNk+auXGZ2faow/Hqb6TQv9oetSR8Wb7Pey2Lbk92nuIA3CS3VApNnbo8g==
+X-Received: by 2002:a37:6f85:: with SMTP id k127mr14708794qkc.240.1547818537913;
+        Fri, 18 Jan 2019 05:35:37 -0800 (PST)
+Received: from localhost.localdomain ([168.181.49.80])
+        by smtp.gmail.com with ESMTPSA id w184sm67984658qkw.90.2019.01.18.05.35.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 05:35:37 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 73171180B7A; Fri, 18 Jan 2019 11:35:34 -0200 (-02)
+Date:   Fri, 18 Jan 2019 11:35:34 -0200
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Vlad Yasevich <vyasevich@gmail.com>,
+        linux-sctp@vger.kernel.org
+Subject: Re: [PATCH 6/7] sctp: Convert to genradix
+Message-ID: <20190118133534.GD666@localhost.localdomain>
+References: <20181217131929.11727-1-kent.overstreet@gmail.com>
+ <20181217131929.11727-7-kent.overstreet@gmail.com>
+ <20181217125001.8e89ac2565417d55ef7a624e@linux-foundation.org>
+ <20181217210021.GA7144@kmo-pixel>
+ <20190115142926.GQ23855@localhost.localdomain>
+ <20190118131022.GA22165@hmswarspite.think-freely.org>
 MIME-Version: 1.0
-In-Reply-To: <20190118115219.63576-1-paolo.valente@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118131022.GA22165@hmswarspite.think-freely.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/19 4:52 AM, Paolo Valente wrote:
-> Hi Jens,
-> a user reported a warning, followed by freezes, in case he increases
-> nr_requests to more than 64 [1]. After reproducing the issues, I
-> reverted the commit f0635b8a416e ("bfq: calculate shallow depths at
-> init time"), plus the related commit bd7d4ef6a4c9 ("bfq-iosched:
-> remove unused variable"). The problem went away.
+On Fri, Jan 18, 2019 at 08:10:22AM -0500, Neil Horman wrote:
+> On Tue, Jan 15, 2019 at 12:29:26PM -0200, Marcelo Ricardo Leitner wrote:
+> > On Mon, Dec 17, 2018 at 04:00:21PM -0500, Kent Overstreet wrote:
+> > > On Mon, Dec 17, 2018 at 12:50:01PM -0800, Andrew Morton wrote:
+> > > > On Mon, 17 Dec 2018 08:19:28 -0500 Kent Overstreet <kent.overstreet@gmail.com> wrote:
+> > > > 
+> > > > > @@ -535,9 +470,6 @@ int sctp_send_add_streams(struct sctp_association *asoc,
+> > > > >  		goto out;
+> > > > >  	}
+> > > > >  
+> > > > > -	stream->incnt = incnt;
+> > > > > -	stream->outcnt = outcnt;
+> > > > > -
+> > > > >  	asoc->strreset_outstanding = !!out + !!in;
+> > > > >  
+> > > > 
+> > > > I'm seeing a reject here for some reason.  Using todays's linux-next,
+> > > > but there are no changes against net/sctp/stream.c in -next.  The
+> > > > assignment to stream->incnt has disappeared.  I did this:
+> > > > 
+> > > > @@ -535,8 +470,6 @@ int sctp_send_add_streams(struct sctp_as
+> > > >  		goto out;
+> > > >  	}
+> > > >  
+> > > > -	stream->outcnt = outcnt;
+> > > > -
+> > > >  	asoc->strreset_outstanding = !!out + !!in;
+> > > >  
+> > > >  out:
+> > > > 
+> > > > 
+> > > > We're at 4.20-rc7 and this series is rather large.  I'll merge them all
+> > > > to see what happens, but I don't think it's 4.21-rc1 material?
+> > > 
+> > > Yeah, agreed. Thanks!
+> > 
+> > Ping? Where did this go?
+> > 
+> As I recall kent reposted his series convirting flex_arrays to radix trees such
+> that it included sctp's uses.
 
-For reverts, please put the justification into the actual revert
-commit. With this series, if applied as-is, we'd have two patches
-in the tree that just says "revert X" without any hint as to why
-that was done.
+That should be this patchset already.  Or you mean another (re)post,
+v2 or so? If yes then I missed it somehow but I still see the
+flex_array in v5.0-rc2:
 
-> Maybe the assumption in commit f0635b8a416e ("bfq: calculate shallow
-> depths at init time") does not hold true?
+net-next]$ git ls-tree v5.0-rc2 -- lib/flex_array.c
+100644 blob 2eed22fa507c7cb0756d7ef643f8a3454eb455ec    lib/flex_array.c
 
-It apparently doesn't! But let's try and figure this out instead of
-blindly reverting it. OK, I think I see it. For the sched_tags
-case, when we grow the requests, we allocate a new set. Hence any
-old cache would be stale at that point.
+and missing the convertion on sctp stack.
 
-How about something like this? It still keeps the code of having
-to update this out of the hot IO path, and only calls it when we
-actually change the depths.
+Current patch is the only one I could find with sctp being included:
+https://lore.kernel.org/lkml/20181217210021.GA7144@kmo-pixel/T/#re4f8656af37431a376044399681a8771375a4405
 
-Totally untested...
+> 
+> I think xin needs to repost the sctp reallocation patch to make use of those
+> radix trees appropriately still (assuming any additional work still needs to be
+> done)
 
+This came up on another converstation with him and the lack of this
+convertion is blocking him on at least one fix, on one that the fix
+using flex_arrays is one and genradix is another.
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index cd307767a134..b09589915667 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -5342,7 +5342,7 @@ static unsigned int bfq_update_depths(struct bfq_data *bfqd,
- 	return min_shallow;
- }
- 
--static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
-+static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
- {
- 	struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
- 	struct blk_mq_tags *tags = hctx->sched_tags;
-@@ -5350,6 +5350,11 @@ static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
- 
- 	min_shallow = bfq_update_depths(bfqd, &tags->bitmap_tags);
- 	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, min_shallow);
-+}
-+
-+static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
-+{
-+	bfq_depth_updated(hctx);
- 	return 0;
- }
- 
-@@ -5772,6 +5777,7 @@ static struct elevator_type iosched_bfq_mq = {
- 		.requests_merged	= bfq_requests_merged,
- 		.request_merged		= bfq_request_merged,
- 		.has_work		= bfq_has_work,
-+		.depth_updated		= bfq_depth_updated,
- 		.init_hctx		= bfq_init_hctx,
- 		.init_sched		= bfq_init_queue,
- 		.exit_sched		= bfq_exit_queue,
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 3ba37b9e15e9..a047b297ade5 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3101,6 +3101,8 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
- 		}
- 		if (ret)
- 			break;
-+		if (q->elevator && q->elevator->type->ops.depth_updated)
-+			q->elevator->type->ops.depth_updated(hctx);
- 	}
- 
- 	if (!ret)
-diff --git a/include/linux/elevator.h b/include/linux/elevator.h
-index 2e9e2763bf47..6e8bc53740f0 100644
---- a/include/linux/elevator.h
-+++ b/include/linux/elevator.h
-@@ -31,6 +31,7 @@ struct elevator_mq_ops {
- 	void (*exit_sched)(struct elevator_queue *);
- 	int (*init_hctx)(struct blk_mq_hw_ctx *, unsigned int);
- 	void (*exit_hctx)(struct blk_mq_hw_ctx *, unsigned int);
-+	void (*depth_updated)(struct blk_mq_hw_ctx *);
- 
- 	bool (*allow_merge)(struct request_queue *, struct request *, struct bio *);
- 	bool (*bio_merge)(struct blk_mq_hw_ctx *, struct bio *);
+  Marcelo
 
--- 
-Jens Axboe
-
+> 
+> Neil
+> 
+> >   Marcelo
+> > 
