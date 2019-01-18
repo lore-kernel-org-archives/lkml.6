@@ -6,62 +6,66 @@ X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD5EC5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF312C5AC81
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8568208E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:40:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB6942087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547840406;
-	bh=CrtGl7HHSqAfAcfySHBzmXeGqHNtlyWOmRoVwd8brKo=;
+	s=default; t=1547840411;
+	bh=cG/suexhWnoVG4agRKnj7UzX2DiXnZWCiDrC4IpfWAM=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=YQVsapsuktmMuY1QMi1px2e1q2ncEMyPaSnD5ViC2ClS327+7RK1+mqkAB1QM3XK4
-	 UW91ORnPKCEuB7mKH/p2NxIBQaCdK4rvnVrprwvojgin85nc/GdPYCGTYgimacFPzI
-	 T1UH+zdC4yFHPTn0jxHrPyOa/wIbCTX7P9xeVONo=
+	b=vK5t9HR4OuVFLsxcgAG0fqT+iRQNzUaYhn1KoyJaN90uW9xjsXOvo7FUrkIXIT5z8
+	 fCa/kwOWD45HdDuncWO3qkCrB5DrH9ptJBOZMOknFNKRQWtyvjCe/7tEj9OXet+wvv
+	 /M5RYJuVDbjkLJR4vASkMnRB3HPQibJFPDfve9jw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729380AbfARTkE (ORCPT
+        id S1729396AbfARTkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:40:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42586 "EHLO mail.kernel.org"
+        Fri, 18 Jan 2019 14:40:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729343AbfARTkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728989AbfARTkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 14:40:03 -0500
-Subject: Re: [GIT PULL] i3c: Fixes for 5.0-rc3
+Subject: Re: [GIT PULL] PCI fixes for v5.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1547840402;
-        bh=CrtGl7HHSqAfAcfySHBzmXeGqHNtlyWOmRoVwd8brKo=;
+        bh=cG/suexhWnoVG4agRKnj7UzX2DiXnZWCiDrC4IpfWAM=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=EslJwjJX5drb1+s++zMy4hX7ldie4s12SjL3WXvzAKsqpGss9sOv8s1VrsXJ4zjg2
-         9pUU9LlkIJOD5cEEjurZHDuDEVf2jtuyD5WfQkL5yGviyZYy0AnKpqYQ7qtfGgsBWc
-         gXZ88sXa5HchGYxm03CYOtnxegO3qLVzSL1YZiHY=
+        b=lSC6TWqEpK0LZsfeQST1NAXJytARHs0fc88gXBIuAiz6z+nPXFUNuyKIekEz/skeu
+         AZLnPqDxff/sw8B7enyXZ8nvXfre0BkCyNFoIy56VBjCTYWik95/xRiPyohg08Y3Hg
+         KgsyeYYdTtwGJqbbt2mtNM2Ao3It6Nxeu9TJYFZs=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190118135716.5cb2cc64@bbrezillon>
-References: <20190118135716.5cb2cc64@bbrezillon>
+In-Reply-To: <20190118190722.GA52844@google.com>
+References: <20190118190722.GA52844@google.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190118135716.5cb2cc64@bbrezillon>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git
- tags/i3c/fixes-for-5.0-rc3
-X-PR-Tracked-Commit-Id: f29fd331aa055fbeb5a496b4af937b7952111b6b
+X-PR-Tracked-Message-Id: <20190118190722.GA52844@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git
+ tags/pci-v5.0-fixes-2
+X-PR-Tracked-Commit-Id: d2fd6e81912a665993b24dcdc1c1384a42a54f7e
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8b4fe58db67947b0c7195405ecb041a991580693
-Message-Id: <154784040247.4383.17402044016165110690.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: d28f3e721974378c404f16d17638d9ae5c0db0d2
+Message-Id: <154784040279.4383.7377265306457026268.pr-tracker-bot@kernel.org>
 Date:   Fri, 18 Jan 2019 19:40:02 +0000
-To:     Boris Brezillon <bbrezillon@kernel.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-i3c <linux-i3c@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@fb.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>, Rob Herring <robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 18 Jan 2019 13:57:37 +0100:
+The pull request you sent on Fri, 18 Jan 2019 13:07:22 -0600:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git tags/i3c/fixes-for-5.0-rc3
+> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v5.0-fixes-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8b4fe58db67947b0c7195405ecb041a991580693
+https://git.kernel.org/torvalds/c/d28f3e721974378c404f16d17638d9ae5c0db0d2
 
 Thank you!
 
