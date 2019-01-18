@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F50CC1B0F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D45C1B0FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C9882086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D88B82086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547846977;
-	bh=4Wy9HHw4yohxCo423IljYqpK8zEHV671qXpcn7IEDfc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IQoQSkZS3PZbgB5brFqyJ4JvGqEsjjhaQNOooUmpqfKjxvtaezmqe/1rv9A/ZW8AY
-	 hnkiD1iVqT7GoGa3LovWMg84eXjEWS63M7ZYtdk+c/Tc7J7oCSr6mNVJHJBgvPG6He
-	 gCm5OUmvxv7ifryMVlvFCfGgBJldG5cdbL4Delwo=
+	s=default; t=1547846981;
+	bh=1xk5HV9EXV9Mu0VSx9tWNzrcgsBKSCxtM9pc23SEWVA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=MwwNVvVm8bMeo5EeAf4l0eSmrjOxv7qeZ6SKef4/8X2Hrh810f05Ub8Bv9SB95RkM
+	 BfJCbS0DUU1UWX5Y+blZIp5yGmtOV61ZAAP2GRd2vDTzbxfwcD9kQOLUAUxQfWlMSx
+	 pSEUHEuLIfl/8FHFjeop+c7Wb1w0fz9Z0d/LffII=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbfARV3g (ORCPT
+        id S1729678AbfARV3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 16:29:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57724 "EHLO mail.kernel.org"
+        Fri, 18 Jan 2019 16:29:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729598AbfARV3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729539AbfARV3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 16:29:34 -0500
 Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18CBB20896;
-        Fri, 18 Jan 2019 21:29:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9089A2086D;
+        Fri, 18 Jan 2019 21:29:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547846974;
-        bh=4Wy9HHw4yohxCo423IljYqpK8zEHV671qXpcn7IEDfc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wIm3cf/PLSfO999wvGqEUmAG1U72VcqdyUk+c5L0BrDytWqMQAWCNvd6m+XdykoD0
-         JtHlPxW5zv9Cjhce6+peLJTzsszDIj6gq8V22ze8bm5jd5u6iHKRvtfNQvoBeV5AuE
-         48v6tnDRQkpaQ/xpkztVqDKhpjfshCabDZoacG3A=
+        s=default; t=1547846973;
+        bh=1xk5HV9EXV9Mu0VSx9tWNzrcgsBKSCxtM9pc23SEWVA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tScGBx9ZJyGXGPwEkrl+KLjS8sxpBS9V0PNwLrl3XaJXpsUep33LQqKozrF1dfMFR
+         EuqmI0dxyKw0RMcOY7K5TFvbQw7uHiVqLGpMz9PAa5yjwEpoSi4C1Tg7An3P12B/JE
+         0kAGuX9jgthF0OUqVW3pEiaJKwIAaKyvwhNi2cJU=
 From:   Shuah Khan <skhan@linuxfoundation.org>
 To:     valentina.manea.m@gmail.com, shuah@kernel.org,
         gregkh@linuxfoundation.org
 Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usbip: Fix vhci_urb_enqueue() URB null transfer buffer error path
-Date:   Fri, 18 Jan 2019 14:29:31 -0700
-Message-Id: <20190118212931.18482-2-skhan@linuxfoundation.org>
+Subject: [PATCH] usbip: Fix vep_free_request() null pointer checks on input args
+Date:   Fri, 18 Jan 2019 14:29:30 -0700
+Message-Id: <20190118212931.18482-1-skhan@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190118212931.18482-1-skhan@linuxfoundation.org>
-References: <20190118212931.18482-1-skhan@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,31 +56,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Shuah Khan <shuah@kernel.org>
 
-Fix vhci_urb_enqueue() to print error and return error instead of
-failing with WARN_ON.
+Fix vep_free_request() to return when usb_ep and usb_request are null
+instead of calling WARN_ON.
 
 Signed-off-by: Shuah Khan <shuah@kernel.org>
 ---
- drivers/usb/usbip/vhci_hcd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/usbip/vudc_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-index 1e592ec94ba4..849ebfde87b5 100644
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -702,8 +702,10 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
- 	}
- 	vdev = &vhci_hcd->vdev[portnum-1];
+diff --git a/drivers/usb/usbip/vudc_dev.c b/drivers/usb/usbip/vudc_dev.c
+index 1634d8698e15..bfc8218e3fb6 100644
+--- a/drivers/usb/usbip/vudc_dev.c
++++ b/drivers/usb/usbip/vudc_dev.c
+@@ -297,7 +297,7 @@ static void vep_free_request(struct usb_ep *_ep, struct usb_request *_req)
+ {
+ 	struct vrequest *req;
  
--	/* patch to usb_sg_init() is in 2.5.60 */
--	BUG_ON(!urb->transfer_buffer && urb->transfer_buffer_length);
-+	if (!urb->transfer_buffer && urb->transfer_buffer_length) {
-+		dev_err(dev, "Null URB transfer buffer\n");
-+		return -EINVAL;
-+	}
+-	if (WARN_ON(!_ep || !_req))
++	if (!_ep || !_req)
+ 		return;
  
- 	spin_lock_irqsave(&vhci->lock, flags);
- 
+ 	req = to_vrequest(_req);
 -- 
 2.17.1
 
