@@ -2,179 +2,559 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1397C1B0FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1586AC1B0F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6A122087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:06:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="oNJTYYuO"
+	by mail.kernel.org (Postfix) with ESMTP id BFAB320883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 22:07:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547849273;
+	bh=QavRa01grMcH9fYsFll0lQKbGayuEhRmqDkBMEKaDsQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=MRz0OVJxXcfot3BOCX99R30FzmZqoY/XA1C0cFWOfVdcSz/LhDEmxXVgbsLS9IGFG
+	 exc0eSlguQVVohrXWTZSerDn38ejoPB+vA0wgXP0bCp9vMrog3+xJq0F/FIOfDZrhw
+	 4eRW98MWKb4yfmzo+mlc7PVVHnKHAaomSWSIrGhM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729945AbfARWGw (ORCPT
+        id S1729960AbfARWHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 17:06:52 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42037 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729621AbfARWGs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 17:06:48 -0500
-Received: by mail-ot1-f66.google.com with SMTP id v23so15745185otk.9;
-        Fri, 18 Jan 2019 14:06:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LUSvv6gyP/U0jb8swx6kbJOKJ75Cx8i7+Ck6/NBHcX0=;
-        b=oNJTYYuO/R2XMxoEYLVk3BuofcbSO2Jal56gIgxesN3nRoMwa8kQQeoALeU/jcioAY
-         0BMPTGKc0jxuJfvJiBGXy4FEh6QOa1vNE4KfNVWxsjr/OuF0lw7BOPhf/Tjh1939Hesr
-         R7bO1MgW1JlIatvJsLhiYDd0HRb7GXE2SVUDiS+lpkAM/2ZGbLZSVPXQe79lFwJsd43Y
-         1gjHPxFRAsvqbYyVis5tnL0yFoQwyl6X5di/X0GfxZXh3YpaNjiMZSiqYiL8M/vpmJYb
-         EaPDBANJvfwULOAitQgiNU6/ViUEoOaksobKoQgUi3BbeOchsHJrlDyBA/z0SMchOtIE
-         jS1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LUSvv6gyP/U0jb8swx6kbJOKJ75Cx8i7+Ck6/NBHcX0=;
-        b=ufDq/hn+auHcNWSNGyztQ979o8VhgyAK5yQRe2a4mQ/K0wXbj3LGRP0eg/817BQcJE
-         ru2rijdKQtrgN73jOFdrxxtmB69Kz4mMldj9SDupHnKeoi0CZfiOGLLN9Ivlz+VBibD3
-         uWw6EdtepS+Bk5k+MnrKixniOQgztRWKDvoZWgh1avvjW6CNqlGDdeVExfK/HWSKxT1X
-         AFcXhMcGFp3dRJ/RcqOktmztgjA9ODjnKwIN4KZIrRUJKjT2ibZrAcEyVlWldwmbqYKV
-         NUfvy7FIMZAtDAwOlrrPRv+NyVLxE67EZKPhgGdoJIVYXLl5DGlBc2PAqb09a+ABIncv
-         dabA==
-X-Gm-Message-State: AJcUukehr4s4rPtPiijIyTIUo3Ycyb+8X6Re6BymeWEjPV8JBTPCMra7
-        RFmNpQmE5GCdXeI9ZXbb4WH8MgDaMDNXKIqRaO8=
-X-Google-Smtp-Source: ALg8bN7xKjfGKRIT4sZ8SnCLXx+7BK9Umi6LGxI5bTxrXMe+VPJ0gK6OA0ZF+r82cglIYKY8bNcJWselXYRCDrFlTFw=
-X-Received: by 2002:a9d:a48:: with SMTP id 66mr12918180otg.308.1547849207355;
- Fri, 18 Jan 2019 14:06:47 -0800 (PST)
+        Fri, 18 Jan 2019 17:07:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729621AbfARWHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 17:07:51 -0500
+Received: from bbrezillon (unknown [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD2282087E;
+        Fri, 18 Jan 2019 22:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547849270;
+        bh=QavRa01grMcH9fYsFll0lQKbGayuEhRmqDkBMEKaDsQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KeLxHQGUMNHcueutB6/abyrMaV0Sd6xaEWmjcTjncWtAahtPTKhELQCBEI3Kw9xVN
+         jN2YTTrByedZcKaMjbHSVlIF2ZEG68VgTha4NmUtJBynW7YynRpKypzIcUhymMOBeM
+         r/LMI33EWcAQ99uxjLOB1oRuYdQT2lYW+P/hHMH0=
+Date:   Fri, 18 Jan 2019 23:07:40 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mtd@lists.infradead.org,
+        Nguyen An Hoan <na-hoan@jinso.co.jp>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] eeprom: at25: SPI transfer improvements
+Message-ID: <20190118230740.44239fcf@bbrezillon>
+In-Reply-To: <20190118140525.29189-1-geert+renesas@glider.be>
+References: <20190118140525.29189-1-geert+renesas@glider.be>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190113181808.5768-1-linux.amoon@gmail.com> <20190113181808.5768-2-linux.amoon@gmail.com>
-In-Reply-To: <20190113181808.5768-2-linux.amoon@gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 18 Jan 2019 23:06:36 +0100
-Message-ID: <CAFBinCCNpW=m4P=dqkn4eKeDPJyi_RML07ZhPKQeFH5j7mXkkg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: meson8b: odroidc1: Fix usb phy regulator
- power failed warning
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Emiliano Ingrassia <ingrassia@epigenesys.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anand,
+Hi Geert,
 
-On Sun, Jan 13, 2019 at 7:18 PM Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Override the dr_mode from "host" to "peripheral" for dwc2
-> usb_phy0->usb0 initialization of OTG Micro-B type.
-> Changes fix the below warning for phy poweron failed --> -22
->
-> This fix the initialization of c9040000.usb phy.
->
-> [    1.639706] phy phy-c1108800.phy.0: USB ID detect failed!
-> [    1.643850] phy phy-c1108800.phy.0: phy poweron failed --> -22
-> [    1.649706] ------------[ cut here ]------------
-> [    1.654273] WARNING: CPU: 0 PID: 29 at drivers/regulator/core.c:2054 _regulator_put.part.8+0xf8/0xfc
-> [    1.663400] Modules linked in:
-> [    1.666439] CPU: 0 PID: 29 Comm: kworker/0:1 Not tainted 4.20.0-xc1ml #11
-> [    1.673192] Hardware name: Amlogic Meson platform
-> [    1.677894] Workqueue: events deferred_probe_work_func
-> [    1.683027] [<c0312204>] (unwind_backtrace) from [<c030cb8c>] (show_stack+0x10/0x14)
-> [    1.690746] [<c030cb8c>] (show_stack) from [<c0e223b8>] (dump_stack+0x8c/0xa0)
-> [    1.697953] [<c0e223b8>] (dump_stack) from [<c0346334>] (__warn.part.3+0xbc/0xd8)
-> [    1.705418] [<c0346334>] (__warn.part.3) from [<c03464b0>] (warn_slowpath_null+0x44/0x4c)
-> [    1.713579] [<c03464b0>] (warn_slowpath_null) from [<c07df6b8>] (_regulator_put.part.8+0xf8/0xfc)
-> [    1.722437] [<c07df6b8>] (_regulator_put.part.8) from [<c07df6e4>] (regulator_put+0x28/0x38)
-> [    1.730859] [<c07df6e4>] (regulator_put) from [<c07df71c>] (regulator_bulk_free+0x28/0x38)
-> [    1.739112] [<c07df71c>] (regulator_bulk_free) from [<c0943858>] (release_nodes+0x1bc/0x200)
-> [    1.747537] [<c0943858>] (release_nodes) from [<c093f82c>] (really_probe+0x110/0x2cc)
-> [    1.755350] [<c093f82c>] (really_probe) from [<c093fb4c>] (driver_probe_device+0x60/0x16c)
-> [    1.763599] [<c093fb4c>] (driver_probe_device) from [<c093dcd4>] (bus_for_each_drv+0x80/0xc4)
-> [    1.772110] [<c093dcd4>] (bus_for_each_drv) from [<c093f6ac>] (__device_attach+0xd0/0x138)
-> [    1.780359] [<c093f6ac>] (__device_attach) from [<c093eae4>] (bus_probe_device+0x84/0x8c)
-> [    1.788522] [<c093eae4>] (bus_probe_device) from [<c093ef80>] (deferred_probe_work_func+0x60/0x8c)
-> [    1.797470] [<c093ef80>] (deferred_probe_work_func) from [<c035fdb8>] (process_one_work+0x218/0x504)
-> [    1.806585] [<c035fdb8>] (process_one_work) from [<c0360ea8>] (worker_thread+0x2a8/0x5bc)
-> [    1.814748] [<c0360ea8>] (worker_thread) from [<c0365a18>] (kthread+0x14c/0x154)
-> [    1.822128] [<c0365a18>] (kthread) from [<c03010e8>] (ret_from_fork+0x14/0x2c)
-> [    1.829331] Exception stack(0xee0ebfb0 to 0xee0ebff8)
-> [    1.834369] bfa0:                                     00000000 00000000 00000000 00000000
-> [    1.842534] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [    1.850695] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> [    1.857311] ---[ end trace e28bbc26874282a4 ]---
-> [    1.861984] ------------[ cut here ]------------
-> [    1.866524] WARNING: CPU: 0 PID: 29 at drivers/regulator/core.c:2054 _regulator_put.part.8+0xf8/0xfc
-> [    1.875629] Modules linked in:
-> [    1.878658] CPU: 0 PID: 29 Comm: kworker/0:1 Tainted: GW         4.20.0-xc1ml #11
-> [    1.886817] Hardware name: Amlogic Meson platform
-> [    1.891513] Workqueue: events deferred_probe_work_func
-> [    1.896641] [<c0312204>] (unwind_backtrace) from [<c030cb8c>] (show_stack+0x10/0x14)
-> [    1.904366] [<c030cb8c>] (show_stack) from [<c0e223b8>] (dump_stack+0x8c/0xa0)
-> [    1.911573] [<c0e223b8>] (dump_stack) from [<c0346334>] (__warn.part.3+0xbc/0xd8)
-> [    1.919041] [<c0346334>] (__warn.part.3) from [<c03464b0>] (warn_slowpath_null+0x44/0x4c)
-> [    1.927203] [<c03464b0>] (warn_slowpath_null) from [<c07df6b8>] (_regulator_put.part.8+0xf8/0xfc)
-> [    1.936060] [<c07df6b8>] (_regulator_put.part.8) from [<c07df6e4>] (regulator_put+0x28/0x38)
-> [    1.944483] [<c07df6e4>] (regulator_put) from [<c07df71c>] (regulator_bulk_free+0x28/0x38)
-> [    1.952734] [<c07df71c>] (regulator_bulk_free) from [<c0943858>] (release_nodes+0x1bc/0x200)
-> [    1.961159] [<c0943858>] (release_nodes) from [<c093f82c>] (really_probe+0x110/0x2cc)
-> [    1.968974] [<c093f82c>] (really_probe) from [<c093fb4c>] (driver_probe_device+0x60/0x16c)
-> [    1.977224] [<c093fb4c>] (driver_probe_device) from [<c093dcd4>] (bus_for_each_drv+0x80/0xc4)
-> [    1.985734] [<c093dcd4>] (bus_for_each_drv) from [<c093f6ac>] (__device_attach+0xd0/0x138)
-> [    1.993984] [<c093f6ac>] (__device_attach) from [<c093eae4>] (bus_probe_device+0x84/0x8c)
-> [    2.002147] [<c093eae4>] (bus_probe_device) from [<c093ef80>] (deferred_probe_work_func+0x60/0x8c)
-> [    2.011092] [<c093ef80>] (deferred_probe_work_func) from [<c035fdb8>] (process_one_work+0x218/0x504)
-> [    2.020209] [<c035fdb8>] (process_one_work) from [<c0360ea8>] (worker_thread+0x2a8/0x5bc)
-> [    2.028371] [<c0360ea8>] (worker_thread) from [<c0365a18>] (kthread+0x14c/0x154)
-> [    2.035752] [<c0365a18>] (kthread) from [<c03010e8>] (ret_from_fork+0x14/0x2c)
-> [    2.042955] Exception stack(0xee0ebfb0 to 0xee0ebff8)
-> [    2.047993] bfa0:                                     00000000 00000000 00000000 00000000
-> [    2.056158] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [    2.064320] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> [    2.070934] ---[ end trace e28bbc26874282a5 ]---
->
-> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> Rebased on Kevin's amlogic/v5.0/fixes branch
-> Note the warning is not getting produced on the latest kernel.
-> ---
->  arch/arm/boot/dts/meson8b-odroidc1.dts | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
-> index a49a8509b288..9d7f725cfe35 100644
-> --- a/arch/arm/boot/dts/meson8b-odroidc1.dts
-> +++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
-> @@ -318,6 +318,7 @@
->
->  &usb0 {
->         status = "okay";
-> +       dr_mode = "peripheral";
->  };
-with this change I get the following message during boot:
-  dwc2 c9040000.usb: Configuration mismatch. dr_mode forced to host
+On Fri, 18 Jan 2019 15:05:23 +0100
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
-as far as I understand your original problem is the following error
-from the USB2 PHY driver:
-  phy phy-c1108800.phy.0: USB ID detect failed!
-  phy phy-c1108800.phy.0: phy poweron failed --> -22
-maybe we should fix that instead?
+> 	Hi all,
+> 
+> This patch series contains two improvements for the AT25 SPI EEPROM
+> driver, related to SPI transfers.
+> 
+> Changes compared to v1:
+>   - Merge "off" and "offset" into a single variable instead of just
+>     killing the cast, as suggested by Arnd,
+>   - Add Acked-by,
+>   - Dropped "[PATCH 3/3] eeprom: at25: Split writes in two SPI transfers
+>     to optimize DMA", as this is better implemented in the SPI
+>     controller driver (cfr. e.g. "[v2 PATCH 2/2] spi: sh-msiof: Use DMA
+>     if possible",
+>     https://lore.kernel.org/linux-renesas-soc/1547803771-9564-2-git-send-email-na-hoan@jinso.co.jp/)
+> 
+> Tested on a Renesas Ebisu development board with R-Car E3 using MSIOF
+> and a 25LC040 EEPROM.
 
+Did you consider converting this driver to spimem? Looks like the
+protocol used to communicate with the memory resembles the one used on
+SPI NANDs/NORs and fits pretty well in the spi_mem_op representation.
 
-Regards
-Martin
+By doing this conversion you'd allow people to connect an AT25 EEPROM
+to an advanced SPI controller that does not support regular SPI
+transfers and you wouldn't have to forge SPI messages manually.
+
+Here is a patch (only compile tested) doing that. The diffstat is not in
+favor of this conversion, but I find the resulting code cleaner and more
+future proof.
+
+Regards,
+
+Boris
+
+drivers/misc/eeprom/at25.c | 302 ++++++++++++++++++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 198 insertions(+), 104 deletions(-)
+
+--->8---
+diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
+index 99de6939cd5a..b9697a27e69b 100644
+--- a/drivers/misc/eeprom/at25.c
++++ b/drivers/misc/eeprom/at25.c
+@@ -17,7 +17,7 @@
+ #include <linux/sched.h>
+ 
+ #include <linux/nvmem-provider.h>
+-#include <linux/spi/spi.h>
++#include <linux/spi/spi-mem.h>
+ #include <linux/spi/eeprom.h>
+ #include <linux/property.h>
+ 
+@@ -29,12 +29,17 @@
+  */
+ 
+ struct at25_data {
+-	struct spi_device	*spi;
++	struct spi_mem		*spimem;
+ 	struct mutex		lock;
+ 	struct spi_eeprom	chip;
+ 	unsigned		addrlen;
+ 	struct nvmem_config	nvmem_config;
+ 	struct nvmem_device	*nvmem;
++	void			*scratchbuf;
++	struct {
++		struct spi_mem_dirmap_desc *rdesc[2];
++		struct spi_mem_dirmap_desc *wdesc[2];
++	} dirmap;
+ };
+ 
+ #define	AT25_WREN	0x06		/* latch the write enable */
+@@ -63,17 +68,117 @@ struct at25_data {
+ 
+ #define	io_limit	PAGE_SIZE	/* bytes */
+ 
++static void at25_destroy_dirmaps(struct at25_data *at25)
++{
++	if (at25->dirmap.rdesc[0])
++		spi_mem_dirmap_destroy(at25->dirmap.rdesc[0]);
++	if (at25->dirmap.rdesc[1])
++		spi_mem_dirmap_destroy(at25->dirmap.rdesc[1]);
++	if (at25->dirmap.wdesc[0])
++		spi_mem_dirmap_destroy(at25->dirmap.wdesc[0]);
++	if (at25->dirmap.wdesc[1])
++		spi_mem_dirmap_destroy(at25->dirmap.wdesc[1]);
++}
++
++static int at25_create_dirmaps(struct at25_data *at25)
++{
++	struct spi_mem_dirmap_info info = {
++		.op_tmpl = SPI_MEM_OP(SPI_MEM_OP_CMD(AT25_READ, 1),
++				      SPI_MEM_OP_ADDR(at25->addrlen, 0, 1),
++				      SPI_MEM_OP_NO_DUMMY,
++				      SPI_MEM_OP_DATA_IN(0, NULL, 1)),
++		.offset = 0,
++		.length = at25->chip.byte_len,
++	};
++	struct spi_mem_dirmap_desc *desc;
++	int ret;
++
++	if (info.length > 1 << at25->addrlen)
++		info.length = at25->chip.byte_len;
++
++	desc = spi_mem_dirmap_create(at25->spimem, &info);
++	if (IS_ERR(desc))
++		return PTR_ERR(desc);
++
++	at25->dirmap.rdesc[0] = desc;
++
++	info.op_tmpl.cmd.opcode = AT25_WRITE;
++	info.op_tmpl.data.dir = SPI_MEM_DATA_OUT;
++
++	desc = spi_mem_dirmap_create(at25->spimem, &info);
++	if (IS_ERR(desc)) {
++		ret = PTR_ERR(desc);
++		goto err_destroy_dirmaps;
++	}
++
++	at25->dirmap.wdesc[0] = desc;
++
++	if (!(at25->chip.flags & EE_INSTR_BIT3_IS_ADDR))
++		return 0;
++
++	info.offset = 256;
++	info.length = at25->chip.byte_len - 256;
++	info.op_tmpl.cmd.opcode = AT25_READ | AT25_INSTR_BIT3;
++	info.op_tmpl.data.dir = SPI_MEM_DATA_IN;
++
++	desc = spi_mem_dirmap_create(at25->spimem, &info);
++	if (IS_ERR(desc)) {
++		ret = PTR_ERR(desc);
++		goto err_destroy_dirmaps;
++	}
++
++	at25->dirmap.rdesc[1] = desc;
++
++	info.op_tmpl.cmd.opcode = AT25_WRITE | AT25_INSTR_BIT3;
++	info.op_tmpl.data.dir = SPI_MEM_DATA_OUT;
++
++	desc = spi_mem_dirmap_create(at25->spimem, &info);
++	if (IS_ERR(desc)) {
++		ret = PTR_ERR(desc);
++		goto err_destroy_dirmaps;
++	}
++
++	at25->dirmap.wdesc[1] = desc;
++
++	return 0;
++
++err_destroy_dirmaps:
++	at25_destroy_dirmaps(at25);
++
++	return ret;
++}
++
++static int at25_rdsr(struct at25_data *at25)
++{
++	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(AT25_RDSR, 1),
++					  SPI_MEM_OP_NO_ADDR,
++					  SPI_MEM_OP_NO_DUMMY,
++					  SPI_MEM_OP_DATA_IN(1, at25->scratchbuf, 1));
++	int ret;
++
++	ret = spi_mem_exec_op(at25->spimem, &op);
++	if (ret)
++		return ret;
++
++	return *((u8 *)at25->scratchbuf);
++}
++
++static int at25_wren(struct at25_data *at25)
++{
++	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(AT25_WREN, 1),
++					  SPI_MEM_OP_NO_ADDR,
++					  SPI_MEM_OP_NO_DUMMY,
++					  SPI_MEM_OP_NO_DATA);
++
++	return spi_mem_exec_op(at25->spimem, &op);
++}
++
+ static int at25_ee_read(void *priv, unsigned int offset,
+ 			void *val, size_t count)
+ {
++	struct spi_mem_dirmap_desc *desc;
+ 	struct at25_data *at25 = priv;
+-	char *buf = val;
+-	u8			command[EE_MAXADDRLEN + 1];
+-	u8			*cp;
+ 	ssize_t			status;
+-	struct spi_transfer	t[2];
+-	struct spi_message	m;
+-	u8			instr;
+ 
+ 	if (unlikely(offset >= at25->chip.byte_len))
+ 		return -EINVAL;
+@@ -82,37 +187,10 @@ static int at25_ee_read(void *priv, unsigned int offset,
+ 	if (unlikely(!count))
+ 		return -EINVAL;
+ 
+-	cp = command;
+-
+-	instr = AT25_READ;
+-	if (at25->chip.flags & EE_INSTR_BIT3_IS_ADDR)
+-		if (offset >= (1U << (at25->addrlen * 8)))
+-			instr |= AT25_INSTR_BIT3;
+-	*cp++ = instr;
+-
+-	/* 8/16/24-bit address is written MSB first */
+-	switch (at25->addrlen) {
+-	default:	/* case 3 */
+-		*cp++ = offset >> 16;
+-		/* fall through */
+-	case 2:
+-		*cp++ = offset >> 8;
+-		/* fall through */
+-	case 1:
+-	case 0:	/* can't happen: for better codegen */
+-		*cp++ = offset >> 0;
+-	}
+-
+-	spi_message_init(&m);
+-	memset(t, 0, sizeof(t));
+-
+-	t[0].tx_buf = command;
+-	t[0].len = at25->addrlen + 1;
+-	spi_message_add_tail(&t[0], &m);
+-
+-	t[1].rx_buf = buf;
+-	t[1].len = count;
+-	spi_message_add_tail(&t[1], &m);
++	if (at25->chip.flags & EE_INSTR_BIT3_IS_ADDR && offset > 255)
++		desc = at25->dirmap.rdesc[1];
++	else
++		desc = at25->dirmap.rdesc[0];
+ 
+ 	mutex_lock(&at25->lock);
+ 
+@@ -122,8 +200,8 @@ static int at25_ee_read(void *priv, unsigned int offset,
+ 	 * other devices on the bus need to be accessed regularly or
+ 	 * this chip is clocked very slowly
+ 	 */
+-	status = spi_sync(at25->spi, &m);
+-	dev_dbg(&at25->spi->dev, "read %zu bytes at %d --> %zd\n",
++	status = spi_mem_dirmap_read(desc, offset, count, val);
++	dev_dbg(&at25->spimem->spi->dev, "read %zu bytes at %d --> %zd\n",
+ 		count, offset, status);
+ 
+ 	mutex_unlock(&at25->lock);
+@@ -149,7 +227,7 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 	buf_size = at25->chip.page_size;
+ 	if (buf_size > io_limit)
+ 		buf_size = io_limit;
+-	bounce = kmalloc(buf_size + at25->addrlen + 1, GFP_KERNEL);
++	bounce = kmalloc(buf_size, GFP_KERNEL);
+ 	if (!bounce)
+ 		return -ENOMEM;
+ 
+@@ -158,47 +236,32 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 	 */
+ 	mutex_lock(&at25->lock);
+ 	do {
++		struct spi_mem_dirmap_desc *desc;
+ 		unsigned long	timeout, retries;
+ 		unsigned	segment;
+ 		unsigned	offset = (unsigned) off;
+-		u8		*cp = bounce;
+ 		int		sr;
+-		u8		instr;
+ 
+-		*cp = AT25_WREN;
+-		status = spi_write(at25->spi, cp, 1);
++		status = at25_wren(at25);
+ 		if (status < 0) {
+-			dev_dbg(&at25->spi->dev, "WREN --> %d\n", status);
++			dev_dbg(&at25->spimem->spi->dev, "WREN --> %d\n",
++				status);
+ 			break;
+ 		}
+ 
+-		instr = AT25_WRITE;
+-		if (at25->chip.flags & EE_INSTR_BIT3_IS_ADDR)
+-			if (offset >= (1U << (at25->addrlen * 8)))
+-				instr |= AT25_INSTR_BIT3;
+-		*cp++ = instr;
+-
+-		/* 8/16/24-bit address is written MSB first */
+-		switch (at25->addrlen) {
+-		default:	/* case 3 */
+-			*cp++ = offset >> 16;
+-			/* fall through */
+-		case 2:
+-			*cp++ = offset >> 8;
+-			/* fall through */
+-		case 1:
+-		case 0:	/* can't happen: for better codegen */
+-			*cp++ = offset >> 0;
+-		}
++		if (at25->chip.flags & EE_INSTR_BIT3_IS_ADDR && offset > 255)
++			desc = at25->dirmap.wdesc[1];
++		else
++			desc = at25->dirmap.wdesc[0];
+ 
+ 		/* Write as much of a page as we can */
+ 		segment = buf_size - (offset % buf_size);
+ 		if (segment > count)
+ 			segment = count;
+-		memcpy(cp, buf, segment);
+-		status = spi_write(at25->spi, bounce,
+-				segment + at25->addrlen + 1);
+-		dev_dbg(&at25->spi->dev, "write %u bytes at %u --> %d\n",
++		memcpy(bounce, buf, segment);
++		status = spi_mem_dirmap_write(desc, offset, segment, bounce);
++		dev_dbg(&at25->spimem->spi->dev,
++			"write %u bytes at %u --> %d\n",
+ 			segment, offset, status);
+ 		if (status < 0)
+ 			break;
+@@ -211,10 +274,9 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 		timeout = jiffies + msecs_to_jiffies(EE_TIMEOUT);
+ 		retries = 0;
+ 		do {
+-
+-			sr = spi_w8r8(at25->spi, AT25_RDSR);
++			sr = at25_rdsr(at25);
+ 			if (sr < 0 || (sr & AT25_SR_nRDY)) {
+-				dev_dbg(&at25->spi->dev,
++				dev_dbg(&at25->spimem->spi->dev,
+ 					"rdsr --> %d (%02x)\n", sr, sr);
+ 				/* at HZ=100, this is sloooow */
+ 				msleep(1);
+@@ -225,7 +287,7 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 		} while (retries++ < 3 || time_before_eq(jiffies, timeout));
+ 
+ 		if ((sr < 0) || (sr & AT25_SR_nRDY)) {
+-			dev_err(&at25->spi->dev,
++			dev_err(&at25->spimem->spi->dev,
+ 				"write %u bytes offset %u, timeout after %u msecs\n",
+ 				segment, offset,
+ 				jiffies_to_msecs(jiffies -
+@@ -304,7 +366,7 @@ static int at25_fw_to_chip(struct device *dev, struct spi_eeprom *chip)
+ 	return 0;
+ }
+ 
+-static int at25_probe(struct spi_device *spi)
++static int at25_probe(struct spi_mem *spimem)
+ {
+ 	struct at25_data	*at25 = NULL;
+ 	struct spi_eeprom	chip;
+@@ -313,12 +375,12 @@ static int at25_probe(struct spi_device *spi)
+ 	int			addrlen;
+ 
+ 	/* Chip description */
+-	if (!spi->dev.platform_data) {
+-		err = at25_fw_to_chip(&spi->dev, &chip);
++	if (!spimem->spi->dev.platform_data) {
++		err = at25_fw_to_chip(&spimem->spi->dev, &chip);
+ 		if (err)
+ 			return err;
+ 	} else
+-		chip = *(struct spi_eeprom *)spi->dev.platform_data;
++		chip = *(struct spi_eeprom *)spimem->spi->dev.platform_data;
+ 
+ 	/* For now we only support 8/16/24 bit addressing */
+ 	if (chip.flags & EE_ADDR1)
+@@ -328,37 +390,48 @@ static int at25_probe(struct spi_device *spi)
+ 	else if (chip.flags & EE_ADDR3)
+ 		addrlen = 3;
+ 	else {
+-		dev_dbg(&spi->dev, "unsupported address type\n");
++		dev_dbg(&spimem->spi->dev, "unsupported address type\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	/* Ping the chip ... the status register is pretty portable,
+-	 * unlike probing manufacturer IDs.  We do expect that system
+-	 * firmware didn't write it in the past few milliseconds!
+-	 */
+-	sr = spi_w8r8(spi, AT25_RDSR);
+-	if (sr < 0 || sr & AT25_SR_nRDY) {
+-		dev_dbg(&spi->dev, "rdsr --> %d (%02x)\n", sr, sr);
+-		return -ENXIO;
+-	}
+-
+-	at25 = devm_kzalloc(&spi->dev, sizeof(struct at25_data), GFP_KERNEL);
++	at25 = devm_kzalloc(&spimem->spi->dev, sizeof(struct at25_data), GFP_KERNEL);
+ 	if (!at25)
+ 		return -ENOMEM;
+ 
+ 	mutex_init(&at25->lock);
+ 	at25->chip = chip;
+-	at25->spi = spi;
+-	spi_set_drvdata(spi, at25);
++	at25->spimem = spimem;
++	spi_mem_set_drvdata(spimem, at25);
+ 	at25->addrlen = addrlen;
+ 
+-	at25->nvmem_config.name = dev_name(&spi->dev);
+-	at25->nvmem_config.dev = &spi->dev;
++	/*
++	 * Can't be allocated with devm_kmalloc() because we need a DMA-safe
++	 * buffer.
++	 */
++	at25->scratchbuf = kmalloc(1, GFP_KERNEL);
++
++	/* Ping the chip ... the status register is pretty portable,
++	 * unlike probing manufacturer IDs.  We do expect that system
++	 * firmware didn't write it in the past few milliseconds!
++	 */
++	sr = at25_rdsr(at25);
++	if (sr < 0 || sr & AT25_SR_nRDY) {
++		dev_dbg(&spimem->spi->dev, "rdsr --> %d (%02x)\n", sr, sr);
++		err = -ENXIO;
++		goto err_free_scratchbuf;
++	}
++
++	err = at25_create_dirmaps(at25);
++	if (err)
++		goto err_free_scratchbuf;
++
++	at25->nvmem_config.name = dev_name(&spimem->spi->dev);
++	at25->nvmem_config.dev = &spimem->spi->dev;
+ 	at25->nvmem_config.read_only = chip.flags & EE_READONLY;
+ 	at25->nvmem_config.root_only = true;
+ 	at25->nvmem_config.owner = THIS_MODULE;
+ 	at25->nvmem_config.compat = true;
+-	at25->nvmem_config.base_dev = &spi->dev;
++	at25->nvmem_config.base_dev = &spimem->spi->dev;
+ 	at25->nvmem_config.reg_read = at25_ee_read;
+ 	at25->nvmem_config.reg_write = at25_ee_write;
+ 	at25->nvmem_config.priv = at25;
+@@ -366,17 +439,38 @@ static int at25_probe(struct spi_device *spi)
+ 	at25->nvmem_config.word_size = 1;
+ 	at25->nvmem_config.size = chip.byte_len;
+ 
+-	at25->nvmem = devm_nvmem_register(&spi->dev, &at25->nvmem_config);
+-	if (IS_ERR(at25->nvmem))
+-		return PTR_ERR(at25->nvmem);
++	at25->nvmem = devm_nvmem_register(&spimem->spi->dev,
++					  &at25->nvmem_config);
++	if (IS_ERR(at25->nvmem)) {
++		err = PTR_ERR(at25->nvmem);
++		goto err_destroy_dirmaps;
++	}
+ 
+-	dev_info(&spi->dev, "%d %s %s eeprom%s, pagesize %u\n",
++	dev_info(&spimem->spi->dev, "%d %s %s eeprom%s, pagesize %u\n",
+ 		(chip.byte_len < 1024) ? chip.byte_len : (chip.byte_len / 1024),
+ 		(chip.byte_len < 1024) ? "Byte" : "KByte",
+ 		at25->chip.name,
+ 		(chip.flags & EE_READONLY) ? " (readonly)" : "",
+ 		at25->chip.page_size);
+ 	return 0;
++
++err_destroy_dirmaps:
++	at25_destroy_dirmaps(at25);
++
++err_free_scratchbuf:
++	kfree(at25->scratchbuf);
++
++	return err;
++}
++
++static int at25_remove(struct spi_mem *spimem)
++{
++	struct at25_data *at25 = spi_mem_get_drvdata(spimem);
++
++	at25_destroy_dirmaps(at25);
++	kfree(at25->scratchbuf);
++
++	return 0;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -387,15 +481,15 @@ static const struct of_device_id at25_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, at25_of_match);
+ 
+-static struct spi_driver at25_driver = {
+-	.driver = {
+-		.name		= "at25",
++static struct spi_mem_driver at25_driver = {
++	.spidrv.driver = {
++		.name = "at25",
+ 		.of_match_table = at25_of_match,
+ 	},
+-	.probe		= at25_probe,
++	.probe = at25_probe,
++	.remove = at25_remove,
+ };
+-
+-module_spi_driver(at25_driver);
++module_spi_mem_driver(at25_driver);
+ 
+ MODULE_DESCRIPTION("Driver for most SPI EEPROMs");
+ MODULE_AUTHOR("David Brownell");
