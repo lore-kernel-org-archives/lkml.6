@@ -2,87 +2,202 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635E1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B902EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EAC12087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:51:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="NXmLx1Uq"
+	by mail.kernel.org (Postfix) with ESMTP id 86FE52086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547826871;
+	bh=X7H0DDDcYw7uvdEcR6Ia2YAuQcvbFL83gE4rAgEw3eo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VArHVPg9RAWGh1YuETm6PyEqxHoAEEwRs/uNdpYfXMqv4WYBf9IdIMWEjJHTbxuuz
+	 iyIQU+axZHa82ojDElK1zk0A15PRXdRhlFchbRrlLJKzMXKL24Z0myQj8A7wMy6Grz
+	 W05ds2QS9oDjn1UdG6W7rIXr75VZGX/RpsVtxi5Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbfARPvS (ORCPT
+        id S1727665AbfARPy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:51:18 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:59442 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727471AbfARPvR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:51:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4tm0fTRj4cI493a9LXESfvrnuBJfXF/hT+wA2hsROrk=; b=NXmLx1UqsRBjRyVdaAnC5Ezoi
-        icZHXC4i4nlEDHZ2cC9BdymZtpbm0SdHjCopbmvG/Yem1lmsgqkA6rj+TjIUmJFjI9XZIJ/J5IazQ
-        b+5cDqjvch4pT19iIYbYsdZWr7Qg2ZTsBYW+prBYhIVsIl24rT0yzGLzUNrHLuwKHYjEA=;
-Received: from e5254000004ec.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33450 helo=shell.armlinux.org.uk)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gkWQH-0008V9-8x; Fri, 18 Jan 2019 15:51:09 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1gkWQG-0001h2-HN; Fri, 18 Jan 2019 15:51:08 +0000
-Date:   Fri, 18 Jan 2019 15:51:08 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 4/7] net: phy: marvell10g: Add support for
- 2.5GBASET and 5GBASET
-Message-ID: <20190118155108.jfu4yjsod225kst3@e5254000004ec.dyn.armlinux.org.uk>
-References: <20190118152352.26417-1-maxime.chevallier@bootlin.com>
- <20190118152352.26417-5-maxime.chevallier@bootlin.com>
+        Fri, 18 Jan 2019 10:54:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727323AbfARPy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:54:29 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 366842086D;
+        Fri, 18 Jan 2019 15:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547826867;
+        bh=X7H0DDDcYw7uvdEcR6Ia2YAuQcvbFL83gE4rAgEw3eo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pAAuOf3howDqxX44pWL1iazlFe9MiEDJ1UMlKEVe8snYToySIRZVyqJoxudVHYy9r
+         SdJNvzbug1F34OlPeRXmATJxj17Qjnc26teHClAx9ijChUjmIbNgeVDuPB+E4ykBCT
+         lbkZgC3hJjzKOZ7wiUTqG6Qd0WVst1Dk7DKJQ0qs=
+Date:   Fri, 18 Jan 2019 16:54:25 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, mcgrof@kernel.org,
+        linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, bvanassche@acm.org
+Subject: Re: [driver-core PATCH v9 1/9] driver core: Establish order of
+ operations for device_add and device_del via bitflag
+Message-ID: <20190118155425.GB5009@kroah.com>
+References: <154466182249.9126.3905559325944768059.stgit@ahduyck-desk1.jf.intel.com>
+ <154466189880.9126.10737761541647369077.stgit@ahduyck-desk1.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190118152352.26417-5-maxime.chevallier@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <154466189880.9126.10737761541647369077.stgit@ahduyck-desk1.jf.intel.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 04:23:49PM +0100, Maxime Chevallier wrote:
-> @@ -264,8 +265,10 @@ static int mv3310_config_init(struct phy_device *phydev)
->  	if (ret)
->  		return ret;
+On Wed, Dec 12, 2018 at 04:44:58PM -0800, Alexander Duyck wrote:
+> Add an additional bit flag to the device struct named "dead".
+> 
+> This additional flag provides a guarantee that when a device_del is
+> executed on a given interface an async worker will not attempt to attach
+> the driver following the earlier device_del call. Previously this
+> guarantee was not present and could result in the device_del call
+> attempting to remove a driver from an interface only to have the async
+> worker attempt to probe the driver later when it finally completes the
+> asynchronous probe call.
+> 
+> One additional change added was that I pulled the check for dev->driver
+> out of the __device_attach_driver call and instead placed it in the
+> __device_attach_async_helper call. This was motivated by the fact that the
+> only other caller of this, __device_attach, had already taken the
+> device_lock() and checked for dev->driver. Instead of testing for this
+> twice in this path it makes more sense to just consolidate the dev->dead
+> and dev->driver checks together into one set of checks.
+> 
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/base/core.c    |   11 +++++++++++
+>  drivers/base/dd.c      |   22 +++++++++++-----------
+>  include/linux/device.h |    5 +++++
+>  3 files changed, 27 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 0073b09bb99f..950e25495726 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -2080,6 +2080,17 @@ void device_del(struct device *dev)
+>  	struct kobject *glue_dir = NULL;
+>  	struct class_interface *class_intf;
 >  
-> -	linkmode_and(phydev->advertising, phydev->advertising,
-> -		     phydev->supported);
-> +	/* Make sure we advertise all the supported modes, and not just the
-> +	 * default one specified in the driver's .features.
+> +	/*
+> +	 * Hold the device lock and set the "dead" flag to guarantee that
+> +	 * the update behavior is consistent with the other bitfields near
+> +	 * it and that we cannot have an asynchronous probe routine trying
+> +	 * to run while we are tearing out the bus/class/sysfs from
+> +	 * underneath the device.
 > +	 */
-> +	linkmode_copy(phydev->advertising, phydev->supported);
+> +	device_lock(dev);
+> +	dev->dead = true;
+> +	device_unlock(dev);
+> +
+>  	/* Notify clients of device removal.  This call must come
+>  	 * before dpm_sysfs_remove().
+>  	 */
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 88713f182086..74c194ac99df 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -731,15 +731,6 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
+>  	bool async_allowed;
+>  	int ret;
+>  
+> -	/*
+> -	 * Check if device has already been claimed. This may
+> -	 * happen with driver loading, device discovery/registration,
+> -	 * and deferred probe processing happens all at once with
+> -	 * multiple threads.
+> -	 */
+> -	if (dev->driver)
+> -		return -EBUSY;
+> -
+>  	ret = driver_match_device(drv, dev);
+>  	if (ret == 0) {
+>  		/* no match */
+> @@ -774,6 +765,15 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+>  
+>  	device_lock(dev);
+>  
+> +	/*
+> +	 * Check if device has already been removed or claimed. This may
+> +	 * happen with driver loading, device discovery/registration,
+> +	 * and deferred probe processing happens all at once with
+> +	 * multiple threads.
+> +	 */
+> +	if (dev->dead || dev->driver)
+> +		goto out_unlock;
+> +
+>  	if (dev->parent)
+>  		pm_runtime_get_sync(dev->parent);
+>  
+> @@ -784,7 +784,7 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+>  
+>  	if (dev->parent)
+>  		pm_runtime_put(dev->parent);
+> -
+> +out_unlock:
+>  	device_unlock(dev);
+>  
+>  	put_device(dev);
+> @@ -897,7 +897,7 @@ static int __driver_attach(struct device *dev, void *data)
+>  	if (dev->parent && dev->bus->need_parent_lock)
+>  		device_lock(dev->parent);
+>  	device_lock(dev);
+> -	if (!dev->driver)
+> +	if (!dev->dead && !dev->driver)
+>  		driver_probe_device(drv, dev);
+>  	device_unlock(dev);
+>  	if (dev->parent && dev->bus->need_parent_lock)
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 1b25c7a43f4c..f73dad81e811 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -957,6 +957,10 @@ struct dev_links_info {
+>   *              device.
+>   * @dma_coherent: this particular device is dma coherent, even if the
+>   *		architecture supports non-coherent devices.
+> + * @dead:	This device is currently either in the process of or has
+> + *		been removed from the system. Any asynchronous events
+> + *		scheduled for this device should exit without taking any
+> + *		action.
+>   *
+>   * At the lowest level, every device in a Linux system is represented by an
+>   * instance of struct device. The device structure contains the information
+> @@ -1051,6 +1055,7 @@ struct device {
+>      defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
+>  	bool			dma_coherent:1;
+>  #endif
+> +	bool			dead:1;
 
-This looks wrong to me, it tramples over the work that phy_probe()
-did, specifically with regard to the pause mode bits.  Please see
-the comments in that function about the pause mode bits.
+This really should live in the struct device_private structure, as
+nothing outside of the driver core should care about this, or touch it.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+A number of other bitfields should also move there as well, your's isn't
+the only one that I missed this for.
+
+So can you make that quick change, and rebase (you needed to for patch 2
+anyway), and resend so I can get this into my -next tree for people to
+start testing and basing their work on?
+
+sorry this has taken so long, and thanks for sticking with it.
+
+greg k-h
