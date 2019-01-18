@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD109C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B4CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1B5F20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CF32087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:27:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfARM1u (ORCPT
+        id S1727643AbfARM1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:27:50 -0500
+        Fri, 18 Jan 2019 07:27:53 -0500
 Received: from mga05.intel.com ([192.55.52.43]:2175 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbfARM1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:27:48 -0500
+        id S1727115AbfARM1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 07:27:50 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 04:27:47 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 04:27:50 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="268136103"
+   d="scan'208";a="268136110"
 Received: from elena-thinkpad-x230.fi.intel.com ([10.237.68.34])
-  by orsmga004.jf.intel.com with ESMTP; 18 Jan 2019 04:27:44 -0800
+  by orsmga004.jf.intel.com with ESMTP; 18 Jan 2019 04:27:47 -0800
 From:   Elena Reshetova <elena.reshetova@intel.com>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, keescook@chromium.org,
         tglx@linutronix.de, Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH 1/5] sched: convert sighand_struct.count to refcount_t
-Date:   Fri, 18 Jan 2019 14:27:26 +0200
-Message-Id: <1547814450-18902-2-git-send-email-elena.reshetova@intel.com>
+Subject: [PATCH 2/5] sched: convert signal_struct.sigcnt to refcount_t
+Date:   Fri, 18 Jan 2019 14:27:27 +0200
+Message-Id: <1547814450-18902-3-git-send-email-elena.reshetova@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
 References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
@@ -59,7 +59,7 @@ refcount_t type and API that prevents accidental counter overflows
 and underflows. This is important since overflows and underflows
 can lead to use-after-free situation and be exploitable.
 
-The variable sighand_struct.count is used as pure reference counter.
+The variable signal_struct.sigcnt is used as pure reference counter.
 Convert it to refcount_t and fix up the operations.
 
 **Important note for maintainers:
@@ -76,9 +76,9 @@ some rare cases it might matter.
 Please double check that you don't have some undocumented
 memory guarantees for this variable usage.
 
-For the sighand_struct.count it might make a difference
+For the signal_struct.sigcnt it might make a difference
 in following places:
- - __cleanup_sighand: decrement in refcount_dec_and_test() only
+ - put_signal_struct(): decrement in refcount_dec_and_test() only
    provides RELEASE ordering and control dependency on success
    vs. fully ordered atomic counterpart
 
@@ -87,107 +87,68 @@ Reviewed-by: David Windsor <dwindsor@gmail.com>
 Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
 Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
 ---
- fs/exec.c                    | 4 ++--
- fs/proc/task_nommu.c         | 2 +-
- include/linux/sched/signal.h | 3 ++-
- kernel/fork.c                | 8 ++++----
- 4 files changed, 9 insertions(+), 8 deletions(-)
+ include/linux/sched/signal.h | 2 +-
+ init/init_task.c             | 2 +-
+ kernel/fork.c                | 6 +++---
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index fb72d36..966cd98 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1189,7 +1189,7 @@ static int de_thread(struct task_struct *tsk)
- 	flush_itimer_signals();
- #endif
- 
--	if (atomic_read(&oldsighand->count) != 1) {
-+	if (refcount_read(&oldsighand->count) != 1) {
- 		struct sighand_struct *newsighand;
- 		/*
- 		 * This ->sighand is shared with the CLONE_SIGHAND
-@@ -1199,7 +1199,7 @@ static int de_thread(struct task_struct *tsk)
- 		if (!newsighand)
- 			return -ENOMEM;
- 
--		atomic_set(&newsighand->count, 1);
-+		refcount_set(&newsighand->count, 1);
- 		memcpy(newsighand->action, oldsighand->action,
- 		       sizeof(newsighand->action));
- 
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index 0b63d68..f912872 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -64,7 +64,7 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
- 	else
- 		bytes += kobjsize(current->files);
- 
--	if (current->sighand && atomic_read(&current->sighand->count) > 1)
-+	if (current->sighand && refcount_read(&current->sighand->count) > 1)
- 		sbytes += kobjsize(current->sighand);
- 	else
- 		bytes += kobjsize(current->sighand);
 diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 0c3e396..2a65721 100644
+index 2a65721..38a0f07 100644
 --- a/include/linux/sched/signal.h
 +++ b/include/linux/sched/signal.h
-@@ -8,13 +8,14 @@
- #include <linux/sched/jobctl.h>
- #include <linux/sched/task.h>
- #include <linux/cred.h>
-+#include <linux/refcount.h>
- 
- /*
-  * Types defining task->signal and task->sighand and APIs using them:
+@@ -83,7 +83,7 @@ struct multiprocess_signals {
+  * the locking of signal_struct.
   */
+ struct signal_struct {
+-	atomic_t		sigcnt;
++	refcount_t		sigcnt;
+ 	atomic_t		live;
+ 	int			nr_threads;
+ 	struct list_head	thread_head;
+diff --git a/init/init_task.c b/init/init_task.c
+index 26131e7..756be60 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -45,7 +45,7 @@ static struct signal_struct init_signals = {
+ };
  
- struct sighand_struct {
--	atomic_t		count;
-+	refcount_t		count;
- 	struct k_sigaction	action[_NSIG];
- 	spinlock_t		siglock;
- 	wait_queue_head_t	signalfd_wqh;
+ static struct sighand_struct init_sighand = {
+-	.count		= ATOMIC_INIT(1),
++	.count		= REFCOUNT_INIT(1),
+ 	.action		= { { { .sa_handler = SIG_DFL, } }, },
+ 	.siglock	= __SPIN_LOCK_UNLOCKED(init_sighand.siglock),
+ 	.signalfd_wqh	= __WAIT_QUEUE_HEAD_INITIALIZER(init_sighand.signalfd_wqh),
 diff --git a/kernel/fork.c b/kernel/fork.c
-index c48e9e2..71b4757 100644
+index 71b4757..504324c 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -1463,7 +1463,7 @@ static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
- 	struct sighand_struct *sig;
+@@ -709,7 +709,7 @@ static inline void free_signal_struct(struct signal_struct *sig)
  
- 	if (clone_flags & CLONE_SIGHAND) {
--		atomic_inc(&current->sighand->count);
-+		refcount_inc(&current->sighand->count);
- 		return 0;
- 	}
- 	sig = kmem_cache_alloc(sighand_cachep, GFP_KERNEL);
-@@ -1471,7 +1471,7 @@ static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
- 	if (!sig)
- 		return -ENOMEM;
- 
--	atomic_set(&sig->count, 1);
-+	refcount_set(&sig->count, 1);
- 	spin_lock_irq(&current->sighand->siglock);
- 	memcpy(sig->action, current->sighand->action, sizeof(sig->action));
- 	spin_unlock_irq(&current->sighand->siglock);
-@@ -1480,7 +1480,7 @@ static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
- 
- void __cleanup_sighand(struct sighand_struct *sighand)
+ static inline void put_signal_struct(struct signal_struct *sig)
  {
--	if (atomic_dec_and_test(&sighand->count)) {
-+	if (refcount_dec_and_test(&sighand->count)) {
- 		signalfd_cleanup(sighand);
- 		/*
- 		 * sighand_cachep is SLAB_TYPESAFE_BY_RCU so we can free it
-@@ -2439,7 +2439,7 @@ static int check_unshare_flags(unsigned long unshare_flags)
- 			return -EINVAL;
- 	}
- 	if (unshare_flags & (CLONE_SIGHAND | CLONE_VM)) {
--		if (atomic_read(&current->sighand->count) > 1)
-+		if (refcount_read(&current->sighand->count) > 1)
- 			return -EINVAL;
- 	}
- 	if (unshare_flags & CLONE_VM) {
+-	if (atomic_dec_and_test(&sig->sigcnt))
++	if (refcount_dec_and_test(&sig->sigcnt))
+ 		free_signal_struct(sig);
+ }
+ 
+@@ -1527,7 +1527,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+ 
+ 	sig->nr_threads = 1;
+ 	atomic_set(&sig->live, 1);
+-	atomic_set(&sig->sigcnt, 1);
++	refcount_set(&sig->sigcnt, 1);
+ 
+ 	/* list_add(thread_node, thread_head) without INIT_LIST_HEAD() */
+ 	sig->thread_head = (struct list_head)LIST_HEAD_INIT(tsk->thread_node);
+@@ -2082,7 +2082,7 @@ static __latent_entropy struct task_struct *copy_process(
+ 		} else {
+ 			current->signal->nr_threads++;
+ 			atomic_inc(&current->signal->live);
+-			atomic_inc(&current->signal->sigcnt);
++			refcount_inc(&current->signal->sigcnt);
+ 			task_join_group_stop(p);
+ 			list_add_tail_rcu(&p->thread_group,
+ 					  &p->group_leader->thread_group);
 -- 
 2.7.4
 
