@@ -2,762 +2,104 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3056C5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4105BC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5BD2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1142F2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:48:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IVd/VRzs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729423AbfARTsg (ORCPT
+        id S1729433AbfARTss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:48:36 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46288 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729262AbfARTse (ORCPT
+        Fri, 18 Jan 2019 14:48:48 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:58710 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729206AbfARTsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:48:34 -0500
-Received: from hades.home (unknown [IPv6:2a00:23c5:58d:db00:68bb:47d:d5ca:9abd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: martyn)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id DBDA927F4E5;
-        Fri, 18 Jan 2019 19:48:29 +0000 (GMT)
-From:   Martyn Welch <martyn.welch@collabora.com>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org,
-        Christian Hemp <c.hemp@phytec.de>,
-        =?UTF-8?q?Stefan=20Riedm=C3=BCller?= <s.riedmueller@phytec.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ARM: dts: imx6: Add support for Phytec phyBOARD i.MX6UL Segin
-Date:   Fri, 18 Jan 2019 19:48:12 +0000
-Message-Id: <20190118194812.3319-2-martyn.welch@collabora.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190118194812.3319-1-martyn.welch@collabora.com>
-References: <20190118194812.3319-1-martyn.welch@collabora.com>
+        Fri, 18 Jan 2019 14:48:47 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0IJi1JN104691;
+        Fri, 18 Jan 2019 19:48:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=dUpyIyqvVNa/xZR/KMTTiG6nH4zSpELQFKQs3EkKJv4=;
+ b=IVd/VRzsAxM0WyjHj6RUjlpHs74zGjPzvxliQI2rbEFL57wAZ5Fu9iRbGvYaN0TcScsv
+ r9UG1KO20Mhn5l9pLPFlJyu+XXBaUVfv2nb6ritvgMYpvkHaXPwy0H+F4muOmTxbweyG
+ at5jb9UFCO0XzQPFekjLP2J486inO+VoepnIpE3BAjd4MZwfGUFG93k3g9ODk3ZKRIdE
+ qWElCFFPAPfOv0PMp0GujEhFiMHfYzaCxP4MDURFtQGjTpsLIZnugRUVco4QwEaGJ4CE
+ LrpRf3mTGyeG/P8jH0bymKOfRJ/NuXoDk7WaXs0A0hbPV7Su1XBRLf9X+ZVYYDKkUmrH lA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2pybjp7buw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Jan 2019 19:48:40 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0IJmdB0013377
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Jan 2019 19:48:40 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0IJmdau011720;
+        Fri, 18 Jan 2019 19:48:39 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 18 Jan 2019 11:48:39 -0800
+Date:   Fri, 18 Jan 2019 14:48:53 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org, daniel.m.jordan@oracle.com
+Subject: Re: [PATCH] workqueue: Try to catch flush_work() without INIT_WORK().
+Message-ID: <20190118194853.pgdkz2ugwrob3zun@ca-dmjordan1.us.oracle.com>
+References: <1547831098-7930-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547831098-7930-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9140 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=959
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901180142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Phytec phyBOARD Segin is i.MX6 based SBC, available with either an
-i.MX6UL or i.MX6ULL SOM and various add-on boards.
+On Sat, Jan 19, 2019 at 02:04:58AM +0900, Tetsuo Handa wrote:
+> syzbot found a flush_work() caller who forgot to call INIT_WORK()
+> because that work_struct was allocated by kzalloc(). But the message
+> 
+>   INFO: trying to register non-static key.
+>   the code is fine but needs lockdep annotation.
+>   turning off the locking correctness validator.
+> 
+> by lock_map_acquire() is failing to tell that INIT_WORK() is missing.
+> 
+> Since flush_work() without INIT_WORK() is a bug, and INIT_WORK() should
+> set ->func field to non-zero, let's warn if ->func field is zero.
 
-The following adds support for the "Full Featured" version of the Segin,
-which is provided with the i.MX6UL SOM and the PEB-EVAL-01 evaluation
-module.
+Agree that it's a good idea to catch this.  So the caller did flush_work
+without queueing it beforehand?  Out of curiosity, what situation leads to
+this?  Link to the report might be helpful.
 
-Its hardware specifications are:
+> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> index 392be4b..a503ad9 100644
+> --- a/kernel/workqueue.c
+> +++ b/kernel/workqueue.c
+> @@ -2908,6 +2908,9 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
+>  	if (WARN_ON(!wq_online))
+>  		return false;
+>  
+> +	if (WARN_ON(!work->func))
+> +		return false;
+> +
 
- * 512MB DDR3 memory
- * 512MB NAND flash
- * Dual 10/100 Ethernet
- * USB Host and USB OTG
- * RS232
- * MicroSD external storage
- * Audio, RS232, I2C, SPI, CAN headers
- * Further I/O options via A/V and Expansion headers
-
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-
----
-
-Changes in v2:
-- Corrected spacing, ordering and naming
-- Corrected ecspi3 chip selects
-- Updated deprecated node
-- Removed unneeded nodes
-
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi   | 149 ++++++++
- .../boot/dts/imx6ul-phytec-peb-eval-01.dtsi   |  55 +++
- .../dts/imx6ul-phytec-phyboard-segin-full.dts |  96 +++++
- .../dts/imx6ul-phytec-phyboard-segin.dtsi     | 330 ++++++++++++++++++
- 5 files changed, 631 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi
- create mode 100644 arch/arm/boot/dts/imx6ul-phytec-peb-eval-01.dtsi
- create mode 100644 arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts
- create mode 100644 arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index bd40148a15b2..d35a0bf7b8f8 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -561,6 +561,7 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
- 	imx6ul-opos6uldev.dtb \
- 	imx6ul-pico-hobbit.dtb \
- 	imx6ul-pico-pi.dtb \
-+	imx6ul-phytec-phyboard-segin-full.dtb \
- 	imx6ul-tx6ul-0010.dtb \
- 	imx6ul-tx6ul-0011.dtb \
- 	imx6ul-tx6ul-mainboard.dtb \
-diff --git a/arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi b/arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi
-new file mode 100644
-index 000000000000..03c194c89fa7
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi
-@@ -0,0 +1,149 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2016 PHYTEC Messtechnik GmbH
-+ * Author: Christian Hemp <c.hemp@phytec.de>
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/pwm/pwm.h>
-+#include "imx6ul.dtsi"
-+
-+/ {
-+	model = "Phytec phyCORE i.MX6 UltraLite";
-+	compatible = "phytec,imx6ul-pcl063", "fsl,imx6ul";
-+
-+	chosen {
-+		stdout-path = &uart1;
-+	};
-+
-+	/*
-+	 * Set the minimum memory size here and
-+	 * let the bootloader set the real size.
-+	 */
-+	memory {
-+		reg = <0x80000000 0x8000000>;
-+	};
-+
-+	gpio_leds_som: leds {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpioleds_som>;
-+		compatible = "gpio-leds";
-+
-+		led_green {
-+			label = "phycore:green";
-+			gpios = <&gpio5 4 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+};
-+
-+&fec1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet1>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy0>;
-+	status = "okay";
-+
-+	mdio: mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy0: ethernet-phy@1 {
-+			reg = <1>;
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+			micrel,led-mode = <1>;
-+			clocks = <&clks IMX6UL_CLK_ENET_REF>;
-+			clock-names = "rmii-ref";
-+		};
-+	};
-+};
-+
-+&gpmi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpmi_nand>;
-+	nand-on-flash-bbt;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 =<&pinctrl_i2c1>;
-+	clock-frequency = <100000>;
-+	status = "okay";
-+
-+	eeprom@52 {
-+		compatible = "catalyst,24c32", "atmel,24c32";
-+		reg = <0x52>;
-+	};
-+};
-+
-+&snvs_poweroff {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart1>;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+
-+	pinctrl_enet1: enet1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO07__ENET1_MDC		0x1b0b0
-+			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x4001b031
-+			MX6UL_PAD_GPIO1_IO02__GPIO1_IO02	0x17059
-+		>;
-+	};
-+
-+	pinctrl_gpioleds_som: gpioledssomgrp {
-+		fsl,pins = <MX6UL_PAD_SNVS_TAMPER4__GPIO5_IO04	0x0b0b0>;
-+	};
-+
-+	pinctrl_gpmi_nand: gpminandgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_NAND_CLE__RAWNAND_CLE		0x0b0b1
-+			MX6UL_PAD_NAND_ALE__RAWNAND_ALE		0x0b0b1
-+			MX6UL_PAD_NAND_WP_B__RAWNAND_WP_B	0x0b0b1
-+			MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B	0x0b000
-+			MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B	0x0b0b1
-+			MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B	0x0b0b1
-+			MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B	0x0b0b1
-+			MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00	0x0b0b1
-+			MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01	0x0b0b1
-+			MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02	0x0b0b1
-+			MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03	0x0b0b1
-+			MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04	0x0b0b1
-+			MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05	0x0b0b1
-+			MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06	0x0b0b1
-+			MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07	0x0b0b1
-+		>;
-+	};
-+
-+	pinctrl_i2c1: i2cgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_UART4_TX_DATA__I2C1_SCL	0x4001b8b0
-+			MX6UL_PAD_UART4_RX_DATA__I2C1_SDA	0x4001b8b0
-+		>;
-+	};
-+
-+	pinctrl_uart1: uart1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_UART1_TX_DATA__UART1_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART1_RX_DATA__UART1_DCE_RX	0x1b0b1
-+		>;
-+	};
-+
-+};
-diff --git a/arch/arm/boot/dts/imx6ul-phytec-peb-eval-01.dtsi b/arch/arm/boot/dts/imx6ul-phytec-peb-eval-01.dtsi
-new file mode 100644
-index 000000000000..e2f38f39a6ad
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-phytec-peb-eval-01.dtsi
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2016 PHYTEC Messtechnik
-+ * Author: Christian Hemp <c.hemp@phytec.de>
-+ */
-+
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	gpio_keys: gpio-keys {
-+		compatible = "gpio-key";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_keys>;
-+		status = "disabled";
-+
-+		power {
-+			label = "Power Button";
-+			gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-source;
-+		};
-+	};
-+
-+	user_leds: leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_user_leds>;
-+		status = "disabled";
-+
-+		led_yellow {
-+			gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "default-on";
-+		};
-+
-+		led_red {
-+			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "default-on";
-+		};
-+	};
-+};
-+
-+&iomuxc {
-+	pinctrl_gpio_keys: gpio_keysgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_SNVS_TAMPER0__GPIO5_IO00	0x79
-+		>;
-+	};
-+
-+	pinctrl_user_leds: user_ledsgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_JTAG_MOD__GPIO1_IO10		0x79
-+			MX6UL_PAD_GPIO1_IO01__GPIO1_IO01	0x79
-+		>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts
-new file mode 100644
-index 000000000000..83cdf4fa10c0
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2016 PHYTEC Messtechnik GmbH
-+ * Author: Christian Hemp <c.hemp@phytec.de>
-+ */
-+
-+/dts-v1/;
-+#include "imx6ul-phytec-pcl063.dtsi"
-+#include "imx6ul-phytec-phyboard-segin.dtsi"
-+#include "imx6ul-phytec-peb-eval-01.dtsi"
-+
-+/ {
-+	model = "Phytec phyBOARD-Segin i.MX6 UltraLite Full Featured";
-+	compatible = "phytec,imx6ul-pbacd10", "phytec,imx6ul-pcl063",
-+		     "fsl,imx6ul";
-+};
-+
-+&adc1 {
-+	status = "okay";
-+};
-+
-+&can1 {
-+	status = "okay";
-+};
-+
-+&codec {
-+	status = "okay";
-+};
-+
-+&ecspi3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi3>;
-+	cs-gpios = <&gpio1 20 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+
-+	spidev@0 {
-+		compatible = "spidev";
-+		spi-max-frequency = <20000000>;
-+		reg = <0>;
-+	};
-+};
-+
-+&fec2 {
-+	status = "okay";
-+};
-+
-+&i2c_rtc {
-+	status = "okay";
-+};
-+
-+&reg_can1_en {
-+	status = "okay";
-+};
-+
-+&reg_sound_1v8 {
-+	status = "okay";
-+};
-+
-+&reg_sound_3v3 {
-+	status = "okay";
-+};
-+
-+&sai2 {
-+	status = "okay";
-+};
-+
-+&sound {
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	status = "okay";
-+};
-+
-+&usdhc1 {
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_ecspi3: ecspi3grp {
-+		fsl,pins = <
-+			MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO	0x10b0
-+			MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI	0x10b0
-+			MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK	0x10b0
-+			MX6UL_PAD_UART2_TX_DATA__GPIO1_IO20	0x10b0
-+		>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi
-new file mode 100644
-index 000000000000..bccabb84c9f6
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi
-@@ -0,0 +1,330 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2016 PHYTEC Messtechnik GmbH
-+ * Author: Christian Hemp <c.hemp@phytec.de>
-+ */
-+
-+/ {
-+	model = "Phytec phyBOARD-Segin i.MX6 UltraLite";
-+	compatible = "phytec,imx6ul-pbacd-10", "phytec,imx6ul-pcl063",
-+		     "fsl,imx6ul";
-+
-+	aliases {
-+		rtc0 = &i2c_rtc;
-+		rtc1 = &snvs_rtc;
-+	};
-+
-+	reg_sound_1v8: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "i2s-audio-1v8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		status = "disabled";
-+	};
-+
-+	reg_sound_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "i2s-audio-3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		status = "disabled";
-+	};
-+
-+	reg_can1_en: regulator-can1 {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&princtrl_flexcan1_en>;
-+		regulator-name = "Can";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		status = "disabled";
-+	};
-+
-+	reg_adc1_vref_3v3: regulator-vref-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vref-3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	sound: sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "phyBOARD-Segin-TLV320AIC3007";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&dailink_master>;
-+		simple-audio-card,frame-master = <&dailink_master>;
-+		simple-audio-card,widgets =
-+			"Line", "Line In",
-+			"Line", "Line Out",
-+			"Speaker", "Speaker";
-+		simple-audio-card,routing =
-+			"Line Out", "LLOUT",
-+			"Line Out", "RLOUT",
-+			"Speaker", "SPOP",
-+			"Speaker", "SPOM",
-+			"LINE1L", "Line In",
-+			"LINE1R", "Line In";
-+		status = "disabled";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&sai2>;
-+		};
-+
-+		dailink_master: simple-audio-card,codec {
-+			sound-dai = <&codec>;
-+			clocks = <&clks IMX6UL_CLK_SAI2>;
-+		};
-+	};
-+
-+};
-+
-+&adc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc1>;
-+	vref-supply = <&reg_adc1_vref_3v3>;
-+	/*
-+	 * driver can not separate a specific channel so we request 4 channels
-+	 * here - we need only the fourth channel
-+	 */
-+	num-channels = <4>;
-+	status = "disabled";
-+};
-+
-+&can1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan1>;
-+	xceiver-supply = <&reg_can1_en>;
-+	status = "disabled";
-+};
-+
-+&clks {
-+	assigned-clocks = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
-+	assigned-clock-rates = <786432000>;
-+};
-+
-+&fec2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet2>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy1>;
-+	status = "disabled";
-+};
-+
-+&i2c1 {
-+	codec: tlv320@18 {
-+		compatible = "ti,tlv320aic3007";
-+		#sound-dai-cells = <0>;
-+		reg = <0x18>;
-+		AVDD-supply = <&reg_sound_3v3>;
-+		IOVDD-supply = <&reg_sound_3v3>;
-+		DRVDD-supply = <&reg_sound_3v3>;
-+		DVDD-supply = <&reg_sound_1v8>;
-+		status = "disabled";
-+	};
-+
-+	stmpe: stmpe@44 {
-+		compatible = "st,stmpe811";
-+		reg = <0x44>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio5>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_stmpe>;
-+		status = "disabled";
-+
-+		touchscreen {
-+			compatible = "st,stmpe-ts";
-+			st,sample-time = <4>;
-+			st,mod-12b = <1>;
-+			st,ref-sel = <0>;
-+			st,adc-freq = <1>;
-+			st,ave-ctrl = <1>;
-+			st,touch-det-delay = <2>;
-+			st,settling = <2>;
-+			st,fraction-z = <7>;
-+			st,i-drive = <1>;
-+			touchscreen-inverted-x = <1>;
-+			touchscreen-inverted-y = <1>;
-+		};
-+	};
-+
-+	i2c_rtc: rtc@68 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_rtc_int>;
-+		compatible = "microcrystal,rv4162";
-+		reg = <0x68>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
-+		status = "disabled";
-+	};
-+};
-+
-+&mdio {
-+	ethphy1: ethernet-phy@2 {
-+		reg = <2>;
-+		micrel,led-mode = <1>;
-+		clocks = <&clks IMX6UL_CLK_ENET2_REF>;
-+		clock-names = "rmii-ref";
-+	};
-+};
-+
-+&pwm3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm3>;
-+	status = "disabled";
-+};
-+
-+&sai2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sai2>;
-+	assigned-clocks = <&clks IMX6UL_CLK_SAI2_SEL>,
-+			<&clks IMX6UL_CLK_SAI2>;
-+	assigned-clock-parents = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
-+	assigned-clock-rates = <0>, <19200000>;
-+	fsl,sai-mclk-direction-output;
-+	status = "disabled";
-+};
-+
-+&uart5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart5>;
-+	uart-has-rtscts;
-+	status = "disabled";
-+};
-+
-+&usbotg1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usb_otg1_id>;
-+	dr_mode = "otg";
-+	status = "disabled";
-+};
-+
-+&usbotg2 {
-+	dr_mode = "host";
-+	disable-over-current;
-+	status = "disabled";
-+};
-+
-+&usdhc1 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-+	cd-gpios = <&gpio1 19 GPIO_ACTIVE_LOW>;
-+	no-1-8-v;
-+	keep-power-in-suspend;
-+	wakeup-source;
-+	status = "disabled";
-+};
-+
-+&iomuxc {
-+	pinctrl_adc1: adc1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO03__GPIO1_IO03	0xb0
-+		>;
-+	};
-+
-+	pinctrl_enet2: enet2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN	0x1b0b0
-+			MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER	0x1b0b0
-+			MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00	0x1b0b0
-+			MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01	0x1b0b0
-+			MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN	0x1b0b0
-+			MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00	0x1b0b0
-+			MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01	0x1b0b0
-+			MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x4001b031
-+		>;
-+	};
-+
-+	pinctrl_flexcan1: flexcan1 {
-+		fsl,pins = <
-+			MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX	0x0b0b0
-+			MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX	0x0b0b0
-+		>;
-+	};
-+
-+	princtrl_flexcan1_en: flexcan1engrp {
-+		fsl,pins = <
-+			MX6UL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x17059
-+		>;
-+	};
-+
-+	pinctrl_pwm3: pwm3grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO04__PWM3_OUT	0x0b0b0
-+		>;
-+	};
-+
-+	pinctrl_rtc_int: rtcintgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x17059
-+		>;
-+	};
-+
-+	pinctrl_sai2: sai2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_JTAG_TDI__SAI2_TX_BCLK	0x17088
-+			MX6UL_PAD_JTAG_TDO__SAI2_TX_SYNC	0x17088
-+			MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x11088
-+			MX6UL_PAD_JTAG_TCK__SAI2_RX_DATA	0x11088
-+			MX6UL_PAD_JTAG_TMS__SAI2_MCLK		0x17088
-+		>;
-+	};
-+
-+	pinctrl_stmpe: stmpegrp {
-+		fsl,pins = <
-+			MX6UL_PAD_SNVS_TAMPER3__GPIO5_IO03	0x17059
-+		>;
-+	};
-+
-+	pinctrl_uart5: uart5grp {
-+		fsl,pins = <
-+			MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX	0x1b0b1
-+			MX6UL_PAD_GPIO1_IO08__UART5_DCE_RTS	0x1b0b1
-+			MX6UL_PAD_GPIO1_IO09__UART5_DCE_CTS	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_usb_otg1_id: usbotg1idgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID	0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x17059
-+			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x10059
-+			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x17059
-+			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x17059
-+			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x17059
-+			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x17059
-+			MX6UL_PAD_UART1_RTS_B__GPIO1_IO19	0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_100mhz: usdhc1grp100mhz {
-+		fsl,pins = <
-+			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x170b9
-+			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x100b9
-+			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x170b9
-+			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x170b9
-+			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x170b9
-+			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x170b9
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
-+		fsl,pins = <
-+			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x170f9
-+			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x100f9
-+			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x170f9
-+			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x170f9
-+			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x170f9
-+			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x170f9
-+		>;
-+	};
-+};
--- 
-2.20.1
-
+__queue_work has a sanity check already for work, but using list_empty.  Seems
+slightly better to be consistent?
