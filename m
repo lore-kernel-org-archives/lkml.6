@@ -5,101 +5,107 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FD0C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035FBC5AE5E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2842720823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:31:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4D2D20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:31:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1w1TXBC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHpMgtM+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730276AbfARXbJ (ORCPT
+        id S1730300AbfARXbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 18:31:09 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40073 "EHLO
+        Fri, 18 Jan 2019 18:31:16 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45609 "EHLO
         mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730188AbfARXao (ORCPT
+        with ESMTP id S1730115AbfARXam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 18:30:44 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u18so6991865plq.7;
-        Fri, 18 Jan 2019 15:30:44 -0800 (PST)
+        Fri, 18 Jan 2019 18:30:42 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so6972890plm.12;
+        Fri, 18 Jan 2019 15:30:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3ga+oVqHLm0lhA1fwqdUImX2t8PWwD8cjXiVk50icN8=;
-        b=W1w1TXBCGuopLfkanOl9XZW3ZUDryRB+Ze8+SZsvH8SKGavMTHWiGxqC+u6Pg5L9iu
-         R3d4kmezOtX6uH3FdJRUdBuK2IJNv8lLJWj8skF80M4L+5cTlelznYk5d6qzkLDhMbEf
-         Csdsjb8xyIdAatH+3KxnxrIdgxpq570CrE+gsXGYNciRqFjWPC7+7jc4KnMPdQqLPyRK
-         J2bjvsjLT5Pvp8TkYy4l5XyLHH5KzVBkZPfAKiBKqfTDVlgmJ6AIe1UCpm7iNnzYPb9B
-         ZyTtTYlHF4rsAK7nDBOv9cy951NqKo8F4KED0bcyJi94J99BOAiaXstt9hctpJLQmqNS
-         vaYg==
+        bh=tILAUjKy4+5QmA7cKr1Y9UyKRlK9bcmdZJH0+ju/KnI=;
+        b=QHpMgtM+oz03m9EzvSgVU6jBMUPCSMve87QxryhQuBBrRf1k1LCLsfcrtUPbZ9WdSq
+         +qerKqWG2bOJ7vU96ybpRcyMA8hr6KJLRijEZn2yaeiTaxWk5LgoqhRu8rqfDdeZu33p
+         xQCM2fDzHuy5T8iqI/+ON+ay/Bi7iVXznEkDNZWfz07Rxkw3tSyFWd3o6P5ZtxhkWsTx
+         Hsj5f4Q+QBtdVru2CPk0unG3POJZVrnhLpbAcVUagjlvO/e7BUGSrlDPzEeIGex7zZvt
+         VOKYsivBf0VNfXUCuC9jqZKtqeKyI7x43cn7tboZzBvTcPZh6n3YoD04qWt2/UUs50F0
+         5WXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3ga+oVqHLm0lhA1fwqdUImX2t8PWwD8cjXiVk50icN8=;
-        b=Gnox6+A/2cwy2AFBztX3dLgv3ou/aBN75l5f8WmkDDquFKaYfWjS51do93Bl0NL+sP
-         JYch4T0+Fl0fzp7q9WxjjPBpzi8EkpiEk83YgjgbZRsqLe0TVLzEz0sipvDicsdWatsx
-         vnaDdCqNxJyivVw+mkBIA6RwPt73fGIhCP/miU7fJczlTxEXwl2SXFl7zh0YGmEZyQes
-         hy8HANkhGjqHOgZdSGKu1Ob0KwBisVS951QeuHj2CYrvztDVsGJI5moT49SFALjwjFHZ
-         rvgMUyPKYMS4Otz0qoYNQ5JnVWmsoBsDfIgLJoHE5Skj6o1ZMBVJBJlspVDNo7erhftY
-         HWmg==
-X-Gm-Message-State: AJcUuketLREyDYZExYjZFOYeGiJbW+cJzLESoIs8s0Hm+6hfFlfypzsG
-        wdZiKwYWgXisJKHkbx2k53w=
-X-Google-Smtp-Source: ALg8bN6fbh6bvT7Djf5MUXW2LSztuYm5FevAb/KhsPyZCD01dYDZEkj0qmadHEwqy3f5jg4dhqSITg==
-X-Received: by 2002:a17:902:848d:: with SMTP id c13mr21059934plo.257.1547854243292;
-        Fri, 18 Jan 2019 15:30:43 -0800 (PST)
+        bh=tILAUjKy4+5QmA7cKr1Y9UyKRlK9bcmdZJH0+ju/KnI=;
+        b=DPXK8/3yW2Xvquw2QOz3VLkCxmPNYeJDbR9y+MMlNtlBbfSzVyucxBrKQyeuSSRAVC
+         hXQ2mLFXfMENuvUhJW7B6f9PaVwed4bnpUL8g1TsvWRV6sYPpojyuu5Z6SOuE6a3rWZ1
+         /eRg8nlkFAVbViioyNcs8l5/zxYnhDi++DdSdSg4DBDJtGK5JP5qaUNplyn7vEEeZdLy
+         fHjE4vOV68tNmXcgFhu2wQm6LxK/Eu/T0iJnY5xTeUdKbWL5rIOgbw4dhAjAIC2YFOdF
+         6xmI1OqgCA7lWXywSK1/gNjx3X1hXoljCXKliHtrCrfYWRnHcvq4qAbdl/0Jx2tPZDN/
+         BMfQ==
+X-Gm-Message-State: AJcUukdBA09sD2wBNWQV8BSjNMCvH+nag2Frm0pPS+gfVNcX8rILO9Gg
+        bE5/KlcpnWMDXKGp0t+6ID/OlSdp
+X-Google-Smtp-Source: ALg8bN5VEagiDKQwIiUcPeGMlaX1SaKu/WMXQmrfjl2jZRezLaDOo2KEESA4A42gtb2/joNGblHi+w==
+X-Received: by 2002:a17:902:7005:: with SMTP id y5mr21062746plk.7.1547854241595;
+        Fri, 18 Jan 2019 15:30:41 -0800 (PST)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id f6sm11857163pfg.188.2019.01.18.15.30.42
+        by smtp.gmail.com with ESMTPSA id f6sm11857163pfg.188.2019.01.18.15.30.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 15:30:42 -0800 (PST)
+        Fri, 18 Jan 2019 15:30:41 -0800 (PST)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] HID: input: add mapping for Expose/Overview key
-Date:   Fri, 18 Jan 2019 15:30:34 -0800
-Message-Id: <20190118233037.87318-4-dmitry.torokhov@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: [PATCH 2/7] [media] doc-rst: switch to new names for Full Screen/Aspect keys
+Date:   Fri, 18 Jan 2019 15:30:32 -0800
+Message-Id: <20190118233037.87318-2-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 In-Reply-To: <20190118233037.87318-1-dmitry.torokhov@gmail.com>
 References: <20190118233037.87318-1-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to HUTRR77 usage 0x29f from the consumer page is reserved for
-the Desktop application to present all running user’s application windows.
-Linux defines KEY_SCALE to request Compiz Scale (Expose) mode, so let's
-add the mapping.
+We defined better names for keys to activate full screen mode or
+change aspect ratio (while keeping the existing keycodes to avoid
+breaking userspace), so let's use them in the document.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
+ Documentation/media/uapi/rc/rc-tables.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This can be applied independently.
-
- drivers/hid/hid-input.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index def58c6aa835..5f800e7b04f2 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1030,6 +1030,8 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
- 		case 0x2cb: map_key_clear(KEY_KBDINPUTASSIST_ACCEPT);	break;
- 		case 0x2cc: map_key_clear(KEY_KBDINPUTASSIST_CANCEL);	break;
+diff --git a/Documentation/media/uapi/rc/rc-tables.rst b/Documentation/media/uapi/rc/rc-tables.rst
+index c8ae9479f842..57797e56f45e 100644
+--- a/Documentation/media/uapi/rc/rc-tables.rst
++++ b/Documentation/media/uapi/rc/rc-tables.rst
+@@ -616,7 +616,7 @@ the remote via /dev/input/event devices.
  
-+		case 0x29f: map_key_clear(KEY_SCALE);		break;
-+
- 		default: map_key_clear(KEY_UNKNOWN);
- 		}
- 		break;
+     -  .. row 78
+ 
+-       -  ``KEY_SCREEN``
++       -  ``KEY_ASPECT_RATIO``
+ 
+        -  Select screen aspect ratio
+ 
+@@ -624,7 +624,7 @@ the remote via /dev/input/event devices.
+ 
+     -  .. row 79
+ 
+-       -  ``KEY_ZOOM``
++       -  ``KEY_FULL_SCREEN``
+ 
+        -  Put device into zoom/full screen mode
+ 
 -- 
 2.20.1.321.g9e740568ce-goog
 
