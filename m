@@ -2,600 +2,113 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD45FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38297C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71F2D2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:22:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="mjvOxz72"
+	by mail.kernel.org (Postfix) with ESMTP id 0A1D920883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547821389;
+	bh=FsLASoKsUR2hEwLe55WKKaJrXYzkv434ZZv/qnewgxg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=dBB9139WwHoaSOaIppB8sswqxdtiOo0HFH/RCgDWY7Hcd7O7lg4fUoV5p7PncLTMV
+	 v7vKxhC8oanE8u1rIQGMLRsyS6k9/0sR3epuCGVgxW1hltkxAkbV0/SnufpQTo2xJ5
+	 nLcMylSxnSBq/zJ8E9XXAqMZHwYcPl5Eb7CMlrbk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbfAROWf (ORCPT
+        id S1727518AbfAROXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:22:35 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:36366 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbfAROWf (ORCPT
+        Fri, 18 Jan 2019 09:23:07 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:38398 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbfAROXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:22:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1547821351; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vzZATh7JXQQa0WtU/bz/YLknC1XzT/jzwFn1aMF0l5M=;
-        b=mjvOxz724Q2aYLcFeg5P1g9k9cJ4zjqrjF43TK2u6O66WuZomq2Btp911aUCuUyXhG8Mzs
-        KluCS25co1qsu8IkvusAqLzpbDxP66qrTRzPPSO0M0OklSZjdhPw6KJYd/z0Nr+HcZIGC2
-        TFFfYJ3rTYzz3HwEBzToOcUpbX54m6A=
-Date:   Fri, 18 Jan 2019 11:22:16 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 7/8] mtd: rawnand: jz4780-bch: Separate top-level and SoC
- specific code
-To:     Boris Brezillon <bbrezillon@kernel.org>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Message-Id: <1547821336.1909.2@crapouillou.net>
-In-Reply-To: <20190118093500.397d5d07@bbrezillon>
-References: <20190118010634.27399-1-paul@crapouillou.net>
-        <20190118010634.27399-7-paul@crapouillou.net>
-        <20190118093500.397d5d07@bbrezillon>
+        Fri, 18 Jan 2019 09:23:06 -0500
+Received: by mail-yb1-f194.google.com with SMTP id x9so4403647ybj.5;
+        Fri, 18 Jan 2019 06:23:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fShawxudI26SvDbmZ3eSrcYp4BsXCd4u6t/WObVnJOs=;
+        b=urmcgzTKKAN9cFALqi3SnsfcMXx3nk3V0CsP42IYiK7AXq26Dn09OU7KjwO8BAZKCx
+         PYn9mrnU3Tj3xvcoevrmntqsbDmJTPi3nT5YEDxpXyZfpYOIJDnhzKjoo9bgTrcW7cJY
+         YtuXp9bSD+NR52lOOYvHvhsl2IZtSRRYict3jo5jMZrFLsvb/+mF5aB1vnl38AXDVLUM
+         BVY/2GiVJX8hhg5Cp83XqWjBVzBQlslsLLidzCyWwyq80AVGidXYrRe0L8JLThHP5WF6
+         Lh7XOAd7Pb+zFlsKzcIwwvGD5EGX4V1IMeHlmj9uku2hmX521JMfxjn2jYbSWWXw1DPk
+         T/gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fShawxudI26SvDbmZ3eSrcYp4BsXCd4u6t/WObVnJOs=;
+        b=XX61RpivHLHV3Ee16BbcJfGqHP5x4ZtqAMh54x8bzKcORYVp4rfSNPsIezaa87H0GE
+         u21pMJWYlY4E8J0pD1tXOXjGJfBSc/1YcmJ0X635KNNC+u8xkERsm4Ftt3/wf3hDkxMC
+         oMDmuF0IBb2AzVOp3aSu1nw2MKzYIm2UZ8PgENS6VOyUN0XstJfd7EmkV2txeOMZdjRd
+         860F8vzi3aZsqxpVSZPC33fyC2u5xx0YhI2UJ97cPeyPOwks1vAwtk93rujZKA2yrhz7
+         InpzUPn33M92AvHKgCukOD0wcBKor1gY7cgWagBLXP0AqfyvR5653gTR8cT2IXrD9qQr
+         DO9g==
+X-Gm-Message-State: AJcUukdXb20B5nLwm/ULDlLqAfpxQGBZ0mp2mfXcW3sLJTZCZc+SD4Vo
+        CwbVH50SsdRFupWqoLrtcmCruJ3I
+X-Google-Smtp-Source: ALg8bN65S+HR/xKxfr1sSLU4LhKw/a9sDj6TQysynAPP+2ix5SkZ1nyia3Id8m424R/r9wCIraURFg==
+X-Received: by 2002:a25:c886:: with SMTP id y128mr6622821ybf.250.1547821385124;
+        Fri, 18 Jan 2019 06:23:05 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:586f])
+        by smtp.gmail.com with ESMTPSA id b144sm2604765ywa.33.2019.01.18.06.23.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 06:23:03 -0800 (PST)
+Date:   Fri, 18 Jan 2019 06:23:02 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Masatake YAMATO <yamato@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190118142302.GC50184@devbig004.ftw2.facebook.com>
+References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
+ <CAHk-=wicks2BEwm1BhdvEj_P3yawmvQuG3NOnjhdrUDEtTGizw@mail.gmail.com>
+ <nycvar.YFH.7.76.1901052108390.16954@cbobk.fhfr.pm>
+ <CAHk-=whGmE4QVr6NbgHnrVGVENfM3s1y6GNbsfh8PcOg=6bpqw@mail.gmail.com>
+ <nycvar.YFH.7.76.1901052131480.16954@cbobk.fhfr.pm>
+ <CAHk-=wgrSKyN23yp-npq6+J-4pGqbzxb3mJ183PryjHw7PWDyA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgrSKyN23yp-npq6+J-4pGqbzxb3mJ183PryjHw7PWDyA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello, Linus.
 
-On Fri, Jan 18, 2019 at 5:35 AM, Boris Brezillon 
-<bbrezillon@kernel.org> wrote:
-> On Thu, 17 Jan 2019 22:06:33 -0300
-> Paul Cercueil <paul@crapouillou.net <mailto:paul@crapouillou.net>> 
-> wrote:
+On Sat, Jan 05, 2019 at 01:54:03PM -0800, Linus Torvalds wrote:
+> And the first hit is 'fincore', which probably nobody cares about
+> anyway, but it does
 > 
->>  The jz4780-nand driver uses an API provided by the jz4780-bch 
->> driver.
->>  This makes it difficult to support other SoCs in the jz4780-bch 
->> driver.
->>  To work around this, we separate the API functions from the 
->> SoC-specific
->>  code, so that these API functions are SoC-agnostic.
->> 
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net 
->> <mailto:paul@crapouillou.net>>
->>  ---
->>   drivers/mtd/nand/raw/Makefile              |   3 +-
->>   drivers/mtd/nand/raw/jz4780_bch.c          | 173 
->> +++--------------------------
->>   drivers/mtd/nand/raw/jz4780_bch_common.c   | 172 
->> ++++++++++++++++++++++++++++
->>   drivers/mtd/nand/raw/jz4780_bch_internal.h |  34 ++++++
-> 
-> What's the overhead of having 4725b and 4780 code in the same source
-> file? If we really need to split that up, I'd prefer to have all 
-> jz47xx
-> sources placed in a subdir (drivers/mtd/nand/raw/jz47xx/).
+>     fd = open (name, O_RDONLY)
+>     ..
+>     mmap(window, len, PROT_NONE, MAP_PRIVATE, ..
 
-It's complicated, the hardware changed a lot between the two SoC 
-revisions,
-to the point where it's not really possible to support the two within 
-one
-single driver. The registers are different, the behaviour is different, 
-etc.
+So, folks here have been using fincore(1) for diagnostic purposes and
+are also looking to expand on it to investigate per-cgroup cache
+usages (mmap -> mincore -> /proc/self/pagemap -> /proc/kpagecgroup ->
+cgroup path).
 
->>   4 files changed, 222 insertions(+), 160 deletions(-)
->>   create mode 100644 drivers/mtd/nand/raw/jz4780_bch_common.c
->>   create mode 100644 drivers/mtd/nand/raw/jz4780_bch_internal.h
->> 
->>  diff --git a/drivers/mtd/nand/raw/Makefile 
->> b/drivers/mtd/nand/raw/Makefile
->>  index 57159b349054..6dacc9cf38d5 100644
->>  --- a/drivers/mtd/nand/raw/Makefile
->>  +++ b/drivers/mtd/nand/raw/Makefile
->>  @@ -46,7 +46,8 @@ obj-$(CONFIG_MTD_NAND_MPC5121_NFC)	+= 
->> mpc5121_nfc.o
->>   obj-$(CONFIG_MTD_NAND_VF610_NFC)	+= vf610_nfc.o
->>   obj-$(CONFIG_MTD_NAND_RICOH)		+= r852.o
->>   obj-$(CONFIG_MTD_NAND_JZ4740)		+= jz4740_nand.o
->>  -obj-$(CONFIG_MTD_NAND_JZ4780)		+= jz4780_nand.o jz4780_bch.o
->>  +obj-$(CONFIG_MTD_NAND_JZ4780)		+= jz4780_nand.o 
->> jz4780_bch_common.o \
->>  +					   jz4780_bch.o
->>   obj-$(CONFIG_MTD_NAND_GPMI_NAND)	+= gpmi-nand/
->>   obj-$(CONFIG_MTD_NAND_XWAY)		+= xway_nand.o
->>   obj-$(CONFIG_MTD_NAND_BCM47XXNFLASH)	+= bcm47xxnflash/
->>  diff --git a/drivers/mtd/nand/raw/jz4780_bch.c 
->> b/drivers/mtd/nand/raw/jz4780_bch.c
->>  index 161d3821e1c4..1dfc960067b3 100644
->>  --- a/drivers/mtd/nand/raw/jz4780_bch.c
->>  +++ b/drivers/mtd/nand/raw/jz4780_bch.c
->>  @@ -1,25 +1,19 @@
->>   // SPDX-License-Identifier: GPL-2.0
->>   /*
->>  - * JZ4780 BCH controller
->>  + * JZ4780 backend code for the jz4780-bch driver
->>    *
->>    * Copyright (c) 2015 Imagination Technologies
->>    * Author: Alex Smith <alex.smith@imgtec.com 
->> <mailto:alex.smith@imgtec.com>>
->>    */
->> 
->>   #include <linux/bitops.h>
->>  -#include <linux/clk.h>
->>  -#include <linux/delay.h>
->>  -#include <linux/init.h>
->>   #include <linux/iopoll.h>
->>  -#include <linux/module.h>
->>   #include <linux/mutex.h>
->>   #include <linux/of.h>
->>  -#include <linux/of_platform.h>
->>  -#include <linux/platform_device.h>
->>  -#include <linux/sched.h>
->>  -#include <linux/slab.h>
->>  +#include <linux/device.h>
->> 
->>   #include "jz4780_bch.h"
->>  +#include "jz4780_bch_internal.h"
->> 
->>   #define BCH_BHCR			0x0
->>   #define BCH_BHCCR			0x8
->>  @@ -60,13 +54,6 @@
->>   /* Timeout for BCH calculation/correction. */
->>   #define BCH_TIMEOUT_US			100000
->> 
->>  -struct jz4780_bch {
->>  -	struct device *dev;
->>  -	void __iomem *base;
->>  -	struct clk *clk;
->>  -	struct mutex lock;
->>  -};
->>  -
->>   static void jz4780_bch_init(struct jz4780_bch *bch,
->>   			    struct jz4780_bch_params *params, bool encode)
->>   {
->>  @@ -165,18 +152,9 @@ static bool jz4780_bch_wait_complete(struct 
->> jz4780_bch *bch, unsigned int irq,
->>   	return true;
->>   }
->> 
->>  -/**
->>  - * jz4780_bch_calculate() - calculate ECC for a data buffer
->>  - * @bch: BCH device.
->>  - * @params: BCH parameters.
->>  - * @buf: input buffer with raw data.
->>  - * @ecc_code: output buffer with ECC.
->>  - *
->>  - * Return: 0 on success, -ETIMEDOUT if timed out while waiting for 
->> BCH
->>  - * controller.
->>  - */
->>  -int jz4780_bch_calculate(struct jz4780_bch *bch, struct 
->> jz4780_bch_params *params,
->>  -			 const u8 *buf, u8 *ecc_code)
->>  +static int jz4780_calculate(struct jz4780_bch *bch,
->>  +			    struct jz4780_bch_params *params,
->>  +			    const u8 *buf, u8 *ecc_code)
->>   {
->>   	int ret = 0;
->> 
->>  @@ -195,23 +173,10 @@ int jz4780_bch_calculate(struct jz4780_bch 
->> *bch, struct jz4780_bch_params *param
->>   	mutex_unlock(&bch->lock);
->>   	return ret;
->>   }
->>  -EXPORT_SYMBOL(jz4780_bch_calculate);
->>  -
->>  -/**
->>  - * jz4780_bch_correct() - detect and correct bit errors
->>  - * @bch: BCH device.
->>  - * @params: BCH parameters.
->>  - * @buf: raw data read from the chip.
->>  - * @ecc_code: ECC read from the chip.
->>  - *
->>  - * Given the raw data and the ECC read from the NAND device, 
->> detects and
->>  - * corrects errors in the data.
->>  - *
->>  - * Return: the number of bit errors corrected, -EBADMSG if there 
->> are too many
->>  - * errors to correct or -ETIMEDOUT if we timed out waiting for the 
->> controller.
->>  - */
->>  -int jz4780_bch_correct(struct jz4780_bch *bch, struct 
->> jz4780_bch_params *params,
->>  -		       u8 *buf, u8 *ecc_code)
->>  +
->>  +static int jz4780_correct(struct jz4780_bch *bch,
->>  +			  struct jz4780_bch_params *params,
->>  +			  u8 *buf, u8 *ecc_code)
->>   {
->>   	u32 reg, mask, index;
->>   	int i, ret, count;
->>  @@ -257,119 +222,9 @@ int jz4780_bch_correct(struct jz4780_bch 
->> *bch, struct jz4780_bch_params *params,
->>   	mutex_unlock(&bch->lock);
->>   	return ret;
->>   }
->>  -EXPORT_SYMBOL(jz4780_bch_correct);
->>  -
->>  -/**
->>  - * jz4780_bch_get() - get the BCH controller device
->>  - * @np: BCH device tree node.
->>  - *
->>  - * Gets the BCH controller device from the specified device tree 
->> node. The
->>  - * device must be released with jz4780_bch_release() when it is no 
->> longer being
->>  - * used.
->>  - *
->>  - * Return: a pointer to jz4780_bch, errors are encoded into the 
->> pointer.
->>  - * PTR_ERR(-EPROBE_DEFER) if the device hasn't been initialised 
->> yet.
->>  - */
->>  -static struct jz4780_bch *jz4780_bch_get(struct device_node *np)
->>  -{
->>  -	struct platform_device *pdev;
->>  -	struct jz4780_bch *bch;
->>  -
->>  -	pdev = of_find_device_by_node(np);
->>  -	if (!pdev || !platform_get_drvdata(pdev))
->>  -		return ERR_PTR(-EPROBE_DEFER);
->>  -
->>  -	get_device(&pdev->dev);
->>  -
->>  -	bch = platform_get_drvdata(pdev);
->>  -	clk_prepare_enable(bch->clk);
->>  -
->>  -	return bch;
->>  -}
->>  -
->>  -/**
->>  - * of_jz4780_bch_get() - get the BCH controller from a DT node
->>  - * @of_node: the node that contains a bch-controller property.
->>  - *
->>  - * Get the bch-controller property from the given device tree
->>  - * node and pass it to jz4780_bch_get to do the work.
->>  - *
->>  - * Return: a pointer to jz4780_bch, errors are encoded into the 
->> pointer.
->>  - * PTR_ERR(-EPROBE_DEFER) if the device hasn't been initialised 
->> yet.
->>  - */
->>  -struct jz4780_bch *of_jz4780_bch_get(struct device_node *of_node)
->>  -{
->>  -	struct jz4780_bch *bch = NULL;
->>  -	struct device_node *np;
->> 
->>  -	np = of_parse_phandle(of_node, "ingenic,bch-controller", 0);
->>  -
->>  -	if (np) {
->>  -		bch = jz4780_bch_get(np);
->>  -		of_node_put(np);
->>  -	}
->>  -	return bch;
->>  -}
->>  -EXPORT_SYMBOL(of_jz4780_bch_get);
->>  -
->>  -/**
->>  - * jz4780_bch_release() - release the BCH controller device
->>  - * @bch: BCH device.
->>  - */
->>  -void jz4780_bch_release(struct jz4780_bch *bch)
->>  -{
->>  -	clk_disable_unprepare(bch->clk);
->>  -	put_device(bch->dev);
->>  -}
->>  -EXPORT_SYMBOL(jz4780_bch_release);
->>  -
->>  -static int jz4780_bch_probe(struct platform_device *pdev)
->>  -{
->>  -	struct device *dev = &pdev->dev;
->>  -	struct jz4780_bch *bch;
->>  -	struct resource *res;
->>  -
->>  -	bch = devm_kzalloc(dev, sizeof(*bch), GFP_KERNEL);
->>  -	if (!bch)
->>  -		return -ENOMEM;
->>  -
->>  -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>  -	bch->base = devm_ioremap_resource(dev, res);
->>  -	if (IS_ERR(bch->base))
->>  -		return PTR_ERR(bch->base);
->>  -
->>  -	jz4780_bch_disable(bch);
->>  -
->>  -	bch->clk = devm_clk_get(dev, NULL);
->>  -	if (IS_ERR(bch->clk)) {
->>  -		dev_err(dev, "failed to get clock: %ld\n", PTR_ERR(bch->clk));
->>  -		return PTR_ERR(bch->clk);
->>  -	}
->>  -
->>  -	mutex_init(&bch->lock);
->>  -
->>  -	bch->dev = dev;
->>  -	platform_set_drvdata(pdev, bch);
->>  -
->>  -	return 0;
->>  -}
->>  -
->>  -static const struct of_device_id jz4780_bch_dt_match[] = {
->>  -	{ .compatible = "ingenic,jz4780-bch" },
->>  -	{},
->>  +const struct jz4780_bch_ops jz4780_bch_jz4780_ops = {
->>  +	.disable = jz4780_bch_disable,
->>  +	.calculate = jz4780_calculate,
->>  +	.correct = jz4780_correct,
->>   };
->>  -MODULE_DEVICE_TABLE(of, jz4780_bch_dt_match);
->>  -
->>  -static struct platform_driver jz4780_bch_driver = {
->>  -	.probe		= jz4780_bch_probe,
->>  -	.driver	= {
->>  -		.name	= "jz4780-bch",
->>  -		.of_match_table = of_match_ptr(jz4780_bch_dt_match),
->>  -	},
->>  -};
->>  -module_platform_driver(jz4780_bch_driver);
->>  -
->>  -MODULE_AUTHOR("Alex Smith <alex@alex-smith.me.uk 
->> <mailto:alex@alex-smith.me.uk>>");
->>  -MODULE_AUTHOR("Harvey Hunt <harveyhuntnexus@gmail.com 
->> <mailto:harveyhuntnexus@gmail.com>>");
->>  -MODULE_DESCRIPTION("Ingenic JZ4780 BCH error correction driver");
->>  -MODULE_LICENSE("GPL v2");
->>  diff --git a/drivers/mtd/nand/raw/jz4780_bch_common.c 
->> b/drivers/mtd/nand/raw/jz4780_bch_common.c
->>  new file mode 100644
->>  index 000000000000..573b079e6cbe
->>  --- /dev/null
->>  +++ b/drivers/mtd/nand/raw/jz4780_bch_common.c
->>  @@ -0,0 +1,172 @@
->>  +// SPDX-License-Identifier: GPL-2.0
->>  +/*
->>  + * JZ4780 BCH controller
->>  + *
->>  + * Copyright (c) 2015 Imagination Technologies
->>  + * Author: Alex Smith <alex.smith@imgtec.com 
->> <mailto:alex.smith@imgtec.com>>
->>  + */
->>  +
->>  +#include <linux/clk.h>
->>  +#include <linux/init.h>
->>  +#include <linux/module.h>
->>  +#include <linux/of_platform.h>
->>  +#include <linux/platform_device.h>
->>  +
->>  +#include "jz4780_bch_internal.h"
->>  +#include "jz4780_bch.h"
->>  +
->>  +/**
->>  + * jz4780_bch_calculate() - calculate ECC for a data buffer
->>  + * @bch: BCH device.
->>  + * @params: BCH parameters.
->>  + * @buf: input buffer with raw data.
->>  + * @ecc_code: output buffer with ECC.
->>  + *
->>  + * Return: 0 on success, -ETIMEDOUT if timed out while waiting for 
->> BCH
->>  + * controller.
->>  + */
->>  +int jz4780_bch_calculate(struct jz4780_bch *bch, struct 
->> jz4780_bch_params *params,
->>  +			 const u8 *buf, u8 *ecc_code)
->>  +{
->>  +	return bch->ops->calculate(bch, params, buf, ecc_code);
->>  +}
->>  +EXPORT_SYMBOL(jz4780_bch_calculate);
->>  +
->>  +/**
->>  + * jz4780_bch_correct() - detect and correct bit errors
->>  + * @bch: BCH device.
->>  + * @params: BCH parameters.
->>  + * @buf: raw data read from the chip.
->>  + * @ecc_code: ECC read from the chip.
->>  + *
->>  + * Given the raw data and the ECC read from the NAND device, 
->> detects and
->>  + * corrects errors in the data.
->>  + *
->>  + * Return: the number of bit errors corrected, -EBADMSG if there 
->> are too many
->>  + * errors to correct or -ETIMEDOUT if we timed out waiting for the 
->> controller.
->>  + */
->>  +int jz4780_bch_correct(struct jz4780_bch *bch, struct 
->> jz4780_bch_params *params,
->>  +		       u8 *buf, u8 *ecc_code)
->>  +{
->>  +	return bch->ops->correct(bch, params, buf, ecc_code);
->>  +}
->>  +EXPORT_SYMBOL(jz4780_bch_correct);
->>  +
->>  +/**
->>  + * jz4780_bch_get() - get the BCH controller device
->>  + * @np: BCH device tree node.
->>  + *
->>  + * Gets the BCH controller device from the specified device tree 
->> node. The
->>  + * device must be released with jz4780_bch_release() when it is no 
->> longer being
->>  + * used.
->>  + *
->>  + * Return: a pointer to jz4780_bch, errors are encoded into the 
->> pointer.
->>  + * PTR_ERR(-EPROBE_DEFER) if the device hasn't been initialised 
->> yet.
->>  + */
->>  +static struct jz4780_bch *jz4780_bch_get(struct device_node *np)
->>  +{
->>  +	struct platform_device *pdev;
->>  +	struct jz4780_bch *bch;
->>  +
->>  +	pdev = of_find_device_by_node(np);
->>  +	if (!pdev || !platform_get_drvdata(pdev))
->>  +		return ERR_PTR(-EPROBE_DEFER);
->>  +
->>  +	get_device(&pdev->dev);
->>  +
->>  +	bch = platform_get_drvdata(pdev);
->>  +	clk_prepare_enable(bch->clk);
->>  +
->>  +	return bch;
->>  +}
->>  +
->>  +/**
->>  + * of_jz4780_bch_get() - get the BCH controller from a DT node
->>  + * @of_node: the node that contains a bch-controller property.
->>  + *
->>  + * Get the bch-controller property from the given device tree
->>  + * node and pass it to jz4780_bch_get to do the work.
->>  + *
->>  + * Return: a pointer to jz4780_bch, errors are encoded into the 
->> pointer.
->>  + * PTR_ERR(-EPROBE_DEFER) if the device hasn't been initialised 
->> yet.
->>  + */
->>  +struct jz4780_bch *of_jz4780_bch_get(struct device_node *of_node)
->>  +{
->>  +	struct jz4780_bch *bch = NULL;
->>  +	struct device_node *np;
->>  +
->>  +	np = of_parse_phandle(of_node, "ingenic,bch-controller", 0);
->>  +
->>  +	if (np) {
->>  +		bch = jz4780_bch_get(np);
->>  +		of_node_put(np);
->>  +	}
->>  +	return bch;
->>  +}
->>  +EXPORT_SYMBOL(of_jz4780_bch_get);
->>  +
->>  +/**
->>  + * jz4780_bch_release() - release the BCH controller device
->>  + * @bch: BCH device.
->>  + */
->>  +void jz4780_bch_release(struct jz4780_bch *bch)
->>  +{
->>  +	clk_disable_unprepare(bch->clk);
->>  +	put_device(bch->dev);
->>  +}
->>  +EXPORT_SYMBOL(jz4780_bch_release);
->>  +
->>  +static int jz4780_bch_probe(struct platform_device *pdev)
->>  +{
->>  +	struct device *dev = &pdev->dev;
->>  +	struct jz4780_bch *bch;
->>  +	struct resource *res;
->>  +
->>  +	bch = devm_kzalloc(dev, sizeof(*bch), GFP_KERNEL);
->>  +	if (!bch)
->>  +		return -ENOMEM;
->>  +
->>  +	bch->ops = device_get_match_data(dev);
->>  +	if (!bch->ops)
->>  +		return -EINVAL;
->>  +
->>  +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>  +	bch->base = devm_ioremap_resource(dev, res);
->>  +	if (IS_ERR(bch->base))
->>  +		return PTR_ERR(bch->base);
->>  +
->>  +	bch->ops->disable(bch);
->>  +
->>  +	bch->clk = devm_clk_get(dev, NULL);
->>  +	if (IS_ERR(bch->clk)) {
->>  +		dev_err(dev, "failed to get clock: %ld\n", PTR_ERR(bch->clk));
->>  +		return PTR_ERR(bch->clk);
->>  +	}
->>  +
->>  +	mutex_init(&bch->lock);
->>  +
->>  +	bch->dev = dev;
->>  +	platform_set_drvdata(pdev, bch);
->>  +
->>  +	return 0;
->>  +}
->>  +
->>  +static const struct of_device_id jz4780_bch_dt_match[] = {
->>  +	{ .compatible = "ingenic,jz4780-bch", .data = 
->> &jz4780_bch_jz4780_ops },
->>  +	{},
->>  +};
->>  +MODULE_DEVICE_TABLE(of, jz4780_bch_dt_match);
->>  +
->>  +static struct platform_driver jz4780_bch_driver = {
->>  +	.probe		= jz4780_bch_probe,
->>  +	.driver	= {
->>  +		.name	= "jz4780-bch",
->>  +		.of_match_table = of_match_ptr(jz4780_bch_dt_match),
->>  +	},
->>  +};
->>  +module_platform_driver(jz4780_bch_driver);
->>  +
->>  +MODULE_AUTHOR("Alex Smith <alex@alex-smith.me.uk 
->> <mailto:alex@alex-smith.me.uk>>");
->>  +MODULE_AUTHOR("Harvey Hunt <harveyhuntnexus@gmail.com 
->> <mailto:harveyhuntnexus@gmail.com>>");
->>  +MODULE_DESCRIPTION("Ingenic JZ4780 BCH error correction driver");
->>  +MODULE_LICENSE("GPL v2");
->>  diff --git a/drivers/mtd/nand/raw/jz4780_bch_internal.h 
->> b/drivers/mtd/nand/raw/jz4780_bch_internal.h
->>  new file mode 100644
->>  index 000000000000..7162e4f872f4
->>  --- /dev/null
->>  +++ b/drivers/mtd/nand/raw/jz4780_bch_internal.h
->>  @@ -0,0 +1,34 @@
->>  +/* SPDX-License-Identifier: GPL-2.0 */
->>  +#ifndef __DRIVERS_MTD_NAND_JZ4780_BCH_INTERNAL_H__
->>  +#define __DRIVERS_MTD_NAND_JZ4780_BCH_INTERNAL_H__
->>  +
->>  +#include <linux/compiler_types.h>
->>  +#include <linux/mutex.h>
->>  +#include <linux/types.h>
->>  +
->>  +struct jz4780_bch_params;
->>  +struct jz4780_bch;
->>  +struct device;
->>  +struct clk;
->>  +
->>  +struct jz4780_bch_ops {
->>  +	void (*disable)(struct jz4780_bch *bch);
->>  +	int (*calculate)(struct jz4780_bch *bch,
->>  +			 struct jz4780_bch_params *params,
->>  +			 const u8 *buf, u8 *ecc_code);
->>  +	int (*correct)(struct jz4780_bch *bch,
->>  +			struct jz4780_bch_params *params,
->>  +			u8 *buf, u8 *ecc_code);
->>  +};
->>  +
->>  +struct jz4780_bch {
->>  +	struct device *dev;
->>  +	const struct jz4780_bch_ops *ops;
->>  +	void __iomem *base;
->>  +	struct clk *clk;
->>  +	struct mutex lock;
->>  +};
->>  +
->>  +extern const struct jz4780_bch_ops jz4780_bch_jz4780_ops;
->>  +
->>  +#endif /* __DRIVERS_MTD_NAND_JZ4780_BCH_INTERNAL_H__ */
-> 
+These are all root-only usages to find out what's going on with the
+whole page cache.  We aren't attached to doing things this particular
+way but it'd suck if there's no way.
 
+Thanks.
 
+-- 
+tejun
