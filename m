@@ -2,175 +2,158 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6659C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766F0C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E29520855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:43:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vCLfYSdT"
+	by mail.kernel.org (Postfix) with ESMTP id 47B5E20896
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:43:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbfARInX (ORCPT
+        id S1727638AbfARIn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:43:23 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54685 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbfARInW (ORCPT
+        Fri, 18 Jan 2019 03:43:26 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39588 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727402AbfARInW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 03:43:22 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190118084320euoutp017fa8c7ff19ef6c6d905337c8836ace71~65M87Nlnr0071700717euoutp01h
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:43:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190118084320euoutp017fa8c7ff19ef6c6d905337c8836ace71~65M87Nlnr0071700717euoutp01h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1547801000;
-        bh=tq1+blycqGUdLuQH8x75+5LtQkOqEdnOKHyxgb/VHgs=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=vCLfYSdTixtJ+vEzL+4F0kGh2IxlqDrltprLktj57C3qL8Ad8v3JKI9qGGeHm9Lsv
-         eeI5DzddYCRQTanZoaLBaLJ1QmO/oRb1Rk9TrzPx05FQdXogs8hiGLe2MR83gao5pc
-         6eisT/0Q+ckg0U1dpaan2b4XZgz5aGeDkzUjtbqY=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190118084319eucas1p1d612773db8e5c366b7f0f00f2106d567~65M8OToUV2117821178eucas1p1W;
-        Fri, 18 Jan 2019 08:43:19 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 67.DA.04806.7A1914C5; Fri, 18
-        Jan 2019 08:43:19 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190118084318eucas1p1b765ad5a0bfa93ea1ed27ed5c8787a6d~65M6u13IE0384303843eucas1p1T;
-        Fri, 18 Jan 2019 08:43:18 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190118084318eusmtrp24edf195e7b0b0a928ac4b724ea2adff6~65M6eug7t1603016030eusmtrp2v;
-        Fri, 18 Jan 2019 08:43:18 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-14-5c4191a72972
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 18.4B.04284.5A1914C5; Fri, 18
-        Jan 2019 08:43:18 +0000 (GMT)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190118084317eusmtip2306b3e2c8a0ae3be0fd57d9b708c2a86~65M6FwQPj0365403654eusmtip24;
-        Fri, 18 Jan 2019 08:43:17 +0000 (GMT)
-Subject: Re: [PATCH v4 0/5] drm/bridge: various small lvds-encoder things
-To:     Peter Rosin <peda@axentia.se>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <be258481-b3e4-8051-abb2-ca430ecc2836@samsung.com>
-Date:   Fri, 18 Jan 2019 09:43:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0I8ctHL109360
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 03:43:21 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q38a1y8ep-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 03:43:21 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Fri, 18 Jan 2019 08:43:18 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 18 Jan 2019 08:43:05 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0I8h4Ht64487672
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Jan 2019 08:43:04 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9F0011C052;
+        Fri, 18 Jan 2019 08:43:04 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7C8A411C058;
+        Fri, 18 Jan 2019 08:43:03 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 18 Jan 2019 08:43:03 +0000 (GMT)
+Date:   Fri, 18 Jan 2019 09:43:02 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 19/21] treewide: add checks for the return value of
+ memblock_alloc*()
+References: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
+ <1547646261-32535-20-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190111151843.11114-1-peda@axentia.se>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjtd+8e1+XiOo19rDBcWhi+oqJLiShEregPCYMe9ph50eWmtquW
-        GSSSY74qRUw3a0qTqZnvNA1LfLQkFUXziWggapZG2UotLber5H/nO+c7nO/AR+Cidq6EUETG
-        0OpIuVLKE3Dq3i51e5oyA4J9Cj+4UBndHRiVpJ3jUoa2bi7Vb/nKo1IyjXyqrzGfRxUN9mJU
-        U4sBUclNbXx/O1nZkzIky2nW82V99zMwmV6bx5VVl6bwZPU/J7iy8TQzJluodg4kLgh8Q2ml
-        Io5We/tdFYQPN2fj0bnkrdK6TiwR/bJPRXYEkAehqiAdS0UCQkQWI8hcWcLZ4QeC/qFXiB0W
-        EPTql7ENS6JmlMMKJgTZqRo+O8wh+FI4wLFuOZInoWpwCFmxExkCJeMTthCc7MFgsUHDswo8
-        0h1WaoZtWEj6wb0HkzYDh3QDveYTbsXbyXOgHX+2vuMAHXmTtgA78hCUDNVyrRgnd0H9XD7O
-        YjGMTBpsYUAO8GFi9huPvfsY/G4vX+/gCLPmWj6Ld8LfBsM6fxeS8vpx1qxF8O6pad18FFrN
-        vWtpxFqCO1Q0erN0AGQZspGVBnIbDM05sDdsg6y6RzhLC0GrEbHbLjDe9QJnsRiKeiy8h0iq
-        29RMt6mNblMb3f/cAsQpRWI6llGF0cyBSPqmFyNXMbGRYV7XolTVaO253q+aLS/R6z8hLYgk
-        kNReOFPnHyziyuOYeFULAgKXOgkd1n5PJAyVx9+m1VFX1LFKmmlBOwiOVCxM2DJxUUSGyWPo
-        CJqOptUbKkbYSRLRCTTdpaPOBPt8RoqC3N0zfnGCyzMjzmMfE05JjnicnzfcWbgedNzM5OhR
-        peulKeOqusnUiSu+B4Wr5c8b80t806v1y9me4uTp05aI4b7OqZrh1rHyw8rKjL0SD3dVmjGw
-        1/fNntWtixWKrsej88azxVMNbnhwVg/nhuuk+xgu5TDh8v37cDUj/wdLZyFCWAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xe7rLJjrGGByMtOg9d5LJoqnjLavF
-        /CPnWC2ufH3PZtE5cQm7xeVdc9gsll6/yGSx99B8RovWvUfYHTg91sxbw+gx7cBsdo/Lfb1M
-        HrM7ZrJ6bFrVyeax/dsDVo/73ceZPD5vkgvgiNKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx
-        1DM0No+1MjJV0rezSUnNySxLLdK3S9DLuHlgCnPBDIGKVdvOMDUwfufpYuTkkBAwkWhou83S
-        xcjFISSwlFHids93FoiEuMTu+W+ZIWxhiT/Xutggil4zSjQc/s0GkhAW8JTYeP0GI4gtIpAk
-        cWT2ZmaQImaBC0wS59c1QI3tYJS4u/Y0K0gVm4CmxN/NN8G6eQXsJFr6n4B1swioSsxuewm2
-        TlQgQuLsy3WMEDWCEidnPgE7iVPAVGLljS1gc5gF1CX+zLvEDGHLS2x/OwfKFpe49WQ+0wRG
-        oVlI2mchaZmFpGUWkpYFjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAiN127Gfm3cwXtoY
-        fIhRgINRiYf3xTaHGCHWxLLiytxDjBIczEoivILAOBfiTUmsrEotyo8vKs1JLT7EaAr03ERm
-        KdHkfGASySuJNzQ1NLewNDQ3Njc2s1AS5z1vUBklJJCeWJKanZpakFoE08fEwSnVwKj38ffU
-        3Qy3z2+e/Ppa9OZfIrL3vj2bF5StaiNwxXTpn7+OB19rXn+ecrLjpVzDpM3811k4borfLWI7
-        LbPSbQ6TYWnuvL8LF/ksexuzKP60cPCSwmjWmjunVhjzy06fp/zp4PrW31cXtwcolb7nmRb2
-        ddvhh0cvV6U8rQq04b16VkHy11KTW5EnlViKMxINtZiLihMBdlv5/+oCAAA=
-X-CMS-MailID: 20190118084318eucas1p1b765ad5a0bfa93ea1ed27ed5c8787a6d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190115040858epcas3p4b4b9bfa6f6706842ad92825fea36d59e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190115040858epcas3p4b4b9bfa6f6706842ad92825fea36d59e
-References: <CGME20190115040858epcas3p4b4b9bfa6f6706842ad92825fea36d59e@epcas3p4.samsung.com>
-        <20190111151843.11114-1-peda@axentia.se>
+In-Reply-To: <1547646261-32535-20-git-send-email-rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19011808-4275-0000-0000-00000300D9EE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011808-4276-0000-0000-0000380F012F
+Message-Id: <20190118084302.GA4160@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901180066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.01.2019 16:18, Peter Rosin wrote:
-> Hi!
->
-> I'm not sure if I should have added the texas chips to the lvds_encoder_match
-> list in the driver, right next to the thine,thc63lvdm83d entry, but ended
-> up not doing that. That can always be added later, if needed...
->
-> Changes since v3:
-> - retained a (modified) note in lvds-transmitter.txt about encoders with
->   additional device-specific properties
-> - added tag from Rob on patch 3/5
->
-> Changes since v2:
-> - changed from pwdn-gpios to powerdown-gpios after discussion with Rob with
->   new patch 3/5 updating the thine,thc63lvdm83d binding as well as a
->   consequence
-> - added patch 4/5 which helps keep lines shorter in the lvds-encoder driver
-> - added tag from Rob on patch 2/5
->
-> Changes since v1:
-> - fork out the bindings for the texas chips into their own file in order
->   to avoid clutter in the generic lvds-transmitter binding.
-> - added a patch to remove some surplus stuff in the generic lvds-transmitter
->   binding.
->
-> Cheers,
-> Peter
+On Wed, Jan 16, 2019 at 03:44:19PM +0200, Mike Rapoport wrote:
+> Add check for the return value of memblock_alloc*() functions and call
+> panic() in case of error.
+> The panic message repeats the one used by panicing memblock allocators with
+> adjustment of parameters to include only relevant ones.
+> 
+> The replacement was mostly automated with semantic patches like the one
+> below with manual massaging of format strings.
+> 
+> @@
+> expression ptr, size, align;
+> @@
+> ptr = memblock_alloc(size, align);
+> + if (!ptr)
+> + 	panic("%s: Failed to allocate %lu bytes align=0x%lx\n", __func__,
+> size, align);
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+...
+> diff --git a/arch/s390/numa/toptree.c b/arch/s390/numa/toptree.c
+> index 71a608c..0118c77 100644
+> --- a/arch/s390/numa/toptree.c
+> +++ b/arch/s390/numa/toptree.c
+> @@ -31,10 +31,14 @@ struct toptree __ref *toptree_alloc(int level, int id)
+>  {
+>  	struct toptree *res;
+> 
+> -	if (slab_is_available())
+> +	if (slab_is_available()) {
+>  		res = kzalloc(sizeof(*res), GFP_KERNEL);
+> -	else
+> +	} else {
+>  		res = memblock_alloc(sizeof(*res), 8);
+> +		if (!res)
+> +			panic("%s: Failed to allocate %zu bytes align=0x%x\n",
+> +			      __func__, sizeof(*res), 8);
+> +	}
+>  	if (!res)
+>  		return res;
 
+Please remove this hunk, since the code _should_ be able to handle
+allocation failures anyway (see end of quoted code).
 
-Queued to drm-misc-next.
-
-
-One thing I have spotted after merging is that there no need to
-null-check before gpiod_set_value_cansleep, no big deal, I guess.
-
-
-Regards
-
-Andrzej
-
-
->
-> Peter Rosin (5):
->   dt-bindings: display: bridge: fork out ti,ds90c185 from
->     lvds-transmitter
->   dt-bindings: display: bridge: lvds-transmitter: cleanup example
->   dt-bindings: display: bridge: thc63lvdm83d: use standard
->     powerdown-gpios
->   drm/bridge: lvds-encoder: add dev helper variable in .probe()
->   drm/bridge: lvds-encoder: add powerdown-gpios support
->
->  .../bindings/display/bridge/lvds-transmitter.txt   | 12 ++---
->  .../bindings/display/bridge/thine,thc63lvdm83d.txt |  2 +-
->  .../bindings/display/bridge/ti,ds90c185.txt        | 55 ++++++++++++++++++++++
->  drivers/gpu/drm/bridge/lvds-encoder.c              | 53 +++++++++++++++++----
->  4 files changed, 103 insertions(+), 19 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
->
+Otherwise for the s390 bits:
+Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 
