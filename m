@@ -2,311 +2,312 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6F4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED0DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD0C20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547792900;
-	bh=eLJyu28gXRw68ufVP13qCEYhoFA/FZ1EgqP3TJY67JA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WkcyUa4DAxxOHIZet1sfbn/zjF0nMixMeeBPU2Cfbd2m+/mdjj/rmBtCo8YMsItuN
-	 5TmymmkBuVUUmrrX1c0dzaJNb0xNz5zmcS/y5YrzRL0bb8cdTRzHPJhbm1wtdTDeQu
-	 EGQOtKxr6h9uEBsuZhO6OHyL5Y80UbBULCuA+2Cg=
+	by mail.kernel.org (Postfix) with ESMTP id 1CA4820855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 06:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfARG2T (ORCPT
+        id S1727222AbfARG3f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 01:28:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbfARG2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 01:28:18 -0500
-Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B25020855;
-        Fri, 18 Jan 2019 06:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547792897;
-        bh=eLJyu28gXRw68ufVP13qCEYhoFA/FZ1EgqP3TJY67JA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EPq6I45NxrXOb1NUKSrZX7WYaYkq5hvUWrrMl4TErBRgCamcv4Xf2j9StAm6nXv6E
-         22Xrc5WcGO/NxIJ5OREtEav696GIVPb+QrgbPuS+YZQcKXMRqQmuLZ00QbyDcqj5Jl
-         y2DU9emMiaFakoxkziNJYT26EIK4ZLGARPR0givI=
-Date:   Fri, 18 Jan 2019 14:28:11 +0800
-From:   Guo Ren <guoren@kernel.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
-Subject: Re: [PATCH] irqchip/irq-csky-mpintc: Add triger type and priority
- setting
-Message-ID: <20190118062811.GA19835@guoren-Inspiron-7460>
-References: <1547570199-25944-1-git-send-email-guoren@kernel.org>
- <9c531bec-263c-070d-fed8-d953b42aa185@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c531bec-263c-070d-fed8-d953b42aa185@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 18 Jan 2019 01:29:35 -0500
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:27749 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726962AbfARG3f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 01:29:35 -0500
+X-Greylist: delayed 378 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Jan 2019 01:29:31 EST
+X-IronPort-AV: E=Sophos;i="5.56,489,1539628200"; 
+   d="scan'208";a="372686"
+Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 18 Jan 2019 11:53:11 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9139"; a="2782173"
+Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
+  by ironmsg03-blr.qualcomm.com with ESMTP; 18 Jan 2019 11:53:11 +0530
+Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
+        id 6700E3A6A; Fri, 18 Jan 2019 11:53:10 +0530 (IST)
+From:   Arun KS <arunks@codeaurora.org>
+To:     arunks.linux@gmail.com, alexander.h.duyck@linux.intel.com,
+        akpm@linux-foundation.org, mhocko@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     getarunks@gmail.com, Arun KS <arunks@codeaurora.org>
+Subject: [PATCH v11] mm/page_alloc.c: memory_hotplug: free pages as higher order
+Date:   Fri, 18 Jan 2019 11:53:08 +0530
+Message-Id: <1547792588-18032-1-git-send-email-arunks@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thx Marc,
+When freeing pages are done with higher order, time spent on coalescing
+pages by buddy allocator can be reduced.  With section size of 256MB, hot
+add latency of a single section shows improvement from 50-60 ms to less
+than 1 ms, hence improving the hot add latency by 60 times.  Modify
+external providers of online callback to align with the change.
 
-On Thu, Jan 17, 2019 at 05:17:45PM +0000, Marc Zyngier wrote:
-> Hi Guo,
-> 
-> On 15/01/2019 16:36, guoren@kernel.org wrote:
-> > From: Guo Ren <ren_guo@c-sky.com>
-> > 
-> > Support 4 triger types:
-> >  - IRQ_TYPE_LEVEL_HIGH
-> >  - IRQ_TYPE_LEVEL_LOW
-> >  - IRQ_TYPE_EDGE_RISING
-> >  - IRQ_TYPE_EDGE_FALLING
-> > 
-> > Support 0-255 priority setting for each irq.
-> > 
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > ---
-> >  .../bindings/interrupt-controller/csky,mpintc.txt  | 24 ++++++-
-> >  drivers/irqchip/irq-csky-mpintc.c                  | 78 +++++++++++++++++++++-
-> >  2 files changed, 99 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-> > index ab921f1..364b789 100644
-> > --- a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-> > @@ -11,6 +11,14 @@ Interrupt number definition:
-> >   16-31  : private  irq, and we use 16 as the co-processor timer.
-> >   31-1024: common irq for soc ip.
-> >  
-> > +Interrupt triger mode:
-> > +  IRQ_TYPE_LEVEL_HIGH (default)
-> > +  IRQ_TYPE_LEVEL_LOW
-> > +  IRQ_TYPE_EDGE_RISING
-> > +  IRQ_TYPE_EDGE_FALLING
-> > +
-> > +Interrupt priority range: 0-255
-> > +
-> >  =============================
-> >  intc node bindings definition
-> >  =============================
-> > @@ -26,7 +34,7 @@ intc node bindings definition
-> >  	- #interrupt-cells
-> >  		Usage: required
-> >  		Value type: <u32>
-> > -		Definition: must be <1>
-> > +		Definition: could be <1> or <2>
-> >  	- interrupt-controller:
-> >  		Usage: required
-> >  
-> > @@ -35,6 +43,18 @@ Examples:
-> >  
-> >  	intc: interrupt-controller {
-> >  		compatible = "csky,mpintc";
-> > -		#interrupt-cells = <1>;
-> > +		#interrupt-cells = <2>;
-> >  		interrupt-controller;
-> >  	};
-> > +
-> > +	0: device-example {
-> > +		...
-> > +		interrupts = <33 IRQ_TYPE_EDGE_RISING>;
-> > +		interrupt-parent = <&intc>;
-> > +	};
-> > +
-> > +	1: device-example {
-> > +		...
-> > +		interrupts = <34 ((priority << 4) | IRQ_TYPE_EDGE_RISING)>;
-> > +		interrupt-parent = <&intc>;
-> > +	};
-> > diff --git a/drivers/irqchip/irq-csky-mpintc.c b/drivers/irqchip/irq-csky-mpintc.c
-> > index c67c961..9edc6d3 100644
-> > --- a/drivers/irqchip/irq-csky-mpintc.c
-> > +++ b/drivers/irqchip/irq-csky-mpintc.c
-> > @@ -29,9 +29,12 @@ static void __iomem *INTCL_base;
-> >  
-> >  #define INTCG_ICTLR	0x0
-> >  #define INTCG_CICFGR	0x100
-> > +#define INTCG_CIPRTR	0x200
-> >  #define INTCG_CIDSTR	0x1000
-> >  
-> >  #define INTCL_PICTLR	0x0
-> > +#define INTCL_CFGR	0x14
-> > +#define INTCL_PRTR	0x20
-> >  #define INTCL_SIGR	0x60
-> >  #define INTCL_HPPIR	0x68
-> >  #define INTCL_RDYIR	0x6c
-> > @@ -73,6 +76,78 @@ static void csky_mpintc_eoi(struct irq_data *d)
-> >  	writel_relaxed(d->hwirq, reg_base + INTCL_CACR);
-> >  }
-> >  
-> > +static int csky_mpintc_set_type(struct irq_data *d, unsigned int type)
-> > +{
-> > +	unsigned int priority, triger;
-> 
-> nit: s/triger/trigger/ everywhere.
-Ok
+Signed-off-by: Arun KS <arunks@codeaurora.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+Changes sinc v10:
+- Fix check page belong to HAS in hv_ballon.c.
+- Removed unnecessary brackets.
 
-> 
-> > +	unsigned int offset, bit_offset;
-> > +	void __iomem *reg_base;
-> > +
-> > +	/*
-> > +	 * type Bit field: | 32 - 12  |  11 - 4  |   3 - 0    |
-> > +	 *                   reserved   priority   triger type
-> > +	 */
-> > +	triger	 = type & IRQ_TYPE_SENSE_MASK;
-> > +	priority = (type >> 4) & 0xff;
-> 
-> Definitely not. The Linux API to set the trigger does not carry any
-> priority information, nor should it. Priorities should be set
-> statically, and no driver should ever be able to change it.
-Currently priority in dts is:
+Changes since v9:
+- Fix condition check in hv_ballon driver.
 
-	interrupts = <34 ((priority << 4) | IRQ_TYPE_EDGE_RISING)>;
+Changes since v8:
+- Remove return type change for online_page_callback.
+- Use consistent names for external online_page providers.
+- Fix onlined_pages accounting.
 
-change it to:
+Changes since v7:
+- Rebased to 5.0-rc1.
+- Fixed onlined_pages accounting.
+- Added comment for return value of online_page_callback.
+- Renamed xen_bring_pgs_online to xen_online_pages.
 
-	interrupts = <34 IRQ_TYPE_EDGE_RISING priority>;
+Changes since v6:
+- Rebased to 4.20
+- Changelog updated.
+- No improvement seen on arm64, hence removed removal of prefetch.
 
-Implement csky own csky_irq_domain_xlate_cells() ...
+Changes since v5:
+- Rebased to 4.20-rc1.
+- Changelog updated.
 
-int csky_irq_domain_xlate_cells(struct irq_domain *d, struct device_node *ctrlr,
-			const u32 *intspec, unsigned int intsize,
-			irq_hw_number_t *out_hwirq, unsigned int *out_type)
-{
-	if (WARN_ON(intsize < 1))
-		return -EINVAL;
-	*out_hwirq = intspec[0];
-	if (intsize > 1)
-		*out_type = intspec[1] & IRQ_TYPE_SENSE_MASK;
-	else
-		*out_type = IRQ_TYPE_NONE;
+Changes since v4:
+- As suggested by Michal Hocko,
+- Simplify logic in online_pages_block() by using get_order().
+- Seperate out removal of prefetch from __free_pages_core().
 
-	if (intsize > 2)
-		setup_priority(d->hwirq, intspec[2]);
+Changes since v3:
+- Renamed _free_pages_boot_core -> __free_pages_core.
+- Removed prefetch from __free_pages_core.
+- Removed xen_online_page().
 
-	return 0;
-}
-Hmm?
+Changes since v2:
+- Reuse code from __free_pages_boot_core().
 
-> 
-> > +
-> > +	switch (triger) {
-> > +	case IRQ_TYPE_LEVEL_HIGH:
-> > +		triger = 0;
-> > +		break;
-> > +	case IRQ_TYPE_LEVEL_LOW:
-> > +		triger = 1;
-> > +		break;
-> > +	case IRQ_TYPE_EDGE_RISING:
-> > +		triger = 2;
-> > +		break;
-> > +	case IRQ_TYPE_EDGE_FALLING:
-> > +		triger = 3;
-> 
-> Can you define some macros that represent these magic values?
-OK.
-> 
-> > +		break;
-> > +	default:
-> > +		triger = 0;
-> > +		break;
-> 
-> If you get an invalid combination, you shouldn't blindly accept it, but
-> instead return an error.
-OK.
+Changes since v1:
+- Removed prefetch().
 
-> 
-> > +	}
-> > +
-> > +	if (d->hwirq < COMM_IRQ_BASE) {
-> > +		reg_base = this_cpu_read(intcl_reg);
-> 
-> Are you guaranteed to be in a non-preemptible section here? I can see
-> things going wrong if not.
+Changes since RFC:
+- Rebase.
+- As suggested by Michal Hocko remove pages_per_block.
+- Modifed external providers of online_page_callback.
 
-???
-In percpu-def.h, I see this_cpu_read is safe() for preemption or
-interrupt.
+v10: https://lore.kernel.org/patchwork/patch/1032266/
+v9: https://lore.kernel.org/patchwork/patch/1030806/
+v8: https://lore.kernel.org/patchwork/patch/1030332/
+v7: https://lore.kernel.org/patchwork/patch/1028908/
+v6: https://lore.kernel.org/patchwork/patch/1007253/
+v5: https://lore.kernel.org/patchwork/patch/995739/
+v4: https://lore.kernel.org/patchwork/patch/995111/
+v3: https://lore.kernel.org/patchwork/patch/992348/
+v2: https://lore.kernel.org/patchwork/patch/991363/
+v1: https://lore.kernel.org/patchwork/patch/989445/
+RFC: https://lore.kernel.org/patchwork/patch/984754/
+---
 
-/*
- * Operations with implied preemption/interrupt protection. These
- * operations can be used without worrying about preemption or interrupt.
- */
-#define this_cpu_read(pcp)		__pcpu_size_call_return(this_cpu_read_, pcp)
+ drivers/hv/hv_balloon.c        |  7 ++++---
+ drivers/xen/balloon.c          | 15 ++++++++++-----
+ include/linux/memory_hotplug.h |  2 +-
+ mm/internal.h                  |  1 +
+ mm/memory_hotplug.c            | 37 +++++++++++++++++++++++++------------
+ mm/page_alloc.c                |  8 ++++----
+ 6 files changed, 45 insertions(+), 25 deletions(-)
 
-And:
-#define __pcpu_size_call_return(stem, variable)				\
-({									\
-	typeof(variable) pscr_ret__;					\
-	__verify_pcpu_ptr(&(variable));					\
-	switch(sizeof(variable)) {					\
-	case 1: pscr_ret__ = stem##1(variable); break;			\
-	case 2: pscr_ret__ = stem##2(variable); break;			\
-	case 4: pscr_ret__ = stem##4(variable); break;			\
-	case 8: pscr_ret__ = stem##8(variable); break;			\
-	default:							\
-		__bad_size_call_parameter(); break;			\
-	}								\
-	pscr_ret__;							\
-})
+diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+index 5301fef..c2cb6df 100644
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
+ 	}
+ }
+ 
+-static void hv_online_page(struct page *pg)
++static void hv_online_page(struct page *pg, unsigned int order)
+ {
+ 	struct hv_hotadd_state *has;
+ 	unsigned long flags;
+@@ -780,10 +780,11 @@ static void hv_online_page(struct page *pg)
+ 	spin_lock_irqsave(&dm_device.ha_lock, flags);
+ 	list_for_each_entry(has, &dm_device.ha_region_list, list) {
+ 		/* The page belongs to a different HAS. */
+-		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
++		if ((pfn < has->start_pfn) ||
++				(pfn + (1UL << order) > has->end_pfn))
+ 			continue;
+ 
+-		hv_page_online_one(has, pg);
++		hv_bring_pgs_online(has, pfn, 1UL << order);
+ 		break;
+ 	}
+ 	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index ceb5048..d107447 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -369,14 +369,19 @@ static enum bp_state reserve_additional_memory(void)
+ 	return BP_ECANCELED;
+ }
+ 
+-static void xen_online_page(struct page *page)
++static void xen_online_page(struct page *page, unsigned int order)
+ {
+-	__online_page_set_limits(page);
++	unsigned long i, size = (1 << order);
++	unsigned long start_pfn = page_to_pfn(page);
++	struct page *p;
+ 
++	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
+ 	mutex_lock(&balloon_mutex);
+-
+-	__balloon_append(page);
+-
++	for (i = 0; i < size; i++) {
++		p = pfn_to_page(start_pfn + i);
++		__online_page_set_limits(p);
++		__balloon_append(p);
++	}
+ 	mutex_unlock(&balloon_mutex);
+ }
+ 
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 07da5c6..e368730 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ 	unsigned long *valid_start, unsigned long *valid_end);
+ extern void __offline_isolated_pages(unsigned long, unsigned long);
+ 
+-typedef void (*online_page_callback_t)(struct page *page);
++typedef void (*online_page_callback_t)(struct page *page, unsigned int order);
+ 
+ extern int set_online_page_callback(online_page_callback_t callback);
+ extern int restore_online_page_callback(online_page_callback_t callback);
+diff --git a/mm/internal.h b/mm/internal.h
+index f4a7bb0..536bc2a 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -163,6 +163,7 @@ static inline struct page *pageblock_pfn_to_page(unsigned long start_pfn,
+ extern int __isolate_free_page(struct page *page, unsigned int order);
+ extern void memblock_free_pages(struct page *page, unsigned long pfn,
+ 					unsigned int order);
++extern void __free_pages_core(struct page *page, unsigned int order);
+ extern void prep_compound_page(struct page *page, unsigned int order);
+ extern void post_alloc_hook(struct page *page, unsigned int order,
+ 					gfp_t gfp_flags);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index b9a667d..77dff24 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -47,7 +47,7 @@
+  * and restore_online_page_callback() for generic callback restore.
+  */
+ 
+-static void generic_online_page(struct page *page);
++static void generic_online_page(struct page *page, unsigned int order);
+ 
+ static online_page_callback_t online_page_callback = generic_online_page;
+ static DEFINE_MUTEX(online_page_callback_lock);
+@@ -656,26 +656,39 @@ void __online_page_free(struct page *page)
+ }
+ EXPORT_SYMBOL_GPL(__online_page_free);
+ 
+-static void generic_online_page(struct page *page)
++static void generic_online_page(struct page *page, unsigned int order)
+ {
+-	__online_page_set_limits(page);
+-	__online_page_increment_counters(page);
+-	__online_page_free(page);
++	__free_pages_core(page, order);
++	totalram_pages_add(1UL << order);
++#ifdef CONFIG_HIGHMEM
++	if (PageHighMem(page))
++		totalhigh_pages_add(1UL << order);
++#endif
++}
++
++static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
++{
++	unsigned long end = start + nr_pages;
++	int order, ret, onlined_pages = 0;
++
++	while (start < end) {
++		order = min(MAX_ORDER - 1,
++			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
++		(*online_page_callback)(pfn_to_page(start), order);
++
++		onlined_pages += (1UL << order);
++		start += (1UL << order);
++	}
++	return onlined_pages;
+ }
+ 
+ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+ 			void *arg)
+ {
+-	unsigned long i;
+ 	unsigned long onlined_pages = *(unsigned long *)arg;
+-	struct page *page;
+ 
+ 	if (PageReserved(pfn_to_page(start_pfn)))
+-		for (i = 0; i < nr_pages; i++) {
+-			page = pfn_to_page(start_pfn + i);
+-			(*online_page_callback)(page);
+-			onlined_pages++;
+-		}
++		onlined_pages += online_pages_blocks(start_pfn, nr_pages);
+ 
+ 	online_mem_sections(start_pfn, start_pfn + nr_pages);
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d295c9b..883212a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1303,7 +1303,7 @@ static void __free_pages_ok(struct page *page, unsigned int order)
+ 	local_irq_restore(flags);
+ }
+ 
+-static void __init __free_pages_boot_core(struct page *page, unsigned int order)
++void __free_pages_core(struct page *page, unsigned int order)
+ {
+ 	unsigned int nr_pages = 1 << order;
+ 	struct page *p = page;
+@@ -1382,7 +1382,7 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
+ {
+ 	if (early_page_uninitialised(pfn))
+ 		return;
+-	return __free_pages_boot_core(page, order);
++	__free_pages_core(page, order);
+ }
+ 
+ /*
+@@ -1472,14 +1472,14 @@ static void __init deferred_free_range(unsigned long pfn,
+ 	if (nr_pages == pageblock_nr_pages &&
+ 	    (pfn & (pageblock_nr_pages - 1)) == 0) {
+ 		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-		__free_pages_boot_core(page, pageblock_order);
++		__free_pages_core(page, pageblock_order);
+ 		return;
+ 	}
+ 
+ 	for (i = 0; i < nr_pages; i++, page++, pfn++) {
+ 		if ((pfn & (pageblock_nr_pages - 1)) == 0)
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-		__free_pages_boot_core(page, 0);
++		__free_pages_core(page, 0);
+ 	}
+ }
+ 
+-- 
+1.9.1
 
-What's the wrong with preemption?
-
-> > +
-> > +		if (triger) {
-> > +			offset = ((d->hwirq * 2) / 32) * 4;
-> > +			bit_offset = (d->hwirq * 2) % 32;
-> 
-> This needs to be turned into a set of macros so that the non-percpu code
-> can reuse it.
-
-
-#define IRQ_OFFSET(irq) \
-	((irq < COMM_IRQ_BASE) ? irq : irq - COMM_IRQ_BASE) 
-
-#define TRIG_VAL(trigger, irq) \
-	(trigger << ((IRQ_OFFSET(irq) * 2) % 32))
-
-#define TRIG_VAL_MSK(irq) \
-	(3 << ((IRQ_OFFSET(irq) * 2) % 32))
-
-#define TRIG_BASE(irq) \
-	((((IRQ_OFFSET(irq) * 2) / 32) * 4) + \
-	((irq < COMM_IRQ_BASE) ? this_cpu_read(intcl_reg) : INTCG_base))
-
-tmp = readl_relaxed(TRIG_BASE(d->hwirq)) & (~TRIG_VAL_MSK(d->hwirq));
-writel_relaxed(tmp | TRIG_VAL(triger, d->hwirq), TRIG_BASE(d->hwirq));
-
-Hmm?
-
-> 
-> > +
-> > +			writel_relaxed(triger << bit_offset,
-> > +				reg_base + INTCL_CFGR + offset);
-> > +		}
-> > +
-> > +		if (priority) {
-> > +			offset = ((d->hwirq * 8) / 32) * 4;
-> > +			bit_offset = (d->hwirq * 8) % 32;
-> > +
-> > +			writel_relaxed(priority << bit_offset,
-> > +				reg_base + INTCL_PRTR + offset);
-> > +		}
-> 
-> And this should only be set at boot time.
-The same with above reply.
-
-Best Regards
- Guo Ren
