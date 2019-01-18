@@ -2,130 +2,139 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D061C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC40C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D7F42087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD99920823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:10:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7Ovutsp"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zqSqv6En"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfARLKM (ORCPT
+        id S1727197AbfARLKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:10:12 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33507 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbfARLKL (ORCPT
+        Fri, 18 Jan 2019 06:10:24 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:44098 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbfARLKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:10:11 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so14605263wrr.0;
-        Fri, 18 Jan 2019 03:10:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i9Jz6mADl+SAlcH6gEeO3JwA6zj1h7g3kXeXLvf3Qh4=;
-        b=c7OvutspFyLKMOanYTqFOhtdpU7ojaNNVvJVsg4XAm+1GYeuC7XX9Xu+fKTrDD6Huu
-         HJQC3lrph0tk/EsV0XUd1Uf2YVoCFHoBspiiB6qOnYfiJisjF8hdIXAyPe5z0IHOoERf
-         d+ZVQ0rTBjEHLZ350xYAXGHdc5PO3yHvLCpmBlgXIoF5PgovBkJrD0JFOG83e9eW/pQo
-         0UN0MNfCoR8n6vvDrnB2feSg8BPvSiNlewlZInoDo6eYsvbChrGuKDovg3aeWkKNVf2/
-         g7lCxkVgPp/ab1W9Eygu/cE19L/uL89L1PKjNyjA2ytquXYqi+lv1HgVlHIxy9u+eEsx
-         nYZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i9Jz6mADl+SAlcH6gEeO3JwA6zj1h7g3kXeXLvf3Qh4=;
-        b=MlUOETbAVi3c5ofXvwmaWp0ofaMdGFBlB29/etjtZF3+pApi0gXtLY5RmzJTD2yXPr
-         7PjrVadXh3382dJLeCvV5YNrx1sdqLIvv/xSPrXqOlEHbkgedZ9ydA+u1S+jXas3le2u
-         TONZhWp0bP5lQrxhSyFA0gmLVnRHaaWLX8PbRoXaLNmJlzmA+zuHOWD0QI4Eykh+CDGz
-         KQs1gaHyUUoO3rtYmXlaK76OxC37I/Vm+uZhq1TB0A6PyUr5JCQ1SnT+ykvt/7IE1QAn
-         EhNNMP2bAl7mHUYdJKqC4A0E0bMPFOjuBMXHCsK+Sxo4xtp7+Ay8mhXEqZF8VmaI14Lz
-         cKTQ==
-X-Gm-Message-State: AJcUukdF/d56bvffC8HizOjy+FonSMjpkIBtLzk6T8USeBwZOuQ9jw53
-        DKPnklcpkYySGGLJddYL4g==
-X-Google-Smtp-Source: ALg8bN5HmuGWHZrf/Pe4lq0wPDcQ3aonXuxeHvlAvYBG6K6PrZDkNJ4+rKgm/Ot09izhnvbvSEmNsg==
-X-Received: by 2002:adf:dcd0:: with SMTP id x16mr15760897wrm.143.1547809809868;
-        Fri, 18 Jan 2019 03:10:09 -0800 (PST)
-Received: from localhost (host89-130-dynamic.43-79-r.retail.telecomitalia.it. [79.43.130.89])
-        by smtp.gmail.com with ESMTPSA id o81sm69625423wmd.10.2019.01.18.03.10.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Jan 2019 03:10:09 -0800 (PST)
-Date:   Fri, 18 Jan 2019 12:10:08 +0100
-From:   Andrea Righi <righi.andrea@gmail.com>
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
-Message-ID: <20190118111008.GA25335@xps-13>
-References: <20190118103127.325-1-righi.andrea@gmail.com>
- <E5872191-EE96-442E-B668-DD148157E665@linaro.org>
+        Fri, 18 Jan 2019 06:10:23 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0IB3nd2097799;
+        Fri, 18 Jan 2019 11:09:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=vJ0vJrzTwis8w2+AQlcWaXGQ6PMulOuhthc3OKzqbnM=;
+ b=zqSqv6En949O1MnRipyzH3VB4x8nRv7kbP2WvnPrGWXPrf6CuFit4KyxvD2SXkumhECO
+ pcb9mEJLlZihvbXpSvNNXVby1kysnf1uf7p3lPW47wsP/ez7rWq2a42B1zcLclo3wQo7
+ iE0ofE0dKeaufNMHmr5aPEfj1xTKSvTBwjjH6/Y+v6hxtriigBYVNjkAbw/yEFB7PA1F
+ JMzrQG7TTVn0d6J8iBzg8AnIPRZ57nPbnuW6L6Z85n6EjjXeLmDlqLvXlDa4u1e6LVYi
+ N4MdHbx0GkJ4HwTMWfR7sSB4wK0TRknoYqknVf1Q5RoGsaAeOFQr0RC75aZScsZHg2dQ 2A== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2pybjsn2k5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Jan 2019 11:09:57 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0IB9tut019376
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Jan 2019 11:09:55 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0IB9sXN031280;
+        Fri, 18 Jan 2019 11:09:54 GMT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Message-ID: <48a105d3-fa32-40e4-9775-37d49f42eac0@default>
+Date:   Fri, 18 Jan 2019 03:09:54 -0800 (PST)
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     <linux-kernel@vger.kernel.org>
+Cc:     <mingo@redhat.com>, <konrad.wilk@oracle.com>, <x86@kernel.org>,
+        <tglx@linutronix.de>, <srinivas.eeda@oracle.com>, <bp@suse.de>,
+        <tim.c.chen@linux.intel.com>, <peterz@infradead.org>,
+        <hpa@zytor.com>
+Subject: [PATCH] x86/speculation: Update TIF_SPEC_IB before ibpb barrier
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <E5872191-EE96-442E-B668-DD148157E665@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9139 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=536
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901180083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 12:04:17PM +0100, Paolo Valente wrote:
-> 
-> 
-> > Il giorno 18 gen 2019, alle ore 11:31, Andrea Righi <righi.andrea@gmail.com> ha scritto:
-> > 
-> > This is a redesign of my old cgroup-io-throttle controller:
-> > https://lwn.net/Articles/330531/
-> > 
-> > I'm resuming this old patch to point out a problem that I think is still
-> > not solved completely.
-> > 
-> > = Problem =
-> > 
-> > The io.max controller works really well at limiting synchronous I/O
-> > (READs), but a lot of I/O requests are initiated outside the context of
-> > the process that is ultimately responsible for its creation (e.g.,
-> > WRITEs).
-> > 
-> > Throttling at the block layer in some cases is too late and we may end
-> > up slowing down processes that are not responsible for the I/O that
-> > is being processed at that level.
-> > 
-> > = Proposed solution =
-> > 
-> > The main idea of this controller is to split I/O measurement and I/O
-> > throttling: I/O is measured at the block layer for READS, at page cache
-> > (dirty pages) for WRITEs, and processes are limited while they're
-> > generating I/O at the VFS level, based on the measured I/O.
-> > 
-> 
-> Hi Andrea,
-> what the about the case where two processes are dirtying the same
-> pages?  Which will be charged?
-> 
-> Thanks,
-> Paolo
+When a task is set for updating TIF_SPEC_IB throuth SECCOMP by others
+and it's scheduled in the first time, a stale TIF_SPEC_IB value is
+picked in cond_ibpb(). This is due to TIF_SPEC_IB is updated later at
+__switch_to_xtra().
 
-Hi Paolo,
+Add an extra call to speculation_ctrl_update_tif() to update it before
+IBPB barrier.
 
-in this case only the first one will be charged for the I/O activity
-(the one that changes a page from clean to dirty). This is probably not
-totally fair in some cases, but I think it's a good compromise, at the
-end rewriting the same page over and over while it's already dirty
-doesn't actually generate I/O activity, until the page is flushed back
-to disk.
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+---
+ arch/x86/include/asm/spec-ctrl.h | 1 +
+ arch/x86/kernel/process.c        | 2 +-
+ arch/x86/mm/tlb.c                | 4 +++-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-Obviously I'm open to other better ideas and suggestions.
-
-Thanks!
--Andrea
+diff --git a/arch/x86/include/asm/spec-ctrl.h b/arch/x86/include/asm/spec-c=
+trl.h
+index 5393bab..8b2814a 100644
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -82,6 +82,7 @@ static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
+ static inline void speculative_store_bypass_ht_init(void) { }
+ #endif
+=20
++extern unsigned long speculation_ctrl_update_tif(struct task_struct *tsk);
+ extern void speculation_ctrl_update(unsigned long tif);
+ extern void speculation_ctrl_update_current(void);
+=20
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 90ae0ca..454e71d 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -446,7 +446,7 @@ static __always_inline void __speculation_ctrl_update(u=
+nsigned long tifp,
+ =09=09wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+ }
+=20
+-static unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
++unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
+ {
+ =09if (test_and_clear_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE)) {
+ =09=09if (task_spec_ssb_disable(tsk))
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 999d6d8..c0f3fcf 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -8,6 +8,7 @@
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
+=20
++#include <asm/spec-ctrl.h>
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+ #include <asm/nospec-branch.h>
+@@ -190,7 +191,8 @@ static void sync_current_stack_to_mm(struct mm_struct *=
+mm)
+=20
+ static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next=
+)
+ {
+-=09unsigned long next_tif =3D task_thread_info(next)->flags;
++=09/* Update the flag bits to newest value actively */
++=09unsigned long next_tif =3D speculation_ctrl_update_tif(next);
+ =09unsigned long ibpb =3D (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
+=20
+ =09return (unsigned long)next->mm | ibpb;
+--=20
+1.8.3.1
