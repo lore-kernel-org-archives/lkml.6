@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51814C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A52C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A8122086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:15:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0B362086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfARIPO (ORCPT
+        id S1727822AbfARIPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:15:14 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2260 "EHLO huawei.com"
+        Fri, 18 Jan 2019 03:15:12 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2259 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727350AbfARINw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727271AbfARINw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 03:13:52 -0500
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A0E7EC9C0E270549F62B;
+        by Forcepoint Email with ESMTP id 9CC25DC2090BD91F56D8;
         Fri, 18 Jan 2019 16:13:49 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 18 Jan 2019 16:13:43 +0800
+ 14.3.408.0; Fri, 18 Jan 2019 16:13:41 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
@@ -32,9 +32,9 @@ CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
         Yunsheng Lin <linyunsheng@huawei.com>,
         Peng Li <lipeng321@huawei.com>
-Subject: [PATCH net-next 07/12] net: hns3: remove redundant codes in hclge_knic_setup
-Date:   Fri, 18 Jan 2019 16:13:09 +0800
-Message-ID: <1547799194-38212-8-git-send-email-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 02/12] net: hns3: remove unused member in struct hns3_enet_ring
+Date:   Fri, 18 Jan 2019 16:13:04 +0800
+Message-ID: <1547799194-38212-3-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
 References: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
@@ -47,65 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TC info will be updated in hclge_tm_vport_tc_info_update(),
-so hclge_knic_setup() no need to do it again.
+The irq_init_flag field in struct hns3_enet_ring is unnecessary.
+This patch removes it.
 
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 17 +----------------
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c   |  2 +-
- 2 files changed, 2 insertions(+), 17 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 1 -
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index f7637c0..17b1e33 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -1096,7 +1096,7 @@ static int hclge_knic_setup(struct hclge_vport *vport,
- 	struct hnae3_handle *nic = &vport->nic;
- 	struct hnae3_knic_private_info *kinfo = &nic->kinfo;
- 	struct hclge_dev *hdev = vport->back;
--	int i, ret;
-+	int ret;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index e0621ef..c6f2d72 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -3208,7 +3208,6 @@ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
+ 			tqp_vector->irq_init_flag = HNS3_VECTOR_NOT_INITED;
+ 		}
  
- 	kinfo->num_desc = num_desc;
- 	kinfo->rx_buf_len = hdev->rx_buf_len;
-@@ -1105,21 +1105,6 @@ static int hclge_knic_setup(struct hclge_vport *vport,
- 		= min_t(u16, hdev->rss_size_max, num_tqps / kinfo->num_tc);
- 	kinfo->num_tqps = kinfo->rss_size * kinfo->num_tc;
+-		priv->ring_data[i].ring->irq_init_flag = HNS3_VECTOR_NOT_INITED;
+ 		hns3_clear_ring_group(&tqp_vector->rx_group);
+ 		hns3_clear_ring_group(&tqp_vector->tx_group);
+ 		netif_napi_del(&priv->tqp_vector[i].napi);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+index e55995e..f59ab73 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -412,7 +412,6 @@ struct hns3_enet_ring {
+ 	unsigned char *va; /* first buffer address for current packet */
  
--	for (i = 0; i < HNAE3_MAX_TC; i++) {
--		if (hdev->hw_tc_map & BIT(i)) {
--			kinfo->tc_info[i].enable = true;
--			kinfo->tc_info[i].tqp_offset = i * kinfo->rss_size;
--			kinfo->tc_info[i].tqp_count = kinfo->rss_size;
--			kinfo->tc_info[i].tc = i;
--		} else {
--			/* Set to default queue if TC is disable */
--			kinfo->tc_info[i].enable = false;
--			kinfo->tc_info[i].tqp_offset = 0;
--			kinfo->tc_info[i].tqp_count = 1;
--			kinfo->tc_info[i].tc = 0;
--		}
--	}
--
- 	kinfo->tqp = devm_kcalloc(&hdev->pdev->dev, kinfo->num_tqps,
- 				  sizeof(struct hnae3_queue *), GFP_KERNEL);
- 	if (!kinfo->tqp)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index fda91e5..8c57950 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -529,7 +529,7 @@ static void hclge_tm_vport_tc_info_update(struct hclge_vport *vport)
- 	vport->dwrr = 100;  /* 100 percent as init */
- 	vport->alloc_rss_size = kinfo->rss_size;
+ 	u32 flag;          /* ring attribute */
+-	int irq_init_flag;
  
--	for (i = 0; i < kinfo->num_tc; i++) {
-+	for (i = 0; i < HNAE3_MAX_TC; i++) {
- 		if (hdev->hw_tc_map & BIT(i)) {
- 			kinfo->tc_info[i].enable = true;
- 			kinfo->tc_info[i].tqp_offset = i * kinfo->rss_size;
+ 	int numa_node;
+ 	cpumask_t affinity_mask;
 -- 
 2.7.4
 
