@@ -2,132 +2,161 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68C3C5AC81
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF6CC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A49920883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547838102;
-	bh=Bgcjvd5HPLqNMwpcnJaTaHEC9lLIohbdbCPfKxN4rfQ=;
-	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=kAQdXLuoWdX8DOZ35+l3DEkT1MPXPNcfx1iYoOjhe/vRGBoRg/zsI0B5HfiUGs/OM
-	 jP0NZFRsVMiLw3NKBkmcrfOTAtJgkv5dPI9cryPJbuxm9n4ZLy5C6GvlhvayD1KUY6
-	 RxgTHkc+bNsmXYOGw6yX2gDcPR6W3qe66RmUHxjI=
+	by mail.kernel.org (Postfix) with ESMTP id 309A220883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 19:01:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tXGZ3AD1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbfARTBl (ORCPT
+        id S1729312AbfARTBo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:01:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728583AbfARTBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:01:40 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD4392086D;
-        Fri, 18 Jan 2019 19:01:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547838099;
-        bh=Bgcjvd5HPLqNMwpcnJaTaHEC9lLIohbdbCPfKxN4rfQ=;
-        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=kbmCV9YMaL6BdWM0kT3X43ubRcXpK885yRkFO3+k+IrYlMYFc9LrS6OukCZv8EaAh
-         vCkOnz0p/Dp+ruGo1gEE2wUKiE3akxgnj0knFe6f1qh3asshEit6SjozfAsJFASGhA
-         2v/3gNFSUSYYpyRftsNm3Spg3hZ1Ajjszy2uaFs4=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 18 Jan 2019 14:01:44 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33029 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728583AbfARTBn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 14:01:43 -0500
+Received: by mail-wm1-f66.google.com with SMTP id r24so1628643wmh.0;
+        Fri, 18 Jan 2019 11:01:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=o2aBihmd7kCS/IVyvwHcJEqsYBV/JMJi5NSNOXEgv4A=;
+        b=tXGZ3AD1uewX/gkWlTNNLm2/qjJk40/HlKu7T3b5hToJ3gndB6XlsgDvcU0EVv/Wfc
+         c6KP9BFVovCKcxm1yXXnqRtP3TS4DCMi47r2Agnkj1OZKebaI/2N8+OR/DuLpqN7tUUw
+         EXxCE9wwz2GXxsM6UnK6uOGWYlw56iR9qFYC0cwK4n2ex3afnTnHfnDAglwJaS9NYsro
+         OGas3G9kIDDfnDwhTaoVwzyTTg98NvdTLtMc7GriibzccJ0r8VAuT03aIHoKnBeD3fGU
+         FH4Pf7CBBPCPLnXbdH7RbxsU36xdAC/VYJgKXWFKyPySxPe09cE83bTnqabBMKMQnivi
+         YLQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=o2aBihmd7kCS/IVyvwHcJEqsYBV/JMJi5NSNOXEgv4A=;
+        b=VXjow91VBEpFgJ3f7UhhKGw2jDWo4yAKKp36WYjvrFwyfXZuDLhLnpjfQdCLIargQ0
+         VHH/OYTm5mKmBp6lDHgia/rQhLU0/EMSRaDT4W7eH5T2vtwsuasRmm8oa2fYtN15tgL5
+         wmra2s+Ycyantml09TUIiBvlmHZobYhsJaBb8fjXODLBTsm85HqXZj1FU1j/ijidqik/
+         KCYBXPbufpDP3EgL3HV3AK81ml66IMkknGbgw2qL9CIEDpIZrDcbLMp4dyrWl2PpFwcK
+         PA7iJydY5uTGnkeAE5I7KvjJcwkvIklEKh9N7natCF1rMGRAR06XoYgAgp0JIO/UVGyv
+         pdSQ==
+X-Gm-Message-State: AJcUukdpbku/EcG38/9HTESLjzBDrDOeGjCp4NY+uY/3FA2RIBHlMpXN
+        uHd1J7dtayZzVGY0Yb2wAUwjhIBN
+X-Google-Smtp-Source: ALg8bN56wZ5fgNVJwFuW9dR2p//ZaZ9K/zujqfjUGMJmJTZgU+X1tgP0EFVv0vikyPlOPU05Nx0UDw==
+X-Received: by 2002:a1c:e345:: with SMTP id a66mr16368663wmh.12.1547838100050;
+        Fri, 18 Jan 2019 11:01:40 -0800 (PST)
+Received: from [172.30.88.68] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
+        by smtp.gmail.com with ESMTPSA id o9sm27557988wmh.3.2019.01.18.11.01.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 11:01:39 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] media: imx: csi: Disable CSI immediately after
+ last EOF
+To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
+Cc:     stable@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190117204912.28456-1-slongerbeam@gmail.com>
+ <20190117204912.28456-2-slongerbeam@gmail.com>
+ <1547807043.3375.3.camel@pengutronix.de>
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+Message-ID: <56b43909-136b-fce0-e743-26cd6afd0eea@gmail.com>
+Date:   Fri, 18 Jan 2019 11:01:35 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass clocks
-User-Agent: alot/0.8
-In-Reply-To: <6ad2f27c-0afc-af6a-8198-679a88dcc2f9@codeaurora.org>
-References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org> <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com> <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org> <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com> <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org> <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com> <6ad2f27c-0afc-af6a-8198-679a88dcc2f9@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Message-ID: <154783809872.169631.3437337484694848807@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 18 Jan 2019 11:01:38 -0800
+In-Reply-To: <1547807043.3375.3.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2019-01-17 03:19:22)
->=20
->=20
-> On 1/15/2019 3:55 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2019-01-13 22:12:39)
-> >>
-> >>
-> >> On 1/8/2019 2:34 AM, Stephen Boyd wrote:
-> >>>
-> >>> As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
-> >>> But removing CLK_IS_CRITICAL and relying on some random bootloader
-> >>> behavior also looks wrong. Can you clarify what's going on?
-> >>>
-> >>
-> >> To enable LPASS clocks the requirement is to enable the GCC_LPASS_SWAY
-> >> clock.
-> >> 1) If the LPASS drivers are enabled/probed before the clock late init
-> >> the client would take care to maintain the dependency to enable the
-> >> GCC_LPASS_SWAY clock before enabling the LPASS clocks.
-> >>
-> >> 2) There could be a condition where the LPASS drivers would probe/init
-> >> later the clock late_init. When the clock_late_init would try to access
-> >> the LPASS clocks, since we cannot maintain the dependency this access
-> >> would fail. To avoid this the earlier patch has made the GCC_LPASS_SWAY
-> >> clock as CRITICAL.
-> >>
-> >> 3) Marking the GCC_LPASS_SWAY clock as CRITICAL has a issue, in the ca=
-se
-> >> where the LPASS subsystem would be restarted due to some critical
-> >> failure on LPASS. Toggling the restart register of LPASS would clear t=
-he
-> >> hardware state of this clock and thus the next access of the LPASS
-> >> clocks would result in failure of the system.
-> >>
-> >> 4) To avoid issues happening in (2) and (3) all the LPASS clocks chould
-> >> be safely marked as CLK_IGNORE_UNUSED. And lpass drivers would take ca=
-re
-> >> of the dependency to enable the required clocks.
-> >>
-> >=20
-> > Ok, so why can't we enable/disable the lpass sway clk in the
-> > prepare/unprepare phase of the lpass clk driver paths? Or why can't we
-> > forcibly enable this lpass sway clk after the reset is deasserted? Which
-> > clk controller is the reset part of? GCC or LPASS?
->=20
-> It is part of Always On Subsystem.
 
-Ok. Is this merged upstream?
 
->=20
-> >=20
-> > It still sounds like the LPASS clk driver isn't handling dependencies it
-> > has on accessing registers, but maybe we can get away with not handling
-> > the dependency still if we make the reset "do the right thing" and turn
-> > the clk back on so it stays "critical".
-> >
->=20
-> This is a reset from hardware and it does not bring back the clock to=20
-> the previous state and so we can not mark it "critical". I would submit=20
-> the next series with comments updated. Please let me know in case you=20
-> have any comments.
->=20
->=20
+On 1/18/19 2:24 AM, Philipp Zabel wrote:
+> On Thu, 2019-01-17 at 12:49 -0800, Steve Longerbeam wrote:
+>> Disable the CSI immediately after receiving the last EOF before stream
+>> off (and thus before disabling the IDMA channel).
+>>
+>> This fixes a complete system hard lockup on the SabreAuto when streaming
+>> from the ADV7180, by repeatedly sending a stream off immediately followed
+>> by stream on:
+>>
+>> while true; do v4l2-ctl  -d4 --stream-mmap --stream-count=3; done
+>>
+>> Eventually this either causes the system lockup or EOF timeouts at all
+>> subsequent stream on, until a system reset.
+>>
+>> The lockup occurs when disabling the IDMA channel at stream off. Disabling
+>> the CSI before disabling the IDMA channel appears to be a reliable fix for
+>> the hard lockup.
+>>
+>> Fixes: 4a34ec8e470cb ("[media] media: imx: Add CSI subdev driver")
+>>
+>> Reported-by: Gaël PORTAY <gael.portay@collabora.com>
+>> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+>> Cc: stable@vger.kernel.org
+>> ---
+>> Changes in v2:
+>> - restore an empty line
+>> - Add Fixes: and Cc: stable
+>> ---
+>>   drivers/staging/media/imx/imx-media-csi.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+>> index e18f58f56dfb..e0f6f88e2e70 100644
+>> --- a/drivers/staging/media/imx/imx-media-csi.c
+>> +++ b/drivers/staging/media/imx/imx-media-csi.c
+>> @@ -681,6 +681,8 @@ static void csi_idmac_stop(struct csi_priv *priv)
+>>   	if (ret == 0)
+>>   		v4l2_warn(&priv->sd, "wait last EOF timeout\n");
+>>   
+>> +	ipu_csi_disable(priv->csi);
+>> +
+> Can you add a short comment why this call is here? Since now
+> csi_idmac_stop is kind of a misnomer and symmetry with csi(_idmac)_start
+> is broken, I think this is a bit un-obvious.
 
-Can we have the always on subsystem reset code go hit this clk enable
-bit back on? And also have the LPASS clk driver get this GCC sway clk
-and enable it during probe? Maybe we need to get some sort of API in the
-clk provider layer that can tell us that the clk state has changed now
-and it needs to be restored. I haven't thought about it deeply but that
-may be the best solution here.
+Yeah. I think a cleaner, more symmetric solution would be to split up 
+csi_idmac_stop.
+
+>
+> Also note that now the error path of csi_start() will now call
+> ipu_csi_disable() while the CSI is disabled. This happens to work
+> because that just calls ipu_module_disable(), which is not refcounted.
+
+Thanks for catching. Splitting up csi_idmac_stop will fix this. Working 
+on that.
+
+Steve
+
+>
+>>   	devm_free_irq(priv->dev, priv->eof_irq, priv);
+>>   	devm_free_irq(priv->dev, priv->nfb4eof_irq, priv);
+>>   
+>> @@ -793,9 +795,9 @@ static void csi_stop(struct csi_priv *priv)
+>>   		/* stop the frame interval monitor */
+>>   		if (priv->fim)
+>>   			imx_media_fim_set_stream(priv->fim, NULL, false);
+>> +	} else {
+>> +		ipu_csi_disable(priv->csi);
+>>   	}
+>> -
+>> -	ipu_csi_disable(priv->csi);
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>
+> regards
+> Philipp
 
