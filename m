@@ -2,99 +2,389 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EB8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080C7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 339B92087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B55812087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:46:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547822784;
+	bh=BsM/SN7m3Qc+YcqWRBwdAu6smvDf2aseQ7kUZG/e0K4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=J1rvgiv7uy+3O8rrfHbSKsWdcsfoIFe693Cq9mkLkOb1GWdP6wi3DVWs0vJ1gqSiW
+	 ufLX7rhkv6f1FZP59345hJzav5ugLG+OsIQuE6zwtRWV7IWJFzdKlj0w+Ros7ibzD+
+	 7q/jEPG2brVXIlK9+DjqmZ7FnJTTJA1/2ZWuBe+0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbfAROqH (ORCPT
+        id S1727861AbfAROqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:46:07 -0500
-Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:46332 "EHLO
-        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728203AbfAROqF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:46:05 -0500
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 78F831C33C9
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 14:46:03 +0000 (GMT)
-Received: (qmail 25076 invoked from network); 18 Jan 2019 14:46:03 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Jan 2019 14:46:03 -0000
-Date:   Fri, 18 Jan 2019 14:46:01 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 25/25] mm, compaction: Do not direct compact remote memory
-Message-ID: <20190118144601.GS27437@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-26-mgorman@techsingularity.net>
- <84a7b23a-1cb7-b888-4245-6b1e829f472b@suse.cz>
+        Fri, 18 Jan 2019 09:46:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727517AbfAROqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:46:22 -0500
+Received: from quaco.ghostprotocols.net (unknown [189.40.100.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47F642054F;
+        Fri, 18 Jan 2019 14:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547822781;
+        bh=BsM/SN7m3Qc+YcqWRBwdAu6smvDf2aseQ7kUZG/e0K4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HmmNESgz0a3EyayWaflYgapyZswRl9YHo91ZXgc3PJZMi87uSs73Rt6zTb2HwClR3
+         LUfeo9KNkE0TO7WgC/Xr7JKO2ufbSQrwnMsGGd6SsjhSUXyQfJywYnMh8eIygj3IoF
+         3A7j9a7da4GmbBriDYIp3A0fSS2WqywPdKIGpk4o=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 0C25C41AB5; Fri, 18 Jan 2019 11:46:17 -0300 (-03)
+Date:   Fri, 18 Jan 2019 11:46:16 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com
+Subject: Re: [PATCH v11 perf, bpf-next 6/9] perf util: handle
+ PERF_RECORD_BPF_EVENT
+Message-ID: <20190118144616.GL5823@kernel.org>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
+ <20190117161521.1341602-7-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <84a7b23a-1cb7-b888-4245-6b1e829f472b@suse.cz>
+In-Reply-To: <20190117161521.1341602-7-songliubraving@fb.com>
+X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 02:51:00PM +0100, Vlastimil Babka wrote:
-> On 1/4/19 1:50 PM, Mel Gorman wrote:
-> > Remote compaction is expensive and possibly counter-productive. Locality
-> > is expected to often have better performance characteristics than remote
-> > high-order pages. For small allocations, it's expected that locality is
-> > generally required or fallbacks are possible. For larger allocations such
-> > as THP, they are forbidden at the time of writing but if __GFP_THISNODE
-> > is ever removed, then it would still be preferable to fallback to small
-> > local base pages over remote THP in the general case. kcompactd is still
-> > woken via kswapd so compaction happens eventually.
-> > 
-> > While this patch potentially has both positive and negative effects,
-> > it is best to avoid the possibility of remote compaction given the cost
-> > relative to any potential benefit.
-> > 
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Em Thu, Jan 17, 2019 at 08:15:18AM -0800, Song Liu escreveu:
+> This patch adds basic handling of PERF_RECORD_BPF_EVENT.
+> Tracking of PERF_RECORD_BPF_EVENT is OFF by default. Option --bpf-event
+> is added to turn it on.
+
+ditto
+ 
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  tools/perf/builtin-record.c |  1 +
+>  tools/perf/perf.h           |  1 +
+>  tools/perf/util/Build       |  2 ++
+>  tools/perf/util/bpf-event.c | 15 +++++++++++++++
+>  tools/perf/util/bpf-event.h | 11 +++++++++++
+>  tools/perf/util/event.c     | 20 ++++++++++++++++++++
+>  tools/perf/util/event.h     | 16 ++++++++++++++++
+>  tools/perf/util/evsel.c     | 11 ++++++++++-
+>  tools/perf/util/evsel.h     |  1 +
+>  tools/perf/util/machine.c   |  3 +++
+>  tools/perf/util/session.c   |  4 ++++
+>  tools/perf/util/tool.h      |  3 ++-
+>  12 files changed, 86 insertions(+), 2 deletions(-)
+>  create mode 100644 tools/perf/util/bpf-event.c
+>  create mode 100644 tools/perf/util/bpf-event.h
 > 
-> Generally agree with the intent, but what if there's e.g. high-order (but not
-> costly) kernel allocation on behalf of user process on cpu belonging to a
-> movable node, where the only non-movable node is node 0. It will have to keep
-> reclaiming until a large enough page is formed, or wait for kcompactd?
-
-Nnnggghhh, movable nodes. Yes, in such a case it would have to wait for
-reclaim or kcompactd which could be problematic. This would have to be
-special cased further.
-
-> So maybe do this only for costly orders?
-> 
-
-This was written on the basis of the __GFP_THISNODE discussion which is
-THP specific so costly didn't come into my thinking. If that ever gets
-resurrected properly, this patch can be revisited. It would be trivial to
-check if the preferred node is a movable node and allow remote compaction
-in such cases but I'm not aiming at any specific problem with this patch
-so it's too hand-wavy.
-
-> Also I think compaction_zonelist_suitable() should be also updated, or we might
-> be promising the reclaim-compact loop e.g. that we will compact after enough
-> reclaim, but then we won't.
-> 
-
-True. I think I'll kill this patch as __GFP_THISNODE is now used again
-for THP (regardless of how one feels about the subject) and we don't have
-good examples where remote compaction for lower-order kernel allocations
-is a problem.
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 882285fb9f64..deaf9b902094 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -1839,6 +1839,7 @@ static struct option __record_options[] = {
+>  	OPT_BOOLEAN(0, "tail-synthesize", &record.opts.tail_synthesize,
+>  		    "synthesize non-sample events at the end of output"),
+>  	OPT_BOOLEAN(0, "overwrite", &record.opts.overwrite, "use overwrite mode"),
+> +	OPT_BOOLEAN(0, "bpf-event", &record.opts.bpf_event, "record bpf events"),
+>  	OPT_BOOLEAN(0, "strict-freq", &record.opts.strict_freq,
+>  		    "Fail if the specified frequency can't be used"),
+>  	OPT_CALLBACK('F', "freq", &record.opts, "freq or 'max'",
+> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+> index 388c6dd128b8..5941fb6eccfc 100644
+> --- a/tools/perf/perf.h
+> +++ b/tools/perf/perf.h
+> @@ -66,6 +66,7 @@ struct record_opts {
+>  	bool	     ignore_missing_thread;
+>  	bool	     strict_freq;
+>  	bool	     sample_id;
+> +	bool	     bpf_event;
+>  	unsigned int freq;
+>  	unsigned int mmap_pages;
+>  	unsigned int auxtrace_mmap_pages;
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index af72be7f5b3b..fa8305390315 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -152,6 +152,8 @@ endif
+>  
+>  libperf-y += perf-hooks.o
+>  
+> +libperf-$(CONFIG_LIBBPF) += bpf-event.o
+> +
+>  libperf-$(CONFIG_CXX) += c++/
+>  
+>  CFLAGS_config.o   += -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
+> diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+> new file mode 100644
+> index 000000000000..87004706874f
+> --- /dev/null
+> +++ b/tools/perf/util/bpf-event.c
+> @@ -0,0 +1,15 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <errno.h>
+> +#include <bpf/bpf.h>
+> +#include "bpf-event.h"
+> +#include "debug.h"
+> +#include "symbol.h"
+> +
+> +int machine__process_bpf_event(struct machine *machine __maybe_unused,
+> +			       union perf_event *event,
+> +			       struct perf_sample *sample __maybe_unused)
+> +{
+> +	if (dump_trace)
+> +		perf_event__fprintf_bpf_event(event, stdout);
+> +	return 0;
+> +}
+> diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
+> new file mode 100644
+> index 000000000000..d5ca355dd298
+> --- /dev/null
+> +++ b/tools/perf/util/bpf-event.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __PERF_BPF_EVENT_H
+> +#define __PERF_BPF_EVENT_H
+> +
+> +#include "machine.h"
+> +
+> +int machine__process_bpf_event(struct machine *machine,
+> +			       union perf_event *event,
+> +			       struct perf_sample *sample);
+> +
+> +#endif
+> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+> index 3c8a6a8dd260..3b646d27374e 100644
+> --- a/tools/perf/util/event.c
+> +++ b/tools/perf/util/event.c
+> @@ -25,6 +25,7 @@
+>  #include "asm/bug.h"
+>  #include "stat.h"
+>  #include "session.h"
+> +#include "bpf-event.h"
+>  
+>  #define DEFAULT_PROC_MAP_PARSE_TIMEOUT 500
+>  
+> @@ -47,6 +48,7 @@ static const char *perf_event__names[] = {
+>  	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
+>  	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
+>  	[PERF_RECORD_KSYMBOL]			= "KSYMBOL",
+> +	[PERF_RECORD_BPF_EVENT]			= "BPF_EVENT",
+>  	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
+>  	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
+>  	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
+> @@ -1339,6 +1341,14 @@ int perf_event__process_ksymbol(struct perf_tool *tool __maybe_unused,
+>  	return machine__process_ksymbol(machine, event, sample);
+>  }
+>  
+> +int perf_event__process_bpf_event(struct perf_tool *tool __maybe_unused,
+> +				  union perf_event *event,
+> +				  struct perf_sample *sample __maybe_unused,
+> +				  struct machine *machine)
+> +{
+> +	return machine__process_bpf_event(machine, event, sample);
+> +}
+> +
+>  size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
+>  {
+>  	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
+> @@ -1479,6 +1489,13 @@ size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
+>  		       event->ksymbol_event.flags, event->ksymbol_event.name);
+>  }
+>  
+> +size_t perf_event__fprintf_bpf_event(union perf_event *event, FILE *fp)
+> +{
+> +	return fprintf(fp, " bpf event with type %u, flags %u, id %u\n",
+> +		       event->bpf_event.type, event->bpf_event.flags,
+> +		       event->bpf_event.id);
+> +}
+> +
+>  size_t perf_event__fprintf(union perf_event *event, FILE *fp)
+>  {
+>  	size_t ret = fprintf(fp, "PERF_RECORD_%s",
+> @@ -1517,6 +1534,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
+>  	case PERF_RECORD_KSYMBOL:
+>  		ret += perf_event__fprintf_ksymbol(event, fp);
+>  		break;
+> +	case PERF_RECORD_BPF_EVENT:
+> +		ret += perf_event__fprintf_bpf_event(event, fp);
+> +		break;
+>  	default:
+>  		ret += fprintf(fp, "\n");
+>  	}
+> diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+> index 018322f2a13e..dad32b81fe71 100644
+> --- a/tools/perf/util/event.h
+> +++ b/tools/perf/util/event.h
+> @@ -98,6 +98,16 @@ struct ksymbol_event {
+>  	char name[KSYM_NAME_LEN];
+>  };
+>  
+> +struct bpf_event {
+> +	struct perf_event_header header;
+> +	u16 type;
+> +	u16 flags;
+> +	u32 id;
+> +
+> +	/* for bpf_prog types */
+> +	u8 tag[BPF_TAG_SIZE];  // prog tag
+> +};
+> +
+>  #define PERF_SAMPLE_MASK				\
+>  	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
+>  	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
+> @@ -666,6 +676,7 @@ union perf_event {
+>  	struct time_conv_event		time_conv;
+>  	struct feature_event		feat;
+>  	struct ksymbol_event		ksymbol_event;
+> +	struct bpf_event		bpf_event;
+>  };
+>  
+>  void perf_event__print_totals(void);
+> @@ -767,6 +778,10 @@ int perf_event__process_ksymbol(struct perf_tool *tool,
+>  				union perf_event *event,
+>  				struct perf_sample *sample,
+>  				struct machine *machine);
+> +int perf_event__process_bpf_event(struct perf_tool *tool,
+> +				  union perf_event *event,
+> +				  struct perf_sample *sample,
+> +				  struct machine *machine);
+>  int perf_tool__process_synth_event(struct perf_tool *tool,
+>  				   union perf_event *event,
+>  				   struct machine *machine,
+> @@ -831,6 +846,7 @@ size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp);
+> +size_t perf_event__fprintf_bpf_event(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf(union perf_event *event, FILE *fp);
+>  
+>  int kallsyms__get_function_start(const char *kallsyms_filename,
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 9c8dc6d1aa7f..684c893ca6bc 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1036,6 +1036,8 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+>  	attr->mmap2 = track && !perf_missing_features.mmap2;
+>  	attr->comm  = track;
+>  	attr->ksymbol = track && !perf_missing_features.ksymbol;
+> +	attr->bpf_event = track && opts->bpf_event &&
+> +		!perf_missing_features.bpf_event;
+>  
+>  	if (opts->record_namespaces)
+>  		attr->namespaces  = track;
+> @@ -1654,6 +1656,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
+>  	PRINT_ATTRf(write_backward, p_unsigned);
+>  	PRINT_ATTRf(namespaces, p_unsigned);
+>  	PRINT_ATTRf(ksymbol, p_unsigned);
+> +	PRINT_ATTRf(bpf_event, p_unsigned);
+>  
+>  	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
+>  	PRINT_ATTRf(bp_type, p_unsigned);
+> @@ -1815,6 +1818,8 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
+>  		evsel->attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
+>  	if (perf_missing_features.ksymbol)
+>  		evsel->attr.ksymbol = 0;
+> +	if (perf_missing_features.bpf_event)
+> +		evsel->attr.bpf_event = 0;
+>  retry_sample_id:
+>  	if (perf_missing_features.sample_id_all)
+>  		evsel->attr.sample_id_all = 0;
+> @@ -1934,7 +1939,11 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
+>  	 * Must probe features in the order they were added to the
+>  	 * perf_event_attr interface.
+>  	 */
+> -	if (!perf_missing_features.ksymbol && evsel->attr.ksymbol) {
+> +	if (!perf_missing_features.bpf_event && evsel->attr.bpf_event) {
+> +		perf_missing_features.bpf_event = true;
+> +		pr_debug2("switching off bpf_event\n");
+> +		goto fallback_missing_features;
+> +	} else if (!perf_missing_features.ksymbol && evsel->attr.ksymbol) {
+>  		perf_missing_features.ksymbol = true;
+>  		pr_debug2("switching off ksymbol\n");
+>  		goto fallback_missing_features;
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index 4a8c3e7f4808..29c5eb68c44b 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -169,6 +169,7 @@ struct perf_missing_features {
+>  	bool write_backward;
+>  	bool group_read;
+>  	bool ksymbol;
+> +	bool bpf_event;
+>  };
+>  
+>  extern struct perf_missing_features perf_missing_features;
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 9bca61c7d5bf..ae85106bb5bf 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -21,6 +21,7 @@
+>  #include "unwind.h"
+>  #include "linux/hash.h"
+>  #include "asm/bug.h"
+> +#include "bpf-event.h"
+>  
+>  #include "sane_ctype.h"
+>  #include <symbol/kallsyms.h>
+> @@ -1867,6 +1868,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
+>  		ret = machine__process_switch_event(machine, event); break;
+>  	case PERF_RECORD_KSYMBOL:
+>  		ret = machine__process_ksymbol(machine, event, sample); break;
+> +	case PERF_RECORD_BPF_EVENT:
+> +		ret = machine__process_bpf_event(machine, event, sample); break;
+>  	default:
+>  		ret = -1;
+>  		break;
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index 2efa75bb0c0a..026bf04bba74 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -378,6 +378,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
+>  		tool->context_switch = perf_event__process_switch;
+>  	if (tool->ksymbol == NULL)
+>  		tool->ksymbol = perf_event__process_ksymbol;
+> +	if (tool->bpf_event == NULL)
+> +		tool->bpf_event = perf_event__process_bpf_event;
+>  	if (tool->read == NULL)
+>  		tool->read = process_event_sample_stub;
+>  	if (tool->throttle == NULL)
+> @@ -1309,6 +1311,8 @@ static int machines__deliver_event(struct machines *machines,
+>  		return tool->context_switch(tool, event, sample, machine);
+>  	case PERF_RECORD_KSYMBOL:
+>  		return tool->ksymbol(tool, event, sample, machine);
+> +	case PERF_RECORD_BPF_EVENT:
+> +		return tool->bpf_event(tool, event, sample, machine);
+>  	default:
+>  		++evlist->stats.nr_unknown_events;
+>  		return -1;
+> diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
+> index 9c81ca2f3cf7..250391672f9f 100644
+> --- a/tools/perf/util/tool.h
+> +++ b/tools/perf/util/tool.h
+> @@ -54,7 +54,8 @@ struct perf_tool {
+>  			context_switch,
+>  			throttle,
+>  			unthrottle,
+> -			ksymbol;
+> +			ksymbol,
+> +			bpf_event;
+>  
+>  	event_attr_op	attr;
+>  	event_attr_op	event_update;
+> -- 
+> 2.17.1
 
 -- 
-Mel Gorman
-SUSE Labs
+
+- Arnaldo
