@@ -2,89 +2,108 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBDCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B39C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A59208E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80DB120823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547816268;
-	bh=/PHdplVUqH8gRGxUccG820izvR+E/zeqIzOESWDnPF4=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=Cp4WDBki7jwGd+kgsn7SX9Y8C48Xra7HEE9MICLYDTmmRZ5V7TDZPn36v8iOgJHrm
-	 xGZJLnfiwYUFAX0vzmMpaxr6hSD1mqX1Mp/8ELMT8SIyRwGCBnk3HOKpqPpwWE7kkk
-	 DJgA/QbcgfxmblGm6OktpvuzGKrnTzeIprtsUnQU=
+	s=default; t=1547816303;
+	bh=a3MFxRbkHlEMNLU4LFrt4AA7jVDj/AkT0ntlpJzBIDU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=OoXeFPqqTSjYPOUFMQSkzc2KicZKA93ngbzCus+aPqAhfBdMsb1YrZ/eB9DX8hWag
+	 Cypq/KS2DXFoHlnU11UMifFyvsSi5lpCLGk2/OuA+Ka9GHRQf1sSZTE6kkvyxcYBiS
+	 rjVkKLXNf2u5d+8Wcpm4bWHRhD8gsupQOqPOlEzg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbfARM5q (ORCPT
+        id S1727790AbfARM6V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:57:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37158 "EHLO mail.kernel.org"
+        Fri, 18 Jan 2019 07:58:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46542 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbfARM5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:57:46 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727037AbfARM6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 07:58:21 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35D9820823;
-        Fri, 18 Jan 2019 12:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547816265;
-        bh=/PHdplVUqH8gRGxUccG820izvR+E/zeqIzOESWDnPF4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Mwp+BdrRQNqpY2JWaoZ41DWVlW9XMZol+5BzhxJiC/DPMO4C2xGKHkiEDcbruQ2J9
-         sUVMlHzt0Bej/9ekwqvh21DJ7rOfP9f0HfXmVdgMYS6e0s72nM+S+/Rgwd0VIYQelN
-         FRBsGYoJc0xKFL7iNJLm5vP2eULPsbtzcGMngqQM=
-Date:   Fri, 18 Jan 2019 13:57:37 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i3c <linux-i3c@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] i3c: Fixes for 5.0-rc3
-Message-ID: <20190118135716.5cb2cc64@bbrezillon>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id 51F9C2CD7EB;
+        Fri, 18 Jan 2019 12:58:20 +0000 (UTC)
+Received: from krava.redhat.com (unknown [10.40.205.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E8C519741;
+        Fri, 18 Jan 2019 12:58:18 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        Lance Digby <ldigby@redhat.com>
+Subject: [PATCH] bpftool: Fix prog dump by tag
+Date:   Fri, 18 Jan 2019 13:58:17 +0100
+Message-Id: <20190118125817.10763-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 18 Jan 2019 12:58:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+Lance reported an issue with bpftool not being able to
+dump program if there are more programs loaded and you
+want to dump any but the first program, like:
 
-Here is the I3C fixes PR for 5.0-rc3.
+  # bpftool prog
+  28: kprobe  name trace_req_start  tag 1dfc28ba8b3dd597  gpl
+  	loaded_at 2019-01-18T17:02:40+1100  uid 0
+  	xlated 112B  jited 109B  memlock 4096B  map_ids 13
+  29: kprobe  name trace_req_compl  tag 5b6a5ecc6030a683  gpl
+  	loaded_at 2019-01-18T17:02:40+1100  uid 0
+  	xlated 928B  jited 575B  memlock 4096B  map_ids 13,14
+  #  bpftool prog dum jited tag 1dfc28ba8b3dd597
+   0:	push   %rbp
+   1:	mov    %rsp,%rbp
+  ...
 
-Regards,
+  #  bpftool prog dum jited tag 5b6a5ecc6030a683
+  Error: can't get prog info (29): Bad address
 
-Boris
+The problem is in the prog_fd_by_tag function not cleaning
+the struct bpf_prog_info before another request, so the
+previous program length is still in there and kernel assumes
+it needs to dump the program, which fails because there's no
+user pointer set.
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+Moving the struct bpf_prog_info declaration into the loop,
+so it gets cleaned before each query.
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+Reported-by: Lance Digby <ldigby@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/bpf/bpftool/prog.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-are available in the Git repository at:
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index 2d1bb7d6ff51..b54ed82b9589 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -78,13 +78,14 @@ static void print_boot_time(__u64 nsecs, char *buf, unsigned int size)
+ 
+ static int prog_fd_by_tag(unsigned char *tag)
+ {
+-	struct bpf_prog_info info = {};
+-	__u32 len = sizeof(info);
+ 	unsigned int id = 0;
+ 	int err;
+ 	int fd;
+ 
+ 	while (true) {
++		struct bpf_prog_info info = {};
++		__u32 len = sizeof(info);
++
+ 		err = bpf_prog_get_next_id(id, &id);
+ 		if (err) {
+ 			p_err("%s", strerror(errno));
+-- 
+2.17.2
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git tags/i3c/fixes-for-5.0-rc3
-
-for you to fetch changes up to f29fd331aa055fbeb5a496b4af937b7952111b6b:
-
-  i3c: master: dw-i3c-master: fix i3c_attach/reattach (2019-01-15 11:15:11 +0100)
-
-----------------------------------------------------------------
-- Fix the error check on master->sysclk val in the Cadence driver
-- Fix reattach implementation in the Designware driver
-
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      i3c: master: Fix an error checking typo in 'cdns_i3c_master_probe()'
-
-Vitor Soares (1):
-      i3c: master: dw-i3c-master: fix i3c_attach/reattach
-
- drivers/i3c/master/dw-i3c-master.c   | 7 ++-----
- drivers/i3c/master/i3c-master-cdns.c | 4 ++--
- 2 files changed, 4 insertions(+), 7 deletions(-)
