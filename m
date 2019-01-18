@@ -2,153 +2,237 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCB3C07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8987CC5AC81
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2D4520850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:52:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gPuWsQiR"
+	by mail.kernel.org (Postfix) with ESMTP id 612ED20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbfARRwb (ORCPT
+        id S1728746AbfARRwg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:52:31 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:42492 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728698AbfARRw3 (ORCPT
+        Fri, 18 Jan 2019 12:52:36 -0500
+Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:43247 "EHLO
+        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728696AbfARRwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:52:29 -0500
-Received: by mail-ua1-f65.google.com with SMTP id d21so4950058uap.9
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:52:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HNip1d+gmnaVYee8c7IXM+XRAYIVovWHTmdMWrDOKy4=;
-        b=gPuWsQiRqzq9GH8wmLfvfPzJIufKcKWjUFDFJiFjvfNR5i1VT85Yya7d6T6MKY6iLj
-         2wlXA60h6UgzOzDVPba5T0ZH+T7XHTo6qkwBiR3u/FAE35e6GfeaiIc/JMDgwpxUArKl
-         DaNFPbi9fEYEVWz/gwMAYIlXs0tkOv45/muRk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HNip1d+gmnaVYee8c7IXM+XRAYIVovWHTmdMWrDOKy4=;
-        b=jXYwbgGfVq41kohmttByCwiuclQ7lEPo5Wi69O8Hv2GSHPgGQY6NwUWKV8DMoiQY0R
-         fviKwHdwTKnTZ0j/0uWccZ0HQKyhM/zehBsUXZJXYq+wI/RuFX8S/efastDCzw/E68p5
-         2x+NXJ43eTy0wWjxzb6NovR4FWG+2TIEqmjLX/U1G0OHsX8oFMqBshOf+ESkCsTDxSlk
-         iSRLZyjIv2QBfKji/9+V1fkq8RrL45dW2l/wjeuJeq0zvMdUgnsxQ7SukpQhoVXw/bhw
-         zE10jtn65gyrhm/Bth4NThLkyfnWqwn1jZsOTM2i04cu0CD0DlQF502YEcRLpJWGf+ru
-         7Nkw==
-X-Gm-Message-State: AJcUukcq9bVB6VEefYNMJ+RUB6YqvfNEqPI3NqQ5IAYrLEZYF54E6497
-        Pg/aYfhKWnfXyvKMB/mMOiQxtPaokZk=
-X-Google-Smtp-Source: ALg8bN4MCgH01WFkckYz2a6/QVFZvcfDuCnAoJXOeZlz39knUhkx3rs6H0WpBCN20PQXnKOAWRwl4A==
-X-Received: by 2002:ab0:740a:: with SMTP id r10mr5676829uap.14.1547833948328;
-        Fri, 18 Jan 2019 09:52:28 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id r130sm52831768vka.55.2019.01.18.09.52.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 09:52:26 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id b74so8898470vsd.9
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:52:25 -0800 (PST)
-X-Received: by 2002:a67:dd94:: with SMTP id i20mr8631042vsk.111.1547833945530;
- Fri, 18 Jan 2019 09:52:25 -0800 (PST)
-MIME-Version: 1.0
-References: <1547056325-1919-1-git-send-email-jshekhar@codeaurora.org> <1547056325-1919-3-git-send-email-jshekhar@codeaurora.org>
-In-Reply-To: <1547056325-1919-3-git-send-email-jshekhar@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 18 Jan 2019 09:52:12 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XUeMTGH+CDwGs3PfK4igdQrCbwucw7_2ViBc4i7grvxg@mail.gmail.com>
-Message-ID: <CAD=FV=XUeMTGH+CDwGs3PfK4igdQrCbwucw7_2ViBc4i7grvxg@mail.gmail.com>
-Subject: Re: [v5 2/3] drm/msm/dpu: Integrate interconnect API in MDSS
-To:     Jayant Shekhar <jshekhar@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Chandan Uddaraju <chandanu@codeaurora.org>,
-        nganji@codeaurora.org, Evan Green <evgreen@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 Jan 2019 12:52:30 -0500
+Received: from mail.blacknight.com (unknown [81.17.254.16])
+        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id CEB0A1C3584
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 17:52:27 +0000 (GMT)
+Received: (qmail 32350 invoked from network); 18 Jan 2019 17:52:27 -0000
+Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPA; 18 Jan 2019 17:52:27 -0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 04/22] mm, compaction: Remove unnecessary zone parameter in some instances
+Date:   Fri, 18 Jan 2019 17:51:18 +0000
+Message-Id: <20190118175136.31341-5-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20190118175136.31341-1-mgorman@techsingularity.net>
+References: <20190118175136.31341-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+A zone parameter is passed into a number of top-level compaction functions
+despite the fact that it's already in compact_control. This is harmless but
+it did need an audit to check if zone actually ever changes meaningfully.
+This patches removes the parameter in a number of top-level functions. The
+change could be much deeper but this was enough to briefly clarify
+the flow.
 
-On Wed, Jan 9, 2019 at 9:52 AM Jayant Shekhar <jshekhar@codeaurora.org> wrote:
-> @@ -127,7 +153,11 @@ static int dpu_mdss_enable(struct msm_mdss *mdss)
->  {
->         struct dpu_mdss *dpu_mdss = to_dpu_mdss(mdss);
->         struct dss_module_power *mp = &dpu_mdss->mp;
-> -       int ret;
-> +       int ret, i;
-> +       u64 avg_bw = dpu_mdss->num_paths ? MAX_BW / dpu_mdss->num_paths : 0;
-> +
-> +       for (i = 0; i < dpu_mdss->num_paths; i++)
-> +               icc_set(dpu_mdss->path[i], avg_bw, kBps_to_icc(MAX_BW));
+No functional change.
 
-You'll need to change icc_set() here to icc_set_bw() to match v13, AKA:
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ mm/compaction.c | 54 ++++++++++++++++++++++++++----------------------------
+ 1 file changed, 26 insertions(+), 28 deletions(-)
 
-- https://patchwork.kernel.org/patch/10766335/
-- https://lkml.kernel.org/r/20190116161103.6937-2-georgi.djakov@linaro.org
+diff --git a/mm/compaction.c b/mm/compaction.c
+index e59dd7a7564c..163841e1b167 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1300,8 +1300,7 @@ static inline bool is_via_compact_memory(int order)
+ 	return order == -1;
+ }
+ 
+-static enum compact_result __compact_finished(struct zone *zone,
+-						struct compact_control *cc)
++static enum compact_result __compact_finished(struct compact_control *cc)
+ {
+ 	unsigned int order;
+ 	const int migratetype = cc->migratetype;
+@@ -1312,7 +1311,7 @@ static enum compact_result __compact_finished(struct zone *zone,
+ 	/* Compaction run completes if the migrate and free scanner meet */
+ 	if (compact_scanners_met(cc)) {
+ 		/* Let the next compaction start anew. */
+-		reset_cached_positions(zone);
++		reset_cached_positions(cc->zone);
+ 
+ 		/*
+ 		 * Mark that the PG_migrate_skip information should be cleared
+@@ -1321,7 +1320,7 @@ static enum compact_result __compact_finished(struct zone *zone,
+ 		 * based on an allocation request.
+ 		 */
+ 		if (cc->direct_compaction)
+-			zone->compact_blockskip_flush = true;
++			cc->zone->compact_blockskip_flush = true;
+ 
+ 		if (cc->whole_zone)
+ 			return COMPACT_COMPLETE;
+@@ -1345,7 +1344,7 @@ static enum compact_result __compact_finished(struct zone *zone,
+ 
+ 	/* Direct compactor: Is a suitable page free? */
+ 	for (order = cc->order; order < MAX_ORDER; order++) {
+-		struct free_area *area = &zone->free_area[order];
++		struct free_area *area = &cc->zone->free_area[order];
+ 		bool can_steal;
+ 
+ 		/* Job done if page is free of the right migratetype */
+@@ -1391,13 +1390,12 @@ static enum compact_result __compact_finished(struct zone *zone,
+ 	return COMPACT_NO_SUITABLE_PAGE;
+ }
+ 
+-static enum compact_result compact_finished(struct zone *zone,
+-			struct compact_control *cc)
++static enum compact_result compact_finished(struct compact_control *cc)
+ {
+ 	int ret;
+ 
+-	ret = __compact_finished(zone, cc);
+-	trace_mm_compaction_finished(zone, cc->order, ret);
++	ret = __compact_finished(cc);
++	trace_mm_compaction_finished(cc->zone, cc->order, ret);
+ 	if (ret == COMPACT_NO_SUITABLE_PAGE)
+ 		ret = COMPACT_CONTINUE;
+ 
+@@ -1524,16 +1522,16 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
+ 	return false;
+ }
+ 
+-static enum compact_result compact_zone(struct zone *zone, struct compact_control *cc)
++static enum compact_result compact_zone(struct compact_control *cc)
+ {
+ 	enum compact_result ret;
+-	unsigned long start_pfn = zone->zone_start_pfn;
+-	unsigned long end_pfn = zone_end_pfn(zone);
++	unsigned long start_pfn = cc->zone->zone_start_pfn;
++	unsigned long end_pfn = zone_end_pfn(cc->zone);
+ 	unsigned long last_migrated_pfn;
+ 	const bool sync = cc->mode != MIGRATE_ASYNC;
+ 
+ 	cc->migratetype = gfpflags_to_migratetype(cc->gfp_mask);
+-	ret = compaction_suitable(zone, cc->order, cc->alloc_flags,
++	ret = compaction_suitable(cc->zone, cc->order, cc->alloc_flags,
+ 							cc->classzone_idx);
+ 	/* Compaction is likely to fail */
+ 	if (ret == COMPACT_SUCCESS || ret == COMPACT_SKIPPED)
+@@ -1546,8 +1544,8 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+ 	 * Clear pageblock skip if there were failures recently and compaction
+ 	 * is about to be retried after being deferred.
+ 	 */
+-	if (compaction_restarting(zone, cc->order))
+-		__reset_isolation_suitable(zone);
++	if (compaction_restarting(cc->zone, cc->order))
++		__reset_isolation_suitable(cc->zone);
+ 
+ 	/*
+ 	 * Setup to move all movable pages to the end of the zone. Used cached
+@@ -1559,16 +1557,16 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+ 		cc->migrate_pfn = start_pfn;
+ 		cc->free_pfn = pageblock_start_pfn(end_pfn - 1);
+ 	} else {
+-		cc->migrate_pfn = zone->compact_cached_migrate_pfn[sync];
+-		cc->free_pfn = zone->compact_cached_free_pfn;
++		cc->migrate_pfn = cc->zone->compact_cached_migrate_pfn[sync];
++		cc->free_pfn = cc->zone->compact_cached_free_pfn;
+ 		if (cc->free_pfn < start_pfn || cc->free_pfn >= end_pfn) {
+ 			cc->free_pfn = pageblock_start_pfn(end_pfn - 1);
+-			zone->compact_cached_free_pfn = cc->free_pfn;
++			cc->zone->compact_cached_free_pfn = cc->free_pfn;
+ 		}
+ 		if (cc->migrate_pfn < start_pfn || cc->migrate_pfn >= end_pfn) {
+ 			cc->migrate_pfn = start_pfn;
+-			zone->compact_cached_migrate_pfn[0] = cc->migrate_pfn;
+-			zone->compact_cached_migrate_pfn[1] = cc->migrate_pfn;
++			cc->zone->compact_cached_migrate_pfn[0] = cc->migrate_pfn;
++			cc->zone->compact_cached_migrate_pfn[1] = cc->migrate_pfn;
+ 		}
+ 
+ 		if (cc->migrate_pfn == start_pfn)
+@@ -1582,11 +1580,11 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+ 
+ 	migrate_prep_local();
+ 
+-	while ((ret = compact_finished(zone, cc)) == COMPACT_CONTINUE) {
++	while ((ret = compact_finished(cc)) == COMPACT_CONTINUE) {
+ 		int err;
+ 		unsigned long start_pfn = cc->migrate_pfn;
+ 
+-		switch (isolate_migratepages(zone, cc)) {
++		switch (isolate_migratepages(cc->zone, cc)) {
+ 		case ISOLATE_ABORT:
+ 			ret = COMPACT_CONTENDED;
+ 			putback_movable_pages(&cc->migratepages);
+@@ -1653,7 +1651,7 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+ 			if (last_migrated_pfn < current_block_start) {
+ 				cpu = get_cpu();
+ 				lru_add_drain_cpu(cpu);
+-				drain_local_pages(zone);
++				drain_local_pages(cc->zone);
+ 				put_cpu();
+ 				/* No more flushing until we migrate again */
+ 				last_migrated_pfn = 0;
+@@ -1678,8 +1676,8 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+ 		 * Only go back, not forward. The cached pfn might have been
+ 		 * already reset to zone end in compact_finished()
+ 		 */
+-		if (free_pfn > zone->compact_cached_free_pfn)
+-			zone->compact_cached_free_pfn = free_pfn;
++		if (free_pfn > cc->zone->compact_cached_free_pfn)
++			cc->zone->compact_cached_free_pfn = free_pfn;
+ 	}
+ 
+ 	count_compact_events(COMPACTMIGRATE_SCANNED, cc->total_migrate_scanned);
+@@ -1716,7 +1714,7 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
+ 	INIT_LIST_HEAD(&cc.freepages);
+ 	INIT_LIST_HEAD(&cc.migratepages);
+ 
+-	ret = compact_zone(zone, &cc);
++	ret = compact_zone(&cc);
+ 
+ 	VM_BUG_ON(!list_empty(&cc.freepages));
+ 	VM_BUG_ON(!list_empty(&cc.migratepages));
+@@ -1834,7 +1832,7 @@ static void compact_node(int nid)
+ 		INIT_LIST_HEAD(&cc.freepages);
+ 		INIT_LIST_HEAD(&cc.migratepages);
+ 
+-		compact_zone(zone, &cc);
++		compact_zone(&cc);
+ 
+ 		VM_BUG_ON(!list_empty(&cc.freepages));
+ 		VM_BUG_ON(!list_empty(&cc.migratepages));
+@@ -1968,7 +1966,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
+ 
+ 		if (kthread_should_stop())
+ 			return;
+-		status = compact_zone(zone, &cc);
++		status = compact_zone(&cc);
+ 
+ 		if (status == COMPACT_SUCCESS) {
+ 			compaction_defer_reset(zone, cc.order, false);
+-- 
+2.16.4
 
-
->         ret = msm_dss_enable_clk(mp->clk_config, mp->num_clk, true);
->         if (ret)
-> @@ -140,12 +170,15 @@ static int dpu_mdss_disable(struct msm_mdss *mdss)
->  {
->         struct dpu_mdss *dpu_mdss = to_dpu_mdss(mdss);
->         struct dss_module_power *mp = &dpu_mdss->mp;
-> -       int ret;
-> +       int ret, i;
->
->         ret = msm_dss_enable_clk(mp->clk_config, mp->num_clk, false);
->         if (ret)
->                 DPU_ERROR("clock disable failed, ret:%d\n", ret);
->
-> +       for (i = 0; i < dpu_mdss->num_paths; i++)
-> +               icc_set(dpu_mdss->path[i], 0, 0);
-
-This will also need to change to icc_set_bw()
-
-
-I'm curious what the plan is for landing this series.  Sean / Rob /
-Gerogi: do you have any preference?  Options I'd imagine:
-
-A) Wait until interconnect lands (in 5.1?) and land this through
-drm-misc / msm-next in the version after (5.2?)
-
-B) Georgi provides an immutable branch for interconnect when his lands
-(assuming he's sending his stuff upstream via pull request) and that
-immutable branch gets merged into the the relevant drm tree.
-
-C) Sean and/or Rob Acks this series and indicates that it should go in
-through Gerogi's tree (probably only works if Georgi plans to send a
-pull request).  If we're going this route then (IIUC) we'd want to
-land this in Gerogi's tree sooner rather than later so it can get some
-bake time in linux-next (we've been baking it in Chrome OS for a
-while, but nice to see it in linux-next too).
-
-
-Does anyone have a preference?  It's be nice if whoever is planning to
-land this could indicate whether they'd prefer Jayant send a new
-version to handle the API change or if the relevant maintainer can
-just do the fixup when the patch lands.
-
-
-Thanks!
-
--Doug
