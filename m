@@ -2,141 +2,195 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 528C9C1B0FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 024ADC1B0F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E78C20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:08:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="YQDjo9KW"
+	by mail.kernel.org (Postfix) with ESMTP id BEBDB2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 21:13:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbfARVIP (ORCPT
+        id S1729608AbfARVNc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 16:08:15 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35866 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729502AbfARVIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 16:08:14 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x23so10073218oix.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 13:08:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=slVKCgtfR6RXPvhhk4waF03IbIKuP2Ae0m2u6xRYQ7w=;
-        b=YQDjo9KWkk9z4g6Oxs/kvLIxE4b9hU/QhD3hO98AoaCw/9L2NPQ/LeE//ADqq3ABZB
-         38JM5pUoZvEhTQzlPeX5GC4FRrH35MgogRZorwGSIEB6aMMpPQZBLpoubP6WhoZzkiV0
-         LitaPt0J/xIZorQei9qN8QduTqB9Y9rquQhNbXvkhpoS+aXnqH0oNq+YNhLa+LerZYu6
-         yNbnlDIJNfOSrmDr2kgG8SkNszyVzMeEyYlxVcfTZ7hjBCeUOtTN5xcOthQ089/uDGM+
-         +v+H+wWlAFKZ2KvRByXCsvHyhjEDsT/AQkmm59DPE64cNr8Bk7EPeQ8ecQnQhRyw5zlq
-         Np2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=slVKCgtfR6RXPvhhk4waF03IbIKuP2Ae0m2u6xRYQ7w=;
-        b=RLetUpyIBW0JXPkHDM4CTN5+di/JkaRFAyfrVtQDsqzGaNMoD1Ym6KiHQ/9sMfMFH5
-         Sy+S4U7lxNa+KfL4GWUogaTPAwAh5FfbobUvTI1TifcFAg4sz1diAwYHf3zo7PV15wyO
-         PwIuNGpKpUMOK/ok5j0VrDqmY/RBCo0CHY6cc3ROOOzZzaRg7fwjhx6z1qJrRKd9Dwg1
-         r3OP8Gj7vQr4g7cL9cVEz8hjc/KMNc+niqw2iys4TRgllPllwu9DxKLr/vrjhuIB7fQt
-         CCk4kpmF3T+bjCST96UWJ/3oUsNo/Z4wE3oHQ7ZwjtKmHy2OFajunlpV4hG/xsvenV1o
-         Qo1w==
-X-Gm-Message-State: AJcUukcF+AEE1FR19esGSdTtme/IYDEjJhs8TNuyGb7ubQr6kfRVmh3E
-        OVnFdCXqdBdAm9Hn6m7mAmiKTBUVqklhx7+aJ4znjg==
-X-Google-Smtp-Source: ALg8bN7LPDKrLO5BrJepfCAq4JqcT975jSj4Uzn3q4n6m6JRvbAyxYGELFEPkHq2FWclOrJqWLbZtAet7ZT1Aj49/vU=
-X-Received: by 2002:aca:d78b:: with SMTP id o133mr988461oig.232.1547845693575;
- Fri, 18 Jan 2019 13:08:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-6-keith.busch@intel.com>
- <CAJZ5v0jmkyrNBHzqHsOuWjLXF34tq83VnEhdBWrdFqxyiXC=cw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jmkyrNBHzqHsOuWjLXF34tq83VnEhdBWrdFqxyiXC=cw@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 18 Jan 2019 13:08:02 -0800
-Message-ID: <CAPcyv4gH0_e_NFJNOFH4XXarSs7+TOj4nT0r-D33ZGNCfqBdxg@mail.gmail.com>
-Subject: Re: [PATCHv4 05/13] Documentation/ABI: Add new node sysfs attributes
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 Jan 2019 16:13:32 -0500
+Received: from mga14.intel.com ([192.55.52.115]:43914 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729517AbfARVNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 16:13:32 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 13:13:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,492,1539673200"; 
+   d="asc'?scan'208";a="109366825"
+Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
+  by orsmga006.jf.intel.com with ESMTP; 18 Jan 2019 13:13:31 -0800
+Message-ID: <581f33be6662d063d89da0a80e7753df2385abed.camel@intel.com>
+Subject: Re: BUG: sleeping function called from invalid context at
+ kernel/locking/mutex.c:908
+From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        intel-wired-lan@lists.osuosl.org
+Cc:     linux-kernel@vger.kernel.org,
+        Bernhard Kaindl <bernhard.kaindl@thalesgroup.com>,
+        Jan Jablonsky <jan.jablonsky@thalesgroup.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Date:   Fri, 18 Jan 2019 13:14:31 -0800
+In-Reply-To: <a743c273-fe13-0e96-a162-8d15b005ad94@I-love.SAKURA.ne.jp>
+References: <CABXGCsOLF48xC30CofbJQMkiRa7vS8pGKu8T0Drskc4QxLy24A@mail.gmail.com>
+         <a743c273-fe13-0e96-a162-8d15b005ad94@I-love.SAKURA.ne.jp>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-pHgpvGEJ56J+rQ6TcAZ8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 3:41 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
-> >
-> > Add entries for memory initiator and target node class attributes.
-> >
-> > Signed-off-by: Keith Busch <keith.busch@intel.com>
->
-> I would recommend combining this with the previous patch, as the way
-> it is now I need to look at two patches at the time. :-)
->
-> > ---
-> >  Documentation/ABI/stable/sysfs-devices-node | 25 ++++++++++++++++++++++++-
-> >  1 file changed, 24 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
-> > index 3e90e1f3bf0a..a9c47b4b0eee 100644
-> > --- a/Documentation/ABI/stable/sysfs-devices-node
-> > +++ b/Documentation/ABI/stable/sysfs-devices-node
-> > @@ -90,4 +90,27 @@ Date:                December 2009
-> >  Contact:       Lee Schermerhorn <lee.schermerhorn@hp.com>
-> >  Description:
-> >                 The node's huge page size control/query attributes.
-> > -               See Documentation/admin-guide/mm/hugetlbpage.rst
-> > \ No newline at end of file
-> > +               See Documentation/admin-guide/mm/hugetlbpage.rst
-> > +
-> > +What:          /sys/devices/system/node/nodeX/classY/
-> > +Date:          December 2018
-> > +Contact:       Keith Busch <keith.busch@intel.com>
-> > +Description:
-> > +               The node's relationship to other nodes for access class "Y".
-> > +
-> > +What:          /sys/devices/system/node/nodeX/classY/initiator_nodelist
-> > +Date:          December 2018
-> > +Contact:       Keith Busch <keith.busch@intel.com>
-> > +Description:
-> > +               The node list of memory initiators that have class "Y" access
-> > +               to this node's memory. CPUs and other memory initiators in
-> > +               nodes not in the list accessing this node's memory may have
-> > +               different performance.
->
-> This does not follow the general "one value per file" rule of sysfs (I
-> know that there are other sysfs files with more than one value in
-> them, but it is better to follow this rule as long as that makes
-> sense).
->
-> > +
-> > +What:          /sys/devices/system/node/nodeX/classY/target_nodelist
-> > +Date:          December 2018
-> > +Contact:       Keith Busch <keith.busch@intel.com>
-> > +Description:
-> > +               The node list of memory targets that this initiator node has
-> > +               class "Y" access. Memory accesses from this node to nodes not
-> > +               in this list may have differet performance.
-> > --
->
-> Same here.
->
-> And if you follow the recommendation given in the previous message
-> (add "initiators" and "targets" subdirs under "classX"), you won't
-> even need the two files above.
 
-This recommendation is in conflict with Greg's feedback about kobject
-usage. If these are just "vanity" subdirs I think it's better to have
-a multi-value sysfs file. This "list" style is already commonplace for
-the /sys/devices/system hierarchy.
+--=-pHgpvGEJ56J+rQ6TcAZ8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, 2019-01-18 at 18:31 +0900, Tetsuo Handa wrote:
+> This is not a MM bug. ;-)
+> And this change is made by below commit.
+>=20
+> commit 59361316afcb08569af21e1af83e89c7051c055a
+> Author: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+> Date:   Thu Aug 2 10:13:10 2018 -0700
+>=20
+>     igb: reduce CPU0 latency when updating statistics
+>=20
+
+This was already identified as a problem and I already sent a patch to
+revert this commit to David Miller's net tree.
+
+commit 5642e27bf6a935c1d0d9149e83d625dfba286463
+Author: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Date:   Wed Jan 9 09:10:53 2019 -0800
+
+    Revert "igb: reduce CPU0 latency when updating statistics"
+   =20
+    This reverts commit 59361316afcb08569af21e1af83e89c7051c055a.
+   =20
+    Due to problems found in additional testing, this causes an illegal
+    context switch in the RCU read-side critical section.
+   =20
+    CC: Dave Jones <davej@codemonkey.org.uk>
+    CC: Cong Wang <xiyou.wangcong@gmail.com>
+    CC: Jan Jablonsky <jan.jablonsky@thalesgroup.com>
+    Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+>=20
+> On 2019/01/18 18:21, Mikhail Gavrilov wrote:
+> > Hi folks.
+> >=20
+> > Starting from 5.0 rc1 every time after launch atop I see subject
+> > error message.
+> >=20
+> > And this issue afle negatively impact on system performance.
+> >=20
+> > Unclear on which subsystem it related but I hope here in mm list
+> > somebody help clarify what is happened.
+> >=20
+> > Thanks.
+> >=20
+> > Full dmesg also attached.
+> >=20
+> > [ 2164.694709] BUG: sleeping function called from invalid context
+> > at
+> > kernel/locking/mutex.c:908
+> > [ 2164.694724] in_atomic(): 1, irqs_disabled(): 0, pid: 10498,
+> > name: atop
+> > [ 2164.694729] 2 locks held by atop/10498:
+> > [ 2164.694732]  #0: 0000000061e564e5 (&p->lock){+.+.}, at:
+> > seq_read+0x41/0x430
+> > [ 2164.694753]  #1: 0000000081e34167 (rcu_read_lock){....}, at:
+> > dev_seq_start+0x5/0x120
+> > [ 2164.694762] CPU: 10 PID: 10498 Comm: atop Tainted: G         C
+> >   5.0.0-0.rc2.git1.2.fc30.x86_64 #1
+> > [ 2164.694765] Hardware name: System manufacturer System Product
+> > Name/ROG STRIX X470-I GAMING, BIOS 1103 11/16/2018
+> > [ 2164.694768] Call Trace:
+> > [ 2164.694773]  dump_stack+0x85/0xc0
+> > [ 2164.694778]  ___might_sleep.cold.73+0xac/0xbc
+> > [ 2164.694783]  __mutex_lock+0x55/0x9a0
+> > [ 2164.694788]  ? seq_vprintf+0x30/0x50
+> > [ 2164.694792]  ? seq_printf+0x53/0x70
+> > [ 2164.694806]  ? igb_get_stats64+0x29/0x80 [igb]
+> > [ 2164.694813]  igb_get_stats64+0x29/0x80 [igb]
+> > [ 2164.694818]  dev_get_stats+0x5b/0xc0
+> > [ 2164.694822]  dev_seq_printf_stats+0x32/0xe0
+> > [ 2164.694836]  dev_seq_show+0x10/0x30
+> > [ 2164.694840]  seq_read+0x2fd/0x430
+> > [ 2164.694847]  proc_reg_read+0x39/0x60
+> > [ 2164.694852]  __vfs_read+0x36/0x1a0
+> > [ 2164.694861]  vfs_read+0x9f/0x160
+> > [ 2164.694866]  ksys_read+0x52/0xc0
+> > [ 2164.694872]  do_syscall_64+0x60/0x1f0
+> > [ 2164.694876]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > [ 2164.694880] RIP: 0033:0x7fa0f51bd255
+> > [ 2164.694883] Code: fe ff ff 50 48 8d 3d 2a 03 0a 00 e8 35 01 02
+> > 00
+> > 0f 1f 44 00 00 f3 0f 1e fa 48 8d 05 c5 94 0d 00 8b 00 85 c0 75 0f
+> > 31
+> > c0 0f 05 <48> 3d 00 f0 ff ff 77 53 c3 66 90 41 54 49 89 d4 55 48 89
+> > f5
+> > 53 89
+> > [ 2164.694886] RSP: 002b:00007ffe79288db8 EFLAGS: 00000246
+> > ORIG_RAX:
+> > 0000000000000000
+> > [ 2164.694890] RAX: ffffffffffffffda RBX: 0000000000a55260 RCX:
+> > 00007fa0f51bd255
+> > [ 2164.694892] RDX: 0000000000000400 RSI: 0000000000a55490 RDI:
+> > 0000000000000004
+> > [ 2164.694895] RBP: 0000000000000d68 R08: 0000000000000001 R09:
+> > 0000000000000000
+> > [ 2164.694898] R10: 00007fa0f50a3740 R11: 0000000000000246 R12:
+> > 00007fa0f528d740
+> > [ 2164.694900] R13: 00007fa0f528e340 R14: 00000000000007ff R15:
+> > 0000000000a55260
+> >=20
+> >=20
+> >=20
+> > --
+> > Best Regards,
+> > Mike Gavrilov.
+> >=20
+
+
+--=-pHgpvGEJ56J+rQ6TcAZ8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlxCQbcACgkQ5W/vlVpL
+7c4kdA/9Gvpie8FefT9Mf19rnPlicNHzPUOnUGMRN4aR17GRKfu2FBboVsEpowGB
++sWfgl8X5xDxU/vtgc1JoKD5jgQK6lBJmJbP7qvDqXIrLSRZOZsiJQ2aVq+3/hlb
+tJkhc5r/HPEEvQ/6PozX6Z1yx4JOIkkzE9OrDIBOrb/7PsYsOOlOd6AKwFFd7KjK
+ZjdapgGhCY4Nm0SfjNFhnRKemNwuU/SCzq67zbsGVh/WaNoistL1r7qvZbQedSlZ
+uh/vunA2GEwneoEl+PSBgaVpEJnLvSjdza0sl5uV3IfTPadr9Ghd1EGPOGlcWeQO
+ixgqaQ7M5d2KuwNfL9UodKjj0UtC1/t9cjNX+psTU3DIZEEbgF8rO1pHuBnevAte
+JTAV0ZnhSGt9dIxxe2emTf5LYh4hhxifnsRfluEZqvtSfbcnjp6Ax8U7cSySDNhX
+IEmtaV4ZBdpKEXlaisJ4CzGrHAqbTBVulWDtw6dAMAKRnfAPsZU8b9OrtZtiFZO2
+vzYawQj3ikr0CDohNKcBFt7urPQ0kefOlBK/PddMImwim+QX81H+VBCCutsDUyiB
+c9YHBw/26Kv5ZUUUDpI6cauwbnwgSnQPbBzIokd57aXu25gtOCE7Yu3+YJmytmk2
+oXMJD90KTDXwBsFAgkkkIRs3jPWibU1zr+sKpFiPJicCtPXEV8w=
+=fmdR
+-----END PGP SIGNATURE-----
+
+--=-pHgpvGEJ56J+rQ6TcAZ8--
+
