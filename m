@@ -2,98 +2,80 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EA6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAD6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C4F205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FF9E205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfARLfp (ORCPT
+        id S1727364AbfARLgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:35:45 -0500
-Received: from verein.lst.de ([213.95.11.211]:43011 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727115AbfARLfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:35:44 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 7B0DF68CEB; Fri, 18 Jan 2019 12:35:43 +0100 (CET)
-Date:   Fri, 18 Jan 2019 12:35:43 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Corentin Labbe <clabbe@baylibre.com>, hch@lst.de,
-        m.szyprowski@samsung.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, joro@8bytes.org
-Subject: Re: [PATCH] dma-debug: add dumping facility via debugfs
-Message-ID: <20190118113543.GA9481@lst.de>
-References: <1547646265-9414-1-git-send-email-clabbe@baylibre.com> <2f43688f-9c08-a9c4-6175-caa3d2e40261@arm.com>
+        Fri, 18 Jan 2019 06:36:43 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:36654 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726448AbfARLgn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 06:36:43 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0IBY9of006811;
+        Fri, 18 Jan 2019 05:36:33 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2pyeh4utm6-1;
+        Fri, 18 Jan 2019 05:36:32 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 4FAD5611C8C1;
+        Fri, 18 Jan 2019 05:36:32 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
+ 11:36:31 +0000
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x0IBaVQL030977; Fri,
+ 18 Jan 2019 11:36:31 GMT
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <broonie@kernel.org>
+CC:     <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 2/2] regulator: lochnagar: Remove redundant MODULE_ALIAS
+Date:   Fri, 18 Jan 2019 11:36:31 +0000
+Message-ID: <20190118113631.23706-2-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190118113631.23706-1-ckeepax@opensource.cirrus.com>
+References: <20190118113631.23706-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f43688f-9c08-a9c4-6175-caa3d2e40261@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=986 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901180087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 06:10:13PM +0000, Robin Murphy wrote:
-> It's a shame that this is pretty much a duplication of 
-> debug_dma_dump_mappings(), but there seems no straightforward way to define 
-> one in terms of the other :/
+The module alias has no effect as the driver can only be loaded through
+device tree at this time.
 
-We could always play some macro magic, but I think that is worse than
-duplicating a little bit of functionality.
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ drivers/regulator/lochnagar-regulator.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Btw, the dev argument to debug_dma_dump_mappings is always NULL and
-could be removed..
+diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+index 4962d13659aab..41de3b715b4db 100644
+--- a/drivers/regulator/lochnagar-regulator.c
++++ b/drivers/regulator/lochnagar-regulator.c
+@@ -280,4 +280,3 @@ module_platform_driver(lochnagar_regulator_driver);
+ MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
+ MODULE_DESCRIPTION("Regulator driver for Cirrus Logic Lochnagar Board");
+ MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("platform:lochnagar-regulator");
+-- 
+2.11.0
 
-> (although given that we'd rather not have that weird external interface 
-> anyway, maybe "now you can use debugfs instead" might be justification 
-> enough for cleaning it up...)
-
-One argument against that is the system might be in a shape where you
-can't easily read a file when it is in that shape.  The argument for
-that is that in many systems the full list of mappings might overwhelm
-the kernel log.
-
-Adding Joerg, who originally wrote the code in case he has an opinion.
-
->
->> +
->> +static int dump_open(struct inode *inode, struct file *file)
->> +{
->> +	return single_open(file, dump_read, inode->i_private);
->> +}
->> +
->> +static const struct file_operations dump_fops = {
->> +	.owner = THIS_MODULE,
->> +	.open = dump_open,
->> +	.read = seq_read,
->> +	.llseek = seq_lseek,
->> +	.release = single_release,
->> +};
->> +
->
-> DEFINE_SHOW_ATTRIBUTE()?
->
-> Robin.
->
->>   static int dma_debug_fs_init(void)
->>   {
->>   	dma_debug_dent = debugfs_create_dir("dma-api", NULL);
->> @@ -894,6 +936,11 @@ static int dma_debug_fs_init(void)
->>   	if (!filter_dent)
->>   		goto out_err;
->>   +	dump_dent = debugfs_create_file("dump", 0444,
->> +					dma_debug_dent, NULL, &dump_fops);
->> +	if (!dump_dent)
->> +		goto out_err;
->> +
->>   	return 0;
->>     out_err:
->>
----end quoted text---
