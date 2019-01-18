@@ -2,92 +2,111 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7F6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A052DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B940B2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547786662;
-	bh=u1mhR/kF2G4BVk4xJ1ovltaIC8VQrNlI1zR7FMHg7zA=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=b2xczAt9CYrkCkO9Hz/AYTeN3kiD3km/+2q2A601kNQudX3usAWuMdR/ffUc9VCwX
-	 ftlq3IkLwRvN1agz4zs/a0CKwnOIa246A4xz1Ne/oBVfVleaV7TaFmWm06E/u3lGfC
-	 g6Zj/b9EDdDJTxTF6lucyY1bJPm8uU8r14+CuX98=
+	by mail.kernel.org (Postfix) with ESMTP id 5AC512087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:44:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DUkuWQtI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X34DsA36"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbfAREoV (ORCPT
+        id S1727164AbfAREod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 23:44:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726989AbfAREoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 23:44:21 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 17 Jan 2019 23:44:33 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43080 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726989AbfAREoc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 23:44:32 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 163306081E; Fri, 18 Jan 2019 04:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547786672;
+        bh=HOixMPbK7CAMLg2ituGrYyxYuhyLaQzTUYemOdWQL7E=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=DUkuWQtIg2F+oaKK6Jcq/uJD9LNoHX9VAa4zs32c9o4xHlw8QlRVOVfcmkE/iVjE0
+         V7BUR+XDpJTPqQlOt3Bw6aqAbdi6ZfYwj76NEKYAYR5TQwafKAwYaK/RTIF8sTANW2
+         5LDhaaN9mfyvdGZc2fGPaaYnkvc0P8wfpZhOsmKY=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 872292086D;
-        Fri, 18 Jan 2019 04:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547786660;
-        bh=u1mhR/kF2G4BVk4xJ1ovltaIC8VQrNlI1zR7FMHg7zA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=oaHSsUBQI+F2VTi5pAQQo+vjgqZzdHR4OGPBmur1Gj5ZiWAvgbem754w1VvXlia5d
-         0OqTTvW8CZGgVe/15Ypif/b1EZMjcrHeswJTcXHrsw2yoT14mnnC2G7DYJIVhTHsp3
-         i4F9/piDOvwllMEfyyR6pU4iec6s+MHPPcuEsr30=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andreas Ziegler <andreas.ziegler@fau.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] tracing: probeevent: Fix probe argument parser and handler
-Date:   Fri, 18 Jan 2019 13:43:56 +0900
-Message-Id: <154778663676.19927.12774448308165809570.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-User-Agent: StGit/0.17.1-dirty
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D4AD607F4;
+        Fri, 18 Jan 2019 04:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547786671;
+        bh=HOixMPbK7CAMLg2ituGrYyxYuhyLaQzTUYemOdWQL7E=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=X34DsA36nLip5tNWBMmAgv3PQ3fkgN4N8Z4Wyn1f4Qusc9h4C0DMgOf4XbmWKMMzy
+         WLRpcQHKDpQgPezQJM8MbpHaAtsJtNymLSzDzS/pb1yGrHL4fNd+M3CAwnGYj5safu
+         MzTOINqhMGNGsTYMYESRp3hPKFkZ+DD49juoBSVI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D4AD607F4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Luca Coelho <luciano.coelho@intel.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: ld: drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h:81: undefined reference to `ieee80211_hdrlen'
+References: <201901180349.Fq6xzBcd%fengguang.wu@intel.com>
+Date:   Fri, 18 Jan 2019 06:44:26 +0200
+In-Reply-To: <201901180349.Fq6xzBcd%fengguang.wu@intel.com> (kbuild test
+        robot's message of "Fri, 18 Jan 2019 03:52:53 +0800")
+Message-ID: <87k1j2pob9.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
++ linux-wireless
 
-Here is the 2nd version of series to fix several bugs in probe event
-argument parser and handler routines.
+kbuild test robot <lkp@intel.com> writes:
 
-In this version I just added Fixes tags so that it makes clear which
-release should be fixed.
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   47bfa6d9dc8c060bf56554a465c9031e286d2f80
+> commit: aca432f06b8a60a92b27fb46e6518a19b28ca93f iwlwifi: make MVM and DVM depend on MAC80211
+> date:   4 weeks ago
+> config: x86_64-randconfig-g3-201902 (attached as .config)
+> compiler: gcc-8 (Debian 8.2.0-14) 8.2.0
+> reproduce:
+>         git checkout aca432f06b8a60a92b27fb46e6518a19b28ca93f
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+>
+> All errors (new ones prefixed by >>):
+>
+>    ld: drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.o: in function `iwl_init_channel_map':
+>    drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c:609: undefined reference to `ieee80211_channel_to_frequency'
+>    ld: drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.o: in function `iwl_init_channel_map':
+>    drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c:353: undefined reference to `ieee80211_channel_to_frequency'
+>    ld: drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.o: in function `iwl_parse_nvm_mcc_info':
+>    drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c:1050: undefined reference to `ieee80211_channel_to_frequency'
+>    ld: drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c:1099: undefined reference to `reg_query_regdb_wmm'
+>    ld: drivers/net/wireless/intel/iwlwifi/pcie/tx.o: in function `iwl_trans_pcie_tx':
+>    drivers/net/wireless/intel/iwlwifi/pcie/tx.c:2317: undefined reference to `ieee80211_hdrlen'
+>    ld: drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.o: in function `iwl_pcie_gen2_build_tfd':
+>    drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c:550: undefined reference to `ieee80211_hdrlen'
+>    ld: drivers/net/wireless/intel/iwlwifi/iwl-devtrace.o: in function `iwl_rx_trace_len':
+>    drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h:81: undefined reference to `ieee80211_hdrlen'
+>>> ld: drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h:81: undefined
+>>> reference to `ieee80211_hdrlen'
+>>> ld: drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h:81: undefined
+>>> reference to `ieee80211_hdrlen'
+>    ld:
+> drivers/net/wireless/intel/iwlwifi/iwl-devtrace.o:drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h:81:
+> more undefined references to `ieee80211_hdrlen' follow
 
-Recently I got 2 issues reported by Andreas, see
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1899098.html
+This should be fixed by:
 
-One issue is already fixed by Andreas (Thanks!) but $comm handling
-issue still exists on uprobe event. [1/3] fixes it.
-And I found other issues around that, [2/3] is just a trivial cleanup,
-[3/3] fixes $comm type issue which occurs not only uprobe events but
-also on kprobe events. Anyway, after this series applied, $comm must
-be "string" type and not be an array.
+https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git/commit/?id=ec5aecc0b227f5509d25853537f989ca303e2be1
 
-Thank you,
-
----
-
-Masami Hiramatsu (3):
-      tracing: uprobes: Re-enable $comm support for uprobe events
-      tracing: probeevent: Do not accumulate on ret variable
-      tracing: probeevent: Fix to make the type of $comm string
-
-
- kernel/trace/trace_probe.c      |   13 +++++++------
- kernel/trace/trace_probe_tmpl.h |    2 +-
- kernel/trace/trace_uprobe.c     |   15 +++++++++++++--
- 3 files changed, 21 insertions(+), 9 deletions(-)
-
---
-Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+-- 
+Kalle Valo
