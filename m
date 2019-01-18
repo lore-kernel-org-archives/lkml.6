@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E76DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1E1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1772D20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BA1420652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbfARMUg (ORCPT
+        id S1727764AbfARMUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:20:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33058 "EHLO mx1.redhat.com"
+        Fri, 18 Jan 2019 07:20:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48364 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727585AbfARMU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:20:28 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1727617AbfARMU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 07:20:29 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E55537AEA4;
-        Fri, 18 Jan 2019 12:20:27 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A1B9242BDF;
+        Fri, 18 Jan 2019 12:20:29 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-38.ams2.redhat.com [10.36.116.38])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33A1B19747;
-        Fri, 18 Jan 2019 12:20:27 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C38CE5C554;
+        Fri, 18 Jan 2019 12:20:25 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 744435F12; Fri, 18 Jan 2019 13:20:22 +0100 (CET)
+        id 7AED799B8; Fri, 18 Jan 2019 13:20:21 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Gerd Hoffmann <kraxel@redhat.com>,
@@ -39,291 +39,44 @@ Cc:     Gerd Hoffmann <kraxel@redhat.com>,
         VIRTUAL GPU),
         spice-devel@lists.freedesktop.org (open list:DRM DRIVER FOR QXL VIRTUAL
         GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 14/23] drm/qxl: cover all crtcs in shadow bo.
-Date:   Fri, 18 Jan 2019 13:20:11 +0100
-Message-Id: <20190118122020.27596-15-kraxel@redhat.com>
+Subject: [PATCH v3 07/23] drm/qxl: allow both PRIV and VRAM placement for QXL_GEM_DOMAIN_SURFACE
+Date:   Fri, 18 Jan 2019 13:20:04 +0100
+Message-Id: <20190118122020.27596-8-kraxel@redhat.com>
 In-Reply-To: <20190118122020.27596-1-kraxel@redhat.com>
 References: <20190118122020.27596-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 18 Jan 2019 12:20:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 18 Jan 2019 12:20:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The qxl device supports only a single active framebuffer ("primary
-surface" in spice terminology).  In multihead configurations are handled
-by defining rectangles within the primary surface for each head/crtc.
-
-Userspace which uses the qxl ioctl interface (xorg qxl driver) is aware
-of this limitation and will setup framebuffers and crtcs accordingly.
-
-Userspace which uses dumb framebuffers (xorg modesetting driver,
-wayland) is not aware of this limitation and tries to use two
-framebuffers (one for each crtc) instead.
-
-The qxl kms driver already has the dumb bo separated from the primary
-surface, by using a (shared) shadow bo as primary surface.  This is
-needed to support pageflips without having to re-create the primary
-surface.  The qxl driver will blit from the dumb bo to the shadow bo
-instead.
-
-So we can extend the shadow logic:  Maintain a global shadow bo (aka
-primary surface), make it big enough that dumb bo's for all crtcs fit in
-side-by-side.  Adjust the pageflip blits to place the heads next to each
-other in the shadow.
-
-With this patch in place multihead qxl works with wayland.
+qxl surfaces (used for framebuffers and gem objects) can live in both
+VRAM and PRIV ttm domains.  Update placement setup to include both.
+Put PRIV first in the list so it is preferred, so VRAM will have more
+room for objects which must be allocated there.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/qxl/qxl_drv.h     |   5 +-
- drivers/gpu/drm/qxl/qxl_display.c | 119 +++++++++++++++++++++++++++++---------
- drivers/gpu/drm/qxl/qxl_draw.c    |   9 ++-
- 3 files changed, 104 insertions(+), 29 deletions(-)
+ drivers/gpu/drm/qxl/qxl_object.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
-index 150b1a4f66..43c6df9cf9 100644
---- a/drivers/gpu/drm/qxl/qxl_drv.h
-+++ b/drivers/gpu/drm/qxl/qxl_drv.h
-@@ -230,6 +230,8 @@ struct qxl_device {
- 	struct qxl_ram_header *ram_header;
- 
- 	struct qxl_bo *primary_bo;
-+	struct qxl_bo *dumb_shadow_bo;
-+	struct qxl_head *dumb_heads;
- 
- 	struct qxl_memslot main_slot;
- 	struct qxl_memslot surfaces_slot;
-@@ -437,7 +439,8 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
- 		       struct qxl_bo *bo,
- 		       unsigned int flags, unsigned int color,
- 		       struct drm_clip_rect *clips,
--		       unsigned int num_clips, int inc);
-+		       unsigned int num_clips, int inc,
-+		       uint32_t dumb_shadow_offset);
- 
- void qxl_draw_fill(struct qxl_draw_fill *qxl_draw_fill_rec);
- 
-diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
-index ff13bc6a4a..d9de43e5fd 100644
---- a/drivers/gpu/drm/qxl/qxl_display.c
-+++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -323,6 +323,8 @@ static void qxl_crtc_update_monitors_config(struct drm_crtc *crtc,
- 		head.y = crtc->y;
- 		if (qdev->monitors_config->count < i + 1)
- 			qdev->monitors_config->count = i + 1;
-+		if (qdev->primary_bo == qdev->dumb_shadow_bo)
-+			head.x += qdev->dumb_heads[i].x;
- 	} else if (i > 0) {
- 		head.width = 0;
- 		head.height = 0;
-@@ -426,7 +428,7 @@ static int qxl_framebuffer_surface_dirty(struct drm_framebuffer *fb,
- 	}
- 
- 	qxl_draw_dirty_fb(qdev, fb, qobj, flags, color,
--			  clips, num_clips, inc);
-+			  clips, num_clips, inc, 0);
- 
- 	drm_modeset_unlock_all(fb->dev);
- 
-@@ -535,6 +537,7 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
- 	    .x2 = plane->state->fb->width,
- 	    .y2 = plane->state->fb->height
- 	};
-+	uint32_t dumb_shadow_offset = 0;
- 
- 	if (old_state->fb) {
- 		bo_old = gem_to_qxl_bo(old_state->fb->obj[0]);
-@@ -551,7 +554,12 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
- 		qxl_primary_apply_cursor(plane);
- 	}
- 
--	qxl_draw_dirty_fb(qdev, plane->state->fb, bo, 0, 0, &norect, 1, 1);
-+	if (bo->is_dumb)
-+		dumb_shadow_offset =
-+			qdev->dumb_heads[plane->state->crtc->index].x;
-+
-+	qxl_draw_dirty_fb(qdev, plane->state->fb, bo, 0, 0, &norect, 1, 1,
-+			  dumb_shadow_offset);
- }
- 
- static void qxl_primary_atomic_disable(struct drm_plane *plane,
-@@ -707,12 +715,68 @@ static void qxl_cursor_atomic_disable(struct drm_plane *plane,
- 	qxl_release_fence_buffer_objects(release);
- }
- 
-+static void qxl_update_dumb_head(struct qxl_device *qdev,
-+				 int index, struct qxl_bo *bo)
-+{
-+	uint32_t width, height;
-+
-+	if (index >= qdev->monitors_config->max_allowed)
-+		return;
-+
-+	if (bo && bo->is_dumb) {
-+		width = bo->surf.width;
-+		height = bo->surf.height;
-+	} else {
-+		width = 0;
-+		height = 0;
+diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/qxl_object.c
+index 34eff8b21e..024c8dd317 100644
+--- a/drivers/gpu/drm/qxl/qxl_object.c
++++ b/drivers/gpu/drm/qxl/qxl_object.c
+@@ -60,8 +60,10 @@ void qxl_ttm_placement_from_domain(struct qxl_bo *qbo, u32 domain, bool pinned)
+ 	qbo->placement.busy_placement = qbo->placements;
+ 	if (domain == QXL_GEM_DOMAIN_VRAM)
+ 		qbo->placements[c++].flags = TTM_PL_FLAG_CACHED | TTM_PL_FLAG_VRAM | pflag;
+-	if (domain == QXL_GEM_DOMAIN_SURFACE)
++	if (domain == QXL_GEM_DOMAIN_SURFACE) {
+ 		qbo->placements[c++].flags = TTM_PL_FLAG_CACHED | TTM_PL_FLAG_PRIV | pflag;
++		qbo->placements[c++].flags = TTM_PL_FLAG_CACHED | TTM_PL_FLAG_VRAM | pflag;
 +	}
-+
-+	if (qdev->dumb_heads[index].width == width &&
-+	    qdev->dumb_heads[index].height == height)
-+		return;
-+
-+	DRM_DEBUG("#%d: %dx%d -> %dx%d\n", index,
-+		  qdev->dumb_heads[index].width,
-+		  qdev->dumb_heads[index].height,
-+		  width, height);
-+	qdev->dumb_heads[index].width = width;
-+	qdev->dumb_heads[index].height = height;
-+}
-+
-+static void qxl_calc_dumb_shadow(struct qxl_device *qdev,
-+				 struct qxl_surface *surf)
-+{
-+	struct qxl_head *head;
-+	int i;
-+
-+	memset(surf, 0, sizeof(*surf));
-+	for (i = 0; i < qdev->monitors_config->max_allowed; i++) {
-+		head = qdev->dumb_heads + i;
-+		head->x = surf->width;
-+		surf->width += head->width;
-+		if (surf->height < head->height)
-+			surf->height = head->height;
-+	}
-+	if (surf->width < 64)
-+		surf->width = 64;
-+	if (surf->height < 64)
-+		surf->height = 64;
-+	surf->format = SPICE_SURFACE_FMT_32_xRGB;
-+	surf->stride = surf->width * 4;
-+
-+	if (!qdev->dumb_shadow_bo ||
-+	    qdev->dumb_shadow_bo->surf.width != surf->width ||
-+	    qdev->dumb_shadow_bo->surf.height != surf->height)
-+		DRM_DEBUG("%dx%d\n", surf->width, surf->height);
-+}
-+
- static int qxl_plane_prepare_fb(struct drm_plane *plane,
- 				struct drm_plane_state *new_state)
- {
- 	struct qxl_device *qdev = plane->dev->dev_private;
- 	struct drm_gem_object *obj;
--	struct qxl_bo *user_bo, *old_bo = NULL;
-+	struct qxl_bo *user_bo;
-+	struct qxl_surface surf;
- 	int ret;
- 
- 	if (!new_state->fb)
-@@ -722,29 +786,30 @@ static int qxl_plane_prepare_fb(struct drm_plane *plane,
- 	user_bo = gem_to_qxl_bo(obj);
- 
- 	if (plane->type == DRM_PLANE_TYPE_PRIMARY &&
--	    user_bo->is_dumb && !user_bo->shadow) {
--		if (plane->state->fb) {
--			obj = plane->state->fb->obj[0];
--			old_bo = gem_to_qxl_bo(obj);
-+	    user_bo->is_dumb) {
-+		qxl_update_dumb_head(qdev, new_state->crtc->index,
-+				     user_bo);
-+		qxl_calc_dumb_shadow(qdev, &surf);
-+		if (!qdev->dumb_shadow_bo ||
-+		    qdev->dumb_shadow_bo->surf.width  != surf.width ||
-+		    qdev->dumb_shadow_bo->surf.height != surf.height) {
-+			if (qdev->dumb_shadow_bo) {
-+				drm_gem_object_put_unlocked
-+					(&qdev->dumb_shadow_bo->gem_base);
-+				qdev->dumb_shadow_bo = NULL;
-+			}
-+			qxl_bo_create(qdev, surf.height * surf.stride,
-+				      true, true, QXL_GEM_DOMAIN_SURFACE, &surf,
-+				      &qdev->dumb_shadow_bo);
- 		}
--		if (old_bo && old_bo->shadow &&
--		    user_bo->gem_base.size == old_bo->gem_base.size &&
--		    plane->state->crtc     == new_state->crtc &&
--		    plane->state->crtc_w   == new_state->crtc_w &&
--		    plane->state->crtc_h   == new_state->crtc_h &&
--		    plane->state->src_x    == new_state->src_x &&
--		    plane->state->src_y    == new_state->src_y &&
--		    plane->state->src_w    == new_state->src_w &&
--		    plane->state->src_h    == new_state->src_h &&
--		    plane->state->rotation == new_state->rotation &&
--		    plane->state->zpos     == new_state->zpos) {
--			drm_gem_object_get(&old_bo->shadow->gem_base);
--			user_bo->shadow = old_bo->shadow;
--		} else {
--			qxl_bo_create(qdev, user_bo->gem_base.size,
--				      true, true, QXL_GEM_DOMAIN_SURFACE, NULL,
--				      &user_bo->shadow);
--			user_bo->shadow->surf = user_bo->surf;
-+		if (user_bo->shadow != qdev->dumb_shadow_bo) {
-+			if (user_bo->shadow) {
-+				drm_gem_object_put_unlocked
-+					(&user_bo->shadow->gem_base);
-+				user_bo->shadow = NULL;
-+			}
-+			drm_gem_object_get(&qdev->dumb_shadow_bo->gem_base);
-+			user_bo->shadow = qdev->dumb_shadow_bo;
- 		}
- 	}
- 
-@@ -773,7 +838,7 @@ static void qxl_plane_cleanup_fb(struct drm_plane *plane,
- 	user_bo = gem_to_qxl_bo(obj);
- 	qxl_bo_unpin(user_bo);
- 
--	if (user_bo->shadow && !user_bo->shadow->is_primary) {
-+	if (old_state->fb != plane->state->fb && user_bo->shadow) {
- 		drm_gem_object_put_unlocked(&user_bo->shadow->gem_base);
- 		user_bo->shadow = NULL;
- 	}
-@@ -1106,6 +1171,8 @@ int qxl_create_monitors_object(struct qxl_device *qdev)
- 
- 	memset(qdev->monitors_config, 0, monitors_config_size);
- 	qdev->monitors_config->max_allowed = max_allowed;
-+
-+	qdev->dumb_heads = kcalloc(max_allowed, sizeof(qdev->dumb_heads[0]), GFP_KERNEL);
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/qxl/qxl_draw.c b/drivers/gpu/drm/qxl/qxl_draw.c
-index c408bb83c7..5313ad21c1 100644
---- a/drivers/gpu/drm/qxl/qxl_draw.c
-+++ b/drivers/gpu/drm/qxl/qxl_draw.c
-@@ -267,7 +267,8 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
- 		       struct qxl_bo *bo,
- 		       unsigned int flags, unsigned int color,
- 		       struct drm_clip_rect *clips,
--		       unsigned int num_clips, int inc)
-+		       unsigned int num_clips, int inc,
-+		       uint32_t dumb_shadow_offset)
- {
- 	/*
- 	 * TODO: if flags & DRM_MODE_FB_DIRTY_ANNOTATE_FILL then we should
-@@ -295,6 +296,9 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
- 	if (ret)
- 		return;
- 
-+	clips->x1 += dumb_shadow_offset;
-+	clips->x2 += dumb_shadow_offset;
-+
- 	left = clips->x1;
- 	right = clips->x2;
- 	top = clips->y1;
-@@ -342,7 +346,8 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
- 		goto out_release_backoff;
- 
- 	ret = qxl_image_init(qdev, release, dimage, surface_base,
--			     left, top, width, height, depth, stride);
-+			     left - dumb_shadow_offset,
-+			     top, width, height, depth, stride);
- 	qxl_bo_kunmap(bo);
- 	if (ret)
- 		goto out_release_backoff;
+ 	if (domain == QXL_GEM_DOMAIN_CPU)
+ 		qbo->placements[c++].flags = TTM_PL_MASK_CACHING | TTM_PL_FLAG_SYSTEM | pflag;
+ 	if (!c)
 -- 
 2.9.3
 
