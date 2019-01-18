@@ -2,138 +2,112 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFDCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACFAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1895E20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:16:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="PSOlE8V4"
+	by mail.kernel.org (Postfix) with ESMTP id 5F73020652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfARMQl (ORCPT
+        id S1727447AbfARMRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:16:41 -0500
-Received: from cock.li ([185.100.85.212]:49774 "EHLO cock.li"
+        Fri, 18 Jan 2019 07:17:06 -0500
+Received: from dcvr.yhbt.net ([64.71.152.64]:58316 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727115AbfARMQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:16:41 -0500
+        id S1727115AbfARMRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 07:17:06 -0500
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id 755331F453;
+        Fri, 18 Jan 2019 12:17:05 +0000 (UTC)
+Date:   Fri, 18 Jan 2019 12:17:05 +0000
+From:   Eric Wong <e@80x24.org>
+To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iommu/intel: quirk to disable DMAR for QM57 igfx
+Message-ID: <20190118121705.a4usvhnskyblooja@dcvr>
+References: <20181227114948.ev4b3jte3ubsc5us@dcvr>
+ <154642214920.6261.102817444136744919@jlahtine-desk.ger.corp.intel.com>
+ <20190104010626.e6yqdqkmdcqjepke@dcvr>
+ <154659116310.4596.13613897418163029789@jlahtine-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1547813797; bh=qEe90IUm6+Bd6IXL/YWzX3ayRknawBL0c2/ak0eJIcc=;
-        h=Date:From:To:Subject:From;
-        b=PSOlE8V4waI4AYI4Au3GkdI9oXN0NGksJX9xUgseHEmpE+YSLgJFmjCnEcjeF7/HI
-         fVHs/fu5c9lsk+a3Rl35cnIzBJDop48eWpF1zydA5ka6MNw2LgvmH2+XyhrdLN22ZH
-         t4jk4y9P0d2UR9TkquTkss0cB2HvsW6y2TDCZDWnUWzptHzWFB0w0I+JEeAVGPloRq
-         kT1jJ8+FivJiybutndxlYqOIm4X08gCPA5F5EjhipZErDQuPRT8cOJm9Q6P+jEf+2R
-         r7LgRIKy3xaDZ7SFNWLf910ttAlsKDPCAqcv4NDV9Ckh+AVS+99ZlGqZVwv+NQVJWi
-         knk2a9zXoUN+Q==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 18 Jan 2019 12:16:36 +0000
-From:   sicevar@redchan.it
-To:     linux-kernel@vger.kernel.org
-Subject: GPL revocation (GPC-Slots 2): Alex "Skud" Bayley,  Leigh Honeywell
-Message-ID: <164d2693561fa67f586909d7adb5f19d@redchan.it>
-X-Sender: sicevar@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <154659116310.4596.13613897418163029789@jlahtine-desk.ger.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quote:
+Joonas Lahtinen <joonas.lahtinen@linux.intel.com> wrote:
+> Quoting Eric Wong (2019-01-04 03:06:26)
+> > Yeah, so the Debian bpo 4.17(.17) kernel did not set
+> > CONFIG_INTEL_IOMMU_DEFAULT_ON, so I didn't encounter problems.
+> > My self-built kernels all set CONFIG_INTEL_IOMMU_DEFAULT_ON.
+> 
+> So it's the case that IOMMU never worked on your machine.
+> 
+> My recommendation would be to simply use intel_iommu=igfx_off if you
+> need IOMMU.
+> 
+> Old hardware is known to have issues with IOMMU, and retroactively
+> enabling IOMMU on those machines just brings them up :/
 
-"
-> Then you should have used them.
-Not necessary, the language used in the press release identifies them 
-easily.
+How about we use a quirk in case distros make IOMMU the default
+one day?
 
-> should
-As if I somehow can't just rescind using their names either.
+--------8<--------
+Subject: [PATCH] iommu/intel: quirk to disable DMAR for QM57 igfx
 
-License to use/modify/etc the GPC Slots 2 code is hereby terminated for. 
-Alex "Skud" Bayley, and Leigh Honeywell.
-(Note: this termination is not to be construed as a lifting of the 
-previously issued termination regarding the "Geek Feminism collective", 
-this termination is an addendum)
+Like the GM45, it seems the integrated graphics on QM57 seems
+broken and hanging graphics with "intel_iommu=on".  So allow
+future users to unconditionally enable DMAR support and not have
+to remember or know to specify "intel_iommu=igfx_off"
 
---MikeeUSA-- (electronic signature :D )
+cf. https://lore.kernel.org/lkml/20181227114948.ev4b3jte3ubsc5us@dcvr/
+cf. https://lore.kernel.org/lkml/154659116310.4596.13613897418163029789@jlahtine-desk.ger.corp.intel.com/
 
->> 1019403
-Their response is irrelevant.
-"
+Signed-off-by: Eric Wong <e@80x24.org>
+---
+ drivers/iommu/intel-iommu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Discussions with author of program involved:
-http://8ch.net/tech/res/1013409.html
-http://8ch.net/tech/res/1017824.html
-http://8ch.net/tech/res/1018729.html
-------------------------
-
-https://slashdot.org/submission/9087542/author-recinds-gpl
-
-------------------------
-p46 "As long as the project continues to honor the terms of the licenses 
-under which it recieved contributions, the licenses continue in effect. 
-There is one important caveat: Even a perpetual license can be revoked. 
-See the discussion of bare licenses and contracts in Chapter 4"
---Lawrence Rosen
-
-p56 "A third problem with bare licenses is that they may be revocable by 
-the licensor. Specifically, /a license not coupled with an interest may 
-be revoked./ The term /interest/ in this context usually means the 
-payment of some royalty or license fee, but there are other more 
-complicated ways to satisfy the interest requirement. For example, a 
-licensee can demonstrate that he or she has paid some consideration-a 
-contract law term not found in copyright or patent law-in order to avoid 
-revocation. Or a licensee may claim that he or she relied on the 
-software licensed under an open source license and now is dependent upon 
-that software, but this contract law concept, called promissory 
-estoppel, is both difficult to prove and unreliable in court tests. (The 
-concepts of /consideration/ and /promissory estoppel/ are explained more 
-fully in the next section.) Unless the courts allow us to apply these 
-contract law principles to a license, we are faced with a bare license 
-that is revocable.
---Lawrence Rosen
-
-p278 "Notice that in a copyright dispute over a bare license, the 
-plaintiff will almost certainly be the copyright owner. If a licensee 
-were foolish enough to sue to enforce the terms and conditions of the 
-license, the licensor can simply revoke the bare license, thus ending 
-the dispute. Remeber that a bare license in the absence of an interest 
-is revocable."
---Lawrence Rosen
-
-Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
-Intellectual property Law
-
-
-
-p65 "Of all the licenses descibed in this book, only the GPL makes the 
-explicity point that it wants nothing of /acceptance/ of 
-/consideration/:
-...
-The GPL authors intend that it not be treated as a contract. I will say 
-much more about this license and these two provisions in Chapter 6. For 
-now, I simply point out that the GPL licensors are in essentially the 
-same situation as other open source licensors who cannot prove offer, 
-acceptance, or consideration. There is no contract."
---Lawrence Rosen
-
-------------------------
-> David McGowan, Professor of Law, University of Minnesota Law School:
-
-> "Termination of rights
-
-> [...] The most plausible assumption is that a developer who releases 
-> code under the GPL may terminate GPL rights, probably at will.
-
-> [...] My point is not that termination is a great risk, it is that it 
-> is not recognized as a risk even though it is probably relevant to 
-> commercial end-users, accustomed to having contractual rights they can 
-> enforce themselves.
-
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 048b5ab36a02..dc2507a01580 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -5399,7 +5399,7 @@ const struct iommu_ops intel_iommu_ops = {
+ 
+ static void quirk_iommu_g4x_gfx(struct pci_dev *dev)
+ {
+-	/* G4x/GM45 integrated gfx dmar support is totally busted. */
++	/* G4x/GM45/QM57 integrated gfx dmar support is totally busted. */
+ 	pr_info("Disabling IOMMU for graphics on this chipset\n");
+ 	dmar_map_gfx = 0;
+ }
+@@ -5411,6 +5411,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e20, quirk_iommu_g4x_gfx);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e30, quirk_iommu_g4x_gfx);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e40, quirk_iommu_g4x_gfx);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e90, quirk_iommu_g4x_gfx);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_iommu_g4x_gfx);
+ 
+ static void quirk_iommu_rwbf(struct pci_dev *dev)
+ {
+@@ -5457,7 +5458,6 @@ static void quirk_calpella_no_shadow_gtt(struct pci_dev *dev)
+        }
+ }
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0040, quirk_calpella_no_shadow_gtt);
+-DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_calpella_no_shadow_gtt);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0062, quirk_calpella_no_shadow_gtt);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x006a, quirk_calpella_no_shadow_gtt);
+ 
+-- 
+EW
