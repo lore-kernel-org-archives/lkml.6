@@ -2,142 +2,175 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8152DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6408BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 531DB2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C6462086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:56:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4lXJ3Od"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KRdazDr/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbfARP4Z (ORCPT
+        id S1727924AbfARP4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:56:25 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43594 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727496AbfARP4Z (ORCPT
+        Fri, 18 Jan 2019 10:56:52 -0500
+Received: from mail-ed1-f43.google.com ([209.85.208.43]:45116 "EHLO
+        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbfARP4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:56:25 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r10so15609544wrs.10
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 07:56:24 -0800 (PST)
+        Fri, 18 Jan 2019 10:56:51 -0500
+Received: by mail-ed1-f43.google.com with SMTP id d39so11443108edb.12
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 07:56:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=IlhRlfE+Zj+QzMvvfaa9gaqWOjCT6FCHLtgklD5DeaI=;
-        b=I4lXJ3OdiEBZv8daCMy3wONl/mhjKPP2EWdUYYZQz1UGTSV+vyV5H3mt1SK16cVUDe
-         Ruzbk1DO1SQTLEikNjpVwFXBxNQ+vE7wxwkPOsxc7UYHvQ3UGL63IaIXJyLGH9uR2hGy
-         wALyH3Gdj4ZJHVBvnNj6IrauZz5hZMJtAL1Ms=
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xs0Wq9yv1JQc7EqjJlD5ZMBNcuwmnG1fIWNiPqiqBHQ=;
+        b=KRdazDr/0ZYmhe6Ec/pRY+VNN98+1GDeYhds4j9mGeVVryB27ZySyze9NIQTMBXxGb
+         /5U2tXGb7/O2EkAbky0LkaTX04sfuZAHZUAOCuszINj7crXPNG6OVUMWiyzyci152zWX
+         /4MwdyFomK8+lIILaBLaWIWiJC1MM9G1mZVHs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IlhRlfE+Zj+QzMvvfaa9gaqWOjCT6FCHLtgklD5DeaI=;
-        b=EwusFuSKnhyOPX26J51Tg+ZJl4m2ThK7j2nYZSRZJaPxGL0+S+sqHlkzTJccJqJjfX
-         eDUkcH1ZwhBj412PhXL64hXVcxQr53LTVLcT3+Dm/EUsQbtHbfHtNRvnXxCwqJ/GFwSV
-         ZzN6u5prelluT84LCD9yYSwoWnTsFX9lV6Xirn1GDgVqVE3AchUk2x6ufDEua3sVbtBw
-         J1mD4cJzfSXCPrIVWuqv4F3JkzpxesF10wq4/rMluyYhfhHwAgWKcK1LNWq4v+Tnl2Tb
-         /vk4ZSuOY/XEbfdHYgFbnDL6cwubvhQbAkSd8joHBezEwT4H0A0/yoDVU2xubq++z5E7
-         ZcRg==
-X-Gm-Message-State: AJcUukeHODOFItyE1wrf8h+EaHPgcSv73VvsY3anET7oZ9Ekgy6M89PH
-        oESDsytkSqjB3z1A8LBCQhTaBjTS+I8=
-X-Google-Smtp-Source: ALg8bN4Etx2pQQP57EWD/UzyF3+z8U1tpKr6qhKJcm1pHlWdKstHNLI3zfhJF3TnbmyrAZyo4nxLYQ==
-X-Received: by 2002:a5d:4586:: with SMTP id p6mr16606884wrq.69.1547826983364;
-        Fri, 18 Jan 2019 07:56:23 -0800 (PST)
-Received: from localhost.localdomain ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id p12sm45656324wmi.5.2019.01.18.07.56.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 07:56:22 -0800 (PST)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To:     linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH] venus: enc: fix enum_frameintervals
-Date:   Fri, 18 Jan 2019 17:56:06 +0200
-Message-Id: <20190118155606.21798-1-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xs0Wq9yv1JQc7EqjJlD5ZMBNcuwmnG1fIWNiPqiqBHQ=;
+        b=f2WxF7jQkZtmwdMw8BqEVHgSlTb/DApX5d4VKhUpKZjC+KU6xFMExl5ZSs3G2mEE5y
+         wMbX+Xw41KkAd6h38ctW244KQUMs2VLMPsxX4s86/b3K8jSo7AgobWHU/j9FsGZoFspG
+         11WjTSaKD8OLxEElKpeHmZcRZqN/1eA8BltE/Ahp4hi9R1g7tYYzxaxBUsd2hlECUncz
+         RfbteiPmBPxoUJpGC8y7/E9S6ZXg3qOfJThiJbwQyESEgjtNAXrqxdjpQWhZPT6S04ib
+         sVb8EZo50fxyrZ6h0RNqlVmVQbDiyq4dYPR7FcWcuqRpkX1jQV0sh+k9Y84MC/r5EJnm
+         M40A==
+X-Gm-Message-State: AJcUukc0vCCYi2L5wuRCEg7Nu0WbTzsKO6kn1pToQmvIRp3W5Xcy8PCd
+        +Wezq8yMcvcSF1qsNKFXB7oW/Tg7GXyy8A==
+X-Google-Smtp-Source: ALg8bN5HP+aoEN8p4HoSRpVu+6cZk6w8+Gsh41UNiNdxP1gnT1X9NC8nBVpkaarv+q253uGRbZO36A==
+X-Received: by 2002:aa7:ca0d:: with SMTP id y13mr15986458eds.285.1547827009477;
+        Fri, 18 Jan 2019 07:56:49 -0800 (PST)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id gk8-v6sm4174872ejb.42.2019.01.18.07.56.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 07:56:48 -0800 (PST)
+Date:   Fri, 18 Jan 2019 16:56:38 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Plain accesses and data races in the Linux Kernel Memory Model
+Message-ID: <20190118155638.GA24442@andrea>
+References: <20190117150336.GA10381@andrea>
+ <Pine.LNX.4.44L0.1901181005110.1425-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1901181005110.1425-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This ixes an issue when setting the encoder framerate because of
-missing precision. Now the frameinterval type is changed to
-TYPE_CONTINUOUS and step = 1. Also the math is changed when
-framerate property is called - the firmware side expects that
-the framerate one is 1 << 16 units.
+On Fri, Jan 18, 2019 at 10:10:22AM -0500, Alan Stern wrote:
+> On Thu, 17 Jan 2019, Andrea Parri wrote:
+> 
+> > > Can the compiler (maybe, it does?) transform, at the C or at the "asm"
+> > > level, LB1's P0 in LB2's P0 (LB1 and LB2 are reported below)?
+> > > 
+> > > C LB1
+> > > 
+> > > {
+> > > 	int *x = &a;
+> > > }
+> > > 
+> > > P0(int **x, int *y)
+> > > {
+> > > 	int *r0;
+> > > 
+> > > 	r0 = rcu_dereference(*x);
+> > > 	*r0 = 0;
+> > > 	smp_wmb();
+> > > 	WRITE_ONCE(*y, 1);
+> > > }
+> > > 
+> > > P1(int **x, int *y, int *b)
+> > > {
+> > > 	int r0;
+> > > 
+> > > 	r0 = READ_ONCE(*y);
+> > > 	rcu_assign_pointer(*x, b);
+> > > }
+> > > 
+> > > exists (0:r0=b /\ 1:r0=1)
+> > > 
+> > > 
+> > > C LB2
+> > > 
+> > > {
+> > > 	int *x = &a;
+> > > }
+> > > 
+> > > P0(int **x, int *y)
+> > > {
+> > > 	int *r0;
+> > > 
+> > > 	r0 = rcu_dereference(*x);
+> > > 	if (*r0)
+> > > 		*r0 = 0;
+> > > 	smp_wmb();
+> > > 	WRITE_ONCE(*y, 1);
+> > > }
+> > > 
+> > > P1(int **x, int *y, int *b)
+> > > {
+> > > 	int r0;
+> > > 
+> > > 	r0 = READ_ONCE(*y);
+> > > 	rcu_assign_pointer(*x, b);
+> > > }
+> > > 
+> > > exists (0:r0=b /\ 1:r0=1)
+> > > 
+> > > LB1 and LB2 are data-race free, according to the patch; LB1's "exists"
+> > > clause is not satisfiable, while LB2's "exists" clause is satisfiable.
+> 
+> A relatively simple solution to this problem would be to say that 
+> smp_wmb doesn't order plain writes.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/venc.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+It seems so; I don't have other solutions to suggest ATM.  (But, TBH,
+I'm still in the process of reviewing/testing these changes... )
 
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index 32cff294582f..8c939af0a1f6 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -31,6 +31,7 @@
- #include "venc.h"
- 
- #define NUM_B_FRAMES_MAX	4
-+#define FRAMERATE_FACTOR	(1 << 16)
- 
- /*
-  * Three resons to keep MPLANE formats (despite that the number of planes
-@@ -581,7 +582,7 @@ static int venc_enum_frameintervals(struct file *file, void *fh,
- 	struct venus_inst *inst = to_inst(file);
- 	const struct venus_format *fmt;
- 
--	fival->type = V4L2_FRMIVAL_TYPE_STEPWISE;
-+	fival->type = V4L2_FRMIVAL_TYPE_CONTINUOUS;
- 
- 	fmt = find_format(inst, fival->pixel_format,
- 			  V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-@@ -604,12 +605,12 @@ static int venc_enum_frameintervals(struct file *file, void *fh,
- 	    fival->height < frame_height_min(inst))
- 		return -EINVAL;
- 
--	fival->stepwise.min.numerator = 1;
-+	fival->stepwise.min.numerator = FRAMERATE_FACTOR;
- 	fival->stepwise.min.denominator = frate_max(inst);
--	fival->stepwise.max.numerator = 1;
-+	fival->stepwise.max.numerator = FRAMERATE_FACTOR;
- 	fival->stepwise.max.denominator = frate_min(inst);
- 	fival->stepwise.step.numerator = 1;
--	fival->stepwise.step.denominator = frate_max(inst);
-+	fival->stepwise.step.denominator = 1;
- 
- 	return 0;
- }
-@@ -654,6 +655,7 @@ static int venc_set_properties(struct venus_inst *inst)
- 	struct hfi_quantization quant;
- 	struct hfi_quantization_range quant_range;
- 	u32 ptype, rate_control, bitrate, profile = 0, level = 0;
-+	u64 framerate;
- 	int ret;
- 
- 	ret = venus_helper_set_work_mode(inst, VIDC_WORK_MODE_2);
-@@ -664,9 +666,14 @@ static int venc_set_properties(struct venus_inst *inst)
- 	if (ret)
- 		return ret;
- 
-+	framerate = inst->timeperframe.denominator * FRAMERATE_FACTOR;
-+	framerate = DIV_ROUND_UP(framerate, inst->timeperframe.numerator);
-+
- 	ptype = HFI_PROPERTY_CONFIG_FRAME_RATE;
- 	frate.buffer_type = HFI_BUFFER_OUTPUT;
--	frate.framerate = inst->fps * (1 << 16);
-+	frate.framerate = framerate;
-+	if (frate.framerate > frate_max(inst))
-+		frate.framerate = frate_max(inst);
- 
- 	ret = hfi_session_set_property(inst, ptype, &frate);
- 	if (ret)
--- 
-2.17.1
+And yes, this is a pain! : I don't have the exact statistics, but I'm
+willing to believe that removing this order will take us back ~99% of
+the current (~500!) uses of smp_wmb() ;-/
 
+Oh, well, maybe we'll find a better solution one day: after all, that
+one doesn't seem worse than what the current LKMM has to say! ;-)
+
+
+> 
+> I think the rest of the memory model would then be okay.  However, I am
+> open to arguments that this approach is too complex and we should
+> insist on the same kind of strict ordering for race avoidance that the
+> C11 standard uses (i.e., conflicting accesses separated by full memory
+> barriers or release & acquire barriers or locking).
+
+Indeed;  maybe, we've just found another reason to obsolete smp_wmb()! ;-)
+
+  Andrea
+
+
+> 
+> Alan
+> 
