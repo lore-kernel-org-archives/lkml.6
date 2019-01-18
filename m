@@ -2,64 +2,79 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C1CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D582C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B94A20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72C522087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbfARPAS (ORCPT
+        id S1727699AbfARPAi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:00:18 -0500
-Received: from mga03.intel.com ([134.134.136.65]:42049 "EHLO mga03.intel.com"
+        Fri, 18 Jan 2019 10:00:38 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49786 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727020AbfARPAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:00:17 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 07:00:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="115700132"
-Received: from unknown (HELO localhost) ([10.249.254.249])
-  by fmsmga007.fm.intel.com with ESMTP; 18 Jan 2019 07:00:14 -0800
-Date:   Fri, 18 Jan 2019 17:00:11 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Safford, David (GE Global Research)" <david.safford@ge.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
-Message-ID: <20190118150011.GF4080@linux.intel.com>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
+        id S1727020AbfARPAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:00:38 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DCECE20A2E; Fri, 18 Jan 2019 16:00:35 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C07AF20CD0;
+        Fri, 18 Jan 2019 15:57:44 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH 1/2] ARM: dts: sun4i: Add support for the C1 SRAM region with the SRAM controller
+Date:   Fri, 18 Jan 2019 15:57:29 +0100
+Message-Id: <20190118145730.22227-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 08:28:00PM +0000, Safford, David (GE Global Research) wrote:
-> You might mention that this is an important feature, as on at least some
-> systems, ppi function 23 is the only way to enable/disable PCR banks.
-> 
-> I have tested this patch set on my HP Spectre laptop, and I am finally
-> able to turn the sha-1 bank on and off. Much appreciated!
-> 
-> Tested-by: David Safford <david.safford@ge.com>
+This adds support for the C1 SRAM region (to be used with the SRAM
+controller driver) for the A10 platform. The region is shared
+between the Video Engine and the CPU.
 
-Great thanks David.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ arch/arm/boot/dts/sun4i-a10.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-/Jarkko
+diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+index a2fb473cbb9d..c3a74024ca0f 100644
+--- a/arch/arm/boot/dts/sun4i-a10.dtsi
++++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+@@ -229,6 +229,19 @@
+ 					status = "disabled";
+ 				};
+ 			};
++
++			sram_c: sram@1d00000 {
++				compatible = "mmio-sram";
++				reg = <0x01d00000 0xd0000>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0 0x01d00000 0xd0000>;
++
++				ve_sram: sram-section@0 {
++					compatible = "allwinner,sun4i-a10-sram-c1";
++					reg = <0x000000 0x80000>;
++				};
++			};
+ 		};
+ 
+ 		dma: dma-controller@1c02000 {
+-- 
+2.20.1
+
