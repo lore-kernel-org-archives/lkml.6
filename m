@@ -2,85 +2,78 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9099FC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 755F7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62C3A20850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:54:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 509AD20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 07:54:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbfARHy2 (ORCPT
+        id S1727556AbfARHyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 02:54:28 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:46631 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbfARHy1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 02:54:27 -0500
-Received: by mail-vs1-f68.google.com with SMTP id n10so7868475vso.13
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 23:54:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HPoLJZo/gEQ5CS4P3egopOmilj0JYJvumjzcc4LknrY=;
-        b=VL53m+0la/c2rqc3bWvU+vdOrJZQ7MQTylJZ07Xl4JaR5rgtRj/muWnaw4qrPryx8V
-         E7Eu6MIJefMYiUxT8cqxdC1lI36lxKsmILHnuM2UsdAmgsz7eRV9zTT+4Pg/fN8C9FM1
-         XZcf6w048VNSuR0Mt6+wijlVN3Z83mcnqWfc32SYOZvOuVtDYiZ8WpjnB6An7B2yF3S7
-         uPow8m6ss3zNMlKFn2Za9wYB4NApiAOgQRH3pHzcPfbWYsneAf7RAd5yA9trHc0E/yoF
-         84/mzE8ekytT5o6YfTVDds+t+TsLJVgMB3nmUDcb9IEfJAapeLHwdl8QDeri16PqJew/
-         wQHw==
-X-Gm-Message-State: AJcUukf7ntHODFp29pX3w3zRrPx472g3KEBtDw4yCu7sL38fsY4KFgHr
-        PksxmJNlWNiMK7W1yjkGYDLJFHiuw/EQ/z/fS80=
-X-Google-Smtp-Source: ALg8bN7QHotq6noRvNZo1wpuFJFIteHaX8+PKKeT7KoBc/XAbNwDRz5n6y/PAImVe+7b3DAmV1lyL7x2ZujKgZJ3Q6w=
-X-Received: by 2002:a67:3885:: with SMTP id n5mr6372788vsi.96.1547798066614;
- Thu, 17 Jan 2019 23:54:26 -0800 (PST)
+        Fri, 18 Jan 2019 02:54:51 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41632 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727167AbfARHyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 02:54:51 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B421AA94EEA23E961D84;
+        Fri, 18 Jan 2019 15:54:48 +0800 (CST)
+Received: from [127.0.0.1] (10.63.139.185) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
+ 15:54:38 +0800
+Subject: Re: [PATCH 3/4] crypto: hisilicon: Add HiSilicon ZIP accelerator
+ support
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+References: <1545465105-133138-1-git-send-email-wangzhou1@hisilicon.com>
+ <1545465105-133138-4-git-send-email-wangzhou1@hisilicon.com>
+ <20190111060859.k647ltxukywjmi3l@gondor.apana.org.au>
+ <5C383908.4090107@hisilicon.com> <5C3F3BDF.6070409@hisilicon.com>
+ <20190118045546.hs37a2isfnvxgm7j@gondor.apana.org.au>
+CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-crypto@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+From:   Zhou Wang <wangzhou1@hisilicon.com>
+Message-ID: <5C418659.30904@hisilicon.com>
+Date:   Fri, 18 Jan 2019 15:55:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-References: <20190117215836.26137-1-rep.dot.nop@gmail.com>
-In-Reply-To: <20190117215836.26137-1-rep.dot.nop@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jan 2019 08:54:15 +0100
-Message-ID: <CAMuHMdVzqEhw0KTbToUkxiuovoaxoW_mw2hF_uh0qcXYf+POsQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] checkstack.pl: Add blackfin support
-To:     Bernhard Reutner-Fischer <rep.dot.nop@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190118045546.hs37a2isfnvxgm7j@gondor.apana.org.au>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.63.139.185]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bernhard,
+On 2019/1/18 12:55, Herbert Xu wrote:
+> On Wed, Jan 16, 2019 at 10:12:47PM +0800, Zhou Wang wrote:
+>>
+>> A stupid question: how do we test scomp alg?
+>>
+>> It seems we can not use general comp API, e.g. crypto_alloc_comp
+>> to do this.
+>>
+>> Could you give me any clue about this?
+> 
+> scomp algorithms are allocated through crypto_alloc_acomp.
 
-Thanks for your patch!
+A little strange, but let me try firstly.
 
-On Thu, Jan 17, 2019 at 11:01 PM Bernhard Reutner-Fischer
-<rep.dot.nop@gmail.com> wrote:
-> We've been carrying this since some time now.. Original submission:
-> http://lists.busybox.net/pipermail/busybox/2007-August/028420.html
->
-> Signed-off-by: Bernhard Reutner-Fischer <rep.dot.nop@gmail.com>
+However, another question is that seems other subsystems in kernel,
+e.g. zswap still use crypto_alloc_comp. So we'd better register this
+ZIP engine using both cryto_alloc_comp and scomp/acomp interface to
+make it compatible with other subsystems?
 
-A similar patch was merged in commit 1e9535a591cf003e ("Add stack
-checking for Blackfin").
+Best,
+Zhou
 
-In the mean time, blackfin support was removed from Linux in commit
-4ba66a9760722ccb ("arch: remove blackfin port"), and from checkstack in
-commit e53a05a49e10c7cf ("scripts/checkstack.pl: remove blackfin support").
+> 
+> Thanks,
+> 
 
-Nevertheless, I can imagine it's nice to have it, as I have used
-checkstack for non-Linux projects, too ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
