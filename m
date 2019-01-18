@@ -3,27 +3,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4A9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45873C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EECC2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2093D2087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 14:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfAROwT (ORCPT
+        id S1727774AbfAROwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:52:19 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48191 "EHLO mail.bootlin.com"
+        Fri, 18 Jan 2019 09:52:05 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48107 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbfAROwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:52:18 -0500
+        id S1727234AbfAROv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 09:51:58 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9C19C2259E; Fri, 18 Jan 2019 15:52:16 +0100 (CET)
+        id 20A24224C7; Fri, 18 Jan 2019 15:51:56 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E990C20E4A;
-        Fri, 18 Jan 2019 15:51:45 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7EA0C207A3;
+        Fri, 18 Jan 2019 15:51:44 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH RESEND v5 19/23] drm/sun4i: Set the coef_rdy bit right after the coef have been set
-Date:   Fri, 18 Jan 2019 15:51:29 +0100
-Message-Id: <20190118145133.21281-20-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RESEND v5 14/23] drm/sun4i: frontend: Add and use helper for checking tiling support
+Date:   Fri, 18 Jan 2019 15:51:24 +0100
+Message-Id: <20190118145133.21281-15-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
 References: <20190118145133.21281-1-paul.kocialkowski@bootlin.com>
@@ -48,33 +48,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
+This introduces a helper to check whether a frontend input format
+supports tiling mode. This helper is used when tiling is requested in
+the frontend format support helper.
 
-The COEF_RDY bit is used to tell the hardware that new FIR filters
-coefficients have been written to the registers and that the hardware
-should take them into account starting next frame.
+Only semiplanar and planar YUV formats are supported by the hardware.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 6636b1998a76..7a1095b004d4 100644
+index 6ede40aab515..1153539f3aef 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -96,6 +96,10 @@ static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
- 			     sun4i_frontend_vert_coef[i]);
+@@ -121,6 +121,26 @@ static bool sun4i_frontend_format_chroma_requires_swap(uint32_t fmt)
  	}
- 
-+	regmap_write_bits(frontend->regs,
-+			  SUN4I_FRONTEND_FRM_CTRL_REG,
-+			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
-+			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
  }
  
- int sun4i_frontend_init(struct sun4i_frontend *frontend)
++static bool sun4i_frontend_format_supports_tiling(uint32_t fmt)
++{
++	switch (fmt) {
++	case DRM_FORMAT_NV12:
++	case DRM_FORMAT_NV16:
++	case DRM_FORMAT_NV21:
++	case DRM_FORMAT_NV61:
++	case DRM_FORMAT_YUV411:
++	case DRM_FORMAT_YUV420:
++	case DRM_FORMAT_YUV422:
++	case DRM_FORMAT_YVU420:
++	case DRM_FORMAT_YVU422:
++	case DRM_FORMAT_YVU411:
++		return true;
++
++	default:
++		return false;
++	}
++}
++
+ void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
+ 				  struct drm_plane *plane)
+ {
+@@ -355,7 +375,9 @@ bool sun4i_frontend_format_is_supported(uint32_t fmt, uint64_t modifier)
+ {
+ 	unsigned int i;
+ 
+-	if (modifier != DRM_FORMAT_MOD_LINEAR)
++	if (modifier == DRM_FORMAT_MOD_ALLWINNER_TILED)
++		return sun4i_frontend_format_supports_tiling(fmt);
++	else if (modifier != DRM_FORMAT_MOD_LINEAR)
+ 		return false;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(sun4i_frontend_formats); i++)
 -- 
 2.20.1
 
