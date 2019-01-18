@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E17C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2544C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A572086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BA472086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfARIOo (ORCPT
+        id S1727503AbfARINw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:14:44 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33938 "EHLO huawei.com"
+        Fri, 18 Jan 2019 03:13:52 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2261 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727567AbfARIN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:13:56 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B0A61DEC02C96B8F9AEA;
-        Fri, 18 Jan 2019 16:13:54 +0800 (CST)
+        id S1727259AbfARINv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:13:51 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A57598951E7941F45D25;
+        Fri, 18 Jan 2019 16:13:49 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 18 Jan 2019 16:13:44 +0800
+ 14.3.408.0; Fri, 18 Jan 2019 16:13:42 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
@@ -32,9 +32,9 @@ CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
         Yunsheng Lin <linyunsheng@huawei.com>,
         Peng Li <lipeng321@huawei.com>
-Subject: [PATCH net-next 09/12] net: hns3: adjust the use of alloc_tqps and num_tqps
-Date:   Fri, 18 Jan 2019 16:13:11 +0800
-Message-ID: <1547799194-38212-10-git-send-email-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 06/12] net: hns3: modify parameter checks in the hns3_set_channels
+Date:   Fri, 18 Jan 2019 16:13:08 +0800
+Message-ID: <1547799194-38212-7-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
 References: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
@@ -47,64 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The alloc_tqps field of struct hclge_vport represents the total number
-of tqps allocated to the vport. The num_tqps of struct
-hnae3_knic_private_info indicates the total number of all enabled tqps,
-which needs to be distinguished during use.
+The number of queues for each enabled TC should range from 1 to
+the maximum available value, and return directly if the value
+is same as the current one.
 
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 55a456f..9506c52 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -1123,7 +1123,7 @@ static int hclge_map_tqp_to_vport(struct hclge_dev *hdev,
- 	u16 i;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 0cd70d7..0bda9bd 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -4157,15 +4157,14 @@ int hns3_set_channels(struct net_device *netdev,
+ 		return -EINVAL;
  
- 	kinfo = &nic->kinfo;
--	for (i = 0; i < kinfo->num_tqps; i++) {
-+	for (i = 0; i < vport->alloc_tqps; i++) {
- 		struct hclge_tqp *q =
- 			container_of(kinfo->tqp[i], struct hclge_tqp, q);
- 		bool is_pf;
-@@ -5241,6 +5241,7 @@ static int hclge_set_loopback(struct hnae3_handle *handle,
- 			      enum hnae3_loop loop_mode, bool en)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
-+	struct hnae3_knic_private_info *kinfo;
- 	struct hclge_dev *hdev = vport->back;
- 	int i, ret;
- 
-@@ -5259,7 +5260,8 @@ static int hclge_set_loopback(struct hnae3_handle *handle,
- 		break;
+ 	if (new_tqp_num > hns3_get_max_available_channels(h) ||
+-	    new_tqp_num < kinfo->num_tc) {
++	    new_tqp_num < 1) {
+ 		dev_err(&netdev->dev,
+-			"Change tqps fail, the tqp range is from %d to %d",
+-			kinfo->num_tc,
++			"Change tqps fail, the tqp range is from 1 to %d",
+ 			hns3_get_max_available_channels(h));
+ 		return -EINVAL;
  	}
  
--	for (i = 0; i < vport->alloc_tqps; i++) {
-+	kinfo = &vport->nic.kinfo;
-+	for (i = 0; i < kinfo->num_tqps; i++) {
- 		ret = hclge_tqp_enable(hdev, i, 0, en);
- 		if (ret)
- 			return ret;
-@@ -5271,11 +5273,13 @@ static int hclge_set_loopback(struct hnae3_handle *handle,
- static void hclge_reset_tqp_stats(struct hnae3_handle *handle)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
-+	struct hnae3_knic_private_info *kinfo;
- 	struct hnae3_queue *queue;
- 	struct hclge_tqp *tqp;
- 	int i;
+-	if (kinfo->num_tqps == new_tqp_num)
++	if (kinfo->rss_size == new_tqp_num)
+ 		return 0;
  
--	for (i = 0; i < vport->alloc_tqps; i++) {
-+	kinfo = &vport->nic.kinfo;
-+	for (i = 0; i < kinfo->num_tqps; i++) {
- 		queue = handle->kinfo.tqp[i];
- 		tqp = container_of(queue, struct hclge_tqp, q);
- 		memset(&tqp->tqp_stats, 0, sizeof(tqp->tqp_stats));
+ 	ret = hns3_reset_notify(h, HNAE3_DOWN_CLIENT);
 -- 
 2.7.4
 
