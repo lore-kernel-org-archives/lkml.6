@@ -2,139 +2,103 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6532C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A789C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB6D20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 198A320855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547801355;
+	bh=PfX/qo5bHBPtw9Z5T0H6GdhgQkWlAb9EfUxVj3N/U7g=;
+	h=References:In-Reply-To:From:Date:Subject:To:List-ID:From;
+	b=Q8Oe/Uu1HmtBXsOhDsMun8jWJ6N1IG/XYiREXJk3kC0oLwQEBJJcgTmrCviyhEqUk
+	 MSlbcpC3IXp4o9V6J8IqjOJ0NZT4HGre8WbelRm7vQoezpi+TGafxJ4UgDvRmO6iCi
+	 oraHpzEmvqTDTKaFIqnDMYbVIr8F4mG8G08rrU7E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfARIs7 (ORCPT
+        id S1727562AbfARItN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:48:59 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58428 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727271AbfARIs6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:48:58 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0I8cuVU006669
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 03:48:57 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q37ver3tq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 03:48:57 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Fri, 18 Jan 2019 08:48:55 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 18 Jan 2019 08:48:52 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0I8mpsb6357452
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Jan 2019 08:48:51 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 576BCA4060;
-        Fri, 18 Jan 2019 08:48:51 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20C20A405C;
-        Fri, 18 Jan 2019 08:48:51 +0000 (GMT)
-Received: from mschwideX1 (unknown [9.152.96.40])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Jan 2019 08:48:51 +0000 (GMT)
-Date:   Fri, 18 Jan 2019 09:48:50 +0100
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 0/5] s390: rework compat wrapper generation
-In-Reply-To: <20190117201920.GB3687@osiris>
-References: <20190116131527.2071570-1-arnd@arndb.de>
-        <20190117133619.GD18351@osiris>
-        <CAK8P3a2KvCwAa5yp+f_cZOX4Osd_tvwfBto=aMEMW9TNbePQ9w@mail.gmail.com>
-        <20190117201920.GB3687@osiris>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 18 Jan 2019 03:49:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726302AbfARItM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 03:49:12 -0500
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4E552133D;
+        Fri, 18 Jan 2019 08:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547801352;
+        bh=PfX/qo5bHBPtw9Z5T0H6GdhgQkWlAb9EfUxVj3N/U7g=;
+        h=References:In-Reply-To:From:Date:Subject:To:From;
+        b=T53reYfgFHCnoicOTGkXjqkpzo7p94iGsOH9g3giXgbAEo8HJ8/byI0KdU2gjOUIm
+         eCQdQ2Ue/ymaP1DqAPPrYFm6Q7wcnsXxLJKLB0X1naNizcUXMQ20oiK9xqAEKmL7U0
+         MWWDXNBkeRDSQHHCUtSJOxXQ4HR6ec/K7P8sD78A=
+Received: by mail-lf1-f54.google.com with SMTP id a8so9908556lfk.5;
+        Fri, 18 Jan 2019 00:49:11 -0800 (PST)
+X-Gm-Message-State: AJcUukfvVa0E2CuHFXjqcuvMNnFIzIxBT+CwVozPtRlnl0dIG39rxu/D
+        FnJ0+MEg9klV4UM3/iA6mzqGu1hluma8riyNRoI=
+X-Google-Smtp-Source: ALg8bN4GiYrnkTzFXO80ibhyb127ymDN6vDF2esfH/C+kgjjrSjSVn38giE+a3KIIvNDDW3DgSW8d+wReXWe6VAiqUA=
+X-Received: by 2002:a19:6e0b:: with SMTP id j11mr12830880lfc.124.1547801349889;
+ Fri, 18 Jan 2019 00:49:09 -0800 (PST)
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 19011808-0020-0000-0000-000003082290
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011808-0021-0000-0000-0000215947E4
-Message-Id: <20190118094850.07f84efc@mschwideX1>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901180066
+References: <CAJKOXPdHhUGoQmrX8_23MfbibozipkAzXA_5woVSFJSK9BvbXw@mail.gmail.com>
+In-Reply-To: <CAJKOXPdHhUGoQmrX8_23MfbibozipkAzXA_5woVSFJSK9BvbXw@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 18 Jan 2019 09:48:58 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPe7ot9TLajErKJjSAkbs2vObMJfATzEFwxpT16aFdXHqg@mail.gmail.com>
+Message-ID: <CAJKOXPe7ot9TLajErKJjSAkbs2vObMJfATzEFwxpT16aFdXHqg@mail.gmail.com>
+Subject: Re: [BUG bisect] Missing Micrel driver on VF50 (net: phy: check
+ return code when requesting PHY driver module)
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Stefan Agner <stefan@agner.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 17 Jan 2019 21:19:20 +0100
-Heiko Carstens <heiko.carstens@de.ibm.com> wrote:
+On Fri, 18 Jan 2019 at 09:39, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Hi,
+>
+> On today's next (next-20190118) my Colibri VF50 board fails to boot up
+> from network (DHCP, NFSv4 root). Looks like missing network adapter.
+> Expected:
+> [ 3.041773] Micrel KSZ8041 400d1000.ethernet-1:00: attached PHY driver
+> [Micrel KSZ8041] (mii_bus:phy_addr=400d1000.ethernet-1:00, irq=POLL)
+>
+> Result:
+> [ 15.614964] Root-NFS: no NFS server address
+> [ 15.619353] VFS: Unable to mount root fs via NFS, trying floppy.
+> [ 15.626762] VFS: Cannot open root device "nfs" or unknown-block(2,0): error -6
+> [ 15.634252] Please append a correct "root=" boot option; here are the
+> available partitions:
+> [ 15.642791] 0100 16384 ram0
+> [ 15.642804] (driver?)
+> [ 15.649076] Kernel panic - not syncing: VFS: Unable to mount root fs
+> on unknown-block(2,0)
+> [ 15.657423] ---[ end Kernel panic - not syncing: VFS: Unable to mount
+> root fs on unknown-block(2,0) ]---
+>
+> Bisect pointed to:
+>     net: phy: check return code when requesting PHY driver module
 
-> On Thu, Jan 17, 2019 at 05:21:50PM +0100, Arnd Bergmann wrote:
-> > On Thu, Jan 17, 2019 at 2:36 PM Heiko Carstens
-> > <heiko.carstens@de.ibm.com> wrote:  
-> > >
-> > > On Wed, Jan 16, 2019 at 02:15:18PM +0100, Arnd Bergmann wrote:  
-> >   
-> > > > I did not test the changes at runtime, but I looked at the
-> > > > generated object code, which seems fine here and includes
-> > > > the same conversions as before.  
-> > >
-> > > All looks good and seems to work fine. This is a very nice
-> > > simplification of our compat code, even if it adds some dead code to
-> > > the kernel image.
-> > >
-> > > I did some tests and it all looks good. Also the generated code looks
-> > > fine. So, if nothing breaks, this will go upstream with next merge
-> > > window via the s390 tree.
-> > >
-> > > Thanks again for your work!  
-> > 
-> > Awesome, thanks for testing it so quickly and agreeing to merge it!
-> > 
-> > There is a dependency that I now have for my y2038 syscall series
-> > of course, so I'd need to have those patches on top of the s390 series.
-> > 
-> > I think we can either have a shared git branch that gets merged both
-> > into your s390 tree and my y2038 tree, or we merge it only through
-> > my tree, with your Ack.
-> > 
-> > Does that work for you?  
-> 
-> I'll discuss this with Martin tomorrow, however I think a shared git
-> branch would be the best solution. I want to get as much testing as
-> possible for this patch set, which means this must also be in the s390
-> tree.
+I see now in the logs:
+[ 2.436822] mdio_bus 400d1000.ethernet-1:00: error -2 loading PHY
+driver module for ID 0x00221513
+which is kind of misleading. There is no initramfs so there is no
+usermod library at this point. It is not needed. This seems to break
+all DHCP/NFS root boots without initrd/initramfs.
 
-Yes, a shared git branch seems like the best solutoin, this is now
-available as a topic branch on the s390/linux:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git compat
-
-The branch has been merged to the features branch for v5.1.
-
-Thanks for the work on the compat code, good stuff!
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+Best regards,
+Krzysztof
