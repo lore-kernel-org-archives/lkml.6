@@ -2,38 +2,39 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D051DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D11C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4CA6214C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32FBB20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:59:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfARF7U (ORCPT
+        id S1727201AbfARF65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 00:59:20 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2196 "EHLO huawei.com"
+        Fri, 18 Jan 2019 00:58:57 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2256 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727084AbfARF7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 00:59:02 -0500
+        id S1727100AbfARF65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 00:58:57 -0500
 Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id DC9FB45E15388DB10ECF;
-        Fri, 18 Jan 2019 13:58:59 +0800 (CST)
+        by Forcepoint Email with ESMTP id BC6407D50AC1ED243926;
+        Fri, 18 Jan 2019 13:58:54 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 18 Jan 2019 13:58:51 +0800
+ 14.3.408.0; Fri, 18 Jan 2019 13:58:49 +0800
 From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
 To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
         <ebiggers@kernel.org>
 CC:     <wangxiongfeng2@huawei.com>, <linux-crypto@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <broonie@kernel.org>,
         <ard.biesheuvel@linaro.org>, <jonathan.cameron@huawei.com>
-Subject: [PATCH V3 5/5] crypto: chacha20poly1305 - use template array registering API to simplify the code
-Date:   Fri, 18 Jan 2019 13:58:15 +0800
-Message-ID: <1547791095-48339-6-git-send-email-wangxiongfeng2@huawei.com>
+Subject: [PATCH V3 1/5] crypto: api - add a helper to (un)register a array of templates
+Date:   Fri, 18 Jan 2019 13:58:11 +0800
+Message-ID: <1547791095-48339-2-git-send-email-wangxiongfeng2@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1547791095-48339-1-git-send-email-wangxiongfeng2@huawei.com>
 References: <1547791095-48339-1-git-send-email-wangxiongfeng2@huawei.com>
@@ -48,70 +49,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiongfeng Wang <xiongfeng.wang@linaro.org>
 
-Use crypto template array registering API to simplify the code.
+This patch add a helper to (un)register a array of templates. The
+following patches will use this helper to simplify the code.
 
 Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
 Reviewed-by: Eric Biggers <ebiggers@google.com>
 ---
- crypto/chacha20poly1305.c | 37 ++++++++++++++-----------------------
- 1 file changed, 14 insertions(+), 23 deletions(-)
+ crypto/algapi.c         | 27 +++++++++++++++++++++++++++
+ include/crypto/algapi.h |  2 ++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/crypto/chacha20poly1305.c b/crypto/chacha20poly1305.c
-index fef1144..ed2e12e 100644
---- a/crypto/chacha20poly1305.c
-+++ b/crypto/chacha20poly1305.c
-@@ -701,37 +701,28 @@ static int rfc7539esp_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	return chachapoly_create(tmpl, tb, "rfc7539esp", 8);
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index 713baab..4c9c86b 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -494,6 +494,24 @@ int crypto_register_template(struct crypto_template *tmpl)
  }
+ EXPORT_SYMBOL_GPL(crypto_register_template);
  
--static struct crypto_template rfc7539_tmpl = {
--	.name = "rfc7539",
--	.create = rfc7539_create,
--	.module = THIS_MODULE,
--};
--
--static struct crypto_template rfc7539esp_tmpl = {
--	.name = "rfc7539esp",
--	.create = rfc7539esp_create,
--	.module = THIS_MODULE,
-+static struct crypto_template rfc7539_tmpls[] = {
-+	{
-+		.name = "rfc7539",
-+		.create = rfc7539_create,
-+		.module = THIS_MODULE,
-+	}, {
-+		.name = "rfc7539esp",
-+		.create = rfc7539esp_create,
-+		.module = THIS_MODULE,
-+	},
- };
- 
- static int __init chacha20poly1305_module_init(void)
++int crypto_register_templates(struct crypto_template *tmpls, int count)
++{
++	int i, err;
++
++	for (i = 0; i < count; i++) {
++		err = crypto_register_template(&tmpls[i]);
++		if (err)
++			goto out;
++	}
++	return 0;
++
++out:
++	for (--i; i >= 0; --i)
++		crypto_unregister_template(&tmpls[i]);
++	return err;
++}
++EXPORT_SYMBOL_GPL(crypto_register_templates);
++
+ void crypto_unregister_template(struct crypto_template *tmpl)
  {
--	int err;
--
--	err = crypto_register_template(&rfc7539_tmpl);
--	if (err)
--		return err;
--
--	err = crypto_register_template(&rfc7539esp_tmpl);
--	if (err)
--		crypto_unregister_template(&rfc7539_tmpl);
--
--	return err;
-+	return crypto_register_templates(rfc7539_tmpls,
-+					 ARRAY_SIZE(rfc7539_tmpls));
+ 	struct crypto_instance *inst;
+@@ -523,6 +541,15 @@ void crypto_unregister_template(struct crypto_template *tmpl)
  }
+ EXPORT_SYMBOL_GPL(crypto_unregister_template);
  
- static void __exit chacha20poly1305_module_exit(void)
++void crypto_unregister_templates(struct crypto_template *tmpls, int count)
++{
++	int i;
++
++	for (i = count - 1; i >= 0; --i)
++		crypto_unregister_template(&tmpls[i]);
++}
++EXPORT_SYMBOL_GPL(crypto_unregister_templates);
++
+ static struct crypto_template *__crypto_lookup_template(const char *name)
  {
--	crypto_unregister_template(&rfc7539esp_tmpl);
--	crypto_unregister_template(&rfc7539_tmpl);
-+	crypto_unregister_templates(rfc7539_tmpls,
-+				    ARRAY_SIZE(rfc7539_tmpls));
- }
+ 	struct crypto_template *q, *tmpl = NULL;
+diff --git a/include/crypto/algapi.h b/include/crypto/algapi.h
+index 093869f..4be38cd 100644
+--- a/include/crypto/algapi.h
++++ b/include/crypto/algapi.h
+@@ -143,7 +143,9 @@ struct ablkcipher_walk {
+ void crypto_mod_put(struct crypto_alg *alg);
  
- module_init(chacha20poly1305_module_init);
+ int crypto_register_template(struct crypto_template *tmpl);
++int crypto_register_templates(struct crypto_template *tmpls, int count);
+ void crypto_unregister_template(struct crypto_template *tmpl);
++void crypto_unregister_templates(struct crypto_template *tmpls, int count);
+ struct crypto_template *crypto_lookup_template(const char *name);
+ 
+ int crypto_register_instance(struct crypto_template *tmpl,
 -- 
 1.7.12.4
 
