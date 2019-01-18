@@ -2,105 +2,87 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C24B9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C69F4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E16A20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A4D62086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:32:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S8KZYzgp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S8KZYzgp"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="IqUYVyYC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbfARFVy (ORCPT
+        id S1727108AbfARFcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 00:21:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38098 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbfARFVy (ORCPT
+        Fri, 18 Jan 2019 00:32:09 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:51524 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbfARFcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 00:21:54 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D0E2E6081E; Fri, 18 Jan 2019 05:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547788913;
-        bh=OeLXSwt9SPv0Z6ZKu2EPP4bCBvBvPgfOhjfBAKW0jxk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S8KZYzgpFMOmugqF06l9+haMeTXkzvdm2t83F7P7ioFxwLBpVKRQUUVVXco6GRBbl
-         ig5769d2p+i3vPGljJn+gyTqcKstpiXvtJKHs3FmDzYRD0ZXdMAWFxbAf2tl+9Gn8m
-         b2Cxm+rSkJgZ3SLl8M1DnpDMfcRS6JXyNcNKJoKM=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 3604760585;
-        Fri, 18 Jan 2019 05:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547788913;
-        bh=OeLXSwt9SPv0Z6ZKu2EPP4bCBvBvPgfOhjfBAKW0jxk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S8KZYzgpFMOmugqF06l9+haMeTXkzvdm2t83F7P7ioFxwLBpVKRQUUVVXco6GRBbl
-         ig5769d2p+i3vPGljJn+gyTqcKstpiXvtJKHs3FmDzYRD0ZXdMAWFxbAf2tl+9Gn8m
-         b2Cxm+rSkJgZ3SLl8M1DnpDMfcRS6JXyNcNKJoKM=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 18 Jan 2019 10:51:53 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-remoteproc@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        sricharan@codeaurora.org, linux-soc-owner@vger.kernel.org
-Subject: Re: [PATCH v6] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-In-Reply-To: <CAD=FV=V2XoaDVy9hnh-S=jbzU-Di0KoD7gM2CxpZm3646k9ZjA@mail.gmail.com>
-References: <20190114192201.23779-1-sibis@codeaurora.org>
- <CAD=FV=V2XoaDVy9hnh-S=jbzU-Di0KoD7gM2CxpZm3646k9ZjA@mail.gmail.com>
-Message-ID: <d3a814812039fdc7459656e2150e00a5@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Fri, 18 Jan 2019 00:32:09 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x0I5Uo9J016515;
+        Fri, 18 Jan 2019 14:30:51 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x0I5Uo9J016515
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547789451;
+        bh=g0IEtR2LdGStw2ATPKCXJNsCFAJuQAUZId86SAXzF9Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IqUYVyYCr2u20fWkbOsEFg9rWXO45lPD/7NZ5UyxX3zUB5d6Wr1rX3dhXZm9TsiaO
+         8jLl2EttACDLk+qZkF46YSf9gXnrGhgsNovK6ieRKHlNOJajkP8yNKuiKI4rPdcBc5
+         G1mLUyJkzyhTn5E+vKr/3+zDm6GRDR0NrN4wfaiAp5lNjIgp+yMl2ZKonhJDDT0Ram
+         18s1YQ8TZfLJonk5R1JZEgaZbU+H08gDnbziyr2mISmqQPaguirWfrLIq6RV9XLFqz
+         uBTI0uXOrY5eGLUZaOBHvs9r7g+IIMQx2jrm4GNxuS9YQrnVJK6xvLgUYXkJQalSHh
+         K2BHRUocjcj9w==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-stable # v4 . 20" <stable@vger.kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH] mtd: rawnand: denali: get ->setup_data_interface() working again
+Date:   Fri, 18 Jan 2019 14:30:38 +0900
+Message-Id: <1547789438-11899-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-18 04:35, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Jan 14, 2019 at 11:22 AM Sibi Sankar <sibis@codeaurora.org> 
-> wrote:
->> +               mss_pil: remoteproc@4080000 {
->> +                       compatible = "qcom,sdm845-mss-pil";
->> +                       reg = <0x04080000 0x408>, <0x04180000 0x48>;
-> 
-> This will now need to be adjusted to:
-> 
-> reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
+Commit 7a08dbaedd36 ("mtd: rawnand: Move ->setup_data_interface() to
+nand_controller_ops") missed to invert the if-conditonal for denali.
+Since then, the Denali NAND driver cannnot invoke setup_data_interface.
 
-Yup, this was on my todo list after Bjorn
-posted out the patch
+Fixes: 7a08dbaedd36 ("mtd: rawnand: Move ->setup_data_interface() to nand_controller_ops")
+Cc: linux-stable <stable@vger.kernel.org> # v4.20
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> 
-> This fixes things up to deal with the patch ("arm64: dts: qcom:
-> sdm845: Increase address and size cells for soc"), AKA:
-> - https://patchwork.kernel.org/patch/10767511/
-> - 
-> https://lkml.kernel.org/r/20190117042940.25487-2-bjorn.andersson@linaro.org
-> 
-> 
-> -Doug
+ drivers/mtd/nand/raw/denali.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index eebac35..6e8edc9 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -1322,7 +1322,7 @@ int denali_init(struct denali_nand_info *denali)
+ 	}
+ 
+ 	/* clk rate info is needed for setup_data_interface */
+-	if (denali->clk_rate && denali->clk_x_rate)
++	if (!denali->clk_rate || !denali->clk_x_rate)
+ 		chip->options |= NAND_KEEP_TIMINGS;
+ 
+ 	chip->legacy.dummy_controller.ops = &denali_controller_ops;
 -- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.7.4
+
