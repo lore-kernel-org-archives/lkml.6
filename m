@@ -2,142 +2,89 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D592C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785DDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBA1B2054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:13:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 391252054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 05:16:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="RXYp9C+J";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dD30X1VT"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QKGBxu3n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbfARFN6 (ORCPT
+        id S1727054AbfARFQ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 00:13:58 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:60529 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726381AbfARFN5 (ORCPT
+        Fri, 18 Jan 2019 00:16:57 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42175 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726226AbfARFQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 00:13:57 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 203C9259AB;
-        Fri, 18 Jan 2019 00:13:56 -0500 (EST)
-Received: from web6 ([10.202.2.216])
-  by compute4.internal (MEProxy); Fri, 18 Jan 2019 00:13:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        message-id:from:to:cc:mime-version:content-transfer-encoding
-        :content-type:subject:in-reply-to:date:references; s=fm1; bh=B/7
-        CgNU5s94c/1EaCMbOA6ixXBS4qhF3PsyR2LzWL7U=; b=RXYp9C+JP0uTj8++2Jb
-        4LKF4XSlvTbaEQv5YKVWnBb3omf7yyLCQ77YAb9MnaTIgev9OvA4cnpgkychacMY
-        3t0bmkdmvrUEOmUMn7t8qxogxn+N5GSY3YMpfjSsbDVnxzcA1GhslF2lOwP4nrao
-        nCf0bhlBio1N3H7AgEzn7xqSyGQmVlPnPqKmSIeXGxTE8sAa6FRHJQ3EGwD6ir/f
-        u+YqUX4Tn0rAw1Q821ChyTgLvjDQprcwxdlEqRWTHjx+hi3IH0UtMyF4OdOrL72c
-        ErXk2BFUvno7PbIF1v735K42KiFhfhxHRTWkCczqSVc/ViC3RPWAxYsO1FcncV6/
-        b0A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=B/7CgNU5s94c/1EaCMbOA6ixXBS4qhF3PsyR2LzWL
-        7U=; b=dD30X1VT7T5ZAuVN0Tn16AbaFIdglCogLoTOOecOPEQfx1c++628p9Ota
-        nG/4pTXkcOCW7g1HOF6LlW3ItiphvY5Vwbl/fW5FtnDasZWakK8nTPi6Ji7nTlqW
-        5WiNudaGD/omXspAvh2BZUIIeBVE4U88U4DYIHT2/5C5h9hEwlXdrMViDbDRL/dL
-        WEChh6FO1J6IBkmCMDJgSApeqIXqNELwe53ftVs6wPGvP3p0cBwMo/vL0Qra3AbG
-        ebzA07bTkGd9ZvXtSz9nYMCAAuEFzBGOpNMe5LvUbkt48DYr8CF2iAYELNZzDWbX
-        D8msEMekwHWjC3MGzehOzYMDVwbGg==
-X-ME-Sender: <xms:k2BBXHkGVzJQL260bklIiKfXWg-EvPpLsptRckMK3lqRfzEp54W_sg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrgeelgdejjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffhvfgggfgtof
-    fujgfffhesthejredtredtjeenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceo
-    rghnughrvgifsegrjhdrihgurdgruheqnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnh
-    gurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:k2BBXPFsjyVZ5P7AMBaVKleEO89bZMHupub_Nis--mKK7Y0ntK7m6g>
-    <xmx:k2BBXIrVyAenT_Udlkfe3mzynKmp8JtZPGndmgyMvUqLzr4Hb4fdDg>
-    <xmx:k2BBXD7xk1aEGteMZ4WCXMTYJtbG2OlVAz_x5uGefYNkkz7qJRs7ag>
-    <xmx:lGBBXKXLjrfQlxyzi0UonxsoVzJ9A4OvZ9DanZWXvwTjdt7zbMBERA>
-Received: by mailuser.nyi.internal (Postfix, from userid 99)
-        id C148B429B; Fri, 18 Jan 2019 00:13:54 -0500 (EST)
-Message-Id: <1547788434.2065387.1637728584.1098F843@webmail.messagingengine.com>
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     Stefan Schaeckeler <schaecsn@gmx.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>, Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-edac@vger.kernel.org
-Cc:     Stefan M Schaeckeler <sschaeck@cisco.com>
+        Fri, 18 Jan 2019 00:16:57 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so10545793lja.9
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 21:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4qOOIdur6T5/rfoMG/Swpii5RwwqntWqsy7IdjLQoZc=;
+        b=QKGBxu3n0jOCDPuNpLr5p0NKhYJ8N5QJxwh2ddc0H5Ui+S6IjO0C8Dn956YURsTw+M
+         bimDBDQahyk1fNHEtSQKi7WMkH7A/Rc17PqJu1IS1nv4CalcDRr6z7tO6au2J4Ui4m7M
+         RiATvy8aVzuoZImU4XE8qe0exP+3Q00x679gs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4qOOIdur6T5/rfoMG/Swpii5RwwqntWqsy7IdjLQoZc=;
+        b=M6U4BmjO0aP5oJ34PW6iAorRXBjBYTI8Dk3SyTTrcZDfjutBWM2zSSIkVUaMSP6Th5
+         who4CW2hExPlGs144O2ViCYvU4dht2w8KeaCHTIxAt0H/Ird4bg8kIyIkoKEevgHFc9V
+         27uW7bCCfw6QOuF7+ShnIGYz4DBPk2os3CeAyOyyZ1SQqqyNOUbo7pA/273t/DWyGClQ
+         rJLCq8eIumDMXdUoOoRQj1+fFc54+KeigNW+KK53H3oyYc3gLrLIfxQtPvY6LtfXSxW8
+         woZj/FBll0uMN80bMaSr9bYCc/rfBJ2sYx7nJyYGM9POtyUMVaY0GGMwFLCo9jjKFxcR
+         hz5A==
+X-Gm-Message-State: AJcUukdkrhVGTRRF6RWrFHR5H0LuG4cjVKEaUBaZpQKQTP61zpL+VYW9
+        trbvXMLG0asMZD1Ye6ATX7oZLR5lFgI=
+X-Google-Smtp-Source: ALg8bN6dAdQSn3XeJ5RgULvCEXrqPrshWrqGO9WT3EpNHpVb4zYDoAY5MakGR/mgMhv8RoPhFCLCEA==
+X-Received: by 2002:a2e:89d7:: with SMTP id c23-v6mr12185070ljk.0.1547788614998;
+        Thu, 17 Jan 2019 21:16:54 -0800 (PST)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id e94sm628243lfi.23.2019.01.17.21.16.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 21:16:53 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id t18-v6so10582031ljd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 21:16:53 -0800 (PST)
+X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr12025586ljk.80.1547788612981;
+ Thu, 17 Jan 2019 21:16:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: MessagingEngine.com Webmail Interface - ajax-36e4bfd3
-Subject: Re: [PATCH v2 2/2] dt-bindings: edac: Aspeed AST2500
-In-Reply-To: <1547743097-5236-3-git-send-email-schaecsn@gmx.net>
-Date:   Fri, 18 Jan 2019 15:43:54 +1030
-References: <1547743097-5236-1-git-send-email-schaecsn@gmx.net>
- <1547743097-5236-3-git-send-email-schaecsn@gmx.net>
+References: <CAPM=9twXwFGmN8fK-iNyFR6T_k64qB5OdNFP3fzKSSWKou1BcA@mail.gmail.com>
+In-Reply-To: <CAPM=9twXwFGmN8fK-iNyFR6T_k64qB5OdNFP3fzKSSWKou1BcA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 18 Jan 2019 17:16:36 +1200
+X-Gmail-Original-Message-ID: <CAHk-=wjS+RmnLFYJHxdvc07Z_GeXm+y92zm=16=a5WXYif49xQ@mail.gmail.com>
+Message-ID: <CAHk-=wjS+RmnLFYJHxdvc07Z_GeXm+y92zm=16=a5WXYif49xQ@mail.gmail.com>
+Subject: Re: [git pull] drm fixes for 5.0-rc3
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Jan 2019, at 03:08, Stefan Schaeckeler wrote:
-> From: Stefan M Schaeckeler <sschaeck@cisco.com>
-> 
-> Add support for EDAC on the Aspeed AST2500 SoC.
-> 
-> Signed-off-by: Stefan M Schaeckeler <sschaeck@cisco.com>
+On Fri, Jan 18, 2019 at 12:43 PM Dave Airlie <airlied@gmail.com> wrote:
+>
+> Going to be at LCA next week in Christchurch, but should be fine for
+> normal pulls.
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+.. hey, me too.
 
-> ---
->  .../bindings/edac/aspeed-sdram-edac.txt       | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/edac/aspeed-sdram-
-> edac.txt b/Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
-> new file mode 100644
-> index 000000000000..6a0f3d90d682
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
-> @@ -0,0 +1,25 @@
-> +Aspeed AST2500 SoC EDAC node
-> +
-> +The Aspeed AST2500 SoC supports DDR3 and DDR4 memory with and without 
-> ECC (error
-> +correction check).
-> +
-> +The memory controller supports SECDED (single bit error correction, 
-> double bit
-> +error detection) and single bit error auto scrubbing by reserving 8 
-> bits for
-> +every 64 bit word (effectively reducing available memory to 8/9).
-> +
-> +Note, the bootloader must configure ECC mode in the memory controller.
-> +
-> +
-> +Required properties:
-> +- compatible: should be "aspeed,ast2500-sdram-edac"
-> +- reg:        sdram controller register set should be <0x1e6e0000 
-> 0x174>
-> +- interrupts: should be AVIC interrupt #0
-> +
-> +
-> +Example:
-> +
-> +	edac: sdram@1e6e0000 {
-> +		compatible = "aspeed,ast2500-sdram-edac";
-> +		reg = <0x1e6e0000 0x174>;
-> +		interrupts = <0>;
-> +	};
-> -- 
-> 2.19.1
-> 
+>   git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-01-18
+
+Pulled,
+
+              Linus
