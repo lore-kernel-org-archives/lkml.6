@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2385C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDF3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B94442086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D019B2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:14:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfARIOA (ORCPT
+        id S1727641AbfARIN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:14:00 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2265 "EHLO huawei.com"
+        Fri, 18 Jan 2019 03:13:58 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2264 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727545AbfARINx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727245AbfARINx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 03:13:53 -0500
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B41D31A1BC471F3D7F40;
+        by Forcepoint Email with ESMTP id AFEF537977777D49B059;
         Fri, 18 Jan 2019 16:13:49 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
@@ -32,9 +32,9 @@ CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
         Yunsheng Lin <linyunsheng@huawei.com>,
         Peng Li <lipeng321@huawei.com>
-Subject: [PATCH net-next 04/12] net: hns3: reuse reinitialization interface in the hns3_set_channels
-Date:   Fri, 18 Jan 2019 16:13:06 +0800
-Message-ID: <1547799194-38212-5-git-send-email-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 05/12] net: hns3: add interface hclge_tm_bp_setup
+Date:   Fri, 18 Jan 2019 16:13:07 +0800
+Message-ID: <1547799194-38212-6-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
 References: <1547799194-38212-1-git-send-email-tanhuazhong@huawei.com>
@@ -47,126 +47,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is already common interface for network device reinitialization,
-so hns3_set_channels() should just call them.
+Provide a common interface to complete the back pressure settings
+of all enabled TCs. So other functions directly call this interface
+to complete the corresponding operation.
 
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 75 ++++---------------------
- 1 file changed, 12 insertions(+), 63 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 23 ++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index c88714c..0cd70d7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -4144,52 +4144,11 @@ static int hns3_reset_notify(struct hnae3_handle *handle,
- 	return ret;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 00458da..fda91e5 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -1228,10 +1228,23 @@ static int hclge_mac_pause_setup_hw(struct hclge_dev *hdev)
+ 	return hclge_mac_pause_en_cfg(hdev, tx_en, rx_en);
  }
  
--static int hns3_modify_tqp_num(struct net_device *netdev, u16 new_tqp_num)
--{
--	struct hns3_nic_priv *priv = netdev_priv(netdev);
--	struct hnae3_handle *h = hns3_get_handle(netdev);
--	int ret;
--
--	ret = h->ae_algo->ops->set_channels(h, new_tqp_num);
--	if (ret)
--		return ret;
--
--	ret = hns3_get_ring_config(priv);
--	if (ret)
--		return ret;
--
--	ret = hns3_nic_alloc_vector_data(priv);
--	if (ret)
--		goto err_alloc_vector;
--
--	hns3_restore_coal(priv);
--
--	ret = hns3_nic_init_vector_data(priv);
--	if (ret)
--		goto err_uninit_vector;
--
--	ret = hns3_init_all_ring(priv);
--	if (ret)
--		goto err_put_ring;
--
--	return 0;
--
--err_put_ring:
--	hns3_put_ring_config(priv);
--err_uninit_vector:
--	hns3_nic_uninit_vector_data(priv);
--err_alloc_vector:
--	hns3_nic_dealloc_vector_data(priv);
--	return ret;
--}
--
- int hns3_set_channels(struct net_device *netdev,
- 		      struct ethtool_channels *ch)
++static int hclge_tm_bp_setup(struct hclge_dev *hdev)
++{
++	int ret = 0;
++	int i;
++
++	for (i = 0; i < hdev->tm_info.num_tc; i++) {
++		ret = hclge_bp_setup_hw(hdev, i);
++		if (ret)
++			return ret;
++	}
++
++	return ret;
++}
++
+ int hclge_pause_setup_hw(struct hclge_dev *hdev)
  {
--	struct hns3_nic_priv *priv = netdev_priv(netdev);
- 	struct hnae3_handle *h = hns3_get_handle(netdev);
- 	struct hnae3_knic_private_info *kinfo = &h->kinfo;
--	bool if_running = netif_running(netdev);
- 	u32 new_tqp_num = ch->combined_count;
- 	u16 org_tqp_num;
  	int ret;
-@@ -4209,27 +4168,18 @@ int hns3_set_channels(struct net_device *netdev,
- 	if (kinfo->num_tqps == new_tqp_num)
- 		return 0;
+-	u8 i;
  
--	if (if_running)
--		hns3_nic_net_stop(netdev);
--
--	ret = hns3_nic_uninit_vector_data(priv);
--	if (ret) {
--		dev_err(&netdev->dev,
--			"Unbind vector with tqp fail, nothing is changed");
--		goto open_netdev;
+ 	ret = hclge_pause_param_setup_hw(hdev);
+ 	if (ret)
+@@ -1250,13 +1263,7 @@ int hclge_pause_setup_hw(struct hclge_dev *hdev)
+ 	if (ret)
+ 		dev_warn(&hdev->pdev->dev, "set pfc pause failed:%d\n", ret);
+ 
+-	for (i = 0; i < hdev->tm_info.num_tc; i++) {
+-		ret = hclge_bp_setup_hw(hdev, i);
+-		if (ret)
+-			return ret;
 -	}
 -
--	hns3_store_coal(priv);
--
--	hns3_nic_dealloc_vector_data(priv);
-+	ret = hns3_reset_notify(h, HNAE3_DOWN_CLIENT);
-+	if (ret)
-+		return ret;
- 
--	hns3_uninit_all_ring(priv);
--	hns3_put_ring_config(priv);
-+	ret = hns3_reset_notify(h, HNAE3_UNINIT_CLIENT);
-+	if (ret)
-+		return ret;
- 
- 	org_tqp_num = h->kinfo.num_tqps;
--	ret = hns3_modify_tqp_num(netdev, new_tqp_num);
-+	ret = h->ae_algo->ops->set_channels(h, new_tqp_num);
- 	if (ret) {
--		ret = hns3_modify_tqp_num(netdev, org_tqp_num);
-+		ret = h->ae_algo->ops->set_channels(h, org_tqp_num);
- 		if (ret) {
- 			/* If revert to old tqp failed, fatal error occurred */
- 			dev_err(&netdev->dev,
-@@ -4239,12 +4189,11 @@ int hns3_set_channels(struct net_device *netdev,
- 		dev_info(&netdev->dev,
- 			 "Change tqp num fail, Revert to old tqp num");
- 	}
-+	ret = hns3_reset_notify(h, HNAE3_INIT_CLIENT);
-+	if (ret)
-+		return ret;
- 
--open_netdev:
--	if (if_running)
--		hns3_nic_net_open(netdev);
--
--	return ret;
-+	return hns3_reset_notify(h, HNAE3_UP_CLIENT);
+-	return 0;
++	return hclge_tm_bp_setup(hdev);
  }
  
- static const struct hnae3_client_ops client_ops = {
+ void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc)
 -- 
 2.7.4
 
