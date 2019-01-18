@@ -2,87 +2,135 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45FDCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB287C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D8220855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3E2220855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 10:42:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKhzwCcD"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="KhzJX/iC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfARKmZ (ORCPT
+        id S1727285AbfARKmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 05:42:25 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36378 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfARKmX (ORCPT
+        Fri, 18 Jan 2019 05:42:38 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:47677 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbfARKmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 05:42:23 -0500
-Received: by mail-ot1-f65.google.com with SMTP id k98so13981933otk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 02:42:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lA1euusP2mPLKLhFrW24JXMPb7DfqCZVnQAvm+7i8AE=;
-        b=QKhzwCcD/RjnZx9934hBfs3nvETRKdzGKTKgqJURDM8m15SzORyD6qY7RdSIDIdAcR
-         I3ITZ7XIMYC8etL0kbkTzq3mJoqTNxu8MDr9xGCB1FGZtRNoZPXvqA2zqCQif8Wn/gM1
-         xoODf/biZjFhD2q9cGsOL/jBgyGhE67tjtIxVoSVbNeaQhwgmQQU7401VOYOB6eONZ4U
-         4fitaXdsIYi/suTs0Sp0zpPobOofPB0CMTyvQyl4ALtoPLKP0+tbQj4JjLHt/fxtJuJ0
-         5+EplOWbA0zYh9njyfknlrOOooTySx+KwVHMYb+94D22Z61s8R8DnNxVXlExNnTEOLpZ
-         kdWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lA1euusP2mPLKLhFrW24JXMPb7DfqCZVnQAvm+7i8AE=;
-        b=cNDtbZv26ZA524DVWbWKwn7OC0OaEcbqj3D5yTKGBPfJQjOZAnhhKTS7Faikc0FjQ7
-         ry6qVuTiMlX9OPFZQsiyM2/SCcq/3O0V4p9ARVbXcuL8zV2a5xjoppFys3sln1e4hb3+
-         OuA+vglanYO0LW3sjKxLbJmgMvNc4JqNcAhrHZGLW/G9i8Wgnj3gMq0p66ztgCJ232X1
-         KVtjNFIot5RbvMSAlQhwhtM8E1BSbgBZaiTn74xo+wowlKuBFwYFYt0cgonGhdK/jgZ/
-         cg6yUpk72pE2oBUDVJNJh1abgpLp4jAGoTHvx6RVLb2/ymUT71HkAMeErRoMfH5lKSEz
-         I/dg==
-X-Gm-Message-State: AJcUukcXQIsDj0vNC3T0CW3W6cLDN7Lln7Ofou/+lLhguqrLBoRD0/sk
-        roLL7FefYnqcCVVxtUmyCi3fh4IDqP98g8d/4sA=
-X-Google-Smtp-Source: ALg8bN7DbC6QRGhotIqY8aTkBgVf2TNhO3pldoBq3PbJ6mUXKty941IOaUdp2FNnL4x0cIGS7y3G/TR1MJSGNhdZ8yk=
-X-Received: by 2002:a9d:77d4:: with SMTP id w20mr11080182otl.196.1547808142538;
- Fri, 18 Jan 2019 02:42:22 -0800 (PST)
+        Fri, 18 Jan 2019 05:42:37 -0500
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x0IAgFGt003979;
+        Fri, 18 Jan 2019 19:42:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x0IAgFGt003979
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547808136;
+        bh=xjSDPRxQGZLfTBJrPX4o/SgdC05g07pN/CaTV31cUjI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KhzJX/iCu6ZCLuU3gJJR3+Ry6bwG/mWRomjxjKu7yEsDevxizjbSrE69k/As1V944
+         Rh/MngAbQi+jChoINwRozOCNE2SCbIW8BHOVHMOiPxEpIh2f514HgY1DVjR+O9hmGL
+         77DwSdFbGKHxctqbUJmCxKUgdsMOwOTN2Uhn+BAJVC53IeuOIUmQHjblq4JkXcE4Ol
+         MV3OEq0bvj/rY8ZfaUSDrBSEQ0FsI5RIlcupM3gEuivlE3YpjfBnuIuGZusuUp/w4d
+         GK8XN9F3p7OqxwV6l+pydykLA5cp+CEZPh3Imw3/1ntmos4+JZqA+qPs5lHIhKc1Tr
+         QDiTEO4ptTyAQ==
+X-Nifty-SrcIP: [209.85.222.49]
+Received: by mail-ua1-f49.google.com with SMTP id d21so4515501uap.9;
+        Fri, 18 Jan 2019 02:42:16 -0800 (PST)
+X-Gm-Message-State: AJcUukfZoyXteE6b+HDdp7sarfmhdI6Qsx9ObhIFn60GsyAAtrq8cUd2
+        3Y5lktlf9nlC+0OJZJSIIR4X//v/WygIZfikq+k=
+X-Google-Smtp-Source: ALg8bN6zhpGzzCVbyydBGiBWiypHH1RdGWUOZy02YmAi6Ubq3Ww6avHifboNt5b0GljM3z0iOVdw5q345XFzRmLv0LA=
+X-Received: by 2002:ab0:849:: with SMTP id b9mr7256515uaf.93.1547808135497;
+ Fri, 18 Jan 2019 02:42:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20190118090656.14201-1-stefan@agner.ch> <20190118090656.14201-3-stefan@agner.ch>
-In-Reply-To: <20190118090656.14201-3-stefan@agner.ch>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 18 Jan 2019 08:42:13 -0200
-Message-ID: <CAOMZO5ALY4gk33evmgafK9mgPYWL59ZfTjQjUtKujchHiHkDLA@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2 3/5] ASoC: imx-sgtl5000: don't print
- EPROBE_DEFER as error
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     timur@kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
+References: <CAK7LNATyx5DtopKfkS4ge=6F7e16qjvOr_1XOTvCZqaZKnPwxQ@mail.gmail.com>
+In-Reply-To: <CAK7LNATyx5DtopKfkS4ge=6F7e16qjvOr_1XOTvCZqaZKnPwxQ@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 18 Jan 2019 19:41:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARBzc+vM4v2ESF5LkDoAi4MzB6WVmMnVGnjKdM2PTqDMg@mail.gmail.com>
+Message-ID: <CAK7LNARBzc+vM4v2ESF5LkDoAi4MzB6WVmMnVGnjKdM2PTqDMg@mail.gmail.com>
+Subject: Re: [Question] What is the license of scripts/basic/fixdep.c ?
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kai Germaschewski <kai.germaschewski@gmx.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jiri Olsa <jolsa@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 7:07 AM Stefan Agner <stefan@agner.ch> wrote:
+On Fri, Jan 18, 2019 at 5:58 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> Probe deferral is to be expected during normal operation, so avoid
-> printing an error when it is encountered.
+> Hi.
 >
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+>
+> The comment block of scripts/basic/fixdep.c says as follows:
+>
+>
+>  * Author       Kai Germaschewski
+>  * Copyright    2002 by Kai Germaschewski  <kai.germaschewski@gmx.de>
+>  *
+>  * This software may be used and distributed according to the terms
+>  * of the GNU General Public License, incorporated herein by reference.
+>
+>
+>
+> It does not explicitly mention the version of GPL.
+>
+> In this case, I think the corresponding SPDX tag
+> is GPL-1.0+ instead of GPL-2.0
+>
+> Is this correct?
+>
+>
+>
+> There could be another problem regarding of this.
+>
+>
+>
+> Commit 9f7ef9854e80 copied scripts/basic/fixdep.c
+> to tools/build/fixdep.c, but it ripped off its license term.
+>
+> Later, it was tagged as GPL-2.0 by b24413180
+>
+> See 'git show  b24413180 -- tools/build/fixdep.c'
+>
+>
+> Maybe tools/build/fixdep.c should be corrected to GPL-1.0+ ?
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+
+I am not an expert of software license, but
+a little more thought about this
+if scripts/basic/fixdep.c is GPL-1.0+,
+
+
+
+Probably, either of the following is correct.
+
+
+Must tools/build/fixdep.c inherit GPL-1.0+
+from script/basic/fixdep.c ?
+
+ or
+
+Can you choose the license (any in GPL-1.0, GPL-2.0, GPL-3.0,
+GPL-1.0+, GPL-2.0+)
+for tools/build/fixdep.c at your opinion?
+(In this case, Jiri Olsa, the author of commit 9f7ef9854e800)
+
+
+
+If the latter is correct, we do not need to fix tools/build/fixdep.c
+
+
+-- 
+Best Regards
+Masahiro Yamada
