@@ -2,133 +2,191 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A6EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04D6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 324772087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:37:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZhPxxCxQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cey58c6Y"
+	by mail.kernel.org (Postfix) with ESMTP id 873522087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:37:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbfARPhI (ORCPT
+        id S1727921AbfARPhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:37:08 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46470 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727542AbfARPhH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:37:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8A75460CF4; Fri, 18 Jan 2019 15:37:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547825826;
-        bh=07iEEVK7MWO8aF+2e4opG9oRji52g7VGu2bTiKecU0M=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=ZhPxxCxQzBGzVzj040vwbIH59YQzmVR30p5U6T6xpHxLEazmXs8QpsHQb5mTd6ZNK
-         ie7VyIAgt9qWpmbbB+M3gWFKA919LXM+Fa5e14aOChNAf2VX4riCc2iEDqfto2fr7x
-         YxmPMa0WsadSdJYUz1aN4UPruWqbQYiM6V67JI00=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 25E026098B;
-        Fri, 18 Jan 2019 15:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547825823;
-        bh=07iEEVK7MWO8aF+2e4opG9oRji52g7VGu2bTiKecU0M=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=cey58c6YfWPr4UhqASdEfsbdXgncqLCPwptW7Q7MnTRmdv5fXsPYqMX5EcqIk1VmR
-         2O9njhCCZtsiJLKxejAgaaWBe0EGH6zdFKAju0NudFhNTTbFdxyExNmSg/UfVXI6IX
-         a7zV1mftRn3fNdYp1WDxbrNM+66dTykyT8XLVCu0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25E026098B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Eyal Reizer <eyalr@ti.com>, linux-wireless@vger.kernel.org,
-        Ricardo Salveti <rsalveti@rsalveti.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Jan Kiszka <jan.kiszka@web.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
-References: <20190116113723.15668-1-ulf.hansson@linaro.org>
-        <20190116154311.GP5544@atomide.com>
-        <CADYN=9L-x2Ar5COE3mJRZz_V-7TNOF__8Rh4Hq7YJ=PoHFrR3Q@mail.gmail.com>
-Date:   Fri, 18 Jan 2019 17:36:58 +0200
-In-Reply-To: <CADYN=9L-x2Ar5COE3mJRZz_V-7TNOF__8Rh4Hq7YJ=PoHFrR3Q@mail.gmail.com>
-        (Anders Roxell's message of "Fri, 18 Jan 2019 16:05:25 +0100")
-Message-ID: <877ef2ou3p.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 18 Jan 2019 10:37:32 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:54644 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727542AbfARPhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:37:31 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id F40E113F8D5;
+        Fri, 18 Jan 2019 16:36:59 +0100 (CET)
+Subject: Re: kmemleak panic
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
+References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
+ <20190118143434.GE118707@arrakis.emea.arm.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+Date:   Fri, 18 Jan 2019 16:36:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190118143434.GE118707@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anders Roxell <anders.roxell@linaro.org> writes:
+On 18/01/2019 15:34, Catalin Marinas wrote:
 
-> On Wed, 16 Jan 2019 at 16:43, Tony Lindgren <tony@atomide.com> wrote:
->>
->> * Ulf Hansson <ulf.hansson@linaro.org> [190116 11:37]:
->> > During "wlan-up", we are programming the FW into the WiFi-chip. However,
->> > re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
->> > is made in-between the programmings.
->> >
->> > To conform to this requirement and to fix the regression in a simple way,
->> > let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
->> > (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
->> > current code is to treat this scenario as an error, but unfortunate this
->> > doesn't work as expected, so let's fix this.
->> >
->> > The other part is to guarantee that a power cycle of the SDIO card has been
->> > completed when wl12xx_sdio_power_on() returns, as to allow the FW
->> > programming to succeed. However, relying solely on runtime PM to deal with
->> > this isn't sufficient. For example, userspace may prevent runtime suspend
->> > via sysfs for the device that represents the SDIO card, leading to that the
->> > mmc core also keeps it powered on. For this reason, let's instead do a
->> > brute force power cycle in wl12xx_sdio_power_on().
->> >
->> > Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
->> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> > ---
->> >
->> > Changes in v2:
->> >       - Keep the SDIO host claimed when calling mmc_hw_reset().
->> >       - Add a fixes tag.
->>
->> This v2 version works for me as tested with:
->>
->> # while [ 1 ]; do ifconfig wlan0 down; ifconfig wlan0 up; done
->> [  181.364990] wlcore: down
->> [  182.116424] wlcore: firmware booted (Rev 6.3.10.0.141)
->> [  182.151641] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
->> [  182.166778] wlcore: down
->> [  182.773132] wlcore: firmware booted (Rev 6.3.10.0.141)
->> [  182.811096] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
->> ...
->>
->> Thanks for fixing this issue properly, and feel free to add:
->>
->> Tested-by: Tony Lindgren <tony@atomide.com>
+> On Fri, Jan 18, 2019 at 02:36:46PM +0100, Marc Gonzalez wrote:
 >
-> Tested-by: Anders Roxell <anders.roxell@linaro.org>
->
-> I tested it on a hikey-6220, and it worked.
+>> Trying to diagnose a separate issue, I enabled a raft of debugging options,
+>> including kmemleak. However, it looks like kmemleak itself is crashing?
+>>
+>> We seem to be crashing on this code:
+>>
+>> 		kasan_disable_current();
+>> 		pointer = *ptr;
+>> 		kasan_enable_current();
+> 
+> There was another regression reported recently:
+> 
+> http://lkml.kernel.org/r/51e79597-21ef-3073-9036-cfc33291f395@lca.pw
+> 
+> See if reverting commit 9f1eb38e0e113 (mm, kmemleak: little optimization while
+> scanning) fixes it.
+> 
 
-So what's the conclusion, can I take this patch? I see that this didn't
-help with Jan but as Tony and Anders provided positive test results I'm
-inclined to take this now and Jan's problem can be fixed with another
-patch. Do everyone agree?
+[Drop LAKML, add LKML, add recipients]
 
--- 
-Kalle Valo
+Bug is easy to reproduce:
+
+boot
+mount -t debugfs nodev /sys/kernel/debug/ 
+echo scan > /sys/kernel/debug/kmemleak
+
+Unable to handle kernel paging request at virtual address ffffffc021e00000
+Mem abort info:
+  ESR = 0x96000006
+  Exception class = DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+Data abort info:
+  ISV = 0, ISS = 0x00000006
+  CM = 0, WnR = 0
+swapper pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+[ffffffc021e00000] pgd=000000017e3ba803, pud=000000017e3ba803, pmd=0000000000000000
+Internal error: Oops: 96000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 635 Comm: exe Not tainted 5.0.0-rc1 #16
+Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
+pstate: 80000085 (Nzcv daIf -PAN -UAO)
+pc : scan_block+0x70/0x190
+lr : scan_block+0x6c/0x190
+sp : ffffff80133b3b20
+x29: ffffff80133b3b20 x28: ffffffc0fdbaf018 
+x27: ffffffc022000000 x26: 0000000000000080 
+x25: ffffff80118bdf70 x24: ffffffc0f8cc8000 
+x23: ffffff8010bd8000 x22: ffffff8010bd8830 
+x21: ffffffc021e00ff9 x20: ffffffc0f8cc8050 
+x19: ffffffc021e00000 x18: 00000000000025fd 
+x17: 0000000000000200 x16: 0000000000000000 
+x15: ffffff8010c24dd8 x14: 00000000000025f9 
+x13: 00000000445b0e6c x12: ffffffc0f5a96658 
+x11: 0000000000000001 x10: ffffff8010bae688 
+x9 : ffffff8010baf000 x8 : ffffff8010bae688 
+x7 : 0000000000000003 x6 : 0000000000000000 
+x5 : ffffff801133ad60 x4 : 0000000000002878 
+x3 : ffffff8010c24d88 x2 : 7c512d102eca1300 
+x1 : ffffffc0f5a81b00 x0 : 0000000000000000 
+Process exe (pid: 635, stack limit = 0x(____ptrval____))
+Call trace:
+ scan_block+0x70/0x190
+ scan_gray_list+0x108/0x1c0
+ kmemleak_scan+0x33c/0x7c0
+ kmemleak_write+0x410/0x4b0
+ full_proxy_write+0x68/0xa0
+ __vfs_write+0x60/0x190
+ vfs_write+0xac/0x1a0
+ ksys_write+0x6c/0xe0
+ __arm64_sys_write+0x24/0x30
+ el0_svc_handler+0xc0/0x160
+ el0_svc+0x8/0xc
+Code: f9000fb4 d503201f 97ffffd2 35000580 (f9400260) 
+---[ end trace 8797ac2fea89abd6 ]---
+note: exe[635] exited with preempt_count 2
+
+
+
+Reverting 9f1eb38e0e1131e75cc4ac684391b25d70282589 does not help:
+
+Unable to handle kernel paging request at virtual address ffffffc021e00000
+Mem abort info:
+  ESR = 0x96000006
+  Exception class = DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+Data abort info:
+  ISV = 0, ISS = 0x00000006
+  CM = 0, WnR = 0
+swapper pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+[ffffffc021e00000] pgd=000000017e3ba803, pud=000000017e3ba803, pmd=0000000000000000
+Internal error: Oops: 96000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 636 Comm: exe Not tainted 5.0.0-rc1 #18
+Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
+pstate: 80000085 (Nzcv daIf -PAN -UAO)
+pc : scan_block+0x70/0x190
+lr : scan_block+0x6c/0x190
+sp : ffffff8013303b20
+x29: ffffff8013303b20 x28: ffffffc0fdbaf018 
+x27: ffffffc022000000 x26: 0000000000000080 
+x25: ffffff80118bdf70 x24: ffffffc0f8cc8000 
+x23: ffffff8010bd8000 x22: ffffff8010bd8830 
+x21: ffffffc021e00ff9 x20: ffffffc0f8cc8050 
+x19: ffffffc021e00000 x18: 0000000000002704 
+x17: 0000000000000200 x16: 0000000000000000 
+x15: ffffff8010c24dd8 x14: 0000000000002700 
+x13: 0000000068ed2dfa x12: ffffffc0f5a39a58 
+x11: 0000000000000001 x10: ffffff8010bae688 
+x9 : ffffff8010baf000 x8 : ffffff8010bae688 
+x7 : 0000000000000003 x6 : 0000000000000000 
+x5 : ffffff80113223a0 x4 : 00000000000029c8 
+x3 : ffffff8010c24d88 x2 : 7c512d102eca1300 
+x1 : ffffffc0f59f9200 x0 : 0000000000000000 
+Process exe (pid: 636, stack limit = 0x(____ptrval____))
+Call trace:
+ scan_block+0x70/0x190
+ scan_gray_list+0x108/0x1c0
+ kmemleak_scan+0x338/0x7c0
+ kmemleak_write+0x410/0x4b0
+ full_proxy_write+0x68/0xa0
+ __vfs_write+0x60/0x190
+ vfs_write+0xac/0x1a0
+ ksys_write+0x6c/0xe0
+ __arm64_sys_write+0x24/0x30
+ el0_svc_handler+0xc0/0x160
+ el0_svc+0x8/0xc
+Code: f9000fb4 d503201f 97ffffd2 35000580 (f9400260) 
+---[ end trace 65933b4754c5cee7 ]---
+note: exe[636] exited with preempt_count 2
+
+
+Regards.
