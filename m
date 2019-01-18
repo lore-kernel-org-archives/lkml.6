@@ -2,117 +2,142 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7C0C64E88
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6F6C5AC81
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C19220850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:10:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Z3+fpPkq"
+	by mail.kernel.org (Postfix) with ESMTP id BACEE20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfARRKr (ORCPT
+        id S1728451AbfARRLg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:10:47 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33902 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727986AbfARRKr (ORCPT
+        Fri, 18 Jan 2019 12:11:36 -0500
+Received: from 212-186-180-163.static.upcbusiness.at ([212.186.180.163]:39736
+        "EHLO cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727986AbfARRLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:10:47 -0500
-Received: by mail-qk1-f195.google.com with SMTP id q8so8489601qke.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:10:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=K+GzCAD5JsR2eGoi0Tbut5ZM+Ap7mhc0BwhnUoPeXpI=;
-        b=Z3+fpPkquX2HK49B7MytRdfIHj847IiGNe4sKqS2UJHboymqb5ts+19NoYVtYlEkbH
-         cwKcT6b8wyfJiWXm205uEH4PdqYFQZtkuLQw9XhjyJOIpHBFurP+6HKK7+GNInIrRs/g
-         kmQ7S0eZg+XMU90qsVpi2rQbOn444LLvRlG2HfUhWth27l5cEtsftNeC0bcSBjdUqovJ
-         tsoKRVWbbjz1u+iqroPTov0egXt5UBFF7UdiZKm56nQzvkAWkrZKrSVxK2F8v6VeD0IW
-         EbsHB8rcSn4w1x81XtNA98+NJnLNTH4WnA5muqQg9KauXlfS0tb35kXxQw/FMDjuiUy6
-         HGMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=K+GzCAD5JsR2eGoi0Tbut5ZM+Ap7mhc0BwhnUoPeXpI=;
-        b=SjAxCN5qytE391aTY46gr97wwAjXlLscmPW9iJMg7hQyZx4pW/Lm0twV1eBL9/npSs
-         i+etOoZQZ0K5lO4giWW/2G2OarIccrYk4giuWfvfIlHWu2OzSe2PVOrqv//x9+MRpgKA
-         9qbF0fSuSNKOVzRt320S+8Umxg0kxK87bfk9eIrEzbQLR+q7pRNJPO12eKKMVmwCu7Bm
-         roY2IFMxGGTlR6h6Ol01Q9dugXUD2eZRddOm5b8trfzc3iRUo54BvOL5x4invxLAnJMp
-         Zs0hfSSWmE0u6cyHCZyGHKa21UuX70SXEaH0kJi3OCDqFzAmZcjmDEUbPDaCtN+Hpsza
-         Ep6Q==
-X-Gm-Message-State: AJcUukeviRxvIOfb3tu/fakjv8yC7eVmD9Y38asQOJ+t6jJGpwcng1qx
-        E6EdRLxA+AwaZ3OwoelA3WaB8SvGaTNUhg==
-X-Google-Smtp-Source: ALg8bN6p1tRTi+S63c0oiFPifO7S8m74wh5lbdIfzyzLtncXi9/XcsGhORcqt3u4xm/5j2cyNtinYg==
-X-Received: by 2002:a37:5dc3:: with SMTP id r186mr15851811qkb.90.1547831445780;
-        Fri, 18 Jan 2019 09:10:45 -0800 (PST)
-Received: from ovpn-124-227.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id u67sm54293253qki.22.2019.01.18.09.10.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 09:10:45 -0800 (PST)
-Subject: Re: [PATCH v2] rbtree: fix the red root
-To:     Esme <esploit@protonmail.ch>
-Cc:     "dgilbert@interlog.com" <dgilbert@interlog.com>,
-        David Lechner <david@lechnology.com>,
-        Michel Lespinasse <walken@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "joeypabalinas@gmail.com" <joeypabalinas@gmail.com>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190111181600.GJ6310@bombadil.infradead.org>
- <864d6b85-3336-4040-7c95-7d9615873777@lechnology.com>
- <b1033d96-ebdd-e791-650a-c6564f030ce1@lca.pw>
- <8v11ZOLyufY7NLAHDFApGwXOO_wGjVHtsbw1eiZ__YvI9EZCDe_4FNmlp0E-39lnzGQHhHAczQ6Q6lQPzVU2V6krtkblM8IFwIXPHZCuqGE=@protonmail.ch>
- <c6265fc0-4089-9d1a-ba7c-b267b847747e@interlog.com>
- <UKsodHRZU8smIdO2MHHL4Yzde_YB4iWX43TaHI1uY2tMo4nii4ucbaw4XC31XIY-Pe4oEovjF62qbkeMsIMTrvT1TdCCP4Fs_fxciAzXYVc=@protonmail.ch>
- <ad591828-76e8-324b-6ab8-dc87e4390f64@interlog.com>
- <GBn2paWQ0Uy0COgTeJsgmC18Faw0x_yNIog8gpuC5TJ4kCn_IUH1EnHJW0mQeo3Qy5MMcpMzyw9Yer3lxyWYgtk5TJx8I3sJK4oVlIJh38s=@protonmail.ch>
- <dac115ca-d6ed-dfc0-161a-8e51a7f93e00@lca.pw>
- <V43yC74oVMPrFb5L6QvYmFx60e29_vCM12jAOjNpWyrsRbIkKjpDRS9uyMCAwOtLpoHKJkM1CVJ50oXG0n23vBvsAluprgSNas3aCeSP7rs=@protonmail.ch>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <86889aee-2e9c-a686-cfe9-dde27249da53@lca.pw>
-Date:   Fri, 18 Jan 2019 12:10:43 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <V43yC74oVMPrFb5L6QvYmFx60e29_vCM12jAOjNpWyrsRbIkKjpDRS9uyMCAwOtLpoHKJkM1CVJ50oXG0n23vBvsAluprgSNas3aCeSP7rs=@protonmail.ch>
+        Fri, 18 Jan 2019 12:11:35 -0500
+Received: from msmac.intern.sperl.org (account martin@sperl.org [10.10.10.11] verified)
+  by sperl.org (CommuniGate Pro SMTP 6.2.1 _community_)
+  with ESMTPSA id 7755052; Fri, 18 Jan 2019 17:11:31 +0000
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync instead run teardown delayed
+From:   kernel@martin.sperl.org
+In-Reply-To: <20190115212539.GK5522@sirena.org.uk>
+Date:   Fri, 18 Jan 2019 18:11:31 +0100
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com> <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org> <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com> <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org> <20190115192619.GG5522@sirena.org.uk> <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org> <20190115212539.GK5522@sirena.org.uk>
+To:     Mark Brown <broonie@kernel.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Mark!
+
+Just got access to my computer back for the weekend ;)
+
+> On 15.01.2019, at 22:25, Mark Brown <broonie@kernel.org> wrote:
+> 
+> On Tue, Jan 15, 2019 at 09:58:55PM +0100, Martin Sperl wrote:
+> 
+>> I may find some time over the weekend if no solution
+>> has been found until then.
+> 
+> Thanks for volunteering :)
+
+I actually brought this about so I see is as part of my
+responsibility trying to solve the issue as well...
+> 
+>> The way I would envision it it would have a “state”
+>> as a level (0=shutdown, 1=hw enabled, 2=in pump, 
+>> 3=in transfer, 4=in hw-mode,...) and a complete
+>> to allow waking the shutdown thread (and by this
+>> avoiding the busy wait loop we have now).
+>> This would replace those idling, busy, and running flags.
+> 
+> That's a good idea, yes - a single enum much more reflects what we can
+> actually do in terms of transitions.
+
+Does something like this looks acceptable?
+
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index ec210286567c..677fc5025033 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -288,6 +288,21 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
+ 	module_driver(__spi_driver, spi_register_driver, \
+ 			spi_unregister_driver)
+
++/* define SPI Controller states in the state machine */
++enum spi_controller_state {
++	SPI_CONTROLLER_STATE_SHUTDOWN		= 0,
++	SPI_CONTROLLER_STATE_IDLE		= 1,
++	SPI_CONTROLLER_STATE_IN_PROCESS		= 2,
++	SPI_CONTROLLER_STATE_IN_TRANSFER	= 3,
++};
++
++/* define SPI Controller mode */
++enum spi_controller_mode {
++	SPI_CONTROLLER_MODE_NORMAL	= 0, /* normal spi mode */
++	SPI_CONTROLLER_MODE_MEM		= 1, /* memory mode using mem_ops */
++	SPI_CONTROLLER_MODE_EXCLUSIVE	= 2, /* could replace bus_lock_flag */
++};
++
+ /**
+  * struct spi_controller - interface to SPI master or slave controller
+  * @dev: device interface to this driver
+@@ -332,14 +347,16 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
+  * @pump_idle_teardown: work structure for scheduling a teardown delayed
+  * @queue_lock: spinlock to syncronise access to message queue
+  * @queue: message queue
+- * @idling: the device is entering idle state
+  * @cur_msg: the currently in-flight message
+  * @cur_msg_prepared: spi_prepare_message was called for the currently
+  *                    in-flight message
+  * @cur_msg_mapped: message has been mapped for DMA
++ * @controller_state: defines the current state of the controller
++ *                    state machine
++ * @controller_state_changed: wakeup of threads interrested in getting
++ *                            notified about a mode change (primarily pm)
++ * @controller_mode: defines the current mode of the controller
+  * @xfer_completion: used by core transfer_one_message()
+- * @busy: message pump is busy
+- * @running: message pump is running
+  * @rt: whether this queue is set to run as a realtime task
+  * @auto_runtime_pm: the core should ensure a runtime PM reference is held
+  *                   while the hardware is prepared, using the parent
+@@ -524,9 +541,9 @@ struct spi_controller {
+ 	spinlock_t			queue_lock;
+ 	struct list_head		queue;
+ 	struct spi_message		*cur_msg;
+-	bool				idling;
+-	bool				busy;
+-	bool				running;
++	enum spi_controller_state	controller_state;
++	struct completion		controller_state_changed;
++	enum spi_controller_mode	controller_mode;
+ 	bool				rt;
+ 	bool				auto_runtime_pm;
+ 	bool                            cur_msg_prepared;
 
 
-On 1/16/19 9:37 AM, Esme wrote:
-> I have been off but back now, I had fetch'd current again and the diagnostics look a bit different, maybe I just got lucky.  Instead of fork'ng the test case (which is fairly aggressive in any case), interacting from the serial port with sig-int ^C tend's to trigger enough to hit something.  I'll get the page_owner sorted soon.
-> 
-> How I'm running;
-> 
-> qemu-system-x86_64 -kernel /home/files/dl/linux//arch/x86/boot/bzImage -append console=ttyS0 root=/dev/sda debug earlyprintk=serial slub_debug=QUZFP page_owner=on -hda stretch.img -net user,hostfwd=tcp::10021-:22 -net nic -enable-kvm -nographic -m 2G -smp 2
-> 
-> It's somewhat random I guess that in the last two CPU context dump's printed out, we see RAX and CR2 off by 4 from one another.
-> 
-> root@syzkaller:~# gcc -o test3 test3.c
-> [  392.754148] ata1: lost interrupt (Status 0x50)
-> [  392.754478] ata1.00: exception Emask 0x0 SAct 0x0 SErr 0x0 action 0x6 frozen
-> [  392.759687] ata1.00: failed command: READ DMA
-> [  392.761902] ata1.00: cmd c8/00:86:00:00:00/00:00:00:00:00/e0 tag 0 dma 68608 out
-> [  392.761902]          res 40/00:01:00:00:00/00:00:00:00:00/a0 Emask 0x4 (timeout)
-> [  392.768541] ata1.00: status: { DRDY }
-> [  392.769532] ata1: soft resetting link
-> [  392.937942] ata1.00: configured for MWDMA2
-> [  392.945624] ata1: EH complete
+SPI_CONTROLLER_MODE_EXCLUSIVE could replace the bus_lock_flag.
+I am also not sure of the “convention” of memory mode (i.e
+using mem_ops). Is it maybe implicitly spi_bus_locked - i.e
+typically only a single device?
 
-While you are gathering page_owner (or kdump), it might be useful to use virtio
-storage driver instead of legacy IDE here, as looks like this ATA was busted.
+Essentially we would transition between these states linearly
+(hopefully no jumps are needed).
+
+Martin
