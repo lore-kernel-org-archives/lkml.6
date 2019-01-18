@@ -2,166 +2,83 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C323EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C65C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B53120855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75D620855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 02:47:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="rO0HGKRU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfARCpi (ORCPT
+        id S1727005AbfARCr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 21:45:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54574 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726398AbfARCpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 21:45:38 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5598736807;
-        Fri, 18 Jan 2019 02:45:37 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-27.pek2.redhat.com [10.72.8.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 08724101961E;
-        Fri, 18 Jan 2019 02:45:29 +0000 (UTC)
-Date:   Fri, 18 Jan 2019 10:45:24 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: linux-next: manual merge of the block tree with the fscrypt tree
-Message-ID: <20190118024523.GA27808@ming.t460p>
-References: <20190116132522.1b756433@canb.auug.org.au>
- <ca843f39-3fcd-1a03-34c9-7284f10fe262@kernel.dk>
- <20190116031301.GC26146@ming.t460p>
- <a1ce4d1d-13e0-c765-bf22-55fd67c9f1d4@kernel.dk>
- <20190116073915.GA1089@ming.t460p>
- <62f1085d-a436-d0ab-6bc1-2b3d7d0ea2c7@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62f1085d-a436-d0ab-6bc1-2b3d7d0ea2c7@kernel.dk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 18 Jan 2019 02:45:37 +0000 (UTC)
+        Thu, 17 Jan 2019 21:47:29 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43574 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfARCr3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 21:47:29 -0500
+Received: by mail-pf1-f194.google.com with SMTP id w73so5800663pfk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jan 2019 18:47:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Os4/lrR4FDyW4kqiyHnEagj4yEUM1GPwMYoR/Eb8uUQ=;
+        b=rO0HGKRUy7MSA22tXUw6KP3CpxcHYzkt8EbTKWSJFTMnYVvUBIOOtEkIgx5oXE/AEo
+         6096lAC43uWtDzktRXfXuHE59zLJN2ivlchQLAyUblHpStRYSG1CB5D0NJYNb4AHla7x
+         HrB0nodQ1hZx3m2MXdXbUVYQAmIIuqDL1JUimFg7vuxH9EGKVeVksQDc+ZvFEjGjkx/R
+         1+mdhn1bd0DVR96I4Ce5+LNLxpaj093k8iexFAxFyxCP4ngVvcLHC8nwWR0NR7gPyfGF
+         eMiGE0SRCBaotPui9mNI37tYq9dCcSpOWqDYImc4rVaG8fV9ZgQSfJPZnez41UiOLVOb
+         Rqcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Os4/lrR4FDyW4kqiyHnEagj4yEUM1GPwMYoR/Eb8uUQ=;
+        b=kFEK+5TuNx3zR3dDdJN3bKS/N0FT+RiCetdE9PPCUQKldbDRztyUCCLyYya1wmd40i
+         9GntC6J3ecp6qs3ErLgkOyRfFNxivQTj+fzM0NuF0afNoUEBL9NyPjBDFgNv1GPv+/st
+         e45RfgcQGWPx25icLr86sKrMxCV0Mp9hENLY9BFFyYdWJgg9SecBrBW+BbZYQevucgkR
+         kbOxhx1lb/9gGN9L/JEK1Pu33M+pL1SFl7aLayz4U4rvY3/KttWO2GdYyPdxJQDztp0A
+         k1+uc0ZQcLGpav+X7HjoT5wG1cpLUSVRxPFYjiwtoBSSQ+gKZ3y0kMUh0rjl2PUAc2gh
+         1xmQ==
+X-Gm-Message-State: AJcUukfKwJuCn82y3gLBmtXFcTaZjm1Kh5mwv4qmSzpSB5rVv9yYIf04
+        JrlBDcSzu4gbSqEPzZpe4VTPww==
+X-Google-Smtp-Source: ALg8bN7NUFBHhPYg+pV7y9t+NycL7TuLeSdUfoezt0HxMESb0R1beIMm/3VLXt46tDB6A/p6OqrjVQ==
+X-Received: by 2002:a62:6b8a:: with SMTP id g132mr17659342pfc.201.1547779648340;
+        Thu, 17 Jan 2019 18:47:28 -0800 (PST)
+Received: from [192.168.0.79] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
+        by smtp.gmail.com with ESMTPSA id k129sm4185795pgk.29.2019.01.17.18.47.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 18:47:27 -0800 (PST)
+Subject: [PATCH v2 0/3] scsi: arcmsr: Fix suspend/resume of
+ ACB_ADAPTER_TYPE_B part 2
+From:   Ching Huang <ching2048@areca.com.tw>
+To:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@oracle.com, hch@infradead.org,
+        colin.king@canonical.com
+Content-Type: text/plain; charset="UTF-8"
+Date:   Fri, 18 Jan 2019 10:47:25 +0800
+Message-ID: <1547779645.4532.9.camel@Centos6.3-64>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 07:27:25AM -0700, Jens Axboe wrote:
-> On 1/16/19 12:39 AM, Ming Lei wrote:
-> > On Tue, Jan 15, 2019 at 08:17:36PM -0700, Jens Axboe wrote:
-> >> On 1/15/19 8:13 PM, Ming Lei wrote:
-> >>> On Tue, Jan 15, 2019 at 07:55:39PM -0700, Jens Axboe wrote:
-> >>>> On 1/15/19 7:25 PM, Stephen Rothwell wrote:
-> >>>>> Hi all,
-> >>>>>
-> >>>>> Today's linux-next merge of the block tree got a conflict in:
-> >>>>>
-> >>>>>   fs/ext4/readpage.c
-> >>>>>
-> >>>>> between commit:
-> >>>>>
-> >>>>>   acc9eb0a6073 ("ext4: add fs-verity read support")
-> >>>>>
-> >>>>> from the fscrypt tree and commit:
-> >>>>>
-> >>>>>   eb754eb2a953 ("block: allow bio_for_each_segment_all() to iterate over multi-page bvec")
-> >>>>>
-> >>>>> from the block tree.
-> >>>>>
-> >>>>> I fixed it up (see below - the former moved the code modified by the
-> >>>>> latter) and can carry the fix as necessary. This is now fixed as far as
-> >>>>> linux-next is concerned, but any non trivial conflicts should be mentioned
-> >>>>> to your upstream maintainer when your tree is submitted for merging.
-> >>>>> You may also want to consider cooperating with the maintainer of the
-> >>>>> conflicting tree to minimise any particularly complex conflicts.
-> >>>>
-> >>>> Ming, I'm pulling this, I thought we agreed none of these bullshit
-> >>>> renames? The fact that a patch looks like this:
-> >>>>
-> >>>> -               for_each_bvec(bv, (it)->bvecs, __cur_iter, __cur_iter)        \
-> >>>> +               for_each_segment(bv, (it)->bvecs, __cur_iter, __cur_iter)     \
-> >>>>
-> >>>> is SUPER annoying and does NOTHING but to cause merge conflicts.
-> >>>>
-> >>>> Resend it without that.
-> >>>
-> >>> We need to differentiate 'segment' with 'bvec' in bvec helpers, which is
-> >>> usually seldom used by drivers. For example, only two in-tree users(ceph, iov_iter).
-> >>> That is why I rename it, and seems Christoph prefers to do it too.
-> >>
-> >> If you want to do a rename, then we do it after. I don't want to deal with
-> >> weeks and weeks of fallout from this. Write a rename script that we can
-> >> then run at the end of the next merge window. You're going to be playing
-> >> catch-up until that happens if we go the current route, and honestly
-> >> I'm not at all interested in the fallout from that.
-> >>
-> >> I know exactly what will happen until 5.1-rc opens, and what my tree will
-> >> look like from having to deal with this. And then I know exactly what Linus
-> >> is going to say, and I can't even argue against it, since he'll be totally
-> >> right.
-> >>
-> >> Hence it's not going to happen this way.
-> > 
-> > I can remove the renaming in patch 'block: rename bvec helpers', but
-> > change on bio_for_each_segment_all() is inevitable, and it is still an
-> > API change, so merge conflict can't avoid too.
-> 
-> That's not what I'm complaining about, API changes are inevitable for
-> something like this. What I'm complaining about is the very example
-> I posted above, and which has already caused issues. That's a frivolous
-> name change. Don't do it.
+This patch series are against to mkp's 5.1/scsi-queue.
 
-Hi Jens,
+1. Due to dma_zalloc_coherent will be phase out, so use dma_alloc_coherent instead.
+2. For ACB_ADAPTER_TYPE_B controller, the read/write after hibernate and resume may
+got 'isr get an illegal ccb command' in log/messages sometimes. This patch fix it.
+3. Update driver version to v1.40.00.10-20190116
+---
 
-I may avoid the rename for avoiding merge conflict.
 
-However, given we have been back and forth for this naming thing several
-times, I'd rather explain the story one more time:
-
-In V13's patch4, we rename:
-
-    for_each_bvec
-    bvec_iter_bvec
-    bvec_iter_len
-    bvec_iter_page
-    bvec_iter_offset
-
-into:
-    for_each_segment
-    segment_iter_bvec
-    segment_iter_len
-    segment_iter_page
-    segment_iter_offset
-
-so that these helpers named with 'segment' only deal with single-page
-bvec, or called segment. We re-introduce helpers named with 'bvec'
-for multi-page bvec, as suggested by Christoph.
-
-If the above renaming has to be avoided, we need one new name
-for multi-page bvec helpers, previous I name it as 'mp_bvec', such as:
-
-    for_each_mp_bvec
-    mp_bvec_iter_bvec
-    mp_bvec_iter_len
-    mp_bvec_iter_page
-    mp_bvec_iter_offset
-
-However, Christoph were not very happy with the above name.
-
-Given you mentioned one more rename after the patches are merged should
-be fine, I understand the new name of 'mp_bvec' should be fine for you
-because it is just short-life.
-
-Please confirm or provide another better name, so that we can move on.
-
-Thanks,
-Ming
