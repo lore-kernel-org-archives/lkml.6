@@ -2,174 +2,130 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1DAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CCBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB8520850
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:30:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHIzpgdV"
+	by mail.kernel.org (Postfix) with ESMTP id C9D3520850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbfARQaZ (ORCPT
+        id S1728231AbfARQbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:30:25 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:41631 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbfARQaY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:30:24 -0500
-Received: by mail-vk1-f194.google.com with SMTP id t127so3193717vke.8;
-        Fri, 18 Jan 2019 08:30:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=f65MArzmJU0qkiDNGEa6uWblqhHifD4FZOoEhv0gxyQ=;
-        b=YHIzpgdVyJgHEQVmqDTpgWWF7BKvcgZmGezY0dwEBbGcjWcLAeSXi84OJUTeFQ0QSG
-         UUuHHKbgEH01+R182RzKhfcM04EGTW5TACaHFilYgo0MJFXndlVPfUhSXXC+jJE+LvAY
-         qed/fe+c/P/OuVMWingA70DKF6GfyYObsYkvhl3WMkwLVEASTgFOkaLyz51oBN9r4XO+
-         RXcDVsk3SVe9mltfoKAAEvnrq/ukpK7f5C/IuScSWqbeaTloN5+3ZuL6UUpv2kWFIWQa
-         bLCwcCjWY7wNrTT6M+WsKj9ACJloX0v6xnrT2fu/wRvio+TsGf6oUuKjamCokheAWGhy
-         dTMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f65MArzmJU0qkiDNGEa6uWblqhHifD4FZOoEhv0gxyQ=;
-        b=K3myADAC7sxaHmgkfXX4SJBLcYPepGDtWdgM4iYs9K9o3VeAwf7291Mcv5Mjl/iHPo
-         gyJglqWG1kPFt4caToYMmyHRJU/4R44+OCOQMwQYjsFwOVZ102cnS5ROkQZAN3tPAMjv
-         vPbBRdpe/mVAA0lCQZaE3qxcw9YbrdiQRufUqRQz7tpFv3cn9jsdQS9e/gywol8JlnG9
-         21Oi4tq5TpfoC2i04hOD8wMpF2C0Yu7m8cjwoo02WTfTiaOzIuD7+Y7Hv9gX2MPzmuow
-         sZw5/cd8gERURsiP3eJCENrNQNFNrN9kQ2Dm1HHrtjAUiYZOcjcUzwFGfHAvGO8u59Eg
-         e2Dw==
-X-Gm-Message-State: AJcUukcezI2wa0tdICxodTvz0gmhF9cumxEjQ8zHxu7PFUFZ9Re5TSkE
-        KJ/QTR4mSeq07Y885WOu3jtstwr90YgSmcC4hcI=
-X-Google-Smtp-Source: ALg8bN6GT54lpdo7t3h5zVmhQ+pRlUbtcjKWILHMm48422T3/Gq9T87+LFb0pcEdubQ7b45M4+oBBKy5o523SUtjFsA=
-X-Received: by 2002:a1f:4245:: with SMTP id p66mr7513800vka.48.1547829022987;
- Fri, 18 Jan 2019 08:30:22 -0800 (PST)
+        Fri, 18 Jan 2019 11:31:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:33502 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727346AbfARQbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 11:31:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BB4BEBD;
+        Fri, 18 Jan 2019 08:31:02 -0800 (PST)
+Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0E593F557;
+        Fri, 18 Jan 2019 08:31:00 -0800 (PST)
+Subject: Re: [PATCH v3 1/7] sysfs/cpu: Allow individual architectures to
+ select vulnerabilities
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, marc.zyngier@arm.com, dave.martin@arm.com,
+        shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
+        ykaukab@suse.de, julien.thierry@arm.com, mlangsdo@redhat.com,
+        Steven.Price@arm.com, stefan.wahren@i2se.com, rafael@kernel.org,
+        tglx@linutronix.de, jpoimboe@redhat.com, konrad.wilk@oracle.com,
+        mingo@kernel.org, longman@redhat.com, ak@linux.intel.com,
+        jkosina@suse.cz
+References: <20190109235544.2992426-1-jeremy.linton@arm.com>
+ <20190109235544.2992426-2-jeremy.linton@arm.com>
+ <901f2f29-aa06-13ad-1995-f9f22184e39d@arm.com>
+ <20190118154637.GA8564@kroah.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <988ddbc9-ae46-22cc-4228-5f1ea98605c1@arm.com>
+Date:   Fri, 18 Jan 2019 10:31:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <alpine.DEB.2.21.1901181147160.1647@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1901181147160.1647@nanos.tec.linutronix.de>
-From:   Shannon Nelson <shannon.lee.nelson@gmail.com>
-Date:   Fri, 18 Jan 2019 08:30:12 -0800
-Message-ID: <CAP-MU4M4FzAvgFodk1gm2dERJcuoJLCdX3QFFJMNDjFGvfGptw@mail.gmail.com>
-Subject: Re: [PATCH] net: sun: cassini: Cleanup license conflict
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Shannon Nelson <shannon.nelson@oracle.com>,
-        Zhu Yanjun <yanjun.zhu@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190118154637.GA8564@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 2:51 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> The recent addition of SPDX license identifiers to the files in
-> drivers/net/ethernet/sun created a licensing conflict.
->
-> The cassini driver files contain a proper license notice:
->
->   * This program is free software; you can redistribute it and/or
->   * modify it under the terms of the GNU General Public License as
->   * published by the Free Software Foundation; either version 2 of the
->   * License, or (at your option) any later version.
->
-> but the SPDX change added:
->
->    SPDX-License-Identifier: GPL-2.0
->
-> So the file got tagged GPL v2 only while in fact it is licensed under GPL
-> v2 or later.
->
-> It's nice that people care about the SPDX tags, but they need to be more
-> careful about it. Not everything under (the) sun belongs to ...
->
-> Fix up the SPDX identifier and remove the boiler plate text as it is
-> redundant.
->
-> Fixes: c861ef83d771 ("sun: Add SPDX license tags to Sun network drivers")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Shannon Nelson <shannon.nelson@oracle.com>
-> Cc: Zhu Yanjun <yanjun.zhu@oracle.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: netdev@vger.kernel.org
-> Cc: stable@vger.kernel.org
+On 01/18/2019 09:46 AM, Greg KH wrote:
+> On Mon, Jan 14, 2019 at 10:02:21AM +0000, Suzuki K Poulose wrote:
+>>
+>>
+>> On 09/01/2019 23:55, Jeremy Linton wrote:
+>>> As suggested on the list, https://lkml.org/lkml/2019/1/4/282, there are
+>>> a number of cases where its useful for a system to avoid exporting a
+>>> sysfs entry for a given vulnerability. This set adds an architecture
+>>> specific callback which returns the bitmap of vulnerabilities the
+>>> architecture would like to advertise.
+>>>
+>>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: Rafael J. Wysocki <rafael@kernel.org>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+>>> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>> Cc: Waiman Long <longman@redhat.com>
+>>> Cc: Andi Kleen <ak@linux.intel.com>
+>>> Cc: Jiri Kosina <jkosina@suse.cz>
+>>> ---
+>>>    drivers/base/cpu.c  | 19 +++++++++++++++++++
+>>>    include/linux/cpu.h |  7 +++++++
+>>>    2 files changed, 26 insertions(+)
+>>>
+>>> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+>>> index eb9443d5bae1..35f6dfb24cd6 100644
+>>> --- a/drivers/base/cpu.c
+>>> +++ b/drivers/base/cpu.c
+>>> @@ -561,6 +561,11 @@ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+>>>    	NULL
+>>>    };
+>>> +uint __weak arch_supported_vuln_attr_fields(void)
+>>> +{
+>>> +	return VULN_MELTDOWN|VULN_SPECTREV1|VULN_SPECTREV2|VULN_SSB|VULN_L1TF;
+>>> +}
+>>> +
+>>>    static const struct attribute_group cpu_root_vulnerabilities_group = {
+>>>    	.name  = "vulnerabilities",
+>>>    	.attrs = cpu_root_vulnerabilities_attrs,
+>>> @@ -568,6 +573,20 @@ static const struct attribute_group cpu_root_vulnerabilities_group = {
+>>>    static void __init cpu_register_vulnerabilities(void)
+>>>    {
+>>> +	int fld;
+>>> +	int max_fields = ARRAY_SIZE(cpu_root_vulnerabilities_attrs) - 1;
+>>> +	struct attribute **hd = cpu_root_vulnerabilities_attrs;
+>>> +	uint enabled_fields = arch_supported_vuln_attr_fields();
+>>> +
+>>> +	/* only enable entries requested by the arch code */
+>>> +	for (fld = 0; fld < max_fields; fld++) {
+>>> +		if (enabled_fields & 1 << fld) {
+>>> +			*hd = cpu_root_vulnerabilities_attrs[fld];
+>>> +			hd++;
+>>> +		}
+>>> +	}
+>>> +	*hd = NULL;
+>>> +
+>>
+>> nit: Could we use "is_visible" callback in the attribute group to check this
+>> dynamically ?
+> 
+> You should, that is what it is there for.
 
-Thanks, Thomas.
 
-Acked-by: Shannon Nelson <shannon.lee.nelson@gmail.com>
-
-> ---
->  drivers/net/ethernet/sun/cassini.c |   15 +--------------
->  drivers/net/ethernet/sun/cassini.h |   15 +--------------
->  2 files changed, 2 insertions(+), 28 deletions(-)
->
-> --- a/drivers/net/ethernet/sun/cassini.c
-> +++ b/drivers/net/ethernet/sun/cassini.c
-> @@ -1,22 +1,9 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> +// SPDX-License-Identifier: GPL-2.0+
->  /* cassini.c: Sun Microsystems Cassini(+) ethernet driver.
->   *
->   * Copyright (C) 2004 Sun Microsystems Inc.
->   * Copyright (C) 2003 Adrian Sun (asun@darksunrising.com)
->   *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License as
-> - * published by the Free Software Foundation; either version 2 of the
-> - * License, or (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, see <http://www.gnu.org/licenses/>.
-> - *
->   * This driver uses the sungem driver (c) David Miller
->   * (davem@redhat.com) as its basis.
->   *
-> --- a/drivers/net/ethernet/sun/cassini.h
-> +++ b/drivers/net/ethernet/sun/cassini.h
-> @@ -1,23 +1,10 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> +/* SPDX-License-Identifier: GPL-2.0+ */
->  /* $Id: cassini.h,v 1.16 2004/08/17 21:15:16 zaumen Exp $
->   * cassini.h: Definitions for Sun Microsystems Cassini(+) ethernet driver.
->   *
->   * Copyright (C) 2004 Sun Microsystems Inc.
->   * Copyright (c) 2003 Adrian Sun (asun@darksunrising.com)
->   *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License as
-> - * published by the Free Software Foundation; either version 2 of the
-> - * License, or (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, see <http://www.gnu.org/licenses/>.
-> - *
->   * vendor id: 0x108E (Sun Microsystems, Inc.)
->   * device id: 0xabba (Cassini)
->   * revision ids: 0x01 = Cassini
+Yes, its a good suggestion. OTOH, I think the plan is to drop this 
+functionality all together by removing the ability to build kernels 
+without the vulnerability checking/processor white lists. That will 
+simplify some of the #ifdef'ing going on as well.
 
 
 
--- 
-==============================================
-Mr. Shannon Nelson         Parents can't afford to be squeamish.
+
