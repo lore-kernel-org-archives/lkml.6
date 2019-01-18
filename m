@@ -2,122 +2,122 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F85FC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FDEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68F8120896
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ED8220855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 04:21:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="oG5OB19K";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FhySyZFw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbfAREUJ (ORCPT
+        id S1727099AbfAREVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 17 Jan 2019 23:20:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49084 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbfAREUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 17 Jan 2019 23:20:08 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7DC1913AA0;
-        Fri, 18 Jan 2019 04:20:08 +0000 (UTC)
-Received: from redhat.com (ovpn-120-92.rdu2.redhat.com [10.10.120.92])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A02C6608FA;
-        Fri, 18 Jan 2019 04:20:07 +0000 (UTC)
-Date:   Thu, 17 Jan 2019 23:20:07 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH v2] virtio_net: bulk free tx skbs
-Message-ID: <20190118041842.24067-1-mst@redhat.com>
+        Thu, 17 Jan 2019 23:21:15 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:59705 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726902AbfAREVP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 17 Jan 2019 23:21:15 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2BE4521ADD;
+        Thu, 17 Jan 2019 23:21:14 -0500 (EST)
+Received: from web6 ([10.202.2.216])
+  by compute4.internal (MEProxy); Thu, 17 Jan 2019 23:21:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        message-id:from:to:cc:mime-version:content-transfer-encoding
+        :content-type:references:date:in-reply-to:subject; s=fm1; bh=m9V
+        EIlsPUJt00+Jb74/la9I69I7E0UJYRsCp2QNRtBo=; b=oG5OB19KjjwCkg9aVNs
+        HVTm2eb8ZbNXU4ZpwzFkrQImrzjRLuj8LO1niVg5ZOy3PGpS7fwFJ+MIwUfXhPhB
+        mOwGjugIIppOol35NU6zfUMNKCHOo9ZpYejCb56EoH1KFZReNnaxWKQNxhJTaZSz
+        4wTjYaBcqGiCVOARPDi8pD9o4c7no9zgUONmgxryBjf6JbMvdCqj9pLi6sumDV3x
+        IQsVf7IrNX5AKSpZSBd/RwC3niykkatbdvZr7wbxMnaxItdYMYGeQX/tVG/HEVRw
+        LQ0F9W/pt+y44ykjlaBZ8TSmEY1XnHWFr6FiykpmVXv8WuGoluiQoqMdzKUDrXn3
+        avQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=m9VEIlsPUJt00+Jb74/la9I69I7E0UJYRsCp2QNRt
+        Bo=; b=FhySyZFw7t7GqpTwHw/DQ5vvJjjtU/tbtSVi9YVZ/og6ELh3be+DjJM6B
+        gxmaIP7yOgvvPx/1azZ5eQqKnwZQchefPWhjftWCrsxwjg5yElEUg/0WhhbWKtKp
+        S8oTNnRxn64TWJkXGo8EOU1YrUHBk66s5QgssB3mGVEpdg3pyQ2w2i+084on5XFc
+        Ir8mp52MNWv/RizXLF2urdyDmiPiV9Pq2yLS8VAosN+Ci2x+SlUoe08rEeeyUUNf
+        4QjXn56qY72h/+ZL/QZkqb8eWVdaeX8/xqf7O9ekS/BdZQh43h7MHK78mLvPM3Vl
+        tUSJPj16pT8P+yresBRLmbHv+bu8A==
+X-ME-Sender: <xms:OVRBXMDcb3mdRnHaga1R2g4qANad2gTgMIg2ETVVgIYH74dN1t44YA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrgeelgdeikecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffhvfgggfgtof
+    hfffgjufesthejredtredtjeenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceo
+    rghnughrvgifsegrjhdrihgurdgruheqnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnh
+    gurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:OVRBXK1qoPczqoQGfrGNuKZWw7T_yJOWQKSm4jOlnk2n4QcxCg8lAQ>
+    <xmx:OVRBXCXjn_vaA3S3yaqtftWEInbWegOglRUHMp58Dzkx7Rr9l6CPjQ>
+    <xmx:OVRBXEmU1h3z0pRYDZmCqcg7ZRjUSJLe0WstK7C8no9wTslOeBjyQA>
+    <xmx:OlRBXK-xS45LkojaaSuib_yZKftL2sz9PB6xtTV1DAoTT3TjjEh-lg>
+Received: by mailuser.nyi.internal (Postfix, from userid 99)
+        id BC8FD429B; Thu, 17 Jan 2019 23:21:12 -0500 (EST)
+Message-Id: <1547785272.2051152.1637704704.1926B2B5@webmail.messagingengine.com>
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     Vijay Khemka <vijaykhemka@fb.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 18 Jan 2019 04:20:08 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-36e4bfd3
+References: <20190117190830.824013-1-vijaykhemka@fb.com>
+Date:   Fri, 18 Jan 2019 14:51:12 +1030
+In-Reply-To: <20190117190830.824013-1-vijaykhemka@fb.com>
+Subject: Re: [PATCH] dt-bindings: aspeed-lpc: Make parameter optional
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use napi_consume_skb() to get bulk free.  Note that napi_consume_skb is
-safe to call in a non-napi context as long as the napi_budget flag is
-correct.
+Hi Vijay,
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
+On Fri, 18 Jan 2019, at 05:38, Vijay Khemka wrote:
+> Memory-region and flash phandle is not a required parameter, it is
+> optional to describe in device tree and needed only use basis.
+> 
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/aspeed-lpc.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt b/
+> Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
+> index 34dd89087cff..ff0cb28903dd 100644
+> --- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
+> @@ -135,6 +135,10 @@ Required properties:
+>  - clocks:	contains a phandle to the syscon node describing the clocks.
+>  		There should then be one cell representing the clock to use
+>  
+> +Optional properties:
+> +These below properties are optional and required only if one need to use it
+> +through ioctl.
 
-Changes from v1:
-	rebase on master.
+I'd just say "Optional properties". Leave the description off, as we probably
+shouldn't be talking about ioctls and such in the bindings.
 
-lightly tested on developer's box.
+Andrew
 
- drivers/net/virtio_net.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 023725086046..8fadd8eaf601 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1330,7 +1330,7 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
- 	return stats.packets;
- }
- 
--static void free_old_xmit_skbs(struct send_queue *sq)
-+static void free_old_xmit_skbs(struct send_queue *sq, bool in_napi)
- {
- 	struct sk_buff *skb;
- 	unsigned int len;
-@@ -1343,7 +1343,7 @@ static void free_old_xmit_skbs(struct send_queue *sq)
- 		bytes += skb->len;
- 		packets++;
- 
--		dev_consume_skb_any(skb);
-+		napi_consume_skb(skb, in_napi);
- 	}
- 
- 	/* Avoid overhead when no packets have been processed
-@@ -1369,7 +1369,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
- 		return;
- 
- 	if (__netif_tx_trylock(txq)) {
--		free_old_xmit_skbs(sq);
-+		free_old_xmit_skbs(sq, true);
- 		__netif_tx_unlock(txq);
- 	}
- 
-@@ -1445,7 +1445,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
- 	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
- 
- 	__netif_tx_lock(txq, raw_smp_processor_id());
--	free_old_xmit_skbs(sq);
-+	free_old_xmit_skbs(sq, true);
- 	__netif_tx_unlock(txq);
- 
- 	virtqueue_napi_complete(napi, sq->vq, 0);
-@@ -1514,7 +1514,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	bool use_napi = sq->napi.weight;
- 
- 	/* Free up any pending old buffers before queueing new ones. */
--	free_old_xmit_skbs(sq);
-+	free_old_xmit_skbs(sq, false);
- 
- 	if (use_napi && kick)
- 		virtqueue_enable_cb_delayed(sq->vq);
-@@ -1557,7 +1557,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
- 		if (!use_napi &&
- 		    unlikely(!virtqueue_enable_cb_delayed(sq->vq))) {
- 			/* More just got used, free them then recheck. */
--			free_old_xmit_skbs(sq);
-+			free_old_xmit_skbs(sq, false);
- 			if (sq->vq->num_free >= 2+MAX_SKB_FRAGS) {
- 				netif_start_subqueue(dev, qnum);
- 				virtqueue_disable_cb(sq->vq);
--- 
-MST
+> +
+>  - memory-region: A phandle to a reserved_memory region to be used for the LPC
+>  		to AHB mapping
+>  
+> -- 
+> 2.17.1
+> 
