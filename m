@@ -2,136 +2,133 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DD2C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EA7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7325520883
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:44:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="f6tuhciC"
+	by mail.kernel.org (Postfix) with ESMTP id 8F21F20883
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 15:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547826403;
+	bh=L25ti83ENXOpGfDeiE9QKBf/2CVNECajnyH5mmldHQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qzV//5opdqgW3hbj5E+pNO+2fHVhNan6LdRafmiykPIc5F/t0I+FkzeVfhT9nI41c
+	 1Y2lDvFp+lbgXdYz+0+HKMck6Dvi4KFQeTvXQkWN60qry06ojKKX65eI/06sbD5yR6
+	 SjUHYw2zdieJa80uB34ZoxsMJZyU5ESfkPUnL2d8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfARPoc (ORCPT
+        id S1727566AbfARPql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:44:32 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39396 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbfARPoc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:44:32 -0500
-Received: by mail-it1-f194.google.com with SMTP id a6so6335873itl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 07:44:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M8rXTSbBX4ubMvOTSWd77IQNaWFBuPmToHx2tviAqv8=;
-        b=f6tuhciCex2pZhhiAe+9TsKtQQMPXIxp/GZCnFoQ2lOYUxu8PzjpdZ28GrY3+ari/7
-         ClVCsgWJRqcJ4ZUkepP7DnoMeUy7CPjzTUxRGOovNivX8D0YTKqF0vHN2ZKGfN2Szuiz
-         BBsSBEIxoolJqcSsitbbXBgKw5QSuoPimSBfo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M8rXTSbBX4ubMvOTSWd77IQNaWFBuPmToHx2tviAqv8=;
-        b=SM9SrCd4qKIh2XS9Oqyws3ocVxv2Blkolt5tQUSilR3crWjuLX45k/N3jcl8amGOwt
-         VF0kYvJPlOk0Opzq6euOz0ZMHCaKYgcHzHnhzhnWB4QFV2vbxau6g/9F2GF23mFcUCpL
-         aoIMhBlNMQrMKAK5fq0id5RYPGdNUXop6lAjiju/1Ji9gxMe9QfmKDM0EKbmBp9TOnlY
-         aNk1GeOb4KRYORj6rOqSIO7TPJ7u0doo3wvAXfi664lXotojSWyWbtAZfL28EGTbtSJs
-         Y44of+pcTYR74ik87tr5bd94Cw/MmLxRUf+5NOmoesyy8btuUDrTJYRbyxafOEFkechr
-         YEWQ==
-X-Gm-Message-State: AJcUukeOW8NUkJRqSWrxSrWIoYRWag70uIhBDciAtY84ZDMlTwQgGwuL
-        HlgPqWWVbUsVPmZE3Sw8uRVLIp0oWvnBYzyIuF745g==
-X-Google-Smtp-Source: ALg8bN6L/+sKvZ0HTo+pIJ0mihUdAg+iv8v9dLRS+wyz/iSOZ/Oqc48dXJYeSuGKMMhAWuAT1z0BlLaP1k/SJLNIQ9o=
-X-Received: by 2002:a24:10cb:: with SMTP id 194mr11701953ity.173.1547826271072;
- Fri, 18 Jan 2019 07:44:31 -0800 (PST)
+        Fri, 18 Jan 2019 10:46:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726902AbfARPqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:46:40 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19D142087E;
+        Fri, 18 Jan 2019 15:46:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547826399;
+        bh=L25ti83ENXOpGfDeiE9QKBf/2CVNECajnyH5mmldHQc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rlWtbnSa/qZNZMmnIEHI1LeTVfM1YVw1J9ErRVA27MORh+sGQS9vTT5AoDvuw0Tdk
+         hcX0p/T2cBsk+FnlDsw8YWXHtGKizlxyizVyOCLo0JnIAZDi1SzF5ib+8k5eNrZf5f
+         YRSMpLa7kwF9N3+ZIFkL1BsjUotAD7TgXFUSITyE=
+Date:   Fri, 18 Jan 2019 16:46:37 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     jeremy.linton@arm.com, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        dave.martin@arm.com, shankerd@codeaurora.org,
+        linux-kernel@vger.kernel.org, ykaukab@suse.de,
+        julien.thierry@arm.com, mlangsdo@redhat.com, Steven.Price@arm.com,
+        stefan.wahren@i2se.com, rafael@kernel.org, tglx@linutronix.de,
+        jpoimboe@redhat.com, konrad.wilk@oracle.com, mingo@kernel.org,
+        longman@redhat.com, ak@linux.intel.com, jkosina@suse.cz
+Subject: Re: [PATCH v3 1/7] sysfs/cpu: Allow individual architectures to
+ select vulnerabilities
+Message-ID: <20190118154637.GA8564@kroah.com>
+References: <20190109235544.2992426-1-jeremy.linton@arm.com>
+ <20190109235544.2992426-2-jeremy.linton@arm.com>
+ <901f2f29-aa06-13ad-1995-f9f22184e39d@arm.com>
 MIME-Version: 1.0
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
- <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
- <20190107141158.zaimizk4rlqa6xli@flea> <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
- <20190108085829.clianbtjovu3oieq@flea> <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
- <20190112164319.whr7gwvl4oux5svz@flea> <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
- <20190116191756.ajzzaga43srk77dk@flea> <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
-In-Reply-To: <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 18 Jan 2019 21:14:19 +0530
-Message-ID: <CAMty3ZDbTgo3EY12VC0X_XuaRobQXvHx=Y6-_sgSWxDm1ZXbHQ@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <901f2f29-aa06-13ad-1995-f9f22184e39d@arm.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 10:02 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
-> > > > > > > > Again, I cannot help you without the datasheet for the panels you're
-> > > > > > > > trying to submit.
-> > > > > > >
-> > > > > > > The panel bound with Sitronix ST7701 IC
-> > > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.pdf
-> > > > > >
-> > > > > > It's the controller, not the panel
-> > > > >
-> > > > > As I said before, the datasheet of that panel doesn't have any
-> > > > > information except electrical characteristics and used IC which is
-> > > > > ST7701.
-> > > > >
-> > > > > I have one more panel, which is from Bananapi, S070WV20-CT16 ICN621
-> > > > > please find the attachment for the same.
-> > > > >
-> > > > > Here is some more details of the same.
-> > > > >
-> > > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/boot/dts/erobbing/x300/x300.dtsi#L81
-> > > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_Slave/USER/main.c#L15
-> > > > >
-> > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
-> > > > > matches timings for
-> > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
-> > > > >
-> > > > > https://github.com/zestroly/micromat/blob/master/test/raspberry/ICN6211.cpp#L169
-> > > >
-> > > > Where did you get the timings from then?
-> > >
-> > > You mean drm_mode timings, the same panel with RGB available in
-> > > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
-> > > sequence commands from BSP[3]
-> > >
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/panel/panel-simple.c?id=7ad8b41cd8f5c2842646d01cdd576663caee04a7
-> > > [2] https://patchwork.kernel.org/patch/10680331/
-> > > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
-> >
-> > So you had no reliable source for the timings then? How do you know if
-> > all your patches that are timing related are right then?
->
-> I don't understand your point, or may be I confused with many links
-> that I attached in previous mail.
->
-> 1. Patch for same panel timings are already in Mainline that was
-> tested on one of the board. [1]
-> 2. Driver from AW, released bsp from BPI-M64-bsp [3]
->
-> Do you think the above two points are not valid sources?
+On Mon, Jan 14, 2019 at 10:02:21AM +0000, Suzuki K Poulose wrote:
+> 
+> 
+> On 09/01/2019 23:55, Jeremy Linton wrote:
+> > As suggested on the list, https://lkml.org/lkml/2019/1/4/282, there are
+> > a number of cases where its useful for a system to avoid exporting a
+> > sysfs entry for a given vulnerability. This set adds an architecture
+> > specific callback which returns the bitmap of vulnerabilities the
+> > architecture would like to advertise.
+> > 
+> > Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Rafael J. Wysocki <rafael@kernel.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> > Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Waiman Long <longman@redhat.com>
+> > Cc: Andi Kleen <ak@linux.intel.com>
+> > Cc: Jiri Kosina <jkosina@suse.cz>
+> > ---
+> >   drivers/base/cpu.c  | 19 +++++++++++++++++++
+> >   include/linux/cpu.h |  7 +++++++
+> >   2 files changed, 26 insertions(+)
+> > 
+> > diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> > index eb9443d5bae1..35f6dfb24cd6 100644
+> > --- a/drivers/base/cpu.c
+> > +++ b/drivers/base/cpu.c
+> > @@ -561,6 +561,11 @@ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+> >   	NULL
+> >   };
+> > +uint __weak arch_supported_vuln_attr_fields(void)
+> > +{
+> > +	return VULN_MELTDOWN|VULN_SPECTREV1|VULN_SPECTREV2|VULN_SSB|VULN_L1TF;
+> > +}
+> > +
+> >   static const struct attribute_group cpu_root_vulnerabilities_group = {
+> >   	.name  = "vulnerabilities",
+> >   	.attrs = cpu_root_vulnerabilities_attrs,
+> > @@ -568,6 +573,20 @@ static const struct attribute_group cpu_root_vulnerabilities_group = {
+> >   static void __init cpu_register_vulnerabilities(void)
+> >   {
+> > +	int fld;
+> > +	int max_fields = ARRAY_SIZE(cpu_root_vulnerabilities_attrs) - 1;
+> > +	struct attribute **hd = cpu_root_vulnerabilities_attrs;
+> > +	uint enabled_fields = arch_supported_vuln_attr_fields();
+> > +
+> > +	/* only enable entries requested by the arch code */
+> > +	for (fld = 0; fld < max_fields; fld++) {
+> > +		if (enabled_fields & 1 << fld) {
+> > +			*hd = cpu_root_vulnerabilities_attrs[fld];
+> > +			hd++;
+> > +		}
+> > +	}
+> > +	*hd = NULL;
+> > +
+> 
+> nit: Could we use "is_visible" callback in the attribute group to check this
+> dynamically ?
 
-fyi, the panel datasheet attached in above mail has timing information.
+You should, that is what it is there for.
+
+thanks,
+
+greg k-h
