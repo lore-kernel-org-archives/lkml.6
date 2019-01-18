@@ -2,108 +2,130 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B39C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C07C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80DB120823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:58:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547816303;
-	bh=a3MFxRbkHlEMNLU4LFrt4AA7jVDj/AkT0ntlpJzBIDU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=OoXeFPqqTSjYPOUFMQSkzc2KicZKA93ngbzCus+aPqAhfBdMsb1YrZ/eB9DX8hWag
-	 Cypq/KS2DXFoHlnU11UMifFyvsSi5lpCLGk2/OuA+Ka9GHRQf1sSZTE6kkvyxcYBiS
-	 rjVkKLXNf2u5d+8Wcpm4bWHRhD8gsupQOqPOlEzg=
+	by mail.kernel.org (Postfix) with ESMTP id 21AE020823
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 12:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbfARM6V (ORCPT
+        id S1727861AbfARM61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 07:58:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46542 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbfARM6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 07:58:21 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51F9C2CD7EB;
-        Fri, 18 Jan 2019 12:58:20 +0000 (UTC)
-Received: from krava.redhat.com (unknown [10.40.205.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E8C519741;
-        Fri, 18 Jan 2019 12:58:18 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        Lance Digby <ldigby@redhat.com>
-Subject: [PATCH] bpftool: Fix prog dump by tag
-Date:   Fri, 18 Jan 2019 13:58:17 +0100
-Message-Id: <20190118125817.10763-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 18 Jan 2019 12:58:20 +0000 (UTC)
+        Fri, 18 Jan 2019 07:58:27 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2268 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727801AbfARM6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 07:58:25 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EA99FFEEA03D4D70EFD3;
+        Fri, 18 Jan 2019 20:58:21 +0800 (CST)
+Received: from [127.0.0.1] (10.57.115.182) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Fri, 18 Jan 2019
+ 20:58:12 +0800
+Subject: Re: [PATCH rdma-rc 1/3] RDMA/hns: Fix the Oops during rmmod or insmod
+ ko when reset occurs
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+References: <1547128663-69220-1-git-send-email-xavier.huwei@huawei.com>
+ <1547128663-69220-2-git-send-email-xavier.huwei@huawei.com>
+ <20190111213411.GA22310@ziepe.ca> <5C399D73.5000902@huawei.com>
+ <20190114220655.GD1208@ziepe.ca> <5C3D3BD1.4000508@huawei.com>
+ <20190115220259.GH22045@ziepe.ca>
+CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <liudongdong3@huawei.com>, <liuyixian@huawei.com>,
+        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
+From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5C41CD63.60506@huawei.com>
+Date:   Fri, 18 Jan 2019 20:58:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190115220259.GH22045@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lance reported an issue with bpftool not being able to
-dump program if there are more programs loaded and you
-want to dump any but the first program, like:
 
-  # bpftool prog
-  28: kprobe  name trace_req_start  tag 1dfc28ba8b3dd597  gpl
-  	loaded_at 2019-01-18T17:02:40+1100  uid 0
-  	xlated 112B  jited 109B  memlock 4096B  map_ids 13
-  29: kprobe  name trace_req_compl  tag 5b6a5ecc6030a683  gpl
-  	loaded_at 2019-01-18T17:02:40+1100  uid 0
-  	xlated 928B  jited 575B  memlock 4096B  map_ids 13,14
-  #  bpftool prog dum jited tag 1dfc28ba8b3dd597
-   0:	push   %rbp
-   1:	mov    %rsp,%rbp
-  ...
 
-  #  bpftool prog dum jited tag 5b6a5ecc6030a683
-  Error: can't get prog info (29): Bad address
+On 2019/1/16 6:02, Jason Gunthorpe wrote:
+> On Tue, Jan 15, 2019 at 09:48:01AM +0800, Wei Hu (Xavier) wrote:
+>>
+>> On 2019/1/15 6:06, Jason Gunthorpe wrote:
+>>> On Sat, Jan 12, 2019 at 03:55:31PM +0800, Wei Hu (Xavier) wrote:
+>>>> On 2019/1/12 5:34, Jason Gunthorpe wrote:
+>>>>> On Thu, Jan 10, 2019 at 09:57:41PM +0800, Wei Hu (Xavier) wrote:
+>>>>>> +	/* Check the status of the current software reset process, if in
+>>>>>> +	 * software reset process, wait until software reset process finished,
+>>>>>> +	 * in order to ensure that reset process and this function will not call
+>>>>>> +	 * __hns_roce_hw_v2_uninit_instance at the same time.
+>>>>>> +	 * If a timeout occurs, it indicates that the network subsystem has
+>>>>>> +	 * encountered a serious error and cannot be recovered from the reset
+>>>>>> +	 * processing.
+>>>>>> +	 */
+>>>>>> +	if (ops->ae_dev_resetting(handle)) {
+>>>>>> +		dev_warn(dev, "Device is busy in resetting state. waiting.\n");
+>>>>>> +		end = msecs_to_jiffies(HNS_ROCE_V2_RST_PRC_MAX_TIME) + jiffies;
+>>>>>> +		while (ops->ae_dev_resetting(handle) &&
+>>>>>> +		       time_before(jiffies, end))
+>>>>>> +			msleep(20);
+>>>>> Really? Does this have to be so ugly? Why isn't there just a simple
+>>>>> lock someplace that is held during reset?
+>>>>>
+>>>>> I'm skeptical that all this strange looking stuff is properly locked
+>>>>> and concurrency safe.
+>>>> Hi, Jason
+>>>>
+>>>> The hns3 NIC driver notifies the hns RoCE driver to perform
+>>>> reset related processing by calling the .reset_notify() interface
+>>>> registered by the RoCE driver.
+>>>>
+>>>> There is a constraint on the hip08 chip, the NIC driver needs to
+>>>> stop the flow before hardware startup reset, otherwise the chip
+>>>> may hang up.
+>>>>
+>>>> We've also thought about using locks, but found using locks can
+>>>> lead to more serious problems because of that restriction of the
+>>>> chip.
+>>>> If using locks here, reset processing may wait for uninstallation
+>>>> to complete, this may lead that NIC driver fails to stop the flow
+>>>> in time in the reset process, thus causing the chip to hang up.
+>>> If you are sleeping then I'm sure a lock can be used instead, how
+>>> would it be any different?
+>> Hi, Jason
+>>     If using locks here, reset process may wait until uninstallation to
+>> complete,
+>>         it may trigger the chip constraint, causing chip to hang up.
+>>     But if using sleeping here, there will notthe case that reset
+>> process wait until
+>>        uninstallation to complete, then will not trigger the chip
+>> constraint.
+> But how is this even right? If ops->ae_dev_resetting can change at any
+> time, and you need to wait for it here, without locks can't it just
+> change instantly after the if statement?
+>
+> I think it shows the concurrancy & locking is not done right when I
+> see loops reading shared data and spinning on them with msleep.
+Hi, Jason
 
-The problem is in the prog_fd_by_tag function not cleaning
-the struct bpf_prog_info before another request, so the
-previous program length is still in there and kernel assumes
-it needs to dump the program, which fails because there's no
-user pointer set.
+    Thanks for your comments,
+    We will modify the related process in hns NIC driver and delete checking
+    whether in the reset state and waiting for the reset to complete in
+    hns_roce_hw_v2_uninit_instance function, and will send patch V2 for
+    rdma-next branch. Thanks
 
-Moving the struct bpf_prog_info declaration into the loop,
-so it gets cleaned before each query.
+    Regards
+Xavier
+> Jason
+>
+> .
+>
 
-Reported-by: Lance Digby <ldigby@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/bpf/bpftool/prog.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index 2d1bb7d6ff51..b54ed82b9589 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -78,13 +78,14 @@ static void print_boot_time(__u64 nsecs, char *buf, unsigned int size)
- 
- static int prog_fd_by_tag(unsigned char *tag)
- {
--	struct bpf_prog_info info = {};
--	__u32 len = sizeof(info);
- 	unsigned int id = 0;
- 	int err;
- 	int fd;
- 
- 	while (true) {
-+		struct bpf_prog_info info = {};
-+		__u32 len = sizeof(info);
-+
- 		err = bpf_prog_get_next_id(id, &id);
- 		if (err) {
- 			p_err("%s", strerror(errno));
--- 
-2.17.2
 
