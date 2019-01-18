@@ -2,101 +2,109 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7DAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31F5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C0002086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73CAC20850
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PYfEWPpI"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l6uFPO04"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbfARQJh (ORCPT
+        id S1727785AbfARQJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:09:37 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43014 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfARQJh (ORCPT
+        Fri, 18 Jan 2019 11:09:52 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:33702 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbfARQJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 11:09:37 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0IG9VY1116565;
-        Fri, 18 Jan 2019 10:09:31 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547827771;
-        bh=kdnsi1vWOwdZ5miOnYpGyxAuJdw0eHG3tnXCtnQUav4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=PYfEWPpI6QILU7Q/S2BT6f965xY1ZaazR3eKw+RsALGenel5iMpW9IWC0ew5wbO+6
-         oQl1JNCzSTWF/Y38zj2qzBk+rWc4n7DW+aEmII1S5K5HxeyzDaEtFL4D6yNUaWBRwK
-         K+Sha7PFFz62qjFIbglLqwG09JIb8kBxAn+uuVdc=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0IG9VGW091978
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Jan 2019 10:09:31 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 18
- Jan 2019 10:09:30 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 18 Jan 2019 10:09:30 -0600
-Received: from [172.22.101.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0IG9U1P008823;
-        Fri, 18 Jan 2019 10:09:30 -0600
-Subject: Re: [PATCH 12/14] staging: android: ion: Declare helpers for carveout
- and chunk heaps
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
-        <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190111180523.27862-1-afd@ti.com>
- <20190111180523.27862-13-afd@ti.com> <20190118095909.GB28982@kroah.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <f06330ff-6319-3d80-fd70-654cf6681144@ti.com>
-Date:   Fri, 18 Jan 2019 10:09:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 18 Jan 2019 11:09:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iX8VW9HjgFXT7Ii2QEevfwIhExiKmVnAFwBnYZ0K2tw=; b=l6uFPO04/Q7PWBF7g0c1NObHQ
+        yQON4kjC6prOLFimKVoHYoVe1+V5Q4SURU8gSlcZlnysvOF35N1tH2175YsULIrkAC7D/RaRy3gqI
+        tuzJxrbKyI9WfIg9gpDof1ebaKrcVJwKJhqRqxClqK12ed3oJdj3kxFBCUJajfCG4mmA9qUjT5FqN
+        BP2JNY4mC0h5wX8Qhigv0CrED03BkQrZ5aSORzYdOdHhoGWrmirfJXrC/3CQsLo58HsiibqmrBLve
+        G8q45iJr6X83/0tp6ASSnHPxeSr5NVJokZGK73TO6piKipLSMvLVEkqRG4gbyPXosCWxBdazxdVWW
+        Vtz2uOONQ==;
+Received: from [89.200.44.227] (helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gkWiJ-00043T-5Z; Fri, 18 Jan 2019 16:09:47 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 065D99818FF; Fri, 18 Jan 2019 16:58:15 +0100 (CET)
+Date:   Fri, 18 Jan 2019 16:58:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vince Weaver <vincent.weaver@maine.edu>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: perf: rdpmc bug when viewing all procs on remote cpu
+Message-ID: <20190118155814.GC14054@worktop.programming.kicks-ass.net>
+References: <alpine.DEB.2.21.1901101229010.3358@macbook-air>
+ <alpine.DEB.2.21.1901101246340.3358@macbook-air>
+ <alpine.DEB.2.21.1901101500030.3717@macbook-air>
+ <alpine.DEB.2.21.1901111649580.6487@macbook-air>
+ <20190118120149.GC27931@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1901180905090.5762@macbook-air>
 MIME-Version: 1.0
-In-Reply-To: <20190118095909.GB28982@kroah.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1901180905090.5762@macbook-air>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/19 3:59 AM, Greg Kroah-Hartman wrote:
-> On Fri, Jan 11, 2019 at 12:05:21PM -0600, Andrew F. Davis wrote:
->> When enabled the helpers functions for creating carveout and chunk heaps
->> should have declarations in the ION header.
+On Fri, Jan 18, 2019 at 09:09:04AM -0500, Vince Weaver wrote:
+> On Fri, 18 Jan 2019, Peter Zijlstra wrote:
 > 
-> Why?  No one calls these from what I can tell.
+> > On Fri, Jan 11, 2019 at 04:52:22PM -0500, Vince Weaver wrote:
+> > > On Thu, 10 Jan 2019, Vince Weaver wrote:
+> > > 
+> > > > On Thu, 10 Jan 2019, Vince Weaver wrote:
+> > > > 
+> > > > > On Thu, 10 Jan 2019, Vince Weaver wrote:
+> > > > > 
+> > > > > > However if you create an all-process attached to CPU event:
+> > > > > > 	perf_event_open(attr, -1, X, -1, 0);
+> > > > > > the mmap event index is set as if this were a valid event and so the rdpmc
+> > > > > > succeeds even though it shouldn't (we're trying to read an event value
+> > > > > > on a remote cpu with a local rdpmc).
+> > > 
+> > > so on further looking at the code, it doesn't appear that rdpmc events are 
+> > > explicitly marked as unavailable in the attach-cpu or attach-pid case, 
+> > > it's just by luck the check for PERF_EVENT_STATE_ACTIVE catches most of 
+> > > the cases?
+> > > 
+> > > should an explicit check be added to zero out userpg->index in cases where 
+> > > the event being measured is running on a different core?
+> > 
+> > And how would we konw? We don't know what CPU will be observing the
+> > mmap().
+> > 
+> > RDPMC fundamentally only makes sense on 'self' (either task or CPU).
 > 
-> Which makes me believe we should just delete the
-> drivers/staging/android/ion/ion_carveout_heap.c and
-> drivers/staging/android/ion/ion_chunk_heap.c files as there are no
-> in-tree users?
-> 
-> Any objection to me doing that?
-> 
+> so is this a "don't do that then" thing and I should have PAPI 
+> userspace avoid using rdpmc() whenever a proc/cpu was attached to?
 
-I use those when creating carveout heaps. My exporter is out of tree
-still as it uses DT and the proper bindings have not been agreed upon
-yet. These helpers also make good heap creation references, even if not
-called by anyone in-tree right now.
+You can actually use rdpmc when you attach to a CPU, but you have to
+ensure that the userspace component is guaranteed to run on that very
+CPU (sched_setaffinity(2) comes to mind).
 
-Thanks,
-Andrew
+> Or is there a way to have the kernel indicate this?  Does the kernel track 
+> current CPU and original CPU of the mmap and could zero out the index 
+> field in this case?  Or would that add too much overhead?
 
-> thanks,
-> 
-> greg k-h
-> 
+Impossible I'm afraid. Memory is not associated with a CPU; it's
+contents is the same whatever CPU reads from it.
+
+The best we could possibly do is put the (target, not current) cpu
+number in the mmap page; but userspace should already know this, for it
+created the event and therefore knows this already.
