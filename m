@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5CFC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1C0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C33420855
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:02:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DC9E20855
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 08:03:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LGv8lZ6V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nw3H/3Xo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbfARICU (ORCPT
+        id S1727463AbfARIC6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:02:20 -0500
-Received: from mail-lj1-f171.google.com ([209.85.208.171]:38891 "EHLO
-        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbfARICT (ORCPT
+        Fri, 18 Jan 2019 03:02:58 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39088 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbfARIC6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:02:19 -0500
-Received: by mail-lj1-f171.google.com with SMTP id c19-v6so10864702lja.5;
-        Fri, 18 Jan 2019 00:02:18 -0800 (PST)
+        Fri, 18 Jan 2019 03:02:58 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t9-v6so10849936ljh.6;
+        Fri, 18 Jan 2019 00:02:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=pf+orFAXU0UsxrI5UFtFzCZJ+tqvHhNURJ6yVZSS9js=;
-        b=LGv8lZ6VDZL2GQj6WzeY6L19mATdsIlGldN5qMjbKmCFZgmvuPh+fB+C6zgQ2k69Nt
-         HUQ+e/Jcodtm5kL2ZAD+fLfwzFyvtYZ75cTvZUDnUzlvGE2pt8rMtOv2ccw4GsYuHJM+
-         LirOfc2UxqDlcAsldVv5V7vr9I3UWZAN6DGbRiDP7+1npXGwbBI1OfkkaMq8L5d+I2jJ
-         nexvbBKPb5VusKaDb6lHHKmiIF10zbGca0iSL2CsTvKTvbou0LmetGqlrp9N8cio9dC2
-         T7MO+b3BdRuBAEhvNSddfmCe2K/BQhkkvF32P3L+2x8WB4cimJDZ2GXMbe9eH2Ski0sz
-         d9Ng==
+        bh=fsKFVPzF0dRyW1g/yUfRd0CuK4ng6hz+eiWHoWJNg90=;
+        b=Nw3H/3XoNTq240K+aiU98OyLO7GRAT+s1V6btI/iqXwcL2403RtI8/WkU0de2qUVG/
+         mizOCMNoiGUB7GCQ1rG8llwZbnJigyTdQFYhmInxo1sB9YHhraAaS4O4FROvhDewHL/O
+         tKOq27goK70tjh09bQdS0Khz8808O55s6JlpG26GOxRkls0qdZabxJ15zNfv5PPvzHmk
+         l8hSo09v1Kx6YvY5lOoTs5ZBe1S4NqSOJG9qoOCXm2HUkzMpBZJ9TXKXOwhvmCju2Cq5
+         rrxcfnRjVxDhRFriIwIBkHrfrvnZLRC1mk+QuZcYnkjiXFufiAaE4TCvOL1AegCMLoxS
+         Jg5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pf+orFAXU0UsxrI5UFtFzCZJ+tqvHhNURJ6yVZSS9js=;
-        b=mgXN33ovAryfAF0xYxblQTbev2qKEFzFhH5uiiMitkUkKJGmTmzaxBGnKNbsodQ9ge
-         eNS/4uHLkSsObAb3J/iWHzFByNvE4VKt+/Q1JFzs8kMf6jAL3Sfafi+XPJPpFNFF/QIx
-         5l/EDgVCML2D4v+Ra6nVlZqPZ12U9tZY7vBi+rLUkhdpKJ3a9yY0MWQ+A/p/ooPwCRPb
-         QsiiIM2Z2y437tBGqIDAcVrSwyLHHxLgOP3XC3ed0Hcoq43SDvLa5Z6eNA9DIvyEElKv
-         X5wWrZHu+bh1TYYC8AZrFrXbeLqb5CoqGEMJ7vG9DQC3jtVbIhzK4MG9bbtFB7CzXjER
-         AV8w==
-X-Gm-Message-State: AJcUukd0L8B0tjjaZZUXWYtES3ur6iPL+Fnd0BcLYoNoTo/g027LHnoh
-        pYPk4y4uZzyyJXfYCwMcnqaJCdRzTfRJe6GCUZY=
-X-Google-Smtp-Source: ALg8bN7ReaKKmO8lJAADvJPCYRa4VFT0az+fcgpuZJHjZ8OHhAxrxt8F8qK59/FmunH6kwwisnu6IuN9h3iWeMvkrdQ=
-X-Received: by 2002:a2e:9c52:: with SMTP id t18-v6mr10176181ljj.149.1547798537950;
- Fri, 18 Jan 2019 00:02:17 -0800 (PST)
+        bh=fsKFVPzF0dRyW1g/yUfRd0CuK4ng6hz+eiWHoWJNg90=;
+        b=kNe4YkOfre7aF2+7HDAlsNoBFXRYoSTfhQpx4+N9rBkPsj8p3/bakcb69VJm3QBlA1
+         ExVDFS0GnIphDVJIFY5/E8lKO5OQ42wkQL7qZh6Ld3FVFvQ/htq8R/hMgDZjEzub+T35
+         5EiMMAc+dfMGgSj/qlx063n6f2SlsMBDyC+Xe4j85CWD16U0wPyI6VyyRDdMkjupLHPV
+         pmtOCwW3HVO1sWiGIzXFk+HZeqSoUO7f94rxri+bzMxOYA27zEV2tOuL7eB/4nSU1v7I
+         ZIOY4POY+1w9t/GX9PPqzQc5rO6QTTKNE1uckIItvLPMau6oS6lbk2+2pk+KJih3qPCO
+         JGRg==
+X-Gm-Message-State: AJcUukcgichZ8McVNlgq5iOEEudHgX4vwkfYdGLBwLcddiJr4fzT25rC
+        eXeNbkL2gaHEcnH1oLoUz1/UzIr7nG4v4ECRcbw=
+X-Google-Smtp-Source: ALg8bN7jmgesgwL3dvoBE6omK4xazCvgKF8Gru08iJ3qsLQ5ydHv4xm18IIahJacrxmjRWYr8ox2mnABPo7a6EfA1/g=
+X-Received: by 2002:a2e:88cf:: with SMTP id a15-v6mr11461379ljk.76.1547798576341;
+ Fri, 18 Jan 2019 00:02:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117231416.111952141@linutronix.de> <20190117231501.254152158@linutronix.de>
-In-Reply-To: <20190117231501.254152158@linutronix.de>
+References: <20190117231416.111952141@linutronix.de> <20190117231500.970473486@linutronix.de>
+In-Reply-To: <20190117231500.970473486@linutronix.de>
 From:   =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
-Date:   Fri, 18 Jan 2019 09:02:06 +0100
-Message-ID: <CAAUqJDufgoZMhPia5M6cc+V5tijX+huzncnd3LSp=DVhXy80Nw@mail.gmail.com>
-Subject: Re: [patch 5/9] crypto: morus - Convert to SPDX license identifiers
+Date:   Fri, 18 Jan 2019 09:02:44 +0100
+Message-ID: <CAAUqJDs0TqhgUw6kFGmGoR_RWiqUAgb68zne45J3JLKWAFjThw@mail.gmail.com>
+Subject: Re: [patch 2/9] crypto: aegis - Cleanup license mess
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -75,11 +75,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 pi 18. 1. 2019 o 0:15 Thomas Gleixner <tglx@linutronix.de> nap=C3=ADsal(a):
-> The license boiler plate text is not ideal for machine parsing. The kerne=
-l
-> uses SPDX license identifiers for that purpose, which replace the boiler
-> plate text.
+> Precise and non-ambiguous license information is important. The recently
+> added aegis header file has a SPDX license identifier, which is nice, but
+> at the same time it has a contradictionary license boiler plate text.
 >
+>   SPDX-License-Identifier: GPL-2.0
+>
+> versus
+>
+>   * This program is free software; you can redistribute it and/or modify =
+it
+>   * under the terms of the GNU General Public License as published by the=
+ Free
+>   * Software Foundation; either version 2 of the License, or (at your opt=
+ion)
+>   * any later version
+>
+> Oh well.
+>
+> As the other aegis related files are licensed under the GPL v2 or later,
+> it's assumed that the boiler plate code is correct, but the SPDX license
+> identifier is wrong.
+>
+> Fix the SPDX identifier and remove the boiler plate as it is redundant.
+>
+> Fixes: f606a88e5823 ("crypto: aegis - Add generic AEGIS AEAD implementati=
+ons")
 > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 > Cc: Ondrej Mosnacek <omosnacek@gmail.com>
 > Cc: Herbert Xu <herbert@gondor.apana.org.au>
@@ -96,19 +117,19 @@ orm)
 >       patches and is intended to be picked up by the maintainer directly.
 >
 > ---
->  crypto/morus1280.c |    6 +-----
->  crypto/morus640.c  |    6 +-----
->  2 files changed, 2 insertions(+), 10 deletions(-)
+>  crypto/aegis.h |    7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 >
-> --- a/crypto/morus1280.c
-> +++ b/crypto/morus1280.c
-> @@ -1,13 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
+> --- a/crypto/aegis.h
+> +++ b/crypto/aegis.h
+> @@ -1,14 +1,9 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
 >  /*
->   * The MORUS-1280 Authenticated-Encryption Algorithm
+>   * AEGIS common definitions
 >   *
->   * Copyright (c) 2016-2018 Ondrej Mosnacek <omosnacek@gmail.com>
->   * Copyright (C) 2017-2018 Red Hat, Inc. All rights reserved.
+>   * Copyright (c) 2018 Ondrej Mosnacek <omosnacek@gmail.com>
+>   * Copyright (c) 2018 Red Hat, Inc. All rights reserved.
 > - *
 > - * This program is free software; you can redistribute it and/or modify =
 it
@@ -119,26 +140,6 @@ ion)
 > - * any later version.
 >   */
 >
->  #include <asm/unaligned.h>
-> --- a/crypto/morus640.c
-> +++ b/crypto/morus640.c
-> @@ -1,13 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
->  /*
->   * The MORUS-640 Authenticated-Encryption Algorithm
->   *
->   * Copyright (c) 2016-2018 Ondrej Mosnacek <omosnacek@gmail.com>
->   * Copyright (C) 2017-2018 Red Hat, Inc. All rights reserved.
-> - *
-> - * This program is free software; you can redistribute it and/or modify =
-it
-> - * under the terms of the GNU General Public License as published by the=
- Free
-> - * Software Foundation; either version 2 of the License, or (at your opt=
-ion)
-> - * any later version.
->   */
->
->  #include <asm/unaligned.h>
+>  #ifndef _CRYPTO_AEGIS_H
 >
 >
