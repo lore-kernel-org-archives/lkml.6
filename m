@@ -2,139 +2,115 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC40C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1371DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD99920823
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D56792087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 11:10:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zqSqv6En"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="jti0xd7o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfARLKY (ORCPT
+        id S1727304AbfARLKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:10:24 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:44098 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbfARLKX (ORCPT
+        Fri, 18 Jan 2019 06:10:31 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:22939 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbfARLKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:10:23 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0IB3nd2097799;
-        Fri, 18 Jan 2019 11:09:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- message-id : date : from : to : cc : subject : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=vJ0vJrzTwis8w2+AQlcWaXGQ6PMulOuhthc3OKzqbnM=;
- b=zqSqv6En949O1MnRipyzH3VB4x8nRv7kbP2WvnPrGWXPrf6CuFit4KyxvD2SXkumhECO
- pcb9mEJLlZihvbXpSvNNXVby1kysnf1uf7p3lPW47wsP/ez7rWq2a42B1zcLclo3wQo7
- iE0ofE0dKeaufNMHmr5aPEfj1xTKSvTBwjjH6/Y+v6hxtriigBYVNjkAbw/yEFB7PA1F
- JMzrQG7TTVn0d6J8iBzg8AnIPRZ57nPbnuW6L6Z85n6EjjXeLmDlqLvXlDa4u1e6LVYi
- N4MdHbx0GkJ4HwTMWfR7sSB4wK0TRknoYqknVf1Q5RoGsaAeOFQr0RC75aZScsZHg2dQ 2A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2pybjsn2k5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jan 2019 11:09:57 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0IB9tut019376
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jan 2019 11:09:55 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0IB9sXN031280;
-        Fri, 18 Jan 2019 11:09:54 GMT
+        Fri, 18 Jan 2019 06:10:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547809828;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=2S9cFsNirSbZDsyyIXpZo/RajCTM5g0kbSLyMuTyGW8=;
+        b=jti0xd7oPd4/zLiq2X4NfVxz9GeNMbbcz0SNplxgZeplNLLHTzbP1md9kw9DFq4oim
+        u6cFCYugTIuAePQH6wbhcvhU6IRZzGnnUsegJeNV0KSQhoieJyW7A5+REEZpU1wFzu5h
+        YNEjbIeyKiX5MYA8xoUV9+U6DoJcqWEyFGAExLXE87I64idySYNEwF31EnJPMlUTD1OM
+        SLHD6AKd4gBCFx+P2HNzZOA2WVp+bSdMJm1aLjIX7k2SQrYOdHA543RWjbvcLoiKJh5N
+        lY5RxYvQd1N6G7LHCsG3+KDU7BLF3K0Y2pW31HRXRH1OV22Tao3l5Fza+WUaXF6SmYyg
+        K+1w==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkO3W1t7/x3Ry2nhljiBv4wW5sxWQ=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:1cca:8712:d929:bc6d]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv0IBAQ92B
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 18 Jan 2019 12:10:26 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
+ <23284859-bf0a-9cd5-a480-2a7fd7802056@xenosoft.de>
+ <075f70e3-7a4a-732f-b501-05a1a8e3c853@xenosoft.de>
+ <b04d08ea-61f9-3212-b9a3-ad79e3b8bd05@xenosoft.de>
+ <21f72a6a-9095-7034-f169-95e876228b2a@xenosoft.de>
+ <27148ac2-2a92-5536-d886-2c0971ab43d9@xenosoft.de>
+ <20190115133558.GA29225@lst.de>
+ <685f0c06-af1b-0bec-ac03-f9bf1f7a2b35@xenosoft.de>
+ <20190115151732.GA2325@lst.de>
+ <e9345547-4dc6-747a-29ec-6375dc8bfe83@xenosoft.de>
+ <20190118083539.GA30479@lst.de>
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+Message-ID: <871403f2-fa7d-de15-89eb-070432e15c69@xenosoft.de>
+Date:   Fri, 18 Jan 2019 12:10:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Message-ID: <48a105d3-fa32-40e4-9775-37d49f42eac0@default>
-Date:   Fri, 18 Jan 2019 03:09:54 -0800 (PST)
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     <linux-kernel@vger.kernel.org>
-Cc:     <mingo@redhat.com>, <konrad.wilk@oracle.com>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <srinivas.eeda@oracle.com>, <bp@suse.de>,
-        <tim.c.chen@linux.intel.com>, <peterz@infradead.org>,
-        <hpa@zytor.com>
-Subject: [PATCH] x86/speculation: Update TIF_SPEC_IB before ibpb barrier
-X-Mailer: Zimbra on Oracle Beehive
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9139 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=536
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901180083
+In-Reply-To: <20190118083539.GA30479@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a task is set for updating TIF_SPEC_IB throuth SECCOMP by others
-and it's scheduled in the first time, a stale TIF_SPEC_IB value is
-picked in cond_ibpb(). This is due to TIF_SPEC_IB is updated later at
-__switch_to_xtra().
+For which commit?
 
-Add an extra call to speculation_ctrl_update_tif() to update it before
-IBPB barrier.
+-- Christian
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
----
- arch/x86/include/asm/spec-ctrl.h | 1 +
- arch/x86/kernel/process.c        | 2 +-
- arch/x86/mm/tlb.c                | 4 +++-
- 3 files changed, 5 insertions(+), 2 deletions(-)
+On 18 January 2019 at 09:35AM, Christoph Hellwig wrote:
+> Hi Christian,
+>
+> can you check if the debug printks in this patch trigger?
+>
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 355d16acee6d..e46c9b64ec0d 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -118,8 +118,11 @@ struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
+>   			page = NULL;
+>   		}
+>   	}
+> -	if (!page)
+> +	if (!page) {
+>   		page = alloc_pages_node(dev_to_node(dev), gfp, page_order);
+> +		if (!page)
+> +			pr_warn("failed to allocate memory with gfp 0x%x\n", gfp);
+> +	}
+>   
+>   	if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
+>   		__free_pages(page, page_order);
+> @@ -139,6 +142,10 @@ struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
+>   		}
+>   	}
+>   
+> +	if (!page) {
+> +		pr_warn("failed to allocate DMA memory!\n");
+> +		dump_stack();
+> +	}
+>   	return page;
+>   }
+>   
+>
 
-diff --git a/arch/x86/include/asm/spec-ctrl.h b/arch/x86/include/asm/spec-c=
-trl.h
-index 5393bab..8b2814a 100644
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -82,6 +82,7 @@ static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
- static inline void speculative_store_bypass_ht_init(void) { }
- #endif
-=20
-+extern unsigned long speculation_ctrl_update_tif(struct task_struct *tsk);
- extern void speculation_ctrl_update(unsigned long tif);
- extern void speculation_ctrl_update_current(void);
-=20
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 90ae0ca..454e71d 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -446,7 +446,7 @@ static __always_inline void __speculation_ctrl_update(u=
-nsigned long tifp,
- =09=09wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
-=20
--static unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
-+unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
- {
- =09if (test_and_clear_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE)) {
- =09=09if (task_spec_ssb_disable(tsk))
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 999d6d8..c0f3fcf 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -8,6 +8,7 @@
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
-=20
-+#include <asm/spec-ctrl.h>
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
- #include <asm/nospec-branch.h>
-@@ -190,7 +191,8 @@ static void sync_current_stack_to_mm(struct mm_struct *=
-mm)
-=20
- static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next=
-)
- {
--=09unsigned long next_tif =3D task_thread_info(next)->flags;
-+=09/* Update the flag bits to newest value actively */
-+=09unsigned long next_tif =3D speculation_ctrl_update_tif(next);
- =09unsigned long ibpb =3D (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
-=20
- =09return (unsigned long)next->mm | ibpb;
---=20
-1.8.3.1
