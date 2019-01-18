@@ -2,237 +2,97 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE4BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57544C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 290962086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iXXWY7JY"
+	by mail.kernel.org (Postfix) with ESMTP id 29FC52086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 16:20:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbfARQUm (ORCPT
+        id S1728371AbfARQUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 11:20:42 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45001 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728337AbfARQUk (ORCPT
+        Fri, 18 Jan 2019 11:20:45 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:34615 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728162AbfARQUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 18 Jan 2019 11:20:40 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so15705820wrt.11
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 08:20:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4RAzAScFwsXLtNFSIi/0xvW83N3ojDdDXPlpjCSX+xg=;
-        b=iXXWY7JY5H0/eLKa9F5YZDxrHSIexcGntP3jMSW8CSR3gzTHaiNguKVguW1CtFLlbn
-         EieHjac/QI/wBdvhHBqPpVaGgIaM6UchqHqo7V+y33RCqBwz22NtNCqeo/pvpTJNgac8
-         7rEyse/QpXy4QsYnZQrhwZ8khn7zjlHSl1MyQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4RAzAScFwsXLtNFSIi/0xvW83N3ojDdDXPlpjCSX+xg=;
-        b=ie9UmI2b60QnZjABxev0sHk+TK/UIw6SWqz87BeRCUdS7GYVPAsQNdvhiYTEIbfsQr
-         0S9Gt6qlhhpEL54c+2N7q4DwtyauVw4DenQZ42bTKQMb5hz+L7E7TAuyJ2Rfwpd8ePkv
-         wjCi/wOlPq8MCGChK8DGWCti1sdEgwLRAGmCUM4M6cBeOuAoQ5mjy4W/gXxnQK/nSmf6
-         ifi5tZW3M8bLpUOqNRGrFeECvpp9QXaKPSLjjEWvH/UC5S/ac8f4gNpdWqCZ5NSZMK/q
-         3C9r65nMeufSj18Gso6kSMWBdCFp6WqzNYF4xIeebQ289MpTKEMN0M2G8LkzIWaevrCe
-         mLhA==
-X-Gm-Message-State: AJcUukcpiBJMeNn9Ka4Q7ZcytHgWb2PaMiYCSB7DKQDsruA4vaEbVOSr
-        QjStiX/jHymTl8pz0YrGWbBKww==
-X-Google-Smtp-Source: ALg8bN5rMpUH51raWPSPHwVKE60gesco3F6fv8iT3D4QlEP4ZL67irNiN2nKoYRqLmB+u8Ieo6P6Vw==
-X-Received: by 2002:adf:e247:: with SMTP id n7mr16470866wri.205.1547828437368;
-        Fri, 18 Jan 2019 08:20:37 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id o4sm79642349wrq.66.2019.01.18.08.20.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 08:20:36 -0800 (PST)
-Subject: Re: [PATCH 1/4] venus: firmware: check fw size against DT memory
- region size
-To:     linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-References: <20190109084616.17162-1-stanimir.varbanov@linaro.org>
- <20190109084616.17162-2-stanimir.varbanov@linaro.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <9ce87f3e-ba2b-b961-a874-666d2d72a293@linaro.org>
-Date:   Fri, 18 Jan 2019 18:20:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mzz6m-1h7x482Ucw-00x1wT; Fri, 18 Jan 2019 17:19:30 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, mattst88@gmail.com,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
+        deller@gmx.de, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
+        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
+        deepa.kernel@gmail.com, ebiederm@xmission.com,
+        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 11/29] sparc64: fix sparc_ipc type conversion
+Date:   Fri, 18 Jan 2019 17:18:17 +0100
+Message-Id: <20190118161835.2259170-12-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190118161835.2259170-1-arnd@arndb.de>
+References: <20190118161835.2259170-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20190109084616.17162-2-stanimir.varbanov@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:E0WLVEaCcQzfD09xtrq4A5jWMomm7adRfer83EpRAVfp369asuy
+ x3/FJ1daGxLmHv7isfyBmmw9CiTpRNTIZF5Gr3d8LXmER0Y68fJAFAfjaBn0f4G0BGnMaQx
+ x2SRX/iEk+wXVeqe10GMRlxV+Tfz1UGHqVsgCFYxSmbS+xtCO7zPPuk3cos5G9lUpWYPzzZ
+ Cd+cyB2Mh1kEIhZmabg+A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:U8fLlZM0o6k=:bhl6IpqDxoJ6kbMGE/L2Hc
+ CzXueO2oa5jGlTL6WLnsLYPOBF2mZVhxD5AP4llrcKg4Do2nFrxENghqjFTLAbPL1QsxZXc/b
+ LnpyH8IuA+uVRH8S8x50ONY5YeJxq+2QhNxaH/wLHtFKi7z8USTpeeVUZCXlul0nja0gF6rOO
+ LL1USYrfYH8u14o6qjYuV81dwO272SuobC89RmEf5pmmulouyOUgkcp/shSJww4iWgefqz74u
+ 6U7B4Y+732hH50WeHW+jmK2UZNpQy29Zjoe2j/U7CTNx8BE+Gkr54u55/Lh2JunMk9s/og4TR
+ dsMViyBx2kjJjkgEqxuWmHUTNlQu51BtfQLyRTAWbgOz01AACB59xRs8hgCJSfM1qdrhWxkWx
+ b7Mf3ttpjFoH/yCzfhmqtBVJbePhcOvcZVDbx2TI+CZIobvf1sZQslNdYpNtm1VH178fbI+5B
+ Ec2CtgMHKExKURICO74Kg//YVBx8XEU6LSNaZh7pucWUly+BVsVaNCdnU6hItAL/BM4GqJnT+
+ w0oS45C/vBaPsuwz0142f3Y/62Xkn18OPu9YZUSlAzq7LM9Pe/9K5fmgYrLaC9FSDljZuydmq
+ jykoWGCnNNUhJI5AYsoroGoYkVnN9Ec9lvj5OEb2n9u0Buc9VIYHXAq6knDPefHHxymWenmkD
+ roYvKjwcBwNJpHKmEGmj7QZzsVbJDYDPSFwoNNBDl7fi9IWX3nVa1iRT0iAn7dyxgKUgZltdI
+ hQ4oQT3HJwHWivAfkNceN5wG99AQRLWvlYiWXw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+__kernel_timespec and timespec are currently the same type, but once
+they are different, the type cast has to be changed here.
 
-If you have time please review this patch, I'd like to send a pull
-request for this series.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/sparc/kernel/sys_sparc_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 1/9/19 10:46 AM, Stanimir Varbanov wrote:
-> By historical reasons we defined firmware memory size to be 6MB even
-> that the firmware size for all supported Venus versions is 5MBs. Correct
-> that by compare the required firmware size returned from mdt loader and
-> the one provided by DT reserved memory region. We proceed further if the
-> required firmware size is smaller than provided by DT memory region.
-> 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/core.h     |  1 +
->  drivers/media/platform/qcom/venus/firmware.c | 54 +++++++++++---------
->  2 files changed, 31 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index 6382cea29185..79c7e816c706 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -134,6 +134,7 @@ struct venus_core {
->  	struct video_firmware {
->  		struct device *dev;
->  		struct iommu_domain *iommu_domain;
-> +		size_t mapped_mem_size;
->  	} fw;
->  	struct mutex lock;
->  	struct list_head instances;
-> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> index c29acfd70c1b..6b509ffd022a 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.c
-> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -35,14 +35,15 @@
->  
->  static void venus_reset_cpu(struct venus_core *core)
->  {
-> +	u32 fw_size = core->fw.mapped_mem_size;
->  	void __iomem *base = core->base;
->  
->  	writel(0, base + WRAPPER_FW_START_ADDR);
-> -	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
-> +	writel(fw_size, base + WRAPPER_FW_END_ADDR);
->  	writel(0, base + WRAPPER_CPA_START_ADDR);
-> -	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
-> -	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
-> -	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
-> +	writel(fw_size, base + WRAPPER_CPA_END_ADDR);
-> +	writel(fw_size, base + WRAPPER_NONPIX_START_ADDR);
-> +	writel(fw_size, base + WRAPPER_NONPIX_END_ADDR);
->  	writel(0x0, base + WRAPPER_CPU_CGC_DIS);
->  	writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
->  
-> @@ -74,6 +75,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
->  	void *mem_va;
->  	int ret;
->  
-> +	*mem_phys = 0;
-> +	*mem_size = 0;
-> +
->  	dev = core->dev;
->  	node = of_parse_phandle(dev->of_node, "memory-region", 0);
->  	if (!node) {
-> @@ -85,28 +89,30 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
->  	if (ret)
->  		return ret;
->  
-> +	ret = request_firmware(&mdt, fwname, dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	fw_size = qcom_mdt_get_size(mdt);
-> +	if (fw_size < 0) {
-> +		ret = fw_size;
-> +		goto err_release_fw;
-> +	}
-> +
->  	*mem_phys = r.start;
->  	*mem_size = resource_size(&r);
->  
-> -	if (*mem_size < VENUS_FW_MEM_SIZE)
-> -		return -EINVAL;
-> +	if (*mem_size < fw_size || fw_size > VENUS_FW_MEM_SIZE) {
-> +		ret = -EINVAL;
-> +		goto err_release_fw;
-> +	}
->  
->  	mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
->  	if (!mem_va) {
->  		dev_err(dev, "unable to map memory region: %pa+%zx\n",
->  			&r.start, *mem_size);
-> -		return -ENOMEM;
-> -	}
-> -
-> -	ret = request_firmware(&mdt, fwname, dev);
-> -	if (ret < 0)
-> -		goto err_unmap;
-> -
-> -	fw_size = qcom_mdt_get_size(mdt);
-> -	if (fw_size < 0) {
-> -		ret = fw_size;
-> -		release_firmware(mdt);
-> -		goto err_unmap;
-> +		ret = -ENOMEM;
-> +		goto err_release_fw;
->  	}
->  
->  	if (core->use_tz)
-> @@ -116,10 +122,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
->  		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
->  					    mem_va, *mem_phys, *mem_size, NULL);
->  
-> -	release_firmware(mdt);
-> -
-> -err_unmap:
->  	memunmap(mem_va);
-> +err_release_fw:
-> +	release_firmware(mdt);
->  	return ret;
->  }
->  
-> @@ -135,6 +140,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
->  		return -EPROBE_DEFER;
->  
->  	iommu = core->fw.iommu_domain;
-> +	core->fw.mapped_mem_size = mem_size;
->  
->  	ret = iommu_map(iommu, VENUS_FW_START_ADDR, mem_phys, mem_size,
->  			IOMMU_READ | IOMMU_WRITE | IOMMU_PRIV);
-> @@ -151,7 +157,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
->  static int venus_shutdown_no_tz(struct venus_core *core)
->  {
->  	struct iommu_domain *iommu;
-> -	size_t unmapped;
-> +	size_t unmapped, mapped = core->fw.mapped_mem_size;
->  	u32 reg;
->  	struct device *dev = core->fw.dev;
->  	void __iomem *base = core->base;
-> @@ -166,8 +172,8 @@ static int venus_shutdown_no_tz(struct venus_core *core)
->  
->  	iommu = core->fw.iommu_domain;
->  
-> -	unmapped = iommu_unmap(iommu, VENUS_FW_START_ADDR, VENUS_FW_MEM_SIZE);
-> -	if (unmapped != VENUS_FW_MEM_SIZE)
-> +	unmapped = iommu_unmap(iommu, VENUS_FW_START_ADDR, mapped);
-> +	if (unmapped != mapped)
->  		dev_err(dev, "failed to unmap firmware\n");
->  
->  	return 0;
-> 
-
+diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
+index 274ed0b9b3e0..1c079e7bab09 100644
+--- a/arch/sparc/kernel/sys_sparc_64.c
++++ b/arch/sparc/kernel/sys_sparc_64.c
+@@ -344,7 +344,7 @@ SYSCALL_DEFINE6(sparc_ipc, unsigned int, call, int, first, unsigned long, second
+ 			goto out;
+ 		case SEMTIMEDOP:
+ 			err = sys_semtimedop(first, ptr, (unsigned int)second,
+-				(const struct timespec __user *)
++				(const struct __kernel_timespec __user *)
+ 					     (unsigned long) fifth);
+ 			goto out;
+ 		case SEMGET:
 -- 
-regards,
-Stan
+2.20.0
+
