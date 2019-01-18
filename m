@@ -2,124 +2,162 @@ Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UPPERCASE_50_75 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED1DC07EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 091ACC07EBF
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99BEF2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547833050;
-	bh=dUbG0GyyPYOxbc8f/aP21xgHaDPPptDs3kmwixzfWZU=;
-	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=gUea7o559jl3sJTt0EnxtpFgGoZfrOJOWIA/wIWA8AWGTUWh+/oZ//DZpzKAskuDi
-	 q/n6EhwO4TGtYdXm/EoTzaoorNHj+XK/qsYrdOZNVQLEJvobvvA254PNs79dMpjtfw
-	 BRbu/W2pqR38YIRJdmp7Vfi3TS+UjL0j3X60V4Pw=
+	by mail.kernel.org (Postfix) with ESMTP id B94E72086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 17:38:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="ahnLICui"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbfARRh2 (ORCPT
+        id S1728430AbfARRij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:37:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57366 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727795AbfARRh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:37:28 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 620122086D;
-        Fri, 18 Jan 2019 17:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547833047;
-        bh=dUbG0GyyPYOxbc8f/aP21xgHaDPPptDs3kmwixzfWZU=;
-        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=z0L2kYXXRbFDWMAB0rTEyhj2caq+EUaxVI0RHQKCNVVJuU2lBKQ58DTe//NhKTR1z
-         5ye04ysyIFq9XNys2/Aw10fQViWGoCbAbprO6hoiLPvs6jFplW0GA5qWKfDJMw3ycO
-         E4zmBoJCcUOi2mZ2XUWONlsbs0ZF6Xw234gkOI+o=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 18 Jan 2019 12:38:39 -0500
+Received: from mail-qk1-f172.google.com ([209.85.222.172]:33491 "EHLO
+        mail-qk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727795AbfARRii (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:38:38 -0500
+Received: by mail-qk1-f172.google.com with SMTP id d15so8545639qkj.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 09:38:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=m9TdNsiJWv8ps/qWNdEuapktg7N9Z9Bh3MKk9GYgQJA=;
+        b=ahnLICuiL8HGdatwwi3KmOfCb7eDucXWps0Xo1esufeMcSpw0tXRF+6HvgYezQVJJc
+         xqA1nDva/BRwhsHqAO6my5hAKB3oWddFzBNiX4bD4MekqRnwxP/VOdHa/xzd0gCkrzJ9
+         lsQs51Ug8459PJx2Bqyy/P8GVWueB3xtGoblG142bpIpU5TmG4s0/7bwg7iUHKRQ+y08
+         esiBQ/5ueSct4DQ9zR7pz+ehu668TvnEsmqJRYj26XuTrJZiPAzanmb0mSpR0qaSAV+W
+         tc+smwXIQE4j7bLHu8fPOLticeKTjCJInsar+31E32CrR97j73nskLSLGHlvT0bj/fpL
+         FF/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=m9TdNsiJWv8ps/qWNdEuapktg7N9Z9Bh3MKk9GYgQJA=;
+        b=s7PGZbL7smhpKb3gAbu+eTF2gMiwGfOctGIiPwpsXsKbuY+UUrmLdiAbIhA40uZ9SM
+         m8I/I5Jf0j4MrtkXdZ7ne1EUtmWzenLtkRAM08k8KVSAQ6YdjNpvnl/G0fuYhjDT3UzG
+         mFzEo2QU8ZDW8S1Nnb5V2LH+vvo+1G0FQM8I8qCQlJNkzimvFMnBHCltlUqi9ommqG2f
+         4bTZPwUrcEEeHf+zngCScbmX3cUIdu3TRxksx21oF0mwRQyTgG7QbSM1lOp/PAaVAeWE
+         ZWgLATQck1uMKwtMs28/7GHAWUVHURUrv+CG7IOqwFLpmN1j3NomuzPKaY4VUZYor9tS
+         GaZA==
+X-Gm-Message-State: AJcUukcRAdn6jGMptxwLiJFU8/JsHwKdhie5t4igoPB+kgTcepAjcJz/
+        /CsqrL9mtpfywaQHnSQPXGhzAJfNBKZW2Q==
+X-Google-Smtp-Source: ALg8bN7wB3OvTEHIJZUObRE+u1jCUob9NBcL6Ym8lBLywE92+LgdzBMziQIaB93dLX8ybvfin45cJQ==
+X-Received: by 2002:a37:6e43:: with SMTP id j64mr11963489qkc.278.1547833116957;
+        Fri, 18 Jan 2019 09:38:36 -0800 (PST)
+Received: from ovpn-124-227.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id n71sm65027068qkh.59.2019.01.18.09.38.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 09:38:36 -0800 (PST)
+Subject: Re: kmemleak panic
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
+ <20190118143434.GE118707@arrakis.emea.arm.com>
+ <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+ <5fe89adc-c95b-ca89-d043-c380e2ba8cb3@lca.pw>
+ <8edcc205-0e55-7988-5729-7b75e47e9b32@free.fr>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <fd0a8e39-b258-6281-ed5d-0e176971478f@lca.pw>
+Date:   Fri, 18 Jan 2019 12:38:33 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: Fixes tag needs some work in the clk tree
-User-Agent: alot/0.8
-In-Reply-To: <878szi3zp6.fsf@concordia.ellerman.id.au>
-References: <20190116083440.11b6839c@canb.auug.org.au> <154767815973.169631.1738587342757192096@swboyd.mtv.corp.google.com> <CAOMZO5DSbVpha=1_s5K+-vodD+N1fGnj41_UKmvqxDOPhxXwfg@mail.gmail.com> <154775054438.169631.5111867106558251203@swboyd.mtv.corp.google.com> <878szi3zp6.fsf@concordia.ellerman.id.au>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Fabio Estevam <festevam@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>
-Message-ID: <154783304655.169631.12906027462791855701@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 18 Jan 2019 09:37:26 -0800
+In-Reply-To: <8edcc205-0e55-7988-5729-7b75e47e9b32@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Michael Ellerman (2019-01-18 04:41:41)
-> Stephen Boyd <sboyd@kernel.org> writes:
->=20
-> > Quoting Fabio Estevam (2019-01-16 17:25:21)
-> >> On Wed, Jan 16, 2019 at 10:44 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >>=20
-> >> > Ok sure. Does this matter to scripts? Is it documented in
-> >> > Documentation/process/submitting-patches.rst? I've seen both types, =
-one
-> >>=20
-> >> From Documentation/process/submitting-patches.rst"
-> >>=20
-> >> "If your patch fixes a bug in a specific commit, e.g. you found an iss=
-ue using
-> >> ``git bisect``, please use the 'Fixes:' tag with the first 12 characte=
-rs of
-> >> the SHA-1 ID, and the one line summary.  For example::
-> >>=20
-> >> Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdata()=
-")"
-> >
-> > Yes but 'one line summary' is not clear to me. Does it mean the summary
-> > line? Or the one line summary on one line regardless of commit message
-> > column wrapping? Sorry to be pedantic but I can see how this can be
-> > misunderstood.
->=20
-> Yeah "one line summary" is referring to the subject of the commit.
->=20
-> So it doesn't explicitly say not to split it across lines, it probably
-> should.
->=20
-> eg: ?
 
-Yes, thanks!
 
->=20
-> diff --git a/Documentation/process/submitting-patches.rst b/Documentation=
-/process/submitting-patches.rst
-> index 30dc00a364e8..12a283ba3929 100644
-> --- a/Documentation/process/submitting-patches.rst
-> +++ b/Documentation/process/submitting-patches.rst
-> @@ -186,6 +186,8 @@ If your patch fixes a bug in a specific commit, e.g. =
-you found an issue using
-> =20
->         Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvd=
-ata()")
-> =20
-> +To ease parsing of the 'Fixes:' tag please don't split it across multipl=
-e lines.
-> +
->  The following ``git config`` settings can be used to add a pretty format=
- for
->  outputting the above style in the ``git log`` or ``git show`` commands::
-> =20
->=20
+On 1/18/19 12:05 PM, Marc Gonzalez wrote:
+> On 18/01/2019 17:14, Qian Cai wrote:
+> 
+>> This looks like something different from the original "invalid PFNs from
+>> pfn_to_online_page()" issue. What's your .config ?
+> 
+> Here's my defconfig:
+> 
+> # CONFIG_SWAP is not set
+> CONFIG_NO_HZ_IDLE=y
+> CONFIG_HIGH_RES_TIMERS=y
+> CONFIG_PREEMPT=y
+> CONFIG_IKCONFIG=y
+> CONFIG_IKCONFIG_PROC=y
+> CONFIG_LOG_BUF_SHIFT=20
+> CONFIG_BLK_DEV_INITRD=y
+> CONFIG_ARCH_QCOM=y
+> # CONFIG_EFI is not set
+> # CONFIG_SUSPEND is not set
+> CONFIG_PM=y
+> # CONFIG_MQ_IOSCHED_DEADLINE is not set
+> # CONFIG_MQ_IOSCHED_KYBER is not set
+> CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+> CONFIG_DEVTMPFS=y
+> CONFIG_DEVTMPFS_MOUNT=y
+> # CONFIG_BLK_DEV is not set
+> # CONFIG_INPUT_KEYBOARD is not set
+> # CONFIG_INPUT_MOUSE is not set
+> # CONFIG_SERIO_SERPORT is not set
+> CONFIG_VT_HW_CONSOLE_BINDING=y
+> CONFIG_LEGACY_PTY_COUNT=16
+> CONFIG_SERIAL_8250=y
+> CONFIG_SERIAL_MSM=y
+> CONFIG_SERIAL_MSM_CONSOLE=y
+> CONFIG_SERIAL_DEV_BUS=y
+> # CONFIG_HW_RANDOM is not set
+> # CONFIG_HWMON is not set
+> CONFIG_REGULATOR=y
+> CONFIG_REGULATOR_FIXED_VOLTAGE=y
+> CONFIG_REGULATOR_QCOM_SMD_RPM=y
+> # CONFIG_HID is not set
+> # CONFIG_USB_SUPPORT is not set
+> # CONFIG_COMMON_CLK_XGENE is not set
+> CONFIG_COMMON_CLK_QCOM=y
+> # CONFIG_QCOM_A53PLL is not set
+> # CONFIG_QCOM_CLK_APCS_MSM8916 is not set
+> CONFIG_QCOM_CLK_SMD_RPM=y
+> CONFIG_MSM_GCC_8998=y
+> CONFIG_HWSPINLOCK=y
+> CONFIG_HWSPINLOCK_QCOM=y
+> CONFIG_MAILBOX=y
+> CONFIG_QCOM_APCS_IPC=y
+> CONFIG_RPMSG_QCOM_GLINK_RPM=y
+> CONFIG_RPMSG_QCOM_GLINK_SMEM=y
+> CONFIG_RPMSG_QCOM_SMD=y
+> CONFIG_RPMSG_VIRTIO=y
+> CONFIG_QCOM_COMMAND_DB=y
+> CONFIG_QCOM_SMEM=y
+> CONFIG_QCOM_SMD_RPM=y
+> CONFIG_TMPFS=y
+> CONFIG_DEBUG_INFO=y
+> CONFIG_DEBUG_KERNEL=y
+> CONFIG_DEBUG_KMEMLEAK=y
+> CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE=4000
+> CONFIG_FUNCTION_TRACER=y
+> 
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-
-Do you have a patch for checkpatch too? Maybe Joe can solve my problem.
-
+This is truncated. I'll need your whole .config file, so I can try to reproduce
+it here on an arm64 ThunderX2 server.
