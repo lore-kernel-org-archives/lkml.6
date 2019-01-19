@@ -2,90 +2,74 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D46C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE04C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8592084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1B8D2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:25:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E6rS/eVK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbfASKXv (ORCPT
+        id S1727854AbfASKZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 05:23:51 -0500
-Received: from ozlabs.org ([203.11.71.1]:34757 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726733AbfASKXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 05:23:50 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43hYnH30Dqz9sBQ;
-        Sat, 19 Jan 2019 21:23:47 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
-In-Reply-To: <cover.1547195976.git.christophe.leroy@c-s.fr>
-References: <cover.1547195976.git.christophe.leroy@c-s.fr>
-Date:   Sat, 19 Jan 2019 21:23:46 +1100
-Message-ID: <87zhrx2bf1.fsf@concordia.ellerman.id.au>
+        Sat, 19 Jan 2019 05:25:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57540 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726733AbfASKZb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 05:25:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3pEYCOCAcVVVJKPSNVrag6u68LCNmc4u9dVSsWTGz4Y=; b=E6rS/eVK8Xk0tAbAXs8I8YZnQ
+        N0m9UuZ0C/5vRbdXcrdAAlcF29uGsOjgpT2m7wtOsJ9yJcvpxcfAaaCN9A8jm699fTjeB419Xi3nx
+        X7dotqTAQewzN6bzYnkSpdTXpRnTju47kbb/HWTwn2EbNOYqhssP4Zo+mqs3zsJJTuSI7hmRIyQOv
+        AA+tRY25qzJQM/wPZs9TvfKFpw6ySpMDbSauExn19yDb05lnN9fencuji08R7FlWer6BR9gdcH41q
+        kZ7e8IQpeh5Om4Zg3WGui0nX31l7jTCHLuGMXtcReXXE8e86AKYikshycZe6r0Pp96fNZ0AFEsQJj
+        7vlaXoOSQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gknod-0005ut-5x; Sat, 19 Jan 2019 10:25:27 +0000
+Date:   Sat, 19 Jan 2019 02:25:27 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Liam Mark <lmark@codeaurora.org>
+Cc:     labbott@redhat.com, sumit.semwal@linaro.org, arve@android.com,
+        tkjos@android.com, maco@android.com, joel@joelfernandes.org,
+        christian@brauner.io, devel@driverdev.osuosl.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-kernel@vger.kernel.org, afd@ti.com, john.stultz@linaro.org
+Subject: Re: [PATCH 3/4] dma-buf: add support for mapping with dma mapping
+ attributes
+Message-ID: <20190119102527.GA17723@infradead.org>
+References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
+ <1547836667-13695-4-git-send-email-lmark@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547836667-13695-4-git-send-email-lmark@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Fri, Jan 18, 2019 at 10:37:46AM -0800, Liam Mark wrote:
+> Add support for configuring dma mapping attributes when mapping
+> and unmapping memory through dma_buf_map_attachment and
+> dma_buf_unmap_attachment.
+> 
+> Signed-off-by: Liam Mark <lmark@codeaurora.org>
 
-> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
-> moves the thread_info into task_struct.
->
-> Moving thread_info into task_struct has the following advantages:
-> - It protects thread_info from corruption in the case of stack
-> overflows.
-> - Its address is harder to determine if stack addresses are
-> leaked, making a number of attacks more difficult.
->
-> Changes since v12:
->  - Patch 1: Taken comment from Mike (re-introduced the 'panic' in case memblock allocation fails in setup_64.c
->  - Patch 1: Added alloc_stack() function in setup_32.c to also panic in case of allocation failure.
+And who is going to decide which ones to pass?  And who documents
+which ones are safe?
 
-Hi Christophe,
-
-I can't get this series to boot on qemu mac99. I'm getting eg:
-
-[    0.981514] NFS: Registering the id_resolver key type
-[    0.981752] Key type id_resolver registered
-[    0.981868] Key type id_legacy registered
-[    0.995711] Unrecoverable exception 0 at 0 (msr=0)
-[    0.996091] Oops: Unrecoverable exception, sig: 6 [#1]
-[    0.996314] BE PAGE_SIZE=4K MMU=Hash PowerMac
-[    0.996617] Modules linked in:
-[    0.996869] CPU: 0 PID: 416 Comm: modprobe Not tainted 5.0.0-rc2-gcc-7.3.0-00043-g53f2de798792 #342
-[    0.997138] NIP:  00000000 LR: 00000000 CTR: 00000000
-[    0.997309] REGS: ef237f50 TRAP: 0000   Not tainted  (5.0.0-rc2-gcc-7.3.0-00043-g53f2de798792)
-[    0.997508] MSR:  00000000 <>  CR: 00000000  XER: 00000000
-[    0.997712] 
-[    0.997712] GPR00: 00000000 ef238000 00000000 00000000 00000000 00000000 00000000 00000000 
-[    0.997712] GPR08: 00000000 00000000 00000000 00000000 00000000 00000000 c006477c ef13d8c0 
-[    0.997712] GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
-[    0.997712] GPR24: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
-[    0.998671] NIP [00000000]   (null)
-[    0.998774] LR [00000000]   (null)
-[    0.998895] Call Trace:
-[    0.999030] Instruction dump:
-[    0.999320] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX 
-[    0.999546] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX 60000000 XXXXXXXX XXXXXXXX XXXXXXXX 
-[    1.000023] ---[ end trace 925ea3419844fe68 ]---
-
-I haven't had time to dig any further.
-
-cheers
+I'd much rather have explicit, well documented dma-buf flags that
+might get translated to the DMA API flags, which are not error checked,
+not very well documented and way to easy to get wrong.
