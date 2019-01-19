@@ -2,95 +2,104 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F07A0C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B281C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8F2A205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6A76205C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:08:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Spm1FEZb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpRsvzGK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfASQFK (ORCPT
+        id S1728612AbfASQIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 11:05:10 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36982 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728590AbfASQFG (ORCPT
+        Sat, 19 Jan 2019 11:08:53 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51421 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728312AbfASQIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 11:05:06 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y126so8098545pfb.4;
-        Sat, 19 Jan 2019 08:05:05 -0800 (PST)
+        Sat, 19 Jan 2019 11:08:53 -0500
+Received: by mail-it1-f194.google.com with SMTP id w18so11041750ite.1;
+        Sat, 19 Jan 2019 08:08:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=igiS7JY9Tkj0t+DmCwo3tZOgXVjRsJpaBhsfH2U83Tk=;
-        b=Spm1FEZb+BK5b0ThVBclsti0DUS08YWPw4T5H4EbwM6l0I3ScjPqv4jE/JZ+7I1It2
-         EdlpVdKqoRFsTWVjQQ8c1PXS6yXo3Lr9dcuMRODmWaRs5ZIc2etzR+G0TFSkQ0Mf0rE0
-         9L+SjcFvyjxrvE1P5+e7H55VgSRbHDkSBzimKHPCANYkFdC8khrqVRzT7W5mrDr0DO/B
-         Tqy85FcB5a39A478ur0RjWSM17+NrSgyvgnOwEp2fMg0NSnoEXoropi42gpxhWUWnGhy
-         tWJ01tt3sekFXdvxGSt2D68Jl5SYjaHZVliJ6TrfW3JeqRBo+8F6RajHkTzhJpK8VL14
-         G+rA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FG5gUckh9DdyTJHbL2iXHBN4K0kVRyYdpq6JIbdw0Ro=;
+        b=SpRsvzGKDdBkVURRWTBndRJKZolvsy2LyvvLFetH+1jV9b92fXDx62Ck39JS6g3oif
+         G8waZxwGc9KTrTPae271IBw2LFXG2DYuuBGuJ0a442w6H1w+Gg8WjCTarM/u8z4bNi5I
+         gNH5KrFIEhoFQfuUTIwGWD7jiuRma3DPw4AGasq9rvh8esQMVR5b1m/xp8+dROwyFcEs
+         sHeu2irrJ58sfUpGyHX/s2muXfpf2f+vZijl2N4GNeoZN0JY50Lf2klohx26ucFzvIxP
+         fJfZ54BwkwUaLLcC442MaWN6aLqrsBeIWZjF0INjj1MjwvpmVoUlU+qjg2yTg8N2ABBr
+         Arrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=igiS7JY9Tkj0t+DmCwo3tZOgXVjRsJpaBhsfH2U83Tk=;
-        b=SWQ7C2PdNsNur5y7cGJGWr47Obs0gLKbhc9TkCI6IUmYSW9yUJS59NzkCxajs65KVg
-         L9lLhpEY4Ps3VgFDfxDatxMM8nu9f02wzVW2Bm3Ywr3kf3OtnshWX6OJKKsiMY32YC8W
-         TkUzCw5mRSOV8icsPOrQWlgxkwDZoGjHCtVESSBYcy+UUe0drj8jLE+djGSQbPl3imeS
-         wDTIbgWvN61xzWblgQ/df9gp3PTeHlAn2tqFKmQd17kpagToQtf533Rz8OqMcMCd9ilB
-         zEGy08xF1PXI8EBpDJMXRV8vYluPIflcLvKsQBjJSw8yJKozl8PgKxiNroVohr1r8DeF
-         fw1Q==
-X-Gm-Message-State: AJcUukcArwHuby9I6JL0gLlz26xMNMmDkSWJyEoddKszTolAYghXbQym
-        9Xzipmw4A7aQEGsQPf7/SLU=
-X-Google-Smtp-Source: ALg8bN5PjATru91+wMlLSq2l4BO4hRMODmPEfcYUsM+BFmU6sD88cDBIUruZ9x9SFsS011ovFvQIlw==
-X-Received: by 2002:a63:2c82:: with SMTP id s124mr21491137pgs.73.1547913905322;
-        Sat, 19 Jan 2019 08:05:05 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id t5sm15786032pfb.60.2019.01.19.08.05.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 19 Jan 2019 08:05:04 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, linux-pm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 3/3] PM / devfreq: fix mem leak in devfreq_add_device()
-Date:   Sat, 19 Jan 2019 11:04:54 -0500
-Message-Id: <20190119160454.23151-3-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190119160454.23151-1-tiny.windzz@gmail.com>
-References: <20190119160454.23151-1-tiny.windzz@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FG5gUckh9DdyTJHbL2iXHBN4K0kVRyYdpq6JIbdw0Ro=;
+        b=HTieTL0Kpo1/OUrjgqeKKYP62hUrY3wYIvnShcqDBzCL8NN8MYZ09F571j7LN/EgTg
+         9Ygk0ALaxZjyUMKHiRMO5WzY3WfrN6KEP6/gcRT42NuxiqYzn/l33ve/t4XDHqJiompe
+         +W5VwxoEvIvXhNLNvmxBeKedtFr6mQLo54bubyIdPJERkpYyRoi9ipAOYCsrLnY0NEuT
+         ccLwiGkhXK4Y1Jmyo1s75vxW8qaS38HgESX4eyxP38yUnxw7uaAv2nKzHpxpNeCGbmCV
+         i2IVb5eZOpcoV7d4kUXMr2ssBhUrlBFDyPupsq+IRI9UTsRoVdQ4+zSQ4nL1gXsrwEDM
+         iGKA==
+X-Gm-Message-State: AJcUukfdJpRHKVBC1/a02VEypsYWCGz+LptKv949SIY3XmnI44sQqYIG
+        hftyzq41ggAaQXc83/kfGWws9BzAYWfeyLfKmG07JbXNhs/noQ==
+X-Google-Smtp-Source: ALg8bN6sVPjl0+Yop/E3bu9gXmMAc9dGV3J7FUhr4TLKZ4tym30nukuypUPz09jQz5LrfVmadfezv++fFcyiWw+gr3U=
+X-Received: by 2002:a02:5184:: with SMTP id s126mr12851368jaa.12.1547914132538;
+ Sat, 19 Jan 2019 08:08:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20190119050256.22520-1-tiny.windzz@gmail.com> <CAGTfZH33xt9xtNF=uvFMLQ9U68UuePQ_zVwtm7juhHK=pxh_jA@mail.gmail.com>
+In-Reply-To: <CAGTfZH33xt9xtNF=uvFMLQ9U68UuePQ_zVwtm7juhHK=pxh_jA@mail.gmail.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sun, 20 Jan 2019 00:08:35 +0800
+Message-ID: <CAEExFWt3QcdAYuUCbJP8ZAr2nhQ4gt5zcnMJA5bwyw+rvxzNUw@mail.gmail.com>
+Subject: Re: [PATCH] PM / devfreq: fix mem leak and missing check of return
+ value in devfreq_add_device()
+To:     cwchoi00@gmail.com
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'devfreq' is malloced in devfreq_add_device() and should be freed in
-the error handling cases, otherwise it will cause memory leak.
+> Also, you better to add following codes to free the memory of
+> 'devfreq->trans_table' and 'devfreq->time_in_state' because this patch
+> handles the memory leak of 'trans_table' and 'time_in_state'
+> variables.
+Hi Chanwoo:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/devfreq/devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Isn't that the mem requested by the devm_ API automatically freed when
+the device is detached?
+So we don't need to pay attention to free these mem.
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 923889229a0b..fe6c157cb7e0 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -651,7 +651,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		mutex_unlock(&devfreq->lock);
- 		err = set_freq_table(devfreq);
- 		if (err < 0)
--			goto err_out;
-+			goto err_dev;
- 		mutex_lock(&devfreq->lock);
- 	}
- 
--- 
-2.17.0
-
+Thanks=EF=BC=8C
+Yangtao
+>
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 0ae3de7..945f5f1 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -593,6 +593,9 @@ static void devfreq_dev_release(struct device *dev)
+>                 devfreq->profile->exit(devfreq->dev.parent);
+>
+>         mutex_destroy(&devfreq->lock);
+> +       kfree(devfreq->trans_table);
+> +       kfree(devfreq->time_in_state);
+>         kfree(devfreq);
+>  }
+>
+> --
+> Best Regards,
+> Chanwoo Choi
+> Samsung Electronics
