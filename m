@@ -2,87 +2,134 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82ECDC5AE5E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 02:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D53C5AE5E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 02:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C86320850
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 02:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17BC120850
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 02:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730391AbfASChk (ORCPT
+        id S1730386AbfASClj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 21:37:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44372 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730318AbfASChk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 21:37:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 52536AD54;
-        Sat, 19 Jan 2019 02:37:39 +0000 (UTC)
-Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to
- failed-syscalls-by-pid.py
-From:   Tony Jones <tonyj@suse.de>
-To:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
- <1547718344-27382-5-git-send-email-s1seetee@linux.vnet.ibm.com>
- <7f78e394-9cc3-e3fc-0497-d0ff0216d331@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
- mQGiBEkQmbwRBACDch7wo/RzlNt2HA8jLICsO2w8yOkJ7UTzHYNn3Q83Ro0qev2KokfE3EDw
- il+vam9CDR7jIDmswHqaMe0/O+UnZtO5PlDgylZcrwNwbBzHfm/KGejbi1RBGAoETrvcfwGi
- w83bR/aDnoRXY5Ho1uphQ05/065EMpbJOOBdn9qQ4wCgv2Q6C/QeYDGsxJPRO+20nLu5K00D
- /Rde4OTZ5biM+vb6ObTmgPNeiMrTwGpMokN7audIl7njwvD+lYrlgQjmDzcaPFz29rYWwT7g
- 6t6hcFgjpU1he/v3qxeQlTJoi2+u5Mqj42z//49h6DqNjT859Z/6h5IwKBo/EZC17iBIlS2G
- VXAstNiZASGiaIlONozWJ/GSjUaRA/9wZTV1nXF/+xX+qmc7SvTg1w6jWyjxVumQLoq2SeA4
- 1Sy5X2IATkAGCCjbeoQGnFdbOnHRSJdlTazObgwreqGPlPnIROpr9QESkfxsaCkDiZfpl0xk
- 6X069QMZBEwGAWILHYXL9UqlOjniZaU2BkVA11JEdBhyQorC8T/ji1edc7QaVG9ueSBKb25l
- cyA8dG9ueWpAc3VzZS5kZT6IYAQTEQIAIAUCSRCZvAIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheAAAoJELFYWyEf4koXGmYAoKCnbv9dhAB2vR6IvSJem1ws4HpfAJ9ZqTKiXcogBGfTPaJR
- GI9QhVUieLkCDQRJEJm8EAgAzr9Zd3v7B10ODtVc7XxbMe3W6o1FdClL9ZIgLv61zhWctafK
- DMu/MUSvxmYFq00pecD/SfX8oxArA02+sQ2E+/Zb4J7NAWIAxCfmy7VE0wDBrZH/hBapIx/L
- gVqYfZ9Rw+a4FXrlk1y8oQCwhvj+kWrm7V7olR0aPOy1NFGNUyTFSMj+pbmxiNOXdCxVUQe3
- UE1k9yA+mILjyaRanwkiCLCjNvRPL88Q017BdhVBWZmz8qhwXN/RrjCcDHsPX5O0ev68MLyu
- sh5mfukuvCqzW1Y3Ql+iwfwEw5lNmQGdoV9csg7JP7saDicSFO2KcZvMbvDMqtPFipdF5UWo
- fZKZ3wADBQf/b5cVNyb5i8QI0G7BPGBNn4VlQX5n66TsPBnrRNOi3MhTTVEBCp8s+jqUjJjX
- EjjA+O4hIm7Qqdsozurw7GlcQ0A06dIzO/1RUglZZMoC0JL43ZQmJ+3+yFrLjWgGH6ev6AOb
- YLH7ZujgAB5n0Hy2ZIChzsKLKbHptFtBvpDKB8updq+GunsY4oN3wGa67h9sHqDvjyp64Czg
- n8G5uGLwx3f/edbECKz5kPUSzChEk3suK742SEP01v4ra5WX88Hn81NjGByQMz9acJLdC7Ff
- LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
- AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
- liv+rwEesYGlGeGNaKHTJw==
-Message-ID: <463ab33a-7ba0-0358-0be9-c0bb17a02785@suse.de>
-Date:   Fri, 18 Jan 2019 18:37:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 18 Jan 2019 21:41:39 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58797 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729963AbfASClj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 21:41:39 -0500
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0J2fP8t084793;
+        Sat, 19 Jan 2019 11:41:25 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
+ Sat, 19 Jan 2019 11:41:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0J2fLuE084605
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 19 Jan 2019 11:41:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] workqueue: Try to catch flush_work() without INIT_WORK().
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <1547831098-7930-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190118194853.pgdkz2ugwrob3zun@ca-dmjordan1.us.oracle.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <90c831b3-0d09-3cf7-5a2c-2fa7afaa003e@i-love.sakura.ne.jp>
+Date:   Sat, 19 Jan 2019 11:41:22 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <7f78e394-9cc3-e3fc-0497-d0ff0216d331@suse.de>
+In-Reply-To: <20190118194853.pgdkz2ugwrob3zun@ca-dmjordan1.us.oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/19 5:12 PM, Tony Jones wrote:
-> On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
+On 2019/01/19 4:48, Daniel Jordan wrote:
+> On Sat, Jan 19, 2019 at 02:04:58AM +0900, Tetsuo Handa wrote:
+>> syzbot found a flush_work() caller who forgot to call INIT_WORK()
+>> because that work_struct was allocated by kzalloc(). But the message
+>>
+>>   INFO: trying to register non-static key.
+>>   the code is fine but needs lockdep annotation.
+>>   turning off the locking correctness validator.
+>>
+>> by lock_map_acquire() is failing to tell that INIT_WORK() is missing.
+>>
+>> Since flush_work() without INIT_WORK() is a bug, and INIT_WORK() should
+>> set ->func field to non-zero, let's warn if ->func field is zero.
 > 
->> +from __future__ import print_function
+> Agree that it's a good idea to catch this.  So the caller did flush_work
+> without queueing it beforehand?  Out of curiosity, what situation leads to
+> this?  Link to the report might be helpful.
+
+I quoted the patch below.
+
 > 
-> You don't need this unless you're actually requiring functionality that only exists in v3.
-> For example, you need it to handle the suppress newline functionality such as "end=".
+>> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+>> index 392be4b..a503ad9 100644
+>> --- a/kernel/workqueue.c
+>> +++ b/kernel/workqueue.c
+>> @@ -2908,6 +2908,9 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
+>>  	if (WARN_ON(!wq_online))
+>>  		return false;
+>>  
+>> +	if (WARN_ON(!work->func))
+>> +		return false;
+>> +
+> 
+> __queue_work has a sanity check already for work, but using list_empty.  Seems
+> slightly better to be consistent?
+> 
 
-Also, it brings up a question I had.   What python versions are expected to be supported with PYTHON=python2?
+list_empty() won't work, for "struct work_struct" is embedded into a struct
+which is allocated by kzalloc().
 
-https://python-future.org/imports.html   So importing from future (for end='' support) implies >= 2.6.   
 
-The base release of 2.6 was October 2008 so maybe this is fine.  Otherwise it may be preferable to use sys.stdout.write which has more consistent semantics (see
-tools/perf/scripts/python/compaction-times.py)
 
-Tony
+From 1bbf8d9c7aaef78d7f483d2131261162485c6f72 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Sat, 19 Jan 2019 01:38:53 +0900
+Subject: [PATCH] drm/vkms: Fix flush_work() without INIT_WORK().
+
+syzbot is hitting a lockdep warning [1] because flush_work() is called
+without INIT_WORK() after kzalloc() at vkms_atomic_crtc_reset().
+
+Commit 6c234fe37c57627a ("drm/vkms: Implement CRC debugfs API") added
+INIT_WORK() to only vkms_atomic_crtc_duplicate_state() side. Assuming
+that lifecycle of crc_work is appropriately managed, fix this problem
+by adding INIT_WORK() to vkms_atomic_crtc_reset() side.
+
+[1] https://syzkaller.appspot.com/bug?id=a5954455fcfa51c29ca2ab55b203076337e1c770
+
+Reported-and-tested-by: syzbot <syzbot+12f1b031b6da017e34f8@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ drivers/gpu/drm/vkms/vkms_crtc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+index 177bbcb..3c37d8c 100644
+--- a/drivers/gpu/drm/vkms/vkms_crtc.c
++++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+@@ -104,6 +104,7 @@ static void vkms_atomic_crtc_reset(struct drm_crtc *crtc)
+ 	vkms_state = kzalloc(sizeof(*vkms_state), GFP_KERNEL);
+ 	if (!vkms_state)
+ 		return;
++	INIT_WORK(&vkms_state->crc_work, vkms_crc_work_handle);
+ 
+ 	crtc->state = &vkms_state->base;
+ 	crtc->state->crtc = crtc;
+-- 
+1.8.3.1
+
