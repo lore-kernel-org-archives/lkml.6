@@ -1,100 +1,106 @@
-Return-Path: <SRS0=4HPh=P2=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3882AC5AE5E
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DAEC5AE5E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0846F20657
-	for <linux-kernel@archiver.kernel.org>; Fri, 18 Jan 2019 23:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBB692086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:00:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U0WVcMHA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbfARX5j (ORCPT
+        id S1730173AbfASAAh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 18:57:39 -0500
-Received: from avon.wwwdotorg.org ([104.237.132.123]:52524 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730118AbfARX5j (ORCPT
+        Fri, 18 Jan 2019 19:00:37 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39441 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730116AbfASAAh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 18:57:39 -0500
-X-Greylist: delayed 500 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Jan 2019 18:57:39 EST
-Received: from [10.20.204.51] (unknown [216.228.112.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 74F021C0086;
-        Fri, 18 Jan 2019 16:49:18 -0700 (MST)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.100.2 at avon.wwwdotorg.org
-Subject: Re: [PATCH 0/8] Virtio-over-PCIe on non-MIC
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
-        gregkh@linuxfoundation.org, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>,
-        "ABRAHAM, KISHON VIJAY" <kishon@ti.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        linux-ntb@googlegroups.com, Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20190116163253.23780-1-vincent.whitchurch@axis.com>
-From:   Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <e22d901d-f92f-90a4-eaa5-a350e3f817f1@wwwdotorg.org>
-Date:   Fri, 18 Jan 2019 16:49:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 18 Jan 2019 19:00:37 -0500
+Received: by mail-pf1-f196.google.com with SMTP id r136so7343162pfc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 16:00:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CQru0ZtjCj4tH1acvKM1FH9lK8e+6criBQjkrVcg/5o=;
+        b=U0WVcMHAXlgEtTRXrunT7DHmBR5HVGIcmDD6NHcoftpfd4TbM3FHNLf6lC7XY3wKwu
+         5r4xMWaxvbwsu0ZiZEEece+JBlBbvbU2WTN6GGSgxFSkcQao2iZHAgHCaEysDinskO2F
+         OvzT7WFNXBdCxW/kibf3aph8u68DfehiYEtsU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CQru0ZtjCj4tH1acvKM1FH9lK8e+6criBQjkrVcg/5o=;
+        b=YFHKy4XvcMyykqxPdYxZsiJNNGTUx6ZSguh2Tm/LfRVuY67fLBJiVW3s0OyItWSm7B
+         dNpuV0UQf71GnxHu90uQD5CiBlyNAXp9eT7NJfF1Qqs9BY6THObDE5HdF8Fr7tozLjiR
+         lvOfHumRnPHQ9wNLSPbh4zibNtV1f07A6N7AUIbzynxeUh7ivcDUAuZ6ndvtQ7mNBj4M
+         eN2MaOogIZjvyO/glCMR7vNxS4ymuy1rUhQibqMvEXkksgOZDuQe3nile9CvByupr0YG
+         uS3tHP8r9wnAB4Wk2d3tJEI8JNtpxXZEZZe0ycpdIj8DeseIoEhgGxm3X4hQ5uYd+IJT
+         dzyA==
+X-Gm-Message-State: AJcUukedC6D+k1tUVSX9h+I5/WLesRdcP7JGA/yhukeUAMltPMUt7E9S
+        H3JdoQ+xWWddh/0yKRIeA0ldgA==
+X-Google-Smtp-Source: ALg8bN5b+l/blDpXz0bBpVc0UWOAf0zgmW/Hr9h6iXHTku+yjv2b5s7UL8AypL2/3Q2cf3ndfsEbLw==
+X-Received: by 2002:a62:26c7:: with SMTP id m190mr21641089pfm.79.1547856036248;
+        Fri, 18 Jan 2019 16:00:36 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id m3sm13066900pfi.102.2019.01.18.16.00.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 16:00:35 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Govind Singh <govinds@codeaurora.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] dts: arm64/sdm845: Add clocks to WCN3990 WLAN module device node
+Date:   Fri, 18 Jan 2019 16:00:15 -0800
+Message-Id: <20190119000016.139657-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 MIME-Version: 1.0
-In-Reply-To: <20190116163253.23780-1-vincent.whitchurch@axis.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/19 9:32 AM, Vincent Whitchurch wrote:
-> The Virtio-over-PCIe framework living under drivers/misc/mic/vop implements a
-> generic framework to use virtio between two Linux systems, given shared memory
-> and a couple of interrupts.  It does not actually require the Intel MIC
-> hardware, x86-64, or even PCIe for that matter.  This patch series makes it
-> buildable on more systems and adds a loopback driver to test it without special
-> hardware.
-> 
-> Note that I don't have access to Intel MIC hardware so some testing of the
-> patchset (especially the patch "vop: Use consistent DMA") on that platform
-> would be appreciated, to ensure that the series does not break anything there.
+When commit be7019103469 ("dts: arm64/sdm845: Add WCN3990 WLAN module
+device node") was posted upstream no clocks were specified.  However,
+when the pack was picked into the Chrome OS kernel tree (allegedly
+directly from the mailing list post) it had clock properties.
 
-So a while ago I took a look at running virtio over PCIe. I found virtio 
-basically had two parts:
+I presume that the clock should be there, so let's add it.
 
-1) The protocol used to enumerate which virtio devices exist, and 
-perhaps configure them.
+Fixes: be7019103469 ("dts: arm64/sdm845: Add WCN3990 WLAN module device node")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-2) The ring buffer protocol that actually transfers the data.
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I recall that data transfer was purely based on simple shared memory and 
-interrupts, and hence could run over PCIe (e.g. via the PCIe endpoint 
-subsystem in the kernel) without issue.
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index e4156ea320aa..f99424fc4df2 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -2211,6 +2211,8 @@
+ 			reg = <0 0x18800000 0 0x800000>;
+ 			reg-names = "membase";
+ 			memory-region = <&wlan_msa_mem>;
++			clock-names = "cxo_ref_clk_pin";
++			clocks = <&rpmhcc RPMH_RF_CLK2>;
+ 			interrupts =
+ 				<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.20.1.321.g9e740568ce-goog
 
-However, the enumeration/configuration protocol requires the host to be 
-able to do all kinds of strange things that can't possibly be emulated 
-over PCIe; IIRC the configuration data contains "registers" that when 
-written select the data other "registers" access. When the virtio device 
-is exposed by a hypervisor, and all the accesses are emulated 
-synchronously through a trap, this is easy enough to implement. However, 
-if the two ends of this configuration parsing are on different ends of a 
-PCIe bus, there's no way this can work.
-
-Are you thinking of doing something different for 
-enumeration/configuration, and just using the virtio ring buffer 
-protocol over PCIe?
-
-I did post asking about this quite a while back, but IIRC I didn't 
-receive much of a response. Yes, here it is:
-
-> https://lists.linuxfoundation.org/pipermail/virtualization/2018-March/037276.html
-"virtio over SW-defined/CPU-driven PCIe endpoint"
