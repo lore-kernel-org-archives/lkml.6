@@ -2,103 +2,119 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCB5C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8E5C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD65720821
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:55:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0BB42084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:07:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rweXwSQo"
+	dkim=pass (1024-bit key) header.d=lkcl.net header.i=@lkcl.net header.b="EgBpfpRD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbfASKzu (ORCPT
+        id S1727885AbfASLHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 05:55:50 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34595 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbfASKzt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 05:55:49 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j10so7301219pga.1;
-        Sat, 19 Jan 2019 02:55:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ehdoWmb4wUTdXYiPCKCbzVf4sdIz4O4H7YapYpem6e0=;
-        b=rweXwSQoQMP7Hn2lBkL7d/UezLSv46E6ppA4md1Rh2fHvjX5s+2AkmolT5q9kU/LEM
-         t0flIipyPYU0x2DsWf6mo2fSFL+bCVU37sNMXcWkDUKT2rGhLv2TxkDXD9s7MALkheoG
-         lfMxOUacGIC87Ab4lZ0sh592zWmhqHajzRFyR68XIuY39b7ah84ufgbWECjnA6jPzDhn
-         0CFWfVsjOyCIPcTf37sDPOkztnfZaz4YQbCr/2AZzagVrQ4soUGnX/V2q+1W0lV7a/Xo
-         CEJd5v+KDPhxHdXYl1je/MnlweGwLqjU1qRMBPE9vsdzwGQhA4cQRXiuiDSBzNzQbAY+
-         IXAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ehdoWmb4wUTdXYiPCKCbzVf4sdIz4O4H7YapYpem6e0=;
-        b=ecLO4GEuHbqAFiEMuiTKoJf69qKkc91sClB0qvOSezGolxHxUKfirv6ZZGGuZF+AqR
-         +rhX5flJnEJUTpxEcxVIdnXE1NeUKWjK5heTG0vB2zn3B7yfqb6UORqtiiXE3Z2oIBWC
-         o4hzc8DczrY4YnLhRtTVTYcxHmh6ljGIPJd/4I3IV3PlejaTDSlVQK3rUNWH2JFS2ueK
-         IBtFsCn1MXK6/uw2EiSsvBDLvBnMX02iGsAToSx41rGcUIY4hIEszpTBCqtrz5dSA0N4
-         onDCWqmbqWjxKpO7X/Foy8oB8uvls/llGzeEenFYl3zI0nuMPWarJTIsKGO3I/OKwHIw
-         gvSQ==
-X-Gm-Message-State: AJcUukf1CCTIDO9kVj2onOEkB6tCQBsyJAmjmL9MyEKG2ksVct+/4UJ6
-        DWf8Xj8536cVS4Zh/4mnyiM=
-X-Google-Smtp-Source: ALg8bN7Kw9tpWMN0KEisK8dfpiAomxC1Y76le4QSQGc+PquvY0EEkzLDd/3kWcNjtrnKwC7soIKjqQ==
-X-Received: by 2002:a62:220d:: with SMTP id i13mr22783293pfi.162.1547895348603;
-        Sat, 19 Jan 2019 02:55:48 -0800 (PST)
-Received: from localhost.localdomain ([222.129.236.86])
-        by smtp.gmail.com with ESMTPSA id 125sm11168135pfg.39.2019.01.19.02.55.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 19 Jan 2019 02:55:47 -0800 (PST)
-From:   Zhiwei Jiang <qq282012236@gmail.com>
-To:     qq282012236@gmail.com
-Cc:     ath9k-devel@qca.qualcomm.com, kvalo@codeaurora.org,
-        davem@davemloft.net, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath: move spin_lock_bh to spin_lock in tasklet
-Date:   Sat, 19 Jan 2019 18:55:30 +0800
-Message-Id: <20190119105530.6079-1-qq282012236@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Sat, 19 Jan 2019 06:07:04 -0500
+Received: from lkcl.net ([217.147.94.29]:36262 "EHLO lkcl.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727787AbfASLHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 06:07:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lkcl.net; s=201607131;
+        h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version; bh=iozwcs/cQO3GQ3kgVLycB5QzCPdQ4YPXoSD0+LwbBLc=;
+        b=EgBpfpRDIUPQmN6W5nMcX3gK5WrBC2rt4Zu9LUYpIkJjhVNfofgpTj/svoJdUOQ97qwq1rprDeblbfrceIReqqMsYxt4Q0Qu4WPOEdJwNDquOrBXWpsAWiBhq9FZjGQYh4aDeJVbL6RJi2S2A5HWcvlf9dJtGEE5uRMCbChB8U4=;
+Received: from mail-lf1-f44.google.com ([209.85.167.44])
+        by lkcl.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <lkcl@lkcl.net>)
+        id 1gkoSs-00054E-1i
+        for linux-kernel@vger.kernel.org; Sat, 19 Jan 2019 11:07:02 +0000
+Received: by mail-lf1-f44.google.com with SMTP id l10so12310687lfh.9
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 03:06:45 -0800 (PST)
+X-Gm-Message-State: AJcUukdRAVl8kiaVOQM3qSqthl/wln2qkE7m6wmHz+ixL55fvOz0um/S
+        ptEkhssHA1TG5f7jPhHn5UpVlLDc2+O03eHa7hw=
+X-Google-Smtp-Source: ALg8bN5DlI5SPnYLsdcG5q7XTG7oM0Ij5EN80ZN/IKn06yTj5kRGL+LeGCDaP1ErcUjBYVW34Nx/4+WNfYX7epd3oeI=
+X-Received: by 2002:a19:e01e:: with SMTP id x30mr14205249lfg.89.1547896000268;
+ Sat, 19 Jan 2019 03:06:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAPweEDyvUdGvwy4u5qoA2QgDow0npZBMqjeMiU2RqzrJ_q4Omw@mail.gmail.com>
+ <CAPweEDyV487=EWqAibc5g_yhtuvy3w2qabCSOqh32q38rrXLSw@mail.gmail.com> <20190118150706.7b1b9e31@alans-desktop>
+In-Reply-To: <20190118150706.7b1b9e31@alans-desktop>
+From:   Luke Kenneth Casson Leighton <lkcl@lkcl.net>
+Date:   Sat, 19 Jan 2019 11:06:28 +0000
+X-Gmail-Original-Message-ID: <CAPweEDw34REx15uQ50pRoXZ+FfLxegcvxm8DN7323NrgOCsZKA@mail.gmail.com>
+Message-ID: <CAPweEDw34REx15uQ50pRoXZ+FfLxegcvxm8DN7323NrgOCsZKA@mail.gmail.com>
+Subject: Re: [RFC] spectre hardware-software cooperative mitigation
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-as you are already in a tasklet, it is unnecessary to call
-spin_lock_bh, because softirq already disable BH.
+On Friday, January 18, 2019, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+>
+> > This is going to be a mammoth task. The alternatives are to continue
+> > as things are, which is a mess that cannot be cleaned up by either of
+> > (mutually exclusive) hardware or software alone.
+> >
+> > Thoughts and feedback appreciated.
+>
+> You need to be talking to the JIT developers not asking here I think.
+> Speculative attacks in JIT environments is a topic an order of magnitude
+> or more complex than the kernel cases because there isn't even process
+> isolation between the JIT, JIT engin eand support logic.
+>
 
-Signed-off-by: Zhiwei Jiang <qq282012236@gmail.com>
----
- drivers/net/wireless/ath/ath9k/htc_drv_txrx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Alan thanks for engaging on this.  Deep breath: it's everything.
+OpenSSL, linux kernel, uboot, JIT developers, PAM, system calls,
+interrupts, exceptions, everything. Anywhere any time there is a
+transition (of any kind, not just JIT environments) from trusted code
+to arbitrary untrusted code, whether it be linux kernel, uboot,
+applications, BIOSes, literally and absolutely anything and
+everything, on every processor that is OoO, regardless of ISA.
 
-diff --git a/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c b/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
-index 799010ed04e0..4e38276ed0d3 100644
---- a/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
-+++ b/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
-@@ -574,12 +574,12 @@ void ath9k_tx_failed_tasklet(unsigned long data)
- {
- 	struct ath9k_htc_priv *priv = (struct ath9k_htc_priv *)data;
- 
--	spin_lock_bh(&priv->tx.tx_lock);
-+	spin_lock(&priv->tx.tx_lock);
- 	if (priv->tx.flags & ATH9K_HTC_OP_TX_DRAIN) {
- 		spin_unlock_bh(&priv->tx.tx_lock);
- 		return;
- 	}
--	spin_unlock_bh(&priv->tx.tx_lock);
-+	spin_unlock(&priv->tx.tx_lock);
- 
- 	ath9k_htc_tx_drainq(priv, &priv->tx.tx_failed);
- }
--- 
-2.19.0
+In essence our basic fundamental assumptions about security separation
+are... gone [for OoO processors].
 
+Since I wrote the OP I found that the RISCV BOOM team had done some
+research, and also concluded that explicitly called speculation
+"fences" were the sanest solution. Link to discussion:
+
+https://groups.google.com/forum/?nomobile=true#!topic/riscv-boom/yxDwmpjtQrE
+
+Where my expertise runs out is whether it should be libc6 that calls
+the firebreak instruction (or if one does not exist, a set of 100 NOPs
+or whatever is found to be best suited for a given OoO processor), or
+whether it should be the linux kernel that does so, perhaps as part of
+the context switch point.
+
+An OoO processor that has since been designed to clear the entire
+speculation state on a context switch, interrupt or exception clearly
+would not need to call the firebreak (fence) instruction in the linux
+kernel context switch (from kernelspace to userspace as you do not
+want info to leak from privileged to non-privileged) however those
+that do not have such capability just as clearly would need to.
+
+Whether the same fence should be called on the switch from userspace
+to kernelspace? Honestly I do not know, I believe it would depend on
+the level of paranoia :) Do you trust the linux kernel not to be
+compromised, if it is, do you consider it Game Over already, that sort
+of thing. Don't know the answer there.
+
+So, yes, JIT definitely more complex, fence will definitely help...
+however it is everywhere, *all* software needs to engage on this and
+begin the long arduous process of designing, agreeing and then
+implementing a sane mitigation strategy.
+
+Yes BIOSes too ( Anyone still think proprietary BIOSes are a good idea? Intel?)
+
+Or, we can all go back to using 25+ year old x86 processors (486s,
+yay! Anyone still got an original OLPC, with the Geode LX500, or even
+a Vortex86?), or use ARM Cortex A7 32 bit, Cortex A53 64 bit, or
+MIPS64, anything that's in-order that can be found... *if* they can be
+found... :)
+
+l.
