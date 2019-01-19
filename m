@@ -2,157 +2,84 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C02B3C6369F
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 07:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1369C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 07:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DDED2084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 07:12:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="XdADO6f7"
+	by mail.kernel.org (Postfix) with ESMTP id BDD9A2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 07:16:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbfASHM2 (ORCPT
+        id S1727611AbfASHQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 02:12:28 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:33618 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727472AbfASHM2 (ORCPT
+        Sat, 19 Jan 2019 02:16:24 -0500
+Received: from mail-qt1-f181.google.com ([209.85.160.181]:44424 "EHLO
+        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727472AbfASHQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 02:12:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hZ9ax6upapGp6T9kLNWDN/tg1u40CL01JpKtAPnNd9U=; b=XdADO6f7BaB+COAcuOFnUT5JI
-        GEUboer4jHyaP/JlDUpUo2nf9cf+Xb3HipPtVOhPJzUCBlpHmBP5sEbC5FjHIjclJUZpScLjksQ2v
-        t4au7BxEJgPwKdGa/Oy1Qntbxek8Ozk3P+P00Lpt7DZTu+75wjnDR84rAHgTOBcijcEXI=;
-Received: from p5dc58a38.dip0.t-ipconnect.de ([93.197.138.56] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gkknh-0003Lb-1O; Sat, 19 Jan 2019 08:12:17 +0100
-Date:   Sat, 19 Jan 2019 08:12:11 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     "J, KEERTHY" <j-keerthy@ti.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, <paul@pwsan.com>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-kernel@vger.kernel.org>, <t-kristo@ti.com>,
-        <bcousson@baylibre.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [Letux-kernel] [PATCH v3 3/3] arm: omap_hwmod disable ick
- autoidling when a hwmod requires that
-Message-ID: <20190119081211.73844b6a@aktux>
-In-Reply-To: <c2c283c5-d1f7-8b65-a19b-0c4af80b722a@ti.com>
-References: <20190116220429.9136-1-andreas@kemnade.info>
-        <20190116220429.9136-4-andreas@kemnade.info>
-        <20190118154807.GV5544@atomide.com>
-        <20190118181827.7163bee4@aktux>
-        <20190118183630.GX5544@atomide.com>
-        <20190118203832.3be7975e@aktux>
-        <20190118204204.44db353f@aktux>
-        <20190118194802.GZ5544@atomide.com>
-        <c2c283c5-d1f7-8b65-a19b-0c4af80b722a@ti.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Sat, 19 Jan 2019 02:16:23 -0500
+Received: by mail-qt1-f181.google.com with SMTP id n32so17764742qte.11
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 23:16:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
+         :mail-followup-to:mime-version:content-disposition:user-agent;
+        bh=K7muGxWLC+as0Ps/LPlVCpjx56rRCs1E9OCFoQtoAG0=;
+        b=FwBIzyV5hodMmtubNsDy8dBwN5K22koD58Ve1EDdd+H978BF2eNWTYkZso7RSfoo9P
+         ytzsuhTa8Ol1u+ZCvRWSsMUpRqalaPCSBuwsCuALCPKS5KZc0Pbt/JDydqWT4XHO3phK
+         4ZSYXa8Hk+K9xZiedkR61ayQvo7NuPWU/hXr0qvnVUnJnh3L8pXoAVgo8330lUA8XRO1
+         WmSu0BHhY0eM5GYCy09gXLfZH7ALDlhX1bWBqXatzyWqsA0NgmnCp5/tbXugsVeZpFs5
+         xNKV/7yVcRhvIRre5kqvkC2wXHaKj8SFOJbdjH8s9gH/L0d92OycyjzIouv56yxtq0ar
+         UoyQ==
+X-Gm-Message-State: AJcUukc3w8RCBAEWRbavRdbnG+I3bN8DpgPIdIcuHBiyeKNwHPgTzXOy
+        rnXQqVyL4yt0k2k4cgNaH3S5oeUSHTY=
+X-Google-Smtp-Source: ALg8bN4wkcvZnspnQMvoLzQRvYzj80UXVKi+tHB6Isf61QGDMr1QLR/P1bgoukAkBUAPuCQCFUSM5w==
+X-Received: by 2002:a0c:d992:: with SMTP id y18mr19075551qvj.161.1547882182936;
+        Fri, 18 Jan 2019 23:16:22 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id 20sm66975101qtp.54.2019.01.18.23.16.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Jan 2019 23:16:22 -0800 (PST)
+Date:   Sat, 19 Jan 2019 00:16:21 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Question about out_unmap section of map_sg in amd_iommu.c
+Message-ID: <20190119071621.xh5s3rkqiabgjwo4@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QOboxb.j5kj7pmjtWLwyAwN"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/QOboxb.j5kj7pmjtWLwyAwN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, 19 Jan 2019 12:09:48 +0530
-"J, KEERTHY" <j-keerthy@ti.com> wrote:
-
-> On 1/19/2019 1:18 AM, Tony Lindgren wrote:
-> > * Andreas Kemnade <andreas@kemnade.info> [190118 19:42]: =20
-> >> On Fri, 18 Jan 2019 20:38:47 +0100
-> >> Andreas Kemnade <andreas@kemnade.info> wrote:
-> >> =20
-> >>> Hi,
-> >>>
-> >>> On Fri, 18 Jan 2019 10:36:30 -0800
-> >>> Tony Lindgren <tony@atomide.com> wrote:
-> >>>
-> >>> [...] =20
-> >>>> til the next workaround.
-> >>>>     =20
-> >>>>> That flags also causes the iclk being enabled/disabled
-> >>>>> manually. =20
-> >>>>
-> >>>> Yes but SWSUP_IDLE for the interface clock to me currently
-> >>>> just means:
-> >>>>
-> >>>> "manually enable and disable ocp interface clock"
-> >>>>     =20
-> >>> well, if we want to manually disable it and not automatically,
-> >>> we have to disable autoidle or it will be automatically disabled.
-> >>>
-> >>> Disabling it manually when it is already auto-disabled (by autoidle) =
-is
-> >>> just practically a no-op towards the clock.
-> >>> =20
-> >>>> and with your changes it becomes:
-> >>>>
-> >>>> "manually enable and disable ocp interface clock and block
-> >>>>   autoidle while in use".
-> >>>>
-> >>>> So aren't we now changing the way things behave in general
-> >>>> for SWSUP_IDLE?
-> >>>>     =20
-> >>> Yes, we are, so proper testing is needed. But If I read those comments
-> >>> it was always intended this way but not fully implemented because it
-> >>> appeared to be more work like needing a usecounter (which my patchset
-> >>> also adds) for that autoidle flag.
-> >>> =20
-> >> and there are quite few hwmods marked by this flag.
-> >> And then there are those clocks marked by this flags (on am33xx) which
-> >> do not have that autoidle feature at all, so the risk is not too high.=
- =20
-> >=20
-> > Keerthy, can you please test this series on top of the
-> > related clock patches with your am335x PM test cases? =20
->=20
-> Can you point me to the clock series that needs to be tested
-> along with this?
->=20
-
-https://patchwork.kernel.org/project/linux-clk/list/?series=3D66691
-
-Regards,
-Andreas
 
 
---Sig_/QOboxb.j5kj7pmjtWLwyAwN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  out_unmap:
+          pr_err("%s: IOMMU mapping error in map_sg (io-pages: %d)\n",
+                 dev_name(dev), npages);
 
------BEGIN PGP SIGNATURE-----
+          for_each_sg(sglist, s, nelems, i) {
+                  int j, pages = iommu_num_pages(sg_phys(s), s->length, PAGE_SIZE);
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlxCzcsACgkQfb1qx03i
-kyRCyg/+MZv6UlN4QxGeLwJk5wnOiM/377SC6ANjD+Wzdmxoq7SctKitaPsqbKIy
-/uHLgS52AzILAELttWdnldgJxeroELE1JyChE+hgb3zOcapGbKkzN5JYdc6cr6vP
-RfG8GwTjDbO1BOdYKzKwDvwINmHpfr4j78/eiC0xjuI/F1tVk0KYWW7tjjmwbFQs
-xSf9/6k/a0nMcTGmZtjBTdorN2qIKBNepeOSLgjj+/6j+WWA3WkiyLsqOyiDxCbU
-TN+VUUDT0tPTFWzZlL3iNlv5bKGWVDBaoYyps4PYzvSlBzQHy9wVmW1KLT9VGIB1
-7bRO3t15DB4eqUNI8JGxRnEto+MytVXB6qIWdhkE2lLBH7j7G3z7rV1kd/vmK+Sy
-q3mgdOG13gtz2T4kKDD4Jf7Zy70pc3iyx9PgO2piptj5rJME2uYtmKRrWWJIDJ++
-Y2BLPEPfVBQpUFnD56DUCdB/+Agx2db7Hmp9FPT5h/V9lWstADz+uFYgMijjBsyH
-C8x2uLsXka6WkrFhq9uqB4aFYyW7tNZuXfuAQnLzK7QjXzKnr/IJStCKTz5hH9tR
-tiUxiCMG81IcCtbgZOgScq1pUAsjsff+lr4xuQlr+wlBeBg1USCSNdrNylCbnHyH
-ipN2p3zN/3rZWcaLPOnwkhhuPiSVnsTjOhfp6YQxj3WwQLvPPj4=
-=iCUZ
------END PGP SIGNATURE-----
+                  for (j = 0; j < pages; ++j) {
+                          unsigned long bus_addr;
 
---Sig_/QOboxb.j5kj7pmjtWLwyAwN--
+                          bus_addr  = address + s->dma_address + (j << PAGE_SHIFT);
+                          iommu_unmap_page(domain, bus_addr, PAGE_SIZE);
+
+                          if (--mapped_pages)
+                                  goto out_free_iova;
+
+Is this condition correct?  My thought is this was meant to break out of the loop early if
+all the mapped pages have been unmapped. So if (--mapped == 0) instead?
+
+                  }
+          }
