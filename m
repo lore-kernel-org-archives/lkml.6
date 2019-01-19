@@ -2,183 +2,95 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	PLING_QUERY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D02C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D0EC61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 565FA205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:45:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iVRbVoZV"
+	by mail.kernel.org (Postfix) with ESMTP id 9888620823
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbfASQpb (ORCPT
+        id S1728586AbfASQup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 11:45:31 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42409 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfASQpb (ORCPT
+        Sat, 19 Jan 2019 11:50:45 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:36859 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfASQup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 11:45:31 -0500
-Received: by mail-io1-f67.google.com with SMTP id x6so13321343ioa.9
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 08:45:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sjMsSYncYq2p8PkZB9EZjIRWCKx6jGaGK0vQqr3rxwE=;
-        b=iVRbVoZVoxn6L6upxvGTL4W6zgFLjDvsJE6v0duzGRL+lejhFDOOeUge3be9uTj28I
-         anNeBgCjfvWjtnmxFq9A+HYh4qc1m6hsx0cPyx74sORvH6UJ1bTsqqWiQIGIlCvHRjPt
-         D5AoTUtfJrbSbPIEceJ7uoru9nL0+vrxrGmWGVkVnPQxS1nIqwrlfK5CQRAvETLyglGH
-         hrFz3iVCvxBiuTZf9dV+QKrHXzuCjKprMd+c56KMBctobbVXJIzft5fSnbtky5LWkH9N
-         zbO/POhDSw5MGYqIehukJ+YaQS7SSd19/RdJaS6gV5BASaTN1Zp5SS/BuAr5bMLgCjk5
-         CmgA==
+        Sat, 19 Jan 2019 11:50:45 -0500
+Received: by mail-qt1-f196.google.com with SMTP id t13so18697854qtn.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 08:50:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sjMsSYncYq2p8PkZB9EZjIRWCKx6jGaGK0vQqr3rxwE=;
-        b=PfPJ3nqIxFDKB7K+oUjsBVVlnsRsibRkIv7Yclwo54DwbKETH5hiZ8qoj5b1j1yTjB
-         8E1Y2kIvfzkfNw7+OmIqQV57tBK0xxciHcbXIKCGXRbRhdDsXzVnv7UrfkYuMgeacFtx
-         Jl4xd7NpPKtYv+5BxZ5it+2QVKzn8MY8190ADpUHl9RCyA7ezNiI4xaJ9CHO7p/FNJGC
-         MTjLtqGaj6nepSwqeR1YDgNQIXy2mUos84m4ubXVI6RwDsjMWiQfTBl8LEFyniu9tLWr
-         ENxxy01SH0RAbsdlzXE9BRLbQFECziRJvBmwiUywoGrUgUEy54BBmLshxPCrdNKKvPps
-         a2Rw==
-X-Gm-Message-State: AJcUukcoybj7ibfErmSIp1I83DPl5CqMj4EMHPhn6MHyii7ih2Pq3bVy
-        ZCN/3hNfP/BlCgWvy+5ZC+xclzCW0LJ0hha0eKcjiQ==
-X-Google-Smtp-Source: ALg8bN5Epl8jNWV7pY1s9/L+3mPAtlu+RPXXK3VntsgKfeP7zrqVQvvSj4iDYzWRcKpEwtovj0ySK0TYmbot/waMz2s=
-X-Received: by 2002:a6b:fa01:: with SMTP id p1mr12119354ioh.271.1547916329918;
- Sat, 19 Jan 2019 08:45:29 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LJnWQwUwnX0sbOUmpB4Cr+Rh7vD7qTFlUyS9FK9e7vM=;
+        b=C92NXrcn6GsFJEBc8DHIDpp58wV9XDPKB+HlHk+jnjwf7gARZuD3zT3f7Kdm8jGq0c
+         F7xFZGSZLkLNkhh4k1wQClolXop1DhskW9Bm4vErkm1IUKXevEfnrLMdtLS7gmdc2r3q
+         r/DNi/LfMdWTQztEGsMVae7qHReKLZclYifJebExZGb0ORlHJtq7j3czH+HQj/o4dJfR
+         e3x4oQG3p9NYuEJbQ46kGdi5NcPrS1JOxHLdt29j9hUgTTjUkTssHMVuQXFOoFQvusK4
+         afmBhI5AK3Kkj2YjuVuzGJc+s9V5SpobZ1HMQromqXtj+QEI+NxAdAdAezvmhhupJyJb
+         NsLg==
+X-Gm-Message-State: AJcUukc7ekmVo0WwHb7vrA25vixS+nLIST5Aqaky970v2ujP+YY0K50z
+        xWZW/5OhjA9tBj488kKi3vJnbw==
+X-Google-Smtp-Source: ALg8bN6fUxHnnUr9XOVXiV9gmcpbkj404QuQXijiMPHWSsc/OuQVDYkP782gmGoyXUjs64T8g7xuFA==
+X-Received: by 2002:a0c:9d81:: with SMTP id s1mr19916830qvd.82.1547916644301;
+        Sat, 19 Jan 2019 08:50:44 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::fb21? ([2601:602:9800:dae6::fb21])
+        by smtp.gmail.com with ESMTPSA id c48sm62635843qtd.9.2019.01.19.08.50.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 19 Jan 2019 08:50:43 -0800 (PST)
+Subject: Re: [PATCH 3/4] dma-buf: add support for mapping with dma mapping
+ attributes
+To:     Christoph Hellwig <hch@infradead.org>,
+        Liam Mark <lmark@codeaurora.org>
+Cc:     sumit.semwal@linaro.org, arve@android.com, tkjos@android.com,
+        maco@android.com, joel@joelfernandes.org, christian@brauner.io,
+        devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+        afd@ti.com, john.stultz@linaro.org
+References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
+ <1547836667-13695-4-git-send-email-lmark@codeaurora.org>
+ <20190119102527.GA17723@infradead.org>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <7ae73c39-9049-bcf6-775f-b0817ba0ec5f@redhat.com>
+Date:   Sat, 19 Jan 2019 08:50:41 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <CAKcZhuW-ozJp-MVU3gw=uhuSc9+HTMVJza8QRUL3TaRrbqjJew@mail.gmail.com>
- <CACT4Y+aJADsj37Y8jPAV7PASqKm_L-iJ=MDv68yPUO0TFvhdRg@mail.gmail.com>
-In-Reply-To: <CACT4Y+aJADsj37Y8jPAV7PASqKm_L-iJ=MDv68yPUO0TFvhdRg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 19 Jan 2019 17:45:18 +0100
-Message-ID: <CACT4Y+ZxgzdbCeFquYmKThfiTGg3pZhn90X_Fk3yRXGYfepU4Q@mail.gmail.com>
-Subject: Re: [RESEND BUG REPORT] System hung! Due to ftrace or KASAN?
-To:     Zenghui Yu <zenghuiyu96@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        linux-trace-devel@vger.kernel.org,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190119102527.GA17723@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 5:37 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Fri, Jan 18, 2019 at 6:45 PM Zenghui Yu <zenghuiyu96@gmail.com> wrote:
-> >
-> > Hi, All!
-> >
-> > I compiled the latest kernel and installed it on my old laptop (Hardware name:
-> > Hewlett-Packard HP ProBook 440 G2/2247, BIOS M74 Ver. 01.02 06/17/2014).  But
-> > when I tried to enable function tracer via debugfs, the system went _hung_!
-> > Compared with the last kernel compiling process, the only change I have made
-> > is that I enabled KASAN configuration this time.
-> >
-> > Reproducing this issue is simple as below:
-> >
-> >         0. `uname -a` shows:
-> >                 Linux ubuntuu 5.0.0-rc2+ #9 SMP Fri Jan 18 03:04:01 CST 2019
-> >                 x86_64 x86_64 x86_64 GNU/Linux
-> >
-> >         1. `make menuconfig` to enable KASAN configuration:
-> >                 Kernel hacking ---> Memory Debugging --->
-> >                 KASAN: runtime memory debugger
-> >
-> >            compile, install, reboot, then `dmesg | grep kasan` shows:
-> >                 [    0.342882] kasan: KernelAddressSanitizer initialized
-> >
-> >         2. enable function tracer
-> >                 `echo function > /sys/kernel/debug/tracing/current_tracer`
-> >            (then my poor laptop was locked and didn't respond to me ...)
-> >
-> > What's more, enabling function graph tracer will suffer from the same problem.
-> > I have no idea about what wrong thing had happened inside kernel --
-> > about ftrace,
-> > or about KASAN?  So I report it to you and waiting for your solution!
-> >
-> > I have provided my *.config* file as attachment for those who're interested in
-> > this issue.  But sorry for that I can't provide any useful call trace
-> > because the
-> > system went down so quickly.
-> >
-> > P.S. I'm a newcomer for KASAN. If any mis-configuration or
-> > mis-understand, please
-> > fix me up and let me know :).
->
-> Hi Zenghui,
->
-> I've tried to reproduce this, but kernel crashes during boot with this
-> config for me.
-> I am commit 2339e91d0e6609e17943a0ab3c3c8c4044760c05, the config is
-> basically yours but updated for newer compiler and with builtin
-> modules:
-> https://gist.githubusercontent.com/dvyukov/9af234617749aa4eada67ba8c2e4f46c/raw/d0e09ddf255962313a82bb552c3fc0d832fa6844/gistfile1.txt
+On 1/19/19 2:25 AM, Christoph Hellwig wrote:
+> On Fri, Jan 18, 2019 at 10:37:46AM -0800, Liam Mark wrote:
+>> Add support for configuring dma mapping attributes when mapping
+>> and unmapping memory through dma_buf_map_attachment and
+>> dma_buf_unmap_attachment.
+>>
+>> Signed-off-by: Liam Mark <lmark@codeaurora.org>
+> 
+> And who is going to decide which ones to pass?  And who documents
+> which ones are safe?
+> 
+> I'd much rather have explicit, well documented dma-buf flags that
+> might get translated to the DMA API flags, which are not error checked,
+> not very well documented and way to easy to get wrong.
+> 
 
-I've commented out the warning locally for now and can reproduce the
-hang. You need this commit, it fixes the hang:
-https://groups.google.com/forum/#!topic/kasan-dev/g8A8PLKCyoE
+I'm not sure having flags in dma-buf really solves anything
+given drivers can use the attributes directly with dma_map
+anyway, which is what we're looking to do. The intention
+is for the driver creating the dma_buf attachment to have
+the knowledge of which flags to use.
 
-> TITLE: WARNING in note_page
-> MAINTAINERS: [dave.hansen@linux.intel.com luto@kernel.org
-> peterz@infradead.org tglx@linutronix.de mingo@redhat.com bp@alien8.de
-> hpa@zytor.com x86@kernel.org linux-kernel@vger.kernel.org]
->
-> ------------[ cut here ]------------
-> x86/mm: Found insecure W+X mapping at address native_usergs_sysret64+0x0/0x10
-> WARNING: CPU: 3 PID: 1 at arch/x86/mm/dump_pagetables.c:263 note_wx
-> arch/x86/mm/dump_pagetables.c:262 [inline]
-> WARNING: CPU: 3 PID: 1 at arch/x86/mm/dump_pagetables.c:263
-> note_page+0x800/0xaf0 arch/x86/mm/dump_pagetables.c:302
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc2+ #16
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x7b/0xb5 lib/dump_stack.c:113
->  panic+0x18e/0x351 kernel/panic.c:214
->  __warn+0x13c/0x140 kernel/panic.c:571
->  report_bug+0xd7/0x140 lib/bug.c:186
->  fixup_bug.part.11+0x2d/0x60 arch/x86/kernel/traps.c:178
->  fixup_bug arch/x86/include/asm/paravirt.h:776 [inline]
->  do_error_trap+0xb6/0xc0 arch/x86/kernel/traps.c:271
->  do_invalid_op+0x3b/0x50 arch/x86/kernel/traps.c:290
->  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-> RIP: 0010:note_wx arch/x86/mm/dump_pagetables.c:262 [inline]
-> RIP: 0010:note_page+0x800/0xaf0 arch/x86/mm/dump_pagetables.c:302
-> Code: 4d 32 00 4c 89 7b 28 48 c7 43 30 00 00 00 00 e9 46 fc ff ff 4c
-> 89 ee 48 c7 c7 a0 35 c5 ae c6 05 02 81 1e 02 01 e8 50 93 01 00 <0f> 0b
-> 48 8b 7d 90 e8 75 4c 32 00 48 8b 43 20 48 89 45 c8 e9 72 f9
-> RSP: 0000:ffff88805d5c7d18 EFLAGS: 00010286
-> RAX: 0000000000000000 RBX: ffff88805d5c7e58 RCX: ffffffffae7f11db
-> RDX: 0000000000000001 RSI: 0000000000000004 RDI: 0000000000000246
-> RBP: ffff88805d5c7da0 R08: ffffed100bab8f5c R09: ffffed100bab8f5c
-> R10: 0000000000000002 R11: ffffed100bab8f5c R12: 0000000000000000
-> R13: ffffffffae800000 R14: 0000000000000004 R15: 0000000000000000
->  walk_pmd_level arch/x86/mm/dump_pagetables.c:428 [inline]
->  walk_pud_level arch/x86/mm/dump_pagetables.c:459 [inline]
->  walk_p4d_level arch/x86/mm/dump_pagetables.c:484 [inline]
->  ptdump_walk_pgd_level_core+0x566/0x6e0 arch/x86/mm/dump_pagetables.c:552
->  ptdump_walk_user_pgd_level_checkwx+0x4e/0x50 arch/x86/mm/dump_pagetables.c:600
->  pti_finalize+0x27/0xaf arch/x86/mm/pti.c:682
->  kernel_init+0x3e/0x130 init/main.c:1066
->  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:352
-> Kernel Offset: 0x2c800000 from 0xffffffff81000000 (relocation range:
-> 0xffffffff80000000-0xffffffffbfffffff)
-> Rebooting in 86400 seconds..
+Thanks,
+Laura
