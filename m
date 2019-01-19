@@ -2,123 +2,143 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37550C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F58C6369F
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2C062086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:17:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZiNAIpf"
+	by mail.kernel.org (Postfix) with ESMTP id 905582086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:30:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbfASLQr (ORCPT
+        id S1727885AbfASLaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 06:16:47 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39309 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbfASLQr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 06:16:47 -0500
-Received: by mail-pl1-f194.google.com with SMTP id 101so7511079pld.6;
-        Sat, 19 Jan 2019 03:16:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=Ihgfkq4eR+s+3kpq93hmo+cYzoH4VL4Bnoc/ppAZGHY=;
-        b=fZiNAIpfxicEqkk8nt3IL/QXpGoVuauCP8ASti80+lk3YQdPbdtpd0deQfU+od1hsn
-         1aqBh5Z7B2e4nQ2UGvv0AbyPtepZ9pHygrbcnJN1PisdmICNjR9qLGDIoT2wK8HcmHlS
-         mg/7/2759Syymjxh1oSJ4kXmxri5cPc4mOdWIrkhhs35iySfJTgb6iUROvHuWNI1cpsG
-         ifDuu84ViCMYSj94mbQPs1dot/nvB5v/soYSa9KS9Ic6CXHvMa9DAXIQUfDGDX1NslTt
-         3UT2rcPX4TJD2zRe+GAeS67MDOptN0ydUdrTZJ9ph5rqzLDM5nYFGyRcfBurzKsUxLbb
-         bKxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=Ihgfkq4eR+s+3kpq93hmo+cYzoH4VL4Bnoc/ppAZGHY=;
-        b=jxQBkma3twIq171RYH3/qc0XAVVTiMBiQwhdMyCC08+BSdLxS0bP2rBMo37coDb9mq
-         SjMcRCXgbee8XtI2Te3LBS/P/tUs6O49koEapyfsdQsMjDjhwlvjQgWffDkrxzmVbG77
-         C1eduJQiEJjLiqFrqIflHrCcWGj64SpqspKGx7z8H1lk6VH3yaeTx3a2TgOyvuuGFGM5
-         PrY85q/TvTaulZkwEfyh5tH6ZNvz6clGErDe9TUD7/FXrLP81XH7aCquVx2RUqXJPKHL
-         pTHZik/H4vm0pTIuWqN6UJfWrMzVDDXZPDa5bASuyofn6N7MvHL2Y2ERMM+i2eHj/LOv
-         1j6A==
-X-Gm-Message-State: AJcUukcI1WIgq41YT6fknYRrvl1n6YbXqPfwIneFb5aDrRDkK5PAqsSr
-        4meRYcozbOiGDr5L+HPoimQ=
-X-Google-Smtp-Source: ALg8bN7Qx2NVoIEm0LDYAL6Fyhs/keApplT6Rk1z0OQwn8HN4Sm5lRBeEr/bY53Ms7xc1R8GeNiFMQ==
-X-Received: by 2002:a17:902:4222:: with SMTP id g31mr22436034pld.240.1547896606065;
-        Sat, 19 Jan 2019 03:16:46 -0800 (PST)
-Received: from [0.0.0.0] (static.31.23.203.116.clients.your-server.de. [116.203.23.31])
-        by smtp.gmail.com with ESMTPSA id 7sm13660184pfm.8.2019.01.19.03.16.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 03:16:45 -0800 (PST)
-To:     ike.pan@canonical.com, dvhart@infradead.org, andy@infradead.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nullptr.cpp@gmail.com
-From:   Yang Fan <nullptr.cpp@gmail.com>
-Subject: [PATCH v2] platform/x86: ideapad-laptop: Fix no_hw_rfkill_list for
- Lenovo RESCUER R720-15IKBN
-Message-ID: <d4974133-580d-9166-f554-7e03bb1948b9@gmail.com>
-Date:   Sat, 19 Jan 2019 19:16:33 +0800
+        Sat, 19 Jan 2019 06:30:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58830 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727758AbfASLaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 06:30:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E75B4AEC3;
+        Sat, 19 Jan 2019 11:30:15 +0000 (UTC)
+Subject: Re: [PATCH v2 1/2] dt-bindings: Add vendor prefix for Catalyst
+ Semiconductor
+To:     Martyn Welch <martyn.welch@collabora.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org, Christian Hemp <c.hemp@phytec.de>,
+        =?UTF-8?Q?Stefan_Riedm=c3=bcller?= <s.riedmueller@phytec.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>
+References: <20190118194812.3319-1-martyn.welch@collabora.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <a5349edd-015f-75da-c47d-90e931f99d43@suse.de>
+Date:   Sat, 19 Jan 2019 12:30:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20190118194812.3319-1-martyn.welch@collabora.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit ae7c8cba3221 ("platform/x86: ideapad-laptop: add lenovo RESCUER 
-R720-15IKBN to no_hw_rfkill_list") added
-    DMI_MATCH(DMI_BOARD_NAME, "80WW")
-for Lenovo RESCUER R720-15IKBN.
+Hi Martyn,
 
-But DMI_BOARD_NAME does not match 80WW on Lenovo RESCUER R720-15IKBN, 
-thus cause Wireless LAN still be hard blocked.
+Am 18.01.19 um 20:48 schrieb Martyn Welch:
+> Add vendor prefix "catalyst" for Catalyst Semiconductor which is
+> already in use but undocumented.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> 
+> Changes in v2: None
+> 
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 389508584f48..d80b23b7771f 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -65,6 +65,7 @@ bticino Bticino International
+>  calxeda	Calxeda
+>  capella	Capella Microsystems, Inc
+>  cascoda	Cascoda, Ltd.
+> +catalyst	Catalyst Semiconductor, Inc
 
-On Lenovo RESCUER R720-15IKBN:
-    ~$ cat /sys/class/dmi/id/sys_vendor 
-    LENOVO
-    ~$ cat /sys/class/dmi/id/board_name 
-    Provence-5R3
-    ~$ cat /sys/class/dmi/id/product_name 
-    80WW
-    ~$ cat /sys/class/dmi/id/product_version 
-    Lenovo R720-15IKBN
+"Inc" surely is an abbreviation for "Incorporated", so can you please
+follow the below examples of writing "Inc." with trailing dot?
 
-So on Lenovo RESCUER R720-15IKBN:
-    DMI_SYS_VENDOR should match "LENOVO",
-    DMI_BOARD_NAME should match "Provence-5R3",
-    DMI_PRODUCT_NAME should match "80WW",
-    DMI_PRODUCT_VERSION should match "Lenovo R720-15IKBN".
+>  cavium	Cavium, Inc.
+>  cdns	Cadence Design Systems Inc.
+>  cdtech	CDTech(H.K.) Electronics Limited
 
-Fix it, and in according with other entries in no_hw_rfkill_list, 
-use DMI_PRODUCT_VERSION instead of DMI_BOARD_NAME.
+Otherwise looks good. Thanks for fixing the undocumented use.
 
-Fixes: ae7c8cba3221 ("platform/x86: ideapad-laptop: add lenovo 
-RESCUER R720-15IKBN to no_hw_rfkill_list")
-Signed-off-by: Yang Fan <nullptr.cpp@gmail.com>
----
- drivers/platform/x86/ideapad-laptop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
+Andreas
 
-diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-index 1589dffab9faf..8b53a9ceb897c 100644
---- a/drivers/platform/x86/ideapad-laptop.c
-+++ b/drivers/platform/x86/ideapad-laptop.c
-@@ -989,7 +989,7 @@ static const struct dmi_system_id no_hw_rfkill_list[] = {
- 		.ident = "Lenovo RESCUER R720-15IKBN",
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
--			DMI_MATCH(DMI_BOARD_NAME, "80WW"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo R720-15IKBN"),
- 		},
- 	},
- 	{
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
