@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D4AC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C12EC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D922084F
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:39:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45DC22084F
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:39:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNow0tf4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nehJCdfo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729002AbfASSjr (ORCPT
+        id S1729105AbfASSjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 13:39:47 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46439 "EHLO
+        Sat, 19 Jan 2019 13:39:54 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35014 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728590AbfASSjr (ORCPT
+        with ESMTP id S1728590AbfASSjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 13:39:47 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so8177695pfe.13;
-        Sat, 19 Jan 2019 10:39:46 -0800 (PST)
+        Sat, 19 Jan 2019 13:39:52 -0500
+Received: by mail-pf1-f196.google.com with SMTP id z9so8210789pfi.2;
+        Sat, 19 Jan 2019 10:39:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=RtrWvJAg8tLRadW6+RGapN9Sh+dFGoMqmkYArH9t5tY=;
-        b=UNow0tf4Q13A0CNJ9QQS57gJzTJYgNE5OJu+9QlzocQhuAoF3Ipa/RXfX6s0oXQmXb
-         SNAGhSmEn71joXJuLY0Ij7f9EZzKdbWRJgCU4IgIJWW+Xz+LrZGgI02hVFCb9PSwxgwW
-         I6ZhPtiF13A8qOQmgborzcGuFzUIH8f6oLJVH80xFJAjtPpypb1hrTK0g9TgGVZuIokO
-         lRmm8q9SZbDanby3aefdF038Ytx2klIEunoZEy5NK/CiK6XDZtJZGQgKOy67Cgb8Six7
-         1DUBXiYTpCjxb3Ws34AlSqzWsBUkoxvnPZ5ZhbcmPd3K5dNnlnJWTybzO+sCYuPtug48
-         BtYA==
+        bh=sVOAklPk261L5+RTM1KzurR44bu8p9J8BGuUmJ4GCSg=;
+        b=nehJCdfosBLJWbp4TGUGU5Q2xMmcFXHpMIVpJJOz72gSaPStSwSrJDduvJ1TN4+xsS
+         i5kGQR+BxN/U9mwOL+DXT+nV/88/UBHLkZ3CocTp0Hx6Dwa5nyfEHEsF5TOvKQByMp/o
+         NwaRajsgTqrWojJ6tTOXwxOLzSri1JJ7u273LaZHZpnpG4B+Xqdy+u9PkJAgn72PkypQ
+         FnLZXq33ED56aZGmUhMPMIY3DFOWIOiHq+srHWFYYN8wZMjGjxDERdZberCuHW91uDpe
+         nvL0nQcCBZ6+cWuuygnQkQ5xX4bO3dfyyA+7XNpGGUKGshTJyKnvhPcZYeyekr3NBZ0E
+         JVAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=RtrWvJAg8tLRadW6+RGapN9Sh+dFGoMqmkYArH9t5tY=;
-        b=klBib8689/osjqUOd3wwE02RAYvOwi1vNADbS6pG5vTotRI4ilNUWidkhWMSutMB+3
-         zUBPVZLlIuoTtkahgszeQDJc5YicxR/FYzKmnm30yNW2zMqbP24nXrOMvYnDp0NuUxhz
-         v+iaKqjhdL5PlQDHAI0MGsU8Revh+d+OXqwoc4ehJw0XpYBvtQ+YNl+1YF+VPzvlwjiW
-         BkXkSly9irOHkR+0ZL9mVgTvKB36aneKo9gUCwv+zonKtsIhECNojJqNDHkYbAS0PSDQ
-         H5XaFjiBShhb+v6jrzE6I8t+RAwgwrA4EW12+6ejAiF9ZULk2yFwo3fIDRQpvyjukklo
-         tUQQ==
-X-Gm-Message-State: AJcUukcWyMWs8PZfuSW0Ygj2o7Hk4WLwxS0ZvG+HUkJC7k0kgBoxBNQ+
-        7KgCcBEfV7z8NUBdwkTDoRM=
-X-Google-Smtp-Source: ALg8bN60L4OE3J/62YXR/m1V18tCI9i4Ii50F/1N7EkJEzkEg1yPiwJsSSSPWg9ZWb4Sq/ytvUIG+g==
-X-Received: by 2002:a63:374e:: with SMTP id g14mr22819442pgn.59.1547923186093;
-        Sat, 19 Jan 2019 10:39:46 -0800 (PST)
+        bh=sVOAklPk261L5+RTM1KzurR44bu8p9J8BGuUmJ4GCSg=;
+        b=JpFmzwlxm3Lz0T56Gizo5EjsykbAmiUM3yiQtcIyuRlz36gbBk5Rd/0Ssk8PUuoe3h
+         OG1fj7+i9pZMjHhKHBpN+dX1CCVbmC0Rxw+e1q6oVd1yxgUOUeEyOOH2FQxZGnUS5r0h
+         pVdFAVETzQ8WJONt3xkII0CxmEkGLvqy1W+Be3X9oz7F9bHEwrUnqsW9qKlmAYvy682L
+         EeyQ2NDPmqILgWh9y3CYSt8mDdk/vRsUuI2Df85LvUhpPYiIo2pSi5VbDY6AqestwbaS
+         0xXB+f0YnsbUhUpC8BClY7WHRwmzxMTCm9iP8JdnV8IMz5Xn8EElR5eCMLgwIcUQMtpo
+         Onmg==
+X-Gm-Message-State: AJcUukeRUlGZUEUF9FMoEg0WOiuBqqSaHqlWW1d7VllJO3smg+e1Ylcf
+        X3J9FbwZfz7lBqMZ0RHngP4=
+X-Google-Smtp-Source: ALg8bN6Wh4HAnsz6LaDG05bGZ/WCLvIhzPQg7go7Tg4bX8Dd+4O2TXj0D5pArRFGS+/ngbVEtStvUQ==
+X-Received: by 2002:a62:5d0c:: with SMTP id r12mr25055773pfb.0.1547923190835;
+        Sat, 19 Jan 2019 10:39:50 -0800 (PST)
 Received: from localhost.localdomain ([49.33.214.52])
-        by smtp.gmail.com with ESMTPSA id m20sm10127471pgb.56.2019.01.19.10.39.42
+        by smtp.gmail.com with ESMTPSA id m20sm10127471pgb.56.2019.01.19.10.39.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 10:39:45 -0800 (PST)
+        Sat, 19 Jan 2019 10:39:50 -0800 (PST)
 From:   Shreeya Patel <shreeya.patel23498@gmail.com>
 To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
         knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
         linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org, shreeya.patel23498@gmail.com
-Subject: [PATCH v2 1/3] Staging: iio: adt7316: Remove irq from bus structure
-Date:   Sun, 20 Jan 2019 00:09:30 +0530
-Message-Id: <20190119183932.14321-2-shreeya.patel23498@gmail.com>
+Subject: [PATCH v2 2/3] Staging: iio: adt7316: Remove multi read and write functions
+Date:   Sun, 20 Jan 2019 00:09:31 +0530
+Message-Id: <20190119183932.14321-3-shreeya.patel23498@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190119183932.14321-1-shreeya.patel23498@gmail.com>
 References: <20190119183932.14321-1-shreeya.patel23498@gmail.com>
@@ -71,135 +71,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-interrupt request is not needed to be present in the bus
-structure. It is a good option to pass it as a parameter
-in the probe function instead of having it in the bus structure.
+Currently, adt7316 doesn't use multi read and multi write
+functions hence remove the redundant code and make the
+necessary changes in the code.
 
 Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
 ---
- drivers/staging/iio/addac/adt7316-i2c.c |  3 +--
- drivers/staging/iio/addac/adt7316-spi.c |  4 ++--
- drivers/staging/iio/addac/adt7316.c     | 15 +++++++--------
- drivers/staging/iio/addac/adt7316.h     |  3 +--
- 4 files changed, 11 insertions(+), 14 deletions(-)
+ drivers/staging/iio/addac/adt7316-i2c.c | 40 -------------------------
+ drivers/staging/iio/addac/adt7316-spi.c | 31 ++++---------------
+ drivers/staging/iio/addac/adt7316.h     |  2 --
+ 3 files changed, 6 insertions(+), 67 deletions(-)
 
 diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
-index ac91163656b5..335c17731cf7 100644
+index 335c17731cf7..40aa9e2f1966 100644
 --- a/drivers/staging/iio/addac/adt7316-i2c.c
 +++ b/drivers/staging/iio/addac/adt7316-i2c.c
-@@ -103,14 +103,13 @@ static int adt7316_i2c_probe(struct i2c_client *client,
- {
- 	struct adt7316_bus bus = {
- 		.client = client,
--		.irq = client->irq,
- 		.read = adt7316_i2c_read,
- 		.write = adt7316_i2c_write,
- 		.multi_read = adt7316_i2c_multi_read,
- 		.multi_write = adt7316_i2c_multi_write,
- 	};
- 
--	return adt7316_probe(&client->dev, &bus, id->name);
-+	return adt7316_probe(&client->dev, &bus, id->name, client->irq);
+@@ -56,44 +56,6 @@ static int adt7316_i2c_write(void *client, u8 reg, u8 data)
+ 	return ret;
  }
  
- static const struct i2c_device_id adt7316_i2c_id[] = {
-diff --git a/drivers/staging/iio/addac/adt7316-spi.c b/drivers/staging/iio/addac/adt7316-spi.c
-index e75827e326a6..adaaa3eecd04 100644
---- a/drivers/staging/iio/addac/adt7316-spi.c
-+++ b/drivers/staging/iio/addac/adt7316-spi.c
-@@ -93,7 +93,6 @@ static int adt7316_spi_probe(struct spi_device *spi_dev)
- {
- 	struct adt7316_bus bus = {
- 		.client = spi_dev,
--		.irq = spi_dev->irq,
- 		.read = adt7316_spi_read,
- 		.write = adt7316_spi_write,
- 		.multi_read = adt7316_spi_multi_read,
-@@ -112,7 +111,8 @@ static int adt7316_spi_probe(struct spi_device *spi_dev)
- 	adt7316_spi_write(spi_dev, 0, 0);
- 	adt7316_spi_write(spi_dev, 0, 0);
- 
--	return adt7316_probe(&spi_dev->dev, &bus, spi_dev->modalias);
-+	return adt7316_probe(&spi_dev->dev, &bus, spi_dev->modalias,
-+			     spi_dev->irq);
- }
- 
- static const struct spi_device_id adt7316_spi_id[] = {
-diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-index 1ca4ee0f30ee..6b4b80fd80cc 100644
---- a/drivers/staging/iio/addac/adt7316.c
-+++ b/drivers/staging/iio/addac/adt7316.c
-@@ -1807,12 +1807,12 @@ static irqreturn_t adt7316_event_handler(int irq, void *private)
- 	return IRQ_HANDLED;
- }
- 
--static int adt7316_setup_irq(struct iio_dev *indio_dev)
-+static int adt7316_setup_irq(struct iio_dev *indio_dev, int irq)
- {
- 	struct adt7316_chip_info *chip = iio_priv(indio_dev);
- 	int irq_type, ret;
- 
--	irq_type = irqd_get_trigger_type(irq_get_irq_data(chip->bus.irq));
-+	irq_type = irqd_get_trigger_type(irq_get_irq_data(irq));
- 
- 	switch (irq_type) {
- 	case IRQF_TRIGGER_HIGH:
-@@ -1828,13 +1828,12 @@ static int adt7316_setup_irq(struct iio_dev *indio_dev)
- 		break;
- 	}
- 
--	ret = devm_request_threaded_irq(&indio_dev->dev, chip->bus.irq,
-+	ret = devm_request_threaded_irq(&indio_dev->dev, irq,
- 					NULL, adt7316_event_handler,
- 					irq_type | IRQF_ONESHOT,
- 					indio_dev->name, indio_dev);
- 	if (ret) {
--		dev_err(&indio_dev->dev, "failed to request irq %d\n",
--			chip->bus.irq);
-+		dev_err(&indio_dev->dev, "failed to request irq %d\n", irq);
- 		return ret;
- 	}
- 
-@@ -2134,7 +2133,7 @@ static const struct iio_info adt7516_info = {
+-static int adt7316_i2c_multi_read(void *client, u8 reg, u8 count, u8 *data)
+-{
+-	struct i2c_client *cl = client;
+-	int i, ret = 0;
+-
+-	if (count > ADT7316_REG_MAX_ADDR)
+-		count = ADT7316_REG_MAX_ADDR;
+-
+-	for (i = 0; i < count; i++) {
+-		ret = adt7316_i2c_read(cl, reg, &data[i]);
+-		if (ret < 0) {
+-			dev_err(&cl->dev, "I2C multi read error\n");
+-			return ret;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int adt7316_i2c_multi_write(void *client, u8 reg, u8 count, u8 *data)
+-{
+-	struct i2c_client *cl = client;
+-	int i, ret = 0;
+-
+-	if (count > ADT7316_REG_MAX_ADDR)
+-		count = ADT7316_REG_MAX_ADDR;
+-
+-	for (i = 0; i < count; i++) {
+-		ret = adt7316_i2c_write(cl, reg, data[i]);
+-		if (ret < 0) {
+-			dev_err(&cl->dev, "I2C multi write error\n");
+-			return ret;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+ /*
   * device probe and remove
   */
- int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
--		const char *name)
-+		  const char *name, int irq)
- {
- 	struct adt7316_chip_info *chip;
- 	struct iio_dev *indio_dev;
-@@ -2180,8 +2179,8 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
- 	indio_dev->name = name;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
+@@ -105,8 +67,6 @@ static int adt7316_i2c_probe(struct i2c_client *client,
+ 		.client = client,
+ 		.read = adt7316_i2c_read,
+ 		.write = adt7316_i2c_write,
+-		.multi_read = adt7316_i2c_multi_read,
+-		.multi_write = adt7316_i2c_multi_write,
+ 	};
  
--	if (chip->bus.irq > 0) {
--		ret = adt7316_setup_irq(indio_dev);
-+	if (irq > 0) {
-+		ret = adt7316_setup_irq(indio_dev, irq);
- 		if (ret)
- 			return ret;
- 	}
+ 	return adt7316_probe(&client->dev, &bus, id->name, client->irq);
+diff --git a/drivers/staging/iio/addac/adt7316-spi.c b/drivers/staging/iio/addac/adt7316-spi.c
+index adaaa3eecd04..1a78dc1e2840 100644
+--- a/drivers/staging/iio/addac/adt7316-spi.c
++++ b/drivers/staging/iio/addac/adt7316-spi.c
+@@ -23,15 +23,12 @@
+  * adt7316 register access by SPI
+  */
+ 
+-static int adt7316_spi_multi_read(void *client, u8 reg, u8 count, u8 *data)
++static int adt7316_spi_read(void *client, u8 reg, u8 *data)
+ {
+ 	struct spi_device *spi_dev = client;
+ 	u8 cmd[2];
+ 	int ret = 0;
+ 
+-	if (count > ADT7316_REG_MAX_ADDR)
+-		count = ADT7316_REG_MAX_ADDR;
+-
+ 	cmd[0] = ADT7316_SPI_CMD_WRITE;
+ 	cmd[1] = reg;
+ 
+@@ -43,7 +40,7 @@ static int adt7316_spi_multi_read(void *client, u8 reg, u8 count, u8 *data)
+ 
+ 	cmd[0] = ADT7316_SPI_CMD_READ;
+ 
+-	ret = spi_write_then_read(spi_dev, cmd, 1, data, count);
++	ret = spi_write_then_read(spi_dev, cmd, 1, data, 1);
+ 	if (ret < 0) {
+ 		dev_err(&spi_dev->dev, "SPI read data error\n");
+ 		return ret;
+@@ -52,21 +49,17 @@ static int adt7316_spi_multi_read(void *client, u8 reg, u8 count, u8 *data)
+ 	return 0;
+ }
+ 
+-static int adt7316_spi_multi_write(void *client, u8 reg, u8 count, u8 *data)
++static int adt7316_spi_write(void *client, u8 reg, u8 val)
+ {
+ 	struct spi_device *spi_dev = client;
+ 	u8 buf[ADT7316_REG_MAX_ADDR + 2];
+-	int i, ret = 0;
+-
+-	if (count > ADT7316_REG_MAX_ADDR)
+-		count = ADT7316_REG_MAX_ADDR;
++	int ret = 0;
+ 
+ 	buf[0] = ADT7316_SPI_CMD_WRITE;
+ 	buf[1] = reg;
+-	for (i = 0; i < count; i++)
+-		buf[i + 2] = data[i];
++	buf[2] = val;
+ 
+-	ret = spi_write(spi_dev, buf, count + 2);
++	ret = spi_write(spi_dev, buf, 3);
+ 	if (ret < 0) {
+ 		dev_err(&spi_dev->dev, "SPI write error\n");
+ 		return ret;
+@@ -75,16 +68,6 @@ static int adt7316_spi_multi_write(void *client, u8 reg, u8 count, u8 *data)
+ 	return ret;
+ }
+ 
+-static int adt7316_spi_read(void *client, u8 reg, u8 *data)
+-{
+-	return adt7316_spi_multi_read(client, reg, 1, data);
+-}
+-
+-static int adt7316_spi_write(void *client, u8 reg, u8 val)
+-{
+-	return adt7316_spi_multi_write(client, reg, 1, &val);
+-}
+-
+ /*
+  * device probe and remove
+  */
+@@ -95,8 +78,6 @@ static int adt7316_spi_probe(struct spi_device *spi_dev)
+ 		.client = spi_dev,
+ 		.read = adt7316_spi_read,
+ 		.write = adt7316_spi_write,
+-		.multi_read = adt7316_spi_multi_read,
+-		.multi_write = adt7316_spi_multi_write,
+ 	};
+ 
+ 	/* don't exceed max specified SPI CLK frequency */
 diff --git a/drivers/staging/iio/addac/adt7316.h b/drivers/staging/iio/addac/adt7316.h
-index fd7c5c92b599..03d5300a98cd 100644
+index 03d5300a98cd..e9f288420234 100644
 --- a/drivers/staging/iio/addac/adt7316.h
 +++ b/drivers/staging/iio/addac/adt7316.h
-@@ -16,7 +16,6 @@
- 
- struct adt7316_bus {
+@@ -18,8 +18,6 @@ struct adt7316_bus {
  	void *client;
--	int irq;
  	int (*read)(void *client, u8 reg, u8 *data);
  	int (*write)(void *client, u8 reg, u8 val);
- 	int (*multi_read)(void *client, u8 first_reg, u8 count, u8 *data);
-@@ -30,6 +29,6 @@ extern const struct dev_pm_ops adt7316_pm_ops;
- #define ADT7316_PM_OPS NULL
- #endif
- int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
--		   const char *name);
-+		  const char *name, int irq);
+-	int (*multi_read)(void *client, u8 first_reg, u8 count, u8 *data);
+-	int (*multi_write)(void *client, u8 first_reg, u8 count, u8 *data);
+ };
  
- #endif
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.17.1
 
