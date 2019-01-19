@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6D0C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1B5C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC3D22086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:42:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E5F92086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:43:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="PSy4ti8V"
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="ZhRvJ69/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbfASKmg (ORCPT
+        id S1727912AbfASKn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 05:42:36 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34342 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfASKmf (ORCPT
+        Sat, 19 Jan 2019 05:43:26 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51719 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfASKn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 05:42:35 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y185so2689572wmd.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 02:42:34 -0800 (PST)
+        Sat, 19 Jan 2019 05:43:26 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b11so6731623wmj.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 02:43:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UEd4cxki9+m4DdvXxjUhMu6h0iHxu0fTOzTyJl5I/AI=;
-        b=PSy4ti8VZpNjpHRPHzkf1+JxjlEBG3aYkYrU3Z9ZH8m9k+qlqh/4URa1Q/hk3PhpNB
-         0wrofvdIUoMzxIKtJkjo/tXPl89IR6k9KwsG9OEeqq0wUlEuGqHlrbONbjpp4dBvJ5Ps
-         8Fad5rKc4/sEro9GhouyzXMRQ1TkGsPmnlr3Mgbs5gfFYAkreTJRUwZo2H7QXvWd6Z68
-         oWMUPmDOH1a/eMKF2sLonGxdHCLBYM4lylzxgtP8FeeZjE7j7Z26T+DbonslB4iS98xR
-         FXm/dJnImfooepGSmT1rfZeFnRV+UJpJTj1K73aQmRrpnpXrPXnioo6ZWo2M+nsstmvc
-         TBrA==
+        bh=GUPmCs7wpKU+X6c9dkGsOCov7VwDuMe9sT0P7uVU3Zo=;
+        b=ZhRvJ69//p5qzIgaSp6Bb4vEGm/ItrPM/Jv5QzBO6VqbMOYJLqZvvBMllJrJ/DpAFx
+         ZvoPpDPAnXHuS7UAiAlKTIPbIn6ZWKD90fRWsMK7TYa6baJ809uy6hH1sc7fBgceg0ZZ
+         Y/gieu67AywuPGm5Ig7fDJ4U2w3THd65QKyBjsgTTf76KrgxdtQvEtG+wOehVZgn3dih
+         m4Dp9yLvWnzD6IN2gznNWlBeWAeftjZFmGMQqmpyYYcfazRvM6Qer/blpr2IH+u/18QI
+         0t5LBfD15uxsGg6LWU3IKUhYgOXdMEm3XS8YSXVkwr2fVKiDtJ9LM+TB57SOq6phFzWc
+         H4lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UEd4cxki9+m4DdvXxjUhMu6h0iHxu0fTOzTyJl5I/AI=;
-        b=R9A3SQlb5WMrcRiYTlTp8BlAgnGL+l1GxokrdFkrFlri0rwXX1AAFduzC4cvYLchlX
-         KrCaGQhZ7wD62WhAjq3C1nuSVTXf6YG3bv0700nDsaci67Aph9lBnGhnM+zfePERtx7s
-         MIoT4B/XPYgG/p9fqo6y+h+IytpclB3em2zRO4vn38TZpatXlrPKb0bq28BBvr9J8RNA
-         dmyul4MIXvSAQzVvYYV+8Y5aHvEQvJ2RMBtAL4cYpriE93jJuSQ7kW+MrxQB9RkHHnB9
-         zze2FxBOAPgh6gvEDnsDUiQovNU9pf6FVYha7DOeu+QrE6cOywN4c0KbCz/ISNXzG+WQ
-         WPgQ==
-X-Gm-Message-State: AJcUukcM05iGz2tSP5l6kMq+uDrsxUcprXzpwu8afK0vKDn4tevesmHV
-        coxKac5j4DmueQwvssXpMOXFahE1rz8Iqc8Jpoj4Ww==
-X-Google-Smtp-Source: ALg8bN5Viv/FnJkD+dxMigBx/5i2ECzC22YPB2Y24b1H6MQooVFiVfucZtcsn26Oj2cve88oQkQd3Mc+tIUz7sCSOgw=
-X-Received: by 2002:a1c:f509:: with SMTP id t9mr19506057wmh.76.1547894553425;
- Sat, 19 Jan 2019 02:42:33 -0800 (PST)
+        bh=GUPmCs7wpKU+X6c9dkGsOCov7VwDuMe9sT0P7uVU3Zo=;
+        b=k0njfypW2K+m4EFJ0y/TsySzXgPbJTmY/RFd1AMZxpXw2vrJQ5Z7V/iQkopMDWG2HW
+         hfAuxzDYp7P3LOLo4KHWdSJhbUZKKO/oOXhu7/0OucLqCkAwoEWXFtFIyOdTf1Jit5XF
+         ClPLlMn31pKAlthft/k6HTPiHdA3WcURx8LTleGalhPHGxzVB0Nc9kDvBKPkNoKrA7Dq
+         bogS17PxuF+GAJfqzZD2u9i3eqnpMIROZ92qVAxMg8LPp9ZZnMLwQGxw+jDHJYmc0KHW
+         BSBf0nE1bdPwV7oGT+9oJym9+rQzWmNLGLRLoqMBoH8JxNEjmS9H4qTSFy9kR6gStmue
+         d2+Q==
+X-Gm-Message-State: AJcUukcecxqtSICrQyA3jct/FabJq4c5KuDY3RdFIvlhvFdPPbme25VY
+        UYUWoFqo+SEKaALrF3x/WSpzWuOmUDpPkHx+v93sAw==
+X-Google-Smtp-Source: ALg8bN5WQzQtniq28bbHJ55Q0Jo+6hAfZTRLrcWyZ2hW/9fAym6FfL/nWXI1c+wW4PTZp3S8+cX1yNJyo8DShmV6Ih0=
+X-Received: by 2002:a1c:1801:: with SMTP id 1mr19820326wmy.153.1547894604575;
+ Sat, 19 Jan 2019 02:43:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20190107161047.10516-1-anup@brainfault.org> <20190107161047.10516-3-anup@brainfault.org>
- <20190115134410.GC13216@infradead.org>
-In-Reply-To: <20190115134410.GC13216@infradead.org>
+References: <20190107161047.10516-1-anup@brainfault.org> <20190107161047.10516-4-anup@brainfault.org>
+ <20190115134453.GD13216@infradead.org>
+In-Reply-To: <20190115134453.GD13216@infradead.org>
 From:   Anup Patel <anup@brainfault.org>
-Date:   Sat, 19 Jan 2019 16:12:22 +0530
-Message-ID: <CAAhSdy1uOVg6R24Wx-g0Z-ejunMfbE9R7yhu8fEGfLzmqE1Bhg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] RISC-V: Setup init_mm before parse_early_param()
+Date:   Sat, 19 Jan 2019 16:13:13 +0530
+Message-ID: <CAAhSdy0DcjA_k-f_dLO1mPdTU=Y9_Ms-aPnQpFO+x7MOUFxFkg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] RISC-V: Move setup_bootmem() to mm/init.c
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Palmer Dabbelt <palmer@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
@@ -75,26 +75,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Jan 15, 2019 at 7:14 PM Christoph Hellwig <hch@infradead.org> wrote:
 >
-> On Mon, Jan 07, 2019 at 09:40:44PM +0530, Anup Patel wrote:
+> On Mon, Jan 07, 2019 at 09:40:45PM +0530, Anup Patel wrote:
 > > From: Anup Patel <anup.patel@wdc.com>
 > >
-> > We should setup init_mm before doing parse_early_param()
-> > in setup_arch() to be consistent with setup_arch() of
-> > other architectures such as x86, ARM, and ARM64.
+> > The setup_bootmem() mainly populates memblocks and does
+> > early memory reservations. The right location for this
+> > function is mm/init.c.
 > >
 > > Signed-off-by: Anup Patel <anup.patel@wdc.com>
 >
-> Is there any good inherent reason why the order matters?  Not that I
-> really care either way..
+> Looks fine:
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>
+> Btw, please use up the available 72 chars per line in your changelogs
+> where possible.
 
-The parse_early_param() calls param callbacks in variety
-of subsystems including MM. Doing init_mm setup before
-parse_early_param() ensures that initial MM state is
-available when MM param callbacks are called.
+Sure will do.
 
-My intention was mainly to make boot-up flow similar
-to x86, ARM and ARM64 so that it is easy to add
-features already present in these arch ports.
-
-Regards,
+Thanks,
 Anup
