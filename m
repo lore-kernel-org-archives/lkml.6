@@ -2,155 +2,160 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5FBC5AE5E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF50C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2528320823
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:31:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DFED2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:38:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oA3VNzX3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sqaT+u7K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730264AbfASAbN (ORCPT
+        id S1730306AbfASAiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 19:31:13 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41605 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730159AbfASAbM (ORCPT
+        Fri, 18 Jan 2019 19:38:21 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37303 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730114AbfASAiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 19:31:12 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b7so7362711pfi.8
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 16:31:11 -0800 (PST)
+        Fri, 18 Jan 2019 19:38:20 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g67so6062195wmd.2;
+        Fri, 18 Jan 2019 16:38:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Sd+gwOo5E4dkuf4Q6i8JvdMw7Stn3ZJ/xuY+z66pxp8=;
-        b=oA3VNzX3bnQsIF+UkffAZ2wgMaE+zvZWqNg94TTjaV6spVo1EZmId5LhAR9U3kg3Rf
-         bo87YaFm4ExZiqEeI8JNFjoH0xhhIpIiq9zqOhFk8XadY45FUxnibwkrSqtkZkNBK8Lr
-         kYUaocAI89Ep6MQo0Yv1crVQFF94Mth6jL/sI=
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=pGtv4QsqOw+uu7zVP/Z08n0sfIMqmOsdBWC5cFt1gTA=;
+        b=sqaT+u7K8tAJ2vrCTWLAmAVZkn2u3ILIqbAb/xhK0WFUGJqHkd71CL8LaKf+6EM3GR
+         C0LvuQ43exOsm+89vDA3k5krOrbpcVogwBCiuEnWKsy44Bb79bP5eH2iUSnXZX2AK6xd
+         NlwN6xN6jOrfoQJa7NxANYaMzuH/ajiWyrC00ng7RHmxDZ0ZGkTcF8uOoaBJsEXi3srT
+         zAgHsJI4NxiHYAv8Q0AlCdUIJQMcBijyQOe2Y5GqJ621AOscp6fix9ZCcG8hLDJXh45u
+         1kHGQ+yc+C5YEG006JyCoLj47AEqCY9OyunL49hLugoj8k87LDUj3TeaV/JXaRSLsBIO
+         BO+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Sd+gwOo5E4dkuf4Q6i8JvdMw7Stn3ZJ/xuY+z66pxp8=;
-        b=gaucsRz/ocl610syLtc7SFhfC+Dmamyt82V5jeoBhmFJV+mJrsb9kbNa8C6jG8akcm
-         HKCi0Ga1V/GXjPGtBMTdpD8dA/B++n5S3Zi7K+wbrvH/JljspY2CZdpqxt4YpzQhoKKh
-         r7JnuRwl9InO68chx3hTABjLHE1C7ztngZYTU9WcVit6YSdaWsTlwRDoe5OKtX9EpPOz
-         SxVJqT30QEmXWdGC14Xln30cBS1XjrAf7cn0ogCOMggknj0TWsrUauGXKYfY47Hs7wwC
-         wZ1LfCiCacm7vUk5XjGSa/z21Ar84vqBZIT3+ETXIblHR3lhTuOibLTrW0tz/5TmPWAM
-         mGFA==
-X-Gm-Message-State: AJcUukeQs0SYOPVFpGrd2I+CU1RgaC89UT9+E3NjuLKuKXd46igg6zPh
-        6CQyZTss6gn7rOTJtoUi0tfT7A==
-X-Google-Smtp-Source: ALg8bN5oODdLlAZyklgwdzaHEQrU0y01J2dK24MCqQvbNSaRWzmMpr17C9P/2k541Da/gT6P/ZXpqw==
-X-Received: by 2002:a63:c051:: with SMTP id z17mr19393530pgi.20.1547857871519;
-        Fri, 18 Jan 2019 16:31:11 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id q195sm6681095pgq.7.2019.01.18.16.31.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Jan 2019 16:31:10 -0800 (PST)
-Date:   Fri, 18 Jan 2019 16:31:09 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
- change command
-Message-ID: <20190119003109.GD261387@google.com>
-References: <20190110143928.GE3430@localhost>
- <61301df80bd6a8ee0265b31b7f6a3aa1@codeaurora.org>
- <20190111013707.GD261387@google.com>
- <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
- <20190111235633.GK261387@google.com>
- <a6e083d245baebc019b6e7163fd6f133@codeaurora.org>
- <20190115234628.GQ261387@google.com>
- <20190117160944.GV3691@localhost>
- <20190117172109.GU261387@google.com>
- <20190118094416.GB3691@localhost>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=pGtv4QsqOw+uu7zVP/Z08n0sfIMqmOsdBWC5cFt1gTA=;
+        b=RIoVu5pmbcTVOG7PjTFA57JsjZKnJkjabED1XtAyad5jh/Ehlo3cWQgS6tbBqfDea4
+         XlXrJbyNjHsHKKbRLR+0cLbKl+Sjs432zuSbujwMGQU8ajFcN+23asSnU63PaoNX952z
+         mJfx+NXAnr4Gcrdufrn6cSzfS9hjsT2xG6SkzHTfanntR7DajTam0hBLqbXw2ZIdoRoU
+         QknZBu97j+domL/GygU6X5uysPJsFh8IPzF3OnoTge8//HhCt3HK5cRFfDx3ToAHkL+J
+         rkQXbU1WcUM5m9ggfj9NO0JLzb5Y01HCDM4buPPgVwZMneUYzPcul21+sQFuDGPgRG/D
+         0DAw==
+X-Gm-Message-State: AJcUukf2nTp2oi3+wD43D+Z3HAIKQkUsYaKXnsIhbMb3bbzdNzd1cLIJ
+        aH6Is+iqxfAdDXa6mmFJtPU=
+X-Google-Smtp-Source: ALg8bN7HqsQlFqWpJkacqL0biu8siNJKPusecNQeP2EEtLWPalodAFasxha1OudzPHWacffRSVZACA==
+X-Received: by 2002:a1c:dd04:: with SMTP id u4mr17159449wmg.84.1547858298418;
+        Fri, 18 Jan 2019 16:38:18 -0800 (PST)
+Received: from [172.30.88.68] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
+        by smtp.gmail.com with ESMTPSA id y34sm235363566wrd.68.2019.01.18.16.38.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 16:38:17 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] media: imx: csi: Disable CSI immediately after
+ last EOF
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
+Cc:     stable@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Peter Seiderer <ps.report@gmx.net>,
+        =?UTF-8?Q?Ga=c3=abl_PORTAY?= <gael.portay@collabora.com>
+References: <20190117204912.28456-1-slongerbeam@gmail.com>
+ <20190117204912.28456-2-slongerbeam@gmail.com>
+ <1547807043.3375.3.camel@pengutronix.de>
+ <56b43909-136b-fce0-e743-26cd6afd0eea@gmail.com>
+Message-ID: <77c399a3-4b21-385f-9d62-aa30f5c89d2f@gmail.com>
+Date:   Fri, 18 Jan 2019 16:38:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190118094416.GB3691@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <56b43909-136b-fce0-e743-26cd6afd0eea@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 10:44:16AM +0100, Johan Hovold wrote:
-> On Thu, Jan 17, 2019 at 09:21:09AM -0800, Matthias Kaehlcke wrote:
-> 
-> > I observed that the qcom_geni_serial driver doesn't raise RTS with
-> > flow control disabled. It seems we have to investigate why that's the
-> > case. I agree that the driver should be platform agnostic.
-> 
-> Sounds like a driver bug, unless the hardware is just "odd". The
-> driver implementation of this looks very non-standard judging from a
-> quick peek.
-> 
-> In fact, qcom_geni_serial_get_mctrl() is currently a no-op if hardware
-> flow control is not enabled:
-> 
-> 	if (uart_console(uport) || !uart_cts_enabled(uport))
-> 		return;
-> 
-> Perhaps dropping the !uart_cts_enabled() test is sufficient.
 
-Thanks for taking a look Johan, that was indeed the problem (also
-in set_mctrl()). I posted a fix: https://lore.kernel.org/patchwork/patch/1033611/
 
-Balakrishna, the following (applied on top of your patch) works for me
-with the UART patch above:
+On 1/18/19 11:01 AM, Steve Longerbeam wrote:
+>
+>
+> On 1/18/19 2:24 AM, Philipp Zabel wrote:
+>> On Thu, 2019-01-17 at 12:49 -0800, Steve Longerbeam wrote:
+>>> Disable the CSI immediately after receiving the last EOF before stream
+>>> off (and thus before disabling the IDMA channel).
+>>>
+>>> This fixes a complete system hard lockup on the SabreAuto when 
+>>> streaming
+>>> from the ADV7180, by repeatedly sending a stream off immediately 
+>>> followed
+>>> by stream on:
+>>>
+>>> while true; do v4l2-ctl  -d4 --stream-mmap --stream-count=3; done
+>>>
+>>> Eventually this either causes the system lockup or EOF timeouts at all
+>>> subsequent stream on, until a system reset.
+>>>
+>>> The lockup occurs when disabling the IDMA channel at stream off. 
+>>> Disabling
+>>> the CSI before disabling the IDMA channel appears to be a reliable 
+>>> fix for
+>>> the hard lockup.
+>>>
+>>> Fixes: 4a34ec8e470cb ("[media] media: imx: Add CSI subdev driver")
+>>>
+>>> Reported-by: Gaël PORTAY <gael.portay@collabora.com>
+>>> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+>>> Cc: stable@vger.kernel.org
+>>> ---
+>>> Changes in v2:
+>>> - restore an empty line
+>>> - Add Fixes: and Cc: stable
+>>> ---
+>>>   drivers/staging/media/imx/imx-media-csi.c | 6 ++++--
+>>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/staging/media/imx/imx-media-csi.c 
+>>> b/drivers/staging/media/imx/imx-media-csi.c
+>>> index e18f58f56dfb..e0f6f88e2e70 100644
+>>> --- a/drivers/staging/media/imx/imx-media-csi.c
+>>> +++ b/drivers/staging/media/imx/imx-media-csi.c
+>>> @@ -681,6 +681,8 @@ static void csi_idmac_stop(struct csi_priv *priv)
+>>>       if (ret == 0)
+>>>           v4l2_warn(&priv->sd, "wait last EOF timeout\n");
+>>>   +    ipu_csi_disable(priv->csi);
+>>> +
+>> Can you add a short comment why this call is here? Since now
+>> csi_idmac_stop is kind of a misnomer and symmetry with csi(_idmac)_start
+>> is broken, I think this is a bit un-obvious.
+>
+> Yeah. I think a cleaner, more symmetric solution would be to split up 
+> csi_idmac_stop.
+>
+>>
+>> Also note that now the error path of csi_start() will now call
+>> ipu_csi_disable() while the CSI is disabled. This happens to work
+>> because that just calls ipu_module_disable(), which is not refcounted.
+>
+> Thanks for catching. Splitting up csi_idmac_stop will fix this. 
+> Working on that.
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 9d5e41f159c78f..60bfdf01f72841 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1080,7 +1080,7 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- {
- 	unsigned int speed, qca_baudrate;
- 	struct qca_serdev *qcadev;
--	int ret;
-+	int ret = 0;
- 
- 	if (speed_type == QCA_INIT_SPEED) {
- 		speed = qca_get_speed(hu, QCA_INIT_SPEED);
-@@ -1097,22 +1097,27 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- 		 * the old speed.
- 		 */
- 		qcadev = serdev_device_get_drvdata(hu->serdev);
--		if (qcadev->btsoc_type == QCA_WCN3990)
-+		if (qcadev->btsoc_type == QCA_WCN3990) {
-+			hci_uart_set_flow_control(hu, true);
- 			serdev_device_set_rts(hu->serdev, false);
-+		}
- 
- 		qca_baudrate = qca_get_baudrate_value(speed);
- 		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
- 		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
- 		if (ret)
--			return ret;
-+			goto out;
- 
- 		host_set_baudrate(hu, speed);
- 
--		if (qcadev->btsoc_type == QCA_WCN3990)
-+out:
-+		if (qcadev->btsoc_type == QCA_WCN3990) {
-+			hci_uart_set_flow_control(hu, false);
- 			serdev_device_set_rts(hu->serdev, true);
-+		}
- 	}
- 
--	return 0;
-+	return ret;
- }
- 
- static int qca_wcn3990_init(struct hci_uart *hu)
+
+Well turns out Peter Seiderer kindly provided a solution they have been 
+using for some time on custom imx6 hardware. His solution is to disable 
+the SMFC before the IDMA channel, which I have tested on the SabreAuto 
+and also works. This is a much simpler change, so I will post v3 that 
+does this instead.
+
+Steve
+
