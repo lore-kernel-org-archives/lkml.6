@@ -2,79 +2,110 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC88C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 23:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27296C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 23:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E01B2086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 23:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0A142086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 23:14:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PQTgh62x"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Odb7xUUM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729815AbfASXCh (ORCPT
+        id S1729871AbfASXOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 18:02:37 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43248 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729727AbfASXCh (ORCPT
+        Sat, 19 Jan 2019 18:14:01 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39693 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729767AbfASXN7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 18:02:37 -0500
-Received: by mail-lf1-f68.google.com with SMTP id u18so12975663lff.10
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 15:02:36 -0800 (PST)
+        Sat, 19 Jan 2019 18:13:59 -0500
+Received: by mail-lf1-f66.google.com with SMTP id n18so13001489lfh.6
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 15:13:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=D40KnZ08lsg4U2H/1xVTd820G6KgzOyAhBJv6sJavys=;
-        b=PQTgh62xRpkh7A64jn0HVh9Z3KYYC1dLYl6YrEnIv4TZ96s0eTVzbAOlwGIgfVTSxJ
-         bwUI6wSjMA4Xd4irzi0rGEsMhifXxFR4Esmi914iluINXyVrTRkWUOOf6xEI7+WNpItc
-         sh1IsLwypzQbTFqOFjpwPilkyxh26wLINwOj4=
+        bh=Yz4Tob51gVDT4+Ce7WDGP97gOPDiLJEEpyq665QE4zw=;
+        b=Odb7xUUMaq7k/Bm34SeNsOj21bTKJEY69QprOwJdXb1PfMFqDaD2HtCLzM2QiSIn+0
+         AD7ikEi8rcWFaWkLtfRBoietZj5f5mnUT0b+D3EobiB5ygFzmhhaLiWrWv/YQSfUzX8L
+         tGBRqu6dnLQ4QfTAbVu3wRCFocMWHV/Gem8+I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=D40KnZ08lsg4U2H/1xVTd820G6KgzOyAhBJv6sJavys=;
-        b=ErO2gGlaDUrnSXNU/Ur7HF+SfAb4upjJP5OIDAEvwBc8tpk3VNqPuyMKkSiAYWK6Ud
-         BVOYfK8Tk9l/JsZOgquQkUi9QqPD/1BzccSW3ZqZJnT5Z0vqqBTiBa6mD0vVdrqUqlEJ
-         dODEcQWaPdI7RQPS9NGZW0IAR3Wgn10ZdeAYSxejV4hRzg9WDdN02IFc1uEqZDhjEFC+
-         //JJvNdTXCc/RTw4I/uPjZVsvKq5zrl1rZdB/qx0O0JQ/IaauLoKHbJgI+o82WfQJyPf
-         MqlY1zadAR/i+NH96iMtYcocD79o1gWlEUdmyR3DCcebWoN9a9QIPvpbkZuj49g+kKpe
-         0vrQ==
-X-Gm-Message-State: AJcUukeP2fTucOedmp7G7d3mrvajKtyxdFEKnAdj8+QGadX2zeidhhyn
-        HCICHgTJQwmu+9ZlIBu/Cxi7LpmqJH2d/EFn/f3hkMywTCc=
-X-Google-Smtp-Source: ALg8bN42k6wGOULXCkYWxiEssAXmefriIZSwAZmDxuUU+a1VkYKx/0jNQ8oLVmGan1p5HUNxfiB+/5HVR0PTbxyqU1g=
-X-Received: by 2002:a19:41c4:: with SMTP id o187mr6630944lfa.32.1547938954449;
- Sat, 19 Jan 2019 15:02:34 -0800 (PST)
+        bh=Yz4Tob51gVDT4+Ce7WDGP97gOPDiLJEEpyq665QE4zw=;
+        b=sEgV3WKlzAOadd43Cyir/AyFisoFxuCIQx5fvXgZlR5yHO47nWeBhziTSZ8b1NfoT5
+         VMrrFNqCUtFEgE4Qu2+httAvIS4aiRvn0qKlY7ZhYOfprCBgjQ4i19ejLdik04SplamO
+         BX0CCu8Zlj2Q5YlTYzYY75cA9O3XdvyzzKo3HxsTUtv1oIhqLXEge/vxAuxuqKSpp4dg
+         X3E9ru3M5yNM3Iv25a05c7t6yGdzBsk8UZdJCwokfTf6SEoFEp1hE0sRu/Ad/+dGJfyo
+         KjAT4PWin+UdtHvQu0j7RTQuCFGDriJjCe54A7xdLXEUtSz402lRH5qoOiKxrGbKw1fK
+         O0ow==
+X-Gm-Message-State: AJcUukf80Rl2TO3Dq5xByCJcOE9LtTTsSPnxFLNhCGrEkBBYVVU2NyC8
+        e0llurqFqJCZOqEawdhmVxcUjdQjK33fl0r/mZ4JZw==
+X-Google-Smtp-Source: ALg8bN7w4e0qghOAoM0BlkxRXqMvp5itu3dSJukH5ukhhAL8/+BpUIi5QqhkgoKLaZFSzQ46emzipwnkT0ITPJhqWb8=
+X-Received: by 2002:a19:8d01:: with SMTP id p1mr14859569lfd.149.1547939637315;
+ Sat, 19 Jan 2019 15:13:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20190110143917.9054-1-linus.walleij@linaro.org>
-In-Reply-To: <20190110143917.9054-1-linus.walleij@linaro.org>
+References: <20190119204252.18370-1-masneyb@onstation.org>
+In-Reply-To: <20190119204252.18370-1-masneyb@onstation.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 20 Jan 2019 00:02:23 +0100
-Message-ID: <CACRpkdbxDfOUqkjfkmbOReXrLKLEWDKfdd7==bGaTjXMKda5rA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: config: Update SPEAr 3xx defconfig
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Viresh Kumar <viresh.linux@gmail.com>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Date:   Sun, 20 Jan 2019 00:13:45 +0100
+Message-ID: <CACRpkdaumxXfFW6SeMzrrQjX7hxc2PddC8=DuL_d9x7CH3ZwWA@mail.gmail.com>
+Subject: Re: [PATCH v6 00/15] qcom: spmi: add support for hierarchical IRQ chip
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 3:39 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Sat, Jan 19, 2019 at 9:43 PM Brian Masney <masneyb@onstation.org> wrote:
 
-> This config is updates to the latest structure of the
-> Kconfig menus so we can apply DRM driver changes on top.
+> This patch series adds hierarchical IRQ chip support to spmi-gpio so
+> that device tree consumers can request an IRQ directly from the GPIO
+> block rather than having to request an IRQ from the underlying PMIC.
 >
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> For more background information, see the email thread with Linus
+> Walleij's excellent description of the problem at
+> https://www.spinics.net/lists/linux-gpio/msg34655.html.
+>
+> This work was tested on a LG Nexus 5 (hammerhead) phone. My status page
+> at https://masneyb.github.io/nexus-5-upstream/ describes what is working
+> so far with the upstream kernel.
+>
+> Changes since v5:
+> - Patch 4: Set handler to edge or level when the IRQ is mapped.
+> - Patch 7: Change IRQ_TYPE_NONE to IRQ_TYPE_EDGE_RISING
+> - Patch 14: New patch to validate type when mapping IRQ
 
-BTW I haven't seen many SPEAr pull requests the recent times,
-if you want I can send these to ARM SoC myself, but I need an
-ACK from one of the SPEAr maintainers to do so.
+If Marc Z is happy I think I will apply all patches on an immutable branch in
+the pin control tree, so that ARM SoC and GPIO can pull it in later if need
+be. (E.g. if they get conflicts.)
 
-Yours.
+I was thinking to also include the DTS changes as it all is so neatly
+coupled, then offer the branch to ARM SoC.
+
+Anyone against?
+
+Yours,
 Linus Walleij
