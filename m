@@ -2,151 +2,129 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF90C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 158A7C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E5D2084C
+	by mail.kernel.org (Postfix) with ESMTP id D73582087E
 	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:52:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="QNbj4pxN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbfASLwm (ORCPT
+        id S1728006AbfASLw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 06:52:42 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:44649 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbfASLwm (ORCPT
+        Sat, 19 Jan 2019 06:52:57 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:19063 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727874AbfASLw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 06:52:42 -0500
-Received: from oxbsltgw64.schlund.de ([212.227.220.202]) by
- mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MDhpf-1gtvRd3XRn-00Aq7B; Sat, 19 Jan 2019 12:52:26 +0100
-Date:   Sat, 19 Jan 2019 12:52:25 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Jeremy Linton <jeremy.linton@arm.com>, marc.zyngier@arm.com
-Cc:     mlangsdo@redhat.com, suzuki.poulose@arm.com,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        julien.thierry@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, steven.price@arm.com,
-        ykaukab@suse.de, dave.martin@arm.com, shankerd@codeaurora.org
-Message-ID: <247598924.444809.1547898745403@email.ionos.de>
-In-Reply-To: <3af70b49-22e7-f394-1b35-ce3c86640bb7@arm.com>
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
- <884332236.499392.1547581848222@email.ionos.de>
- <c99f5da9-259c-3fc5-6150-7327ba0ff429@arm.com>
- <575913854.422488.1547834735236@email.ionos.de>
- <3af70b49-22e7-f394-1b35-ce3c86640bb7@arm.com>
-Subject: Re: [PATCH v3 0/7] arm64: add system vulnerability sysfs entries
+        Sat, 19 Jan 2019 06:52:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547898774;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=vARq1cGS//INRMMLH9lnSOofzwKkiFX8otQWVQoOaRU=;
+        b=QNbj4pxNCqN5PoOE2hcvj7FOPj5QDiGqqUUDHvIf3SL4Q+njsAQ35zTgT3vM5ePsIo
+        Ki0QTdlp9jKPWyiOVAHMeWq/UoKpBVyWLWI+aTn3Dh4XZRIA4QeqZ7XId3/y5hqPjuCN
+        sAHeqdJLJSK1rQhcgWCVydTbwM2bTLiG5uwV9fLVF4p/LpticCKJYL1fuY+xh9tDWV1w
+        wlqxGM4oJEW3cqn9DgNcK5iJsjpjvf+aTodcwixKyDY9zT6rww2bb5mfxz2D4kDU4nzO
+        DKW6b8ojIk8cNtTZkHI0ZQ/f7QlH2LSUUkp5zmakFO3OcuZ/MoDCXiZ8wN2xqaDJd4YP
+        k9fw==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkL2i4gEPjvTsV+g6fCctWoeoah8A=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:4dec:9113:8f36:c6c8]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv0JBqrDGy
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sat, 19 Jan 2019 12:52:53 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20190115133558.GA29225@lst.de>
+ <685f0c06-af1b-0bec-ac03-f9bf1f7a2b35@xenosoft.de>
+ <20190115151732.GA2325@lst.de>
+ <e9345547-4dc6-747a-29ec-6375dc8bfe83@xenosoft.de>
+ <20190118083539.GA30479@lst.de>
+ <871403f2-fa7d-de15-89eb-070432e15c69@xenosoft.de>
+ <20190118112842.GA9115@lst.de>
+ <a2ca0118-5915-8b1c-7cfa-71cb4b43eaa6@xenosoft.de>
+ <20190118121810.GA13327@lst.de>
+ <eceebeda-0e18-00f6-06e7-def2eb0aa961@xenosoft.de>
+ <20190118125500.GA15657@lst.de>
+ <e11e61b1-6468-122e-fc2b-3b3f857186bb@xenosoft.de>
+ <f39d4fc6-7e4e-9132-c03f-59f1b52260e0@xenosoft.de>
+Message-ID: <b9e5e081-a3cc-2625-4e08-2d55c2ba224b@xenosoft.de>
+Date:   Sat, 19 Jan 2019 12:52:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:CCXtxrzf1TbPqLsEu/M0bGh9ETIUU9N9SsbCEctrj3/5F7N+aZM
- +iO/2hGPcxNODcOq2d+7K+PPYueDvGVJEsfx560xC5f2VJIOOQa1atNDbQ7dyNXMXVNWGZG
- LlmidxhUiKocXLe9U/VoZJM3ckJ9EvobOSZDJZIC4GpQ+AMQ0Isl2yhyMNlHnZiMTr3gihB
- FzggT5aTXvQVSDc/e6vQA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Qt0HaB/TrSc=:L3y0w8w8P8Le3F6TGPpMJF
- zqjqB6SdBvax+nsmjUj6Kw+TXOXaXg12OZGl4OwEXig8suvQSy+eKNn+ZAkwpIi5PxLjkLNqZ
- Ur/f28AEaqKD8I6rkMRe8YHmmnOFPwtd/fwg3cZJS/K0Pr4Jyyi9JBruHHtchgre4iAr0CPry
- JaWwHpWLn06WLTX9Xa2xauQsAuu/P8PBDPUoUAWl/kBN7JcL2FDLyO2fuIjAqJYqNCEI/Nk6J
- dB8qjfxeqydnXwRr8CE2PckObw4ZYfBTL71rBJOHUc/FiRD3/5RC/B7qgLJwRSJrVj5iF8nPn
- WYqiImBmfHoH2yph9J9CKj57CHfdGQhKsuwrSSNWt3D1IxVzXx9vjxRpIpgkpTkHhrO/8U2y3
- 1PbH1Wf5kxCMSNhGlHffJZknKUGMxtCRM8+AXFPQH/pJouBkjbDNs2P0H+XTl2hYuesQnf2gf
- i/HoFc1Llpx81/EI2xbdxZUFp+piplC0s2EkWhhkrIRBNO5QitkrNJLmSF+bj9ff3ecaONhyn
- evgy9ycn2WQohqZUxMUzXh4NU/0mdwLbm8P+4gZHqoizsposdlxDpJOMAc+wJvOh72ME9Wqdu
- bsOeg+dpBAdeybn2nzN6Q+Z4b8Yhi8S+JE5bRiKfohoaD5a296VvcHZlRsETm3WCC01E6gBng
- 0p0TJH5NIx6Dv2EIgPIoRZJYZJawTEAb7guXAF/ZLbQMXd8apF4yhxZB+ky6sF9eYeVqj/NaE
- f1BiJsQmIkX7RqIghvB2ssO0ebPoCbKZYhg6zjS/rxYJwcJRbMgc9HWL1/U=
+In-Reply-To: <f39d4fc6-7e4e-9132-c03f-59f1b52260e0@xenosoft.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Christoph,
 
-> Jeremy Linton <jeremy.linton@arm.com> hat am 18. Januar 2019 um 23:22 geschrieben:
-> 
-> 
-> On 01/18/2019 12:05 PM, Stefan Wahren wrote:
-> > Hi,
-> > 
-> > ...
-> > 
-> > a snippet or a new version would be nice
-> 
-> Sure, I've got another version, to be posted soon (probably Tue of next 
-> week).
-> 
-> In the meantime, Marc's tree should work with the following fix:
-> 
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index b44f87e7360d..7cfd34b2c0e5 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -286,11 +286,15 @@ static int detect_harden_bp_fw(void)
->   }
->   #endif /* CONFIG_HARDEN_BRANCH_PREDICTOR */
-> 
-> +#if defined(CONFIG_ARM64_SSBD) || \
-> +       defined(CONFIG_GENERIC_CPU_VULNERABILITIES)
-> +static bool __ssb_safe = true;
-> +#endif
-> +
->   #ifdef CONFIG_ARM64_SSBD
->   DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
-> 
->   int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
-> -static bool __ssb_safe = true;
-> 
->   static const struct ssbd_options {
->          const char      *str;
-> @@ -569,6 +573,8 @@ check_branch_predictor(const struct 
-> arm64_cpu_capabilities *entry, int scope)
-> 
->          WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
-> 
-> +       arm64_requested_vuln_attrs |= VULN_SPECTREV2;
-> +
->          /* If the CPU has CSV2 set, we're safe */
->          if 
-> (cpuid_feature_extract_unsigned_field(read_cpuid(ID_AA64PFR0_EL1),
->                                                   ID_AA64PFR0_CSV2_SHIFT))
-> @@ -578,17 +584,17 @@ check_branch_predictor(const struct 
-> arm64_cpu_capabilities *entry, int scope)
->          if (is_midr_in_range_list(read_cpuid_id(), spectre_v2_safe_list))
->                  return false;
-> 
-> +       __spectrev2_safe = false;
-> +
->          /* Fallback to firmware detection */
->          need_wa = detect_harden_bp_fw();
->          if (!need_wa)
->                  return false;
-> 
-> -       __spectrev2_safe = false;
-> -
->          if (need_wa < 0)
->                  pr_warn_once("ARM_SMCCC_ARCH_WORKAROUND_1 missing from 
-> firmware\n");
-> 
-> -       arm64_requested_vuln_attrs |= VULN_SPECTREV2;
-> +
-> 
->          return (need_wa > 0);
->   }
-> 
+I have found a small workaround. If I add 'mem=3500M' to the boot 
+arguments then it detects the SATA hard disk and boots without any problems.
+
+X5000> setenv bootargs root=/dev/sda2 console=ttyS0,115200 mem=3500M
+
+Cheers,
+Christian
+
+
+On 19 January 2019 at 12:40PM, Christian Zigotzky wrote:
+> Hi Christoph,
+>
+> I bought a USB null modem RS-232 serial cable today so I was able to 
+> get some SATA error messages.
+>
+> Error messages:
+>
+> [   13.468538] fsl-sata ffe220000.sata: Sata FSL Platform/CSB Driver init
+> [   13.475106] fsl-sata ffe220000.sata: failed to start port 0 
+> (errno=-12)
+> [   13.481736] fsl-sata ffe221000.sata: Sata FSL Platform/CSB Driver init
+> [   13.488267] fsl-sata ffe221000.sata: failed to start port 0 
+> (errno=-12)
+>
+> ---
+>
+> errno=-12 = Out of memory
+>
+> Please find attached the complete serial log.
+>
+> Cheers,
+> Christian
+>
+>
+> On 18 January 2019 at 4:06PM, Christian Zigotzky wrote:
+>> Hello Christoph,
+>>
+>> I was able to compile 257002094bc5935dd63207a380d9698ab81f0775 from 
+>> your Git powerpc-dma.6-debug today.
+>>
+>> Unfortunately I don't see any error messages (kernel ring buffer) and 
+>> I don't have a RS232 serial null modem cable to get them.
+>>
+>> Cheers,
+>> Christian
+>>
+>>
 >
 
-fine with these changes i'm getting the following:
-
-meltdown:Not affected
-spec_store_bypass:Not affected
-spectre_v1:Mitigation: __user pointer sanitization
-spectre_v2:Not affected
-
-Thanks
-Stefan
