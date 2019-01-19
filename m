@@ -2,88 +2,127 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBA2C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 17:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBC5C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 17:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90DC320883
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 17:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547919899;
-	bh=jFkBs6YaPqO2lrs2z6SdXt4+SuPAqhzx4zURpPfALP0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=JXVO2EvwzqPvRP4++TRBo9ZtTtDbBGWHX/Tv0qCx8UP4OLRu3qwWm7qCE4pbTZiEJ
-	 pBpXQZVk51n+pw8fTSiYVjUvr+hoY5aNsPy5kNAq2vQT1ZsnWGudUzrVgTn0W2zd7u
-	 Mnb+1LtnEwDWb+e621GEWwiSNaKcE+qEhAggg3AA=
+	by mail.kernel.org (Postfix) with ESMTP id 0A6452087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 17:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbfASRo5 (ORCPT
+        id S1728866AbfASRqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 12:44:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728658AbfASRo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 12:44:57 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C154E2084F;
-        Sat, 19 Jan 2019 17:44:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547919897;
-        bh=jFkBs6YaPqO2lrs2z6SdXt4+SuPAqhzx4zURpPfALP0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=vD3jEIeXwgNnzJr87JElCmhKt2gs6hkwSGRn4jyLx0UbIQJkzpWq3XY3bfADZZXcY
-         oP9/rphxMZcJ4USWsEXcTkQHhi4KWwoXX++PpkhOqQzECrjz20rfHyn1a14/2b7kti
-         gbI1PXhhAUJljSjTlnRh5vBUpwwrVnaOuPq24HWo=
-Date:   Sat, 19 Jan 2019 17:44:51 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Sebastien Bourdelin <sebastien.bourdelin@gmail.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, himanshujha199640@gmail.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, pmeerw@pmeerw.net,
-        lars@metafoo.de, knaack.h@gmx.de
-Subject: Re: [PATCH v3 2/2] dt-bindings: iio: chemical: Add bindings for
- bme680
-Message-ID: <20190119174451.2528072a@archlinux>
-In-Reply-To: <20190115202802.GA26149@bogus>
-References: <20190114201914.24572-1-sebastien.bourdelin@gmail.com>
-        <20190114201914.24572-2-sebastien.bourdelin@gmail.com>
-        <20190115202802.GA26149@bogus>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 19 Jan 2019 12:46:42 -0500
+Received: from bout01.mta.xmission.com ([166.70.11.15]:38068 "EHLO
+        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728658AbfASRqm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 12:46:42 -0500
+Received: from mx02.mta.xmission.com ([166.70.13.212])
+        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <sbauer@plzdonthack.me>)
+        id 1gkuhc-00069C-6e; Sat, 19 Jan 2019 10:46:40 -0700
+Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
+        by mx02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <sbauer@plzdonthack.me>)
+        id 1gkuhb-0005HM-Md; Sat, 19 Jan 2019 10:46:40 -0700
+Received: from hacktheplanet (unknown [73.58.156.101])
+        by plesk14.xmission.com (Postfix) with ESMTPSA id D2D072119B7;
+        Sat, 19 Jan 2019 17:46:38 +0000 (UTC)
+Date:   Sat, 19 Jan 2019 12:46:33 -0500
+From:   Scott Bauer <sbauer@plzdonthack.me>
+To:     David Kozub <zub@linux.fjfi.cvut.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, jonathan.derrick@intel.com
+Message-ID: <20190119174633.GA15276@hacktheplanet>
+References: <1547760716-7304-16-git-send-email-zub@linux.fjfi.cvut.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547760716-7304-16-git-send-email-zub@linux.fjfi.cvut.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-XM-SPF: eid=1gkuhb-0005HM-Md;;;mid=<20190119174633.GA15276@hacktheplanet>;;;hst=mx02.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
+X-SA-Exim-Connect-IP: 166.70.198.161
+X-SA-Exim-Mail-From: sbauer@plzdonthack.me
+Subject: Re: [PATCH v2 15/16] block: sed-opal: don't repeat opal_discovery0
+ in each steps array
+X-SA-Exim-Version: 4.2.1 (built Fri, 13 May 2016 17:07:30 -0600)
+X-SA-Exim-Scanned: Yes (on mx02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Jan 2019 14:28:02 -0600
-Rob Herring <robh@kernel.org> wrote:
+On Thu, Jan 17, 2019 at 09:31:55PM +0000, David Kozub wrote:
 
-> On Mon, 14 Jan 2019 15:19:14 -0500, Sebastien Bourdelin wrote:
-> > BME680 is a pressure/temperature/humidity/voc sensor.
-> > 
-> > Signed-off-by: Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
-> > ---
-> > v2 -> v3:
-> >   - change i2c address to 0x76 as it seems more reliable: Suggested by Himanshu Jha <himanshujha199640@gmail.com>
-> >   - rebase on master
-> > ---
-> >  .../devicetree/bindings/iio/chemical/bme680.txt       | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/chemical/bme680.txt
-> >   
+> -	for (state = 0; !error && state < n_steps; state++) {
+> -		step = &steps[state];
+> -
+> -		error = step->fn(dev, step->data);
+> -		if (error) {
+> -			pr_debug("Step %zu (%pS) failed with error %d: %s\n",
+> -				 state, step->fn, error,
+> -				 opal_error_to_human(error));
+> -
+> -			/* For each OPAL command we do a discovery0 then we
+> -			 * start some sort of session.
+> -			 * If we haven't passed state 1 then there was an error
+> -			 * on discovery0 or during the attempt to start a
+> -			 * session. Therefore we shouldn't attempt to terminate
+> -			 * a session, as one has not yet been created.
+> -			 */
+> -			if (state > 1) {
+> -				end_opal_session_error(dev);
+> -				return error;
+> -			}
+
+
+
+
+> +	/* first do a discovery0 */
+> +	error = opal_discovery0_step(dev);
+>  
+> -		}
+> -	}
+> +	for (state = 0; !error && state < n_steps; state++)
+> +		error = execute_step(dev, &steps[state], state);
+> +
+> +	/* For each OPAL command the first step in steps starts some sort
+> +	 * of session. If an error occurred in the initial discovery0 or if
+> +	 * an error stopped the loop in state 0 then there was an error
+> +	 * before or during the attempt to start a session. Therefore we
+> +	 * shouldn't attempt to terminate a session, as one has not yet
+> +	 * been created.
+> +	 */
+> +	if (error && state > 0)
+> +		end_opal_session_error(dev);
+
+
+This is subtly wrong. There was some state that was encoded by having the
+loop the way we did.
+
+the tl;dr is the check needs to be if (error && state > 1) still.
+
+The why is that in the previous implementation we wanted to end_opal_session_error
+only if a successful discovery0 AND a successful start_*_session. In the previous loop,
+discovery0 would complete, we'd do state++, then we'd go and attempt to start our
+session. If we failed on that session starting we'd still be in state 1, and wouldn't
+attempt to close the session.
+
+In the current form, discovery0 is gone, so start session is on state 0. If we fail
+on the start session, we set error = true, state gets ++'d, then we look at !error
+and we don't loop again.
+
+We go down to the check and attempt to end a session that was never started.
+
+
+
+
+> -- 
+> 2.20.1
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to play with it.
-
-Thanks,
-
-Jonathan
+> 
