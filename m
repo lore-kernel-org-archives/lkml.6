@@ -4,56 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4325C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 09:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 987B0C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 09:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44AA2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 09:01:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6748A20883
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 09:01:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgDtiBdU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkk4BRzw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbfASJBZ (ORCPT
+        id S1727976AbfASJBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 04:01:25 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33885 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfASJBK (ORCPT
+        Sat, 19 Jan 2019 04:01:31 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42556 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727733AbfASJBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 04:01:10 -0500
-Received: by mail-lj1-f193.google.com with SMTP id u89-v6so13624113lje.1;
-        Sat, 19 Jan 2019 01:01:08 -0800 (PST)
+        Sat, 19 Jan 2019 04:01:07 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so13586186lja.9;
+        Sat, 19 Jan 2019 01:01:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Gsad/wBToe+cmtNDHEYdNCur8rX+EzM0uvagphRxBvM=;
-        b=GgDtiBdUwfAVCMRUZFT/cYdaRDT15Q90Aw7kFvRLf7pT3ggSVQOVNmqy3qMqQLLIhd
-         bP89XL+haGdT8RZYSDUyLUPgDlECebFuL7hCPdLyDND0iAP7tqeC6dx1fjFlmqaEnTPj
-         AGzt1qCYhdxsYNhNh8LAxk9JcaY/6pahAT1E+l4+oh9DZWg/b64OwjvZs7uN3euPwx1s
-         fHlpklv1UOlIbZp1yGpfAff8+ikDchyvwXhcYjURgPtanLSRfpjhueqFSL0N6xoVU8l9
-         6hEO5V1QHNaBqNZEWrWmzF3y8vhtCuFl2ztB71T1k5WR9KNJkZMZU4ERTHgdDmBR0oAi
-         LWGw==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1pudjFZm7a1TG8b705J5+DLKWhWvGwPk11vg4nopYJk=;
+        b=fkk4BRzw835xS+GyYaXXi+h/P94dO8Ss8mevsxlSA/BuAAe+GIf1U893vJhhNI2i02
+         tcfYFbcduwycjK/q5S7KZmBHuuNxwzAfF+ylj+OSTN9uLKhKQ0FP3AaqNHYs6i6aWH7w
+         +oeG2g6DwoD0/R0Vpxs78yscBmPo/BXEFcGIwF5mMz5CTBAaosCOFZmhLdgnAlnhzSXr
+         ghU/Ge9i4niAZrNSbDn2hT1iKItKHAeCT/ylusv29lbU6/pQL51noWX81ME0cZrsGiIF
+         AJ6NrHgef9B95/O7FmFkR6th6Warm4g8kRd4VM/xoTQ6sQquFAa3HuIrWEBsmPL65z+g
+         auUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=Gsad/wBToe+cmtNDHEYdNCur8rX+EzM0uvagphRxBvM=;
-        b=gW7MD1gnr7JGy8qWJm1rYiP6xpbInZx3Uq5egLKS2cjCxoROSP40QM1zraZZn7dws3
-         NEAHFETvrqRR1Px4VsQth2KAlxEEQBY31VDxSd6g9FMacNyA6ctNyAhulp46/vD6ICN3
-         G2ugN247KJc/Eo6wuUADREms9qjgjn9mZqTA0sybkDhF1QTojHm71WrCy9+Mh7uWiwM4
-         jtpnz20zBrXWy+CQ85Bs0qR+k2pNkYWnExLHvhIFCuF8lch1SKy85kCoiMy0WSiFPfH1
-         OvJq9m4LciqpTm35o7zTye0GoOudWRHSFVEDUCAbDXQe1YtUowvvf4SaC8uIkgSVauNF
-         xw9Q==
-X-Gm-Message-State: AJcUukfJly8rpUD41+9rm9OTe0ydbjntzVmondP7720IPvaOLna7WuJQ
-        Nnem5a08DDOEOPk7BqtixQQ=
-X-Google-Smtp-Source: ALg8bN4w0xDZHt23MbaUSx8PRMigw70iS8f7jKTxfstac8yVlL6xceH9gF2m14GhKUn+ZoU1dYa0BQ==
-X-Received: by 2002:a2e:710a:: with SMTP id m10-v6mr13726595ljc.66.1547888467396;
-        Sat, 19 Jan 2019 01:01:07 -0800 (PST)
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=1pudjFZm7a1TG8b705J5+DLKWhWvGwPk11vg4nopYJk=;
+        b=SOzRrlbxA5VjQxVw/F60VT5jlPqATXKVo6QDFQM5QyiFYauL//tOYOTccExvdRM1xX
+         FERg4w3YoYuyJoA67qxWMQZWDSrmMfPbLocPns/8OEA7zHtYAt1h55aV7Kwnigczs07n
+         6WEk/8cRmjJ3TwQh1OS7A6aFn5BpaIeSf4m6A+47UWqW9QcXj7oYxT/KVO4RwGR0lZE9
+         on849aLBq+guHFjtxsYqNWmrXZtfeZfzIcMju1IoTPayFdxqzRZnHsVgLhFPZuc7FKov
+         W4WFSYp0umSGdlAuFIpT4PIdY94Cq705qScJgpopJgLE6gV0v5T8HJUEdw/YGHTXfnh6
+         oXPg==
+X-Gm-Message-State: AJcUukcarmFwU8HhNWD/FRCVuIUUm8L1GtlhQxmNEr85xY4bKnj13PSs
+        RZoLInpDvjUf2Bzc/DxIua4=
+X-Google-Smtp-Source: ALg8bN72OQaBPsFJgD/k6pNJAUvUZIOHB+1axILf3JhkGhzV7kUTLBkDdjcybobihzmmmf2UGGMZ/Q==
+X-Received: by 2002:a2e:5703:: with SMTP id l3-v6mr15189174ljb.106.1547888465056;
+        Sat, 19 Jan 2019 01:01:05 -0800 (PST)
 Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm1254995lji.45.2019.01.19.01.01.06
+        by smtp.gmail.com with ESMTPSA id h22-v6sm1254995lji.45.2019.01.19.01.01.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 01:01:06 -0800 (PST)
+        Sat, 19 Jan 2019 01:01:04 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc:     Alessandro Zummo <a.zummo@towertech.it>,
@@ -67,94 +69,82 @@ Cc:     Alessandro Zummo <a.zummo@towertech.it>,
         =?UTF-8?q?Urs=20F=C3=A4ssler?= <urs.fassler@bbv.ch>,
         Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v3 5/6] rtc: pcf8523: set xtal load capacitance from DT
-Date:   Sat, 19 Jan 2019 10:00:30 +0100
-Message-Id: <20190119090031.29147-6-sam@ravnborg.org>
+        Sam Ravnborg <sam@ravnborg.org>,
+        =?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>
+Subject: [PATCH v3 3/6] dt-binding: pcf8523: add xtal load capacitance
+Date:   Sat, 19 Jan 2019 10:00:28 +0100
+Message-Id: <20190119090031.29147-4-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
 In-Reply-To: <20190119090031.29147-1-sam@ravnborg.org>
 References: <20190119090031.29147-1-sam@ravnborg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for specifying the xtal load capacitance in the DT node.
-The pcf8523 supports xtal load capacitance of 7pF or 12.5pF.
-If the rtc has the wrong configuration the time will
-drift several hours/week.
+The NXP pcf8523 supports two different xtal load capacitance
+- 7000fF  (7pF)    HW default
+- 12500fF (12.5pF) Minimum power consumption, driver default
 
-The driver use the default value 12.5pF.
+To obtain a precise RTC the pcf8523 must be configured
+with the correct capacitance load of the xtal.
 
-The DT may specify either 7000fF or 12500fF.
-(The DT uses femto Farad to avoid decimal numbers).
-Other values are warned and the driver uses the default value.
+Add a property to specify the xtal capacitance load.
+The default value matches that of the current Linux driver.
 
+With a dedicated binding remove the entry in rtc.txt
+
+Signed-off-by: Søren Andersen <san@skov.dk>
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Cc: Alessandro Zummo <a.zummo@towertech.it>
 Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
 ---
- drivers/rtc/rtc-pcf8523.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt | 18 ++++++++++++++++++
+ Documentation/devicetree/bindings/rtc/rtc.txt         |  1 -
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
 
-diff --git a/drivers/rtc/rtc-pcf8523.c b/drivers/rtc/rtc-pcf8523.c
-index 3fcd2cbafc84..2e03021f15d1 100644
---- a/drivers/rtc/rtc-pcf8523.c
-+++ b/drivers/rtc/rtc-pcf8523.c
-@@ -97,8 +97,9 @@ static int pcf8523_voltage_low(struct i2c_client *client)
- 	return !!(value & REG_CONTROL3_BLF);
- }
- 
--static int pcf8523_select_capacitance(struct i2c_client *client, bool high)
-+static int pcf8523_load_capacitance(struct i2c_client *client)
- {
-+	u32 load;
- 	u8 value;
- 	int err;
- 
-@@ -106,14 +107,24 @@ static int pcf8523_select_capacitance(struct i2c_client *client, bool high)
- 	if (err < 0)
- 		return err;
- 
--	if (!high)
--		value &= ~REG_CONTROL1_CAP_SEL;
--	else
-+	load = 12500;
-+	of_property_read_u32(client->dev.of_node, "quartz-load-femtofarads",
-+			     &load);
+diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt b/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
+new file mode 100644
+index 000000000000..0b1080c60f63
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
+@@ -0,0 +1,18 @@
++* NXP PCF8523 Real Time Clock
 +
-+	switch (load) {
-+	default:
-+		dev_warn(&client->dev, "Unknown quartz-load-femtofarads value: %d. Assuming 12500",
-+			 load);
-+		/* fall through */
-+	case 12500:
- 		value |= REG_CONTROL1_CAP_SEL;
-+		break;
-+	case 7000:
-+		value &= ~REG_CONTROL1_CAP_SEL;
-+		break;
-+	}
- 
- 	err = pcf8523_write(client, REG_CONTROL1, value);
--	if (err < 0)
--		return err;
- 
- 	return err;
- }
-@@ -347,9 +358,10 @@ static int pcf8523_probe(struct i2c_client *client,
- 	if (!pcf)
- 		return -ENOMEM;
- 
--	err = pcf8523_select_capacitance(client, true);
-+	err = pcf8523_load_capacitance(client);
- 	if (err < 0)
--		return err;
-+		dev_warn(&client->dev, "failed to set xtal load capacitance: %d",
-+			 err);
- 
- 	err = pcf8523_set_pm(client, 0);
- 	if (err < 0)
++Required properties:
++- compatible: Should contain "nxp,pcf8523".
++- reg: I2C address for chip.
++
++Optional property:
++- quartz-load-femtofarads: The capacitive load of the quartz(x-tal),
++  expressed in femto Farad (fF). Valid values are 7000 and 12500.
++  Default value (if no value is specified) is 12500fF.
++
++Example:
++
++pcf8523: rtc@68 {
++	compatible = "nxp,pcf8523";
++	reg = <0x68>;
++	quartz-load-femtofarads = <7000>;
++};
+diff --git a/Documentation/devicetree/bindings/rtc/rtc.txt b/Documentation/devicetree/bindings/rtc/rtc.txt
+index 41eb335ea816..6d726a801d21 100644
+--- a/Documentation/devicetree/bindings/rtc/rtc.txt
++++ b/Documentation/devicetree/bindings/rtc/rtc.txt
+@@ -55,7 +55,6 @@ isil,isl12022		Intersil ISL12022 Real-time Clock
+ microcrystal,rv3029	Real Time Clock Module with I2C-Bus
+ nxp,pcf2127		Real-time clock
+ nxp,pcf2129		Real-time clock
+-nxp,pcf8523		Real-time Clock
+ nxp,pcf8563		Real-time clock/calendar
+ nxp,pcf85063		Tiny Real-Time Clock
+ pericom,pt7c4338	Real-time Clock Module
 -- 
 2.12.0
 
