@@ -2,173 +2,117 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B72C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19758C6369F
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14BCF2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF78E2086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:09:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdjqUq9Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729042AbfASTJZ (ORCPT
+        id S1729190AbfASTJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 14:09:25 -0500
-Received: from mga18.intel.com ([134.134.136.126]:56834 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728911AbfASTJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 14:09:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jan 2019 11:09:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,496,1539673200"; 
-   d="scan'208";a="136057111"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga002.fm.intel.com with ESMTP; 19 Jan 2019 11:09:24 -0800
-Subject: [PATCH v4] acpi/nfit: Fix command-supported detection
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     stable@vger.kernel.org, Sujith Pandel <sujith_pandel@dell.com>,
-        Sujith Pandel <sujith_pandel@dell.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-kernel@vger.kernel.org
-Date:   Sat, 19 Jan 2019 10:56:47 -0800
-Message-ID: <154792410908.2360577.7879178748203288256.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        Sat, 19 Jan 2019 14:09:29 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33767 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728926AbfASTJ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 14:09:26 -0500
+Received: by mail-pl1-f195.google.com with SMTP id z23so7858863plo.0;
+        Sat, 19 Jan 2019 11:09:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=g573yFdUR1QNOETBR14gICrLdrm+mrhO4U/KSc359pE=;
+        b=bdjqUq9YJ2AhXplULFqO3qM4/9qV9N2c/kplMqW9qnfzFGXHOAH1gPOq1AnvArNCBR
+         ECvf+7zsiJImkMR4lWD52RU4HOb9+BVLghdaoQXK/U6zmMEXH/TMEFkaxoRFBalvoSyB
+         sYATkWvKcYpuyNiwoiXsK0IJERGdl6loNSDmQNs8s+93jhTGsL8W7mSG4UglHnlpxEPd
+         HxH7odynuu6n0ldomtx/tECU8U0UfEs01N9YHfRrBV3yrCNmMVy18AcfA1QqnmmA2fPg
+         AZ7QbDbJNwZvmSIUahGAa9mE0svNW4lJoirRyyOlVg3TMsvpn27E6buJbRtVRuHneQ0h
+         gbyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=g573yFdUR1QNOETBR14gICrLdrm+mrhO4U/KSc359pE=;
+        b=bx3NVgryZxpAgxqF/8onvyXgWZKXKNU8ZQ1NwYs91/pxY3YDpCWNuH6v3InkVGGs15
+         +JqEDkLD3tkUtA+FZgmI+fzLKzTGDD70MZVSE1hJHg74ZZMSL+yBupcxdTbIs0sW2Rna
+         ufklX7Y/QTgsgCaqUo88ePEIpiJPfwPbb5T1KpddtAwg7bomc0rIQk2+mbApKQEi+b/p
+         wSY9lHApdVzz2jVxJTgutWnxh+OJRImlMuV3Lchgoj2Ntb0NtWejGq9aOnaGOcXU+RIM
+         +l4vTLvQTsBZL9UjK8KJT7YYWqOe35ESBSmjWxIAzrYSo5rjxzSmi063Yv7zMyMgS26F
+         XikA==
+X-Gm-Message-State: AJcUukd3ev0R4nlEoSNikoUjgB9vuogpt3VpScSu4UM8PdzTHfNAuI0w
+        E9NMXenF3zWvEs+6nlAJK38=
+X-Google-Smtp-Source: ALg8bN5AcI7YFFPd1MPvZQYTUu7oZoSnHBBoFtDySdqswi8colUhavQJFRXNFNmYL+jGjf6xKgwcgA==
+X-Received: by 2002:a17:902:42e4:: with SMTP id h91mr24263235pld.18.1547924964929;
+        Sat, 19 Jan 2019 11:09:24 -0800 (PST)
+Received: from Shreeya-Patel ([49.33.214.52])
+        by smtp.googlemail.com with ESMTPSA id x127sm14997857pfd.156.2019.01.19.11.09.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 19 Jan 2019 11:09:24 -0800 (PST)
+Message-ID: <6996e2140ecff930497469dbf0d8b35098b94f4f.camel@gmail.com>
+Subject: Re: [PATCH v2 0/3] adt7316 regmap implementation
+From:   Shreeya Patel <shreeya.patel23498@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Sun, 20 Jan 2019 00:39:18 +0530
+In-Reply-To: <20190119190440.71dd0dd9@archlinux>
+References: <20190119183932.14321-1-shreeya.patel23498@gmail.com>
+         <20190119190440.71dd0dd9@archlinux>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The _DSM function number validation only happens to succeed when the
-generic Linux command number translation corresponds with a
-DSM-family-specific function number. This breaks NVDIMM-N
-implementations that correctly implement _LSR, _LSW, and _LSI, but do
-not happen to publish support for DSM function numbers 4, 5, and 6.
+On Sat, 2019-01-19 at 19:04 +0000, Jonathan Cameron wrote:
+> On Sun, 20 Jan 2019 00:09:29 +0530
+> Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
+> 
+> > This patchset consist of some initial patches for heading
+> > towards the regmap implementation and also the final patch
+> > which enables the driver to use regmap API thus removing
+> > the redundant and common code.
+> > 
+> > Shreeya Patel (3):
+> >   Staging: iio: adt7316: Remove irq from bus structure
+> >   Staging: iio: adt7316: Remove multi read and write functions
+> >   Staging: iio: adt7316: Add regmap support
+> > 
+> >  drivers/staging/iio/addac/adt7316-i2c.c | 101 ++--------------
+> >  drivers/staging/iio/addac/adt7316-spi.c |  95 +++------------
+> >  drivers/staging/iio/addac/adt7316.c     | 147 ++++++++++++------
+> > ------
+> >  drivers/staging/iio/addac/adt7316.h     |  15 +--
+> >  4 files changed, 103 insertions(+), 255 deletions(-)
+> > 
+> 
+> Hi Shreeya,
+> 
+> I'm not seeing a change log for any of these. Please make sure to
+> add one so we know what changed since V1.  Saves a lot of trying
+> to remember things from a while back!
+> 
 
-Recall that the support for _LS{I,R,W} family of methods results in the
-DIMM being marked as supporting those command numbers at
-acpi_nfit_register_dimms() time. The DSM function mask is only used for
-ND_CMD_CALL support of non-NVDIMM_FAMILY_INTEL devices.
+Sorry, I forgot to add it. I remembered it when I had already sent the
+patches. 
+I'll also cc Jeremy in V3.
 
-Fixes: 31eca76ba2fc ("nfit, libnvdimm: limited/whitelisted dimm command...")
-Cc: <stable@vger.kernel.org>
-Link: https://github.com/pmem/ndctl/issues/78
-Reported-by: Sujith Pandel <sujith_pandel@dell.com>
-Tested-by: Sujith Pandel <sujith_pandel@dell.com>
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes since v3:
-* Fix ND_CMD_CALL regression:
-  https://lists.01.org/pipermail/linux-nvdimm/2019-January/019644.html
+Thanks
 
- drivers/acpi/nfit/core.c |   54 ++++++++++++++++++++++++++++++++++------------
- 1 file changed, 40 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 73281b19d3dd..71d03a4004fb 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -409,6 +409,32 @@ static bool payload_dumpable(struct nvdimm *nvdimm, unsigned int func)
- 	return true;
- }
- 
-+static int cmd_to_func(struct nfit_mem *nfit_mem, unsigned int cmd,
-+		struct nd_cmd_pkg *call_pkg)
-+{
-+	if (call_pkg) {
-+		int i;
-+
-+		if (nfit_mem->family != call_pkg->nd_family)
-+			return -ENOTTY;
-+
-+		for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
-+			if (call_pkg->nd_reserved2[i])
-+				return -EINVAL;
-+		return call_pkg->nd_command;
-+	}
-+
-+	/* Linux ND commands == NVDIMM_FAMILY_INTEL function numbers */
-+	if (nfit_mem->family == NVDIMM_FAMILY_INTEL)
-+		return cmd;
-+
-+	/*
-+	 * Force function number validation to fail since 0 is never
-+	 * published as a valid function in dsm_mask.
-+	 */
-+	return 0;
-+}
-+
- int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 		unsigned int cmd, void *buf, unsigned int buf_len, int *cmd_rc)
- {
-@@ -422,30 +448,23 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 	unsigned long cmd_mask, dsm_mask;
- 	u32 offset, fw_status = 0;
- 	acpi_handle handle;
--	unsigned int func;
- 	const guid_t *guid;
--	int rc, i;
-+	int func, rc, i;
- 
- 	if (cmd_rc)
- 		*cmd_rc = -EINVAL;
--	func = cmd;
--	if (cmd == ND_CMD_CALL) {
--		call_pkg = buf;
--		func = call_pkg->nd_command;
--
--		for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
--			if (call_pkg->nd_reserved2[i])
--				return -EINVAL;
--	}
- 
- 	if (nvdimm) {
- 		struct acpi_device *adev = nfit_mem->adev;
- 
- 		if (!adev)
- 			return -ENOTTY;
--		if (call_pkg && nfit_mem->family != call_pkg->nd_family)
--			return -ENOTTY;
- 
-+		if (cmd == ND_CMD_CALL)
-+			call_pkg = buf;
-+		func = cmd_to_func(nfit_mem, cmd, call_pkg);
-+		if (func < 0)
-+			return func;
- 		dimm_name = nvdimm_name(nvdimm);
- 		cmd_name = nvdimm_cmd_name(cmd);
- 		cmd_mask = nvdimm_cmd_mask(nvdimm);
-@@ -456,6 +475,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 	} else {
- 		struct acpi_device *adev = to_acpi_dev(acpi_desc);
- 
-+		func = cmd;
- 		cmd_name = nvdimm_bus_cmd_name(cmd);
- 		cmd_mask = nd_desc->cmd_mask;
- 		dsm_mask = cmd_mask;
-@@ -470,7 +490,13 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 	if (!desc || (cmd && (desc->out_num + desc->in_num == 0)))
- 		return -ENOTTY;
- 
--	if (!test_bit(cmd, &cmd_mask) || !test_bit(func, &dsm_mask))
-+	/*
-+	 * Check for a valid command.  For ND_CMD_CALL, we also have to
-+	 * make sure that the DSM function is supported.
-+	 */
-+	if (cmd == ND_CMD_CALL && !test_bit(func, &dsm_mask))
-+		return -ENOTTY;
-+	else if (!test_bit(cmd, &cmd_mask))
- 		return -ENOTTY;
- 
- 	in_obj.type = ACPI_TYPE_PACKAGE;
+> Thanks,
+> 
+> Jonathan
 
