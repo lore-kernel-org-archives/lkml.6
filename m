@@ -2,81 +2,89 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F43C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 23:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD499C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 23:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23C0A2087E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 23:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58F32086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 23:57:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729928AbfASX5B (ORCPT
+        id S1729992AbfASX5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 18:57:01 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46680 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729803AbfASX5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 18:57:01 -0500
+        Sat, 19 Jan 2019 18:57:50 -0500
+Received: from foss.arm.com ([217.140.101.70]:46748 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729803AbfASX5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 18:57:49 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01F38A78;
-        Sat, 19 Jan 2019 15:57:00 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE4D6A78;
+        Sat, 19 Jan 2019 15:57:48 -0800 (PST)
 Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D89B93F6A8;
-        Sat, 19 Jan 2019 15:56:55 -0800 (PST)
-Date:   Sat, 19 Jan 2019 23:56:52 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F3B03F6A8;
+        Sat, 19 Jan 2019 15:57:42 -0800 (PST)
+Date:   Sat, 19 Jan 2019 23:57:39 +0000
 From:   Will Deacon <will.deacon@arm.com>
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
         linux-arm-kernel@lists.infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org
-Subject: Re: [PATCH 0/3] arm64: system call table generation for asm-generic
-Message-ID: <20190119235650.GC26876@brain-police>
-References: <1546530025-26014-1-git-send-email-firoz.khan@linaro.org>
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
+        hch@infradead.org, Matthew Wilcox <willy@infradead.org>,
+        hsinyi@chromium.org, stable@vger.kernel.org
+Subject: Re: [PATCH v6 2/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory,
+ and improve debugging
+Message-ID: <20190119235737.GE26876@brain-police>
+References: <20181210011504.122604-1-drinkcat@chromium.org>
+ <20181210011504.122604-3-drinkcat@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1546530025-26014-1-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <20181210011504.122604-3-drinkcat@chromium.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 09:10:22PM +0530, Firoz Khan wrote:
-> This will be an automated scripts to provide easy support
-> for add/modify/delete the system call entry by add in 
-> respective *.tbl file.
+On Mon, Dec 10, 2018 at 09:15:03AM +0800, Nicolas Boichat wrote:
+> IOMMUs using ARMv7 short-descriptor format require page tables
+> (level 1 and 2) to be allocated within the first 4GB of RAM, even
+> on 64-bit systems.
 > 
-> System call table generation support for asm-generic is
-> provide for arm64 architecture which will use the common
-> scripts resides in scripts directory and use syscall.tbl
-> syscall_arm32.tbl files as inputs. This implementation 
-> will replace asm-generic/unistd.h.
+> For level 1/2 pages, ensure GFP_DMA32 is used if CONFIG_ZONE_DMA32
+> is defined (e.g. on arm64 platforms).
 > 
-> This patch depends on:
->  https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
->  https://lore.kernel.org/lkml/1546520681-24453-1-git-send-email-firoz.khan@linaro.org/
+> For level 2 pages, allocate a slab cache in SLAB_CACHE_DMA32. Note
+> that we do not explicitly pass GFP_DMA[32] to kmem_cache_zalloc,
+> as this is not strictly necessary, and would cause a warning
+> in mm/sl*b.c, as we did not update GFP_SLAB_BUG_MASK.
+> 
+> Also, print an error when the physical address does not fit in
+> 32-bit, to make debugging easier in the future.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
+> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 
-I'm having a hard time understanding what the benefit of this series is,
-given that we only support EABI compat tasks. When adding a new compat
-system call, you can't just blindly hook it up without checking whether it
-needs a wrapper to deal with any type conversion etc, so really we're just
-replacing one table with another as far as I can tell. What am I missing?
+Assuming you're routing all of this via akpm:
 
-I also really don't think we should be generating the 32-bit UAPI headers
-from the 64-bit compat system call support (if that's what you're trying to
-do -- make headers_check fails with your patches applied). arch/arm/ is the
-canonical place for the 32-bit UAPI, and we're just implementing that.
+Acked-by: Will Deacon <will.deacon@arm.com>
 
 Will
