@@ -2,247 +2,100 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DC2C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E107C5AE5E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D97892086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:51:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jyinSFuL"
+	by mail.kernel.org (Postfix) with ESMTP id 2D5C82086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfASAue (ORCPT
+        id S1727252AbfASAxf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 19:50:34 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:49927 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfASAue (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 19:50:34 -0500
-Received: by mail-pl1-f202.google.com with SMTP id v12so9142030plp.16
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 16:50:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=mffs7ZoNWUB7d7Vc+bx+tYMC4aNf0jf7l/hY0o8bs7c=;
-        b=jyinSFuLKwb+Y6S6+nFUkaUHHVGd08Fy/dre24YgZkQA/3HdqeIPFkMLiarnKhEn09
-         BHx0xnsxHUqSTLqxjNyjZF7whGS2jiOcoP9UB2ubPAfOwH492cD/eZQ2Np+Lv4gleDwS
-         3PHFIuBvf7MuasaFsNU9incv3ERouDNCW2QBTxPYlPAobveTSS6FxQk/VwITr3hSd6Q7
-         UiOegFzk8wwHOJBd9kn4gZZio+gz1O7Nu7NX8hYAKRA/lP/Ytb6G4Zb1xtDSMalICFjE
-         t5Nuwh051ig6x+NZlQ7Z6aW6JqAaWLz6yF6Qhox5OAqwUYYNxEHswuwfzGM0PLr4HklF
-         GCbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=mffs7ZoNWUB7d7Vc+bx+tYMC4aNf0jf7l/hY0o8bs7c=;
-        b=M1iKLMFeeR+4CNUWrt/p802Mh2nFvEsdSmsG7eeCs2iyy+uaBdP6Q2bMHNY/jMEnqR
-         1ZED0pO31eXbAUowu72FHNMUMN7pLGFUt3uMs3d9hrUGrkWhhMieOC+LoLRJ0P7OBgQ5
-         ijgI3bxNlk2W4qNdadug2rrCu+EkVCwRs6MLfIp7nqDHFPLnsxinj1R9pm2ok3LJ2Vsw
-         Kr8xtSR5M+aqYtOuiHgemiFy4U7fAwpfgjtNssy25tTEaCQg4hcyJ9AxzKRMn+6GPdj+
-         pMhr4DTCNCjDOxhzJLoWWLYByjo2Cq/GRRMLg5HD4sRkU9kV/qxztUgqdQp6MicpKb26
-         u7oA==
-X-Gm-Message-State: AJcUukcDZzBO6HucMcrcKUvkfJ8QgcDdCgUnoTNTJXL6DlIhGnn8vnDv
-        Or+roLGSFFaG/t9BkiMcG3upDHM1umXymg==
-X-Google-Smtp-Source: ALg8bN4M/ljDwaak+PgDIMf+Aw7XX0SqMkW+JoQVAhM1JtP11tGK8U92525weKj8W/uGHgUvmfpNblGSa+kvIg==
-X-Received: by 2002:a17:902:aa86:: with SMTP id d6mr7010687plr.21.1547859032905;
- Fri, 18 Jan 2019 16:50:32 -0800 (PST)
-Date:   Fri, 18 Jan 2019 16:50:22 -0800
-Message-Id: <20190119005022.61321-1-shakeelb@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
-Subject: [RFC PATCH] mm, oom: fix use-after-free in oom_kill_process
-From:   Shakeel Butt <shakeelb@google.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Shakeel Butt <shakeelb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 Jan 2019 19:53:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35628 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726196AbfASAxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 19:53:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A81AFAA71;
+        Sat, 19 Jan 2019 00:53:33 +0000 (UTC)
+Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to
+ syscall-counts-by-pid.py
+To:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
+ <1547718344-27382-15-git-send-email-s1seetee@linux.vnet.ibm.com>
+From:   Tony Jones <tonyj@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
+ mQGiBEkQmbwRBACDch7wo/RzlNt2HA8jLICsO2w8yOkJ7UTzHYNn3Q83Ro0qev2KokfE3EDw
+ il+vam9CDR7jIDmswHqaMe0/O+UnZtO5PlDgylZcrwNwbBzHfm/KGejbi1RBGAoETrvcfwGi
+ w83bR/aDnoRXY5Ho1uphQ05/065EMpbJOOBdn9qQ4wCgv2Q6C/QeYDGsxJPRO+20nLu5K00D
+ /Rde4OTZ5biM+vb6ObTmgPNeiMrTwGpMokN7audIl7njwvD+lYrlgQjmDzcaPFz29rYWwT7g
+ 6t6hcFgjpU1he/v3qxeQlTJoi2+u5Mqj42z//49h6DqNjT859Z/6h5IwKBo/EZC17iBIlS2G
+ VXAstNiZASGiaIlONozWJ/GSjUaRA/9wZTV1nXF/+xX+qmc7SvTg1w6jWyjxVumQLoq2SeA4
+ 1Sy5X2IATkAGCCjbeoQGnFdbOnHRSJdlTazObgwreqGPlPnIROpr9QESkfxsaCkDiZfpl0xk
+ 6X069QMZBEwGAWILHYXL9UqlOjniZaU2BkVA11JEdBhyQorC8T/ji1edc7QaVG9ueSBKb25l
+ cyA8dG9ueWpAc3VzZS5kZT6IYAQTEQIAIAUCSRCZvAIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheAAAoJELFYWyEf4koXGmYAoKCnbv9dhAB2vR6IvSJem1ws4HpfAJ9ZqTKiXcogBGfTPaJR
+ GI9QhVUieLkCDQRJEJm8EAgAzr9Zd3v7B10ODtVc7XxbMe3W6o1FdClL9ZIgLv61zhWctafK
+ DMu/MUSvxmYFq00pecD/SfX8oxArA02+sQ2E+/Zb4J7NAWIAxCfmy7VE0wDBrZH/hBapIx/L
+ gVqYfZ9Rw+a4FXrlk1y8oQCwhvj+kWrm7V7olR0aPOy1NFGNUyTFSMj+pbmxiNOXdCxVUQe3
+ UE1k9yA+mILjyaRanwkiCLCjNvRPL88Q017BdhVBWZmz8qhwXN/RrjCcDHsPX5O0ev68MLyu
+ sh5mfukuvCqzW1Y3Ql+iwfwEw5lNmQGdoV9csg7JP7saDicSFO2KcZvMbvDMqtPFipdF5UWo
+ fZKZ3wADBQf/b5cVNyb5i8QI0G7BPGBNn4VlQX5n66TsPBnrRNOi3MhTTVEBCp8s+jqUjJjX
+ EjjA+O4hIm7Qqdsozurw7GlcQ0A06dIzO/1RUglZZMoC0JL43ZQmJ+3+yFrLjWgGH6ev6AOb
+ YLH7ZujgAB5n0Hy2ZIChzsKLKbHptFtBvpDKB8updq+GunsY4oN3wGa67h9sHqDvjyp64Czg
+ n8G5uGLwx3f/edbECKz5kPUSzChEk3suK742SEP01v4ra5WX88Hn81NjGByQMz9acJLdC7Ff
+ LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
+ AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
+ liv+rwEesYGlGeGNaKHTJw==
+Message-ID: <98c8deb4-e078-82cf-ec5b-372274f5fc9d@suse.de>
+Date:   Fri, 18 Jan 2019 16:53:30 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <1547718344-27382-15-git-send-email-s1seetee@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In our internal syzbot instance running on upstream kernel, we see the
-following crash.
+On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
 
---------------------
-syzbot has found the following crash on:
+> -	    print "\nsyscall events for %s:\n\n" % (for_comm),
+> +	    print("\nsyscall events for %s:\n\n" % (for_comm)),
+>      else:
+> -	    print "\nsyscall events by comm/pid:\n\n",
+> +	    print("\nsyscall events by comm/pid:\n\n"),
+>  
+> -    print "%-40s  %10s\n" % ("comm [pid]/syscalls", "count"),
+> -    print "%-40s  %10s\n" % ("----------------------------------------", \
+> -                                 "----------"),
+> +    print("%-40s  %10s\n" % ("comm [pid]/syscalls", "count")),
+> +    print("%-40s  %10s\n" % ("----------------------------------------", \
+> +                                 "----------")),
 
-HEAD commit: 47bfa6d9dc8c Merge tag 'selinux-pr-20190115' of git://git.kernel.org/pub/scm/linux/kernel/g..
-git tree: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-...
-compiler: gcc (GCC) 9.0.0 20181231 (experimental)
+Is the 'print (x),' [trailing comma] syntax valid for function syntax?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Print "x", in Py2 means suppress the trailing newline.
 
-See http://go/syzbot for details on how to handle this bug.
+You need to actually run the scripts (old,  new PYTHON=python2, new PYTHON=python3) and compare the output.
 
-kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
-Memory cgroup stats for /syz1: cache:28KB rss:274692KB rss_huge:190464KB shmem:64KB mapped_file:0KB dirty:0KB writeback:0KB swap:0KB inactive_anon:222780KB active_anon:4152KB inactive_file:0KB active_file:0KB unevictable:47872KB
-oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=syz1,mems_allowed=0-1,oom_memcg=/syz1,task_memcg=/syz1,task=syz-executor1,pid=15858,uid=0
-Memory cgroup out of memory: Kill process 15858 (syz-executor1) score 1148 or sacrifice child
-==================================================================
-BUG: KASAN: use-after-free in oom_kill_process.cold+0x484/0x9d4 mm/oom_kill.c:978
-Read of size 8 at addr ffff8880595f6c40 by task syz-executor1/15817
+This:
+print "%-40s  %10s\n" % ("comm [pid]/syscalls", "count"),
 
-CPU: 1 PID: 15817 Comm: syz-executor1 Not tainted 5.0.0-rc2+ #29
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
- print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
- kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
- oom_kill_process.cold+0x484/0x9d4 mm/oom_kill.c:978
- out_of_memory+0x885/0x1420 mm/oom_kill.c:1133
- mem_cgroup_out_of_memory+0x160/0x210 mm/memcontrol.c:1393
- mem_cgroup_oom mm/memcontrol.c:1721 [inline]
- try_charge+0xd44/0x19b0 mm/memcontrol.c:2283
- memcg_kmem_charge_memcg+0x7c/0x130 mm/memcontrol.c:2591
- memcg_kmem_charge+0x13b/0x340 mm/memcontrol.c:2624
- __alloc_pages_nodemask+0x7b8/0xdc0 mm/page_alloc.c:4559
- __alloc_pages include/linux/gfp.h:473 [inline]
- __alloc_pages_node include/linux/gfp.h:486 [inline]
- alloc_pages_node include/linux/gfp.h:500 [inline]
- alloc_thread_stack_node kernel/fork.c:246 [inline]
- dup_task_struct kernel/fork.c:849 [inline]
- copy_process+0x847/0x8710 kernel/fork.c:1753
- _do_fork+0x1a9/0x1170 kernel/fork.c:2227
- __do_sys_clone kernel/fork.c:2334 [inline]
- __se_sys_clone kernel/fork.c:2328 [inline]
- __x64_sys_clone+0xbf/0x150 kernel/fork.c:2328
- do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457ec9
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f36f091cc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457ec9
-RDX: 9999999999999999 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 000000000073bf00 R08: ffffffffffffffff R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f36f091d6d4
-R13: 00000000004be2a0 R14: 00000000004ce760 R15: 00000000ffffffff
+can be reworked as:
+print ("%-40s  %10s" % ("comm [pid]/syscalls", "count"))
 
-Allocated by task 15809:
- save_stack+0x45/0xd0 mm/kasan/common.c:73
- set_track mm/kasan/common.c:85 [inline]
- __kasan_kmalloc mm/kasan/common.c:496 [inline]
- __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
- kasan_kmalloc mm/kasan/common.c:504 [inline]
- kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:411
- kmem_cache_alloc_node+0x144/0x710 mm/slab.c:3633
- alloc_task_struct_node kernel/fork.c:158 [inline]
- dup_task_struct kernel/fork.c:845 [inline]
- copy_process+0x405b/0x8710 kernel/fork.c:1753
- _do_fork+0x1a9/0x1170 kernel/fork.c:2227
- __do_sys_clone kernel/fork.c:2334 [inline]
- __se_sys_clone kernel/fork.c:2328 [inline]
- __x64_sys_clone+0xbf/0x150 kernel/fork.c:2328
- do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Freed by task 15817:
- save_stack+0x45/0xd0 mm/kasan/common.c:73
- set_track mm/kasan/common.c:85 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
- kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
- __cache_free mm/slab.c:3487 [inline]
- kmem_cache_free+0x86/0x260 mm/slab.c:3749
- free_task_struct kernel/fork.c:163 [inline]
- free_task+0x170/0x1f0 kernel/fork.c:458
- __put_task_struct+0x2e0/0x630 kernel/fork.c:731
- put_task_struct+0x4b/0x60 include/linux/sched/task.h:98
- oom_kill_process.cold+0x93a/0x9d4 mm/oom_kill.c:990
- out_of_memory+0x885/0x1420 mm/oom_kill.c:1133
- mem_cgroup_out_of_memory+0x160/0x210 mm/memcontrol.c:1393
- mem_cgroup_oom mm/memcontrol.c:1721 [inline]
- try_charge+0xd44/0x19b0 mm/memcontrol.c:2283
- memcg_kmem_charge_memcg+0x7c/0x130 mm/memcontrol.c:2591
- memcg_kmem_charge+0x13b/0x340 mm/memcontrol.c:2624
- __alloc_pages_nodemask+0x7b8/0xdc0 mm/page_alloc.c:4559
- __alloc_pages include/linux/gfp.h:473 [inline]
- __alloc_pages_node include/linux/gfp.h:486 [inline]
- alloc_pages_node include/linux/gfp.h:500 [inline]
- alloc_thread_stack_node kernel/fork.c:246 [inline]
- dup_task_struct kernel/fork.c:849 [inline]
- copy_process+0x847/0x8710 kernel/fork.c:1753
- _do_fork+0x1a9/0x1170 kernel/fork.c:2227
- __do_sys_clone kernel/fork.c:2334 [inline]
- __se_sys_clone kernel/fork.c:2328 [inline]
- __x64_sys_clone+0xbf/0x150 kernel/fork.c:2328
- do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8880595f6540
- which belongs to the cache task_struct(33:syz1) of size 6080
-The buggy address is located 1792 bytes inside of
- 6080-byte region [ffff8880595f6540, ffff8880595f7d00)
-The buggy address belongs to the page:
-page:ffffea0001657d80 count:1 mapcount:0 mapping:ffff888091f65840 index:0x0 compound_mapcount: 0
-flags: 0x1fffc0000010200(slab|head)
-raw: 01fffc0000010200 ffffea00028b3288 ffffea0002612788 ffff888091f65840
-raw: 0000000000000000 ffff8880595f6540 0000000100000001 ffff888057fe2b00
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff888057fe2b00
-
---------------------
-
-On looking further it seems like the process selected to be oom-killed
-has exited even before reaching read_lock(&tasklist_lock) in
-oom_kill_process(). More specifically the tsk->usage is 1 which is due
-to get_task_struct() in oom_evaluate_task() and the put_task_struct
-within for_each_thread() frees the tsk and for_each_thread() tries to
-access the tsk. The easiest fix is to do get/put across the
-for_each_thread() on the selected task.
-
-Now the next question is should we continue with the oom-kill as the
-previously selected task has exited? However before adding more
-complexity and heuristics, let's answer why we even look at the
-children of oom-kill selected task? The select_bad_process() has already
-selected the worst process in the system/memcg. Due to race, the
-selected process might not be the worst at the kill time but does that
-matter matter? The userspace can play with oom_score_adj to prefer
-children to be killed before the parent. I looked at the history but it
-seems like this is there before git history.
-
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
- mm/oom_kill.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 0930b4365be7..1a007dae1e8f 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -981,6 +981,13 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	 * still freeing memory.
- 	 */
- 	read_lock(&tasklist_lock);
-+
-+	/*
-+	 * The task 'p' might have already exited before reaching here. The
-+	 * put_task_struct() will free task_struct 'p' while the loop still try
-+	 * to access the field of 'p', so, get an extra reference.
-+	 */
-+	get_task_struct(p);
- 	for_each_thread(p, t) {
- 		list_for_each_entry(child, &t->children, sibling) {
- 			unsigned int child_points;
-@@ -1000,6 +1007,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 			}
- 		}
- 	}
-+	put_task_struct(p);
- 	read_unlock(&tasklist_lock);
- 
- 	/*
--- 
-2.20.1.321.g9e740568ce-goog
-
+See:  https://build.opensuse.org/package/view_file/devel:tools/perf/port-failed-syscalls-by-pid-script-to-python3.patch?expand=1
