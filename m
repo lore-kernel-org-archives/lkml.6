@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A559EC636A1
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 08:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC0EC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 08:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75A3F2086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 08:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1D582086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 08:41:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arjsBqa6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlkTjj4a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfASIky (ORCPT
+        id S1727806AbfASIkw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 03:40:54 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33962 "EHLO
+        Sat, 19 Jan 2019 03:40:52 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:47029 "EHLO
         mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727770AbfASIkr (ORCPT
+        with ESMTP id S1727745AbfASIkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 19 Jan 2019 03:40:47 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so12215318lfc.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 00:40:46 -0800 (PST)
+Received: by mail-lf1-f66.google.com with SMTP id y14so12152827lfg.13
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 00:40:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=t4gO5DVMANH5E+Sbju7OOPAWMqUw7l2Z+75E0VcRtJI=;
-        b=arjsBqa6Q78ZmdAXceEdbPfSv2t5cuV7Ll5grTVWjIGE2AqDMMEtzst0hEyu30FOgt
-         ixfyaJFadolrsfsm9Z2WT00lXApQ1lX/OtWsAAVC64ATvsKQqcDLzPhJsuepaG2I9u1h
-         a/Ex9sW9l83sPtamWY3D/vkUBFNKkzCKx8QGKLVXV6S2ttrr1M+0C2j9TaZ5l86+1t0j
-         cu5PpSVrm2ApLzgm+HBRQf8VAtMHCMwBs81Wmgel4CA7yDDOUGnXnN/F6gekdn+0coI4
-         7OUd49jb1yYt4vxM9WIOW5ygDhiGl/0sXy7v+FCXqlVQIrh4un2K6ryP6DHQ52GAxVd0
-         AaVw==
+        bh=+qcOXE5cVDqCuNYXeM4OywdRRJJPc4720wZbAYZ2jys=;
+        b=FlkTjj4aLH17uPcQh7r8FTzeigzTV30bxYndnY7oZMMYeZvdxHJmuUBao/SSEBTbGZ
+         CUzX3NeodqwQ3GWQm3mmmKDER/87gt9ZSwuweyMx6pDOqFcv80/gEvVp2axEtsQQCBVi
+         LVFsvQ+nbJuHq+YMDbbVz2z4jfmnYCcczMm09j++N3IoUeN5Aw6nxcq1DA5JatMEqrif
+         Hmgyd01MFCWAgo8SfQbCmQerBrqgNaynI2oUnYG8WxKiKRh6BSFckfrgc74xpVmAQiqh
+         0JuMJmUcY/z+koy/jtYw06BqhCzpUj6RFOxOAOobYrcRnl43T2RuCeq/dH/zQSQd/cAh
+         yyjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=t4gO5DVMANH5E+Sbju7OOPAWMqUw7l2Z+75E0VcRtJI=;
-        b=qABHyJ4/hUC1Uskil3/wAXyFGsTti+pDqu0w13J6fM/E5pIGpxg9v3rikf8aW9NADd
-         Vn37f0CHX9khV5qEXa8zZt/UX/cGOI3SHRDO6Y9+nJWxTE9mhYxs8fcXK3V49XV2OwTe
-         XhSThnr+5KPIxgwLuxlwp98Y25sdp3W9lYLNi2T0CmulAd99z1vDPMuR9AX1zxZv8+Hu
-         vQTiWFUk+ES0mqc+c5eISpQ/Bj3xiSLPc+Y1YKPQE7gFAq5n07mi/8HDtbVDOmjYDR0/
-         LZhV70GJJpbK4yfHNDKmMyZCsZSPuYgQsbuUlWwy+DE3szOfFb4oCflrHrkerok4CBGQ
-         Z9vQ==
-X-Gm-Message-State: AJcUukdfpGoaQKXBXGRY1mvmbadFfwgrJYnNXDUfdTOAWUGjEIoMvRUA
-        fq6FhHvTeKr2/rcXPVkZaJQ=
-X-Google-Smtp-Source: ALg8bN55DDUoBJT1Ua154+F3PXzBhZBxCKFDwdswvrLSVYZE4HO68tLVg1hWoa/VqQfALGg/vnRPWA==
-X-Received: by 2002:a19:4bc9:: with SMTP id y192mr14056081lfa.49.1547887246008;
-        Sat, 19 Jan 2019 00:40:46 -0800 (PST)
+        bh=+qcOXE5cVDqCuNYXeM4OywdRRJJPc4720wZbAYZ2jys=;
+        b=suYfLhplruG38TjMqo5xTl644RJRkH1tGIgf3ViGxTA1JPrH/RQl1bj3etFcEJNplY
+         R8V2x/TnyNkGpKunkK6eRT3KpCh945Vra8Egv25j6r/mU/qdeuejCwjeCiAC12OeTmRl
+         AKB/1ExZSYPj3aiEy6BmNPoYbuakZV2W6HZ0tM0MfhorEu9/XHsd3TyyWRcuVkXIsFGj
+         c2yBeKEwvw6t6YRjow9jKowvZSg1q2Zhk3sYUy48LqJCeCaA8mVUcH6LYuhBw+O++9AD
+         l9uaS/29U+9N35FRpA9lOFzgYEwowUiVQhBE8VzcB4iqXANniR6e+UNxasRV7CK7+BYG
+         YVZQ==
+X-Gm-Message-State: AJcUukdTCDzsDbQWJlTzuEsDD29I2bXTSPCHVH7KJ0KvvD6iPHppc7Ji
+        +5zEeRGWlE50DqDD5Dq0cQg=
+X-Google-Smtp-Source: ALg8bN5U2/ZzBfn14Cg4ByxiW5KfoQrFh3dfCbJEAlTLkfO4atSVTwQWSyNiw6G16weKYZgEhA6dKQ==
+X-Received: by 2002:a19:59c2:: with SMTP id n185mr13757815lfb.118.1547887244647;
+        Sat, 19 Jan 2019 00:40:44 -0800 (PST)
 Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id p23sm1187109lfh.47.2019.01.19.00.40.44
+        by smtp.gmail.com with ESMTPSA id p23sm1187109lfh.47.2019.01.19.00.40.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 00:40:45 -0800 (PST)
+        Sat, 19 Jan 2019 00:40:44 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Sam Ravnborg <sam@ravnborg.org>,
@@ -77,9 +77,9 @@ Cc:     Sam Ravnborg <sam@ravnborg.org>,
         Xinwei Kong <kong.kongxinwei@hisilicon.com>,
         Yannick Fertre <yannick.fertre@st.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/6] drm: remove drmP.h from drm_modeset_helper.h
-Date:   Sat, 19 Jan 2019 09:40:14 +0100
-Message-Id: <20190119084014.5355-7-sam@ravnborg.org>
+Subject: [PATCH v5 5/6] drmi/rcar-du: prepare for drmP.h removal from drm_modeset_helper.h
+Date:   Sat, 19 Jan 2019 09:40:13 +0100
+Message-Id: <20190119084014.5355-6-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
 In-Reply-To: <20190119084014.5355-1-sam@ravnborg.org>
 References: <20190119084014.5355-1-sam@ravnborg.org>
@@ -88,73 +88,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the removal of drmP.h from drm_modeset_helper.h
-the drmP.h are no longer included by any include files
-in include/drm.
-The drmP.h file is thus only included explicit
-either in .c files or in local .h files.
-This makes the process of deleting the drmP.h includes easier
-as we have a more local dependency chain.
+The use of drmP.h is discouraged and removal of it from
+drm_modeset_helper.h caused rcar-du to fail to build.
 
-Include build failure fixes in drm files after the drmP.h removal.
+This patch introduce the necessary fixes to prepare for the
+drmP.h removal from drm_modeset_helper.h.
+
+Build tested on arm x86 and arm allmodconfig.
 
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Sean Paul <sean@poorly.run>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: David Airlie <airlied@linux.ie>
 Cc: Daniel Vetter <daniel@ffwll.ch>
 ---
- drivers/gpu/drm/drm_damage_helper.c  | 1 +
- drivers/gpu/drm/drm_modeset_helper.c | 2 ++
- include/drm/drm_modeset_helper.h     | 6 +++++-
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/drm_damage_helper.c b/drivers/gpu/drm/drm_damage_helper.c
-index e16aa5ae00b4..ee67c96841fa 100644
---- a/drivers/gpu/drm/drm_damage_helper.c
-+++ b/drivers/gpu/drm/drm_damage_helper.c
-@@ -32,6 +32,7 @@
- 
- #include <drm/drm_atomic.h>
- #include <drm/drm_damage_helper.h>
-+#include <drm/drm_device.h>
- 
- /**
-  * DOC: overview
-diff --git a/drivers/gpu/drm/drm_modeset_helper.c b/drivers/gpu/drm/drm_modeset_helper.c
-index 9150fa385bba..9bc1ef788c77 100644
---- a/drivers/gpu/drm/drm_modeset_helper.c
-+++ b/drivers/gpu/drm/drm_modeset_helper.c
-@@ -23,8 +23,10 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_fb_helper.h>
-+#include <drm/drm_fourcc.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_plane_helper.h>
-+#include <drm/drm_print.h>
- 
- /**
-  * DOC: aux kms helpers
-diff --git a/include/drm/drm_modeset_helper.h b/include/drm/drm_modeset_helper.h
-index efa337f03129..995fd981cab0 100644
---- a/include/drm/drm_modeset_helper.h
-+++ b/include/drm/drm_modeset_helper.h
-@@ -23,7 +23,11 @@
- #ifndef __DRM_KMS_HELPER_H__
- #define __DRM_KMS_HELPER_H__
- 
--#include <drm/drmP.h>
-+struct drm_crtc;
-+struct drm_crtc_funcs;
-+struct drm_device;
-+struct drm_framebuffer;
-+struct drm_mode_fb_cmd2;
- 
- void drm_helper_move_panel_connectors_to_head(struct drm_device *);
- 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 534a128a869d..8010ed702509 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -10,6 +10,7 @@
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/of_graph.h>
 -- 
 2.12.0
 
