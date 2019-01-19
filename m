@@ -2,74 +2,169 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A32EDC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C378DC61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 639D42086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:28:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BA+XFgqG"
+	by mail.kernel.org (Postfix) with ESMTP id 9B32E2086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:29:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbfASK2J (ORCPT
+        id S1727837AbfASK3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 05:28:09 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57614 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfASK2J (ORCPT
+        Sat, 19 Jan 2019 05:29:22 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:54917 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbfASK3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 05:28:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QqYhpraz2T5DKlyFklHd2H2zgLOLDp2vx7iyLks+BLA=; b=BA+XFgqGvneirc1cwRxhITEl8
-        AA3+AG2XztsCqQC3cvJTybc7lKHSNq8PoGV5+skZtU9xS7pFDVFjcW8UwMkaczs9vNcvfczTfE6Q+
-        kEssNrZgvD8zZGgx6RrN09xdKjnKN2+BQFGauFRGOIVhg4smbEGsLxrLXyWDwNb/60142kCzD+Aiw
-        ++Wol1YEGTYEF8h881JcCdG9tTM5ISIShOPVn++aY7il1Mqi0KttUN0MTgv0MK5DWnRT/1Ioy6lLq
-        ne8yFZheosE2GnL9QXOwJL5s9mK4sDPi3HKYvTa18D6q1XmMmi2HrKBeBQTfFcEqpQcCATQzZJxFE
-        Q++7bwpsg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gknr6-0005zW-VI; Sat, 19 Jan 2019 10:28:00 +0000
-Date:   Sat, 19 Jan 2019 02:28:00 -0800
-From:   Christoph Hellwig <hch@infradead.org>
+        Sat, 19 Jan 2019 05:29:21 -0500
+X-Originating-IP: 141.70.45.131
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 5F0ACC0006;
+        Sat, 19 Jan 2019 10:29:13 +0000 (UTC)
+Date:   Sat, 19 Jan 2019 11:29:12 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
 To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
-        atishp04@gmail.com, Borislav Petkov <bp@alien8.de>,
-        dancol@google.com, gregkh@linuxfoundation.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
-        karim.yaghmour@opersys.com, Kees Cook <keescook@chromium.org>,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        Manoj Rao <linux@manojrajarao.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        paulmck@linux.vnet.ibm.com,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        rdunlap@infradead.org, rostedt@goodmis.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        yhs@fb.com
-Subject: Re: [RFC] Provide in-kernel headers for making it easy to extend the
- kernel
-Message-ID: <20190119102800.GB17723@infradead.org>
-References: <20190118225543.86996-1-joel@joelfernandes.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Hartman <ghartman@google.com>,
+        Alistair Strachan <strachan@google.com>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Christian Brauner <christian@brauner.io>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/wait: introduce wait_event_freezable_hrtimeout
+Message-ID: <20190119102912.GA2647@hle-laptop.local>
+References: <20190117224135.GC8100@hle-laptop.local>
+ <20190118151941.GB187589@google.com>
+ <20190118170801.GA4537@hle-laptop.local>
+ <20190119015355.GA115342@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
 Content-Disposition: inline
-In-Reply-To: <20190118225543.86996-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190119015355.GA115342@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This seems like a pretty horrible idea and waste of kernel memory.
-Just add support to kbuild to store a compressed archive in initramfs
-and unpack it in the right place.
+
+--DocE+STaALJfprDB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+> > as far as I understand this code, freezable_schedule() avoids blocking =
+the
+> > freezer during the schedule() call, but in the end try_to_freeze() is s=
+till
+> > called so the result is the same, right?
+> > I wonder why wait_event_freezable is not calling freezable_schedule().
+>=20
+> It could be something subtle in my view. freezable_schedule() actually ma=
+kes
+> the freezer code not send a wake up to the sleeping task if a freeze happ=
+ens,
+> because the PF_FREEZER_SKIP flag is set, as you pointed.
+>=20
+> Whereas wait_event_freezable() which uses try_to_freeze() does not seem t=
+o have
+> this behavior and the task will enter the freezer. So I'm a bit skeptical=
+ if
+> your API will behave as expected (or at least consistently with other wait
+> APIs).
+
+oh right, now it is clear to me:
+
+- schedule(); try_to_freeze()
+
+schedule() is called and the task enters sleep. Since PF_FREEZER_SKIP is
+not set, the task wakes up as soon as try_to_freeze_tasks() is called.
+Right after waking up the task calls try_to_freeze() which freezes it.
+
+- freezable_schedule()=20
+
+schedule() is called and the task enters sleep. Since PF_FREEZER_SKIP is
+set, the task does not wake up when try_to_freeze_tasks() is called. This
+is not a problem, the task can't "do anything which isn't allowed for a
+frozen task" while sleeping[0].=20
+
+When the task wakes up (timeout, or whatever other reason) it calls
+try_to_freeze() which freezes it if the freeze is still underway.
+
+So if a freeze is triggered while the task is sleeping, a task executing
+freezable_schedule() might or might not notice the freeze depending on how
+long it sleeps. A task executing schedule(); try_to_freeze() will always
+notice it.
+
+I might be wrong on that, but freezable_schedule() just seems like a
+performance improvement to me.
+
+Now I fully agree with you that there should be a uniform definition of
+"freezable" between wait_event_freezable and wait_event_freezable_hrtimeout.
+This leaves me to the question: should I modify my definition of
+wait_event_freezable_hrtimeout, or prepare a patch for wait_event_freezable=
+ ?
+
+If I am right with the performance thing, the latter might be worth
+considering?
+
+Either way, this will be fixed in the v2.
+
+> > That being said, I am not sure that the try_to_freeze() call does anyth=
+ing
+> > in the vsoc case because there is no call to set_freezable() so the thr=
+ead
+> > still has PF_NOFREEZE...
+>=20
+> I traced this, and PF_NOFREEZE is not set by default for tasks.
+
+Well, I did not check this in practice and might be confused somewhere but
+the documentation[1] says "kernel threads are not freezable by default.
+However, a kernel thread may clear PF_NOFREEZE for itself by calling
+set_freezable()".
+
+Looking at the kthreadd() definition it seems like new tasks have
+PF_NOFREEZE set by default[2].
+
+I'll take some time to check this in practice in the next days.
+
+Anyways, thanks for your time !
+
+regards,
+ Hugo
+
+[0] https://elixir.bootlin.com/linux/latest/source/include/linux/freezer.h#=
+L103
+[1] https://elixir.bootlin.com/linux/latest/source/Documentation/power/free=
+zing-of-tasks.txt#L90
+[2] https://elixir.bootlin.com/linux/latest/source/kernel/kthread.c#L569
+
+--=20
+                Hugo Lefeuvre (hle)    |    www.owl.eu.com
+RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
+ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
+
+--DocE+STaALJfprDB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlxC++8ACgkQZYVUZx9w
+0DTHbwf8DQdawIVEQVNUyheP2WxzOVoEjNdB29OKYD/MvoV0Mn4O62FmDa4an/79
+uvVAT8rTzVAJc82a7hUyUlHoaExOrEJw3rpDmr9f2oaShsd8VE0CIr7m5KsdjbVm
+qkKMezoXK0m/P6MM6uBjhD9TZAMrLwSyd7giBdLo6eJY0PXZv+t15BONqP6yvvP8
+3AZYNN/u3kbUN7cCBVZpLeKMdwf6EQWdXqQ6rLf88YioDcoT846vGk1yUXBr5wt/
+GgT1z0rEF5QDJC9eu9j0bGl/RX/PfgFSf8Uzsy5S187MVubU21X5NRARuHoAFlAO
+Doj+sFtGpKzDpiA7bqfdgi998xKSoA==
+=fANt
+-----END PGP SIGNATURE-----
+
+--DocE+STaALJfprDB--
