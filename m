@@ -2,169 +2,173 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C378DC61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6D7C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B32E2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46AF52086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfASK3W (ORCPT
+        id S1727874AbfASKag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 05:29:22 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:54917 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfASK3V (ORCPT
+        Sat, 19 Jan 2019 05:30:36 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:49563 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726541AbfASKaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 05:29:21 -0500
-X-Originating-IP: 141.70.45.131
-Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 5F0ACC0006;
-        Sat, 19 Jan 2019 10:29:13 +0000 (UTC)
-Date:   Sat, 19 Jan 2019 11:29:12 +0100
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Greg Hartman <ghartman@google.com>,
-        Alistair Strachan <strachan@google.com>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/wait: introduce wait_event_freezable_hrtimeout
-Message-ID: <20190119102912.GA2647@hle-laptop.local>
-References: <20190117224135.GC8100@hle-laptop.local>
- <20190118151941.GB187589@google.com>
- <20190118170801.GA4537@hle-laptop.local>
- <20190119015355.GA115342@google.com>
+        Sat, 19 Jan 2019 05:30:35 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id kntTgoNxBRO5ZkntWgrn0C; Sat, 19 Jan 2019 11:30:33 +0100
+Subject: Re: [PATCH v9 4/4] sound/usb: Use Media Controller API to share media
+ resources
+To:     shuah <shuah@kernel.org>, mchehab@kernel.org, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <cover.1545154777.git.shuah@kernel.org>
+ <2fb40852e4035b2a58010ce7416448918f12804f.1545154778.git.shuah@kernel.org>
+ <b2fddc47-94c6-b7b3-8304-55905a3e278d@xs4all.nl>
+ <ee9b4161-eeb8-340f-7b39-93d0bc5fe1bd@kernel.org>
+ <8593299c-b80f-d1d3-9a03-d56fb1573f60@kernel.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <7719a35c-c65e-977e-88b8-693d55e88723@xs4all.nl>
+Date:   Sat, 19 Jan 2019 11:30:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
-Content-Disposition: inline
-In-Reply-To: <20190119015355.GA115342@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8593299c-b80f-d1d3-9a03-d56fb1573f60@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfC6LdPIDfT0Pq+axFIfWCzNyxa2JcWzdCpI13rFOsWjwh1W6/UByMo8M97usFe+QOfIVobbEs7Dq4ymS/dhXL3t9EEZTIuqBjnlwkjCmKQ+NAzxqTUP3
+ wfceHRZZNSWoBZpHQJ99x3TSFF9nIoGvlB3SIAZ91DexZczRdCXJRikllJ3gFUmuFjUKgjamNuzNphSWkrfsGjYHUAByiMSWChuh+HLdHbgsxFNcow1HDw+M
+ YPmltsCOWXCC0Ine1PqkEWF6MsRWo5G0MChxSBDLKcQOTeHVDxu4kUnHXftGggZvkT1jluZiTtW369Cv7HujmmW55BVQo/X31i9GBDuNKdd3+8+6Ap3s9Bdz
+ V8yUPLH8iQ9jMhGfKiEn9tyeevjnMQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/19/2019 02:03 AM, shuah wrote:
+> On 1/18/19 2:54 PM, shuah wrote:
+>> On 1/18/19 1:36 AM, Hans Verkuil wrote:
+>>> On 12/18/18 6:59 PM, shuah@kernel.org wrote:
+>>>> From: Shuah Khan <shuah@kernel.org>
+>>>>
+>>>> Media Device Allocator API to allows multiple drivers share a media 
+>>>> device.
+>>>> This API solves a very common use-case for media devices where one 
+>>>> physical
+>>>> device (an USB stick) provides both audio and video. When such media 
+>>>> device
+>>>> exposes a standard USB Audio class, a proprietary Video class, two or 
+>>>> more
+>>>> independent drivers will share a single physical USB bridge. In such 
+>>>> cases,
+>>>> it is necessary to coordinate access to the shared resource.
+>>>>
+>>>> Using this API, drivers can allocate a media device with the shared 
+>>>> struct
+>>>> device as the key. Once the media device is allocated by a driver, other
+>>>> drivers can get a reference to it. The media device is released when all
+>>>> the references are released.
+>>>>
+>>>> Change the ALSA driver to use the Media Controller API to share media
+>>>> resources with DVB, and V4L2 drivers on a AU0828 media device.
+>>>>
+>>>> The Media Controller specific initialization is done after sound card is
+>>>> registered. ALSA creates Media interface and entity function graph nodes
+>>>> for Control, Mixer, PCM Playback, and PCM Capture devices.
+>>>>
+>>>> snd_usb_hw_params() will call Media Controller enable source handler
+>>>> interface to request the media resource. If resource request is granted,
+>>>> it will release it from snd_usb_hw_free(). If resource is busy, 
+>>>> -EBUSY is
+>>>> returned.
+>>>>
+>>>> Media specific cleanup is done in usb_audio_disconnect().
+>>>>
+>>>> Signed-off-by: Shuah Khan <shuah@kernel.org>
+>>>> ---
+>>>>   sound/usb/Kconfig        |   4 +
+>>>>   sound/usb/Makefile       |   2 +
+>>>>   sound/usb/card.c         |  14 ++
+>>>>   sound/usb/card.h         |   3 +
+>>>>   sound/usb/media.c        | 321 +++++++++++++++++++++++++++++++++++++++
+>>>>   sound/usb/media.h        |  74 +++++++++
+>>>>   sound/usb/mixer.h        |   3 +
+>>>>   sound/usb/pcm.c          |  29 +++-
+>>>>   sound/usb/quirks-table.h |   1 +
+>>>>   sound/usb/stream.c       |   2 +
+>>>>   sound/usb/usbaudio.h     |   6 +
+>>>>   11 files changed, 455 insertions(+), 4 deletions(-)
+>>>>   create mode 100644 sound/usb/media.c
+>>>>   create mode 100644 sound/usb/media.h
+>>>>
+>>>
+>>> <snip>
+>>>
+>>>> +int snd_media_device_create(struct snd_usb_audio *chip,
+>>>> +            struct usb_interface *iface)
+>>>> +{
+>>>> +    struct media_device *mdev;
+>>>> +    struct usb_device *usbdev = interface_to_usbdev(iface);
+>>>> +    int ret;
+>>>> +
+>>>> +    /* usb-audio driver is probed for each usb interface, and
+>>>> +     * there are multiple interfaces per device. Avoid calling
+>>>> +     * media_device_usb_allocate() each time usb_audio_probe()
+>>>> +     * is called. Do it only once.
+>>>> +     */
+>>>> +    if (chip->media_dev)
+>>>> +        goto snd_mixer_init;
+>>>> +
+>>>> +    mdev = media_device_usb_allocate(usbdev, KBUILD_MODNAME);
+>>>> +    if (!mdev)
+>>>> +        return -ENOMEM;
+>>>> +
+>>>> +    if (!media_devnode_is_registered(mdev->devnode)) {
+>>>
+>>> It looks like you missed my comment for v8:
+>>>
+>>> "You should first configure the media device before registering it."
+>>>
+>>> In other words, first create the media entities, and only then do you
+>>> register the media device. Otherwise it will come up without any alsa
+>>> entities, which are then added. So an application that immediately
+>>> opens the media device upon creation will see a topology that is still
+>>> in flux.
+>>
+>> Yes. You are right. I saw your comment and thought I got it addressed.
+>> I will fix it. I have the logic correct in au0828, but not here.
+>>
+> 
+> One thing to mention here is some ALSA entities get created dynamically
+> during PCM open when stream is initialized. This happens after media
+> device is registered. These get deleted when pcm close happens. There is
+> no way to avoid creating entities after media device register.
 
---DocE+STaALJfprDB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's OK. We're missing some infrastructure (media events) to inform the
+application about topology changes.
 
-> > as far as I understand this code, freezable_schedule() avoids blocking =
-the
-> > freezer during the schedule() call, but in the end try_to_freeze() is s=
-till
-> > called so the result is the same, right?
-> > I wonder why wait_event_freezable is not calling freezable_schedule().
->=20
-> It could be something subtle in my view. freezable_schedule() actually ma=
-kes
-> the freezer code not send a wake up to the sleeping task if a freeze happ=
-ens,
-> because the PF_FREEZER_SKIP flag is set, as you pointed.
->=20
-> Whereas wait_event_freezable() which uses try_to_freeze() does not seem t=
-o have
-> this behavior and the task will enter the freezer. So I'm a bit skeptical=
- if
-> your API will behave as expected (or at least consistently with other wait
-> APIs).
+But when registering the media device for the first time it is good practice
+to do that after creating all the entities that you can.
 
-oh right, now it is clear to me:
+Regards,
 
-- schedule(); try_to_freeze()
+	Hans
 
-schedule() is called and the task enters sleep. Since PF_FREEZER_SKIP is
-not set, the task wakes up as soon as try_to_freeze_tasks() is called.
-Right after waking up the task calls try_to_freeze() which freezes it.
+> snd_media_device_create() could get called after media_device_register()
+> happens, if au0828 registers it first.
+> 
+> I did find a problem in snd_media_device_create() and I will send a v10
+> with that fix.
+> 
+> thanks,
+> -- Shuah
+> 
 
-- freezable_schedule()=20
-
-schedule() is called and the task enters sleep. Since PF_FREEZER_SKIP is
-set, the task does not wake up when try_to_freeze_tasks() is called. This
-is not a problem, the task can't "do anything which isn't allowed for a
-frozen task" while sleeping[0].=20
-
-When the task wakes up (timeout, or whatever other reason) it calls
-try_to_freeze() which freezes it if the freeze is still underway.
-
-So if a freeze is triggered while the task is sleeping, a task executing
-freezable_schedule() might or might not notice the freeze depending on how
-long it sleeps. A task executing schedule(); try_to_freeze() will always
-notice it.
-
-I might be wrong on that, but freezable_schedule() just seems like a
-performance improvement to me.
-
-Now I fully agree with you that there should be a uniform definition of
-"freezable" between wait_event_freezable and wait_event_freezable_hrtimeout.
-This leaves me to the question: should I modify my definition of
-wait_event_freezable_hrtimeout, or prepare a patch for wait_event_freezable=
- ?
-
-If I am right with the performance thing, the latter might be worth
-considering?
-
-Either way, this will be fixed in the v2.
-
-> > That being said, I am not sure that the try_to_freeze() call does anyth=
-ing
-> > in the vsoc case because there is no call to set_freezable() so the thr=
-ead
-> > still has PF_NOFREEZE...
->=20
-> I traced this, and PF_NOFREEZE is not set by default for tasks.
-
-Well, I did not check this in practice and might be confused somewhere but
-the documentation[1] says "kernel threads are not freezable by default.
-However, a kernel thread may clear PF_NOFREEZE for itself by calling
-set_freezable()".
-
-Looking at the kthreadd() definition it seems like new tasks have
-PF_NOFREEZE set by default[2].
-
-I'll take some time to check this in practice in the next days.
-
-Anyways, thanks for your time !
-
-regards,
- Hugo
-
-[0] https://elixir.bootlin.com/linux/latest/source/include/linux/freezer.h#=
-L103
-[1] https://elixir.bootlin.com/linux/latest/source/Documentation/power/free=
-zing-of-tasks.txt#L90
-[2] https://elixir.bootlin.com/linux/latest/source/kernel/kthread.c#L569
-
---=20
-                Hugo Lefeuvre (hle)    |    www.owl.eu.com
-RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
-ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
-
---DocE+STaALJfprDB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlxC++8ACgkQZYVUZx9w
-0DTHbwf8DQdawIVEQVNUyheP2WxzOVoEjNdB29OKYD/MvoV0Mn4O62FmDa4an/79
-uvVAT8rTzVAJc82a7hUyUlHoaExOrEJw3rpDmr9f2oaShsd8VE0CIr7m5KsdjbVm
-qkKMezoXK0m/P6MM6uBjhD9TZAMrLwSyd7giBdLo6eJY0PXZv+t15BONqP6yvvP8
-3AZYNN/u3kbUN7cCBVZpLeKMdwf6EQWdXqQ6rLf88YioDcoT846vGk1yUXBr5wt/
-GgT1z0rEF5QDJC9eu9j0bGl/RX/PfgFSf8Uzsy5S187MVubU21X5NRARuHoAFlAO
-Doj+sFtGpKzDpiA7bqfdgi998xKSoA==
-=fANt
------END PGP SIGNATURE-----
-
---DocE+STaALJfprDB--
