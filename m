@@ -2,109 +2,88 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B60C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AF2C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9E8D2084F
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A9BB2084F
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:39:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="do5BfSJf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MbMppkYu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbfASSfs (ORCPT
+        id S1728926AbfASSjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 13:35:48 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46410 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728429AbfASSfr (ORCPT
+        Sat, 19 Jan 2019 13:39:43 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45990 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728590AbfASSjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 13:35:47 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y14so12762112lfg.13;
-        Sat, 19 Jan 2019 10:35:45 -0800 (PST)
+        Sat, 19 Jan 2019 13:39:43 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g62so8180637pfd.12;
+        Sat, 19 Jan 2019 10:39:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kP5aKteC5epjnCFE/cVSielWVaoYfwdwpKPnCoIHAlE=;
-        b=do5BfSJf9iKpsRvFeJyQgATzB038hF3LayCL8Qde8gpCGA8z/YjbcsUggt0Mhe6F7l
-         GYrc9zfwXua2/PVKMdtKmx4fxNJAXy98xz77B2WsnZOpzpxMGJ2LmP9AwOd4OiL+iv12
-         blmTb8NaXEQF59ZVLP+dJihq+z/rj2XbT/8WPLNphzAjRNOmvxu57EYQRlLjMnzSj+1e
-         J45Vvav8wS4dR6NpXaRMbPaTY1qQvgZM4VVtkIW5a8Of+IymKTqSi7uD83ST1QPvxanP
-         ZkVdh+JFCkuTmuG9TDjxCggsN/rbrN0F6XiI5U+qzRUrXuva9kXDmJh/bA9wjm+akbpJ
-         yVLQ==
+        h=from:to:subject:date:message-id;
+        bh=ntPlN8O5ix9MTWk+pNPs1SfGLLi/+g0hRkSJC0iaDn0=;
+        b=MbMppkYu+KX1dnuJqZa+gd+01WpRIxiysr0ASr/+envppdboY+DFFRQDfQ3EDpflX3
+         DxK6Eiqf97ewldOZxvcukXUYRblS/WKhlYMYn+FLmpFEvfi5kWKVH4O6A7qtUim+12Ou
+         mAxGDpGoW/PL+9BIdP1ji0WzdOYlYp5zriH/yFBRpaRIxeoNg9Tt8lzaCLlcGtlTYV4t
+         FNMqSOHWEWmX5SSaekeqkDYFxRtFvaKezSUs2YFuuY5Vo2QUE3jlEfxud0UBUvmA+pgl
+         Peyc3zKRaoADOqeSgW0JjzTHYElvQdNNHGme4NISuTEtyfkVKMCWqtJajXHdUZ3LLfLt
+         tQRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kP5aKteC5epjnCFE/cVSielWVaoYfwdwpKPnCoIHAlE=;
-        b=gjSdI/RPB/PTE+A7bmpIiZn96ffTgvDDkmWD9wKX/Zg5OW47Br3Oa+oEk4DrPsjTW6
-         5I5arK1Nn/fjQRtCh6Qe5NURmbtJSfdgwuqerosRKLHrGjeRVjm0UoUGiCQAxq0GwA6/
-         vwwcg1xOi5GWCv1aMMypGDb4y7xa3/f5U84qSfGYVAUSHrvZeShp9lvZz9wz6HqsfqOJ
-         D/hjyt8tsZyD+yjufCLH/pMmgLE9fuQhQARheZpcFka/BvrjszeGKv0efJ9FqjU9O7Bj
-         0aGAB0SxE/qvoYlEUM6admEN9VEQJVRP3ft2UJm8f4OpPh+JsiyyfnvxS3tYQr41j4bO
-         OAkQ==
-X-Gm-Message-State: AJcUukfRgheRMk/z1NLiG0hpOamPRtjSAGxcpnOobVZa3k5Bw3/yV58w
-        kaE4YAn5OE82gk/vwqbzEQz9xlyH8G2gtqXcLag=
-X-Google-Smtp-Source: ALg8bN5IiTdCArPpkYkvRopIMDwN9n8CBwxebkURxs5DUqjmARgZQrAz+eoOluNpO6BZ4b09LjLJOUuGfEEn4F2wciQ=
-X-Received: by 2002:a19:8fce:: with SMTP id s75mr14669958lfk.151.1547922944761;
- Sat, 19 Jan 2019 10:35:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20190102205715.14054-1-mst@redhat.com> <20190102205715.14054-2-mst@redhat.com>
- <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
- <CANiq72nEiw8+cZNnBOwF1ehv232ZJe5qzhdbaTEg0rOoV2p4sg@mail.gmail.com> <20190109094959-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20190109094959-mutt-send-email-mst@kernel.org>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sat, 19 Jan 2019 19:35:33 +0100
-Message-ID: <CANiq72npFGsoHmBQUSNRLohDmMBNQFka8AcmhMz--QU1v2Aorg@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/4] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-sparse@vger.kernel.org,
-        Eric Christopher <echristo@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=ntPlN8O5ix9MTWk+pNPs1SfGLLi/+g0hRkSJC0iaDn0=;
+        b=VCrMqELZ4e/eSpBaBTOM/uhoCRBzYfDNdF4ntz+aFRsIJXrAzL5u5cY1054H1gihsG
+         RGR3HIMAO31oCpNw8OYmmAdiTWfdwCYy5MFxx4K3WAtNXeA3wiW90duxnsSFZZlw0PIF
+         1qKLE9h+6mZaArVafCpf6OLgsPG95p7lZDI06hPs3zyLAnUJejxwfePw5+LFo5kE1WSk
+         yK78dih2WJJ7cyYabQJibhLKpdr5eZPAtVTytFVWEksqzHGzWwdqLn4FAE1d0CLEZRgj
+         bEW8sEMjoYOn0pQeLdc5XcrNZTtfX7SuIQYyEejbU+0YqNHubkRWDstVgpvuxiXh/GK/
+         T9Qw==
+X-Gm-Message-State: AJcUukfTJPSDTpEFtWD98a94DhmhGLlWyhP+aQkzExC8lt5wQLLhB44p
+        yUxi7AEShs+kdtytAs1WZCQ=
+X-Google-Smtp-Source: ALg8bN70hCgKkOKliX4XX7yTLdk4cRt+yRik4tktHNBZgvyk/FriGdmt55+K34aveFVHJkhQIGjzdw==
+X-Received: by 2002:a63:6604:: with SMTP id a4mr22379949pgc.118.1547923181862;
+        Sat, 19 Jan 2019 10:39:41 -0800 (PST)
+Received: from localhost.localdomain ([49.33.214.52])
+        by smtp.gmail.com with ESMTPSA id m20sm10127471pgb.56.2019.01.19.10.39.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 19 Jan 2019 10:39:41 -0800 (PST)
+From:   Shreeya Patel <shreeya.patel23498@gmail.com>
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, shreeya.patel23498@gmail.com
+Subject: [PATCH v2 0/3] adt7316 regmap implementation
+Date:   Sun, 20 Jan 2019 00:09:29 +0530
+Message-Id: <20190119183932.14321-1-shreeya.patel23498@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+This patchset consist of some initial patches for heading
+towards the regmap implementation and also the final patch
+which enables the driver to use regmap API thus removing
+the redundant and common code.
 
-On Wed, Jan 9, 2019 at 3:50 PM Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> On Wed, Jan 09, 2019 at 11:35:52AM +0100, Miguel Ojeda wrote:
-> > Note it would be nice to separate the patch into two (one for the
-> > comments, another for OPTIMIZER_HIDE_VAR), and also possibly another
-> > for barrier_data().
->
-> Okay, I will try.
+Shreeya Patel (3):
+  Staging: iio: adt7316: Remove irq from bus structure
+  Staging: iio: adt7316: Remove multi read and write functions
+  Staging: iio: adt7316: Add regmap support
 
-Did you have a chance to do it (or maybe I missed the patches)? If
-not, no worries, I can send this to Linus as it is and get it in
-already, then we can do the barrier_data later.
+ drivers/staging/iio/addac/adt7316-i2c.c | 101 ++--------------
+ drivers/staging/iio/addac/adt7316-spi.c |  95 +++------------
+ drivers/staging/iio/addac/adt7316.c     | 147 ++++++++++++------------
+ drivers/staging/iio/addac/adt7316.h     |  15 +--
+ 4 files changed, 103 insertions(+), 255 deletions(-)
 
-Cheers,
-Miguel
+-- 
+2.17.1
+
