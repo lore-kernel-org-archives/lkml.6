@@ -2,109 +2,109 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BBAC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC7FC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC602084F
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4B672084F
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:18:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyRB6oDG"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLiTw/CX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728658AbfASQQk (ORCPT
+        id S1728674AbfASQSv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 11:16:40 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41996 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728387AbfASQQj (ORCPT
+        Sat, 19 Jan 2019 11:18:51 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40360 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728460AbfASQSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 11:16:39 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q18so18521141wrx.9;
-        Sat, 19 Jan 2019 08:16:38 -0800 (PST)
+        Sat, 19 Jan 2019 11:18:51 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z10so7499182pgp.7
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 08:18:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
+        h=sender:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+Y8/KD/t1457g2rhN8kwOJyAZn1/qLZf2s1MYK2X4I0=;
-        b=GyRB6oDGZjtoszrokJ7iwaw5qLuEUUgxNoGE5d5qBGDbaRf1e1HVTuPN1l2c8Xj7mw
-         tN8ORFAULB7Us4Tu1lQin1loWNBZ5Y6Iu/kwbPLLxN7Rkt9HdbU0SY93aPegzYQSfHPp
-         PolCHHfq/Ah6LfGuthghXMCNG+t7hPEzRw4gxuMlGhYTEyNOLYu6lSw0H0XpfhC+6OyD
-         w+EoKpp+MQV39Ud4KqE1Io+Md5uPqXsbimd7qVfv6a8rIUPBWxrpxRxD4ndTiS8I2aHU
-         f0q/nxMzMLbjMtgfQnc137zc6PgVDx2bNqTSMm/tUy1uWkrTLpUVZeR3vyLbG/Ng30Ze
-         L6MA==
+        bh=p2JF6kCxDVwm8ztbo8DbVkB8buCPaFSdA3+ZOMTjwkM=;
+        b=ZLiTw/CXvBtjwyP+b3HA/yOdrHasdukHyaN6/wZirWWGx9OG3v+a30Py2h9jHoJ7Ry
+         /rSnbzrzDwQuD94mhLoVlk7PrhHb+uzYi8BtA4exDWbI+2RKHspc8EQAP8iYaz8dVJ1d
+         YZutH9PtQd0wDltZuooF6B83Oz7EYRFMxbTQdLhaj2MvnC7sy4p+N7cUz384f3mlYg8X
+         JT4FmSyt1YIjy1Gled6wthM43OhU8JggppJnBQ+xLEaSoFdiHFkFh0EMYJxJSlcPulNo
+         EpAOqActKeYTd8IAR7r/hECfF2YhBgJw00kYBjpgJedOQIKgHSOA/zYTNviXA/UknD79
+         qJPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+Y8/KD/t1457g2rhN8kwOJyAZn1/qLZf2s1MYK2X4I0=;
-        b=UTtoQA9BT3I6n2e8Onch40d9N/RXZ8Y6FX4evW2GSSaF/+HCiSU1R/LTfFA90dlNy0
-         tqQDplzhuX2csCOWgEUtzxlsA2GrPoAvM9Xg/7wZLXzCpiVBmvwaXKFz/nHYhEfvu7pU
-         4jfo+9Nb3XKzYQz7MxegwnYZ3k7nFmwErDgjMKaPfZHBl6efqGDeGf4NtTFKHTkGLzae
-         kpJXyoyEK00wuVhjSSKgesCGhMgvY5AMHEcTVUyaG8mdxQ+dKoAhS5K4Cr7Mdh/UR1a0
-         zovjbOiy5vubteakwR/5AJmzSigzfYUb6F14+bxoXhjxIpTVP9TWPVUeSCLpNoRYAH7m
-         FSgQ==
-X-Gm-Message-State: AJcUukfrEN2mDb8tUxNngY6h9NYWEPmIHcHrebBFAkL9f0G9xjYXHuBJ
-        bKr/gy+r/eojD01jGj6eDuA=
-X-Google-Smtp-Source: ALg8bN6o3U4U0C/TQSg+mbVfgJMXQuAfUDZmFoDLcSrNeY4ayByHSuxcTBGfjd3j+lVNr8JYPQRZqQ==
-X-Received: by 2002:a05:6000:1287:: with SMTP id f7mr21952937wrx.302.1547914598073;
-        Sat, 19 Jan 2019 08:16:38 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a03f:40eb:400:bcef:d6e3:7d06:ac3])
-        by smtp.gmail.com with ESMTPSA id v12sm86976151wmd.27.2019.01.19.08.16.36
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=p2JF6kCxDVwm8ztbo8DbVkB8buCPaFSdA3+ZOMTjwkM=;
+        b=sS+Em9CmrpBdlXx8uaU+4lUpgabES7C4C//AM1bTvjorw4+cp3CDylUX9OqzJXhFyx
+         k7YbJidNbS/m8mv6gOPLLdVpLfSehtNrsBZ+Y8/O3FLHnyKwxG5/UZQ6Q0vVw7Pb9sbn
+         1/QZJdfRKRdLPXrZrsHQapjLlZs/4jTnLCVKHwaYchr9a+B/ZaSEmrJOa2FEcKhFZSmB
+         HYxlJ9SjQOGWuiy5HAIWN8o3wDcH4YEfFAg+Vj6iNBH07+3X9R6PzQvkdDA+68BZPDoX
+         HzehHsOiyyh8KjFLjw+N0fbWK6kwmLECC9jB8NZ0JQ0gWaK2MiXaeYcVjCKTWKvrS7en
+         3YgQ==
+X-Gm-Message-State: AJcUukf4mrmHVmXkDzh2lQv97acVJX90TO6C2pOz6phaYV3BBkqFOsQ7
+        PlvOG8umPsf+2VIty8sxznQ=
+X-Google-Smtp-Source: ALg8bN4HtuFQjUdq0KEw4xzV43Dbambc7GeLtCaeSodr71/pe2oY5aBPk6qJM9PbTzbp1CLLaMQCSw==
+X-Received: by 2002:a62:2cf:: with SMTP id 198mr23792285pfc.67.1547914730497;
+        Sat, 19 Jan 2019 08:18:50 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d16sm8748888pgj.21.2019.01.19.08.18.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 08:16:37 -0800 (PST)
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Zhang Rui <rui.zhang@intel.com>
-Cc:     Petr Mladek <pmladek@suse.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [PATCH] thermal/intel_powerclamp: fix __percpu declaration of worker_data
-Date:   Sat, 19 Jan 2019 17:15:23 +0100
-Message-Id: <20190119161523.87999-1-luc.vanoostenryck@gmail.com>
-X-Mailer: git-send-email 2.20.0
+        Sat, 19 Jan 2019 08:18:49 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v2] powerpc: chrp: Use device_type helpers to access the node type
+Date:   Sat, 19 Jan 2019 08:18:45 -0800
+Message-Id: <1547914725-12125-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This variable is declared as:
-	static struct powerclamp_worker_data * __percpu worker_data;
-In other words, a percpu pointer to struct ...
+The node type can no longer be accessed directly, resulting in the
+following build error. Use accessor function instead.
 
-But this variable not used like so but as a pointer to a percpu
-struct powerclamp_worker_data.
+arch/powerpc/platforms/chrp/setup.c: In function ‘chrp_init_IRQ’:
+arch/powerpc/platforms/chrp/setup.c:541:33: error:
+	‘struct device_node’ has no member named ‘type’
 
-So fix the declaration as:
-	static struct powerclamp_worker_data __percpu *worker_data;
-
-This also quiets Sparse's warnings from __verify_pcpu_ptr(), like:
-  494:49: warning: incorrect type in initializer (different address spaces)
-  494:49:    expected void const [noderef] <asn:3> *__vpp_verify
-  494:49:    got struct powerclamp_worker_data *
-
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Fixes: 8ce5f8415753 ("of: Remove struct device_node.type pointer")
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/thermal/intel/intel_powerclamp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: of_node_is_type() checks if the node pointer is NULL, so there is
+    no need to check it before calling the function.
 
-diff --git a/drivers/thermal/intel/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
-index 7571f7c2e..c7cba20bd 100644
---- a/drivers/thermal/intel/intel_powerclamp.c
-+++ b/drivers/thermal/intel/intel_powerclamp.c
-@@ -101,7 +101,7 @@ struct powerclamp_worker_data {
- 	bool clamping;
- };
- 
--static struct powerclamp_worker_data * __percpu worker_data;
-+static struct powerclamp_worker_data __percpu * worker_data;
- static struct thermal_cooling_device *cooling_dev;
- static unsigned long *cpu_clamping_mask;  /* bit map for tracking per cpu
- 					   * clamping kthread worker
+ arch/powerpc/platforms/chrp/setup.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/platforms/chrp/setup.c b/arch/powerpc/platforms/chrp/setup.c
+index e66644e0fb40..9438fa0fc355 100644
+--- a/arch/powerpc/platforms/chrp/setup.c
++++ b/arch/powerpc/platforms/chrp/setup.c
+@@ -538,8 +538,7 @@ static void __init chrp_init_IRQ(void)
+ 	/* see if there is a keyboard in the device tree
+ 	   with a parent of type "adb" */
+ 	for_each_node_by_name(kbd, "keyboard")
+-		if (kbd->parent && kbd->parent->type
+-		    && strcmp(kbd->parent->type, "adb") == 0)
++		if (of_node_is_type(kbd->parent, "adb"))
+ 			break;
+ 	of_node_put(kbd);
+ 	if (kbd)
 -- 
-2.20.0
+2.7.4
 
