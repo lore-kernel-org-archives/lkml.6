@@ -4,36 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52075C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 20:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D0BC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 20:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E0CE2086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 20:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 016E42087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 20:44:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="B9q1DMrn"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="Gxqj50v0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbfASUon (ORCPT
+        id S1730152AbfASUoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 15:44:43 -0500
-Received: from onstation.org ([52.200.56.107]:35178 "EHLO onstation.org"
+        Sat, 19 Jan 2019 15:44:54 -0500
+Received: from onstation.org ([52.200.56.107]:35190 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729427AbfASUne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729175AbfASUne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 19 Jan 2019 15:43:34 -0500
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 7CE0035F;
-        Sat, 19 Jan 2019 20:43:33 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 47DAE76A;
+        Sat, 19 Jan 2019 20:43:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1547930614;
-        bh=AxGdMVw+9dm8YxUPnUKVwGnMOxAF2TlqG+sCG3Bo3lo=;
+        s=default; t=1547930612;
+        bh=RuioL+4LP940FlBCUos7aPa6NfWKZmdTRN7mnPnWWrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B9q1DMrnoowjgN/gm3X2+j3bHc6IQ1fZXhKj773rSnCZ/hXzXACRCPWM4IQnGgln/
-         xxRl3Y9MX9v7kGe74vY/m6S/DeKP8linFNiseAVeQM8QY3Cdf/d2hqg9nsr7T4rQQe
-         Mv2VyuCcn/dgXbWSWpB8i025Ga6bT3w/TONyxrJw=
+        b=Gxqj50v0foYFSx450MTgklJ9nonZ3WiQpE0+5Od2JdUih3U6BFfm3X3QK/OkoYLrO
+         PCsMBnnU3Cgwos7SZIvVkqMrqBlRjKznSeb97WlOzOruPlRamte1NU7ifA1OU4Vm+u
+         Ms5INTY7Q62pYZxIVCqAqzSJi7ojLPdVrdEjP7Ac=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org,
@@ -44,9 +45,9 @@ Cc:     shawnguo@kernel.org, dianders@chromium.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 06/15] spmi: pmic-arb: disassociate old virq if hwirq mapping already exists
-Date:   Sat, 19 Jan 2019 15:42:43 -0500
-Message-Id: <20190119204252.18370-7-masneyb@onstation.org>
+Subject: [PATCH v6 04/15] spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips
+Date:   Sat, 19 Jan 2019 15:42:41 -0500
+Message-Id: <20190119204252.18370-5-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190119204252.18370-1-masneyb@onstation.org>
 References: <20190119204252.18370-1-masneyb@onstation.org>
@@ -55,64 +56,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check to see if the hwirq is already associated with another virq on
-this IRQ domain. If so, then disassociate it before associating the
-hwirq with the new virq.
+Convert the spmi-pmic-arb IRQ code to use the version 2 IRQ interface
+in order to support hierarchical IRQ chips. This is necessary so that
+spmi-gpio can be setup as a hierarchical IRQ chip with pmic-arb as the
+parent. IRQ chips in device tree should be usable from the start without
+the consumer having to make an additional call to gpio[d]_to_irq() to
+get the proper IRQ on the parent.
 
-This is a temporary hack that is needed in order to not break git
-bisect for existing boards. The next patch in this series converts
-spmi-gpio to be a hierarchical IRQ chip, then there are several patches
-to update all of the device tree files, and finally this patch will be
-reverted within the same patch series.
+The old qpnpint_irq_domain_map function would hardcode the handler as
+handle_level_irq, however qpnpint_irq_set_type would later override the
+handler. Properly set the handler when the IRQ is mapped. This new code
+doesn't return an error for IRQ_TYPE_NONE and preserves the existing
+behavior of using handle_level_irq since there are some broken device
+tree bindings that need to be corrected first.
 
-IRQs for spmi-gpio are all initially setup without an IRQ hierarchy
-on pmic-arb when mfd/qcom-spmi-pmic.c is probed (via the
-devm_of_platform_populate call) due to the interrupts property in
-device tree. Once spmi-gpio is converted to be a hierarchical IRQ chip
-in the next patch, existing users of gpio[d]_to_irq() will call
-pmic_gpio_to_irq(), and that will use the new IRQ chip code in
-spmi-gpio that sets up the IRQ in an IRQ hierarchy. The hwirq is now
-associated with two Linux virqs and interrupts will not work as
-expected. This patch corrects that issue.
-
-Driver was tested using gpio-keys and iadc/vadc on the LG Nexus 5
-(hammerhead) phone.
+Driver was tested on a LG Nexus 5 (hammerhead) phone.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
+The broken device tree bindings are corrected in this patch series and
+additional validation to the type field is added later in the series.
+
 Changes since v5:
-- None
+- Properly set handler to edge or level when the IRQ is mapped.
 
 Changes since v4:
 - None
 
-Patch introduced in v4.
+Changes since v3:
+- None
 
- drivers/spmi/spmi-pmic-arb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes since v2:
+- Don't move pmic_gpio_of_match block. Use device_get_match_data instead
+  of of_match_device.
+- Correct build warning on arm64: warning: cast from pointer to integer
+  of different size
+
+ drivers/spmi/spmi-pmic-arb.c | 67 +++++++++++++++++++++++++-----------
+ 1 file changed, 47 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-index 928759242e42..bc7dc1d6e4b2 100644
+index 360b8218f322..928759242e42 100644
 --- a/drivers/spmi/spmi-pmic-arb.c
 +++ b/drivers/spmi/spmi-pmic-arb.c
-@@ -745,10 +745,15 @@ static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
- 				   irq_hw_number_t hwirq, unsigned int type)
+@@ -666,7 +666,8 @@ static int qpnpint_get_irqchip_state(struct irq_data *d,
+ 	return 0;
+ }
+ 
+-static int qpnpint_irq_request_resources(struct irq_data *d)
++static int qpnpint_irq_domain_activate(struct irq_domain *domain,
++				       struct irq_data *d, bool reserve)
  {
- 	irq_flow_handler_t handler;
-+	unsigned int old_virq;
+ 	struct spmi_pmic_arb *pmic_arb = irq_data_get_irq_chip_data(d);
+ 	u16 periph = hwirq_to_per(d->hwirq);
+@@ -692,27 +693,25 @@ static struct irq_chip pmic_arb_irqchip = {
+ 	.irq_set_type	= qpnpint_irq_set_type,
+ 	.irq_set_wake	= qpnpint_irq_set_wake,
+ 	.irq_get_irqchip_state	= qpnpint_get_irqchip_state,
+-	.irq_request_resources = qpnpint_irq_request_resources,
+ 	.flags		= IRQCHIP_MASK_ON_SUSPEND,
+ };
  
- 	dev_dbg(&pmic_arb->spmic->dev, "virq = %u, hwirq = %lu, type = %u\n",
- 		virq, hwirq, type);
+-static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
+-					   struct device_node *controller,
+-					   const u32 *intspec,
+-					   unsigned int intsize,
+-					   unsigned long *out_hwirq,
+-					   unsigned int *out_type)
++static int qpnpint_irq_domain_translate(struct irq_domain *d,
++					struct irq_fwspec *fwspec,
++					unsigned long *out_hwirq,
++					unsigned int *out_type)
+ {
+ 	struct spmi_pmic_arb *pmic_arb = d->host_data;
++	u32 *intspec = fwspec->param;
+ 	u16 apid, ppid;
+ 	int rc;
  
-+	old_virq = irq_find_mapping(domain, hwirq);
-+	if (old_virq)
-+		irq_domain_disassociate(domain, old_virq);
+ 	dev_dbg(&pmic_arb->spmic->dev, "intspec[0] 0x%1x intspec[1] 0x%02x intspec[2] 0x%02x\n",
+ 		intspec[0], intspec[1], intspec[2]);
+ 
+-	if (irq_domain_get_of_node(d) != controller)
++	if (irq_domain_get_of_node(d) != pmic_arb->spmic->dev.of_node)
+ 		return -EINVAL;
+-	if (intsize != 4)
++	if (fwspec->param_count != 4)
+ 		return -EINVAL;
+ 	if (intspec[0] > 0xF || intspec[1] > 0xFF || intspec[2] > 0x7)
+ 		return -EINVAL;
+@@ -740,17 +739,43 @@ static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
+ 	return 0;
+ }
+ 
+-static int qpnpint_irq_domain_map(struct irq_domain *d,
+-				  unsigned int virq,
+-				  irq_hw_number_t hwirq)
 +
- 	if (type & IRQ_TYPE_EDGE_BOTH)
- 		handler = handle_edge_irq;
- 	else
++static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
++				   struct irq_domain *domain, unsigned int virq,
++				   irq_hw_number_t hwirq, unsigned int type)
+ {
+-	struct spmi_pmic_arb *pmic_arb = d->host_data;
++	irq_flow_handler_t handler;
++
++	dev_dbg(&pmic_arb->spmic->dev, "virq = %u, hwirq = %lu, type = %u\n",
++		virq, hwirq, type);
++
++	if (type & IRQ_TYPE_EDGE_BOTH)
++		handler = handle_edge_irq;
++	else
++		handler = handle_level_irq;
++
++	irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_arb,
++			    handler, NULL, NULL);
++}
++
++static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
++				    unsigned int virq, unsigned int nr_irqs,
++				    void *data)
++{
++	struct spmi_pmic_arb *pmic_arb = domain->host_data;
++	struct irq_fwspec *fwspec = data;
++	irq_hw_number_t hwirq;
++	unsigned int type;
++	int ret, i;
++
++	ret = qpnpint_irq_domain_translate(domain, fwspec, &hwirq, &type);
++	if (ret)
++		return ret;
+ 
+-	dev_dbg(&pmic_arb->spmic->dev, "virq = %u, hwirq = %lu\n", virq, hwirq);
++	for (i = 0; i < nr_irqs; i++)
++		qpnpint_irq_domain_map(pmic_arb, domain, virq + i, hwirq + i,
++				       type);
+ 
+-	irq_set_chip_and_handler(virq, &pmic_arb_irqchip, handle_level_irq);
+-	irq_set_chip_data(virq, d->host_data);
+-	irq_set_noprobe(virq);
+ 	return 0;
+ }
+ 
+@@ -1126,8 +1151,10 @@ static const struct pmic_arb_ver_ops pmic_arb_v5 = {
+ };
+ 
+ static const struct irq_domain_ops pmic_arb_irq_domain_ops = {
+-	.map	= qpnpint_irq_domain_map,
+-	.xlate	= qpnpint_irq_domain_dt_translate,
++	.activate = qpnpint_irq_domain_activate,
++	.alloc = qpnpint_irq_domain_alloc,
++	.free = irq_domain_free_irqs_common,
++	.translate = qpnpint_irq_domain_translate,
+ };
+ 
+ static int spmi_pmic_arb_probe(struct platform_device *pdev)
 -- 
 2.17.2
 
