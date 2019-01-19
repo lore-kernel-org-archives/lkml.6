@@ -3,68 +3,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A302C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BBAC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ED2F2084F
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EC602084F
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:16:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="QaGNlyED"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyRB6oDG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbfASQO7 (ORCPT
+        id S1728658AbfASQQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 11:14:59 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33534 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbfASQO7 (ORCPT
+        Sat, 19 Jan 2019 11:16:40 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41996 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728387AbfASQQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 11:14:59 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l11so18709712qtp.0
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 08:14:58 -0800 (PST)
+        Sat, 19 Jan 2019 11:16:39 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q18so18521141wrx.9;
+        Sat, 19 Jan 2019 08:16:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
+        d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=e6yMb6PRHmeFDBnmK1UMXlNWyico8bLjeKf61ZSNHSU=;
-        b=QaGNlyEDLCO3RK5ybtRJ/2ez07NsZyJIa1NB7+Cz/fZZzHXhfQeaVoMUmfb3o3fchu
-         NTcqgK0tn03mvjCMauWGhE+rk1ENFenVDCFm0j6Z92NXQDXy9AJACWxXnuPYPXgABEKL
-         tt1FR0PG7Rj9ilaeVtFG/IAlvy216UhS4LPYk=
+        bh=+Y8/KD/t1457g2rhN8kwOJyAZn1/qLZf2s1MYK2X4I0=;
+        b=GyRB6oDGZjtoszrokJ7iwaw5qLuEUUgxNoGE5d5qBGDbaRf1e1HVTuPN1l2c8Xj7mw
+         tN8ORFAULB7Us4Tu1lQin1loWNBZ5Y6Iu/kwbPLLxN7Rkt9HdbU0SY93aPegzYQSfHPp
+         PolCHHfq/Ah6LfGuthghXMCNG+t7hPEzRw4gxuMlGhYTEyNOLYu6lSw0H0XpfhC+6OyD
+         w+EoKpp+MQV39Ud4KqE1Io+Md5uPqXsbimd7qVfv6a8rIUPBWxrpxRxD4ndTiS8I2aHU
+         f0q/nxMzMLbjMtgfQnc137zc6PgVDx2bNqTSMm/tUy1uWkrTLpUVZeR3vyLbG/Ng30Ze
+         L6MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=e6yMb6PRHmeFDBnmK1UMXlNWyico8bLjeKf61ZSNHSU=;
-        b=YIcsna4Vs46fCIXMk/yPGhARGYpir5eo4abY/qHLyN2OYt+VkgloqadG8m+zXIJaui
-         SggUk8SLqEx2BWvrm3JkYJXOlGi9HF1GsRIMxOLJ56nGw6Y4VCS3gmBhw60VFkgKNUBf
-         1Us2au9x3KnLdbYKQxIkz89qNlcy/QzUCIYv50kdpMCOfqQm01GgK6Z1oj8egxk7g4NY
-         8qFlVUgI3SRla+bhti/1aoCwox50iaapyK6Lo1C3Bjq2Bek18J2Nn7ECLzjhYrdiUfgD
-         1maRCinY7/dx50hBJMZfu3iZtWy1PyvtOLq0vpoTTD6NPdpac0kKe+HXee7YuMJG+Mf6
-         ApHQ==
-X-Gm-Message-State: AJcUukdibeqoHhrqSDSV8+PrGnUrlb+wHaC61ztd2sXmJQY0W5cx0v2r
-        wQmsfH+sBCoXIiOMTtaAasjRwiMbEcU=
-X-Google-Smtp-Source: ALg8bN6nQ5FM9dQz8wUXybMHVJVUNhOjpINhbbo+LoDbIzCBDm80cFSQhQK9OaZEUl/YbdonwnMBFw==
-X-Received: by 2002:ac8:7353:: with SMTP id q19mr20125197qtp.265.1547914497548;
-        Sat, 19 Jan 2019 08:14:57 -0800 (PST)
-Received: from joelaf.cam.corp.google.com ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id u50sm70960256qta.23.2019.01.19.08.14.56
+        bh=+Y8/KD/t1457g2rhN8kwOJyAZn1/qLZf2s1MYK2X4I0=;
+        b=UTtoQA9BT3I6n2e8Onch40d9N/RXZ8Y6FX4evW2GSSaF/+HCiSU1R/LTfFA90dlNy0
+         tqQDplzhuX2csCOWgEUtzxlsA2GrPoAvM9Xg/7wZLXzCpiVBmvwaXKFz/nHYhEfvu7pU
+         4jfo+9Nb3XKzYQz7MxegwnYZ3k7nFmwErDgjMKaPfZHBl6efqGDeGf4NtTFKHTkGLzae
+         kpJXyoyEK00wuVhjSSKgesCGhMgvY5AMHEcTVUyaG8mdxQ+dKoAhS5K4Cr7Mdh/UR1a0
+         zovjbOiy5vubteakwR/5AJmzSigzfYUb6F14+bxoXhjxIpTVP9TWPVUeSCLpNoRYAH7m
+         FSgQ==
+X-Gm-Message-State: AJcUukfrEN2mDb8tUxNngY6h9NYWEPmIHcHrebBFAkL9f0G9xjYXHuBJ
+        bKr/gy+r/eojD01jGj6eDuA=
+X-Google-Smtp-Source: ALg8bN6o3U4U0C/TQSg+mbVfgJMXQuAfUDZmFoDLcSrNeY4ayByHSuxcTBGfjd3j+lVNr8JYPQRZqQ==
+X-Received: by 2002:a05:6000:1287:: with SMTP id f7mr21952937wrx.302.1547914598073;
+        Sat, 19 Jan 2019 08:16:38 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a03f:40eb:400:bcef:d6e3:7d06:ac3])
+        by smtp.gmail.com with ESMTPSA id v12sm86976151wmd.27.2019.01.19.08.16.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 08:14:56 -0800 (PST)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [RFC] rcu: Avoid unnecessary softirq when system is idle
-Date:   Sat, 19 Jan 2019 11:14:18 -0500
-Message-Id: <20190119161418.231042-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+        Sat, 19 Jan 2019 08:16:37 -0800 (PST)
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Zhang Rui <rui.zhang@intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: [PATCH] thermal/intel_powerclamp: fix __percpu declaration of worker_data
+Date:   Sat, 19 Jan 2019 17:15:23 +0100
+Message-Id: <20190119161523.87999-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,40 +72,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there are no callbacks pending on an idle system, I noticed that
-RCU softirq is continuously firing. During this the cpu_no_qs is set to
-false, and core_needs_qs is set to true indefinitely. This causes
-rcu_process_callbacks to be repeatedly called, even though the node
-corresponding to the CPU has that CPU's mask bit cleared and the system
-is idle. I believe the race is when such mask clearing is done during
-idle CPU scan of the quiescent state forcing stage in the kthread
-instead of the softirq. Since the rnp mask is cleared, but the flags on
-the CPU's rdp are not cleared, the CPU thinks it still needs to report
-to core RCU.
+This variable is declared as:
+	static struct powerclamp_worker_data * __percpu worker_data;
+In other words, a percpu pointer to struct ...
 
-Cure this by clearing the core_needs_qs flag when the CPU detects that
-its node is already updated which will avoid the unwanted softirq raises
-to the benefit of real-time systems.
+But this variable not used like so but as a pointer to a percpu
+struct powerclamp_worker_data.
 
-Test: Ran rcutorture for various tree RCU configs.
+So fix the declaration as:
+	static struct powerclamp_worker_data __percpu *worker_data;
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+This also quiets Sparse's warnings from __verify_pcpu_ptr(), like:
+  494:49: warning: incorrect type in initializer (different address spaces)
+  494:49:    expected void const [noderef] <asn:3> *__vpp_verify
+  494:49:    got struct powerclamp_worker_data *
+
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- kernel/rcu/tree.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/thermal/intel/intel_powerclamp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 9180158756d2..96ad80c76b15 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2273,6 +2273,7 @@ rcu_report_qs_rdp(int cpu, struct rcu_data *rdp)
- 	}
- 	mask = rdp->grpmask;
- 	if ((rnp->qsmask & mask) == 0) {
-+		rdp->core_needs_qs = false;
- 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	} else {
- 		rdp->core_needs_qs = false;
+diff --git a/drivers/thermal/intel/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
+index 7571f7c2e..c7cba20bd 100644
+--- a/drivers/thermal/intel/intel_powerclamp.c
++++ b/drivers/thermal/intel/intel_powerclamp.c
+@@ -101,7 +101,7 @@ struct powerclamp_worker_data {
+ 	bool clamping;
+ };
+ 
+-static struct powerclamp_worker_data * __percpu worker_data;
++static struct powerclamp_worker_data __percpu * worker_data;
+ static struct thermal_cooling_device *cooling_dev;
+ static unsigned long *cpu_clamping_mask;  /* bit map for tracking per cpu
+ 					   * clamping kthread worker
 -- 
-2.20.1.321.g9e740568ce-goog
+2.20.0
 
