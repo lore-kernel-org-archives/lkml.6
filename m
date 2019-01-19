@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A43AC61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F07A0C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE9AD2087E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:05:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8F2A205C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 16:05:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AwyJrhRc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Spm1FEZb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbfASQFF (ORCPT
+        id S1728657AbfASQFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 11:05:05 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41268 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728312AbfASQFD (ORCPT
+        Sat, 19 Jan 2019 11:05:10 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36982 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728590AbfASQFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 11:05:03 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b7so8081808pfi.8;
-        Sat, 19 Jan 2019 08:05:03 -0800 (PST)
+        Sat, 19 Jan 2019 11:05:06 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y126so8098545pfb.4;
+        Sat, 19 Jan 2019 08:05:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HhgKdS56P2I78qNU/oYmWmiGlWeN03CHUf47z15UwlQ=;
-        b=AwyJrhRcycp3KuhCxqymWMWG4P/3y7ES2et1N/KSI7Q6acV3/v86UsWf0q7dPc9oqK
-         h/t8Hkf/rKOvHlFC8u57RCEvdAf4N+FhIxxkc3dQCZdzKkGnUzL46j2Khiuk1htCq5Nz
-         XyX586/6fqX1GkXGMd9UxAaWZryHkAl7L/kqIkAanli2luotXH3rnV+ECAWjOzv248JE
-         UITSxcB50ablV5ifPYHPHTkc1aHuZoK61elryoXAebL2iV9mPeLj+nNvJ5CEgnJZ6rku
-         yiN+lTQVH0NGNeUMLanN0Uj0Tth+t63oAJaIjjOEBphbSV/1IOuP23bZ1eW50ku04XBM
-         +Brg==
+        bh=igiS7JY9Tkj0t+DmCwo3tZOgXVjRsJpaBhsfH2U83Tk=;
+        b=Spm1FEZb+BK5b0ThVBclsti0DUS08YWPw4T5H4EbwM6l0I3ScjPqv4jE/JZ+7I1It2
+         EdlpVdKqoRFsTWVjQQ8c1PXS6yXo3Lr9dcuMRODmWaRs5ZIc2etzR+G0TFSkQ0Mf0rE0
+         9L+SjcFvyjxrvE1P5+e7H55VgSRbHDkSBzimKHPCANYkFdC8khrqVRzT7W5mrDr0DO/B
+         Tqy85FcB5a39A478ur0RjWSM17+NrSgyvgnOwEp2fMg0NSnoEXoropi42gpxhWUWnGhy
+         tWJ01tt3sekFXdvxGSt2D68Jl5SYjaHZVliJ6TrfW3JeqRBo+8F6RajHkTzhJpK8VL14
+         G+rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=HhgKdS56P2I78qNU/oYmWmiGlWeN03CHUf47z15UwlQ=;
-        b=HAAfmbYzVCX1TGWw/6XHRVxtVuMOANSCuYpFhx08K9w/MeznrHkxNIH8AavUX/vJln
-         CDbRUy33ig1exFXTy1ZqukSG7YkG01PHscUGvcyZgQWehCbSEhBTyAHxY0pCENTpMQEE
-         42ZHcMFtbQs/E12U/6rb7uXVIAOLMgDOZPLsp0Mo5+bc+bqhX8NPESMiBEb+MUJjT0T8
-         tC0kS0xlV7jHR2lyIh9s0vc+l+6l40KHvxjkLwDibOrLWZdn/2OQxEZIqmPbchsoXxvy
-         OiFQS9NSwrLuYmlVKNF6S6VAmNyGQgNtbNkrZTE6qEm81WtOHDYHqA+o6ImtQ5SuD7TG
-         89oA==
-X-Gm-Message-State: AJcUukdVQQraGGNA3RjxHRy65D3/RbozvEe4ZlOL+Zf+Tj7lCeXvg2Jh
-        /daBJEv9QKZ2n2I4x7UJ54U=
-X-Google-Smtp-Source: ALg8bN4hcF2k73qHmyD9Xg/fa1MNSQwFmyuViDni0ZxlQdY0JLtf9cvTC/cnLHGOM8MVhKDmiqOX7g==
-X-Received: by 2002:a63:1321:: with SMTP id i33mr22322084pgl.380.1547913902761;
-        Sat, 19 Jan 2019 08:05:02 -0800 (PST)
+        bh=igiS7JY9Tkj0t+DmCwo3tZOgXVjRsJpaBhsfH2U83Tk=;
+        b=SWQ7C2PdNsNur5y7cGJGWr47Obs0gLKbhc9TkCI6IUmYSW9yUJS59NzkCxajs65KVg
+         L9lLhpEY4Ps3VgFDfxDatxMM8nu9f02wzVW2Bm3Ywr3kf3OtnshWX6OJKKsiMY32YC8W
+         TkUzCw5mRSOV8icsPOrQWlgxkwDZoGjHCtVESSBYcy+UUe0drj8jLE+djGSQbPl3imeS
+         wDTIbgWvN61xzWblgQ/df9gp3PTeHlAn2tqFKmQd17kpagToQtf533Rz8OqMcMCd9ilB
+         zEGy08xF1PXI8EBpDJMXRV8vYluPIflcLvKsQBjJSw8yJKozl8PgKxiNroVohr1r8DeF
+         fw1Q==
+X-Gm-Message-State: AJcUukcArwHuby9I6JL0gLlz26xMNMmDkSWJyEoddKszTolAYghXbQym
+        9Xzipmw4A7aQEGsQPf7/SLU=
+X-Google-Smtp-Source: ALg8bN5PjATru91+wMlLSq2l4BO4hRMODmPEfcYUsM+BFmU6sD88cDBIUruZ9x9SFsS011ovFvQIlw==
+X-Received: by 2002:a63:2c82:: with SMTP id s124mr21491137pgs.73.1547913905322;
+        Sat, 19 Jan 2019 08:05:05 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id e187sm10850686pfa.130.2019.01.19.08.05.01
+        by smtp.gmail.com with ESMTPSA id t5sm15786032pfb.60.2019.01.19.08.05.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 19 Jan 2019 08:05:01 -0800 (PST)
+        Sat, 19 Jan 2019 08:05:04 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
         cw00.choi@samsung.com, linux-pm@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 2/3] PM / devfreq: fix missing check of return value in devfreq_add_device()
-Date:   Sat, 19 Jan 2019 11:04:53 -0500
-Message-Id: <20190119160454.23151-2-tiny.windzz@gmail.com>
+Subject: [PATCH 3/3] PM / devfreq: fix mem leak in devfreq_add_device()
+Date:   Sat, 19 Jan 2019 11:04:54 -0500
+Message-Id: <20190119160454.23151-3-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190119160454.23151-1-tiny.windzz@gmail.com>
 References: <20190119160454.23151-1-tiny.windzz@gmail.com>
@@ -70,50 +70,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_kzalloc() could fail, so insert a check of its return value. And
-if it fails, returns -ENOMEM.
+'devfreq' is malloced in devfreq_add_device() and should be freed in
+the error handling cases, otherwise it will cause memory leak.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/devfreq/devfreq.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/devfreq/devfreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 076b1c2f40a4..923889229a0b 100644
+index 923889229a0b..fe6c157cb7e0 100644
 --- a/drivers/devfreq/devfreq.c
 +++ b/drivers/devfreq/devfreq.c
-@@ -688,10 +688,22 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 					    devfreq->profile->max_state,
- 					    devfreq->profile->max_state),
- 					    GFP_KERNEL);
-+	if (!devfreq->trans_table) {
-+		mutex_unlock(&devfreq->lock);
-+		err = -ENOMEM;
-+		goto err_devfreq;
-+	}
-+
- 	devfreq->time_in_state = devm_kcalloc(&devfreq->dev,
- 					      devfreq->profile->max_state,
- 					      sizeof(unsigned long),
- 					      GFP_KERNEL);
-+	if (!devfreq->time_in_state) {
-+		mutex_unlock(&devfreq->lock);
-+		err = -ENOMEM;
-+		goto err_devfreq;
-+	}
-+
- 	devfreq->last_stat_updated = jiffies;
+@@ -651,7 +651,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 		mutex_unlock(&devfreq->lock);
+ 		err = set_freq_table(devfreq);
+ 		if (err < 0)
+-			goto err_out;
++			goto err_dev;
+ 		mutex_lock(&devfreq->lock);
+ 	}
  
- 	srcu_init_notifier_head(&devfreq->transition_notifier_list);
-@@ -725,7 +737,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 
- err_init:
- 	mutex_unlock(&devfreq_list_lock);
--
-+err_devfreq:
- 	devfreq_remove_device(devfreq);
- 	devfreq = NULL;
- err_dev:
 -- 
 2.17.0
 
