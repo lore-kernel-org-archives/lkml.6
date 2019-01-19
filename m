@@ -2,141 +2,208 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0209C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B522C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA0D2087E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:02:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=appneta.com header.i=@appneta.com header.b="WPmXatBf"
+	by mail.kernel.org (Postfix) with ESMTP id 1230D2087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547924591;
+	bh=40nrlDnXr4tDByzHhw7hA0c4XfP+2r3WVL5NA5ACiJs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=z3ahR2DlzSmAN9RB/sS/RDt/hf0jGfWOSjOAZtD2q3urVXZ1BF5f7lA8li4Suw/fG
+	 +PcGjzgOou3T6DzVFWtbKZr2fWWF4E0xNV3zm1ftHIdQ9Bl3du3nf7qULYJGh0C47g
+	 VMjHnZ3kti/XtOkq1BA787gN+nZBY5T3nk52FaKY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfASTB7 (ORCPT
+        id S1729105AbfASTDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 14:01:59 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36806 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728647AbfASTB7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 14:01:59 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so8214894pfc.3
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 11:01:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=appneta.com; s=google;
-        h=from:content-transfer-encoding:mime-version:subject:message-id:date
-         :to;
-        bh=+dHmXbqYSJnjaGEdRTcrqrCVdzuXgtxdSvydWt27WvY=;
-        b=WPmXatBfYZPGYNlZEgfwdQSR1pKqfNnDTAJTYhBPD0D7YVR4M0StP9M+hYb/x61nSF
-         bv1wGDPAzLmxyrQbEamFB90zzk5ByxeEgsQDp0kqqsp3srP0KHSNxymNyyioWq157rgk
-         0+nicIS/dm+4FtV9dpjHraAUqKPfvQW67ZscU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:to;
-        bh=+dHmXbqYSJnjaGEdRTcrqrCVdzuXgtxdSvydWt27WvY=;
-        b=cvblFXH/YLddkbUy6B8Q0C/lfdd5YObdblNN/rW9LAH5Ps3N6isFAxVutj6PKY+1Nr
-         DXp5enWkAQU7sspZnVVZm5sG/nbx1meQ6NHyPgUjmZNtA8M828Dq+rVSVVdyUkvs08G0
-         +WOc3coLseNXDe++UI4YpFnPaLaVgPS/WNT4uuB5r70Bz23gjAstYyim7EJJEHsZuBof
-         TRdnPk8kUHl7WSMRJPsaT59UvNPHU//lfNYK5pScfEwp1TaQCV2XPcN9hiiKBrAgC1wk
-         uMFycKChm9PkLOlfgqyd4zSPFi6UrwD/JOlleRbgGlVhhX0GpdD2Es5JO0nRcnBmRBhd
-         Kp4w==
-X-Gm-Message-State: AJcUukcLMQbtOMjS7eEjDNdPaZL3IXHwHAYC2PmOgC7Gkm1ll3u6Fg+O
-        LeobmnjY3sRwLY8c3MH3fBy4WA==
-X-Google-Smtp-Source: ALg8bN6p+3zPNqa1iggy0dK1qEobw5x0eqivmpfu1hGdjeeRt02/CxKHhg1xv0cKIs6kkJtpxjnI0A==
-X-Received: by 2002:a63:295:: with SMTP id 143mr21639796pgc.362.1547924517589;
-        Sat, 19 Jan 2019 11:01:57 -0800 (PST)
-Received: from [10.0.1.12] (S010620c9d00fc332.vf.shawcable.net. [70.71.167.160])
-        by smtp.gmail.com with ESMTPSA id v191sm18243233pgb.77.2019.01.19.11.01.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 11:01:56 -0800 (PST)
-From:   Fred Klassen <fklassen@appneta.com>
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: PATCH] ipmi: Prevent use-after-free in deliver_response
-Message-Id: <12B5075E-F8F6-45F0-9D36-8739EA2393A1@appneta.com>
-Date:   Sat, 19 Jan 2019 11:01:54 -0800
-To:     "Corey Minyard (supporter:IPMI SUBSYSTEM)" <minyard@acm.org>,
-        "Arnd Bergmann (supporter:CHAR and MISC DRIVERS)" <arnd@arndb.de>,
-        "Greg Kroah-Hartman (supporter:CHAR and MISC DRIVERS)" 
-        <gregkh@linuxfoundation.org>,
-        "moderated list:IPMI SUBSYSTEM" 
-        <openipmi-developer@lists.sourceforge.net>,
-        open list <linux-kernel@vger.kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Sat, 19 Jan 2019 14:03:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728647AbfASTDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 14:03:08 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 672A42086D;
+        Sat, 19 Jan 2019 19:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547924588;
+        bh=40nrlDnXr4tDByzHhw7hA0c4XfP+2r3WVL5NA5ACiJs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jagVNFLLEUCpGJroBwx2aLTYAm0KCLpk6uCD+T+gOSw1AEaQ6PVykTjwM4kQx7unt
+         gL/f3xdzIXki/odeRuubhyDmrIejEXpesX/Eeq0L/AzRv3D7R3axl7OCdxfUlCaGxm
+         e8OW11BwCncz2oSuzRxUrKA89TqUjcILrx81k99E=
+Date:   Sat, 19 Jan 2019 19:03:03 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Shreeya Patel <shreeya.patel23498@gmail.com>
+Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] Staging: iio: adt7316: Remove irq from bus
+ structure
+Message-ID: <20190119190303.65434e58@archlinux>
+In-Reply-To: <20190119183932.14321-2-shreeya.patel23498@gmail.com>
+References: <20190119183932.14321-1-shreeya.patel23498@gmail.com>
+        <20190119183932.14321-2-shreeya.patel23498@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some IPMI modules (e.g. ibmpex_msg_handler()) will have ipmi_usr_hdlr
-handlers that call ipmi_free_recv_msg() directly. This will essentially
-kfree(msg), leading to use-after-free.
+On Sun, 20 Jan 2019 00:09:30 +0530
+Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
 
-This does not happen in the ipmi_devintf module, which will queue the
-message and run ipmi_free_recv_msg() later.
+> interrupt request is not needed to be present in the bus
+> structure. It is a good option to pass it as a parameter
+> in the probe function instead of having it in the bus structure.
+> 
+> Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+Hi Shreeya,
 
-BUG: KASAN: use-after-free in deliver_response+0x12f/0x1b0
-Read of size 8 at addr ffff888a7bf20018 by task ksoftirqd/3/27
-CPU: 3 PID: 27 Comm: ksoftirqd/3 Tainted: G           O      =
-4.19.11-amd64-ani99-debug #12.0.1.601133+pv
-Hardware name: AppNeta r1000/X11SPW-TF, BIOS 2.1a-AP 09/17/2018
-Call Trace:
- dump_stack+0x92/0xeb
- print_address_description+0x73/0x290
- kasan_report+0x258/0x380
- deliver_response+0x12f/0x1b0
- ? ipmi_free_recv_msg+0x50/0x50
- deliver_local_response+0xe/0x50
- handle_one_recv_msg+0x37a/0x21d0
- handle_new_recv_msgs+0x1ce/0x440
- ...
+I just tried applying this to the current testing branch of
+iio.git and unfortunately it doesn't apply. Please rebase
+on that as there have been various changes.
 
-Allocated by task 9885:
- kasan_kmalloc+0xa0/0xd0
- kmem_cache_alloc_trace+0x116/0x290
- ipmi_alloc_recv_msg+0x28/0x70
- i_ipmi_request+0xb4a/0x1640
- ipmi_request_settime+0x1b8/0x1e0
- ...
+Superficially I think it is all white space related and a bit
+of code movement, but I'd rather you made sure the rebase
+worked well than I made assumptions!
 
-Freed by task 27:
- __kasan_slab_free+0x12e/0x180
- kfree+0xe9/0x280
- deliver_response+0x122/0x1b0
- deliver_local_response+0xe/0x50
- handle_one_recv_msg+0x37a/0x21d0
- handle_new_recv_msgs+0x1ce/0x440
- tasklet_action_common.isra.19+0xc4/0x250
- __do_softirq+0x11f/0x51f
+The change looks good otherwise.
 
-Fixes: e86ee2d44b4 ("ipmi: Rework locking and shutdown for hot remove")
-Signed-off-by: Fred Klassen <fklassen@appneta.com>
-Cc: stable@vger.kernel.org
----
-drivers/char/ipmi/ipmi_msghandler.c | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
+Jonathan
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c =
-b/drivers/char/ipmi/ipmi_msghandler.c
-index 7fc9612070a1..fbf93c2d6c05 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -883,7 +883,7 @@ static int deliver_response(struct ipmi_smi *intf, =
-struct ipmi_recv_msg *msg)
+> ---
+>  drivers/staging/iio/addac/adt7316-i2c.c |  3 +--
+>  drivers/staging/iio/addac/adt7316-spi.c |  4 ++--
+>  drivers/staging/iio/addac/adt7316.c     | 15 +++++++--------
+>  drivers/staging/iio/addac/adt7316.h     |  3 +--
+>  4 files changed, 11 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
+> index ac91163656b5..335c17731cf7 100644
+> --- a/drivers/staging/iio/addac/adt7316-i2c.c
+> +++ b/drivers/staging/iio/addac/adt7316-i2c.c
+> @@ -103,14 +103,13 @@ static int adt7316_i2c_probe(struct i2c_client *client,
+>  {
+>  	struct adt7316_bus bus = {
+>  		.client = client,
+> -		.irq = client->irq,
+>  		.read = adt7316_i2c_read,
+>  		.write = adt7316_i2c_write,
+>  		.multi_read = adt7316_i2c_multi_read,
+>  		.multi_write = adt7316_i2c_multi_write,
+>  	};
+>  
+> -	return adt7316_probe(&client->dev, &bus, id->name);
+> +	return adt7316_probe(&client->dev, &bus, id->name, client->irq);
+>  }
+>  
+>  static const struct i2c_device_id adt7316_i2c_id[] = {
+> diff --git a/drivers/staging/iio/addac/adt7316-spi.c b/drivers/staging/iio/addac/adt7316-spi.c
+> index e75827e326a6..adaaa3eecd04 100644
+> --- a/drivers/staging/iio/addac/adt7316-spi.c
+> +++ b/drivers/staging/iio/addac/adt7316-spi.c
+> @@ -93,7 +93,6 @@ static int adt7316_spi_probe(struct spi_device *spi_dev)
+>  {
+>  	struct adt7316_bus bus = {
+>  		.client = spi_dev,
+> -		.irq = spi_dev->irq,
+>  		.read = adt7316_spi_read,
+>  		.write = adt7316_spi_write,
+>  		.multi_read = adt7316_spi_multi_read,
+> @@ -112,7 +111,8 @@ static int adt7316_spi_probe(struct spi_device *spi_dev)
+>  	adt7316_spi_write(spi_dev, 0, 0);
+>  	adt7316_spi_write(spi_dev, 0, 0);
+>  
+> -	return adt7316_probe(&spi_dev->dev, &bus, spi_dev->modalias);
+> +	return adt7316_probe(&spi_dev->dev, &bus, spi_dev->modalias,
+> +			     spi_dev->irq);
+>  }
+>  
+>  static const struct spi_device_id adt7316_spi_id[] = {
+> diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
+> index 1ca4ee0f30ee..6b4b80fd80cc 100644
+> --- a/drivers/staging/iio/addac/adt7316.c
+> +++ b/drivers/staging/iio/addac/adt7316.c
+> @@ -1807,12 +1807,12 @@ static irqreturn_t adt7316_event_handler(int irq, void *private)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static int adt7316_setup_irq(struct iio_dev *indio_dev)
+> +static int adt7316_setup_irq(struct iio_dev *indio_dev, int irq)
+>  {
+>  	struct adt7316_chip_info *chip = iio_priv(indio_dev);
+>  	int irq_type, ret;
+>  
+> -	irq_type = irqd_get_trigger_type(irq_get_irq_data(chip->bus.irq));
+> +	irq_type = irqd_get_trigger_type(irq_get_irq_data(irq));
+>  
+>  	switch (irq_type) {
+>  	case IRQF_TRIGGER_HIGH:
+> @@ -1828,13 +1828,12 @@ static int adt7316_setup_irq(struct iio_dev *indio_dev)
+>  		break;
+>  	}
+>  
+> -	ret = devm_request_threaded_irq(&indio_dev->dev, chip->bus.irq,
+> +	ret = devm_request_threaded_irq(&indio_dev->dev, irq,
+>  					NULL, adt7316_event_handler,
+>  					irq_type | IRQF_ONESHOT,
+>  					indio_dev->name, indio_dev);
+>  	if (ret) {
+> -		dev_err(&indio_dev->dev, "failed to request irq %d\n",
+> -			chip->bus.irq);
+> +		dev_err(&indio_dev->dev, "failed to request irq %d\n", irq);
+>  		return ret;
+>  	}
+>  
+> @@ -2134,7 +2133,7 @@ static const struct iio_info adt7516_info = {
+>   * device probe and remove
+>   */
+>  int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+> -		const char *name)
+> +		  const char *name, int irq)
+>  {
+>  	struct adt7316_chip_info *chip;
+>  	struct iio_dev *indio_dev;
+> @@ -2180,8 +2179,8 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+>  	indio_dev->name = name;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  
+> -	if (chip->bus.irq > 0) {
+> -		ret = adt7316_setup_irq(indio_dev);
+> +	if (irq > 0) {
+> +		ret = adt7316_setup_irq(indio_dev, irq);
+>  		if (ret)
+>  			return ret;
+>  	}
+> diff --git a/drivers/staging/iio/addac/adt7316.h b/drivers/staging/iio/addac/adt7316.h
+> index fd7c5c92b599..03d5300a98cd 100644
+> --- a/drivers/staging/iio/addac/adt7316.h
+> +++ b/drivers/staging/iio/addac/adt7316.h
+> @@ -16,7 +16,6 @@
+>  
+>  struct adt7316_bus {
+>  	void *client;
+> -	int irq;
+>  	int (*read)(void *client, u8 reg, u8 *data);
+>  	int (*write)(void *client, u8 reg, u8 val);
+>  	int (*multi_read)(void *client, u8 first_reg, u8 count, u8 *data);
+> @@ -30,6 +29,6 @@ extern const struct dev_pm_ops adt7316_pm_ops;
+>  #define ADT7316_PM_OPS NULL
+>  #endif
+>  int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+> -		   const char *name);
+> +		  const char *name, int irq);
+>  
+>  #endif
 
-		if (user) {
-			user->handler->ipmi_recv_hndl(msg, =
-user->handler_data);
--			release_ipmi_user(msg->user, index);
-+			release_ipmi_user(user, index);
-		} else {
-			/* User went away, give up. */
-			ipmi_free_recv_msg(msg);
---=20
-2.11.0=
