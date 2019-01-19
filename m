@@ -2,205 +2,157 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CF5C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3054AC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF4CE20821
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB7C72084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M2qMl+FO"
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="OpIQBQ3N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbfASLla (ORCPT
+        id S1727942AbfASLpJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 06:41:30 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:53636 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727774AbfASLl3 (ORCPT
+        Sat, 19 Jan 2019 06:45:09 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37821 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbfASLpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 06:41:29 -0500
-Received: by mail-it1-f194.google.com with SMTP id g85so10478292ita.3
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 03:41:29 -0800 (PST)
+        Sat, 19 Jan 2019 06:45:08 -0500
+Received: by mail-wr1-f66.google.com with SMTP id s12so18106046wrt.4
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 03:45:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=McOUXOiiaYCdNaQcyXceaAx7TLaYHa5kRxGK9v+Z4ls=;
-        b=M2qMl+FO6B7yKNLC+hGoxmuLPT/W7loETNVuQCHs+ZwWwAYvmiKQXm8Mo7PmctHLMJ
-         GMZU2XmVPWKvoguHWJouP/5PWzIpqyN+zZIj8Xo1AFARJipbfAY3WZl0djCXkwfZwE3R
-         kxo+UCdUFlSovkH0owWAFNMxoJ4GYdw0qoYBUSoby0onOwojWYdywOur7YcUYA6gDQTf
-         b2FGnbMglR0rGII/WccA7qOFDHEjRFAkRg8u5v+07YMsuM7kvx+cO/Ti1KA20Vy0vU65
-         RrHyx+H9iAHcStLXOr1JL3XWKkGRyuSF4dUbU4SfDVrYepSDj3WZJTIUKIAOjNS1B2Zz
-         Bt6A==
+        bh=+vwESvPsUPWdfsIpmSo7CLXk62e+AihcYNrgiKP4BLQ=;
+        b=OpIQBQ3NSuf6//MCRyI6qaPtJyGFEDxT1a4VxytfAnf8yf8s1fUWao8ldyI+H9Vjud
+         eNB0nlCawXuyFdY3BcVNx9O1QZnGHP0SvASh2yezB+c+GKKLxD+D+op3xfzs3AlvKwgG
+         Ljd+GVWRq8La+o7AabLJSJK29D7rrWXaJ3NFeM7W2B9pcmtKO4GRJBqDo8xu6siEbqKQ
+         hf7sJTp3Jdfvc88qSdmy1LeZOCCs6F5Q0j1ZwN/bIesN/5lfqhw5qWFVvA+gOH5TIsCA
+         y1lvnpJzGZdeRLZP70fP0hnijSyRooLiebwZGX4oZ167UHO9lDOHvYXPkzyQ8J9aIudu
+         /B2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=McOUXOiiaYCdNaQcyXceaAx7TLaYHa5kRxGK9v+Z4ls=;
-        b=rsIw5D018BM3ozka3P2AN/aF7HyfmITSggjwxh0EWPjmJGpkIxzlW+AA4LzBZsSaZ7
-         9Nffw9V5dBdNb0ARINZEuqVTl/T3T1euFxMHulskAEGNwN918Q+ANUn8Vho0yLotfdEr
-         UV3VUFYxdLhCTTWzPH5B265IchQIMzMpWuX92toBQl/1qZykzx8xH0y4eXilDrJuOCxm
-         nwtK+DumkAtYFDMdg4Gm5vYKscOCgbS5N5u/RzUMBLC4au78N9wPv4x6kAWe7c77luJF
-         Gh8HfBlH8y3OuFu70Vj2bf0W9H2wV5dKvvm6QW3MqvG4rax2QGO4WDMqhYrYA0tIm5H/
-         NF3g==
-X-Gm-Message-State: AJcUukcSR4k9qy9Ua9DuKl85EEbCJqgbh8LrrB+jD3m7lrYKi8onN3rE
-        xkjl1gEOY5imnM9u/7NMNDiTPMg2158dwuoOsSF1hQ==
-X-Google-Smtp-Source: ALg8bN7837aviYwzCqHQolleZ984cQjPigOLAxKqJ/BlAjvERuDnQSgNgCI9cWwBbY+Wb0cJT6zXoTSOk/oNfw9y5vo=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr4539145iti.166.1547898088336;
- Sat, 19 Jan 2019 03:41:28 -0800 (PST)
+        bh=+vwESvPsUPWdfsIpmSo7CLXk62e+AihcYNrgiKP4BLQ=;
+        b=lAbdGARLW6gYZxbBcSfagO6y4z9Jf/uUVhDR/jyzVxObZyPA+yl8WzH5lUsYzYwpY7
+         O8ZHvYrVwQetsLPDuebn7kMrBIIhRz19W4r2EU7ILmY/6amV8ydymMMavuImPfBq1hmU
+         LITZQpRJuv5BpGWWyYb2RApU4quKibBHSG7H366HhRoIxiVOIKR/zl6dnMUiccx3+4G1
+         +VlMDJyAP55ZWTUh8UY7/pgYDZU18mdY4377YVT51cdUgDIlEjugq9Cw57wJF3dnHYXX
+         CJP2NObWb8KOPhsV9b9QlTwvsOICii7rLhHkBDrKinlbILrucLPjtdffMOY+tOAZxtmw
+         I29w==
+X-Gm-Message-State: AJcUukfY2csEjBewrwUaQ7OqrWfrYCwcEXAxhgwnxa6JUcLA2OKrCVWh
+        kluE+N7OzEZkUg5WaAMoFsIUIdG+6rI0oSnclJVdMQ==
+X-Google-Smtp-Source: ALg8bN69SN2/62L2WE9uHPe+C1tCbhqKYQmuUgsN2yf0vNo5uCkeHMUuRGCD4glW1ctt9fG9CfepzW/OcOHFlV+1cxQ=
+X-Received: by 2002:adf:f785:: with SMTP id q5mr19369498wrp.9.1547898306356;
+ Sat, 19 Jan 2019 03:45:06 -0800 (PST)
 MIME-Version: 1.0
-References: <00000000000010b2fc057fcdfaba@google.com>
-In-Reply-To: <00000000000010b2fc057fcdfaba@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 19 Jan 2019 12:41:17 +0100
-Message-ID: <CACT4Y+ZSK4DDhsz5gCAUnW49mCJPGcKECqC8yAn=PAA0Tx8D3w@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in sys_sendfile64 (2)
-To:     syzbot <syzbot+1505c80c74256c6118a5@syzkaller.appspotmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Matthew Wilcox <willy@infradead.org>
+References: <20190107161047.10516-1-anup@brainfault.org> <20190107161047.10516-6-anup@brainfault.org>
+ <20190115134746.GF13216@infradead.org>
+In-Reply-To: <20190115134746.GF13216@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Sat, 19 Jan 2019 17:14:55 +0530
+Message-ID: <CAAhSdy2Fzj08+Tdog1Z907=mr8Th0CYvE+fM1kFpii=GcTeTnw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] RISC-V: Implement compile-time fixed mappings
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup.patel@wdc.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 12:32 PM syzbot
-<syzbot+1505c80c74256c6118a5@syzkaller.appspotmail.com> wrote:
+On Tue, Jan 15, 2019 at 7:17 PM Christoph Hellwig <hch@infradead.org> wrote:
 >
-> Hello,
+> On Mon, Jan 07, 2019 at 09:40:47PM +0530, Anup Patel wrote:
+> > From: Anup Patel <anup.patel@wdc.com>
+> >
+> > This patch implements compile-time virtual to physical
+> > mappings. These compile-time fixed mappings can be used
+> > by earlycon, ACPI, and early ioremap for creating fixed
+> > mappings when FIX_EARLYCON_MEM=y.
+> >
+> > To start with, we have enabled compile-time fixed
+> > mappings for earlycon.
+> >
+> > Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> > ---
+> >  arch/riscv/Kconfig              |  3 ++
+> >  arch/riscv/include/asm/fixmap.h | 52 +++++++++++++++++++++++++++++++++
+> >  arch/riscv/mm/init.c            | 32 ++++++++++++++++++++
+> >  3 files changed, 87 insertions(+)
+> >  create mode 100644 arch/riscv/include/asm/fixmap.h
+> >
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index e0d7d61779a6..66094aba9a59 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -86,6 +86,9 @@ config GENERIC_CSUM
+> >  config GENERIC_HWEIGHT
+> >       def_bool y
+> >
+> > +config FIX_EARLYCON_MEM
+> > +     def_bool y
+> > +
 >
-> syzbot found the following crash on:
->
-> HEAD commit:    2339e91d0e66 Merge tag 'media/v5.0-1' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=175f2638c00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=abc3dc9b7a900258
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1505c80c74256c6118a5
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c4dc28c00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15df4108c00000
+> Can you please throw in a prep patch to move FIX_EARLYCON_MEM to
+> drivers/tty/serial/Kconfig and only select it from the architectures
+> that use it?
 
-Looking at the reproducer it looks like something with scheduler as it
-involves perf_event_open and sched_setattr. So +Peter and Mingo.
-Is it the same root cause as the other stalls involving sched_setattr?
+Implementing fixmap is totally optional for architectures so it
+makes sense to have FIX_EARLYCON_MEM as architecture
+specific kconfig option. There are many such architecture specific
+options provided as "def_bool y" in arch/<xyz>/Kconfig. Also,
+having such "def_bool y" kconfig options in arch/<xyz>/Kconfig
+gives us idea about optional features implemented by <xyz>
+arch support.
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+1505c80c74256c6118a5@syzkaller.appspotmail.com
+I don't agree with this suggestion. If you still feel this is right way
+to go then please go ahead and send patch to move
+FIX_EARLYCON_MEM option in drivers/tty/serial/Kconfig.
+
 >
-> audit: type=1400 audit(1547895693.874:36): avc:  denied  { map } for
-> pid=8427 comm="syz-executor786" path="/root/syz-executor786610373"
-> dev="sda1" ino=1426 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-> hrtimer: interrupt took 42996 ns
-> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> rcu:    (detected by 0, t=10502 jiffies, g=6469, q=3)
-> rcu: All QSes seen, last rcu_preempt kthread activity 10502
-> (4295051508-4295041006), jiffies_till_next_fqs=1, root ->qsmask 0x0
-> syz-executor786 R  running task    21544  8437   8433 0x00000000
-> Call Trace:
->   <IRQ>
->   sched_show_task kernel/sched/core.c:5293 [inline]
->   sched_show_task.cold+0x273/0x2d5 kernel/sched/core.c:5268
->   print_other_cpu_stall.cold+0x7f2/0x8bb kernel/rcu/tree.c:1301
->   check_cpu_stall kernel/rcu/tree.c:1429 [inline]
->   rcu_pending kernel/rcu/tree.c:3018 [inline]
->   rcu_check_callbacks+0xf36/0x1380 kernel/rcu/tree.c:2521
->   update_process_times+0x32/0x80 kernel/time/timer.c:1635
->   tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
->   tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
->   __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
->   __hrtimer_run_queues+0x3a7/0x1050 kernel/time/hrtimer.c:1451
->   hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
->   local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
->   smp_apic_timer_interrupt+0x18d/0x760 arch/x86/kernel/apic/apic.c:1060
->   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
->   </IRQ>
-> RIP: 0010:preempt_count arch/x86/include/asm/preempt.h:26 [inline]
-> RIP: 0010:check_kcov_mode kernel/kcov.c:67 [inline]
-> RIP: 0010:write_comp_data+0x9/0x70 kernel/kcov.c:122
-> Code: 12 00 00 8b 80 dc 12 00 00 48 8b 11 48 83 c2 01 48 39 d0 76 07 48 89
-> 34 d1 48 89 11 5d c3 0f 1f 00 65 4c 8b 04 25 40 ee 01 00 <65> 8b 05 80 ee
-> 7f 7e a9 00 01 1f 00 75 51 41 8b 80 d8 12 00 00 83
-> RSP: 0018:ffff888080466f58 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-> RAX: 000000000000226d RBX: ffff888080467140 RCX: ffffffff87f08bdf
-> RDX: 0000000000000002 RSI: 0000000000000002 RDI: 0000000000000007
-> RBP: ffff888080466f60 R08: ffff888096338480 R09: ffffed1015cc5b90
-> R10: ffffed1015cc5b8f R11: ffff8880ae62dc7b R12: 1ffff1101008cdf0
-> R13: ffff888092b64102 R14: ffff888092b64102 R15: ffff888080467158
->   xa_is_node include/linux/xarray.h:946 [inline]
->   xas_start+0x1cf/0x720 lib/xarray.c:183
->   xas_load+0x21/0x160 lib/xarray.c:227
->   find_get_entry+0x350/0x10a0 mm/filemap.c:1476
->   pagecache_get_page+0xe6/0x1020 mm/filemap.c:1579
->   find_get_page include/linux/pagemap.h:272 [inline]
->   generic_file_buffered_read mm/filemap.c:2076 [inline]
->   generic_file_read_iter+0x7b2/0x2d40 mm/filemap.c:2350
->   ext4_file_read_iter+0x180/0x3c0 fs/ext4/file.c:77
->   call_read_iter include/linux/fs.h:1856 [inline]
->   generic_file_splice_read+0x5c4/0xa90 fs/splice.c:308
->   do_splice_to+0x12a/0x190 fs/splice.c:880
->   splice_direct_to_actor+0x31b/0x9d0 fs/splice.c:957
->   do_splice_direct+0x2c7/0x420 fs/splice.c:1066
->   do_sendfile+0x61a/0xe60 fs/read_write.c:1436
->   __do_sys_sendfile64 fs/read_write.c:1491 [inline]
->   __se_sys_sendfile64 fs/read_write.c:1483 [inline]
->   __x64_sys_sendfile64+0x15a/0x240 fs/read_write.c:1483
->   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x446a19
-> Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 4b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f53e33cfda8 EFLAGS: 00000297 ORIG_RAX: 0000000000000028
-> RAX: ffffffffffffffda RBX: 00000000006dcc28 RCX: 0000000000446a19
-> RDX: 0000000020000380 RSI: 0000000000000003 RDI: 0000000000000003
-> RBP: 00000000006dcc20 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00008080fffffffe R11: 0000000000000297 R12: 00000000006dcc2c
-> R13: 00008080fffffffe R14: 00007f53e33d09c0 R15: 00000000006dcd2c
-> rcu: rcu_preempt kthread starved for 10502 jiffies! g6469 f0x2
-> RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-> rcu: RCU grace-period kthread stack dump:
-> rcu_preempt     R  running task    26200    10      2 0x80000000
-> Call Trace:
->   context_switch kernel/sched/core.c:2831 [inline]
->   __schedule+0x897/0x1e60 kernel/sched/core.c:3472
->   schedule+0xfe/0x350 kernel/sched/core.c:3516
->   schedule_timeout+0x14a/0x250 kernel/time/timer.c:1803
->   rcu_gp_fqs_loop+0x6ba/0x970 kernel/rcu/tree.c:1948
->   rcu_gp_kthread+0x2bb/0xc10 kernel/rcu/tree.c:2105
->   kthread+0x357/0x430 kernel/kthread.c:246
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-> sched: RT throttling activated
+> > + * fixmap.h: compile-time virtual memory allocation
 >
+> No need to mention the header name.
+
+Sure, will remove header name.
+
 >
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > + */
+> > +
+> > +#ifndef _ASM_RISCV_FIXMAP_H
+> > +#define _ASM_RISCV_FIXMAP_H
+> > +
+> > +#ifndef __ASSEMBLY__
 >
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> As far as I can tell we never include this header from assembly files,
+> so this ifdef should not be needed.
 >
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000010b2fc057fcdfaba%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+> > +/*
+> > + * Here we define all the compile-time 'special' virtual
+> > + * addresses. The point is to have a constant address at
+> > + * compile time, but to set the physical address only
+> > + * in the boot process.
+> > + *
+> > + * These 'compile-time allocated' memory buffers are
+> > + * page-sized. Use set_fixmap(idx,phys) to associate
+> > + * physical memory with fixmap indices.
+> > + */
+>
+> Please use up the available 80 chars per line for comments.
+
+Regards,
+Anup
