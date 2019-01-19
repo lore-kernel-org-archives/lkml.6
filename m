@@ -3,34 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E107C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0164CC5AE5E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5C82086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C675720850
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:59:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbfASAxf (ORCPT
+        id S1727300AbfASA7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 19:53:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35628 "EHLO mx1.suse.de"
+        Fri, 18 Jan 2019 19:59:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35982 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726196AbfASAxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 19:53:34 -0500
+        id S1726033AbfASA7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 19:59:17 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A81AFAA71;
-        Sat, 19 Jan 2019 00:53:33 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E57EFAD8E;
+        Sat, 19 Jan 2019 00:59:15 +0000 (UTC)
 Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to
- syscall-counts-by-pid.py
+ check-perf-trace.py
 To:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
         peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         alexander.shishkin@linux.intel.com, jolsa@redhat.com,
         namhyung@kernel.org, linux-kernel@vger.kernel.org
 References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
- <1547718344-27382-15-git-send-email-s1seetee@linux.vnet.ibm.com>
 From:   Tony Jones <tonyj@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
@@ -56,15 +54,15 @@ Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
  LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
  AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
  liv+rwEesYGlGeGNaKHTJw==
-Message-ID: <98c8deb4-e078-82cf-ec5b-372274f5fc9d@suse.de>
-Date:   Fri, 18 Jan 2019 16:53:30 -0800
+Message-ID: <fef55746-9ea1-15a8-b978-6a02e55e19d1@suse.de>
+Date:   Fri, 18 Jan 2019 16:59:12 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1547718344-27382-15-git-send-email-s1seetee@linux.vnet.ibm.com>
+In-Reply-To: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -72,30 +70,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
 
-> -	    print "\nsyscall events for %s:\n\n" % (for_comm),
-> +	    print("\nsyscall events for %s:\n\n" % (for_comm)),
->      else:
-> -	    print "\nsyscall events by comm/pid:\n\n",
-> +	    print("\nsyscall events by comm/pid:\n\n"),
->  
-> -    print "%-40s  %10s\n" % ("comm [pid]/syscalls", "count"),
-> -    print "%-40s  %10s\n" % ("----------------------------------------", \
-> -                                 "----------"),
-> +    print("%-40s  %10s\n" % ("comm [pid]/syscalls", "count")),
-> +    print("%-40s  %10s\n" % ("----------------------------------------", \
-> +                                 "----------")),
+> -		print "vec=%s\n" % \
+> -		(symbol_str("irq__softirq_entry", "vec", vec)),
+> +		print("vec=%s\n" % \
+> +		(symbol_str("irq__softirq_entry", "vec", vec))),
 
-Is the 'print (x),' [trailing comma] syntax valid for function syntax?
+Again, check the trailing comma usage:
 
-Print "x", in Py2 means suppress the trailing newline.
-
-You need to actually run the scripts (old,  new PYTHON=python2, new PYTHON=python3) and compare the output.
-
-This:
-print "%-40s  %10s\n" % ("comm [pid]/syscalls", "count"),
-
-can be reworked as:
-print ("%-40s  %10s" % ("comm [pid]/syscalls", "count"))
-
-
-See:  https://build.opensuse.org/package/view_file/devel:tools/perf/port-failed-syscalls-by-pid-script-to-python3.patch?expand=1
+$ echo 'print "abc", ; print "def"' | python2
+abc def
+$ echo 'print ("abc"), ; print ("def")' | python2
+abc def
+$ echo 'print ("abc"), ; print ("def")' | python3
+abc
+def
