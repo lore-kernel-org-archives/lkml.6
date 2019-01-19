@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9420C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 15:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D144C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 15:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B0712087E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 15:42:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F41AF2087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 15:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547912522;
-	bh=pd3JnVRvx9qXga1PfmEpbi76HIFcTcq5J/fGSAxb3fk=;
+	s=default; t=1547912541;
+	bh=mSOK+5vCBQoqvx/N69fr27yhahTN2A0lMMtC837TB74=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:List-ID:From;
-	b=Hw9joNv2BQv5QYZjkPppUZw4Z0Y9I/QAYXQ8NAo3iuTrOfLUD1c9+QDlkZO+Gk8qU
-	 48VP2d7KX4RUhXwLfPLvbxBdt9pJxHeEFYT/H0CbwKQRjDk+86Ur6OgbxT1qbWWe7K
-	 Eky2FRYrCOU8St323ceRolc5LyXnhdEwVlaH7rJc=
+	b=cd+XR09a1NE93NKTWqEpjKCN3I5F/F6Ks0WsRwBNY6a6eUCAxMeTWUBXKD7BN7zrx
+	 opFf/ojEArFPs3ajKd1lsHEuGYB6QwPBGJAyd2N3rR5upahIYzjd/YcOmc5nxIHGxh
+	 WJ9rBGk982UwXnfZkfp6JULqw/Pd7a/ebZnvEaKE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbfASPmB (ORCPT
+        id S1728403AbfASPmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 10:42:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34582 "EHLO mail.kernel.org"
+        Sat, 19 Jan 2019 10:42:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728268AbfASPmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 10:42:00 -0500
+        id S1728268AbfASPmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 10:42:15 -0500
 Received: from localhost.localdomain (unknown [91.160.177.164])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6822F2084F;
-        Sat, 19 Jan 2019 15:41:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3FBE2087E;
+        Sat, 19 Jan 2019 15:42:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547912519;
-        bh=pd3JnVRvx9qXga1PfmEpbi76HIFcTcq5J/fGSAxb3fk=;
+        s=default; t=1547912534;
+        bh=mSOK+5vCBQoqvx/N69fr27yhahTN2A0lMMtC837TB74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:From;
-        b=bL2GNqGt6U/MR0TQLIcVRdOoga6bmlPU4Vkc2c+9qy6OYKdYRRN7blMOA5v2mFSrc
-         Rp9yVHctUiEmxdfjs2CO6owa/AAbGpa3ofXXEevtUdVyHUjojeaK9wL48inQcnF5Tb
-         FAfFL25UScLUwgIUZBDI2RBO27sGBTCCqnwZ1Vwg=
+        b=KRmFIrMudRrFkHS1BipcOr8BMxamj66SrCuvIHDlLNG8avtAd8opCEiHJckq5caUR
+         FzlslG/h+t1KF5XhuiHJiDCjjJ1lyDief6+e1LwfNwth8i4JUfb6OeRDsM+TsgCoMZ
+         uiSl/cwACBKKNOem6O669CLqO75unMBgpUtYZctU=
 From:   Boris Brezillon <bbrezillon@kernel.org>
 To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
         "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
@@ -58,23 +58,26 @@ Cc:     Boris Brezillon <bbrezillon@kernel.org>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [v7,3/5] mtd: m25p80: add support of octal mode I/O transfer
-Date:   Sat, 19 Jan 2019 16:41:49 +0100
-Message-Id: <20190119154149.3451-1-bbrezillon@kernel.org>
+Subject: Re: [v7,2/5] mtd: spi-nor: add octal read flag for flash mt35xu512aba
+Date:   Sat, 19 Jan 2019 16:42:04 +0100
+Message-Id: <20190119154204.3518-1-bbrezillon@kernel.org>
 X-Mailer: git-send-email 2.17.1
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: 0837ae46ff003fed44bfead23c590e7105f47623
-In-Reply-To: <1547546584-5254-4-git-send-email-yogeshnarayan.gaur@nxp.com>
+X-linux-mtd-patch-commit: 2bda2f811b36cb7e569ca384e2dfcf74740a8279
+In-Reply-To: <1547546584-5254-3-git-send-email-yogeshnarayan.gaur@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-15 at 10:05:22 UTC, Yogesh Narayan Gaur wrote:
-> Add support for octal mode I/O data transfer based on the controller (spi)
-> mode.
-> Assign hw-capability mask bits for octal transfer.
+On Tue, 2019-01-15 at 10:05:16 UTC, Yogesh Narayan Gaur wrote:
+> Add octal read flag for flash mt35xu512aba.
+> This flash, mt35xu512aba, is only complaint to SFDP JESD216B and does
+> not seem to support newer JESD216C standard that provides auto
+> detection of Octal mode capabilities and opcodes. Therefore, this
+> capability is manually added using new SPI_NOR_OCTAL_READ flag.
 > 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
 > Signed-off-by: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
 > Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
