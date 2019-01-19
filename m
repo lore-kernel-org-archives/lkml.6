@@ -2,140 +2,90 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UPPERCASE_50_75 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8186C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D46C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 883FE2084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E8592084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbfASKVw (ORCPT
+        id S1727806AbfASKXv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 05:21:52 -0500
-Received: from smtp4-g21.free.fr ([212.27.42.4]:34454 "EHLO smtp4-g21.free.fr"
+        Sat, 19 Jan 2019 05:23:51 -0500
+Received: from ozlabs.org ([203.11.71.1]:34757 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbfASKVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 05:21:51 -0500
-Received: from [192.168.1.42] (unknown [77.207.133.132])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 6A33919F4EA;
-        Sat, 19 Jan 2019 11:21:21 +0100 (CET)
-Subject: Re: kmemleak panic
-To:     Qian Cai <cai@lca.pw>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
- <20190118143434.GE118707@arrakis.emea.arm.com>
- <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
- <5fe89adc-c95b-ca89-d043-c380e2ba8cb3@lca.pw>
- <8edcc205-0e55-7988-5729-7b75e47e9b32@free.fr>
- <fd0a8e39-b258-6281-ed5d-0e176971478f@lca.pw>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <d344a4f5-ba3c-6d9e-010f-0df43e81873f@free.fr>
-Date:   Sat, 19 Jan 2019 11:21:16 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Firefox/52.0 SeaMonkey/2.49.4
+        id S1726733AbfASKXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 05:23:50 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43hYnH30Dqz9sBQ;
+        Sat, 19 Jan 2019 21:23:47 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+In-Reply-To: <cover.1547195976.git.christophe.leroy@c-s.fr>
+References: <cover.1547195976.git.christophe.leroy@c-s.fr>
+Date:   Sat, 19 Jan 2019 21:23:46 +1100
+Message-ID: <87zhrx2bf1.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <fd0a8e39-b258-6281-ed5d-0e176971478f@lca.pw>
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/01/2019 18:38, Qian Cai wrote:
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-> On 1/18/19 12:05 PM, Marc Gonzalez wrote:
+> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+> moves the thread_info into task_struct.
 >
->> On 18/01/2019 17:14, Qian Cai wrote:
->>
->>> This looks like something different from the original "invalid PFNs from
->>> pfn_to_online_page()" issue. What's your .config ?
->>
->> Here's my defconfig:
->>
->> # CONFIG_SWAP is not set
->> CONFIG_NO_HZ_IDLE=y
->> CONFIG_HIGH_RES_TIMERS=y
->> CONFIG_PREEMPT=y
->> CONFIG_IKCONFIG=y
->> CONFIG_IKCONFIG_PROC=y
->> CONFIG_LOG_BUF_SHIFT=20
->> CONFIG_BLK_DEV_INITRD=y
->> CONFIG_ARCH_QCOM=y
->> # CONFIG_EFI is not set
->> # CONFIG_SUSPEND is not set
->> CONFIG_PM=y
->> # CONFIG_MQ_IOSCHED_DEADLINE is not set
->> # CONFIG_MQ_IOSCHED_KYBER is not set
->> CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
->> CONFIG_DEVTMPFS=y
->> CONFIG_DEVTMPFS_MOUNT=y
->> # CONFIG_BLK_DEV is not set
->> # CONFIG_INPUT_KEYBOARD is not set
->> # CONFIG_INPUT_MOUSE is not set
->> # CONFIG_SERIO_SERPORT is not set
->> CONFIG_VT_HW_CONSOLE_BINDING=y
->> CONFIG_LEGACY_PTY_COUNT=16
->> CONFIG_SERIAL_8250=y
->> CONFIG_SERIAL_MSM=y
->> CONFIG_SERIAL_MSM_CONSOLE=y
->> CONFIG_SERIAL_DEV_BUS=y
->> # CONFIG_HW_RANDOM is not set
->> # CONFIG_HWMON is not set
->> CONFIG_REGULATOR=y
->> CONFIG_REGULATOR_FIXED_VOLTAGE=y
->> CONFIG_REGULATOR_QCOM_SMD_RPM=y
->> # CONFIG_HID is not set
->> # CONFIG_USB_SUPPORT is not set
->> # CONFIG_COMMON_CLK_XGENE is not set
->> CONFIG_COMMON_CLK_QCOM=y
->> # CONFIG_QCOM_A53PLL is not set
->> # CONFIG_QCOM_CLK_APCS_MSM8916 is not set
->> CONFIG_QCOM_CLK_SMD_RPM=y
->> CONFIG_MSM_GCC_8998=y
->> CONFIG_HWSPINLOCK=y
->> CONFIG_HWSPINLOCK_QCOM=y
->> CONFIG_MAILBOX=y
->> CONFIG_QCOM_APCS_IPC=y
->> CONFIG_RPMSG_QCOM_GLINK_RPM=y
->> CONFIG_RPMSG_QCOM_GLINK_SMEM=y
->> CONFIG_RPMSG_QCOM_SMD=y
->> CONFIG_RPMSG_VIRTIO=y
->> CONFIG_QCOM_COMMAND_DB=y
->> CONFIG_QCOM_SMEM=y
->> CONFIG_QCOM_SMD_RPM=y
->> CONFIG_TMPFS=y
->> CONFIG_DEBUG_INFO=y
->> CONFIG_DEBUG_KERNEL=y
->> CONFIG_DEBUG_KMEMLEAK=y
->> CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE=4000
->> CONFIG_FUNCTION_TRACER=y
-> 
-> This is truncated. I'll need your whole .config file, so I can try to reproduce
-> it here on an arm64 ThunderX2 server.
+> Moving thread_info into task_struct has the following advantages:
+> - It protects thread_info from corruption in the case of stack
+> overflows.
+> - Its address is harder to determine if stack addresses are
+> leaked, making a number of attacks more difficult.
+>
+> Changes since v12:
+>  - Patch 1: Taken comment from Mike (re-introduced the 'panic' in case memblock allocation fails in setup_64.c
+>  - Patch 1: Added alloc_stack() function in setup_32.c to also panic in case of allocation failure.
 
-Smirk. It's not truncated, it's condensed ;-)
+Hi Christophe,
 
-It's a defconfig, as generated by make savedefconfig.
+I can't get this series to boot on qemu mac99. I'm getting eg:
 
-https://stackoverflow.com/questions/27899104/how-to-create-a-defconfig-file-from-a-config
+[    0.981514] NFS: Registering the id_resolver key type
+[    0.981752] Key type id_resolver registered
+[    0.981868] Key type id_legacy registered
+[    0.995711] Unrecoverable exception 0 at 0 (msr=0)
+[    0.996091] Oops: Unrecoverable exception, sig: 6 [#1]
+[    0.996314] BE PAGE_SIZE=4K MMU=Hash PowerMac
+[    0.996617] Modules linked in:
+[    0.996869] CPU: 0 PID: 416 Comm: modprobe Not tainted 5.0.0-rc2-gcc-7.3.0-00043-g53f2de798792 #342
+[    0.997138] NIP:  00000000 LR: 00000000 CTR: 00000000
+[    0.997309] REGS: ef237f50 TRAP: 0000   Not tainted  (5.0.0-rc2-gcc-7.3.0-00043-g53f2de798792)
+[    0.997508] MSR:  00000000 <>  CR: 00000000  XER: 00000000
+[    0.997712] 
+[    0.997712] GPR00: 00000000 ef238000 00000000 00000000 00000000 00000000 00000000 00000000 
+[    0.997712] GPR08: 00000000 00000000 00000000 00000000 00000000 00000000 c006477c ef13d8c0 
+[    0.997712] GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+[    0.997712] GPR24: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+[    0.998671] NIP [00000000]   (null)
+[    0.998774] LR [00000000]   (null)
+[    0.998895] Call Trace:
+[    0.999030] Instruction dump:
+[    0.999320] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX 
+[    0.999546] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX 60000000 XXXXXXXX XXXXXXXX XXXXXXXX 
+[    1.000023] ---[ end trace 925ea3419844fe68 ]---
 
-Save it to e.g. arch/arm64/configs/marc_defconfig and then you can
-just run 'make marc_defconfig' to generate the .config
+I haven't had time to dig any further.
 
-Regards.
+cheers
