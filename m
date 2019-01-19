@@ -2,176 +2,96 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB7CC61CE3
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26593C5AE5E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BDA2087E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:05:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMetuke9"
+	by mail.kernel.org (Postfix) with ESMTP id F25A520850
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbfASBFM (ORCPT
+        id S1730114AbfASBFQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 20:05:12 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:32880 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbfASBFJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 20:05:09 -0500
-Received: by mail-pl1-f193.google.com with SMTP id z23so7086286plo.0;
-        Fri, 18 Jan 2019 17:05:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jo6uF/Bb588VrfKQ3Bf/yZ/V7tccuOBIBhw3APlJnCA=;
-        b=lMetuke9K1KS0eEGT2vCBslUwNXHTvYPDEXh4S0/PgR2D4ahJASJJBjRa6iS+vhQDT
-         oms7mLcIdtW2xrIhpz0JEX0ABIHSZZzZMUSqYf3F+McfrjybvAqoOg11pC/Hstfv1/n7
-         tu8p0LdeuK9W73wKYU6+t6yX47fS2BbHVrayKrU7eaZPDqhO2abPU8g4osEWpuTIyY3L
-         dAz48/X53RVhBw89+qzHKqXV03gvzRjQuXGz4O7JP0DcenlVsHxbSDE3RD8qeSmEUUe4
-         8/nuXHioswvEKU6XpbTkWstgXCXKyjv8mu14TiP24iSlL7h5vg3M7FwwEmUNsi6vYDQa
-         5u2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jo6uF/Bb588VrfKQ3Bf/yZ/V7tccuOBIBhw3APlJnCA=;
-        b=B9fxYDypjTd4vwwxT3b92/NTXdkPt435wXkBAYjJhyjbuDHvATzmWCWmdkONX9klf1
-         37DM49MKqKRNx3PJ/w0W1MHmEZ4bXhJMuZmvvLNsd2eEorw3aYRmX8ElEqG6lClBs4Ow
-         EnGhztcUTF1XXBXr7BapDOubhNSWo8omoFymFbdd7cVVxwvmc1WptsAWjom/jsAYPPjL
-         YYFWChSbGesIrl36FAg+0CsIx4MwX67N8zX5LKussrlIb/CLsva0s4BRsxq3EcGLgSTd
-         GHzaLzYxRw8Gi4/GEKJvi0lR6SphgOvr5W8HD0MX1IjHnp09tRLojIHtNojpwu31EvZF
-         mjFw==
-X-Gm-Message-State: AJcUukdgixukbKRg77Hz5OBLjKdYIpQdLaMRnFUmrqEOblTW0+BW7O7Q
-        LFryxFc6NDYldpq2nZN5ehF6o+a0u0A=
-X-Google-Smtp-Source: ALg8bN6e4fFsttREh9ZKCah554hK1l3bJ+n7efkkNeBEOKsEEUGjmphyhTnKvWzkBuavYdOFjWUotg==
-X-Received: by 2002:a17:902:2bc5:: with SMTP id l63mr21500764plb.107.1547859907491;
-        Fri, 18 Jan 2019 17:05:07 -0800 (PST)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id w128sm7955307pfw.79.2019.01.18.17.05.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 17:05:06 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Gael PORTAY <gael.portay@collabora.com>,
-        Peter Seiderer <ps.report@gmx.net>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/2] media: imx: prpencvf: Stop upstream before disabling IDMA channel
-Date:   Fri, 18 Jan 2019 17:04:57 -0800
-Message-Id: <20190119010457.2623-3-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190119010457.2623-1-slongerbeam@gmail.com>
-References: <20190119010457.2623-1-slongerbeam@gmail.com>
+        Fri, 18 Jan 2019 20:05:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36504 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727422AbfASBFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 20:05:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 69CA2AE30;
+        Sat, 19 Jan 2019 01:05:09 +0000 (UTC)
+Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to
+ export-to-sqlite.py
+To:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
+ <1547718344-27382-4-git-send-email-s1seetee@linux.vnet.ibm.com>
+From:   Tony Jones <tonyj@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
+ mQGiBEkQmbwRBACDch7wo/RzlNt2HA8jLICsO2w8yOkJ7UTzHYNn3Q83Ro0qev2KokfE3EDw
+ il+vam9CDR7jIDmswHqaMe0/O+UnZtO5PlDgylZcrwNwbBzHfm/KGejbi1RBGAoETrvcfwGi
+ w83bR/aDnoRXY5Ho1uphQ05/065EMpbJOOBdn9qQ4wCgv2Q6C/QeYDGsxJPRO+20nLu5K00D
+ /Rde4OTZ5biM+vb6ObTmgPNeiMrTwGpMokN7audIl7njwvD+lYrlgQjmDzcaPFz29rYWwT7g
+ 6t6hcFgjpU1he/v3qxeQlTJoi2+u5Mqj42z//49h6DqNjT859Z/6h5IwKBo/EZC17iBIlS2G
+ VXAstNiZASGiaIlONozWJ/GSjUaRA/9wZTV1nXF/+xX+qmc7SvTg1w6jWyjxVumQLoq2SeA4
+ 1Sy5X2IATkAGCCjbeoQGnFdbOnHRSJdlTazObgwreqGPlPnIROpr9QESkfxsaCkDiZfpl0xk
+ 6X069QMZBEwGAWILHYXL9UqlOjniZaU2BkVA11JEdBhyQorC8T/ji1edc7QaVG9ueSBKb25l
+ cyA8dG9ueWpAc3VzZS5kZT6IYAQTEQIAIAUCSRCZvAIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheAAAoJELFYWyEf4koXGmYAoKCnbv9dhAB2vR6IvSJem1ws4HpfAJ9ZqTKiXcogBGfTPaJR
+ GI9QhVUieLkCDQRJEJm8EAgAzr9Zd3v7B10ODtVc7XxbMe3W6o1FdClL9ZIgLv61zhWctafK
+ DMu/MUSvxmYFq00pecD/SfX8oxArA02+sQ2E+/Zb4J7NAWIAxCfmy7VE0wDBrZH/hBapIx/L
+ gVqYfZ9Rw+a4FXrlk1y8oQCwhvj+kWrm7V7olR0aPOy1NFGNUyTFSMj+pbmxiNOXdCxVUQe3
+ UE1k9yA+mILjyaRanwkiCLCjNvRPL88Q017BdhVBWZmz8qhwXN/RrjCcDHsPX5O0ev68MLyu
+ sh5mfukuvCqzW1Y3Ql+iwfwEw5lNmQGdoV9csg7JP7saDicSFO2KcZvMbvDMqtPFipdF5UWo
+ fZKZ3wADBQf/b5cVNyb5i8QI0G7BPGBNn4VlQX5n66TsPBnrRNOi3MhTTVEBCp8s+jqUjJjX
+ EjjA+O4hIm7Qqdsozurw7GlcQ0A06dIzO/1RUglZZMoC0JL43ZQmJ+3+yFrLjWgGH6ev6AOb
+ YLH7ZujgAB5n0Hy2ZIChzsKLKbHptFtBvpDKB8updq+GunsY4oN3wGa67h9sHqDvjyp64Czg
+ n8G5uGLwx3f/edbECKz5kPUSzChEk3suK742SEP01v4ra5WX88Hn81NjGByQMz9acJLdC7Ff
+ LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
+ AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
+ liv+rwEesYGlGeGNaKHTJw==
+Message-ID: <fc0d6d7e-9374-c655-8aea-84616a13a5c1@suse.de>
+Date:   Fri, 18 Jan 2019 17:05:06 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1547718344-27382-4-git-send-email-s1seetee@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Upstream must be stopped immediately after receiving the last EOF and
-before disabling the IDMA channel. This can be accomplished by moving
-upstream stream off to just after receiving the last EOF completion in
-prp_stop(). For symmetry also move upstream stream on to end of
-prp_start().
+On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
+> Support both Python 2 and Python 3 in export-to-sqlite.py. ``print`` is
+> now a function rather than a statement. This should have no functional
+> change.
 
-This fixes a complete system hard lockup on the SabreAuto when streaming
-from the ADV7180, by repeatedly sending a stream off immediately followed
-by stream on:
+I don't see any changes handling the following:
 
-while true; do v4l2-ctl  -d1 --stream-mmap --stream-count=3; done
+$ git annotate tools/perf/scripts/python/export-to-sqlite.py | grep ">> sys"
+564b9527d1ccf	(Adrian Hunter	2017-08-03 11:31:28 +0300	64)	print >> sys.stderr, "Usage is: export-to-sqlite.py <database name> [<columns>] [<calls>] [<callchains>]"
+564b9527d1ccf	(Adrian Hunter	2017-08-03 11:31:28 +0300	65)	print >> sys.stderr, "where:	columns		'all' or 'branches'"
+564b9527d1ccf	(Adrian Hunter	2017-08-03 11:31:28 +0300	66)	print >> sys.stderr, "		calls		'calls' => create calls and call_paths table"
+564b9527d1ccf	(Adrian Hunter	2017-08-03 11:31:28 +0300	67)	print >> sys.stderr, "		callchains	'callchains' => create call_paths table"
 
-Eventually this either causes the system lockup or EOF timeouts at all
-subsequent stream on, until a system reset.
+$ echo 'import sys ; print >> sys.stderr, "Usage is: exported-sql-viewer.py {<database name> | --help-only}"' | python2
+Usage is: exported-sql-viewer.py {<database name> | --help-only}
 
-The lockup occurs when disabling the IDMA channel at stream off. Stopping
-the video data stream entering the IDMA channel before disabling the
-channel itself appears to be a reliable fix for the hard lockup.
+$ echo 'import sys ; print >> sys.stderr, "Usage is: exported-sql-viewer.py {<database name> | --help-only}"' | python3
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: unsupported operand type(s) for >>: 'builtin_function_or_method' and '_io.TextIOWrapper'. Did you mean "print(<message>, file=<output_stream>)"?
 
-Fixes: f0d9c8924e2c3 ("[media] media: imx: Add IC subdev drivers")
 
-Reported-by: Gaël PORTAY <gael.portay@collabora.com>
-Tested-by: Gaël PORTAY <gael.portay@collabora.com>
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Cc: stable@vger.kernel.org
----
-Changes in v3:
-- Reword the commit subject and message. No functional changes.
-Changes in v2:
-- Add Fixes: and Cc: stable
----
- drivers/staging/media/imx/imx-ic-prpencvf.c | 26 ++++++++++++++-------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+They are best handled via conversion to sys.stderr.write() since sys is already imported.
 
-diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
-index 33ada6612fee..f53cdb608528 100644
---- a/drivers/staging/media/imx/imx-ic-prpencvf.c
-+++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
-@@ -707,12 +707,23 @@ static int prp_start(struct prp_priv *priv)
- 		goto out_free_nfb4eof_irq;
- 	}
- 
-+	/* start upstream */
-+	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, 1);
-+	ret = (ret && ret != -ENOIOCTLCMD) ? ret : 0;
-+	if (ret) {
-+		v4l2_err(&ic_priv->sd,
-+			 "upstream stream on failed: %d\n", ret);
-+		goto out_free_eof_irq;
-+	}
-+
- 	/* start the EOF timeout timer */
- 	mod_timer(&priv->eof_timeout_timer,
- 		  jiffies + msecs_to_jiffies(IMX_MEDIA_EOF_TIMEOUT));
- 
- 	return 0;
- 
-+out_free_eof_irq:
-+	devm_free_irq(ic_priv->dev, priv->eof_irq, priv);
- out_free_nfb4eof_irq:
- 	devm_free_irq(ic_priv->dev, priv->nfb4eof_irq, priv);
- out_unsetup:
-@@ -744,6 +755,12 @@ static void prp_stop(struct prp_priv *priv)
- 	if (ret == 0)
- 		v4l2_warn(&ic_priv->sd, "wait last EOF timeout\n");
- 
-+	/* stop upstream */
-+	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, 0);
-+	if (ret && ret != -ENOIOCTLCMD)
-+		v4l2_warn(&ic_priv->sd,
-+			  "upstream stream off failed: %d\n", ret);
-+
- 	devm_free_irq(ic_priv->dev, priv->eof_irq, priv);
- 	devm_free_irq(ic_priv->dev, priv->nfb4eof_irq, priv);
- 
-@@ -1174,15 +1191,6 @@ static int prp_s_stream(struct v4l2_subdev *sd, int enable)
- 	if (ret)
- 		goto out;
- 
--	/* start/stop upstream */
--	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, enable);
--	ret = (ret && ret != -ENOIOCTLCMD) ? ret : 0;
--	if (ret) {
--		if (enable)
--			prp_stop(priv);
--		goto out;
--	}
--
- update_count:
- 	priv->stream_count += enable ? 1 : -1;
- 	if (priv->stream_count < 0)
--- 
-2.17.1
-
+Tony
