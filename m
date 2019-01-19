@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9491C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC74C6369F
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADBD72084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ADB62084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 11:56:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbfASL4k (ORCPT
+        id S1728078AbfASL4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 06:56:40 -0500
+        Sat, 19 Jan 2019 06:56:44 -0500
 Received: from route-level1.fsdata.se ([89.221.252.216]:30728 "EHLO
         route-level1.fsdata.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727868AbfASL4k (ORCPT
+        with ESMTP id S1728039AbfASL4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 06:56:40 -0500
+        Sat, 19 Jan 2019 06:56:41 -0500
 Received: from DAG01.HMC.local (192.168.46.11) by EDGE01LEVEL1.hmc.local
  (192.168.46.33) with Microsoft SMTP Server (TLS) id 15.0.847.32; Sat, 19 Jan
- 2019 12:56:13 +0100
+ 2019 12:56:23 +0100
 Received: from localhost (94.234.47.42) by DAG01.HMC.local (192.168.46.11)
- with Microsoft SMTP Server (TLS) id 15.0.1263.5; Sat, 19 Jan 2019 12:56:16
+ with Microsoft SMTP Server (TLS) id 15.0.1263.5; Sat, 19 Jan 2019 12:56:26
  +0100
 From:   Mattias Jacobsson <2pi@mok.nu>
-To:     <yamada.masahiro@socionext.com>, <michal.lkml@markovi.net>,
-        <dvhart@infradead.org>, <andy@infradead.org>,
-        <pali.rohar@gmail.com>
+To:     <mario.limonciello@dell.com>, <dvhart@infradead.org>,
+        <andy@infradead.org>, <mjg59@srcf.ucam.org>, <pali.rohar@gmail.com>
 CC:     <2pi@mok.nu>, <platform-driver-x86@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/3] platform/x86: wmi: add WMI support to MODULE_DEVICE_TABLE()
-Date:   Sat, 19 Jan 2019 12:55:54 +0100
-Message-ID: <ff56fb53485ec75b5e8a81f306983aa7976574c5.1547827336.git.2pi@mok.nu>
+Subject: [PATCH 3/3] platform/x86: wmi: use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS()
+Date:   Sat, 19 Jan 2019 12:55:55 +0100
+Message-ID: <e468c28f030e93ec54010878f222c56541d6af00.1547827336.git.2pi@mok.nu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1547827336.git.2pi@mok.nu>
 References: <cover.1547827336.git.2pi@mok.nu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [94.234.47.42]
 X-ClientProxiedBy: PROXY05.HMC.local (192.168.46.55) To DAG01.HMC.local
  (192.168.46.11)
@@ -51,79 +50,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add WMI support to MODULE_DEVICE_TABLE() by adding info about struct
-wmi_device_id in devicetable-offsets.c and add a WMI entry point in
-file2alias.c.
+WMI drivers can if they have specified an array of struct wmi_device_id
+use the MODULE_DEVICE_TABLE() macro to automatically generate the
+appropriate MODULE_ALIAS() output.
 
-The type argument for MODULE_DEVICE_TABLE(type, name) is wmi.
+Change all driver that have specified an array of struct wmi_device_id
+to use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS().
 
 Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
 ---
+ drivers/platform/x86/dell-smbios-wmi.c       | 2 +-
+ drivers/platform/x86/dell-wmi-descriptor.c   | 2 +-
+ drivers/platform/x86/dell-wmi.c              | 4 ++--
+ drivers/platform/x86/huawei-wmi.c            | 3 +--
+ drivers/platform/x86/intel-wmi-thunderbolt.c | 2 +-
+ drivers/platform/x86/wmi-bmof.c              | 2 +-
+ 6 files changed, 7 insertions(+), 8 deletions(-)
 
-The idea of adding wmi support to MODULE_DEVICE_TABLE() originates from
-a suggestion at [1]. However [2] states: "Please note that this tag
-should not be added without the reporter's permission, especially if
-the idea was not posted in a public forum." about the "Suggested-by:"
-tag.
-Pali Rohár: May I add a "Suggested-by:" tag?
-
-[1]: https://lore.kernel.org/patchwork/patch/795892/#989423
-[2]: Documentation/process/submitting-patches.rst
-
----
- scripts/mod/devicetable-offsets.c |  3 +++
- scripts/mod/file2alias.c          | 18 ++++++++++++++++++
- 2 files changed, 21 insertions(+)
-
-diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-index 293004499b4d..99276a422e77 100644
---- a/scripts/mod/devicetable-offsets.c
-+++ b/scripts/mod/devicetable-offsets.c
-@@ -225,5 +225,8 @@ int main(void)
- 	DEVID_FIELD(typec_device_id, svid);
- 	DEVID_FIELD(typec_device_id, mode);
- 
-+	DEVID(wmi_device_id);
-+	DEVID_FIELD(wmi_device_id, guid_string);
-+
- 	return 0;
- }
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index a37af7d71973..f014a2466ff7 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -1287,6 +1287,23 @@ static int do_typec_entry(const char *filename, void *symval, char *alias)
- 	return 1;
+diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+index cf2229ece9ff..c3ed3c8c17b9 100644
+--- a/drivers/platform/x86/dell-smbios-wmi.c
++++ b/drivers/platform/x86/dell-smbios-wmi.c
+@@ -277,4 +277,4 @@ void exit_dell_smbios_wmi(void)
+ 	wmi_driver_unregister(&dell_smbios_wmi_driver);
  }
  
-+/* Looks like: wmi:guid */
-+static int do_wmi_entry(const char *filename, void *symval, char *alias)
-+{
-+	DEF_FIELD_ADDR(symval, wmi_device_id, guid_string);
-+	if (strlen(*guid_string) != WMI_GUID_STRING_LEN) {
-+		warn("Invalid WMI device id 'wmi:%s' in '%s'\n",
-+				*guid_string, filename);
-+		return 0;
-+	}
-+	if (snprintf(alias, 500, WMI_MODULE_PREFIX "%s", *guid_string) < 0) {
-+		warn("Could not generate all MODULE_ALIAS's in '%s'\n",
-+				filename);
-+		return 0;
-+	}
-+	return 1;
-+}
-+
- /* Does namelen bytes of name exactly match the symbol? */
- static bool sym_is(const char *name, unsigned namelen, const char *symbol)
- {
-@@ -1357,6 +1374,7 @@ static const struct devtable devtable[] = {
- 	{"fslmc", SIZE_fsl_mc_device_id, do_fsl_mc_entry},
- 	{"tbsvc", SIZE_tb_service_id, do_tbsvc_entry},
- 	{"typec", SIZE_typec_device_id, do_typec_entry},
-+	{"wmi", SIZE_wmi_device_id, do_wmi_entry},
- };
+-MODULE_ALIAS("wmi:" DELL_WMI_SMBIOS_GUID);
++MODULE_DEVICE_TABLE(wmi, dell_smbios_wmi_id_table);
+diff --git a/drivers/platform/x86/dell-wmi-descriptor.c b/drivers/platform/x86/dell-wmi-descriptor.c
+index 072821aa47fc..14ab250b7d5a 100644
+--- a/drivers/platform/x86/dell-wmi-descriptor.c
++++ b/drivers/platform/x86/dell-wmi-descriptor.c
+@@ -207,7 +207,7 @@ static struct wmi_driver dell_wmi_descriptor_driver = {
  
- /* Create MODULE_ALIAS() statements.
+ module_wmi_driver(dell_wmi_descriptor_driver);
+ 
+-MODULE_ALIAS("wmi:" DELL_WMI_DESCRIPTOR_GUID);
++MODULE_DEVICE_TABLE(wmi, dell_wmi_descriptor_id_table);
+ MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+ MODULE_DESCRIPTION("Dell WMI descriptor driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
+index 16c7f3d9a335..0602aba62b3f 100644
+--- a/drivers/platform/x86/dell-wmi.c
++++ b/drivers/platform/x86/dell-wmi.c
+@@ -50,8 +50,6 @@ MODULE_LICENSE("GPL");
+ 
+ static bool wmi_requires_smbios_request;
+ 
+-MODULE_ALIAS("wmi:"DELL_EVENT_GUID);
+-
+ struct dell_wmi_priv {
+ 	struct input_dev *input_dev;
+ 	u32 interface_version;
+@@ -738,3 +736,5 @@ static void __exit dell_wmi_exit(void)
+ 	wmi_driver_unregister(&dell_wmi_driver);
+ }
+ module_exit(dell_wmi_exit);
++
++MODULE_DEVICE_TABLE(wmi, dell_wmi_id_table);
+diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+index 59872f87b741..52fcac5b393a 100644
+--- a/drivers/platform/x86/huawei-wmi.c
++++ b/drivers/platform/x86/huawei-wmi.c
+@@ -201,8 +201,7 @@ static struct wmi_driver huawei_wmi_driver = {
+ 
+ module_wmi_driver(huawei_wmi_driver);
+ 
+-MODULE_ALIAS("wmi:"WMI0_EVENT_GUID);
+-MODULE_ALIAS("wmi:"AMW0_EVENT_GUID);
++MODULE_DEVICE_TABLE(wmi, huawei_wmi_id_table);
+ MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
+ MODULE_DESCRIPTION("Huawei WMI hotkeys");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c b/drivers/platform/x86/intel-wmi-thunderbolt.c
+index 9ded8e2af312..4dfa61434a76 100644
+--- a/drivers/platform/x86/intel-wmi-thunderbolt.c
++++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
+@@ -88,7 +88,7 @@ static struct wmi_driver intel_wmi_thunderbolt_driver = {
+ 
+ module_wmi_driver(intel_wmi_thunderbolt_driver);
+ 
+-MODULE_ALIAS("wmi:" INTEL_WMI_THUNDERBOLT_GUID);
++MODULE_DEVICE_TABLE(wmi, intel_wmi_thunderbolt_id_table);
+ MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+ MODULE_DESCRIPTION("Intel WMI Thunderbolt force power driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
+index c4530ba715e8..8751a13134be 100644
+--- a/drivers/platform/x86/wmi-bmof.c
++++ b/drivers/platform/x86/wmi-bmof.c
+@@ -119,7 +119,7 @@ static struct wmi_driver wmi_bmof_driver = {
+ 
+ module_wmi_driver(wmi_bmof_driver);
+ 
+-MODULE_ALIAS("wmi:" WMI_BMOF_GUID);
++MODULE_DEVICE_TABLE(wmi, wmi_bmof_id_table);
+ MODULE_AUTHOR("Andrew Lutomirski <luto@kernel.org>");
+ MODULE_DESCRIPTION("WMI embedded Binary MOF driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.20.1
 
