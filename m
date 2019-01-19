@@ -2,191 +2,114 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D68C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE38C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 20:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB992086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDABC2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 20:12:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dF1iVCwy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbfASTvV convert rfc822-to-8bit (ORCPT
+        id S1729185AbfASUHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 14:51:21 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:48093 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729334AbfASTvO (ORCPT
+        Sat, 19 Jan 2019 15:07:37 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46252 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726758AbfASUHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 14:51:14 -0500
-Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 2C453CF353;
-        Sat, 19 Jan 2019 20:58:58 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v4 5/5] Bluetooth: btusb: Use the hw_reset method to allow
- resetting the BT chip
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190118223407.64818-5-rajatja@google.com>
-Date:   Sat, 19 Jan 2019 20:51:11 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Alex Hung <alex.hung@canonical.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        rajatxjain@gmail.com, dtor@google.com, raghuram.hegde@intel.com,
-        chethan.tumkur.narayan@intel.com, sukumar.ghorai@intel.com
-Content-Transfer-Encoding: 8BIT
-Message-Id: <710EDC24-B0F2-4FDB-9C30-F78CDF74C0E5@holtmann.org>
-References: <20181117010748.24347-1-rajatja@google.com>
- <20190118223407.64818-1-rajatja@google.com>
- <20190118223407.64818-5-rajatja@google.com>
-To:     Rajat Jain <rajatja@google.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Sat, 19 Jan 2019 15:07:36 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l9so18894735wrt.13
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 12:07:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FcIkyt1qb61GftfpgTWg4H4x05ilc5MHpd5J7cqtPPs=;
+        b=dF1iVCwygFRRdyL2QlQlkOOBTIbNUri5xdTAM8BMNOOiH5zocq1dwFncJyWWxQZLmr
+         zh9hTjCtLEZGrjpXOKnR9sunbysBZerQ4ad/9evhGsJU1JPjCZjFXLH2ttWTkEd3RtJD
+         7Pb5JS2FSnAIaptHbaLK5Q7+BmY2Vg3oc0fpLuI3bHM0FJSq7VCbXjGOJichbTC0m3Xu
+         AAohi2PNPQuTvSKRWGnaGUAWRLenYhiMem0PsLbV2skn6R9K7cZnvblbFIMo0HK3UYu0
+         t4+Xo9K4cPiXO1LR2Z1qajdZDsLDQf9tN7DPJ7glVdjgC521igVcKSUMhkcXFqsQ89RR
+         D9iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FcIkyt1qb61GftfpgTWg4H4x05ilc5MHpd5J7cqtPPs=;
+        b=lRQDCdv5wEuiekw9/nz04v7okOTUYfJ2nKeQO2KQwibO456ZdiIqdZUnr8dlt+3xYF
+         XpTJCHCKq21qtrCwo4YVNfG79vPHgTRUXKZgBHG/iZGrARt1qXArJVtVYRzWgdYJ66GY
+         1vzIHe+Npk7pqE6uV3BVYTS5MkIdIbGViZKX/Dc10yJDuAejo57BvsPpX05ww25F5rA1
+         Z0FVBqX6eK5Pg7jLsPuIXYTT5fID5B+azhs+aakTt4d4txX9SQ7p4jUnL/tLA1CRSc5k
+         mUS9oARXXGGe7kfPDgsOyJVxf34jU/mm4r7bwwXO+Y0h36/nmGSzOflnDfolyDEZ9gSR
+         j+bg==
+X-Gm-Message-State: AJcUukcL2VSrUo0Dcn30etXDVWzOiBW1mO+98vlpt2uwLVvPOTs72PRk
+        30Zdhf3YI8zy5F985Wyq2Lk=
+X-Google-Smtp-Source: ALg8bN4EK3izkSTa2J3vsyZ5rP0B2S4GDGahrI1lXF9xKMacfot1GQzZcKJYGyX/BbZWgd6SiC0OWw==
+X-Received: by 2002:adf:8b83:: with SMTP id o3mr22263213wra.81.1547928454880;
+        Sat, 19 Jan 2019 12:07:34 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d90:4f00:49c3:3590:ca42:b19e])
+        by smtp.gmail.com with ESMTPSA id n11sm27238072wrw.60.2019.01.19.12.07.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 19 Jan 2019 12:07:34 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>, Len Brown <lenb@kernel.org>,
+        Len Brown <len.brown@intel.com>
+Cc:     Jiang Liu <jiang.liu@linux.intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: update simple firmware interface (SFI) section entry
+Date:   Sat, 19 Jan 2019 21:07:19 +0100
+Message-Id: <20190119200719.5686-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rajat,
+Len Brown has not been active in this part since around 2010. The recent
+activity suggests that Thomas Gleixner and Jiang Lui were maintaining
+this part of the kernel sources. Jiang Lui has not been active in the
+kernel sources since beginning 2016. So, the maintainer's role seems to
+be now with Thomas.
 
-> If the platform provides it, use the reset gpio to reset the BT
-> chip (requested by the HCI core if needed). This has been found helpful
-> on some of Intel bluetooth controllers where the firmware gets stuck and
-> the only way out is a hard reset pin provided by the platform.
-> 
-> Signed-off-by: Rajat Jain <rajatja@google.com>
-> ---
-> v4: Use data->flags instead of clearing the quirk in btusb_hw_reset()
-> v3: Better error handling for gpiod_get_optional()
-> v2: Handle the EPROBE_DEFER case.
-> 
-> drivers/bluetooth/btusb.c | 45 +++++++++++++++++++++++++++++++++++++++
-> 1 file changed, 45 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 59869643cc29..7cf1e4f749e9 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -29,6 +29,7 @@
-> #include <linux/of_device.h>
-> #include <linux/of_irq.h>
-> #include <linux/suspend.h>
-> +#include <linux/gpio/consumer.h>
-> #include <asm/unaligned.h>
-> 
-> #include <net/bluetooth/bluetooth.h>
-> @@ -439,6 +440,7 @@ static const struct dmi_system_id btusb_needs_reset_resume_table[] = {
-> #define BTUSB_BOOTING		9
-> #define BTUSB_DIAG_RUNNING	10
-> #define BTUSB_OOB_WAKE_ENABLED	11
-> +#define BTUSB_HW_RESET_DONE	12
+The referenced git tree does not exist. Instead, I found an sfi branch
+in Len's kernel git repository, but that has not been updated since 2014;
+so that is not worth to be mentioned in MAINTAINERS now anymore either.
 
-I think you mean BTUSB_HW_RESET_ACTIVE or BTUSB_HW_RESET_IN_PROGRESS.
+This change was motivated after I found that I could not send any mails
+to the sfi-devel mailing list, and that the mailing list does not exist
+anymore.
 
-> 
-> struct btusb_data {
-> 	struct hci_dev       *hdev;
-> @@ -476,6 +478,8 @@ struct btusb_data {
-> 	struct usb_endpoint_descriptor *diag_tx_ep;
-> 	struct usb_endpoint_descriptor *diag_rx_ep;
-> 
-> +	struct gpio_desc *reset_gpio;
-> +
-> 	__u8 cmdreq_type;
-> 	__u8 cmdreq;
-> 
-> @@ -491,6 +495,30 @@ struct btusb_data {
-> 	int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
-> };
-> 
-> +
-> +static void btusb_hw_reset(struct hci_dev *hdev)
-> +{
-> +	struct btusb_data *data = hci_get_drvdata(hdev);
-> +	struct gpio_desc *reset_gpio = data->reset_gpio;
-> +
-> +	/*
-> +	 * Toggle the hard reset line if the platform provides one. The reset
-> +	 * is going to yank the device off the USB and then replug. So doing
-> +	 * once is enough. The cleanup is handled correctly on the way out
-> +	 * (standard USB disconnect), and the new device is detected cleanly
-> +	 * and bound to the driver again like it should be.
-> +	 */
-> +	if (test_and_set_bit(BTUSB_HW_RESET_DONE, &data->flags)) {
-> +		bt_dev_warn(hdev, "last reset failed? Not resetting again\n");
-> +		return;
-> +	}
-> +
-> +	bt_dev_dbg(hdev, "Initiating HW reset via gpio\n”);
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
 
-The bt_dev_ functions don’t need the \n at the end.
+Len, please ack this patch.
 
-> +	gpiod_set_value(reset_gpio, 1);
-> +	mdelay(100);
-> +	gpiod_set_value(reset_gpio, 0);
-> +}
-> +
-> static inline void btusb_free_frags(struct btusb_data *data)
-> {
-> 	unsigned long flags;
-> @@ -2915,6 +2943,7 @@ static int btusb_probe(struct usb_interface *intf,
-> 		       const struct usb_device_id *id)
-> {
-> 	struct usb_endpoint_descriptor *ep_desc;
-> +	struct gpio_desc *reset_gpio;
-> 	struct btusb_data *data;
-> 	struct hci_dev *hdev;
-> 	unsigned ifnum_base;
-> @@ -3028,6 +3057,16 @@ static int btusb_probe(struct usb_interface *intf,
-> 
-> 	SET_HCIDEV_DEV(hdev, &intf->dev);
-> 
-> +	reset_gpio = gpiod_get_optional(&data->udev->dev, "reset",
-> +					GPIOD_OUT_LOW);
-> +	if (IS_ERR(reset_gpio)) {
-> +		err = PTR_ERR(reset_gpio);
-> +		goto out_free_dev;
-> +	} else if (reset_gpio) {
-> +		data->reset_gpio = reset_gpio;
-> +		hdev->hw_reset = btusb_hw_reset;
-> +	}
-> +
-> 	hdev->open   = btusb_open;
-> 	hdev->close  = btusb_close;
-> 	hdev->flush  = btusb_flush;
-> @@ -3083,6 +3122,7 @@ static int btusb_probe(struct usb_interface *intf,
-> 		set_bit(HCI_QUIRK_STRICT_DUPLICATE_FILTER, &hdev->quirks);
-> 		set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
-> 		set_bit(HCI_QUIRK_NON_PERSISTENT_DIAG, &hdev->quirks);
-> +		set_bit(HCI_QUIRK_HW_RESET_ON_TIMEOUT, &hdev->quirks);
-> 
-> 		if (id->driver_info & BTUSB_INTEL) {
-> 			hdev->setup = btusb_setup_intel;
-> @@ -3223,6 +3263,8 @@ static int btusb_probe(struct usb_interface *intf,
-> 	return 0;
-> 
-> out_free_dev:
-> +	if (data->reset_gpio)
-> +		gpiod_put(data->reset_gpio);
-> 	hci_free_dev(hdev);
-> 	return err;
-> }
-> @@ -3266,6 +3308,9 @@ static void btusb_disconnect(struct usb_interface *intf)
-> 	if (data->oob_wake_irq)
-> 		device_init_wakeup(&data->udev->dev, false);
-> 
-> +	if (data->reset_gpio)
-> +		gpiod_put(data->reset_gpio);
-> +
-> 	hci_free_dev(hdev);
-> }
+Thomas, if you are maintaining SFI, please pick this.
 
-Regards
+ MAINTAINERS | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Marcel
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 887b4b9fb6c4..e2d370910a07 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13841,10 +13841,8 @@ F:	drivers/video/fbdev/sm712*
+ F:	Documentation/fb/sm712fb.txt
+ 
+ SIMPLE FIRMWARE INTERFACE (SFI)
+-M:	Len Brown <lenb@kernel.org>
+-L:	sfi-devel@simplefirmware.org
++M:	Thomas Gleixner <tglx@linutronix.de>
+ W:	http://simplefirmware.org/
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux-sfi-2.6.git
+ S:	Supported
+ F:	arch/x86/platform/sfi/
+ F:	drivers/sfi/
+-- 
+2.17.1
 
