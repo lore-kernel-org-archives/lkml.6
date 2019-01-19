@@ -2,74 +2,85 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E058DC61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5BBC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0CD2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:06:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26A912086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 19:06:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbfASTGY (ORCPT
+        id S1729278AbfASTGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 14:06:24 -0500
-Received: from smtprelay0153.hostedemail.com ([216.40.44.153]:46276 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728911AbfASTGX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 14:06:23 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 301B9182CED34;
-        Sat, 19 Jan 2019 19:06:22 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: idea25_71b6f5d7f982c
-X-Filterd-Recvd-Size: 1643
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 19 Jan 2019 19:06:21 +0000 (UTC)
-Message-ID: <a5eab6ca68ee1eb837c8c86b69b4696846af719b.camel@perches.com>
-Subject: Re: [PATCH] clang-format: Update .clang-format with the latest
- for_each macro list
-From:   Joe Perches <joe@perches.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Sat, 19 Jan 2019 11:06:20 -0800
-In-Reply-To: <CANiq72=o_7d63MXJJn6dEnt76viF0YV4svp-5VBHk7JKyjXJDw@mail.gmail.com>
-References: <20190118225658.GA28312@ziepe.ca>
-         <CANiq72=o_7d63MXJJn6dEnt76viF0YV4svp-5VBHk7JKyjXJDw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Sat, 19 Jan 2019 14:06:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40084 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728911AbfASTGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 14:06:33 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D95DD9FDF9;
+        Sat, 19 Jan 2019 19:06:32 +0000 (UTC)
+Received: from [10.10.120.4] (ovpn-120-4.rdu2.redhat.com [10.10.120.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CA432611A1;
+        Sat, 19 Jan 2019 19:06:31 +0000 (UTC)
+Subject: Re: [PATCH v2] target: fix a missing check of match_int
+To:     Kangjie Lu <kjlu@umn.edu>
+References: <5C38F72B.5000203@redhat.com>
+ <20190112053159.99406-1-kjlu@umn.edu>
+Cc:     pakki001@umn.edu, "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Mike Christie <mchristi@redhat.com>
+Message-ID: <5C437537.8010304@redhat.com>
+Date:   Sat, 19 Jan 2019 13:06:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
+MIME-Version: 1.0
+In-Reply-To: <20190112053159.99406-1-kjlu@umn.edu>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sat, 19 Jan 2019 19:06:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-01-19 at 19:30 +0100, Miguel Ojeda wrote:
-> Hi Jason,
+On 01/11/2019 11:31 PM, Kangjie Lu wrote:
+> When match_int fails, "arg" is left uninitialized and may contain random
+> value, thus should not be used.
+> The fix checks if match_int fails, and if so, returns its error code.
 > 
-> On Fri, Jan 18, 2019 at 11:57 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
-> > Re-run the shell fragment that generated the original list. In particular
-> > this adds the missing xarray related functions.
-> > 
-> > Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/target/target_core_rd.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
 > 
-> Thank for the patch! Picking it up.
+> diff --git a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
+> index a6e8106abd6f..3b7657b2f2f1 100644
+> --- a/drivers/target/target_core_rd.c
+> +++ b/drivers/target/target_core_rd.c
+> @@ -559,6 +559,7 @@ static ssize_t rd_set_configfs_dev_params(struct se_device *dev,
+>  	char *orig, *ptr, *opts;
+>  	substring_t args[MAX_OPT_ARGS];
+>  	int arg, token;
+> +	int ret;
+>  
+>  	opts = kstrdup(page, GFP_KERNEL);
+>  	if (!opts)
+> @@ -573,14 +574,24 @@ static ssize_t rd_set_configfs_dev_params(struct se_device *dev,
+>  		token = match_token(ptr, tokens, args);
+>  		switch (token) {
+>  		case Opt_rd_pages:
+> -			match_int(args, &arg);
+> +			ret = match_int(args, &arg);
+> +			if (ret) {
+> +				kfree(orig);
+> +				return ret;
 
-This misses all the directory/file specific #defines
-outside of include/ with for_each
-
-$ git grep "#define.*for_each" | grep -v '^include' | wc -l
-619
-
-Is it possible to make this generic somehow instead?
-Perhaps extend .clang_format with regexes?
-
-(?:[a-z0-9_]+_)?for_each(?:_[a-z_]+)
-[a-z0-9_]+_for_each
-
+Just set ret to the return value and then break, so all the error and
+success paths are going through the same code path.
