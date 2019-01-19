@@ -2,255 +2,100 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C1BC61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 17:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B92AC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 17:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 916D82086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 17:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547919220;
-	bh=DtvgE/snMwSj3ZN1+bmlCAElg0h7LXzdeERzCLJc92U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=W4W5OerlmQnbKTi4mCR8+v8pLURi1w4WNn4UYDXVhXdg/sBnllE6Z76IK3hejSg6d
-	 fZ1+5T3VORO7PlkzVwypnmhv3bMYtY9/Wipr34dUwOeG6HihGXmNkDSgU7NfDOW4tF
-	 /PCn1laMxsGaY4Tq/A6HIpm+TFLyr9GAuTYV0WQc=
+	by mail.kernel.org (Postfix) with ESMTP id 12F062086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 17:36:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbfASRdg (ORCPT
+        id S1728777AbfASRgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 12:33:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51706 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728620AbfASRdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 12:33:35 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B233D2086D;
-        Sat, 19 Jan 2019 17:33:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547919214;
-        bh=DtvgE/snMwSj3ZN1+bmlCAElg0h7LXzdeERzCLJc92U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Jd4aTyMPUW4q4BSBL/RMcJ1TndjPS9QXxSUSNucBDinZiH3vd2XcA+357b0HcAYEO
-         JL72Ot84z3qe+DNPd34tm/5SU7KFpEVmEgztdmpkVQqFaThw8NuqOOhzAe24dZXmvP
-         JmGKlD2Wxtf9sEjA/odm99HBE88Gr4FUCxzt7aeM=
-Date:   Sat, 19 Jan 2019 17:33:30 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Denis CIOCCA <denis.ciocca@st.com>
-Cc:     Mario Tesi <martepisa@gmail.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mario TESI <mario.tesi@st.com>
-Subject: Re: [PATCH] iio:st_pressure:initial lps22hh sensor support
-Message-ID: <20190119173330.29e49c63@archlinux>
-In-Reply-To: <2844d78742404a0ebea470fa5e0ec722@SFHDAG2NODE1.st.com>
-References: <1547486660-15359-1-git-send-email-mario.tesi@st.com>
-        <2844d78742404a0ebea470fa5e0ec722@SFHDAG2NODE1.st.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 19 Jan 2019 12:36:14 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41269 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728423AbfASRgO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 12:36:14 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l12so18732628qtf.8
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 09:36:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=ypvr+OQYTHNW4uY/rsGS/sj1gVmbytj2ZKJs+P5iF1A=;
+        b=G3RIaxSyLP7kAXfSf8cnLEcfuTaueSe/VlmOdKCAkocrfxgWMg2HmDWQdkbnlMEzFy
+         uk6L5pSVm2v5Ik1f5pCyoJ0Xs5nryBWgbeDFdCvG1jRFd1qIb/6rCjE6vSxmrHmEkhXF
+         /iYJoe2wZlGp9RmA5b7mdi+zId0BARspdedRinn7A3Ke2KYJDI68RF27ockP8uHBxFOu
+         au3bdLWpBTjHzrq9v/zyHtlFwortxGVxcMF7RllLnXTD61qmjl4Q8/J4klvOiyKA51M6
+         U5Q16ytZty/j8crLrHQwTBZdn3V7/OXg3GP1ykbqTcPX9XodT7e3luneGzt68gSbWKOr
+         epQA==
+X-Gm-Message-State: AJcUuke+Lmao9FWUGXjNrqdDbBzGX3TY5oxzuASz2EHRIxpxHqW9CbjY
+        5e+3KQgUXX6Vgz3Rv7xLupG5i+qcAGM=
+X-Google-Smtp-Source: ALg8bN7XqssjwFdyiBEKx7QTA/6s4K+zBW74AvjGO7ecXmSTWr75yoXlTP6/x02d8me3Gr9P9By0cw==
+X-Received: by 2002:a0c:a9da:: with SMTP id c26mr19630056qvb.140.1547919373462;
+        Sat, 19 Jan 2019 09:36:13 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id v32sm77821479qta.37.2019.01.19.09.36.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 19 Jan 2019 09:36:12 -0800 (PST)
+Date:   Sat, 19 Jan 2019 10:36:11 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     iommu@lists.linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH] iommu: amd: call free_iova_fast with pfn in map_sg
+Message-ID: <20190119173611.reqzqxwgf2z22gby@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+References: <20190117192902.15158-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190117192902.15158-1-jsnitsel@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Jan 2019 00:18:58 +0000
-Denis CIOCCA <denis.ciocca@st.com> wrote:
+On Thu Jan 17 19, Jerry Snitselaar wrote:
+>In the error path of map_sg, free_iova_fast is being called with
+>address instead of the pfn. This results in a bad value getting into
+>the rcache, and can result in hitting a BUG_ON when
+>iova_magazine_free_pfns is called.
+>
+>Cc: Joerg Roedel <joro@8bytes.org>
+>Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+>Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>---
+> drivers/iommu/amd_iommu.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+>index 87ba23a75b38..418df8ff3e50 100644
+>--- a/drivers/iommu/amd_iommu.c
+>+++ b/drivers/iommu/amd_iommu.c
+>@@ -2623,7 +2623,7 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
+> 	}
+>
+> out_free_iova:
+>-	free_iova_fast(&dma_dom->iovad, address, npages);
+>+	free_iova_fast(&dma_dom->iovad, address >> PAGE_SHIFT, npages);
+>
+> out_err:
+> 	return 0;
+>-- 
+>2.20.1.98.gecbdaf0899
+>
 
-> Acked-by: Denis Ciocca <denis.ciocca@st.com>
-> 
-> 
-> -----Original Message-----
-> From: linux-iio-owner@vger.kernel.org <linux-iio-owner@vger.kernel.org> On Behalf Of Mario Tesi
-> Sent: Monday, January 14, 2019 9:24 AM
-> To: jic23@kernel.org
-> Cc: linux-iio@vger.kernel.org; linux-kernel@vger.kernel.org; Mario TESI <mario.tesi@st.com>
-> Subject: [PATCH] iio:st_pressure:initial lps22hh sensor support
-> 
-> From: mario tesi <mario.tesi@st.com>
-> 
-> Initial support for ST LPS22HH pressure sensor. Datasheet:
-> http://www2.st.com/resource/en/datasheet/lps22hh.pdf
-> 
-> Features:
->  * pressure, temperature data and timestamping channels
->  * sampling frequency selection [1..200] Hz
->  * interrupt based trigger
->  * over I2C or SPI interface
-> 
-> Signed-off-by: mario tesi <mario.tesi@st.com>
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
 
-Thanks,
+I forgot to add the Fixes line.
 
-Jonathan
-
-> ---
->  drivers/iio/pressure/Kconfig            |  2 +-
->  drivers/iio/pressure/st_pressure.h      |  2 +
->  drivers/iio/pressure/st_pressure_core.c | 69 +++++++++++++++++++++++++++++++++  drivers/iio/pressure/st_pressure_i2c.c  |  5 +++  drivers/iio/pressure/st_pressure_spi.c  |  5 +++
->  5 files changed, 82 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/pressure/Kconfig b/drivers/iio/pressure/Kconfig index eaa7cfc..efeb89f 100644
-> --- a/drivers/iio/pressure/Kconfig
-> +++ b/drivers/iio/pressure/Kconfig
-> @@ -165,7 +165,7 @@ config IIO_ST_PRESS
->  	select IIO_TRIGGERED_BUFFER if (IIO_BUFFER)
->  	help
->  	  Say yes here to build support for STMicroelectronics pressure
-> -	  sensors: LPS001WP, LPS25H, LPS331AP, LPS22HB.
-> +	  sensors: LPS001WP, LPS25H, LPS331AP, LPS22HB, LPS22HH.
->  
->  	  This driver can also be built as a module. If so, these modules
->  	  will be created:
-> diff --git a/drivers/iio/pressure/st_pressure.h b/drivers/iio/pressure/st_pressure.h
-> index e67eb0d..5794660 100644
-> --- a/drivers/iio/pressure/st_pressure.h
-> +++ b/drivers/iio/pressure/st_pressure.h
-> @@ -21,6 +21,7 @@ enum st_press_type {
->  	LPS22HB,
->  	LPS33HW,
->  	LPS35HW,
-> +	LPS22HH,
->  	ST_PRESS_MAX,
->  };
->  
-> @@ -30,6 +31,7 @@ enum st_press_type {
->  #define LPS22HB_PRESS_DEV_NAME		"lps22hb"
->  #define LPS33HW_PRESS_DEV_NAME		"lps33hw"
->  #define LPS35HW_PRESS_DEV_NAME		"lps35hw"
-> +#define LPS22HH_PRESS_DEV_NAME		"lps22hh"
->  
->  /**
->   * struct st_sensors_platform_data - default press platform data diff --git a/drivers/iio/pressure/st_pressure_core.c b/drivers/iio/pressure/st_pressure_core.c
-> index 4ddb6cf..38dcdb7 100644
-> --- a/drivers/iio/pressure/st_pressure_core.c
-> +++ b/drivers/iio/pressure/st_pressure_core.c
-> @@ -492,6 +492,75 @@
->  		.multi_read_bit = false,
->  		.bootime = 2,
->  	},
-> +	{
-> +		/*
-> +		 * CUSTOM VALUES FOR LPS22HH SENSOR
-> +		 * See LPS22HH datasheet:
-> +		 * http://www2.st.com/resource/en/datasheet/lps22hh.pdf
-> +		 */
-> +		.wai = 0xb3,
-> +		.wai_addr = ST_SENSORS_DEFAULT_WAI_ADDRESS,
-> +		.sensors_supported = {
-> +			[0] = LPS22HH_PRESS_DEV_NAME,
-> +		},
-> +		.ch = (struct iio_chan_spec *)st_press_lps22hb_channels,
-> +		.num_ch = ARRAY_SIZE(st_press_lps22hb_channels),
-> +		.odr = {
-> +			.addr = 0x10,
-> +			.mask = 0x70,
-> +			.odr_avl = {
-> +				{ .hz = 1, .value = 0x01 },
-> +				{ .hz = 10, .value = 0x02 },
-> +				{ .hz = 25, .value = 0x03 },
-> +				{ .hz = 50, .value = 0x04 },
-> +				{ .hz = 75, .value = 0x05 },
-> +				{ .hz = 100, .value = 0x06 },
-> +				{ .hz = 200, .value = 0x07 },
-> +			},
-> +		},
-> +		.pw = {
-> +			.addr = 0x10,
-> +			.mask = 0x70,
-> +			.value_off = ST_SENSORS_DEFAULT_POWER_OFF_VALUE,
-> +		},
-> +		.fs = {
-> +			.fs_avl = {
-> +				/*
-> +				 * Pressure and temperature sensitivity values
-> +				 * as defined in table 3 of LPS22HH datasheet.
-> +				 */
-> +				[0] = {
-> +					.num = ST_PRESS_FS_AVL_1260MB,
-> +					.gain = ST_PRESS_KPASCAL_NANO_SCALE,
-> +					.gain2 = ST_PRESS_LPS22HB_LSB_PER_CELSIUS,
-> +				},
-> +			},
-> +		},
-> +		.bdu = {
-> +			.addr = 0x10,
-> +			.mask = BIT(1),
-> +		},
-> +		.drdy_irq = {
-> +			.int1 = {
-> +				.addr = 0x12,
-> +				.mask = BIT(2),
-> +				.addr_od = 0x11,
-> +				.mask_od = BIT(5),
-> +			},
-> +			.addr_ihl = 0x11,
-> +			.mask_ihl = BIT(6),
-> +			.stat_drdy = {
-> +				.addr = ST_SENSORS_DEFAULT_STAT_ADDR,
-> +				.mask = 0x03,
-> +			},
-> +		},
-> +		.sim = {
-> +			.addr = 0x10,
-> +			.value = BIT(0),
-> +		},
-> +		.multi_read_bit = false,
-> +		.bootime = 2,
-> +	},
->  };
->  
->  static int st_press_write_raw(struct iio_dev *indio_dev, diff --git a/drivers/iio/pressure/st_pressure_i2c.c b/drivers/iio/pressure/st_pressure_i2c.c
-> index 2026a10..a60849d 100644
-> --- a/drivers/iio/pressure/st_pressure_i2c.c
-> +++ b/drivers/iio/pressure/st_pressure_i2c.c
-> @@ -45,6 +45,10 @@
->  		.compatible = "st,lps35hw",
->  		.data = LPS35HW_PRESS_DEV_NAME,
->  	},
-> +	{
-> +		.compatible = "st,lps22hh",
-> +		.data = LPS22HH_PRESS_DEV_NAME,
-> +	},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, st_press_of_match); @@ -69,6 +73,7 @@
->  	{ LPS22HB_PRESS_DEV_NAME, LPS22HB },
->  	{ LPS33HW_PRESS_DEV_NAME, LPS33HW },
->  	{ LPS35HW_PRESS_DEV_NAME, LPS35HW },
-> +	{ LPS22HH_PRESS_DEV_NAME, LPS22HH },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(i2c, st_press_id_table); diff --git a/drivers/iio/pressure/st_pressure_spi.c b/drivers/iio/pressure/st_pressure_spi.c
-> index 9a3441b..79a12ed 100644
-> --- a/drivers/iio/pressure/st_pressure_spi.c
-> +++ b/drivers/iio/pressure/st_pressure_spi.c
-> @@ -49,6 +49,10 @@
->  		.compatible = "st,lps35hw",
->  		.data = LPS35HW_PRESS_DEV_NAME,
->  	},
-> +	{
-> +		.compatible = "st,lps22hh",
-> +		.data = LPS22HH_PRESS_DEV_NAME,
-> +	},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, st_press_of_match); @@ -93,6 +97,7 @@ static int st_press_spi_remove(struct spi_device *spi)
->  	{ LPS22HB_PRESS_DEV_NAME },
->  	{ LPS33HW_PRESS_DEV_NAME },
->  	{ LPS35HW_PRESS_DEV_NAME },
-> +	{ LPS22HH_PRESS_DEV_NAME },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(spi, st_press_id_table);
-> --
-> 1.9.1
-> 
-
+Fixes: 80187fd39dcb ("iommu/amd: Optimize map_sg and unmap_sg")
