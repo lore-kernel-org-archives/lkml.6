@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFFDC5AE5E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBE9C61CE3
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67EA92086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 260892086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:10:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbfASAGK (ORCPT
+        id S1730178AbfASAKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 19:06:10 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:53594 "EHLO ale.deltatee.com"
+        Fri, 18 Jan 2019 19:10:10 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:53618 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730114AbfASAGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 19:06:10 -0500
+        id S1730125AbfASAKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 19:10:10 -0500
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1gke9E-00028U-Qx; Fri, 18 Jan 2019 17:06:06 -0700
+        id 1gkeDA-0002BS-RN; Fri, 18 Jan 2019 17:10:09 -0700
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1gke9C-0003Ku-Pf; Fri, 18 Jan 2019 17:06:02 -0700
+        id 1gkeD9-0003Po-4G; Fri, 18 Jan 2019 17:10:07 -0700
 From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>
-Date:   Fri, 18 Jan 2019 17:05:59 -0700
-Message-Id: <20190119000559.12784-1-logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>
+Date:   Fri, 18 Jan 2019 17:10:01 -0700
+Message-Id: <20190119001001.13087-1-logang@deltatee.com>
 X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, hch@lst.de, logang@deltatee.com, dwmw2@infradead.org, joro@8bytes.org
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, logang@deltatee.com, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH] iommu/vt-d: Implement dma_[un]map_resource()
+Subject: [PATCH] NTB: ntb_transport: Ensure the destination buffer is mapped for TX DMA
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,93 +49,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the Intel IOMMU uses the default dma_[un]map_resource()
-implementations does nothing and simply returns the physical address
-unmodified.
+Presently, when ntb_transport is used with DMA and the IOMMU turned on,
+it fails with errors from the IOMMU such as:
 
-However, this doesn't create the IOVA entries necessary for addresses
-mapped this way to work when the IOMMU is enabled. Thus, when the
-IOMMU is enabled, drivers relying on dma_map_resource() will trigger
-DMAR errors. We see this when running ntb_transport with the IOMMU
-enabled, DMA, and switchtec hardware.
+  DMAR: DRHD: handling fault status reg 202
+  DMAR: [DMA Write] Request device [00:04.0] fault addr
+	381fc0340000 [fault reason 05] PTE Write access is not set
 
-The implementation for intel_map_resource() is nearly identical to
-intel_map_page(), we just have to re-create __intel_map_single().
-dma_unmap_resource() uses intel_unmap_page() directly as the
-functions are identical.
+This is because ntb_transport does not map the BAR space with the IOMMU.
 
+To fix this, we map the entire MW region for each QP after we assign
+the DMA channel. This prevents needing an extra DMA map in the fast
+path.
+
+Link: https://lore.kernel.org/linux-pci/499934e7-3734-1aee-37dd-b42a5d2a2608@intel.com/
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Jon Mason <jdmason@kudzu.us>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Allen Hubbe <allenbh@gmail.com>
 ---
- drivers/iommu/intel-iommu.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ drivers/ntb/ntb_transport.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 2bd9ac285c0d..81fb265f7730 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3649,11 +3649,9 @@ static int iommu_no_mapping(struct device *dev)
- 	return 0;
- }
+diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+index 3bfdb4562408..526b65afc16a 100644
+--- a/drivers/ntb/ntb_transport.c
++++ b/drivers/ntb/ntb_transport.c
+@@ -144,7 +144,9 @@ struct ntb_transport_qp {
+ 	struct list_head tx_free_q;
+ 	spinlock_t ntb_tx_free_q_lock;
+ 	void __iomem *tx_mw;
+-	dma_addr_t tx_mw_phys;
++	phys_addr_t tx_mw_phys;
++	size_t tx_mw_size;
++	dma_addr_t tx_mw_dma_addr;
+ 	unsigned int tx_index;
+ 	unsigned int tx_max_entry;
+ 	unsigned int tx_max_frame;
+@@ -1049,6 +1051,7 @@ static int ntb_transport_init_queue(struct ntb_transport_ctx *nt,
+ 	tx_size = (unsigned int)mw_size / num_qps_mw;
+ 	qp_offset = tx_size * (qp_num / mw_count);
  
--static dma_addr_t __intel_map_page(struct device *dev, struct page *page,
--				   unsigned long offset, size_t size, int dir,
--				   u64 dma_mask)
-+static dma_addr_t __intel_map_single(struct device *dev, phys_addr_t paddr,
-+				     size_t size, int dir, u64 dma_mask)
- {
--	phys_addr_t paddr = page_to_phys(page) + offset;
- 	struct dmar_domain *domain;
- 	phys_addr_t start_paddr;
- 	unsigned long iova_pfn;
-@@ -3710,6 +3708,14 @@ static dma_addr_t __intel_map_page(struct device *dev, struct page *page,
- 	return DMA_MAPPING_ERROR;
- }
++	qp->tx_mw_size = tx_size;
+ 	qp->tx_mw = nt->mw_vec[mw_num].vbase + qp_offset;
+ 	if (!qp->tx_mw)
+ 		return -EINVAL;
+@@ -1644,7 +1647,7 @@ static int ntb_async_tx_submit(struct ntb_transport_qp *qp,
+ 	dma_cookie_t cookie;
  
-+static dma_addr_t __intel_map_page(struct device *dev, struct page *page,
-+				   unsigned long offset, size_t size, int dir,
-+				   u64 dma_mask)
-+{
-+	return __intel_map_single(dev, page_to_phys(page) + offset, size, dir,
-+				  dma_mask);
-+}
+ 	device = chan->device;
+-	dest = qp->tx_mw_phys + qp->tx_max_frame * entry->tx_index;
++	dest = qp->tx_mw_dma_addr + qp->tx_max_frame * entry->tx_index;
+ 	buff_off = (size_t)buf & ~PAGE_MASK;
+ 	dest_off = (size_t)dest & ~PAGE_MASK;
+ 
+@@ -1863,6 +1866,18 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
+ 		qp->rx_dma_chan = NULL;
+ 	}
+ 
++	if (qp->tx_dma_chan) {
++		qp->tx_mw_dma_addr =
++			dma_map_resource(qp->tx_dma_chan->device->dev,
++					 qp->tx_mw_phys, qp->tx_mw_size,
++					 DMA_FROM_DEVICE, 0);
++		if (dma_mapping_error(qp->tx_dma_chan->device->dev,
++				      qp->tx_mw_dma_addr)) {
++			qp->tx_mw_dma_addr = 0;
++			goto err1;
++		}
++	}
 +
- static dma_addr_t intel_map_page(struct device *dev, struct page *page,
- 				 unsigned long offset, size_t size,
- 				 enum dma_data_direction dir,
-@@ -3718,6 +3724,13 @@ static dma_addr_t intel_map_page(struct device *dev, struct page *page,
- 	return __intel_map_page(dev, page, offset, size, dir, *dev->dma_mask);
- }
+ 	dev_dbg(&pdev->dev, "Using %s memcpy for TX\n",
+ 		qp->tx_dma_chan ? "DMA" : "CPU");
  
-+static dma_addr_t intel_map_resource(struct device *dev, phys_addr_t phys_addr,
-+				     size_t size, enum dma_data_direction dir,
-+				     unsigned long attrs)
-+{
-+	return __intel_map_single(dev, phys_addr, size, dir, *dev->dma_mask);
-+}
+@@ -1904,6 +1919,10 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
+ 	qp->rx_alloc_entry = 0;
+ 	while ((entry = ntb_list_rm(&qp->ntb_rx_q_lock, &qp->rx_free_q)))
+ 		kfree(entry);
++	if (qp->tx_mw_dma_addr)
++		dma_unmap_resource(qp->tx_dma_chan->device->dev,
++				   qp->tx_mw_dma_addr, qp->tx_mw_size,
++				   DMA_FROM_DEVICE, 0);
+ 	if (qp->tx_dma_chan)
+ 		dma_release_channel(qp->tx_dma_chan);
+ 	if (qp->rx_dma_chan)
+@@ -1945,6 +1964,11 @@ void ntb_transport_free_queue(struct ntb_transport_qp *qp)
+ 		 */
+ 		dma_sync_wait(chan, qp->last_cookie);
+ 		dmaengine_terminate_all(chan);
 +
- static void intel_unmap(struct device *dev, dma_addr_t dev_addr, size_t size)
- {
- 	struct dmar_domain *domain;
-@@ -3924,6 +3937,8 @@ static const struct dma_map_ops intel_dma_ops = {
- 	.unmap_sg = intel_unmap_sg,
- 	.map_page = intel_map_page,
- 	.unmap_page = intel_unmap_page,
-+	.map_resource = intel_map_resource,
-+	.unmap_resource = intel_unmap_page,
- 	.dma_supported = dma_direct_supported,
- };
- 
-@@ -4080,7 +4095,7 @@ static int init_iommu_hw(void)
- 				iommu_disable_protect_mem_regions(iommu);
- 			continue;
- 		}
--	
++		dma_unmap_resource(chan->device->dev,
++				   qp->tx_mw_dma_addr, qp->tx_mw_size,
++				   DMA_FROM_DEVICE, 0);
 +
- 		iommu_flush_write_buffer(iommu);
+ 		dma_release_channel(chan);
+ 	}
  
- 		iommu_set_root_entry(iommu);
 -- 
 2.19.0
 
