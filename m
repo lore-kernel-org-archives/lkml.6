@@ -2,168 +2,90 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FC9C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC68C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EECAB2084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 484942086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 18:22:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="kIdFfgKv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbfASSK6 (ORCPT
+        id S1729055AbfASSVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 13:10:58 -0500
-Received: from mga14.intel.com ([192.55.52.115]:33709 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728898AbfASSK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 13:10:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jan 2019 10:10:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,496,1539673200"; 
-   d="scan'208";a="129135088"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga001.jf.intel.com with ESMTP; 19 Jan 2019 10:10:57 -0800
-Subject: [PATCH] libnvdimm/security: Require nvdimm_security_setup_events()
- to succeed
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org
-Date:   Sat, 19 Jan 2019 09:58:20 -0800
-Message-ID: <154792070048.2307301.10850114897455981881.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Sat, 19 Jan 2019 13:21:51 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:35044 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728923AbfASSVv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 13:21:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vQT2blScUouxrTEKhEUzWsU5ZKit9n0YusMuo0ydMmM=; b=kIdFfgKvRd/Fw/SmgHq1IFC2e
+        RP3lbVrtdXJfiac8yUOr5n9PVn6Vf1KibATnAddx9HMGLAawXNPNoj3O6lYy0Ta5U3Rvv9I+/Toos
+        rr3otW7ze0+o8GoVBZydgbZQQgaoivMsjEnC4ZPzy3/0uo2BxxgK2q2dun7h/KBKIzBdY=;
+Received: from p200300ccfbfb41001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbfb:4100:1a3d:a2ff:febf:d33a] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gkvFU-0002M9-Qk; Sat, 19 Jan 2019 19:21:40 +0100
+Received: from andi by aktux with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gkvFU-0002T2-HK; Sat, 19 Jan 2019 19:21:40 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     tomi.valkeinen@ti.com, airlied@linux.ie, daniel@ffwll.ch,
+        laurent.pinchart@ideasonboard.com, sre@kernel.org,
+        dri-devel@lists.freedesktop.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 2/2] dt-bindings: panel: td028ttec1: add backlight property
+Date:   Sat, 19 Jan 2019 19:21:31 +0100
+Message-Id: <20190119182131.9341-3-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190119182131.9341-1-andreas@kemnade.info>
+References: <20190119182131.9341-1-andreas@kemnade.info>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following warning:
+This add an additional backlight property as described
+in panel-common.txt
 
-    ACPI0012:00: security event setup failed: -19
-
-...is meant to capture exceptional failures of sysfs_get_dirent(),
-however it will also fail in the common case when security support is
-disabled. A few issues:
-
-1/ A dev_warn() report for a common case is too chatty
-2/ The setup of this notifier is generic, no need for it to be driven
-   from the nfit driver, it can exist completely in the core.
-3/ If it fails for any reason besides security support being disabled,
-   that's fatal and should abort DIMM activation. Userspace may hang if
-   it never gets overwrite notifications.
-4/ The dirent needs to be released.
-
-Move the call to the core 'dimm' driver, make it conditional on security
-support being active, make it fatal for the exceptional case, add the
-missing sysfs_put() at device disable time.
-
-Cc: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- drivers/acpi/nfit/core.c   |    5 -----
- drivers/nvdimm/dimm.c      |    6 ++++++
- drivers/nvdimm/dimm_devs.c |   22 +++++++++++++++++-----
- drivers/nvdimm/nd.h        |    1 +
- include/linux/libnvdimm.h  |    1 -
- 5 files changed, 24 insertions(+), 11 deletions(-)
+ Documentation/devicetree/bindings/display/panel/tpo,td028ttec1.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 9c95b82e5e5d..c38c914d8a58 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -2073,11 +2073,6 @@ static int acpi_nfit_register_dimms(struct acpi_nfit_desc *acpi_desc)
- 		if (!nvdimm)
- 			continue;
+diff --git a/Documentation/devicetree/bindings/display/panel/tpo,td028ttec1.txt b/Documentation/devicetree/bindings/display/panel/tpo,td028ttec1.txt
+index ed34253d9fb1..898e06ecf4ef 100644
+--- a/Documentation/devicetree/bindings/display/panel/tpo,td028ttec1.txt
++++ b/Documentation/devicetree/bindings/display/panel/tpo,td028ttec1.txt
+@@ -6,6 +6,7 @@ Required properties:
  
--		rc = nvdimm_security_setup_events(nvdimm);
--		if (rc < 0)
--			dev_warn(acpi_desc->dev,
--				"security event setup failed: %d\n", rc);
--
- 		nfit_kernfs = sysfs_get_dirent(nvdimm_kobj(nvdimm)->sd, "nfit");
- 		if (nfit_kernfs)
- 			nfit_mem->flags_attr = sysfs_get_dirent(nfit_kernfs,
-diff --git a/drivers/nvdimm/dimm.c b/drivers/nvdimm/dimm.c
-index 0cf58cabc9ed..3cf50274fadb 100644
---- a/drivers/nvdimm/dimm.c
-+++ b/drivers/nvdimm/dimm.c
-@@ -26,6 +26,12 @@ static int nvdimm_probe(struct device *dev)
- 	struct nvdimm_drvdata *ndd;
- 	int rc;
+ Optional properties:
+ - label: a symbolic name for the panel
++- backlight: phandle of the backlight device
  
-+	rc = nvdimm_security_setup_events(dev);
-+	if (rc < 0) {
-+		dev_err(dev, "security event setup failed: %d\n", rc);
-+		return rc;
-+	}
-+
- 	rc = nvdimm_check_config_data(dev);
- 	if (rc) {
- 		/* not required for non-aliased nvdimm, ex. NVDIMM-N */
-diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
-index 4890310df874..efe412a6b5b9 100644
---- a/drivers/nvdimm/dimm_devs.c
-+++ b/drivers/nvdimm/dimm_devs.c
-@@ -578,13 +578,25 @@ struct nvdimm *__nvdimm_create(struct nvdimm_bus *nvdimm_bus,
- }
- EXPORT_SYMBOL_GPL(__nvdimm_create);
+ Required nodes:
+ - Video port for DPI input
+@@ -21,6 +22,7 @@ lcd-panel: td028ttec1@0 {
+ 	spi-cpha;
  
--int nvdimm_security_setup_events(struct nvdimm *nvdimm)
-+static void shutdown_security_notify(void *data)
- {
--	nvdimm->sec.overwrite_state = sysfs_get_dirent(nvdimm->dev.kobj.sd,
--			"security");
-+	struct nvdimm *nvdimm = data;
-+
-+	sysfs_put(nvdimm->sec.overwrite_state);
-+}
-+
-+int nvdimm_security_setup_events(struct device *dev)
-+{
-+	struct nvdimm *nvdimm = to_nvdimm(dev);
-+
-+	if (nvdimm->sec.state < 0 || !nvdimm->sec.ops
-+			|| !nvdimm->sec.ops->overwrite)
-+		return 0;
-+	nvdimm->sec.overwrite_state = sysfs_get_dirent(dev->kobj.sd, "security");
- 	if (!nvdimm->sec.overwrite_state)
--		return -ENODEV;
--	return 0;
-+		return -ENOMEM;
-+
-+	return devm_add_action_or_reset(dev, shutdown_security_notify, nvdimm);
- }
- EXPORT_SYMBOL_GPL(nvdimm_security_setup_events);
- 
-diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-index cfde992684e7..379bf4305e61 100644
---- a/drivers/nvdimm/nd.h
-+++ b/drivers/nvdimm/nd.h
-@@ -250,6 +250,7 @@ long nvdimm_clear_poison(struct device *dev, phys_addr_t phys,
- void nvdimm_set_aliasing(struct device *dev);
- void nvdimm_set_locked(struct device *dev);
- void nvdimm_clear_locked(struct device *dev);
-+int nvdimm_security_setup_events(struct device *dev);
- #if IS_ENABLED(CONFIG_NVDIMM_KEYS)
- int nvdimm_security_unlock(struct device *dev);
- #else
-diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-index 7315977b64da..ad609617aeb8 100644
---- a/include/linux/libnvdimm.h
-+++ b/include/linux/libnvdimm.h
-@@ -235,7 +235,6 @@ static inline struct nvdimm *nvdimm_create(struct nvdimm_bus *nvdimm_bus,
- 			cmd_mask, num_flush, flush_wpq, NULL, NULL);
- }
- 
--int nvdimm_security_setup_events(struct nvdimm *nvdimm);
- const struct nd_cmd_desc *nd_cmd_dimm_desc(int cmd);
- const struct nd_cmd_desc *nd_cmd_bus_desc(int cmd);
- u32 nd_cmd_in_size(struct nvdimm *nvdimm, int cmd,
+ 	label = "lcd";
++	backlight = <&backlight>;
+ 	port {
+ 		lcd_in: endpoint {
+ 			remote-endpoint = <&dpi_out>;
+-- 
+2.11.0
 
