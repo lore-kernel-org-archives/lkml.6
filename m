@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7046FC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 13:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44029C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 13:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352992086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 13:28:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 018322086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 13:29:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Yb0pRR4J";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="eIfgBp00"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="aFbFS4H6";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="BhGS45YX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbfASN2y (ORCPT
+        id S1728400AbfASN3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 08:28:54 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:59594 "EHLO
+        Sat, 19 Jan 2019 08:29:05 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:59604 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbfASN2y (ORCPT
+        with ESMTP id S1728354AbfASN3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 08:28:54 -0500
+        Sat, 19 Jan 2019 08:29:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1547904533; x=1579440533;
+  t=1547904545; x=1579440545;
   h=from:to:cc:subject:date:message-id:references:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=bGPlGg8EE3H4XUDQMXXPKEwt2W12jtDqim6zbzgAvJM=;
-  b=Yb0pRR4JhyYBVY91oFH5gaOTwkkeUPFGEVWsRGR3kGovORSeU1T52tKd
-   9eImTkeui9co+CY9EWOL5HoTJP39b2h8uHrNTI3ql2G572o90I3KjFrU7
-   +BhbqOSCokdfmIhHvtnpeqayYprSj3pAvFm0SIn1B355AE2gVDoz2X8FD
-   EqHK6DiNKEdiQWwTwXSuAMB9L3MA10yV7EuBFDV9ND6CP4eIN0CMl93Di
-   EgDZwjS/GxHNBiC8osWsiPU8LmFxSIA2jk7OzPHvSr2QSGM5PadGgLIVM
-   Lmo7R2tWkEK0ZhadWQ98VC6Z3EzqTsPw7J1H4kf9HwE0B1iOPRTW0jn8d
-   Q==;
+  bh=RkBTH8lbPokRi3AbbPZC7LaTnjprJMzCRLruXMKSeEc=;
+  b=aFbFS4H6YzyThIATQ7bs1zo77TH8N2LESt0/NS9Usm1qWaDLh4rrFRtl
+   1O7IZcwQXa8he52VHmWFUMUZ8Ofy2w96gt0KBKfJXjxR18YOdd3UDarod
+   WfjWvaWh5gRGAPibFEY+2Ft+QDHFIbHWULJkoC1LDjmxcrYrMjmaFwQqr
+   gam1x/AFimoVJhj0z/nACXl5sCsra82zduUFaOyAp0+LDZ9yl8QT9MF2w
+   S0osrrLAv2ldn0IvwaDZI6LPgyEOGAtc3bf+qQYsXGbUsdcyWZ/XLICGL
+   EsO481+ZznI5+80qkCy7IFd1HKGLaptAChjqdnpNFar7bJJgWQAjPR59h
+   w==;
 X-IronPort-AV: E=Sophos;i="5.56,495,1539619200"; 
-   d="scan'208";a="104187208"
-Received: from mail-sn1nam02lp2057.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.57])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Jan 2019 21:28:52 +0800
+   d="scan'208";a="104187216"
+Received: from mail-by2nam03lp2055.outbound.protection.outlook.com (HELO NAM03-BY2-obe.outbound.protection.outlook.com) ([104.47.42.55])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Jan 2019 21:29:04 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wgdNNWdPnXdH9THUJg9iQNdnvoZEA2SBeGHYVByoDwY=;
- b=eIfgBp00G9Ef4BJIeDRLlTSq6Z/50injE6uISpdciBhHUaD26u5/Y9RAAYsld9MVo04Ngi+Ysa/6dPjLOYxrbUZg2GZqOH88bUqcrQ2xcLlFn1Ptfdtiv9bTRoiW09gOwtufkhnLzQYgc6zAlGe66yllkuRo00DEuEbvwwIHXzo=
+ bh=jUGRwrEhvO7GNr+kDod846Bm8yelHx5kYWNQyVfOwr8=;
+ b=BhGS45YXBnp2J3WLa48/kgoEVPYsmTES8PfzrhT5b+JeWPpRejgewfWCBOhVO398iiwzsJdbDk2enaa8Y0YK66mujBQjmQQYYQE3PVx1/+fCRZ4HVtv9ujgxdRGXU0hqrCrPXoFqlo54QmBXV/1V48T7vYB8Z3IGULijfnxWpxA=
 Received: from BYAPR04MB5303.namprd04.prod.outlook.com (20.178.49.148) by
- BYAPR04MB6117.namprd04.prod.outlook.com (20.178.234.153) with Microsoft SMTP
+ BYAPR04MB5397.namprd04.prod.outlook.com (20.178.50.214) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.24; Sat, 19 Jan 2019 13:28:51 +0000
+ 15.20.1516.19; Sat, 19 Jan 2019 13:28:59 +0000
 Received: from BYAPR04MB5303.namprd04.prod.outlook.com
  ([fe80::add1:92cc:65d7:5d94]) by BYAPR04MB5303.namprd04.prod.outlook.com
  ([fe80::add1:92cc:65d7:5d94%2]) with mapi id 15.20.1537.028; Sat, 19 Jan 2019
- 13:28:51 +0000
+ 13:28:59 +0000
 From:   Anup Patel <Anup.Patel@wdc.com>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>
@@ -63,11 +63,11 @@ CC:     Atish Patra <Atish.Patra@wdc.com>,
         "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Anup Patel <Anup.Patel@wdc.com>
-Subject: [PATCH v2 5/6] RISC-V: Implement compile-time fixed mappings
-Thread-Topic: [PATCH v2 5/6] RISC-V: Implement compile-time fixed mappings
-Thread-Index: AQHUr/rq5jJd1glB7k+R6lJy0++NFQ==
-Date:   Sat, 19 Jan 2019 13:28:51 +0000
-Message-ID: <20190119132650.9978-6-anup.patel@wdc.com>
+Subject: [PATCH v2 6/6] RISC-V: Implement keepinitrd kernel parameter
+Thread-Topic: [PATCH v2 6/6] RISC-V: Implement keepinitrd kernel parameter
+Thread-Index: AQHUr/rvNlD18fFOHEuGvgVx64rC4Q==
+Date:   Sat, 19 Jan 2019 13:28:59 +0000
+Message-ID: <20190119132650.9978-7-anup.patel@wdc.com>
 References: <20190119132650.9978-1-anup.patel@wdc.com>
 In-Reply-To: <20190119132650.9978-1-anup.patel@wdc.com>
 Accept-Language: en-US
@@ -83,193 +83,73 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [49.207.52.191]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR04MB6117;6:3SQQTa77+t9VZX2o/w/gu2dIe4Dnp+5u7w0psdzVFNFSppM0boH39zicQEZ6URVW7e9Jq6eRbLD0RQ0gHAFCS27SkGhtvyipPdeR+WwPZLsC9FKiIdXvbEcgkgfu7OUsEm9KaxyAKFWhN+J49v+IH6bJ1v0rxgQ3GEKNt4zNbx5ZgPiC3pzHQ4fppGANRqm3fq+jiVagFGineAlgOPihr/daakTBvVJgRVMCZZgQSrV5oZRns/aSuK061XUX0kXAhS04/iv7QS7JTjphk/3HQWv0DSFVB+rplFiYpabjHbmG6bRDJZ4iduplAH57xVeS+e6Dgh1caLZBRffOmUIlO4AlMo5FaC7o5TC672FNQN7tTSh1yV6aAKnjZNldFA2u8LQt03IO+OX5b5PscF/wFpVpU9PQfjVnV/h5H3PkEBgKSSusvOV/n3Toq5WmtofXCa7O2FPH01Of2fPLk30o6A==;5:4EVFdVI9tpCmf4Jn9CioiiyjOsjRmv7cNSGU0CfXByXoRR0Wjt5V5LBqqCJTMf+b23UTvYvxzbWi9qkDhufVmFpO8Oo4C0erFMhTTEZAC3BSQwfkbAWL+ilWBM64ZQsdFxAy8xl0pZnAz+KMDZixLO2EYJ8nnRvtP143LQNt1VjM3fUH6MRjjEYS6fOc8LNEB+KzFwaQ4l0EhlfmDP3PGA==;7:U07bX/vV+xSL60fkqdwdUXSphfOSxXKXe71DBq4o6JFW9wRbk3LdK8ZgFGwnJEBe5VYJz90ZJp3t/4PFgeDBLNuqhVSrAPxfkn/O7fPDBfeDlZ+5+pS1MtIUUowiUYNcaUhzFhD4EVRV/KsOz8DuSw==
-x-ms-office365-filtering-correlation-id: b0914f4c-d5b3-4ad5-9162-08d67e120cc8
+x-microsoft-exchange-diagnostics: 1;BYAPR04MB5397;6:I95jqhLKkE1aouccQGNmrUJuyPeFo8xAKYDLBMv6FDC9PGFh9eeZreaO8es4hOcGm05MeXkvqYr4iHg7DJSbPI1J94BMHD+f36O7bDeHM6pFpjtSGfLx7E8hyHHmL/Yr51u0OkzHlev1igx4EVX6V+M/1CZS3V+CN9hnysp9tZVECpE4Zw+TwJ/sEeba7aELnNm3K8zapkBVdXjvoDk47PIqdudiFex7SlkxG9APN22Jb8M3c0ZQvuUBMtO0MDXYxDh+7uAvF5kwqRGg+0ztEMDrxunUBK0sy8liKAXEgGWWCdCO0OrSN7/GAJntWxAHAdYLPJWgZJ73OEA/7hrE4UHOGMi9pIymJLRyKHjv8DY0q5/Lg/bW1k7M8ap8c8joYOfPvuQdjJSPA1plgpFvKxaTGQEzJkUM4thzZs9RFUet+ik0NK5Pud3K44EiYHEZnYbv8Roux6cK7K/5RqL0ZA==;5:0n3K4Zfvs3yCLpfW26AcBWJy9qJj79F3ua8ZmUF+D/MdHam+GPmZ+3mr3ocJFAGG3IrBmW118GA3IlotpULqrQSNfLJzB8iYoAxoT2t4rCi51XHDUOCGGIpn+oiwUuI5kKvRmFIHPICAsmIZ3zYPEusqFbJbn9Wo5dV3FelVItTwm9zkMCtUmpPEYSoNrwjMzzRPQt9EXUtPgJxF4jp0Xw==;7:GiIYfOTA46KXGaqtZwZbB2cfdITqp7jpnZGP3UidcTPJPevci/18FFb4Bb2B5T9T97mKheEZaVY0dQT4OcyOAkeZt1pszRAXOnaaWlUukRJp9rirnhQ0HTDSnMKpEKqMwtEP4VRPhr5+JsLgDyEtbA==
+x-ms-office365-filtering-correlation-id: 36b63613-5f19-480a-eac7-08d67e1211c8
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB6117;
-x-ms-traffictypediagnostic: BYAPR04MB6117:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB5397;
+x-ms-traffictypediagnostic: BYAPR04MB5397:
 wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <BYAPR04MB6117AB08A8D82D09ECEE4F108D9D0@BYAPR04MB6117.namprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <BYAPR04MB5397F2C02117AF7E3953AFBF8D9D0@BYAPR04MB5397.namprd04.prod.outlook.com>
 x-forefront-prvs: 09222B39F5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(39860400002)(396003)(346002)(366004)(189003)(199004)(476003)(8936002)(52116002)(102836004)(55236004)(446003)(36756003)(6506007)(386003)(76176011)(2616005)(2171002)(50226002)(8676002)(6486002)(4326008)(81156014)(81166006)(25786009)(44832011)(105586002)(106356001)(53936002)(71200400001)(71190400001)(186003)(68736007)(99286004)(97736004)(6512007)(305945005)(3846002)(72206003)(478600001)(6116002)(256004)(86362001)(66066001)(5660300001)(7736002)(1076003)(316002)(2906002)(26005)(6436002)(11346002)(486006)(14454004)(54906003)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB6117;H:BYAPR04MB5303.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(136003)(366004)(376002)(396003)(199004)(189003)(6116002)(99286004)(14444005)(25786009)(72206003)(8936002)(4326008)(102836004)(50226002)(81166006)(14454004)(68736007)(105586002)(305945005)(7736002)(66066001)(478600001)(2171002)(8676002)(1076003)(81156014)(256004)(53936002)(106356001)(3846002)(26005)(86362001)(386003)(55236004)(6506007)(71190400001)(2906002)(71200400001)(97736004)(6436002)(6486002)(476003)(2616005)(186003)(44832011)(76176011)(6512007)(316002)(5660300001)(446003)(11346002)(52116002)(486006)(110136005)(54906003)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5397;H:BYAPR04MB5303.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: p1mmbdGyitIUD+gxssOy+cMpNPnSzFw52rTpF+u8hCwsmIG52PuYzvpeDZKxHlLtrWFXv9ghtngHkvca6BSZi9Dg5RlAm8b125WhFFxTfxy0q0nRIbF7rZVH2dJsxfvYESH2Qk3lPDlUhbmBRKd0mnDmhSW7B8MWlKLLdPiZP1/TpxM0Lh1bzAuAl9IXHCNJAxFQ1Ght/XzckZ8Mh9zrU8d95qms2/VyTArzuTP9RWduejIGefrJOnN47bo8sQ5ILxTXRITEipM1779/y2Z4FbeSgN2S03tm6QrdqVrkiabqDAKr8q4WD/+NykLott6CD4Jn6br9JPslVVWYkTr8EFNvouKHcsFHU7os6jtJmI84FlkG9Eok+VePqieAKwleAY4IVBBvj6VQvNGCoryuAal6pQdhc6OSeJ9UvjIdw24=
+x-microsoft-antispam-message-info: Ii1hjsBLKm//soG1BH1Fq2NOppTFNn5vN0wOyDlB1CTkxwsUOFaHubdpgB5uQTQxhI2DPXQYKBe2N5aqPYF494nLcsNkQg4XTQFv3BoP/oItvULrPO+8vkGAiu5jn/9gbVqJGy2Bj1sDy5R+lHZToJDzST+RGszJ8cGTjxiG96/q6G/zg7TVE/SE/D0vUqIkJ9MijGAWfeDkv0fBNm6RfQ+IVFsnpZHm8L5RiIk2S2dCRQqg0CO5QVHzbm/D5shup3o/2Pp0qsRGaNZuSppeRYnIPPPn4i+JTNabiTWZ8n3SCO0a5u+8HO2E/nQHx6GjHHwgZvCR64sdCCupHi2S1e6pT79AXksF8eTUZB6JSpjk/TjeE67YqdQj42rZtf89KwjYnawzTPjKxB3sLaf+GndB9Y4e74bo8nHzzqb9Rwo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0914f4c-d5b3-4ad5-9162-08d67e120cc8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2019 13:28:48.6766
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36b63613-5f19-480a-eac7-08d67e1211c8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2019 13:28:57.0831
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB6117
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5397
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements compile-time virtual to physical
-mappings. These compile-time fixed mappings can be used
-by earlycon, ACPI, and early ioremap for creating fixed
-mappings when FIX_EARLYCON_MEM=3Dy.
+This patch implements keepinitrd kernel parameter. By default,
+keepinitrd=3D1 but users can pass "keepinitrd=3D0" to free-up
+initrd memory at boot-time in free_initrd_mem() function.
 
-To start with, we have enabled compile-time fixed
-mappings for earlycon.
+The keepinitrd kernel parameter is already implemented by
+unicore32, arm, and arm64 architectures and it is documented
+at: Documentation/admin-guide/kernel-parameters.txt
 
 Signed-off-by: Anup Patel <anup.patel@wdc.com>
 ---
- arch/riscv/Kconfig              |  3 +++
- arch/riscv/include/asm/fixmap.h | 44 +++++++++++++++++++++++++++++++++
- arch/riscv/mm/init.c            | 34 +++++++++++++++++++++++++
- 3 files changed, 81 insertions(+)
- create mode 100644 arch/riscv/include/asm/fixmap.h
+ arch/riscv/kernel/setup.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index feeeaa60697c..c18bba5d0e32 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -89,6 +89,9 @@ config GENERIC_CSUM
- config GENERIC_HWEIGHT
- 	def_bool y
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index 9cd583b6d1cd..46e547dd8245 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -97,8 +97,20 @@ static void __init setup_initrd(void)
+ 	initrd_end =3D 0;
+ }
 =20
-+config FIX_EARLYCON_MEM
-+	def_bool y
+-void free_initrd_mem(unsigned long start, unsigned long end)
++static int keep_initrd __initdata;
 +
- config PGTABLE_LEVELS
- 	int
- 	default 3 if 64BIT
-diff --git a/arch/riscv/include/asm/fixmap.h b/arch/riscv/include/asm/fixma=
-p.h
-new file mode 100644
-index 000000000000..57afe604b495
---- /dev/null
-+++ b/arch/riscv/include/asm/fixmap.h
-@@ -0,0 +1,44 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2019 Western Digital Corporation or its affiliates.
-+ */
-+
-+#ifndef _ASM_RISCV_FIXMAP_H
-+#define _ASM_RISCV_FIXMAP_H
-+
-+#include <linux/kernel.h>
-+#include <linux/sizes.h>
-+#include <asm/page.h>
-+#include <asm/pgtable.h>
-+
-+/*
-+ * Here we define all the compile-time 'special' virtual addresses.
-+ * The point is to have a constant address at compile time, but to
-+ * set the physical address only in the boot process.
-+ *
-+ * These 'compile-time allocated' memory buffers are page-sized. Use
-+ * set_fixmap(idx,phys) to associate physical memory with fixmap indices.
-+ */
-+enum fixed_addresses {
-+	FIX_HOLE,
-+	FIX_EARLYCON_MEM_BASE,
-+	__end_of_fixed_addresses
-+};
-+
-+#define FIXADDR_SIZE		(__end_of_fixed_addresses * PAGE_SIZE)
-+#define FIXADDR_TOP		(PAGE_OFFSET)
-+#define FIXADDR_START		(FIXADDR_TOP - FIXADDR_SIZE)
-+
-+#define FIXMAP_PAGE_IO		PAGE_KERNEL
-+
-+#define __early_set_fixmap	__set_fixmap
-+
-+#define __late_set_fixmap	__set_fixmap
-+#define __late_clear_fixmap(idx) __set_fixmap((idx), 0, FIXMAP_PAGE_CLEAR)
-+
-+extern void __set_fixmap(enum fixed_addresses idx,
-+			 phys_addr_t phys, pgprot_t prot);
-+
-+#include <asm-generic/fixmap.h>
-+
-+#endif /* _ASM_RISCV_FIXMAP_H */
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index f8e396dc80a4..4c627b8d53c7 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -18,6 +18,7 @@
- #include <linux/sizes.h>
- #include <linux/of_fdt.h>
-=20
-+#include <asm/fixmap.h>
- #include <asm/tlbflush.h>
- #include <asm/sections.h>
- #include <asm/pgtable.h>
-@@ -110,8 +111,28 @@ pgd_t trampoline_pg_dir[PTRS_PER_PGD] __initdata __ali=
-gned(PAGE_SIZE);
- #define NUM_SWAPPER_PMDS ((uintptr_t)-PAGE_OFFSET >> PGDIR_SHIFT)
- pmd_t swapper_pmd[PTRS_PER_PMD*((-PAGE_OFFSET)/PGDIR_SIZE)] __page_aligned=
-_bss;
- pmd_t trampoline_pmd[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
-+pmd_t fixmap_pmd[PTRS_PER_PMD] __page_aligned_bss;
- #endif
-=20
-+pte_t fixmap_pte[PTRS_PER_PTE] __page_aligned_bss;
-+
-+void __set_fixmap(enum fixed_addresses idx, phys_addr_t phys, pgprot_t pro=
-t)
++static int __init keepinitrd_setup(char *__unused)
 +{
-+	unsigned long addr =3D __fix_to_virt(idx);
-+	pte_t *ptep;
-+
-+	BUG_ON(idx <=3D FIX_HOLE || idx >=3D __end_of_fixed_addresses);
-+
-+	ptep =3D &fixmap_pte[pte_index(addr)];
-+
-+	if (pgprot_val(prot)) {
-+		set_pte(ptep, pfn_pte(phys >> PAGE_SHIFT, prot));
-+	} else {
-+		pte_clear(&init_mm, addr, ptep);
-+		local_flush_tlb_page(addr);
-+	}
++	keep_initrd =3D 1;
++	return 1;
 +}
 +
- asmlinkage void __init setup_vm(void)
++__setup("keepinitrd", keepinitrd_setup);
++
++void __init free_initrd_mem(unsigned long start, unsigned long end)
  {
- 	extern char _start;
-@@ -134,20 +155,33 @@ asmlinkage void __init setup_vm(void)
-=20
- 	for (i =3D 0; i < (-PAGE_OFFSET)/PGDIR_SIZE; ++i) {
- 		size_t o =3D (PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD + i;
-+
- 		swapper_pg_dir[o] =3D
- 			pfn_pgd(PFN_DOWN((uintptr_t)swapper_pmd) + i,
- 				__pgprot(_PAGE_TABLE));
- 	}
- 	for (i =3D 0; i < ARRAY_SIZE(swapper_pmd); i++)
- 		swapper_pmd[i] =3D pfn_pmd(PFN_DOWN(pa + i * PMD_SIZE), prot);
-+
-+	swapper_pg_dir[(FIXADDR_START >> PGDIR_SHIFT) % PTRS_PER_PGD] =3D
-+		pfn_pgd(PFN_DOWN((uintptr_t)fixmap_pmd),
-+				__pgprot(_PAGE_TABLE));
-+	fixmap_pmd[(FIXADDR_START >> PMD_SHIFT) % PTRS_PER_PMD] =3D
-+		pfn_pmd(PFN_DOWN((uintptr_t)fixmap_pte),
-+				__pgprot(_PAGE_TABLE));
- #else
- 	trampoline_pg_dir[(PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD] =3D
- 		pfn_pgd(PFN_DOWN(pa), prot);
-=20
- 	for (i =3D 0; i < (-PAGE_OFFSET)/PGDIR_SIZE; ++i) {
- 		size_t o =3D (PAGE_OFFSET >> PGDIR_SHIFT) % PTRS_PER_PGD + i;
-+
- 		swapper_pg_dir[o] =3D
- 			pfn_pgd(PFN_DOWN(pa + i * PGDIR_SIZE), prot);
- 	}
-+
-+	swapper_pg_dir[(FIXADDR_START >> PGDIR_SHIFT) % PTRS_PER_PGD] =3D
-+		pfn_pgd(PFN_DOWN((uintptr_t)fixmap_pte),
-+				__pgprot(_PAGE_TABLE));
- #endif
++	if (!keep_initrd)
++		memblock_free(__pa(start), end - start);
  }
+ #endif /* CONFIG_BLK_DEV_INITRD */
+=20
 --=20
 2.17.1
 
