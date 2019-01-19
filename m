@@ -4,67 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1B9C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 22:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B20AC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 22:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE9C20883
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 22:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC51820883
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 22:35:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547937306;
-	bh=HmKRbI7EgL4QO1tSmXDwZjLM/wvC/NJ/Yqxa/2V2dDA=;
+	s=default; t=1547937309;
+	bh=9PxH6ahYUyXJ9m5v4M3PfSKb6ibV+miuNwdFEzAgx6o=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=TBnwH7t3mSNh3H3G6VzmZxJk/YnjJx3Ikui2tJ/PSg5x2QYM61TGeEAIFcRZa9GJu
-	 je+EoYtR2FFMKVOoNWUR6qnxMZ/00c7NklOpkYj4NsD1n+Z/MQtbWn5H6XkdbFfRs8
-	 q41uQ+G/Ttxp6sGxVcFVC1a4FXqhzWPV0SNnk1BQ=
+	b=CHbfSi+9S63hp836qWBDhPx6d39UV30Fe0OmRDPgzybbgIrrUn6d1L0AbIFjt9+FL
+	 2uKCvScXmYKQfScW/a9791fB6bC+uV9cAuGoX17RpfZ/x4+zmiSUoHuaYoeH4Pzugo
+	 QMWV3s1aAnc1+T+3mfo5eRcYtslYRWLbGFcvjSoE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbfASWfD (ORCPT
+        id S1729776AbfASWfC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 17:35:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729701AbfASWfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 19 Jan 2019 17:35:02 -0500
-Subject: Re: [GIT PULL] Devicetree fix for 5.0-rc
+Received: from mail.kernel.org ([198.145.29.99]:54122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729642AbfASWfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 17:35:02 -0500
+Subject: Re: [GIT PULL REQUEST] watchdog - v5.0-rc Fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547937302;
-        bh=HmKRbI7EgL4QO1tSmXDwZjLM/wvC/NJ/Yqxa/2V2dDA=;
+        s=default; t=1547937301;
+        bh=9PxH6ahYUyXJ9m5v4M3PfSKb6ibV+miuNwdFEzAgx6o=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=IDGJuIiuuKsBaljShpmxf6iYQnmqiDn8mpZtpV2vIwsNFvoFYk8ySTcOXc3WHlDzr
-         AGetgdIfsSMPUoDbsek03KiXL+x0lwCbcCyAcCyW/Axf++kcstuAzI0Dn5njey8HYr
-         rOUiRcg6CpAPK8jaLPhsQj46xA4x8Cb1BWIvukUc=
+        b=s8TJueyzQlI/Gp9KpRWM9dpNLlm9oyY25I5RxjW8LA448oiKvdRTs4YPT/istwMs1
+         75oD0tSTwls13o51LnTtnJP6MD/LtvQTOd7vRAkrVBGsTBWtjSPubZVB20uKA80jtP
+         NLGyuXnh3DcQWC7GrL4Nb6DbUQlBD6yYe0d63xuY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAL_JsqKbma-kw0hrdBa2e7CLzSBsEy7dJZwvj+BrLjqzhuCPQA@mail.gmail.com>
-References: <CAL_JsqKbma-kw0hrdBa2e7CLzSBsEy7dJZwvj+BrLjqzhuCPQA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAL_JsqKbma-kw0hrdBa2e7CLzSBsEy7dJZwvj+BrLjqzhuCPQA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
- tags/devicetree-fixes-for-5.0-2
-X-PR-Tracked-Commit-Id: 75a080cde08d2dcba19ee864f9732094d93fab41
+In-Reply-To: <20190119114007.GA22111@www.linux-watchdog.org>
+References: <20190119114007.GA22111@www.linux-watchdog.org>
+X-PR-Tracked-List-Id: <linux-watchdog.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190119114007.GA22111@www.linux-watchdog.org>
+X-PR-Tracked-Remote: git://www.linux-watchdog.org/linux-watchdog.git
+ tags/linux-watchdog-5.0-rc-fixes
+X-PR-Tracked-Commit-Id: 4a22fc534f2f55808c41197cf17d829099032acb
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6a0141a0966cfbd765bff065c3eb61b09a92318e
-Message-Id: <154793730204.16838.2158961933177037543.pr-tracker-bot@kernel.org>
-Date:   Sat, 19 Jan 2019 22:35:02 +0000
-To:     Rob Herring <robherring2@gmail.com>
+X-PR-Merge-Commit-Id: f403d718ebde2059de848ae7548392dfb25a13ae
+Message-Id: <154793730170.16838.17686429447862894559.pr-tracker-bot@kernel.org>
+Date:   Sat, 19 Jan 2019 22:35:01 +0000
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        NeilBrown <neil@brown.name>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 19 Jan 2019 10:43:42 -0600:
+The pull request you sent on Sat, 19 Jan 2019 12:40:07 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-fixes-for-5.0-2
+> git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-5.0-rc-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6a0141a0966cfbd765bff065c3eb61b09a92318e
+https://git.kernel.org/torvalds/c/f403d718ebde2059de848ae7548392dfb25a13ae
 
 Thank you!
 
