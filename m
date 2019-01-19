@@ -2,54 +2,56 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21BBC5AE5E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB1FC61CE3
 	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F47620850
+	by mail.kernel.org (Postfix) with ESMTP id BB9552087E
 	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:44:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GxfMfnje"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UJR/ZDiL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbfASBoG (ORCPT
+        id S1729920AbfASBoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 20:44:06 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34623 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727713AbfASBoG (ORCPT
+        Fri, 18 Jan 2019 20:44:10 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44095 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727713AbfASBoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 20:44:06 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h3so7450712pfg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 17:44:05 -0800 (PST)
+        Fri, 18 Jan 2019 20:44:10 -0500
+Received: by mail-pg1-f196.google.com with SMTP id t13so6856536pgr.11
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 17:44:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+gI7uPG/kMFpjvedpiuVotP6KJ84HcEfWwY5I+LGi9I=;
-        b=GxfMfnjeWS83+HeD1bR5fowABwHrLh9+7w3HzEeWX5FjWnhJQbvWUlf90S9VqQLda4
-         zZNiKYaxtHL4oJtK0GvtuOKWWDBqkFywQeDcBPmoBFQ3qUI3mqiRRVo0ijiE9l6BS4WE
-         W36A78xWiyOtkR6XXMWTB4dhfLfMK6OSeGBXE=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=jETu+BduxrzXdBTSoIHDOv28Ri7iXymF5DJaIor1gtI=;
+        b=UJR/ZDiLrjsIi9UcHwH4vY5U6Z90QraRTn+RRpSe4uSHbu8vCGNQiDKM6DoVc7aJoU
+         9deaQGz1NS/r9W8SPTrMsbninLi8UUuIVDTKQ0/eo21TQ4WaMoF4BdRzhKmdgklUljK/
+         ZjkVKboyhwsZShHi77LZBbotd/1pNsLp0lXdM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+gI7uPG/kMFpjvedpiuVotP6KJ84HcEfWwY5I+LGi9I=;
-        b=HcGs0IL1kQfjkRHdkgIAcQYEdirnufPedieZON79jhISYZYnXiTXGYeBnm0wYoSpXP
-         nnwBAf8y6dkkkTmNx+Ayy2NC1hB1DrIEFHMlavI6M/nllP/tHYMKHIemwyQU4VkZllX8
-         M/2iPQt9mW484LSuUDUQ6LFweiC2Z+lRa7Kav5jQC4jHONHuuu40I4ZlFUwME7UsdMhM
-         v+pu3l7Do/uBSaO8hMMIEZi9bqKMfZ16EPjHjkad8dgAGUsNPwANOm4vpFwHw0zu2DKF
-         pkeUrcFAzrGjQ3QDL82zDB2SSrKkOvlxuiMBGS8wxiX20gy8P2H++bPa9o3XkLMSzH2m
-         0jpA==
-X-Gm-Message-State: AJcUukd1eo9LpWBhxFTcQzAnCAsqtKE1Bn0zEyeElqdZ9TfKW4W5nL0k
-        BDOd5vLdbYkmkfBtuy6nSopReQ==
-X-Google-Smtp-Source: ALg8bN6rfHMN+/FzJ0M7MmMKKTVdK5Q+HeWXGJ1ygSC3Pj2hqY/GScdJjTysGVnxLmQMtwMP6LWjbA==
-X-Received: by 2002:aa7:8542:: with SMTP id y2mr21883180pfn.83.1547862245254;
-        Fri, 18 Jan 2019 17:44:05 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=jETu+BduxrzXdBTSoIHDOv28Ri7iXymF5DJaIor1gtI=;
+        b=cR7kck29VPueE875yHJF2PE3j5Vs8romOmeJzavHFjSTk5F8NlquWofRe4qEHYCG4a
+         HYItyg1T6q3zBam5Sg37LWXjOqM5rIFYLK13ncO/tGeif8B37/09dW5U1fqAgBBkMLdg
+         K9JGGadlkqgMYdjC2ZUcvGFWW/b5/VX8hvvf7cvuOBpFCMOPXOo7+fX2u9FXN5eEUn86
+         W0B6oXzVDrq9KHfYg0D1ayFztggIwy38/i0SvBmHBlYPni07Pd7cSY8f7OGpvQ4+AZMc
+         P++4pBB5w+7sp9tt7ypBzXKZ+MmV/+GCgBAlI/Wn6nypoEzGhG6XpyVxz8wrrTGIZFDy
+         AnDQ==
+X-Gm-Message-State: AJcUukeA/eRFostUQypQx5AVsVm/J2cIv7S1C0wIMc0sdP2iOrxq2H+M
+        mI+/Gu1XC7jSdRWtBeGJGsf5UQ==
+X-Google-Smtp-Source: ALg8bN79tjDtBMZp6UuoXC+x3eva11l1rLyjvJBpSU+Uduh8IjCTpWpfl4YpJtBFLjEuJdIqZ5rqkg==
+X-Received: by 2002:a62:6204:: with SMTP id w4mr21762120pfb.5.1547862249054;
+        Fri, 18 Jan 2019 17:44:09 -0800 (PST)
 Received: from localhost.localdomain (li421-24.members.linode.com. [50.116.3.24])
-        by smtp.gmail.com with ESMTPSA id d21sm8648436pfo.162.2019.01.18.17.44.01
+        by smtp.gmail.com with ESMTPSA id d21sm8648436pfo.162.2019.01.18.17.44.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 17:44:04 -0800 (PST)
+        Fri, 18 Jan 2019 17:44:08 -0800 (PST)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -62,100 +64,96 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Coresight ML <coresight@lists.linaro.org>
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v6 0/8] perf cs-etm: Add support for sample flags
-Date:   Sat, 19 Jan 2019 09:43:39 +0800
-Message-Id: <20190119014347.27441-1-leo.yan@linaro.org>
+Subject: [PATCH v6 1/8] perf cs-etm: Add last instruction information in packet
+Date:   Sat, 19 Jan 2019 09:43:40 +0800
+Message-Id: <20190119014347.27441-2-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190119014347.27441-1-leo.yan@linaro.org>
+References: <20190119014347.27441-1-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch seris adds support for sample flags so can facilitate perf
-to print sample flags for branch instruction.
+Decoder provides last instruction related information, these information
+can be used for trace analysis; specifically we can get to know what
+kind of branch instruction has been executed, mainly the information
+are contained in three element fields:
 
-Patch 0001 is used to save last branch information in packet structure,
-this includes instruction type, subtype and condition flag to help
-making decision for which branch instruction it is.  It passes related
-information from decoder layer to cs-etm.c, so we use cs-etm.c as a
-central place to set sample flags.
+  last_i_type: this is significant type for waypoint calculation, it
+  indicates the last instruction is one of immediate branch instruction,
+  indirect branch instruction, instruction barrier (ISB), or data
+  barrier (DSB/DMB).
 
-Patch 0002 is used to set sample flags for instruction range packet.
+  last_i_subtype: this is used for instruction sub type, it can be
+  branch with link, ARMv8 return instruction, ARMv8 eret instruction
+  (return from exception), or ARMv7 instruction which could imply
+  return (e.g. MOV PC, LR; POP { ,PC}).
 
-Patch 0003 is used to set sample flags for trace discontinuity packet.
+  last_instr_cond: it indicates if the last instruction was conditional.
 
-Patches 0004/0005/0006 are preparation for exception packet handling:
-Patch 0004 addes exception number in packet; pacth 0005/0006 is to use
-traceID/metadata tuple to access metadata pointer based on traceID, this
-can help decide if the CPU is connected with ETMv3 or ETMv4, ETMv3 and
-ETMv4 have totally different definition for exception numbers.
+But these three fields are not saved into cs_etm_packet struct, thus
+cs-etm layer don't know related information and cannot generate sample
+flags for branch instructions.
 
-Patch 0007 sets sample flags for exception packet; patch 0008 support
-sample flags for exception return packet.
+This patch add corresponding three new fields in cs_etm_packet struct
+and save related value into the packet structure, it is preparation for
+supporting sample flags.
 
-This patch series is applied on the acme's perf core branch with the
-with latest commit 02bb912ae451 ("perf tools: Replace automatic const
-char[] variables by statics").
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 9 +++++++++
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 3 +++
+ 2 files changed, 12 insertions(+)
 
-After applying this patch series, we can verify sample flags with below
-command:
-
-  # perf script -F,-time,+flags,+ip,+sym,+dso,+addr,+symoff -k vmlinux
-
-Changes from v5:
-* Addressed Rob's suggestion to add specification info for exception
-  number encoding;
-* Added Rob's review tag in patch 0007.
-
-Changes from v4:
-* Fixed typos in comments, and removed redundant info from commit log;
-* Addressed Mathieu's suggestion to add helper functions for metadata
-  fields (CS_ETM_CPU and CS_ETM_MAGIC) accessing;
-* Addressed Mathieu's suggestion to include headers with alphabetical
-  order.
-
-Changes from v3:
-* Fixed typos in commit logs;
-* Rearranged fields in cs_etm_packet by grouping with same variable
-  types;
-* Fixed ETMv4 exception number which pointed by Mike;
-* Fixed ETMv4 SVC / SMC / HVC in the same CALL, by checking svc
-  instruction to distinguish them;
-* Refine ETMv4 return exception packet handling.
-
-Changes from v2:
-* Addressed Mathieu's suggestion to split one big patch to 3 small
-  patches for setting sample flags, one is for instruction range
-  packet, one is for discontinuity packet and one is for exception
-  packet.
-* Added supporting for ETMv3 exception packet.
-* Followed Mathieu's suggestion to move all sample flags handling
-  from decoder layer to cs-etm.c, thus it has enough info to set flags
-  based on trace context in single place.
-
-Changes from v1:
-* Moved exception packets handling patches into patch series 'perf
-  cs-etm: Correct packets handling'.
-* Added sample flags fixing up for TRACE_OFF packet.
-* Created a new function which is used to maintain flags fixing up.
-
-
-Leo Yan (8):
-  perf cs-etm: Add last instruction information in packet
-  perf cs-etm: Set sample flags for instruction range packet
-  perf cs-etm: Set sample flags for trace discontinuity
-  perf cs-etm: Add exception number in exception packet
-  perf cs-etm: Change tuple from traceID-CPU# to traceID-metadata
-  perf cs-etm: Add traceID in packet
-  perf cs-etm: Set sample flags for exception packet
-  perf cs-etm: Set sample flags for exception return packet
-
- .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  41 +-
- .../perf/util/cs-etm-decoder/cs-etm-decoder.h |   6 +
- tools/perf/util/cs-etm.c                      | 405 +++++++++++++++++-
- tools/perf/util/cs-etm.h                      |  48 ++-
- 4 files changed, 482 insertions(+), 18 deletions(-)
-
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index 8c155575c6c5..8a19310500d9 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -290,6 +290,9 @@ static void cs_etm_decoder__clear_buffer(struct cs_etm_decoder *decoder)
+ 		decoder->packet_buffer[i].instr_count = 0;
+ 		decoder->packet_buffer[i].last_instr_taken_branch = false;
+ 		decoder->packet_buffer[i].last_instr_size = 0;
++		decoder->packet_buffer[i].last_instr_type = 0;
++		decoder->packet_buffer[i].last_instr_subtype = 0;
++		decoder->packet_buffer[i].last_instr_cond = 0;
+ 		decoder->packet_buffer[i].cpu = INT_MIN;
+ 	}
+ }
+@@ -323,6 +326,9 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+ 	decoder->packet_buffer[et].instr_count = 0;
+ 	decoder->packet_buffer[et].last_instr_taken_branch = false;
+ 	decoder->packet_buffer[et].last_instr_size = 0;
++	decoder->packet_buffer[et].last_instr_type = 0;
++	decoder->packet_buffer[et].last_instr_subtype = 0;
++	decoder->packet_buffer[et].last_instr_cond = 0;
+ 
+ 	if (decoder->packet_count == MAX_BUFFER - 1)
+ 		return OCSD_RESP_WAIT;
+@@ -366,6 +372,9 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
+ 	packet->start_addr = elem->st_addr;
+ 	packet->end_addr = elem->en_addr;
+ 	packet->instr_count = elem->num_instr_range;
++	packet->last_instr_type = elem->last_i_type;
++	packet->last_instr_subtype = elem->last_i_subtype;
++	packet->last_instr_cond = elem->last_instr_cond;
+ 
+ 	switch (elem->last_i_type) {
+ 	case OCSD_INSTR_BR:
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+index a6407d41598f..7cdd6a9c68a7 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+@@ -43,6 +43,9 @@ struct cs_etm_packet {
+ 	u64 start_addr;
+ 	u64 end_addr;
+ 	u32 instr_count;
++	u32 last_instr_type;
++	u32 last_instr_subtype;
++	u8 last_instr_cond;
+ 	u8 last_instr_taken_branch;
+ 	u8 last_instr_size;
+ 	int cpu;
 -- 
 2.17.1
 
