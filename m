@@ -6,60 +6,60 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3254AC61CE8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60139C61CE4
 	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 05:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9A7D2084F
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 05:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2260C2087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 05:30:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="EKUexgRx"
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="fP9zCSOI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfASF0N (ORCPT
+        id S1727444AbfASF1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 00:26:13 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44209 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbfASF0M (ORCPT
+        Sat, 19 Jan 2019 00:27:07 -0500
+Received: from mail-wm1-f49.google.com ([209.85.128.49]:40286 "EHLO
+        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfASF1G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 00:26:12 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z5so17431594wrt.11
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 21:26:11 -0800 (PST)
+        Sat, 19 Jan 2019 00:27:06 -0500
+Received: by mail-wm1-f49.google.com with SMTP id f188so6291446wmf.5
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 21:27:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=S5WLHKm1UldARquTGB6XuPGzuMNSMkWoRTMN9CVKI/w=;
-        b=EKUexgRxQOa3l+/0BWMsjZDhFsahNG3htOdWMBQshY+zSyrbzlNtNVuLI8l1NMF64f
-         ZuI9t8ruKJ6eIB6sUfg3Fu1I1XGrEOitLDS/vEB0xEy3gpMSTF4Yi6oTZyyNnREehEWr
-         yhxzE6Viob6I87vxJH8ssA4IWjfqieA//B9EC2QWcAcYnUvaWafo91M/rWjiwUhnqMJK
-         ABbzoU5leiZkmBka2yAUBTgX2aabrK+bZqYHdPyCxYJpSYEa9KB/0MDmCTKKs3yvswP5
-         55wCnt3VKdJhCQg3nn3LVnEdF2cZKtNOmrl9oys0wX73P5ibXAnriFnhT4a/cbsfi7Er
-         qeDw==
+        bh=+BQqAME/n96OaDRAvhqrmL+Q8yZyrA9mWoXMS5JE7pE=;
+        b=fP9zCSOI58Il0IPLCGwoSGtvSya1dK7oL8gdVFU4k+p415AnygBCURviv37BBme5Xu
+         CNWsikmffBocAkY298f4gm7QaEfVr10uNE5cMeLt+3fBjBHBGYS+9/mZ94+Yqp9F2bru
+         L8Ym/yDXLJ3kLHiKBNM7Hrh2vHFmNEAWb10DmhPBsJQGRiFw8lfHERrpIqwLmwCEHmDo
+         3aSmWY+mGMXPxX87cjvyXgG+sD3bF2d0aky7rNngPY2SZbH93SdTqHm3KBsJ5W1zqi6v
+         RpSMr6BzQJL+dEzKHfF5EWOqfwbacHm0fr1e33D8uPyU9dxkrOPLjWAkutaYQ/jlSLp7
+         2IJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=S5WLHKm1UldARquTGB6XuPGzuMNSMkWoRTMN9CVKI/w=;
-        b=mDWMcJlhN+X6Jf87UglEXSUO/bt/OcIphLEenpfl/R9sGNEousClw4Gtg3kS0uNYhB
-         QXXznBA51wo1nH3WJQFe2JctIHPTtw/15Pj64hnIrF2M8pymnVke+t0yz1CV8vDpi/3W
-         92H+8deiPl7n7j5ye3okU/ZlK2OYR4lZum8IGv+GtTqhleHzFxIG8UKSiLT+VjiSsqk1
-         UIDpakfAILaIUIrkrRpQ1LnpGxrlqu7GxqN9cLzKyW4ZCI1XS0sBA/i0lbILj4LeBp31
-         vjZL0dlsLOI0Jrzg5Ors2QHqWw+raBxLjZdxDi/MnYTA6gmtdo1ZznEiQ3wK0wYhkBbO
-         e48g==
-X-Gm-Message-State: AJcUukfKb0lObuZTmpTI7IaUkpmR0C9xlfVoycmmXlMFP2obOQwgw/pH
-        0OziDTQheXPkou5kL85CvrBcikZn1x5KlPJkldHdAA==
-X-Google-Smtp-Source: ALg8bN5V+6YkMLC8pakrEPq8SJekNxg23yM0DzsOQo9orwLdyQ2JYB31GJ9nrRjDaMLL15Fy665TkIML85jGj1BAs7c=
-X-Received: by 2002:adf:f5d1:: with SMTP id k17mr20570188wrp.59.1547875570759;
- Fri, 18 Jan 2019 21:26:10 -0800 (PST)
+        bh=+BQqAME/n96OaDRAvhqrmL+Q8yZyrA9mWoXMS5JE7pE=;
+        b=HxFYdh6NSsdTUj8PLzhg48Nde8NO0vczY87yr6LrqLZEuRS73Pf9LVCBIAvtiA1FKS
+         3b5ZhQzvbuxO2PNQDsOMYzh6FO4khfBjOvV9XHXeJJudJtwS5im9vEHHfaGu25V8d9i1
+         pYfV+xnpnLyKZOmHelsLNqLB+mAk2TkRS40DnU/2mP8bsEkdrzJl6Oi3/vd3SyJT6FQJ
+         lxaDnR++x2B0V0GNQdOSteQaFV9Jl7lS6wifQSjHhMROpWdy9wtABygqvCMuVuI/YevN
+         R+geR2k2Kwzoth9Jkvswqz+WikkGXQX4209bNKOE2UiLxe6u4JEq5swiXpfatt7f4vox
+         5swA==
+X-Gm-Message-State: AJcUukfWJaQ6jU4QY/084xcwvbFhAqe7UZLOntNcH5xArpPO+DDe6hkg
+        X9XbUZ2saA7Pw7qQUbhaJTbS9udRe3lS5AIieyw0xw==
+X-Google-Smtp-Source: ALg8bN6HPCgf6Y92vYMKkS6v+Nl7Gq6Rxxcz7LLyiaVmaCS98mMzr238JY944RYvOiwSQc5gijwXBvzHPuUqVvBVsDc=
+X-Received: by 2002:a1c:1801:: with SMTP id 1mr19018322wmy.153.1547875624887;
+ Fri, 18 Jan 2019 21:27:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20181227111821.80908-1-anup@brainfault.org> <20181227111821.80908-5-anup@brainfault.org>
- <20190115155600.GC13095@infradead.org>
-In-Reply-To: <20190115155600.GC13095@infradead.org>
+References: <20181227111821.80908-1-anup@brainfault.org> <20181227111821.80908-6-anup@brainfault.org>
+ <20190115155727.GD13095@infradead.org>
+In-Reply-To: <20190115155727.GD13095@infradead.org>
 From:   Anup Patel <anup@brainfault.org>
-Date:   Sat, 19 Jan 2019 10:55:58 +0530
-Message-ID: <CAAhSdy2Oe44Mw66rphPHGU69DN1bnyhXH3xjrQ6DvLNsVVqgSw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] irqchip: sifive-plic: Differentiate between PLIC
- handler and context
+Date:   Sat, 19 Jan 2019 10:56:53 +0530
+Message-ID: <CAAhSdy1JpFfxPmuLM_T_YVax9HD2oNbfwMAwttNYjZ+BSL4fuw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] irqchip: sifive-plic: Implement irq_set_affinity()
+ for SMP host
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Palmer Dabbelt <palmer@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
@@ -76,34 +76,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 9:26 PM Christoph Hellwig <hch@infradead.org> wrote:
+On Tue, Jan 15, 2019 at 9:27 PM Christoph Hellwig <hch@infradead.org> wrote:
 >
-> On Thu, Dec 27, 2018 at 04:48:20PM +0530, Anup Patel wrote:
-> > We explicitly differentiate between PLIC handler and context because
-> > PLIC context is for given mode of HART whereas PLIC handler is per-CPU
-> > software construct meant for handling interrupts from a particular
-> > PLIC context.
-> >
-> > To achieve this differentiation, we rename "nr_handlers" to "nr_contexts"
-> > and "nr_mapped" to "nr_handlers" in plic_init().
+> > +     if (!force)
+> > +             cpu = cpumask_any_and(mask_val, cpu_online_mask);
+> > +     else
+> > +             cpu = cpumask_first(mask_val);
 >
-> Not sure what this differenciates that we previously didn't.  As far
-> as I can tell it just is a slight naming cleanup.
+> Any reason for the inverted test?
 
-There is a disconnect between PLIC documentation and PLIC driver.
+Okay, I will not use inverted test here.
 
-If we have 8 HARTs then we can have 16 PLIC contexts whereas PLIC
-handlers (SW construct) are always same as number of HARTs. In other
-words, there will be separate PLIC context for M-mode and S-mode of a
-HART.
+>
+> Otherwise this looks fine to me:
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Linux runs in S-mode so we can only use PLIC context meant for S-mode.
-This means per-CPU handlers in PLIC driver only handle PLIC S-mode
-context of a HART.
-
-This patch makes PLIC driver more readable and matching PLIC HW
-documentation by differentiating between PLIC handler and PLIC
-context.
-
-Regards,
+Thanks,
 Anup
