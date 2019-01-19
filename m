@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C31C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC29C5AE5E
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0337D2084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F81B2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 01:21:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbfASBQM (ORCPT
+        id S1728291AbfASBVm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 20:16:12 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37838 "EHLO mx1.suse.de"
+        Fri, 18 Jan 2019 20:21:42 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38098 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726964AbfASBQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 20:16:12 -0500
+        id S1726908AbfASBVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 18 Jan 2019 20:21:42 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CDAF8AD98;
-        Sat, 19 Jan 2019 01:16:10 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id CF7C4AE3D;
+        Sat, 19 Jan 2019 01:21:40 +0000 (UTC)
 Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to
- intel-pt-events.py
+ netdev-times.py
 To:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
         peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         alexander.shishkin@linux.intel.com, jolsa@redhat.com,
         namhyung@kernel.org, linux-kernel@vger.kernel.org
 References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
- <1547718344-27382-7-git-send-email-s1seetee@linux.vnet.ibm.com>
+ <1547718344-27382-9-git-send-email-s1seetee@linux.vnet.ibm.com>
 From:   Tony Jones <tonyj@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
@@ -56,12 +56,12 @@ Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
  LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
  AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
  liv+rwEesYGlGeGNaKHTJw==
-Message-ID: <c211bf6e-169c-d6e4-e732-21d15864189e@suse.de>
-Date:   Fri, 18 Jan 2019 17:16:06 -0800
+Message-ID: <1d212f1d-b4fc-061f-2b0b-945c2dafba09@suse.de>
+Date:   Fri, 18 Jan 2019 17:21:37 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1547718344-27382-7-git-send-email-s1seetee@linux.vnet.ibm.com>
+In-Reply-To: <1547718344-27382-9-git-send-email-s1seetee@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,21 +70,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
-> Support both Python 2 and Python 3 in intel-pt-events.py.``print``
+On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:> Support both Python 2 and Python 3 in netdev-times.py. ``print``
 > is now a function rather than a statement. This should have no
 > functional change.
-> 
-> Fixes indentation issue, replace spaces with tab.
 
-Again,  trailing comma use is incorrect.
+Same feedback as all the other patches applies.
 
+In addition:
 
-> -	print "%16s %5u/%-5u [%03u] %9u.%09u %7s:" % (comm, pid, tid, cpu, ts / 1000000000, ts %1000000000, name),
-> +	print("%16s %5u/%-5u [%03u] %9u.%09u %7s:" % (comm, pid, tid, cpu, ts / 1000000000, ts %1000000000, name)),
+$ git annotate tools/perf/scripts/python/netdev-times.py | grep "all_event_list.sort"
+359d5106a2ff4	(Koki Sanagi	2010-08-23 18:47:09 +0900	175)	all_event_list.sort(lambda a,b :cmp(a[EINFO_IDX_TIME],
 
-print ("%16s %5u/%-5u [%03u] %9u.%09u %7s:" % (comm, pid, tid, cpu, ts / 1000000000, ts %1000000000, name), end='')
+I didn't think the above was valid with Python3.
 
-and so on for rest of changes.
+In my version (https://build.opensuse.org/package/view_file/devel:tools/perf/port-failed-syscalls-by-pid-script-to-python3.patch?expand=1)
+I reworked it as:
+
+from functools import cmp_to_key
+all_event_list.sort(key=cmp_to_key(lambda a,b :a[EINFO_IDX_TIME] < b[EINFO_IDX_TIME]))
 
 Tony
