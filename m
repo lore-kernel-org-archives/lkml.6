@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BC9C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 05:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F453C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 05:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1072086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 05:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E1E42086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 05:57:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="c9iglgff"
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="f/6EgnVa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbfASF5Q (ORCPT
+        id S1727633AbfASF5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 00:57:16 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37048 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfASF5O (ORCPT
+        Sat, 19 Jan 2019 00:57:20 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39719 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbfASF5S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 00:57:14 -0500
-Received: by mail-pf1-f196.google.com with SMTP id y126so7642331pfb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 21:57:13 -0800 (PST)
+        Sat, 19 Jan 2019 00:57:18 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w6so7051498pgl.6
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 21:57:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QPq/o0R9ggNlb2oMRGbkSeTpgM0rzBY83T9WPQ+nWrg=;
-        b=c9iglgffLpFLhSbvvzWlFeS/AvjO1P40S00smgVlLs3YsQBwjZMXqbP/aAAXhAhoaU
-         sKCAXePv6bS9r+kmQxgtpiCwwGLxGZXp18KdPCWPBXk+TdXZmD/7a0tuyJQ0d8R87xnr
-         Q07fJcQPr9WP5xf5QruBLirguXjfdTkl/nCWXHQXBo05DtYfxtdR562jSwn/QG2Kt4n9
-         SXqkAy/msiA/fclUCpM8xKtfjqpzZnHtdmGNkRFjfrx47tJrq76JfHYFCdmYsDT13s7T
-         tdwo5AXFp3mV+gX8qwruOOmNRzuHiJz0djr8IRmL84vE+A5Lpx0b7h/WeDJGL4Spqm87
-         KbOA==
+        bh=zz52nPvPtFJqyPj2XZVPMynhhMIZtDAuu6S8fhVpQdc=;
+        b=f/6EgnVaPcImxeZ24fW1x3B5RgtHb20eZMqTQ96nYxSVMUllIaqDMVJprUUnRUxpsn
+         mKCOlaefUjQF3kfbvkVxg28riYDbStDjlKgTaSm3dQD6JQpCiQKEwsv8OUl8dgawEYPo
+         ic5/xhdDU1M0ZhHGZDicrWjpwYif6fPWPpwaDJbC1zxvXFziFUbVGlFi+7lbKOZjMHiE
+         RydhpZA+l2O8O9BVWgo5WzkOL83oNG5WbLSb7Nc9J7/W8LDtSANpWGPGD8G5NfkIMgpm
+         jpE1L/Hbq8tEco++PE4lo3gXhBwS/RjUyhOp6mhQdRdhG3tDcLesyYVvPTCWNPDMXRRu
+         kRLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QPq/o0R9ggNlb2oMRGbkSeTpgM0rzBY83T9WPQ+nWrg=;
-        b=Srov1nHBXYUNyzTXZwHnzVEScZxyCswkIwsoda4DL1KGZbvEaR/nw7zBqoPH0WVwCI
-         8SiWnoBu/WQnm5SNe4UkVhq+XXWRwwF1lmzIg/yGC5Hbjb3BlPqe8diRL7YtB+6IQIJJ
-         vyrQ3qAOVwZN9oxVHelft7ttJp1wkZqjkIdt9WOSxuI4WWx33V9UMk2Ko7nOIKbA91aK
-         B7N/w17VugruzWKbYlUUWHn+HUSUHwKIE+ob/pXVHn56ObI2eCHsLHCEiH54yZ7qIj3a
-         +SvWZfPBqb+cIM3g3IOxwnZvvm+RhaFBfwDKnEYM9jCp4lJH2GjK4PuZsuerheziKsGG
-         J8yw==
-X-Gm-Message-State: AJcUukfqCuz+mcuCEIh5vUbAbgxxa19l8bG/Hznst3G1MdpJkddi+Xtn
-        uVerwBRjVQK1NmCKkt7YRL12Lw==
-X-Google-Smtp-Source: ALg8bN6JYdjBjQL1iTQMTWXvrOTiU/Fa0DfbRJm4zuIRUgdZLqvPh2JyNaWwYssKxs/5vtkL9ZBrAQ==
-X-Received: by 2002:a63:f412:: with SMTP id g18mr20671728pgi.262.1547877432781;
-        Fri, 18 Jan 2019 21:57:12 -0800 (PST)
+        bh=zz52nPvPtFJqyPj2XZVPMynhhMIZtDAuu6S8fhVpQdc=;
+        b=PaGtcilzTlP464k86eOGdesvDbOzPigDZQpMTewP4D4/TlaILz7fmpF6v4DOQRNgtZ
+         M0g4zaE1+FXmESVpxAkKftiU57+/QB53II+uv0NBvJIhXGvrk9gg/Il9n78b8ySCDA8C
+         cZSSPnwQL4D0QBJIYh4POBQTUz9SR1Qn5OIdwoCTJ9c5E173q+uHFW+2oyy2TBJ1krBx
+         yQJNiMPKpHxnYrWHbcdNMHl0/ycKOSgX5H8HeZ81Bz7afiBCcQoCcvzioAnc4Ggp9ZK1
+         7LjR2F/51/HjezXcjU1dYnwSUvskv2XMh6BH13OOd8LTQajPj0GM/kBNhn0chVzf1PBR
+         OSPg==
+X-Gm-Message-State: AJcUukfB2z5Y/Q0GoZKE6JDkRoCUQe2BgfLwGs+q4ituMDe2Wjgft17i
+        njgUicmBD8XRE7WrvW4u46if0A==
+X-Google-Smtp-Source: ALg8bN5yaqJwyxbRwG4IIcWKUrLsn+0tH7+5XWFIVPrlf3zW4l96BtUsxikPVWNhTZZqfJ6OEB+Eiw==
+X-Received: by 2002:a63:4e15:: with SMTP id c21mr20644687pgb.50.1547877437499;
+        Fri, 18 Jan 2019 21:57:17 -0800 (PST)
 Received: from localhost.localdomain ([49.207.51.221])
-        by smtp.gmail.com with ESMTPSA id c7sm9295535pfh.18.2019.01.18.21.57.09
+        by smtp.gmail.com with ESMTPSA id c7sm9295535pfh.18.2019.01.18.21.57.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 21:57:12 -0800 (PST)
+        Fri, 18 Jan 2019 21:57:16 -0800 (PST)
 From:   Anup Patel <anup@brainfault.org>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
@@ -66,9 +66,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Christoph Hellwig <hch@infradead.org>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         Anup Patel <anup@brainfault.org>
-Subject: [PATCH v5 3/5] irqchip: sifive-plic: Add warning in plic_init() if handler already present
-Date:   Sat, 19 Jan 2019 11:26:23 +0530
-Message-Id: <20190119055625.100054-4-anup@brainfault.org>
+Subject: [PATCH v5 4/5] irqchip: sifive-plic: Differentiate between PLIC handler and context
+Date:   Sat, 19 Jan 2019 11:26:24 +0530
+Message-Id: <20190119055625.100054-5-anup@brainfault.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190119055625.100054-1-anup@brainfault.org>
 References: <20190119055625.100054-1-anup@brainfault.org>
@@ -77,40 +77,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have two enteries (one for M-mode and another for S-mode) in the
-interrupts-extended DT property of PLIC DT node for each HART. It is
-expected that firmware/bootloader will set M-mode HWIRQ line of each
-HART to 0xffffffff (i.e. -1) in interrupts-extended DT property
-because Linux runs in S-mode only.
+We explicitly differentiate between PLIC handler and context because
+PLIC context is for given mode of HART whereas PLIC handler is per-CPU
+software construct meant for handling interrupts from a particular
+PLIC context.
 
-If firmware/bootloader is buggy then it will not correctly update
-interrupts-extended DT property which might result in a plic_handler
-configured twice. This patch adds a warning in plic_init() if a
-plic_handler is already marked present. This warning provides us
-a hint about incorrectly updated interrupts-extended DT property.
+To achieve this differentiation, we rename "nr_handlers" to "nr_contexts"
+and "nr_mapped" to "nr_handlers" in plic_init().
 
 Signed-off-by: Anup Patel <anup@brainfault.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/irqchip/irq-sifive-plic.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/irqchip/irq-sifive-plic.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 01bbbbffbcae..b9a0bcefe426 100644
+index b9a0bcefe426..24c906f4be93 100644
 --- a/drivers/irqchip/irq-sifive-plic.c
 +++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -229,6 +229,11 @@ static int __init plic_init(struct device_node *node,
+@@ -177,7 +177,7 @@ static int plic_find_hart_id(struct device_node *node)
+ static int __init plic_init(struct device_node *node,
+ 		struct device_node *parent)
+ {
+-	int error = 0, nr_handlers, nr_mapped = 0, i;
++	int error = 0, nr_contexts, nr_handlers = 0, i;
+ 	u32 nr_irqs;
  
- 		cpu = riscv_hartid_to_cpuid(hartid);
- 		handler = per_cpu_ptr(&plic_handlers, cpu);
-+		if (handler->present) {
-+			pr_warn("handler already present for context %d.\n", i);
-+			continue;
-+		}
-+
- 		handler->present = true;
- 		handler->hart_base =
- 			plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
+ 	if (plic_regs) {
+@@ -194,10 +194,10 @@ static int __init plic_init(struct device_node *node,
+ 	if (WARN_ON(!nr_irqs))
+ 		goto out_iounmap;
+ 
+-	nr_handlers = of_irq_count(node);
+-	if (WARN_ON(!nr_handlers))
++	nr_contexts = of_irq_count(node);
++	if (WARN_ON(!nr_contexts))
+ 		goto out_iounmap;
+-	if (WARN_ON(nr_handlers < num_possible_cpus()))
++	if (WARN_ON(nr_contexts < num_possible_cpus()))
+ 		goto out_iounmap;
+ 
+ 	error = -ENOMEM;
+@@ -206,7 +206,7 @@ static int __init plic_init(struct device_node *node,
+ 	if (WARN_ON(!plic_irqdomain))
+ 		goto out_iounmap;
+ 
+-	for (i = 0; i < nr_handlers; i++) {
++	for (i = 0; i < nr_contexts; i++) {
+ 		struct of_phandle_args parent;
+ 		struct plic_handler *handler;
+ 		irq_hw_number_t hwirq;
+@@ -245,11 +245,11 @@ static int __init plic_init(struct device_node *node,
+ 		writel(0, handler->hart_base + CONTEXT_THRESHOLD);
+ 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
+ 			plic_toggle(handler, hwirq, 0);
+-		nr_mapped++;
++		nr_handlers++;
+ 	}
+ 
+-	pr_info("mapped %d interrupts to %d (out of %d) handlers.\n",
+-		nr_irqs, nr_mapped, nr_handlers);
++	pr_info("mapped %d interrupts with %d handlers for %d contexts.\n",
++		nr_irqs, nr_handlers, nr_contexts);
+ 	set_handle_irq(plic_handle_irq);
+ 	return 0;
+ 
 -- 
 2.17.1
 
