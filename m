@@ -2,78 +2,140 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UPPERCASE_50_75 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7D0C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8186C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3522086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:11:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QvrCIKkY"
+	by mail.kernel.org (Postfix) with ESMTP id 883FE2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 10:21:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbfASKLY (ORCPT
+        id S1727790AbfASKVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 05:11:24 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57296 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbfASKLY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 05:11:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Du82R+DEIpEf8ousaba7lveRYIKww7TofVK6LWT0DzE=; b=QvrCIKkYGaDGOC2AdmX/zObKU
-        PzGTgoK5j3ZtqZJw8AnRvZYH2X098mRzQykl33hnN6DHXbMsZ8E44VVpXoQfrbZrkYC/xQ6nCOSnT
-        Gtl8rs+OlN2beC0ZRZ9LuztJ55t9OqRqfiWmehY048vd1J8b41sdTpsUx55UdidMLI24RzL80K/8T
-        xL3EKd2zzvUWvneRGYErkyVfkibrCkdw/ovGdHM0FC7JsV6lhvf9Fh4Bh9hIuZPfJqOZp2dMUFleh
-        vVLTvk419VoDfvVBtItPbW2/95Pk+E7bMXmuuD6w5/0dmwOnwCswTAJQrSoPwp0073aVnHKoJQB7q
-        +35FVlqPA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gknax-0001t8-2i; Sat, 19 Jan 2019 10:11:19 +0000
-Date:   Sat, 19 Jan 2019 02:11:18 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     "Andrew F. Davis" <afd@ti.com>, Liam Mark <lmark@codeaurora.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
- map/unmap
-Message-ID: <20190119101118.GA2127@infradead.org>
-References: <20190111180523.27862-14-afd@ti.com>
- <alpine.DEB.2.10.1901140910130.23879@lmark-linux.qualcomm.com>
- <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
- <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
- <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com>
- <b6cb5596-6beb-73e0-0d8c-d9a13466d626@redhat.com>
- <99ca0b08-02bd-64fd-d43c-c330f0d11639@ti.com>
- <alpine.DEB.2.10.1901161441280.10666@lmark-linux.qualcomm.com>
- <7620534f-b749-76f9-0f53-f73e3f12e9a9@ti.com>
- <fd33986f-ec26-c028-32c2-19c8cc0aba15@redhat.com>
+        Sat, 19 Jan 2019 05:21:52 -0500
+Received: from smtp4-g21.free.fr ([212.27.42.4]:34454 "EHLO smtp4-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727733AbfASKVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 05:21:51 -0500
+Received: from [192.168.1.42] (unknown [77.207.133.132])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 6A33919F4EA;
+        Sat, 19 Jan 2019 11:21:21 +0100 (CET)
+Subject: Re: kmemleak panic
+To:     Qian Cai <cai@lca.pw>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
+ <20190118143434.GE118707@arrakis.emea.arm.com>
+ <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+ <5fe89adc-c95b-ca89-d043-c380e2ba8cb3@lca.pw>
+ <8edcc205-0e55-7988-5729-7b75e47e9b32@free.fr>
+ <fd0a8e39-b258-6281-ed5d-0e176971478f@lca.pw>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <d344a4f5-ba3c-6d9e-010f-0df43e81873f@free.fr>
+Date:   Sat, 19 Jan 2019 11:21:16 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd33986f-ec26-c028-32c2-19c8cc0aba15@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <fd0a8e39-b258-6281-ed5d-0e176971478f@lca.pw>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 12:31:34PM -0800, Laura Abbott wrote:
-> I thought about doing that, the problem is it becomes an ABI break for
-> existing users which I really didn't want to do again. If it
-> ends up being the last thing we do before moving out of staging,
-> I'd consider doing it.
+On 18/01/2019 18:38, Qian Cai wrote:
 
-This is staging code, so any existing users by defintion do not matter.
-Let's not drag Linux development down over this.
+> On 1/18/19 12:05 PM, Marc Gonzalez wrote:
+>
+>> On 18/01/2019 17:14, Qian Cai wrote:
+>>
+>>> This looks like something different from the original "invalid PFNs from
+>>> pfn_to_online_page()" issue. What's your .config ?
+>>
+>> Here's my defconfig:
+>>
+>> # CONFIG_SWAP is not set
+>> CONFIG_NO_HZ_IDLE=y
+>> CONFIG_HIGH_RES_TIMERS=y
+>> CONFIG_PREEMPT=y
+>> CONFIG_IKCONFIG=y
+>> CONFIG_IKCONFIG_PROC=y
+>> CONFIG_LOG_BUF_SHIFT=20
+>> CONFIG_BLK_DEV_INITRD=y
+>> CONFIG_ARCH_QCOM=y
+>> # CONFIG_EFI is not set
+>> # CONFIG_SUSPEND is not set
+>> CONFIG_PM=y
+>> # CONFIG_MQ_IOSCHED_DEADLINE is not set
+>> # CONFIG_MQ_IOSCHED_KYBER is not set
+>> CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+>> CONFIG_DEVTMPFS=y
+>> CONFIG_DEVTMPFS_MOUNT=y
+>> # CONFIG_BLK_DEV is not set
+>> # CONFIG_INPUT_KEYBOARD is not set
+>> # CONFIG_INPUT_MOUSE is not set
+>> # CONFIG_SERIO_SERPORT is not set
+>> CONFIG_VT_HW_CONSOLE_BINDING=y
+>> CONFIG_LEGACY_PTY_COUNT=16
+>> CONFIG_SERIAL_8250=y
+>> CONFIG_SERIAL_MSM=y
+>> CONFIG_SERIAL_MSM_CONSOLE=y
+>> CONFIG_SERIAL_DEV_BUS=y
+>> # CONFIG_HW_RANDOM is not set
+>> # CONFIG_HWMON is not set
+>> CONFIG_REGULATOR=y
+>> CONFIG_REGULATOR_FIXED_VOLTAGE=y
+>> CONFIG_REGULATOR_QCOM_SMD_RPM=y
+>> # CONFIG_HID is not set
+>> # CONFIG_USB_SUPPORT is not set
+>> # CONFIG_COMMON_CLK_XGENE is not set
+>> CONFIG_COMMON_CLK_QCOM=y
+>> # CONFIG_QCOM_A53PLL is not set
+>> # CONFIG_QCOM_CLK_APCS_MSM8916 is not set
+>> CONFIG_QCOM_CLK_SMD_RPM=y
+>> CONFIG_MSM_GCC_8998=y
+>> CONFIG_HWSPINLOCK=y
+>> CONFIG_HWSPINLOCK_QCOM=y
+>> CONFIG_MAILBOX=y
+>> CONFIG_QCOM_APCS_IPC=y
+>> CONFIG_RPMSG_QCOM_GLINK_RPM=y
+>> CONFIG_RPMSG_QCOM_GLINK_SMEM=y
+>> CONFIG_RPMSG_QCOM_SMD=y
+>> CONFIG_RPMSG_VIRTIO=y
+>> CONFIG_QCOM_COMMAND_DB=y
+>> CONFIG_QCOM_SMEM=y
+>> CONFIG_QCOM_SMD_RPM=y
+>> CONFIG_TMPFS=y
+>> CONFIG_DEBUG_INFO=y
+>> CONFIG_DEBUG_KERNEL=y
+>> CONFIG_DEBUG_KMEMLEAK=y
+>> CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE=4000
+>> CONFIG_FUNCTION_TRACER=y
+> 
+> This is truncated. I'll need your whole .config file, so I can try to reproduce
+> it here on an arm64 ThunderX2 server.
+
+Smirk. It's not truncated, it's condensed ;-)
+
+It's a defconfig, as generated by make savedefconfig.
+
+https://stackoverflow.com/questions/27899104/how-to-create-a-defconfig-file-from-a-config
+
+Save it to e.g. arch/arm64/configs/marc_defconfig and then you can
+just run 'make marc_defconfig' to generate the .config
+
+Regards.
