@@ -5,67 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1299C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE18CC61CE3
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3E72087E
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:15:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C83E2086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 00:15:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q8g2CYvF"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eVWNNv0e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbfASAPK (ORCPT
+        id S1730426AbfASAPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 18 Jan 2019 19:15:10 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:39865 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730329AbfASAOi (ORCPT
+        Fri, 18 Jan 2019 19:15:17 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:32873 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730159AbfASAOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 18 Jan 2019 19:14:38 -0500
-Received: by mail-it1-f196.google.com with SMTP id a6so8138916itl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 16:14:37 -0800 (PST)
+        Fri, 18 Jan 2019 19:14:34 -0500
+Received: by mail-io1-f68.google.com with SMTP id t24so12276713ioi.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jan 2019 16:14:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=U4/11qBya9eW0TJulgY+pL3W8mKOzagyoDohcwhv/7A=;
-        b=Q8g2CYvFZ2UYeUj77LcTL3vkxcfxEPoIB439S9+EqUmuDAbzYtgWiQ3jf05hkXWD/6
-         3tY1MKyy89MkZIZkVM3yrADfnvnVYnMglnZp65eslvKy3dEhH0v1NNjVOy9uOrinJfOG
-         5uHQArlFqJFNUefh4kwNC9K9gefzHtxXA15hg=
+        bh=Xspm6iAicRrBEIABBjnxHHb3wYQuD8seYqVRS9aGGBE=;
+        b=eVWNNv0e7NAshJSacDx+TuvDhjfI1nlZ1TFjyJTkuZZ23R6u87MP3Gn6qhOZUNZZBq
+         ohjY8K3/Uk/oPOdt3q7RFXmCTAcOptcq31LXAJqBE+EFnOGWoe8nPKhLI7TiQ4E/XbL3
+         sf0AJOYgFFCFhu5qvcexbmzJUNGg+/FmabGTQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=U4/11qBya9eW0TJulgY+pL3W8mKOzagyoDohcwhv/7A=;
-        b=uHT08N2s7U1RawYRTFHD07z0Yd7wwY2BmaS+RjNpW7dLRaNxz9z8b7qv2gjQSZtSpf
-         +u9UQfqJfeRuACik7pkqsiIKdb2G/9OewZTLGQCMoODG/FxS8UBuZwq3LOBnFGXLOpZa
-         7cSsVSPEDy+/qaJ5j723NBP/n4vPySYrKqIBu52cO24+V6nWaGZsrOanlR3TK9vqMLEL
-         PEtmPoMmCQu5VT79pX82UR4XJpd/LW9dAHWVM8DDOQAQkdE6qehjoDYZxalwxB5tzRkv
-         HFLQjMDtQ2+H9V/2InjAnAn+6AodBFz1tYle16EuEH5s9g/wiS1meEtjEy/GyPFQ7MiN
-         nvmQ==
-X-Gm-Message-State: AJcUukeoS9n1WNCm1QwMw0J16VBKfAo9AR2zKbHX08Y9BvL+Tx5sNEU9
-        PLJqG3QRGz2DHRvse5urm1+gWva1Gv8=
-X-Google-Smtp-Source: ALg8bN5OLnie6P7lkZw7Wk3ioFnDPCuK3kz7rz69+eDYmQ1WCsYXa3i1dJLSCYctkAXGhzsS6brFug==
-X-Received: by 2002:a24:9a01:: with SMTP id l1mr1265823ite.113.1547856876495;
-        Fri, 18 Jan 2019 16:14:36 -0800 (PST)
+        bh=Xspm6iAicRrBEIABBjnxHHb3wYQuD8seYqVRS9aGGBE=;
+        b=MjBGjqbj5abGi/3RBp7QUFAwtAKh9QSXhQXsCZfNtRDBU+d7uCgqR6KrMDiAZzTk1n
+         ww1BuAXqVTMfsxs3zbaUa/JDhOMTu9FXOdNaTsOLe8+coqn5dRffjNBxDyUOCgGVqCEs
+         laEXq0CiFiNSgPKSaZluNXhBdLooQNkmgFLgmsumF0/JcsNiXV+GPwDS1hzj6KuQ0O0V
+         m5fs4ZFQwnpOpF54jcBOcve4pmqvJPHiP6Kha2M3eSrJ312+b/7mqg3uo8jWAqWwjtZk
+         I10LJWn+AAuUsTnwnvx/A11zBFOXOV1kVOZsi5KA7ANfT7IeNivQMmi7e1ad4NDC/1G7
+         TzuQ==
+X-Gm-Message-State: AJcUukdxiut5zfguc76Xgt0mUp9KgTlBzAT59JMuYEGc7bq5yWeL0LCL
+        M7YOf4Bh6n3/RVjjiggcg+vQUDsiagA=
+X-Google-Smtp-Source: ALg8bN6u9dLFCAmVduT62IaW1YKtieLUH7CnPZLXKjgGWWwESCGw8HcPEszSH+/eyQvi9vPoe4qVvg==
+X-Received: by 2002:a6b:310b:: with SMTP id j11mr10421598ioa.141.1547856872526;
+        Fri, 18 Jan 2019 16:14:32 -0800 (PST)
 Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:8140:8e3f:aea5:bcdf])
-        by smtp.gmail.com with ESMTPSA id e22sm2382062iod.47.2019.01.18.16.14.35
+        by smtp.gmail.com with ESMTPSA id e22sm2382062iod.47.2019.01.18.16.14.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 16:14:35 -0800 (PST)
+        Fri, 18 Jan 2019 16:14:31 -0800 (PST)
 From:   Nick Crews <ncrews@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, sjg@chromium.org, djkurtz@google.com,
         dlaurie@chromium.org, Duncan Laurie <dlaurie@google.com>,
-        Nick Crews <ncrews@chromium.org>, linux-rtc@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Benson Leung <bleung@chromium.org>,
+        Nick Crews <ncrews@chromium.org>,
         Nick Crews <ncrews@google.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v3 5/9] platform/chrome: rtc: Add RTC driver
-Date:   Fri, 18 Jan 2019 17:14:18 -0700
-Message-Id: <20190119001422.48186-6-ncrews@chromium.org>
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>
+Subject: [PATCH v3 2/9] platform/chrome: Add new driver for Wilco EC
+Date:   Fri, 18 Jan 2019 17:14:15 -0700
+Message-Id: <20190119001422.48186-3-ncrews@chromium.org>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 In-Reply-To: <20190119001422.48186-1-ncrews@chromium.org>
 References: <20190119001422.48186-1-ncrews@chromium.org>
@@ -78,298 +76,603 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Duncan Laurie <dlaurie@google.com>
 
-This Embedded Controller has an internal RTC that is exposed
-as a standard RTC class driver with read/write functionality.
-
-The driver is added to the drivers/rtc/ so that the maintainer of that
-directory will be able to comment on this change, as that maintainer is
-the expert on this system. In addition, the driver code is called
-indirectly after a corresponding device is registered from core.c,
-as opposed to core.c registering the driver callbacks directly.
-
-> hwclock --show --rtc /dev/rtc1
-2007-12-31 16:01:20.460959-08:00
-> hwclock --systohc --rtc /dev/rtc1
-> hwclock --show --rtc /dev/rtc1
-2018-11-29 17:08:00.780793-08:00
+This EC is an incompatible variant of the typical Chrome OS embedded
+controller.  It uses the same low-level communication and a similar
+protocol with some significant differences.  The EC firmware does
+not support the same mailbox commands so it is not registered as a
+cros_ec device type.
 
 Signed-off-by: Duncan Laurie <dlaurie@google.com>
 Signed-off-by: Nick Crews <ncrews@chromium.org>
 ---
 
 Changes in v3:
-- rm #define for driver name
-- Don't compute weekday when reading from RTC.
-  Still set weekday when writing, as RTC needs this
-  to control advanced power scheduling
-- rm check for invalid month data
-- Set range_min and range_max on rtc_device
+- remove unused ret in probe()
+- Add newline spacer in probe()
+- rm unnecessary res in get_resource()
+- s/8bit/8-bit
+- rm first sleep when sending command to EC
 
 Changes in v2:
-- rm license boiler plate
-- rm "wilco_ec_rtc -" prefix in docstring
-- Make rtc driver its own module within the drivers/rtc/ directory
-- Register a rtc device from core.c that is picked up by this driver
+- Remove COMPILE_TEST from Kconfig because inb()/outb()
+won't work on anything but X86
+- Add myself as module author
+- Tweak mailbox()
 
- drivers/platform/chrome/wilco_ec/core.c |  17 +++
- drivers/rtc/Kconfig                     |  11 ++
- drivers/rtc/Makefile                    |   1 +
- drivers/rtc/rtc-wilco-ec.c              | 177 ++++++++++++++++++++++++
- 4 files changed, 206 insertions(+)
- create mode 100644 drivers/rtc/rtc-wilco-ec.c
+ drivers/platform/chrome/Kconfig            |   4 +-
+ drivers/platform/chrome/Makefile           |   2 +
+ drivers/platform/chrome/wilco_ec/Kconfig   |  24 +++
+ drivers/platform/chrome/wilco_ec/Makefile  |   4 +
+ drivers/platform/chrome/wilco_ec/core.c    |  96 +++++++++
+ drivers/platform/chrome/wilco_ec/mailbox.c | 236 +++++++++++++++++++++
+ include/linux/platform_data/wilco-ec.h     | 138 ++++++++++++
+ 7 files changed, 503 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/platform/chrome/wilco_ec/Kconfig
+ create mode 100644 drivers/platform/chrome/wilco_ec/Makefile
+ create mode 100644 drivers/platform/chrome/wilco_ec/core.c
+ create mode 100644 drivers/platform/chrome/wilco_ec/mailbox.c
+ create mode 100644 include/linux/platform_data/wilco-ec.h
 
-diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
-index 9b4a25e63b56..dd8b896b3833 100644
---- a/drivers/platform/chrome/wilco_ec/core.c
-+++ b/drivers/platform/chrome/wilco_ec/core.c
-@@ -34,6 +34,7 @@ static int wilco_ec_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct wilco_ec_device *ec;
-+	struct platform_device *child_pdev;
- 	int ret;
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 16b1615958aa..bf889adfd4ef 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -49,6 +49,8 @@ config CHROMEOS_TBMC
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called chromeos_tbmc.
  
- 	ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
-@@ -76,8 +77,24 @@ static int wilco_ec_probe(struct platform_device *pdev)
- 		goto rm_debugfs;
- 	}
- 
-+	/*
-+	 * Register a RTC platform device that will get picked up by the RTC
-+	 * subsystem. This platform device will get freed when its parent device
-+	 * dev is unregistered.
-+	 */
-+	child_pdev = platform_device_register_data(dev, "rtc-wilco-ec",
-+						   PLATFORM_DEVID_AUTO,
-+						   NULL, 0);
-+	if (IS_ERR(child_pdev)) {
-+		dev_err(dev, "Failed to create RTC platform device\n");
-+		ret = PTR_ERR(child_pdev);
-+		goto remove_sysfs;
-+	}
++source "drivers/platform/chrome/wilco_ec/Kconfig"
 +
- 	return 0;
+ config CROS_EC_CTL
+         tristate
  
-+remove_sysfs:
-+	wilco_ec_sysfs_remove(ec);
- rm_debugfs:
- 	wilco_ec_debugfs_remove(ec);
- destroy_mec:
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 225b0b8516f3..d5063c791515 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1814,4 +1814,15 @@ config RTC_DRV_GOLDFISH
- 	  Goldfish is a code name for the virtual platform developed by Google
- 	  for Android emulation.
+@@ -86,7 +88,7 @@ config CROS_EC_LPC
  
-+config RTC_DRV_WILCO_EC
-+	tristate "Wilco EC RTC"
-+	depends on WILCO_EC
-+	default m
-+	help
-+	  If you say yes here, you get read/write support for the Real Time
-+	  Clock on the Wilco Embedded Controller (Wilco is a kind of Chromebook)
+ config CROS_EC_LPC_MEC
+ 	bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
+-	depends on CROS_EC_LPC
++	depends on CROS_EC_LPC || WILCO_EC
+ 	default n
+ 	help
+ 	  If you say Y here, a variant LPC protocol for the Microchip EC
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index cd591bf872bb..7242ee2b13c5 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -13,3 +13,5 @@ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
+ obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
+ obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o
+ obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
 +
-+	  This can also be built as a module. If so, the module will
-+	  be named "rtc_wilco_ec".
-+
- endif # RTC_CLASS
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index df022d820bee..6255ea78da25 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -172,6 +172,7 @@ obj-$(CONFIG_RTC_DRV_V3020)	+= rtc-v3020.o
- obj-$(CONFIG_RTC_DRV_VR41XX)	+= rtc-vr41xx.o
- obj-$(CONFIG_RTC_DRV_VRTC)	+= rtc-mrst.o
- obj-$(CONFIG_RTC_DRV_VT8500)	+= rtc-vt8500.o
-+obj-$(CONFIG_RTC_DRV_WILCO_EC)	+= rtc-wilco-ec.o
- obj-$(CONFIG_RTC_DRV_WM831X)	+= rtc-wm831x.o
- obj-$(CONFIG_RTC_DRV_WM8350)	+= rtc-wm8350.o
- obj-$(CONFIG_RTC_DRV_X1205)	+= rtc-x1205.o
-diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
++obj-$(CONFIG_WILCO_EC)			+= wilco_ec/
+diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
 new file mode 100644
-index 000000000000..b721cc3f17f0
+index 000000000000..f8e6c9e8c5cd
 --- /dev/null
-+++ b/drivers/rtc/rtc-wilco-ec.c
-@@ -0,0 +1,177 @@
++++ b/drivers/platform/chrome/wilco_ec/Kconfig
+@@ -0,0 +1,24 @@
++menuconfig WILCO_EC_PLATFORM
++	bool "Platform support for Wilco Embedded Controller hardware"
++	help
++	  Say Y here to get to see options for platform support for
++	  various Wilco EC features. This option alone does
++	  not add any kernel code.
++
++	  If you say N, all options in this submenu will be skipped and disabled.
++
++if WILCO_EC_PLATFORM
++
++config WILCO_EC
++	tristate "ChromeOS Wilco Embedded Controller"
++	depends on ACPI && X86
++	select CROS_EC_LPC_MEC
++	help
++	  If you say Y here, you get support for talking to the ChromeOS
++	  Wilco EC over an eSPI bus. This uses a simple byte-level protocol
++	  with a checksum.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called wilco_ec.
++
++endif # WILCO_EC_PLATFORM
+diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform/chrome/wilco_ec/Makefile
+new file mode 100644
+index 000000000000..03b32301dc61
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++
++wilco_ec-objs				:= core.o mailbox.o
++obj-$(CONFIG_WILCO_EC)			+= wilco_ec.o
+diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
+new file mode 100644
+index 000000000000..13fe21dd235a
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec/core.c
+@@ -0,0 +1,96 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * RTC interface for Wilco Embedded Controller with R/W abilities
++ * Mailbox interface for Wilco Embedded Controller
++ *
++ * Copyright 2018 Google LLC
++ */
++
++#include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/ioport.h>
++#include <linux/module.h>
++#include <linux/platform_data/wilco-ec.h>
++#include <linux/platform_device.h>
++
++#include "../cros_ec_lpc_mec.h"
++
++static struct resource *wilco_get_resource(struct platform_device *pdev,
++					   int index)
++{
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++
++	res = platform_get_resource(pdev, IORESOURCE_IO, index);
++	if (!res) {
++		dev_dbg(dev, "couldn't find IO resource %d\n", index);
++		return res;
++	}
++
++	return devm_request_region(dev, res->start, resource_size(res),
++				   dev_name(dev));
++}
++
++static int wilco_ec_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct wilco_ec_device *ec;
++
++	ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
++	if (!ec)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, ec);
++	ec->dev = dev;
++	mutex_init(&ec->mailbox_lock);
++
++	/* Largest data buffer size requirement is extended data response */
++	ec->data_size = sizeof(struct wilco_ec_response) +
++		EC_MAILBOX_DATA_SIZE_EXTENDED;
++	ec->data_buffer = devm_kzalloc(dev, ec->data_size, GFP_KERNEL);
++	if (!ec->data_buffer)
++		return -ENOMEM;
++
++	/* Prepare access to IO regions provided by ACPI */
++	ec->io_data = wilco_get_resource(pdev, 0);	/* Host Data */
++	ec->io_command = wilco_get_resource(pdev, 1);	/* Host Command */
++	ec->io_packet = wilco_get_resource(pdev, 2);	/* MEC EMI */
++	if (!ec->io_data || !ec->io_command || !ec->io_packet)
++		return -ENODEV;
++
++	/* Initialize cros_ec register interface for communication */
++	cros_ec_lpc_mec_init(ec->io_packet->start,
++			     ec->io_packet->start + EC_MAILBOX_DATA_SIZE);
++
++	return 0;
++}
++
++static int wilco_ec_remove(struct platform_device *pdev)
++{
++	/* Teardown cros_ec interface */
++	cros_ec_lpc_mec_destroy();
++
++	return 0;
++}
++
++static const struct acpi_device_id wilco_ec_acpi_device_ids[] = {
++	{ "GOOG000C", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, wilco_ec_acpi_device_ids);
++
++static struct platform_driver wilco_ec_driver = {
++	.driver = {
++		.name = "wilco_ec",
++		.acpi_match_table = wilco_ec_acpi_device_ids,
++	},
++	.probe = wilco_ec_probe,
++	.remove = wilco_ec_remove,
++};
++
++module_platform_driver(wilco_ec_driver);
++
++MODULE_AUTHOR("Nick Crews <ncrews@google.com>");
++MODULE_AUTHOR("Duncan Laurie <dlaurie@chromium.org>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("ChromeOS Wilco Embedded Controller driver");
++MODULE_ALIAS("platform:wilco-ec");
+diff --git a/drivers/platform/chrome/wilco_ec/mailbox.c b/drivers/platform/chrome/wilco_ec/mailbox.c
+new file mode 100644
+index 000000000000..4920a86d83f9
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec/mailbox.c
+@@ -0,0 +1,236 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Mailbox interface for Wilco Embedded Controller
 + *
 + * Copyright 2018 Google LLC
 + *
-+ * The corresponding platform device is typically registered in
-+ * drivers/platform/chrome/wilco_ec/core.c
++ * The Wilco EC is similar to a typical ChromeOS embedded controller.
++ * It uses the same MEC based low-level communication and a similar
++ * protocol, but with some important differences.  The EC firmware does
++ * not support the same mailbox commands so it is not registered as a
++ * cros_ec device type.
++ *
++ * Most messages follow a standard format, but there are some exceptions
++ * and an interface is provided to do direct/raw transactions that do not
++ * make assumptions about byte placement.
 + */
 +
-+#include <linux/bcd.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/io.h>
 +#include <linux/platform_data/wilco-ec.h>
-+#include <linux/rtc.h>
-+#include <linux/timekeeping.h>
++#include <linux/platform_device.h>
 +
-+#define EC_COMMAND_CMOS			0x7c
-+#define EC_CMOS_TOD_WRITE		0x02
-+#define EC_CMOS_TOD_READ		0x08
++#include "../cros_ec_lpc_mec.h"
++
++/* Version of mailbox interface */
++#define EC_MAILBOX_VERSION		0
++
++/* Command to start mailbox transaction */
++#define EC_MAILBOX_START_COMMAND	0xda
++
++/* Version of EC protocol */
++#define EC_MAILBOX_PROTO_VERSION	3
++
++/* Number of header bytes to be counted as data bytes */
++#define EC_MAILBOX_DATA_EXTRA		2
++
++/* Maximum timeout */
++#define EC_MAILBOX_TIMEOUT		HZ
++
++/* EC response flags */
++#define EC_CMDR_DATA		BIT(0)	/* Data ready for host to read */
++#define EC_CMDR_PENDING		BIT(1)	/* Write pending to EC */
++#define EC_CMDR_BUSY		BIT(2)	/* EC is busy processing a command */
++#define EC_CMDR_CMD		BIT(3)	/* Last host write was a command */
 +
 +/**
-+ * struct ec_rtc_read - Format of RTC returned by EC.
-+ * @second: Second value (0..59)
-+ * @minute: Minute value (0..59)
-+ * @hour: Hour value (0..23)
-+ * @day: Day value (1..31)
-+ * @month: Month value (1..12)
-+ * @year: Year value (full year % 100)
-+ * @century: Century value (full year / 100)
++ * wilco_ec_response_timed_out() - Wait for EC response.
++ * @ec: EC device.
 + *
-+ * All values are presented in binary (not BCD).
++ * Return: true if EC timed out, false if EC did not time out.
 + */
-+struct ec_rtc_read {
-+	u8 second;
-+	u8 minute;
-+	u8 hour;
-+	u8 day;
-+	u8 month;
-+	u8 year;
-+	u8 century;
++static bool wilco_ec_response_timed_out(struct wilco_ec_device *ec)
++{
++	unsigned long timeout = jiffies + EC_MAILBOX_TIMEOUT;
++
++	do {
++		if (!(inb(ec->io_command->start) &
++		      (EC_CMDR_PENDING | EC_CMDR_BUSY)))
++			return false;
++		usleep_range(100, 200);
++	} while (time_before(jiffies, timeout));
++
++	return true;
++}
++
++/**
++ * wilco_ec_checksum() - Compute 8-bit checksum over data range.
++ * @data: Data to checksum.
++ * @size: Number of bytes to checksum.
++ *
++ * Return: 8-bit checksum of provided data.
++ */
++static u8 wilco_ec_checksum(const void *data, size_t size)
++{
++	u8 *data_bytes = (u8 *)data;
++	u8 checksum = 0;
++	size_t i;
++
++	for (i = 0; i < size; i++)
++		checksum += data_bytes[i];
++
++	return checksum;
++}
++
++/**
++ * wilco_ec_prepare() - Prepare the request structure for the EC.
++ * @msg: EC message with request information.
++ * @rq: EC request structure to fill.
++ */
++static void wilco_ec_prepare(struct wilco_ec_message *msg,
++			     struct wilco_ec_request *rq)
++{
++	memset(rq, 0, sizeof(*rq));
++
++	/* Handle messages without trimming bytes from the request */
++	if (msg->request_size && msg->flags & WILCO_EC_FLAG_RAW_REQUEST) {
++		rq->reserved_raw = *(u8 *)msg->request_data;
++		msg->request_size--;
++		memmove(msg->request_data, msg->request_data + 1,
++			msg->request_size);
++	}
++
++	/* Fill in request packet */
++	rq->struct_version = EC_MAILBOX_PROTO_VERSION;
++	rq->mailbox_id = msg->type;
++	rq->mailbox_version = EC_MAILBOX_VERSION;
++	rq->data_size = msg->request_size + EC_MAILBOX_DATA_EXTRA;
++	rq->command = msg->command;
++
++	/* Checksum header and data */
++	rq->checksum = wilco_ec_checksum(rq, sizeof(*rq));
++	rq->checksum += wilco_ec_checksum(msg->request_data, msg->request_size);
++	rq->checksum = -rq->checksum;
++}
++
++/**
++ * wilco_ec_transfer() - Perform actual data transfer.
++ * @ec: EC device.
++ * @msg: EC message data for request and response.
++ * @rq: Filled in request structure
++ *
++ * Context: ec->mailbox_lock should be held while using this function.
++ * Return: number of bytes received or negative error code on failure.
++ */
++int wilco_ec_transfer(struct wilco_ec_device *ec, struct wilco_ec_message *msg,
++		      struct wilco_ec_request *rq)
++{
++	struct wilco_ec_response *rs;
++	u8 checksum;
++	u8 flag;
++	size_t size;
++
++	/* Write request header, then data */
++	cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE, 0, sizeof(*rq), (u8 *)rq);
++	cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE, sizeof(*rq), msg->request_size,
++				 msg->request_data);
++
++	/* Start the command */
++	outb(EC_MAILBOX_START_COMMAND, ec->io_command->start);
++
++	/* Wait for it to complete */
++	if (wilco_ec_response_timed_out(ec)) {
++		dev_dbg(ec->dev, "response timed out\n");
++		return -ETIMEDOUT;
++	}
++
++	/* For some commands (eg shutdown) the EC will not respond, that's OK */
++	if (msg->flags & WILCO_EC_FLAG_NO_RESPONSE) {
++		dev_dbg(ec->dev, "EC does not respond to this command\n");
++		return 0;
++	}
++
++	/* Check result */
++	flag = inb(ec->io_data->start);
++	if (flag) {
++		dev_dbg(ec->dev, "bad response: 0x%02x\n", flag);
++		return -EIO;
++	}
++
++	if (msg->flags & WILCO_EC_FLAG_EXTENDED_DATA)
++		size = EC_MAILBOX_DATA_SIZE_EXTENDED;
++	else
++		size = EC_MAILBOX_DATA_SIZE;
++
++	/* Read back response */
++	rs = ec->data_buffer;
++	checksum = cros_ec_lpc_io_bytes_mec(MEC_IO_READ, 0,
++					    sizeof(*rs) + size, (u8 *)rs);
++	if (checksum) {
++		dev_dbg(ec->dev, "bad packet checksum 0x%02x\n", rs->checksum);
++		return -EBADMSG;
++	}
++
++	/* Check that the EC reported success */
++	msg->result = rs->result;
++	if (msg->result) {
++		dev_dbg(ec->dev, "bad response: 0x%02x\n", msg->result);
++		return -EBADMSG;
++	}
++
++	/* Check the returned data size, skipping the header */
++	if (rs->data_size != size) {
++		dev_dbg(ec->dev, "unexpected packet size (%u != %zu)",
++			rs->data_size, size);
++		return -EMSGSIZE;
++	}
++
++	/* Skip 1 response data byte unless specified */
++	size = (msg->flags & WILCO_EC_FLAG_RAW_RESPONSE) ? 0 : 1;
++	if ((ssize_t) rs->data_size - size < msg->response_size) {
++		dev_dbg(ec->dev, "response data too short (%zd < %zu)",
++			(ssize_t) rs->data_size - size, msg->response_size);
++		return -EMSGSIZE;
++	}
++
++	/* Ignore response data bytes as requested */
++	memcpy(msg->response_data, rs->data + size, msg->response_size);
++
++	/* Return actual amount of data received */
++	return msg->response_size;
++}
++
++/**
++ * wilco_ec_mailbox() - Send EC request and receive EC response.
++ * @ec: EC device.
++ * @msg: EC message data for request and response.
++ *
++ * On entry msg->type, msg->flags, msg->command, msg->request_size,
++ * msg->response_size, and msg->request_data should all be filled in.
++ *
++ * On exit msg->result and msg->response_data will be filled.
++ *
++ * Return: number of bytes received or negative error code on failure.
++ */
++int wilco_ec_mailbox(struct wilco_ec_device *ec, struct wilco_ec_message *msg)
++{
++	struct wilco_ec_request *rq;
++	int ret;
++
++	dev_dbg(ec->dev, "cmd=%02x type=%04x flags=%02x rslen=%zu rqlen=%zu\n",
++		msg->command, msg->type, msg->flags, msg->response_size,
++		msg->request_size);
++
++	/* Prepare request packet */
++	rq = ec->data_buffer;
++	wilco_ec_prepare(msg, rq);
++
++	mutex_lock(&ec->mailbox_lock);
++	ret = wilco_ec_transfer(ec, msg, rq);
++	mutex_unlock(&ec->mailbox_lock);
++
++	return ret;
++
++}
++EXPORT_SYMBOL_GPL(wilco_ec_mailbox);
+diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
+new file mode 100644
+index 000000000000..5477b8802f81
+--- /dev/null
++++ b/include/linux/platform_data/wilco-ec.h
+@@ -0,0 +1,138 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * ChromeOS Wilco Embedded Controller
++ *
++ * Copyright 2018 Google LLC
++ */
++
++#ifndef WILCO_EC_H
++#define WILCO_EC_H
++
++#include <linux/device.h>
++#include <linux/kernel.h>
++
++#define WILCO_EC_FLAG_NO_RESPONSE	BIT(0) /* EC does not respond */
++#define WILCO_EC_FLAG_EXTENDED_DATA	BIT(1) /* EC returns 256 data bytes */
++#define WILCO_EC_FLAG_RAW_REQUEST	BIT(2) /* Do not trim request data */
++#define WILCO_EC_FLAG_RAW_RESPONSE	BIT(3) /* Do not trim response data */
++#define WILCO_EC_FLAG_RAW		(WILCO_EC_FLAG_RAW_REQUEST | \
++					 WILCO_EC_FLAG_RAW_RESPONSE)
++
++/* Normal commands have a maximum 32 bytes of data */
++#define EC_MAILBOX_DATA_SIZE		32
++
++/* Extended commands have 256 bytes of response data */
++#define EC_MAILBOX_DATA_SIZE_EXTENDED	256
++
++/**
++ * struct wilco_ec_device - Wilco Embedded Controller handle.
++ * @dev: Device handle.
++ * @mailbox_lock: Mutex to ensure one mailbox command at a time.
++ * @io_command: I/O port for mailbox command.  Provided by ACPI.
++ * @io_data: I/O port for mailbox data.  Provided by ACPI.
++ * @io_packet: I/O port for mailbox packet data.  Provided by ACPI.
++ * @data_buffer: Buffer used for EC communication.  The same buffer
++ *               is used to hold the request and the response.
++ * @data_size: Size of the data buffer used for EC communication.
++ */
++struct wilco_ec_device {
++	struct device *dev;
++	struct mutex mailbox_lock;
++	struct resource *io_command;
++	struct resource *io_data;
++	struct resource *io_packet;
++	void *data_buffer;
++	size_t data_size;
++};
++
++/**
++ * enum wilco_ec_msg_type - Message type to select a set of command codes.
++ * @WILCO_EC_MSG_LEGACY: Legacy EC messages for standard EC behavior.
++ * @WILCO_EC_MSG_PROPERTY: Get/Set/Sync EC controlled NVRAM property.
++ * @WILCO_EC_MSG_TELEMETRY: Telemetry data provided by the EC.
++ */
++enum wilco_ec_msg_type {
++	WILCO_EC_MSG_LEGACY = 0x00f0,
++	WILCO_EC_MSG_PROPERTY = 0x00f2,
++	WILCO_EC_MSG_TELEMETRY = 0x00f5,
++};
++
++/**
++ * struct wilco_ec_message - Request and response message.
++ * @type: Mailbox message type.
++ * @flags: Message flags.
++ * @command: Mailbox command code.
++ * @result: Result code from the EC.  Non-zero indicates an error.
++ * @request_size: Number of bytes to send to the EC.
++ * @request_data: Buffer containing the request data.
++ * @response_size: Number of bytes expected from the EC.
++ *                 This is 32 by default and 256 if the flag
++ *                 is set for %WILCO_EC_FLAG_EXTENDED_DATA
++ * @response_data: Buffer containing the response data, should be
++ *                 response_size bytes and allocated by caller.
++ */
++struct wilco_ec_message {
++	enum wilco_ec_msg_type type;
++	u8 flags;
++	u8 command;
++	u8 result;
++	size_t request_size;
++	void *request_data;
++	size_t response_size;
++	void *response_data;
++};
++
++/**
++ * struct wilco_ec_request - Mailbox request message format.
++ * @struct_version: Should be %EC_MAILBOX_PROTO_VERSION
++ * @checksum: Sum of all bytes must be 0.
++ * @mailbox_id: Mailbox identifier, specifies the command set.
++ * @mailbox_version: Mailbox interface version %EC_MAILBOX_VERSION
++ * @reserved: Set to zero.
++ * @data_size: Length of request, data + last 2 bytes of the header.
++ * @command: Mailbox command code, unique for each mailbox_id set.
++ * @reserved_raw: Set to zero for most commands, but is used by
++ *                some command types and for raw commands.
++ */
++struct wilco_ec_request {
++	u8 struct_version;
++	u8 checksum;
++	u16 mailbox_id;
++	u8 mailbox_version;
++	u8 reserved;
++	u16 data_size;
++	u8 command;
++	u8 reserved_raw;
 +} __packed;
 +
 +/**
-+ * struct ec_rtc_write - Format of RTC sent to the EC.
-+ * @param: EC_CMOS_TOD_WRITE
-+ * @century: Century value (full year / 100)
-+ * @year: Year value (full year % 100)
-+ * @month: Month value (1..12)
-+ * @day: Day value (1..31)
-+ * @hour: Hour value (0..23)
-+ * @minute: Minute value (0..59)
-+ * @second: Second value (0..59)
-+ * @weekday: Day of the week (0=Saturday)
-+ *
-+ * All values are presented in BCD.
++ * struct wilco_ec_response - Mailbox response message format.
++ * @struct_version: Should be %EC_MAILBOX_PROTO_VERSION
++ * @checksum: Sum of all bytes must be 0.
++ * @result: Result code from the EC.  Non-zero indicates an error.
++ * @data_size: Length of the response data buffer.
++ * @reserved: Set to zero.
++ * @mbox0: EC returned data at offset 0 is unused (always 0) so this byte
++ *         is treated as part of the header instead of the data.
++ * @data: Response data buffer.  Max size is %EC_MAILBOX_DATA_SIZE_EXTENDED.
 + */
-+struct ec_rtc_write {
-+	u8 param;
-+	u8 century;
-+	u8 year;
-+	u8 month;
-+	u8 day;
-+	u8 hour;
-+	u8 minute;
-+	u8 second;
-+	u8 weekday;
++struct wilco_ec_response {
++	u8 struct_version;
++	u8 checksum;
++	u16 result;
++	u16 data_size;
++	u8 reserved[2];
++	u8 mbox0;
++	u8 data[0];
 +} __packed;
 +
-+int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
-+{
-+	struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
-+	u8 param = EC_CMOS_TOD_READ;
-+	struct ec_rtc_read rtc;
-+	struct wilco_ec_message msg = {
-+		.type = WILCO_EC_MSG_LEGACY,
-+		.flags = WILCO_EC_FLAG_RAW_RESPONSE,
-+		.command = EC_COMMAND_CMOS,
-+		.request_data = &param,
-+		.request_size = sizeof(param),
-+		.response_data = &rtc,
-+		.response_size = sizeof(rtc),
-+	};
-+	int ret;
++/**
++ * wilco_ec_mailbox() - Send request to the EC and receive the response.
++ * @ec: Wilco EC device.
++ * @msg: Wilco EC message.
++ *
++ * Return: Number of bytes received or negative error code on failure.
++ */
++int wilco_ec_mailbox(struct wilco_ec_device *ec, struct wilco_ec_message *msg);
 +
-+	ret = wilco_ec_mailbox(ec, &msg);
-+	if (ret < 0)
-+		return ret;
-+
-+	tm->tm_sec	= rtc.second;
-+	tm->tm_min	= rtc.minute;
-+	tm->tm_hour	= rtc.hour;
-+	tm->tm_mday	= rtc.day;
-+	tm->tm_mon	= rtc.month - 1;
-+	tm->tm_year	= rtc.year + (rtc.century * 100) - 1900;
-+	tm->tm_yday	= rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
-+
-+	/* Don't compute day of week, we don't need it. */
-+	tm->tm_wday = -1;
-+
-+	return 0;
-+}
-+
-+int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm)
-+{
-+	struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
-+	struct ec_rtc_write rtc;
-+	struct wilco_ec_message msg = {
-+		.type = WILCO_EC_MSG_LEGACY,
-+		.flags = WILCO_EC_FLAG_RAW_RESPONSE,
-+		.command = EC_COMMAND_CMOS,
-+		.request_data = &rtc,
-+		.request_size = sizeof(rtc),
-+	};
-+	int year = tm->tm_year + 1900;
-+	/*
-+	 * Convert from 0=Sunday to 0=Saturday for the EC
-+	 * We DO need to set weekday because the EC controls battery charging
-+	 * schedules that depend on the day of the week.
-+	 */
-+	int wday = tm->tm_wday == 6 ? 0 : tm->tm_wday + 1;
-+	int ret;
-+
-+	rtc.param	= EC_CMOS_TOD_WRITE;
-+	rtc.century	= bin2bcd(year / 100);
-+	rtc.year	= bin2bcd(year % 100);
-+	rtc.month	= bin2bcd(tm->tm_mon + 1);
-+	rtc.day		= bin2bcd(tm->tm_mday);
-+	rtc.hour	= bin2bcd(tm->tm_hour);
-+	rtc.minute	= bin2bcd(tm->tm_min);
-+	rtc.second	= bin2bcd(tm->tm_sec);
-+	rtc.weekday	= bin2bcd(wday);
-+
-+	ret = wilco_ec_mailbox(ec, &msg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static const struct rtc_class_ops wilco_ec_rtc_ops = {
-+	.read_time = wilco_ec_rtc_read,
-+	.set_time = wilco_ec_rtc_write,
-+};
-+
-+static int wilco_ec_rtc_probe(struct platform_device *pdev)
-+{
-+	struct rtc_device *rtc;
-+
-+	rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(rtc))
-+		return PTR_ERR(rtc);
-+
-+	rtc->ops = &wilco_ec_rtc_ops;
-+	/* EC only supports this century */
-+	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	rtc->range_max = RTC_TIMESTAMP_END_2099;
-+	rtc->owner = THIS_MODULE;
-+
-+	return rtc_register_device(rtc);
-+}
-+
-+static struct platform_driver wilco_ec_rtc_driver = {
-+	.driver = {
-+		.name = "rtc-wilco-ec",
-+	},
-+	.probe = wilco_ec_rtc_probe,
-+};
-+
-+module_platform_driver(wilco_ec_rtc_driver);
-+
-+MODULE_ALIAS("platform:rtc-wilco-ec");
-+MODULE_AUTHOR("Nick Crews <ncrews@google.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Wilco EC RTC driver");
++#endif /* WILCO_EC_H */
 -- 
 2.20.1.321.g9e740568ce-goog
 
