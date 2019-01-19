@@ -2,73 +2,175 @@ Return-Path: <SRS0=awCL=P3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02535C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 09:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA63C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 09:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B792A2086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 09:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547889174;
-	bh=2QPsAC4AYXyGNZKN2TilCJ4WEB28fTy0LOIevQZyPA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CUVCWFm+QxG4Nf3TyAGfMSRIgmCEZPZ+nsAjNQjDVigvxp2XzVlF537ODS3te7DTl
-	 yMrpY6SwcDYijnpFoRzExsAUmcJPY2SbayIzx33bOC++jWl6CA2i8duw2oG5dcTDuA
-	 LVdQQmXEDvonUfMnf66wxoQTgAncMpcOK4V5Qo5w=
+	by mail.kernel.org (Postfix) with ESMTP id D0E68208E4
+	for <linux-kernel@archiver.kernel.org>; Sat, 19 Jan 2019 09:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfASJLM (ORCPT
+        id S1727721AbfASJUX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 04:11:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727644AbfASJLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 04:11:12 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCD3A2086D;
-        Sat, 19 Jan 2019 09:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547889071;
-        bh=2QPsAC4AYXyGNZKN2TilCJ4WEB28fTy0LOIevQZyPA0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yQzV5CVDTKiGv3Y/By0Dkfxqwe5TiRI+ht5YQZaiF4Nb4aRzw2vGNtZFDsXw7IR/y
-         15sTmS2RAjKKLif+0VRw6DZNaQGTQA8RlBz8VUGXO3ZhNAvprGv6rXKLgMc1/SAjIw
-         xvQWDn12QygkX3bBU44xpQhTxCuhnW0Z90qEMR1k=
-Date:   Sat, 19 Jan 2019 10:11:08 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] tiocsti() NULL dereference if ld->ops->receive_buf==NULL
-Message-ID: <20190119091108.GF10836@kroah.com>
-References: <CAG48ez06mDExELyTYN7MZQ3FjGcLx9ASc5HnxW8NQbfTAPX=Qg@mail.gmail.com>
+        Sat, 19 Jan 2019 04:20:23 -0500
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:38704 "EHLO
+        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727644AbfASJUW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 04:20:22 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07457527|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07440;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.DnpktYB_1547889617;
+Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.DnpktYB_1547889617)
+          by smtp.aliyun-inc.com(10.147.42.22);
+          Sat, 19 Jan 2019 17:20:17 +0800
+Subject: Re: [RFC v5 2/4] pstore/blk: add sample for pstore_blk
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <1546862462-19640-3-git-send-email-liaoweixiong@allwinnertech.com>
+ <CAGXu5j+4QdqSYokE-0Y_pm5RgBp6i+xMgeXjTnNGVVMKeUafYg@mail.gmail.com>
+From:   liaoweixiong <liaoweixiong@allwinnertech.com>
+Message-ID: <853df536-a86d-de14-47f4-244f60d9eceb@allwinnertech.com>
+Date:   Sat, 19 Jan 2019 17:20:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez06mDExELyTYN7MZQ3FjGcLx9ASc5HnxW8NQbfTAPX=Qg@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <CAGXu5j+4QdqSYokE-0Y_pm5RgBp6i+xMgeXjTnNGVVMKeUafYg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 08:09:07PM +0100, Jann Horn wrote:
-> Hi!
+On 2019-01-18 08:15, Kees Cook wrote:
+> On Mon, Jan 7, 2019 at 4:01 AM liaoweixiong
+> <liaoweixiong@allwinnertech.com> wrote:
+>>
+>> It is a sample for pstore_blk, using general ram rather than block device.
+>> According to pstore_blk, the data will be saved to ram buffer if not
+>> register device path and apis for panic. So, it can only used to dump
+>> Oops and some things will not reboot.
 > 
-> When a line discipline doesn't have a ->receive_buf handler, tiocsti()
-> attempts to call a NULL pointer. Both tty_n_tracesink and
-> spk_ttyio_ldisc_ops don't have such a handler.
+> I'm not sure I see the purpose of this implementation? Doesn't this
+> just cause all the pstore machinery to skip any actions?
+
+It just a sample for pstore_blk, which can used to record OOPS log on
+ram buffer. This module make it easier for device, without panic apis,
+to record oops log only.
+
+> i.e. without bzinfo->part_path, won't blkz_sample_write() just return
+-EINVAL, etc?
+
+Sure, blkz_sample_write (named blkz_default_general_write now) just
+return -EINVAL without bzinfo->part_path. How is the write path? It is
+blkoops_pstore_write->blkz_dmesg_write->blkz_zone_write->blkz_default_general_write.
+The blkz_zone_write will save the log to ram buffer even
+blkz_default_general_write return failure.
+
+>>
+>> Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
+>> ---
+>>  fs/pstore/Kconfig  |  9 +++++++++
+>>  fs/pstore/Makefile |  2 ++
+>>  fs/pstore/blkbuf.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 57 insertions(+)
+>>  create mode 100644 fs/pstore/blkbuf.c
+>>
+>> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+>> index a881c53..18b1fe6 100644
+>> --- a/fs/pstore/Kconfig
+>> +++ b/fs/pstore/Kconfig
+>> @@ -159,3 +159,12 @@ config PSTORE_BLK
+>>         help
+>>           This enables panic and oops message to be logged to a block dev
+>>           where it can be read back at some later point.
+>> +
+>> +config PSTORE_BLKBUF
+>> +       tristate "pstore block buffer sample"
+>> +       depends on PSTORE_BLK
+>> +       help
+>> +         This is a sample for pstore block, but do NOT have a block dev.
+>> +         According to pstore_blk, the data will be saved to ram buffer and
+>> +         dropped when reboot. So, it can only used to dump Oops and some
+>> +         things will not reboot.
+>> diff --git a/fs/pstore/Makefile b/fs/pstore/Makefile
+>> index c431700..4a6cde1 100644
+>> --- a/fs/pstore/Makefile
+>> +++ b/fs/pstore/Makefile
+>> @@ -15,3 +15,5 @@ obj-$(CONFIG_PSTORE_RAM)      += ramoops.o
+>>
+>>  obj-$(CONFIG_PSTORE_BLK)       += pstore_blk.o
+>>  pstore_blk-y += blkzone.o
+>> +
+>> +obj-$(CONFIG_PSTORE_BLKBUF)    += blkbuf.o
+>> diff --git a/fs/pstore/blkbuf.c b/fs/pstore/blkbuf.c
+>> new file mode 100644
+>> index 0000000..f1c6f57
+>> --- /dev/null
+>> +++ b/fs/pstore/blkbuf.c
+>> @@ -0,0 +1,46 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + *
+>> + * blkbuf.c: Block device Oops/Panic logger
+>> + *
+>> + * Copyright (C) 2019 liaoweixiong <liaoweixiong@gallwinnertech.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + */
+>> +#define pr_fmt(fmt) "blkbuf: " fmt
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/pstore_blk.h>
+>> +
+>> +struct blkz_info blkbuf_info = {
+>> +       .owner = THIS_MODULE,
+>> +       .name = "blkbuf",
+>> +       .part_size = 512 * 1024,
+>> +       .dmesg_size = 64 * 1024,
+>> +       .dump_oops = true,
+>> +};
+>> +
+>> +static int __init blkbuf_init(void)
+>> +{
+>> +       return blkz_register(&blkbuf_info);
+>> +}
+>> +module_init(blkbuf_init);
+>> +
+>> +static void __exit blkbuf_exit(void)
+>> +{
+>> +       blkz_unregister(&blkbuf_info);
+>> +}
+>> +module_exit(blkbuf_exit);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_AUTHOR("liaoweixiong <liaoweixiong@allwinnertech.com>");
+>> +MODULE_DESCRIPTION("Sample for Pstore BLK with Oops logger");
+>> --
+>> 1.9.1
+>>
 > 
-> To reproduce, build a kernel with CONFIG_SPEAKUP=y and
-> CONFIG_SPEAKUP_SYNTH_SOFT=y, set speakup.synth=soft in the kernel
-> command line, and run the following code as root:
-
-<snip>
-
-Ugh, thanks for finding this.  I'll look at it later this afternoon...
-
-greg k-h
+> 
