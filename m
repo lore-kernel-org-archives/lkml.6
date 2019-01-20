@@ -2,108 +2,104 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7750DC282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B809C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A7D20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:23:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WBwN8DYP"
+	by mail.kernel.org (Postfix) with ESMTP id 110EA20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728394AbfAUHXw (ORCPT
+        id S1728379AbfAUHYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:23:52 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:56539 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727992AbfAUHXs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:23:48 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190121012753epoutp0288f97c57543fbd9e1206e371e8fc907f~7uMnGY4mv0822908229epoutp02M
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:27:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190121012753epoutp0288f97c57543fbd9e1206e371e8fc907f~7uMnGY4mv0822908229epoutp02M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1548034073;
-        bh=n7gckqyZyZLjOOQ09nraz2rV2FeNQAdB346VcThszXE=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=WBwN8DYPV9xnA8H2hjGzvI9hTthLSgUvXvHJ8gz+uGMV4owjCq3kaxZJUWK0pbBwx
-         l6pexgAS/F8dZQ2GsROBCrcKXXMBS/RCaojBYh29SsJby3NB0Ux7Yolfm4YxMP9POn
-         WiU8rWPuobilnR8yCaX9nxwWCzlZGUdIouOQ597A=
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190121012751epcas1p44d236a952bfad3d9bdb7ff43c154d7d9~7uMlFEmfs2102521025epcas1p4p;
-        Mon, 21 Jan 2019 01:27:51 +0000 (GMT)
-X-AuditID: b6c32a39-1ce159c00000106e-8e-5c4520160cbf
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F5.44.04206.610254C5; Mon, 21 Jan 2019 10:27:50 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: [PATCH 2/3] PM / devfreq: fix missing check of return value in
- devfreq_add_device()
-Reply-To: myungjoo.ham@samsung.com
-From:   MyungJoo Ham <myungjoo.ham@samsung.com>
-To:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20190119160454.23151-2-tiny.windzz@gmail.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20190121012750epcms1p1b3fae992e1ae0f83c1d530feae02104c@epcms1p1>
-Date:   Mon, 21 Jan 2019 10:27:50 +0900
-X-CMS-MailID: 20190121012750epcms1p1b3fae992e1ae0f83c1d530feae02104c
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCKsWRmVeSWpSXmKPExsWy7bCmga6YgmuMwe6XJhbXvzxntTjb9Ibd
-        4vKuOWwWn3uPMFrM/T2BzYHVY+esu+wefVtWMXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r
-        5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFJJoSwxpxQoFJBYXKykb2dTlF9akqqQ
-        kV9cYquUWpCSU2BZoFecmFtcmpeul5yfa2VoYGBkClSYkJ3xYmttwQ/mir7JXA2MG5m7GDk5
-        JARMJPq7TgDZXBxCAjsYJSZu7wJyODh4BQQl/u4QBqkRFkiS+LP6LxOILSSgJNFwcx8zRFxf
-        ouPBNkYQm01AV2LrhrssIHNEBPoYJa5c/ccKkmAWSJdY93AOE8QyXokZ7U9ZIGxpie3Lt4I1
-        cwpYA9nL2CHiohI3V7+Fs98fm88IYYtItN47C3W0oMSDn7sZYebMmPIfama1xKOei2DPSAi0
-        MEqsmrkNarG+xJm5J9lAbF4BX4k3nZPAmlkEVCWW7jsPVeMicWfdR2aIo+Ultr+dAw4IZgFN
-        ifW79CHCfBLvvvawwvyyY94TqFY1iUO7l0DdLCNxevpCqDs9JF7cn84KCdzNjBI3v6xin8Ao
-        PwsRvrOQbJuFsG0BI/MqRrHUguLc9NRiwwJT5AjdxAhOcVqWOxiPnfM5xCjAwajEw/vjnkuM
-        EGtiWXFl7iFGCQ5mJRHejOPOMUK8KYmVValF+fFFpTmpxYcYTYGensgsJZqcD0y/eSXxhqZG
-        xsbGFiaGZqaGhkrivOsdgJoE0hNLUrNTUwtSi2D6mDg4pRoY8+5MPsU/f8LcOz9fV3hEnBHb
-        cmWV0ZTd5zck610yLF8fNO9ZvN0/6R/Tvs5/NfEA55qst3vOPlG48+TMju0vzx3PnGv/cqWY
-        rtCquVviq02u8c7Y3fH3s8TXiiXztzpPsA5TTnfqEH/60is/IUeb6apQMN9/ofzAb4e/3P+u
-        z3Rdar9KuWy+XacSS3FGoqEWc1FxIgBr3Q/6hwMAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190119183509epcas1p27012fefeafe539c3f82030caf85ad308
-References: <20190119160454.23151-2-tiny.windzz@gmail.com>
-        <20190119160454.23151-1-tiny.windzz@gmail.com>
-        <CGME20190119183509epcas1p27012fefeafe539c3f82030caf85ad308@epcms1p1>
+        Mon, 21 Jan 2019 02:24:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56610 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727785AbfAUHYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:24:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 931CCAF4F;
+        Sun, 20 Jan 2019 20:50:54 +0000 (UTC)
+Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to
+ exported-sql-viewer.py
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
+ <1547718344-27382-3-git-send-email-s1seetee@linux.vnet.ibm.com>
+ <f086e4fb-0bbf-9e21-25e2-708b092f1636@suse.de>
+ <20190120122755.1a8fe456@lwn.net>
+From:   Tony Jones <tonyj@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
+ mQGiBEkQmbwRBACDch7wo/RzlNt2HA8jLICsO2w8yOkJ7UTzHYNn3Q83Ro0qev2KokfE3EDw
+ il+vam9CDR7jIDmswHqaMe0/O+UnZtO5PlDgylZcrwNwbBzHfm/KGejbi1RBGAoETrvcfwGi
+ w83bR/aDnoRXY5Ho1uphQ05/065EMpbJOOBdn9qQ4wCgv2Q6C/QeYDGsxJPRO+20nLu5K00D
+ /Rde4OTZ5biM+vb6ObTmgPNeiMrTwGpMokN7audIl7njwvD+lYrlgQjmDzcaPFz29rYWwT7g
+ 6t6hcFgjpU1he/v3qxeQlTJoi2+u5Mqj42z//49h6DqNjT859Z/6h5IwKBo/EZC17iBIlS2G
+ VXAstNiZASGiaIlONozWJ/GSjUaRA/9wZTV1nXF/+xX+qmc7SvTg1w6jWyjxVumQLoq2SeA4
+ 1Sy5X2IATkAGCCjbeoQGnFdbOnHRSJdlTazObgwreqGPlPnIROpr9QESkfxsaCkDiZfpl0xk
+ 6X069QMZBEwGAWILHYXL9UqlOjniZaU2BkVA11JEdBhyQorC8T/ji1edc7QaVG9ueSBKb25l
+ cyA8dG9ueWpAc3VzZS5kZT6IYAQTEQIAIAUCSRCZvAIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheAAAoJELFYWyEf4koXGmYAoKCnbv9dhAB2vR6IvSJem1ws4HpfAJ9ZqTKiXcogBGfTPaJR
+ GI9QhVUieLkCDQRJEJm8EAgAzr9Zd3v7B10ODtVc7XxbMe3W6o1FdClL9ZIgLv61zhWctafK
+ DMu/MUSvxmYFq00pecD/SfX8oxArA02+sQ2E+/Zb4J7NAWIAxCfmy7VE0wDBrZH/hBapIx/L
+ gVqYfZ9Rw+a4FXrlk1y8oQCwhvj+kWrm7V7olR0aPOy1NFGNUyTFSMj+pbmxiNOXdCxVUQe3
+ UE1k9yA+mILjyaRanwkiCLCjNvRPL88Q017BdhVBWZmz8qhwXN/RrjCcDHsPX5O0ev68MLyu
+ sh5mfukuvCqzW1Y3Ql+iwfwEw5lNmQGdoV9csg7JP7saDicSFO2KcZvMbvDMqtPFipdF5UWo
+ fZKZ3wADBQf/b5cVNyb5i8QI0G7BPGBNn4VlQX5n66TsPBnrRNOi3MhTTVEBCp8s+jqUjJjX
+ EjjA+O4hIm7Qqdsozurw7GlcQ0A06dIzO/1RUglZZMoC0JL43ZQmJ+3+yFrLjWgGH6ev6AOb
+ YLH7ZujgAB5n0Hy2ZIChzsKLKbHptFtBvpDKB8updq+GunsY4oN3wGa67h9sHqDvjyp64Czg
+ n8G5uGLwx3f/edbECKz5kPUSzChEk3suK742SEP01v4ra5WX88Hn81NjGByQMz9acJLdC7Ff
+ LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
+ AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
+ liv+rwEesYGlGeGNaKHTJw==
+Message-ID: <6c3d7574-f9cf-d86a-16af-43fa9929015b@suse.de>
+Date:   Sun, 20 Jan 2019 12:50:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20190120122755.1a8fe456@lwn.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->devm_kzalloc() could fail, so insert a check of its return value. And
->if it fails, returns -ENOMEM.
->
->Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->---
-> drivers/devfreq/devfreq.c | 14 +++++++++++++-
-> 1 file changed, 13 insertions(+), 1 deletion(-)
->
->diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->index 076b1c2f40a4..923889229a0b 100644
->--- a/drivers/devfreq/devfreq.c
->+++ b/drivers/devfreq/devfreq.c
+On 1/20/19 11:27 AM, Jonathan Corbet wrote:
+> On Fri, 18 Jan 2019 16:45:04 -0800
+> Tony Jones <tonyj@suse.de> wrote:
+> 
+>> On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
+>>
+>>> +if sys.version_info[0] < 3:
+>>> +    import cPickle
+>>> +else:
+>>> +    import _pickle as cPickle  
+>>
+>> Do you really need this?
+>>
+>> pickle is already in Python2.
+> 
+> Did you mean in Python3?  I would agree that using it is better than
+> importing the semi-hidden _pickle module.
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+No.  I meant Python2 :)   
 
+pickle in Python2 is the python implementation
+cPickle in Python2 is the C implementation.
+
+Read: https://docs.python.org/3.1/whatsnew/3.0.html#library-changes
+A common pattern in Python 2.x is to have one version of a module implemented in pure Python, with an optional accelerated version implemented as a C extension; for example, pickle and cPickle. This places the burden of importing the accelerated version and falling back on the pure Python version on each user of these modules. In Python 3.0, the accelerated versions are considered implementation details of the pure Python versions. Users should always import the standard version, which attempts to import the accelerated version and falls back to the pure Python version. 
+
+I my patchset "import pickle" was sufficient for Python2 and Python3  The question I suppose is whether this script,  for Python2,  needs the accelerated C implementation.  I decided it didn't.
+
+Tony
 
