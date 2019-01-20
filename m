@@ -2,93 +2,87 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A8AC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1690C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C59E2087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:17:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="V4T9QiZG"
+	by mail.kernel.org (Postfix) with ESMTP id 84A2A2087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730516AbfATLRC (ORCPT
+        id S1730515AbfATLY1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 06:17:02 -0500
-Received: from mx.kolabnow.com ([95.128.36.42]:37496 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728781AbfATLRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 06:17:01 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id 80F14403E6;
-        Sun, 20 Jan 2019 12:16:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-transfer-encoding:mime-version:message-id:date:date
-        :subject:subject:from:from:received:received:received; s=
-        dkim20160331; t=1547983018; x=1549797419; bh=u5PJQeq4w4A5yhgLWfl
-        aalMoIP8exjuFkUijpjiiGZc=; b=V4T9QiZGuFNjVv2DnTQ7UAYec0oCZCbTsAc
-        yb/OLWpmehnEO8DVce0K5M6y7Tjj0EFd6fxyAfy/7089tPfze+O4ho3x9OIpnf6D
-        qPuxygFyETspT8aO5TF4HGhZBFJ9vya3EwjxNv7XVSt7ZNFTd/oQ2P9bF7xXFk7t
-        YLQsjf4C59xufLmPP9QS4CeO+3kJTfG4jW/9nwvuXI8FHhIUbo6vcwnjoAisbIwO
-        McyG/VZWIsbMlI0k3+tAbfjLxWp9LXXaaaNwpRZCREwKuA2DW+/g3WjS0BS1NY+1
-        8jSRSIGfdh+P8L5OK8v2ewH6GZCQWPV+vCTjDFssWbvEIVFwynuOL0N7L9h6xDlI
-        RSbxmUIs/p6zgWh8GTjuXML+tdmlfH4Q5Et+1zEfJeFEGnQQXc1jgQH3xcj78yPG
-        XJEC0Tro8QLJdC9AQpdqibY0TCbnbnNnyqC20ygZagX8R8PIOujY9fbH6ZVFZ3jz
-        c8YmW5REWE26XaaZoWh5NqJ3jjvlPzftObhVpqowX0Ps1HlwmNDH5DGZ1ULY73Uh
-        ON8YmDlriCj3S4CIBFfMn9fjl8h1TrJI1R5rvgM9tIwE8/XlEX8iMH3szC2N00+k
-        hFXCnyNpV8avmsI7cnjl9owgNFwFZgvvApI7L0Oby09X8DbVI7g/Ms2VmslkpOlr
-        M9kFuRM4=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id lm-C7Rw9fiJH; Sun, 20 Jan 2019 12:16:58 +0100 (CET)
-Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id DFDB8403BB;
-        Sun, 20 Jan 2019 12:16:58 +0100 (CET)
-Received: from ext-subm001.mykolab.com (unknown [10.9.6.1])
-        by int-mx001.mykolab.com (Postfix) with ESMTPS id 6E1E83D7;
-        Sun, 20 Jan 2019 12:16:58 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH] doc:process: add missing internal link in stable-kernel-rules
-Date:   Sun, 20 Jan 2019 12:16:29 +0100
-Message-Id: <20190120111629.31681-1-federico.vaga@vaga.pv.it>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 20 Jan 2019 06:24:27 -0500
+Received: from 212-186-180-163.static.upcbusiness.at ([212.186.180.163]:39902
+        "EHLO cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730458AbfATLY0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 06:24:26 -0500
+Received: from msmac.intern.sperl.org (account martin@sperl.org [10.10.10.11] verified)
+  by sperl.org (CommuniGate Pro SMTP 6.2.1 _community_)
+  with ESMTPSA id 7755101; Sun, 20 Jan 2019 11:24:23 +0000
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync instead run teardown delayed
+From:   kernel@martin.sperl.org
+In-Reply-To: <20190118191202.GG6260@sirena.org.uk>
+Date:   Sun, 20 Jan 2019 12:24:23 +0100
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <EE52ED32-CBB4-40D4-8615-CA814158C826@martin.sperl.org>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com> <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org> <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com> <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org> <20190115192619.GG5522@sirena.org.uk> <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org> <20190115212539.GK5522@sirena.org.uk> <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org> <20190118191202.GG6260@sirena.org.uk>
+To:     Mark Brown <broonie@kernel.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Keep consistent the document. In the document, option references
-are always linked, except for the one I fixed with this patch
+Hi Mark!
 
-Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
----
- Documentation/process/stable-kernel-rules.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> On 18.01.2019, at 20:12, Mark Brown <broonie@kernel.org> wrote:
+> 
+> On Fri, Jan 18, 2019 at 06:11:31PM +0100, kernel@martin.sperl.org wrote:
+> 
+>> Does something like this looks acceptable?
+> 
+> Yes, it does!
 
-diff --git a/Documentation/process/stable-kernel-rules.rst b/Documentation/process/stable-kernel-rules.rst
-index 0de6f6145cc6..070e3f04d183 100644
---- a/Documentation/process/stable-kernel-rules.rst
-+++ b/Documentation/process/stable-kernel-rules.rst
-@@ -98,9 +98,9 @@ text, like this:
- 
-     commit <sha1> upstream.
- 
--Additionally, some patches submitted via Option 1 may have additional patch
--prerequisites which can be cherry-picked. This can be specified in the following
--format in the sign-off area:
-+Additionally, some patches submitted via :ref:`option_1` may have additional
-+patch prerequisites which can be cherry-picked. This can be specified in the
-+following format in the sign-off area:
- 
- .. code-block:: none
- 
--- 
-2.20.1
+> 
+>> SPI_CONTROLLER_MODE_EXCLUSIVE could replace the bus_lock_flag.
+>> I am also not sure of the “convention” of memory mode (i.e
+>> using mem_ops). Is it maybe implicitly spi_bus_locked - i.e
+>> typically only a single device?
+> 
+> Yes, it does - we're basically handing over the entire SPI bus to
+> another bit of hardware that will do memory mapped flash access so we
+> can't really have anything else trying to do SPI operations at the same
+> time.
+
+These kind of changes it requires are consuming a bit more time than
+I was hoping for.
+
+So maybe at this very moment the best is reverting the patch.
+
+I have some patches that would move towards that goal in
+baby steps without having to resort to a big rewrite at
+this very moment.
+
+Maybe Jon can check each patch one after another to see if any is 
+producing the unexpected behavior and only then you would include
+them...
+
+As for the root cause of the regression: my guess is that spi-mem is
+just not triggering a shutdown any more because of how message_pump works.
+
+The improvement of the state-machine can then get addressed
+separately.
+
+Martin
+
 
