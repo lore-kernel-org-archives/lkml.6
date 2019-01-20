@@ -2,87 +2,103 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1690C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E597EC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A2A2087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9B212084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730515AbfATLY1 convert rfc822-to-8bit (ORCPT
+        id S1730538AbfATLav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 06:24:27 -0500
-Received: from 212-186-180-163.static.upcbusiness.at ([212.186.180.163]:39902
-        "EHLO cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730458AbfATLY0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 06:24:26 -0500
-Received: from msmac.intern.sperl.org (account martin@sperl.org [10.10.10.11] verified)
-  by sperl.org (CommuniGate Pro SMTP 6.2.1 _community_)
-  with ESMTPSA id 7755101; Sun, 20 Jan 2019 11:24:23 +0000
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync instead run teardown delayed
-From:   kernel@martin.sperl.org
-In-Reply-To: <20190118191202.GG6260@sirena.org.uk>
-Date:   Sun, 20 Jan 2019 12:24:23 +0100
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <EE52ED32-CBB4-40D4-8615-CA814158C826@martin.sperl.org>
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com> <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org> <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com> <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org> <20190115192619.GG5522@sirena.org.uk> <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org> <20190115212539.GK5522@sirena.org.uk> <EA757B47-A264-4B4D-9E5F-16611ABA0278@martin.sperl.org> <20190118191202.GG6260@sirena.org.uk>
-To:     Mark Brown <broonie@kernel.org>
-X-Mailer: Apple Mail (2.3124)
+        Sun, 20 Jan 2019 06:30:51 -0500
+Received: from foss.arm.com ([217.140.101.70]:49210 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730478AbfATLau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 06:30:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6401A78;
+        Sun, 20 Jan 2019 03:30:49 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 007A53F557;
+        Sun, 20 Jan 2019 03:30:45 -0800 (PST)
+Date:   Sun, 20 Jan 2019 11:30:36 +0000
+Message-ID: <86k1iza7mr.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 04/15] spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips
+In-Reply-To: <20190119204252.18370-5-masneyb@onstation.org>
+References: <20190119204252.18370-1-masneyb@onstation.org>
+        <20190119204252.18370-5-masneyb@onstation.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark!
-
-> On 18.01.2019, at 20:12, Mark Brown <broonie@kernel.org> wrote:
+On Sat, 19 Jan 2019 20:42:41 +0000,
+Brian Masney <masneyb@onstation.org> wrote:
 > 
-> On Fri, Jan 18, 2019 at 06:11:31PM +0100, kernel@martin.sperl.org wrote:
+> Convert the spmi-pmic-arb IRQ code to use the version 2 IRQ interface
+> in order to support hierarchical IRQ chips. This is necessary so that
+> spmi-gpio can be setup as a hierarchical IRQ chip with pmic-arb as the
+> parent. IRQ chips in device tree should be usable from the start without
+> the consumer having to make an additional call to gpio[d]_to_irq() to
+> get the proper IRQ on the parent.
 > 
->> Does something like this looks acceptable?
+> The old qpnpint_irq_domain_map function would hardcode the handler as
+> handle_level_irq, however qpnpint_irq_set_type would later override the
+> handler. Properly set the handler when the IRQ is mapped. This new code
+> doesn't return an error for IRQ_TYPE_NONE and preserves the existing
+> behavior of using handle_level_irq since there are some broken device
+> tree bindings that need to be corrected first.
 > 
-> Yes, it does!
-
+> Driver was tested on a LG Nexus 5 (hammerhead) phone.
 > 
->> SPI_CONTROLLER_MODE_EXCLUSIVE could replace the bus_lock_flag.
->> I am also not sure of the “convention” of memory mode (i.e
->> using mem_ops). Is it maybe implicitly spi_bus_locked - i.e
->> typically only a single device?
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> The broken device tree bindings are corrected in this patch series and
+> additional validation to the type field is added later in the series.
 > 
-> Yes, it does - we're basically handing over the entire SPI bus to
-> another bit of hardware that will do memory mapped flash access so we
-> can't really have anything else trying to do SPI operations at the same
-> time.
+> Changes since v5:
+> - Properly set handler to edge or level when the IRQ is mapped.
+> 
+> Changes since v4:
+> - None
+> 
+> Changes since v3:
+> - None
+> 
+> Changes since v2:
+> - Don't move pmic_gpio_of_match block. Use device_get_match_data instead
+>   of of_match_device.
+> - Correct build warning on arm64: warning: cast from pointer to integer
+>   of different size
+> 
+>  drivers/spmi/spmi-pmic-arb.c | 67 +++++++++++++++++++++++++-----------
+>  1 file changed, 47 insertions(+), 20 deletions(-)
 
-These kind of changes it requires are consuming a bit more time than
-I was hoping for.
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
-So maybe at this very moment the best is reverting the patch.
+Thanks,
 
-I have some patches that would move towards that goal in
-baby steps without having to resort to a big rewrite at
-this very moment.
+	M.
 
-Maybe Jon can check each patch one after another to see if any is 
-producing the unexpected behavior and only then you would include
-them...
-
-As for the root cause of the regression: my guess is that spi-mem is
-just not triggering a shutdown any more because of how message_pump works.
-
-The improvement of the state-machine can then get addressed
-separately.
-
-Martin
-
-
+-- 
+Jazz is not dead, it just smell funny.
