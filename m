@@ -2,75 +2,88 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A37C26641
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A49C26640
 	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 19:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3901B20861
+	by mail.kernel.org (Postfix) with ESMTP id 5B69820880
 	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 19:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548012543;
+	bh=fDBjE454Ydxp5PgLjL4Ibp70CQX1pm4wj4ILddvKLqU=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=cNp0cIrLFCQR0vWf3oHcMxoMTbQe4qC8bixJXPsC9Rh1biZfWTpsJP9I9eGDGMetN
+	 hofWtqQ8P2pnZZUJ9w/mBJmg1wyo2fAlYkgl4gAo2qxBZYs9IZMcZUOPDpkNoc1TSb
+	 dBgpApAQ5mVgN7owfeEWZsOqbs5hegP6+dTTfjFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbfATT2C (ORCPT
+        id S1727804AbfATT2h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 14:28:02 -0500
-Received: from ms.lwn.net ([45.79.88.28]:58932 "EHLO ms.lwn.net"
+        Sun, 20 Jan 2019 14:28:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbfATT2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 14:28:02 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727518AbfATT2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 14:28:37 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 2D41A7DE;
-        Sun, 20 Jan 2019 19:27:59 +0000 (UTC)
-Date:   Sun, 20 Jan 2019 12:27:55 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Tony Jones <tonyj@suse.de>
-Cc:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to
- exported-sql-viewer.py
-Message-ID: <20190120122755.1a8fe456@lwn.net>
-In-Reply-To: <f086e4fb-0bbf-9e21-25e2-708b092f1636@suse.de>
-References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
-        <1547718344-27382-3-git-send-email-s1seetee@linux.vnet.ibm.com>
-        <f086e4fb-0bbf-9e21-25e2-708b092f1636@suse.de>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2414220861;
+        Sun, 20 Jan 2019 19:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548012516;
+        bh=fDBjE454Ydxp5PgLjL4Ibp70CQX1pm4wj4ILddvKLqU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=tcf3n1+NQtP/6QFhTqY8qMERKwM8SNoSqrCBLYKRWEsnglzgRLUImMiIZCFm7WxTn
+         Fg3pcu+OBsUBkDMv9w3oqztcXi8mU0AxbRQbn4BmiwzBuHfYroBG1AruoosCWl+BTQ
+         IbU4ejxpZ0UlVyd42/tZh2X0tYcnDvhjPiIaJJ10=
+Subject: Re: [PATCH v1 0/6] seccomp test fixes
+To:     Kees Cook <keescook@chromium.org>, Tycho Andersen <tycho@tycho.ws>
+Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, shuah <shuah@kernel.org>
+References: <20190119001217.12660-1-tycho@tycho.ws>
+ <CAGXu5jKtQZ5oKethjopCW75eDtj6fEdCANRqah+wUh2pYfdGiQ@mail.gmail.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <debaac10-04ec-2d59-d2a8-8fce156d5d40@kernel.org>
+Date:   Sun, 20 Jan 2019 12:28:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXu5jKtQZ5oKethjopCW75eDtj6fEdCANRqah+wUh2pYfdGiQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Jan 2019 16:45:04 -0800
-Tony Jones <tonyj@suse.de> wrote:
+On 1/19/19 5:43 PM, Kees Cook wrote:
+> On Fri, Jan 18, 2019 at 4:12 PM Tycho Andersen <tycho@tycho.ws> wrote:
+>>
+>> Hi all,
+>>
+>> Here are the fixes I previously mentioned I would send. I previously
+>> assumed that the tests were mostly run as root, but it turns out
+>> everything else besides the stuff I wrote in the seccomp tests either
+>> sets NNP and doesn't require real root, so it all actually works. This
+>> set of fixes should make most of the other tests work unprivileged,
+>> while XFAIL-ing the one that requires real root.
 
-> On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
+Tycho, Thanks for a quick response in fixing the problems.
 > 
-> > +if sys.version_info[0] < 3:
-> > +    import cPickle
-> > +else:
-> > +    import _pickle as cPickle  
+> Awesome. This all looks good to me. :)
 > 
-> Do you really need this?
+> Acked-by: Kees Cook <keescook@chromium.org>
 > 
-> pickle is already in Python2.
+> Shuah, can you take this series?
+> 
 
-Did you mean in Python3?  I would agree that using it is better than
-importing the semi-hidden _pickle module.
 
-That said, I'll echo the questions about testing.  Pickle works in
-Python3, but it is fraught with all kinds of bytes/str and encoding
-issues; I've found it sufficiently fragile in practice that I really just
-try to avoid it.  How have you verified that this script works under both
-versions of Python?
+Yes. I will take these in for rc5.
 
-Thanks,
+thanks,
+-- Shuah
 
-jon
