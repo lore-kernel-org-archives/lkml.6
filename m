@@ -2,120 +2,137 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A530C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE83BC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460F62084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:37:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFAD620896
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:43:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ve7uMo/W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbfATChN (ORCPT
+        id S1730093AbfATCnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 21:37:13 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:15799 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbfATChM (ORCPT
+        Sat, 19 Jan 2019 21:43:11 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42631 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbfATCnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 21:37:12 -0500
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0K2Ztlo012616;
-        Sun, 20 Jan 2019 11:35:55 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Sun, 20 Jan 2019 11:35:55 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0K2ZrYw012598
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sun, 20 Jan 2019 11:35:55 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in lo_ioctl
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Omar Sandoval <osandov@osandov.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@fb.com>,
-        syzbot 
-        <bot+abdba5bc6de135d7622f00756da97998425b6de5@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Ming Lei <tom.leiming@gmail.com>,
-        Hannes Reinecke <hare@suse.de>, shli@fb.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, knikanth@suse.de
-References: <94eb2c0810d04f5a46055ffc71aa@google.com>
- <CACT4Y+Y6UhNQOc7VUPgvXZ3yGPusjg2WJ9-OXMCRGM2Q1bx7ZQ@mail.gmail.com>
- <6012a726-069a-13a5-9c8d-6a11730d8414@I-love.SAKURA.ne.jp>
- <468f7418-a02d-79cc-3d94-91bbe146567e@I-love.SAKURA.ne.jp>
- <20180406121411.GJ4082@hirez.programming.kicks-ass.net>
- <201804062255.HEJ82361.FJOFHVtSLOMOQF@I-love.SAKURA.ne.jp>
- <20180406154343.GK4082@hirez.programming.kicks-ass.net>
- <20180406155905.GA11697@vader>
- <CACT4Y+ZaL=zPbb-r7PKvOsY8aBRiMEEHMc+-HVGm+dRTax+DfA@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <faf9772a-f865-1475-ea0b-f9efb04ea974@i-love.sakura.ne.jp>
-Date:   Sun, 20 Jan 2019 11:35:51 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZaL=zPbb-r7PKvOsY8aBRiMEEHMc+-HVGm+dRTax+DfA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 19 Jan 2019 21:43:11 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y1so8095755plp.9
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 18:43:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BF0HO+6QfeFEmeGaUgC9N9Nw569CU5Sf/OjrZdT31Wg=;
+        b=ve7uMo/WkBW5ujSWYk+nN5+VSlRR2lfzFGtil22YGCIoR4mFc1H4ycwzUrksmeSCmB
+         RarIj+S+Qc7rqJtHbHBRO1nYLdwhDjxAOaqPAmQnOOGHS1IdLCIwrDSFgbTWCaln8MZs
+         bWyyqSyCPpMLsFgdlOFxxLSlxOUXPZdGCNE5mgjrkvuFAmPC8arCyTC+kbOAeiwzDjXt
+         q2ESNsJrtH1s/dFv3EdnwxHs+cFNHW6si7TTQFYdfg7HkCCiRExo/7thTpe5VBP5xlBq
+         XDk6zVTqwNPEahQ58U/hVUf3e2E2oyRBbLyca+tZwOricxgotO9ErTNNokApwhGqykG8
+         VRbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BF0HO+6QfeFEmeGaUgC9N9Nw569CU5Sf/OjrZdT31Wg=;
+        b=kK4MVktXAopiygS4vbV8pCa1Am6nO5fyQFpOoKSK8KNbsb+5evDUOuXq1SseJCFjKA
+         LEvbh2zrzZ222eejx6VddR5OQGwHkpmgJwdw08yE326fDOC2MYWznJO82V7EvGkU9K6b
+         8ubNtQvpDcXVNYEf+pzKs9dxy3Y+W/S+5P7JcA3qFJlU+vVNPIophuGwPpHajYwoe0ux
+         jdwqdj174v2N2b1sZn2P1iHNcMWfoKk1PaeZfNUgQoENzQ0fbZugAl0yySXOrSWgn9SC
+         dM+lNXA6i6XVA/BqXbR5nFHi2yOW+K/Uo8PsCZWTlVApgHwEjsaAnI6rYuI9CNDqb3P5
+         NVzQ==
+X-Gm-Message-State: AJcUukcD9UzLrZNpzlG9QFzCoIdQ7nDnJf5x12M1mPnOEpuMCT6bm7hz
+        xLIemtbUYg1+11EJWL+xSYc=
+X-Google-Smtp-Source: ALg8bN7ZtgzavMun3yAyKxR+7y4PL4IqxrsURKlQG8mJ2G3W6aSTG9mtKyeOMt55UoILIzxB+OPOpQ==
+X-Received: by 2002:a17:902:50e:: with SMTP id 14mr24538529plf.141.1547952190466;
+        Sat, 19 Jan 2019 18:43:10 -0800 (PST)
+Received: from localhost.localdomain ([207.246.99.41])
+        by smtp.gmail.com with ESMTPSA id j197sm12208228pgc.76.2019.01.19.18.43.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 19 Jan 2019 18:43:09 -0800 (PST)
+From:   Changbin Du <changbin.du@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     yamada.masahiro@socionext.com, mingo@kernel.org, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Changbin Du <changbin.du@gmail.com>
+Subject: [PATCH] mm/page_owner: move config option to mm/Kconfig.debug
+Date:   Sun, 20 Jan 2019 10:42:54 +0800
+Message-Id: <20190120024254.6270-1-changbin.du@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/20 3:56, Dmitry Vyukov wrote:
->> Seems easy enough to fix without resorting to __mutex_owner() (untested):
->>
->>
->> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
->> index 264abaaff662..cee258d12a1e 100644
->> --- a/drivers/block/loop.c
->> +++ b/drivers/block/loop.c
->> @@ -1300,12 +1300,13 @@ loop_get_status_old(struct loop_device *lo, struct loop_info __user *arg) {
->>  static int
->>  loop_get_status64(struct loop_device *lo, struct loop_info64 __user *arg) {
->>         struct loop_info64 info64;
->> -       int err = 0;
->> +       int err;
->>
->> -       if (!arg)
->> -               err = -EINVAL;
->> -       if (!err)
->> -               err = loop_get_status(lo, &info64);
->> +       if (!arg) {
->> +               mutex_unlock(&lo->lo_ctl_mutex);
->> +               return -EINVAL;
->> +       }
->> +       err = loop_get_status(lo, &info64);
->>         if (!err && copy_to_user(arg, &info64, sizeof(info64)))
->>                 err = -EFAULT;
->>
->>
->> I'll test it and send it up when I get into the office.
-> 
-> 
-> Was this ever submitted? Or some other fix for this?
-> 
-> The bug is still open, but last happened 289 days ago:
-> https://syzkaller.appspot.com/bug?id=608144371e7fc2cb6285b9ed871fb1eb817a61ce
-> 
-> But it also has 10 duplicates, some of which happened much more recently.
-> If a fix was submitted, but Reported-by tag wasn't added this open bug
-> can now mask lots of other new bugs.
-> 
+Move the PAGE_OWNER option from submenu "Compile-time checks and compiler
+options" to dedicated submenu "Memory Debugging".
 
-The commit for this specific patch is bdac616db9bbadb9 ("loop: fix LOOP_GET_STATUS
-lock imbalance"). But the root cause of these hung tasks would be fixed by a series
-containing commit 1dded9acf6dc9a34 ("Avoid circular locking dependency between
-loop_ctl_mutex and bd_mutex") or commit 04906b2f542c2362 ("blockdev: Fix livelocks
-on loop device"). We were not aware of these bugs when you marked these reports as
-duplicates on 2017/12/12. You can undup them and fix them if you want.
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+---
+ lib/Kconfig.debug | 17 -----------------
+ mm/Kconfig.debug  | 17 +++++++++++++++++
+ 2 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index d4df5b24d75e..e43cfdc86fd6 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -266,23 +266,6 @@ config UNUSED_SYMBOLS
+ 	  you really need it, and what the merge plan to the mainline kernel for
+ 	  your module is.
+ 
+-config PAGE_OWNER
+-	bool "Track page owner"
+-	depends on DEBUG_KERNEL && STACKTRACE_SUPPORT
+-	select DEBUG_FS
+-	select STACKTRACE
+-	select STACKDEPOT
+-	select PAGE_EXTENSION
+-	help
+-	  This keeps track of what call chain is the owner of a page, may
+-	  help to find bare alloc_page(s) leaks. Even if you include this
+-	  feature on your build, it is disabled in default. You should pass
+-	  "page_owner=on" to boot parameter in order to enable it. Eats
+-	  a fair amount of memory if enabled. See tools/vm/page_owner_sort.c
+-	  for user-space helper.
+-
+-	  If unsure, say N.
+-
+ config DEBUG_FS
+ 	bool "Debug Filesystem"
+ 	help
+diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+index 9a7b8b049d04..e3df921208c0 100644
+--- a/mm/Kconfig.debug
++++ b/mm/Kconfig.debug
+@@ -39,6 +39,23 @@ config DEBUG_PAGEALLOC_ENABLE_DEFAULT
+ 	  Enable debug page memory allocations by default? This value
+ 	  can be overridden by debug_pagealloc=off|on.
+ 
++config PAGE_OWNER
++	bool "Track page owner"
++	depends on DEBUG_KERNEL && STACKTRACE_SUPPORT
++	select DEBUG_FS
++	select STACKTRACE
++	select STACKDEPOT
++	select PAGE_EXTENSION
++	help
++	  This keeps track of what call chain is the owner of a page, may
++	  help to find bare alloc_page(s) leaks. Even if you include this
++	  feature on your build, it is disabled in default. You should pass
++	  "page_owner=on" to boot parameter in order to enable it. Eats
++	  a fair amount of memory if enabled. See tools/vm/page_owner_sort.c
++	  for user-space helper.
++
++	  If unsure, say N.
++
+ config PAGE_POISONING
+ 	bool "Poison pages after freeing"
+ 	select PAGE_POISONING_NO_SANITY if HIBERNATION
+-- 
+2.17.1
+
