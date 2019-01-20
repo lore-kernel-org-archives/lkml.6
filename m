@@ -4,127 +4,177 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 090FAC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9CCC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF132087B
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072AA2087B
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:12:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547982498;
-	bh=6JOgy4qD6CGxl1OspXO/aQD9Cs9w19R36CZSfUz0tXQ=;
+	s=default; t=1547982771;
+	bh=pUOprQbOADkmOadE8UJzN9vDHOZ7uNyMZtLXB22wOk0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=04ja4BEa66UyMR1IHDArBzf4f+L73TBIzn+8Hd1HfxZEl2OWO8v4y5rw6m5/SBcly
-	 KoUePH50zOnMwrTeQkrps6BXYjzWEdz/ewsCVDEecoOL1vRJV5G6vfOy36FjF9nH1n
-	 czE9jz8Mc1fhIzLtkqlc9u3Q0RCEblJHpqjqHaqg=
+	b=vwOgbbWOEoVlgKdI7hCD0tH11cQG6nn9/tJZc6wv2duOHTmgRO/Uk+jjOTLH+nhlA
+	 Sa1iKbWRc7cPwCKRaXQZnhg3gZ7LDAzd1+F7XkJQYUAJWDyKv6CdqTeSQg+/O7iNUT
+	 wfZ5pa8WuR0qQIWQtAF5iFadEjxoSQFmZ+/VXAcI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730505AbfATLIR (ORCPT
+        id S1730483AbfATLMu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 06:08:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55368 "EHLO mail.kernel.org"
+        Sun, 20 Jan 2019 06:12:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728894AbfATLIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 06:08:16 -0500
+        id S1728894AbfATLMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 06:12:50 -0500
 Received: from localhost (unknown [122.178.235.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C52142084F;
-        Sun, 20 Jan 2019 11:08:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBE7C2085B;
+        Sun, 20 Jan 2019 11:12:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547982495;
-        bh=6JOgy4qD6CGxl1OspXO/aQD9Cs9w19R36CZSfUz0tXQ=;
+        s=default; t=1547982769;
+        bh=pUOprQbOADkmOadE8UJzN9vDHOZ7uNyMZtLXB22wOk0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lq8do58y2AIluPJnZqsjM+Byrz0YTx2J+KW/bu1y0UR1hRFl02RUCKOtKcYQQi5NV
-         E/GaEaSLuGk48qNxMcfpB9SLKAekA0PrsX/Zn43xR3Oj1w6HOfECHOwtZTWAu2golS
-         5ePGcvSgexWDEbxAGDFvLsFZlttU/UXq9+5GsWpc=
-Date:   Sun, 20 Jan 2019 16:36:42 +0530
+        b=sy2AlZr7qMofSZWVrStX0nB8070kOv04jM8gDama/gUmkFv7efOuw0w2VqcsUp3Lf
+         b3saEyLzlpSoFyWLOZUtlbG8c0ma6O+uRdq9X09QW7iA4rda6VPVTOhzNMVlm5MtdE
+         MUHKEfqjK6gjmNhbW4AbLkGFYmp/Oi+nOmpE1Lok=
+Date:   Sun, 20 Jan 2019 16:41:15 +0530
 From:   Vinod Koul <vkoul@kernel.org>
 To:     John Stultz <john.stultz@linaro.org>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tanglei Han <hantanglei@huawei.com>,
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Youlin Wang <wwx575822@notesmail.huawei.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Zhuangluan Su <suzhuangluan@hisilicon.com>,
         Ryan Grachek <ryan@edited.us>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/8 v4] Documentation: bindings: dma: Add binding for
- dma-channel-mask
-Message-ID: <20190120110642.GT4635@vkoul-mobl>
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        dmaengine@vger.kernel.org, Tanglei Han <hantanglei@huawei.com>
+Subject: Re: [PATCH 3/8 v4] dma: k3dma: Upgrade k3dma driver to support
+ hisi_asp_dma hardware
+Message-ID: <20190120111115.GU4635@vkoul-mobl>
 References: <1547658629-25378-1-git-send-email-john.stultz@linaro.org>
- <1547658629-25378-3-git-send-email-john.stultz@linaro.org>
- <20190117170829.GJ5283@Mani-XPS-13-9360>
- <CALAqxLXc4dE=65MYR5M_jA-uKeGjsN0CL+JjDYbZUTyi+mKUTA@mail.gmail.com>
+ <1547658629-25378-4-git-send-email-john.stultz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALAqxLXc4dE=65MYR5M_jA-uKeGjsN0CL+JjDYbZUTyi+mKUTA@mail.gmail.com>
+In-Reply-To: <1547658629-25378-4-git-send-email-john.stultz@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-01-19, 09:43, John Stultz wrote:
-> On Thu, Jan 17, 2019 at 9:08 AM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Wed, Jan 16, 2019 at 09:10:23AM -0800, John Stultz wrote:
-> > > Some dma channels can be reserved for secure mode or other
-> > > hardware on the SoC, so provide a binding for a bitmask
-> > > listing the available channels for the kernel to use.
-> > >
-> > > This follows the pre-existing bcm,dma-channel-mask binding.
-> > >
-> > > Cc: Vinod Koul <vkoul@kernel.org>
-> > > Cc: Rob Herring <robh+dt@kernel.org>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Tanglei Han <hantanglei@huawei.com>
-> > > Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
-> > > Cc: Ryan Grachek <ryan@edited.us>
-> > > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > Cc: dmaengine@vger.kernel.org
-> > > Cc: devicetree@vger.kernel.org
-> > > Signed-off-by: John Stultz <john.stultz@linaro.org>
-> > > ---
-> > > v3: Renamed to hisi-dma-avail-chan
-> > > v4: Reworked to generic dma-channel-mask
-> > > ---
-> > >  Documentation/devicetree/bindings/dma/dma.txt | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/dma/dma.txt b/Documentation/devicetree/bindings/dma/dma.txt
-> > > index 6312fb0..eeb4e4d 100644
-> > > --- a/Documentation/devicetree/bindings/dma/dma.txt
-> > > +++ b/Documentation/devicetree/bindings/dma/dma.txt
-> > > @@ -16,6 +16,9 @@ Optional properties:
-> > >  - dma-channels:      Number of DMA channels supported by the controller.
-> > >  - dma-requests:      Number of DMA request signals supported by the
-> > >                       controller.
-> > > +- dma-channel-mask:  Bitmask of available DMA channels in ascending order
-> > > +                     that are not reserved by firmware and are available to
-> > > +                     the kernel. i.e. first channel corresponds to LSB.
-> >
-> > A general assumption is, "dma-channel-mask" refers to the bit fields of
-> > the channels which needs to be masked. But here, it refers to the channels
-> > which are available. Doesn't it contradict?
+On 16-01-19, 09:10, John Stultz wrote:
+> From: Youlin Wang <wwx575822@notesmail.huawei.com>
 > 
-> Hrm. So while I can sort of understand the common usage of "mask" as
-> to "hide", thus the desire to have a bitfield mean "the channels we
-> hide" or "don't use", but in my experience bitmasking is more commonly
-> used to keep only a portion of the the bits, so from that perspective
-> its more intuitive that a mask be the channels we keep to use. So I'm
-> not sure if your suggestion makes it more clear.
+> On the hi3660 hardware there are two (at least) DMA controllers,
+> the DMA-P (Peripherial DMA) and the DMA-A (Audio DMA). The
+                    ^^^
+typo
+
+> two blocks are similar, but have some slight differences. This
+> resulted in the vendor implementing two separate drivers, which
+> after review, they have been able to condense and re-use the
+> existing k3dma driver.
 > 
-> But I'm not very particular here, so I'll defer to others on this.
+> Thus, this patch adds support for the new "hisi-pcm-asp-dma-1.0"
+> compatible string in the binding.
+> 
+> One difference with the DMA-A controller, is that it does not
+> need to initialize a clock. So we skip this by adding and using
+> soc data flags.
+> 
+> After above this driver will support both k3 and hisi_asp dma
+> hardware.
 
-Given the context and documentation which explicitly says it is bitmask
-of available channels, i think we are fine :)
+Great thanks for the effort!
 
+> 
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
+> Cc: Ryan Grachek <ryan@edited.us>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: dmaengine@vger.kernel.org
+> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Youlin Wang <wwx575822@notesmail.huawei.com>
+> Signed-off-by: Tanglei Han <hantanglei@huawei.com>
+> [jstultz: Reworked to use of_match_data, commit msg improvements]
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+> v2:
+> * Reworked to use of_match_data
+> v3:
+> * Further rework of the commit message
+> ---
+>  drivers/dma/k3dma.c | 37 ++++++++++++++++++++++++++++++++-----
+>  1 file changed, 32 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
+> index fdec2b6..df61406 100644
+> --- a/drivers/dma/k3dma.c
+> +++ b/drivers/dma/k3dma.c
+> @@ -116,6 +116,13 @@ struct k3_dma_dev {
+>  	unsigned int		irq;
+>  };
+>  
+> +
+> +#define K3_FLAG_NOCLK  (1<<0)
+
+why not use BIT()
+
+space between two please
+
+> +struct k3dma_soc_data {
+> +	unsigned long flags;
+> +};
+> +
+> +
+>  #define to_k3_dma(dmadev) container_of(dmadev, struct k3_dma_dev, slave)
+>  
+>  static int k3_dma_config_write(struct dma_chan *chan,
+> @@ -790,8 +797,21 @@ static int k3_dma_transfer_resume(struct dma_chan *chan)
+>  	return 0;
+>  }
+>  
+> +static const struct k3dma_soc_data k3_v1_dma_data = {
+> +	.flags = 0,
+> +};
+
+So basically this is default right, do we need to set dma_data and not
+assume default..
+
+> +
+> +static const struct k3dma_soc_data asp_v1_dma_data = {
+> +	.flags = K3_FLAG_NOCLK,
+> +};
+> +
+>  static const struct of_device_id k3_pdma_dt_ids[] = {
+> -	{ .compatible = "hisilicon,k3-dma-1.0", },
+> +	{ .compatible = "hisilicon,k3-dma-1.0",
+> +	  .data = &k3_v1_dma_data
+> +	},
+> +	{ .compatible = "hisilicon,hisi-pcm-asp-dma-1.0",
+> +	  .data = &asp_v1_dma_data
+> +	},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, k3_pdma_dt_ids);
+> @@ -810,6 +830,7 @@ static struct dma_chan *k3_of_dma_simple_xlate(struct of_phandle_args *dma_spec,
+>  
+>  static int k3_dma_probe(struct platform_device *op)
+>  {
+> +	const struct k3dma_soc_data *soc_data;
+>  	struct k3_dma_dev *d;
+>  	const struct of_device_id *of_id;
+>  	struct resource *iores;
+> @@ -823,6 +844,10 @@ static int k3_dma_probe(struct platform_device *op)
+>  	if (!d)
+>  		return -ENOMEM;
+>  
+> +	soc_data = device_get_match_data(&op->dev);
+> +	if (!soc_data)
+> +		return -EINVAL;
+
+So this is not optional, either ways fine by me :)
 -- 
 ~Vinod
