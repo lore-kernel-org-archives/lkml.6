@@ -2,208 +2,283 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BCEC282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCA0C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 764332084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 660E120855
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:22:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="yYRLSmZx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbfAUIWh (ORCPT
+        id S1729973AbfAUIWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:22:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44112 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728855AbfAUIWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:22:24 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 393A11640;
-        Mon, 21 Jan 2019 08:22:24 +0000 (UTC)
-Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 45ECB68381;
-        Mon, 21 Jan 2019 08:22:22 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
-        Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V14 18/18] block: kill BLK_MQ_F_SG_MERGE
-Date:   Mon, 21 Jan 2019 16:18:05 +0800
-Message-Id: <20190121081805.32727-19-ming.lei@redhat.com>
-In-Reply-To: <20190121081805.32727-1-ming.lei@redhat.com>
-References: <20190121081805.32727-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 21 Jan 2019 08:22:24 +0000 (UTC)
+        Mon, 21 Jan 2019 03:22:41 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51090 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729958AbfAUIWi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:22:38 -0500
+Received: by mail-wm1-f66.google.com with SMTP id n190so9867586wmd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:22:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0OqLvzW5MQrfuIe3z+jSnzLo7imHs95KAnl9HGxJMCo=;
+        b=yYRLSmZx3VakZ8SKuXrzKmyFkiZSRROicdX91CWyuDz2CpJsuwBZqzVx+TTunJPC9u
+         DbS3TheV5EpcJtKTnE2cTarW+D/3QE7v2a9nmoEa+ASANRSjmIrLbKI+3KxpULyIANb6
+         yToEv62OeTxhE51skHEFtLvs6yj/5djd2pvKgnbXwAnNngFw366FR29+ml186uYd7Khw
+         R5k/JfXmWQqvWw7b4jIPBiA0Tlc+W314aZVasBI6HZCcAX5SFgqGjBsY/CGO0YiN5etm
+         G8v8QsVNF3cZEimpSIqICXk9thPLONCGp0fQbaX+h4EkBZJlitVFO1itfPyP/YhsL+AF
+         huGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0OqLvzW5MQrfuIe3z+jSnzLo7imHs95KAnl9HGxJMCo=;
+        b=kxiURtcGYY13UIIuBiooHGwwKKCbwtqKbwuUahtCwygpB+1Eg0MpVgfHNb2Qc28jv2
+         YNhy/rsvw68tIk38QTfsuLIWD34MzF3uhyYuwJKA4gYxyVby9xBJ+6l8womD3vmF0Xm5
+         U7Xh+bBIak0krRvTsfcr+zjs1fnhY1fML8AY12dJRrHKe2bejNmATVzy+OUCohkXchD9
+         hy+q1tbkZ0gaSDHtsa7l0QNJzzcN2sUWfI3KGhzOGZp4d6/dOx072avQmzPg0J+HyJ5F
+         kOOxcuzetp/AXsMkXs5s9CT3fXy5bYeJINe6tuBErGGm+tWFXKA9LRYOo1rk2Mqmj503
+         RJYA==
+X-Gm-Message-State: AJcUukceKmr1FxFoYPHHGnRTZ/QeAMNX6PpidY0uKBtAQC2kzOluGzww
+        GsHuHZbQmphJfy878zC96cDVXU0iDpA=
+X-Google-Smtp-Source: ALg8bN7BspABjC4Tx0mR0cZ5bDtUcpbUbN1oLlRuJgMW19CJxqAW3DqnuLdB+LHgxaAFJeHcsg6aqw==
+X-Received: by 2002:a1c:d752:: with SMTP id o79mr6401523wmg.100.1548027662972;
+        Sun, 20 Jan 2019 15:41:02 -0800 (PST)
+Received: from localhost.localdomain ([156.212.82.83])
+        by smtp.gmail.com with ESMTPSA id e9sm76576753wro.16.2019.01.20.15.40.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 15:41:02 -0800 (PST)
+From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
+        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
+        Boris Lukashev <blukashev@sempervictus.com>,
+        Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+Subject: [RESEND PATCH V8 0/11] KVM: X86: Introducing ROE Protection Kernel Hardening
+Date:   Mon, 21 Jan 2019 01:39:29 +0200
+Message-Id: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUEUE_FLAG_NO_SG_MERGE has been killed, so kill BLK_MQ_F_SG_MERGE too.
+-- Summary --
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/blk-mq-debugfs.c       | 1 -
- drivers/block/loop.c         | 2 +-
- drivers/block/nbd.c          | 2 +-
- drivers/block/rbd.c          | 2 +-
- drivers/block/skd_main.c     | 1 -
- drivers/block/xen-blkfront.c | 2 +-
- drivers/md/dm-rq.c           | 2 +-
- drivers/mmc/core/queue.c     | 3 +--
- drivers/scsi/scsi_lib.c      | 2 +-
- include/linux/blk-mq.h       | 1 -
- 10 files changed, 7 insertions(+), 11 deletions(-)
+ROE is a hypercall that enables host operating system to restrict guest's access
+to its own memory. This will provide a hardening mechanism that can be used to
+stop rootkits from manipulating kernel static data structures and code. Once a
+memory region is protected the guest kernel can't even request undoing the
+protection.
 
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index 2f9a11ef5bad..2ba0aa05ce13 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -250,7 +250,6 @@ static const char *const alloc_policy_name[] = {
- static const char *const hctx_flag_name[] = {
- 	HCTX_FLAG_NAME(SHOULD_MERGE),
- 	HCTX_FLAG_NAME(TAG_SHARED),
--	HCTX_FLAG_NAME(SG_MERGE),
- 	HCTX_FLAG_NAME(BLOCKING),
- 	HCTX_FLAG_NAME(NO_SCHED),
- };
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 168a151aba49..714924cfb050 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1937,7 +1937,7 @@ static int loop_add(struct loop_device **l, int i)
- 	lo->tag_set.queue_depth = 128;
- 	lo->tag_set.numa_node = NUMA_NO_NODE;
- 	lo->tag_set.cmd_size = sizeof(struct loop_cmd);
--	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	lo->tag_set.driver_data = lo;
- 
- 	err = blk_mq_alloc_tag_set(&lo->tag_set);
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 08696f5f00bb..999c94de78e5 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1570,7 +1570,7 @@ static int nbd_dev_add(int index)
- 	nbd->tag_set.numa_node = NUMA_NO_NODE;
- 	nbd->tag_set.cmd_size = sizeof(struct nbd_cmd);
- 	nbd->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE | BLK_MQ_F_BLOCKING;
-+		BLK_MQ_F_BLOCKING;
- 	nbd->tag_set.driver_data = nbd;
- 
- 	err = blk_mq_alloc_tag_set(&nbd->tag_set);
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 1e92b61d0bd5..abe9e1c89227 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3988,7 +3988,7 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
- 	rbd_dev->tag_set.ops = &rbd_mq_ops;
- 	rbd_dev->tag_set.queue_depth = rbd_dev->opts->queue_depth;
- 	rbd_dev->tag_set.numa_node = NUMA_NO_NODE;
--	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	rbd_dev->tag_set.nr_hw_queues = 1;
- 	rbd_dev->tag_set.cmd_size = sizeof(struct work_struct);
- 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index ab893a7571a2..7d3ad6c22ee5 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -2843,7 +2843,6 @@ static int skd_cons_disk(struct skd_device *skdev)
- 		skdev->sgs_per_request * sizeof(struct scatterlist);
- 	skdev->tag_set.numa_node = NUMA_NO_NODE;
- 	skdev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE |
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(BLK_TAG_ALLOC_FIFO);
- 	skdev->tag_set.driver_data = skdev;
- 	rc = blk_mq_alloc_tag_set(&skdev->tag_set);
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 0ed4b200fa58..d43a5677ccbc 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -977,7 +977,7 @@ static int xlvbd_init_blk_queue(struct gendisk *gd, u16 sector_size,
- 	} else
- 		info->tag_set.queue_depth = BLK_RING_SIZE(info);
- 	info->tag_set.numa_node = NUMA_NO_NODE;
--	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	info->tag_set.cmd_size = sizeof(struct blkif_req);
- 	info->tag_set.driver_data = info;
- 
-diff --git a/drivers/md/dm-rq.c b/drivers/md/dm-rq.c
-index 4eb5f8c56535..b2f8eb2365ee 100644
---- a/drivers/md/dm-rq.c
-+++ b/drivers/md/dm-rq.c
-@@ -527,7 +527,7 @@ int dm_mq_init_request_queue(struct mapped_device *md, struct dm_table *t)
- 	md->tag_set->ops = &dm_mq_ops;
- 	md->tag_set->queue_depth = dm_get_blk_mq_queue_depth();
- 	md->tag_set->numa_node = md->numa_node_id;
--	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE;
- 	md->tag_set->nr_hw_queues = dm_get_blk_mq_nr_hw_queues();
- 	md->tag_set->driver_data = md;
- 
-diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index 35cc138b096d..cc19e71c71d4 100644
---- a/drivers/mmc/core/queue.c
-+++ b/drivers/mmc/core/queue.c
-@@ -410,8 +410,7 @@ int mmc_init_queue(struct mmc_queue *mq, struct mmc_card *card)
- 	else
- 		mq->tag_set.queue_depth = MMC_QUEUE_DEPTH;
- 	mq->tag_set.numa_node = NUMA_NO_NODE;
--	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE |
--			    BLK_MQ_F_BLOCKING;
-+	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_BLOCKING;
- 	mq->tag_set.nr_hw_queues = 1;
- 	mq->tag_set.cmd_size = sizeof(struct mmc_queue_req);
- 	mq->tag_set.driver_data = mq;
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index b13cc9288ba0..afad57071cb6 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1899,7 +1899,7 @@ int scsi_mq_setup_tags(struct Scsi_Host *shost)
- 	shost->tag_set.queue_depth = shost->can_queue;
- 	shost->tag_set.cmd_size = cmd_size;
- 	shost->tag_set.numa_node = NUMA_NO_NODE;
--	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	shost->tag_set.flags |=
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(shost->hostt->tag_alloc_policy);
- 	shost->tag_set.driver_data = shost;
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 0e030f5f76b6..b0c814bcc7e3 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -218,7 +218,6 @@ struct blk_mq_ops {
- enum {
- 	BLK_MQ_F_SHOULD_MERGE	= 1 << 0,
- 	BLK_MQ_F_TAG_SHARED	= 1 << 1,
--	BLK_MQ_F_SG_MERGE	= 1 << 2,
- 	BLK_MQ_F_BLOCKING	= 1 << 5,
- 	BLK_MQ_F_NO_SCHED	= 1 << 6,
- 	BLK_MQ_F_ALLOC_POLICY_START_BIT = 8,
--- 
-2.9.5
+Memory protected by ROE should be non-swapable because even if the ROE protected
+page got swapped out, It won't be possible to write anything in its place.
 
+ROE hypercall should be capable of either protecting a whole memory frame or
+parts of it. With these two, it should be possible for guest kernel to protect
+its memory and all the page table entries for that memory inside the page table.
+I am still not sure whether this should be part of ROE job or the guest's job.
+
+Our threat model assumes that an attacker got full root access to a running
+guest and his goal is to manipulate kernel code/data (hook syscalls, overwrite
+IDT ..etc).
+
+
+-- Why didn't I implement ROE in host's userspace ? --
+
+The reason why it would be better to implement this from inside kvm: It will
+become a big performance hit to vmexit and switch to user space mode on each
+fault, on the other hand, having the permission handled by EPT should make some
+remarkable performance gain when writing in non protected page that contains
+protected chunks. My tests showed that the bottle neck is the time taken in
+context switching, reducing the number of switches did improve performance a
+lot. Full lengthy explanation with numbers can be found in [2].
+
+
+-- Future Work -- 
+There is future work in progress to also put some sort of protection on the page
+table register CR3 and other critical registers that can be intercepted by KVM.
+This way it won't be possible for an attacker to manipulate any part of the
+guests page table.
+
+
+-- Test Case --
+
+I was requested to add a test to tools/testing/selftests/kvm/. But the original
+testing suite didn't work on my machine, I experienced shutdown due to triple
+fault because of EPT fault with the current tests. I tried bisecting but the
+triple fault was there from the very first commit.
+
+So instead I would provide here a demo kernel module to test the current
+implementation:
+
+```
+	#include <linux/init.h>
+	#include <linux/module.h>
+	#include <linux/kernel.h>
+	#include <linux/slab.h>
+	#include <linux/kvm_para.h>
+	#include <linux/mm.h>
+	MODULE_LICENSE("GPL");
+	MODULE_AUTHOR("OddCoder");
+	MODULE_DESCRIPTION("ROE Hello world Module");
+	MODULE_VERSION("0.0.1");
+
+	#define KVM_HC_ROE 11
+	#define ROE_VERSION 0
+	#define ROE_MPROTECT 1
+	#define ROE_MPROTECT_CHUNK 2
+
+	static long roe_version(void){
+		return kvm_hypercall1 (KVM_HC_ROE, ROE_VERSION);
+	}
+
+	static long roe_mprotect(void *addr, long pg_count) {
+		return kvm_hypercall3 (KVM_HC_ROE, ROE_MPROTECT, (u64)addr, pg_count);
+	}
+
+	static long roe_mprotect_chunk(void *addr, long size) {
+		return kvm_hypercall3 (KVM_HC_ROE, ROE_MPROTECT_CHUNK, (u64)addr, size);
+	}
+
+ 	static int __init hello(void ) {
+		int x;
+		struct page *pg1, *pg2;
+		void *memory;
+		pg1 = alloc_page(GFP_KERNEL);
+		pg2 = alloc_page(GFP_KERNEL);
+		memory = page_to_virt(pg1);
+		pr_info ("ROE_VERSION: %ld\n", roe_version());
+		pr_info ("Allocated memory: 0x%llx\n", (u64)memory);
+		pr_info("Physical Address: 0x%llx\n", virt_to_phys(memory));
+		strcpy((char *)memory, "ROE PROTECTED");
+		pr_info("memory_content: %s\n", (char *)memory);
+		x = roe_mprotect((void *)memory, 1);
+		strcpy((char *)memory, "The strcpy should silently fail and"
+					"memory content won't be modified");
+		pr_info("memory_content: %s\n", (char *)memory);
+		memory = page_to_virt(pg2);
+		pr_info ("Allocated memory: 0x%llx\n", (u64)memory);
+		pr_info("Physical Address: 0x%llx\n", virt_to_phys(memory));
+		strcpy((char *)memory, "ROE PROTECTED PARTIALLY");
+		roe_mprotect_chunk((void *)memory, strlen((char *)memory));
+		pr_info("memory_content: %s\n", (char *)memory);
+		strcpy((char *)memory, "XXXXXXXXXXXXXXXXXXXXXXX"
+					" <- Text here not modified still Can concat");
+		pr_info("memory_content: %s\n", (char *)memory);
+		return 0;
+	}
+	static void __exit bye(void) {
+		pr_info("Allocated Memory May never be freed at all!\n");
+		pr_info("Actually this is more of an ABI demonstration\n");
+		pr_info("than actual use case\n");
+		}
+	module_init(hello);
+	module_exit(bye);
+
+```
+
+I tried this on Gentoo host with Ubuntu guest and Qemu from git after applying
+the following changes to Qemu
+
+diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c
+index 4880a05399..57d0973aca 100644
+--- a/accel/kvm/kvm-all.c
++++ b/accel/kvm/kvm-all.c
+@@ -2035,6 +2035,9 @@ int kvm_cpu_exec(CPUState *cpu)
+                              run->mmio.is_write);
+             ret = 0;
+             break;
++	case KVM_EXIT_ROE:
++	    ret = 0;
++	    break;
+         case KVM_EXIT_IRQ_WINDOW_OPEN:
+             DPRINTF("irq_window_open\n");
+             ret = EXCP_INTERRUPT;
+diff --git a/linux-headers/linux/kvm.h b/linux-headers/linux/kvm.h
+index f11a7eb49c..67aded8f00 100644
+--- a/linux-headers/linux/kvm.h
++++ b/linux-headers/linux/kvm.h
+@@ -235,7 +235,7 @@ struct kvm_hyperv_exit {
+ #define KVM_EXIT_S390_STSI        25
+ #define KVM_EXIT_IOAPIC_EOI       26
+ #define KVM_EXIT_HYPERV           27
+-
++#define KVM_EXIT_ROE              28
+ /* For KVM_EXIT_INTERNAL_ERROR */
+ /* Emulate instruction failed. */
+ #define KVM_INTERNAL_ERROR_EMULATION	1
+
+
+
+-- Change log V7 -> V8 --
+
+- Bug fix in patch 10, (it didn't work).
+- Replacing the linked list structure used to store protected chunks with a red
+  black tree. That offered huge performance improvement where the query time
+  when writing to a linked list of ~2000 chunks was almost constant.
+
+
+-- Known Issues --
+
+- THP is not supported yet. In general it is not supported when the guest frame
+  size is not the same as the equivalent EPT frame size.
+
+The previous version (V7) of the patch set can be found at [1]
+
+-- links --
+
+[1] https://lkml.org/lkml/2018/12/7/345
+[2] https://lkml.org/lkml/2018/12/21/340
+
+-- List of patches --
+
+[PATCH V8 01/11] KVM: State whether memory should be freed in
+[PATCH V8 02/11] KVM: X86: Add arbitrary data pointer in kvm memslot
+[PATCH V8 03/11] KVM: X86: Add helper function to convert SPTE to GFN
+[PATCH V8 04/11] KVM: Document Memory ROE
+[PATCH V8 05/11] KVM: Create architecture independent ROE skeleton
+[PATCH V8 06/11] KVM: X86: Enable ROE for x86
+[PATCH V8 07/11] KVM: Add support for byte granular memory ROE
+[PATCH V8 08/11] KVM: X86: Port ROE_MPROTECT_CHUNK to x86
+[PATCH V8 09/11] KVM: Add new exit reason For ROE violations
+[PATCH V8 10/11] KVM: Log ROE violations in system log
+[PATCH V8 11/11] KVM: ROE: Store protected chunks in red black tree
+
+-- Difstat --
+
+Documentation/virtual/kvm/hypercalls.txt |  40 +++
+arch/x86/include/asm/kvm_host.h          |   2 +-
+arch/x86/kvm/Makefile                    |   4 +-
+arch/x86/kvm/mmu.c                       | 121 ++++-----
+arch/x86/kvm/mmu.h                       |  31 ++-
+arch/x86/kvm/roe.c                       | 104 ++++++++
+arch/x86/kvm/roe_arch.h                  |  28 ++
+arch/x86/kvm/x86.c                       |  21 +-
+include/kvm/roe.h                        |  28 ++
+include/linux/kvm_host.h                 |  57 ++++
+include/uapi/linux/kvm.h                 |   2 +-
+include/uapi/linux/kvm_para.h            |   5 +
+virt/kvm/kvm_main.c                      |  54 +++-
+virt/kvm/roe.c                           | 445 +++++++++++++++++++++++++++++++
+virt/kvm/roe_generic.h                   |  22 ++
+15 files changed, 868 insertions(+), 96 deletions(-)
+
+
+Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
