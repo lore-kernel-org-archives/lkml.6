@@ -2,175 +2,293 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED316C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CA1C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEBE32084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92FB82084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Z9aH3/9z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbfAUIIh (ORCPT
+        id S1728726AbfAUIIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:08:37 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38658 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729635AbfAUIEz (ORCPT
+        Mon, 21 Jan 2019 03:08:47 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:44343 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfAUIIq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:04:55 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0L83mO1132171
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:04:54 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q59werwyc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:04:54 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 21 Jan 2019 08:04:51 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 08:04:39 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0L84cJ71114462
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 08:04:39 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D32BE4C046;
-        Mon, 21 Jan 2019 08:04:38 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BBE7E4C052;
-        Mon, 21 Jan 2019 08:04:33 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.125])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 21 Jan 2019 08:04:33 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 21 Jan 2019 10:04:33 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dennis Zhou <dennis@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Mark Salter <msalter@redhat.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stafford Horne <shorne@gmail.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
-        xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH v2 04/21] memblock: drop memblock_alloc_base_nid()
-Date:   Mon, 21 Jan 2019 10:03:51 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
-References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19012108-4275-0000-0000-00000301E9EB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012108-4276-0000-0000-0000381015C0
-Message-Id: <1548057848-15136-5-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=833 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210066
+        Mon, 21 Jan 2019 03:08:46 -0500
+Received: by mail-yb1-f194.google.com with SMTP id k189so1589423yba.11
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:08:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WAsgi9z+q7Ez6FA/JsmnCOegKj2qaFLDUKqTP2l6SfY=;
+        b=Z9aH3/9z2ZhogOUwrGBSYChpJubtstD07OPA0LLnaOxUg6sOj4Wn6iRbCJCpdTL0xI
+         uWnraSn8T2+zSj3HgJAsWn6aVc4C5cy0vynF20IRgesIUR7q9KWBOX8IlT10bKB7BK4C
+         MaNswRBJPro3BPOiVCDgEOQzQPO435zS912Rc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WAsgi9z+q7Ez6FA/JsmnCOegKj2qaFLDUKqTP2l6SfY=;
+        b=Ab8ZL0w9crA3SJUU9lHQBKIfenrV3Za0kQiZAxdMHCPVLYB07WY5VsmHgAXMoFE9K6
+         +GJfaHCPu82vQYVychFJXwO6wMTPHwoom5Ay3gDZKx9wivhlc0IZ5OtMmpBaH8hp5vuX
+         s5wHd2OrgDpY3Brmu2tWGTt6AceOl6PFLGoYPVvWRS+aE8ITnJSeek1ZBnDIMIi+Z/Ng
+         nw3oEh/LhqETjJ64ej0Gvt7MyA12Srb7aAzN2Hq6U92s8cnmvS6kuwNKc0uOGiySsqBT
+         9GsKflw34glERBSZFXrQtvqCv6BnRPWjXJXx2UyzabcJVvnXlL4XOdkzChe4+A4OfcHs
+         9iTw==
+X-Gm-Message-State: AJcUukdE/QZdl5tWwi5npQ4SGCNXVo8oG8i4KHBpQ3myVEaNIi3o6qHQ
+        wf/hNH8esFpAwEqFx3EY7w7Oz/CKx+gG0uhc
+X-Google-Smtp-Source: ALg8bN4Gy4xGAqNdkVkBUJweR9Zd3Y5hKbZnBq08fN08lbOyMXVEDFa+OgdKbKOyWT4ly3O8FtQHpg==
+X-Received: by 2002:a25:1446:: with SMTP id 67mr14578436ybu.372.1548020481691;
+        Sun, 20 Jan 2019 13:41:21 -0800 (PST)
+Received: from [10.136.8.252] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id b144sm7013563ywa.33.2019.01.20.13.41.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 13:41:20 -0800 (PST)
+Subject: Re: [PATCH v3 1/8] i2c: iproc: I2C read up to 255 bytes support
+To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        rjui@broadcom.com
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        shreesha.rajashekar@broadcom.com, sbranden@broadcom.com,
+        wsa@the-dreams.de, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ccheng@broadcom.com,
+        heikki.krogerus@linux.intel.com, geert@linux-m68k.org,
+        arnd@arndb.de, manivannan.sadhasivam@linaro.org, ajayg@nvidia.com,
+        ard.biesheuvel@linaro.org, eajames@linux.vnet.ibm.com,
+        kramasub@codeaurora.org, vigneshr@ti.com,
+        mika.westerberg@linux.intel.com, pierre-yves.mordret@st.com,
+        f.fainelli@gmail.com, aaron.wu@analog.com, jdelvare@suse.de,
+        andriy.shevchenko@linux.intel.com, jarkko.nikula@linux.intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        rayagonoda.kokatanur@braodcom.com,
+        Shreesha Rajashekar <shreesha@broadcom.com>
+References: <1547791464-3540-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+ <1547791464-3540-2-git-send-email-rayagonda.kokatanur@broadcom.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <e3f402dc-3fa9-4d3c-8fc5-956737c1a3f3@broadcom.com>
+Date:   Sun, 20 Jan 2019 13:41:14 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <1547791464-3540-2-git-send-email-rayagonda.kokatanur@broadcom.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memblock_alloc_base_nid() is a oneliner wrapper for
-memblock_alloc_range_nid() without any side effect.
-Replace it's usage by the direct calls to memblock_alloc_range_nid().
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- include/linux/memblock.h |  3 ---
- mm/memblock.c            | 15 ++++-----------
- 2 files changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index 60e100f..f7ef313 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -490,9 +490,6 @@ static inline bool memblock_bottom_up(void)
- phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
- 					phys_addr_t start, phys_addr_t end,
- 					enum memblock_flags flags);
--phys_addr_t memblock_alloc_base_nid(phys_addr_t size,
--					phys_addr_t align, phys_addr_t max_addr,
--					int nid, enum memblock_flags flags);
- phys_addr_t memblock_alloc_base(phys_addr_t size, phys_addr_t align,
- 				phys_addr_t max_addr);
- phys_addr_t __memblock_alloc_base(phys_addr_t size, phys_addr_t align,
-diff --git a/mm/memblock.c b/mm/memblock.c
-index a32db30..c80029e 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1346,21 +1346,14 @@ phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
- 					flags);
- }
- 
--phys_addr_t __init memblock_alloc_base_nid(phys_addr_t size,
--					phys_addr_t align, phys_addr_t max_addr,
--					int nid, enum memblock_flags flags)
--{
--	return memblock_alloc_range_nid(size, align, 0, max_addr, nid, flags);
--}
--
- phys_addr_t __init memblock_phys_alloc_nid(phys_addr_t size, phys_addr_t align, int nid)
- {
- 	enum memblock_flags flags = choose_memblock_flags();
- 	phys_addr_t ret;
- 
- again:
--	ret = memblock_alloc_base_nid(size, align, MEMBLOCK_ALLOC_ACCESSIBLE,
--				      nid, flags);
-+	ret = memblock_alloc_range_nid(size, align, 0,
-+				       MEMBLOCK_ALLOC_ACCESSIBLE, nid, flags);
- 
- 	if (!ret && (flags & MEMBLOCK_MIRROR)) {
- 		flags &= ~MEMBLOCK_MIRROR;
-@@ -1371,8 +1364,8 @@ phys_addr_t __init memblock_phys_alloc_nid(phys_addr_t size, phys_addr_t align,
- 
- phys_addr_t __init __memblock_alloc_base(phys_addr_t size, phys_addr_t align, phys_addr_t max_addr)
- {
--	return memblock_alloc_base_nid(size, align, max_addr, NUMA_NO_NODE,
--				       MEMBLOCK_NONE);
-+	return memblock_alloc_range_nid(size, align, 0, max_addr, NUMA_NO_NODE,
-+					MEMBLOCK_NONE);
- }
- 
- phys_addr_t __init memblock_alloc_base(phys_addr_t size, phys_addr_t align, phys_addr_t max_addr)
--- 
-2.7.4
+On 1/17/2019 10:04 PM, Rayagonda Kokatanur wrote:
+> From: Shreesha Rajashekar <shreesha@broadcom.com>
+> 
+> Add support to allow I2C RX transfer up to 255 bytes.
+> 
+> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+> Signed-off-by: Shreesha Rajashekar <shreesha@broadcom.com>
+> ---
+>  drivers/i2c/busses/i2c-bcm-iproc.c | 98 +++++++++++++++++++++++++++++---------
+>  1 file changed, 76 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-bcm-iproc.c b/drivers/i2c/busses/i2c-bcm-iproc.c
+> index 4c8c3bc4669c..eb7339a0280e 100644
+> --- a/drivers/i2c/busses/i2c-bcm-iproc.c
+> +++ b/drivers/i2c/busses/i2c-bcm-iproc.c
+> @@ -80,6 +80,10 @@
+>  
+>  #define I2C_TIMEOUT_MSEC             50000
+>  #define M_TX_RX_FIFO_SIZE            64
+> +#define M_RX_FIFO_MAX_THLD_VALUE     (M_TX_RX_FIFO_SIZE - 1)
+> +
+> +#define M_RX_MAX_READ_LEN            255
+> +#define M_RX_FIFO_THLD_VALUE         50
+>  
+>  enum bus_speed_index {
+>  	I2C_SPD_100K = 0,
+> @@ -102,17 +106,41 @@ struct bcm_iproc_i2c_dev {
+>  
+>  	/* bytes that have been transferred */
+>  	unsigned int tx_bytes;
+> +	/* bytes that have been read */
+> +	unsigned int rx_bytes;
+> +	unsigned int thld_bytes;
+>  };
+>  
+>  /*
+>   * Can be expanded in the future if more interrupt status bits are utilized
+>   */
+> -#define ISR_MASK (BIT(IS_M_START_BUSY_SHIFT) | BIT(IS_M_TX_UNDERRUN_SHIFT))
+> +#define ISR_MASK (BIT(IS_M_START_BUSY_SHIFT) | BIT(IS_M_TX_UNDERRUN_SHIFT)\
+> +		| BIT(IS_M_RX_THLD_SHIFT))
+> +
+> +static void bcm_iproc_i2c_read_valid_bytes(struct bcm_iproc_i2c_dev *iproc_i2c)
+> +{
+> +	struct i2c_msg *msg = iproc_i2c->msg;
+> +
+> +	/* Read valid data from RX FIFO */
+> +	while (iproc_i2c->rx_bytes < msg->len) {
+> +		if (!((readl(iproc_i2c->base +
+> +		M_FIFO_CTRL_OFFSET) >>
+> +		M_FIFO_RX_CNT_SHIFT) &
+> +		M_FIFO_RX_CNT_MASK))
+> +			break;
+> +
+> +		msg->buf[iproc_i2c->rx_bytes] =
+> +			(readl(iproc_i2c->base + M_RX_OFFSET) >>
+> +			M_RX_DATA_SHIFT) & M_RX_DATA_MASK;
+> +		iproc_i2c->rx_bytes++;
+> +	}
+> +}
+>  
+>  static irqreturn_t bcm_iproc_i2c_isr(int irq, void *data)
+>  {
+>  	struct bcm_iproc_i2c_dev *iproc_i2c = data;
+>  	u32 status = readl(iproc_i2c->base + IS_OFFSET);
+> +	u32 tmp;
+>  
+>  	status &= ISR_MASK;
+>  
+> @@ -136,8 +164,6 @@ static irqreturn_t bcm_iproc_i2c_isr(int irq, void *data)
+>  
+>  			/* mark the last byte */
+>  			if (idx == msg->len - 1) {
+> -				u32 tmp;
+> -
+>  				val |= BIT(M_TX_WR_STATUS_SHIFT);
+>  
+>  				/*
+> @@ -156,6 +182,32 @@ static irqreturn_t bcm_iproc_i2c_isr(int irq, void *data)
+>  		iproc_i2c->tx_bytes += tx_bytes;
+>  	}
+>  
+> +	if (status & BIT(IS_M_RX_THLD_SHIFT)) {
+> +		struct i2c_msg *msg = iproc_i2c->msg;
+> +		u32 bytes_left;
+> +
+> +		bcm_iproc_i2c_read_valid_bytes(iproc_i2c);
+> +		bytes_left = msg->len - iproc_i2c->rx_bytes;
+> +		if (bytes_left == 0) {
+> +			/* finished reading all data, disable rx thld event */
+> +			tmp = readl(iproc_i2c->base + IE_OFFSET);
+> +			tmp &= ~BIT(IS_M_RX_THLD_SHIFT);
+> +			writel(tmp, iproc_i2c->base + IE_OFFSET);
+> +		} else if (bytes_left < iproc_i2c->thld_bytes) {
+> +			/* set bytes left as threshold */
+> +			tmp = readl(iproc_i2c->base + M_FIFO_CTRL_OFFSET);
+> +			tmp &= ~(M_FIFO_RX_THLD_MASK << M_FIFO_RX_THLD_SHIFT);
+> +			tmp |= (bytes_left << M_FIFO_RX_THLD_SHIFT);
+> +			writel(tmp, iproc_i2c->base + M_FIFO_CTRL_OFFSET);
+> +			iproc_i2c->thld_bytes = bytes_left;
+> +		}
+> +		/*
+> +		 * bytes_left >= iproc_i2c->thld_bytes,
+> +		 * hence no need to change the THRESHOLD SET.
+> +		 * It will remain as iproc_i2c->thld_bytes itself
+> +		 */
+> +	}
+> +
+>  	if (status & BIT(IS_M_START_BUSY_SHIFT)) {
+>  		iproc_i2c->xfer_is_done = 1;
+>  		complete(&iproc_i2c->done);
+> @@ -253,7 +305,7 @@ static int bcm_iproc_i2c_xfer_single_msg(struct bcm_iproc_i2c_dev *iproc_i2c,
+>  {
+>  	int ret, i;
+>  	u8 addr;
+> -	u32 val;
+> +	u32 val, tmp, val_intr_en;
+>  	unsigned int tx_bytes;
+>  	unsigned long time_left = msecs_to_jiffies(I2C_TIMEOUT_MSEC);
+>  
+> @@ -298,7 +350,7 @@ static int bcm_iproc_i2c_xfer_single_msg(struct bcm_iproc_i2c_dev *iproc_i2c,
+>  	 * transaction is done, i.e., the internal start_busy bit, transitions
+>  	 * from 1 to 0.
+>  	 */
+> -	val = BIT(IE_M_START_BUSY_SHIFT);
+> +	val_intr_en = BIT(IE_M_START_BUSY_SHIFT);
+>  
+>  	/*
+>  	 * If TX data size is larger than the TX FIFO, need to enable TX
+> @@ -307,9 +359,7 @@ static int bcm_iproc_i2c_xfer_single_msg(struct bcm_iproc_i2c_dev *iproc_i2c,
+>  	 */
+>  	if (!(msg->flags & I2C_M_RD) &&
+>  	    msg->len > iproc_i2c->tx_bytes)
+> -		val |= BIT(IE_M_TX_UNDERRUN_SHIFT);
+> -
+> -	writel(val, iproc_i2c->base + IE_OFFSET);
+> +		val_intr_en |= BIT(IE_M_TX_UNDERRUN_SHIFT);
+>  
+>  	/*
+>  	 * Now we can activate the transfer. For a read operation, specify the
+> @@ -317,11 +367,27 @@ static int bcm_iproc_i2c_xfer_single_msg(struct bcm_iproc_i2c_dev *iproc_i2c,
+>  	 */
+>  	val = BIT(M_CMD_START_BUSY_SHIFT);
+>  	if (msg->flags & I2C_M_RD) {
+> +		iproc_i2c->rx_bytes = 0;
+> +		if (msg->len > M_RX_FIFO_MAX_THLD_VALUE)
+> +			iproc_i2c->thld_bytes = M_RX_FIFO_THLD_VALUE;
+> +		else
+> +			iproc_i2c->thld_bytes = msg->len;
+> +
+> +		/* set threshold value */
+> +		tmp = readl(iproc_i2c->base + M_FIFO_CTRL_OFFSET);
+> +		tmp &= ~(M_FIFO_RX_THLD_MASK << M_FIFO_RX_THLD_SHIFT);
+> +		tmp |= iproc_i2c->thld_bytes << M_FIFO_RX_THLD_SHIFT;
+> +		writel(tmp, iproc_i2c->base + M_FIFO_CTRL_OFFSET);
+> +
+> +		/* enable the RX threshold interrupt */
+> +		val_intr_en |= BIT(IE_M_RX_THLD_SHIFT);
+> +
+>  		val |= (M_CMD_PROTOCOL_BLK_RD << M_CMD_PROTOCOL_SHIFT) |
+>  		       (msg->len << M_CMD_RD_CNT_SHIFT);
+>  	} else {
+>  		val |= (M_CMD_PROTOCOL_BLK_WR << M_CMD_PROTOCOL_SHIFT);
+>  	}
+> +	writel(val_intr_en, iproc_i2c->base + IE_OFFSET);
+>  	writel(val, iproc_i2c->base + M_CMD_OFFSET);
+>  
+>  	time_left = wait_for_completion_timeout(&iproc_i2c->done, time_left);
+> @@ -353,17 +419,6 @@ static int bcm_iproc_i2c_xfer_single_msg(struct bcm_iproc_i2c_dev *iproc_i2c,
+>  		return ret;
+>  	}
+>  
+> -	/*
+> -	 * For a read operation, we now need to load the data from FIFO
+> -	 * into the memory buffer
+> -	 */
+> -	if (msg->flags & I2C_M_RD) {
+> -		for (i = 0; i < msg->len; i++) {
+> -			msg->buf[i] = (readl(iproc_i2c->base + M_RX_OFFSET) >>
+> -				      M_RX_DATA_SHIFT) & M_RX_DATA_MASK;
+> -		}
+> -	}
+> -
+>  	return 0;
+>  }
+>  
+> @@ -395,9 +450,8 @@ static uint32_t bcm_iproc_i2c_functionality(struct i2c_adapter *adap)
+>  	.functionality = bcm_iproc_i2c_functionality,
+>  };
+>  
+> -static const struct i2c_adapter_quirks bcm_iproc_i2c_quirks = {
+> -	/* need to reserve one byte in the FIFO for the slave address */
+> -	.max_read_len = M_TX_RX_FIFO_SIZE - 1,
+> +static struct i2c_adapter_quirks bcm_iproc_i2c_quirks = {
+> +	.max_read_len = M_RX_MAX_READ_LEN,
+>  };
+>  
+>  static int bcm_iproc_i2c_cfg_speed(struct bcm_iproc_i2c_dev *iproc_i2c)
+> 
 
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
