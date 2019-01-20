@@ -2,337 +2,71 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37765C26641
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9980C26660
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F24042084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:33:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8BF22133F
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548009608;
+	bh=aE/+ehsAxgu7+SyXYd2O/ZcPzSo33JripmKtCmzzZIM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=gwFocZKVX6o2tKdBtPNXoSD4Yu13Cu0wbiqauuq6JuvCmLBhevAwqTm9y/UabZHwD
+	 URtUDJh1+wg979jtD5bsAn9cL5byt10RWBGXohXSY8IE99DaA7wejHyaqASTr7B3kE
+	 c2NmypMS4777ewaRbM9PSinmXm9WWezRm0752Yy8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfATSdt (ORCPT
+        id S1727710AbfATSkD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 13:33:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38290 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726541AbfATSdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 13:33:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F17E6AD00;
-        Sun, 20 Jan 2019 18:33:45 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     linux-lpwan@lists.infradead.org, linux-wpan@vger.kernel.org
-Cc:     Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        TL Lim <tllim@pine64.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [RFC net-next] net: Z-Wave driver prototype
-Date:   Sun, 20 Jan 2019 19:33:15 +0100
-Message-Id: <20190120183315.22743-1-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 20 Jan 2019 13:40:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727363AbfATSkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 13:40:02 -0500
+Subject: Re: [GIT PULL] compiler-attributes for v5.0-rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548009601;
+        bh=aE/+ehsAxgu7+SyXYd2O/ZcPzSo33JripmKtCmzzZIM=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=z9EvzX2LyLCpMtaZ9iHuqNZwH10UES4BIhdQhMX0pxmMstngV017dgw3uX0Ritchn
+         xuytcsPnt+r+zlZZN8kDtHRnINcLvj+lDnx0rvr3jNy44tz/jE+7dK2Mqgr6zl0qoq
+         JzxMGEgiKYV5iJYtalPDBN5q78Ue+gRt/nhTPaC0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190120153417.GA29879@gmail.com>
+References: <20190120153417.GA29879@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190120153417.GA29879@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ojeda/linux.git
+ tags/compiler-attributes-for-linus-v5.0-rc3
+X-PR-Tracked-Commit-Id: 3e2ffd655cc6a694608d997738989ff5572a8266
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 315a6d850a8290919c499cfbed08737f6164c7bd
+Message-Id: <154800960162.15983.2046713238990753081.pr-tracker-bot@kernel.org>
+Date:   Sun, 20 Jan 2019 18:40:01 +0000
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Inspired from my LoRa and FSK driver project, I've hacked together a PoC
-for an in-kernel Z-Wave driver. Tested with Pine64 Z-Wave module.
+The pull request you sent on Sun, 20 Jan 2019 16:34:17 +0100:
 
-The by now SiLabs ZM5304 module exposes a UART interface that this
-serdev driver can be attached to, using Device Tree.
+> https://github.com/ojeda/linux.git tags/compiler-attributes-for-linus-v5.0-rc3
 
-There didn't appear to be any schematics for the Pine64 Z-Wave adapter,
-so the reset GPIO handling is still missing.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/315a6d850a8290919c499cfbed08737f6164c7bd
 
-Helpers are implemented for dealing with command, response and respective
-checksum-based acknowledgements.
+Thank you!
 
-While by now there is extensive public documentation on Command Classes
-for individual types of Z-Wave devices, I still couldn't find any proper
-documentation of the UART protocol below and relied on a former tutorial
-by Henrik Leidecker Jørgensen documenting commands for device discovery.
-
-Tested as external kernel module, so Kconfig/Makefile integration missing.
-
-Some ideas where to take this from here:
-1) Try to expose this as a net device and leave node communication to
-   userspace via sockets (command/response as skb?) or other means.
-2) Make this its own, e.g., drivers/zwave/ subsystem as bus and create
-   individual drivers (iio, gpio, led, etc.) for the various node types.
-   Optionally, implement a zwave-dev driver for generic userspace access
-   to one particular node, similar to spidev.
-
-Note: Z-Wave is based on GFSK modulation, so someone with a lot of time
-might implement it based on the FSK drivers being created alongside LoRa.
-That speaks against relying on the serial protocol, and it would not work
-with any tty based userspace applications.
-
-Cc: TL Lim <tllim@pine64.org>
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- drivers/net/zwave/Makefile |   1 +
- drivers/net/zwave/zwave.c  | 236 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 237 insertions(+)
- create mode 100644 drivers/net/zwave/Makefile
- create mode 100644 drivers/net/zwave/zwave.c
-
-diff --git a/drivers/net/zwave/Makefile b/drivers/net/zwave/Makefile
-new file mode 100644
-index 000000000000..1a4171308c79
---- /dev/null
-+++ b/drivers/net/zwave/Makefile
-@@ -0,0 +1 @@
-+obj-m += zwave.o
-diff --git a/drivers/net/zwave/zwave.c b/drivers/net/zwave/zwave.c
-new file mode 100644
-index 000000000000..8ac680bbb969
---- /dev/null
-+++ b/drivers/net/zwave/zwave.c
-@@ -0,0 +1,236 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Z-Wave
-+ *
-+ * Copyright (c) 2019 Andreas Färber
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/completion.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/rculist.h>
-+#include <linux/serdev.h>
-+
-+struct zwave_msg_dispatcher {
-+	struct list_head list;
-+	u8 id;
-+	void (*dispatch)(const u8 *data, u8 len, struct zwave_msg_dispatcher *d);
-+};
-+
-+struct zwave_device {
-+	struct serdev_device *serdev;
-+
-+	struct completion ack_comp;
-+	struct list_head msg_dispatchers;
-+
-+	struct zwave_msg_dispatcher node_list_disp;
-+};
-+
-+static void zwave_add_dispatcher(struct zwave_device *zdev,
-+	struct zwave_msg_dispatcher *entry)
-+{
-+	list_add_tail_rcu(&entry->list, &zdev->msg_dispatchers);
-+}
-+
-+static void zwave_remove_dispatcher(struct zwave_device *zdev,
-+	struct zwave_msg_dispatcher *entry)
-+{
-+	list_del_rcu(&entry->list);
-+}
-+
-+static u8 zwave_msg_checksum_first(const u8 first, const u8 *data, int len)
-+{
-+	u8 chksum;
-+	int i;
-+
-+	chksum = first;
-+	for (i = 0; i < len; i++) {
-+		chksum ^= data[i];
-+	}
-+	return ~chksum;
-+}
-+
-+static u8 zwave_msg_checksum(const u8 *data, int len)
-+{
-+	return zwave_msg_checksum_first(data[0], data + 1, len - 1);
-+}
-+
-+static int zwave_send_msg(struct zwave_device *zdev, const u8 *data, int data_len,
-+	unsigned long timeout)
-+{
-+	u8 chksum;
-+	u8 buf[2];
-+	int ret;
-+
-+	reinit_completion(&zdev->ack_comp);
-+
-+	buf[0] = 0x01;
-+	buf[1] = data_len + 1;
-+
-+	chksum = zwave_msg_checksum_first(buf[1], data, data_len);
-+	dev_dbg(&zdev->serdev->dev, "checksum: 0x%02x\n", (unsigned int)chksum);
-+
-+	ret = serdev_device_write(zdev->serdev, buf, 2, timeout);
-+	if (ret < 0)
-+		return ret;
-+	if (ret > 0 && ret < 2)
-+		return -EIO;
-+
-+	ret = serdev_device_write(zdev->serdev, data, data_len, timeout);
-+	if (ret < 0)
-+		return ret;
-+	if (ret > 0 && ret < data_len)
-+		return -EIO;
-+
-+	ret = serdev_device_write(zdev->serdev, &chksum, 1, timeout);
-+	if (ret < 0)
-+		return ret;
-+
-+	timeout = wait_for_completion_timeout(&zdev->ack_comp, timeout);
-+	if (!timeout)
-+		return -ETIMEDOUT;
-+
-+	return 0;
-+}
-+
-+static void zwave_node_list_report(const u8 *data, u8 len,
-+	struct zwave_msg_dispatcher *d)
-+{
-+	struct zwave_device *zdev = container_of(d, struct zwave_device, node_list_disp);
-+	struct device *dev = &zdev->serdev->dev;
-+	int i, j;
-+
-+	if (len != 36) {
-+		dev_err(dev, "node list report unexpected length (%u)\n", (unsigned int)len);
-+		return;
-+	};
-+
-+	dev_info(dev, "node list report\n");
-+	for (i = 0; i < data[4]; i++) {
-+		u8 tmp = data[5 + i];
-+		for (j = 0; j < 8; j++) {
-+			if (tmp & BIT(j))
-+				dev_info(dev, "node list data %u: node id %u\n", i + 1, i * 8 + j + 1);
-+		}
-+	}
-+}
-+
-+static int zwave_receive_buf(struct serdev_device *sdev, const u8 *data, size_t count)
-+{
-+	struct zwave_device *zdev = serdev_device_get_drvdata(sdev);
-+	struct zwave_msg_dispatcher *e;
-+	u8 buf[1] = { 0x06 };
-+	u8 msglen;
-+	u8 chksum;
-+
-+	dev_dbg(&sdev->dev, "Receive (%zu)\n", count);
-+
-+	if (data[0] == 0x06) {
-+		dev_info(&sdev->dev, "ACK received\n");
-+		complete(&zdev->ack_comp);
-+		return 1;
-+	} else {
-+		if (count < 2)
-+			return 0;
-+		msglen = data[1];
-+		if (count < 2 + msglen) {
-+			dev_dbg(&sdev->dev, "%s: received %zu, expecting %u\n", __func__, count, 2 + (unsigned int)msglen);
-+			return 0;
-+		}
-+		print_hex_dump_bytes("received: ", DUMP_PREFIX_OFFSET, data, 2 + msglen);
-+		if (msglen > 0) {
-+			chksum = zwave_msg_checksum(data + 1, msglen);
-+			if (data[1 + msglen] == chksum) {
-+				dev_info(&sdev->dev, "sending ACK\n");
-+				serdev_device_write_buf(sdev, buf, 1);
-+			} else {
-+				dev_warn(&sdev->dev, "checksum mismatch\n");
-+				return 2 + msglen;
-+			}
-+		}
-+		list_for_each_entry(e, &zdev->msg_dispatchers, list) {
-+			if (msglen > 2 && e->id == data[3])
-+				e->dispatch(data + 2, msglen ? msglen - 1 : 0, e);
-+		}
-+		return 2 + msglen;
-+	}
-+}
-+
-+static const struct serdev_device_ops zwave_serdev_client_ops = {
-+	.receive_buf = zwave_receive_buf,
-+	.write_wakeup = serdev_device_write_wakeup,
-+};
-+
-+static int zwave_probe(struct serdev_device *sdev)
-+{
-+	struct zwave_device *zdev;
-+	int ret;
-+	const u8 msg[] = { 0x00, 0x02 };
-+	//const u8 msg[] = { 0x00, 0x41, 1 };
-+
-+	dev_dbg(&sdev->dev, "Probing");
-+
-+	zdev = devm_kzalloc(&sdev->dev, sizeof(*zdev), GFP_KERNEL);
-+	if (!zdev)
-+		return -ENOMEM;
-+
-+	zdev->serdev = sdev;
-+	init_completion(&zdev->ack_comp);
-+	INIT_LIST_HEAD(&zdev->msg_dispatchers);
-+	serdev_device_set_drvdata(sdev, zdev);
-+
-+	ret = serdev_device_open(sdev);
-+	if (ret) {
-+		dev_err(&sdev->dev, "Failed to open (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	serdev_device_set_baudrate(sdev, 115200);
-+	serdev_device_set_flow_control(sdev, false);
-+	serdev_device_set_client_ops(sdev, &zwave_serdev_client_ops);
-+
-+	zdev->node_list_disp.id = 0x02;
-+	zdev->node_list_disp.dispatch = zwave_node_list_report;
-+	zwave_add_dispatcher(zdev, &zdev->node_list_disp);
-+
-+	ret = zwave_send_msg(zdev, msg, sizeof(msg), HZ);
-+	if (ret) {
-+		dev_warn(&sdev->dev, "Failed to send (%d)\n", ret);
-+	}
-+
-+	dev_dbg(&sdev->dev, "Done.\n");
-+
-+	return 0;
-+}
-+
-+static void zwave_remove(struct serdev_device *sdev)
-+{
-+	struct zwave_device *zdev = serdev_device_get_drvdata(sdev);
-+
-+	serdev_device_close(sdev);
-+
-+	zwave_remove_dispatcher(zdev, &zdev->node_list_disp);
-+
-+	dev_dbg(&sdev->dev, "Removed\n");
-+}
-+
-+static const struct of_device_id zwave_of_match[] = {
-+	{ .compatible = "zwave,zwave" }, /* XXX */
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, zwave_of_match);
-+
-+static struct serdev_device_driver zwave_serdev_driver = {
-+	.probe = zwave_probe,
-+	.remove = zwave_remove,
-+	.driver = {
-+		.name = "zwave",
-+		.of_match_table = zwave_of_match,
-+	},
-+};
-+module_serdev_device_driver(zwave_serdev_driver);
-+
-+MODULE_DESCRIPTION("Z-Wave serdev driver");
-+MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
-+MODULE_LICENSE("GPL");
 -- 
-2.16.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
