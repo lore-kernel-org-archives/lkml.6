@@ -2,108 +2,80 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5A7C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C21CC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20CDC2084F
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BF6B2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:32:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="X7QkXQ4O";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="X7QkXQ4O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730109AbfATCIm (ORCPT
+        id S1730048AbfATCcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 21:08:42 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47372 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729945AbfATCIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 21:08:42 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AB1BA78;
-        Sat, 19 Jan 2019 18:08:41 -0800 (PST)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4E823F5C1;
-        Sat, 19 Jan 2019 18:08:38 -0800 (PST)
-Date:   Sun, 20 Jan 2019 02:08:31 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Kassey <kassey1216@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, willy@infradead.org, kassey@126.com,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        mark.rutland@arm.com, robin.murphy@arm.com,
-        ard.biesheuvel@linaro.org
-Subject: Re: arm64: copy_from_user access the last page of ddr has problem on
- 4.14 kernel
-Message-ID: <20190120020829.GA28576@brain-police>
-References: <CAKwPUowmzZ2BNi-RmJm3=ENrZ5sxPf1SeT+b9A9iHHSCUQQAUw@mail.gmail.com>
- <20190116164817.GG1910@brain-police>
- <CAKwPUoyWy64-o2NgB5iPXNs4UR7bmYjmKk3Ub0X6DND40fCtPA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwPUoyWy64-o2NgB5iPXNs4UR7bmYjmKk3Ub0X6DND40fCtPA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sat, 19 Jan 2019 21:32:02 -0500
+Received: from node.akkea.ca ([192.155.83.177]:36276 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729969AbfATCcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 21:32:02 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id 937A14E2050;
+        Sun, 20 Jan 2019 02:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1547951521; bh=U3u1ymfYif5svjWWDk0JiwVizRuEI3eEjAatwNEEO7A=;
+        h=From:To:Cc:Subject:Date;
+        b=X7QkXQ4OhFqZ9nUvw3Cn0kukA5mfmmEIYQarVNLQJl46PEdPg+XEi12+65k/RmWiu
+         hrhtNOKm5l4xH1T/V0PnDo2A7PsJNTUppaXbIUy9/RMGxAIVZK8xhWneZdrPGBAm59
+         ierLZbkvMVbCYxcLGgoJf7WV7jDK1nF1zfcnW6VA=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 6LG6ktte-aVq; Sun, 20 Jan 2019 02:32:01 +0000 (UTC)
+Received: from localhost.localdomain (198-48-167-13.cpe.pppoe.ca [198.48.167.13])
+        by node.akkea.ca (Postfix) with ESMTPSA id A4FA24E204B;
+        Sun, 20 Jan 2019 02:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1547951521; bh=U3u1ymfYif5svjWWDk0JiwVizRuEI3eEjAatwNEEO7A=;
+        h=From:To:Cc:Subject:Date;
+        b=X7QkXQ4OhFqZ9nUvw3Cn0kukA5mfmmEIYQarVNLQJl46PEdPg+XEi12+65k/RmWiu
+         hrhtNOKm5l4xH1T/V0PnDo2A7PsJNTUppaXbIUy9/RMGxAIVZK8xhWneZdrPGBAm59
+         ierLZbkvMVbCYxcLGgoJf7WV7jDK1nF1zfcnW6VA=
+From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>
+Subject: [PATCH v2 0/3] dma: imx-sdma: add the sdma engine to the imx8mq
+Date:   Sat, 19 Jan 2019 19:31:47 -0700
+Message-Id: <20190120023150.17138-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 09:57:17AM +0800, Kassey wrote:
-> hi, Will
->       it is hard to try on v5.0-rc2 kernel, since there is much port
-> job to be done.
->      dst kernel buffer is looks overwriten by some same(fix) patter
-> start with "mmap"    (0x6d6d7061)  see below code (data from vmalloc),
-> and file is mmaped (include the last phy page of ddr.)
->      see below pattern and pieces of code.
+Add sdma support for the imx8mq
 
-Weird!
+Changes since V1
 
->      not sure if there is boundary issue for copy_from_user, please
-> help to suggest if you got some idea from the pattern, thanks.
+Fixed to build against v5.0-rc2
 
-copy_from_user() doesn't care about the physical address, so I can't see why
-it would matter (assuming we haven't done something nuts elsewhere, like
-double-allocate the page).
+Angus Ainslie (Purism) (3):
+  dma: imx-sdma: fix NULL pointer de-reference
+  dma: imx-sdma: add clock ratio 1:1 check
+  imx8mq.dtsi: add the sdma nodes
 
-The corruption you have is reasonably regular:
+ .../devicetree/bindings/dma/fsl-imx-sdma.txt  |  1 +
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi     | 31 ++++++++++++++++
+ drivers/dma/imx-sdma.c                        | 37 +++++++++++++------
+ 3 files changed, 57 insertions(+), 12 deletions(-)
 
-> 0079c00 6d6d 7061 0000 0000 0848 fd8f 0001 0000
-> 0079c10 0048 fd8f 0001 0000 0001 0000 0003 0000
-> 0079c20 2000 fd83 0001 0000 1fff fd86 0001 0000
-> 0079c30 0000 0000 0000 0000 700f 0000 0000 0000
+-- 
+2.17.1
 
-Here's "mmap" again, but the record is twice as long:
-
-> 0079c40 6d6d 7061 0000 0000 f448 ffff 0001 0000
-> 0079c50 f748 ffff 0001 0000 0001 0000 0004 0000
-> 0079c60 3000 fd8c 0001 0000 2fff fd8e 0001 0000
-> 0079c70 0000 0000 0000 0000 700f 0000 0000 0000
-> 0079c80 c103 0606 0100 be00 1009 3b00 3b07 0607
-> 0079c90 0100 5700 1006 e800 8c03 3103 0100 0a00
-> 0079ca0 0000 cf00 bf08 0a00 0100 5700 1006 3700
-> 0079cb0 3906 0606 0100 1600 0004 4700 9902 0207
-
-And then the whole structure repeats:
-
-> 0079cc0 6d6d 7061 0000 0000 f808 ffff 0001 0000
-> 0079cd0 f1c8 ffff 0001 0000 0001 0000 0005 0000
-> 0079ce0 d000 fff8 0001 0000 efff fffa 0001 0000
-> 0079cf0 0000 0000 0000 0000 700f 0000 0000 0000
-
-> 0079d00 6d6d 7061 0000 0000 f1c8 ffff 0001 0000
-> 0079d10 f388 ffff 0001 0000 0001 0000 0003 0000
-> 0079d20 c000 ffdf 0001 0000 6fff fff8 0001 0000
-> 0079d30 0000 0000 0000 0000 700f 0000 0000 0000
-> 0079d40 9407 0901 0100 5300 0204 b400 d503 0a04
-> 0079d50 0100 0000 0001 0200 7309 0202 0100 0200
-> 0079d60 5000 0200 7309 0202 0400 ff00 f7ff 94ff
-> 0079d70 b400 0208 0100 dc00 0000 b400 5803 0607
-> 0079d80 6d6d 7061 0000 0000 f7c8 ffff 0001 0000
-
-Do you have any applications running with the name "mmap"?
-
-Also, have you booted with "memtest" on the command-line, so that we can
-rule out any dram aliasing issues and the like?
-
-Will
