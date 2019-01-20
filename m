@@ -2,84 +2,69 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFA9C61CE3
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 03:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDAAC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 04:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A343C2084A
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 03:56:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 841142087B
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 04:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547956804;
+	bh=0NsXX9z3D0Ipytk+W6XcUHD/v1plWlIs7jL0YqB/B6o=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=rqiMzg0q/xZdh4IsHwc7y0rJ3cePNLkXm0w1I06qqlLH9xW0NFOk1XgohG1AcGC8D
+	 XMVzyUMLtCUTKanryMQ54eAj0aHKjD7VElfik7NgGfkpCHJymKVi/GpkLxpUnYAAzQ
+	 3QwnAIiW67k/BuGgUvELeETrer30Bw3G9lUMWzQc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfATD4q (ORCPT
+        id S1730215AbfATEAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 22:56:46 -0500
-Received: from www.osadl.org ([62.245.132.105]:54512 "EHLO www.osadl.org"
+        Sat, 19 Jan 2019 23:00:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730065AbfATD4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 22:56:45 -0500
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id x0K3uIS5027500;
-        Sun, 20 Jan 2019 04:56:18 +0100
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Brad Love <brad@nextdimension.cc>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] media: cx23885: check allocation return
-Date:   Sun, 20 Jan 2019 04:52:23 +0100
-Message-Id: <1547956343-11166-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        id S1730085AbfATEAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 23:00:02 -0500
+Subject: Re: [GIT PULL] arm64: fixes for -rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547956802;
+        bh=0NsXX9z3D0Ipytk+W6XcUHD/v1plWlIs7jL0YqB/B6o=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=Sy7GHFp8nispoSSmBtLjcxhFYkbqyTGB/SIFl6zmus7NKPpIg0CLDS5yWHORlRxRc
+         gcSltjERYtKbR9L4sChDXpjJReEOXc+ZK5p6ZHjbslAYnUa3RLAJt21yGv3a6oSlgl
+         sLDueaRsb24esoWdT4p9YHuHGatoZuVLV7iHyMVs=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190120000420.GM26876@brain-police>
+References: <20190120000420.GM26876@brain-police>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190120000420.GM26876@brain-police>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+ tags/arm64-fixes
+X-PR-Tracked-Commit-Id: 7fa1e2e6afa7f4c9f46528e61de6a15d9e8dffd9
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b0f3e768a89bbc72195023c3db1db45c40e5b70c
+Message-Id: <154795680204.15924.5820126657535767382.pr-tracker-bot@kernel.org>
+Date:   Sun, 20 Jan 2019 04:00:02 +0000
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        ard.biesheuvel@linaro.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checking of kmalloc() seems to have been committed - as
-cx23885_dvb_register() is checking for != 0 return, returning
--ENOMEM should be fine here.  While at it address the coccicheck
-suggestion to move to kmemdup rather than using kmalloc+memcpy.
+The pull request you sent on Sun, 20 Jan 2019 00:04:22 +0000:
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 46b21bbaa8a8 ("[media] Add support for DViCO FusionHDTV DVB-T Dual Express2")
----
-Problem located with an experimental coccinelle script
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
 
-Patch was compile tested with: x86_64_defconfig + MEDIA_SUPPORT=y
-MEDIA_PCI_SUPPORT=y, MEDIA_DIGITAL_TV_SUPPORT=y,
-MEDIA_ANALOG_TV_SUPPORT=y (for VIDEO_DEV), RC_CORE=y
-VIDEO_CX23885=y
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b0f3e768a89bbc72195023c3db1db45c40e5b70c
 
-The coccicheck on the initial fix for kmalloc only reported:
-drivers/media/pci/cx23885//cx23885-dvb.c:1477:33-40: WARNING opportunity for kmemdup
-so that was merged into this patch - the return value still needs to
-be checked.
+Thank you!
 
-Patch is against 5.0-rc2 (localversion-next is next-20190118)
-
- drivers/media/pci/cx23885/cx23885-dvb.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/pci/cx23885/cx23885-dvb.c b/drivers/media/pci/cx23885/cx23885-dvb.c
-index 0d0929c..225cdfe 100644
---- a/drivers/media/pci/cx23885/cx23885-dvb.c
-+++ b/drivers/media/pci/cx23885/cx23885-dvb.c
-@@ -1474,8 +1474,11 @@ static int dvb_register(struct cx23885_tsport *port)
- 		if (fe0->dvb.frontend != NULL) {
- 			struct i2c_adapter *tun_i2c;
- 
--			fe0->dvb.frontend->sec_priv = kmalloc(sizeof(dib7000p_ops), GFP_KERNEL);
--			memcpy(fe0->dvb.frontend->sec_priv, &dib7000p_ops, sizeof(dib7000p_ops));
-+			fe0->dvb.frontend->sec_priv = kmemdup(&dib7000p_ops,
-+							sizeof(dib7000p_ops),
-+							GFP_KERNEL);
-+			if (!fe0->dvb.frontend->sec_priv)
-+				return -ENOMEM;
- 			tun_i2c = dib7000p_ops.get_i2c_master(fe0->dvb.frontend, DIBX000_I2C_INTERFACE_TUNER, 1);
- 			if (!dvb_attach(dib0070_attach, fe0->dvb.frontend, tun_i2c, &dib7070p_dib0070_config))
- 				return -ENODEV;
 -- 
-2.1.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
