@@ -2,58 +2,56 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2583C31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D503C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7532720823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:18:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 024CE20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:18:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548055083;
-	bh=Igd5GzNXesTGFa66J0kiGXJV4L71glyWWerlSQ7nKEw=;
+	s=default; t=1548055090;
+	bh=3GDN5WoPWS4KWKusYYeDpmAEBq9fNZ4PPDc/28BTfE4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EOUcEUn0rekRIzEtYI8P2Y6VKzoU8L80gDDaOQ4uMfmbFksvPDgViUu7ekC3QlAoe
-	 CI1r8qrONIWlEd4jk6hNOL91NB+iv3lZIP3OYBGedjY32uyCOSouSm3eEA2hxDWVWJ
-	 u9rPqrPh22us6WWQCxrO65ZakPvuUFcKc9W+kkdw=
+	b=1QZhlfFlWSQlJwCWTsd2P/1kl6+RoIMiZ4kSNf9HGWbv/8mzQWkkjVlVDLOniBD8w
+	 L2ykYZpTVk6bL4WUnQuh5L9unSzEGINoRI+Gk4RWcAEUC/mQ2VLw78zdX/Km7T1Lzd
+	 rvrl1Kood5jUkyXBrCpIQxlWU213hL5pMh99CkrE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbfAUHSC (ORCPT
+        id S1727989AbfAUHSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:18:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42190 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 02:18:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727785AbfAUHR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727749AbfAUHR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 02:17:58 -0500
 Received: from earth.universe (unknown [194.136.232.109])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E2062175B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B8F521741;
         Mon, 21 Jan 2019 00:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1548029491;
-        bh=Igd5GzNXesTGFa66J0kiGXJV4L71glyWWerlSQ7nKEw=;
+        bh=3GDN5WoPWS4KWKusYYeDpmAEBq9fNZ4PPDc/28BTfE4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B0fwlXQF5j7qUKJfDp9eYVj/YMtBu6GOO5Paw26iHWtv1DnBJzE7gILnnr+RVq3st
-         WeP5XtJ1jFB9J2jMj0Re2wJf7IANIBKC7iN8jQeJ+5Y7Mtpw6qc+YE3baEKHiRINDv
-         Nw8YHHOi7/ROQk2LKj5fYirvYaK34zRs2+1KjyyA=
+        b=ULtLcfG7hROS0vzczMmzXibBPhsimfyWkQx6f53aWuis65p7NkKyP0vT2xHya6sFt
+         6JN0pB1qTLgnLQj/AcJHSn0Ino8liKig+1miCcdVUAQWcW3tfXxpq98Xn7DLUbkHqL
+         0nTwG2ZW7ZvR3aBlCqHB3QX0aleGIg+Xe9ICehRA=
 Received: by earth.universe (Postfix, from userid 1000)
-        id 8FBF13C08EC; Sun, 20 Jan 2019 22:45:27 +0100 (CET)
-Date:   Sun, 20 Jan 2019 22:45:27 +0100
+        id B24603C08EB; Sun, 20 Jan 2019 22:44:48 +0100 (CET)
+Date:   Sun, 20 Jan 2019 22:44:48 +0100
 From:   Sebastian Reichel <sre@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Jiri Kosina <trivial@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: charger-manager: Fix trivial language
- typos
-Message-ID: <20190120214527.vhfgufoob4dtl7m4@earth.universe>
-References: <1546949532-30150-1-git-send-email-krzk@kernel.org>
+To:     fuyao <fuyao@allwinnertech.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power_suuupy: change brace's place
+Message-ID: <20190120214448.yjiuy7gqkfcrktss@earth.universe>
+References: <20181229055925.GA12884@AExdroid03>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="x2bs3sv77t67xb3f"
+        protocol="application/pgp-signature"; boundary="irl2k3n5wbpagzeo"
 Content-Disposition: inline
-In-Reply-To: <1546949532-30150-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <20181229055925.GA12884@AExdroid03>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,144 +59,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---x2bs3sv77t67xb3f
+--irl2k3n5wbpagzeo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi fuyao,
 
-On Tue, Jan 08, 2019 at 01:12:12PM +0100, Krzysztof Kozlowski wrote:
-> Fix few trivial language typos.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+Sorry, but your patch does not follow kernel patch submission rules.
+All patches should have a long description, that describes _why_ the
+patch is required. Also it needs a Signed-off-by line submitted with
+your full realname. Last but not least there is a typo in the
+subject and the patch is not send to the right mailinglist. Please
+resubmit after reading the files in Documentation/process.
 
-Thanks, queued.
+Thanks for your patch,
 
 -- Sebastian
 
->  drivers/power/supply/charger-manager.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+On Sat, Dec 29, 2018 at 01:59:25PM +0800, fuyao wrote:
+> ---
+>  drivers/power/supply/power_supply_sysfs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/suppl=
-y/charger-manager.c
-> index 38be91f21cc4..2e8db5e6de0b 100644
-> --- a/drivers/power/supply/charger-manager.c
-> +++ b/drivers/power/supply/charger-manager.c
-> @@ -4,7 +4,7 @@
->   *
->   * This driver enables to monitor battery health and control charger
->   * during suspend-to-mem.
-> - * Charger manager depends on other devices. register this later than
-> + * Charger manager depends on other devices. Register this later than
->   * the depending devices.
->   *
->   * This program is free software; you can redistribute it and/or modify
-> @@ -29,7 +29,7 @@
->  #include <linux/thermal.h>
+> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/su=
+pply/power_supply_sysfs.c
+> index 5204f115970f..be1577e96c59 100644
+> --- a/drivers/power/supply/power_supply_sysfs.c
+> +++ b/drivers/power/supply/power_supply_sysfs.c
+> @@ -75,7 +75,8 @@ static const char * const power_supply_scope_text[] =3D=
+ {
 > =20
->  /*
-> - * Default termperature threshold for charging.
-> + * Default temperature threshold for charging.
->   * Every temperature units are in tenth of centigrade.
->   */
->  #define CM_DEFAULT_RECHARGE_TEMP_DIFF	50
-> @@ -356,7 +356,7 @@ static bool is_polling_required(struct charger_manage=
-r *cm)
->   * Note that Charger Manager keeps the charger enabled regardless whether
->   * the charger is charging or not (because battery is full or no external
->   * power source exists) except when CM needs to disable chargers forcibly
-> - * bacause of emergency causes; when the battery is overheated or too co=
-ld.
-> + * because of emergency causes; when the battery is overheated or too co=
-ld.
->   */
->  static int try_charger_enable(struct charger_manager *cm, bool enable)
->  {
-> @@ -643,7 +643,7 @@ static int cm_check_thermal_status(struct charger_man=
-ager *cm)
->  	if (ret) {
->  		/* FIXME:
->  		 * No information of battery temperature might
-> -		 * occur hazadous result. We have to handle it
-> +		 * occur hazardous result. We have to handle it
->  		 * depending on battery type.
->  		 */
->  		dev_err(cm->dev, "Failed to get battery temperature\n");
-> @@ -693,7 +693,7 @@ static bool _cm_monitor(struct charger_manager *cm)
->  			uevent_notify(cm, default_event_names[temp_alrt]);
-> =20
->  	/*
-> -	 * Check whole charging duration and discharing duration
-> +	 * Check whole charging duration and discharging duration
->  	 * after full-batt.
->  	 */
->  	} else if (!cm->emergency_stop && check_charging_duration(cm)) {
-> @@ -866,7 +866,7 @@ static void battout_handler(struct charger_manager *c=
-m)
->  }
-> =20
->  /**
-> - * misc_event_handler - Handler for other evnets
-> + * misc_event_handler - Handler for other events
->   * @cm: the Charger Manager representing the battery.
->   * @type: the Charger Manager representing the battery.
->   */
-> @@ -1218,7 +1218,7 @@ static int charger_extcon_init(struct charger_manag=
-er *cm,
->  }
-> =20
->  /**
-> - * charger_manager_register_extcon - Register extcon device to recevie s=
-tate
-> + * charger_manager_register_extcon - Register extcon device to receive s=
-tate
->   *				     of charger cable.
->   * @cm: the Charger Manager representing the battery.
->   *
-> @@ -1538,7 +1538,7 @@ static struct charger_desc *of_cm_parse_desc(struct=
- device *dev)
->  	of_property_read_u32(np, "cm-discharging-max",
->  				&desc->discharging_max_duration_ms);
-> =20
-> -	/* battery charger regualtors */
-> +	/* battery charger regulators */
->  	desc->num_charger_regulators =3D of_get_child_count(np);
->  	if (desc->num_charger_regulators) {
->  		struct charger_regulator *chg_regs;
-> @@ -1801,7 +1801,7 @@ static int charger_manager_probe(struct platform_de=
-vice *pdev)
-> =20
->  	/*
->  	 * Charger-manager have to check the charging state right after
-> -	 * tialization of charger-manager and then update current charging
-> +	 * initialization of charger-manager and then update current charging
->  	 * state.
->  	 */
->  	cm_monitor();
+>  static ssize_t power_supply_show_property(struct device *dev,
+>  					  struct device_attribute *attr,
+> -					  char *buf) {
+> +					  char *buf)
+> +{
+>  	ssize_t ret =3D 0;
+>  	struct power_supply *psy =3D dev_get_drvdata(dev);
+>  	const ptrdiff_t off =3D attr - power_supply_attrs;
 > --=20
-> 2.7.4
+> 2.19.1
 >=20
 
---x2bs3sv77t67xb3f
+--irl2k3n5wbpagzeo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxE6/cACgkQ2O7X88g7
-+prupw/+M3m4rmhrb2SHzGIrnraeP5X9CuQtDWfxr9cxyiyeWcpwAhJYEZnGMJj0
-LBOyiJxsGs8ZUDSKPjEsuCJYWWmRpkqQhYTQS6xy9z9vOwhhaaQIc17cs2Ffpvbv
-C0400UrkirP3ieSS1EyhUnCHA4XWkOyg4ccjjCWxo6z3zR62Vu1N85+cLkDZAnqP
-JE4F2tbm/BYLv+x8uB9gfHLNTImbXl++U3cIJAp8uABml3KP1kqKS6kuHmPxb1ck
-9gv7RnvJQAXLkFImUF0vEWCdEc+bmHPkkK1YUdViQCKZ6X0WAJsx8sZtF6YruOfw
-z/QlpK/TptlXIlte6l9urOc2UqRpCCHky/+tvZiMJFd/si08u7sjpQ5VSG8GoaF/
-R5OQgxP7SjxBcN4y7DSQ1uo8ZCHPduKBSu6rjRASJQZhw8Vnhrna0Bu88tRrUnsk
-KrdCTeQL/T/ER/UrfrzRL4VVWA5YhPcDxiFS0UG5wg1gj0/SNRHdW5oDfRdEdttO
-4BIMBi1R1598aUSccujLFml8nua1lBcQvENxoUwhNPUOCsZVwxRiNayRDit/CcwB
-qZUpuRtL7zNpzQzEfCz49JZRZdw2XF8ZMfHgjylAtr1EzqpnwnvpDL8qhvGwlzUp
-gi3bS5rfnwkIH/gZfhQmZ8IIta8GV8H++NXIUytaUiJWv5gLc5E=
-=dgrP
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxE69AACgkQ2O7X88g7
++pp0WA/9HIkpk5D6r1kBmR/1pq6YoikJTmycOOXra35nis8/6c1iU5sTlpIcfs3Y
+fqa2toiZf0DGEh8yAbKExmWxgwCHEDYru/jtkIOWYDlE2RdAwIsqJ6zoPyZdVfjt
+r4wNyTl6cJ/WFdC8Wq8J57YSjcc3ieKZoKzdxJJ0h++QPdra//Qb5jvi3xy1MoJH
+w3sGmnOprPO6BjmBeCk1R5rDZNdM1Y28Z7nO1f/kFA8MjGBMQsf/B5V+iswGCT0c
+IFoZi9o0KD5KpFZn76zxRSjP3/On/mrWazTpzU2tU5SprkC6cgmk5O68nrHDm2R6
+Zwm3PSpe4hgM9bLG8VIek8C1uaF89Gs9PZtqR16h4G2iUavfElDy78vraGVUqfj0
+/1x1dqQclkdqoSxbAabqnSeVgZG4LhEACvtDsvS6RvpVRHbreH3YCq5RsQ5TYEAt
+qBudSv8rKc6RcIKASAi8M2UUQq8+f5u76zrRXYWZ+196CXm9qDZ62LpSlg3CLhbN
+pTMgk7Qs1ljbuuTRS8Nv5zSb9VVk6kleC4pX1v7WkN0Dnys8pRwAzVkQDq2PYbCa
+z0X3x7fSwAb9q8MjNdglwcOeCxLjoiahswXmdb45K8rwO9+4sfgnjwmpBjfiJwFL
+ZigBEWFLlfPr5lzXBc1k1KFcoMIo4XFoXOiMparKcQT7fQxo7io=
+=WAre
 -----END PGP SIGNATURE-----
 
---x2bs3sv77t67xb3f--
+--irl2k3n5wbpagzeo--
