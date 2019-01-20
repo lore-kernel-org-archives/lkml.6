@@ -2,119 +2,142 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CE2C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 09:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CB2C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 09:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D0E02087B
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 09:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547977931;
-	bh=4aWYzgsxH3YV9mtnItmg3G5GFItXEqZINtPgJ1iGgt8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NkiOpWXu4pr6Jg4/yJjgBGxynHEu5ZefYghTTEy1L08VsJ3snLP/RxpccVHpluPp2
-	 6tkKzkHsR0JhTP2jQ2mKCaMVV6i0sNn6hqmVG6d/yRJ3jnh9TAXBQUjWoXWWxIuAn0
-	 FIV0bT7OhkEf3dulJ7SjbpnrjSWB1otPFQ0e4Oas=
+	by mail.kernel.org (Postfix) with ESMTP id F14802085B
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 09:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730452AbfATJwJ (ORCPT
+        id S1730474AbfATJwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 04:52:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34192 "EHLO mail.kernel.org"
+        Sun, 20 Jan 2019 04:52:44 -0500
+Received: from mga01.intel.com ([192.55.52.88]:13578 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726939AbfATJwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 04:52:08 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DD552085B;
-        Sun, 20 Jan 2019 09:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547977928;
-        bh=4aWYzgsxH3YV9mtnItmg3G5GFItXEqZINtPgJ1iGgt8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hk8UDNveEriV8XSqcRY1QKuvH07K3Dd/DwATAXZky7oGucw0oaPLBodjhUM4Cl5Oj
-         CdVAAmeKGl5pAZMHkKv9V/+BJmTwkv7SMJW1cWAyQT/nWJODpqldg2xSYTm3cdGI44
-         GDvEA+GUylTDXCk5IVDEHBay1rgtsJaoGJ7sQfeY=
-Date:   Sun, 20 Jan 2019 10:52:05 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-Subject: Re: [BUG] tiocsti() NULL dereference if ld->ops->receive_buf==NULL
-Message-ID: <20190120095205.GB28267@kroah.com>
-References: <CAG48ez06mDExELyTYN7MZQ3FjGcLx9ASc5HnxW8NQbfTAPX=Qg@mail.gmail.com>
- <20190119091108.GF10836@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190119091108.GF10836@kroah.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        id S1726939AbfATJwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 04:52:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 01:52:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,499,1539673200"; 
+   d="scan'208";a="119882987"
+Received: from mint-dev.iind.intel.com ([10.223.25.164])
+  by orsmga003.jf.intel.com with ESMTP; 20 Jan 2019 01:52:40 -0800
+From:   Ramalingam C <ramalingam.c@intel.com>
+To:     intel-gfx-trybot@lists.freedesktop.org
+Cc:     Ramalingam C <ramalingam.c@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v10 03/41] component: alloc component_match without any comp to match
+Date:   Sun, 20 Jan 2019 15:16:17 +0530
+Message-Id: <1547977615-30780-3-git-send-email-ramalingam.c@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547977615-30780-1-git-send-email-ramalingam.c@intel.com>
+References: <1547977615-30780-1-git-send-email-ramalingam.c@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 10:11:08AM +0100, Greg Kroah-Hartman wrote:
-> On Fri, Jan 18, 2019 at 08:09:07PM +0100, Jann Horn wrote:
-> > Hi!
-> > 
-> > When a line discipline doesn't have a ->receive_buf handler, tiocsti()
-> > attempts to call a NULL pointer. Both tty_n_tracesink and
-> > spk_ttyio_ldisc_ops don't have such a handler.
-> > 
-> > To reproduce, build a kernel with CONFIG_SPEAKUP=y and
-> > CONFIG_SPEAKUP_SYNTH_SOFT=y, set speakup.synth=soft in the kernel
-> > command line, and run the following code as root:
-> 
-> <snip>
-> 
-> Ugh, thanks for finding this.  I'll look at it later this afternoon...
+If all the components associated to a component master is not added
+to the component framework due to the HW capability or Kconfig
+selection, component_match will be NULL at
+component_master_add_with_match().
 
-It looks to be a simple change.  We can't really "fail" this ioctl if
-there's nothing wrong with the structure of the call, so we can just
-quietly "eat" the character, given that the line discipline doesn't care
-about it.
+To avoid this, component_match_alloc() is added to the framework,
+to allcoate the struct component_match with zero associated components.
+Hence component master can be added with a component_match with zero
+associated components.
 
-So, any objections to the patch below?
+This helps the component master bind call to get triggered,
+even if no component is registered for that particular master.
 
-thanks,
+This is meant for big PCI device drivers where small/optional
+features are external components, and based on usecases different
+combination of components are build as entire driver.
 
-greg k-h
+In such PCI device driver Load, if we use the component master for
+waiting for few  components(features) availability, only if they are
+supported by the underlying HW, then we need to allocate memory for
+component_match using the API introduced in this change before
+the call to component_master_add_with_match.
 
------------------
-
-Subject: [PATCH] tty: Handle problem if line discipline does not have receive_buf
-
-Some tty line disciplines do not have a receive buf callback, so
-properly check for that before calling it.  If they do not have this
-callback, just eat the character quietly, as we can't fail this call.
-
-Reported-by: Jann Horn <jannh@google.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
+Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/tty_io.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
+ include/linux/component.h |  2 ++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 23c6fd238422..21ffcce16927 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2189,7 +2189,8 @@ static int tiocsti(struct tty_struct *tty, char __user *p)
- 	ld = tty_ldisc_ref_wait(tty);
- 	if (!ld)
- 		return -EIO;
--	ld->ops->receive_buf(tty, &ch, &mbz, 1);
-+	if (ld->ops->receive_buf)
-+		ld->ops->receive_buf(tty, &ch, &mbz, 1);
- 	tty_ldisc_deref(ld);
- 	return 0;
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index ddcea8739c12..1b8bb07c0ec7 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -302,6 +302,36 @@ static int component_match_realloc(struct device *dev,
  }
+ 
+ /*
++ * Allocate the match without any component_match_array elements.
++ *
++ * This function is useful when the component master might end up
++ * registering itself without any matching components.
++ */
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr)
++{
++	struct component_match *match = *matchptr;
++
++	if (IS_ERR(match))
++		return;
++
++	if (match)
++		return;
++
++	match = devres_alloc(devm_component_match_release,
++			     sizeof(*match), GFP_KERNEL);
++	if (!match) {
++		*matchptr = ERR_PTR(-ENOMEM);
++		return;
++	}
++
++	devres_add(master, match);
++
++	*matchptr = match;
++}
++EXPORT_SYMBOL(component_match_alloc);
++
++/*
+  * Add a component to be matched, with a release function.
+  *
+  * The match array is first created or extended if necessary.
+diff --git a/include/linux/component.h b/include/linux/component.h
+index e71fbbbc74e2..3f6b420a58f8 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
+ 	struct component_match **matchptr,
+ 	void (*release)(struct device *, void *),
+ 	int (*compare)(struct device *, void *), void *compare_data);
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr);
+ 
+ static inline void component_match_add(struct device *master,
+ 	struct component_match **matchptr,
 -- 
-2.20.1
+2.7.4
 
