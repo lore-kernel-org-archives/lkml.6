@@ -7,68 +7,59 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E25C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C823C282DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A78D20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C12820989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:32:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NnHYHzOQ"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KwEUk1u7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfAUHbe (ORCPT
+        id S1728639AbfAUHb6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:31:34 -0500
+        Mon, 21 Jan 2019 02:31:58 -0500
 Received: from perceval.ideasonboard.com ([213.167.242.64]:45902 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728486AbfAUHbc (ORCPT
+        with ESMTP id S1728430AbfAUHba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:31:32 -0500
+        Mon, 21 Jan 2019 02:31:30 -0500
 Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 92004E81;
-        Sun, 20 Jan 2019 20:41:59 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 72581B60;
+        Sun, 20 Jan 2019 20:41:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548013320;
-        bh=YnbaPsFlCSsBt3uBy9C5XLZC4Iv1Yah6zatFOWt4DKw=;
+        s=mail; t=1548013317;
+        bh=M5/euAy6dX0wJeOW7nGNoT6yPzv7tpxo8hKP2n5rlK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NnHYHzOQ2jPfSiL9pkmacENgXHYT3VMeqeh77ir/HarZa7o+gtwNF2iOA8mpwM7vK
-         g6/Gfyn8z65ZlO3hcb9f3vA8HRXy9j66OevkHNoryn/cGyw5QQIR95DvbsWeZOT08c
-         AIp/lMfW3m7lP897o9RsLV6Hbojh0UoHmI8FQdSk=
+        b=KwEUk1u7bxxd2dTW7bqH6riMx4gX/2DVPejji8OqFIstRhWRiaa/IIOvRWRzfEUgE
+         oOJdRBffKbes2JNRlSpxiHmjZbH+ta92aC9UFHjl2EQtC1M52sg+ARgN54hn9yGL8j
+         F4Y6NOlCZPMfaL+azX1Owz4tZb7MMQ6Fp+ZpH5NE=
 From:   Paul Elder <paul.elder@ideasonboard.com>
 To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
 Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
         stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
         gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/6] usb: gadget: uvc: package setup and data for control OUT requests
-Date:   Sun, 20 Jan 2019 14:41:33 -0500
-Message-Id: <20190120194136.21870-4-paul.elder@ideasonboard.com>
+Subject: [PATCH v6 1/6] usb: uvc: include videodev2.h in g_uvc.h
+Date:   Sun, 20 Jan 2019 14:41:31 -0500
+Message-Id: <20190120194136.21870-2-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190120194136.21870-1-paul.elder@ideasonboard.com>
 References: <20190120194136.21870-1-paul.elder@ideasonboard.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since "usb: gadget: uvc: enqueue uvc_request_data in setup handler
-for control OUT requests" it is no longer necessary for userspace to
-call ioctl UVCIOC_SEND_RESPONSE in response to receiving a
-UVC_EVENT_SETUP from the uvc function driver for a control OUT request.
+V4L2_EVENT_PRIVATE_START is used in g_uvc.h but is defined in
+videodev2.h, which is not included and causes a compiler warning:
 
-This change means that for control OUT userspace will receive a
-UVC_EVENT_SETUP and not do anything with it. This is a waste of a pair
-of context switches, so we put the setup and data stage data into a
-single UVC_EVENT_DATA to give to userspace. Previously struct
-uvc_request_data had 60 bytes allocated for data, and since uvc data at
-most is 34 bytes in UVC 1.1 and 48 bytes in UVC 1.5, we can afford to
-cut out 8 bytes to store the setup control.
+linux/usb/g_uvc.h:15:28: error: ‘V4L2_EVENT_PRIVATE_START’ undeclared here (not in a function)
+ #define UVC_EVENT_FIRST   (V4L2_EVENT_PRIVATE_START + 0)
 
-Since the setup control is discarded after the handling of the setup
-stage, it must be saved in struct uvc_device during the setup handler in
-order for the data stage handler to be able to read it and send it to
-userspace.
+Include videodev2.h in g_uvc.h.
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -79,58 +70,21 @@ No change from v3
 No change from v2
 No change from v1
 
- drivers/usb/gadget/function/f_uvc.c | 3 +++
- drivers/usb/gadget/function/uvc.h   | 1 +
- include/uapi/linux/usb/g_uvc.h      | 3 ++-
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ include/uapi/linux/usb/g_uvc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/gadget/function/f_uvc.c b/drivers/usb/gadget/function/f_uvc.c
-index f571623cc6e4..6303ed346af9 100644
---- a/drivers/usb/gadget/function/f_uvc.c
-+++ b/drivers/usb/gadget/function/f_uvc.c
-@@ -215,6 +215,8 @@ uvc_function_ep0_complete(struct usb_ep *ep, struct usb_request *req)
- 		v4l2_event.type = UVC_EVENT_DATA;
- 		uvc_event->data.length = req->actual;
- 		memcpy(&uvc_event->data.data, req->buf, req->actual);
-+		memcpy(&uvc_event->data.setup, &uvc->control_setup,
-+		       sizeof(uvc_event->data.setup));
- 		v4l2_event_queue(&uvc->vdev, &v4l2_event);
- 	}
- }
-@@ -238,6 +240,7 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 	 */
- 	uvc->event_setup_out = !(ctrl->bRequestType & USB_DIR_IN);
- 	uvc->event_length = le16_to_cpu(ctrl->wLength);
-+	memcpy(&uvc->control_setup, ctrl, sizeof(uvc->control_setup));
- 
- 	if (uvc->event_setup_out) {
- 		struct usb_request *req = uvc->control_req;
-diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
-index 671020c8a836..1d89b1df4ba0 100644
---- a/drivers/usb/gadget/function/uvc.h
-+++ b/drivers/usb/gadget/function/uvc.h
-@@ -163,6 +163,7 @@ struct uvc_device {
- 	unsigned int control_intf;
- 	struct usb_ep *control_ep;
- 	struct usb_request *control_req;
-+	struct usb_ctrlrequest control_setup;
- 	void *control_buf;
- 
- 	unsigned int streaming_intf;
 diff --git a/include/uapi/linux/usb/g_uvc.h b/include/uapi/linux/usb/g_uvc.h
-index 6698c3263ae8..10fbb4382925 100644
+index 3c9ee3020cbb..6698c3263ae8 100644
 --- a/include/uapi/linux/usb/g_uvc.h
 +++ b/include/uapi/linux/usb/g_uvc.h
-@@ -24,7 +24,8 @@
+@@ -11,6 +11,7 @@
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
+ #include <linux/usb/ch9.h>
++#include <linux/videodev2.h>
  
- struct uvc_request_data {
- 	__s32 length;
--	__u8 data[60];
-+	struct usb_ctrlrequest setup;
-+	__u8 data[52];
- };
- 
- struct uvc_event {
+ #define UVC_EVENT_FIRST			(V4L2_EVENT_PRIVATE_START + 0)
+ #define UVC_EVENT_CONNECT		(V4L2_EVENT_PRIVATE_START + 0)
 -- 
 2.20.1
 
