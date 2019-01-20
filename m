@@ -2,84 +2,85 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7BCC676F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 15:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E27A0C7113C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 15:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3682120861
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 15:43:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K/BoH4Nr"
+	by mail.kernel.org (Postfix) with ESMTP id B2AC920880
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 15:52:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfATPnf (ORCPT
+        id S1726663AbfATPwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 10:43:35 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:33633 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfATPnf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 10:43:35 -0500
-Received: by mail-it1-f193.google.com with SMTP id m8so5124715itk.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 07:43:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Xt6OSfbY32n9hhAD9g737/33MNLX0J6L8rwgNqtQGC4=;
-        b=K/BoH4NrB8SAS/IdxZxBMqXhBQ3FKXUs9x/M+V8tNqEIzc9+NlbNIijpqqIwbK3yuh
-         hLSbTR6QWo4XyxisOgqBaKA25hKX0OUAzWwTmZf5xukEgU1ouzRyxxs+NEG9A9vwniMr
-         ZD/TTfvf5RTNHqHoZQ3L1hNtu8Zoj/qNDOHI4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xt6OSfbY32n9hhAD9g737/33MNLX0J6L8rwgNqtQGC4=;
-        b=q2fxUtW+H1jy/vf/uGbCbxojN4ydNNuAehjoThQ21nP85OwkQEU7q6HlXbi3P73Hv0
-         h7cJyv+LH6bxJeoFRIkJ/lL0PJI3iB+h6ZrY+gzNkb32m75gbdImQMQ1VBraa3t6HAf8
-         GWPWddi4MEKmZH2mwDI+kkGNiWOo8XVRfqZwghOnVCkNDaV/cKiAbBJ/1LXRYaf7yKiL
-         Rnaqi3rimc7JpEz9BkGns6jkf4tcX68XUM8x1ZfXdamO9Nn5N4rDFRZTSEHt5IXvlZXu
-         K7lsI4jSJeFEJgHw+aks+t234uSZjDTQymyAbbZBbcksjPurTAfmKEBJm1QaOMyaJcmL
-         nMXA==
-X-Gm-Message-State: AJcUukdfDCTjWmiWuywob/B2FiuCPnAm6aEB2Jyay2TPa5hRh/DHudPu
-        O2i50Pt5VOYE9w23fdShAOTrH2UGli3xbEI4hgwfMg==
-X-Google-Smtp-Source: ALg8bN7faX177yOYMc/jL/sb/U1fdkkITjUcvPFwl8D2zoWPGloddnuId5odHIL5Fzp9W0QtwVRFK9mJXKN2icjv1Qc=
-X-Received: by 2002:a24:edc4:: with SMTP id r187mr16780026ith.158.1547999014337;
- Sun, 20 Jan 2019 07:43:34 -0800 (PST)
+        Sun, 20 Jan 2019 10:52:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42794 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726004AbfATPwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 10:52:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 66A02AE3C;
+        Sun, 20 Jan 2019 15:52:01 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id CCDEADA85F; Sun, 20 Jan 2019 16:51:30 +0100 (CET)
+From:   David Sterba <dsterba@suse.com>
+To:     torvalds@linux-foundation.org
+Cc:     David Sterba <dsterba@suse.com>, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 5.0-rc3
+Date:   Sun, 20 Jan 2019 16:51:29 +0100
+Message-Id: <cover.1547998923.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190118105807.26425-1-ard.biesheuvel@linaro.org> <CAGXu5jKa6Tzea9SyTi5aOZusnb+1+yTJhMNaz-Ha8sjR7oCWsw@mail.gmail.com>
-In-Reply-To: <CAGXu5jKa6Tzea9SyTi5aOZusnb+1+yTJhMNaz-Ha8sjR7oCWsw@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sun, 20 Jan 2019 16:43:22 +0100
-Message-ID: <CAKv+Gu_VBQOfV7Z=PfAoBhUbyNtYg8tHumOciN7Yxa8RuQ06XQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] gcc-plugins: fixes for arm_ssp_per_task_plugin
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Emese Revfy <re.emese@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 20 Jan 2019 at 02:51, Kees Cook <keescook@chromium.org> wrote:
->
-> On Fri, Jan 18, 2019 at 2:58 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
-> >
-> > A couple of fixes to permit newer versions of GCC to use the stack
-> > protector plugin for ARM.
-> >
-> > Ard Biesheuvel (2):
-> >   gcc-plugins: arm_ssp_per_task_plugin: sign extend the SP mask
-> >   gcc-plugins: arm_ssp_per_task_plugin: fix for GCC 9+
->
-> Nice; thanks! It seems like these should go into -rc4, yes? I'll get
-> them queued up for Linus...
->
+Hi,
 
-Yes, given that it is new code anyway, let's merge it as fixes.
+please pull the following branch to obtain a handful of fixes (some of
+them in testing for a long time, were briefly mentioned in the 1st
+pull):
+
+- fix some test failures regarding cleanup after transaction abort
+
+- revert of a patch that could cause a deadlock
+
+- delayed iput fixes, that can help in ENOSPC situation when there's low
+  space and lot data to write
+
+Thanks.
+
+----------------------------------------------------------------
+The following changes since commit 1b3922a8bc74231f9a767d1be6d9a061a4d4eeab:
+
+  btrfs: Use real device structure to verify dev extent (2019-01-10 17:13:00 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.0-rc2-tag
+
+for you to fetch changes up to fd340d0f68cc87badfc9efcb226f23a5428826a0:
+
+  btrfs: wakeup cleaner thread when adding delayed iput (2019-01-18 17:27:23 +0100)
+
+----------------------------------------------------------------
+David Sterba (1):
+      Revert "btrfs: balance dirty metadata pages in btrfs_finish_ordered_io"
+
+Josef Bacik (4):
+      btrfs: handle delayed ref head accounting cleanup in abort
+      btrfs: wait on ordered extents on abort cleanup
+      btrfs: run delayed iputs before committing
+      btrfs: wakeup cleaner thread when adding delayed iput
+
+ fs/btrfs/ctree.h       |  7 +++++++
+ fs/btrfs/disk-io.c     | 12 ++++++++++++
+ fs/btrfs/extent-tree.c | 21 ++++++++++++++-------
+ fs/btrfs/inode.c       |  5 ++---
+ 4 files changed, 35 insertions(+), 10 deletions(-)
