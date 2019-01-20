@@ -2,94 +2,56 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FC8C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 00:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC26C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 00:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E032420883
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 00:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1139520883
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 00:07:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729922AbfATAE2 (ORCPT
+        id S1729992AbfATAHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 19:04:28 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46982 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729803AbfATAE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 19:04:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78345A78;
-        Sat, 19 Jan 2019 16:04:27 -0800 (PST)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF3F43F6A8;
-        Sat, 19 Jan 2019 16:04:25 -0800 (PST)
-Date:   Sun, 20 Jan 2019 00:04:22 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com, ard.biesheuvel@linaro.org
-Subject: [GIT PULL] arm64: fixes for -rc3
-Message-ID: <20190120000420.GM26876@brain-police>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sat, 19 Jan 2019 19:07:24 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:59474 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbfATAHY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 19:07:24 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 767BE14BEE7E3;
+        Sat, 19 Jan 2019 16:07:23 -0800 (PST)
+Date:   Sat, 19 Jan 2019 16:07:23 -0800 (PST)
+Message-Id: <20190119.160723.1130861899371541485.davem@davemloft.net>
+To:     mst@redhat.com
+Cc:     linux-kernel@vger.kernel.org, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2] virtio_net: bulk free tx skbs
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190118041842.24067-1-mst@redhat.com>
+References: <20190118041842.24067-1-mst@redhat.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 19 Jan 2019 16:07:23 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Date: Thu, 17 Jan 2019 23:20:07 -0500
 
-Please pull these three arm64 fixes for -rc3. We've plugged a couple of
-nasty issues involving KASLR-enabled kernels, and removed a redundant
-#define that was introduced as part of the KHWASAN fixes from akpm at -rc2.
+> Use napi_consume_skb() to get bulk free.  Note that napi_consume_skb is
+> safe to call in a non-napi context as long as the napi_budget flag is
+> correct.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-The kernel.org servers wouldn't talk to me from NZ (the keys appeared to
-have changed), so I ended up pushing via the UK which seems to have worked.
-Please shout if anything looks weird.
-
-Cheers,
-
-Will
-
---->8
-
-The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
-
-  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 7fa1e2e6afa7f4c9f46528e61de6a15d9e8dffd9:
-
-  kasan, arm64: remove redundant ARCH_SLAB_MINALIGN define (2019-01-16 12:09:11 +0000)
-
-----------------------------------------------------------------
-arm64 fixes for -rc3
-
-- Fix broken kpti page-table rewrite in bizarre KASLR configuration
-
-- Fix module loading with KASLR
-
-- Remove redundant definition of ARCH_SLAB_MINALIGN
-
-----------------------------------------------------------------
-Andrey Konovalov (1):
-      kasan, arm64: remove redundant ARCH_SLAB_MINALIGN define
-
-Ard Biesheuvel (1):
-      arm64: kaslr: ensure randomized quantities are clean to the PoC
-
-James Morse (1):
-      arm64: kpti: Update arm64_kernel_use_ng_mappings() when forced on
-
- arch/arm64/include/asm/cache.h | 2 --
- arch/arm64/include/asm/mmu.h   | 5 ++++-
- arch/arm64/kernel/kaslr.c      | 8 ++++++--
- 3 files changed, 10 insertions(+), 5 deletions(-)
+Applied, thanks.
