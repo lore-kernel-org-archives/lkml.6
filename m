@@ -2,78 +2,115 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6767AC7113C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CB3C7113C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FAAB20880
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B032085A
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfATQES (ORCPT
+        id S1726775AbfATQFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 11:04:18 -0500
-Received: from mga06.intel.com ([134.134.136.31]:58813 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbfATQES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 11:04:18 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 08:04:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,499,1539673200"; 
-   d="scan'208";a="127235859"
-Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.134])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Jan 2019 08:04:15 -0800
-Date:   Sun, 20 Jan 2019 18:04:13 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190120160413.GB30478@linux.intel.com>
-References: <20190118142559.GA4080@linux.intel.com>
- <1547849358.2794.90.camel@HansenPartnership.com>
+        Sun, 20 Jan 2019 11:05:48 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41430 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725985AbfATQFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 11:05:48 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AF1A94449C8B7FB1D0A4;
+        Mon, 21 Jan 2019 00:05:44 +0800 (CST)
+Received: from huawei.com (100.95.165.100) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Mon, 21 Jan 2019
+ 00:05:35 +0800
+From:   He Kuang <hekuang@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <hekuang@huawei.com>
+Subject: [PATCH] perf top: Fix wrong hottest instruction highlighted
+Date:   Mon, 21 Jan 2019 00:05:22 +0800
+Message-ID: <20190120160523.4391-1-hekuang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547849358.2794.90.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [100.95.165.100]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 02:09:18PM -0800, James Bottomley wrote:
-> On Fri, 2019-01-18 at 16:25 +0200, Jarkko Sakkinen wrote:
-> > I get this on a Geminilake NUC after rebasing my maintainer trees:
-> > 
-> > tpm tpm0: A TPM error (-1) occurred attempting the self test
-> > 
-> > I checked the latest commit ID from drivers/char/tpm to make sure
-> > that I did not put anything broken to my last PR [1]. It works
-> > without issues.
-> > 
-> > In addition [2] gives me an empty diff.
-> > 
-> > Something outside of the TPM driver must have happened that breaks
-> > the driver. Any ideas?
-> > 
-> > [1] commit 9488585b21bef0df1217e510c7134905d1d376a7
-> > [2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master
-> > drivers/char/tpm/
-> 
-> I'm afraid you're going to have to bisect to find the offending in-
-> kernel commit, which is going to be painful since it seems to depend on
-> physical hardware.  My first instinct is that we're getting a zero
-> length read somewhere, but I still can't see anything in the merge
-> window that would cause that behaviour.
+Annotation line's percentage is compared and inserted into rbtree, but the
+percent field of 'struct annotation_data' is an array, the comparison
+result between them is the address difference.
 
-Yeah, I've started to bisect it (still 9 rounds to go).
+This patch compares the right slot of percent array according to
+opts->percent_type and makes things right.
 
-/Jarkko
+The problem can be reproduced by pressing 'H' in perf top annotation view.
+It should highlight the instruction line which has the highest sampling
+percentage.
+
+Signed-off-by: He Kuang <hekuang@huawei.com>
+---
+ tools/perf/ui/browsers/annotate.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 1d00e5ec7906..82e16bf84466 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -224,20 +224,24 @@ static unsigned int annotate_browser__refresh(struct ui_browser *browser)
+ 	return ret;
+ }
+ 
+-static int disasm__cmp(struct annotation_line *a, struct annotation_line *b)
++static double disasm__cmp(struct annotation_line *a, struct annotation_line *b,
++						  int percent_type)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < a->data_nr; i++) {
+-		if (a->data[i].percent == b->data[i].percent)
++		if (a->data[i].percent[percent_type] == b->data[i].percent[percent_type])
+ 			continue;
+-		return a->data[i].percent < b->data[i].percent;
++		return a->data[i].percent[percent_type] -
++			   b->data[i].percent[percent_type];
+ 	}
+ 	return 0;
+ }
+ 
+-static void disasm_rb_tree__insert(struct rb_root *root, struct annotation_line *al)
++static void disasm_rb_tree__insert(struct annotate_browser *browser,
++				struct annotation_line *al)
+ {
++	struct rb_root *root = &browser->entries;
+ 	struct rb_node **p = &root->rb_node;
+ 	struct rb_node *parent = NULL;
+ 	struct annotation_line *l;
+@@ -246,7 +250,7 @@ static void disasm_rb_tree__insert(struct rb_root *root, struct annotation_line
+ 		parent = *p;
+ 		l = rb_entry(parent, struct annotation_line, rb_node);
+ 
+-		if (disasm__cmp(al, l))
++		if (disasm__cmp(al, l, browser->opts->percent_type) < 0)
+ 			p = &(*p)->rb_left;
+ 		else
+ 			p = &(*p)->rb_right;
+@@ -329,7 +333,7 @@ static void annotate_browser__calc_percent(struct annotate_browser *browser,
+ 			RB_CLEAR_NODE(&pos->al.rb_node);
+ 			continue;
+ 		}
+-		disasm_rb_tree__insert(&browser->entries, &pos->al);
++		disasm_rb_tree__insert(browser, &pos->al);
+ 	}
+ 	pthread_mutex_unlock(&notes->lock);
+ 
+-- 
+2.20.1
+
