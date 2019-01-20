@@ -2,170 +2,346 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1A2C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 06:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AABC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 06:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 901612084F
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 06:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58CD32084A
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 06:43:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dv7Typ/H"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nwn8JX1M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbfATGjj (ORCPT
+        id S1728026AbfATGm7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 01:39:39 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38646 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfATGjj (ORCPT
+        Sun, 20 Jan 2019 01:42:59 -0500
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:35194 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbfATGm6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 01:39:39 -0500
-Received: by mail-pg1-f195.google.com with SMTP id g189so8008913pgc.5
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 22:39:38 -0800 (PST)
+        Sun, 20 Jan 2019 01:42:58 -0500
+Received: by mail-lf1-f41.google.com with SMTP id e26so13300282lfc.2;
+        Sat, 19 Jan 2019 22:42:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=OQfVRzCzHA4WSBdCjgd+0IRJW2iisS/CcO4MaoQg3i8=;
-        b=Dv7Typ/HYxrw8biRC7OXQmZR+uTVsJTxceUWyO8L1hwuy7r+L9EAYUj9Wuzp1fqsxi
-         53ckfNfQmZeeEquWV0kGayPzQnuf7kOZtaGIx+fH21wFNy65KaVPVnrpqVJtvW6yMNVS
-         sWuNXLStR1uhvJtAoxZlaWq/qlJld5/hUquVM=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YV7dvQ7IEB3T0Gl5UywSUz/oFbUV0B3lnDIScubJI2k=;
+        b=Nwn8JX1MC6/PnN1fz5G49SbnmdQwRfhGmIEGakxcjEoB+Wtz3at9LIe5v7BoeQimUJ
+         wvhgJvl6qzA1quFHutf7/qyPYDu5vMwNTLMhn+gY2iKTSlmssZ/lay7Qb6xtKVt3bBPx
+         ZcB0UwXFN5IrhPmZ1oteeKhSC5W+htfoVKuWb+VnM3vy6l47iuATDn8dKRmiaS7oHPfJ
+         0PuzH07svKovfKpwJo1dypDn2MH/SF6bWOC3dqejS1zSTUl62V5zzEifm090oVhy+Prh
+         +/iiRHG0YlhPAyysIXmUPwiYYwbbpTSGyPtozV/lYDvoWwoGh1T2nan4JjXuAuqgjuQY
+         XOPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=OQfVRzCzHA4WSBdCjgd+0IRJW2iisS/CcO4MaoQg3i8=;
-        b=cZHyIc9K0sbgl7IMAD97Ot6Oq6PAZZUITTS53J9i+QOn1Xc06spsOzZUdt9sBOF697
-         UA8/FlJBwi/JzzMHyjdQRZoC9LNV0da4mXmFQPV2mTE+FK+9igNEXZ7eK5q39emoIfr/
-         JBzI7a2dU2Q1BP3Llt9gXdRmvt1Cco9ZafiuD8UFIZDKVUYih9fio3WigSZU9+oe4FVI
-         TPBUl7PnUh6Rb2Kx3IX5zsiqI1WKzg3e3GcRA35QY7VLwspFtK8mT/aRtDOl3ydORiUv
-         3LEjfR4wFHZwHiV6jeF9JLJsCuDGU+YC9M7YX4EDeYuxUzSgt0NrPX+YSTDmei8ZSQW2
-         mRUg==
-X-Gm-Message-State: AJcUukcuV+vwvKZ1wSG0kUVOfhQOuAFECus0tWtA+sM4VdUI7yhPdgfe
-        B7NrUtXNGfp8iwijFBFiW2E0vw==
-X-Google-Smtp-Source: ALg8bN4Jcd0kJf1puf97Qz7E/At0O6dWiQ9dMqH6grrZb1jfoPDDP/JZHL8Cg3pCR+AQU/3UjeWksQ==
-X-Received: by 2002:a63:f811:: with SMTP id n17mr24331927pgh.23.1547966377877;
-        Sat, 19 Jan 2019 22:39:37 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x12sm8836776pgr.55.2019.01.19.22.39.36
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YV7dvQ7IEB3T0Gl5UywSUz/oFbUV0B3lnDIScubJI2k=;
+        b=HvKaLMWN/aEEMIpRlOY4w+Kp4TBo6Chy1NfeAtYMFn9sUS4/+gh7UwRd+6yPTC9eEG
+         gYJluoxi/ZdgzY9kdDRKyA43coT/R0UKWh5SwB7RJzxPuBBN+he1bTvX8bJQabF/l/bf
+         vPTxwO4cSJuoCwZbd2TWybWL4x0D3N0m9bFBjXBv4FVrCZptWUt57txPhXiorQQZjmWw
+         r6PaTp+ljESCA72b6m46sTFMHvTy4MSpz43UCd07MWg3sPsJMOGDHsUxLgDFnU5S7Ynf
+         x8FMQcemzp8ZvVyeK9MbZHGQ7N0O9u20/QlmWObyvyI9ov0GDC0fQjsPvU9qz/FkEGgb
+         6dLQ==
+X-Gm-Message-State: AJcUukfk3SOW9J0w9O0nvDQnZJcDioVAbWGHq72l+zURmR4m1hDSdOxR
+        G5gkPHHoGEGCZ5sQfxLD8MQ=
+X-Google-Smtp-Source: ALg8bN4pEhsbKukPn1up3NI5UtEldNEz4+OV4tjNAWkvVPdjQXeJSYlMqnsomG35M1bzhaOElVkxtA==
+X-Received: by 2002:a19:c396:: with SMTP id t144mr15339968lff.110.1547966575365;
+        Sat, 19 Jan 2019 22:42:55 -0800 (PST)
+Received: from ?IPv6:2001:14ba:8017:3300:7056:8bb8:4271:58c3? (dtynxhydtm6g7ttxvndbt-3.rev.dnainternet.fi. [2001:14ba:8017:3300:7056:8bb8:4271:58c3])
+        by smtp.googlemail.com with ESMTPSA id b25-v6sm1573359lji.94.2019.01.19.22.42.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 22:39:37 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: qcom: sdm845-mtp: Add WCN3990 BT node
-Date:   Sat, 19 Jan 2019 22:39:02 -0800
-Message-Id: <20190120063902.1714-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Sat, 19 Jan 2019 22:42:54 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED
+ driver
+To:     Dan Murphy <dmurphy@ti.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org
+References: <20190114211723.11186-1-dmurphy@ti.com>
+ <20190114211723.11186-2-dmurphy@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com> <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com> <20190116105537.GA1803@amd>
+ <86299268-3202-814a-134b-04bd2170faab@ti.com>
+ <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
+ <9f87e1ac-be66-2998-578c-de2c1794a00a@ti.com>
+ <4a20b14c-9514-25b8-affe-20f9ede4d4d8@ti.com>
+From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Message-ID: <8fac6aeb-28a8-d136-c654-9d1b5d4f7ddb@gmail.com>
+Date:   Sun, 20 Jan 2019 08:42:53 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <4a20b14c-9514-25b8-affe-20f9ede4d4d8@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SDM845 MTP has a WCN3990 Bluetooth chip on UART6, enable this.
+Hi Dan,
 
-Pinconf and the associated comments are copied from a patch by
-Matthias Kaehlcke <mka@chromium.org>.
+On 18/01/2019 15.58, Dan Murphy wrote:
+> Jacek
+> 
+> On 1/18/19 7:45 AM, Dan Murphy wrote:
+>> Jacek
+>>
+>> On 1/17/19 3:10 PM, Jacek Anaszewski wrote:
+>>> Hi Dan,
+>>>
+>>> On 1/16/19 7:41 PM, Dan Murphy wrote:
+>>>> Hello
+>>>>
+>>>> On 1/16/19 4:55 AM, Pavel Machek wrote:
+>>>>> Hi!
+>>>>>
+>>>>>> On 1/15/19 4:22 PM, Pavel Machek wrote:
+>>>>>>> Hi!
+>>>>>>>
+>>>>>>>>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
+>>>>>>>>> +XX - Do not care ignored by the driver
+>>>>>>>>> +RR - is the 8 bit Red LED value
+>>>>>>>>> +GG - is the 8 bit Green LED value
+>>>>>>>>> +BB - is the 8 bit Blue LED value
+>>>>>>>>> +
+>>>>>>>>> +Example:
+>>>>>>>>> +LED module output 4 of the LP5024 will be a yellow color:
+>>>>>>>>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
+>>>>>>>>> +
+>>>>>>>>> +LED module output 4 of the LP5024 will be dimmed 50%:
+>>>>>>>>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
+>>>>>>>>> +
+>>>>>>>>> +LED banked RGBs of the LP5036 will be a white color:
+>>>>>>>>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
+>>>>>>>>
+>>>>>>>> This part with example cans remain in Documentation/leds if you
+>>>>>>>>> like.
+>>>>>>>
+>>>>>>> Does it actually work like that on hardware?
+>>>>>>
+>>>>>> What?
+>>>>>
+>>>>> If you do echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color,
+>>>>> does it actually produce white? With all the different RGB modules
+>>>>> manufacturers can use with lp5024P?
+>>>>>
+>>>>> If you do echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color, does
+>>>>> it actually produce yellow, with all the different RGB modules
+>>>>> manufacturers can use with lp5024P?
+>>>>>
+>>>>
+>>>> I believe the answer to the general questions is no for any RGB cluster and driver out there.
+>>>> Because if you set the same values on each and every RGB device out there you will get varying shades of the color.
+>>>> But for this device yes the color does appear to be yellow to me versus what was displayed on my monitor by the HSL picker.
+>>>> But everyone interprets colors differently.
+>>>>
+>>>> If you write the same value for yellow or white on a droid 4 and the N900 do they produce the same color side by side?
+>>>> Most probably not.
+>>>>
+>>>> As you pointed out the PWM needs to be modified to obtain the correct white color to account for LED and other device constraints.
+>>>>
+>>>> But we need to take into account the light pipe.  Pools nowadays have RGB LED spot lights in them.  It can
+>>>> be set to white.  On my pool right off the lens the color has a purplish hue to it.  As the light is diffracted into
+>>>> the pool the color becomes white.  The pool is clear.  When I add chemicals to the pool and make it cloudy
+>>>> and turn on the lights the color off the lens is now white.  This is an example on a large scale but the issue
+>>>> scales down to the hand helds and smart home applications.
+>>>>
+>>>> If the cluster is piped through a flexible optic 0xffffff may produce the "white" you want on its output.
+>>>>
+>>>> So an expectation of certain color without proper piping based on a single RGB value may be a little unreasonable.
+>>>> There may need to be a way to attenuate the values based on the hardware aspect of the equation ie light pipe (or lack thereof) and LED vendor.
+>>>> So if we write 0xffffff to the RGB driver the driver could adjust the intensity of the individual LEDs based on the diffraction
+>>>> coefficients.
+>>>>
+>>>> I also think that is an unreasonable expectation here that writing a single value to any LED RGB driver would produce
+>>>> a "rest of the world" absolute color.  Maybe it can produce something similar but not identical.
+>>>> As you indicated in the requirements there is more involved here then just the LED and the values written.
+>>>> The colors should be close but may not be identical.
+>>>>
+>>>> A 10 year old N900 should not be considered the gold standard for color production due to advancements in LED,
+>>>> light pipe and LED driver technology.
+>>>> The single package RGB clusters on the board I am testing is about the size of a single RGB LED from 10 years ago.
+>>>>
+>>>> I agree that the interface developed should work on the device but the algorithm derived to obtain the color needs to have
+>>>> a hardware aspect to the calculation.
+>>>>
+>>>>>>> Is it supposed to support "normal" RGB colors as seen on monitors?
+>>>>>>
+>>>>>> Monitors are not an application for this part.
+>>>>>
+>>>>> You did not answer the question. When you talk about yellow, is it
+>>>>> same yellow the rest of world talks about?
+>>>>>
+>>>>
+>>>> See above.  It is close to what was on my monitor displayed.
+>>>>
+>>>>>>> Because 100% PWM on all channels does not result in white on hardware
+>>>>>>> I have.
+>>>>>>
+>>>>>> I don't know I am usually blinded by the light and have no diffuser over
+>>>>>> the LEDs to disperse the light so when I look I see all 3 colors.
+>>>>>
+>>>>> How can we have useful discussion about colors when you don't see the
+>>>>> colors?
+>>>>>
+>>>>> Place a piece of paper over the LEDs....
+>>>>>
+>>>>
+>>>> Good suggestion for a rough test.
+>>>>
+>>>>>>> But...
+>>>>>>>
+>>>>>>> I believe we should have a reasonable design before we do something
+>>>>>>> like this. There's no guarantee someone will not use lp50xx with just
+>>>>>>> the white LEDs for example. How will this work? Plus existing hardware
+>>>>>>> already uses three separate LEDs for RGB LED. Why not provide same
+>>>>>>> interface?
+>>>>>>
+>>>>>> Which existing hardware?  Are they using this part?
+>>>>>
+>>>>> Nokia N900. They are not using this part, but any interface we invent
+>>>>> should work there, too.
+>>>>>
+>>>>
+>>>> Yes a common interface would be nice with some sort of hardware tuning coefficient.
+>>>>
+>>>>>> <rant>
+>>>>>> Why are we delaying getting the RGB framework or HSV in?
+>>>>>> I would rather design against something you want instead of having
+>>>>>> everyone complain about every implementation I post.
+>>>>>> </rant>
+>>>>>
+>>>>> Because you insist on creating new kernel interfaces, when existing
+>>>>> interfaces work, and are doing that badly.
+>>>>>
+>>>>> Because your patches are of lower quality than is acceptable for linux
+>>>>> kernel.
+>>>>>
+>>>>> Because you don't seem to be reading the emails.
+>>>>>
+>>>>> I sent list of requirements for RGB led support. This does not meet
+>>>>> them.
+>>>>>
+>>>>
+>>>> Sigh.  You did not answer my question.
+>>>>
+>>>> Your requirements seem to be centered around monitors but that is only one application of the current
+>>>> RGB LED landscape.
+>>>>
+>>>> I am willing to work with you on the HSV and adapting the LP50xx part to this framework.
+>>>> Or any RGB framework for that matter.  I still don't agree with the kernel needing to declare colors
+>>>>    maybe color capabilities but not specific colors.
+>>>
+>>> Dan, if you have a bandwidth for LED RGB class implementation
+>>> then please go ahead. It would be good to compare colors produced
+>>> by software HSV->RGB algorithm to what can be achieved with
+>>> LEDn_BRIGHTNESS feature.
+>>>
+>>> The requirements for LED RGB class as I would see it:
+>>>
+>>> sysfs interface:
+>>>
+>>> brightness-model: space separated list of available options:
+>>> - rgb (default):
+>>>    - creates color file with "red green blue" decimal values
+>>
+>> What about other colored LEDs?  Presenting RGB for an Amber LED does not seem right.
+>> Should the LED color come from the DT?
+>>
+> 
+> I thought about this, other non-RGB LEDs would not use the RGB framework.
+> But should they have the same interfaces as RGB?
+> 
+> Should PWM control be a global interface?
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+In order to being able to set multi color element led at one go I would 
+recommend using then model:
 
-Changes since v1:
-- Fixed the pinconf
+color_names: "red green blue white"
 
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 53 +++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+echo "32 43 0 128" > color
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-index af8c6a2445a2..5aec2c680033 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-@@ -17,6 +17,7 @@
- 
- 	aliases {
- 		serial0 = &uart9;
-+		hsuart0 = &uart6;
- 	};
- 
- 	chosen {
-@@ -357,6 +358,10 @@
- 	clock-frequency = <400000>;
- };
- 
-+&qupv3_id_0 {
-+	status = "okay";
-+};
-+
- &qupv3_id_1 {
- 	status = "okay";
- };
-@@ -373,6 +378,20 @@
- 	cd-gpios = <&tlmm 126 GPIO_ACTIVE_LOW>;
- };
- 
-+&uart6 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn3990-bt";
-+
-+		vddio-supply = <&vreg_s4a_1p8>;
-+		vddxo-supply = <&vreg_l7a_1p8>;
-+		vddrf-supply = <&vreg_l17a_1p3>;
-+		vddch0-supply = <&vreg_l25a_3p3>;
-+		max-speed = <3200000>;
-+	};
-+};
-+
- &uart9 {
- 	status = "okay";
- };
-@@ -470,6 +489,40 @@
- 	};
- };
- 
-+&qup_uart6_default {
-+	pinmux {
-+		pins = "gpio45", "gpio46", "gpio47", "gpio48";
-+		function = "qup6";
-+	};
-+
-+	cts {
-+		/*
-+		 * Configure a pull-down on 45 (CTS) to match the pull of
-+		 * the Bluetooth module.
-+		 */
-+		pins = "gpio45";
-+		bias-pull-down;
-+	};
-+
-+	rts-tx {
-+		/* We'll drive 46 (RTS) and 47 (TX), so no pull */
-+		pins = "gpio46", "gpio47";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rx {
-+		/*
-+		 * Configure a pull-up on 48 (RX). This is needed to avoid
-+		 * garbage data when the TX pin of the Bluetooth module is
-+		 * in tri-state (module powered off or not driving the
-+		 * signal yet).
-+		 */
-+		pins = "gpio48";
-+		bias-pull-up;
-+	};
-+};
-+
- &qup_uart9_default {
- 	pinconf-tx {
- 		pins = "gpio4";
--- 
-2.18.0
+This way all elements would be set at same time from user space point of 
+view.
 
+This of course requires that it is part of the physical/logical led that 
+is being controlled. If it is a separate thing then it would logically 
+be differently controlled mono color led.
+
+If you look what kinds of leds are available lets say from digikey you 
+get all kinds of combos:
+
+- red, green, blue
+- red, green, blue, amber
+- red, green, blue, white
+- red, green, blue, white - cool
+- red, green, blue, white - neutral
+- red, green, blue, white - warm
+- red, orange
+- purple, ultraviolet
+- amber, blue
+- amber, blue, cyan, green, red, violet, white - cool
+- amber, blue, green
+- amber, green, blue
+- and then lots of single special colors
+
+Better models even list some properties about how different color 
+elements behave.
+
+I would expect red, green, blue to be the most common case. So 
+automating for that for chip like what you are working now is reasonable.
+
+For simple case where we can expect red, green, blue mapping we can 
+auto-configure the multi color element led with "red", "green" and 
+"blue" color elements.
+
+But TI also have other kind of driver chips that could be used in "more 
+freely" enabling use all of those combos.
+
+If user would have "amber", "green" and "blue" then we would need to add 
+this definition in devicetree in order for user space to be able to 
+recognize that now we have different config.
+
+Or if user would have most complex of those then in devicetree you would 
+configure 7 color element led like "amber", "blue", "cyan", "green", 
+"red", "violet", "white" as color elements.
+
+Then you could set them in one go:
+echo "32 76 43 2 43 76 54" > color
+
+Now in this special case if we would have hsl brightness model and lets 
+say it only knows red, green and blue. Then it would pick red, green and 
+blue color element names and only adjust those others would be linear 
+should there be non-zero value.
+
+In this case however you might be better doing it in user space as it 
+might be preferable to control all values let say in sRGB space and then 
+let the software transform result to all color elements and then setup 
+entries to kernel. In here the ICC color profile might be the way to go 
+to model your let and let user space software do the fancier math.
+
+As this latest example is the fanciest I would like to remind that the 
+red, green, blue is the most common. I would make their life easier and 
+then when you go to more advanced setups then you are are already 
+mentally ready to do more complex things :)
+
+As an example in our case we can do with "red", "green", and "red", 
+"green", "blue" combos fill all our current requirements we have. 
+Perhaps white could be added as one thing in future (white is currently 
+used only in lcd module's background).
+
+Latest proposal I have for the interface now lets you do all of those 
+things so it should be easy enough for most cases and still flexes to 
+more complex cases while keeping kernel space simple.
+
+Thanks,
+Vesa Jääskeläinen
