@@ -2,45 +2,53 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E17C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A86A3C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A15A2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:32:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8000F2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730545AbfATLch (ORCPT
+        id S1730554AbfATLgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 06:32:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49240 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730492AbfATLch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 06:32:37 -0500
+        Sun, 20 Jan 2019 06:36:39 -0500
+Received: from foss.arm.com ([217.140.101.70]:49264 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730484AbfATLgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 06:36:39 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 814C5A78;
-        Sun, 20 Jan 2019 03:32:36 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 313CAA78;
+        Sun, 20 Jan 2019 03:36:38 -0800 (PST)
 Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F80A3F557;
-        Sun, 20 Jan 2019 03:32:32 -0800 (PST)
-Date:   Sun, 20 Jan 2019 11:32:29 +0000
-Message-ID: <86imyja7jm.wl-marc.zyngier@arm.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 380803F557;
+        Sun, 20 Jan 2019 03:36:33 -0800 (PST)
+Date:   Sun, 20 Jan 2019 11:36:30 +0000
+Message-ID: <86h8e3a7cx.wl-marc.zyngier@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        shawnguo@kernel.org, dianders@chromium.org,
-        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
-        niklas.cassel@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 07/15] qcom: spmi-gpio: add support for hierarchical IRQ chip
-In-Reply-To: <20190119204252.18370-8-masneyb@onstation.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Brian Masney <masneyb@onstation.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 00/15] qcom: spmi: add support for hierarchical IRQ chip
+In-Reply-To: <CACRpkdaumxXfFW6SeMzrrQjX7hxc2PddC8=DuL_d9x7CH3ZwWA@mail.gmail.com>
 References: <20190119204252.18370-1-masneyb@onstation.org>
-        <20190119204252.18370-8-masneyb@onstation.org>
+        <CACRpkdaumxXfFW6SeMzrrQjX7hxc2PddC8=DuL_d9x7CH3ZwWA@mail.gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -52,95 +60,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 19 Jan 2019 20:42:44 +0000,
-Brian Masney <masneyb@onstation.org> wrote:
+On Sat, 19 Jan 2019 23:13:45 +0000,
+Linus Walleij <linus.walleij@linaro.org> wrote:
 > 
-> spmi-gpio did not have any irqchip support so consumers of this in
-> device tree would need to call gpio[d]_to_irq() in order to get the
-> proper IRQ on the underlying PMIC. IRQ chips in device tree should
-> be usable from the start without the consumer having to make an
-> additional call to get the proper IRQ on the parent. This patch adds
-> hierarchical IRQ chip support to the spmi-gpio code to correct this
-> issue.
+> On Sat, Jan 19, 2019 at 9:43 PM Brian Masney <masneyb@onstation.org> wrote:
 > 
-> Driver was tested using the volume buttons (via gpio-keys) on the LG
-> Nexus 5 (hammerhead) phone with the following two configurations.
+> > This patch series adds hierarchical IRQ chip support to spmi-gpio so
+> > that device tree consumers can request an IRQ directly from the GPIO
+> > block rather than having to request an IRQ from the underlying PMIC.
+> >
+> > For more background information, see the email thread with Linus
+> > Walleij's excellent description of the problem at
+> > https://www.spinics.net/lists/linux-gpio/msg34655.html.
+> >
+> > This work was tested on a LG Nexus 5 (hammerhead) phone. My status page
+> > at https://masneyb.github.io/nexus-5-upstream/ describes what is working
+> > so far with the upstream kernel.
+> >
+> > Changes since v5:
+> > - Patch 4: Set handler to edge or level when the IRQ is mapped.
+> > - Patch 7: Change IRQ_TYPE_NONE to IRQ_TYPE_EDGE_RISING
+> > - Patch 14: New patch to validate type when mapping IRQ
 > 
-> volume-up {
->         interrupts-extended = <&pm8941_gpios 2 IRQ_TYPE_EDGE_BOTH>;
->         ...
-> };
-> 
-> volume-up {
->         gpios = <&pm8941_gpios 2 GPIO_ACTIVE_LOW>;
->         ...
-> };
-> 
-> Both configurations now show that spmi-gpio is the IRQ domain and that
-> the IRQ is setup in a hierarchy.
-> 
-> $ grep volume_up /proc/interrupts
->  72:          6          0  spmi-gpio   1 Edge      volume_up
-> 
-> $ cat /sys/kernel/debug/irq/irqs/72
-> handler:  handle_edge_irq
-> device:   (null)
-> status:   0x00000403
->             _IRQ_NOPROBE
-> istate:   0x00000000
-> ddepth:   0
-> wdepth:   0
-> dstate:   0x02400203
->             IRQ_TYPE_EDGE_RISING
->             IRQ_TYPE_EDGE_FALLING
->             IRQD_ACTIVATED
->             IRQD_IRQ_STARTED
-> node:     0
-> affinity: 0-3
-> effectiv:
-> domain:  :soc:spmi@fc4cf000:pm8941@0:gpios@c000
->  hwirq:   0x1
->  chip:    spmi-gpio
->   flags:   0x4
->              IRQCHIP_MASK_ON_SUSPEND
->  parent:
->     domain:  :soc:spmi@fc4cf000
->      hwirq:   0xc100057
->      chip:    pmic_arb
->       flags:   0x4
->                  IRQCHIP_MASK_ON_SUSPEND
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> Changes since v5:
-> - Change IRQ_TYPE_NONE to IRQ_TYPE_EDGE_RISING
-> 
-> Changes since v4:
-> - None
-> 
-> Changes since v3:
-> - None
-> 
-> Changes since v2:
-> - Use PMIC_GPIO_PHYSICAL_OFFSET instead of the 1 constant
-> - Use gpiochip_irq_domain_{activate,deactivate}
-> - Changed 'fwspec->param[0] + 0xc0 - 1' to 'hwirq + c0' in call to
->   irq_domain_alloc_irqs_parent
-> 
-> Changes since v1:
-> - Use two cells for interrupts instead of four.
-> - Pin numbers in interrupts-extended are now one based instead of zero
->   based so that they match the GPIO pin number.
-> - Drop unnecessary parenthesis in pmic_gpio_domain_translate
-> - Add missing of_node_put()
-> - Remove irq field from pmic_gpio_pad struct that is no longer
->   necessary.
-> 
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 115 +++++++++++++++++++++--
->  1 file changed, 105 insertions(+), 10 deletions(-)
+> If Marc Z is happy I think I will apply all patches on an immutable branch in
 
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+As a matter of fact, I am!
+
+> the pin control tree, so that ARM SoC and GPIO can pull it in later if need
+> be. (E.g. if they get conflicts.)
+> 
+> I was thinking to also include the DTS changes as it all is so neatly
+> coupled, then offer the branch to ARM SoC.
+> 
+> Anyone against?
+
+No objection from me whatsoever.
 
 Thanks,
 
