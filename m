@@ -2,190 +2,168 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DATE_IN_PAST_06_12,
+	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D22C282DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DE6C282DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B1D20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 384BD20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:32:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IJ1sV62W"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FvHYWjA3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbfAUHba (ORCPT
+        id S1728430AbfAUHcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:31:30 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45898 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbfAUHb2 (ORCPT
+        Mon, 21 Jan 2019 02:32:41 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:42113 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbfAUHcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:31:28 -0500
-Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3BC9BE85;
-        Sun, 20 Jan 2019 20:42:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548013325;
-        bh=uMszIWKQRJ00p2a9xxtOi/zb12GsAIqCRkjaC5/I/Pg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJ1sV62WNg1F7bY7HIKb6ju3rr+CyfrSbSaLrLK1T6mTLHCE6XimOih8YoG9/50cy
-         xMh5CfZ4mH6SIaOzL0o+TtCLBkRh6guE8LiP1lvO38V3z8L4llsCmk8lQruSzgakly
-         dWavKFH+cU/6Gd3cXdQp0WkpkC4XjWtqlsvDWnzU=
-From:   Paul Elder <paul.elder@ideasonboard.com>
-To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
-Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
-        stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 6/6] usb: gadget: uvc: allow ioctl to send response in status stage
-Date:   Sun, 20 Jan 2019 14:41:36 -0500
-Message-Id: <20190120194136.21870-7-paul.elder@ideasonboard.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190120194136.21870-1-paul.elder@ideasonboard.com>
-References: <20190120194136.21870-1-paul.elder@ideasonboard.com>
+        Mon, 21 Jan 2019 02:32:41 -0500
+Received: by mail-yb1-f195.google.com with SMTP id q145so6790196ybq.9
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:32:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iVWug8Y2Ns5o1OPZVIkMf1S2JdPZN07bhMcpTWiOsqE=;
+        b=FvHYWjA385j/IdO0J937EWIjOGmT2E9/HvCkAqB997Srj0BN7ANK7ru7SqXyQDdIOZ
+         46uFSw3JgtVdVpa4C/M55nkP4/N/rtsxHYc03v+ayds2x19Dhq/+GamhCjDQrI8Q0EKS
+         2wf8Iqy4t7FCvBmDABUY2j8KABp3gmR/xLs0HCQic/kp/mR05NfJZEBAPabmhh9OynEO
+         gvvkY+490tsUhw+hf8rmrDZGwa8WQwIi/hPv6P2MnITMHuRUCEYXeTLiykUWMzr6s2I7
+         f+MLv0cqqFmzB1IrOS+MsdkNS5piEi11IRitRpfhhWWnKYrzw2YnJScyqc74wUCLql9Z
+         sBig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iVWug8Y2Ns5o1OPZVIkMf1S2JdPZN07bhMcpTWiOsqE=;
+        b=Ki5XTUTLtyZPkeTVDgBSksPYZuLznjvtx4dSe4yUp5XAUF8t5YJS7O2cxpp9EMOIKI
+         VPT1HQB080yl1cC48+PU++oBaS+gBP0m69OblvHMmF9EvohOLrgosYwO+CqLdCxsfvtF
+         AyWDNoyPnvP1BBSO2LpIVWBoFTJ7qs1aHdjY9r9i7jM7eKHlKQ8ZFiSGMvSbgrdiHTVs
+         Z5GzZy4SchmldQz23FgSRZW7K/bsGNdWxtJFtApfgcwwdkS+5HOxt3t8jy6rs2dQmBKx
+         rZhjMmSbSkCT1IoqTB/WsFw5U84/zhPNqyfOfkmJVtsgrIE1QPpm0cYUDVmJwXdBMyit
+         FXKw==
+X-Gm-Message-State: AJcUukdiWRERrREP4LDZhr07DnedhJlS1JqHme+DWDqvKczGLKkw0vKD
+        p00j1srql/B0WMpNWuiuTeyPxf7oWGYBPcJTqVOQA6Ffh2c=
+X-Google-Smtp-Source: ALg8bN6Q/qsc2n5y4uUzQDlUmsve6sirgrw5MTByulwHQoaWncZN+PGTc0fSmkcHbt6V/XIIw0/QoYYtLXltzIUlmBQ=
+X-Received: by 2002:a25:d7c5:: with SMTP id o188mr14584562ybg.464.1548015873274;
+ Sun, 20 Jan 2019 12:24:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190119005022.61321-1-shakeelb@google.com> <20190119070934.GD4087@dhcp22.suse.cz>
+In-Reply-To: <20190119070934.GD4087@dhcp22.suse.cz>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Sun, 20 Jan 2019 12:24:22 -0800
+Message-ID: <CALvZod7Dk-TLFHf1wi=qLAY3nv4t6grEmJkppZz=JB3GutXC+g@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm, oom: fix use-after-free in oom_kill_process
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now have a mechanism to signal the UDC driver to reply to a control
-OUT request with STALL or ACK, and we have packaged the setup stage data
-and the data stage data of a control OUT request into a single
-UVC_EVENT_DATA for userspace to consume. After telling the UDC to delay
-the status stage, the ioctl UVCIOC_SEND_RESPONSE should be called to
-notify the UDC driver to reply with STALL or ACK, for control OUT
-requests. In the case of a control IN request, the ioctl sends the UVC
-data as before.
+On Fri, Jan 18, 2019 at 11:09 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Fri 18-01-19 16:50:22, Shakeel Butt wrote:
+> [...]
+> > On looking further it seems like the process selected to be oom-killed
+> > has exited even before reaching read_lock(&tasklist_lock) in
+> > oom_kill_process(). More specifically the tsk->usage is 1 which is due
+> > to get_task_struct() in oom_evaluate_task() and the put_task_struct
+> > within for_each_thread() frees the tsk and for_each_thread() tries to
+> > access the tsk. The easiest fix is to do get/put across the
+> > for_each_thread() on the selected task.
+>
+> Very well spotted! The code seems safe because we are careful to
+> transfer the victim along with reference counting but I've totally
+> missed that the loop itself needs a reference. It seems that this has
+> been broken since the heuristic has been introduced. But I haven't
+> checked it closely. I am still on vacation.
+>
+> > Now the next question is should we continue with the oom-kill as the
+> > previously selected task has exited? However before adding more
+> > complexity and heuristics, let's answer why we even look at the
+> > children of oom-kill selected task?
+>
+> The objective was the work protection assuming that children did less
+> work than their parrent. I find this argument a bit questionable because
+> it highly depends a specific workload while it opens doors for
+> problematic behavior at the same time. If you have a fork bomb like
+> workload then it is basically hard to resolve the OOM condition as
+> children have barely any memory so we keep looping killing tasks which
+> will not free up much. So I am all for removing this heuristic.
+>
+> > The select_bad_process() has already
+> > selected the worst process in the system/memcg. Due to race, the
+> > selected process might not be the worst at the kill time but does that
+> > matter matter?
+>
+> No, we don't I believe. The aim of the oom killer is to kill something.
+> We will never be ideal here because this is a land of races.
+>
+> > The userspace can play with oom_score_adj to prefer
+> > children to be killed before the parent. I looked at the history but it
+> > seems like this is there before git history.
+> >
+> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
+>
+> Fixes: 5e9d834a0e0c ("oom: sacrifice child with highest badness score for parent")
+> Cc: stable
+>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+>
+> Thanks!
 
-This means that the completion handler will also be called for the
-status stage, so make the UVC gadget driver aware of if the
-completion handler is called for the status stage, and do nothing (as
-opposed to giving userspace the UVC data again).
+Thanks for the review. I will keep this for the stable branches and
+for the next release I will remove this whole children selection
+heuristic.
 
-Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
----
-Changes from v5:
+Shakeel
 
-- add event_status flag and use to keep track of whether or not the
-  gadget is in the status stage or not
-- do nothing if the completion handler is called during the status stage
-
-No change from v4
-No change from v3
-
-Changes from v2:
-- calling usb_ep_set_halt in uvc_send_response if data->length < 0 is
-  now common for both IN and OUT transfers so make that check common
-- remove now unnecessary field setting for the usb_request to be queued
-  for the status stage
-
-Changes from v1:
-- remove usb_ep_delay_status call from the old proposed API
-- changed portions of uvc_send_response to match v2 API
-- remove UDC warning that send_response is not implemented
-
- drivers/usb/gadget/function/f_uvc.c    | 11 +++++++++--
- drivers/usb/gadget/function/uvc.h      |  1 +
- drivers/usb/gadget/function/uvc_v4l2.c | 24 ++++++++++++++++++------
- 3 files changed, 28 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/f_uvc.c b/drivers/usb/gadget/function/f_uvc.c
-index 6303ed346af9..dd3a06e28435 100644
---- a/drivers/usb/gadget/function/f_uvc.c
-+++ b/drivers/usb/gadget/function/f_uvc.c
-@@ -208,15 +208,19 @@ uvc_function_ep0_complete(struct usb_ep *ep, struct usb_request *req)
- 	struct v4l2_event v4l2_event;
- 	struct uvc_event *uvc_event = (void *)&v4l2_event.u.data;
- 
--	if (uvc->event_setup_out) {
--		uvc->event_setup_out = 0;
-+	if (uvc->event_status) {
-+		uvc->event_status = 0;
-+		return;
-+	}
- 
-+	if (uvc->event_setup_out) {
- 		memset(&v4l2_event, 0, sizeof(v4l2_event));
- 		v4l2_event.type = UVC_EVENT_DATA;
- 		uvc_event->data.length = req->actual;
- 		memcpy(&uvc_event->data.data, req->buf, req->actual);
- 		memcpy(&uvc_event->data.setup, &uvc->control_setup,
- 		       sizeof(uvc_event->data.setup));
-+
- 		v4l2_event_queue(&uvc->vdev, &v4l2_event);
- 	}
- }
-@@ -242,6 +246,8 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 	uvc->event_length = le16_to_cpu(ctrl->wLength);
- 	memcpy(&uvc->control_setup, ctrl, sizeof(uvc->control_setup));
- 
-+	uvc->event_status = 0;
-+
- 	if (uvc->event_setup_out) {
- 		struct usb_request *req = uvc->control_req;
- 
-@@ -251,6 +257,7 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 		 */
- 		req->length = uvc->event_length;
- 		req->zero = 0;
-+		req->explicit_status = 1;
- 		usb_ep_queue(f->config->cdev->gadget->ep0, req, GFP_KERNEL);
- 	} else {
- 		struct v4l2_event v4l2_event;
-diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
-index 1d89b1df4ba0..5754548d94c5 100644
---- a/drivers/usb/gadget/function/uvc.h
-+++ b/drivers/usb/gadget/function/uvc.h
-@@ -171,6 +171,7 @@ struct uvc_device {
- 	/* Events */
- 	unsigned int event_length;
- 	unsigned int event_setup_out : 1;
-+	unsigned int event_status : 1;
- };
- 
- static inline struct uvc_device *to_uvc(struct usb_function *f)
-diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-index ac48f49d9f10..338811c612c5 100644
---- a/drivers/usb/gadget/function/uvc_v4l2.c
-+++ b/drivers/usb/gadget/function/uvc_v4l2.c
-@@ -35,15 +35,27 @@ uvc_send_response(struct uvc_device *uvc, struct uvc_request_data *data)
- 	struct usb_composite_dev *cdev = uvc->func.config->cdev;
- 	struct usb_request *req = uvc->control_req;
- 
-+	if (data->length < 0)
-+		return usb_ep_set_halt(cdev->gadget->ep0);
-+
- 	/*
- 	 * For control OUT transfers the request has been enqueued synchronously
--	 * by the setup handler, there's nothing to be done here.
-+	 * by the setup handler, we just need to tell the UDC whether to ACK or
-+	 * STALL the control transfer.
- 	 */
--	if (uvc->event_setup_out)
--		return 0;
--
--	if (data->length < 0)
--		return usb_ep_set_halt(cdev->gadget->ep0);
-+	if (uvc->event_setup_out) {
-+		/*
-+		 * The length field carries the control request status.
-+		 * Negative values signal a STALL and zero values an ACK.
-+		 * Positive values are not valid as there is no data to send
-+		 * back in the status stage.
-+		 */
-+		if (data->length > 0)
-+			return -EINVAL;
-+
-+		uvc->event_status = 1;
-+		return usb_ep_queue(cdev->gadget->ep0, req, GFP_KERNEL);
-+	}
- 
- 	req->length = min_t(unsigned int, uvc->event_length, data->length);
- 	req->zero = data->length < uvc->event_length;
--- 
-2.20.1
-
+> > ---
+> >  mm/oom_kill.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > index 0930b4365be7..1a007dae1e8f 100644
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+> > @@ -981,6 +981,13 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+> >        * still freeing memory.
+> >        */
+> >       read_lock(&tasklist_lock);
+> > +
+> > +     /*
+> > +      * The task 'p' might have already exited before reaching here. The
+> > +      * put_task_struct() will free task_struct 'p' while the loop still try
+> > +      * to access the field of 'p', so, get an extra reference.
+> > +      */
+> > +     get_task_struct(p);
+> >       for_each_thread(p, t) {
+> >               list_for_each_entry(child, &t->children, sibling) {
+> >                       unsigned int child_points;
+> > @@ -1000,6 +1007,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+> >                       }
+> >               }
+> >       }
+> > +     put_task_struct(p);
+> >       read_unlock(&tasklist_lock);
+> >
+> >       /*
+> > --
+> > 2.20.1.321.g9e740568ce-goog
+>
+> --
+> Michal Hocko
+> SUSE Labs
