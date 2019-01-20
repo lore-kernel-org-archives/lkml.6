@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E597EC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E17C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B212084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A15A2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 11:32:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730538AbfATLav (ORCPT
+        id S1730545AbfATLch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 06:30:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:49210 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730478AbfATLau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 06:30:50 -0500
+        Sun, 20 Jan 2019 06:32:37 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49240 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730492AbfATLch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 06:32:37 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6401A78;
-        Sun, 20 Jan 2019 03:30:49 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 814C5A78;
+        Sun, 20 Jan 2019 03:32:36 -0800 (PST)
 Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 007A53F557;
-        Sun, 20 Jan 2019 03:30:45 -0800 (PST)
-Date:   Sun, 20 Jan 2019 11:30:36 +0000
-Message-ID: <86k1iza7mr.wl-marc.zyngier@arm.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F80A3F557;
+        Sun, 20 Jan 2019 03:32:32 -0800 (PST)
+Date:   Sun, 20 Jan 2019 11:32:29 +0000
+Message-ID: <86imyja7jm.wl-marc.zyngier@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Brian Masney <masneyb@onstation.org>
 Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
@@ -37,10 +37,10 @@ Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 04/15] spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips
-In-Reply-To: <20190119204252.18370-5-masneyb@onstation.org>
+Subject: Re: [PATCH v6 07/15] qcom: spmi-gpio: add support for hierarchical IRQ chip
+In-Reply-To: <20190119204252.18370-8-masneyb@onstation.org>
 References: <20190119204252.18370-1-masneyb@onstation.org>
-        <20190119204252.18370-5-masneyb@onstation.org>
+        <20190119204252.18370-8-masneyb@onstation.org>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -52,32 +52,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 19 Jan 2019 20:42:41 +0000,
+On Sat, 19 Jan 2019 20:42:44 +0000,
 Brian Masney <masneyb@onstation.org> wrote:
 > 
-> Convert the spmi-pmic-arb IRQ code to use the version 2 IRQ interface
-> in order to support hierarchical IRQ chips. This is necessary so that
-> spmi-gpio can be setup as a hierarchical IRQ chip with pmic-arb as the
-> parent. IRQ chips in device tree should be usable from the start without
-> the consumer having to make an additional call to gpio[d]_to_irq() to
-> get the proper IRQ on the parent.
+> spmi-gpio did not have any irqchip support so consumers of this in
+> device tree would need to call gpio[d]_to_irq() in order to get the
+> proper IRQ on the underlying PMIC. IRQ chips in device tree should
+> be usable from the start without the consumer having to make an
+> additional call to get the proper IRQ on the parent. This patch adds
+> hierarchical IRQ chip support to the spmi-gpio code to correct this
+> issue.
 > 
-> The old qpnpint_irq_domain_map function would hardcode the handler as
-> handle_level_irq, however qpnpint_irq_set_type would later override the
-> handler. Properly set the handler when the IRQ is mapped. This new code
-> doesn't return an error for IRQ_TYPE_NONE and preserves the existing
-> behavior of using handle_level_irq since there are some broken device
-> tree bindings that need to be corrected first.
+> Driver was tested using the volume buttons (via gpio-keys) on the LG
+> Nexus 5 (hammerhead) phone with the following two configurations.
 > 
-> Driver was tested on a LG Nexus 5 (hammerhead) phone.
+> volume-up {
+>         interrupts-extended = <&pm8941_gpios 2 IRQ_TYPE_EDGE_BOTH>;
+>         ...
+> };
+> 
+> volume-up {
+>         gpios = <&pm8941_gpios 2 GPIO_ACTIVE_LOW>;
+>         ...
+> };
+> 
+> Both configurations now show that spmi-gpio is the IRQ domain and that
+> the IRQ is setup in a hierarchy.
+> 
+> $ grep volume_up /proc/interrupts
+>  72:          6          0  spmi-gpio   1 Edge      volume_up
+> 
+> $ cat /sys/kernel/debug/irq/irqs/72
+> handler:  handle_edge_irq
+> device:   (null)
+> status:   0x00000403
+>             _IRQ_NOPROBE
+> istate:   0x00000000
+> ddepth:   0
+> wdepth:   0
+> dstate:   0x02400203
+>             IRQ_TYPE_EDGE_RISING
+>             IRQ_TYPE_EDGE_FALLING
+>             IRQD_ACTIVATED
+>             IRQD_IRQ_STARTED
+> node:     0
+> affinity: 0-3
+> effectiv:
+> domain:  :soc:spmi@fc4cf000:pm8941@0:gpios@c000
+>  hwirq:   0x1
+>  chip:    spmi-gpio
+>   flags:   0x4
+>              IRQCHIP_MASK_ON_SUSPEND
+>  parent:
+>     domain:  :soc:spmi@fc4cf000
+>      hwirq:   0xc100057
+>      chip:    pmic_arb
+>       flags:   0x4
+>                  IRQCHIP_MASK_ON_SUSPEND
 > 
 > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 > ---
-> The broken device tree bindings are corrected in this patch series and
-> additional validation to the type field is added later in the series.
-> 
 > Changes since v5:
-> - Properly set handler to edge or level when the IRQ is mapped.
+> - Change IRQ_TYPE_NONE to IRQ_TYPE_EDGE_RISING
 > 
 > Changes since v4:
 > - None
@@ -86,13 +123,22 @@ Brian Masney <masneyb@onstation.org> wrote:
 > - None
 > 
 > Changes since v2:
-> - Don't move pmic_gpio_of_match block. Use device_get_match_data instead
->   of of_match_device.
-> - Correct build warning on arm64: warning: cast from pointer to integer
->   of different size
+> - Use PMIC_GPIO_PHYSICAL_OFFSET instead of the 1 constant
+> - Use gpiochip_irq_domain_{activate,deactivate}
+> - Changed 'fwspec->param[0] + 0xc0 - 1' to 'hwirq + c0' in call to
+>   irq_domain_alloc_irqs_parent
 > 
->  drivers/spmi/spmi-pmic-arb.c | 67 +++++++++++++++++++++++++-----------
->  1 file changed, 47 insertions(+), 20 deletions(-)
+> Changes since v1:
+> - Use two cells for interrupts instead of four.
+> - Pin numbers in interrupts-extended are now one based instead of zero
+>   based so that they match the GPIO pin number.
+> - Drop unnecessary parenthesis in pmic_gpio_domain_translate
+> - Add missing of_node_put()
+> - Remove irq field from pmic_gpio_pad struct that is no longer
+>   necessary.
+> 
+>  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 115 +++++++++++++++++++++--
+>  1 file changed, 105 insertions(+), 10 deletions(-)
 
 Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
