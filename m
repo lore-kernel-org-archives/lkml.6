@@ -2,145 +2,325 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F2BC282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D1CC282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28CEB2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E752120823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="Iyzp/Z0t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbfAUIHO (ORCPT
+        id S1728514AbfAUIH4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:07:14 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:51350 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729883AbfAUIFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:05:54 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 11F0E2000D4;
-        Mon, 21 Jan 2019 04:18:39 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 86D39200064;
-        Mon, 21 Jan 2019 04:18:33 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 89D81402D9;
-        Mon, 21 Jan 2019 11:18:26 +0800 (SGT)
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jerry.huang@nxp.com,
-        ran.wang_1@nxp.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
-        Nikhil Badola <nikhil.badola@freescale.com>,
-        Suresh Gupta <suresh.gupta@freescale.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Suresh Gupta <B42813@freescale.com>
-Subject: [PATCH v1 2/6] usb: phy: Workaround for USB erratum-A005728
-Date:   Mon, 21 Jan 2019 11:13:00 +0800
-Message-Id: <20190121031304.31161-2-yinbo.zhu@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190121031304.31161-1-yinbo.zhu@nxp.com>
-References: <20190121031304.31161-1-yinbo.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 21 Jan 2019 03:07:56 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46637 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728081AbfAUIHx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:07:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so22052204wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:07:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JVFrpeC80OLPbUMIpkWyZ48VgZSdWjNoszlgtYxl1bA=;
+        b=Iyzp/Z0tl0zUVSzsrk15rnenCu3gmeS9BbVxPnOR2X0A/wDa67TG2ErOw86zlPJST0
+         ANFCzpKMRXGco1+Q+3Xcmq6VS5TIB1TJJIBddBx70n1IFKfzNY5MOmuXo2QN65LKCHnj
+         ep/Xjc3Z/aKRTl59oK6xkKe2rVc/4jCaxo4NH6VqNDXMq3RlS1SbKVFhGGgNi0VwBB7M
+         pEP9qVG9dyo/IQNHMP515X2fAyKiTuXAIWzb7siMHqd6STQsv7KzjPufW5NceEhq4S7P
+         ZcXRbcoQ989ppL5tObtjpUtor1QP/joOnD9UK/zK6PKLelzhLR+l6+O9aDF/pqCptwT6
+         dkOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JVFrpeC80OLPbUMIpkWyZ48VgZSdWjNoszlgtYxl1bA=;
+        b=uBf1ph1Gyar4XFy3ZR3YbOw8ZmWZZJhnorvun4zlRsWo5PYJ+VTm8VQo0tb7nLnTjb
+         4SbTYtBhY7eR2h5U5queZ5YCyE+FP/aY85p+A6F3m21cfXZMYUH2A2DOYqXqpbu3h/ot
+         VJsws0MEqbmjUF+I2zHbyJp4N3QEi0JIBX3J6KJ++r5WUIHTk86OH1ViBiTAbLFIw8ft
+         Dbk2dvIHXbj0wtQo18a37M9uK6uEN7/1R4D8C0KujAVH8JiXtxweHwNB8HVPEVEvjwBR
+         MIKd0d0oUICZRrnvScZTvoz49ulyS4sUSu9BXgGABy8WpjcDSLdaRoCIxBIqedDymQ2d
+         Rtaw==
+X-Gm-Message-State: AJcUukeag8l7Au2BxDjYts7Umd4HPl951kKWYSaxvqKAexjbiGarEzh+
+        RSt+lKLbnlCAGwXpVeYVm/dxXOw3Ihk=
+X-Google-Smtp-Source: ALg8bN7yd4LLsUEEVxWZ6AaI+n5mCvGMx2xoXPiVv6mpYsuArzhbuv6KL8o8fpyT9SQ/Ftboiosjgg==
+X-Received: by 2002:adf:ff09:: with SMTP id k9mr24408212wrr.97.1548027669143;
+        Sun, 20 Jan 2019 15:41:09 -0800 (PST)
+Received: from localhost.localdomain ([156.212.82.83])
+        by smtp.gmail.com with ESMTPSA id e9sm76576753wro.16.2019.01.20.15.41.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 15:41:08 -0800 (PST)
+From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
+        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
+        Boris Lukashev <blukashev@sempervictus.com>,
+        Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+Subject: [RESEND PATCH V8 02/11] KVM: X86: Add arbitrary data pointer in kvm memslot iterator functions
+Date:   Mon, 21 Jan 2019 01:39:31 +0200
+Message-Id: <20190120233940.15282-3-ahmedsoliman@mena.vt.edu>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+References: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suresh Gupta <B42813@freescale.com>
+This will help sharing data into the slot_level_handler callback. In my
+case I need to a share a counter for the pages traversed to use it in some
+bitmap. Being able to send arbitrary memory pointer into the
+slot_level_handler callback made it easy.
 
-PHY_CLK_VALID bit for UTMI PHY in USBDR does not set even
-if PHY is providing valid clock. Workaround for this
-involves resetting of PHY and check PHY_CLK_VALID bit
-multiple times. If PHY_CLK_VALID bit is still not set even
-after 5 retries, it would be safe to deaclare that PHY
-clock is not available.
-This erratum is applicable for USBDR less then ver 2.4.
-
-Signed-off-by: Suresh Gupta <B42813@freescale.com>
-Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
+Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
 ---
- drivers/usb/host/ehci-fsl.c |   37 ++++++++++++++++++++++++++-----------
- drivers/usb/host/ehci-fsl.h |    3 +++
- 2 files changed, 29 insertions(+), 11 deletions(-)
+ arch/x86/kvm/mmu.c | 65 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 37 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
-index 71c4661..a28ec1e 100644
---- a/drivers/usb/host/ehci-fsl.c
-+++ b/drivers/usb/host/ehci-fsl.c
-@@ -176,6 +176,17 @@ static int fsl_ehci_drv_probe(struct platform_device *pdev)
- 	return retval;
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index ce770b4462..098df7d135 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -1525,7 +1525,7 @@ static bool spte_write_protect(u64 *sptep, bool pt_protect)
+ 
+ static bool __rmap_write_protect(struct kvm *kvm,
+ 				 struct kvm_rmap_head *rmap_head,
+-				 bool pt_protect)
++				 bool pt_protect, void *data)
+ {
+ 	u64 *sptep;
+ 	struct rmap_iterator iter;
+@@ -1564,7 +1564,8 @@ static bool wrprot_ad_disabled_spte(u64 *sptep)
+  *	- W bit on ad-disabled SPTEs.
+  * Returns true iff any D or W bits were cleared.
+  */
+-static bool __rmap_clear_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
++static bool __rmap_clear_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
++				void *data)
+ {
+ 	u64 *sptep;
+ 	struct rmap_iterator iter;
+@@ -1590,7 +1591,8 @@ static bool spte_set_dirty(u64 *sptep)
+ 	return mmu_spte_update(sptep, spte);
  }
  
-+static bool usb_phy_clk_valid(struct usb_hcd *hcd)
-+{
-+	void __iomem *non_ehci = hcd->regs;
-+	bool ret = true;
-+
-+	if (!(in_be32(non_ehci + FSL_SOC_USB_CTRL) & PHY_CLK_VALID))
-+		ret = false;
-+
-+	return ret;
-+}
-+
- static int ehci_fsl_setup_phy(struct usb_hcd *hcd,
- 			       enum fsl_usb2_phy_modes phy_mode,
- 			       unsigned int port_offset)
-@@ -214,6 +225,16 @@ static int ehci_fsl_setup_phy(struct usb_hcd *hcd,
- 		/* fall through */
- 	case FSL_USB2_PHY_UTMI:
- 	case FSL_USB2_PHY_UTMI_DUAL:
-+		/* PHY_CLK_VALID bit is de-featured from all controller
-+		 * versions below 2.4 and is to be checked only for
-+		 * internal UTMI phy
-+		 */
-+		if (pdata->controller_ver > FSL_USB_VER_2_4 &&
-+			pdata->have_sysif_regs && !usb_phy_clk_valid(hcd)) {
-+			pr_err("fsl-ehci: USB PHY clock invalid\n");
-+			return -EINVAL;
-+		}
-+
- 		if (pdata->have_sysif_regs && pdata->controller_ver) {
- 			/* controller version 1.6 or above */
- 			clrsetbits_be32(non_ehci + FSL_SOC_USB_CTRL,
-@@ -232,17 +253,11 @@ static int ehci_fsl_setup_phy(struct usb_hcd *hcd,
- 		break;
+-static bool __rmap_set_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
++static bool __rmap_set_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
++				void *data)
+ {
+ 	u64 *sptep;
+ 	struct rmap_iterator iter;
+@@ -1622,7 +1624,7 @@ static void kvm_mmu_write_protect_pt_masked(struct kvm *kvm,
+ 	while (mask) {
+ 		rmap_head = __gfn_to_rmap(slot->base_gfn + gfn_offset + __ffs(mask),
+ 					  PT_PAGE_TABLE_LEVEL, slot);
+-		__rmap_write_protect(kvm, rmap_head, false);
++		__rmap_write_protect(kvm, rmap_head, false, NULL);
+ 
+ 		/* clear the first set bit */
+ 		mask &= mask - 1;
+@@ -1648,7 +1650,7 @@ void kvm_mmu_clear_dirty_pt_masked(struct kvm *kvm,
+ 	while (mask) {
+ 		rmap_head = __gfn_to_rmap(slot->base_gfn + gfn_offset + __ffs(mask),
+ 					  PT_PAGE_TABLE_LEVEL, slot);
+-		__rmap_clear_dirty(kvm, rmap_head);
++		__rmap_clear_dirty(kvm, rmap_head, NULL);
+ 
+ 		/* clear the first set bit */
+ 		mask &= mask - 1;
+@@ -1701,7 +1703,8 @@ bool kvm_mmu_slot_gfn_write_protect(struct kvm *kvm,
+ 
+ 	for (i = PT_PAGE_TABLE_LEVEL; i <= PT_MAX_HUGEPAGE_LEVEL; ++i) {
+ 		rmap_head = __gfn_to_rmap(gfn, i, slot);
+-		write_protected |= __rmap_write_protect(kvm, rmap_head, true);
++		write_protected |= __rmap_write_protect(kvm, rmap_head, true,
++				NULL);
  	}
  
--	/*
--	 * check PHY_CLK_VALID to determine phy clock presence before writing
--	 * to portsc
--	 */
--	if (pdata->check_phy_clk_valid) {
--		if (!(ioread32be(non_ehci + FSL_SOC_USB_CTRL) &
--		    PHY_CLK_VALID)) {
--			dev_warn(hcd->self.controller,
--				 "USB PHY clock invalid\n");
--			return -EINVAL;
--		}
-+	if (pdata->have_sysif_regs &&
-+		pdata->controller_ver > FSL_USB_VER_1_6 &&
-+		!usb_phy_clk_valid(hcd)) {
-+		dev_warn(hcd->self.controller, "USB PHY clock invalid\n");
-+		return -EINVAL;
+ 	return write_protected;
+@@ -1715,7 +1718,8 @@ static bool rmap_write_protect(struct kvm_vcpu *vcpu, u64 gfn)
+ 	return kvm_mmu_slot_gfn_write_protect(vcpu->kvm, slot, gfn);
+ }
+ 
+-static bool kvm_zap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
++static bool kvm_zap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
++		void *data)
+ {
+ 	u64 *sptep;
+ 	struct rmap_iterator iter;
+@@ -1735,7 +1739,7 @@ static int kvm_unmap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
+ 			   struct kvm_memory_slot *slot, gfn_t gfn, int level,
+ 			   unsigned long data)
+ {
+-	return kvm_zap_rmapp(kvm, rmap_head);
++	return kvm_zap_rmapp(kvm, rmap_head, NULL);
+ }
+ 
+ static int kvm_set_pte_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
+@@ -5552,13 +5556,15 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
+ }
+ 
+ /* The return value indicates if tlb flush on all vcpus is needed. */
+-typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
++typedef bool (*slot_level_handler) (struct kvm *kvm,
++		struct kvm_rmap_head *rmap_head, void *data);
+ 
+ /* The caller should hold mmu-lock before calling this function. */
+ static __always_inline bool
+ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 			slot_level_handler fn, int start_level, int end_level,
+-			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
++			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb,
++			void *data)
+ {
+ 	struct slot_rmap_walk_iterator iterator;
+ 	bool flush = false;
+@@ -5566,7 +5572,7 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 	for_each_slot_rmap_range(memslot, start_level, end_level, start_gfn,
+ 			end_gfn, &iterator) {
+ 		if (iterator.rmap)
+-			flush |= fn(kvm, iterator.rmap);
++			flush |= fn(kvm, iterator.rmap, data);
+ 
+ 		if (need_resched() || spin_needbreak(&kvm->mmu_lock)) {
+ 			if (flush && lock_flush_tlb) {
+@@ -5588,36 +5594,36 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ static __always_inline bool
+ slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 		  slot_level_handler fn, int start_level, int end_level,
+-		  bool lock_flush_tlb)
++		  bool lock_flush_tlb, void *data)
+ {
+ 	return slot_handle_level_range(kvm, memslot, fn, start_level,
+ 			end_level, memslot->base_gfn,
+ 			memslot->base_gfn + memslot->npages - 1,
+-			lock_flush_tlb);
++			lock_flush_tlb, data);
+ }
+ 
+ static __always_inline bool
+ slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+-		      slot_level_handler fn, bool lock_flush_tlb)
++		      slot_level_handler fn, bool lock_flush_tlb, void *data)
+ {
+ 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
+-				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
++				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb, data);
+ }
+ 
+ static __always_inline bool
+ slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+-			slot_level_handler fn, bool lock_flush_tlb)
++			slot_level_handler fn, bool lock_flush_tlb, void *data)
+ {
+ 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL + 1,
+-				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
++				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb, data);
+ }
+ 
+ static __always_inline bool
+ slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
+-		 slot_level_handler fn, bool lock_flush_tlb)
++		 slot_level_handler fn, bool lock_flush_tlb, void *data)
+ {
+ 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
+-				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb);
++				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb, data);
+ }
+ 
+ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+@@ -5645,7 +5651,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+ 			flush |= slot_handle_level_range(kvm, memslot,
+ 					kvm_zap_rmapp, PT_PAGE_TABLE_LEVEL,
+ 					PT_MAX_HUGEPAGE_LEVEL, start,
+-					end - 1, flush_tlb);
++					end - 1, flush_tlb, NULL);
+ 		}
  	}
  
- 	ehci_writel(ehci, portsc, &ehci->regs->port_status[port_offset]);
-diff --git a/drivers/usb/host/ehci-fsl.h b/drivers/usb/host/ehci-fsl.h
-index cbc4220..9d18c6e 100644
---- a/drivers/usb/host/ehci-fsl.h
-+++ b/drivers/usb/host/ehci-fsl.h
-@@ -50,4 +50,7 @@
- #define UTMI_PHY_EN             (1<<9)
- #define ULPI_PHY_CLK_SEL        (1<<10)
- #define PHY_CLK_VALID		(1<<17)
-+
-+/* Retry count for checking UTMI PHY CLK validity */
-+#define UTMI_PHY_CLK_VALID_CHK_RETRY 5
- #endif				/* _EHCI_FSL_H */
+@@ -5657,9 +5663,10 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+ }
+ 
+ static bool slot_rmap_write_protect(struct kvm *kvm,
+-				    struct kvm_rmap_head *rmap_head)
++				    struct kvm_rmap_head *rmap_head,
++				    void *data)
+ {
+-	return __rmap_write_protect(kvm, rmap_head, false);
++	return __rmap_write_protect(kvm, rmap_head, false, data);
+ }
+ 
+ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
+@@ -5669,7 +5676,7 @@ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
+ 
+ 	spin_lock(&kvm->mmu_lock);
+ 	flush = slot_handle_all_level(kvm, memslot, slot_rmap_write_protect,
+-				      false);
++				      false, NULL);
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+ 	/*
+@@ -5696,7 +5703,8 @@ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
+ }
+ 
+ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
+-					 struct kvm_rmap_head *rmap_head)
++					 struct kvm_rmap_head *rmap_head,
++					 void *data)
+ {
+ 	u64 *sptep;
+ 	struct rmap_iterator iter;
+@@ -5740,7 +5748,7 @@ void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
+ 	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
+ 	spin_lock(&kvm->mmu_lock);
+ 	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
+-			 kvm_mmu_zap_collapsible_spte, true);
++			 kvm_mmu_zap_collapsible_spte, true, NULL);
+ 	spin_unlock(&kvm->mmu_lock);
+ }
+ 
+@@ -5750,7 +5758,7 @@ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
+ 	bool flush;
+ 
+ 	spin_lock(&kvm->mmu_lock);
+-	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false);
++	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false, NULL);
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+ 	lockdep_assert_held(&kvm->slots_lock);
+@@ -5774,7 +5782,7 @@ void kvm_mmu_slot_largepage_remove_write_access(struct kvm *kvm,
+ 
+ 	spin_lock(&kvm->mmu_lock);
+ 	flush = slot_handle_large_level(kvm, memslot, slot_rmap_write_protect,
+-					false);
++					false, NULL);
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+ 	/* see kvm_mmu_slot_remove_write_access */
+@@ -5792,7 +5800,8 @@ void kvm_mmu_slot_set_dirty(struct kvm *kvm,
+ 	bool flush;
+ 
+ 	spin_lock(&kvm->mmu_lock);
+-	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false);
++	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false,
++			NULL);
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+ 	lockdep_assert_held(&kvm->slots_lock);
 -- 
-1.7.1
+2.19.2
 
