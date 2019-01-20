@@ -2,97 +2,100 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F364AC26640
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD889C26640
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F6720861
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:51:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IJEbEVgx"
+	by mail.kernel.org (Postfix) with ESMTP id A29D120861
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbfATSvL (ORCPT
+        id S1727711AbfATSzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 13:51:11 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:49451 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727208AbfATSvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 13:51:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=F/NoWxBnuEylA+vwK0t2ToezftjRIUcqu5ui+VUsKlg=;
-        b=IJEbEVgxitgjMOELet/b0CjherLfgWaGnZh3KLPXRBmVCWkatjU67OW5OuUM3ZvL00gFcNqUFO2Et+ftBG8xsC0Fi7yToDE3BXhTCRhz4ylVOnN9cpEpuaxggF8NJgQxjofl/9Et6d7tnPtYYHv81xfZsOGEo8Chuqqq99dwkmc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1glIBX-0005CI-I6; Sun, 20 Jan 2019 19:51:07 +0100
-Date:   Sun, 20 Jan 2019 19:51:07 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 1/7] net: phy: Extract genphy_c45_read_abilities
- from marvell10g
-Message-ID: <20190120185107.GA19714@lunn.ch>
-References: <20190118152352.26417-1-maxime.chevallier@bootlin.com>
- <20190118152352.26417-2-maxime.chevallier@bootlin.com>
+        Sun, 20 Jan 2019 13:55:25 -0500
+Received: from ivanoab6.miniserver.com ([5.153.251.140]:41662 "EHLO
+        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbfATSzY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 13:55:24 -0500
+Received: from [192.168.17.6] (helo=smaug.kot-begemot.co.uk)
+        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1glIFY-00055m-QI; Sun, 20 Jan 2019 18:55:20 +0000
+Received: from [192.168.15.6]
+        by smaug.kot-begemot.co.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1glIFT-0001CC-94; Sun, 20 Jan 2019 18:55:15 +0000
+Subject: Re: [-next] um: Remove duplicated include from vector_user.c
+To:     YueHaibing <yuehaibing@huawei.com>, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>
+Cc:     kernel-janitors@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
+From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Organization: Cambridge Greys Limited
+Message-ID: <cff7d34e-7afa-70cc-427d-ebeaa1e65e73@cambridgegreys.com>
+Date:   Sun, 20 Jan 2019 18:54:56 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118152352.26417-2-maxime.chevallier@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 04:23:46PM +0100, Maxime Chevallier wrote:
-> Marvell 10G PHY driver has a generic way of initializing the supported
-> link modes by reading the PHY's C45 PMA abilities. This can be made
-> generic, since these registers are part of the 802.3 specifications.
+
+
+On 1/3/19 3:12 AM, YueHaibing wrote:
+> Remove duplicated include.
 > 
-> This commit extracts the config_init link_mode initialization code from
-> marvell10g and uses it to introduce the genphy_c45_read_abilities
-> function.
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>   arch/um/drivers/vector_user.c | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+> index d2c17dd..b3f7b3c 100644
+> --- a/arch/um/drivers/vector_user.c
+> +++ b/arch/um/drivers/vector_user.c
+> @@ -16,14 +16,12 @@
+>   #include <sys/types.h>
+>   #include <sys/stat.h>
+>   #include <fcntl.h>
+> -#include <sys/types.h>
+>   #include <sys/socket.h>
+>   #include <net/ethernet.h>
+>   #include <netinet/ip.h>
+>   #include <netinet/ether.h>
+>   #include <linux/if_ether.h>
+>   #include <linux/if_packet.h>
+> -#include <sys/socket.h>
+>   #include <sys/wait.h>
+>   #include <sys/uio.h>
+>   #include <linux/virtio_net.h>
+> @@ -31,7 +29,6 @@
+>   #include <stdlib.h>
+>   #include <os.h>
+>   #include <um_malloc.h>
+> -#include <sys/uio.h>
+>   #include "vector_user.h"
+>   
+>   #define ID_GRE 0
+> 
 
-Hi Maxime
+Reviewed-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Acked-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+-- 
+Anton R. Ivanov
 
-I think the idea is good. I just have a few English language
-issues/questions.
-
-Capabilities is more often used than abilities. I just wondered if
-abilities is taken from the 802.3 specifications?
-
-Also, i wonder if we should include _pma_ in the name? At some point
-we might want to do something similar for other sublayers.
-
-> +/**
-> + * genphy_c45_read_abilities - read supported link modes from PMA
-> + * @phydev: target phy_device struct
-> + *
-> + * Read the supported link modes from the PMA Status 2 (1.8) register. If bit
-> + * 1.8.9 is set, the list of supported modes is completed with the values in the
-
-completed is not the right word. 'is build using the values in the' ?
-
-> + * PMA Extended Abilities (1.11) register, indicating 1000BASET an 10G related
-> + * modes. If bit 1.11.14 is set, then the list is also completed with the modes
-
-list is also extended with the modes
-
-> + * in the 2.5G/5G PMA Extended register (1.21), indicating if 2.5GBASET and
-> + * 5GBASET are supported.
-> + */
-
-
-Thanks
-	Andrew
+Cambridge Greys Limited, England and Wales company No 10273661
+http://www.cambridgegreys.com/
