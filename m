@@ -2,142 +2,84 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CB2C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 09:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA74C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 09:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14802085B
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 09:52:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2E4E2087B
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 09:54:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qJnM2xae"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730474AbfATJwo (ORCPT
+        id S1730476AbfATJym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 04:52:44 -0500
-Received: from mga01.intel.com ([192.55.52.88]:13578 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726939AbfATJwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 04:52:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 01:52:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,499,1539673200"; 
-   d="scan'208";a="119882987"
-Received: from mint-dev.iind.intel.com ([10.223.25.164])
-  by orsmga003.jf.intel.com with ESMTP; 20 Jan 2019 01:52:40 -0800
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     intel-gfx-trybot@lists.freedesktop.org
-Cc:     Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v10 03/41] component: alloc component_match without any comp to match
-Date:   Sun, 20 Jan 2019 15:16:17 +0530
-Message-Id: <1547977615-30780-3-git-send-email-ramalingam.c@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547977615-30780-1-git-send-email-ramalingam.c@intel.com>
-References: <1547977615-30780-1-git-send-email-ramalingam.c@intel.com>
+        Sun, 20 Jan 2019 04:54:42 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40048 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbfATJym (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 04:54:42 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g22so14359211edr.7;
+        Sun, 20 Jan 2019 01:54:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I6cNL5ToUtCNsr/CKvfB8RhbwkcNkmposyYLF5WsXX0=;
+        b=qJnM2xaej1cC9JT9+UKiqJjCSsp4yBGQoNBjPHFoVNieeUD3xzNrffnXbuz5cGZBP6
+         Ffa1aB5UbjsniPG9KlXUGRv04Cq6D+7U4w/WyMAxordNxBByySOfZgzoczWAG5T6VLip
+         MbC8bK84rqf3MAW3iAXo+fbXWvfc854+pWI5lilzn6+EMdSiz8LaxBm+2s9kwiq80HmW
+         Xi89C9DevR/UHbJbmrbUQ75+y1IxFxPnR75wJIAtifmSHBkymdFC4AOCIA0zxgdo4sma
+         +KLzB9wtzpSYReKPJxwZuaK7UzUkWbASXFlG198g8mj8VG80JCVVAqHQlBKRuz8Wva8q
+         k1Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I6cNL5ToUtCNsr/CKvfB8RhbwkcNkmposyYLF5WsXX0=;
+        b=KLjx+nByIT374wqv76878ZCwM/LnR2vwkQdAovsN3cp6tepyKzNTOv5Op0Lg+Ucqa0
+         WHssJyU9RM0hdVQWGr430YyqYx33Yz7LHDXseo10X3K00Z7UmwgdsYkScQPGr5GIeb2f
+         dsDMkeckoKtKhlB7g4CAyV2B3yODvt54bZJgkeMrzvKA0bHMlmx5tsTtWvW50DUfZl90
+         42AK/IW8KiD6aJ2gW4r2P5DENcR7vOCviBZUICbgcbFwlNv+ZFXwVv5v7OjhFMm1qTi+
+         05MBP5vVEThtMNbXrIbXkUU+RkPcLaz9Qpmkx44z/vd/ud01TYP0JW5Ara5DwXtwN6Ai
+         oA8A==
+X-Gm-Message-State: AJcUukeC0EVuOHJ5IicTfn0DCxsv1Yzerc1PQCKMm1SsAg6WTFav9lEu
+        lPlcj3JEk9k6ucnJ4z2GbyC5oqwYUstggALnAcI=
+X-Google-Smtp-Source: ALg8bN6nxxziJ1hdtrCfwWxbX5KkBx4SnU3osNdATcCywXqHwZw05R8ZpHnnqCjhMezeffvHH3GTrjSVXQGQcC1sjFA=
+X-Received: by 2002:a17:906:a4cf:: with SMTP id cc15-v6mr20897762ejb.157.1547978079939;
+ Sun, 20 Jan 2019 01:54:39 -0800 (PST)
+MIME-Version: 1.0
+References: <20190120023150.17138-1-angus@akkea.ca> <20190120023150.17138-2-angus@akkea.ca>
+In-Reply-To: <20190120023150.17138-2-angus@akkea.ca>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Sun, 20 Jan 2019 11:54:28 +0200
+Message-ID: <CAEnQRZDzvmn-6YyoQRrWbkbH8d1ej8aFE1wFAiXQtqzHxyW2eA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dma: imx-sdma: fix NULL pointer de-reference
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all the components associated to a component master is not added
-to the component framework due to the HW capability or Kconfig
-selection, component_match will be NULL at
-component_master_add_with_match().
+On Sun, Jan 20, 2019 at 4:34 AM Angus Ainslie (Purism) <angus@akkea.ca> wrote:
+>
+> On the imx8mq I get NULL pointer de-deference errors if the device
+> isn't passed in during allocation.
+>
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 
-To avoid this, component_match_alloc() is added to the framework,
-to allcoate the struct component_match with zero associated components.
-Hence component master can be added with a component_match with zero
-associated components.
+Hi Angus,
 
-This helps the component master bind call to get triggered,
-even if no component is registered for that particular master.
+I have already sent a fix for this:
 
-This is meant for big PCI device drivers where small/optional
-features are external components, and based on usecases different
-combination of components are build as entire driver.
-
-In such PCI device driver Load, if we use the component master for
-waiting for few  components(features) availability, only if they are
-supported by the underlying HW, then we need to allocate memory for
-component_match using the API introduced in this change before
-the call to component_master_add_with_match.
-
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/component.h |  2 ++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index ddcea8739c12..1b8bb07c0ec7 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -302,6 +302,36 @@ static int component_match_realloc(struct device *dev,
- }
- 
- /*
-+ * Allocate the match without any component_match_array elements.
-+ *
-+ * This function is useful when the component master might end up
-+ * registering itself without any matching components.
-+ */
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr)
-+{
-+	struct component_match *match = *matchptr;
-+
-+	if (IS_ERR(match))
-+		return;
-+
-+	if (match)
-+		return;
-+
-+	match = devres_alloc(devm_component_match_release,
-+			     sizeof(*match), GFP_KERNEL);
-+	if (!match) {
-+		*matchptr = ERR_PTR(-ENOMEM);
-+		return;
-+	}
-+
-+	devres_add(master, match);
-+
-+	*matchptr = match;
-+}
-+EXPORT_SYMBOL(component_match_alloc);
-+
-+/*
-  * Add a component to be matched, with a release function.
-  *
-  * The match array is first created or extended if necessary.
-diff --git a/include/linux/component.h b/include/linux/component.h
-index e71fbbbc74e2..3f6b420a58f8 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr);
- 
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
--- 
-2.7.4
-
+https://patchwork.kernel.org/patch/10758203/
