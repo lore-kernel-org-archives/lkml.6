@@ -2,140 +2,104 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD54AC282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A38C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DEA02084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 048A520823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:09:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="w35K7R+Q"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C4glJbX5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729374AbfAUIJA (ORCPT
+        id S1729460AbfAUIJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:09:00 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:55060 "EHLO
-        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729251AbfAUII6 (ORCPT
+        Mon, 21 Jan 2019 03:09:15 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41541 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728398AbfAUIJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:08:58 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id C77DEA2A6B;
-        Sun, 20 Jan 2019 21:23:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1548015805; i=@fjfi.cvut.cz;
-        bh=6sYmLwZ2FUMh4z5Tv34oBSifBfR1aAUqgGQRwnrGn08=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References;
-        b=w35K7R+Qm3N2wS7ssE0AEs5ve/ijVcrufpQheskfx6jCOm297pmBdRvMiHyq1wY0x
-         teGbiTHFjvhXZFRdLPy5FK0iCAPn2hZ5CuBmxY9i6kNpVHY0pHj308Zhg+SNFkexrl
-         Olm/03tTjGOQ5fnmsK+iqBKdgyUvSC/ilKOnHsaM=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id bDkgLG8Bx-fz; Sun, 20 Jan 2019 21:23:21 +0100 (CET)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 62617A2A5F;
-        Sun, 20 Jan 2019 21:23:21 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 62617A2A5F
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id 266066004E; Sun, 20 Jan 2019 21:23:21 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by linux.fjfi.cvut.cz (Postfix) with ESMTP id 1AEF46002A;
-        Sun, 20 Jan 2019 21:23:21 +0100 (CET)
-Date:   Sun, 20 Jan 2019 21:23:21 +0100 (CET)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-To:     Scott Bauer <sbauer@plzdonthack.me>
-cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        hch@infradead.org, jonathan.derrick@intel.com
-Subject: Re: [PATCH v2 15/16] block: sed-opal: don't repeat opal_discovery0
- in each steps array
-In-Reply-To: <20190119174633.GA15276@hacktheplanet>
-Message-ID: <alpine.LRH.2.21.1901201128260.4278@linux.fjfi.cvut.cz>
-References: <1547760716-7304-16-git-send-email-zub@linux.fjfi.cvut.cz> <20190119174633.GA15276@hacktheplanet>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Mon, 21 Jan 2019 03:09:14 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u6so9419231plm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:09:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=I6FVRA4XSxZpmaxpsnd+V/mR5be0y9wtt8PvTBdO5UM=;
+        b=C4glJbX5OSlpAr2CZvYAtmHh/yUu7K0U4rcvUgCvbmjx7VkwLmhnvEr9hl5su9Fg/S
+         TSFUaOM2Ls3y/LBb/OlaaDkGpU4JVSUcKKF8+V2kxNzlZ0NSTZWaCspbbEpQ1sXJkDx/
+         H4QH2MwnHqdZQVAcgeu9GyvtNCWYV42wKDW9w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=I6FVRA4XSxZpmaxpsnd+V/mR5be0y9wtt8PvTBdO5UM=;
+        b=FnmDObrFlTf12mS9/UWnKkczuzYh+P4LQIkYQYcxkHZfMFjh1UmxdSoYIu9Ho62lwE
+         da+PIjHVwQBNhTjO/qif5sRmyCDMhZvSlqKnQ/CkhUb5zZiCoHTBvuqo58YFx2fn6Or8
+         axx8nfwBwGoqbbATsKSTMyODJz8y7rjRQikq/nE3EJB0ewNgVMrz39o5Lu84UUXRNTGk
+         uo0p/w1HlgSLYya8bnI3qR3PBcaHeZQMU44HnnbKoBLZJnceE0/MARFi+Lbc6AQh/BRH
+         d7PJlIB4ikDlkZ9QVDoGdp1tugRccoP76GUBpIRUVXSw1lmmnb2QZtPNfE77J7JO6TWx
+         5HkQ==
+X-Gm-Message-State: AJcUukcwqsBy9wGyTQWlaI3nb5nbicr3npgiQCeTpv8F57OkgqCK6ngI
+        /YIoP0waof7P+VxUsqrTLdMTn+3Czx4=
+X-Google-Smtp-Source: ALg8bN4iq8HQIpcGz4T9WyZ5bd7dviYh+TUmymP+Gm1zQ0HEBHQ6WEu+tCtR2O4Ed/7KeuHmBN9ujQ==
+X-Received: by 2002:a17:902:5982:: with SMTP id p2mr27433295pli.39.1548022858558;
+        Sun, 20 Jan 2019 14:20:58 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id z13sm26665781pgf.84.2019.01.20.14.20.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 20 Jan 2019 14:20:57 -0800 (PST)
+Date:   Sun, 20 Jan 2019 14:20:56 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kugan Vivekanandarajah <kugan.vivekanandarajah@linaro.org>
+Subject: [GIT PULL] gcc-plugin fixes for v5.0-rc4
+Message-ID: <20190120222056.GA35153@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 19 Jan 2019, Scott Bauer wrote:
+Hi Linus,
 
-> On Thu, Jan 17, 2019 at 09:31:55PM +0000, David Kozub wrote:
->
->> -	for (state = 0; !error && state < n_steps; state++) {
->> -		step = &steps[state];
->> -
->> -		error = step->fn(dev, step->data);
->> -		if (error) {
->> -			pr_debug("Step %zu (%pS) failed with error %d: %s\n",
->> -				 state, step->fn, error,
->> -				 opal_error_to_human(error));
->> -
->> -			/* For each OPAL command we do a discovery0 then we
->> -			 * start some sort of session.
->> -			 * If we haven't passed state 1 then there was an error
->> -			 * on discovery0 or during the attempt to start a
->> -			 * session. Therefore we shouldn't attempt to terminate
->> -			 * a session, as one has not yet been created.
->> -			 */
->> -			if (state > 1) {
->> -				end_opal_session_error(dev);
->> -				return error;
->> -			}
->
->
->
->
->> +	/* first do a discovery0 */
->> +	error = opal_discovery0_step(dev);
->>
->> -		}
->> -	}
->> +	for (state = 0; !error && state < n_steps; state++)
->> +		error = execute_step(dev, &steps[state], state);
->> +
->> +	/* For each OPAL command the first step in steps starts some sort
->> +	 * of session. If an error occurred in the initial discovery0 or if
->> +	 * an error stopped the loop in state 0 then there was an error
->> +	 * before or during the attempt to start a session. Therefore we
->> +	 * shouldn't attempt to terminate a session, as one has not yet
->> +	 * been created.
->> +	 */
->> +	if (error && state > 0)
->> +		end_opal_session_error(dev);
->
->
-> This is subtly wrong. There was some state that was encoded by having the
-> loop the way we did.
->
-> the tl;dr is the check needs to be if (error && state > 1) still.
->
-> The why is that in the previous implementation we wanted to end_opal_session_error
-> only if a successful discovery0 AND a successful start_*_session. In the previous loop,
-> discovery0 would complete, we'd do state++, then we'd go and attempt to start our
-> session. If we failed on that session starting we'd still be in state 1, and wouldn't
-> attempt to close the session.
->
-> In the current form, discovery0 is gone, so start session is on state 0. If we fail
-> on the start session, we set error = true, state gets ++'d, then we look at !error
-> and we don't loop again.
->
-> We go down to the check and attempt to end a session that was never started.
+Please pull these gcc-plugin fixes for v5.0-rc4.
 
-Ouch! You're right. I'll fix this for v3 by comparing against 1.
+Thanks!
 
-There is one more issue that was bugging me. If next() fails at the 
-discovery0 step, or at steps[0], in both cases the error message will say 
-step 0 failed. But as it's just a pr_debug message, the function address 
-is included and I don't see a short and nice solution (should I report the 
-steps as starting from 1? but that might be confusing; or a different 
-string? sounds like not worth it), I kept it that way.
+-Kees
 
-But if someone thinks this is worth improving, please let me know.
+The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+
+  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/gcc-plugins-v5.0-rc4
+
+for you to fetch changes up to 2c88c742d011707b55da7b54b06a030c6f57233f:
+
+  gcc-plugins: arm_ssp_per_task_plugin: fix for GCC 9+ (2019-01-20 14:06:40 -0800)
+
+----------------------------------------------------------------
+Bug fixes for gcc-plugins
+
+- Fix ARM per-task stack protector plugin under GCC 9 (Ard Biesheuvel)
+
+----------------------------------------------------------------
+Ard Biesheuvel (2):
+      gcc-plugins: arm_ssp_per_task_plugin: sign extend the SP mask
+      gcc-plugins: arm_ssp_per_task_plugin: fix for GCC 9+
+
+ scripts/gcc-plugins/arm_ssp_per_task_plugin.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+-- 
+Kees Cook
