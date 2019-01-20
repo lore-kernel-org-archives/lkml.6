@@ -2,108 +2,144 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95806C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 10:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29E3C61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 10:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA622084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 10:00:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1885E2087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 10:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QuvOaThZ"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="e/kC6Ke7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730462AbfATKA3 (ORCPT
+        id S1730461AbfATK1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 05:00:29 -0500
-Received: from mail-lj1-f179.google.com ([209.85.208.179]:33892 "EHLO
-        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726939AbfATKA3 (ORCPT
+        Sun, 20 Jan 2019 05:27:40 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:33244 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730427AbfATK1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 05:00:29 -0500
-Received: by mail-lj1-f179.google.com with SMTP id u89-v6so15101141lje.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 02:00:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nou3fs3Y96BAWpXHhlaYB51/JeEc54cVl/ZbMqKLQ/M=;
-        b=QuvOaThZ03dWh7zs55B7nkf8ccCroTR+jkwqF9RrjPM3rd4nXKEbO7fCNCzXCMGqcK
-         mQLg2/BwZXqBlTD5fDzyi0qn5VG1L7kcWExe2wS33zfUARbYDhcS9BWDcVI/02EngK7t
-         U6U830U64fxri3kyKtSosO7d3hPbA93/ptIHk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nou3fs3Y96BAWpXHhlaYB51/JeEc54cVl/ZbMqKLQ/M=;
-        b=G/fN+zxV428GepRUAC3fOqU8DEB/9RkD7W9dpXIR9fYj8A9uSlfk9vH7xa1J0LIbAA
-         rWCsRFaOw+iqT0GE42tPsjxV8uxDZPxKamangXcX+YI2neAutV5tUoQwXVLw9NjzHMtS
-         QN70li/n8GjUAMFhf1XDIsMJbobY07HQJZq8GOnVgUNZj+AW23fx3LUhpzj+/U9Yrfef
-         j5UCKhaJkLFA58bSQwcbPJAaPFpChrsbLks0nWgMA4DxnZLtjrML3PW67XOM5tJfyoTQ
-         E/lpdphecn5GIrGFtVEI1yCcpxGR1hP2SURPd8fGdzqy/upA1m1LceSfj8/DVRY0V616
-         Mr/Q==
-X-Gm-Message-State: AJcUukdQ9HGzqN7uO0/RJecPm/SacuURSHDAeQAvm4Cy3hWKBHLj+/JB
-        LDLoq868GiMjGd2IsSxIsEsDrU5nQLO6Sg==
-X-Google-Smtp-Source: ALg8bN5cN89b/uTup7BtRgBL3RY/7v2aItyASk5DfYQ4t7MU6DkTcZvfeDiF0sMihC7oOam+0bq99w==
-X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr15296729ljh.59.1547978426673;
-        Sun, 20 Jan 2019 02:00:26 -0800 (PST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id h82sm1682586lfg.94.2019.01.20.02.00.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 02:00:25 -0800 (PST)
-Received: by mail-lj1-f176.google.com with SMTP id n18-v6so15078064lji.7
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 02:00:24 -0800 (PST)
-X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr16732573lji.133.1547978424135;
- Sun, 20 Jan 2019 02:00:24 -0800 (PST)
+        Sun, 20 Jan 2019 05:27:40 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 8BEAEA009B;
+        Sun, 20 Jan 2019 11:27:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1547980058; i=@fjfi.cvut.cz;
+        bh=05DCmzKy2JWk5/dlJWb1twQpyRlEyUxnlfJhbY0uP8Q=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References;
+        b=e/kC6Ke7R632WRh9IwqmrHV/d6HMBJdX98oFL0o+1ZO5+dvuRG7LTnepVa7WcP2DR
+         9O23S2o/QBKUhhtcdubMn5wEpqxFVXngL++YgumN4tKDINxsiR2luHtcCIQEIwUc5w
+         5xhJ1bKJlQtmrmDOk/7KhxF4aiKuNT+qPrfLMag0=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id eNln3N2Jq7zl; Sun, 20 Jan 2019 11:27:35 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 424F7A0081;
+        Sun, 20 Jan 2019 11:27:31 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 424F7A0081
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id EEBF16004E; Sun, 20 Jan 2019 11:27:30 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by linux.fjfi.cvut.cz (Postfix) with ESMTP id DAEB16002A;
+        Sun, 20 Jan 2019 11:27:30 +0100 (CET)
+Date:   Sun, 20 Jan 2019 11:27:30 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Scott Bauer <sbauer@plzdonthack.me>
+cc:     linux-kernel@vger.kernel.org, axboe@kernel.dk, hch@infradead.org,
+        jonathan.derrick@intel.com
+Subject: Re: [PATCH v2 11/16] block: sed-opal: ioctl for writing to shadow
+ mbr
+In-Reply-To: <20190119171550.GB12171@hacktheplanet>
+Message-ID: <alpine.LRH.2.21.1901201045280.4278@linux.fjfi.cvut.cz>
+References: <1547760716-7304-12-git-send-email-zub@linux.fjfi.cvut.cz> <20190119171550.GB12171@hacktheplanet>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190119151450.26879-1-Florian.LaRoche@googlemail.com>
- <20190120000138.GI26876@brain-police> <CAHk-=wjKgJ-9ypvzq+CB_NKnRk6iAqFtgVPwSH17C5RqJoYF=A@mail.gmail.com>
- <CAKv63uuf4e0arj9OvSLXRTxF9pUJUmbe7yApU0StF-B=BcbGZA@mail.gmail.com> <CAKv63utKUuXTBT44anBT17-O4puzJsesHmAOFPDN=qFPjzPGTQ@mail.gmail.com>
-In-Reply-To: <CAKv63utKUuXTBT44anBT17-O4puzJsesHmAOFPDN=qFPjzPGTQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 20 Jan 2019 22:00:07 +1200
-X-Gmail-Original-Message-ID: <CAHk-=wgrTWpzTo56=mOT8f8RDAo=RvHsXp4d8GqbLwEZUQmJqw@mail.gmail.com>
-Message-ID: <CAHk-=wgrTWpzTo56=mOT8f8RDAo=RvHsXp4d8GqbLwEZUQmJqw@mail.gmail.com>
-Subject: Re: fix int_sqrt() for very large numbers
-To:     Crt Mori <cmo@melexis.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Florian La Roche <florian.laroche@googlemail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 20, 2019 at 9:30 PM Crt Mori <cmo@melexis.com> wrote:
+On Sat, 19 Jan 2019, Scott Bauer wrote:
+
+> On Thu, Jan 17, 2019 at 09:31:51PM +0000, David Kozub wrote:
 >
-> I have just re-read the patch submit discussion and a sqrt of 64bit
-> number can never be more than 32bit. That is why u32 return value is
-> enough.
+>> +static int write_shadow_mbr(struct opal_dev *dev, void *data)
+>> +{
+>> +	struct opal_shadow_mbr *shadow = data;
+>> +	const u8 __user *src;
+>> +	u8 *dst;
+>> +	size_t off = 0;
+>> +	u64 len;
+>> +	int err = 0;
+>> +
+>> +	/* do the actual transmission(s) */
+>> +	src = (u8 *) shadow->data;
+>> +	while (off < shadow->size) {
+>> +		err = cmd_start(dev, opaluid[OPAL_MBR], opalmethod[OPAL_SET]);
+>> +		add_token_u8(&err, dev, OPAL_STARTNAME);
+>> +		add_token_u8(&err, dev, OPAL_WHERE);
+>> +		add_token_u64(&err, dev, shadow->offset + off);
+>> +		add_token_u8(&err, dev, OPAL_ENDNAME);
+>> +
+>> +		add_token_u8(&err, dev, OPAL_STARTNAME);
+>> +		add_token_u8(&err, dev, OPAL_VALUES);
+>> +
+>> +		/*
+>> +		 * The bytestring header is either 1 or 2 bytes, so assume 2.
+>> +		 * There also needs to be enough space to accommodate the
+>> +		 * trailing OPAL_ENDNAME (1 byte) and tokens added by
+>> +		 * cmd_finalize.
+>> +		 */
+>> +		len = min(remaining_size(dev) - (2+1+CMD_FINALIZE_BYTES_NEEDED),
+>> +			  (size_t)(shadow->size - off));
+>
+> What if remaining_size(dev) <  2 + 1 + CMD_FINALIZE_BYTES_NEEDED? If that's possible we
+> get min(UINT_MAX(ish) , some size larger than our remaining buffer) and that's not good.
 
-Right. And that's exactly why I thought it was so odd how the
-mlx90632.c driver - which is the only user of int_sqrt64() - does a
-nested one.
+This is only possible for uselessly small values of IO_BUFFER_LENGTH, 
+which is a compile-time value. Originally I thought it's OK as nobody 
+would set the value so low. But on a second thought, after reading your 
+comment, I think that even if IO_BUFFER_LENGTH was set to such a value, 
+the code should fail gracefully.
 
-It would be sufficient to do
+So I will change it into:
 
-        int_sqrt(int_sqrt64(..))
+while (off < shadow->size) {
+ 	/*
+ 	 * Number of bytes needed in the cmd buffer to terminate the
+ 	 * write shadow mbr command.
+ 	 *
+ 	 * The bytestring header is either 1 or 2 bytes, so assume 2.
+ 	 * There also needs to be enough space to accommodate the
+ 	 * trailing OPAL_ENDNAME (1 byte) and tokens added by
+ 	 * cmd_finalize.
+ 	 */
+ 	const size_t write_shadow_mbr_footer_size =
+ 		2 + 1 + CMD_FINALIZE_BYTES_NEEDED;
 
-because the domain on the outer one isn't actually 64 bits, it's only 32 bits.
+ 	err = cmd_start(dev, opaluid[OPAL_MBR], opalmethod[OPAL_SET]);
+ 	add_token_u8(&err, dev, OPAL_STARTNAME);
+ 	add_token_u8(&err, dev, OPAL_WHERE);
+ 	add_token_u64(&err, dev, shadow->offset + off);
+ 	add_token_u8(&err, dev, OPAL_ENDNAME);
 
-But it's just a slight confusion and doesn't really matter much.
+ 	add_token_u8(&err, dev, OPAL_STARTNAME);
+ 	add_token_u8(&err, dev, OPAL_VALUES);
 
-The bug in int_sqrt64() is real, but as mentioned, the calculations
-done to generate the argument for that one user do seem to all be
-*signed*. If it overflows into the high bit of an u64 (which is where
-the off-by-one bug would matter), then the types in that one user are
-already wrong.
+ 	if (!can_add(&err, dev, write_shadow_mbr_footer_size))
+ 		break;
+ 	len = min(remaining_size(dev) - write_shadow_mbr_footer_size,
+ 		  (size_t)(shadow->size - off));
+ 	pr_debug("MBR: write bytes %zu+%llu/%llu\n",
+ 		 off, len, shadow->size);
 
-So it would probably be a good idea to clarify the single user too while at it.
+Please let me know if you would prefer a different solution.
 
-           Linus
+Best regards,
+David
