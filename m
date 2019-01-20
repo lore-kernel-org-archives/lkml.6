@@ -2,165 +2,114 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F108C26640
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 19:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC92C26640
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 19:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DECF92084F
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 19:13:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXxgAXt5"
+	by mail.kernel.org (Postfix) with ESMTP id 94F1B20880
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 19:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbfATTNj (ORCPT
+        id S1727823AbfATTOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 14:13:39 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37357 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727415AbfATTNj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 14:13:39 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5so8696945plr.4;
-        Sun, 20 Jan 2019 11:13:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=e2HOUbGNN/v/dW8bjHRJUsT8BYGPYXxk3FU2EXZ7FCI=;
-        b=eXxgAXt5nD5btFz97FB/AxCg4gs8Esl3yRHuNB/O9LdnyEYTTLi8nogkUOYLKT/tSv
-         gQyIQ7wns3ULiF41O4WQxAfJ9ysK5LeFygq9oBxLYFyPlnGXde8+9M+7RB9cAvgHSJgk
-         YJn4HCuOTrlNk3f3kAJW9Ixc3KhKNsRwucoQfg+rb7GNfQPDGzMKRjByj9cNE/yY1vs6
-         jii23yaD/M7lnTSXPQRJEN9NA+VwodQajJzrUrf4szOMwwNcq4zOeyxwPBXdwLBnPsR0
-         /juZssM+8fUCrnR46E4Mc/jE/8wGGMGCy/sYxBGcvx9Rgf5zKWPz+1RVUXQ8nxOIKit8
-         j9Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=e2HOUbGNN/v/dW8bjHRJUsT8BYGPYXxk3FU2EXZ7FCI=;
-        b=JLXZZPO2gH2x2AvnJs+VHRanv3ft6vEuZgwvLhkZAmHRchtyVt3j7xY7WjjyaiqhH+
-         Mjmqy7IV0b86AXgHA3NT43yx2/tMJ9QPFMZyG7j7Lkyamc4Ds2Xt/SmLaISWCe3QWuQ3
-         XneBKfg7CDZzFf/iKXiqnr1Fma/MbxSsHSvtQibLtnQl5Y3VSQWvTTSaxGc0Y0bTmMDz
-         AQIEMgnhWAW1RJeSKSU3FEiNOMYE1hLr9PiJMW8EXHAgP+Let1FCA/UcOKv3zaRO2GDH
-         z9SrHyRxdUS6zW7tAWQDNni020SQW4DxJxJbYy9PJullDToYtJrtDhK5I8J2aKv5kxNY
-         gbpQ==
-X-Gm-Message-State: AJcUukey9GWJe/LMklPgmzacl184J9W41fZU+vuzCI3P7/o7g8Kxr6kB
-        Q0NndGAj1QdwbQKesTGSyV5INHuiHDM=
-X-Google-Smtp-Source: ALg8bN4NJN+IFYPvsoIIYZtEvTJEXEpC8jY1WAEwJsnsZlc8XchRHDxgmWUo86HJNh4IkNlBTNkH2w==
-X-Received: by 2002:a17:902:ac1:: with SMTP id 59mr26980010plp.36.1548011618112;
-        Sun, 20 Jan 2019 11:13:38 -0800 (PST)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id 125sm14173055pfd.124.2019.01.20.11.13.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 11:13:37 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] media: imx: Validate frame intervals before setting
-Date:   Sun, 20 Jan 2019 11:13:31 -0800
-Message-Id: <20190120191331.9723-1-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 20 Jan 2019 14:14:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42338 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727415AbfATTOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 14:14:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0472EAB42;
+        Sun, 20 Jan 2019 19:14:34 +0000 (UTC)
+From:   Tony Jones <tonyj@suse.de>
+To:     linux-perf-users@vger.kernel.org
+Cc:     Tony Jones <tonyj@suse.de>, acme@kernel.org,
+        Jin Yao <yao.jin@linux.intel.com>, jolsa@redhat.com,
+        ak@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf script: fix crash when processing recorded stat data
+Date:   Sun, 20 Jan 2019 11:14:14 -0800
+Message-Id: <20190120191414.12925-1-tonyj@suse.de>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the .s_frame_interval() subdev op, don't accept or set a
-frame interval with a zero numerator or denominator. This fixes
-a v4l2-compliance failure:
+While updating Perf to work with Python3 and Python2 I noticed that the 
+stat-cpi script was dumping core.
 
-fail: v4l2-test-formats.cpp(1146):
-cap->timeperframe.numerator == 0 || cap->timeperframe.denominator == 0
-test VIDIOC_G/S_PARM: FAIL
+$ perf  stat -e cycles,instructions record -o /tmp/perf.data /bin/false
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+ Performance counter stats for '/bin/false':
+
+           802,148      cycles
+
+           604,622      instructions                                                       802,148      cycles
+           604,622      instructions
+
+       0.001445842 seconds time elapsed
+
+$ perf script -i /tmp/perf.data -s scripts/python/stat-cpi.py
+Segmentation fault (core dumped)
+...
+...
+    rblist=rblist@entry=0xb2a200 <rt_stat>,
+    new_entry=new_entry@entry=0x7ffcb755c310) at util/rblist.c:33
+    ctx=<optimized out>, type=<optimized out>, create=<optimized out>,
+    cpu=<optimized out>, evsel=<optimized out>) at util/stat-shadow.c:118
+    ctx=<optimized out>, type=<optimized out>, st=<optimized out>)
+    at util/stat-shadow.c:196
+    count=count@entry=727442, cpu=cpu@entry=0, st=0xb2a200 <rt_stat>)
+    at util/stat-shadow.c:239
+    config=config@entry=0xafeb40 <stat_config>,
+    counter=counter@entry=0x133c6e0) at util/stat.c:372
+...
+...
+
+The issue is that since 1fcd03946b52 perf_stat__update_shadow_stats now calls
+update_runtime_stat passing rt_stat rather than calling update_stats but
+perf_stat__init_shadow_stats has never been called to initialize rt_stat in
+the script path processing recorded stat data.
+
+Since I can't see any reason why perf_stat__init_shadow_stats() is presently
+initialized like it is in builtin-script.c::perf_sample__fprint_metric()
+[4bd1bef8bba2f] I'm proposing it instead be initialized once in __cmd_script
+
+Fixes: 1fcd03946b52 ("perf stat: Update per-thread shadow stats")
+Signed-off-by: Tony Jones <tonyj@suse.de>
 ---
- drivers/staging/media/imx/imx-ic-prp.c      | 9 +++++++--
- drivers/staging/media/imx/imx-ic-prpencvf.c | 9 +++++++--
- drivers/staging/media/imx/imx-media-csi.c   | 5 ++++-
- drivers/staging/media/imx/imx-media-vdic.c  | 5 ++++-
- 4 files changed, 22 insertions(+), 6 deletions(-)
+ tools/perf/builtin-script.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx-ic-prp.c b/drivers/staging/media/imx/imx-ic-prp.c
-index 98923fc844ce..a2bb5c702d74 100644
---- a/drivers/staging/media/imx/imx-ic-prp.c
-+++ b/drivers/staging/media/imx/imx-ic-prp.c
-@@ -422,9 +422,14 @@ static int prp_s_frame_interval(struct v4l2_subdev *sd,
- 	if (fi->pad >= PRP_NUM_PADS)
- 		return -EINVAL;
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index d079f36d342d..9a6dd86e606f 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1681,13 +1681,8 @@ static void perf_sample__fprint_metric(struct perf_script *script,
+ 		.force_header = false,
+ 	};
+ 	struct perf_evsel *ev2;
+-	static bool init;
+ 	u64 val;
  
--	/* No limits on frame interval */
- 	mutex_lock(&priv->lock);
--	priv->frame_interval = fi->interval;
+-	if (!init) {
+-		perf_stat__init_shadow_stats();
+-		init = true;
+-	}
+ 	if (!evsel->stats)
+ 		perf_evlist__alloc_stats(script->session->evlist, false);
+ 	if (evsel_script(evsel->leader)->gnum++ == 0)
+@@ -2359,6 +2354,8 @@ static int __cmd_script(struct perf_script *script)
+ 
+ 	signal(SIGINT, sig_handler);
+ 
++	perf_stat__init_shadow_stats();
 +
-+	/* No limits on valid frame intervals */
-+	if (fi->interval.numerator == 0 || fi->interval.denominator == 0)
-+		fi->interval = priv->frame_interval;
-+	else
-+		priv->frame_interval = fi->interval;
-+
- 	mutex_unlock(&priv->lock);
- 
- 	return 0;
-diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
-index 33ada6612fee..d35591e9933b 100644
---- a/drivers/staging/media/imx/imx-ic-prpencvf.c
-+++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
-@@ -1215,9 +1215,14 @@ static int prp_s_frame_interval(struct v4l2_subdev *sd,
- 	if (fi->pad >= PRPENCVF_NUM_PADS)
- 		return -EINVAL;
- 
--	/* No limits on frame interval */
- 	mutex_lock(&priv->lock);
--	priv->frame_interval = fi->interval;
-+
-+	/* No limits on valid frame intervals */
-+	if (fi->interval.numerator == 0 || fi->interval.denominator == 0)
-+		fi->interval = priv->frame_interval;
-+	else
-+		priv->frame_interval = fi->interval;
-+
- 	mutex_unlock(&priv->lock);
- 
- 	return 0;
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 555aa45e02e3..81f78a928048 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -905,7 +905,10 @@ static int csi_s_frame_interval(struct v4l2_subdev *sd,
- 
- 	switch (fi->pad) {
- 	case CSI_SINK_PAD:
--		/* No limits on input frame interval */
-+		/* No limits on valid input frame intervals */
-+		if (fi->interval.numerator == 0 ||
-+		    fi->interval.denominator == 0)
-+			fi->interval = *input_fi;
- 		/* Reset output intervals and frame skipping ratio to 1:1 */
- 		priv->frame_interval[CSI_SRC_PAD_IDMAC] = fi->interval;
- 		priv->frame_interval[CSI_SRC_PAD_DIRECT] = fi->interval;
-diff --git a/drivers/staging/media/imx/imx-media-vdic.c b/drivers/staging/media/imx/imx-media-vdic.c
-index 4a890714193e..62e09a53d171 100644
---- a/drivers/staging/media/imx/imx-media-vdic.c
-+++ b/drivers/staging/media/imx/imx-media-vdic.c
-@@ -818,7 +818,10 @@ static int vdic_s_frame_interval(struct v4l2_subdev *sd,
- 	switch (fi->pad) {
- 	case VDIC_SINK_PAD_DIRECT:
- 	case VDIC_SINK_PAD_IDMAC:
--		/* No limits on input frame interval */
-+		/* No limits on valid input frame intervals */
-+		if (fi->interval.numerator == 0 ||
-+		    fi->interval.denominator == 0)
-+			fi->interval = priv->frame_interval[fi->pad];
- 		/* Reset output interval */
- 		*output_fi = fi->interval;
- 		if (priv->csi_direct)
+ 	/* override event processing functions */
+ 	if (script->show_task_events) {
+ 		script->tool.comm = process_comm_event;
 -- 
-2.17.1
+2.18.0
 
