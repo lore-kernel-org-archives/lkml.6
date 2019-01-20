@@ -2,85 +2,103 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DB3C61CE8
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 01:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECFEC61CE8
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 01:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A21A22084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 01:49:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABFAA2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 01:51:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C54ILMlN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729996AbfATBtE (ORCPT
+        id S1730037AbfATBvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 20:49:04 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:53363 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727830AbfATBtE (ORCPT
+        Sat, 19 Jan 2019 20:51:23 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:44680 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbfATBvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 20:49:04 -0500
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0K1mi6o061723;
-        Sun, 20 Jan 2019 10:48:44 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
- Sun, 20 Jan 2019 10:48:44 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0K1mdWt061663
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sun, 20 Jan 2019 10:48:44 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in fat_fallocate
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+cfa5d826b19395f1940e@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.com>
-Cc:     hirofumi@mail.parknet.co.jp, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <000000000000c49e10056affb536@google.com>
- <CACT4Y+aLeRxHE1wyGhjvb5V81LEKWh=7Lw3fDpqRFmTzq_4JtA@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <c5b4b7b2-fc78-7bb0-7c3a-8f31c24028e6@i-love.sakura.ne.jp>
-Date:   Sun, 20 Jan 2019 10:48:38 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 19 Jan 2019 20:51:23 -0500
+Received: by mail-ua1-f65.google.com with SMTP id d19so5881520uaq.11
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 17:51:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d7BbmGr0HTL3SKEnOU556dNzvnNLbzxMHiMhLjnBKNc=;
+        b=C54ILMlN0B/CmULRDKjLs+2SS+11vlgTyMT0woHHxtNKrF7j+gexrtRHiYQcFiaEFf
+         Y/CFhICif2VBLHCTSmIUlfPzpqhrUTQ/TU/xl6Id14HvCj6mDBiKjAosqGzkak/sx7jk
+         y4FSCo75E3N2I4eJ34wie1YjaEAFmd/S7uOUQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d7BbmGr0HTL3SKEnOU556dNzvnNLbzxMHiMhLjnBKNc=;
+        b=LFvbB2ACxc3Gpa2z9ajMnLqUsgdPToDzlV4nLeASthxCEHBsa12c6Jp1eLE6xsek1g
+         av67fv8nRIULG0ezthM3eor8BKtfPnAExDFbETyzN+xMKW0Lj3YG9j3iV09scYMb44aR
+         7mLV4EQKEe+7eidEUhmgAHWozBucA2MX++bm0rNcVYfnQpIr0D2OEM2ddg4TLGgzgqe8
+         XXjg4QPwrO73IWq6hnnUDNQcxJDXIMy+wuySbWNjx92vO1gA3NE4HF2A0b3R/ERIcR3T
+         U/Ue8bHLNKr75c9mAZ+N3RZhHiWi5PcJi+aZjQPELIeFj2wC6QqctcUSdO20kt+MhChX
+         kPwQ==
+X-Gm-Message-State: AJcUukclEdRLJCWmnNPG6jOb/gtaytD1EHvPsy9/qK2gqBkABVaJGJSt
+        AO2GZs0JF/DZDkUQ/Cs+/Am+QPosxhQ=
+X-Google-Smtp-Source: ALg8bN4aEzDGmgPmmadsXK717F8Yd1eJAqURzlcwSLU+LE5TP4ecweiwsp1VLlzhLE67bfPRgEtxiw==
+X-Received: by 2002:ab0:621a:: with SMTP id m26mr8809568uao.36.1547949082156;
+        Sat, 19 Jan 2019 17:51:22 -0800 (PST)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id w65sm18363195vsc.16.2019.01.19.17.51.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 19 Jan 2019 17:51:21 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id z3so10715127vsf.7
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 17:51:21 -0800 (PST)
+X-Received: by 2002:a67:7d01:: with SMTP id y1mr10540778vsc.48.1547949080517;
+ Sat, 19 Jan 2019 17:51:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+aLeRxHE1wyGhjvb5V81LEKWh=7Lw3fDpqRFmTzq_4JtA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190118105807.26425-1-ard.biesheuvel@linaro.org>
+In-Reply-To: <20190118105807.26425-1-ard.biesheuvel@linaro.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 19 Jan 2019 17:51:08 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKa6Tzea9SyTi5aOZusnb+1+yTJhMNaz-Ha8sjR7oCWsw@mail.gmail.com>
+Message-ID: <CAGXu5jKa6Tzea9SyTi5aOZusnb+1+yTJhMNaz-Ha8sjR7oCWsw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] gcc-plugins: fixes for arm_ssp_per_task_plugin
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Emese Revfy <re.emese@gmail.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/20 4:03, Dmitry Vyukov wrote:
-> On Sun, Apr 29, 2018 at 7:03 PM syzbot
-> <syzbot+cfa5d826b19395f1940e@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot hit the following crash on upstream commit
->> bf8f5de17442bba5f811e7e724980730e079ee11 (Sat Apr 28 17:05:04 2018 +0000)
->> MAINTAINERS: add myself as maintainer of AFFS
->> syzbot dashboard link:
->> https://syzkaller.appspot.com/bug?extid=cfa5d826b19395f1940e
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->> Raw console output:
->> https://syzkaller.appspot.com/x/log.txt?id=5087555854794752
->> Kernel config:
->> https://syzkaller.appspot.com/x/.config?id=7043958930931867332
->> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> This mentions __getblk_gfp. Is it the same as "INFO: task hung in
-> generic_file_write_iter":
-> https://syzkaller.appspot.com/bug?id=b3c7e1440aa8ece16bf557dbac427fdff1dad9d6
-> and fixed with "blockdev: Fix livelocks on loop device"?
+On Fri, Jan 18, 2019 at 2:58 AM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> A couple of fixes to permit newer versions of GCC to use the stack
+> protector plugin for ARM.
+>
+> Ard Biesheuvel (2):
+>   gcc-plugins: arm_ssp_per_task_plugin: sign extend the SP mask
+>   gcc-plugins: arm_ssp_per_task_plugin: fix for GCC 9+
 
-Yes, I think so.
+Nice; thanks! It seems like these should go into -rc4, yes? I'll get
+them queued up for Linus...
 
-#syz dup: INFO: task hung in generic_file_write_iter
+-Kees
+
+>
+>  scripts/gcc-plugins/arm_ssp_per_task_plugin.c | 23 ++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+>
+> --
+> 2.20.1
+>
+
+
+-- 
+Kees Cook
