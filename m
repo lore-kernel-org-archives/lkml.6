@@ -2,81 +2,119 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEA4C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CECFC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DB932084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EDED2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:28:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i97PveTH"
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="gnuyvR2b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbfAUI2f (ORCPT
+        id S1729173AbfAUI2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:28:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45568 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbfAUI2f (ORCPT
+        Mon, 21 Jan 2019 03:28:51 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34121 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727979AbfAUI2v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:28:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fCoGQM1JMNeKC9RxqPi2EysR5pQSJP0jB0mOgBL7qSE=; b=i97PveTH70c7385c1ATzPG7EL
-        FkGVX1vaixpcDXhFLfAP13hdHJ5BB5UmaiOYJSk2nx8OIAf8dWiJ/SsxwTlgW9IFvV/v9WwLg2lJ4
-        lc81GKb/BzV/j7JAr02Y4fytwW5dmEOo5kbior1QQvlQoNq5wysuSXCaHC0nuCvx0aVUt3EnWiReJ
-        cnl3s3AKw+lfA3ecvonJ55aSyy+pDAKca1HPpvcRvp5BMZWd60qEXIQiDc/njqDstHv+XVNjrTsDz
-        KQKbqZ8bXAt6b+84aq3p/s4cB+3nic+oEEfsivLCif4e9SRw0Kx9psmwHXG1TcdznTHjt+1d45tk5
-        nFUFYhiQA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glUwZ-0003c6-8c; Mon, 21 Jan 2019 08:28:31 +0000
-Date:   Mon, 21 Jan 2019 00:28:30 -0800
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "mst@redhat.com" <mst@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "sstabellini@kernel.org" <sstabellini@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-Subject: Re: [RFC] virtio_ring: check dma_mem for xen_domain
-Message-ID: <20190121082830.GC12420@infradead.org>
-References: <20190121050056.14325-1-peng.fan@nxp.com>
+        Mon, 21 Jan 2019 03:28:51 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y185so5545087wmd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:28:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=juz3/8ubyO70o/WwTakdDVvsVYAiN+8d71XTlXhc8d0=;
+        b=gnuyvR2bnuLilcd7+9IZF+J+o8w0XrNB/1Xkz7HCGSUq9qPW+NOUi/WjYSQqOIbFY6
+         zLE2d9gMubbXqFn/RyND6TvDIfdb/L+z0gY/VXI5CSIrtblIhzSkrwfO9Z3V+IZ3pvOf
+         OgWoTmijDHQtTrwB5UKFvw62XDi3VPUnfQJz+ZgdTCd6RSzSyBC7iwapfZxpAHiNfiBX
+         pBvS382M8jVHkBZVPVELstfsb3pvL6o7J+IpQFEUIL3qZGuiRXIiQ8eWV08tqCEpZ3k+
+         StfsIH+p6gK7RZjheXduzukbYDmmTJja/NEELPCmFu5nVOPQKZ38nUuJFdcfezgwc4gg
+         o3Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=juz3/8ubyO70o/WwTakdDVvsVYAiN+8d71XTlXhc8d0=;
+        b=p5itO4r/BrhtPf/+IShzaE7Kf5ZpEbLhCnW0BHItRZOQ9S33BwbDqsiSZiofi+5ozh
+         ohnrvO1OAmsTKpsdH6JmUvcCkCUM3E2SFOm3SM/hS+lsYCShiQbjk7SN/X8rIZ+bnLtr
+         6Qv7tRA6Aw4z/AWrkXoDuKEnx8HD35r+VhJSLyElonaQ0QRUa8ciwVFNNRKxGKlvKdbK
+         jOEbtgxG+gD3O556+PujWB7aqM1zMfAgaj2mWGZh8Bd+X7jYjhnp6dtLH1BMNU67NZeD
+         CU377qJYxeR+QHxnDMBU7jqUeW4dEafZseuw5820nKbCketzDVsb7WrgHp17yYzFFzKa
+         cJBg==
+X-Gm-Message-State: AJcUukcZjdFjr/YxMToVWEM9wE8AP/OtcawyV32zmdI9FpAWBDlGtf2h
+        bD0hX9Ffux+X0prkIcO0e4LNvzZm9lU=
+X-Google-Smtp-Source: ALg8bN4jEjW9am+Xzj8QcDzzmQ0pxFo+cktjow7q+YKP8Hur7vhk7wc+PrdAJwB7Juu+8w+lON7BAA==
+X-Received: by 2002:a1c:2c6:: with SMTP id 189mr22057938wmc.21.1548027673915;
+        Sun, 20 Jan 2019 15:41:13 -0800 (PST)
+Received: from localhost.localdomain ([156.212.82.83])
+        by smtp.gmail.com with ESMTPSA id e9sm76576753wro.16.2019.01.20.15.41.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 15:41:13 -0800 (PST)
+From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
+        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
+        Boris Lukashev <blukashev@sempervictus.com>,
+        Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+Subject: [RESEND PATCH V8 03/11] KVM: X86: Add helper function to convert SPTE to GFN
+Date:   Mon, 21 Jan 2019 01:39:32 +0200
+Message-Id: <20190120233940.15282-4-ahmedsoliman@mena.vt.edu>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+References: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121050056.14325-1-peng.fan@nxp.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 04:51:57AM +0000, Peng Fan wrote:
-> on i.MX8QM, M4_1 is communicating with DomU using rpmsg with a fixed
-> address as the dma mem buffer which is predefined.
-> 
-> Without this patch, the flow is:
-> vring_map_one_sg -> vring_use_dma_api
->                  -> dma_map_page
-> 		       -> __swiotlb_map_page
-> 		                ->swiotlb_map_page
-> 				->__dma_map_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
-> However we are using per device dma area for rpmsg, phys_to_virt
-> could not return a correct virtual address for virtual address in
-> vmalloc area. Then kernel panic.
+Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+---
+ arch/x86/kvm/mmu.c | 7 +++++++
+ arch/x86/kvm/mmu.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-And that is the right thing to do.  You must not call dma_map_* on
-memory that was allocated from dma_alloc_*.
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 098df7d135..bbfe3f2863 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -1053,6 +1053,13 @@ static gfn_t kvm_mmu_page_get_gfn(struct kvm_mmu_page *sp, int index)
+ 
+ 	return sp->gfn + (index << ((sp->role.level - 1) * PT64_LEVEL_BITS));
+ }
++gfn_t spte_to_gfn(u64 *spte)
++{
++	struct kvm_mmu_page *sp;
++
++	sp = page_header(__pa(spte));
++	return kvm_mmu_page_get_gfn(sp, spte - sp->spt);
++}
+ 
+ static void kvm_mmu_page_set_gfn(struct kvm_mmu_page *sp, int index, gfn_t gfn)
+ {
+diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+index c7b333147c..49d7f2f002 100644
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@ -211,4 +211,5 @@ void kvm_mmu_gfn_allow_lpage(struct kvm_memory_slot *slot, gfn_t gfn);
+ bool kvm_mmu_slot_gfn_write_protect(struct kvm *kvm,
+ 				    struct kvm_memory_slot *slot, u64 gfn);
+ int kvm_arch_write_log_dirty(struct kvm_vcpu *vcpu);
++gfn_t spte_to_gfn(u64 *sptep);
+ #endif
+-- 
+2.19.2
 
-We actually have another thread which appears to be for this same issue.
