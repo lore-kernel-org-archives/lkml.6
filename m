@@ -2,68 +2,67 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A592C26640
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5646EC26640
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 692C62084F
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548009627;
-	bh=h0HVpnmOMn3YnQY8dWg2vJ6cf80ypMKGu3f9fU5ANVg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=GP6JSYc1sDXO96rh7tL8qpJTR17MvcjpD4BlDujDBo1Vq4ywNRdXRxekyWGOaVj75
-	 wSrw4k2kClVIV4h+w8+S4+N5a9c4C2St8YyWtGpFME7cPDV3Zvg3Cplc6r7XOPYOuo
-	 1yXIGoK0ZHMBW/pt80XwRjEhP2ILPNW8MYSBc0BY=
+	by mail.kernel.org (Postfix) with ESMTP id 2FD302084F
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbfATSkZ (ORCPT
+        id S1727858AbfATSkr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 13:40:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39628 "EHLO mail.kernel.org"
+        Sun, 20 Jan 2019 13:40:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57686 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727630AbfATSkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 13:40:02 -0500
-Subject: Re: [GIT PULL] Btrfs fixes for 5.0-rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548009602;
-        bh=h0HVpnmOMn3YnQY8dWg2vJ6cf80ypMKGu3f9fU5ANVg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=gyp58XMFbroZ3ChXBUKr6fVNOjD4Bn1OtF9EBu4gMwaH3V3ctIQg2/74o2xlqQWrZ
-         YQ0uX7Bg6vaZ++U+yZJwTaPVQCxvXXxTXe8zrcv3W4Y4+Vzg1ZHsk7ahHdheHl+NCx
-         Hct/sGuOOPEb6XkpX6m32Y1TO/kqsYJQZhAc5Duw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1547998923.git.dsterba@suse.com>
-References: <cover.1547998923.git.dsterba@suse.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1547998923.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.0-rc2-tag
-X-PR-Tracked-Commit-Id: fd340d0f68cc87badfc9efcb226f23a5428826a0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1be969f4682b0aa1995e46fba51502de55f15ce8
-Message-Id: <154800960227.15983.1928682040558514514.pr-tracker-bot@kernel.org>
-Date:   Sun, 20 Jan 2019 18:40:02 +0000
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
-        clm@fb.com, linux-btrfs@vger.kernel.org,
+        id S1726541AbfATSkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 13:40:47 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3AA6F81F12;
+        Sun, 20 Jan 2019 18:40:47 +0000 (UTC)
+Received: from krava (ovpn-204-22.brq.redhat.com [10.40.204.22])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0B64A60462;
+        Sun, 20 Jan 2019 18:40:44 +0000 (UTC)
+Date:   Sun, 20 Jan 2019 19:40:43 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     He Kuang <hekuang@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf top: Fix wrong hottest instruction highlighted
+Message-ID: <20190120184043.GD8591@krava>
+References: <20190120160523.4391-1-hekuang@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190120160523.4391-1-hekuang@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Sun, 20 Jan 2019 18:40:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 20 Jan 2019 16:51:29 +0100:
+On Mon, Jan 21, 2019 at 12:05:22AM +0800, He Kuang wrote:
+> Annotation line's percentage is compared and inserted into rbtree, but the
+> percent field of 'struct annotation_data' is an array, the comparison
+> result between them is the address difference.
+> 
+> This patch compares the right slot of percent array according to
+> opts->percent_type and makes things right.
+> 
+> The problem can be reproduced by pressing 'H' in perf top annotation view.
+> It should highlight the instruction line which has the highest sampling
+> percentage.
+> 
+> Signed-off-by: He Kuang <hekuang@huawei.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.0-rc2-tag
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1be969f4682b0aa1995e46fba51502de55f15ce8
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+thanks,
+jirka
