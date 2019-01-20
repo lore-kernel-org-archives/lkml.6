@@ -2,91 +2,136 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7A4C282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52224C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6F820823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:02:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FlvF7l6l"
+	by mail.kernel.org (Postfix) with ESMTP id 28F4F20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729200AbfAUICm (ORCPT
+        id S1729262AbfAUICx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:02:42 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37159 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728530AbfAUICl (ORCPT
+        Mon, 21 Jan 2019 03:02:53 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34065 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728530AbfAUICw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:02:41 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y126so9762277pfb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=YSO3o33xwpZEnY3dvM5KsEyTJ0JSkemSKiFEUP456FU=;
-        b=FlvF7l6lfla3iCYt5v9kdG+acvXvTeFeg/qzfGi5BNxYTpZYrPAeDngZg6nm00b9S3
-         NbGwHhlcE6GYx4P0ta4rjdqhQdwf/QcNJI79EKuQ/yyb1KuL+pqdmZW0MqeCtizSPRJV
-         AOMpETPdNE2cjwkASbSwY6na1Fs2BcMC5j1AU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YSO3o33xwpZEnY3dvM5KsEyTJ0JSkemSKiFEUP456FU=;
-        b=MS8vi9wk4fcK7okSKPztD+JrCYMz1IDqLonY5W1WjT3n2QfuXPy1G7hXqs2yQUAPA6
-         JqgLd7bkae96hMID8MTNklUtJ/UweNHJGA93kc4dxZftlTzg/TmH+QHLAM2wAS5IYwn4
-         RzzHubTM5ih5k8Ib+mjeLIkXj+mQPlbnX45V/hVb5IG0N4w4x5W6WF6yh5ylGVifhFqb
-         koTThiSSqKMt5/m4yqbN2h3Ol1hKB4EGccOtgb4LWnOqQRg8WEhavja8UmI7ofib9+Qp
-         qAnpjWmfDFiBzYniPUhaHH4u4sSGHT8Q8fc/hzMNjpLnvGswT4gjxKxVzntj6OkX3hHx
-         UlcQ==
-X-Gm-Message-State: AJcUukfaDe7inwSymXJSEA90NOiycjzLVhUVrTScAV+Gd3gwTlxHqnYg
-        MOfxOXcxU7QpAg5uIjkzprELiQ==
-X-Google-Smtp-Source: ALg8bN628PJ/H0gKED4QC4efZUQWbB3egHAmjavO6rCI1l6uN/ac5MmUe+WCQFamxSECTuShHFzdVA==
-X-Received: by 2002:a62:5e41:: with SMTP id s62mr28172745pfb.232.1548047193126;
-        Sun, 20 Jan 2019 21:06:33 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id u87sm27186794pfi.2.2019.01.20.21.06.29
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 20 Jan 2019 21:06:32 -0800 (PST)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org,
-        neo.hou@unisoc.com, broonie@kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: sprd: Remove unused irq trigger setting
-Date:   Mon, 21 Jan 2019 13:05:39 +0800
-Message-Id: <972fd6c1a222b35159671ca82fb63db1632c3ba3.1548046988.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        Mon, 21 Jan 2019 03:02:52 -0500
+Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0KLwNvv2248914
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Sun, 20 Jan 2019 13:58:24 -0800
+Date:   Sun, 20 Jan 2019 13:58:15 -0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190120161003.GB23827@google.com>
+References: <20190118225543.86996-1-joel@joelfernandes.org> <20190119102800.GB17723@infradead.org> <20190119103606.GA17400@kroah.com> <8BD4CB7A-944C-4EC5-A198-1D85C9EE28D6@zytor.com> <20190120161003.GB23827@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [RFC] Provide in-kernel headers for making it easy to extend the kernel
+To:     Joel Fernandes <joel@joelfernandes.org>
+CC:     Greg KH <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
+        atishp04@gmail.com, Borislav Petkov <bp@alien8.de>,
+        dancol@google.com, Ingo Molnar <mingo@redhat.com>,
+        Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
+        karim.yaghmour@opersys.com, Kees Cook <keescook@chromium.org>,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        paulmck@linux.vnet.ibm.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        rdunlap@infradead.org, rostedt@goodmis.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        yhs@fb.com
+From:   hpa@zytor.com
+Message-ID: <A40C22DF-B43F-44BA-8148-FC0881087315@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Spreadtrum PMIC interrupt controller has no registers to set irq
-trigger type, since it is always high level trigger. That means the
-PMIC EIC controller as a child device of PMIC INTC does not need to
-set the trigger type, so remove it.
+On January 20, 2019 8:10:03 AM PST, Joel Fernandes <joel@joelfernandes.org> wrote:
+>On Sat, Jan 19, 2019 at 11:01:13PM -0800, hpa@zytor.com wrote:
+>> On January 19, 2019 2:36:06 AM PST, Greg KH
+><gregkh@linuxfoundation.org> wrote:
+>> >On Sat, Jan 19, 2019 at 02:28:00AM -0800, Christoph Hellwig wrote:
+>> >> This seems like a pretty horrible idea and waste of kernel memory.
+>> >
+>> >It's only a waste if you want it to be a waste, i.e. if you load the
+>> >kernel module.
+>> >
+>> >This really isn't any different from how /proc/config.gz works.
+>> >
+>> >> Just add support to kbuild to store a compressed archive in
+>initramfs
+>> >> and unpack it in the right place.
+>> >
+>> >I think the issue is that some devices do not use initramfs, or
+>switch
+>> >away from it after init happens or something like that.  Joel has
+>all
+>> >of
+>> >the looney details that he can provide.
+>> >
+>> >thanks,
+>> >
+>> >greg k-h
+>> 
+>> Yeah, well... but it is kind of a losing game... the more in-kernel
+>stuff there is the less smiley are things to actually be supported.
+>
+>It is better than nothing, and if this makes things a bit easier and
+>solves
+>real-world issues people have been having, and is optional, then I
+>don't see
+>why not.
+>
+>> Modularizing is it in some ways even crazier in the sense that at
+>that point you are relying on the filesystem containing the module,
+>which has to be loaded into the kernel by a root user. One could even
+>wonder if a better way to do this would be to have "make
+>modules_install" park an archive file – or even a directory as opposed
+>to a symlink – with this stuff in /lib/modules. We could even provide a
+>tmpfs shim which autoloads such an archive via the firmware loader;
+>this might even be generically useful, who knows.
+>
+>All this seems to assume where the modules are located. In Android, we
+>don't
+>have /lib/modules. This patch generically fits into the grand scheme
+>things
+>and I think is just better made a part of the kernel since it is not
+>that
+>huge once compressed, as Dan also pointed. The more complex, and the
+>more
+>assumptions we make, the less likely people writing tools will get it
+>right
+>and be able to easily use it.
+>
+>> 
+>> Note also that initramfs contents can be built into the kernel.
+>Extracting such content into a single-instance tmpfs would again be a
+>possibility
+>
+>Such an approach would bloat the kernel image size though, which may
+>not work
+>for everyone. The module based approach, on the other hand, gives an
+>option
+>to the user to enable the feature, but not have it loaded into memory
+>or used
+>until it is really needed.
+>
+>thanks,
+>
+> - Joel
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/gpio/gpio-pmic-eic-sprd.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-index 29e044f..ac573da 100644
---- a/drivers/gpio/gpio-pmic-eic-sprd.c
-+++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-@@ -322,7 +322,6 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, pmic_eic->irq, NULL,
- 					sprd_pmic_eic_irq_handler,
--					IRQF_TRIGGER_LOW |
- 					IRQF_ONESHOT | IRQF_NO_SUSPEND,
- 					dev_name(&pdev->dev), pmic_eic);
- 	if (ret) {
+Well, where are the modules? They must exist in the filesystem.
 -- 
-1.7.9.5
-
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
