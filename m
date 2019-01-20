@@ -2,127 +2,83 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3631AC7113C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C74C7113D
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 080DF2085A
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:02:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE8212085A
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:03:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=appneta.com header.i=@appneta.com header.b="Xbt718To"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbfATQCP (ORCPT
+        id S1726843AbfATQDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 11:02:15 -0500
-Received: from mga17.intel.com ([192.55.52.151]:18727 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbfATQCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 11:02:15 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 08:02:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,499,1539673200"; 
-   d="scan'208";a="137292600"
-Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.134])
-  by fmsmga004.fm.intel.com with ESMTP; 20 Jan 2019 08:02:06 -0800
-Date:   Sun, 20 Jan 2019 18:02:04 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephan Mueller <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-Message-ID: <20190120160204.GA30478@linux.intel.com>
-References: <4499700.LRS4F2YjjC@tauon.chronox.de>
- <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
- <1565399.7ulKdI1fm5@tauon.chronox.de>
- <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
- <1546994671.6077.10.camel@HansenPartnership.com>
- <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
- <20190111140226.GA6448@linux.intel.com>
- <1547220538.2793.6.camel@HansenPartnership.com>
- <20190118143348.GB4080@linux.intel.com>
- <1547845146.2794.69.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547845146.2794.69.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 20 Jan 2019 11:03:19 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41754 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfATQDS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 11:03:18 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so8938506pfi.8
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 08:03:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=appneta.com; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=73Dd9IDkWCGiW5JIKs3Sq3hJTdYKxShmv0lLRLRNtLA=;
+        b=Xbt718ToqztL2cTBxMdTXGCbYO2JwVL+oC4KcOQowPG3dxWrKL6EnDzUO+uENWi4dV
+         e2IEc9zabqONv7bGPqumAUDqQjT8TLQmBs69t26CSj0Vu4soArUDmhGtUbAuAmtnC2in
+         s5G1IqLX+d06yBF2YcnRR/mLvCln+GvWhdxrA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=73Dd9IDkWCGiW5JIKs3Sq3hJTdYKxShmv0lLRLRNtLA=;
+        b=OdKuNETezwI46UokNFWaLUCI8jMjGGFldD1UvVmSJEK+NUYH7Dwk9tbxPLCPZHBUos
+         IHDf9qvtu5mvSvEpb8+IE4N92t1nxUGuMYmtnN0hBXTAgmInTZsIUCTr/wRDhxT9S+2O
+         fN77LlZOdOxsbfvChDJfO8XLcCg3otJ/I/c+qImbs9moT9r+TiiU0yuhif2UzLbhScAz
+         qneL9TgQnLzx9j9PIK87kZvvp8SPYD+6OC1JQ8sS7ilYdNqKgoquWQfb6GasME4iwajh
+         8c/BvqiPLEw6ocLeQBNeysWRgd9ydHjZsMyTEwiEXgdStqWS5StRZLSxrrx80dSqvXUh
+         +j6Q==
+X-Gm-Message-State: AJcUuke+2WJMBO5+yZX8p0/K1fCajvFkvjpSLTn633wowsZzJt4wr1Eb
+        WJhJTGPWaZnY9p/gdW1d90so9w==
+X-Google-Smtp-Source: ALg8bN72bvZMYJMsVXiKsMM7tMsKY9kcaZ7QtB3a/HS58keHKE3K+tJyB9vwYwzxtjtFaWLPTM23hg==
+X-Received: by 2002:a62:7e13:: with SMTP id z19mr26558245pfc.94.1548000198023;
+        Sun, 20 Jan 2019 08:03:18 -0800 (PST)
+Received: from [10.0.1.12] (S010620c9d00fc332.vf.shawcable.net. [70.71.167.160])
+        by smtp.gmail.com with ESMTPSA id j197sm13886514pgc.76.2019.01.20.08.03.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 08:03:17 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2] ipmi: Prevent use-after-free in deliver_response
+From:   Fred Klassen <fklassen@appneta.com>
+In-Reply-To: <3f6be669-0a5f-5b82-aa68-14c97c7df52a@acm.org>
+Date:   Sun, 20 Jan 2019 08:03:15 -0800
+Cc:     "Arnd Bergmann (supporter:CHAR and MISC DRIVERS)" <arnd@arndb.de>,
+        "Greg Kroah-Hartman (supporter:CHAR and MISC DRIVERS)" 
+        <gregkh@linuxfoundation.org>,
+        "moderated list:IPMI SUBSYSTEM" 
+        <openipmi-developer@lists.sourceforge.net>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <7957E337-A273-4460-9B9D-B165CDDE284F@appneta.com>
+References: <A305B9C6-87C8-406A-9A9A-623BE0768FFB@appneta.com>
+ <3f6be669-0a5f-5b82-aa68-14c97c7df52a@acm.org>
+To:     "Corey Minyard (supporter:IPMI SUBSYSTEM)" <minyard@acm.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 12:59:06PM -0800, James Bottomley wrote:
-> On Fri, 2019-01-18 at 16:33 +0200, Jarkko Sakkinen wrote:
-> > On Fri, Jan 11, 2019 at 07:28:58AM -0800, James Bottomley wrote:
-> > > On Fri, 2019-01-11 at 16:02 +0200, Jarkko Sakkinen wrote:
-> > > > On Tue, Jan 08, 2019 at 05:43:53PM -0800, Andy Lutomirski wrote:
-> > > > > (Also, do we have a sensible story of how the TPM interacts
-> > > > > with hibernation at all?  Presumably we should at least try to
-> > > > > replay the PCR operations that have occurred so that we can
-> > > > > massage the PCRs into the same state post-hibernation.  Also,
-> > > > > do we have any way for the kernel to sign something with the
-> > > > > TPM along with an attestation that the signature was requested
-> > > > > *by the kernel*?  Something like a sub-hierarchy of keys that
-> > > > > the kernel explicitly prevents userspace from accessing?)
-> > > > 
-> > > > Kernel can keep it is own key hierarchy in memory as TPM2 chips
-> > > > allow to offload data in encrypted form and load it to TPM when
-> > > > it needs to use it.
-> > > > 
-> > > > The in-kernel resource manager that I initiated couple years ago
-> > > > provides this type of functionality.
-> > > 
-> > > Actually, the resource manager only keeps volatile objects
-> > > separated when in use not when offloaded.  The problem here is that
-> > > the object needs to be persisted across reboots, so either it gets
-> > > written to the NV area, bypassing the resource manager and making
-> > > it globally visible or it has to get stored in TPM form in the
-> > > hibernation image, meaning anyone with access to the TPM who can
-> > > read the image can extract and load it. Further: anyone with access
-> > > to the TPM can create a bogus sealed key and encrypt a malicious
-> > > hibernation image with it.  So there are two additional problems
-> > > 
-> > >    1. Given that the attacker may have access to the binary form of
-> > > the
-> > >       key, can we make sure only the kernel can get it released?
-> > >    2. How do we prevent an attacker with access to the TPM from
-> > > creating a
-> > >       bogus sealed key?
-> > > 
-> > > This is why I was thinking localities.
-> > 
-> > Why you would want to go for localities and not seal to PCRs?
+Correct, targeting 5.0.
+
+> On Jan 19, 2019, at 5:30 PM, Corey Minyard <minyard@acm.org> wrote:
 > 
-> Because the requested functionality was a key that would be accessible
-> to the kernel and not to user space and also guaranteed created by the
-> kernel.  The only discriminator we have to enforce that is the locality
-> (assuming we reserve a locality as accessible to the kernel but
-> inaccessible to userspace).  PCRs alone can't restrict where the key is
-> accessed or created from.
+> I assume you want this for 5.0., right?
 
-OK, locality would probably make sense, assuming that the key is stored
-in nvram.
-
-/Jarkko
-
-/Jarkko
