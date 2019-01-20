@@ -2,115 +2,121 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6664C31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DD7C31D64
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E3C20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="csw6EXJq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SUgsPHZF"
+	by mail.kernel.org (Postfix) with ESMTP id 5160520989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548054859;
+	bh=FG60ojF+jU+XYDrwm0EV5/XurIpqpLASzLIzV6s09lg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CEibW8S2re5OmSy0EXdM8gPLztpU5ICohl7J/kx81pRV81NOJtHCG9cURo+0iv6pM
+	 MXbnEyla4XWg7A9vcGH31QxN6nG9yXZ5TDHowd2ezHy8v4cAaHGEIHNz3iGJHtWqXV
+	 UoS6m0RmYD0aRxx7OZHrbMGh2iVWrWhRIqfKf+C8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbfAUHOM (ORCPT
+        id S1727944AbfAUHM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:14:12 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43298 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbfAUHNE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:13:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A13CD6087B; Mon, 21 Jan 2019 05:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548050028;
-        bh=2DBDGwUlWjS1IStdYezKwR/C6qSSDYrOCCPTeQbHBPs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=csw6EXJqFlaJcz/mDGAS8bmthO41fNyf81CtfIqM6mpjIYfCQafOUM1Ux6H18YF1R
-         7KHF2r+ex1f6a/rLHZjvwiThQ81Rq4h6gVivUbBR6CXpGkTLeBrZh/KcD/Q47+bZHA
-         ovPMT91+u1L8Xx5cfCU9OYKBpVqYrzxuxhufkuSk=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Mon, 21 Jan 2019 02:12:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727587AbfAUHM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:12:58 -0500
+Received: from earth.universe (unknown [194.136.232.109])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 220F060237;
-        Mon, 21 Jan 2019 05:53:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548050027;
-        bh=2DBDGwUlWjS1IStdYezKwR/C6qSSDYrOCCPTeQbHBPs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SUgsPHZFTLtAvaxvBOLZIasN0cZOSNphdom2Imladlv5KpMymgB2QkWB/LdMuzsx0
-         y1prPUyk4LHw+cOVlWa8C7jO4gsARYgK3Y4nrqHp/M1GQGRvEByjVEQJQ6pIbJ9Wp2
-         wDOTDQZYXNml2oZTIx+7Z9XRj1+CyZFY92ZBAa/4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 220F060237
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, tfiga@chromium.org,
-        pratikp@codeaurora.org, pdaly@codeaurora.org,
-        jcrouse@codeaurora.org, Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH 0/3] iommu/arm-smmu: Add support to use Last level cache
-Date:   Mon, 21 Jan 2019 11:23:32 +0530
-Message-Id: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F07B214C6;
+        Mon, 21 Jan 2019 00:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548029191;
+        bh=FG60ojF+jU+XYDrwm0EV5/XurIpqpLASzLIzV6s09lg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IHPKFzihkThc03aYCPB6QBgqzuxHj0gXSS6FNTjUzjHjPIAf+OU9fTHvn7m4yxCVT
+         daMpriCaoTokc5lbxvjyD2MyxBnEpYxE5Z2q9qwGG6O69evF9pJGYOeglMUAjA0c5v
+         wiW7z6F6getttiS6W05VTzmwaYePh4ZMJB8kWPvc=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 50DFD3C08E9; Sun, 20 Jan 2019 22:39:45 +0100 (CET)
+Date:   Sun, 20 Jan 2019 22:39:45 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: remove some duplicated includes
+Message-ID: <20190120213945.23lf5whwqrcbatg3@earth.universe>
+References: <20181226165357.6426-1-tiny.windzz@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="fwcs2pxufa3ede2t"
+Content-Disposition: inline
+In-Reply-To: <20181226165357.6426-1-tiny.windzz@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Qualcomm SoCs have an additional level of cache called as
-System cache, aka. Last level cache (LLC). This cache sits right
-before the DDR, and is tightly coupled with the memory controller.
-The clients using this cache request their slices from this
-system cache, make it active, and can then start using it.
-For these clients with smmu, to start using the system cache for
-buffers and, related page tables [1], memory attributes need to be
-set accordingly. This series add the required support.
 
-This change is a realisation of following changes from downstream msm-4.9:
-iommu: io-pgtable-arm: Support DOMAIN_ATTRIBUTE_USE_UPSTREAM_HINT[2]
-iommu: io-pgtable-arm: Implement IOMMU_USE_UPSTREAM_HINT[3]
+--fwcs2pxufa3ede2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since v2:
- - Split the patches into io-pgtable-arm driver and arm-smmu driver.
- - Converted smmu domain attributes to a bitmap, so multiple attributes
-   can be managed easily.
- - With addition of non-coherent page table mapping support [4], this
-   patch series now aligns with the understanding of upgrading the
-   non-coherent devices to use some level of outer cache.
- - Updated the macros and comments to reflect the use of QCOM_SYS_CACHE.
- - QCOM_SYS_CACHE can still be used at stage 2, so that doens't depend on
-   stage-1 mapping.
- - Added change to disable the attribute from arm_smmu_domain_set_attr()
-   when needed.
- - Removed the page protection controls for QCOM_SYS_CACHE at the DMA API
-   level.
+Hi,
 
-Goes on top of the non-coherent page tables support patch series [4]
+On Wed, Dec 26, 2018 at 11:53:57AM -0500, Yangtao Li wrote:
+> We include of.h twice. It's unnecessary,so
+> just remove them.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
 
-[1] https://patchwork.kernel.org/patch/10302791/
-[2] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=bf762276796e79ca90014992f4d9da5593fa7d51
-[3] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=d4c72c413ea27c43f60825193d4de9cb8ffd9602
-[4] https://lore.kernel.org/patchwork/cover/1032938/
+Thanks, queued.
 
-Vivek Gautam (3):
-  iommu/arm-smmu: Move to bitmap for arm_smmu_domain atrributes
-  iommu/io-pgtable-arm: Add support to use system cache
-  iommu/arm-smmu: Add support to use system cache
+-- Sebastian
 
- drivers/iommu/arm-smmu.c       | 28 ++++++++++++++++++++++++----
- drivers/iommu/io-pgtable-arm.c | 15 +++++++++++++--
- drivers/iommu/io-pgtable.h     |  4 ++++
- include/linux/iommu.h          |  2 ++
- 4 files changed, 43 insertions(+), 6 deletions(-)
+>  drivers/power/supply/power_supply_core.c | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/sup=
+ply/power_supply_core.c
+> index e85361878450..529721660e68 100644
+> --- a/drivers/power/supply/power_supply_core.c
+> +++ b/drivers/power/supply/power_supply_core.c
+> @@ -156,8 +156,6 @@ static void power_supply_deferred_register_work(struc=
+t work_struct *work)
+>  }
+> =20
+>  #ifdef CONFIG_OF
+> -#include <linux/of.h>
+> -
+>  static int __power_supply_populate_supplied_from(struct device *dev,
+>  						 void *data)
+>  {
+> --=20
+> 2.17.0
+>=20
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+--fwcs2pxufa3ede2t
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxE6qEACgkQ2O7X88g7
++prp7g/+P9I8U3fsbBWFa/YCdJjqUsDmn/l8K625J+BK21zRwbDTSPqtSVkDWY8s
+5cd8opLYw1UqQgsr5z1oXCJORFm/1cY8C+avHx8kbFiLa07P12iJGGELeFYaX/NM
+zxXWx8YebVVf4blbsLcu/z7VkI/KXW8MhmbIMDPEU9cfBri0/ssNmP+CfPgvhFmb
+M5XbfO6YBqRhcVRAiSSY8yKpk3xg5m2eMjhIv4hdtFtbjotaen3BXDpg0+9IhO4I
+gQjFn9fWOlgiP4fAppwabJ596BDTCAUClYGl+bBW2h3F72U8dao5flkVlrvY7tUD
+LCnBZTSVBGJi0AuI+H9vATtbHjDKXfG0Fc3zErHco9DxUO/7wLnEhQ+3WiO0NvMB
+BFMfONS5tTCASmIVR76PrR2QW0yBV8GuTfQ6toorLhAQWQIzwQdMx9qoaQz5cM9p
+7hp6oe+NwbBvttD9yALfgkGc2iudhs1id9FrJL5wlU772L88SbG3KlC6vX7szIYC
+icg1K2q0lh8WngVf6jGk759vv1o0gX65609N/eQFFX4O11yOZj1E0tixf0qFAANt
+qrmuoNv23jiWk4um6vmhmh+DeChdeBk16+i79nyZKoO3ghxC9lNN5vKTL7FIVZml
+jQ8ndgCTLUKAJA6bQzmZqbl2eK3lkfm2biNQGj6tSSS6WEZNI4g=
+=FTJ/
+-----END PGP SIGNATURE-----
+
+--fwcs2pxufa3ede2t--
