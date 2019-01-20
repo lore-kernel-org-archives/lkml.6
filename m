@@ -2,205 +2,125 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DATE_IN_PAST_06_12,
+	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCAAC31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA18C31D64
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 241DB20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9995320880
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Sx7G1G6z";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N65Qpwg3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ovavreme"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbfAUHNF (ORCPT
+        id S1728311AbfAUHOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:13:05 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43302 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727992AbfAUHNE (ORCPT
+        Mon, 21 Jan 2019 02:14:03 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:33208 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727993AbfAUHOC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:13:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AD5E2608CF; Mon, 21 Jan 2019 05:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548050038;
-        bh=XaMXsOjL9zaSjV8aUTXyCSeq6HwVo4Jy+/NPc1jscug=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sx7G1G6z9jqpCslXUQqxNWgwjSE1xApZFsQ9LeAxFVZ22lTiii893QPBJ/ehlj2tm
-         AdDJhzL601LIxqgCGmSsExbgkBPFQtZzDGoBSVCSQXh4j+ykqk4nlwpJJtUOznuNYB
-         GT0rRnSuEPp/nQoPOEM0l8Gi224zJeRP1P0AGuDo=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 663016020B;
-        Mon, 21 Jan 2019 05:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548050035;
-        bh=XaMXsOjL9zaSjV8aUTXyCSeq6HwVo4Jy+/NPc1jscug=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N65Qpwg3qv7EQtq/GRm0C/+RbPVppCmdkjglwpDXNi3YiMDU8wCULMktiLWz82fcE
-         i/IO3XQOIubn9V3myR4YQo/Lo6m9JDNv8VODE9UTHsTOrqvpDXHaYVvadskmlimIV+
-         UJQvCgD0mZO5xE9DmIvsFZm2WeNnaHvcIW5FRF4I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 663016020B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, tfiga@chromium.org,
-        pratikp@codeaurora.org, pdaly@codeaurora.org,
-        jcrouse@codeaurora.org, Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH 2/3] iommu/io-pgtable-arm: Add support to use system cache
-Date:   Mon, 21 Jan 2019 11:23:34 +0530
-Message-Id: <20190121055335.15430-3-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
-References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+        Mon, 21 Jan 2019 02:14:02 -0500
+Received: by mail-yw1-f68.google.com with SMTP id p65so7690585ywe.0
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:14:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uyipLOZTSIwpZWsR1TcE0z4tQjeXZYKEV1wzcg4NrdU=;
+        b=Ovavreme06i/tytbU8X7EJC4RV8sMcflD5xhosuyrSWqXc5eM8szEctbmKg9M8LNKO
+         aGWQ/xCrNFp00v4VVDGlrSp5ZJdOv6vieT/xlAUKbKPx2yN1vNDJ4iIxj5U936gukCoY
+         U9GgQD2k1/pm7VBpzCy0Pe2TCP+E8h22TCV01Fy/em6ASXf5FXqEWUh1YfPaHys/CMq1
+         RGaGlIbSDi2TTl6ckosGRJIH3lHT83h1ZzX5z67li1hUGBhnx+A3/slKkvkMPZnCGMg+
+         UfjYti0gPSaUYxN1VhlPkjC4XW9A36VerlF7d4Tk9cGFLaTLRlwo8tOika7BfzZhp5MZ
+         WT7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uyipLOZTSIwpZWsR1TcE0z4tQjeXZYKEV1wzcg4NrdU=;
+        b=kRclXEFQt7hwirZQy5w8xRU5UtC01VCszzPUKk7KcTgcOlQbINQgIkn5XTfUXYqAWP
+         PYPwIsVgvw04u2oOIxpjBb4uxjT5PWragMz7FRJcvDPNnWyKQWhslB2ibrQK7XTO8Mh/
+         29UR9JIkJYB2Z4H/YZ8K08J8rSBn3ndrni77WU5cAe6KU5J4M/3OHuMFcfji//LfMN3Q
+         2vZPpt0pe2jwMdIm4cosMotyCthrb5JZ9iQDKinGBPlK8AVXc4nF9nqp7aAG49rXUhd6
+         S9FMr9ZADfwqMm1vAo5PZgfbCNVAlv9Q3PyP+pDTO/+ukJtCQ4yA7EXB7jDm19Un70we
+         DPpg==
+X-Gm-Message-State: AJcUukc+Lkb/P0LFIfx+nlTT1ij9IYYHgmnZ+Yquk/+nFn/BANNY4DMh
+        GRBRxHsUrbQvVvEepq37b1MtO2YodnamPxTPiDQk1WrQ+Lg=
+X-Google-Smtp-Source: ALg8bN7duwdDk5JK1h87DBVWJL+DtD+PdtVzIgEpXIJiCrqL5BteFdBGwjM7HQJUFjBIQLleYVSCz88/LiMRLWbUtB4=
+X-Received: by 2002:a81:60c4:: with SMTP id u187mr25686411ywb.345.1548015796908;
+ Sun, 20 Jan 2019 12:23:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20190119005022.61321-1-shakeelb@google.com> <02f74c47-4f35-3d59-f767-268844cb875e@i-love.sakura.ne.jp>
+In-Reply-To: <02f74c47-4f35-3d59-f767-268844cb875e@i-love.sakura.ne.jp>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Sun, 20 Jan 2019 12:23:06 -0800
+Message-ID: <CALvZod4h7ouNE7p2ouTix9uK3XLUvP6UYNDPEkR-y5PZRJRDnw@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm, oom: fix use-after-free in oom_kill_process
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Few Qualcomm platforms such as, sdm845 have an additional outer
-cache called as System cache, aka. Last level cache (LLC) that
-allows non-coherent devices to upgrade to using caching.
+On Fri, Jan 18, 2019 at 7:35 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2019/01/19 9:50, Shakeel Butt wrote:
+> > On looking further it seems like the process selected to be oom-killed
+> > has exited even before reaching read_lock(&tasklist_lock) in
+> > oom_kill_process(). More specifically the tsk->usage is 1 which is due
+> > to get_task_struct() in oom_evaluate_task() and the put_task_struct
+> > within for_each_thread() frees the tsk and for_each_thread() tries to
+> > access the tsk. The easiest fix is to do get/put across the
+> > for_each_thread() on the selected task.
+>
+> Good catch. p->usage can become 1 while printk()ing a lot at dump_header().
+>
+> > @@ -981,6 +981,13 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+> >        * still freeing memory.
+> >        */
+> >       read_lock(&tasklist_lock);
+> > +
+> > +     /*
+> > +      * The task 'p' might have already exited before reaching here. The
+> > +      * put_task_struct() will free task_struct 'p' while the loop still try
+> > +      * to access the field of 'p', so, get an extra reference.
+> > +      */
+> > +     get_task_struct(p);
+> >       for_each_thread(p, t) {
+> >               list_for_each_entry(child, &t->children, sibling) {
+> >                       unsigned int child_points;
+> > @@ -1000,6 +1007,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+> >                       }
+> >               }
+> >       }
+> > +     put_task_struct(p);
+>
+> Moving put_task_struct(p) to after read_unlock(&tasklist_lock) will reduce
+> latency of a write_lock(&tasklist_lock) waiter.
+>
+> >       read_unlock(&tasklist_lock);
+> >
+> >       /*
+> >
+>
+> By the way, p->usage is already 1 implies that p->mm == NULL due to already
+> completed exit_mm(p). Then, process_shares_mm(child, p->mm) might fail to
+> return true for some of children. Not critical but might lead to unnecessary
+> oom_badness() calls for child selection. Maybe we want to use same logic
+> __oom_kill_process() uses (i.e. bail out if find_task_lock_mm(p) failed)?
 
-There is a fundamental assumption that non-coherent devices can't
-access caches. This change adds an exception where they *can* use
-some level of cache despite still being non-coherent overall.
-The coherent devices that use cacheable memory, and CPU make use of
-this system cache by default.
+Thanks for the review. I am thinking of removing the whole children
+selection heuristic for now.
 
-Looking at memory types, we have following -
-a) Normal uncached :- MAIR 0x44, inner non-cacheable,
-                      outer non-cacheable;
-b) Normal cached :-   MAIR 0xff, inner read write-back non-transient,
-                      outer read write-back non-transient;
-                      attribute setting for coherenet I/O devices.
-and, for non-coherent i/o devices that can allocate in system cache
-another type gets added -
-c) Normal sys-cached :- MAIR 0xf4, inner non-cacheable,
-                        outer read write-back non-transient
-
-Coherent I/O devices use system cache by marking the memory as
-normal cached.
-Non-coherent I/O devices should mark the memory as normal
-sys-cached in page tables to use system cache.
-
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
- drivers/iommu/io-pgtable-arm.c | 15 +++++++++++++--
- drivers/iommu/io-pgtable.h     |  4 ++++
- include/linux/iommu.h          |  2 ++
- 3 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index c76919c30f1a..0e55772702da 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -168,10 +168,12 @@
- #define ARM_LPAE_MAIR_ATTR_MASK		0xff
- #define ARM_LPAE_MAIR_ATTR_DEVICE	0x04
- #define ARM_LPAE_MAIR_ATTR_NC		0x44
-+#define ARM_LPAE_MAIR_ATTR_QCOM_SYS_CACHE	0xf4
- #define ARM_LPAE_MAIR_ATTR_WBRWA	0xff
- #define ARM_LPAE_MAIR_ATTR_IDX_NC	0
- #define ARM_LPAE_MAIR_ATTR_IDX_CACHE	1
- #define ARM_LPAE_MAIR_ATTR_IDX_DEV	2
-+#define ARM_LPAE_MAIR_ATTR_IDX_QCOM_SYS_CACHE	3
- 
- /* IOPTE accessors */
- #define iopte_deref(pte,d) __va(iopte_to_paddr(pte, d))
-@@ -443,6 +445,9 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
- 		else if (prot & IOMMU_CACHE)
- 			pte |= (ARM_LPAE_MAIR_ATTR_IDX_CACHE
- 				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
-+		else if (prot & IOMMU_QCOM_SYS_CACHE)
-+			pte |= (ARM_LPAE_MAIR_ATTR_IDX_QCOM_SYS_CACHE
-+				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
- 	} else {
- 		pte = ARM_LPAE_PTE_HAP_FAULT;
- 		if (prot & IOMMU_READ)
-@@ -781,7 +786,8 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
- 
- 	if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA |
- 			    IO_PGTABLE_QUIRK_NON_STRICT |
--			    IO_PGTABLE_QUIRK_NON_COHERENT))
-+			    IO_PGTABLE_QUIRK_NON_COHERENT |
-+			    IO_PGTABLE_QUIRK_QCOM_SYS_CACHE))
- 		return NULL;
- 
- 	data = arm_lpae_alloc_pgtable(cfg);
-@@ -794,6 +800,9 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
- 	if (cfg->quirks & IO_PGTABLE_QUIRK_NON_COHERENT)
- 		reg |= ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_IRGN0_SHIFT |
- 		       ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_ORGN0_SHIFT;
-+	else if (cfg->quirks & IO_PGTABLE_QUIRK_QCOM_SYS_CACHE)
-+		reg |= ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_IRGN0_SHIFT |
-+		      ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT;
- 	else
- 		reg |= ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT |
- 		       ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT;
-@@ -848,7 +857,9 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
- 	      (ARM_LPAE_MAIR_ATTR_WBRWA
- 	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_CACHE)) |
- 	      (ARM_LPAE_MAIR_ATTR_DEVICE
--	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_DEV));
-+	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_DEV)) |
-+	      (ARM_LPAE_MAIR_ATTR_QCOM_SYS_CACHE
-+	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_QCOM_SYS_CACHE));
- 
- 	cfg->arm_lpae_s1_cfg.mair[0] = reg;
- 	cfg->arm_lpae_s1_cfg.mair[1] = 0;
-diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
-index 46604cf7b017..fb237e8aa9f1 100644
---- a/drivers/iommu/io-pgtable.h
-+++ b/drivers/iommu/io-pgtable.h
-@@ -80,6 +80,9 @@ struct io_pgtable_cfg {
- 	 *      pagetables even on a coherent SMMU for cases where reducing
- 	 *      snoop traffic/latency on walks outweighs the cost of cache
- 	 *      maintenance on PTE updates.
-+	 *
-+	 * IO_PGTABLE_QUIRK_QCOM_SYS_CACHE: Force using outer system cache
-+	 *      for non-coherent devices on Qcom platforms.
- 	 */
- 	#define IO_PGTABLE_QUIRK_ARM_NS		BIT(0)
- 	#define IO_PGTABLE_QUIRK_NO_PERMS	BIT(1)
-@@ -88,6 +91,7 @@ struct io_pgtable_cfg {
- 	#define IO_PGTABLE_QUIRK_NO_DMA		BIT(4)
- 	#define IO_PGTABLE_QUIRK_NON_STRICT	BIT(5)
- 	#define IO_PGTABLE_QUIRK_NON_COHERENT	BIT(6)
-+	#define IO_PGTABLE_QUIRK_QCOM_SYS_CACHE BIT(7)
- 	unsigned long			quirks;
- 	unsigned long			pgsize_bitmap;
- 	unsigned int			ias;
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index e90da6b6f3d1..08bb6befad5e 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -31,6 +31,7 @@
- #define IOMMU_CACHE	(1 << 2) /* DMA cache coherency */
- #define IOMMU_NOEXEC	(1 << 3)
- #define IOMMU_MMIO	(1 << 4) /* e.g. things like MSI doorbells */
-+#define IOMMU_QCOM_SYS_CACHE	(1 << 6)
- /*
-  * Where the bus hardware includes a privilege level as part of its access type
-  * markings, and certain devices are capable of issuing transactions marked as
-@@ -125,6 +126,7 @@ enum iommu_attr {
- 	DOMAIN_ATTR_FSL_PAMUV1,
- 	DOMAIN_ATTR_NESTING,	/* two stages of translation */
- 	DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE,
-+	DOMAIN_ATTR_QCOM_SYS_CACHE,
- 	DOMAIN_ATTR_MAX,
- };
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+Shakeel
