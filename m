@@ -2,107 +2,141 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BCFC6369F
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 13:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D91C6369F
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 13:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 832592087B
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 13:05:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D22DD20861
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 13:30:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQs1yjEv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ovui++He"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbfATNE3 (ORCPT
+        id S1730613AbfATNam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 08:04:29 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37770 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730542AbfATNE2 (ORCPT
+        Sun, 20 Jan 2019 08:30:42 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54608 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730596AbfATNal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 08:04:28 -0500
-Received: by mail-lf1-f68.google.com with SMTP id y11so13614975lfj.4;
-        Sun, 20 Jan 2019 05:04:27 -0800 (PST)
+        Sun, 20 Jan 2019 08:30:41 -0500
+Received: by mail-it1-f195.google.com with SMTP id i145so13104455ita.4
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 05:30:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rw8t1BZ5ouoNoJISrQlHLxtYmn9AYuqm7x0WnAVcO0U=;
-        b=bQs1yjEv3evOioeCPWEHmkMJ32xQeloSBCy4740ydb67MK1T0FX7nhNmXfeXQ2vtyt
-         FJcapcAQVLss9tgxGJUNybjzgpPitjl6tspycTusnOOJeru5h8qBnVsuGpRgKitKUJqz
-         oOmt8Vz7GV0ncmsLfuP2OMqOIHQ5lKw6zQLkb2xi3XE2wOiX0zqdgLavg+y/O0iSPRGY
-         zGka4VbDm0z2Zc7TRorbc/og7z9aeZD+zrSMRARWK84xlssVQ1Kj0sXqvRaIS1D0N6Wf
-         WJNsjKZUl+6LPa0hqjKTzxw/wbgOGe10Y4RDtotOIuV5aQtqV0RsQZhxRQmnBmpZEFSC
-         KE9Q==
+        bh=kvPxZxbejLIRpkWpPkQpCpqx55TaTGMUbFyDQUcQOH4=;
+        b=ovui++HeQkza1NtzXxbxEEAuR9Kl+GYoJUXLn6Pkezrl/6olxG0GM9Emt9KnAMstkh
+         m0mPlxWguzJ9f5G8d2dFTHSmm4eiWCItwxFYnaKj9DWy2UUBbNPS8feoqCI29CMaMmKD
+         ZV7/XOXDTcd4pruN7Kj6IgSETHHYqCS3/SYmC1pDYTVz9yY1RnWg/mjThwG7G6D++LkC
+         Q2xuRx/A5p94WPyY219D3+J4yl1qKgJJSryZSo4HoqK9YnIgWpiKLyuvSkbouA1oIFHf
+         WQ4yrQZ12I+Lq57gScP1Fou22oHFv+c3pxtPeLbxhjAYZceYyXBQsHqT+c+kO23+KGkz
+         srjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rw8t1BZ5ouoNoJISrQlHLxtYmn9AYuqm7x0WnAVcO0U=;
-        b=RQA4PEFcMeScBLEIiqynr+E+mirjeV9PA+g5Z5R7v+BW/bJF3aHnUAbIXG5XHzToFy
-         qxIc7Ow3vrR8M25f4W0CppJE7+XYJEIiv3FWL86wSTBPk8HxfD2ucquTr9NTH2dQUQbR
-         j7nxYsI/xToVFp4+9KqPuH5rX3EAkGpOT9tsPQ9PlHNKxUMg/IF7jP0DMprQY2xHFGB7
-         J/p3xJwAdimu1T9IJqOE+Ood0JR3euHsBKcHmkjzflr4Ma3tghaGDpJNbFjS/arrXQHs
-         3x6i80bsh31L9uyzowgcBEotvGvXCYondwLsbNCRNm93G92IvBisXUllM3o2GDAUw+zk
-         qV3Q==
-X-Gm-Message-State: AJcUukdO960Sj/5e6doW6PFDtP0ntEZXE7dBFkIFb/0yXT/AHkWKjPNx
-        gprTOA2PcC37jTGZf6H1dF0g/Xezozw+acKpU3U=
-X-Google-Smtp-Source: ALg8bN6WHmjrSm51/C+RdXGBxN96l24iaZGpgRF93FeCXXFffr0m6QVgdFl01vjsh2sY0A87E4eN3SWc4aiANo+rfUg=
-X-Received: by 2002:a19:d90c:: with SMTP id q12mr15581326lfg.24.1547989466271;
- Sun, 20 Jan 2019 05:04:26 -0800 (PST)
+        bh=kvPxZxbejLIRpkWpPkQpCpqx55TaTGMUbFyDQUcQOH4=;
+        b=fl3az3BLk22O1JsROjCoMsePK3VyXV775Kh4ARyFkiloqohFWnVd3w2/H0tKXTuNyH
+         FUcmDS/LLAp/R8rwta008FWgPEEmQ+yVHbHv7ifQByBvrvfvHVzqNv1mUxZohMDSzxky
+         XYoWmk0AFxzwVNL5SwAiIrlerlG3WwLx65JFD8bbRVdujTymRtD2PSOHvE6sblyEeAaK
+         TdGf5elX8MWTPW1mhc2GDVzu0/N/rWyc4AopsomXFueGcfaiDJQDUmhGhAunKGXWRxvv
+         2nudlhWqyX7rNIY20zY1/v8+eqsC0pgchzyi5pHOy5dC0stXu4j6CkrhAn8NgnBEleiB
+         ++bQ==
+X-Gm-Message-State: AJcUukfe3uRU8lgzQ2PKYwRMmG083micjBn9B9YWrT3wsUGcswUMGBOG
+        /3OC5izEyJHUBLSAt+tnYztsIARVTZguFsOi5l1GOA==
+X-Google-Smtp-Source: ALg8bN4Y567V5el6qPj6tMuVjN9+Yf2lTkOzSiNd3H/zVUMmXK/cv9wDbxp2/voSuypeGaZjJ0OMecXqt6RgliDFKL0=
+X-Received: by 2002:a02:97a2:: with SMTP id s31mr14655398jaj.82.1547991040336;
+ Sun, 20 Jan 2019 05:30:40 -0800 (PST)
 MIME-Version: 1.0
-References: <5bd55e34.1c69fb81.b2503.b6f5@mx.google.com>
-In-Reply-To: <5bd55e34.1c69fb81.b2503.b6f5@mx.google.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Sun, 20 Jan 2019 18:38:24 +0530
-Message-ID: <CAFqt6zYkgrUgtFQbc-W=Jap84wshPSH5aTRTBfsRkOQhaSROdQ@mail.gmail.com>
-Subject: Re: [PATCH] arch/sh/mm/consistent.c: Use dma_zalloc_coherent
-To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
-        jacopo+renesas@jmondi.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+References: <ea2bc542-38b2-8218-9eb7-4c4a05da36ea@i-love.sakura.ne.jp>
+ <CACT4Y+Yy-bF07F7F8DoFY8=4LtLURRn1WsZzNZ9LN+N=vn7Tpw@mail.gmail.com>
+ <201901180520.x0I5KYTi096127@www262.sakura.ne.jp> <CACT4Y+acvQXPLHFSbNYAEma6Rqx6QCp_kqjsbAF8M9og4KA3CA@mail.gmail.com>
+ <d90cc533-607e-fe40-9b02-a6cac7b7b534@i-love.sakura.ne.jp>
+In-Reply-To: <d90cc533-607e-fe40-9b02-a6cac7b7b534@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Sun, 20 Jan 2019 14:30:29 +0100
+Message-ID: <CACT4Y+b=5_p=eTgKobApkZZTAVeRxrn3dEempFHampFjrGX0Pw@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in ndisc_alloc_skb
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     syzbot <syzbot+ea7d9cb314b4ab49a18a@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        syzkaller <syzkaller@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 12:29 PM Sabyasachi Gupta
-<sabyasachi.linux@gmail.com> wrote:
+On Sat, Jan 19, 2019 at 2:10 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
 >
-> Replaced dma_alloc_coherent + memset with dma_zalloc_coherant
+> On 2019/01/19 21:16, Dmitry Vyukov wrote:
+> >> The question for me is, whether sysbot can detect hash collision with different
+> >> syz-program lines before writing the hash value to /dev/kmsg, and retry by modifying
+> >> syz-program lines in order to get a new hash value until collision is avoided.
+> >> If it is difficult, simpler choice like current Unix time and PID could be used
+> >> instead...
+> >
+> > Hummm, say, if you run syz-manager locally and report a bug, where
+> > will the webserver and database that allows to download all satellite
+> > info work? How long you need to keep this info and provide the web
+> > service? You will also need to pay and maintain the server for... how
+> > long? I don't see how this can work and how we can ask people to do
+> > this. This frankly looks like overly complex solution to a problem
+> > were simpler solutions will work. Keeping all info in a self-contained
+> > file looks like the only option to make it work reliably.
+> > It's also not possible to attribute kernel output to individual programs.
 >
-> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+> The first messages I want to look at is kernel output. Then, I look at
+> syz-program lines as needed. But current "a self-contained file" is
+> hard to find kernel output.
 
-Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
+I think everybody looks at kernel crash first, that's why we provide
+kernel crash inline in the email so it's super easy to find. One does
+not need to look at console output at all to read the crash message.
+Console output is meant for more complex cases when a developer needs
+to extract some long tail of custom information. We don't know what
+exactly information a developer is looking for and it is different in
+each case, so it's not possible to optimize for this. We preserve
+console output intact to not destroy some potentially important
+information. Say, if we start reordering messages, we lose timing
+information and timing/interleaving information is important in some
+cases.
 
-> ---
->  arch/sh/mm/consistent.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Even if we keep both kernel output and
+> syz-program lines in a single file, we can improve readability by
+> splitting into kernel output section and syz-program section.
 >
-> diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
-> index 792f361..fc8d235 100644
-> --- a/arch/sh/mm/consistent.c
-> +++ b/arch/sh/mm/consistent.c
-> @@ -52,13 +52,12 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
->         if (!memsize)
->                 return 0;
->
-> -       buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
-> +       buf = dma_zalloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
->         if (!buf) {
->                 pr_warning("%s: unable to allocate memory\n", name);
->                 return -ENOMEM;
->         }
->
-> -       memset(buf, 0, memsize);
->
->         r->flags = IORESOURCE_MEM;
->         r->start = dma_handle;
-> --
-> 2.7.4
+>   # Kernel output section start
+>   [$(uptime)][$(caller_info)] executing program #0123456789abcdef0123456789abcdef
+>   [$(uptime)][$(caller_info)] $(kernel_messages_caused_by_0123456789abcdef0123456789abcdef_are_here)
+>   [$(uptime)][$(caller_info)] executing program #456789abcdef0123456789abcdef0123
+>   [$(uptime)][$(caller_info)] $(kernel_messages_caused_by_456789abcdef0123456789abcdef0123_and_0123456789abcdef0123456789abcdef_are_here)
+>   [$(uptime)][$(caller_info)] executing program #89abcdef0123456789abcdef01234567
+>   [$(uptime)][$(caller_info)] $(kernel_messages_caused_by_89abcdef0123456789abcdef01234567_456789abcdef0123456789abcdef0123_and_0123456789abcdef0123456789abcdef_are_here)
+>   [$(uptime)][$(caller_info)] BUG: unable to handle kernel paging request at $(address)
+>   [$(uptime)][$(caller_info)] CPU: $(cpu) PID: $(pid) Comm: syz#89abcdef0123 Not tainted $(version) #$(build)
+>   [$(uptime)][$(caller_info)] $(backtrace_of_caller_info_is_here)
+>   [$(uptime)][$(caller_info)] Kernel panic - not syncing: Fatal exception
+>   # Kernel output section end
+>   # syzbot code section start
+>   Program for #0123456789abcdef0123456789abcdef
+>   $(program_lines_for_0123456789abcdef0123456789abcdef_is_here)
+>   Program for #456789abcdef0123456789abcdef0123
+>   $(program_lines_for_456789abcdef0123456789abcdef0123_is_here)
+>   Program for #89abcdef0123456789abcdef01234567
+>   $(program_lines_for_89abcdef0123456789abcdef01234567_is_here)
+>   # syzbot code section end
 >
