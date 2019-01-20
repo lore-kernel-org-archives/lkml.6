@@ -2,69 +2,100 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDAAC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 04:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 557D6C61CE3
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 04:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 841142087B
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 04:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547956804;
-	bh=0NsXX9z3D0Ipytk+W6XcUHD/v1plWlIs7jL0YqB/B6o=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=rqiMzg0q/xZdh4IsHwc7y0rJ3cePNLkXm0w1I06qqlLH9xW0NFOk1XgohG1AcGC8D
-	 XMVzyUMLtCUTKanryMQ54eAj0aHKjD7VElfik7NgGfkpCHJymKVi/GpkLxpUnYAAzQ
-	 3QwnAIiW67k/BuGgUvELeETrer30Bw3G9lUMWzQc=
+	by mail.kernel.org (Postfix) with ESMTP id 177A22084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 04:10:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YnD+xZjU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbfATEAD (ORCPT
+        id S1730229AbfATEKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 23:00:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51684 "EHLO mail.kernel.org"
+        Sat, 19 Jan 2019 23:10:37 -0500
+Received: from ozlabs.org ([203.11.71.1]:45561 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730085AbfATEAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 23:00:02 -0500
-Subject: Re: [GIT PULL] arm64: fixes for -rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547956802;
-        bh=0NsXX9z3D0Ipytk+W6XcUHD/v1plWlIs7jL0YqB/B6o=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Sy7GHFp8nispoSSmBtLjcxhFYkbqyTGB/SIFl6zmus7NKPpIg0CLDS5yWHORlRxRc
-         gcSltjERYtKbR9L4sChDXpjJReEOXc+ZK5p6ZHjbslAYnUa3RLAJt21yGv3a6oSlgl
-         sLDueaRsb24esoWdT4p9YHuHGatoZuVLV7iHyMVs=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190120000420.GM26876@brain-police>
-References: <20190120000420.GM26876@brain-police>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190120000420.GM26876@brain-police>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 7fa1e2e6afa7f4c9f46528e61de6a15d9e8dffd9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b0f3e768a89bbc72195023c3db1db45c40e5b70c
-Message-Id: <154795680204.15924.5820126657535767382.pr-tracker-bot@kernel.org>
-Date:   Sun, 20 Jan 2019 04:00:02 +0000
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        ard.biesheuvel@linaro.org
+        id S1730065AbfATEKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 19 Jan 2019 23:10:36 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43j1S965Ltz9sCh;
+        Sun, 20 Jan 2019 15:10:33 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547957434;
+        bh=xO1voMFlltFkj4LV3nMUquk5VVeVmfMnA4uI6GyBtbU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YnD+xZjUMesUiA2+aMg1DY9/gxcyF/xYpFYo2QFRdX6XoTQkRvlov+kwgdanv0mCD
+         22O/34Xh6ioAztULBW/sQtdxfVTp6junfRgLd7XO/8jirHvmz0TM82vUqAotQn+oQy
+         n9usbZ1PwZTcjvQxf0izozcCQMTZkD8viDOr4bfpTGNBET58K3CRm2SYYT0mCw0jvy
+         +SPrCR6PW+rtS0P7EWweq6h2tmDmSfooPGJcG4Z8OilJ3Wj517ZCxT0dkfQ7rgj17B
+         5Z3gs9jAJ3GJi4DFHqH3p5Mi9lcJrDi/qfcoi2DdKm0qq0JBUurNp9yRu3HL5owl97
+         RleZwJrP9irUw==
+Date:   Sun, 20 Jan 2019 15:10:25 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eli Britstein <elibr@mellanox.com>,
+        Oz Shlomo <ozsh@mellanox.com>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Message-ID: <20190120151025.196b7a5e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eB5QcuqC+._gdmVJWj8Nsk."; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 20 Jan 2019 00:04:22 +0000:
+--Sig_/eB5QcuqC+._gdmVJWj8Nsk.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+Hi all,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b0f3e768a89bbc72195023c3db1db45c40e5b70c
+In commit
 
-Thank you!
+  25f2d0e7791e ("net/mlx5e: Fix cb_ident duplicate in indirect block regist=
+er")
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Fixes tag
+
+  Fixes: f5bc2c5de101 ("net/mlx5e: Support TC indirect block notifications
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+The Fixes tag line was split over 2 lines.  Please, in the future, try
+to keep it on a single line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eB5QcuqC+._gdmVJWj8Nsk.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxD9LEACgkQAVBC80lX
+0GzaMwf/Qub8Lk1mIzFmEFUEqxZ0C/Brpc0crAwn1bDT1AR2thWpYcGQwvxwFmjM
+EEdrjxEAEhsV8DAPJuEuLjQNFSRRsC4WUOVzng6Y/+73NmHmEXu5+Q5cISv78c/J
+bEvVL4M27MBJ6r+ddp9+sAnWt+ZjsguuyjtvKVo6wTIOkkrSza215Unhj06YOh7w
+Bz4/sbTBEUbLkbHWabOUkDNPhZ/7C6DJuoAt5vUlDNhP3Af8j9FyFxt6c18aZV9k
+1IYbk/AuaERo+MRXCmh5LHS2B7uOpDcFTeVIfc7cyJ+48Bo/tzTHn7iPkWsSn93R
+ozrfE29iipxSVQ8NBY21TWvt8iZnFg==
+=KssF
+-----END PGP SIGNATURE-----
+
+--Sig_/eB5QcuqC+._gdmVJWj8Nsk.--
