@@ -2,163 +2,185 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21DCC7113D
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22F2C7113C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE5352087B
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548001215;
-	bh=QAWH+9ixaeGOiazvqImEpq5irr32gvi3HlSBLDH2VlE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xzpISrRX4apIoPO0m18vsdrNS/5qS3kZYe4hQwJT6NuLQwnEi8hE8rB/dJQu9X5mF
-	 zWk6Lvrh9WTQ/wpOWAGgQ1IDLerdIZM4ug/90dLqileG3gOZ7pn/LduwGKU6a3zmPU
-	 y/Hn3cgoz5M9EZZfxFI+cEaF7uP5gDS6fM3RMGsU=
+	by mail.kernel.org (Postfix) with ESMTP id 9A25520861
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 16:29:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+CF+9Kh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbfATQUN (ORCPT
+        id S1727197AbfATQ2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 11:20:13 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40995 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbfATQUN (ORCPT
+        Sun, 20 Jan 2019 11:28:22 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45771 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbfATQ2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 11:20:13 -0500
-Received: by mail-oi1-f195.google.com with SMTP id j21so12713405oii.8;
-        Sun, 20 Jan 2019 08:20:12 -0800 (PST)
+        Sun, 20 Jan 2019 11:28:22 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so13772554lfa.12;
+        Sun, 20 Jan 2019 08:28:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2zeLJaZ4n1WQI+SD7IrLf8g19G1ClUe9M8YddGgYayE=;
+        b=k+CF+9KhVTO05PRScpyt9Wp1xQkKGY2wIGdbEqVCoG3wSeZXeLt0YFWG5aB8CzFO+H
+         oPwT9jtZSLfA+vL28dOGRU5XdRqw3IJmXrHXX8sWtacOViFMhRo/qLmxh66WEtF4wgIt
+         TZOTXENA5U1qU/qzgpC+IwK5aaHPywtjuoD6d/84iZB1Aq9zedPLxKxVD1yq9yEY+Vsa
+         SF+yGQPSGfB1J/gWmlAotOhEbiwD6prAdIBQH6YVJpmrgc45ZCr7RWp/0fXqpk/X4GfY
+         qLJXrtVlGWIR+HdBkjwWbs4rJus/UnyMVjc8OEkq0IRT9KP5H3Y/wI8TC//dOclt8SDo
+         IiKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=87E/+3zx0weqSrGfJzPSvhyyNU7cB2w5xkBG7edYcBc=;
-        b=Xp6RWUM/qEW1agM5oAWgBluWop5L0cxTNnICH330MHT8g0k4D7TKPmfw6+5LEHkzaY
-         MgVvIHPZ9MMdIxpXy8IONhqic0GVMQqDny16dGQ3MLwf/pyQZ9O4sGaIHL3Zy52kRIPo
-         RN1BPztShIE7e9tu27wlG9ixwUBqHIouyhaLHPINT6cMjVi9N8pm8Ha73xg/sXkIOx7D
-         yeh1B3qOtXYfokoswr4/79romb5wEmAVsgbIEYd+J2gcZxgFFAI4SksC04OF2a6cJY0g
-         dS6ZMC8hvmHH+yrzH+Tq1hzStAgVL8putvNS/t9UehhNXuaak7ncEjUcpypk0jucOja8
-         YJbA==
-X-Gm-Message-State: AJcUukfA0xvH5MGC8FLOi9kuirB6EgQb7fx+gtTKphOeDDB/ks1Y794/
-        Je/betTFViLpLthrOSsaJjqXhpRpiw86mpIwlEkzKQ==
-X-Google-Smtp-Source: ALg8bN5NqABJ18wP8P6IhKoam3VQS7fk8Gs/RE1Yj7JHEHhV4UN+uNm+x//910014kfRV+Ut4sCX8NiXUchri5bNe+M=
-X-Received: by 2002:aca:e715:: with SMTP id e21mr3625067oih.76.1548001212260;
- Sun, 20 Jan 2019 08:20:12 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2zeLJaZ4n1WQI+SD7IrLf8g19G1ClUe9M8YddGgYayE=;
+        b=qLordlKPPo5Nm1deaSuOsbWLtn8pPIIIQULVp1HwGBOWnn6c8LtqeVYdIRd16yUzC8
+         eE23aRtHDMnyGR6Wioq1aBOSYvrbgUm0mqvsiRCJzyG6lmOa0D0FXNnZbg+gqTUtqZKU
+         p39t3nJ5w3+FFWvxFGZsJcu6EnERUvZKZtHTo2xCnQeqYbQopjZiyADlO+pDyNErDMdd
+         IOifnXwNXZPDbyAclExn1sDBhEYShYUJZrpYM01OYp3EfjrnZMSxSPSGV4jWYTvRiIks
+         yuzxkAlCuJ3hVpevPKs4u1LdAy/RdZqAV+UvKqXOZqzKaqIyb9AdTjyBXWF9kWl6belN
+         Txmw==
+X-Gm-Message-State: AJcUukecCNYxcALPCnQa7+Oe16+2mwmf5vkDHqFlZwLzhb3J/mTBN8Ei
+        zKkPzn/f3Ps7mJHCDF70o2cwbLCh
+X-Google-Smtp-Source: ALg8bN4328O6qWJ0U4VfgiJH4SPdhMpJuW/8CRaSvx28VCzVKokS5q5JvOGDnFJzzfdtk7Ea9E9X+w==
+X-Received: by 2002:a19:df41:: with SMTP id q1mr17222481lfj.25.1548001698849;
+        Sun, 20 Jan 2019 08:28:18 -0800 (PST)
+Received: from [192.168.1.18] (bdu110.neoplus.adsl.tpnet.pl. [83.28.6.110])
+        by smtp.gmail.com with ESMTPSA id 12-v6sm1763896ljf.96.2019.01.20.08.28.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 08:28:18 -0800 (PST)
+Subject: Re: [PATCH 05/13] dt-bindings: leds: add DT bindings for max77650
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190118134244.22253-1-brgl@bgdev.pl>
+ <20190118134244.22253-6-brgl@bgdev.pl>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <86aebe51-1279-0bb6-05ca-8d7c27790681@gmail.com>
+Date:   Sun, 20 Jan 2019 17:28:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-6-keith.busch@intel.com>
- <CAJZ5v0jmkyrNBHzqHsOuWjLXF34tq83VnEhdBWrdFqxyiXC=cw@mail.gmail.com>
- <CAPcyv4gH0_e_NFJNOFH4XXarSs7+TOj4nT0r-D33ZGNCfqBdxg@mail.gmail.com>
- <20190119090129.GC10836@kroah.com> <CAPcyv4jijnkW6E=0gpT3-qy5uOgTV-D7AN+CAu7mmdrRKGHvFg@mail.gmail.com>
-In-Reply-To: <CAPcyv4jijnkW6E=0gpT3-qy5uOgTV-D7AN+CAu7mmdrRKGHvFg@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sun, 20 Jan 2019 17:19:56 +0100
-Message-ID: <CAJZ5v0hS8Mb-BZuzztTt9D0Rd0TPzMcod48Ev-8HCZg07BP6fw@mail.gmail.com>
-Subject: Re: [PATCHv4 05/13] Documentation/ABI: Add new node sysfs attributes
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190118134244.22253-6-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 5:56 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Sat, Jan 19, 2019 at 1:01 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Jan 18, 2019 at 01:08:02PM -0800, Dan Williams wrote:
-> > > On Thu, Jan 17, 2019 at 3:41 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > >
-> > > > On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
-> > > > >
-> > > > > Add entries for memory initiator and target node class attributes.
-> > > > >
-> > > > > Signed-off-by: Keith Busch <keith.busch@intel.com>
-> > > >
-> > > > I would recommend combining this with the previous patch, as the way
-> > > > it is now I need to look at two patches at the time. :-)
-> > > >
-> > > > > ---
-> > > > >  Documentation/ABI/stable/sysfs-devices-node | 25 ++++++++++++++++++++++++-
-> > > > >  1 file changed, 24 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
-> > > > > index 3e90e1f3bf0a..a9c47b4b0eee 100644
-> > > > > --- a/Documentation/ABI/stable/sysfs-devices-node
-> > > > > +++ b/Documentation/ABI/stable/sysfs-devices-node
-> > > > > @@ -90,4 +90,27 @@ Date:                December 2009
-> > > > >  Contact:       Lee Schermerhorn <lee.schermerhorn@hp.com>
-> > > > >  Description:
-> > > > >                 The node's huge page size control/query attributes.
-> > > > > -               See Documentation/admin-guide/mm/hugetlbpage.rst
-> > > > > \ No newline at end of file
-> > > > > +               See Documentation/admin-guide/mm/hugetlbpage.rst
-> > > > > +
-> > > > > +What:          /sys/devices/system/node/nodeX/classY/
-> > > > > +Date:          December 2018
-> > > > > +Contact:       Keith Busch <keith.busch@intel.com>
-> > > > > +Description:
-> > > > > +               The node's relationship to other nodes for access class "Y".
-> > > > > +
-> > > > > +What:          /sys/devices/system/node/nodeX/classY/initiator_nodelist
-> > > > > +Date:          December 2018
-> > > > > +Contact:       Keith Busch <keith.busch@intel.com>
-> > > > > +Description:
-> > > > > +               The node list of memory initiators that have class "Y" access
-> > > > > +               to this node's memory. CPUs and other memory initiators in
-> > > > > +               nodes not in the list accessing this node's memory may have
-> > > > > +               different performance.
-> > > >
-> > > > This does not follow the general "one value per file" rule of sysfs (I
-> > > > know that there are other sysfs files with more than one value in
-> > > > them, but it is better to follow this rule as long as that makes
-> > > > sense).
-> > > >
-> > > > > +
-> > > > > +What:          /sys/devices/system/node/nodeX/classY/target_nodelist
-> > > > > +Date:          December 2018
-> > > > > +Contact:       Keith Busch <keith.busch@intel.com>
-> > > > > +Description:
-> > > > > +               The node list of memory targets that this initiator node has
-> > > > > +               class "Y" access. Memory accesses from this node to nodes not
-> > > > > +               in this list may have differet performance.
-> > > > > --
-> > > >
-> > > > Same here.
-> > > >
-> > > > And if you follow the recommendation given in the previous message
-> > > > (add "initiators" and "targets" subdirs under "classX"), you won't
-> > > > even need the two files above.
-> > >
-> > > This recommendation is in conflict with Greg's feedback about kobject
-> > > usage. If these are just "vanity" subdirs I think it's better to have
-> > > a multi-value sysfs file. This "list" style is already commonplace for
-> > > the /sys/devices/system hierarchy.
-> >
-> > If you do a subdirectory "correctly" (i.e. a name for an attribute
-> > group), that's fine.  Just do not ever create a kobject just for a
-> > subdir, that will mess up userspace.
-> >
-> > And I hate the "multi-value" sysfs files, where at all possible, please
-> > do not copy past bad mistakes there.  If you can make them individual
-> > files, please do that, it makes it easier to maintain and code the
-> > kernel for.
->
-> I agree in general about multi-value sysfs, but in this case we're
-> talking about a mask. Masks are a single value. That said I can get on
-> board with calling what 'cpulist' does a design mistake (human
-> readable mask), but otherwise switching to one file per item in the
-> mask is a mess for userspace to consume.
+Hi Bartosz,
 
-Can you please refer to my response to Keith?
+Thank you for the patch.
 
-If you have "initiators" and "targets" under "classX" and a list of
-symlinks in each of them, I don't see any kind of a mess here.
+On 1/18/19 2:42 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Add the DT binding document for the LEDs module of max77650.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   .../bindings/leds/leds-max77650.txt           | 57 +++++++++++++++++++
+>   1 file changed, 57 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.txt b/Documentation/devicetree/bindings/leds/leds-max77650.txt
+> new file mode 100644
+> index 000000000000..822b8893bc20
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-max77650.txt
+> @@ -0,0 +1,57 @@
+> +LED driver for MAX77650 PMIC from Maxim Integrated.
+> +
+> +This module is part of the MAX77650 MFD device. For more details
+> +see Documentation/devicetree/bindings/mfd/max77650.txt.
+> +
+> +The LED controller is represented as a sub-node of the PMIC node on
+> +the device tree.
+> +
+> +This device has three current sinks.
+> +
+> +Required properties:
+> +--------------------
+> +- compatible:		Must be "maxim,max77650-leds"
+> +- #address-cells:	Must be <1>.
+> +- #size-cells:		Must be <0>.
+> +
+> +Each LED is represented as a sub-node of the LED-controller node. Up to
+> +three sub-nodes can be defined.
+> +
+> +Required properties of the sub-node:
+> +------------------------------------
+> +
+> +- reg:			Must be <0>, <1> or <2>.
+> +
+> +Optional properties of the sub-node:
+> +------------------------------------
+> +
+> +- label:		See Documentation/devicetree/bindings/leds/common.txt
+> +- linux,default-trigger: See Documentation/devicetree/bindings/leds/common.txt
+> +
+> +For more details, please refer to the generic GPIO DT binding document
+> +<devicetree/bindings/gpio/gpio.txt>.
+> +
+> +Example:
+> +--------
+> +
+> +	leds {
+> +		compatible = "maxim,max77650-leds";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		led0 {
+
+s/led0/led@0/
+
+> +			reg = <0>;
+> +			label = "max77650:blue:usr0";
+> +		};
+> +
+> +		led1 {
+
+s/led1/led@1/
+
+> +			reg = <1>;
+> +			label = "max77650:red:usr1";
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +
+> +		led2 {
+
+s/led2/led@2/
+
+> +			reg = <2>;
+> +			label = "max77650:green:usr2";
+> +		};
+
+Please remove "max77650:" from labels and add it in the driver.
+
+> +	};
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
