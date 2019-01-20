@@ -2,97 +2,131 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5526C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 08:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B664BC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 08:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 938BC2084A
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 08:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CD262084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 08:32:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OD3yXsWD"
+	dkim=pass (2048-bit key) header.d=melexis.com header.i=@melexis.com header.b="DUlHyDdv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730280AbfATIOV (ORCPT
+        id S1730236AbfATIcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 03:14:21 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40838 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730236AbfATIOU (ORCPT
+        Sun, 20 Jan 2019 03:32:18 -0500
+Received: from mail-vs1-f47.google.com ([209.85.217.47]:42110 "EHLO
+        mail-vs1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbfATIcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 03:14:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so19800156wrt.7
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 00:14:19 -0800 (PST)
+        Sun, 20 Jan 2019 03:32:17 -0500
+Received: by mail-vs1-f47.google.com with SMTP id b74so10915189vsd.9
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 00:32:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6TueSK0t2mbCzrUTvwto9p+ZPwhPUJQ8fKD3EecXO7w=;
-        b=OD3yXsWDmwKt0s2/30zZ9wHAQvNxYe25MlTSBacU8H1lyh5DtbY3iagvPhgHl0wR7m
-         0KZd0x/QursI2cOZQvqTzHH5hh1lXqzSpFpLRi+fOgTkC8RSKWF26YwYhyTRRT+sTIRi
-         1p3hrY761Ep9sZdVFk1w6WbzPf9NWCQ0LkKeu4ZrqngaVhZ/7aWWOs+GYhqsP3X+UTxV
-         g+jD0JLltHhn1zIVCetbwj4qR+eNe3oLFY3HtbC+/IMkhmSBDfOeCEhoZOzh3WM86usT
-         uuLWYhI2YuUAtynTFX7jGy9fb41rIP+TsKHMUCCBHh6wXcJLJ+y+Q+AcEysiGYj5s0aT
-         0a8w==
+        d=melexis.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vuGdsjMedZbRP27gfuWy7CNl4LFB73NmQrOD2muDJh8=;
+        b=DUlHyDdvZdIPrufeMKyRsCp5G3yyAbT5hTj7iSXivI+bG4OXl47ttg9E3w8rcfGlZ5
+         /8q/XRfNkFrcaw2XXBFJOJd7piGI0dTgikIzy5J5eRzxDg3EPCGf69He+ACXUeR0LUkb
+         Vhl0EjXvegpZbX+WAbac7pPliSFU2V+HF0DvvsFUA1nNbcxeqllAgtTQL1HkAvNv+0dS
+         VL8AnFB/Su52r4NNz0+0zHY1pl6Bs0C+BJL/Dv4J/ACyjagbRjobRpMbfFVNYB5+cHDk
+         //79MvTpwpPEAmqk23hk8W31t+PqVVMbP34v0MWZGWKfvzjQjFJru0jbmfNMYLZzCka0
+         CI7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6TueSK0t2mbCzrUTvwto9p+ZPwhPUJQ8fKD3EecXO7w=;
-        b=MYEHh9fMlGq4wl4x0dFIrsO8acHltjArO0bqbdR00c3XQJc3eAYl7hwUlZuvbDozxe
-         /2oO7e7RGdGjg/SMU+ulkBTxGSWXrPmfRKpCMyamBnJ4Mh+7tN10AuDuDwiFrjqajnwp
-         lBe4VxseGxw185lS6mM5dzXqa3kkhaC5A2ZxF5FQvl61BBsd543vGBuVBFw466LuSSh6
-         bp2fQqNbvzUCYY/2ltyNG+43QZ74WE79XjD6fzRjc7Gd+xz6hYkXX1OA9PEG5ga9Tw9q
-         SuvWafVpRVN1TklDOhwXvNIXf46y5HPhLKdSqHpIzfCs+hBJzuRkyFoQUtm3t7Aei54R
-         1z1A==
-X-Gm-Message-State: AJcUukezLVh2z1Djqm5ilP5M9Mtu8oyY2p0JXsetXkvaFBS63lqiEShs
-        7ETLsV3dpAGtzVZcW/z7N1A=
-X-Google-Smtp-Source: ALg8bN4g15eyxfr6tSx564o9SKGT8PDY3+OtAhMoPjlRoT7TC6utLS7k15Ha8yOLXndfJB/2N9NhEA==
-X-Received: by 2002:a5d:63c3:: with SMTP id c3mr22954222wrw.215.1547972059060;
-        Sun, 20 Jan 2019 00:14:19 -0800 (PST)
-Received: from localhost ([2a01:4f8:1c1c:6057::1])
-        by smtp.gmail.com with ESMTPSA id k19sm142925012wre.5.2019.01.20.00.14.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 20 Jan 2019 00:14:18 -0800 (PST)
-From:   Yang Fan <nullptr.cpp@gmail.com>
-To:     akpm@linux-foundation.org, will.deacon@arm.com
-Cc:     Yang Fan <nullptr.cpp@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mm/mmap.c: Remove redundant const qualifier of the no-pointer parameters
-Date:   Sun, 20 Jan 2019 09:13:45 +0100
-Message-Id: <a1ef2a2113cd8847002f0064f198aa4afe465548.1547966629.git.nullptr.cpp@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1547966629.git.nullptr.cpp@gmail.com>
-References: <cover.1547966629.git.nullptr.cpp@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vuGdsjMedZbRP27gfuWy7CNl4LFB73NmQrOD2muDJh8=;
+        b=BfiwpGZfRyXqEvJoLpH+kLCuqtnWD/qNoeofXOjWeO0Lr7BTs2uss024YENgHGH3ie
+         mmAum7xKR5vvZRKtl01QJ7O26y8u5ZK6Vx+5n8miavOm+M/aphytb0Rz0f+o0JE9s3qm
+         gcnKYDIJvDkT4dXfkUrhdMnYamDcgq553cJzJGoGs7/QxvAgf7OhL7DNUJWvZ8Q1yDyf
+         VWNuLLtjK88xGVPaMLIGRE9vZbCw5kA52MfTAo4MIX3lBmIDcoo5Xz5NtAhZz+JC4sNF
+         WtnW6mkxfQlXe5qH0HM1vvvfTEGi2WqwQlQYCAZV9DbcVmRIp7NcG52IQ3oWmvtI53gt
+         5ntg==
+X-Gm-Message-State: AJcUukd247UyDsYC0mBBuuknPkk1FnI6it7l9iUSxz1agsEiUHS1onxD
+        dxT+lmEJqXSLweeB7KqIq633Kvlbm8GfrcBqkvjw9w==
+X-Google-Smtp-Source: ALg8bN4c9hRDS7a2JyfJlrwg3DKLXNo3f/WK93NYRzdg5h19VeH0fgHX27x05VBwVRnxACeG22Yx0qlhWf2E2RlCqzc=
+X-Received: by 2002:a67:99c2:: with SMTP id b185mr10078491vse.84.1547973135935;
+ Sun, 20 Jan 2019 00:32:15 -0800 (PST)
+MIME-Version: 1.0
+References: <20190119151450.26879-1-Florian.LaRoche@googlemail.com>
+ <20190120000138.GI26876@brain-police> <CAHk-=wjKgJ-9ypvzq+CB_NKnRk6iAqFtgVPwSH17C5RqJoYF=A@mail.gmail.com>
+In-Reply-To: <CAHk-=wjKgJ-9ypvzq+CB_NKnRk6iAqFtgVPwSH17C5RqJoYF=A@mail.gmail.com>
+From:   Crt Mori <cmo@melexis.com>
+Date:   Sun, 20 Jan 2019 09:31:39 +0100
+Message-ID: <CAKv63uuf4e0arj9OvSLXRTxF9pUJUmbe7yApU0StF-B=BcbGZA@mail.gmail.com>
+Subject: Re: fix int_sqrt() for very large numbers
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Florian La Roche <florian.laroche@googlemail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In according with other functions, remove the const qualifier of the 
-no-pointer parameters in function arch_get_unmapped_area_topdown().
+On Sun, 20 Jan 2019 at 04:49, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, Jan 20, 2019 at 12:01 PM Will Deacon <will.deacon@arm.com> wrote:
+> >
+> > > @@ -52,7 +52,7 @@ u32 int_sqrt64(u64 x)
+> > >       if (x <= ULONG_MAX)
+> > >               return int_sqrt((unsigned long) x);
+> > >
+> > > -     m = 1ULL << (fls64(x) & ~1ULL);
+> > > +     m = 1ULL << ((fls64(x) - 1) & ~1ULL);
+> >
+> > This just looks like a copy-paste error because there isn't an __fls64().
+> > But I think your suggestion here is ok, given the previous check against
+> > ULONG_MAX.
+>
+> Hmm. We probably *should* add a __fls64().
+>
+> There looks to be only one user of int_sqrt64(), and that one is
+> confused. It does int_sqrt64() twice, but since the inner one will
+> reduce the range to 32 bits, the outer one is just silly.
 
-Signed-off-by: Yang Fan <nullptr.cpp@gmail.com>
----
- mm/mmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+II have a usecase (mlx90632) where this calculation worked on arm64
+(nexus), but not in normal 32-bit arm (beaglebone). I have tried going
+with full u64 to u64, but I was persuaded that it is not necessary and
+testing on black body (sensor range from 0 - 80 degrees) confirmed
+that for my calculations u32/u64 is enough. Because of the testing
+range (and keep in mind it is casted to signed after two sqrts) the
+high bit might never affect my end result, but I needed precision, not
+the range. Inside the function the b was 32bit on 32bit core, but I
+needed it to be 64bit. To keep it similar to existing int_sqrt, I have
+decided to just type all variables there to 64bit.
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index f2d163ac827a..84cdde125d4d 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2127,8 +2127,8 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
- #ifndef HAVE_ARCH_UNMAPPED_AREA_TOPDOWN
- unsigned long
- arch_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
--			  const unsigned long len, const unsigned long pgoff,
--			  const unsigned long flags)
-+			  unsigned long len, unsigned long pgoff,
-+			  unsigned long flags)
- {
- 	struct vm_area_struct *vma, *prev;
- 	struct mm_struct *mm = current->mm;
--- 
-2.17.1
+We have implementation of this with doubles (see datasheet) and I
+ported it to integer on arm64. The end result was fairly similar
+calculation (for within object tempearture range from 0-80), between
+both.
 
+> That one user also had better not be overflowing into the high bit -
+> it uses "s64" as a type and does seem to use signed operatons, so high
+> bit set really means negative. sqrt() returning something odd for a
+> negative number wouldn't be all that odd in that context.
+>
+> But yes, our current int_sqrt64() does seem buggy as-is, because it's
+> *supposed* to work on u64's, even if I don't think we really have any
+> users that care.
+
+I introduced strong types for existing int_sqrt implementation to keep
+it aligned between 64bit and 32bit.
+
+Best regards,
+Crt
+
+> And as Will mentioned, the regular int_sqrt() looks perfectly fine,
+> and subtracting 1 from the __fls() return value would actually
+> _introduce_ a bug.
+>
+>             Linus
