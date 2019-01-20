@@ -2,132 +2,155 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183ABC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 01:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51BDC61CE8
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 01:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEF3E2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 01:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C2320883
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 01:31:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3O+SKi1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729978AbfATBHl (ORCPT
+        id S1729973AbfATBbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 20:07:41 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53220 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728926AbfATBHl (ORCPT
+        Sat, 19 Jan 2019 20:31:03 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46254 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728596AbfATBbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 20:07:41 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0K14ATE017680
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 20:07:40 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q4cy2bxb4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 20:07:39 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 20 Jan 2019 01:07:38 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 20 Jan 2019 01:07:35 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0K17YLc24641654
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 20 Jan 2019 01:07:34 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6037CB2064;
-        Sun, 20 Jan 2019 01:07:34 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 18996B205F;
-        Sun, 20 Jan 2019 01:07:34 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.152.170])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 20 Jan 2019 01:07:34 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 95E5116C35B2; Sat, 19 Jan 2019 17:07:32 -0800 (PST)
-Date:   Sat, 19 Jan 2019 17:07:32 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC] rcu: Avoid unnecessary softirq when system is idle
-Reply-To: paulmck@linux.ibm.com
-References: <20190119161418.231042-1-joel@joelfernandes.org>
+        Sat, 19 Jan 2019 20:31:03 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w25so17705324otm.13
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 17:31:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:reply-to:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=xhu316w8O2VsLVcckitjc4RYqk1mh63kjawbFkPcwcc=;
+        b=A3O+SKi15tUfDYbDaJjjqKz1F31A1ivKVxhN7VDilX+PsCa6SY9Lj76REEokaJkte2
+         1RZFmTRl16agmfYBvKoINVe/NpA2S7DQbLLrbiFM/qwjbbWEj0UVkJ/smgpQXpmdG99C
+         eNuhJL/D6bqOMSVchbwHp3KRYkrRaHmniv/roEDh0sD9Eq+1TXqjcHSS8Plv/7eiUfN+
+         LiwcbA77+bxGwrbBumUn1SFa2NGqgVr930L17ca2yiHYkaNEmlcPvneTjfx9jK+s1BUj
+         KROWJ/a+0ALUZMVcgvZ+olBAORVrQ34iBqi4amKGjOe3L63hy8pOwQDWwz8SQcJ4LSTh
+         Ehtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:reply-to:subject:to:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=xhu316w8O2VsLVcckitjc4RYqk1mh63kjawbFkPcwcc=;
+        b=UnRN7juWv1NcRottiXgN0wEsRrQhm8i04D3CmfG1ec5p1ZSh3zEqEbmEe5XHb990h5
+         I2BTvl8GekK4sVSn6D6DV92ioj7RylN/nVTg1Yt7gRj2KmYPS4fjB0LOHyokWBxo9oKs
+         r6Ckj0m8Lz4OBSv0/4GlmDutmnEEH/Qjfp20A0Iw2UekHFbx467SBUbc+v1lIrHVsXUX
+         qS2RkRulvrb3yGDBOBkEGZOvWMCZlgIHH7VTGfHxphZbqul1gIH9bVonjblCH4dWfQaU
+         pileDRBrXZWejB6D8CiWfA7Fzc0f54abTowfP8EWZwc+a8qQpiDSvoCa1H+Us7nbFkbR
+         OIFQ==
+X-Gm-Message-State: AJcUukcOk9FduCh44SWVI0jZwIsw8tYOIACfOxIqjZsGg/34s6alJUPC
+        U8CMLrIU48zzDZM8fVUV34pv1tY=
+X-Google-Smtp-Source: ALg8bN5jObRkSYP33dvCGgOu2eHSupC2OsGG9FZfUCcRk3Ob5LB0GgECmVFgRShDaektwcdJLvzQhA==
+X-Received: by 2002:a9d:491e:: with SMTP id e30mr16354699otf.131.1547947861863;
+        Sat, 19 Jan 2019 17:31:01 -0800 (PST)
+Received: from serve.minyard.net ([47.184.128.64])
+        by smtp.gmail.com with ESMTPSA id 30sm3856933ots.52.2019.01.19.17.31.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 19 Jan 2019 17:31:01 -0800 (PST)
+Received: from [IPv6:2001:470:b8f6:1b:6d14:52f9:ea85:e9f] (unknown [IPv6:2001:470:b8f6:1b:6d14:52f9:ea85:e9f])
+        by serve.minyard.net (Postfix) with ESMTPSA id 511AC864;
+        Sat, 19 Jan 2019 19:31:00 -0600 (CST)
+Reply-To: minyard@acm.org
+Subject: Re: [PATCH v2] ipmi: Prevent use-after-free in deliver_response
+To:     Fred Klassen <fklassen@appneta.com>,
+        "Arnd Bergmann (supporter:CHAR and MISC DRIVERS)" <arnd@arndb.de>,
+        "Greg Kroah-Hartman (supporter:CHAR and MISC DRIVERS)" 
+        <gregkh@linuxfoundation.org>,
+        "moderated list:IPMI SUBSYSTEM" 
+        <openipmi-developer@lists.sourceforge.net>,
+        open list <linux-kernel@vger.kernel.org>
+References: <A305B9C6-87C8-406A-9A9A-623BE0768FFB@appneta.com>
+From:   Corey Minyard <minyard@acm.org>
+Message-ID: <3f6be669-0a5f-5b82-aa68-14c97c7df52a@acm.org>
+Date:   Sat, 19 Jan 2019 19:30:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190119161418.231042-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19012001-0040-0000-0000-000004B48D57
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010439; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01148964; UDB=6.00593882; IPR=6.00929272;
- MB=3.00025206; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-20 01:07:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012001-0041-0000-0000-000008BF998B
-Message-Id: <20190120010732.GH4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-19_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=864 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901200007
+In-Reply-To: <A305B9C6-87C8-406A-9A9A-623BE0768FFB@appneta.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 11:14:18AM -0500, Joel Fernandes (Google) wrote:
-> When there are no callbacks pending on an idle system, I noticed that
-> RCU softirq is continuously firing. During this the cpu_no_qs is set to
-> false, and core_needs_qs is set to true indefinitely. This causes
-> rcu_process_callbacks to be repeatedly called, even though the node
-> corresponding to the CPU has that CPU's mask bit cleared and the system
-> is idle. I believe the race is when such mask clearing is done during
-> idle CPU scan of the quiescent state forcing stage in the kthread
-> instead of the softirq. Since the rnp mask is cleared, but the flags on
-> the CPU's rdp are not cleared, the CPU thinks it still needs to report
-> to core RCU.
-> 
-> Cure this by clearing the core_needs_qs flag when the CPU detects that
-> its node is already updated which will avoid the unwanted softirq raises
-> to the benefit of real-time systems.
-> 
-> Test: Ran rcutorture for various tree RCU configs.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+On 1/19/19 4:28 PM, Fred Klassen wrote:
+> Some IPMI modules (e.g. ibmpex_msg_handler()) will have ipmi_usr_hdlr
+> handlers that call ipmi_free_recv_msg() directly. This will essentially
+> kfree(msg), leading to use-after-free.
+>
+> This does not happen in the ipmi_devintf module, which will queue the
+> message and run ipmi_free_recv_msg() later.
 
-Good catch, queued, thank you!
+Yeah, this is better style, if nothing else.
 
-							Thanx, Paul
+I assume you want this for 5.0., right?
 
+-corey
+
+> BUG: KASAN: use-after-free in deliver_response+0x12f/0x1b0
+> Read of size 8 at addr ffff888a7bf20018 by task ksoftirqd/3/27
+> CPU: 3 PID: 27 Comm: ksoftirqd/3 Tainted: G           O      4.19.11-amd64-ani99-debug #12.0.1.601133+pv
+> Hardware name: AppNeta r1000/X11SPW-TF, BIOS 2.1a-AP 09/17/2018
+> Call Trace:
+> dump_stack+0x92/0xeb
+> print_address_description+0x73/0x290
+> kasan_report+0x258/0x380
+> deliver_response+0x12f/0x1b0
+> ? ipmi_free_recv_msg+0x50/0x50
+> deliver_local_response+0xe/0x50
+> handle_one_recv_msg+0x37a/0x21d0
+> handle_new_recv_msgs+0x1ce/0x440
+> ...
+>
+> Allocated by task 9885:
+> kasan_kmalloc+0xa0/0xd0
+> kmem_cache_alloc_trace+0x116/0x290
+> ipmi_alloc_recv_msg+0x28/0x70
+> i_ipmi_request+0xb4a/0x1640
+> ipmi_request_settime+0x1b8/0x1e0
+> ...
+>
+> Freed by task 27:
+> __kasan_slab_free+0x12e/0x180
+> kfree+0xe9/0x280
+> deliver_response+0x122/0x1b0
+> deliver_local_response+0xe/0x50
+> handle_one_recv_msg+0x37a/0x21d0
+> handle_new_recv_msgs+0x1ce/0x440
+> tasklet_action_common.isra.19+0xc4/0x250
+> __do_softirq+0x11f/0x51f
+>
+> Fixes: e86ee2d44b44 ("ipmi: Rework locking and shutdown for hot remove")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fred Klassen <fklassen@appneta.com>
 > ---
->  kernel/rcu/tree.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 9180158756d2..96ad80c76b15 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -2273,6 +2273,7 @@ rcu_report_qs_rdp(int cpu, struct rcu_data *rdp)
->  	}
->  	mask = rdp->grpmask;
->  	if ((rnp->qsmask & mask) == 0) {
-> +		rdp->core_needs_qs = false;
->  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->  	} else {
->  		rdp->core_needs_qs = false;
-> -- 
-> 2.20.1.321.g9e740568ce-goog
-> 
+> drivers/char/ipmi/ipmi_msghandler.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+> index 7fc9612070a1..fbf93c2d6c05 100644
+> --- a/drivers/char/ipmi/ipmi_msghandler.c
+> +++ b/drivers/char/ipmi/ipmi_msghandler.c
+> @@ -883,7 +883,7 @@ static int deliver_response(struct ipmi_smi *intf, struct ipmi_recv_msg *msg)
+>
+> 		if (user) {
+> 			user->handler->ipmi_recv_hndl(msg, user->handler_data);
+> -			release_ipmi_user(msg->user, index);
+> +			release_ipmi_user(user, index);
+> 		} else {
+> 			/* User went away, give up. */
+> 			ipmi_free_recv_msg(msg);
+
 
