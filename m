@@ -2,172 +2,213 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021CAC676ED
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 14:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D62C636A2
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 14:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4EE42085A
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 14:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C36D82085A
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 14:39:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="TpEpeNEk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeGWlhTc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbfATOiN (ORCPT
+        id S1730608AbfATOjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 09:38:13 -0500
-Received: from node.akkea.ca ([192.155.83.177]:50632 "EHLO node.akkea.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726693AbfATOiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 09:38:13 -0500
-Received: by node.akkea.ca (Postfix, from userid 33)
-        id 12A004E204B; Sun, 20 Jan 2019 14:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1547995092; bh=lqzT7b3ndhHCCoDCH9ylBv0zUtb2DkeRZ+CEWkdvREI=;
-        h=To:Subject:Date:From:Cc:In-Reply-To:References;
-        b=TpEpeNEkEAIawrV+M9ImxJNBfdfvsUlbPfwa4rhCQv1e/rjj8c/fWXB1ijFPdMNuS
-         ygjKGLBVs7QpLmD/K8pXXL+qMzxfvdhHBR1i1oHjyBfentToWub8nBt0Skx2PfWRH8
-         SeRAq79KcDh2zOLl5BCwXaYgM15x8wfUJn/GVwJE=
-To:     Daniel Baluta <daniel.baluta@gmail.com>
-Subject: Re: [PATCH v2 2/3] dma: imx-sdma: add clock ratio 1:1 check
-X-PHP-Originating-Script: 1000:rcube.php
+        Sun, 20 Jan 2019 09:39:33 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43602 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726693AbfATOjc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 09:39:32 -0500
+Received: by mail-pg1-f194.google.com with SMTP id v28so8260320pgk.10
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 06:39:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=FpSlXkFoNvsrAFaP0gUvcH/6UIHmLreDVVHagc2cunw=;
+        b=AeGWlhTcF+XyMdjTnE/FrJ2zEVjUhhYWUd2SZT7DqSfKYgfzcoQF/yXMSD3kDl5pjr
+         5L6Ko4QkUqNe3j5oQXj2VSf0uorX8Rd4MKMmLs7DqQXyEN/MFjUlRF1VagRrDeNMweDQ
+         CGFnxMfYlxMyoMvFFRab201AF2na1TpzPWx8zCX0mrT0pdffwafSE8x8fH5GYdckpvKG
+         k7hU8IeBDLF2Gg04QD0gbilkOjFHOEANcElyrjCSNvtWQZTWsKjgenHuwqcYpmzqib2R
+         LJVdvRXwCUKYMoiQssM6RvOpZDHStSKzkWyEN1UXJm31JwrVFKT5y5KjvEZpCw6p5AzY
+         XEOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=FpSlXkFoNvsrAFaP0gUvcH/6UIHmLreDVVHagc2cunw=;
+        b=DHHL7JwH9qnG1dX8lIjkjMUMmFzw92QmQxBW4rEKjjfgReEBNfG+uzrqz/Hu3C6RDZ
+         EKAqLo15fry9QqHWIR1pA7wySwG/SNpSKAKH3mVdp3J8k/nHzkbTRMtj9QxrvjLxLTGS
+         xcLH3BowZMdzE8QigHEcNx+wX7x5t67e8ZVs1mBejfUB3OB4FhiDSJR6kBept1A8wUK4
+         pj5CROfyMVMgk72qqAxr8W1nLAeXKMor3sB3Jhm8V9qOQjM1sPi+12+P7UE7DFqUN1cI
+         gEf5X2p6diKT6s8WPGrVZmqz8GRenY6kl48GyIS4SYpmdu1s+dtw/OCWEcgTElo9i8V2
+         wtMw==
+X-Gm-Message-State: AJcUukd7fXmaefD5qiEc0xOubQv01Ngz/AY6F8XK+3hEWhJr72B2KM4j
+        BUVynAOTB0JQsCEc7XotXHYnRIwdVyO3RcYu
+X-Google-Smtp-Source: ALg8bN6olB9KV9Us4FEZAuLfbT22ie0OKwIW8QYc00PMpC81oLda8VrViFlMcKelaUJvO8bjvlXXFw==
+X-Received: by 2002:a63:6150:: with SMTP id v77mr24240270pgb.266.1547995171555;
+        Sun, 20 Jan 2019 06:39:31 -0800 (PST)
+Received: from ali-6c96cfde3a47.local ([2409:8a00:19d2:6c0:c4b0:b83a:db72:7303])
+        by smtp.gmail.com with ESMTPSA id j197sm13723950pgc.76.2019.01.20.06.39.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 06:39:30 -0800 (PST)
+From:   "Jason Cai (Xiang Feng)" <jason.cai.kern@gmail.com>
+X-Google-Original-From: "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
+Date:   Sun, 20 Jan 2019 22:39:13 +0800
+To:     snitzer@redhat.com, agk@redhat.com, ejt@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Cc:     jason.cai.kern@gmail.com
+Subject: [PATCH] dm thin: add sanity checks on creating thin-pool and
+ external snapshot
+Message-ID: <20190120143913.GA27003@ali-6c96cfde3a47.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sun, 20 Jan 2019 07:38:12 -0700
-From:   Angus Ainslie <angus@akkea.ca>
-Cc:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <CAEnQRZBLLKotGy2t-f3rURnoUCjkxfuwrtYkirv6+kdAzidaFg@mail.gmail.com>
-References: <20190120023150.17138-1-angus@akkea.ca>
- <20190120023150.17138-3-angus@akkea.ca>
- <CAEnQRZBLLKotGy2t-f3rURnoUCjkxfuwrtYkirv6+kdAzidaFg@mail.gmail.com>
-Message-ID: <6cbbac1e98b74702fc5a9b915b7630f7@www.akkea.ca>
-X-Sender: angus@akkea.ca
-User-Agent: Roundcube Webmail/1.1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+Invoking `dm_get_device` twice on the same device path with different
+modes is dangerous. Because in that case, `upgrade_mode()` will place
+a new `dm_dev` and free the old one, which may be referenced by a
+previous caller. Subsequently dereference the dangling pointer will
+trigger kernel NULL pointer dereference.
 
-On 2019-01-20 02:58, Daniel Baluta wrote:
-> On Sun, Jan 20, 2019 at 4:32 AM Angus Ainslie (Purism) <angus@akkea.ca> 
-> wrote:
->> 
->> On i.mx8 mscale B0 chip, AHB/SDMA clock ratio 2:1 can't be supportted,
->> since SDMA clock ratio has to be increased to 250Mhz, AHB can't reach
->> to 500Mhz, so use 1:1 instead.
->> 
->> based on NXP commit MLK-16841-1
-> 
-> Hi Angus,
-> 
-> Thanks for doing this!
-> 
-> I'm not sure specifying the MLK here helps. I think it would be better
-> to somehow add the original Signed-off-by and mention that the commit
-> was pulled from NXP linux-imx tree.
+The following two cases can reproduce this issue. Actually, they are
+invalid setups. And we need to prevent them from triggering panic.
 
-If it was exactly the same patch I would have but as I added the lines 
-in
-sdma_run_channel0 I didn't think it would be right to put signed off by
-"Robin Gong <yibin.gong@nxp.com>" as the code isn't what he signed off 
-on.
+e.g.:
 
->> 
->> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
->> ---
->>  .../devicetree/bindings/dma/fsl-imx-sdma.txt  |  1 +
->>  drivers/dma/imx-sdma.c                        | 20 
->> +++++++++++++++----
->>  2 files changed, 17 insertions(+), 4 deletions(-)
->> 
->> diff --git a/Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt 
->> b/Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt
->> index 3c9a57a8443b..17544c1820b7 100644
->> --- a/Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt
->> +++ b/Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt
->> @@ -67,6 +67,7 @@ Optional properties:
->>      reg is the GPR register offset.
->>      shift is the bit position inside the GPR register.
->>      val is the value of the bit (0 or 1).
->> +- fsl,ratio-1-1: AHB/SDMA core clock ration 1:1, 2:1 without this.
->> 
->>  Examples:
->> 
->> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
->> index 0b3a67ff8e82..65dada21d3c1 100644
->> --- a/drivers/dma/imx-sdma.c
->> +++ b/drivers/dma/imx-sdma.c
->> @@ -440,6 +440,8 @@ struct sdma_engine {
->>         unsigned int                    irq;
->>         dma_addr_t                      bd0_phys;
->>         struct sdma_buffer_descriptor   *bd0;
->> +       /* clock ratio for AHB:SDMA core. 1:1 is 1, 2:1 is 0*/
->> +       bool                            clk_ratio;
->>  };
->> 
->>  static int sdma_config_write(struct dma_chan *chan,
->> @@ -662,8 +664,14 @@ static int sdma_run_channel0(struct sdma_engine 
->> *sdma)
->>                 dev_err(sdma->dev, "Timeout waiting for CH0 ready\n");
->> 
->>         /* Set bits of CONFIG register with dynamic context switching 
->> */
->> -       if (readl(sdma->regs + SDMA_H_CONFIG) == 0)
->> -               writel_relaxed(SDMA_H_CONFIG_CSM, sdma->regs + 
->> SDMA_H_CONFIG);
->> +       if (readl(sdma->regs + SDMA_H_CONFIG) == 0) {
->> +               if (sdma->clk_ratio)
->> +                       reg = SDMA_H_CONFIG_CSM | SDMA_H_CONFIG_ACR;
->> +               else
->> +                       reg = SDMA_H_CONFIG_CSM;
->> +
->> +               writel_relaxed(reg, sdma->regs + SDMA_H_CONFIG);
->> +       }
->> 
+1. Creating a thin-pool with read_only mode, and the same device as
+both metadata and data.
 
-This is the code that I added out of an over abundance of prudence.
+```
+dmsetup create thinp --table \
+    "0 41943040 thin-pool /dev/vdb /dev/vdb 128 0 1 read_only"
 
-Angus
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP PTI
+CPU: 0 PID: 4024 Comm: dmsetup Tainted: G           O 4.19.14 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+RIP: 0010:submit_io+0x90/0x220 [dm_bufio]
+Code: 0f 8e 92 01 00 00 31 d2 bf 00 12 40 00 e8 b8 66 22 e1 48 85 c0 49 89 c7 0f 84 e7 00 00 00 4c 89 60 28 48 8b 43 60 48 8b 40 50 <48> 8b 80 80 00 00 00 49 39 47
+08 74 16 66 41 81 67 14 ff fd 48 8b
+RSP: 0018:ffffc9000193ba30 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff8881f45250c8 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88822f1a3bd8
+RBP: ffffc9000193ba88 R08: ffff88822f1a3b40 R09: ffff888237403380
+R10: 0000000000240000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff88822f1a3b40
+FS:  00007fb5d0b41680(0000) GS:ffff888237a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000080 CR3: 0000000234a88005 CR4: 00000000001606f0
+Call Trace:
+ new_read+0xfb/0x110 [dm_bufio]
+ dm_bm_read_lock+0x43/0x190 [dm_persistent_data]
+ ? kmem_cache_alloc_trace+0x15c/0x1e0
+ __create_persistent_data_objects+0x65/0x3e0 [dm_thin_pool]
+ dm_pool_metadata_open+0x8c/0xf0 [dm_thin_pool]
+ pool_ctr.cold.79+0x213/0x913 [dm_thin_pool]
+ ? realloc_argv+0x50/0x70 [dm_mod]
+ dm_table_add_target+0x14e/0x330 [dm_mod]
+ table_load+0x122/0x2e0 [dm_mod]
+ ? dev_status+0x40/0x40 [dm_mod]
+ ctl_ioctl+0x1aa/0x3e0 [dm_mod]
+ dm_ctl_ioctl+0xa/0x10 [dm_mod]
+ do_vfs_ioctl+0xa2/0x600
+ ? handle_mm_fault+0xda/0x200
+ ? __do_page_fault+0x26c/0x4f0
+ ksys_ioctl+0x60/0x90
+ __x64_sys_ioctl+0x16/0x20
+ do_syscall_64+0x55/0x150
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+```
 
->>         return ret;
->>  }
->> @@ -1880,8 +1888,10 @@ static int sdma_init(struct sdma_engine *sdma)
->>         writel_relaxed(0x4050, sdma->regs + SDMA_CHN0ADDR);
->> 
->>         /* Set bits of CONFIG register but with static context 
->> switching */
->> -       /* FIXME: Check whether to set ACR bit depending on clock 
->> ratios */
->> -       writel_relaxed(0, sdma->regs + SDMA_H_CONFIG);
->> +       if (sdma->clk_ratio)
->> +               writel_relaxed(SDMA_H_CONFIG_ACR, sdma->regs + 
->> SDMA_H_CONFIG);
->> +       else
->> +               writel_relaxed(0, sdma->regs + SDMA_H_CONFIG);
->> 
->>         writel_relaxed(ccb_phys, sdma->regs + SDMA_H_C0PTR);
->> 
->> @@ -1975,6 +1985,8 @@ static int sdma_probe(struct platform_device 
->> *pdev)
->>         if (!sdma)
->>                 return -ENOMEM;
->> 
->> +       sdma->clk_ratio = of_property_read_bool(np, "fsl,ratio-1-1");
->> +
->>         spin_lock_init(&sdma->channel_0_lock);
->> 
->>         sdma->dev = &pdev->dev;
->> --
->> 2.17.1
->> 
+2. Creating a external snapshot using the same thin-pool device.
+
+```
+dmsetup create thinp --table \
+    "0 41943040 thin-pool /dev/vdc /dev/vdb 128 0 2 ignore_discard"
+dmsetup message /dev/mapper/thinp 0 "create_thin 0"
+dmsetup create snap --table \
+            "0 204800 thin /dev/mapper/thinp 0 /dev/mapper/thinp"
+
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+PGD 0 P4D 0
+Oops: 0000 [#2] SMP
+CPU: 4 PID: 1806 Comm: dmsetup Tainted: G      D 4.19.14 #4
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+RIP: 0010:thin_status+0xc1/0x220 [dm_thin_pool]
+Code: c2 bc 78 33 a0 e8 ff 1e 53 e1 4c 63 e8 48 8b 43 18 48 85 c0 74 41 4c 39 ed 7e 3c 48 8b 00 48 8d 7c 24 18 48 c7 c6 76 78 33 a0 <8b> 10 89 d1 c1 ea 14 81 e1 ff
+ff 0f 00 e8 5d 1f 53 e1 48 89 ee 48
+RSP: 0018:ffffc90001c4bbe0 EFLAGS: 00010216
+RAX: 0000000000000000 RBX: ffff8882333b1f00 RCX: 0000000000000000
+RDX: 0000000000000007 RSI: ffffffffa0337876 RDI: ffffc90001c4bbf8
+RBP: 0000000000003ea0 R08: ffffc90001c4bbf7 R09: 00000000fe3b4408
+R10: ffff8882335f0000 R11: ffff8882335ec167 R12: ffff8882335ec160
+R13: 0000000000000007 R14: ffff8882335ec160 R15: ffffc90001379040
+FS:  00007f2f5ae30680(0000) GS:ffff888237b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000022f778002 CR4: 00000000001606e0
+Call Trace:
+? __alloc_pages_nodemask+0x13c/0x2e0
+retrieve_status+0xa5/0x1f0 [dm_mod]
+? dm_get_live_or_inactive_table.isra.7+0x20/0x20 [dm_mod]
+ table_status+0x61/0xa0 [dm_mod]
+ ctl_ioctl+0x1aa/0x3e0 [dm_mod]
+ dm_ctl_ioctl+0xa/0x10 [dm_mod]
+ do_vfs_ioctl+0xa2/0x600
+ ksys_ioctl+0x60/0x90
+ ? ksys_write+0x4f/0xb0
+ __x64_sys_ioctl+0x16/0x20
+ do_syscall_64+0x55/0x150
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+```
+
+Signed-off-by: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
+---
+ drivers/md/dm-thin.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index dadd9696340c..23cc401a6340 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -3238,6 +3238,13 @@ static int pool_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	as.argc = argc;
+ 	as.argv = argv;
+ 
++	/* make sure metadata and data are different devices */
++	if (!strcmp(argv[0], argv[1])) {
++		ti->error = "Error setting metadata or data device";
++		r = -EINVAL;
++		goto out_unlock;
++	}
++
+ 	/*
+ 	 * Set default pool features.
+ 	 */
+@@ -4122,6 +4129,12 @@ static int thin_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	tc->sort_bio_list = RB_ROOT;
+ 
+ 	if (argc == 3) {
++		if (!strcmp(argv[0], argv[2])) {
++			ti->error = "Error setting origin device";
++			r = -EINVAL;
++			goto bad_origin_dev;
++		}
++
+ 		r = dm_get_device(ti, argv[2], FMODE_READ, &origin_dev);
+ 		if (r) {
+ 			ti->error = "Error opening origin device";
+-- 
+2.17.0
 
