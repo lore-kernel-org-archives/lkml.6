@@ -2,100 +2,80 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD889C26640
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DD7C26640
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A29D120861
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2217620861
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 18:56:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="plCPFwLz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbfATSzZ (ORCPT
+        id S1727773AbfATS4W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 13:55:25 -0500
-Received: from ivanoab6.miniserver.com ([5.153.251.140]:41662 "EHLO
-        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfATSzY (ORCPT
+        Sun, 20 Jan 2019 13:56:22 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:44160 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbfATS4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 13:55:24 -0500
-Received: from [192.168.17.6] (helo=smaug.kot-begemot.co.uk)
-        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1glIFY-00055m-QI; Sun, 20 Jan 2019 18:55:20 +0000
-Received: from [192.168.15.6]
-        by smaug.kot-begemot.co.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1glIFT-0001CC-94; Sun, 20 Jan 2019 18:55:15 +0000
-Subject: Re: [-next] um: Remove duplicated include from vector_user.c
-To:     YueHaibing <yuehaibing@huawei.com>, Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>
-Cc:     kernel-janitors@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
-From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Organization: Cambridge Greys Limited
-Message-ID: <cff7d34e-7afa-70cc-427d-ebeaa1e65e73@cambridgegreys.com>
-Date:   Sun, 20 Jan 2019 18:54:56 +0000
+        Sun, 20 Jan 2019 13:56:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=aeTwocZBuTE/+vKqVwEqa1BPVszrbuyizVlF3M3Co/k=; b=plCPFwLzuJVVPsEbwtHzyIYuIs
+        2n9wzCTRCovV2a12CTlMrTgv/RDor3Y16umwsUJ14aTaADLDtBnrQPMUruAohrhUAw8OjDsgJ+wI9
+        gQILvrDnrwfNkBnhFcoL/E7lVCoMqZps8PGuz8wvbvbBbzoAYLPgx/vlbxzBYjmDhzhEFC/ajY5ki
+        +AR+FZ/IQRYHrysZOZ22t4k5rvC0V/TSWES9RVk3LxSo8RaxEiNG2vBGb5mtHzAFg8F318siZ1PV3
+        R9SAkEjSws5xzUJHyL+IHDzpncGgjoAteZgiGl+pIr7HCuzq4ReyFClCic7YsGowrQdLRrnmyu7jc
+        8VI7lDwQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glIGU-00046M-Ar; Sun, 20 Jan 2019 18:56:14 +0000
+Subject: Re: [RFC net-next] net: Z-Wave driver prototype
+To:     =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        linux-lpwan@lists.infradead.org, linux-wpan@vger.kernel.org
+Cc:     Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        TL Lim <tllim@pine64.org>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20190120183315.22743-1-afaerber@suse.de>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <5f5aa12c-604d-ca10-1873-f5f2bbe3d266@infradead.org>
+Date:   Sun, 20 Jan 2019 10:56:07 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190120183315.22743-1-afaerber@suse.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Clacks-Overhead: GNU Terry Pratchett
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/20/19 10:33 AM, Andreas Färber wrote:
+> diff --git a/drivers/net/zwave/Makefile b/drivers/net/zwave/Makefile
+> new file mode 100644
+> index 000000000000..1a4171308c79
+> --- /dev/null
+> +++ b/drivers/net/zwave/Makefile
+> @@ -0,0 +1 @@
+> +obj-m += zwave.o
 
 
-On 1/3/19 3:12 AM, YueHaibing wrote:
-> Remove duplicated include.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   arch/um/drivers/vector_user.c | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-> index d2c17dd..b3f7b3c 100644
-> --- a/arch/um/drivers/vector_user.c
-> +++ b/arch/um/drivers/vector_user.c
-> @@ -16,14 +16,12 @@
->   #include <sys/types.h>
->   #include <sys/stat.h>
->   #include <fcntl.h>
-> -#include <sys/types.h>
->   #include <sys/socket.h>
->   #include <net/ethernet.h>
->   #include <netinet/ip.h>
->   #include <netinet/ether.h>
->   #include <linux/if_ether.h>
->   #include <linux/if_packet.h>
-> -#include <sys/socket.h>
->   #include <sys/wait.h>
->   #include <sys/uio.h>
->   #include <linux/virtio_net.h>
-> @@ -31,7 +29,6 @@
->   #include <stdlib.h>
->   #include <os.h>
->   #include <um_malloc.h>
-> -#include <sys/uio.h>
->   #include "vector_user.h"
->   
->   #define ID_GRE 0
-> 
+Hi,
 
-Reviewed-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Acked-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+This will need a Kconfig file and a symbol so that the Makefile
+will not always build the zwave module.
+
+thanks,
 -- 
-Anton R. Ivanov
-
-Cambridge Greys Limited, England and Wales company No 10273661
-http://www.cambridgegreys.com/
+~Randy
