@@ -2,115 +2,113 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468F4C282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD122C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1540720855
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:14:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FFAC2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:14:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="S8OtVsCQ"
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="lcJa/9Go"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfAUIOH (ORCPT
+        id S1729341AbfAUIOL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:14:07 -0500
-Received: from mx.kolabnow.com ([95.128.36.41]:39698 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727980AbfAUIOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:14:06 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTP id 435E764D;
-        Mon, 21 Jan 2019 09:14:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:message-id:date:date:subject:subject
-        :from:from:received:received:received; s=dkim20160331; t=
-        1548058442; x=1549872843; bh=ZcGqDyYnPIWY6Q/Fdn0PVIGnfxTQl+CA7Kf
-        W7eaitSg=; b=S8OtVsCQtcRZy9QB6omo3emE8RFWZEVsuGaGJ2IqyNiabe8O9tA
-        OWXnWYetJns5aHGH3v+n/SdA+21apnlFEdAdb6A5I2ZE2tXEX3sLJO+b1kTJCHKd
-        py/q3UMEnvblxfxtor+zr+tU3fmxWkQN0mHYEX3knGD5EwLbR61hv/6EHgXNEnhe
-        7juSMGwHA5yRZ8N3b0MikcIqPBaEstixsC58zHmwFDM9K12Iw7go4m0QdHzwSgjw
-        grTbq5B4HEoPxVZJXfkh1VMy2ItDOlUwT6pf1Ekw9iwKzMULaTyIfwogsu9HrNMh
-        5mVoltsntfbYlskQ2fElaHFnNCggJ+ButpHYxXcZmWCavI5Ryh6F0uNPO5325Jyn
-        q2T4281ptnJ2OCx6FuiBpJ1PgYTwFMU1BQeO3KdAJtBzaE8s9qCZ+CRBpeSbEuV3
-        jx19+/DiYjvjSjI5DeDUWKMOQ0qUiTXdoq3H25SK6NJf+1TFK/Sy3rDg15WO7HWJ
-        DAcbX3b1aFQPhvuFHHN9G3hZfpgiYDD6KeLxpiIXhlFXdOw5oqAk5vZyiVocCBg4
-        PCkP7cxUfRaR9kBFkwtOdgx/ha9zM/QNQdeZhgMOHJD9y4keabD7xLuNR5by/C3l
-        osIletEBKAFDEfThCZ5sWE0dTG0waFaGc4g6706uC74ViMk9sBxGu4UE=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out002.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NN53k5nGlcTT; Mon, 21 Jan 2019 09:14:02 +0100 (CET)
-Received: from int-mx002.mykolab.com (unknown [10.9.13.2])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTPS id ED817625;
-        Mon, 21 Jan 2019 09:14:02 +0100 (CET)
-Received: from ext-subm002.mykolab.com (unknown [10.9.6.2])
-        by int-mx002.mykolab.com (Postfix) with ESMTPS id 986361DA6;
-        Mon, 21 Jan 2019 09:14:02 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Greg KH <greg@kroah.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc:process: remove note from 'stable api nonsense'
-Date:   Mon, 21 Jan 2019 09:14:00 +0100
-Message-ID: <53383524.y9DmdCAcNX@pcbe13614>
-In-Reply-To: <20190120184338.01cd4ef9@lwn.net>
-References: <20190118215804.3340-1-federico.vaga@vaga.pv.it> <20190120184338.01cd4ef9@lwn.net>
+        Mon, 21 Jan 2019 03:14:11 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37000 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727980AbfAUIOK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:14:10 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g67so9768999wmd.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:14:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ibxTSM7aAfMxp0mh34e5XoCF9bu27Z34+6gCZTrPT34=;
+        b=lcJa/9GoZ/Y6WfC0bylBfI5oCVTUbuuQaazcglM7FxSXk53oJ3EwA7gQ6DK+WxiFMb
+         Tlrgwvc736fHcfg+YAswmtczDWnSSBMIcGSSXYg6i0MRH/ZIX2y9cpGSxmZ+J63hsT4/
+         QTQXtg0gQ8OgWOCw2BrEXgDSkegRbpVoC0R+6nlx8MG5HL4zfx/R+JZ6gMYPKE+l1tLJ
+         AXI8c4Qwl9aiXZE+hXoOGirioCNsW/YzcD/4+02Q9kHE3d1EMNxtT20zPoj7Mcuv0039
+         pK40Sk4UGAAo1eF1IXEqWJ3/lN+mYFSzRQBsmUcXjgxuNNvUwayW8QCEFaj6ijFFXHa+
+         HtKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ibxTSM7aAfMxp0mh34e5XoCF9bu27Z34+6gCZTrPT34=;
+        b=mzBWBrlJiMWZI69ljN+B9NllugdO+tmVuDf7lWCddzj4QVF3U75aecfJ6TtxbXZ3ST
+         Z42v5FVp7lHclebi/gzwN8FqSc71NaknDT+OSdGaoFwO3dIUdYOCGPXieyRp4H+VpLn+
+         USBQ1QZIE+VK1pH73wDW/98omEagamFmY0MNR0E1yZ2Oq8rRtscwguKLd7yuEqhO6D4d
+         kM9qUyORT7GKoXCBop3z4g5bUnBEoMIeAotBsn2cJoR7/1TDYmZvr2IFQPNRnkXvcuYB
+         IFf+3NdTy6JMOaxLCW+k//MKi+5Gvo+sIHSdYSPdQprU0HkUmdwJF1NniKUBoZY0cJ3W
+         t8+Q==
+X-Gm-Message-State: AJcUukdKdoyC3I2CXgwIsomYhfClYHYWv5o8zGkXLr6/Nu4oXKntLdyV
+        frIhcNX1lW2aH2YyrIvNEiSNM9cg5Bc=
+X-Google-Smtp-Source: ALg8bN6p9RWZDpkENLmzoXwCtF9v6nAyN1W721G5G6yv2ozcu7srm3C8FwlQtG+MKjShLdYSf4N48A==
+X-Received: by 2002:a1c:9a4c:: with SMTP id c73mr23491864wme.35.1548027691743;
+        Sun, 20 Jan 2019 15:41:31 -0800 (PST)
+Received: from localhost.localdomain ([156.212.82.83])
+        by smtp.gmail.com with ESMTPSA id e9sm76576753wro.16.2019.01.20.15.41.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 15:41:31 -0800 (PST)
+From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
+        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
+        Boris Lukashev <blukashev@sempervictus.com>,
+        Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+Subject: [RESEND PATCH V8 08/11] KVM: X86: Port ROE_MPROTECT_CHUNK to x86
+Date:   Mon, 21 Jan 2019 01:39:37 +0200
+Message-Id: <20190120233940.15282-9-ahmedsoliman@mena.vt.edu>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+References: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, January 21, 2019 2:43:38 AM CET Jonathan Corbet wrote:
-> On Fri, 18 Jan 2019 22:58:04 +0100
-> 
-> Federico Vaga <federico.vaga@vaga.pv.it> wrote:
-> > The link referred by the note can't be retrieved: this patch just
-> > remove that old note.
-> > 
-> > Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
-> > ---
-> > 
-> >  Documentation/process/stable-api-nonsense.rst | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/process/stable-api-nonsense.rst
-> > b/Documentation/process/stable-api-nonsense.rst index
-> > 24f5aeecee91..57d95a49c096 100644
-> > --- a/Documentation/process/stable-api-nonsense.rst
-> > +++ b/Documentation/process/stable-api-nonsense.rst
-> > @@ -171,8 +171,7 @@ is also a rough job.
-> > 
-> >  Simple, get your kernel driver into the main kernel tree (remember we
-> >  are talking about GPL released drivers here, if your code doesn't fall
-> > 
-> > -under this category, good luck, you are on your own here, you leech
-> > -<insert link to leech comment from Andrew and Linus here>.)  If your
-> > +under this category, good luck, you are on your own here, you leech).  If
-> > your> 
-> >  driver is in the tree, and a kernel interface changes, it will be fixed
-> >  up by the person who did the kernel change in the first place.  This
-> >  ensures that your driver is always buildable, and works over time, with
-> 
-> I've applied this.  I do wonder if the "you leech" should maybe come out
-> too, though.  I don't think that parasitic worms are a protected class
-> under the CoC, but they might still suffer emotionally from being
-> compared to the purveyors of proprietary modules...
+Apply d->memslot->partial_roe_bitmap to shadow page table entries
+too.
 
-I agree, do you want me to change the patch?
+Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+---
+ arch/x86/kvm/roe.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> 
-> jon
-
-
+diff --git a/arch/x86/kvm/roe.c b/arch/x86/kvm/roe.c
+index f787106be8..700f69823b 100644
+--- a/arch/x86/kvm/roe.c
++++ b/arch/x86/kvm/roe.c
+@@ -25,11 +25,14 @@ static bool __rmap_write_protect_roe(struct kvm *kvm,
+ 	struct rmap_iterator iter;
+ 	bool prot;
+ 	bool flush = false;
++	void *full_bmp =  memslot->roe_bitmap;
++	void *part_bmp = memslot->partial_roe_bitmap;
+ 
+ 	for_each_rmap_spte(rmap_head, &iter, sptep) {
+ 		int idx = spte_to_gfn(sptep) - memslot->base_gfn;
+ 
+-		prot = !test_bit(idx, memslot->roe_bitmap) && pt_protect;
++		prot = !(test_bit(idx, full_bmp) || test_bit(idx, part_bmp));
++		prot = prot && pt_protect;
+ 		flush |= spte_write_protect(sptep, prot);
+ 	}
+ 	return flush;
 -- 
-Federico Vaga
-http://www.federicovaga.it/
-
+2.19.2
 
