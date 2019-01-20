@@ -2,87 +2,147 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4C1C61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 07:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0129DC61CE4
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 07:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CE992084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 07:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB74E2084A
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 07:34:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="zGnYsX1z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbfATHCi convert rfc822-to-8bit (ORCPT
+        id S1729341AbfATHeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 02:02:38 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57191 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbfATHCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 02:02:38 -0500
-Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0K71LVK1953801
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Sat, 19 Jan 2019 23:01:21 -0800
-Date:   Sat, 19 Jan 2019 23:01:13 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190119103606.GA17400@kroah.com>
-References: <20190118225543.86996-1-joel@joelfernandes.org> <20190119102800.GB17723@infradead.org> <20190119103606.GA17400@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [RFC] Provide in-kernel headers for making it easy to extend the kernel
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>
-CC:     Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
-        atishp04@gmail.com, Borislav Petkov <bp@alien8.de>,
-        dancol@google.com, Ingo Molnar <mingo@redhat.com>,
-        Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
-        karim.yaghmour@opersys.com, Kees Cook <keescook@chromium.org>,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        Manoj Rao <linux@manojrajarao.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        paulmck@linux.vnet.ibm.com,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        rdunlap@infradead.org, rostedt@goodmis.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        yhs@fb.com
-From:   hpa@zytor.com
-Message-ID: <8BD4CB7A-944C-4EC5-A198-1D85C9EE28D6@zytor.com>
+        Sun, 20 Jan 2019 02:34:15 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35537 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfATHeO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 02:34:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z9so8680293pfi.2
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 23:34:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=7Lj+fRCAAyeVkoJyjP3FfszmJEhZXQQAKnTgDNY13jc=;
+        b=zGnYsX1zeg/g3bxsu2jPZweQX/AySchsNnQ9URcLRg7lpiwksly6IMYNtzMUaouWza
+         qP1g/2xOLmcCsix9ZrQ+lsKyiKvofFJK7elFX5zznWhfLsW6pHItxG+9/uh9IKrJO6QL
+         7hQpdPtiTi8rBKO8kmrIxUWT3EC5vBwgcOSa1IMDx/McXzOCb9dNKPBk65G1UHJdkHv4
+         DZ4x/YeDflGE8qg/5y2FNp3WPw4BZUPH4Rv4MzXroKe/ZcIwamtR/uPuoG+vNArAgB9N
+         E121gDHzxXxgqtbLtX+YwmiwcncWOzWHrvD+ae7DVDuhDBWhs7MdoXghMfHXMdLgJwkb
+         MRXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7Lj+fRCAAyeVkoJyjP3FfszmJEhZXQQAKnTgDNY13jc=;
+        b=ZjLvHSIscaiDQiHujaU52PVt2ADTR6eCCoeNlgYGrdTZfHeSWLQUfMTKy+j4U8YAl9
+         zq9djMlAzP1pCSdkSylqp0Wv3hbxXNqvp6KAzeAD/rscSKEltULZBX/EsHfADrGP8KZJ
+         tbSjpae2rbJSvvtGq6Hzko+/zLL3G75BJ5Hb6TX4ERqe2fmcEYqYGEgVtbNAiF3JpFrE
+         reuc8TywNkFSqmnTxW4CDtHrbYK5R0vgDJOCFb9c1aqWDD3FIxDhQDgClbxlj+Ba3KpQ
+         TJAl1l9TQKFajyO4AmWjWmcRJYnn8gEEqjA6bQ2+mOHD5brWhqKsxWmKu/2hAvMfoaTr
+         MQMg==
+X-Gm-Message-State: AJcUukdUGA1nlbjOE68xuX2dWcqv6oAIs3f7/P2mltqC00byhFcNz+Ww
+        uvY1hEBQ4w5vT0LAP5P+KTbHNIPxtT8=
+X-Google-Smtp-Source: ALg8bN6jIpoIBDqTE/gx0v25FR9PjW0zRgFVAu4tYM1sbP9PZ5buYxcMqWxiN6oMdsDj5CxI9rA8GA==
+X-Received: by 2002:a63:9501:: with SMTP id p1mr23919790pgd.149.1547969653385;
+        Sat, 19 Jan 2019 23:34:13 -0800 (PST)
+Received: from localhost.localdomain (36-239-240-12.dynamic-ip.hinet.net. [36.239.240.12])
+        by smtp.gmail.com with ESMTPSA id f32sm13321975pgf.80.2019.01.19.23.34.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 19 Jan 2019 23:34:12 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: wm831x-dcdc: Convert to use regulator_linear_range for wm831x_buckv
+Date:   Sun, 20 Jan 2019 15:33:56 +0800
+Message-Id: <20190120073356.20523-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On January 19, 2019 2:36:06 AM PST, Greg KH <gregkh@linuxfoundation.org> wrote:
->On Sat, Jan 19, 2019 at 02:28:00AM -0800, Christoph Hellwig wrote:
->> This seems like a pretty horrible idea and waste of kernel memory.
->
->It's only a waste if you want it to be a waste, i.e. if you load the
->kernel module.
->
->This really isn't any different from how /proc/config.gz works.
->
->> Just add support to kbuild to store a compressed archive in initramfs
->> and unpack it in the right place.
->
->I think the issue is that some devices do not use initramfs, or switch
->away from it after init happens or something like that.  Joel has all
->of
->the looney details that he can provide.
->
->thanks,
->
->greg k-h
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/wm831x-dcdc.c | 39 ++++++++-------------------------
+ 1 file changed, 9 insertions(+), 30 deletions(-)
 
-Yeah, well... but it is kind of a losing game... the more in-kernel stuff there is the less smiley are things to actually be supported.
-
-Modularizing is it in some ways even crazier in the sense that at that point you are relying on the filesystem containing the module, which has to be loaded into the kernel by a root user. One could even wonder if a better way to do this would be to have "make modules_install" park an archive file – or even a directory as opposed to a symlink – with this stuff in /lib/modules. We could even provide a tmpfs shim which autoloads such an archive via the firmware loader; this might even be generically useful, who knows.
-
-Note also that initramfs contents can be built into the kernel. Extracting such content into a single-instance tmpfs would again be a possibility.
+diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
+index 5a5bc4bb08d2..4a573eea284a 100644
+--- a/drivers/regulator/wm831x-dcdc.c
++++ b/drivers/regulator/wm831x-dcdc.c
+@@ -205,33 +205,10 @@ static irqreturn_t wm831x_dcdc_oc_irq(int irq, void *data)
+  * BUCKV specifics
+  */
+ 
+-static int wm831x_buckv_list_voltage(struct regulator_dev *rdev,
+-				      unsigned selector)
+-{
+-	if (selector <= 0x8)
+-		return 600000;
+-	if (selector <= WM831X_BUCKV_MAX_SELECTOR)
+-		return 600000 + ((selector - 0x8) * 12500);
+-	return -EINVAL;
+-}
+-
+-static int wm831x_buckv_map_voltage(struct regulator_dev *rdev,
+-				   int min_uV, int max_uV)
+-{
+-	u16 vsel;
+-
+-	if (min_uV < 600000)
+-		vsel = 0;
+-	else if (min_uV <= 1800000)
+-		vsel = DIV_ROUND_UP(min_uV - 600000, 12500) + 8;
+-	else
+-		return -EINVAL;
+-
+-	if (wm831x_buckv_list_voltage(rdev, vsel) > max_uV)
+-		return -EINVAL;
+-
+-	return vsel;
+-}
++static const struct regulator_linear_range wm831x_buckv_ranges[] = {
++	REGULATOR_LINEAR_RANGE(600000, 0, 0x7, 0),
++	REGULATOR_LINEAR_RANGE(600000, 0x8, 0x68, 12500),
++};
+ 
+ static int wm831x_buckv_set_dvs(struct regulator_dev *rdev, int state)
+ {
+@@ -309,7 +286,7 @@ static int wm831x_buckv_set_suspend_voltage(struct regulator_dev *rdev,
+ 	u16 reg = dcdc->base + WM831X_DCDC_SLEEP_CONTROL;
+ 	int vsel;
+ 
+-	vsel = wm831x_buckv_map_voltage(rdev, uV, uV);
++	vsel = regulator_map_voltage_linear_range(rdev, uV, uV);
+ 	if (vsel < 0)
+ 		return vsel;
+ 
+@@ -368,8 +345,8 @@ static int wm831x_buckv_get_current_limit(struct regulator_dev *rdev)
+ static const struct regulator_ops wm831x_buckv_ops = {
+ 	.set_voltage_sel = wm831x_buckv_set_voltage_sel,
+ 	.get_voltage_sel = wm831x_buckv_get_voltage_sel,
+-	.list_voltage = wm831x_buckv_list_voltage,
+-	.map_voltage = wm831x_buckv_map_voltage,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
+ 	.set_suspend_voltage = wm831x_buckv_set_suspend_voltage,
+ 	.set_current_limit = wm831x_buckv_set_current_limit,
+ 	.get_current_limit = wm831x_buckv_get_current_limit,
+@@ -492,6 +469,8 @@ static int wm831x_buckv_probe(struct platform_device *pdev)
+ 	dcdc->desc.id = id;
+ 	dcdc->desc.type = REGULATOR_VOLTAGE;
+ 	dcdc->desc.n_voltages = WM831X_BUCKV_MAX_SELECTOR + 1;
++	dcdc->desc.linear_ranges = wm831x_buckv_ranges;
++	dcdc->desc.n_linear_ranges = ARRAY_SIZE(wm831x_buckv_ranges);
+ 	dcdc->desc.ops = &wm831x_buckv_ops;
+ 	dcdc->desc.owner = THIS_MODULE;
+ 	dcdc->desc.enable_reg = WM831X_DCDC_ENABLE;
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+2.17.1
+
