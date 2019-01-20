@@ -2,97 +2,90 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34FFC282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3155C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC84A2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:54:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A13C2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbfAUHyz (ORCPT
+        id S1729046AbfAUHz0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:54:55 -0500
-Received: from ms.lwn.net ([45.79.88.28]:33038 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726240AbfAUHyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:54:54 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id BC4E835A;
-        Mon, 21 Jan 2019 01:56:22 +0000 (UTC)
-Date:   Sun, 20 Jan 2019 18:56:17 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Federico Vaga <federico.vaga@vaga.pv.it>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc:it_IT: add translations in process/
-Message-ID: <20190120185617.44a7f275@lwn.net>
-In-Reply-To: <20190119221341.3622-1-federico.vaga@vaga.pv.it>
-References: <20190119221341.3622-1-federico.vaga@vaga.pv.it>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 21 Jan 2019 02:55:26 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53908 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728357AbfAUHz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:55:26 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9AAFDF9DF9DC46FC69F3;
+        Mon, 21 Jan 2019 14:09:50 +0800 (CST)
+Received: from localhost.localdomain (10.175.34.53) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 21 Jan 2019 14:09:40 +0800
+From:   Xue Chaojing <xuechaojing@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <xuechaojing@huawei.com>,
+        <netdev@vger.kernel.org>, <wulike1@huawei.com>,
+        <chiqijun@huawei.com>, <fy.wang@huawei.com>, <tony.qu@huawei.com>,
+        <luoshaokai@huawei.com>
+Subject: [PATCH net-next] hinic: Add pci device ids
+Date:   Sun, 20 Jan 2019 22:15:46 +0000
+Message-ID: <20190120221546.24445-1-xuechaojing@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.34.53]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 19 Jan 2019 23:13:41 +0100
-Federico Vaga <federico.vaga@vaga.pv.it> wrote:
+This patch adds PCI device IDs to support following cards:
 
-> This patch adds the Italian translation for the following documents
-> in Documentation/process:
-> 
-> - applying-patches
-> - submit-checklist
-> - submitting-drivers
-> - changes
-> - stable api nonsense
-> 
-> Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+1. Add device id 0x0205 for HINIC 100GE dual port mezz card.
+2. Add device id 0x0210 for HINIC 25GE quad port mezz card.
+3. Delete device id 0x0201 for HINIC 100GE dual port card, because
+this is used by other product.
+4. Macro of device id 0x200 is modified for HINIC 100GE dual port card.
 
-In general, this looks good.  One thing jumped at me, though...(OK, more
-than one, but only one to fix):
+Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+---
+ drivers/net/ethernet/huawei/hinic/hinic_main.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-> +Perl
-> +----
-> +
-> +Per compilare il kernel vi servirà perl 5 e i seguenti moduli ``Getopt::Long``,
-> +``Getopt::Std``, ``File::Basename``, e ``File::Find``.
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+index da323b9e1f62..e64bc664f687 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+@@ -51,9 +51,10 @@ static unsigned int rx_weight = 64;
+ module_param(rx_weight, uint, 0644);
+ MODULE_PARM_DESC(rx_weight, "Number Rx packets for NAPI budget (default=64)");
+ 
+-#define HINIC_DEV_ID_QUAD_PORT_25GE     0x1822
+-#define HINIC_DEV_ID_DUAL_PORT_25GE     0x0200
+-#define HINIC_DEV_ID_DUAL_PORT_100GE    0x0201
++#define HINIC_DEV_ID_QUAD_PORT_25GE         0x1822
++#define HINIC_DEV_ID_DUAL_PORT_100GE        0x0200
++#define HINIC_DEV_ID_DUAL_PORT_100GE_MEZZ   0x0205
++#define HINIC_DEV_ID_QUAD_PORT_25GE_MEZZ    0x0210
+ 
+ #define HINIC_WQ_NAME                   "hinic_dev"
+ 
+@@ -1113,8 +1114,9 @@ static void hinic_shutdown(struct pci_dev *pdev)
+ 
+ static const struct pci_device_id hinic_pci_table[] = {
+ 	{ PCI_VDEVICE(HUAWEI, HINIC_DEV_ID_QUAD_PORT_25GE), 0},
+-	{ PCI_VDEVICE(HUAWEI, HINIC_DEV_ID_DUAL_PORT_25GE), 0},
+ 	{ PCI_VDEVICE(HUAWEI, HINIC_DEV_ID_DUAL_PORT_100GE), 0},
++	{ PCI_VDEVICE(HUAWEI, HINIC_DEV_ID_DUAL_PORT_100GE_MEZZ), 0},
++	{ PCI_VDEVICE(HUAWEI, HINIC_DEV_ID_QUAD_PORT_25GE_MEZZ), 0},
+ 	{ 0, 0}
+ };
+ MODULE_DEVICE_TABLE(pci, hinic_pci_table);
+-- 
+2.17.1
 
-Didn't Rob Landley go though some considerable pain a while back to
-eliminate Perl from the basic kernel build?  This, perhaps, should come out
-of the original.  (As long as it's still there, it makes sense to be in the
-translation, of course).
-
-> +Modifiche architetturali
-> +------------------------
-> +
-> +DevFS è stato reso obsoleto da udev
-> +(http://www.kernel.org/pub/linux/utils/kernel/hotplug/)
-> +
-> +Il supporto per UID a 32-bit è ora disponibile.  Divertitevi!
-
-Speaking of stuff that should come out of the original...this is not
-exactly news at this point...
-
-Meanwhile, here is the thing that actually needs to be fixed:
-
-> +Raiserfsprogs
-> +-------------
-> +
-> +Il pacchetto raiserfsprogs dovrebbe essere usato con raiserfs-3.6.x (Linux
-> +kernel 2.4.x).  Questo è un pacchetto combinato che contiene versioni
-> +funzionanti di ``mkreiserfs``, ``resize_reiserfs``, ``debugreiserfs`` e
-> +``reiserfsck``.  Questi programmi funzionano sulle piattaforme i386 e alpha.
-
-Even in Italian, I believe that 'Reiser" is spelled "Reiser"...
-
-Thanks,
-
-jon
