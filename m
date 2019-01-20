@@ -2,137 +2,89 @@ Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE83BC61CE4
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EB3C61CE8
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFAD620896
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:43:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ve7uMo/W"
+	by mail.kernel.org (Postfix) with ESMTP id DD45D2084F
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 02:56:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbfATCnL (ORCPT
+        id S1730068AbfATCvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 19 Jan 2019 21:43:11 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42631 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbfATCnL (ORCPT
+        Sat, 19 Jan 2019 21:51:14 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:13253 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729996AbfATCvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 19 Jan 2019 21:43:11 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so8095755plp.9
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jan 2019 18:43:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=BF0HO+6QfeFEmeGaUgC9N9Nw569CU5Sf/OjrZdT31Wg=;
-        b=ve7uMo/WkBW5ujSWYk+nN5+VSlRR2lfzFGtil22YGCIoR4mFc1H4ycwzUrksmeSCmB
-         RarIj+S+Qc7rqJtHbHBRO1nYLdwhDjxAOaqPAmQnOOGHS1IdLCIwrDSFgbTWCaln8MZs
-         bWyyqSyCPpMLsFgdlOFxxLSlxOUXPZdGCNE5mgjrkvuFAmPC8arCyTC+kbOAeiwzDjXt
-         q2ESNsJrtH1s/dFv3EdnwxHs+cFNHW6si7TTQFYdfg7HkCCiRExo/7thTpe5VBP5xlBq
-         XDk6zVTqwNPEahQ58U/hVUf3e2E2oyRBbLyca+tZwOricxgotO9ErTNNokApwhGqykG8
-         VRbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BF0HO+6QfeFEmeGaUgC9N9Nw569CU5Sf/OjrZdT31Wg=;
-        b=kK4MVktXAopiygS4vbV8pCa1Am6nO5fyQFpOoKSK8KNbsb+5evDUOuXq1SseJCFjKA
-         LEvbh2zrzZ222eejx6VddR5OQGwHkpmgJwdw08yE326fDOC2MYWznJO82V7EvGkU9K6b
-         8ubNtQvpDcXVNYEf+pzKs9dxy3Y+W/S+5P7JcA3qFJlU+vVNPIophuGwPpHajYwoe0ux
-         jdwqdj174v2N2b1sZn2P1iHNcMWfoKk1PaeZfNUgQoENzQ0fbZugAl0yySXOrSWgn9SC
-         dM+lNXA6i6XVA/BqXbR5nFHi2yOW+K/Uo8PsCZWTlVApgHwEjsaAnI6rYuI9CNDqb3P5
-         NVzQ==
-X-Gm-Message-State: AJcUukcD9UzLrZNpzlG9QFzCoIdQ7nDnJf5x12M1mPnOEpuMCT6bm7hz
-        xLIemtbUYg1+11EJWL+xSYc=
-X-Google-Smtp-Source: ALg8bN7ZtgzavMun3yAyKxR+7y4PL4IqxrsURKlQG8mJ2G3W6aSTG9mtKyeOMt55UoILIzxB+OPOpQ==
-X-Received: by 2002:a17:902:50e:: with SMTP id 14mr24538529plf.141.1547952190466;
-        Sat, 19 Jan 2019 18:43:10 -0800 (PST)
-Received: from localhost.localdomain ([207.246.99.41])
-        by smtp.gmail.com with ESMTPSA id j197sm12208228pgc.76.2019.01.19.18.43.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 19 Jan 2019 18:43:09 -0800 (PST)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     yamada.masahiro@socionext.com, mingo@kernel.org, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH] mm/page_owner: move config option to mm/Kconfig.debug
-Date:   Sun, 20 Jan 2019 10:42:54 +0800
-Message-Id: <20190120024254.6270-1-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 19 Jan 2019 21:51:14 -0500
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0K2ooal028244;
+        Sun, 20 Jan 2019 11:50:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
+ Sun, 20 Jan 2019 11:50:50 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0K2ooHt028240
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sun, 20 Jan 2019 11:50:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] locking/lockdep: Add debug_locks check in
+ __lock_downgrade()
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1547093005-26085-1-git-send-email-longman@redhat.com>
+ <CACT4Y+YJYSo5GtSvMSqh4y_w7jWC1S-RYu+exuR3DU9NyrpJqA@mail.gmail.com>
+ <20190114133650.GC10486@hirez.programming.kicks-ass.net>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <250f311c-a686-d4b3-d88f-6d39ff3b1492@i-love.sakura.ne.jp>
+Date:   Sun, 20 Jan 2019 11:50:49 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190114133650.GC10486@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the PAGE_OWNER option from submenu "Compile-time checks and compiler
-options" to dedicated submenu "Memory Debugging".
+Peter, will this fix be sent to linux.git shortly?
+syzbot is generating many corrupted reports due to this race.
 
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
----
- lib/Kconfig.debug | 17 -----------------
- mm/Kconfig.debug  | 17 +++++++++++++++++
- 2 files changed, 17 insertions(+), 17 deletions(-)
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index d4df5b24d75e..e43cfdc86fd6 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -266,23 +266,6 @@ config UNUSED_SYMBOLS
- 	  you really need it, and what the merge plan to the mainline kernel for
- 	  your module is.
- 
--config PAGE_OWNER
--	bool "Track page owner"
--	depends on DEBUG_KERNEL && STACKTRACE_SUPPORT
--	select DEBUG_FS
--	select STACKTRACE
--	select STACKDEPOT
--	select PAGE_EXTENSION
--	help
--	  This keeps track of what call chain is the owner of a page, may
--	  help to find bare alloc_page(s) leaks. Even if you include this
--	  feature on your build, it is disabled in default. You should pass
--	  "page_owner=on" to boot parameter in order to enable it. Eats
--	  a fair amount of memory if enabled. See tools/vm/page_owner_sort.c
--	  for user-space helper.
--
--	  If unsure, say N.
--
- config DEBUG_FS
- 	bool "Debug Filesystem"
- 	help
-diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-index 9a7b8b049d04..e3df921208c0 100644
---- a/mm/Kconfig.debug
-+++ b/mm/Kconfig.debug
-@@ -39,6 +39,23 @@ config DEBUG_PAGEALLOC_ENABLE_DEFAULT
- 	  Enable debug page memory allocations by default? This value
- 	  can be overridden by debug_pagealloc=off|on.
- 
-+config PAGE_OWNER
-+	bool "Track page owner"
-+	depends on DEBUG_KERNEL && STACKTRACE_SUPPORT
-+	select DEBUG_FS
-+	select STACKTRACE
-+	select STACKDEPOT
-+	select PAGE_EXTENSION
-+	help
-+	  This keeps track of what call chain is the owner of a page, may
-+	  help to find bare alloc_page(s) leaks. Even if you include this
-+	  feature on your build, it is disabled in default. You should pass
-+	  "page_owner=on" to boot parameter in order to enable it. Eats
-+	  a fair amount of memory if enabled. See tools/vm/page_owner_sort.c
-+	  for user-space helper.
-+
-+	  If unsure, say N.
-+
- config PAGE_POISONING
- 	bool "Poison pages after freeing"
- 	select PAGE_POISONING_NO_SANITY if HIBERNATION
--- 
-2.17.1
-
+On 2019/01/14 22:36, Peter Zijlstra wrote:
+> On Thu, Jan 10, 2019 at 11:21:13AM +0100, Dmitry Vyukov wrote:
+>> On Thu, Jan 10, 2019 at 5:04 AM Waiman Long <longman@redhat.com> wrote:
+>>>
+>>> Tetsuo Handa had reported he saw an incorrect "downgrading a read lock"
+>>> warning right after a previous lockdep warning. It is likely that the
+>>> previous warning turned off lock debugging causing the lockdep to have
+>>> inconsistency states leading to the lock downgrade warning.
+>>>
+>>> Fix that by add a check for debug_locks at the beginning of
+>>> __lock_downgrade().
+>>>
+>>> Signed-off-by: Waiman Long <longman@redhat.com>
+>>> Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+>>
+>> Please also add:
+>>
+>> Reported-by: syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com
+>>
+>> for tracking purposes. But Tetsuo deserves lots of credit for debugging it.
+> 
+> I made that:
+> 
+> Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Debugged-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Reported-by: syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com
