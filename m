@@ -2,325 +2,140 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DATE_IN_PAST_03_06,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D1CC282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1276C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E752120823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="Iyzp/Z0t"
+	by mail.kernel.org (Postfix) with ESMTP id 9BD4A2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548058083;
+	bh=WoXqts8Zyyj3IcCcrBeogQKzogQyA/qUsPtodKHtexM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=FVsryK1uGy3OSaCA7I/N1XUC9MowGiuGtnHBqL5cADVf+KlPD4l3zst44kH6SSyBq
+	 rKFoEYbrgimNDIF0FP6eCtxHgWlYIZo3xdoPuQLt2gk/DjV+PNrilkNmRDFQ6HeS2G
+	 TTEUPltxfcwIZC+r28Vw9gw95fhGIl+MjCpblnzE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfAUIH4 (ORCPT
+        id S1729303AbfAUIIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:07:56 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46637 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbfAUIHx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:07:53 -0500
-Received: by mail-wr1-f68.google.com with SMTP id l9so22052204wrt.13
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:07:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JVFrpeC80OLPbUMIpkWyZ48VgZSdWjNoszlgtYxl1bA=;
-        b=Iyzp/Z0tl0zUVSzsrk15rnenCu3gmeS9BbVxPnOR2X0A/wDa67TG2ErOw86zlPJST0
-         ANFCzpKMRXGco1+Q+3Xcmq6VS5TIB1TJJIBddBx70n1IFKfzNY5MOmuXo2QN65LKCHnj
-         ep/Xjc3Z/aKRTl59oK6xkKe2rVc/4jCaxo4NH6VqNDXMq3RlS1SbKVFhGGgNi0VwBB7M
-         pEP9qVG9dyo/IQNHMP515X2fAyKiTuXAIWzb7siMHqd6STQsv7KzjPufW5NceEhq4S7P
-         ZcXRbcoQ989ppL5tObtjpUtor1QP/joOnD9UK/zK6PKLelzhLR+l6+O9aDF/pqCptwT6
-         dkOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JVFrpeC80OLPbUMIpkWyZ48VgZSdWjNoszlgtYxl1bA=;
-        b=uBf1ph1Gyar4XFy3ZR3YbOw8ZmWZZJhnorvun4zlRsWo5PYJ+VTm8VQo0tb7nLnTjb
-         4SbTYtBhY7eR2h5U5queZ5YCyE+FP/aY85p+A6F3m21cfXZMYUH2A2DOYqXqpbu3h/ot
-         VJsws0MEqbmjUF+I2zHbyJp4N3QEi0JIBX3J6KJ++r5WUIHTk86OH1ViBiTAbLFIw8ft
-         Dbk2dvIHXbj0wtQo18a37M9uK6uEN7/1R4D8C0KujAVH8JiXtxweHwNB8HVPEVEvjwBR
-         MIKd0d0oUICZRrnvScZTvoz49ulyS4sUSu9BXgGABy8WpjcDSLdaRoCIxBIqedDymQ2d
-         Rtaw==
-X-Gm-Message-State: AJcUukeag8l7Au2BxDjYts7Umd4HPl951kKWYSaxvqKAexjbiGarEzh+
-        RSt+lKLbnlCAGwXpVeYVm/dxXOw3Ihk=
-X-Google-Smtp-Source: ALg8bN7yd4LLsUEEVxWZ6AaI+n5mCvGMx2xoXPiVv6mpYsuArzhbuv6KL8o8fpyT9SQ/Ftboiosjgg==
-X-Received: by 2002:adf:ff09:: with SMTP id k9mr24408212wrr.97.1548027669143;
-        Sun, 20 Jan 2019 15:41:09 -0800 (PST)
-Received: from localhost.localdomain ([156.212.82.83])
-        by smtp.gmail.com with ESMTPSA id e9sm76576753wro.16.2019.01.20.15.41.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 15:41:08 -0800 (PST)
-From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
-        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
-        Boris Lukashev <blukashev@sempervictus.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-Subject: [RESEND PATCH V8 02/11] KVM: X86: Add arbitrary data pointer in kvm memslot iterator functions
-Date:   Mon, 21 Jan 2019 01:39:31 +0200
-Message-Id: <20190120233940.15282-3-ahmedsoliman@mena.vt.edu>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
-References: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+        Mon, 21 Jan 2019 03:08:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49994 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728639AbfAUIH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:07:59 -0500
+Received: from earth.universe (unknown [194.136.232.109])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D78421783;
+        Mon, 21 Jan 2019 01:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548032491;
+        bh=WoXqts8Zyyj3IcCcrBeogQKzogQyA/qUsPtodKHtexM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xhf4SW1OsEEMgUedcEFUIjJ5Fm7zk/nIfjJafYfyIFqX8y+GTazmqNSdOUJNETNyn
+         3YMqgToiLxsLCne4WbHa2KAOvMxxhlVLEzAPogVw4HtLrKG3uTu44QIDpgkFLGTjcG
+         GqbqP7eaCf03iyiH9uwHPQKJe9bdD/i7vXojLw/k=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 362FB3C08E2; Sun, 20 Jan 2019 22:23:26 +0100 (CET)
+Date:   Sun, 20 Jan 2019 22:23:26 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     hdegoede@redhat.com, wens@csie.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: axp288_fuel_gauge: Change to use
+ DEFINE_SHOW_ATTRIBUTE macro
+Message-ID: <20190120212326.6kk4tcpzs6ytlvho@earth.universe>
+References: <20181122142551.25367-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ovmzsfkld3ku7wlo"
+Content-Disposition: inline
+In-Reply-To: <20181122142551.25367-1-tiny.windzz@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will help sharing data into the slot_level_handler callback. In my
-case I need to a share a counter for the pages traversed to use it in some
-bitmap. Being able to send arbitrary memory pointer into the
-slot_level_handler callback made it easy.
 
-Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
----
- arch/x86/kvm/mmu.c | 65 ++++++++++++++++++++++++++--------------------
- 1 file changed, 37 insertions(+), 28 deletions(-)
+--ovmzsfkld3ku7wlo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index ce770b4462..098df7d135 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -1525,7 +1525,7 @@ static bool spte_write_protect(u64 *sptep, bool pt_protect)
- 
- static bool __rmap_write_protect(struct kvm *kvm,
- 				 struct kvm_rmap_head *rmap_head,
--				 bool pt_protect)
-+				 bool pt_protect, void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -1564,7 +1564,8 @@ static bool wrprot_ad_disabled_spte(u64 *sptep)
-  *	- W bit on ad-disabled SPTEs.
-  * Returns true iff any D or W bits were cleared.
-  */
--static bool __rmap_clear_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
-+static bool __rmap_clear_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-+				void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -1590,7 +1591,8 @@ static bool spte_set_dirty(u64 *sptep)
- 	return mmu_spte_update(sptep, spte);
- }
- 
--static bool __rmap_set_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
-+static bool __rmap_set_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-+				void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -1622,7 +1624,7 @@ static void kvm_mmu_write_protect_pt_masked(struct kvm *kvm,
- 	while (mask) {
- 		rmap_head = __gfn_to_rmap(slot->base_gfn + gfn_offset + __ffs(mask),
- 					  PT_PAGE_TABLE_LEVEL, slot);
--		__rmap_write_protect(kvm, rmap_head, false);
-+		__rmap_write_protect(kvm, rmap_head, false, NULL);
- 
- 		/* clear the first set bit */
- 		mask &= mask - 1;
-@@ -1648,7 +1650,7 @@ void kvm_mmu_clear_dirty_pt_masked(struct kvm *kvm,
- 	while (mask) {
- 		rmap_head = __gfn_to_rmap(slot->base_gfn + gfn_offset + __ffs(mask),
- 					  PT_PAGE_TABLE_LEVEL, slot);
--		__rmap_clear_dirty(kvm, rmap_head);
-+		__rmap_clear_dirty(kvm, rmap_head, NULL);
- 
- 		/* clear the first set bit */
- 		mask &= mask - 1;
-@@ -1701,7 +1703,8 @@ bool kvm_mmu_slot_gfn_write_protect(struct kvm *kvm,
- 
- 	for (i = PT_PAGE_TABLE_LEVEL; i <= PT_MAX_HUGEPAGE_LEVEL; ++i) {
- 		rmap_head = __gfn_to_rmap(gfn, i, slot);
--		write_protected |= __rmap_write_protect(kvm, rmap_head, true);
-+		write_protected |= __rmap_write_protect(kvm, rmap_head, true,
-+				NULL);
- 	}
- 
- 	return write_protected;
-@@ -1715,7 +1718,8 @@ static bool rmap_write_protect(struct kvm_vcpu *vcpu, u64 gfn)
- 	return kvm_mmu_slot_gfn_write_protect(vcpu->kvm, slot, gfn);
- }
- 
--static bool kvm_zap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
-+static bool kvm_zap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-+		void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -1735,7 +1739,7 @@ static int kvm_unmap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
- 			   struct kvm_memory_slot *slot, gfn_t gfn, int level,
- 			   unsigned long data)
- {
--	return kvm_zap_rmapp(kvm, rmap_head);
-+	return kvm_zap_rmapp(kvm, rmap_head, NULL);
- }
- 
- static int kvm_set_pte_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-@@ -5552,13 +5556,15 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
- }
- 
- /* The return value indicates if tlb flush on all vcpus is needed. */
--typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
-+typedef bool (*slot_level_handler) (struct kvm *kvm,
-+		struct kvm_rmap_head *rmap_head, void *data);
- 
- /* The caller should hold mmu-lock before calling this function. */
- static __always_inline bool
- slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 			slot_level_handler fn, int start_level, int end_level,
--			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
-+			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb,
-+			void *data)
- {
- 	struct slot_rmap_walk_iterator iterator;
- 	bool flush = false;
-@@ -5566,7 +5572,7 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 	for_each_slot_rmap_range(memslot, start_level, end_level, start_gfn,
- 			end_gfn, &iterator) {
- 		if (iterator.rmap)
--			flush |= fn(kvm, iterator.rmap);
-+			flush |= fn(kvm, iterator.rmap, data);
- 
- 		if (need_resched() || spin_needbreak(&kvm->mmu_lock)) {
- 			if (flush && lock_flush_tlb) {
-@@ -5588,36 +5594,36 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- static __always_inline bool
- slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		  slot_level_handler fn, int start_level, int end_level,
--		  bool lock_flush_tlb)
-+		  bool lock_flush_tlb, void *data)
- {
- 	return slot_handle_level_range(kvm, memslot, fn, start_level,
- 			end_level, memslot->base_gfn,
- 			memslot->base_gfn + memslot->npages - 1,
--			lock_flush_tlb);
-+			lock_flush_tlb, data);
- }
- 
- static __always_inline bool
- slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
--		      slot_level_handler fn, bool lock_flush_tlb)
-+		      slot_level_handler fn, bool lock_flush_tlb, void *data)
- {
- 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
--				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
-+				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb, data);
- }
- 
- static __always_inline bool
- slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
--			slot_level_handler fn, bool lock_flush_tlb)
-+			slot_level_handler fn, bool lock_flush_tlb, void *data)
- {
- 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL + 1,
--				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
-+				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb, data);
- }
- 
- static __always_inline bool
- slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
--		 slot_level_handler fn, bool lock_flush_tlb)
-+		 slot_level_handler fn, bool lock_flush_tlb, void *data)
- {
- 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
--				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb);
-+				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb, data);
- }
- 
- void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
-@@ -5645,7 +5651,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 			flush |= slot_handle_level_range(kvm, memslot,
- 					kvm_zap_rmapp, PT_PAGE_TABLE_LEVEL,
- 					PT_MAX_HUGEPAGE_LEVEL, start,
--					end - 1, flush_tlb);
-+					end - 1, flush_tlb, NULL);
- 		}
- 	}
- 
-@@ -5657,9 +5663,10 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- }
- 
- static bool slot_rmap_write_protect(struct kvm *kvm,
--				    struct kvm_rmap_head *rmap_head)
-+				    struct kvm_rmap_head *rmap_head,
-+				    void *data)
- {
--	return __rmap_write_protect(kvm, rmap_head, false);
-+	return __rmap_write_protect(kvm, rmap_head, false, data);
- }
- 
- void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
-@@ -5669,7 +5676,7 @@ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
- 
- 	spin_lock(&kvm->mmu_lock);
- 	flush = slot_handle_all_level(kvm, memslot, slot_rmap_write_protect,
--				      false);
-+				      false, NULL);
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	/*
-@@ -5696,7 +5703,8 @@ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
- }
- 
- static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
--					 struct kvm_rmap_head *rmap_head)
-+					 struct kvm_rmap_head *rmap_head,
-+					 void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -5740,7 +5748,7 @@ void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
- 	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
- 	spin_lock(&kvm->mmu_lock);
- 	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
--			 kvm_mmu_zap_collapsible_spte, true);
-+			 kvm_mmu_zap_collapsible_spte, true, NULL);
- 	spin_unlock(&kvm->mmu_lock);
- }
- 
-@@ -5750,7 +5758,7 @@ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
- 	bool flush;
- 
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false);
-+	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false, NULL);
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	lockdep_assert_held(&kvm->slots_lock);
-@@ -5774,7 +5782,7 @@ void kvm_mmu_slot_largepage_remove_write_access(struct kvm *kvm,
- 
- 	spin_lock(&kvm->mmu_lock);
- 	flush = slot_handle_large_level(kvm, memslot, slot_rmap_write_protect,
--					false);
-+					false, NULL);
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	/* see kvm_mmu_slot_remove_write_access */
-@@ -5792,7 +5800,8 @@ void kvm_mmu_slot_set_dirty(struct kvm *kvm,
- 	bool flush;
- 
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false);
-+	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false,
-+			NULL);
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	lockdep_assert_held(&kvm->slots_lock);
--- 
-2.19.2
+Hi,
 
+On Thu, Nov 22, 2018 at 09:25:51AM -0500, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+
+Thanks, queued to power-supply-next. Sorry for the delay, I missed
+this when I collected patches for the 5.0 kernel.
+
+-- Sebastian
+
+>  drivers/power/supply/axp288_fuel_gauge.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/sup=
+ply/axp288_fuel_gauge.c
+> index 084c8ba9749d..9ff2461820d8 100644
+> --- a/drivers/power/supply/axp288_fuel_gauge.c
+> +++ b/drivers/power/supply/axp288_fuel_gauge.c
+> @@ -307,22 +307,12 @@ static int fuel_gauge_debug_show(struct seq_file *s=
+, void *data)
+>  	return 0;
+>  }
+> =20
+> -static int debug_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, fuel_gauge_debug_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations fg_debug_fops =3D {
+> -	.open       =3D debug_open,
+> -	.read       =3D seq_read,
+> -	.llseek     =3D seq_lseek,
+> -	.release    =3D single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(fuel_gauge_debug);
+> =20
+>  static void fuel_gauge_create_debugfs(struct axp288_fg_info *info)
+>  {
+>  	info->debug_file =3D debugfs_create_file("fuelgauge", 0666, NULL,
+> -		info, &fg_debug_fops);
+> +		info, &fuel_gauge_debug_fops);
+>  }
+> =20
+>  static void fuel_gauge_remove_debugfs(struct axp288_fg_info *info)
+> --=20
+> 2.17.0
+>=20
+
+--ovmzsfkld3ku7wlo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxE5ssACgkQ2O7X88g7
++ppAWA//Wxt0SzuHUUfk6z2Z1e/IO5kyxalrUCImNkjSTgb1aNxc779EHweTgpKu
+pGUdSiBlpPcOa8CgtozABrKlHjmmRFYWRcfVxGogZyCQBt2mQwgW/TbS3pHUN8Sr
+VnQrAv+cf0g3M5c6WnPguvOVvLao/zwwymvQqqDPNvoYDrrS4oOP0InlE4uhSIfP
+LyPToq0PkWaImWHB/mr5Y7iy79b4qkKe744nJtDlbroVSvESmktGIdQ4vaiJhc10
+yvLppZMm0CmU2IrjQtNQYgnWssTRUrfZ/JJ0a8t1lT3W69n0J05X9vZrC5kGaTyD
+ovyixjLt8Fwcw9EZC+YlKunMoUYiUc7mD5U3ftbuxSxWbAnCds3tqiNf2XoqIkUr
+JYa4azZy+S9Gm1io6ySja3HSjgG0NBrkVitjSC5nqKD9S3bQY8eaUkA5iib3n5oZ
+UEv/0eRlfHngl+FVIBjeM1RNeRSLY/70hwON9skYG7RuA6GnYPNpxXVW0Z1WAYeO
+8S+Omo01WNdu1pBwN/qqVVa8AFBH6BUXxCHObo7z6Ef0AGwZS3B0tpboe1UZuTwn
+F3x32rPyYG0DHVEcr5uH0FKXwfo6n9hnADoXsVFhbVdN+si3PUXvOV/EDSaksN1L
+Wvkcu4u+QT60Wda/tTNA542Rrhw0WFW3/4nsdWciaGZJGdznd8w=
+=uac3
+-----END PGP SIGNATURE-----
+
+--ovmzsfkld3ku7wlo--
