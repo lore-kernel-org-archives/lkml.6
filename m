@@ -2,109 +2,130 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E87C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA609C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F6720879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079041;
-	bh=Nd2vwmN00wMPNG5BwvBZN6BMV670blATs9i7g6sdvwE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2H+qGz4prhbG9/o6rkVk3VWhb/LVSlQHbh1IXb9vucDjV9PmXXrpg6ZIg5QNRj17O
-	 f+sgCy0GAvETCPJ8+zIkBrIbw8Yz6DKvdxzRogpcK0lvC3SHjI31kaxS7LQerF362a
-	 8QgnxpKLZ/wpldz9Z7QgbG34BWZ3oPoEccPIRwac=
+	by mail.kernel.org (Postfix) with ESMTP id 958702087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731950AbfAUN4e (ORCPT
+        id S1731915AbfAUN4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:56:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41732 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:56:23 -0500
+Received: from foss.arm.com ([217.140.101.70]:34546 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731930AbfAUN42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:56:28 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C42112089F;
-        Mon, 21 Jan 2019 13:56:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078987;
-        bh=Nd2vwmN00wMPNG5BwvBZN6BMV670blATs9i7g6sdvwE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YVspnVOlyvXOnIy6inoE/dM6duKLDanBtdiAVMgt3xXQmEAmSzCy9wPwycBLNIv8Z
-         5qPV9197SEsLVNTV1vJ/AnZ6xF2rUF04QJDw1CwXi3yBuOMwIUxvYCdkOniCxOhmzQ
-         ALdGHD+meKwhVzapxVHe2T2vIAi66aWzIT8nqaCk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.9 36/51] sunrpc: handle ENOMEM in rpcb_getport_async
-Date:   Mon, 21 Jan 2019 14:44:32 +0100
-Message-Id: <20190121122457.157030144@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
-References: <20190121122453.700446926@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1731888AbfAUN4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:56:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3FC01EBD;
+        Mon, 21 Jan 2019 05:56:17 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F1FD03F614;
+        Mon, 21 Jan 2019 05:56:14 -0800 (PST)
+Subject: Re: [PATCH 0/3] iommu/arm-smmu: Add support to use Last level cache
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        pdaly@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>, pratikp@codeaurora.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+ <CAKv+Gu8P-5hxZ8+OV_xSZteTvCLw-Sc-=KJM1i=3aWajcS9bUw@mail.gmail.com>
+ <CAFp+6iEp-bzMrZz8cFUciTFKm7TwAoLdYpsSTD73kDfCRh60bA@mail.gmail.com>
+ <CAKv+Gu9z_mGwdZYMKPfM_g2MZwrCF5=f4WAdn_R6wJ1A9xSZ_Q@mail.gmail.com>
+ <dbba5a8a-70c0-dd01-713c-081eb412e2d7@arm.com>
+ <CAKv+Gu8K5f0va9q4FYk9x1puoOTDjZ0c25qokm2izSVAwd1gmQ@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <964779d6-c676-3379-bf1e-cde0dd82d63d@arm.com>
+Date:   Mon, 21 Jan 2019 13:56:13 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKv+Gu8K5f0va9q4FYk9x1puoOTDjZ0c25qokm2izSVAwd1gmQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On 21/01/2019 13:36, Ard Biesheuvel wrote:
+> On Mon, 21 Jan 2019 at 14:25, Robin Murphy <robin.murphy@arm.com> wrote:
+>>
+>> On 21/01/2019 10:50, Ard Biesheuvel wrote:
+>>> On Mon, 21 Jan 2019 at 11:17, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>>
+>>>> On Mon, Jan 21, 2019 at 12:56 PM Ard Biesheuvel
+>>>> <ard.biesheuvel@linaro.org> wrote:
+>>>>>
+>>>>> On Mon, 21 Jan 2019 at 06:54, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+>>>>>>
+>>>>>> Qualcomm SoCs have an additional level of cache called as
+>>>>>> System cache, aka. Last level cache (LLC). This cache sits right
+>>>>>> before the DDR, and is tightly coupled with the memory controller.
+>>>>>> The clients using this cache request their slices from this
+>>>>>> system cache, make it active, and can then start using it.
+>>>>>> For these clients with smmu, to start using the system cache for
+>>>>>> buffers and, related page tables [1], memory attributes need to be
+>>>>>> set accordingly. This series add the required support.
+>>>>>>
+>>>>>
+>>>>> Does this actually improve performance on reads from a device? The
+>>>>> non-cache coherent DMA routines perform an unconditional D-cache
+>>>>> invalidate by VA to the PoC before reading from the buffers filled by
+>>>>> the device, and I would expect the PoC to be defined as lying beyond
+>>>>> the LLC to still guarantee the architected behavior.
+>>>>
+>>>> We have seen performance improvements when running Manhattan
+>>>> GFXBench benchmarks.
+>>>>
+>>>
+>>> Ah ok, that makes sense, since in that case, the data flow is mostly
+>>> to the device, not from the device.
+>>>
+>>>> As for the PoC, from my knowledge on sdm845 the system cache, aka
+>>>> Last level cache (LLC) lies beyond the point of coherency.
+>>>> Non-cache coherent buffers will not be cached to system cache also, and
+>>>> no additional software cache maintenance ops are required for system cache.
+>>>> Pratik can add more if I am missing something.
+>>>>
+>>>> To take care of the memory attributes from DMA APIs side, we can add a
+>>>> DMA_ATTR definition to take care of any dma non-coherent APIs calls.
+>>>>
+>>>
+>>> So does the device use the correct inner non-cacheable, outer
+>>> writeback cacheable attributes if the SMMU is in pass-through?
+>>>
+>>> We have been looking into another use case where the fact that the
+>>> SMMU overrides memory attributes is causing issues (WC mappings used
+>>> by the radeon and amdgpu driver). So if the SMMU would honour the
+>>> existing attributes, would you still need the SMMU changes?
+>>
+>> Even if we could force a stage 2 mapping with the weakest pagetable
+>> attributes (such that combining would work), there would still need to
+>> be a way to set the TCR attributes appropriately if this behaviour is
+>> wanted for the SMMU's own table walks as well.
+>>
+> 
+> Isn't that just a matter of implementing support for SMMUs that lack
+> the 'dma-coherent' attribute?
 
-------------------
+Not quite - in general they need INC-ONC attributes in case there 
+actually is something in the architectural outer-cacheable domain. The 
+case of the outer cacheablility being not that but a hint to control 
+non-CPU traffic through some not-quite-transparent cache behind the PoC 
+definitely stays wrapped up in qcom-specific magic ;)
 
-From: J. Bruce Fields <bfields@redhat.com>
-
-commit 81c88b18de1f11f70c97f28ced8d642c00bb3955 upstream.
-
-If we ignore the error we'll hit a null dereference a little later.
-
-Reported-by: syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/sunrpc/rpcb_clnt.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
---- a/net/sunrpc/rpcb_clnt.c
-+++ b/net/sunrpc/rpcb_clnt.c
-@@ -770,6 +770,12 @@ void rpcb_getport_async(struct rpc_task
- 	case RPCBVERS_3:
- 		map->r_netid = xprt->address_strings[RPC_DISPLAY_NETID];
- 		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
-+		if (!map->r_addr) {
-+			status = -ENOMEM;
-+			dprintk("RPC: %5u %s: no memory available\n",
-+				task->tk_pid, __func__);
-+			goto bailout_free_args;
-+		}
- 		map->r_owner = "";
- 		break;
- 	case RPCBVERS_2:
-@@ -792,6 +798,8 @@ void rpcb_getport_async(struct rpc_task
- 	rpc_put_task(child);
- 	return;
- 
-+bailout_free_args:
-+	kfree(map);
- bailout_release_client:
- 	rpc_release_client(rpcb_clnt);
- bailout_nofree:
-
-
+Robin.
