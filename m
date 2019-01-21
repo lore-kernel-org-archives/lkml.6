@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 207C3C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA9EC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3A8620879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CC6D20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078449;
-	bh=xKZztE9LVQqn6LEvGgi4RU3c9RsHwe+jUozl3kJn0Ms=;
+	s=default; t=1548078452;
+	bh=woFZSJAEiwJ2ET855R4gzGvSEnzpWKt9sFfmfDNpyqk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OJ4jgbCLF7O6m5bsUUvQ4dLcQFRHwTOQGXQNc9447bieeeIBamt22jNu7aHGYAM3l
-	 dXmzEWcU+zzZl4Vk1b3xVSCF91/siA4L4NvHgDK9agfOcEgPkWZGfMtXRSf7fzE/Nb
-	 DqeBMJWZhe8hxuA24M69lR7myMd2wrGmT64wDjFg=
+	b=aiYxKcY+eEyI/3yXQ/6H/is+YFXtfGNXPzs7zOF6FajJhau6PXNFMC+Ezr6zQtBTV
+	 RMYK+FlT6Mt+t/CHVMieC/IJ3oqHZJ7k5olDeDAK5rFPgi6IXrQQs3SdAQ+djPvLNE
+	 f+inXOwvBQNmpEd36//cTaGOQWjoiMJxk9CGvSsM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbfAUNr1 (ORCPT
+        id S1729623AbfAUNra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:47:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56710 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:47:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729586AbfAUNrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:47:24 -0500
+        id S1729117AbfAUNr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:47:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E1D820861;
-        Mon, 21 Jan 2019 13:47:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC7BE20861;
+        Mon, 21 Jan 2019 13:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078442;
-        bh=xKZztE9LVQqn6LEvGgi4RU3c9RsHwe+jUozl3kJn0Ms=;
+        s=default; t=1548078448;
+        bh=woFZSJAEiwJ2ET855R4gzGvSEnzpWKt9sFfmfDNpyqk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NfcsJtMvPUluQK5TQZ8QZAHFzI/nbGfTDaDCBbo2sl0NO+KJExSxpQevkaaDj8JH2
-         vSQ64FiUWAwuE2sZBBprkT5NeRw1T3/GCqmkPdT6+18/ucFuzQeDSqY+IIkz/wIuNj
-         fW6x/RjBHQrnbfg9JOmPSW4+hw6v09RQgSr3wDdQ=
+        b=hJvhzS058F/C0LCzawG06utlmz/agxbEskxiYACJLO55ynIljhJTVS/H8ouxHTZi2
+         l+lvVvB3uinR0IIr71MPK2eQtQTPSO4QhzR3PYy+2JwnFOqm7kjdB5SA82ch2zFQkz
+         aQoV2Df/PXQWYVNnAz6nUScsw8o/2to9P1Xdze3M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aymen Sghaier <aymen.sghaier@nxp.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.20 033/111] crypto: caam - fix zero-length buffer DMA mapping
-Date:   Mon, 21 Jan 2019 14:42:27 +0100
-Message-Id: <20190121122459.525568289@linuxfoundation.org>
+        stable@vger.kernel.org, Shawn Bohrer <sbohrer@cloudflare.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.20 008/111] netfilter: nf_conncount: split gc in two phases
+Date:   Mon, 21 Jan 2019 14:42:02 +0100
+Message-Id: <20190121122456.690054934@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -67,93 +66,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aymen Sghaier <aymen.sghaier@nxp.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit 04e6d25c5bb244c1a37eb9fe0b604cc11a04e8c5 upstream.
+commit f7fcc98dfc2d136722007fec0debbed761679b94 upstream.
 
-Recent changes - probably DMA API related (generic and/or arm64-specific) -
-exposed a case where driver maps a zero-length buffer:
-ahash_init()->ahash_update()->ahash_final() with a zero-length string to
-hash
+The lockless workqueue garbage collector can race with packet path
+garbage collector to delete list nodes, as it calls tree_nodes_free()
+with the addresses of nodes that might have been free'd already from
+another cpu.
 
-kernel BUG at kernel/dma/swiotlb.c:475!
-Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 2 PID: 1823 Comm: cryptomgr_test Not tainted 4.20.0-rc1-00108-g00c9fe37a7f2 #1
-Hardware name: LS1046A RDB Board (DT)
-pstate: 80000005 (Nzcv daif -PAN -UAO)
-pc : swiotlb_tbl_map_single+0x170/0x2b8
-lr : swiotlb_map_page+0x134/0x1f8
-sp : ffff00000f79b8f0
-x29: ffff00000f79b8f0 x28: 0000000000000000
-x27: ffff0000093d0000 x26: 0000000000000000
-x25: 00000000001f3ffe x24: 0000000000200000
-x23: 0000000000000000 x22: 00000009f2c538c0
-x21: ffff800970aeb410 x20: 0000000000000001
-x19: ffff800970aeb410 x18: 0000000000000007
-x17: 000000000000000e x16: 0000000000000001
-x15: 0000000000000019 x14: c32cb8218a167fe8
-x13: ffffffff00000000 x12: ffff80097fdae348
-x11: 0000800976bca000 x10: 0000000000000010
-x9 : 0000000000000000 x8 : ffff0000091fd6c8
-x7 : 0000000000000000 x6 : 00000009f2c538bf
-x5 : 0000000000000000 x4 : 0000000000000001
-x3 : 0000000000000000 x2 : 00000009f2c538c0
-x1 : 00000000f9fff000 x0 : 0000000000000000
-Process cryptomgr_test (pid: 1823, stack limit = 0x(____ptrval____))
-Call trace:
- swiotlb_tbl_map_single+0x170/0x2b8
- swiotlb_map_page+0x134/0x1f8
- ahash_final_no_ctx+0xc4/0x6cc
- ahash_final+0x10/0x18
- crypto_ahash_op+0x30/0x84
- crypto_ahash_final+0x14/0x1c
- __test_hash+0x574/0xe0c
- test_hash+0x28/0x80
- __alg_test_hash+0x84/0xd0
- alg_test_hash+0x78/0x144
- alg_test.part.30+0x12c/0x2b4
- alg_test+0x3c/0x68
- cryptomgr_test+0x44/0x4c
- kthread+0xfc/0x128
- ret_from_fork+0x10/0x18
-Code: d34bfc18 2a1a03f7 1a9f8694 35fff89a (d4210000)
+To fix this, split gc into two phases.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Aymen Sghaier <aymen.sghaier@nxp.com>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+One phase to perform gc on the connections: From a locking perspective,
+this is the same as count_tree(): we hold rcu lock, but we do not
+change the tree, we only change the nodes' contents.
+
+The second phase acquires the tree lock and reaps empty nodes.
+This avoids a race condition of the garbage collection vs.  packet path:
+If a node has been free'd already, the second phase won't find it anymore.
+
+This second phase is, from locking perspective, same as insert_tree().
+
+The former only modifies nodes (list content, count), latter modifies
+the tree itself (rb_erase or rb_insert).
+
+Fixes: 5c789e131cbb9 ("netfilter: nf_conncount: Add list lock and gc worker, and RCU for init tree search")
+Reviewed-by: Shawn Bohrer <sbohrer@cloudflare.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/caam/caamhash.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ net/netfilter/nf_conncount.c |   22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -1071,13 +1071,16 @@ static int ahash_final_no_ctx(struct aha
+--- a/net/netfilter/nf_conncount.c
++++ b/net/netfilter/nf_conncount.c
+@@ -500,16 +500,32 @@ static void tree_gc_worker(struct work_s
+ 	for (node = rb_first(root); node != NULL; node = rb_next(node)) {
+ 		rbconn = rb_entry(node, struct nf_conncount_rb, node);
+ 		if (nf_conncount_gc_list(data->net, &rbconn->list))
+-			gc_nodes[gc_count++] = rbconn;
++			gc_count++;
+ 	}
+ 	rcu_read_unlock();
  
- 	desc = edesc->hw_desc;
+ 	spin_lock_bh(&nf_conncount_locks[tree]);
++	if (gc_count < ARRAY_SIZE(gc_nodes))
++		goto next; /* do not bother */
  
--	state->buf_dma = dma_map_single(jrdev, buf, buflen, DMA_TO_DEVICE);
--	if (dma_mapping_error(jrdev, state->buf_dma)) {
--		dev_err(jrdev, "unable to map src\n");
--		goto unmap;
--	}
-+	if (buflen) {
-+		state->buf_dma = dma_map_single(jrdev, buf, buflen,
-+						DMA_TO_DEVICE);
-+		if (dma_mapping_error(jrdev, state->buf_dma)) {
-+			dev_err(jrdev, "unable to map src\n");
-+			goto unmap;
+-	if (gc_count) {
+-		tree_nodes_free(root, gc_nodes, gc_count);
++	gc_count = 0;
++	node = rb_first(root);
++	while (node != NULL) {
++		rbconn = rb_entry(node, struct nf_conncount_rb, node);
++		node = rb_next(node);
++
++		if (rbconn->list.count > 0)
++			continue;
++
++		gc_nodes[gc_count++] = rbconn;
++		if (gc_count >= ARRAY_SIZE(gc_nodes)) {
++			tree_nodes_free(root, gc_nodes, gc_count);
++			gc_count = 0;
 +		}
+ 	}
  
--	append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
-+		append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
-+	}
++	tree_nodes_free(root, gc_nodes, gc_count);
++next:
+ 	clear_bit(tree, data->pending_trees);
  
- 	edesc->dst_dma = map_seq_out_ptr_result(desc, jrdev, req->result,
- 						digestsize);
+ 	next_tree = (tree + 1) % CONNCOUNT_SLOTS;
 
 
