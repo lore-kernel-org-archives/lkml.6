@@ -2,68 +2,96 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6ADBC37121
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064E4C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B05722089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1DB320861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:56:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="i+M98hlX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbfAUUtI (ORCPT
+        id S1727066AbfAUUz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:49:08 -0500
-Received: from mail-qt1-f177.google.com ([209.85.160.177]:40334 "EHLO
-        mail-qt1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfAUUtH (ORCPT
+        Mon, 21 Jan 2019 15:55:59 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43742 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfAUUz7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:49:07 -0500
-Received: by mail-qt1-f177.google.com with SMTP id k12so25029592qtf.7;
-        Mon, 21 Jan 2019 12:49:07 -0800 (PST)
+        Mon, 21 Jan 2019 15:55:59 -0500
+Received: by mail-oi1-f195.google.com with SMTP id u18so15607683oie.10
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:55:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OKBB/nbJ0k8tun2GicnRPygSL370rUx/qPCIojnYS0w=;
+        b=i+M98hlX6664mZd9+nua5s9g6bLxv0FGNXsz3McPTtf/FwqdnjsxGesCDOxtWv3b8k
+         EMOqYulUZbIz2lLdzeMG8zMkRUgNOAyd0L32iG6TOGq8jZqo1RP7xG+8G6SPv7dBIZpQ
+         1IuBlAoiTp8fJFPhhEQJHrnKI7bGZbJoO8k7uhtDAExivTGAqO1bNqZBUY0kTNEIFiV2
+         zzAjdq7/FSEeR3LZsHhnn8BxeNl4P1dXj61mwAKAUsrYWvypCKd61W3UUnWf1jZZnKkJ
+         +uSJrrBp1Q1Kj9db9BnnDIr0w+bkypMmexcOmZlYTpR1aSq/uXlEQA2Ahh0UCY4kgLRX
+         9asg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TaBK4XeuqC88UVowCeUDOukzrGG02Sj5zlxTwu6Zo/0=;
-        b=pwXaoRk3KUXWTFPJlgyzTzOL9CdtqyodipooqaFAejc18tD6omMfOO+rg+QHGMaIU9
-         wBTnqOtHZof66g+hp6usA7TzBtYAFx5MtR2+g1LNrYy5O38l7VqTSPhBOk8Qpsi5ouqK
-         745WyykcBfvk2F02B2Nds2NbT/X+zPSh5DLISiTnCYmo4DjU5OQD6OYd2rYQL1ECxC2F
-         RLqk7glg9VEwNe//pHvKeybz/DVn5kah1zafY1k3PINibluZkv6+yyqfIXePJvRofn9t
-         vQ9PiZokAUT5w5OlSjVZADZm5tXErdnJ8q1YYI5P90w8Z6M1Kk2MdBwBcCzNMzTIDxVJ
-         M8wg==
-X-Gm-Message-State: AJcUukeo4me5BYPvaFHeyagc2Ggyz7QF5TAFepzQ0IcuAEG0KtEss8L1
-        Oz2IKtN6T9pZhrDnAJRbkfo9WeK3p7/tpwF7WvLUXw==
-X-Google-Smtp-Source: ALg8bN5q49QYLqNMNJWt1p9N+w4SsRoQIh8X5ibLCp/3FdLVf7wNe0hht1A2b9bA0Jmr59CG56pdpEKW737Qh0ZkCmY=
-X-Received: by 2002:ac8:2c34:: with SMTP id d49mr28811819qta.152.1548103746668;
- Mon, 21 Jan 2019 12:49:06 -0800 (PST)
+        bh=OKBB/nbJ0k8tun2GicnRPygSL370rUx/qPCIojnYS0w=;
+        b=aa3VKNtRPMJGyPCQpOHxOMhmkcI1FFKmTAae/bBUjevUKpiy3Hvjt6j+EmpLto6Rn0
+         3wdMnwzoVSwZMaqU5c8aYbYOMzQrVD4hnyfq9go6Jpt+hZ1Ts7/z4UaHZ6Q50Gq2/NTp
+         JuDV6mR1PFoTtk8txFzEndsIEFzESLTV72K6z4yDOH5IiMNqBY1QQ4AnmSIjLvtPFj9w
+         SBGjmFbKkKfPnEZKhIiU4riA0ohbTDP0zm3SnjtEPmbGuJLE+HAMozNxuBc2xAHRsJPh
+         cRKGdF25eeOEgCALunflRZIw4VJ1oszhCPWO8cAh0cHLdVno7xExItwaWnYWumX0UTaI
+         c6Xw==
+X-Gm-Message-State: AJcUukfrF4NzTTb+9l3bI9x1cy8jvK7rAwxZ6cPawvhFtPTUBBM1li26
+        /vNgMuYEQE7CvteGKt/f9vmOVRLVzC6l5V56928=
+X-Google-Smtp-Source: ALg8bN4X1zBlAOtMn3AK2UnD6WwjYDQBNQMWLd6229NDPn97fNAKJngoaxEUjD8Ikm67FEJxdtNL0qtx0r4PzhWdrhQ=
+X-Received: by 2002:aca:5b43:: with SMTP id p64mr6309612oib.41.1548104158237;
+ Mon, 21 Jan 2019 12:55:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20190120153044.71775e03@canb.auug.org.au>
-In-Reply-To: <20190120153044.71775e03@canb.auug.org.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 21 Jan 2019 21:48:50 +0100
-Message-ID: <CAK8P3a28_hxweVAXn0tdE83fpTcNMdOnuuva=Z4J9-jv6skyMg@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the y2038 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190121183723.25231-1-martin.blumenstingl@googlemail.com> <20190121191816.GH12679@sirena.org.uk>
+In-Reply-To: <20190121191816.GH12679@sirena.org.uk>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 21 Jan 2019 21:55:47 +0100
+Message-ID: <CAFBinCDK92yZZFzkoZriCSObm+jf1=RQ99K4uAGSCKSnTXhURA@mail.gmail.com>
+Subject: Re: [PATCH 0/1] pwm-regulator: reduce noise on EPROBE_DEFER
+To:     Mark Brown <broonie@kernel.org>
+Cc:     lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        boris.brezillon@free-electrons.com, thierry.reding@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 20, 2019 at 5:30 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Arnd,
->
-> Commits
->
->   e6f8f282d174 ("timex: use __kernel_timex internally")
->   683569ef2b4f ("time: Add struct __kernel_timex")
->
-> are missing a Signed-off-by from their committers.
+Hi Mark,
 
-Fixed now, thanks for the report!
+On Mon, Jan 21, 2019 at 8:18 PM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Mon, Jan 21, 2019 at 07:37:22PM +0100, Martin Blumenstingl wrote:
+> > pwm-regulator can be a bit noisy during boot.
+> >
+> > One example are the 32-bit Amlogic SoCs when using
+> > multi_v7_defconfig (which has CONFIG_REGULATOR_PWM=y and
+>
+> Please don't send cover letters for single patches, if there is anything
+> that needs saying put it in the changelog of the patch or after the ---
+> if it's administrative stuff.  This reduces mail volume and ensures that
+> any important information is recorded in the changelog rather than being
+> lost.
+noted - sorry for the noise.
 
-    Arnd
+the patch description already contains all relevant information, so I
+won't re-send the patch.
+only the KernelCI link is not included because I'm not sure how long
+it's valid (instead the description includes all relevant information
+which also can be seen in the KernelCI link)
+
+
+Regards
+Martin
