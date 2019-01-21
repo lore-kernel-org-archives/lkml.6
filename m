@@ -2,140 +2,119 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0DCC2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3048DC2F441
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A79E20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:14:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kj4FebBW"
+	by mail.kernel.org (Postfix) with ESMTP id F0ABA20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548087419;
+	bh=JxtVpJxY3XtxWcUbYSQ+0yAiHD86+4cmV6KOM9FsZEw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=N2CwAsWVI/8fndRqpFJKow7pCWDaXz2arcV8zu6XkG48pEs8RGVJOS64Met3wWE6R
+	 2af+YSxQi9Cc32YMWVwy/ynqlkb7usgCUcCFq8yn0qSZRJKPEfcrd/7VOCnM7xpdwj
+	 SO0bntmqLqtpDOGmz00JZemHQxr3ESt/+C/t0CMk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730426AbfAUQOu (ORCPT
+        id S1729954AbfAUQQ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 11:14:50 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33294 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729469AbfAUQOu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 11:14:50 -0500
-Received: by mail-io1-f67.google.com with SMTP id t24so16836123ioi.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 08:14:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JJK1BCKSyDL+6Bnumrmgz0aFAHbUsIf0r+wdJw+CqMA=;
-        b=Kj4FebBWF3IgYE59zzK25BcvMYseHgw2U55GKDu80LoJc/1no88VfZWlimZA92sHU/
-         6z4nya+rz29tQfRHc4u4Wt+pAECUdo5iUyr2hhxn2hAkDZBP6J2HKgJfnHLekJzK1vIJ
-         tlERyFoqq1KbB5gtnwr8uQra/yhMCIJnZ+jZM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JJK1BCKSyDL+6Bnumrmgz0aFAHbUsIf0r+wdJw+CqMA=;
-        b=rTnqKSZOkzefKw2EHtWVOIWq6t2MvzkmJzdo2HUpEFyIgVoXE1qovIm/rwi6fh14Yz
-         yZj451/N1tXXk4OexU9lhcXez7a1N/lDKX8nSc5zgQvdkgAeLMBHJddqNzxIgSWWSTIn
-         NklED2yVWsyLWuVyLJ+A0fAKMcgIc46Y75gsl3tGH/hh+ES2CuqcmViaNmS8JxAAzbcL
-         A+ETduWpJt3SSug75j8U2RrmdndgzJmriYxGfldjeiK68BI/eqxpdT3SIsmaAh+auoIq
-         8kkQNgk6pX/wWgvLXoGrx+QU8gl6JnImEg5S/nWmVMwhZH/MXYMildUpX2LnojQmCcsH
-         QG4g==
-X-Gm-Message-State: AJcUukeMOmMC1osGgBdGUbL5c/LNqYWREqP9YdXZGKDs745UqxA5RCCs
-        I713XdtNRnn/eLeqX9B8ZbM1KEHEZBOSv+YxoIubIQ==
-X-Google-Smtp-Source: ALg8bN4kiLIcOotuv3Eol9fGHrSR9csRaV14VqHmTkDO6pNF4iUibro4vd5Dh/nvdiiHg+VbxvGt1HqX22lk+oQCMOk=
-X-Received: by 2002:a5e:c206:: with SMTP id v6mr17797491iop.60.1548087289131;
- Mon, 21 Jan 2019 08:14:49 -0800 (PST)
+        Mon, 21 Jan 2019 11:16:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43800 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729413AbfAUQQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 11:16:56 -0500
+Received: from mail-yw1-f45.google.com (mail-yw1-f45.google.com [209.85.161.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 166C121019;
+        Mon, 21 Jan 2019 16:16:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548087415;
+        bh=JxtVpJxY3XtxWcUbYSQ+0yAiHD86+4cmV6KOM9FsZEw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ECjtTXcBLoNOY/dpE3oMp5KquniUbESzthQ6KvzvvN4WC5HZGntNlwhOk6qrHw+qK
+         3Hm5zphxjavtiYS8H2Yjg4rzDirneGhpse1IkN1DxfBLl2R+B1QrpIT1eykwuwVEA3
+         QYaN6ZPLqzJzsNKo506e39AAFO8DPlhnpMIEEyCg=
+Received: by mail-yw1-f45.google.com with SMTP id t13so8198411ywe.13;
+        Mon, 21 Jan 2019 08:16:55 -0800 (PST)
+X-Gm-Message-State: AJcUukcnSpmFMIqRln/0CyXjGTxronlMhJ6iZ2bO6mSMqq0r6iTOBF7D
+        HrmrJmshsy9C2NRP+dpIC8p5Qr0p5fzK7+zvEQ==
+X-Google-Smtp-Source: ALg8bN5uKiCJja1bkYucZ4/Iy8rEPPSAeQoVr8/Ke9rCRYMH02APxWY8TC9A1J4rhyzly0huq1jdpEcPH2hC6OQHXoI=
+X-Received: by 2002:a81:3944:: with SMTP id g65mr29110172ywa.337.1548087414360;
+ Mon, 21 Jan 2019 08:16:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
- <20190121150734.GA30582@infradead.org> <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
- <20190121155908.GA8084@infradead.org>
-In-Reply-To: <20190121155908.GA8084@infradead.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 21 Jan 2019 17:14:37 +0100
-Message-ID: <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org,
-        Christian Koenig <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Michel Daenzer <michel.daenzer@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>
+References: <20181215151802.18592-1-jagan@amarulasolutions.com>
+ <20181215151802.18592-2-jagan@amarulasolutions.com> <20190107225810.ggmkkbrnkoy2ykx5@penguin>
+ <CAL_JsqKTnPVM7Qahy9ejQbPfENpLCdzf5K5uUTcPh8j3EiqWRA@mail.gmail.com> <CAMty3ZCyq=tZMt6RC1aYJuEWgYp2zv1LBh+ZUwucE+g4RCoUaQ@mail.gmail.com>
+In-Reply-To: <CAMty3ZCyq=tZMt6RC1aYJuEWgYp2zv1LBh+ZUwucE+g4RCoUaQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 21 Jan 2019 10:16:43 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKCw3EV+0_DuMiHh7GRGxv7YogQf-xwp71n9gpc2GzSSQ@mail.gmail.com>
+Message-ID: <CAL_JsqKCw3EV+0_DuMiHh7GRGxv7YogQf-xwp71n9gpc2GzSSQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: input: touchscreen: goodix: Document
+ AVDD28-supply property
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-input@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 16:59, Christoph Hellwig <hch@infradead.org> wrote:
+On Fri, Jan 18, 2019 at 10:01 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
 >
-> On Mon, Jan 21, 2019 at 04:33:27PM +0100, Ard Biesheuvel wrote:
-> > On Mon, 21 Jan 2019 at 16:07, Christoph Hellwig <hch@infradead.org> wrote:
-> > >
-> > > > +#include <linux/dma-noncoherent.h>
-> > >
-> > > This header is not for usage in device drivers, but purely for
-> > > dma-mapping implementations!
-> > >
+> On Wed, Jan 9, 2019 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
 > >
-> > Is that documented anywhere?
+> > Please CC DT list if you want bindings reviewed.
 >
-> I'll add big fat comments.  But the fact that nothing is exported
-> there should be a fairly big hint.
+> Sorry I forgot.
 >
-
-I don't follow. How do other header files 'export' things in a way
-that this header doesn't?
-
-> > > And even if something like this was valid to do, it would have to be
-> > > a core function with an arch hook, and not hidden in a random driver.
 > >
-> > Why would it not be valid to do? Is it wrong for a driver to be aware
-> > of whether a device is cache coherent or not?
+> > On Wed, Jan 9, 2019 at 1:40 AM Dmitry Torokhov
+> > <dmitry.torokhov@gmail.com> wrote:
+> > >
+> > > On Sat, Dec 15, 2018 at 08:47:59PM +0530, Jagan Teki wrote:
+> > > > Most of the Goodix CTP controllers are supply with AVDD28 pin.
+> > > > which need to supply for controllers like GT5663 on some boards
+> > > > to trigger the power.
+> > > >
+> > > > So, document the supply property so-that the require boards
+> > > > that used on GT5663 can enable it via device tree.
+> > > >
+> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > index f7e95c52f3c7..c4622c983e08 100644
+> > > > --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > @@ -23,6 +23,7 @@ Optional properties:
+> > > >   - touchscreen-inverted-y  : Y axis is inverted (boolean)
+> > > >   - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
+> > > >                               (swapping is done after inverting the axis)
+> > > > + - AVDD28-supply     : Analog power supply regulator on AVDD28 pin
+> > >
+> > > I think we normally use lower case in DT bindings and rarely encode
+> > > voltage in the supply name unless we are dealing with several supplies
+> > > of the same kind, but I'll let Ron comment on this.
 > >
-> > And in case it isn't, do you have an alternative suggestion on how to
-> > fix this mess?
+> > Yes on lowercase though there are some exceptions.
+> >
+> > There's also a AVDD22 supply as well as DVDD12 and VDDIO. So we
+> > probably need to keep the voltage, but the binding is incomplete.
 >
-> For the write combine mappings we need a proper core API how instances
-> can advertise the support.  One thing I want to do fairly soon is
-> error checking of the attrs argument to dma_alloc_attrs - so if you
-> pass in something unsupported it will give you back an error.
->
+> What is incomplete here? can you please elaborate.
 
-That sounds useful.
+You are missing the 3 other supplies the chip has: AVDD22, DVDD12 and VDDIO.
 
-> It seems that isn't quite enough for the drm use case, so we might
-> also need a way to query these features, but that really has to go
-> through the usual dma layer abstraction as well and not hacked together
-> in a driver based on an eduacted guestimate.
-
-As far as I can tell, these drivers allocate DMA'able memory [in
-ttm_tt_populate()] and subsequently create their own CPU mappings for
-it, assuming that
-a) the default is cache coherent, so vmap()ing those pages with
-cacheable attributes works, and
-b) telling the GPU to use NoSnoop attributes makes the accesses it
-performs coherent with non-cacheable CPU mappings of those physical
-pages
-
-Since the latter is not true for many arm64 systems, I need this patch
-to get a working system.
-
-So how do you propose we proceed to get this fixed? Does it have to
-wait for this proper core API plus followup changes for DRM?
+Rob
