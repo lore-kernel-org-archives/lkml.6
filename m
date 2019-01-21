@@ -2,230 +2,133 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 934A2C2F3D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30ABDC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6121320861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0168620861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548080080;
+	bh=QpxeUCL91y1ZEKuF+zecWgI4jYSWw4fLojKE5+NJrgU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ZWtbAxD9qG5iZFBDTpZjPvMJIC7TCRDZKuM2cW9788XiPTuDngJYXFF0l8saz4F4a
+	 wz/j8ChnHVAmFC66re57u1Fa1uHMJZZniRrAWMerq2k3M+e5kD4XuDLas5ExOlTtsC
+	 z0X5b5OhS5cfKUAX6h0/NXG+4RYvRAdMlYdMUafs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730475AbfAUOOa (ORCPT
+        id S1730980AbfAUNwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:14:30 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38705 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731001AbfAUNwN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:13 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LDprfb2542808
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 21 Jan 2019 05:51:53 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LDprbk2542805;
-        Mon, 21 Jan 2019 05:51:53 -0800
-Date:   Mon, 21 Jan 2019 05:51:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Quentin Perret <tipbot@zytor.com>
-Message-ID: <tip-570139c80d73a5aa60c2500163378412b3836fc9@git.kernel.org>
-Cc:     quentin.perret@arm.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
-          peterz@infradead.org, tglx@linutronix.de, quentin.perret@arm.com,
-          hpa@zytor.com, torvalds@linux-foundation.org
-In-Reply-To: <20181203095628.11858-11-quentin.perret@arm.com>
-References: <20181203095628.11858-11-quentin.perret@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/topology: Introduce a sysctl for Energy
- Aware Scheduling
-Git-Commit-ID: 570139c80d73a5aa60c2500163378412b3836fc9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 21 Jan 2019 08:52:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730960AbfAUNwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:05 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92BBE2087F;
+        Mon, 21 Jan 2019 13:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548078725;
+        bh=QpxeUCL91y1ZEKuF+zecWgI4jYSWw4fLojKE5+NJrgU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DNhNfWEwDhLbDHlMD0jYB9DJkUmu5qNqQdKMZ1/z5SvsntS7qZiQhGaodQKH++aRE
+         RFKRptuix/Lr20KWiwMBVmxp2mkkmclifXzp3bYMLe0echvVvG0Ys7aS237FtMyPQV
+         fiVqjNBXgdGQSvVC/3xG/0Iqiv1Txq2c4rAFfEF4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        "Lukas F. Hartmann" <lukas@mntmn.com>,
+        Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.14 04/59] tty: Dont hold ldisc lock in tty_reopen() if ldisc present
+Date:   Mon, 21 Jan 2019 14:43:29 +0100
+Message-Id: <20190121122456.957681790@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
+References: <20190121122456.529172919@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  570139c80d73a5aa60c2500163378412b3836fc9
-Gitweb:     https://git.kernel.org/tip/570139c80d73a5aa60c2500163378412b3836fc9
-Author:     Quentin Perret <quentin.perret@arm.com>
-AuthorDate: Mon, 3 Dec 2018 09:56:23 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 21 Jan 2019 14:40:28 +0100
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-sched/topology: Introduce a sysctl for Energy Aware Scheduling
+------------------
 
-In its current state, Energy Aware Scheduling (EAS) starts automatically
-on asymmetric platforms having an Energy Model (EM). However, there are
-users who want to have an EM (for thermal management for example), but
-don't want EAS with it.
+From: Dmitry Safonov <dima@arista.com>
 
-In order to let users disable EAS explicitly, introduce a new sysctl
-called 'sched_energy_aware'. It is enabled by default so that EAS can
-start automatically on platforms where it makes sense. Flipping it to 0
-rebuilds the scheduling domains and disables EAS.
+commit d3736d82e8169768218ee0ef68718875918091a0 upstream.
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: adharmap@codeaurora.org
-Cc: chris.redpath@arm.com
-Cc: currojerez@riseup.net
-Cc: dietmar.eggemann@arm.com
-Cc: edubezval@gmail.com
-Cc: gregkh@linuxfoundation.org
-Cc: javi.merino@kernel.org
-Cc: joel@joelfernandes.org
-Cc: juri.lelli@redhat.com
-Cc: morten.rasmussen@arm.com
-Cc: patrick.bellasi@arm.com
-Cc: pkondeti@codeaurora.org
-Cc: rjw@rjwysocki.net
-Cc: skannan@codeaurora.org
-Cc: smuckle@google.com
-Cc: srinivas.pandruvada@linux.intel.com
-Cc: thara.gopinath@linaro.org
-Cc: tkjos@google.com
-Cc: valentin.schneider@arm.com
-Cc: vincent.guittot@linaro.org
-Cc: viresh.kumar@linaro.org
-Link: https://lkml.kernel.org/r/20181203095628.11858-11-quentin.perret@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Try to get reference for ldisc during tty_reopen().
+If ldisc present, we don't need to do tty_ldisc_reinit() and lock the
+write side for line discipline semaphore.
+Effectively, it optimizes fast-path for tty_reopen(), but more
+importantly it won't interrupt ongoing IO on the tty as no ldisc change
+is needed.
+Fixes user-visible issue when tty_reopen() interrupted login process for
+user with a long password, observed and reported by Lukas.
+
+Fixes: c96cf923a98d ("tty: Don't block on IO when ldisc change is pending")
+Fixes: 83d817f41070 ("tty: Hold tty_ldisc_lock() during tty_reopen()")
+Cc: Jiri Slaby <jslaby@suse.com>
+Reported-by: Lukas F. Hartmann <lukas@mntmn.com>
+Tested-by: Lukas F. Hartmann <lukas@mntmn.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- Documentation/sysctl/kernel.txt | 12 ++++++++++++
- include/linux/sched/sysctl.h    |  7 +++++++
- kernel/sched/topology.c         | 29 +++++++++++++++++++++++++++++
- kernel/sysctl.c                 | 11 +++++++++++
- 4 files changed, 59 insertions(+)
+ drivers/tty/tty_io.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index c0527d8a468a..379063e58326 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -79,6 +79,7 @@ show up in /proc/sys/kernel:
- - reboot-cmd                  [ SPARC only ]
- - rtsig-max
- - rtsig-nr
-+- sched_energy_aware
- - seccomp/                    ==> Documentation/userspace-api/seccomp_filter.rst
- - sem
- - sem_next_id		      [ sysv ipc ]
-@@ -890,6 +891,17 @@ rtsig-nr shows the number of RT signals currently queued.
- 
- ==============================================================
- 
-+sched_energy_aware:
-+
-+Enables/disables Energy Aware Scheduling (EAS). EAS starts
-+automatically on platforms where it can run (that is,
-+platforms with asymmetric CPU topologies and having an Energy
-+Model available). If your platform happens to meet the
-+requirements for EAS but you do not want to use it, change
-+this value to 0.
-+
-+==============================================================
-+
- sched_schedstats:
- 
- Enables/disables scheduler statistics. Enabling this feature
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index a9c32daeb9d8..99ce6d728df7 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -83,4 +83,11 @@ extern int sysctl_schedstats(struct ctl_table *table, int write,
- 				 void __user *buffer, size_t *lenp,
- 				 loff_t *ppos);
- 
-+#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+extern unsigned int sysctl_sched_energy_aware;
-+extern int sched_energy_aware_handler(struct ctl_table *table, int write,
-+				 void __user *buffer, size_t *lenp,
-+				 loff_t *ppos);
-+#endif
-+
- #endif /* _LINUX_SCHED_SYSCTL_H */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 3f35ba1d8fde..50c3fc316c54 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -203,9 +203,35 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
- 
- DEFINE_STATIC_KEY_FALSE(sched_energy_present);
- #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+unsigned int sysctl_sched_energy_aware = 1;
- DEFINE_MUTEX(sched_energy_mutex);
- bool sched_energy_update;
- 
-+#ifdef CONFIG_PROC_SYSCTL
-+int sched_energy_aware_handler(struct ctl_table *table, int write,
-+			 void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int ret, state;
-+
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+	if (!ret && write) {
-+		state = static_branch_unlikely(&sched_energy_present);
-+		if (state != sysctl_sched_energy_aware) {
-+			mutex_lock(&sched_energy_mutex);
-+			sched_energy_update = 1;
-+			rebuild_sched_domains();
-+			sched_energy_update = 0;
-+			mutex_unlock(&sched_energy_mutex);
-+		}
-+	}
-+
-+	return ret;
-+}
-+#endif
-+
- static void free_pd(struct perf_domain *pd)
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1254,7 +1254,8 @@ static void tty_driver_remove_tty(struct
+ static int tty_reopen(struct tty_struct *tty)
  {
- 	struct perf_domain *tmp;
-@@ -322,6 +348,9 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
- 	struct cpufreq_policy *policy;
- 	struct cpufreq_governor *gov;
+ 	struct tty_driver *driver = tty->driver;
+-	int retval;
++	struct tty_ldisc *ld;
++	int retval = 0;
  
-+	if (!sysctl_sched_energy_aware)
-+		goto free;
+ 	if (driver->type == TTY_DRIVER_TYPE_PTY &&
+ 	    driver->subtype == PTY_TYPE_MASTER)
+@@ -1266,13 +1267,18 @@ static int tty_reopen(struct tty_struct
+ 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
+ 		return -EBUSY;
+ 
+-	retval = tty_ldisc_lock(tty, 5 * HZ);
+-	if (retval)
+-		return retval;
+-
+-	if (!tty->ldisc)
+-		retval = tty_ldisc_reinit(tty, tty->termios.c_line);
+-	tty_ldisc_unlock(tty);
++	ld = tty_ldisc_ref_wait(tty);
++	if (ld) {
++		tty_ldisc_deref(ld);
++	} else {
++		retval = tty_ldisc_lock(tty, 5 * HZ);
++		if (retval)
++			return retval;
 +
- 	/* EAS is enabled for asymmetric CPU capacity topologies. */
- 	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
- 		if (sched_debug()) {
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ba4d9e85feb8..987ae08147bf 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -467,6 +467,17 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= &one,
- 	},
- #endif
-+#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+	{
-+		.procname	= "sched_energy_aware",
-+		.data		= &sysctl_sched_energy_aware,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= sched_energy_aware_handler,
-+		.extra1		= &zero,
-+		.extra2		= &one,
-+	},
-+#endif
- #ifdef CONFIG_PROVE_LOCKING
- 	{
- 		.procname	= "prove_locking",
++		if (!tty->ldisc)
++			retval = tty_ldisc_reinit(tty, tty->termios.c_line);
++		tty_ldisc_unlock(tty);
++	}
+ 
+ 	if (retval == 0)
+ 		tty->count++;
+
+
