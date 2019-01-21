@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98837C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC38AC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 688F320861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B997220879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078620;
-	bh=47r4ndJCZeAeCK4ugzrLu3/mqFLDFaSnzBUdzxoFPrY=;
+	s=default; t=1548078624;
+	bh=hyXqKx7g0AZxMhbu5m9cyNRjFasu+C8dDe6dQLa8CjM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VVJt8tY6B1VtJgp3gacpMqwby4XX30SlQeQQqQf/XR/neuoOmB4kRX6tgFYS1xme5
-	 KKU9Jth+JbWktYl3nEGl0hL+45ib0XMZbyWcbKEC1p+Uf0X8x9ZAFaNmcaaqyM5Zl9
-	 hcuLyudZ7IGEv1lOUCwYrz6ISM4IfGb5hA8W/nQg=
+	b=D4NuXBmkyI1vPGPwplamshvycDI1lFoX3JNDg3RtQtGD+bhQnNbEAm3ZZaNbjglw9
+	 knmH0RxLr75pMyGTAPUxo0QVKpP7eU8LgXe6iBic1rkRxWkQO59ZMO7wuseAv68ohL
+	 rUz/pdI8cQWwRXaqBXk9nlMVQY8ulnBbubECQfnI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730517AbfAUNuS (ORCPT
+        id S1730526AbfAUNuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:50:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32772 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:50:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729520AbfAUNuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:15 -0500
+        id S1730520AbfAUNuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EC412063F;
-        Mon, 21 Jan 2019 13:50:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 084D12063F;
+        Mon, 21 Jan 2019 13:50:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078613;
-        bh=47r4ndJCZeAeCK4ugzrLu3/mqFLDFaSnzBUdzxoFPrY=;
+        s=default; t=1548078619;
+        bh=hyXqKx7g0AZxMhbu5m9cyNRjFasu+C8dDe6dQLa8CjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oXnsM5tNEJCzxKJ/4OuxqzS6O+Qh+dhr27un/uo+jrOmTkX7itqFGrVTZYeNVXuQy
-         dO1Lz71fqZQkGs66FnX2T+uNsQtkD2OFbGikKYrpzR/Avgqpb0RXZ3xqbKQdqbA1B7
-         zl3Hq0CiFlHguEk4DZ8eSks9LdsruEQTlb8lmBJ0=
+        b=AYEc2ugtaLHPw0MbT20qV/qlKYEkbSbfcKtx12duEUf53Dmh0TUQCkHLERqnH9Gl+
+         XHfUk+Dy33h3PTt2j1TJ0qORgYghV2jMCHu4n0dd/TGQnX2/8c0bM076+Zb2CLAPK4
+         rVixj1Xee/WSO8ZPTOUL5xQIwCe9cbxaKwIRnECA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Wang <wei.w.wang@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: [PATCH 4.20 046/111] virtio: dont allocate vqs when names[i] = NULL
-Date:   Mon, 21 Jan 2019 14:42:40 +0100
-Message-Id: <20190121122501.044710396@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.20 096/111] loop: Get rid of loop_index_mutex
+Date:   Mon, 21 Jan 2019 14:43:30 +0100
+Message-Id: <20190121122506.497422699@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,128 +65,163 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Wang <wei.w.wang@intel.com>
+From: Jan Kara <jack@suse.cz>
 
-commit a229989d975eb926076307c1f2f5e4c6111768e7 upstream.
+commit 0a42e99b58a208839626465af194cfe640ef9493 upstream.
 
-Some vqs may not need to be allocated when their related feature bits
-are disabled. So callers may pass in such vqs with "names = NULL".
-Then we skip such vq allocations.
+Now that loop_ctl_mutex is global, just get rid of loop_index_mutex as
+there is no good reason to keep these two separate and it just
+complicates the locking.
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 86a559787e6f ("virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT")
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mic/vop/vop_main.c        |    9 +++++++--
- drivers/remoteproc/remoteproc_virtio.c |    9 +++++++--
- drivers/s390/virtio/virtio_ccw.c       |   12 +++++++++---
- drivers/virtio/virtio_mmio.c           |    9 +++++++--
- 4 files changed, 30 insertions(+), 9 deletions(-)
+ drivers/block/loop.c |   41 ++++++++++++++++++++---------------------
+ 1 file changed, 20 insertions(+), 21 deletions(-)
 
---- a/drivers/misc/mic/vop/vop_main.c
-+++ b/drivers/misc/mic/vop/vop_main.c
-@@ -381,16 +381,21 @@ static int vop_find_vqs(struct virtio_de
- 	struct _vop_vdev *vdev = to_vopvdev(dev);
- 	struct vop_device *vpdev = vdev->vpdev;
- 	struct mic_device_ctrl __iomem *dc = vdev->dc;
--	int i, err, retry;
-+	int i, err, retry, queue_idx = 0;
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -83,7 +83,6 @@
+ #include <linux/uaccess.h>
  
- 	/* We must have this many virtqueues. */
- 	if (nvqs > ioread8(&vdev->desc->num_vq))
- 		return -ENOENT;
+ static DEFINE_IDR(loop_index_idr);
+-static DEFINE_MUTEX(loop_index_mutex);
+ static DEFINE_MUTEX(loop_ctl_mutex);
  
- 	for (i = 0; i < nvqs; ++i) {
-+		if (!names[i]) {
-+			vqs[i] = NULL;
-+			continue;
-+		}
-+
- 		dev_dbg(_vop_dev(vdev), "%s: %d: %s\n",
- 			__func__, i, names[i]);
--		vqs[i] = vop_find_vq(dev, i, callbacks[i], names[i],
-+		vqs[i] = vop_find_vq(dev, queue_idx++, callbacks[i], names[i],
- 				     ctx ? ctx[i] : false);
- 		if (IS_ERR(vqs[i])) {
- 			err = PTR_ERR(vqs[i]);
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -153,10 +153,15 @@ static int rproc_virtio_find_vqs(struct
- 				 const bool * ctx,
- 				 struct irq_affinity *desc)
+ static int max_part;
+@@ -1626,9 +1625,11 @@ static int lo_compat_ioctl(struct block_
+ static int lo_open(struct block_device *bdev, fmode_t mode)
  {
--	int i, ret;
-+	int i, ret, queue_idx = 0;
+ 	struct loop_device *lo;
+-	int err = 0;
++	int err;
  
- 	for (i = 0; i < nvqs; ++i) {
--		vqs[i] = rp_find_vq(vdev, i, callbacks[i], names[i],
-+		if (!names[i]) {
-+			vqs[i] = NULL;
-+			continue;
-+		}
-+
-+		vqs[i] = rp_find_vq(vdev, queue_idx++, callbacks[i], names[i],
- 				    ctx ? ctx[i] : false);
- 		if (IS_ERR(vqs[i])) {
- 			ret = PTR_ERR(vqs[i]);
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -635,7 +635,7 @@ static int virtio_ccw_find_vqs(struct vi
+-	mutex_lock(&loop_index_mutex);
++	err = mutex_lock_killable(&loop_ctl_mutex);
++	if (err)
++		return err;
+ 	lo = bdev->bd_disk->private_data;
+ 	if (!lo) {
+ 		err = -ENXIO;
+@@ -1637,7 +1638,7 @@ static int lo_open(struct block_device *
+ 
+ 	atomic_inc(&lo->lo_refcnt);
+ out:
+-	mutex_unlock(&loop_index_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 	return err;
+ }
+ 
+@@ -1646,12 +1647,11 @@ static void lo_release(struct gendisk *d
+ 	struct loop_device *lo;
+ 	int err;
+ 
+-	mutex_lock(&loop_index_mutex);
++	mutex_lock(&loop_ctl_mutex);
+ 	lo = disk->private_data;
+ 	if (atomic_dec_return(&lo->lo_refcnt))
+-		goto unlock_index;
++		goto out_unlock;
+ 
+-	mutex_lock(&loop_ctl_mutex);
+ 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
+ 		/*
+ 		 * In autoclear mode, stop the loop thread
+@@ -1659,7 +1659,7 @@ static void lo_release(struct gendisk *d
+ 		 */
+ 		err = loop_clr_fd(lo);
+ 		if (!err)
+-			goto unlock_index;
++			return;
+ 	} else if (lo->lo_state == Lo_bound) {
+ 		/*
+ 		 * Otherwise keep thread (if running) and config,
+@@ -1669,9 +1669,8 @@ static void lo_release(struct gendisk *d
+ 		blk_mq_unfreeze_queue(lo->lo_queue);
+ 	}
+ 
++out_unlock:
+ 	mutex_unlock(&loop_ctl_mutex);
+-unlock_index:
+-	mutex_unlock(&loop_index_mutex);
+ }
+ 
+ static const struct block_device_operations lo_fops = {
+@@ -1972,7 +1971,7 @@ static struct kobject *loop_probe(dev_t
+ 	struct kobject *kobj;
+ 	int err;
+ 
+-	mutex_lock(&loop_index_mutex);
++	mutex_lock(&loop_ctl_mutex);
+ 	err = loop_lookup(&lo, MINOR(dev) >> part_shift);
+ 	if (err < 0)
+ 		err = loop_add(&lo, MINOR(dev) >> part_shift);
+@@ -1980,7 +1979,7 @@ static struct kobject *loop_probe(dev_t
+ 		kobj = NULL;
+ 	else
+ 		kobj = get_disk_and_module(lo->lo_disk);
+-	mutex_unlock(&loop_index_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 
+ 	*part = 0;
+ 	return kobj;
+@@ -1990,9 +1989,13 @@ static long loop_control_ioctl(struct fi
+ 			       unsigned long parm)
  {
- 	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
- 	unsigned long *indicatorp = NULL;
--	int ret, i;
-+	int ret, i, queue_idx = 0;
- 	struct ccw1 *ccw;
+ 	struct loop_device *lo;
+-	int ret = -ENOSYS;
++	int ret;
  
- 	ccw = kzalloc(sizeof(*ccw), GFP_DMA | GFP_KERNEL);
-@@ -643,8 +643,14 @@ static int virtio_ccw_find_vqs(struct vi
- 		return -ENOMEM;
- 
- 	for (i = 0; i < nvqs; ++i) {
--		vqs[i] = virtio_ccw_setup_vq(vdev, i, callbacks[i], names[i],
--					     ctx ? ctx[i] : false, ccw);
-+		if (!names[i]) {
-+			vqs[i] = NULL;
-+			continue;
-+		}
+-	mutex_lock(&loop_index_mutex);
++	ret = mutex_lock_killable(&loop_ctl_mutex);
++	if (ret)
++		return ret;
 +
-+		vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, callbacks[i],
-+					     names[i], ctx ? ctx[i] : false,
-+					     ccw);
- 		if (IS_ERR(vqs[i])) {
- 			ret = PTR_ERR(vqs[i]);
- 			vqs[i] = NULL;
---- a/drivers/virtio/virtio_mmio.c
-+++ b/drivers/virtio/virtio_mmio.c
-@@ -468,7 +468,7 @@ static int vm_find_vqs(struct virtio_dev
- {
- 	struct virtio_mmio_device *vm_dev = to_virtio_mmio_device(vdev);
- 	unsigned int irq = platform_get_irq(vm_dev->pdev, 0);
--	int i, err;
-+	int i, err, queue_idx = 0;
++	ret = -ENOSYS;
+ 	switch (cmd) {
+ 	case LOOP_CTL_ADD:
+ 		ret = loop_lookup(&lo, parm);
+@@ -2006,9 +2009,6 @@ static long loop_control_ioctl(struct fi
+ 		ret = loop_lookup(&lo, parm);
+ 		if (ret < 0)
+ 			break;
+-		ret = mutex_lock_killable(&loop_ctl_mutex);
+-		if (ret)
+-			break;
+ 		if (lo->lo_state != Lo_unbound) {
+ 			ret = -EBUSY;
+ 			mutex_unlock(&loop_ctl_mutex);
+@@ -2020,7 +2020,6 @@ static long loop_control_ioctl(struct fi
+ 			break;
+ 		}
+ 		lo->lo_disk->private_data = NULL;
+-		mutex_unlock(&loop_ctl_mutex);
+ 		idr_remove(&loop_index_idr, lo->lo_number);
+ 		loop_remove(lo);
+ 		break;
+@@ -2030,7 +2029,7 @@ static long loop_control_ioctl(struct fi
+ 			break;
+ 		ret = loop_add(&lo, -1);
+ 	}
+-	mutex_unlock(&loop_index_mutex);
++	mutex_unlock(&loop_ctl_mutex);
  
- 	err = request_irq(irq, vm_interrupt, IRQF_SHARED,
- 			dev_name(&vdev->dev), vm_dev);
-@@ -476,7 +476,12 @@ static int vm_find_vqs(struct virtio_dev
- 		return err;
+ 	return ret;
+ }
+@@ -2114,10 +2113,10 @@ static int __init loop_init(void)
+ 				  THIS_MODULE, loop_probe, NULL, NULL);
  
- 	for (i = 0; i < nvqs; ++i) {
--		vqs[i] = vm_setup_vq(vdev, i, callbacks[i], names[i],
-+		if (!names[i]) {
-+			vqs[i] = NULL;
-+			continue;
-+		}
-+
-+		vqs[i] = vm_setup_vq(vdev, queue_idx++, callbacks[i], names[i],
- 				     ctx ? ctx[i] : false);
- 		if (IS_ERR(vqs[i])) {
- 			vm_del_vqs(vdev);
+ 	/* pre-create number of devices given by config or max_loop */
+-	mutex_lock(&loop_index_mutex);
++	mutex_lock(&loop_ctl_mutex);
+ 	for (i = 0; i < nr; i++)
+ 		loop_add(&lo, i);
+-	mutex_unlock(&loop_index_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 
+ 	printk(KERN_INFO "loop: module loaded\n");
+ 	return 0;
 
 
