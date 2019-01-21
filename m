@@ -2,444 +2,139 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241CBC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975E0C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1AD320855
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65E8820861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:00:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HWc9mVic"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HMRWHWCm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfAUM7v (ORCPT
+        id S1728680AbfAUNAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:59:51 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:42777 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbfAUM7v (ORCPT
+        Mon, 21 Jan 2019 08:00:41 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:48146 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728363AbfAUNAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:59:51 -0500
-Received: by mail-ua1-f68.google.com with SMTP id d21so6863820uap.9
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 04:59:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yIUJxY7ecV+YclMvUe7W7kCU4s7PPUlm9JwzRXk9TF8=;
-        b=HWc9mVicPRPYEZXMLTpmJZHJKPNtFaxyMvlMta4+eLdJ8qT06+L6lsq9+q+s3f5YDW
-         naFpBbr1smFmGtM+H6FHFB8AvLqYzaK7zlnfuFHy0QVuXIXs0c69YQQdaW4zlvA6wEP/
-         XU6ABkNmUN761btfx9zN/TRZBtmatDP2MH+5g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yIUJxY7ecV+YclMvUe7W7kCU4s7PPUlm9JwzRXk9TF8=;
-        b=AE3gdzHd61iQciXnOy+FNRnyRVnhcH6i8uz3EF3TXdn5kVBPF/AVjE1yt6wPJH/+67
-         NWrYay5cxo2s6w1WyrLYIRmRojv8ZFnNrcycRWHSJCCMoaYVAw18njnkL64icOIS4+fk
-         CYQnCYI8z/se2Jxr2CYMCBSyxZZBU/8q40x6PSaAGMdwidebyfVCTjXnkkNOcvIPRPw2
-         3p6+hogI/HMWD+9UUwB7Xn2x+Jgp6W4V2kTmxmSz13/Jrjkl6RiP1L2v+XZko3V/WwyG
-         gmylLRT5WE+mRucrXwEDXEJCnA46tLa992uam0fdc+TBgcqV5DlpIi33xsYJ3fH8cX4m
-         gIEg==
-X-Gm-Message-State: AJcUukdw4/r/eK2jLDrhKxS8bQjPKYFdjP9f4vllZOjvpb/5ic+h88D6
-        ZaR15+Sj76lnGWBMFWMrJkAnTi/R4rmISZCCtKEx5Q==
-X-Google-Smtp-Source: ALg8bN5rRO4/sDwmqKBoshTnIx6HARGuuXVTkn0571XjW5bwzOOb2tVWhWNmcGsZAGjJEcHlrwtRsOMHc8w6accKGmU=
-X-Received: by 2002:ab0:21c6:: with SMTP id u6mr11755181uan.97.1548075589309;
- Mon, 21 Jan 2019 04:59:49 -0800 (PST)
+        Mon, 21 Jan 2019 08:00:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ipwiN3PRKrQcMWvCKKqu5ZB7SpMzYl2BERw9AiTLkNM=; b=HMRWHWCmcr3pAZazg0etePB01
+        845wQkHMyCaJaDVOMDRVauwapIOfvOxXuimLmy+T5kFQh3IcKLgVKR2SoOjVGflf7uroioUzRHziM
+        duVIxxnuEWlcl+cKwjZt49V5Qnq1hhleHoH5Lan1Az+nGZV0NCAewgn3PUmOsbzwwxcDg=;
+Received: from e5254000004ec.dyn.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:59636 helo=shell.armlinux.org.uk)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1glZBn-0003qZ-Ly; Mon, 21 Jan 2019 13:00:31 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1glZBm-0000sX-Vn; Mon, 21 Jan 2019 13:00:31 +0000
+Date:   Mon, 21 Jan 2019 13:00:30 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 5/7] net: phy: marvell10g: Force reading of
+ 2.5/5G PMA extended abilities
+Message-ID: <20190121130030.i5kkjb55gwttobvq@e5254000004ec.dyn.armlinux.org.uk>
+References: <20190118152352.26417-1-maxime.chevallier@bootlin.com>
+ <20190118152352.26417-6-maxime.chevallier@bootlin.com>
+ <20190120190809.GB19714@lunn.ch>
+ <20190121113531.7a8b5b51@bootlin.com>
+ <20190121105206.mxxxosytk5qiysc2@e5254000004ec.dyn.armlinux.org.uk>
+ <20190121132945.6e6dee23@bootlin.com>
 MIME-Version: 1.0
-References: <1548062959-31860-1-git-send-email-sumit.garg@linaro.org>
- <1548062959-31860-5-git-send-email-sumit.garg@linaro.org> <CAKv+Gu8icUVE1kqyHkK72wiGpmj7Gzqj_z_z2ox686gY=dCOcQ@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8icUVE1kqyHkK72wiGpmj7Gzqj_z_z2ox686gY=dCOcQ@mail.gmail.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Mon, 21 Jan 2019 18:29:37 +0530
-Message-ID: <CAFA6WYO8HrTr0U+u-iwQ3g84E8H69rKqoBzLsP=5TTFamEv3jA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] hwrng: add OP-TEE based rng driver
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mpm@selenic.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121132945.6e6dee23@bootlin.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 15:33, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On Mon, 21 Jan 2019 at 10:30, Sumit Garg <sumit.garg@linaro.org> wrote:
-> >
-> > On ARM SoC's with TrustZone enabled, peripherals like entropy sources
-> > might not be accessible to normal world (linux in this case) and rather
-> > accessible to secure world (OP-TEE in this case) only. So this driver
-> > aims to provides a generic interface to OP-TEE based random number
-> > generator service.
-> >
-> > This driver registers on TEE bus to interact with OP-TEE based rng
-> > device/service.
-> >
-> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > ---
-> >  MAINTAINERS                        |   5 +
-> >  drivers/char/hw_random/Kconfig     |  15 ++
-> >  drivers/char/hw_random/Makefile    |   1 +
-> >  drivers/char/hw_random/optee-rng.c | 272 +++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 293 insertions(+)
-> >  create mode 100644 drivers/char/hw_random/optee-rng.c
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 32d44447..502733c 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -11260,6 +11260,11 @@ M:     Jens Wiklander <jens.wiklander@linaro.org>
-> >  S:     Maintained
-> >  F:     drivers/tee/optee/
-> >
-> > +OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
-> > +M:     Sumit Garg <sumit.garg@linaro.org>
-> > +S:     Maintained
-> > +F:     drivers/char/hw_random/optee-rng.c
-> > +
-> >  OPA-VNIC DRIVER
-> >  M:     Dennis Dalessandro <dennis.dalessandro@intel.com>
-> >  M:     Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>
-> > diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-> > index dac895d..25a7d8f 100644
-> > --- a/drivers/char/hw_random/Kconfig
-> > +++ b/drivers/char/hw_random/Kconfig
-> > @@ -424,6 +424,21 @@ config HW_RANDOM_EXYNOS
-> >           will be called exynos-trng.
-> >
-> >           If unsure, say Y.
-> > +
-> > +config HW_RANDOM_OPTEE
-> > +       tristate "OP-TEE based Random Number Generator support"
-> > +       depends on OPTEE
-> > +       default HW_RANDOM
-> > +       help
-> > +         This  driver provides support for OP-TEE based Random Number
-> > +         Generator on ARM SoCs where hardware entropy sources are not
-> > +         accessible to normal world (Linux).
-> > +
-> > +         To compile this driver as a module, choose M here: the module
-> > +         will be called optee-rng.
-> > +
-> > +         If unsure, say Y.
-> > +
-> >  endif # HW_RANDOM
-> >
-> >  config UML_RANDOM
-> > diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-> > index e35ec3c..7c9ef4a 100644
-> > --- a/drivers/char/hw_random/Makefile
-> > +++ b/drivers/char/hw_random/Makefile
-> > @@ -38,3 +38,4 @@ obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
-> >  obj-$(CONFIG_HW_RANDOM_MTK)    += mtk-rng.o
-> >  obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
-> >  obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
-> > +obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
-> > diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
-> > new file mode 100644
-> > index 0000000..6ac862a
-> > --- /dev/null
-> > +++ b/drivers/char/hw_random/optee-rng.c
-> > @@ -0,0 +1,272 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2018-2019 Linaro Ltd.
-> > + */
-> > +
-> > +#include <linux/delay.h>
-> > +#include <linux/of.h>
-> > +#include <linux/hw_random.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/tee_drv.h>
-> > +#include <linux/uuid.h>
-> > +
-> > +#define DRIVER_NAME "optee-rng"
-> > +
-> > +#define TEE_ERROR_HEALTH_TEST_FAIL     0x00000001
-> > +
-> > +/*
-> > + * TA_CMD_GET_ENTROPY - Get Entropy from RNG
-> > + *
-> > + * param[0] (inout memref) - Entropy buffer memory reference
-> > + * param[1] unused
-> > + * param[2] unused
-> > + * param[3] unused
-> > + *
-> > + * Result:
-> > + * TEE_SUCCESS - Invoke command success
-> > + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-> > + * TEE_ERROR_NOT_SUPPORTED - Requested entropy size greater than size of pool
-> > + * TEE_ERROR_HEALTH_TEST_FAIL - Continuous health testing failed
-> > + */
-> > +#define TA_CMD_GET_ENTROPY             0x0
-> > +
-> > +/*
-> > + * TA_CMD_GET_RNG_INFO - Get RNG information
-> > + *
-> > + * param[0] (out value) - value.a: RNG data-rate in bytes per second
-> > + *                        value.b: Quality/Entropy per 1024 bit of data
-> > + * param[1] unused
-> > + * param[2] unused
-> > + * param[3] unused
-> > + *
-> > + * Result:
-> > + * TEE_SUCCESS - Invoke command success
-> > + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-> > + */
-> > +#define TA_CMD_GET_RNG_INFO            0x1
-> > +
-> > +#define MAX_ENTROPY_REQ_SZ             (4 * 1024)
-> > +
-> > +static struct tee_context *ctx;
-> > +static struct tee_shm *entropy_shm_pool;
-> > +static u32 ta_rng_data_rate;
-> > +static u32 ta_rng_session_id;
-> > +
-> > +static size_t get_optee_rng_data(void *buf, size_t req_size)
-> > +{
-> > +       u32 ret = 0;
-> > +       u8 *rng_data = NULL;
-> > +       size_t rng_size = 0;
-> > +       struct tee_ioctl_invoke_arg inv_arg = {0};
-> > +       struct tee_param param[4] = {0};
-> > +
-> > +       /* Invoke TA_CMD_GET_ENTROPY function of Trusted App */
-> > +       inv_arg.func = TA_CMD_GET_ENTROPY;
-> > +       inv_arg.session = ta_rng_session_id;
-> > +       inv_arg.num_params = 4;
-> > +
-> > +       /* Fill invoke cmd params */
-> > +       param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
-> > +       param[0].u.memref.shm = entropy_shm_pool;
-> > +       param[0].u.memref.size = req_size;
-> > +       param[0].u.memref.shm_offs = 0;
-> > +
-> > +       ret = tee_client_invoke_func(ctx, &inv_arg, param);
-> > +       if ((ret < 0) || (inv_arg.ret != 0)) {
-> > +               pr_err("TA_CMD_GET_ENTROPY invoke function error: %x\n",
-> > +                      inv_arg.ret);
-> > +               return 0;
-> > +       }
-> > +
-> > +       rng_data = tee_shm_get_va(entropy_shm_pool, 0);
-> > +       if (IS_ERR(rng_data)) {
-> > +               pr_err("tee_shm_get_va failed\n");
-> > +               return 0;
-> > +       }
-> > +
-> > +       rng_size = param[0].u.memref.size;
-> > +       memcpy(buf, rng_data, rng_size);
-> > +
-> > +       return rng_size;
-> > +}
-> > +
-> > +static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-> > +{
-> > +       u8 *data = buf;
-> > +       size_t read = 0, rng_size = 0;
-> > +       int timeout = 1;
-> > +
-> > +       if (max > MAX_ENTROPY_REQ_SZ)
-> > +               max = MAX_ENTROPY_REQ_SZ;
-> > +
-> > +       while (read == 0) {
-> > +               rng_size = get_optee_rng_data(data, (max - read));
-> > +
-> > +               data += rng_size;
-> > +               read += rng_size;
-> > +
-> > +               if (wait) {
-> > +                       if (timeout-- == 0)
-> > +                               return read;
-> > +                       msleep((1000 * (max - read)) / ta_rng_data_rate);
-> > +               } else {
-> > +                       return read;
-> > +               }
-> > +       }
-> > +
-> > +       return read;
-> > +}
-> > +
-> > +static int optee_rng_init(struct hwrng *rng)
-> > +{
-> > +       entropy_shm_pool = tee_shm_alloc(ctx, MAX_ENTROPY_REQ_SZ,
-> > +                                        TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
-> > +       if (IS_ERR(entropy_shm_pool)) {
-> > +               pr_err("tee_shm_alloc failed\n");
-> > +               return PTR_ERR(entropy_shm_pool);
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static void optee_rng_cleanup(struct hwrng *rng)
-> > +{
-> > +       tee_shm_free(entropy_shm_pool);
-> > +}
-> > +
-> > +static struct hwrng optee_rng = {
-> > +       .name           = DRIVER_NAME,
-> > +       .init           = optee_rng_init,
-> > +       .cleanup        = optee_rng_cleanup,
-> > +       .read           = optee_rng_read,
-> > +};
-> > +
-> > +static int get_optee_rng_info(struct device *dev)
-> > +{
-> > +       u32 ret = 0;
-> > +       struct tee_ioctl_invoke_arg inv_arg = {0};
-> > +       struct tee_param param[4] = {0};
-> > +
-> > +       /* Invoke TA_CMD_GET_RNG_INFO function of Trusted App */
-> > +       inv_arg.func = TA_CMD_GET_RNG_INFO;
-> > +       inv_arg.session = ta_rng_session_id;
-> > +       inv_arg.num_params = 4;
-> > +
-> > +       /* Fill invoke cmd params */
-> > +       param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
-> > +
-> > +       ret = tee_client_invoke_func(ctx, &inv_arg, param);
-> > +       if ((ret < 0) || (inv_arg.ret != 0)) {
-> > +               dev_err(dev, "TA_CMD_GET_RNG_INFO invoke func error: %x\n",
-> > +                       inv_arg.ret);
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       ta_rng_data_rate = param[0].u.value.a;
-> > +       optee_rng.quality = param[0].u.value.b;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-> > +{
-> > +       if (ver->impl_id == TEE_IMPL_ID_OPTEE)
-> > +               return 1;
-> > +       else
-> > +               return 0;
-> > +}
-> > +
-> > +static int optee_rng_probe(struct device *dev)
-> > +{
-> > +       struct tee_client_device *rng_device = to_tee_client_device(dev);
-> > +       int ret = 0, err = -ENODEV;
-> > +       struct tee_ioctl_open_session_arg sess_arg = {0};
-> > +
-> > +       /* Open context with TEE driver */
-> > +       ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
-> > +       if (IS_ERR(ctx))
-> > +               return -ENODEV;
-> > +
-> > +       /* Open session with hwrng Trusted App */
-> > +       memcpy(sess_arg.uuid, rng_device->id.b, TEE_IOCTL_UUID_LEN);
-> > +       sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
-> > +       sess_arg.num_params = 0;
-> > +
-> > +       ret = tee_client_open_session(ctx, &sess_arg, NULL);
-> > +       if ((ret < 0) || (sess_arg.ret != 0)) {
-> > +               dev_err(dev, "tee_client_open_session failed, error: %x\n",
-> > +                       sess_arg.ret);
-> > +               err = -EINVAL;
-> > +               goto out_ctx;
-> > +       }
-> > +       ta_rng_session_id = sess_arg.session;
-> > +
-> > +       err = get_optee_rng_info(dev);
-> > +       if (err)
-> > +               goto out_sess;
-> > +
-> > +       err = hwrng_register(&optee_rng);
-> > +       if (err) {
-> > +               dev_err(dev, "hwrng registration failed (%d)\n", err);
-> > +               goto out_sess;
-> > +       }
-> > +
-> > +       return 0;
-> > +
-> > +out_sess:
-> > +       tee_client_close_session(ctx, ta_rng_session_id);
-> > +out_ctx:
-> > +       tee_client_close_context(ctx);
-> > +
-> > +       return err;
-> > +}
-> > +
-> > +static int optee_rng_remove(struct device *dev)
-> > +{
-> > +       hwrng_unregister(&optee_rng);
-> > +       tee_client_close_session(ctx, ta_rng_session_id);
-> > +       tee_client_close_context(ctx);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +const tee_client_device_id optee_rng_id_table[] = {
-> > +       UUID_INIT(0xab7a617c, 0xb8e7, 0x4d8f,
-> > +                  0x83, 0x01, 0xd0, 0x9b, 0x61, 0x03, 0x6b, 0x64),
-> > +       {}
-> > +};
-> > +
->
-> Could we expose this via MODULE_DEVICE_TABLE() as well? That should
-> allow udev to load the module on demand.
->
+On Mon, Jan 21, 2019 at 01:29:45PM +0100, Maxime Chevallier wrote:
+> Hello Russell,
+> 
+> On Mon, 21 Jan 2019 10:52:06 +0000
+> Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
+> >It's entirely possible that the 3310 switches to different hardware
+> >blocks for 2.5G and 5G speeds, and reading _just_ the 1.4 register
+> >is not sufficient.
+> 
+> I agree with you but in that particular case, I think we are reading
+> from the correct device. The datasheet itself says that we should be
+> reading 1.4 and 1.11 as we expect, with 2.5G/5G support being set (these
+> registers are read-only, and the datasheet's values aren't what we
+> actually read).
 
-IIUC, here you are referring to addition of "modalias" infrastructure
-for TEE bus. I think this is good feature to have for automatic
-out-of-tree module loading via udev. Shall I create a separate patch
-for this feature addition rather than including it in this patch-set?
+No, you missed what I was saying.
 
-Currently I use to put this module entry in /etc/modules for auto-loading.
+The 88x3310 is a hybrid device.  It contains multiple instances of
+each individual device at different offsets in each MMD address space.
 
--Sumit
+For example, there isn't just one PCS in MMD 3, there are three:
 
-> > +static struct tee_client_driver optee_rng_driver = {
-> > +       .id_table       = optee_rng_id_table,
-> > +       .driver         = {
-> > +               .name           = DRIVER_NAME,
-> > +               .bus            = &tee_bus_type,
-> > +               .probe          = optee_rng_probe,
-> > +               .remove         = optee_rng_remove,
-> > +       },
-> > +};
-> > +
-> > +static int __init optee_rng_mod_init(void)
-> > +{
-> > +       int rc;
-> > +
-> > +       rc = driver_register(&optee_rng_driver.driver);
-> > +       if (rc)
-> > +               pr_warn("driver registration failed, err: %d", rc);
-> > +
-> > +       return rc;
-> > +}
-> > +
-> > +static void __exit optee_rng_mod_exit(void)
-> > +{
-> > +       driver_unregister(&optee_rng_driver.driver);
-> > +}
-> > +
-> > +module_init(optee_rng_mod_init);
-> > +module_exit(optee_rng_mod_exit);
-> > +
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_AUTHOR("Sumit Garg <sumit.garg@linaro.org>");
-> > +MODULE_DESCRIPTION("OP-TEE based random number generator driver");
-> > --
-> > 2.7.4
-> >
+offset 0x0000: 10GBASE-T PCS
+offset 0x1000: 10GBASE-R, 10GBASE-X, 40GBASE-R PCS
+offset 0x2000: 1000baseX-FD PCS
+
+Which get used depends on what is active.  For example, on the
+Macchiatobin, the PCS at 0x1000 gets used for the SFP port, and
+the PCS at 0x0000 gets used for the copper port.  The PCS at
+0x2000 doesn't ever seem to become active.
+
+MMD 4 (PHYXS) is very similar, and MMD 7 (AN) has four instances.
+Different AN instances get used for 10GBASE-T, 10GBASE-KR, SGMII etc.
+
+Each of these blocks either comes from Marvell or another manufacturer.
+The 3310 is a mismash of IPs bolted together, with a bunch of routing
+between them.  It is not simply a Clause 45 compliant PHY (it isn't
+compliant, because C45 requires certain registers to be reserved,
+but the 3310 has incomplete address decoding - visible as repeats in
+the address space of each MMD.)
+
+The exception seems to be the PMA/PMD MMD which I've only discovered
+a single instance.
+
+> >The 88x3310 is multiple PHY devices in one package, with a CPU that
+> >manages the routing between each individual device.
+> 
+> I also just checked register 3.4 "PCS Speed Ability", and 3.8 "PCS
+> Status 2" which also contains informations on 2.5G/5G abilities, but
+> there's the same issue here.
+
+What I'm saying is, there is much more to this PHY than just the 802.3
+register layout because of there being multiple instances.  It _may_
+be that a different set of instances gets used to the ones at offset 0
+for any particular set of speeds.
+
+I can't look at this at the moment because I am unable to get access to
+the 802.3bz specifications - I try to get them through the IEEE get
+program website, and I can get to the 802.3 Ethernet specs, click on
+either of the 802.3bz amendment 7 links, and I just get a couple of
+spinning blobs in Firefox - the page never finishes loading.  So, I
+can't get the register information for NBASE-T and compare it to the
+various MMD instances in the 88x3310.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
