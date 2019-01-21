@@ -2,31 +2,31 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942D6C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6C7C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E0C20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F048214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbfAUH5e (ORCPT
+        id S1728901AbfAUH5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:57:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59932 "EHLO mx1.redhat.com"
+        Mon, 21 Jan 2019 02:57:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52918 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726240AbfAUH5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:57:34 -0500
+        id S1726240AbfAUH5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:57:40 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 41BAB99C18;
-        Mon, 21 Jan 2019 07:57:33 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 65187C05000F;
+        Mon, 21 Jan 2019 07:57:39 +0000 (UTC)
 Received: from xz-x1.nay.redhat.com (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A0FD4608C2;
-        Mon, 21 Jan 2019 07:57:23 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D959D608C2;
+        Mon, 21 Jan 2019 07:57:33 +0000 (UTC)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Hugh Dickins <hughd@google.com>, Maya Gokhale <gokhale2@llnl.gov>,
@@ -43,235 +43,203 @@ Cc:     Hugh Dickins <hughd@google.com>, Maya Gokhale <gokhale2@llnl.gov>,
         Mel Gorman <mgorman@suse.de>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: [PATCH RFC 00/24] userfaultfd: write protection support
-Date:   Mon, 21 Jan 2019 15:56:58 +0800
-Message-Id: <20190121075722.7945-1-peterx@redhat.com>
+Subject: [PATCH RFC 01/24] mm: gup: rename "nonblocking" to "locked" where proper
+Date:   Mon, 21 Jan 2019 15:56:59 +0800
+Message-Id: <20190121075722.7945-2-peterx@redhat.com>
+In-Reply-To: <20190121075722.7945-1-peterx@redhat.com>
+References: <20190121075722.7945-1-peterx@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 21 Jan 2019 07:57:33 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 21 Jan 2019 07:57:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+There's plenty of places around __get_user_pages() that has a parameter
+"nonblocking" which does not really mean that "it won't block" (because
+it can really block) but instead it shows whether the mmap_sem is
+released by up_read() during the page fault handling mostly when
+VM_FAULT_RETRY is returned.
 
-This series implements initial write protection support for
-userfaultfd.  Currently both shmem and hugetlbfs are not supported
-yet, but only anonymous memory.
+We have the correct naming in e.g. get_user_pages_locked() or
+get_user_pages_remote() as "locked", however there're still many places
+that are using the "nonblocking" as name.
 
-To be simple, either "userfaultfd-wp" or "uffd-wp" might be used in
-later paragraphs.
+Renaming the places to "locked" where proper to better suite the
+functionality of the variable.  While at it, fixing up some of the
+comments accordingly.
 
-The whole series can also be found at:
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ mm/gup.c     | 44 +++++++++++++++++++++-----------------------
+ mm/hugetlb.c |  8 ++++----
+ 2 files changed, 25 insertions(+), 27 deletions(-)
 
-  https://github.com/xzpeter/linux/tree/uffd-wp-merged
-
-Any comment would be greatly welcomed.   Thanks.
-
-Overview
-====================
-
-The uffd-wp work was initialized by Shaohua Li [1], and later
-continued by Andrea [2]. This series is based upon Andrea's latest
-userfaultfd tree, and it is a continuous works from both Shaohua and
-Andrea.  Many of the follow up ideas come from Andrea too.
-
-Besides the old MISSING register mode of userfaultfd, the new uffd-wp
-support provides another alternative register mode called
-UFFDIO_REGISTER_MODE_WP that can be used to listen to not only missing
-page faults but also write protection page faults, or even they can be
-registered together.  At the same time, the new feature also provides
-a new userfaultfd ioctl called UFFDIO_WRITEPROTECT which allows the
-userspace to write protect a range or memory or fixup write permission
-of faulted pages.
-
-Please refer to the document patch "userfaultfd: wp:
-UFFDIO_REGISTER_MODE_WP documentation update" for more information on
-the new interface and what it can do.
-
-The major workflow of an uffd-wp program should be:
-
-  1. Register a memory region with WP mode using UFFDIO_REGISTER_MODE_WP
-
-  2. Write protect part of the whole registered region using
-     UFFDIO_WRITEPROTECT, passing in UFFDIO_WRITEPROTECT_MODE_WP to
-     show that we want to write protect the range.
-
-  3. Start a working thread that modifies the protected pages,
-     meanwhile listening to UFFD messages.
-
-  4. When a write is detected upon the protected range, page fault
-     happens, a UFFD message will be generated and reported to the
-     page fault handling thread
-
-  5. The page fault handler thread resolves the page fault using the
-     new UFFDIO_WRITEPROTECT ioctl, but this time passing in
-     !UFFDIO_WRITEPROTECT_MODE_WP instead showing that we want to
-     recover the write permission.  Before this operation, the fault
-     handler thread can do anything it wants, e.g., dumps the page to
-     a persistent storage.
-
-  6. The worker thread will continue running with the correctly
-     applied write permission from step 5.
-
-Currently there are already two projects that are based on this new
-userfaultfd feature.
-
-QEMU Live Snapshot: The project provides a way to allow the QEMU
-                    hypervisor to take snapshot of VMs without
-                    stopping the VM [3].
-
-LLNL umap library:  The project provides a mmap-like interface and
-                    "allow to have an application specific buffer of
-                    pages cached from a large file, i.e. out-of-core
-                    execution using memory map" [4][5].
-
-Before posting the patchset, this series was smoke tested against QEMU
-live snapshot and the LLNL umap library (by doing parallel quicksort
-using 128 sorting threads + 80 uffd servicing threads).  My sincere
-thanks to Marty Mcfadden and Denis Plotnikov for the help along the
-way.
-
-Implementation
-==============
-
-Patch 1-4: The whole uffd-wp requires the kernel page fault path to
-           take more than one retries.  In the previous works starting
-           from Shaohua, a new fault flag FAULT_FLAG_ALLOW_UFFD_RETRY
-           was introduced for this [6]. However in this series we have
-           dropped that patch, instead the whole work is based on the
-           recent series "[PATCH RFC v3 0/4] mm: some enhancements to
-           the page fault mechanism" [7] which removes the assuption
-           that VM_FAULT_RETRY can only happen once.  This four
-           patches are identital patches but picked up here.  Please
-           refer to the cover letter [7] for more information.  More
-           discussion upstream shows that this work could even benefit
-           existing use case [8] so please help justify whether
-           patches 1-4 can be consider to be accepted even earlier
-           than the rest of the series.
-
-Patch 5-21:   Implements the uffd-wp logic.  To avoid collision with
-              existing write protections (e.g., an private anonymous
-              page can be write protected if it was shared between
-              multiple processes), a new PTE bit (_PAGE_UFFD_WP) was
-              introduced to explicitly mark a PTE as userfault
-              write-protected.  A similar bit was also used in the
-              swap/migration entry (_PAGE_SWP_UFFD_WP) to make sure
-              even if the pages were swapped or migrated, the uffd-wp
-              tracking information won't be lost.  When resolving a
-              page fault, we'll do a page copy before hand if the page
-              was COWed to make sure we won't corrupt any shared
-              pages.  Etc.  Please see separated patches for more
-              details.
-
-Patch 22:     Documentation update for uffd-wp
-
-Patch 23,24:  Uffd-wp selftests
-
-TODO
-=============
-
-- hugetlbfs/shmem support
-- performance
-- more architectures
-- ...
-
-References
-==========
-
-[1] https://lwn.net/Articles/666187/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/log/?h=userfault
-[3] https://github.com/denis-plotnikov/qemu/commits/background-snapshot-kvm
-[4] https://github.com/LLNL/umap
-[5] https://llnl-umap.readthedocs.io/en/develop/
-[6] https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/commit/?h=userfault&id=b245ecf6cf59156966f3da6e6b674f6695a5ffa5
-[7] https://lkml.org/lkml/2018/11/21/370
-[8] https://lkml.org/lkml/2018/12/30/64
-
-Andrea Arcangeli (5):
-  userfaultfd: wp: add the writeprotect API to userfaultfd ioctl
-  userfaultfd: wp: hook userfault handler to write protection fault
-  userfaultfd: wp: add WP pagetable tracking to x86
-  userfaultfd: wp: userfaultfd_pte/huge_pmd_wp() helpers
-  userfaultfd: wp: add UFFDIO_COPY_MODE_WP
-
-Martin Cracauer (1):
-  userfaultfd: wp: UFFDIO_REGISTER_MODE_WP documentation update
-
-Peter Xu (15):
-  mm: gup: rename "nonblocking" to "locked" where proper
-  mm: userfault: return VM_FAULT_RETRY on signals
-  mm: allow VM_FAULT_RETRY for multiple times
-  mm: gup: allow VM_FAULT_RETRY for multiple times
-  mm: merge parameters for change_protection()
-  userfaultfd: wp: apply _PAGE_UFFD_WP bit
-  mm: export wp_page_copy()
-  userfaultfd: wp: handle COW properly for uffd-wp
-  userfaultfd: wp: drop _PAGE_UFFD_WP properly when fork
-  userfaultfd: wp: add pmd_swp_*uffd_wp() helpers
-  userfaultfd: wp: support swap and page migration
-  userfaultfd: wp: don't wake up when doing write protect
-  khugepaged: skip collapse if uffd-wp detected
-  userfaultfd: selftests: refactor statistics
-  userfaultfd: selftests: add write-protect test
-
-Shaohua Li (3):
-  userfaultfd: wp: add helper for writeprotect check
-  userfaultfd: wp: support write protection for userfault vma range
-  userfaultfd: wp: enabled write protection in userfaultfd API
-
- Documentation/admin-guide/mm/userfaultfd.rst |  51 +++++
- arch/alpha/mm/fault.c                        |   4 +-
- arch/arc/mm/fault.c                          |  12 +-
- arch/arm/mm/fault.c                          |  17 +-
- arch/arm64/mm/fault.c                        |  11 +-
- arch/hexagon/mm/vm_fault.c                   |   3 +-
- arch/ia64/mm/fault.c                         |   3 +-
- arch/m68k/mm/fault.c                         |   5 +-
- arch/microblaze/mm/fault.c                   |   3 +-
- arch/mips/mm/fault.c                         |   3 +-
- arch/nds32/mm/fault.c                        |   7 +-
- arch/nios2/mm/fault.c                        |   5 +-
- arch/openrisc/mm/fault.c                     |   3 +-
- arch/parisc/mm/fault.c                       |   4 +-
- arch/powerpc/mm/fault.c                      |   9 +-
- arch/riscv/mm/fault.c                        |   9 +-
- arch/s390/mm/fault.c                         |  14 +-
- arch/sh/mm/fault.c                           |   5 +-
- arch/sparc/mm/fault_32.c                     |   4 +-
- arch/sparc/mm/fault_64.c                     |   4 +-
- arch/um/kernel/trap.c                        |   6 +-
- arch/unicore32/mm/fault.c                    |  10 +-
- arch/x86/Kconfig                             |   1 +
- arch/x86/include/asm/pgtable.h               |  67 ++++++
- arch/x86/include/asm/pgtable_64.h            |   8 +-
- arch/x86/include/asm/pgtable_types.h         |  11 +-
- arch/x86/mm/fault.c                          |  13 +-
- arch/xtensa/mm/fault.c                       |   4 +-
- fs/userfaultfd.c                             | 110 +++++----
- include/asm-generic/pgtable.h                |   1 +
- include/asm-generic/pgtable_uffd.h           |  66 ++++++
- include/linux/huge_mm.h                      |   2 +-
- include/linux/mm.h                           |  21 +-
- include/linux/swapops.h                      |   2 +
- include/linux/userfaultfd_k.h                |  41 +++-
- include/trace/events/huge_memory.h           |   1 +
- include/uapi/linux/userfaultfd.h             |  28 ++-
- init/Kconfig                                 |   5 +
- mm/gup.c                                     |  61 ++---
- mm/huge_memory.c                             |  28 ++-
- mm/hugetlb.c                                 |   8 +-
- mm/khugepaged.c                              |  23 ++
- mm/memory.c                                  |  28 ++-
- mm/mempolicy.c                               |   2 +-
- mm/migrate.c                                 |   7 +
- mm/mprotect.c                                |  99 +++++++--
- mm/rmap.c                                    |   6 +
- mm/userfaultfd.c                             |  92 +++++++-
- tools/testing/selftests/vm/userfaultfd.c     | 222 ++++++++++++++-----
- 49 files changed, 898 insertions(+), 251 deletions(-)
- create mode 100644 include/asm-generic/pgtable_uffd.h
-
+diff --git a/mm/gup.c b/mm/gup.c
+index 8cb68a50dbdf..7b1f452cc2ef 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -506,12 +506,12 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
+ }
+ 
+ /*
+- * mmap_sem must be held on entry.  If @nonblocking != NULL and
+- * *@flags does not include FOLL_NOWAIT, the mmap_sem may be released.
+- * If it is, *@nonblocking will be set to 0 and -EBUSY returned.
++ * mmap_sem must be held on entry.  If @locked != NULL and *@flags
++ * does not include FOLL_NOWAIT, the mmap_sem may be released.  If it
++ * is, *@locked will be set to 0 and -EBUSY returned.
+  */
+ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
+-		unsigned long address, unsigned int *flags, int *nonblocking)
++		unsigned long address, unsigned int *flags, int *locked)
+ {
+ 	unsigned int fault_flags = 0;
+ 	vm_fault_t ret;
+@@ -523,7 +523,7 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
+ 		fault_flags |= FAULT_FLAG_WRITE;
+ 	if (*flags & FOLL_REMOTE)
+ 		fault_flags |= FAULT_FLAG_REMOTE;
+-	if (nonblocking)
++	if (locked)
+ 		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
+ 	if (*flags & FOLL_NOWAIT)
+ 		fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT;
+@@ -549,8 +549,8 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
+ 	}
+ 
+ 	if (ret & VM_FAULT_RETRY) {
+-		if (nonblocking && !(fault_flags & FAULT_FLAG_RETRY_NOWAIT))
+-			*nonblocking = 0;
++		if (locked && !(fault_flags & FAULT_FLAG_RETRY_NOWAIT))
++			*locked = 0;
+ 		return -EBUSY;
+ 	}
+ 
+@@ -627,7 +627,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+  *		only intends to ensure the pages are faulted in.
+  * @vmas:	array of pointers to vmas corresponding to each page.
+  *		Or NULL if the caller does not require them.
+- * @nonblocking: whether waiting for disk IO or mmap_sem contention
++ * @locked:     whether we're still with the mmap_sem held
+  *
+  * Returns number of pages pinned. This may be fewer than the number
+  * requested. If nr_pages is 0 or negative, returns 0. If no pages
+@@ -656,13 +656,11 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+  * appropriate) must be called after the page is finished with, and
+  * before put_page is called.
+  *
+- * If @nonblocking != NULL, __get_user_pages will not wait for disk IO
+- * or mmap_sem contention, and if waiting is needed to pin all pages,
+- * *@nonblocking will be set to 0.  Further, if @gup_flags does not
+- * include FOLL_NOWAIT, the mmap_sem will be released via up_read() in
+- * this case.
++ * If @locked != NULL, *@locked will be set to 0 when mmap_sem is
++ * released by an up_read().  That can happen if @gup_flags does not
++ * has FOLL_NOWAIT.
+  *
+- * A caller using such a combination of @nonblocking and @gup_flags
++ * A caller using such a combination of @locked and @gup_flags
+  * must therefore hold the mmap_sem for reading only, and recognize
+  * when it's been released.  Otherwise, it must be held for either
+  * reading or writing and will not be released.
+@@ -674,7 +672,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		unsigned long start, unsigned long nr_pages,
+ 		unsigned int gup_flags, struct page **pages,
+-		struct vm_area_struct **vmas, int *nonblocking)
++		struct vm_area_struct **vmas, int *locked)
+ {
+ 	long ret = 0, i = 0;
+ 	struct vm_area_struct *vma = NULL;
+@@ -718,7 +716,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 			if (is_vm_hugetlb_page(vma)) {
+ 				i = follow_hugetlb_page(mm, vma, pages, vmas,
+ 						&start, &nr_pages, i,
+-						gup_flags, nonblocking);
++						gup_flags, locked);
+ 				continue;
+ 			}
+ 		}
+@@ -736,7 +734,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		page = follow_page_mask(vma, start, foll_flags, &ctx);
+ 		if (!page) {
+ 			ret = faultin_page(tsk, vma, start, &foll_flags,
+-					nonblocking);
++					   locked);
+ 			switch (ret) {
+ 			case 0:
+ 				goto retry;
+@@ -1195,7 +1193,7 @@ EXPORT_SYMBOL(get_user_pages_longterm);
+  * @vma:   target vma
+  * @start: start address
+  * @end:   end address
+- * @nonblocking:
++ * @locked: whether the mmap_sem is still held
+  *
+  * This takes care of mlocking the pages too if VM_LOCKED is set.
+  *
+@@ -1203,14 +1201,14 @@ EXPORT_SYMBOL(get_user_pages_longterm);
+  *
+  * vma->vm_mm->mmap_sem must be held.
+  *
+- * If @nonblocking is NULL, it may be held for read or write and will
++ * If @locked is NULL, it may be held for read or write and will
+  * be unperturbed.
+  *
+- * If @nonblocking is non-NULL, it must held for read only and may be
+- * released.  If it's released, *@nonblocking will be set to 0.
++ * If @locked is non-NULL, it must held for read only and may be
++ * released.  If it's released, *@locked will be set to 0.
+  */
+ long populate_vma_page_range(struct vm_area_struct *vma,
+-		unsigned long start, unsigned long end, int *nonblocking)
++		unsigned long start, unsigned long end, int *locked)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	unsigned long nr_pages = (end - start) / PAGE_SIZE;
+@@ -1245,7 +1243,7 @@ long populate_vma_page_range(struct vm_area_struct *vma,
+ 	 * not result in a stack expansion that recurses back here.
+ 	 */
+ 	return __get_user_pages(current, mm, start, nr_pages, gup_flags,
+-				NULL, NULL, nonblocking);
++				NULL, NULL, locked);
+ }
+ 
+ /*
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 705a3e9cc910..05b879bda10a 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4181,7 +4181,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			 struct page **pages, struct vm_area_struct **vmas,
+ 			 unsigned long *position, unsigned long *nr_pages,
+-			 long i, unsigned int flags, int *nonblocking)
++			 long i, unsigned int flags, int *locked)
+ {
+ 	unsigned long pfn_offset;
+ 	unsigned long vaddr = *position;
+@@ -4252,7 +4252,7 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+ 				spin_unlock(ptl);
+ 			if (flags & FOLL_WRITE)
+ 				fault_flags |= FAULT_FLAG_WRITE;
+-			if (nonblocking)
++			if (locked)
+ 				fault_flags |= FAULT_FLAG_ALLOW_RETRY;
+ 			if (flags & FOLL_NOWAIT)
+ 				fault_flags |= FAULT_FLAG_ALLOW_RETRY |
+@@ -4269,8 +4269,8 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+ 				break;
+ 			}
+ 			if (ret & VM_FAULT_RETRY) {
+-				if (nonblocking)
+-					*nonblocking = 0;
++				if (locked)
++					*locked = 0;
+ 				*nr_pages = 0;
+ 				/*
+ 				 * VM_FAULT_RETRY must not return an
 -- 
 2.17.1
 
