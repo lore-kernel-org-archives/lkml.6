@@ -2,203 +2,118 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7121C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A695CC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88E1D214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73F0920861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:38:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="PP8Cnnd7"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="vOEFLvDi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbfAUIhj (ORCPT
+        id S1729698AbfAUIiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:37:39 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:63893 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729654AbfAUIhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:37:38 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43jlKj5Cg5z9v3wN;
-        Mon, 21 Jan 2019 09:37:29 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=PP8Cnnd7; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id S2muWeUT1ur7; Mon, 21 Jan 2019 09:37:29 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43jlKj3sr6z9v3wM;
-        Mon, 21 Jan 2019 09:37:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548059849; bh=mOz+SF4vHcoXej60wSp2Oxa4TkiSpvVlnnGpg2LPLR8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PP8Cnnd7A1qFz/7PftVGJR/Gejs0QLQ5DXHlU/026lMLfGY4JWtED4MtDYs78l0Vn
-         q129cuRKtM1IVTehbGwVB2lX8kCI3vP/2z6u09VeTR+9bsyTJSff+FH/DrJ9bH6fJi
-         qwJhi2fuNvRqiVbwpXJPb7ZCviqB7Gz4882G6YqQ=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D7BF18B799;
-        Mon, 21 Jan 2019 09:37:35 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id mwTxzbdOtdoM; Mon, 21 Jan 2019 09:37:35 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9ACEA8B79B;
-        Mon, 21 Jan 2019 09:37:35 +0100 (CET)
-Subject: Re: [PATCH v3 3/3] powerpc/32: Add KASAN support
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Alexander Potapenko <glider@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-References: <cover.1547289808.git.christophe.leroy@c-s.fr>
- <935f9f83393affb5d55323b126468ecb90373b88.1547289808.git.christophe.leroy@c-s.fr>
- <e4b343fa-702b-294f-7741-bb85ed877cdf@virtuozzo.com>
- <8d433501-a5a7-8e3b-03f7-ccdd0f8622e1@c-s.fr>
- <CACT4Y+Z+UbN1rjHr3T5rgHpCJUknupPvEPw0SHs1-qjWBDhm3Q@mail.gmail.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <d2f85bee-c551-ec9d-1a13-6d3364788cc1@c-s.fr>
-Date:   Mon, 21 Jan 2019 09:37:35 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 21 Jan 2019 03:38:10 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36926 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728910AbfAUIiK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:38:10 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so9480992plr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:38:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ucO+mEyukstSZOvX/DChuy7j9sUdkEFCR7xKzTtgKxM=;
+        b=vOEFLvDifGw5avCbsCCz5QvbSdVOTDHlqRwfyD0Q1kaXsSRKWzVCqVd5gSoTO1Ph0o
+         YzMoo3aLurhTaVY+G7Z2RdAlZKLaWyqllQCct4kQnVsGWK5kHJAysUEjR5idEIKTN9aJ
+         b/vDe+L2zL2D5Zl0vIy6N4mM2ulQK6XHPv+pJC81HP42MqGxGwIm8u6doeoKpyfduQWX
+         6mBDU/gyALKpAOgPoihX4FyTLECy3P+iZCFS9wKVEczm4WSDJcAy0M8uzg2Kn1nf3l1E
+         hRlRFGKLqfIaKtwgjDrVNToTEvB8jim9Sb3yd7HeZC39rOJK81qPfsvbZtl6enGa3DXt
+         clKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ucO+mEyukstSZOvX/DChuy7j9sUdkEFCR7xKzTtgKxM=;
+        b=gK/GleCRWdy6FJkS189yFIBtIVD2cac5qgvAfLSlmVTXKcj/Oz/T3Nxj/wrY/kUaBU
+         L8PEVacZn+kwixbo7HlajV1csYUEiMm3Cmyao9Xk9K3YXCJMcJG0CHcq5gkjXMoKWho7
+         KUKi5dj2sYEoXfweP74xgdXK/J2T1edsPXceYA2ZwQXr9OO2isYK+PaYjFfQd2gkRLzU
+         FFn4bOGkrfDWqTghhiTOqy2Qbxl2hXhO/a4enZKrd7e5xuwRZPzs8VmnLZo255Kuz6oZ
+         PJrXabNcsxfscxUwJn/z4rusL7Tu6X1EgnjQYTMLDWk/+xxCm1kjtWhU0IjsntSdaGv6
+         /xSg==
+X-Gm-Message-State: AJcUukf+EA8qney5FAE5keK/ZW2X04qTC02+VLDpXhPMszIDZfXg+Ehs
+        tvTbKAV8DxFM9pLGb83irkHCyQgSmzo=
+X-Google-Smtp-Source: ALg8bN7vzbRoRjqMbTtv/6fG2CcHXyYU9hGVxqG89Xa8OkMJDc0udiZei0505/7Y5eMeu/ePKZe9Ag==
+X-Received: by 2002:a17:902:be11:: with SMTP id r17mr6240646pls.308.1548033050922;
+        Sun, 20 Jan 2019 17:10:50 -0800 (PST)
+Received: from sspatil-glaptop2.roam.corp.google.com (c-73-170-36-70.hsd1.ca.comcast.net. [73.170.36.70])
+        by smtp.gmail.com with ESMTPSA id 4sm13985132pfq.10.2019.01.20.17.10.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 17:10:50 -0800 (PST)
+From:   Sandeep Patil <sspatil@android.com>
+To:     vbabka@suse.cz, adobriyan@gmail.com, akpm@linux-foundation.org,
+        avagin@openvz.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        kernel-team@android.com, dancol@google.com
+Subject: [PATCH] mm: proc: smaps_rollup: Fix pss_locked calculation
+Date:   Sun, 20 Jan 2019 17:10:49 -0800
+Message-Id: <20190121011049.160505-1-sspatil@android.com>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Z+UbN1rjHr3T5rgHpCJUknupPvEPw0SHs1-qjWBDhm3Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The 'pss_locked' field of smaps_rollup was being calculated incorrectly
+as it accumulated the current pss everytime a locked VMA was found.
 
+Fix that by making sure we record the current pss value before each VMA
+is walked. So, we can only add the delta if the VMA was found to be
+VM_LOCKED.
 
-Le 21/01/2019 à 09:30, Dmitry Vyukov a écrit :
-> On Mon, Jan 21, 2019 at 8:17 AM Christophe Leroy
-> <christophe.leroy@c-s.fr> wrote:
->>
->>
->>
->> Le 15/01/2019 à 18:23, Andrey Ryabinin a écrit :
->>>
->>>
->>> On 1/12/19 2:16 PM, Christophe Leroy wrote:
->>>
->>>> +KASAN_SANITIZE_early_32.o := n
->>>> +KASAN_SANITIZE_cputable.o := n
->>>> +KASAN_SANITIZE_prom_init.o := n
->>>> +
->>>
->>> Usually it's also good idea to disable branch profiling - define DISABLE_BRANCH_PROFILING
->>> either in top of these files or via Makefile. Branch profiling redefines if() statement and calls
->>> instrumented ftrace_likely_update in every if().
->>>
->>>
->>>
->>>> diff --git a/arch/powerpc/mm/kasan_init.c b/arch/powerpc/mm/kasan_init.c
->>>> new file mode 100644
->>>> index 000000000000..3edc9c2d2f3e
->>>
->>>> +void __init kasan_init(void)
->>>> +{
->>>> +    struct memblock_region *reg;
->>>> +
->>>> +    for_each_memblock(memory, reg)
->>>> +            kasan_init_region(reg);
->>>> +
->>>> +    pr_info("KASAN init done\n");
->>>
->>> Without "init_task.kasan_depth = 0;" kasan will not repot bugs.
->>>
->>> There is test_kasan module. Make sure that it produce reports.
->>>
->>
->> Thanks for the review.
->>
->> Now I get the following very early in boot, what does that mean ?
-> 
-> This looks like an instrumented memset call before kasan shadow is
-> mapped, or kasan shadow is not zeros. Does this happen before or after
-> mapping of kasan_early_shadow_page?
+Fixes: 493b0e9d945f ("mm: add /proc/pid/smaps_rollup")
+Cc: stable@vger.kernel.org # 4.14.y 4.19.y
+Signed-off-by: Sandeep Patil <sspatil@android.com>
+---
+ fs/proc/task_mmu.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-This is after the mapping of kasan_early_shadow_page.
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f0ec9edab2f3..51a00a2b4733 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -709,6 +709,7 @@ static void smap_gather_stats(struct vm_area_struct *vma,
+ #endif
+ 		.mm = vma->vm_mm,
+ 	};
++	unsigned long pss;
+ 
+ 	smaps_walk.private = mss;
+ 
+@@ -737,11 +738,12 @@ static void smap_gather_stats(struct vm_area_struct *vma,
+ 		}
+ 	}
+ #endif
+-
++	/* record current pss so we can calculate the delta after page walk */
++	pss = mss->pss;
+ 	/* mmap_sem is held in m_start */
+ 	walk_page_vma(vma, &smaps_walk);
+ 	if (vma->vm_flags & VM_LOCKED)
+-		mss->pss_locked += mss->pss;
++		mss->pss_locked += mss->pss - pss;
+ }
+ 
+ #define SEQ_PUT_DEC(str, val) \
+-- 
+2.20.1.321.g9e740568ce-goog
 
-> This version seems to miss what x86 code has to clear the early shadow:
-> 
-> /*
-> * kasan_early_shadow_page has been used as early shadow memory, thus
-> * it may contain some garbage. Now we can clear and write protect it,
-> * since after the TLB flush no one should write to it.
-> */
-> memset(kasan_early_shadow_page, 0, PAGE_SIZE);
-
-In the early part, kasan_early_shadow_page is mapped read-only so I 
-assumed this reset of its content was unneccessary.
-
-I'll try with it.
-
-Christophe
-
-> 
-> 
->> [    0.000000] KASAN init done
->> [    0.000000]
->> ==================================================================
->> [    0.000000] BUG: KASAN: unknown-crash in memblock_alloc_try_nid+0xd8/0xf0
->> [    0.000000] Write of size 68 at addr c7ff5a90 by task swapper/0
->> [    0.000000]
->> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
->> 5.0.0-rc2-s3k-dev-00559-g88aa407c4bce #772
->> [    0.000000] Call Trace:
->> [    0.000000] [c094ded0] [c016c7e4]
->> print_address_description+0x1a0/0x2b8 (unreliable)
->> [    0.000000] [c094df00] [c016caa0] kasan_report+0xe4/0x168
->> [    0.000000] [c094df40] [c016b464] memset+0x2c/0x4c
->> [    0.000000] [c094df60] [c08731f0] memblock_alloc_try_nid+0xd8/0xf0
->> [    0.000000] [c094df90] [c0861f20] mmu_context_init+0x58/0xa0
->> [    0.000000] [c094dfb0] [c085ca70] start_kernel+0x54/0x400
->> [    0.000000] [c094dff0] [c0002258] start_here+0x44/0x9c
->> [    0.000000]
->> [    0.000000]
->> [    0.000000] Memory state around the buggy address:
->> [    0.000000]  c7ff5980: e2 a1 87 81 bd d4 a5 b5 f8 8d 89 e7 72 bc 20 24
->> [    0.000000]  c7ff5a00: e7 b9 c1 c7 17 e9 b4 bd a4 d0 e7 a0 11 15 a5 b5
->> [    0.000000] >c7ff5a80: b5 e1 83 a5 2d 65 31 3f f3 e5 a7 ef 34 b5 69 b5
->> [    0.000000]                  ^
->> [    0.000000]  c7ff5b00: 21 a5 c1 c1 b4 bf 2d e5 e5 c3 f5 91 e3 b8 a1 34
->> [    0.000000]  c7ff5b80: ad ef 23 87 3d a6 ad b5 c3 c3 80 b7 ac b1 1f 37
->> [    0.000000]
->> ==================================================================
->> [    0.000000] Disabling lock debugging due to kernel taint
->> [    0.000000] MMU: Allocated 76 bytes of context maps for 16 contexts
->> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8176
->> [    0.000000] Kernel command line: console=ttyCPM0,115200N8
->> ip=192.168.2.7:192.168.2.2::255.0.0.0:vgoip:eth0:off kgdboc=ttyCPM0
->> [    0.000000] Dentry cache hash table entries: 16384 (order: 2, 65536
->> bytes)
->> [    0.000000] Inode-cache hash table entries: 8192 (order: 1, 32768 bytes)
->> [    0.000000] Memory: 99904K/131072K available (7376K kernel code, 528K
->> rwdata, 1168K rodata, 576K init, 4623K bss, 31168K reserved, 0K
->> cma-reserved)
->> [    0.000000] Kernel virtual memory layout:
->> [    0.000000]   * 0xffefc000..0xffffc000  : fixmap
->> [    0.000000]   * 0xf7c00000..0xffc00000  : kasan shadow mem
->> [    0.000000]   * 0xf7a00000..0xf7c00000  : consistent mem
->> [    0.000000]   * 0xf7a00000..0xf7a00000  : early ioremap
->> [    0.000000]   * 0xc9000000..0xf7a00000  : vmalloc & ioremap
->>
->>
->> Christophe
