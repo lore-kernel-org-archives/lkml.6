@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31110C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E27C2F3CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013492087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FD0B20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079205;
-	bh=8X89epfTPxoZttnMGavahmKESlm/LzEPaYStJRevPvc=;
+	s=default; t=1548079208;
+	bh=iFLA/yE+pk7cfPYEDCbQJRkxwF+M5Uq9JduBAy4HCv8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jTssjS0mcIkMFThd2v0MbVZ8pCRzXfF2Juy5pTdrCMDVuFaFfmoYm2/Q4ZkzYnaxf
-	 tX7+r0tSIwojz5oDtbR/NL0cpNCiZXvl4mnFtpgU3xKT0d7i38S8YzFga7m1tIjiYU
-	 +6aHmO5kH91FRFV8pla6VsVPHb891MyDBceBtZgk=
+	b=EKwa/eHSs9DOaZ7sLF35CsCXPvxTpbDMSzyflO9HSeAkFYmXvjkMexxUQruRt1XuX
+	 EDW97NrPRG8Cf7jqKhymrfYmGSPsd803pFialaHdC2mfFoq27+D0QNPEKpzMLFJr8y
+	 ai28fjRln+DslIx2LlRh4KwFuTbbWH6a5MEPSRoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732304AbfAUOAD (ORCPT
+        id S1732318AbfAUOAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:00:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46266 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:00:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732293AbfAUOAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:00 -0500
+        id S1732301AbfAUOAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:00:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8E6B2087F;
-        Mon, 21 Jan 2019 13:59:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0994D20879;
+        Mon, 21 Jan 2019 14:00:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079199;
-        bh=8X89epfTPxoZttnMGavahmKESlm/LzEPaYStJRevPvc=;
+        s=default; t=1548079202;
+        bh=iFLA/yE+pk7cfPYEDCbQJRkxwF+M5Uq9JduBAy4HCv8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EDDN8wvUXy4sgvomb4LE+cx5h4kNu5Hru7DZ5+163ORjuR0XQUG0z4ys8XJ0GYnJM
-         tcmH7E7731BK6ydfFe72TkUzFl4jz6T0ESuD2k7kd22HjwXa7fG4nPu7M93m4syXjO
-         wwwTWrbTlm4pihu7sK+uNzG9x9rXIfZFqVGZGie4=
+        b=CwL29NAL5vIKo5CMg8op5fDRnTq6IrTc8iXQosIy+8QymSmPdLmvUFfe/SKIWUUk9
+         /kRRkRTCxVvA4ouqmOdYLF1YeBQLAD6o/K+9jNzQT25mHohjxX2P9+M6RFUKan0a3x
+         k1CH+NKWcTimn7KcslScAf4h3CrxvLVblVa0AH5g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Shawn Bohrer <sbohrer@cloudflare.com>,
         Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 08/99] netfilter: nf_conncount: split gc in two phases
-Date:   Mon, 21 Jan 2019 14:48:00 +0100
-Message-Id: <20190121134914.234510860@linuxfoundation.org>
+Subject: [PATCH 4.19 09/99] netfilter: nf_conncount: restart search when nodes have been erased
+Date:   Mon, 21 Jan 2019 14:48:01 +0100
+Message-Id: <20190121134914.273684405@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -68,75 +68,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Florian Westphal <fw@strlen.de>
 
-commit f7fcc98dfc2d136722007fec0debbed761679b94 upstream.
+commit e8cfb372b38a1b8979aa7f7631fb5e7b11c3793c upstream.
 
-The lockless workqueue garbage collector can race with packet path
-garbage collector to delete list nodes, as it calls tree_nodes_free()
-with the addresses of nodes that might have been free'd already from
-another cpu.
+Shawn Bohrer reported a following crash:
+ |RIP: 0010:rb_erase+0xae/0x360
+ [..]
+ Call Trace:
+  nf_conncount_destroy+0x59/0xc0 [nf_conncount]
+  cleanup_match+0x45/0x70 [ip_tables]
+  ...
 
-To fix this, split gc into two phases.
+Shawn tracked this down to bogus 'parent' pointer:
+Problem is that when we insert a new node, then there is a chance that
+the 'parent' that we found was also passed to tree_nodes_free() (because
+that node was empty) for erase+free.
 
-One phase to perform gc on the connections: From a locking perspective,
-this is the same as count_tree(): we hold rcu lock, but we do not
-change the tree, we only change the nodes' contents.
+Instead of trying to be clever and detect when this happens, restart
+the search if we have evicted one or more nodes.  To prevent frequent
+restarts, do not perform gc on the second round.
 
-The second phase acquires the tree lock and reaps empty nodes.
-This avoids a race condition of the garbage collection vs.  packet path:
-If a node has been free'd already, the second phase won't find it anymore.
+Also, unconditionally schedule the gc worker.
+The condition
 
-This second phase is, from locking perspective, same as insert_tree().
+  gc_count > ARRAY_SIZE(gc_nodes))
 
-The former only modifies nodes (list content, count), latter modifies
-the tree itself (rb_erase or rb_insert).
+cannot be true unless tree grows very large, as the height of the tree
+will be low even with hundreds of nodes present.
 
 Fixes: 5c789e131cbb9 ("netfilter: nf_conncount: Add list lock and gc worker, and RCU for init tree search")
+Reported-by: Shawn Bohrer <sbohrer@cloudflare.com>
 Reviewed-by: Shawn Bohrer <sbohrer@cloudflare.com>
 Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_conncount.c |   22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ net/netfilter/nf_conncount.c |   18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
 --- a/net/netfilter/nf_conncount.c
 +++ b/net/netfilter/nf_conncount.c
-@@ -500,16 +500,32 @@ static void tree_gc_worker(struct work_s
- 	for (node = rb_first(root); node != NULL; node = rb_next(node)) {
- 		rbconn = rb_entry(node, struct nf_conncount_rb, node);
- 		if (nf_conncount_gc_list(data->net, &rbconn->list))
--			gc_nodes[gc_count++] = rbconn;
-+			gc_count++;
- 	}
- 	rcu_read_unlock();
+@@ -346,9 +346,10 @@ insert_tree(struct net *net,
+ 	struct nf_conncount_tuple *conn;
+ 	unsigned int count = 0, gc_count = 0;
+ 	bool node_found = false;
++	bool do_gc = true;
  
- 	spin_lock_bh(&nf_conncount_locks[tree]);
-+	if (gc_count < ARRAY_SIZE(gc_nodes))
-+		goto next; /* do not bother */
+ 	spin_lock_bh(&nf_conncount_locks[hash]);
+-
++restart:
+ 	parent = NULL;
+ 	rbnode = &(root->rb_node);
+ 	while (*rbnode) {
+@@ -381,21 +382,16 @@ insert_tree(struct net *net,
+ 		if (gc_count >= ARRAY_SIZE(gc_nodes))
+ 			continue;
  
--	if (gc_count) {
--		tree_nodes_free(root, gc_nodes, gc_count);
-+	gc_count = 0;
-+	node = rb_first(root);
-+	while (node != NULL) {
-+		rbconn = rb_entry(node, struct nf_conncount_rb, node);
-+		node = rb_next(node);
-+
-+		if (rbconn->list.count > 0)
-+			continue;
-+
-+		gc_nodes[gc_count++] = rbconn;
-+		if (gc_count >= ARRAY_SIZE(gc_nodes)) {
-+			tree_nodes_free(root, gc_nodes, gc_count);
-+			gc_count = 0;
-+		}
+-		if (nf_conncount_gc_list(net, &rbconn->list))
++		if (do_gc && nf_conncount_gc_list(net, &rbconn->list))
+ 			gc_nodes[gc_count++] = rbconn;
  	}
  
-+	tree_nodes_free(root, gc_nodes, gc_count);
-+next:
- 	clear_bit(tree, data->pending_trees);
+ 	if (gc_count) {
+ 		tree_nodes_free(root, gc_nodes, gc_count);
+-		/* tree_node_free before new allocation permits
+-		 * allocator to re-use newly free'd object.
+-		 *
+-		 * This is a rare event; in most cases we will find
+-		 * existing node to re-use. (or gc_count is 0).
+-		 */
+-
+-		if (gc_count >= ARRAY_SIZE(gc_nodes))
+-			schedule_gc_worker(data, hash);
++		schedule_gc_worker(data, hash);
++		gc_count = 0;
++		do_gc = false;
++		goto restart;
+ 	}
  
- 	next_tree = (tree + 1) % CONNCOUNT_SLOTS;
+ 	if (node_found)
 
 
