@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FFDC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB39C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B620B2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D318A2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079603;
-	bh=bH7m0xXyEh4jBRVdJ50knXNSm5tafn4UecEOSK3lRfE=;
+	s=default; t=1548079611;
+	bh=1h7VRctfXPD3uXjvnhmFQVdXYBhDa0cRPo+FG74tblg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xzEJkarysRyyFrht4Fq3ZjLv+v5mOeeNSDf3tLgeKwjR+6LkqZZTxToyGOlPDVtc1
-	 iktHheYJrk2CGi7XZicmVnW7tRcxGNSxWcqeH14hs4A1RgGaL4gOG0Wke1SfEhkqCt
-	 BKq36ybHHeaTw9XUUUjgiZOd3evvZtdxzSBsEuR0=
+	b=vrG16n9QNAwniLxcYQJFNvdRk0nxUcrn5uB6wW4G3vRL2kGjar8/or+t4J2KulmFy
+	 YwEzG5MaWEm1PEw/oSqU8wlmnH4ifzqFP6s3bGGoDBvWFXmZmK/1l7qzQPpfxbUcqg
+	 VQ0ev+0h9pXsTkfRfpYGwwxFPScvhWjgnE5ens4g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732350AbfAUOAS (ORCPT
+        id S1730799AbfAUOGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:00:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46718 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:06:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732339AbfAUOAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:15 -0500
+        id S1731872AbfAUOAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:00:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E69512084C;
-        Mon, 21 Jan 2019 14:00:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B94212087F;
+        Mon, 21 Jan 2019 14:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079214;
-        bh=bH7m0xXyEh4jBRVdJ50knXNSm5tafn4UecEOSK3lRfE=;
+        s=default; t=1548079211;
+        bh=1h7VRctfXPD3uXjvnhmFQVdXYBhDa0cRPo+FG74tblg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FFbMfr1TnTSpa3SStHCK0t1+yFyJc+JtlvK104pon+ISKrdCwPe64h7Ej1MGTDSe6
-         vejC5L+B9AW3Gy7irXNl0H+QxpjAVopO7KbulIdgQzhmOy2/8aHIyQBE8mUaDpAEnh
-         7X4NJ/nP+UxGmjs9JngYLd67tppLecBMQ2zOktJc=
+        b=A586MbHWISu1q0P6CVO489+Bco4R33erG0i/YMh3IPIa15kccCi6XAuXBov32xga5
+         ZvXknWRnb8wM9elQU5siDZGWeCloX4UAQ307F7OQ8j2L6m2SG0bW5M3gz0RRcEcqmK
+         39tjq8GR9gbtaYKiADiyB4nwhzh88gKK86ClVyG4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Monroy, Rodrigo Axel" <rodrigo.axel.monroy@intel.com>,
-        "Orrala Contreras, Alfredo" <alfredo.orrala.contreras@intel.com>,
-        Hang Yuan <hang.yuan@intel.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>
-Subject: [PATCH 4.19 48/99] drm/i915/gvt: Fix mmap range check
-Date:   Mon, 21 Jan 2019 14:48:40 +0100
-Message-Id: <20190121134915.802139323@linuxfoundation.org>
+        stable@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+        Paul Burton <paul.burton@mips.com>, jhogan@kernel.org,
+        ralf@linux-mips.org, john@phrozen.org, linux-mips@linux-mips.org,
+        linux-mips@vger.kernel.org, stable@kernel.org
+Subject: [PATCH 4.19 47/99] MIPS: lantiq: Fix IPI interrupt handling
+Date:   Mon, 21 Jan 2019 14:48:39 +0100
+Message-Id: <20190121134915.762416972@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -68,58 +67,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-commit 51b00d8509dc69c98740da2ad07308b630d3eb7d upstream.
+commit 2b4dba55b04b212a7fd1f0395b41d79ee3a9801b upstream.
 
-This is to fix missed mmap range check on vGPU bar2 region
-and only allow to map vGPU allocated GMADDR range, which means
-user space should support sparse mmap to get proper offset for
-mmap vGPU aperture. And this takes care of actual pgoff in mmap
-request as original code always does from beginning of vGPU
-aperture.
+This makes SMP on the vrx200 work again, by removing all the MIPS CPU
+interrupt specific code and making it fully use the generic MIPS CPU
+interrupt controller.
 
-Fixes: 659643f7d814 ("drm/i915/gvt/kvmgt: add vfio/mdev support to KVMGT")
-Cc: "Monroy, Rodrigo Axel" <rodrigo.axel.monroy@intel.com>
-Cc: "Orrala Contreras, Alfredo" <alfredo.orrala.contreras@intel.com>
-Cc: stable@vger.kernel.org # v4.10+
-Reviewed-by: Hang Yuan <hang.yuan@intel.com>
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+The mti,cpu-interrupt-controller from irq-mips-cpu.c now handles the CPU
+interrupts and also the IPI interrupts which are used to communication
+between the CPUs in a SMP system. The generic interrupt code was
+already used before but the interrupt vectors were overwritten again
+when we called set_vi_handler() in the lantiq interrupt driver and we
+also provided our own plat_irq_dispatch() function which overwrote the
+weak generic implementation. Now the code uses the generic handler for
+the MIPS CPU interrupts including the IPI interrupts and registers a
+handler for the CPU interrupts which are handled by the lantiq ICU with
+irq_set_chained_handler() which was already called before.
+
+Calling the set_c0_status() function is also not needed any more because
+the generic MIPS CPU interrupt already activates the needed bits.
+
+Fixes: 1eed40043579 ("MIPS: smp-mt: Use CPU interrupt controller IPI IRQ domain support")
+Cc: stable@kernel.org # v4.12
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: jhogan@kernel.org
+Cc: ralf@linux-mips.org
+Cc: john@phrozen.org
+Cc: linux-mips@linux-mips.org
+Cc: linux-mips@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/gvt/kvmgt.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ arch/mips/lantiq/irq.c |   68 +++----------------------------------------------
+ 1 file changed, 5 insertions(+), 63 deletions(-)
 
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -996,7 +996,7 @@ static int intel_vgpu_mmap(struct mdev_d
+--- a/arch/mips/lantiq/irq.c
++++ b/arch/mips/lantiq/irq.c
+@@ -224,9 +224,11 @@ static struct irq_chip ltq_eiu_type = {
+ 	.irq_set_type = ltq_eiu_settype,
+ };
+ 
+-static void ltq_hw_irqdispatch(int module)
++static void ltq_hw_irq_handler(struct irq_desc *desc)
  {
- 	unsigned int index;
- 	u64 virtaddr;
--	unsigned long req_size, pgoff = 0;
-+	unsigned long req_size, pgoff, req_start;
- 	pgprot_t pg_prot;
- 	struct intel_vgpu *vgpu = mdev_get_drvdata(mdev);
++	int module = irq_desc_get_irq(desc) - 2;
+ 	u32 irq;
++	int hwirq;
  
-@@ -1014,7 +1014,17 @@ static int intel_vgpu_mmap(struct mdev_d
- 	pg_prot = vma->vm_page_prot;
- 	virtaddr = vma->vm_start;
- 	req_size = vma->vm_end - vma->vm_start;
--	pgoff = vgpu_aperture_pa_base(vgpu) >> PAGE_SHIFT;
-+	pgoff = vma->vm_pgoff &
-+		((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
-+	req_start = pgoff << PAGE_SHIFT;
-+
-+	if (!intel_vgpu_in_aperture(vgpu, req_start))
-+		return -EINVAL;
-+	if (req_start + req_size >
-+	    vgpu_aperture_offset(vgpu) + vgpu_aperture_sz(vgpu))
-+		return -EINVAL;
-+
-+	pgoff = (gvt_aperture_pa_base(vgpu->gvt) >> PAGE_SHIFT) + pgoff;
+ 	irq = ltq_icu_r32(module, LTQ_ICU_IM0_IOSR);
+ 	if (irq == 0)
+@@ -237,7 +239,8 @@ static void ltq_hw_irqdispatch(int modul
+ 	 * other bits might be bogus
+ 	 */
+ 	irq = __fls(irq);
+-	do_IRQ((int)irq + MIPS_CPU_IRQ_CASCADE + (INT_NUM_IM_OFFSET * module));
++	hwirq = irq + MIPS_CPU_IRQ_CASCADE + (INT_NUM_IM_OFFSET * module);
++	generic_handle_irq(irq_linear_revmap(ltq_domain, hwirq));
  
- 	return remap_pfn_range(vma, virtaddr, pgoff, req_size, pg_prot);
+ 	/* if this is a EBU irq, we need to ack it or get a deadlock */
+ 	if ((irq == LTQ_ICU_EBU_IRQ) && (module == 0) && LTQ_EBU_PCC_ISTAT)
+@@ -245,49 +248,6 @@ static void ltq_hw_irqdispatch(int modul
+ 			LTQ_EBU_PCC_ISTAT);
  }
+ 
+-#define DEFINE_HWx_IRQDISPATCH(x)					\
+-	static void ltq_hw ## x ## _irqdispatch(void)			\
+-	{								\
+-		ltq_hw_irqdispatch(x);					\
+-	}
+-DEFINE_HWx_IRQDISPATCH(0)
+-DEFINE_HWx_IRQDISPATCH(1)
+-DEFINE_HWx_IRQDISPATCH(2)
+-DEFINE_HWx_IRQDISPATCH(3)
+-DEFINE_HWx_IRQDISPATCH(4)
+-
+-#if MIPS_CPU_TIMER_IRQ == 7
+-static void ltq_hw5_irqdispatch(void)
+-{
+-	do_IRQ(MIPS_CPU_TIMER_IRQ);
+-}
+-#else
+-DEFINE_HWx_IRQDISPATCH(5)
+-#endif
+-
+-static void ltq_hw_irq_handler(struct irq_desc *desc)
+-{
+-	ltq_hw_irqdispatch(irq_desc_get_irq(desc) - 2);
+-}
+-
+-asmlinkage void plat_irq_dispatch(void)
+-{
+-	unsigned int pending = read_c0_status() & read_c0_cause() & ST0_IM;
+-	int irq;
+-
+-	if (!pending) {
+-		spurious_interrupt();
+-		return;
+-	}
+-
+-	pending >>= CAUSEB_IP;
+-	while (pending) {
+-		irq = fls(pending) - 1;
+-		do_IRQ(MIPS_CPU_IRQ_BASE + irq);
+-		pending &= ~BIT(irq);
+-	}
+-}
+-
+ static int icu_map(struct irq_domain *d, unsigned int irq, irq_hw_number_t hw)
+ {
+ 	struct irq_chip *chip = &ltq_irq_type;
+@@ -343,28 +303,10 @@ int __init icu_of_init(struct device_nod
+ 	for (i = 0; i < MAX_IM; i++)
+ 		irq_set_chained_handler(i + 2, ltq_hw_irq_handler);
+ 
+-	if (cpu_has_vint) {
+-		pr_info("Setting up vectored interrupts\n");
+-		set_vi_handler(2, ltq_hw0_irqdispatch);
+-		set_vi_handler(3, ltq_hw1_irqdispatch);
+-		set_vi_handler(4, ltq_hw2_irqdispatch);
+-		set_vi_handler(5, ltq_hw3_irqdispatch);
+-		set_vi_handler(6, ltq_hw4_irqdispatch);
+-		set_vi_handler(7, ltq_hw5_irqdispatch);
+-	}
+-
+ 	ltq_domain = irq_domain_add_linear(node,
+ 		(MAX_IM * INT_NUM_IM_OFFSET) + MIPS_CPU_IRQ_CASCADE,
+ 		&irq_domain_ops, 0);
+ 
+-#ifndef CONFIG_MIPS_MT_SMP
+-	set_c0_status(IE_IRQ0 | IE_IRQ1 | IE_IRQ2 |
+-		IE_IRQ3 | IE_IRQ4 | IE_IRQ5);
+-#else
+-	set_c0_status(IE_SW0 | IE_SW1 | IE_IRQ0 | IE_IRQ1 |
+-		IE_IRQ2 | IE_IRQ3 | IE_IRQ4 | IE_IRQ5);
+-#endif
+-
+ 	/* tell oprofile which irq to use */
+ 	ltq_perfcount_irq = irq_create_mapping(ltq_domain, LTQ_PERF_IRQ);
+ 
 
 
