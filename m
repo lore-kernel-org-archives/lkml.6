@@ -2,126 +2,80 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9964EC37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DEBC37123
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67BFC20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:24:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="lFDhDYgf"
+	by mail.kernel.org (Postfix) with ESMTP id A578D20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfAUVX7 (ORCPT
+        id S1728232AbfAUVYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:23:59 -0500
-Received: from mail.efficios.com ([167.114.142.138]:56070 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbfAUVX7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 16:23:59 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0A15AB4D52;
-        Mon, 21 Jan 2019 16:23:57 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id c85f-9a2i-Wd; Mon, 21 Jan 2019 16:23:56 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 29D6CB4D4A;
-        Mon, 21 Jan 2019 16:23:56 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 29D6CB4D4A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1548105836;
-        bh=fSU2JRLPtR/56gZe4r2TAeNx6cGq1OoI4zlPdI8inB8=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=lFDhDYgfNVwHUsu0rb1mb3Gxq+ySCvfwyvHmlxWY3QsBfOL7Zp3WlArxdaz4ebc25
-         j2fuxxMszI6khkoLFJkyqWIX2MayGszAky2Bp7wrkV6P3sMTXvkImRCcliDQUgiaSK
-         2M3jfqxxQaX8wEYvSULp0njMsIKZ3lJ8BElfLXQc9DgaKBu1x7FoI9HDy3c9ztdRN/
-         WrYbqlzFfllWd8kopUzPGXcRHQHaznDvM/Obte0p6m47PohUc/YJv9SCTgaQ+WBlzu
-         vQo+j5gIxatTf07/YlAL+iKVgdIirIAm67N1OIDIkTv0u1+cRtk41i9WkGQFFeHI3y
-         KfszM5Kum9uQA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id dQb3Yasfzdyl; Mon, 21 Jan 2019 16:23:56 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 06783B4D44;
-        Mon, 21 Jan 2019 16:23:56 -0500 (EST)
-Date:   Mon, 21 Jan 2019 16:23:55 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     carlos <carlos@redhat.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1189519139.464.1548105835783.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1887968822.1146.1547833305059.JavaMail.zimbra@efficios.com>
-References: <20190115015148.32155-1-mathieu.desnoyers@efficios.com> <1887968822.1146.1547833305059.JavaMail.zimbra@efficios.com>
-Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at C
- startup and thread creation (v5)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3716 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3745)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v5)
-Thread-Index: llu+wX0M8PxIAlgKK5KtAmtbEJg5APmkjqtG
+        Mon, 21 Jan 2019 16:24:05 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:33784 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727137AbfAUVYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 16:24:04 -0500
+Received: from localhost.localdomain (unknown [85.140.183.8])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 3ABAE54006B;
+        Tue, 22 Jan 2019 00:24:01 +0300 (MSK)
+From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: [PATCH v2] usb: dwc3: exynos: Fix error handling of clk_prepare_enable
+Date:   Tue, 22 Jan 2019 00:23:50 +0300
+Message-Id: <1548105830-26376-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jan 18, 2019, at 12:41 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+If clk_prepare_enable() fails in dwc3_exynos_probe() or in
+dwc3_exynos_resume(), exynos->clks[0] is left undisabled
+because of usage preincrement in while condition.
 
-> ----- On Jan 14, 2019, at 8:51 PM, Mathieu Desnoyers
-> mathieu.desnoyers@efficios.com wrote:
-> 
-> [...]
-> 
->> diff --git a/sysdeps/unix/sysv/linux/rseq-sym.c
->> b/sysdeps/unix/sysv/linux/rseq-sym.c
->> new file mode 100644
->> index 0000000000..6856d0388a
-> [...]
->> +/* volatile because fields can be read/updated by the kernel.  */
->> +__thread volatile struct rseq __rseq_abi = {
->> +  .cpu_id = RSEQ_CPU_ID_UNINITIALIZED,
->> +};
->> +
->> +/* volatile because refcount can be read/updated by signal handlers.  */
->> +__thread volatile uint32_t __rseq_refcount;
-> 
-> Back to the weak vs non-weak question about those two symbols. I understand
-> that tagging them as weak symbols has little effect on the dynamic loader
-> when it loads libc.so. However, I'm worried about that happens when
-> libc is statically linked into an application, and there happens to
-> be more than one instance of those symbols (e.g. libc and another library
-> define the same symbols, and both are statically linked into the same
-> application). Isn't it a situation where tagging those symbols as "weak"
-> becomes useful ?
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Testing shows that it seems fine to statically link two archives within an
-executable in a scenario where each .a defines the same symbol, without
-using "weak", so I won't worry about this further.
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 9f2168367a0a ("usb: dwc3: exynos: Rework clock handling and prepare for new variants")
+---
+v2: Add fix for the second instance in dwc3_exynos_resume() per Marek Szyprowski note.
 
-Thanks,
+ drivers/usb/dwc3/dwc3-exynos.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Mathieu
-
-
+diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+index cb7fcd7c0ad8..c1e9ea621f41 100644
+--- a/drivers/usb/dwc3/dwc3-exynos.c
++++ b/drivers/usb/dwc3/dwc3-exynos.c
+@@ -78,7 +78,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+ 	for (i = 0; i < exynos->num_clks; i++) {
+ 		ret = clk_prepare_enable(exynos->clks[i]);
+ 		if (ret) {
+-			while (--i > 0)
++			while (i-- > 0)
+ 				clk_disable_unprepare(exynos->clks[i]);
+ 			return ret;
+ 		}
+@@ -223,7 +223,7 @@ static int dwc3_exynos_resume(struct device *dev)
+ 	for (i = 0; i < exynos->num_clks; i++) {
+ 		ret = clk_prepare_enable(exynos->clks[i]);
+ 		if (ret) {
+-			while (--i > 0)
++			while (i-- > 0)
+ 				clk_disable_unprepare(exynos->clks[i]);
+ 			return ret;
+ 		}
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.7.4
+
