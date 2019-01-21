@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8945CC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 529B8C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D8621019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EF962063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078725;
-	bh=SEvr/2/sFOfG2G5f+0tu+PLrXLy2NRe9qxJlE5fODds=;
+	s=default; t=1548078733;
+	bh=QXNI9mjERxDH0J5VnjRoGVPWFkmb68CFde7SNZV2VP0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nLKwiYUHon7IQj2//S6tWcH5kQxtpS25cuiwlGN7lNzL73/62xAoRVkZOLp9SW8EW
-	 1N8Z+A6fxsjqY/WAFMlmobBIqV49HIGSmjWKwHTjXwyeeLWhsaOSJx1nSAWyAq66x4
-	 l14Wtp8J0flDiCOoG0UncHw/8pSiDxbEBM288U8M=
+	b=iArMcWflKpEAMMsXS8nwfS0Q8BIQfXc/F7VzBefSJezHUAF9cWfHoidLBnE1MTt3h
+	 MausQOajBGpHtQedBJKTemKZEXHz5NgjQXJrxUgjlLvosa3wVrQGRBVmbQCRMqqj+d
+	 SsPzRjT0I7IXTm/KusbPqUUx1pu3GFyMHK/r1gGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730956AbfAUNwD (ORCPT
+        id S1730994AbfAUNwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:52:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35142 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:52:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730904AbfAUNwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:00 -0500
+        id S1730974AbfAUNwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3173C20989;
-        Mon, 21 Jan 2019 13:51:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D99A2063F;
+        Mon, 21 Jan 2019 13:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078719;
-        bh=SEvr/2/sFOfG2G5f+0tu+PLrXLy2NRe9qxJlE5fODds=;
+        s=default; t=1548078728;
+        bh=QXNI9mjERxDH0J5VnjRoGVPWFkmb68CFde7SNZV2VP0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nr+guXxr9Re9/3oUSsczNdJEvRzMpBOwiQhtvEWTMAATk/0RMtWSgtTo0PDRKTGh6
-         +DVvEikv3v9AKg5cIY11EFbkkpCa9LoMgvtfMFIGuCJ/jwDBrLk2YIt7068/Ohoi2h
-         qCwv5dM6iywdxMXZco0PpKtwXMdRvJSjSzVHllWo=
+        b=bLexhEqHdcM6qGdRnNIvgnipiY45labLUH8kjCPjOtWuYPm0pB8c3NeZkYXd3uWI0
+         K/XkxEVc+RTw21G/YIClK/uz4UP2iWWXLr5MtymsUUebkJRS+l7PmPFq1rWoZonHf1
+         YieEYqrR0/E0dQLxHOxGP9cqKA2grOpcu+rEFqSg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 20/59] crypto: bcm - convert to use crypto_authenc_extractkeys()
-Date:   Mon, 21 Jan 2019 14:43:45 +0100
-Message-Id: <20190121122458.764763223@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Mason <clm@fb.com>,
+        ethanlien <ethanlien@synology.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 22/59] Revert "btrfs: balance dirty metadata pages in btrfs_finish_ordered_io"
+Date:   Mon, 21 Jan 2019 14:43:47 +0100
+Message-Id: <20190121122459.034412568@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -64,122 +66,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: David Sterba <dsterba@suse.com>
 
-commit ab57b33525c3221afaebd391458fa0cbcd56903d upstream.
+commit 77b7aad195099e7c6da11e94b7fa6ef5e6fb0025 upstream.
 
-Convert the bcm crypto driver to use crypto_authenc_extractkeys() so
-that it picks up the fix for broken validation of rtattr::rta_len.
+This reverts commit e73e81b6d0114d4a303205a952ab2e87c44bd279.
 
-This also fixes the DES weak key check to actually be done on the right
-key. (It was checking the authentication key, not the encryption key...)
+This patch causes a few problems:
 
-Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
-Cc: <stable@vger.kernel.org> # v4.11+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+- adds latency to btrfs_finish_ordered_io
+- as btrfs_finish_ordered_io is used for free space cache, generating
+  more work from btrfs_btree_balance_dirty_nodelay could end up in the
+  same workque, effectively deadlocking
+
+12260 kworker/u96:16+btrfs-freespace-write D
+[<0>] balance_dirty_pages+0x6e6/0x7ad
+[<0>] balance_dirty_pages_ratelimited+0x6bb/0xa90
+[<0>] btrfs_finish_ordered_io+0x3da/0x770
+[<0>] normal_work_helper+0x1c5/0x5a0
+[<0>] process_one_work+0x1ee/0x5a0
+[<0>] worker_thread+0x46/0x3d0
+[<0>] kthread+0xf5/0x130
+[<0>] ret_from_fork+0x24/0x30
+[<0>] 0xffffffffffffffff
+
+Transaction commit will wait on the freespace cache:
+
+838 btrfs-transacti D
+[<0>] btrfs_start_ordered_extent+0x154/0x1e0
+[<0>] btrfs_wait_ordered_range+0xbd/0x110
+[<0>] __btrfs_wait_cache_io+0x49/0x1a0
+[<0>] btrfs_write_dirty_block_groups+0x10b/0x3b0
+[<0>] commit_cowonly_roots+0x215/0x2b0
+[<0>] btrfs_commit_transaction+0x37e/0x910
+[<0>] transaction_kthread+0x14d/0x180
+[<0>] kthread+0xf5/0x130
+[<0>] ret_from_fork+0x24/0x30
+[<0>] 0xffffffffffffffff
+
+And then writepages ends up waiting on transaction commit:
+
+9520 kworker/u96:13+flush-btrfs-1 D
+[<0>] wait_current_trans+0xac/0xe0
+[<0>] start_transaction+0x21b/0x4b0
+[<0>] cow_file_range_inline+0x10b/0x6b0
+[<0>] cow_file_range.isra.69+0x329/0x4a0
+[<0>] run_delalloc_range+0x105/0x3c0
+[<0>] writepage_delalloc+0x119/0x180
+[<0>] __extent_writepage+0x10c/0x390
+[<0>] extent_write_cache_pages+0x26f/0x3d0
+[<0>] extent_writepages+0x4f/0x80
+[<0>] do_writepages+0x17/0x60
+[<0>] __writeback_single_inode+0x59/0x690
+[<0>] writeback_sb_inodes+0x291/0x4e0
+[<0>] __writeback_inodes_wb+0x87/0xb0
+[<0>] wb_writeback+0x3bb/0x500
+[<0>] wb_workfn+0x40d/0x610
+[<0>] process_one_work+0x1ee/0x5a0
+[<0>] worker_thread+0x1e0/0x3d0
+[<0>] kthread+0xf5/0x130
+[<0>] ret_from_fork+0x24/0x30
+[<0>] 0xffffffffffffffff
+
+Eventually, we have every process in the system waiting on
+balance_dirty_pages(), and nobody is able to make progress on page
+writeback.
+
+The original patch tried to fix an OOM condition, that happened on 4.4 but no
+success reproducing that on later kernels (4.19 and 4.20). This is more likely
+a problem in OOM itself.
+
+Link: https://lore.kernel.org/linux-btrfs/20180528054821.9092-1-ethanlien@synology.com/
+Reported-by: Chris Mason <clm@fb.com>
+CC: stable@vger.kernel.org # 4.18+
+CC: ethanlien <ethanlien@synology.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/Kconfig      |    1 +
- drivers/crypto/bcm/cipher.c |   44 +++++++++++++-------------------------------
- 2 files changed, 14 insertions(+), 31 deletions(-)
+ fs/btrfs/inode.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -679,6 +679,7 @@ config CRYPTO_DEV_BCM_SPU
- 	depends on ARCH_BCM_IPROC
- 	depends on MAILBOX
- 	default m
-+	select CRYPTO_AUTHENC
- 	select CRYPTO_DES
- 	select CRYPTO_MD5
- 	select CRYPTO_SHA1
---- a/drivers/crypto/bcm/cipher.c
-+++ b/drivers/crypto/bcm/cipher.c
-@@ -2846,44 +2846,28 @@ static int aead_authenc_setkey(struct cr
- 	struct spu_hw *spu = &iproc_priv.spu;
- 	struct iproc_ctx_s *ctx = crypto_aead_ctx(cipher);
- 	struct crypto_tfm *tfm = crypto_aead_tfm(cipher);
--	struct rtattr *rta = (void *)key;
--	struct crypto_authenc_key_param *param;
--	const u8 *origkey = key;
--	const unsigned int origkeylen = keylen;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3170,9 +3170,6 @@ out:
+ 	/* once for the tree */
+ 	btrfs_put_ordered_extent(ordered_extent);
+ 
+-	/* Try to release some metadata so we don't get an OOM but don't wait */
+-	btrfs_btree_balance_dirty_nodelay(fs_info);
 -
--	int ret = 0;
-+	struct crypto_authenc_keys keys;
-+	int ret;
+ 	return ret;
+ }
  
- 	flow_log("%s() aead:%p key:%p keylen:%u\n", __func__, cipher, key,
- 		 keylen);
- 	flow_dump("  key: ", key, keylen);
- 
--	if (!RTA_OK(rta, keylen))
--		goto badkey;
--	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
-+	ret = crypto_authenc_extractkeys(&keys, key, keylen);
-+	if (ret)
- 		goto badkey;
--	if (RTA_PAYLOAD(rta) < sizeof(*param))
--		goto badkey;
--
--	param = RTA_DATA(rta);
--	ctx->enckeylen = be32_to_cpu(param->enckeylen);
- 
--	key += RTA_ALIGN(rta->rta_len);
--	keylen -= RTA_ALIGN(rta->rta_len);
--
--	if (keylen < ctx->enckeylen)
--		goto badkey;
--	if (ctx->enckeylen > MAX_KEY_SIZE)
-+	if (keys.enckeylen > MAX_KEY_SIZE ||
-+	    keys.authkeylen > MAX_KEY_SIZE)
- 		goto badkey;
- 
--	ctx->authkeylen = keylen - ctx->enckeylen;
--
--	if (ctx->authkeylen > MAX_KEY_SIZE)
--		goto badkey;
-+	ctx->enckeylen = keys.enckeylen;
-+	ctx->authkeylen = keys.authkeylen;
- 
--	memcpy(ctx->enckey, key + ctx->authkeylen, ctx->enckeylen);
-+	memcpy(ctx->enckey, keys.enckey, keys.enckeylen);
- 	/* May end up padding auth key. So make sure it's zeroed. */
- 	memset(ctx->authkey, 0, sizeof(ctx->authkey));
--	memcpy(ctx->authkey, key, ctx->authkeylen);
-+	memcpy(ctx->authkey, keys.authkey, keys.authkeylen);
- 
- 	switch (ctx->alg->cipher_info.alg) {
- 	case CIPHER_ALG_DES:
-@@ -2891,7 +2875,7 @@ static int aead_authenc_setkey(struct cr
- 			u32 tmp[DES_EXPKEY_WORDS];
- 			u32 flags = CRYPTO_TFM_RES_WEAK_KEY;
- 
--			if (des_ekey(tmp, key) == 0) {
-+			if (des_ekey(tmp, keys.enckey) == 0) {
- 				if (crypto_aead_get_flags(cipher) &
- 				    CRYPTO_TFM_REQ_WEAK_KEY) {
- 					crypto_aead_set_flags(cipher, flags);
-@@ -2906,7 +2890,7 @@ static int aead_authenc_setkey(struct cr
- 		break;
- 	case CIPHER_ALG_3DES:
- 		if (ctx->enckeylen == (DES_KEY_SIZE * 3)) {
--			const u32 *K = (const u32 *)key;
-+			const u32 *K = (const u32 *)keys.enckey;
- 			u32 flags = CRYPTO_TFM_RES_BAD_KEY_SCHED;
- 
- 			if (!((K[0] ^ K[2]) | (K[1] ^ K[3])) ||
-@@ -2957,9 +2941,7 @@ static int aead_authenc_setkey(struct cr
- 		ctx->fallback_cipher->base.crt_flags &= ~CRYPTO_TFM_REQ_MASK;
- 		ctx->fallback_cipher->base.crt_flags |=
- 		    tfm->crt_flags & CRYPTO_TFM_REQ_MASK;
--		ret =
--		    crypto_aead_setkey(ctx->fallback_cipher, origkey,
--				       origkeylen);
-+		ret = crypto_aead_setkey(ctx->fallback_cipher, key, keylen);
- 		if (ret) {
- 			flow_log("  fallback setkey() returned:%d\n", ret);
- 			tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
 
 
