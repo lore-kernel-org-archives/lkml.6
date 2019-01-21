@@ -2,171 +2,179 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA88FC2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E41C2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9518B20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0087320870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DL9I95He"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BCtyzqGC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbfAUPnB (ORCPT
+        id S1730169AbfAUPnj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:43:01 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34673 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729612AbfAUPnA (ORCPT
+        Mon, 21 Jan 2019 10:43:39 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40150 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729195AbfAUPni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:43:00 -0500
-Received: by mail-io1-f66.google.com with SMTP id b16so16758862ior.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:42:59 -0800 (PST)
+        Mon, 21 Jan 2019 10:43:38 -0500
+Received: by mail-wm1-f68.google.com with SMTP id f188so11190256wmf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:43:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yhXNhVthK2ADzkNXHxGjOO9GA4GV19AqWl+e6KsOOhg=;
-        b=DL9I95He0QGH9IK22WIEmrQxuPDUp/mjHLqqMMWGYkKVVaQt+Wf2ophnhVWRa5rIJm
-         X40hYJUacKmclFtP6/yFmArpNo6kNvqEvz5zVlZcHXBlrfYDHWaFmjF5RS/50tRyaVvk
-         PwpdECd8tQHlvIbxp9WMMgbBH8bAMDTLIt1no=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=6nK5Z7skk0g3LC/CfG1f/AiMAh85ZzuJOt+3kzqjet0=;
+        b=BCtyzqGCEaRnpexFp/8u0S0xLLNlc/eLc1RE+1luRPpgO2HLYQY+VS2oWTHdcc0HQ3
+         4jh6sm6O35/GKcPGP0A+eYmGY1PVK7xR2w9iULuvIWlZgTcZNuJgD4TQoD9hELoHNXTV
+         Ffh+LqclWWKwo+HtTeTnZv0GYrSmMHfCI4wGo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yhXNhVthK2ADzkNXHxGjOO9GA4GV19AqWl+e6KsOOhg=;
-        b=OCHZrXDm6W5V/bIywpZfZ/Lf1T6bFAneIbP5Bhym6Jj44FSDvIb3Io4Xe7M2bP87/W
-         50ju6QAPC3TQbwgNqczvvHwq9GPiL3Mv3nlSLb4ePVzbuuFSDLl86mBLTgaQ3DUJuxhN
-         L8NZfoX4SyTzGTI7YKX54tOwddccHwxDjjUAObl6O0++DGzOtCxWVaUEZl5dTACKy561
-         BPKvLEhSwfFwofZVq6Lm+nSGVFD0BtVmsjyg66zMoCYkGqkJ/t4isingKI6WvHsvX3Oc
-         BBYmNRxSQHx4YBRTOEHdfj7eoItjVne/RgL+hEzv8pWTphQILgWIUkLmECOE81r5e8f4
-         DaMQ==
-X-Gm-Message-State: AJcUukd9NKLzemCAdI0X6xONwah9qw25L9ysIlu4pmTleL8ooDQ8LjII
-        PlSwqztiVKwrDLQYyJFqG75NTznIi/nSN6ObFwNSPw==
-X-Google-Smtp-Source: ALg8bN7oA+eNciAo7OAY1Trq/TCQHSPNwLNgcgIMUor0zOlWetbhkxMGl14dJFm5IhZLFq9psBXNHdhDPirSC/jrin8=
-X-Received: by 2002:a5d:8410:: with SMTP id i16mr16954755ion.173.1548085379377;
- Mon, 21 Jan 2019 07:42:59 -0800 (PST)
-MIME-Version: 1.0
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com> <1548084825-8803-12-git-send-email-julien.thierry@arm.com>
-In-Reply-To: <1548084825-8803-12-git-send-email-julien.thierry@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 21 Jan 2019 16:42:48 +0100
-Message-ID: <CAKv+Gu8w1cgrqpoL2n2Q=Jbjt_ZruF=oH0-cDyy-LuJUo8YBEA@mail.gmail.com>
-Subject: Re: [PATCH v9 11/26] efi: Let architectures decide the flags that
- should be saved/restored
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-efi <linux-efi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=6nK5Z7skk0g3LC/CfG1f/AiMAh85ZzuJOt+3kzqjet0=;
+        b=m+sw8jOVVhUiNfgHoEH2vlrThxiYM5XkZHiMYjIdLnOmSa6dEDqLPUBqYSH3XNvbcD
+         8NQT0Evn4HPLadXih0ffK+TMrB8CeEVhV9j5M4SVLedfRvIJUvSepQeAJcxhw4FqLN9C
+         UPr4awC/CwTouYsIlw0x9lYrwjVTXbg5WBM6U5fT0cEww/t3nMk6KAkGcgSECs1ABkqh
+         7PpgdDYdiXW+DcOnPnyGTz0YaVenZAaivGpnp2i2j7xxpllXdcIImlXVBdvWL9+gUGrg
+         AsncKixmEyDFE0qtN+4dEHsOkF+R7/srl6liUknP2eUkeA+8cHXMV51c33Ipc+PRLpoc
+         fNjA==
+X-Gm-Message-State: AJcUukc92KbJvoy3OMQD3gLUAkp7Ckvlxg4kSvo6q0Y6+ZKzOrIBRZW+
+        zzZNdQ7DPEA7DZlwyDV32mEULC9WRtU=
+X-Google-Smtp-Source: ALg8bN6I88MxOM7njkA7lOhPxp8KzvrOmjChQXyjD7+grSL1kJXEwy1L6wnz8lUISdyDXDZgTfFuOQ==
+X-Received: by 2002:a1c:7511:: with SMTP id o17mr24971901wmc.42.1548085415973;
+        Mon, 21 Jan 2019 07:43:35 -0800 (PST)
+Received: from localhost ([49.248.61.1])
+        by smtp.gmail.com with ESMTPSA id n15sm76230608wrt.21.2019.01.21.07.43.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 07:43:35 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
+        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tao Wang <kevin.wangtao@hisilicon.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2 2/9] cpufreq: Auto-register the driver as a thermal cooling device if asked
+Date:   Mon, 21 Jan 2019 21:10:27 +0530
+Message-Id: <0036de796308b8919eac74a9a910f0d7b9c0cbf8.1548084260.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
+References: <cover.1548084260.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
+References: <cover.1548084260.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 16:34, Julien Thierry <julien.thierry@arm.com> wrote:
->
-> Currently, irqflags are saved before calling runtime services and
-> checked for mismatch on return.
->
-> Provide a pair of overridable macros to save and restore (if needed) the
-> state that need to be preserved on return from a runtime service.
-> This allows to check for flags that are not necesarly related to
-> irqflags.
->
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: linux-efi@vger.kernel.org
-> ---
->  drivers/firmware/efi/runtime-wrappers.c | 17 +++++++++++++++--
->  include/linux/efi.h                     |  5 +++--
->  2 files changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-> index 8903b9c..2f4b68b 100644
-> --- a/drivers/firmware/efi/runtime-wrappers.c
-> +++ b/drivers/firmware/efi/runtime-wrappers.c
-> @@ -89,11 +89,24 @@
->         efi_rts_work.status;                                            \
->  })
->
-> +#ifndef arch_efi_save_flags
-> +#define arch_efi_save_flags(state_flags)       local_save_flags(state_flags)
-> +#define arch_efi_restore_flags(state_flags)    local_irq_restore(state_flags)
-> +#endif
-> +
-> +inline unsigned long efi_call_virt_save_flags(void)
+All cpufreq drivers do similar things to register as a cooling device.
+Provide a cpufreq driver flag so drivers can just ask the cpufreq core
+to register the cooling device on their behalf. This allows us to get
+rid of duplicated code in the drivers.
 
-If you drop the 'inline' here,
+In order to allow this, we add a struct thermal_cooling_device pointer
+to struct cpufreq_policy so that drivers don't need to store it in a
+private data structure.
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Suggested-by: Stephen Boyd <swboyd@chromium.org>
+Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/cpufreq/cpufreq.c |  6 ++++++
+ include/linux/cpufreq.h   | 25 +++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-> +{
-> +       unsigned long flags;
-> +
-> +       arch_efi_save_flags(flags);
-> +       return flags;
-> +}
-> +
->  void efi_call_virt_check_flags(unsigned long flags, const char *call)
->  {
->         unsigned long cur_flags, mismatch;
->
-> -       local_save_flags(cur_flags);
-> +       cur_flags = efi_call_virt_save_flags();
->
->         mismatch = flags ^ cur_flags;
->         if (!WARN_ON_ONCE(mismatch & ARCH_EFI_IRQ_FLAGS_MASK))
-> @@ -102,7 +115,7 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
->         add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_NOW_UNRELIABLE);
->         pr_err_ratelimited(FW_BUG "IRQ flags corrupted (0x%08lx=>0x%08lx) by EFI %s\n",
->                            flags, cur_flags, call);
-> -       local_irq_restore(flags);
-> +       arch_efi_restore_flags(flags);
->  }
->
->  /*
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 45ff763..bd80b7e 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1607,6 +1607,7 @@ efi_status_t efi_setup_gop(efi_system_table_t *sys_table_arg,
->
->  bool efi_runtime_disabled(void);
->  extern void efi_call_virt_check_flags(unsigned long flags, const char *call);
-> +extern unsigned long efi_call_virt_save_flags(void);
->
->  enum efi_secureboot_mode {
->         efi_secureboot_mode_unset,
-> @@ -1652,7 +1653,7 @@ enum efi_secureboot_mode {
->                                                                         \
->         arch_efi_call_virt_setup();                                     \
->                                                                         \
-> -       local_save_flags(__flags);                                      \
-> +       __flags = efi_call_virt_save_flags();                           \
->         __s = arch_efi_call_virt(p, f, args);                           \
->         efi_call_virt_check_flags(__flags, __stringify(f));             \
->                                                                         \
-> @@ -1667,7 +1668,7 @@ enum efi_secureboot_mode {
->                                                                         \
->         arch_efi_call_virt_setup();                                     \
->                                                                         \
-> -       local_save_flags(__flags);                                      \
-> +       __flags = efi_call_virt_save_flags();                           \
->         arch_efi_call_virt(p, f, args);                                 \
->         efi_call_virt_check_flags(__flags, __stringify(f));             \
->                                                                         \
-> --
-> 1.9.1
->
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index e35a886e00bc..cf1be057caf4 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1318,6 +1318,9 @@ static int cpufreq_online(unsigned int cpu)
+ 	if (cpufreq_driver->ready)
+ 		cpufreq_driver->ready(policy);
+ 
++	if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV)
++		register_cooling_device(policy);
++
+ 	pr_debug("initialization complete\n");
+ 
+ 	return 0;
+@@ -1405,6 +1408,9 @@ static int cpufreq_offline(unsigned int cpu)
+ 		goto unlock;
+ 	}
+ 
++	if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV)
++		unregister_cooling_device(policy);
++
+ 	if (cpufreq_driver->stop_cpu)
+ 		cpufreq_driver->stop_cpu(policy);
+ 
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index bd7fbd6a4478..02fc9f210aee 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/cpumask.h>
++#include <linux/cpu_cooling.h>
+ #include <linux/completion.h>
+ #include <linux/kobject.h>
+ #include <linux/notifier.h>
+@@ -151,6 +152,11 @@ struct cpufreq_policy {
+ 
+ 	/* For cpufreq driver's internal use */
+ 	void			*driver_data;
++
++#ifdef CONFIG_CPU_THERMAL
++	/* Pointer to the cooling device if used for thermal mitigation */
++	struct thermal_cooling_device *cdev;
++#endif
+ };
+ 
+ /* Only for ACPI */
+@@ -386,6 +392,12 @@ struct cpufreq_driver {
+  */
+ #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING	BIT(6)
+ 
++/*
++ * Set by drivers that want the core to automatically register the cpufreq
++ * driver as a thermal cooling device.
++ */
++#define CPUFREQ_AUTO_REGISTER_COOLING_DEV	BIT(7)
++
+ int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+ int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+ 
+@@ -415,6 +427,19 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
+ 			policy->cpuinfo.max_freq);
+ }
+ 
++#ifdef CONFIG_CPU_THERMAL
++static inline void register_cooling_device(struct cpufreq_policy *policy) {
++	policy->cdev = of_cpufreq_cooling_register(policy);
++}
++
++static inline void unregister_cooling_device(struct cpufreq_policy *policy) {
++	cpufreq_cooling_unregister(policy->cdev);
++	policy->cdev = NULL;
++}
++#else
++static inline void register_cooling_device(struct cpufreq_policy *policy) {}
++static inline void unregister_cooling_device(struct cpufreq_policy *policy) {}
++#endif
+ #ifdef CONFIG_CPU_FREQ
+ void cpufreq_suspend(void);
+ void cpufreq_resume(void);
+-- 
+2.17.1
+
