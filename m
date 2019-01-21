@@ -2,90 +2,349 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 588B8C2F420
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EDDC2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED9B20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:07:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aVYYgK+H"
+	by mail.kernel.org (Postfix) with ESMTP id 334EB2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:09:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbfAUPHh (ORCPT
+        id S1729804AbfAUPJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:07:37 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49262 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729072AbfAUPHh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:07:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2j5QAMnWZYAHmPB6B/PLFycemJfuLetLmqnb8Ek7zWQ=; b=aVYYgK+HBuEyNiRsC+xcgmMGG
-        BrXscf3Dz0SZfcuB6oOpJWcJmSYnuBHFr79JIiV4zOjYcLMSzLb6fuyNcFPRKJjlFAJIKmQOJrGSl
-        O0f/V84aHAqhGSvfYeaP+MC0tlEqUajjWXCV2qp/FTXI97jI/NWM0NIxR+Qywagl568xIzb1e1YkU
-        uIilgow675PlyDGRpv1MwbLPAXNPusKtP1fJ8J55IkFaXlZyJGlBs4gKretnrvW6Zezlqum5Cr/ya
-        IHzum9uV51KRS2hqSDS5Pr5q1po6+w5iHUUylPvBRXC/eGGw0wIEKIulX+5BYDKtUvkAqvbmL4Msm
-        /7kd3RPsQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glbAk-00015z-Kc; Mon, 21 Jan 2019 15:07:34 +0000
-Date:   Mon, 21 Jan 2019 07:07:34 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        Christian Koenig <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Michel Daenzer <michel.daenzer@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-Message-ID: <20190121150734.GA30582@infradead.org>
-References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
+        Mon, 21 Jan 2019 10:09:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729072AbfAUPJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:09:45 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AC77B1451E0;
+        Mon, 21 Jan 2019 15:09:43 +0000 (UTC)
+Received: from redhat.com (ovpn-122-5.rdu2.redhat.com [10.10.122.5])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2EE8C100190B;
+        Mon, 21 Jan 2019 15:09:40 +0000 (UTC)
+Date:   Mon, 21 Jan 2019 10:09:38 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH RFC 10/24] userfaultfd: wp: add WP pagetable tracking to
+ x86
+Message-ID: <20190121150937.GE3344@redhat.com>
+References: <20190121075722.7945-1-peterx@redhat.com>
+ <20190121075722.7945-11-peterx@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190121075722.7945-11-peterx@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 21 Jan 2019 15:09:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +#include <linux/dma-noncoherent.h>
+On Mon, Jan 21, 2019 at 03:57:08PM +0800, Peter Xu wrote:
+> From: Andrea Arcangeli <aarcange@redhat.com>
+> 
+> Accurate userfaultfd WP tracking is possible by tracking exactly which
+> virtual memory ranges were writeprotected by userland. We can't relay
+> only on the RW bit of the mapped pagetable because that information is
+> destroyed by fork() or KSM or swap. If we were to relay on that, we'd
+> need to stay on the safe side and generate false positive wp faults
+> for every swapped out page.
 
-This header is not for usage in device drivers, but purely for
-dma-mapping implementations!
+So you want to forward write fault (of a protected range) to user space
+only if page is not write protected because of fork(), KSM or swap.
 
-> +static inline bool drm_device_can_wc_memory(struct drm_device *ddev)
->  {
-> +	if (IS_ENABLED(CONFIG_PPC))
-> +		return IS_ENABLED(CONFIG_NOT_COHERENT_CACHE);
-> +	else if (IS_ENABLED(CONFIG_MIPS))
-> +		return !IS_ENABLED(CONFIG_CPU_LOONGSON3);
-> +	else if (IS_ENABLED(CONFIG_X86))
-> +		return true;
+This write protection feature is only for anonymous page right ? Other-
+wise how would you protect a share page (ie anyone can look it up and
+call page_mkwrite on it and start writting to it) ?
+
+So for anonymous page for fork() the mapcount will tell you if page is
+write protected for COW. For KSM it is easy check the page flag.
+
+For swap you can use the page lock to synchronize. A page that is
+write protected because of swap is write protected because it is being
+write to disk thus either under page lock, or with PageWriteback()
+returning true while write is on going.
+
+So to me it seems you could properly identify if a page is write
+protected for fork, swap or KSM without a new flag.
+
+Cheers,
+Jérôme
+
+> 
+> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  arch/x86/Kconfig                     |  1 +
+>  arch/x86/include/asm/pgtable.h       | 52 ++++++++++++++++++++++++++++
+>  arch/x86/include/asm/pgtable_64.h    |  8 ++++-
+>  arch/x86/include/asm/pgtable_types.h |  9 +++++
+>  include/asm-generic/pgtable.h        |  1 +
+>  include/asm-generic/pgtable_uffd.h   | 51 +++++++++++++++++++++++++++
+>  init/Kconfig                         |  5 +++
+>  7 files changed, 126 insertions(+), 1 deletion(-)
+>  create mode 100644 include/asm-generic/pgtable_uffd.h
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 8689e794a43c..096c773452d0 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -207,6 +207,7 @@ config X86
+>  	select USER_STACKTRACE_SUPPORT
+>  	select VIRT_TO_BUS
+>  	select X86_FEATURE_NAMES		if PROC_FS
+> +	select HAVE_ARCH_USERFAULTFD_WP		if USERFAULTFD
+>  
+>  config INSTRUCTION_DECODER
+>  	def_bool y
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index 40616e805292..7a71158982f4 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -23,6 +23,7 @@
+>  
+>  #ifndef __ASSEMBLY__
+>  #include <asm/x86_init.h>
+> +#include <asm-generic/pgtable_uffd.h>
+>  
+>  extern pgd_t early_top_pgt[PTRS_PER_PGD];
+>  int __init __early_make_pgtable(unsigned long address, pmdval_t pmd);
+> @@ -293,6 +294,23 @@ static inline pte_t pte_clear_flags(pte_t pte, pteval_t clear)
+>  	return native_make_pte(v & ~clear);
+>  }
+>  
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> +static inline int pte_uffd_wp(pte_t pte)
+> +{
+> +	return pte_flags(pte) & _PAGE_UFFD_WP;
+> +}
 > +
-> +	return !dev_is_dma_coherent(ddev->dev);
-
-And even if something like this was valid to do, it would have to be
-a core function with an arch hook, and not hidden in a random driver.
+> +static inline pte_t pte_mkuffd_wp(pte_t pte)
+> +{
+> +	return pte_set_flags(pte, _PAGE_UFFD_WP);
+> +}
+> +
+> +static inline pte_t pte_clear_uffd_wp(pte_t pte)
+> +{
+> +	return pte_clear_flags(pte, _PAGE_UFFD_WP);
+> +}
+> +#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+> +
+>  static inline pte_t pte_mkclean(pte_t pte)
+>  {
+>  	return pte_clear_flags(pte, _PAGE_DIRTY);
+> @@ -372,6 +390,23 @@ static inline pmd_t pmd_clear_flags(pmd_t pmd, pmdval_t clear)
+>  	return native_make_pmd(v & ~clear);
+>  }
+>  
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> +static inline int pmd_uffd_wp(pmd_t pmd)
+> +{
+> +	return pmd_flags(pmd) & _PAGE_UFFD_WP;
+> +}
+> +
+> +static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
+> +{
+> +	return pmd_set_flags(pmd, _PAGE_UFFD_WP);
+> +}
+> +
+> +static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
+> +{
+> +	return pmd_clear_flags(pmd, _PAGE_UFFD_WP);
+> +}
+> +#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+> +
+>  static inline pmd_t pmd_mkold(pmd_t pmd)
+>  {
+>  	return pmd_clear_flags(pmd, _PAGE_ACCESSED);
+> @@ -1351,6 +1386,23 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+>  #endif
+>  #endif
+>  
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> +static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
+> +{
+> +	return pte_set_flags(pte, _PAGE_SWP_UFFD_WP);
+> +}
+> +
+> +static inline int pte_swp_uffd_wp(pte_t pte)
+> +{
+> +	return pte_flags(pte) & _PAGE_SWP_UFFD_WP;
+> +}
+> +
+> +static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
+> +{
+> +	return pte_clear_flags(pte, _PAGE_SWP_UFFD_WP);
+> +}
+> +#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+> +
+>  #define PKRU_AD_BIT 0x1
+>  #define PKRU_WD_BIT 0x2
+>  #define PKRU_BITS_PER_PKEY 2
+> diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+> index 9c85b54bf03c..e0c5d29b8685 100644
+> --- a/arch/x86/include/asm/pgtable_64.h
+> +++ b/arch/x86/include/asm/pgtable_64.h
+> @@ -189,7 +189,7 @@ extern void sync_global_pgds(unsigned long start, unsigned long end);
+>   *
+>   * |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2| 1|0| <- bit number
+>   * |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U| W|P| <- bit names
+> - * | TYPE (59-63) | ~OFFSET (9-58)  |0|0|X|X| X| X|X|SD|0| <- swp entry
+> + * | TYPE (59-63) | ~OFFSET (9-58)  |0|0|X|X| X| X|F|SD|0| <- swp entry
+>   *
+>   * G (8) is aliased and used as a PROT_NONE indicator for
+>   * !present ptes.  We need to start storing swap entries above
+> @@ -197,9 +197,15 @@ extern void sync_global_pgds(unsigned long start, unsigned long end);
+>   * erratum where they can be incorrectly set by hardware on
+>   * non-present PTEs.
+>   *
+> + * SD Bits 1-4 are not used in non-present format and available for
+> + * special use described below:
+> + *
+>   * SD (1) in swp entry is used to store soft dirty bit, which helps us
+>   * remember soft dirty over page migration
+>   *
+> + * F (2) in swp entry is used to record when a pagetable is
+> + * writeprotected by userfaultfd WP support.
+> + *
+>   * Bit 7 in swp entry should be 0 because pmd_present checks not only P,
+>   * but also L and G.
+>   *
+> diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+> index 106b7d0e2dae..163043ab142d 100644
+> --- a/arch/x86/include/asm/pgtable_types.h
+> +++ b/arch/x86/include/asm/pgtable_types.h
+> @@ -32,6 +32,7 @@
+>  
+>  #define _PAGE_BIT_SPECIAL	_PAGE_BIT_SOFTW1
+>  #define _PAGE_BIT_CPA_TEST	_PAGE_BIT_SOFTW1
+> +#define _PAGE_BIT_UFFD_WP	_PAGE_BIT_SOFTW2 /* userfaultfd wrprotected */
+>  #define _PAGE_BIT_SOFT_DIRTY	_PAGE_BIT_SOFTW3 /* software dirty tracking */
+>  #define _PAGE_BIT_DEVMAP	_PAGE_BIT_SOFTW4
+>  
+> @@ -100,6 +101,14 @@
+>  #define _PAGE_SWP_SOFT_DIRTY	(_AT(pteval_t, 0))
+>  #endif
+>  
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> +#define _PAGE_UFFD_WP		(_AT(pteval_t, 1) << _PAGE_BIT_UFFD_WP)
+> +#define _PAGE_SWP_UFFD_WP	_PAGE_USER
+> +#else
+> +#define _PAGE_UFFD_WP		(_AT(pteval_t, 0))
+> +#define _PAGE_SWP_UFFD_WP	(_AT(pteval_t, 0))
+> +#endif
+> +
+>  #if defined(CONFIG_X86_64) || defined(CONFIG_X86_PAE)
+>  #define _PAGE_NX	(_AT(pteval_t, 1) << _PAGE_BIT_NX)
+>  #define _PAGE_DEVMAP	(_AT(u64, 1) << _PAGE_BIT_DEVMAP)
+> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+> index 359fb935ded6..0e1470ecf7b5 100644
+> --- a/include/asm-generic/pgtable.h
+> +++ b/include/asm-generic/pgtable.h
+> @@ -10,6 +10,7 @@
+>  #include <linux/mm_types.h>
+>  #include <linux/bug.h>
+>  #include <linux/errno.h>
+> +#include <asm-generic/pgtable_uffd.h>
+>  
+>  #if 5 - defined(__PAGETABLE_P4D_FOLDED) - defined(__PAGETABLE_PUD_FOLDED) - \
+>  	defined(__PAGETABLE_PMD_FOLDED) != CONFIG_PGTABLE_LEVELS
+> diff --git a/include/asm-generic/pgtable_uffd.h b/include/asm-generic/pgtable_uffd.h
+> new file mode 100644
+> index 000000000000..643d1bf559c2
+> --- /dev/null
+> +++ b/include/asm-generic/pgtable_uffd.h
+> @@ -0,0 +1,51 @@
+> +#ifndef _ASM_GENERIC_PGTABLE_UFFD_H
+> +#define _ASM_GENERIC_PGTABLE_UFFD_H
+> +
+> +#ifndef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> +static __always_inline int pte_uffd_wp(pte_t pte)
+> +{
+> +	return 0;
+> +}
+> +
+> +static __always_inline int pmd_uffd_wp(pmd_t pmd)
+> +{
+> +	return 0;
+> +}
+> +
+> +static __always_inline pte_t pte_mkuffd_wp(pte_t pte)
+> +{
+> +	return pte;
+> +}
+> +
+> +static __always_inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
+> +{
+> +	return pmd;
+> +}
+> +
+> +static __always_inline pte_t pte_clear_uffd_wp(pte_t pte)
+> +{
+> +	return pte;
+> +}
+> +
+> +static __always_inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
+> +{
+> +	return pmd;
+> +}
+> +
+> +static __always_inline pte_t pte_swp_mkuffd_wp(pte_t pte)
+> +{
+> +	return pte;
+> +}
+> +
+> +static __always_inline int pte_swp_uffd_wp(pte_t pte)
+> +{
+> +	return 0;
+> +}
+> +
+> +static __always_inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
+> +{
+> +	return pte;
+> +}
+> +#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+> +
+> +#endif /* _ASM_GENERIC_PGTABLE_UFFD_H */
+> diff --git a/init/Kconfig b/init/Kconfig
+> index cf5b5a0dcbc2..2a02e004874e 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1418,6 +1418,11 @@ config ADVISE_SYSCALLS
+>  	  applications use these syscalls, you can disable this option to save
+>  	  space.
+>  
+> +config HAVE_ARCH_USERFAULTFD_WP
+> +	bool
+> +	help
+> +	  Arch has userfaultfd write protection support
+> +
+>  config MEMBARRIER
+>  	bool "Enable membarrier() system call" if EXPERT
+>  	default y
+> -- 
+> 2.17.1
+> 
