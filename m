@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA75C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A633BC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95D5E20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C08220861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078960;
-	bh=QOz5ddkoMY1QJN0bLUJbjvSYzgy9f/XWokhUCH41vrM=;
+	s=default; t=1548078964;
+	bh=mRW6ptt1EXhC2VIpsVwYYGLWgu5FcZeSvvmNaUR0/bM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=afaye90B1QhPJ7VbooOG0LEGlHHqkkJgB88/DpJMpC5a/cXGDj3cB4R44UtXoJqB9
-	 VsB0hmlQ+BgMMeKbwQUtwufuAZ4jZwghkkxKIePqEczlMYwKBgnIt/xSvsNVq48gUn
-	 0HL597AxDcDGyR+XbfiJca6ehas0lH3Xe7U8rzwI=
+	b=wlYMJ+3udXxTn8YSvw6n1F5w6hJ89ZrnaiKH6NUrrnpf2vsd4KfFhic0H+fIjwuKh
+	 WEd4I4GnpLo1sUNGzLOMzTp2ynKo6iHLnycPgiwoxkNDvjig1VecdqD789eklAuJKk
+	 R9tQxY/PrDLKciFwO0dEOlPrizbXS+mVKEFqe0sU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731850AbfAUNz6 (ORCPT
+        id S1731421AbfAUN4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:55:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40754 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:56:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731341AbfAUNzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:55:55 -0500
+        id S1730622AbfAUN4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:56:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ECBD20989;
-        Mon, 21 Jan 2019 13:55:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1014420879;
+        Mon, 21 Jan 2019 13:55:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078953;
-        bh=QOz5ddkoMY1QJN0bLUJbjvSYzgy9f/XWokhUCH41vrM=;
+        s=default; t=1548078959;
+        bh=mRW6ptt1EXhC2VIpsVwYYGLWgu5FcZeSvvmNaUR0/bM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EVTbMIO8g34nFOgQhdi4stnC/yeBGE/JooyLpWGbhEOMnOSZILnLhKkktYHrezogv
-         WLLbYX6OfveTKqC6WgGcqxVjW6cevt/pzi8La5OURDtnhQqu8gVu+2exfCn5za9bb3
-         5H+0VBgev6fHA5BxGKboFQC2WDHFYoiHDU3nUKrc=
+        b=BWBoXLQFv4gRRGDf5FFsmSpaMf2Rrlsrsul4SmFMwSatxxvhGskwoTX1dMs7mbJMz
+         +Fh/78gA5jUWKv7gcWyQQScUwjDptCHLYRhl63Ih8sQFoiR6Yr7gnNeMTPeSKV4Jw1
+         YC0oBsySOm1w8b+11CzxJuB3Jm9hjote7FtRMvtw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com,
+        syzbot+06e771a754829716a327@syzkaller.appspotmail.com,
         Ying Xue <ying.xue@windriver.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 42/51] tipc: fix uninit-value in tipc_nl_compat_bearer_enable
-Date:   Mon, 21 Jan 2019 14:44:38 +0100
-Message-Id: <20190121122457.831108269@linuxfoundation.org>
+Subject: [PATCH 4.9 44/51] tipc: fix uninit-value in tipc_nl_compat_name_table_dump
+Date:   Mon, 21 Jan 2019 14:44:40 +0100
+Message-Id: <20190121122458.067751583@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -69,24 +69,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ying Xue <ying.xue@windriver.com>
 
-commit 0762216c0ad2a2fccd63890648eca491f2c83d9a upstream.
+commit 974cb0e3e7c963ced06c4e32c5b2884173fa5e01 upstream.
 
 syzbot reported:
 
-BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:484
-CPU: 1 PID: 6371 Comm: syz-executor652 Not tainted 4.19.0-rc8+ #70
+BUG: KMSAN: uninit-value in __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
+BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
+BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
+CPU: 0 PID: 6290 Comm: syz-executor848 Not tainted 4.19.0-rc8+ #70
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:77 [inline]
  dump_stack+0x306/0x460 lib/dump_stack.c:113
  kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
  __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
- strlen+0x3b/0xa0 lib/string.c:484
- nla_put_string include/net/netlink.h:1011 [inline]
- tipc_nl_compat_bearer_enable+0x238/0x7b0 net/tipc/netlink_compat.c:389
- __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
- tipc_nl_compat_doit+0x39f/0xae0 net/tipc/netlink_compat.c:344
- tipc_nl_compat_recv+0x147c/0x2760 net/tipc/netlink_compat.c:1107
+ __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
+ __fswab32 include/uapi/linux/swab.h:59 [inline]
+ tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
+ __tipc_nl_compat_dumpit+0x59e/0xdb0 net/tipc/netlink_compat.c:205
+ tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:270
+ tipc_nl_compat_handle net/tipc/netlink_compat.c:1151 [inline]
+ tipc_nl_compat_recv+0x1402/0x2760 net/tipc/netlink_compat.c:1210
  genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
  genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
  netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
@@ -105,7 +108,7 @@ Call Trace:
  entry_SYSCALL_64_after_hwframe+0x63/0xe7
 RIP: 0033:0x440179
 Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffef7beee8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RSP: 002b:00007ffecec49318 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
 RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
 RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
 RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
@@ -135,121 +138,29 @@ Uninit was created at:
  do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
  entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-The root cause is that we don't validate whether bear name is a valid
-string in tipc_nl_compat_bearer_enable().
+We cannot take for granted the thing that the length of data contained
+in TLV is longer than the size of struct tipc_name_table_query in
+tipc_nl_compat_name_table_dump().
 
-Meanwhile, we also fix the same issue in the following functions:
-tipc_nl_compat_bearer_disable()
-tipc_nl_compat_link_stat_dump()
-tipc_nl_compat_media_set()
-tipc_nl_compat_bearer_set()
-
-Reported-by: syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com
+Reported-by: syzbot+06e771a754829716a327@syzkaller.appspotmail.com
 Signed-off-by: Ying Xue <ying.xue@windriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ net/tipc/netlink_compat.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/net/tipc/netlink_compat.c
 +++ b/net/tipc/netlink_compat.c
-@@ -380,6 +380,7 @@ static int tipc_nl_compat_bearer_enable(
- 	struct nlattr *prop;
- 	struct nlattr *bearer;
- 	struct tipc_bearer_config *b;
-+	int len;
+@@ -815,6 +815,8 @@ static int tipc_nl_compat_name_table_dum
+ 	};
  
- 	b = (struct tipc_bearer_config *)TLV_DATA(msg->req);
- 
-@@ -387,6 +388,10 @@ static int tipc_nl_compat_bearer_enable(
- 	if (!bearer)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
-+	if (!string_is_valid(b->name, len))
+ 	ntq = (struct tipc_name_table_query *)TLV_DATA(msg->req);
++	if (TLV_GET_DATA_LEN(msg->req) < sizeof(struct tipc_name_table_query))
 +		return -EINVAL;
-+
- 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, b->name))
- 		return -EMSGSIZE;
  
-@@ -412,6 +417,7 @@ static int tipc_nl_compat_bearer_disable
- {
- 	char *name;
- 	struct nlattr *bearer;
-+	int len;
- 
- 	name = (char *)TLV_DATA(msg->req);
- 
-@@ -419,6 +425,10 @@ static int tipc_nl_compat_bearer_disable
- 	if (!bearer)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
-+	if (!string_is_valid(name, len))
-+		return -EINVAL;
-+
- 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, name))
- 		return -EMSGSIZE;
- 
-@@ -479,6 +489,7 @@ static int tipc_nl_compat_link_stat_dump
- 	struct nlattr *prop[TIPC_NLA_PROP_MAX + 1];
- 	struct nlattr *stats[TIPC_NLA_STATS_MAX + 1];
- 	int err;
-+	int len;
- 
- 	if (!attrs[TIPC_NLA_LINK])
- 		return -EINVAL;
-@@ -505,6 +516,11 @@ static int tipc_nl_compat_link_stat_dump
- 		return err;
- 
- 	name = (char *)TLV_DATA(msg->req);
-+
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
-+	if (!string_is_valid(name, len))
-+		return -EINVAL;
-+
- 	if (strcmp(name, nla_data(link[TIPC_NLA_LINK_NAME])) != 0)
- 		return 0;
- 
-@@ -645,6 +661,7 @@ static int tipc_nl_compat_media_set(stru
- 	struct nlattr *prop;
- 	struct nlattr *media;
- 	struct tipc_link_config *lc;
-+	int len;
- 
- 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
- 
-@@ -652,6 +669,10 @@ static int tipc_nl_compat_media_set(stru
- 	if (!media)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_MEDIA_NAME);
-+	if (!string_is_valid(lc->name, len))
-+		return -EINVAL;
-+
- 	if (nla_put_string(skb, TIPC_NLA_MEDIA_NAME, lc->name))
- 		return -EMSGSIZE;
- 
-@@ -672,6 +693,7 @@ static int tipc_nl_compat_bearer_set(str
- 	struct nlattr *prop;
- 	struct nlattr *bearer;
- 	struct tipc_link_config *lc;
-+	int len;
- 
- 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
- 
-@@ -679,6 +701,10 @@ static int tipc_nl_compat_bearer_set(str
- 	if (!bearer)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_MEDIA_NAME);
-+	if (!string_is_valid(lc->name, len))
-+		return -EINVAL;
-+
- 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, lc->name))
- 		return -EMSGSIZE;
+ 	depth = ntohl(ntq->depth);
  
 
 
