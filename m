@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF75C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED92C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E6FC20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B08E820879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:25:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="BxOWQZQl"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="M5JDfr0G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfAUKZR (ORCPT
+        id S1727648AbfAUKZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:25:17 -0500
-Received: from mail-eopbgr150084.outbound.protection.outlook.com ([40.107.15.84]:46872
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        Mon, 21 Jan 2019 05:25:22 -0500
+Received: from mail-eopbgr10083.outbound.protection.outlook.com ([40.107.1.83]:45568
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726191AbfAUKZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:25:16 -0500
+        id S1726191AbfAUKZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 05:25:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5kss/Ad4eOgvtbc+kDo3JYGw7YpFBOJxlZn1ClRqhEc=;
- b=BxOWQZQltZQOrqVIs/Wo9b1c28/h8WU4nuysZgFTTsDY/lqOpPFsVVafI4U4QlBoRXJEqlfQZjDx7r/wwCSE8Kzql5SHQCA+fYXIsBS884n9vRUxkD9ijp5BfZ+JojwvSYBff+ZGOWNgUXtJh9AkivVPw6B+QNZTZxuftuArRpU=
+ bh=LwZbwsEDU3J/GAQ7lcOOK8y5Ns8DrXZecVIVKr+xb8A=;
+ b=M5JDfr0GQR4Ebt8uXNLWOksTqpDPUHjUEaWLvnd4hGBQIX2o3APqtKB95hnJi6AY8/ODI20em6Vcdrd21+sFMw7qQTZHO1IuAGgyRdKLoxO0oDLeBg2ZIUp+iinAhmZ9MdcewIbvkvIvRiwzk/1E9XHF0mDTYdD7KW7w1qAfPk0=
 Received: from VI1PR04MB4158.eurprd04.prod.outlook.com (52.133.15.33) by
- VI1PR04MB6110.eurprd04.prod.outlook.com (20.179.26.18) with Microsoft SMTP
+ VI1PR04MB6048.eurprd04.prod.outlook.com (20.179.24.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.27; Mon, 21 Jan 2019 10:25:11 +0000
+ 15.20.1537.24; Mon, 21 Jan 2019 10:25:16 +0000
 Received: from VI1PR04MB4158.eurprd04.prod.outlook.com
  ([fe80::257e:f28a:1a8c:c9c4]) by VI1PR04MB4158.eurprd04.prod.outlook.com
  ([fe80::257e:f28a:1a8c:c9c4%2]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
- 10:25:11 +0000
+ 10:25:16 +0000
 From:   Yinbo Zhu <yinbo.zhu@nxp.com>
 To:     Alan Stern <stern@rowland.harvard.edu>
 CC:     Yinbo Zhu <yinbo.zhu@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
@@ -46,13 +46,13 @@ CC:     Yinbo Zhu <yinbo.zhu@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
         Suresh Gupta <suresh.gupta@freescale.com>,
         "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/6] usb: host: Stops USB controller init if PLL fails to
- lock
-Thread-Topic: [PATCH v2 3/6] usb: host: Stops USB controller init if PLL fails
- to lock
-Thread-Index: AQHUsXOWYWo9SkwNBE2vWQj5pSmfbw==
-Date:   Mon, 21 Jan 2019 10:25:10 +0000
-Message-ID: <20190121102601.4735-3-yinbo.zhu@nxp.com>
+Subject: [PATCH v2 4/6] usb: linux/fsl_device: Add platform member
+ has_fsl_erratum_a006918
+Thread-Topic: [PATCH v2 4/6] usb: linux/fsl_device: Add platform member
+ has_fsl_erratum_a006918
+Thread-Index: AQHUsXOZxMMeIXYUFUa7J7VHKAaqcw==
+Date:   Mon, 21 Jan 2019 10:25:15 +0000
+Message-ID: <20190121102601.4735-4-yinbo.zhu@nxp.com>
 References: <20190121102601.4735-1-yinbo.zhu@nxp.com>
 In-Reply-To: <20190121102601.4735-1-yinbo.zhu@nxp.com>
 Accept-Language: zh-CN, en-US
@@ -68,89 +68,56 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [119.31.174.73]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB6110;6:VTyk2kVag+qECxwhSeqlscwweqF6Bv+jqRyMxG7G0RffF42P0CfU1eLakS2/pGC3+ANTZZtzTtOcvkIcY+nUJHlwXDPFG3i1K8dyoRU1/UOUEVV7yEagGQupGzJwAtXEK6e4vAFgkaxsovvZYEnsqrkKaxjfGN03A0xM1VBdYc0c8vx3DHF4MfHo46SHJ7OXd5Uw5qcn3r5OuO+j+/JN7CwUkqQLAmeKjAVSwxICLc5iNsJXkuXYMeGHveZ6/Q0Ei/TqoN683GmxrxhY3fBKtdZxCVZXJn5gjSNCHS3hDsFLiPukjkPQIBVo+/aKgeszr/vZCR2ircuCYx0sCQPQbZXs2yhkNGdaxCr2yxCXfpSXLWyj2mTbu5b7Qz1e3m7vqzoXhWT9uBgP8UrG/XJtxKE+DXdgRPE8UcxEOdZLNy6mxsR2MeXrAVuevOuPbvUjokOJEbapuEusT9DW4q2jYA==;5:Ho87y+3LtA2lrsRJxnAUdEEmOsbWTFSVTGrn4dqRxLzi+au+c8IOji4uyNXteqEqCfTq+6+5EWlQlsXwrRURmNHjqo82LmoZNSN1mIkJVtx15Ea+ip3XHr3mW5RBYdIh8OGDl0eslD+V2/M2hS2zQbc3sQtZrcksZy9KQWhFRv7bk0OLcxUQoihs9nV7lfo+JmFcusY/zjqfDWO5L01uxQ==;7:tJWRCyL+JNRekIUEHzHvVCBXMH4Th+VrOLIu3rveM7YPYVCvM6IKgYuwhXBiSeSGqZjJXECxJpWSkLkgzy3difPwd5JdqAFqX9oastMmQlF2+4zikL01IOBZ856KO093QCx2G/zhPCWSAyMO+ErI2A==
-x-ms-office365-filtering-correlation-id: ac197d14-f1a8-4e6a-9f81-08d67f8ab911
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB6048;6:f/SYdXY7GCFKbgoTn8HRit2ks9tLKYDL2zgXP+DPO7K6rC/ID20y2n8eHrdN1ny3uQ3NuLlDpndO8HhoTUH6pMH7WlFHlXrlSVbzkpd5RgHPRbVGDbervJeOcJophPh5jNhO3Z/Sntz0mc8qQa2adYfsuA6QRfiPn9kXFxoEbrzzXfMudsacDUc4Bc5jSTJr1/ZYHpr4gutouBnHwb8bZjIkVWYKPiREHvCboLYvXLxGerWi9IpbXhnZJrvGtnPq6zKswErdaNEwrZZKwQyVsetAURjhIKCA86KtZUWGy3NcIZjkLjwo1JX4/W9vcbHN4jlfVoRSI6aGaWKo/IO2gc4nXq85rgK7kZXewWdazy1LyKHGcGJGcgblMZAUlKNOTm2dnXEihSySlb56zrEVxPi0I9uq5CAF5u/Kij5KeHea2P7/R1O9p0Q28i+aRetvcc64a/V+HDVLgNNQEIyhiw==;5:Fpj81qbN2XGj6bzVZd+OcG20Uwcex9TlkaOQgkOPVQzJ2d9YRmudbGr1PJBUbn3spbGUF/RX+ed5hGmRWyMB9V3k2hiReq3Aun5J9pXXy49jr4LlzEkeFF4kDdA1j3IhdVfECczAkWgQG2SGiB3PK+OOL+YzsTAEKt2j2MQ2NkRMJOif0gHTvcI0g1G1uzcXxomjHW+qE2KSy18xtB1GiA==;7:s8l/9Z6nA2TBhYgcZSDm04aVt0+jYkCvVW1FZwtZQX4OWNxjMAuIx4GtxZ/KA3weaGO3e/Am1bHNCTdVKXW2t45s9ecdR4Ubz9lquqBXiX3qaiXsEB6xsz37nZ8bNlWm6iuxPBijyqcoyM6Vsacjcw==
+x-ms-office365-filtering-correlation-id: 11834e83-b5e3-4b58-929f-08d67f8abbed
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB6110;
-x-ms-traffictypediagnostic: VI1PR04MB6110:
-x-microsoft-antispam-prvs: <VI1PR04MB611026532CDA061D0EF0939EE99F0@VI1PR04MB6110.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB6048;
+x-ms-traffictypediagnostic: VI1PR04MB6048:
+x-microsoft-antispam-prvs: <VI1PR04MB604898C1050E1FC89FB700C6E99F0@VI1PR04MB6048.eurprd04.prod.outlook.com>
 x-forefront-prvs: 0924C6A0D5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(199004)(189003)(476003)(2616005)(446003)(11346002)(6486002)(2906002)(1076003)(4326008)(316002)(6916009)(68736007)(7736002)(54906003)(86362001)(71190400001)(305945005)(71200400001)(478600001)(66066001)(6116002)(3846002)(25786009)(8676002)(6506007)(386003)(52116002)(81156014)(81166006)(26005)(76176011)(99286004)(186003)(102836004)(50226002)(14444005)(256004)(14454004)(8936002)(36756003)(486006)(6436002)(105586002)(106356001)(2171002)(6512007)(97736004)(44832011)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6110;H:VI1PR04MB4158.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(346002)(396003)(39860400002)(376002)(189003)(199004)(3846002)(1076003)(86362001)(386003)(6506007)(102836004)(71190400001)(316002)(6486002)(26005)(71200400001)(2906002)(6436002)(52116002)(6916009)(99286004)(186003)(76176011)(54906003)(81166006)(81156014)(68736007)(6116002)(8676002)(4744005)(2171002)(66066001)(53936002)(97736004)(478600001)(305945005)(14444005)(36756003)(4326008)(7736002)(256004)(476003)(44832011)(50226002)(105586002)(106356001)(11346002)(486006)(25786009)(2616005)(446003)(8936002)(6512007)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6048;H:VI1PR04MB4158.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 3qWBrMcO+vu00Qzz5olLZVOjuTyP9R5ouYwpraBwE43tojR17IVBCzW9Ept4BfT2iobl5pydFFU6qV9yy+5Rq/X8aFH8gcJGDWSTDZeiHld/wxMbIanJHjUihfL4WdORB85yH3KaiUk7g+CuwUYK/u653hJAD/FzKuxUWI3SqPCD/Rw52eF2IEK9/rEWn3tXyqq8JmitSXOoU5iBq1fA6+kRxWRlgvRPsZUJSbrnqlf4UcO2DWI7WilT9V6YbWypo5jm4qjGdOlt2uOlMNOTcLhChSSQvULST4paPr+Z3k82KjHHkKHkGRgEEtCilS+eNO8PRmiYqD0jtVN3iwqIhKxFJGCmFKZFo9WOXgpnGFbay4doVC+XM1oE5uWgjL5Ht37mF75TtHO7EM3y/QG04pXM8jb9pirkyomEFnC4/0A=
+x-microsoft-antispam-message-info: 2kRogi7vb8fmPS7vb2KByCT7FIp8AJKNYq6GFWeNVod8PNpo5DO0API2cdGEQRgAg5C5sQBjP+C3fe5Y0Lp73wAEvFyypVsC28DjGnXJAyiy1DJpXbBYv6cRRoHeIDqQpwkX6s28/q1M5QtYqoB8h6+13nDRdyOP0j0QL5qXkD7a0hcnDVjLqmMbOTc7KJ2eKBzRlFvYyvBcu+kPsLCttDViHqMC/PDKik4/NwDaBGeZ74rp5TS5Iiql2Yic5NXy4g9tyGePOB/Ou4RpAb0Kct8WcUr5gkqDqhuZe9Mty/YnmrDS+7FEXFWIlgPJxBSz2ptYFmm4tfc22cWomFBg3EAVJqMhELq8xbNxBtIGv4/mf88zIfwxJkxNvzN+Og/EUcIzhDVYHaFL0aUThH+D9wT1CELG1EMVQR0AEsfWaks=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac197d14-f1a8-4e6a-9f81-08d67f8ab911
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 10:25:06.4626
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11834e83-b5e3-4b58-929f-08d67f8abbed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 10:25:11.2595
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6110
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yinbo.zhu <yinbo.zhu@nxp.com>
+From: Yinbo Zhu <yinbo.zhu@nxp.com>
 
-USB erratum-A006918 workaround tries to start internal PHY inside
-uboot (when PLL fails to lock). However, if the workaround also
-fails, then USB initialization is also stopped inside Linux.
-Erratum-A006918 workaround failure creates "fsl,erratum_a006918"
-node in device-tree. Presence of this node in device-tree is
-used to stop USB controller initialization in Linux
+This patch is to add member has_fsl_erratum_a006918 in platform data
 
-Signed-off-by: Ramneek Mehresh <ramneek.mehresh@freescale.com>
-Signed-off-by: Suresh Gupta <suresh.gupta@freescale.com>
 Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
 ---
-Change in v2:
-		replace Yinbo.Zhu with Yinbo Zhu
+ include/linux/fsl_devices.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
- drivers/usb/host/ehci-fsl.c      |    5 +++++
- drivers/usb/host/fsl-mph-dr-of.c |    5 +++++
- 2 files changed, 10 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
-index a28ec1e..6884130 100644
---- a/drivers/usb/host/ehci-fsl.c
-+++ b/drivers/usb/host/ehci-fsl.c
-@@ -224,6 +224,11 @@ static int ehci_fsl_setup_phy(struct usb_hcd *hcd,
- 		portsc |=3D PORT_PTS_PTW;
- 		/* fall through */
- 	case FSL_USB2_PHY_UTMI:
-+		if (pdata->has_fsl_erratum_a006918) {
-+			pr_warn("fsl-ehci: USB PHY clock invalid\n");
-+			return -EINVAL;
-+		}
-+
- 	case FSL_USB2_PHY_UTMI_DUAL:
- 		/* PHY_CLK_VALID bit is de-featured from all controller
- 		 * versions below 2.4 and is to be checked only for
-diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr=
--of.c
-index 677f9d5..7e07701 100644
---- a/drivers/usb/host/fsl-mph-dr-of.c
-+++ b/drivers/usb/host/fsl-mph-dr-of.c
-@@ -225,6 +225,11 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_de=
-vice *ofdev)
- 	pdata->has_fsl_erratum_a005697 =3D
- 		of_property_read_bool(np, "fsl,usb_erratum-a005697");
+diff --git a/include/linux/fsl_devices.h b/include/linux/fsl_devices.h
+index 60cef82..7ea53c8 100644
+--- a/include/linux/fsl_devices.h
++++ b/include/linux/fsl_devices.h
+@@ -101,6 +101,7 @@ struct fsl_usb2_platform_data {
+ 	unsigned        has_fsl_erratum_a007792:1;
+ 	unsigned        has_fsl_erratum_a005275:1;
+ 	unsigned	has_fsl_erratum_a005697:1;
++	unsigned	has_fsl_erratum_a006918:1;
+ 	unsigned        check_phy_clk_valid:1;
 =20
-+	if (of_get_property(np, "fsl,erratum_a006918", NULL))
-+		pdata->has_fsl_erratum_a006918 =3D 1;
-+	else
-+		pdata->has_fsl_erratum_a006918 =3D 0;
-+
- 	/*
- 	 * Determine whether phy_clk_valid needs to be checked
- 	 * by reading property in device tree
+ 	/* register save area for suspend/resume */
 --=20
 1.7.1
 
