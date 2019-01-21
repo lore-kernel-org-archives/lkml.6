@@ -6,47 +6,50 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB7AC31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8F8C31680
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD3AC2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:35:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA0F421726
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548095740;
-	bh=Q6FORiGHNSBbj3H/Ni6KFm+7XOcewWGAsI4EqCSFAiQ=;
+	s=default; t=1548095744;
+	bh=sh0cfqRPiFqBaAnRx3+vVxdOrbDoMF6AbsktLhaVg14=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NwfYabUWQvZdZeDmiwp7xIXjq1PF3HUPPxkZA/LTY1mIQAo8QXwoNoxLq5FDpYeJA
-	 pMLXyQa8c/VIJo1m2dp+FwLLqz2jJAyXFv5u4JGHPUnd4Xlzvwbjcrbu1wquDz4wPw
-	 Yvzbn4puIOrJtD6wZp+OtAYq/aQfTrAPICzUN7Rw=
+	b=ZhOuvIHuOwoIF/XAm0fSxdLUjwO3C5FC8jiQrLCna5yioJ8wEiIJPe/4g6ISwqR8T
+	 4FyxXG4fwW7cBoY+QohYXwmVwZh/wHEhL8qFJrWnmBTaASiPNPnZZT47MmIcNSPl7p
+	 AVzq8UZb3shO5KlqhbRqfB9vEcBDkXUi7RLvG+T4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbfAUSfj (ORCPT
+        id S1728223AbfAUSfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:35:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42954 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 13:35:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbfAUSfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:35:38 -0500
+        id S1728173AbfAUSfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 13:35:42 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BC6620989;
-        Mon, 21 Jan 2019 18:35:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFC6F21721;
+        Mon, 21 Jan 2019 18:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548095737;
-        bh=Q6FORiGHNSBbj3H/Ni6KFm+7XOcewWGAsI4EqCSFAiQ=;
+        s=default; t=1548095741;
+        bh=sh0cfqRPiFqBaAnRx3+vVxdOrbDoMF6AbsktLhaVg14=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OSfChQKn+DA8FvJpu4hyfJzUsJqIn8lFmO65fiT0UtDVXBANg5llg3OmANCTZ1u1B
-         MsmZJwGMUuHFsePNm3QApdoSbm97SXn8aGmwFIhOPs7+6zcHD4Ju0wQXA21Ar5UXwY
-         oPcndoL1uwAK7aUzlmV16jLl8HjkoyBqSqbDIyHE=
+        b=vOXpgvWIKtOdc5SMdBvEtGnENvRj31Eaf5EP7fDhIBYKkOE2eMU4dXjLApRDJ0cnJ
+         zZhJzcvmWqnpIJHaafWlTjYq8Gl12t0AMlTBbhweDChj3iNRb+SCHqP2oUtFFdoGEi
+         ZRmFuKTkST+lmBzAWmlbOxCsgYA9oEBenTUfw3i4=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        linux-perf-users@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: [PATCH 2/7] perf script: Fix crash with printing mixed trace point and other events
-Date:   Mon, 21 Jan 2019 15:35:02 -0300
-Message-Id: <20190121183507.23490-3-acme@kernel.org>
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 3/7] perf core: Fix perf_proc_update_handler() bug
+Date:   Mon, 21 Jan 2019 15:35:03 -0300
+Message-Id: <20190121183507.23490-4-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121183507.23490-1-acme@kernel.org>
 References: <20190121183507.23490-1-acme@kernel.org>
@@ -57,79 +60,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Stephane Eranian <eranian@google.com>
 
-'perf script' crashes currently when printing mixed trace points and
-other events because the trace format does not handle events without
-trace meta data. Add a simple check to avoid that.
+The perf_proc_update_handler() handles /proc/sys/kernel/perf_event_max_sample_rate
+syctl variable.  When the PMU IRQ handler timing monitoring is disabled, i.e,
+when /proc/sys/kernel/perf_cpu_time_max_percent is equal to 0 or 100,
+then no modification to sysctl_perf_event_sample_rate is allowed to prevent
+possible hang from wrong values.
 
-  % cat > test.c
-  main()
-  {
-      printf("Hello world\n");
-  }
-  ^D
-  % gcc -g -o test test.c
-  % sudo perf probe -x test 'test.c:3'
-  % perf record -e '{cpu/cpu-cycles,period=10000/,probe_test:main}:S' ./test
-  % perf script
-  <segfault>
+The problem is that the test to prevent modification is made after the
+sysctl variable is modified in perf_proc_update_handler().
+
+You get an error:
+
+  $ echo 10001 >/proc/sys/kernel/perf_event_max_sample_rate
+  echo: write error: invalid argument
+
+But the value is still modified causing all sorts of inconsistencies:
+
+  $ cat /proc/sys/kernel/perf_event_max_sample_rate
+  10001
+
+This patch fixes the problem by moving the parsing of the value after
+the test.
 
 Committer testing:
 
-Before:
-
-  # perf probe -x /lib64/libc-2.28.so malloc
-  Added new event:
-    probe_libc:malloc    (on malloc in /usr/lib64/libc-2.28.so)
-
-  You can now use it in all perf tools, such as:
-
-	perf record -e probe_libc:malloc -aR sleep 1
-
-  # perf probe -l
-  probe_libc:malloc    (on __libc_malloc@malloc/malloc.c in /usr/lib64/libc-2.28.so)
-  # perf record -e '{cpu/cpu-cycles,period=10000/,probe_libc:*}:S' sleep 1
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.023 MB perf.data (40 samples) ]
-  # perf script
-  Segmentation fault (core dumped)
-  ^C
+  # echo 100 > /proc/sys/kernel/perf_cpu_time_max_percent
+  # echo 10001 > /proc/sys/kernel/perf_event_max_sample_rate
+  -bash: echo: write error: Invalid argument
+  # cat /proc/sys/kernel/perf_event_max_sample_rate
+  10001
   #
 
-After:
-
-  # perf script | head -6
-     sleep 2888 94796.944981: 16198 cpu/cpu-cycles,period=10000/: ffffffff925dc04f get_random_u32+0x1f (/lib/modules/5.0.0-rc2+/build/vmlinux)
-     sleep 2888 [-01] 94796.944981: probe_libc:malloc:
-     sleep 2888 94796.944983:  4713 cpu/cpu-cycles,period=10000/: ffffffff922763af change_protection+0xcf (/lib/modules/5.0.0-rc2+/build/vmlinux)
-     sleep 2888 [-01] 94796.944983: probe_libc:malloc:
-     sleep 2888 94796.944986:  9934 cpu/cpu-cycles,period=10000/: ffffffff922777e0 move_page_tables+0x0 (/lib/modules/5.0.0-rc2+/build/vmlinux)
-     sleep 2888 [-01] 94796.944986: probe_libc:malloc:
-  #
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20190117194834.21940-1-andi@firstfloor.org
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1547169436-6266-1-git-send-email-eranian@google.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-script.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index d079f36d342d..357906ed1898 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1794,7 +1794,7 @@ static void process_event(struct perf_script *script,
- 		return;
- 	}
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3cd13a30f732..e5ede6918050 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -436,18 +436,18 @@ int perf_proc_update_handler(struct ctl_table *table, int write,
+ 		void __user *buffer, size_t *lenp,
+ 		loff_t *ppos)
+ {
+-	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+-
+-	if (ret || !write)
+-		return ret;
+-
++	int ret;
++	int perf_cpu = sysctl_perf_cpu_time_max_percent;
+ 	/*
+ 	 * If throttling is disabled don't allow the write:
+ 	 */
+-	if (sysctl_perf_cpu_time_max_percent == 100 ||
+-	    sysctl_perf_cpu_time_max_percent == 0)
++	if (write && (perf_cpu == 100 || perf_cpu == 0))
+ 		return -EINVAL;
  
--	if (PRINT_FIELD(TRACE)) {
-+	if (PRINT_FIELD(TRACE) && sample->raw_data) {
- 		event_format__fprintf(evsel->tp_format, sample->cpu,
- 				      sample->raw_data, sample->raw_size, fp);
- 	}
++	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++	if (ret || !write)
++		return ret;
++
+ 	max_samples_per_tick = DIV_ROUND_UP(sysctl_perf_event_sample_rate, HZ);
+ 	perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
+ 	update_perf_cpu_limits();
 -- 
 2.20.1
 
