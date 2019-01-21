@@ -2,113 +2,84 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CD2C31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CE9C31680
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45FBF20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:15:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 770C020663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:15:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548090940;
+	bh=7pf9yreBmfqff5hIhgefFssNdJRpsm6s+buvpRYoknk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=B0u/2Q4qLcuPY5TH2ehxWxBjTJByGIpvkUEJsKcfu+kRXWFUSLy/pdaCOs6xqKODL
+	 AEWeJlGsGo3UHs3VpfxGnqP0a2iagI9VkrYM0WdaepZCePJfGqOyvi3juFIjSt7DK9
+	 wvd7owV+i8e6T3s0vYukfAF/0PxXO0DZiNNEDTwU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfAURPW (ORCPT
+        id S1727189AbfAURPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 12:15:22 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:59810 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbfAURPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 12:15:21 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 6E6A213F85F;
-        Mon, 21 Jan 2019 18:15:06 +0100 (CET)
-Subject: Re: [RFC PATCH v2 2/4] arm64: dts: qcom: msm8998: Add UFS nodes
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <88e04336-723f-c157-0384-c5054a73e0a4@free.fr>
- <d183a99d-6fd7-8b06-3f22-a26415cf4967@free.fr>
- <8dd04fdc-a5ad-420f-5224-641a71b3176c@codeaurora.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <9aba81b6-e202-019c-f0f3-60c07935fa43@free.fr>
-Date:   Mon, 21 Jan 2019 18:15:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 12:15:39 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36415 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbfAURPi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 12:15:38 -0500
+Received: by mail-oi1-f196.google.com with SMTP id x23so15131877oix.3;
+        Mon, 21 Jan 2019 09:15:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aIbnHP3kQnWvLMSaXvoD0S8eEMf5emNZxF2RqvW+3Jo=;
+        b=Wf6vDV/hmbQt+VbOKVGbUcTxUEnvhrdacozPhb8XPX77DBbNlaWj4XKx7sl/kn89QT
+         427QbtH7IK+8+SgFy/plfhx1IO88TJR8NfoGC4MEIadjd6oJtqw79yjNnbJIKo0gTdop
+         roBHHtW5PfdiLaFIUiSpjY60xNeV95vC7AUwNkd2HuZSW696c1PDgsko6oLVXxY8hNQZ
+         JZfe6cNQiOL7DauEQrfPpwyPoD+oKMPry7LrAWD9SAlzh+3+lRZta3Y10cnL7p8KmLAj
+         AKM6lVGdRTqkuPy1sNWqhu6q7Ml/NuonawT2pKF/HCV28yM57vH/8Wqjwe9E2BLBmvNo
+         F7sA==
+X-Gm-Message-State: AJcUukfHHU/JN1RNV3Ju9aBRTjxGDtpqge40Kmdc0H5ym7+RBvM1ILsu
+        vl2MeQTB9g/boNiy2pJPx6Yg2go=
+X-Google-Smtp-Source: ALg8bN7qaFeQDQYWo/V0UuQFAq8jsy2svnIfPmoOKY/zBZK6HWCq6qgVK8MpJD2mhQcd3VeTEs/Sig==
+X-Received: by 2002:aca:6155:: with SMTP id v82mr6351123oib.259.1548090937861;
+        Mon, 21 Jan 2019 09:15:37 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id p203sm6737239oic.49.2019.01.21.09.15.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 09:15:37 -0800 (PST)
+Date:   Mon, 21 Jan 2019 11:15:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/4] dt-bindings: memory: jz4780: Add compatible
+ string for JZ4725B SoC
+Message-ID: <20190121171536.GA12475@bogus>
+References: <20190118151329.8040-1-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <8dd04fdc-a5ad-420f-5224-641a71b3176c@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118151329.8040-1-paul@crapouillou.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/01/2019 16:36, Jeffrey Hugo wrote:
-
-> On 1/16/2019 3:56 AM, Marc Gonzalez wrote:
->
->> Add host controller and PHY DT nodes.
->>
->> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
->> ---
->> TODO: check whether the driver uses the 'resets' prop
->> ---
->>   arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 20 +++++++
->>   arch/arm64/boot/dts/qcom/msm8998.dtsi     | 63 +++++++++++++++++++++++
->>   2 files changed, 83 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
->> index 50e9033aa7f6..cd1c9e84eab7 100644
->> --- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
->> @@ -257,3 +257,23 @@
->>   	pinctrl-0 = <&sdc2_clk_on  &sdc2_cmd_on  &sdc2_data_on  &sdc2_cd_on>;
->>   	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
->>   };
->> +
->> +&ufshc {
->> +	vdd-hba-fixed-regulator;
+On Fri, 18 Jan 2019 12:13:26 -0300, Paul Cercueil wrote:
+> Add a compatible string to support the memory controller built into the
+> JZ4725B SoC from Ingenic.
 > 
-> Since we are not specifying the vdd anymore, I suspect this should be 
-> dropped.  Do you know of any reason why we'd still need it?
-
-Will drop in v3.
-
->> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
->> index 6f4f4b79853b..36fd2e614464 100644
->> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
->> @@ -711,6 +711,69 @@
->>   			redistributor-stride = <0x0 0x20000>;
->>   			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->>   		};
->> +
->> +		ufshc: ufshc@1da4000 {
->> +			compatible = "qcom,msm8998-ufshc", "qcom,ufshc",
->> +				     "jedec,ufs-2.0";
->> +			reg = <0x1da4000 0x2500>;
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+> ---
 > 
-> Bjorn would like it if reg addresses are full width, ie 0x01da4000
-
-Will tweak in v3.
-
->> +		ufsphy: phy@1da7000 {
->> +			compatible = "qcom,sdm845-qmp-ufs-phy";
+> v2: No change
 > 
-> We should make an 8998 compatible.  Also, don't you have phy changes 
-> since the init sequence differs between 845 and 8998?
+>  .../devicetree/bindings/memory-controllers/ingenic,jz4780-nemc.txt       | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Will create a specific binding.
-I don't have any PHY changes, I just used the 845 init sequence.
-I tested this by using the 845 init sequence downstream.
-
-However, no point in sending v3 until someone comments on patches 3 and 4 :-)
-
-Patch 4 needs to become a real patch.
-
-Regards.
+Reviewed-by: Rob Herring <robh@kernel.org>
