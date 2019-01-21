@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE05CC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E78C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD6020861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2B9C2063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078484;
-	bh=eds9A/Knpr+KEntucTxFMau1OOHnah6UX5m/RzLPp8U=;
+	s=default; t=1548078489;
+	bh=arJ3BqX14LzWcPuMwgZ+8NG/SybKnkOMFJkQkM9hVOg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O7vpIIBcXybEOShHGVV0lm4aVY9rYqAEONgtFENEFKN9opzt59Nm9l+xbVMyMvs8k
-	 Rv/wAoyC69hwA9OrFd6jNom00uGC6FWQbOUDERlXSmyQc6YFlngxkRb+QXUDAgQdmM
-	 vRrYxPEJuUK4OUD0r0882Zo8cZHUKxIdWukGUHKc=
+	b=WVQJd0Fgw031kwPmaTDoVdZBYN3lg5I9xKngQpidprpzHa12DRlDHvlNeNPTqMZMg
+	 X3B8sqo2ZS8OHuQBBnAgKCfoDp9nYSIXsho0sNtHIxyc+RqA05upsyiN2Li6QDGiQw
+	 K43o9HUHpfYnsZ9mf/YM3xM6zVS4NG4FXO6mA+qw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbfAUNsD (ORCPT
+        id S1729832AbfAUNsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:48:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57570 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:48:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729682AbfAUNr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:47:56 -0500
+        id S1729800AbfAUNsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:48:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8935D20861;
-        Mon, 21 Jan 2019 13:47:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 675D52063F;
+        Mon, 21 Jan 2019 13:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078476;
-        bh=eds9A/Knpr+KEntucTxFMau1OOHnah6UX5m/RzLPp8U=;
+        s=default; t=1548078484;
+        bh=arJ3BqX14LzWcPuMwgZ+8NG/SybKnkOMFJkQkM9hVOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aJJTadpel3X4pYLqxhzGKxcx8p5XLJ54RLQmiiSrOPTfYx+A5qciwZ5KqJWEAy1lm
-         h8rZigJzp/eEV7CjcEAFT93E/ouqwv1dtOy+PqOBN5rIdNr5hO9sUjVQ8n5qTmQwjt
-         DJRoSM1oRgPXICSVX8LDG4TJnt2E8h1n6ohoi6zI=
+        b=RraZdSzUsqwVHUfo3M9SC0OqN9w+RJiE4r5MLKgJBnjxT26saFNkwJRjpGJMyWPNB
+         M+iR5jEFWK5D24bWQoN0V7TZ8Tia/FUr+6jZVTAH3LCvB/niA/iJVLkpFo20uhUvmh
+         6HQ0Cn56yR0ks36wgam4T4pCsQNRH0CyzokTNPek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.20 044/111] scsi: core: Synchronize request queue PM status only on successful resume
-Date:   Mon, 21 Jan 2019 14:42:38 +0100
-Message-Id: <20190121122500.730526969@linuxfoundation.org>
+        stable@vger.kernel.org, Shawn Bohrer <sbohrer@cloudflare.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.20 010/111] netfilter: nf_conncount: merge lookup and add functions
+Date:   Mon, 21 Jan 2019 14:42:04 +0100
+Message-Id: <20190121122456.891645963@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,97 +66,359 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stanley Chu <stanley.chu@mediatek.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit 3f7e62bba0003f9c68f599f5997c4647ef5b4f4e upstream.
+commit df4a902509766897f7371fdfa4c3bf8bc321b55d upstream.
 
-The commit 356fd2663cff ("scsi: Set request queue runtime PM status back to
-active on resume") fixed up the inconsistent RPM status between request
-queue and device. However changing request queue RPM status shall be done
-only on successful resume, otherwise status may be still inconsistent as
-below,
+'lookup' is always followed by 'add'.
+Merge both and make the list-walk part of nf_conncount_add().
 
-Request queue: RPM_ACTIVE
-Device: RPM_SUSPENDED
+This also avoids one unneeded unlock/re-lock pair.
 
-This ends up soft lockup because requests can be submitted to underlying
-devices but those devices and their required resource are not resumed.
+Extra care needs to be taken in count_tree, as we only hold rcu
+read lock, i.e. we can only insert to an existing tree node after
+acquiring its lock and making sure it has a nonzero count.
 
-For example,
+As a zero count should be rare, just fall back to insert_tree()
+(which acquires tree lock).
 
-After above inconsistent status happens, IO request can be submitted to UFS
-device driver but required resource (like clock) is not resumed yet thus
-lead to warning as below call stack,
+This issue and its solution were pointed out by Shawn Bohrer
+during patch review.
 
-WARN_ON(hba->clk_gating.state != CLKS_ON);
-ufshcd_queuecommand
-scsi_dispatch_cmd
-scsi_request_fn
-__blk_run_queue
-cfq_insert_request
-__elv_add_request
-blk_flush_plug_list
-blk_finish_plug
-jbd2_journal_commit_transaction
-kjournald2
-
-We may see all behind IO requests hang because of no response from storage
-host or device and then soft lockup happens in system. In the end, system
-may crash in many ways.
-
-Fixes: 356fd2663cff (scsi: Set request queue runtime PM status back to active on resume)
-Cc: stable@vger.kernel.org
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reviewed-by: Shawn Bohrer <sbohrer@cloudflare.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/scsi_pm.c |   26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ include/net/netfilter/nf_conntrack_count.h |   18 ---
+ net/netfilter/nf_conncount.c               |  146 +++++++++++++----------------
+ net/netfilter/nft_connlimit.c              |   14 --
+ 3 files changed, 72 insertions(+), 106 deletions(-)
 
---- a/drivers/scsi/scsi_pm.c
-+++ b/drivers/scsi/scsi_pm.c
-@@ -80,8 +80,22 @@ static int scsi_dev_type_resume(struct d
+--- a/include/net/netfilter/nf_conntrack_count.h
++++ b/include/net/netfilter/nf_conntrack_count.h
+@@ -5,12 +5,6 @@
  
- 	if (err == 0) {
- 		pm_runtime_disable(dev);
--		pm_runtime_set_active(dev);
-+		err = pm_runtime_set_active(dev);
- 		pm_runtime_enable(dev);
+ struct nf_conncount_data;
+ 
+-enum nf_conncount_list_add {
+-	NF_CONNCOUNT_ADDED, 	/* list add was ok */
+-	NF_CONNCOUNT_ERR,	/* -ENOMEM, must drop skb */
+-	NF_CONNCOUNT_SKIP,	/* list is already reclaimed by gc */
+-};
+-
+ struct nf_conncount_list {
+ 	spinlock_t list_lock;
+ 	struct list_head head;	/* connections with the same filtering key */
+@@ -29,18 +23,12 @@ unsigned int nf_conncount_count(struct n
+ 				const struct nf_conntrack_tuple *tuple,
+ 				const struct nf_conntrack_zone *zone);
+ 
+-void nf_conncount_lookup(struct net *net, struct nf_conncount_list *list,
+-			 const struct nf_conntrack_tuple *tuple,
+-			 const struct nf_conntrack_zone *zone,
+-			 bool *addit);
++int nf_conncount_add(struct net *net, struct nf_conncount_list *list,
++		     const struct nf_conntrack_tuple *tuple,
++		     const struct nf_conntrack_zone *zone);
+ 
+ void nf_conncount_list_init(struct nf_conncount_list *list);
+ 
+-enum nf_conncount_list_add
+-nf_conncount_add(struct nf_conncount_list *list,
+-		 const struct nf_conntrack_tuple *tuple,
+-		 const struct nf_conntrack_zone *zone);
+-
+ bool nf_conncount_gc_list(struct net *net,
+ 			  struct nf_conncount_list *list);
+ 
+--- a/net/netfilter/nf_conncount.c
++++ b/net/netfilter/nf_conncount.c
+@@ -83,38 +83,6 @@ static int key_diff(const u32 *a, const
+ 	return memcmp(a, b, klen * sizeof(u32));
+ }
+ 
+-enum nf_conncount_list_add
+-nf_conncount_add(struct nf_conncount_list *list,
+-		 const struct nf_conntrack_tuple *tuple,
+-		 const struct nf_conntrack_zone *zone)
+-{
+-	struct nf_conncount_tuple *conn;
+-
+-	if (WARN_ON_ONCE(list->count > INT_MAX))
+-		return NF_CONNCOUNT_ERR;
+-
+-	conn = kmem_cache_alloc(conncount_conn_cachep, GFP_ATOMIC);
+-	if (conn == NULL)
+-		return NF_CONNCOUNT_ERR;
+-
+-	conn->tuple = *tuple;
+-	conn->zone = *zone;
+-	conn->cpu = raw_smp_processor_id();
+-	conn->jiffies32 = (u32)jiffies;
+-	conn->dead = false;
+-	spin_lock_bh(&list->list_lock);
+-	if (list->dead == true) {
+-		kmem_cache_free(conncount_conn_cachep, conn);
+-		spin_unlock_bh(&list->list_lock);
+-		return NF_CONNCOUNT_SKIP;
+-	}
+-	list_add_tail(&conn->node, &list->head);
+-	list->count++;
+-	spin_unlock_bh(&list->list_lock);
+-	return NF_CONNCOUNT_ADDED;
+-}
+-EXPORT_SYMBOL_GPL(nf_conncount_add);
+-
+ static void __conn_free(struct rcu_head *h)
+ {
+ 	struct nf_conncount_tuple *conn;
+@@ -177,11 +145,10 @@ find_or_evict(struct net *net, struct nf
+ 	return ERR_PTR(-EAGAIN);
+ }
+ 
+-void nf_conncount_lookup(struct net *net,
+-			 struct nf_conncount_list *list,
+-			 const struct nf_conntrack_tuple *tuple,
+-			 const struct nf_conntrack_zone *zone,
+-			 bool *addit)
++static int __nf_conncount_add(struct net *net,
++			      struct nf_conncount_list *list,
++			      const struct nf_conntrack_tuple *tuple,
++			      const struct nf_conntrack_zone *zone)
+ {
+ 	const struct nf_conntrack_tuple_hash *found;
+ 	struct nf_conncount_tuple *conn, *conn_n;
+@@ -189,9 +156,6 @@ void nf_conncount_lookup(struct net *net
+ 	unsigned int collect = 0;
+ 	bool free_entry = false;
+ 
+-	/* best effort only */
+-	*addit = tuple ? true : false;
+-
+ 	/* check the saved connections */
+ 	list_for_each_entry_safe(conn, conn_n, &list->head, node) {
+ 		if (collect > CONNCOUNT_GC_MAX_NODES)
+@@ -201,21 +165,19 @@ void nf_conncount_lookup(struct net *net
+ 		if (IS_ERR(found)) {
+ 			/* Not found, but might be about to be confirmed */
+ 			if (PTR_ERR(found) == -EAGAIN) {
+-				if (!tuple)
+-					continue;
+-
+ 				if (nf_ct_tuple_equal(&conn->tuple, tuple) &&
+ 				    nf_ct_zone_id(&conn->zone, conn->zone.dir) ==
+ 				    nf_ct_zone_id(zone, zone->dir))
+-					*addit = false;
+-			} else if (PTR_ERR(found) == -ENOENT)
++					return 0; /* already exists */
++			} else {
+ 				collect++;
++			}
+ 			continue;
+ 		}
+ 
+ 		found_ct = nf_ct_tuplehash_to_ctrack(found);
+ 
+-		if (tuple && nf_ct_tuple_equal(&conn->tuple, tuple) &&
++		if (nf_ct_tuple_equal(&conn->tuple, tuple) &&
+ 		    nf_ct_zone_equal(found_ct, zone, zone->dir)) {
+ 			/*
+ 			 * We should not see tuples twice unless someone hooks
+@@ -223,7 +185,8 @@ void nf_conncount_lookup(struct net *net
+ 			 *
+ 			 * Attempt to avoid a re-add in this case.
+ 			 */
+-			*addit = false;
++			nf_ct_put(found_ct);
++			return 0;
+ 		} else if (already_closed(found_ct)) {
+ 			/*
+ 			 * we do not care about connections which are
+@@ -237,8 +200,38 @@ void nf_conncount_lookup(struct net *net
+ 
+ 		nf_ct_put(found_ct);
+ 	}
 +
-+		/*
-+		 * Forcibly set runtime PM status of request queue to "active"
-+		 * to make sure we can again get requests from the queue
-+		 * (see also blk_pm_peek_request()).
-+		 *
-+		 * The resume hook will correct runtime PM status of the disk.
-+		 */
-+		if (!err && scsi_is_sdev_device(dev)) {
-+			struct scsi_device *sdev = to_scsi_device(dev);
++	if (WARN_ON_ONCE(list->count > INT_MAX))
++		return -EOVERFLOW;
 +
-+			if (sdev->request_queue->dev)
-+				blk_set_runtime_active(sdev->request_queue);
-+		}
++	conn = kmem_cache_alloc(conncount_conn_cachep, GFP_ATOMIC);
++	if (conn == NULL)
++		return -ENOMEM;
++
++	conn->tuple = *tuple;
++	conn->zone = *zone;
++	conn->cpu = raw_smp_processor_id();
++	conn->jiffies32 = (u32)jiffies;
++	list_add_tail(&conn->node, &list->head);
++	list->count++;
++	return 0;
++}
++
++int nf_conncount_add(struct net *net,
++		     struct nf_conncount_list *list,
++		     const struct nf_conntrack_tuple *tuple,
++		     const struct nf_conntrack_zone *zone)
++{
++	int ret;
++
++	/* check the saved connections */
++	spin_lock_bh(&list->list_lock);
++	ret = __nf_conncount_add(net, list, tuple, zone);
++	spin_unlock_bh(&list->list_lock);
++
++	return ret;
+ }
+-EXPORT_SYMBOL_GPL(nf_conncount_lookup);
++EXPORT_SYMBOL_GPL(nf_conncount_add);
+ 
+ void nf_conncount_list_init(struct nf_conncount_list *list)
+ {
+@@ -339,13 +332,11 @@ insert_tree(struct net *net,
+ 	    const struct nf_conntrack_tuple *tuple,
+ 	    const struct nf_conntrack_zone *zone)
+ {
+-	enum nf_conncount_list_add ret;
+ 	struct nf_conncount_rb *gc_nodes[CONNCOUNT_GC_MAX_NODES];
+ 	struct rb_node **rbnode, *parent;
+ 	struct nf_conncount_rb *rbconn;
+ 	struct nf_conncount_tuple *conn;
+ 	unsigned int count = 0, gc_count = 0;
+-	bool node_found = false;
+ 	bool do_gc = true;
+ 
+ 	spin_lock_bh(&nf_conncount_locks[hash]);
+@@ -363,20 +354,15 @@ restart:
+ 		} else if (diff > 0) {
+ 			rbnode = &((*rbnode)->rb_right);
+ 		} else {
+-			/* unlikely: other cpu added node already */
+-			node_found = true;
+-			ret = nf_conncount_add(&rbconn->list, tuple, zone);
+-			if (ret == NF_CONNCOUNT_ERR) {
++			int ret;
++
++			ret = nf_conncount_add(net, &rbconn->list, tuple, zone);
++			if (ret)
+ 				count = 0; /* hotdrop */
+-			} else if (ret == NF_CONNCOUNT_ADDED) {
++			else
+ 				count = rbconn->list.count;
+-			} else {
+-				/* NF_CONNCOUNT_SKIP, rbconn is already
+-				 * reclaimed by gc, insert a new tree node
+-				 */
+-				node_found = false;
+-			}
+-			break;
++			tree_nodes_free(root, gc_nodes, gc_count);
++			goto out_unlock;
+ 		}
+ 
+ 		if (gc_count >= ARRAY_SIZE(gc_nodes))
+@@ -394,9 +380,6 @@ restart:
+ 		goto restart;
  	}
  
- 	return err;
-@@ -140,16 +154,6 @@ static int scsi_bus_resume_common(struct
- 	else
- 		fn = NULL;
- 
--	/*
--	 * Forcibly set runtime PM status of request queue to "active" to
--	 * make sure we can again get requests from the queue (see also
--	 * blk_pm_peek_request()).
--	 *
--	 * The resume hook will correct runtime PM status of the disk.
--	 */
--	if (scsi_is_sdev_device(dev) && pm_runtime_suspended(dev))
--		blk_set_runtime_active(to_scsi_device(dev)->request_queue);
+-	if (node_found)
+-		goto out_unlock;
 -
- 	if (fn) {
- 		async_schedule_domain(fn, dev, &scsi_sd_pm_domain);
+ 	/* expected case: match, insert new node */
+ 	rbconn = kmem_cache_alloc(conncount_rb_cachep, GFP_ATOMIC);
+ 	if (rbconn == NULL)
+@@ -431,7 +414,6 @@ count_tree(struct net *net,
+ 	   const struct nf_conntrack_tuple *tuple,
+ 	   const struct nf_conntrack_zone *zone)
+ {
+-	enum nf_conncount_list_add ret;
+ 	struct rb_root *root;
+ 	struct rb_node *parent;
+ 	struct nf_conncount_rb *rbconn;
+@@ -444,7 +426,6 @@ count_tree(struct net *net,
+ 	parent = rcu_dereference_raw(root->rb_node);
+ 	while (parent) {
+ 		int diff;
+-		bool addit;
  
+ 		rbconn = rb_entry(parent, struct nf_conncount_rb, node);
+ 
+@@ -454,24 +435,29 @@ count_tree(struct net *net,
+ 		} else if (diff > 0) {
+ 			parent = rcu_dereference_raw(parent->rb_right);
+ 		} else {
+-			/* same source network -> be counted! */
+-			nf_conncount_lookup(net, &rbconn->list, tuple, zone,
+-					    &addit);
++			int ret;
+ 
+-			if (!addit)
++			if (!tuple) {
++				nf_conncount_gc_list(net, &rbconn->list);
+ 				return rbconn->list.count;
++			}
+ 
+-			ret = nf_conncount_add(&rbconn->list, tuple, zone);
+-			if (ret == NF_CONNCOUNT_ERR) {
+-				return 0; /* hotdrop */
+-			} else if (ret == NF_CONNCOUNT_ADDED) {
+-				return rbconn->list.count;
+-			} else {
+-				/* NF_CONNCOUNT_SKIP, rbconn is already
+-				 * reclaimed by gc, insert a new tree node
+-				 */
++			spin_lock_bh(&rbconn->list.list_lock);
++			/* Node might be about to be free'd.
++			 * We need to defer to insert_tree() in this case.
++			 */
++			if (rbconn->list.count == 0) {
++				spin_unlock_bh(&rbconn->list.list_lock);
+ 				break;
+ 			}
++
++			/* same source network -> be counted! */
++			ret = __nf_conncount_add(net, &rbconn->list, tuple, zone);
++			spin_unlock_bh(&rbconn->list.list_lock);
++			if (ret)
++				return 0; /* hotdrop */
++			else
++				return rbconn->list.count;
+ 		}
+ 	}
+ 
+--- a/net/netfilter/nft_connlimit.c
++++ b/net/netfilter/nft_connlimit.c
+@@ -30,7 +30,6 @@ static inline void nft_connlimit_do_eval
+ 	enum ip_conntrack_info ctinfo;
+ 	const struct nf_conn *ct;
+ 	unsigned int count;
+-	bool addit;
+ 
+ 	tuple_ptr = &tuple;
+ 
+@@ -44,19 +43,12 @@ static inline void nft_connlimit_do_eval
+ 		return;
+ 	}
+ 
+-	nf_conncount_lookup(nft_net(pkt), &priv->list, tuple_ptr, zone,
+-			    &addit);
+-	count = priv->list.count;
+-
+-	if (!addit)
+-		goto out;
+-
+-	if (nf_conncount_add(&priv->list, tuple_ptr, zone) == NF_CONNCOUNT_ERR) {
++	if (nf_conncount_add(nft_net(pkt), &priv->list, tuple_ptr, zone)) {
+ 		regs->verdict.code = NF_DROP;
+ 		return;
+ 	}
+-	count++;
+-out:
++
++	count = priv->list.count;
+ 
+ 	if ((count > priv->limit) ^ priv->invert) {
+ 		regs->verdict.code = NFT_BREAK;
 
 
