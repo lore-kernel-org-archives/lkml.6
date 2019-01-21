@@ -2,577 +2,520 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F216C3712B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D50BC37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 113382089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE75221019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:04:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jB+3n8AZ"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vyt5CZqR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AhFPAgXs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbfAUUDM (ORCPT
+        id S1728155AbfAUUEa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:03:12 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:36160 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727699AbfAUUDL (ORCPT
+        Mon, 21 Jan 2019 15:04:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53314 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727699AbfAUUE3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:03:11 -0500
-Received: by mail-vk1-f195.google.com with SMTP id 185so4850635vkc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:03:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=g3o/q0eHw+o6A4J+E89jZEoMHJiBmk+Ik/eQSO0DvoU=;
-        b=jB+3n8AZ8JrOiOdBP/e1vLkswm7CSqthcJmKJw/Qtdbdhl6H3BSI9wcTo0TOGQsTnB
-         hjlI4mrRcJj5jhQ4fV/xmYhDJ28OEERfWuVYt+Gp6Xkc836Dq5U02Fd+xLg2YBLtsyac
-         bLHJmr2N72BqPf6S5d6gOzJrFXMmdpe3Dk2HE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=g3o/q0eHw+o6A4J+E89jZEoMHJiBmk+Ik/eQSO0DvoU=;
-        b=P/3JdnS8TFdKn8V+fXn/ij2xvHUsNhpwbQ0khJtwzh+ZEQQ9vyHtQvo1gtWnIUFYs/
-         VNZL/UDnO4Ok+dlAEP2Rk+tEwBPXagXcTp3tNWvyhkDL6DVODUmIgKHq7YsBacuyHmyG
-         uEVD7s5OIpGMUwmfYiWeEjiDQ7Hk2Py363Cv1GM8Nv20xjg4NMKF++IUKx4AGHPYYUax
-         f/s7Xy9cTcbiC91mxpeDdRc4lu2OaFTUFQLyY/HyE/bUvrpI9tBlVfOE6TgqxKzpWAKH
-         J1nCfYbpATEkvlGeDt6psJApluJOd8cvqt9Z4D4FkwkUPOFLPnzPA+3qrXMHdsvuit+p
-         fG1g==
-X-Gm-Message-State: AJcUukffAKUyhXxUcGLP1DdhItvsiQZswG+hEPjhna+3GZTE9TpDFwEN
-        sRQaXDaXvS1Jm8P+FaJDxLCTJSGrNp8=
-X-Google-Smtp-Source: ALg8bN6dFRvusSaMmwfIM1a1puRauqZBw/nKcxuIVSX9kCAa69uuedUDq/hLrmT2hpkf/vRiJn1lsQ==
-X-Received: by 2002:a1f:95d1:: with SMTP id x200mr12041158vkd.78.1548100988417;
-        Mon, 21 Jan 2019 12:03:08 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id r8sm11427580uan.0.2019.01.21.12.03.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 12:03:06 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id n13so13353830vsk.4
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:03:06 -0800 (PST)
-X-Received: by 2002:a67:848a:: with SMTP id g132mr12529219vsd.222.1548100985401;
- Mon, 21 Jan 2019 12:03:05 -0800 (PST)
+        Mon, 21 Jan 2019 15:04:29 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 62E2C60850; Mon, 21 Jan 2019 20:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548101067;
+        bh=Et7Ec3kGGwZyuesnJdnkZ1lwkdI0qDw+fKLFU2oa0xA=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=Vyt5CZqR6FjSF9t3tTqrENcWeKcMFrkERlesoQqC8WDNRbf1KoJxdUowoQxFDUsQy
+         6RYy30BGxys/98Th1n84QpawTVSRrgfmuDbrz3Xb0ZLvMrzyJ2jtSOSDOntdKTnoRx
+         aTo2lUV7qDmij/EJIel3Qer9VtSGCW2FmX+7lvZQ=
+Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: lmark@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0862760791;
+        Mon, 21 Jan 2019 20:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548101064;
+        bh=Et7Ec3kGGwZyuesnJdnkZ1lwkdI0qDw+fKLFU2oa0xA=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=AhFPAgXseqiPinLMdEGvumCVUaGYaDYEOe/gmWZCm4eU3/oLbyvSi+QKHaUsl4DQT
+         xkuz2XG8EUmEza5z3KUALsGHsO6PBRFisVCI292cTQp1GG8ZaU9UhkXWsulWossSa3
+         Z1Usc/EXfGrKXC1rX4uoSGYsdnBd2rqdFiWaDQvw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0862760791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
+Date:   Mon, 21 Jan 2019 12:04:23 -0800 (PST)
+From:   Liam Mark <lmark@codeaurora.org>
+X-X-Sender: lmark@lmark-linux.qualcomm.com
+To:     "Andrew F. Davis" <afd@ti.com>
+cc:     Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?ISO-8859-15?Q?Arve_Hj=F8nnev=E5g?= <arve@android.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
+ map/unmap
+In-Reply-To: <ca892630-48b7-120c-8822-db308b03c6ca@ti.com>
+Message-ID: <alpine.DEB.2.10.1901211203320.11004@lmark-linux.qualcomm.com>
+References: <20190111180523.27862-1-afd@ti.com> <20190111180523.27862-14-afd@ti.com> <alpine.DEB.2.10.1901140910130.23879@lmark-linux.qualcomm.com> <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com> <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
+ <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com> <b6cb5596-6beb-73e0-0d8c-d9a13466d626@redhat.com> <99ca0b08-02bd-64fd-d43c-c330f0d11639@ti.com> <alpine.DEB.2.10.1901161441280.10666@lmark-linux.qualcomm.com> <7620534f-b749-76f9-0f53-f73e3f12e9a9@ti.com>
+ <alpine.DEB.2.10.1901171700490.12287@lmark-linux.qualcomm.com> <678589f7-055f-7a2e-3ade-c0c0aa37aeac@ti.com> <alpine.DEB.2.10.1901181340590.9328@lmark-linux.qualcomm.com> <ca892630-48b7-120c-8822-db308b03c6ca@ti.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-References: <1546873978-27797-3-git-send-email-longman@redhat.com> <20190118084456.GA10690@shao2-debian>
-In-Reply-To: <20190118084456.GA10690@shao2-debian>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 22 Jan 2019 09:02:53 +1300
-X-Gmail-Original-Message-ID: <CAGXu5j+aEs3bq5Ym+VCYGmPQNJZC44vFk9MJDxH1zq=hZ3N4CA@mail.gmail.com>
-Message-ID: <CAGXu5j+aEs3bq5Ym+VCYGmPQNJZC44vFk9MJDxH1zq=hZ3N4CA@mail.gmail.com>
-Subject: Re: [LKP] [/proc/stat] 3047027b34: reaim.jobs_per_min -4.8% regression
-To:     kernel test robot <rong.a.chen@intel.com>,
-        Waiman Long <longman@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>, LKP <lkp@01.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: MULTIPART/MIXED; BOUNDARY="-2046127808-1948698926-1548101064=:11004"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 9:44 PM kernel test robot <rong.a.chen@intel.com> w=
-rote:
->
-> Greeting,
->
-> FYI, we noticed a -4.8% regression of reaim.jobs_per_min due to commit:
->
->
-> commit: 3047027b34b8c6404b509903058b89836093acc7 ("[PATCH 2/2] /proc/stat=
-: Add sysctl parameter to control irq counts latency")
-> url: https://github.com/0day-ci/linux/commits/Waiman-Long/proc-stat-Reduc=
-e-irqs-counting-performance-overhead/20190108-104818
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Is this expected? (And it seems like other things in the report below
-are faster? I don't understand why this particular regression was
-called out?)
+---2046127808-1948698926-1548101064=:11004
+Content-Type: TEXT/PLAIN; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
--Kees
+On Mon, 21 Jan 2019, Andrew F. Davis wrote:
 
->
->
-> in testcase: reaim
-> on test machine: 56 threads Intel(R) Xeon(R) CPU E5-2695 v3 @ 2.30GHz wit=
-h 256G memory
-> with following parameters:
->
->         runtime: 300s
->         nr_task: 5000
->         test: shared_memory
->         cpufreq_governor: performance
->         ucode: 0x3d
->
-> test-description: REAIM is an updated and improved version of AIM 7 bench=
-mark.
-> test-url: https://sourceforge.net/projects/re-aim-7/
->
->
->
-> Details are as below:
-> -------------------------------------------------------------------------=
-------------------------->
->
->
-> To reproduce:
->
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp install job.yaml  # job file is attached in this email
->         bin/lkp run     job.yaml
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> compiler/cpufreq_governor/kconfig/nr_task/rootfs/runtime/tbox_group/test/=
-testcase/ucode:
->   gcc-7/performance/x86_64-rhel-7.2/5000/debian-x86_64-2018-04-03.cgz/300=
-s/lkp-hsw-ep5/shared_memory/reaim/0x3d
->
-> commit:
->   51e8bce392 ("/proc/stat: Extract irqs counting code into show_stat_irqs=
-()")
->   3047027b34 ("/proc/stat: Add sysctl parameter to control irq counts lat=
-ency")
->
-> 51e8bce392dd2cc9 3047027b34b8c6404b50990305
-> ---------------- --------------------------
->        fail:runs  %reproduction    fail:runs
->            |             |             |
->           1:4          -25%            :4     kmsg.igb#:#:#:exceed_max#se=
-cond
->          %stddev     %change         %stddev
->              \          |                \
->     101.96            +7.5%     109.60        reaim.child_systime
->      33.32            -1.8%      32.73        reaim.child_utime
->    5534451            -4.8%    5271308        reaim.jobs_per_min
->       1106            -4.8%       1054        reaim.jobs_per_min_child
->    5800927            -4.9%    5517884        reaim.max_jobs_per_min
->       5.42            +5.0%       5.69        reaim.parent_time
->       1.51            +5.3%       1.59        reaim.std_dev_time
->   29374932            -2.8%   28558608        reaim.time.minor_page_fault=
-s
->       1681            +1.6%       1708        reaim.time.percent_of_cpu_t=
-his_job_got
->       3841            +4.5%       4012        reaim.time.system_time
->       1234            -4.4%       1180        reaim.time.user_time
->   18500000            -2.7%   18000000        reaim.workload
->    5495296 =C2=B1  9%      -9.5%    4970496        meminfo.DirectMap2M
->       5142 =C2=B1 18%     -43.2%       2920 =C2=B1 46%  numa-vmstat.node0=
-.nr_shmem
->      29.00 =C2=B1 32%     +56.9%      45.50 =C2=B1 10%  vmstat.procs.r
->      67175 =C2=B1 37%     +66.6%     111910 =C2=B1 20%  numa-meminfo.node=
-0.AnonHugePages
->      20591 =C2=B1 18%     -43.2%      11691 =C2=B1 46%  numa-meminfo.node=
-0.Shmem
->      64688 =C2=B1  6%     -36.8%      40906 =C2=B1 19%  slabinfo.kmalloc-=
-8.active_objs
->      64691 =C2=B1  6%     -36.8%      40908 =C2=B1 19%  slabinfo.kmalloc-=
-8.num_objs
->      37.36 =C2=B1  7%     +11.1%      41.53 =C2=B1  4%  boot-time.boot
->      29.15 =C2=B1  6%     +14.3%      33.31 =C2=B1  3%  boot-time.dhcp
->     847.73 =C2=B1  9%     +12.9%     957.09 =C2=B1  4%  boot-time.idle
->     202.50 =C2=B1100%    +101.7%     408.50        proc-vmstat.nr_mlock
->       8018 =C2=B1  9%     -12.3%       7034 =C2=B1  2%  proc-vmstat.nr_sh=
-mem
->   29175944            -2.8%   28369676        proc-vmstat.numa_hit
->   29170351            -2.8%   28364111        proc-vmstat.numa_local
->       5439 =C2=B1  5%     -18.7%       4423 =C2=B1  7%  proc-vmstat.pgact=
-ivate
->   30220220            -2.8%   29374906        proc-vmstat.pgalloc_normal
->   30182224            -2.7%   29368266        proc-vmstat.pgfault
->   30186671            -2.8%   29341792        proc-vmstat.pgfree
->      69510 =C2=B1 12%     -34.2%      45759 =C2=B1 33%  sched_debug.cfs_r=
-q:/.load.avg
->      30.21 =C2=B1 24%     -33.6%      20.05 =C2=B1 20%  sched_debug.cfs_r=
-q:/.runnable_load_avg.avg
->      66447 =C2=B1 12%     -37.6%      41460 =C2=B1 37%  sched_debug.cfs_r=
-q:/.runnable_weight.avg
->      12.35 =C2=B1  4%     +88.0%      23.22 =C2=B1 15%  sched_debug.cpu.c=
-lock.stddev
->      12.35 =C2=B1  4%     +88.0%      23.22 =C2=B1 15%  sched_debug.cpu.c=
-lock_task.stddev
->      30.06 =C2=B1 12%     -26.5%      22.10 =C2=B1 13%  sched_debug.cpu.c=
-pu_load[0].avg
->      29.37 =C2=B1  9%     -22.6%      22.72 =C2=B1 13%  sched_debug.cpu.c=
-pu_load[1].avg
->      28.71 =C2=B1  6%     -21.1%      22.66 =C2=B1 16%  sched_debug.cpu.c=
-pu_load[2].avg
->      17985           -12.0%      15823 =C2=B1  2%  sched_debug.cpu.curr->=
-pid.max
->      67478 =C2=B1  6%     -32.5%      45531 =C2=B1 24%  sched_debug.cpu.l=
-oad.avg
->      10369 =C2=B1 49%    -100.0%       0.00        sched_debug.cpu.load.m=
-in
->       0.21 =C2=B1 34%    -100.0%       0.00        sched_debug.cpu.nr_run=
-ning.min
->      12.98           -16.3%      10.86 =C2=B1 11%  perf-stat.i.MPKI
->  5.712e+09            -3.8%  5.492e+09        perf-stat.i.branch-instruct=
-ions
->  1.024e+08            -3.7%   98557208        perf-stat.i.branch-misses
->       8.17            +0.4        8.58 =C2=B1  2%  perf-stat.i.cache-miss=
--rate%
->    7839589           +10.5%    8659798        perf-stat.i.cache-misses
->   86324420            +3.8%   89595898 =C2=B1  2%  perf-stat.i.cache-refe=
-rences
->       1.55 =C2=B1  2%      -4.0%       1.49        perf-stat.i.cpi
->       2290            -1.9%       2246        perf-stat.i.cpu-migrations
->       4667           -10.9%       4160        perf-stat.i.cycles-between-=
-cache-misses
->  8.749e+09            -3.9%  8.409e+09        perf-stat.i.dTLB-loads
->     527660 =C2=B1  3%     -15.0%     448539 =C2=B1  5%  perf-stat.i.dTLB-=
-store-misses
->  5.747e+09            -4.3%  5.499e+09        perf-stat.i.dTLB-stores
->   53047071            -3.5%   51190942        perf-stat.i.iTLB-load-misse=
-s
->   20576112           -13.7%   17759009 =C2=B1  2%  perf-stat.i.iTLB-loads
->  3.207e+10            -3.9%  3.083e+10        perf-stat.i.instructions
->       0.77            -2.3%       0.75        perf-stat.i.ipc
->      99933            -3.8%      96127        perf-stat.i.minor-faults
->    4325719            +5.6%    4568226        perf-stat.i.node-load-misse=
-s
->      52.39            -2.0       50.36        perf-stat.i.node-store-miss=
--rate%
->    1411700           +20.9%    1706321        perf-stat.i.node-store-miss=
-es
->     883790           +34.1%    1184836        perf-stat.i.node-stores
->      99933            -3.8%      96127        perf-stat.i.page-faults
->       2.69            +7.9%       2.91        perf-stat.overall.MPKI
->       9.08            +0.6        9.67 =C2=B1  2%  perf-stat.overall.cach=
-e-miss-rate%
->       1.13            +5.0%       1.19        perf-stat.overall.cpi
->       4633            -8.6%       4233        perf-stat.overall.cycles-be=
-tween-cache-misses
->       0.01 =C2=B1  2%      -0.0        0.01 =C2=B1  4%  perf-stat.overall=
-.dTLB-store-miss-rate%
->      72.05            +2.2       74.24        perf-stat.overall.iTLB-load=
--miss-rate%
->       0.88            -4.8%       0.84        perf-stat.overall.ipc
->      78.12            +1.4       79.52        perf-stat.overall.node-load=
--miss-rate%
->      61.49            -2.5       59.01        perf-stat.overall.node-stor=
-e-miss-rate%
->  5.688e+09            -3.8%  5.471e+09        perf-stat.ps.branch-instruc=
-tions
->   1.02e+08            -3.7%   98177745        perf-stat.ps.branch-misses
->    7807912           +10.5%    8626353        perf-stat.ps.cache-misses
->   85999504            +3.8%   89266688 =C2=B1  2%  perf-stat.ps.cache-ref=
-erences
->       2282            -1.9%       2239        perf-stat.ps.cpu-migrations
->  8.713e+09            -3.9%  8.376e+09        perf-stat.ps.dTLB-loads
->     525761 =C2=B1  3%     -15.0%     446967 =C2=B1  5%  perf-stat.ps.dTLB=
--store-misses
->  5.723e+09            -4.3%  5.478e+09        perf-stat.ps.dTLB-stores
->   52823322            -3.5%   50990190        perf-stat.ps.iTLB-load-miss=
-es
->   20490261           -13.7%   17689923 =C2=B1  2%  perf-stat.ps.iTLB-load=
-s
->  3.193e+10            -3.8%  3.071e+10        perf-stat.ps.instructions
->      99560            -3.8%      95786        perf-stat.ps.minor-faults
->    4308031            +5.6%    4550453        perf-stat.ps.node-load-miss=
-es
->    1405805           +20.9%    1699670        perf-stat.ps.node-store-mis=
-ses
->     880319           +34.1%    1180378        perf-stat.ps.node-stores
->      99560            -3.8%      95786        perf-stat.ps.page-faults
->  9.664e+12            -2.8%  9.397e+12        perf-stat.total.instruction=
-s
->      33.09 =C2=B1  7%     -25.0        8.10 =C2=B1 45%  perf-profile.call=
-trace.cycles-pp.entry_SYSCALL_64_after_hwframe
->      32.21 =C2=B1  7%     -24.3        7.92 =C2=B1 45%  perf-profile.call=
-trace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe
->      22.36 =C2=B1  7%     -17.1        5.24 =C2=B1 49%  perf-profile.call=
-trace.cycles-pp.do_semtimedop.do_syscall_64.entry_SYSCALL_64_after_hwframe
->      10.57 =C2=B1  5%      -8.3        2.31 =C2=B1 48%  perf-profile.call=
-trace.cycles-pp.entry_SYSCALL_64
->       9.60 =C2=B1  4%      -7.6        2.03 =C2=B1 49%  perf-profile.call=
-trace.cycles-pp.syscall_return_via_sysret
->       3.68 =C2=B1  8%      -3.3        0.43 =C2=B1102%  perf-profile.call=
-trace.cycles-pp.security_ipc_permission.do_semtimedop.do_syscall_64.entry_S=
-YSCALL_64_after_hwframe
->       4.37 =C2=B1  9%      -2.8        1.60 =C2=B1 50%  perf-profile.call=
-trace.cycles-pp.ipc_obtain_object_check.do_semtimedop.do_syscall_64.entry_S=
-YSCALL_64_after_hwframe
->       2.30 =C2=B1  2%      -1.9        0.44 =C2=B1102%  perf-profile.call=
-trace.cycles-pp.security_sem_semop.do_semtimedop.do_syscall_64.entry_SYSCAL=
-L_64_after_hwframe
->       5.10 =C2=B1  3%      -1.6        3.46 =C2=B1 10%  perf-profile.call=
-trace.cycles-pp.ipc_has_perm.security_ipc_permission.do_semtimedop.do_sysca=
-ll_64.entry_SYSCALL_64_after_hwframe
->       3.20            -1.3        1.95 =C2=B1 23%  perf-profile.calltrace=
-.cycles-pp.avc_has_perm.ipc_has_perm.security_ipc_permission.do_semtimedop.=
-do_syscall_64
->       2.12 =C2=B1  3%      -0.4        1.76 =C2=B1  4%  perf-profile.call=
-trace.cycles-pp.avc_has_perm.ipc_has_perm.security_sem_semop.do_semtimedop.=
-do_syscall_64
->       1.03 =C2=B1  2%      -0.1        0.94 =C2=B1  3%  perf-profile.call=
-trace.cycles-pp.__do_page_fault.do_page_fault.page_fault
->       1.06 =C2=B1  2%      -0.1        0.97 =C2=B1  3%  perf-profile.call=
-trace.cycles-pp.do_page_fault.page_fault
->       1.06 =C2=B1  2%      -0.1        0.98 =C2=B1  3%  perf-profile.call=
-trace.cycles-pp.page_fault
->       0.91 =C2=B1  3%      -0.1        0.82 =C2=B1  3%  perf-profile.call=
-trace.cycles-pp.handle_mm_fault.__do_page_fault.do_page_fault.page_fault
->       0.86 =C2=B1  3%      -0.1        0.78 =C2=B1  3%  perf-profile.call=
-trace.cycles-pp.__handle_mm_fault.handle_mm_fault.__do_page_fault.do_page_f=
-ault.page_fault
->       0.61 =C2=B1 12%      +0.2        0.79 =C2=B1 12%  perf-profile.call=
-trace.cycles-pp.smp_apic_timer_interrupt.apic_timer_interrupt.cpuidle_enter=
-_state.do_idle.cpu_startup_entry
->       0.61 =C2=B1 10%      +0.2        0.79 =C2=B1 10%  perf-profile.call=
-trace.cycles-pp.shm_close.remove_vma.__do_munmap.ksys_shmdt.do_syscall_64
->       0.67 =C2=B1 11%      +0.2        0.86 =C2=B1 10%  perf-profile.call=
-trace.cycles-pp.apic_timer_interrupt.cpuidle_enter_state.do_idle.cpu_startu=
-p_entry.start_secondary
->       0.40 =C2=B1 57%      +0.2        0.62 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.call_rwsem_down_write_failed.down_write.do_shmat.__x64_sys_=
-shmat.do_syscall_64
->       0.40 =C2=B1 57%      +0.2        0.62 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.rwsem_down_write_failed.call_rwsem_down_write_failed.down_w=
-rite.do_shmat.__x64_sys_shmat
->       0.43 =C2=B1 57%      +0.2        0.66 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.down_write.do_shmat.__x64_sys_shmat.do_syscall_64.entry_SYS=
-CALL_64_after_hwframe
->       0.41 =C2=B1 57%      +0.3        0.67 =C2=B1  9%  perf-profile.call=
-trace.cycles-pp.call_rwsem_down_write_failed.down_write.shm_close.remove_vm=
-a.__do_munmap
->       0.40 =C2=B1 57%      +0.3        0.66 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.down_write.ipcget.__x64_sys_shmget.do_syscall_64.entry_SYSC=
-ALL_64_after_hwframe
->       0.41 =C2=B1 57%      +0.3        0.67 =C2=B1  9%  perf-profile.call=
-trace.cycles-pp.rwsem_down_write_failed.call_rwsem_down_write_failed.down_w=
-rite.shm_close.remove_vma
->       0.44 =C2=B1 57%      +0.3        0.71 =C2=B1  9%  perf-profile.call=
-trace.cycles-pp.down_write.shm_close.remove_vma.__do_munmap.ksys_shmdt
->       0.26 =C2=B1100%      +0.4        0.67 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.dput.__fput.task_work_run.exit_to_usermode_loop.do_syscall_=
-64
->       0.28 =C2=B1100%      +0.4        0.71 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.__might_fault._copy_from_user.do_semtimedop.do_syscall_64.e=
-ntry_SYSCALL_64_after_hwframe
->       0.58 =C2=B1 10%      +0.4        1.03 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.shmctl_down.ksys_shmctl.do_syscall_64.entry_SYSCALL_64_afte=
-r_hwframe.shmctl
->       0.59 =C2=B1 10%      +0.5        1.05 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.ksys_shmctl.do_syscall_64.entry_SYSCALL_64_after_hwframe.sh=
-mctl
->       0.13 =C2=B1173%      +0.5        0.62 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.call_rwsem_down_write_failed.down_write.ipcget.__x64_sys_sh=
-mget.do_syscall_64
->       0.13 =C2=B1173%      +0.5        0.62 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.rwsem_down_write_failed.call_rwsem_down_write_failed.down_w=
-rite.ipcget.__x64_sys_shmget
->       0.12 =C2=B1173%      +0.5        0.66 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.dentry_kill.dput.__fput.task_work_run.exit_to_usermode_loop
->       0.00            +0.6        0.58 =C2=B1  7%  perf-profile.calltrace=
-.cycles-pp.copy_user_generic_unrolled._copy_from_user.do_semtimedop.do_sysc=
-all_64.entry_SYSCALL_64_after_hwframe
->       0.00            +0.6        0.60 =C2=B1  7%  perf-profile.calltrace=
-.cycles-pp.unmap_region.__do_munmap.ksys_shmdt.do_syscall_64.entry_SYSCALL_=
-64_after_hwframe
->       0.00            +0.6        0.61 =C2=B1  7%  perf-profile.calltrace=
-.cycles-pp.wait_consider_task.do_wait.kernel_wait4.__do_sys_wait4.do_syscal=
-l_64
->       0.00            +0.6        0.62 =C2=B1  4%  perf-profile.calltrace=
-.cycles-pp.semctl_down.ksys_semctl.do_syscall_64.entry_SYSCALL_64_after_hwf=
-rame.semctl
->       0.75 =C2=B1  8%      +0.6        1.38 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.__x64_sys_semop.do_syscall_64.entry_SYSCALL_64_after_hwfram=
-e.semop
->       0.00            +0.6        0.65 =C2=B1  9%  perf-profile.calltrace=
-.cycles-pp.ipcperms.do_semtimedop.do_syscall_64.entry_SYSCALL_64_after_hwfr=
-ame.semop
->       0.00            +0.6        0.65 =C2=B1  8%  perf-profile.calltrace=
-.cycles-pp.__dentry_kill.dentry_kill.dput.__fput.task_work_run
->       0.89 =C2=B1 11%      +0.7        1.57 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.do_shmat.__x64_sys_shmat.do_syscall_64.entry_SYSCALL_64_aft=
-er_hwframe.shmat
->       0.90 =C2=B1 11%      +0.7        1.58 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.shmat
->       0.90 =C2=B1 10%      +0.7        1.58 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.__x64_sys_shmat.do_syscall_64.entry_SYSCALL_64_after_hwfram=
-e.shmat
->       0.00            +0.7        0.68 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.do_wait.kernel_wait4.__do_sys_wait4.do_syscall_64.entry_SYSCALL_=
-64_after_hwframe
->       0.00            +0.7        0.69 =C2=B1  6%  perf-profile.calltrace=
-.cycles-pp.entry_SYSCALL_64_after_hwframe.wait
->       0.00            +0.7        0.69 =C2=B1  6%  perf-profile.calltrace=
-.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.wait
->       0.00            +0.7        0.69 =C2=B1  6%  perf-profile.calltrace=
-.cycles-pp.__do_sys_wait4.do_syscall_64.entry_SYSCALL_64_after_hwframe.wait
->       0.00            +0.7        0.69 =C2=B1  6%  perf-profile.calltrace=
-.cycles-pp.kernel_wait4.__do_sys_wait4.do_syscall_64.entry_SYSCALL_64_after=
-_hwframe.wait
->       0.90 =C2=B1 11%      +0.7        1.59 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.entry_SYSCALL_64_after_hwframe.shmat
->       0.00            +0.7        0.69 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.wait
->       0.27 =C2=B1100%      +0.7        0.99 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.perform_atomic_semop.do_semtimedop.do_syscall_64.entry_SYSC=
-ALL_64_after_hwframe.semop
->       0.95 =C2=B1 11%      +0.7        1.67 =C2=B1  8%  perf-profile.call=
-trace.cycles-pp.shmat
->       0.00            +0.7        0.73 =C2=B1  6%  perf-profile.calltrace=
-.cycles-pp.ipcget.ksys_semget.do_syscall_64.entry_SYSCALL_64_after_hwframe.=
-semget
->       0.00            +0.7        0.74 =C2=B1  8%  perf-profile.calltrace=
-.cycles-pp.task_work_run.exit_to_usermode_loop.do_syscall_64.entry_SYSCALL_=
-64_after_hwframe.shmctl
->       0.72 =C2=B1  9%      +0.7        1.46 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp._raw_spin_lock.do_semtimedop.do_syscall_64.entry_SYSCALL_64=
-_after_hwframe.semop
->       0.00            +0.8        0.75 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.ksys_semget.do_syscall_64.entry_SYSCALL_64_after_hwframe.semget
->       0.00            +0.8        0.76 =C2=B1  8%  perf-profile.calltrace=
-.cycles-pp.exit_to_usermode_loop.do_syscall_64.entry_SYSCALL_64_after_hwfra=
-me.shmctl
->       0.89 =C2=B1  9%      +0.8        1.65 =C2=B1  9%  perf-profile.call=
-trace.cycles-pp.__do_munmap.ksys_shmdt.do_syscall_64.entry_SYSCALL_64_after=
-_hwframe.shmdt
->       0.00            +0.8        0.76 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.semget
->       0.00            +0.8        0.76 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.entry_SYSCALL_64_after_hwframe.semget
->       0.90 =C2=B1  9%      +0.8        1.68 =C2=B1  9%  perf-profile.call=
-trace.cycles-pp.ksys_shmdt.do_syscall_64.entry_SYSCALL_64_after_hwframe.shm=
-dt
->       0.00            +0.8        0.78 =C2=B1  6%  perf-profile.calltrace=
-.cycles-pp.ksys_semctl.do_syscall_64.entry_SYSCALL_64_after_hwframe.semctl
->       0.00            +0.8        0.80 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.entry_SYSCALL_64_after_hwframe.semctl
->       0.00            +0.8        0.80 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.semctl
->       0.00            +0.8        0.85 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.semget
->       0.97 =C2=B1  9%      +0.8        1.82 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.shmctl
->       0.97 =C2=B1  9%      +0.8        1.82 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.entry_SYSCALL_64_after_hwframe.shmctl
->       0.94 =C2=B1 10%      +0.9        1.79 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp._copy_from_user.do_semtimedop.do_syscall_64.entry_SYSCALL_6=
-4_after_hwframe.semop
->       1.04 =C2=B1  9%      +0.9        1.91 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.ipcget.__x64_sys_shmget.do_syscall_64.entry_SYSCALL_64_afte=
-r_hwframe.shmget
->       1.05 =C2=B1  9%      +0.9        1.92 =C2=B1  5%  perf-profile.call=
-trace.cycles-pp.__x64_sys_shmget.do_syscall_64.entry_SYSCALL_64_after_hwfra=
-me.shmget
->       1.05 =C2=B1  9%      +0.9        1.93 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.entry_SYSCALL_64_after_hwframe.shmget
->       1.05 =C2=B1  9%      +0.9        1.93 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.shmget
->       1.02 =C2=B1  9%      +0.9        1.92 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.shmctl
->       1.00 =C2=B1  9%      +0.9        1.93 =C2=B1  9%  perf-profile.call=
-trace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.shmdt
->       1.00 =C2=B1  8%      +0.9        1.94 =C2=B1  9%  perf-profile.call=
-trace.cycles-pp.entry_SYSCALL_64_after_hwframe.shmdt
->       1.13 =C2=B1  8%      +0.9        2.08 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.shmget
->       0.00            +1.0        0.97 =C2=B1  5%  perf-profile.calltrace=
-.cycles-pp.semctl
->       1.03 =C2=B1  9%      +1.0        1.99 =C2=B1  5%  perf-profile.call=
-trace.cycles-pp.do_smart_update.do_semtimedop.do_syscall_64.entry_SYSCALL_6=
-4_after_hwframe.semop
->       1.04 =C2=B1  8%      +1.0        2.03 =C2=B1  9%  perf-profile.call=
-trace.cycles-pp.shmdt
->       2.61 =C2=B1  9%      +1.3        3.89 =C2=B1 14%  perf-profile.call=
-trace.cycles-pp.security_ipc_permission.do_semtimedop.do_syscall_64.entry_S=
-YSCALL_64_after_hwframe.semop
->       1.65 =C2=B1 13%      +2.0        3.65 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.security_sem_semop.do_semtimedop.do_syscall_64.entry_SYSCAL=
-L_64_after_hwframe.semop
->       1.61 =C2=B1  6%      +5.3        6.89 =C2=B1  2%  perf-profile.call=
-trace.cycles-pp.idr_find.ipc_obtain_object_check.do_semtimedop.do_syscall_6=
-4.entry_SYSCALL_64_after_hwframe
->       6.45 =C2=B1  9%      +6.2       12.63 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.syscall_return_via_sysret.semop
->       2.92 =C2=B1  5%      +8.0       10.88 =C2=B1  7%  perf-profile.call=
-trace.cycles-pp.ipc_obtain_object_check.do_semtimedop.do_syscall_64.entry_S=
-YSCALL_64_after_hwframe.semop
->       9.07 =C2=B1  8%      +8.8       17.85 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.entry_SYSCALL_64.semop
->      15.56 =C2=B1  8%     +18.8       34.38 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.do_semtimedop.do_syscall_64.entry_SYSCALL_64_after_hwframe.=
-semop
->      17.40 =C2=B1  8%     +20.4       37.82 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.semop
->      17.99 =C2=B1  8%     +21.0       39.00 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.entry_SYSCALL_64_after_hwframe.semop
->      33.85 =C2=B1  8%     +36.1       69.98 =C2=B1  6%  perf-profile.call=
-trace.cycles-pp.semop
->
->
->
->                       reaim.time.percent_of_cpu_this_job_got
->
->   1800 +-+---------------------------------------------------------------=
----+
->        |         O                                                       =
-   |
->   1780 +-OO O O     O                                                    =
-   |
->   1760 O-+     O   O  OO                                                 =
-   |
->        |                                                                 =
-   |
->   1740 +-+                                                               =
-   |
->        |                                                                 =
-   |
->   1720 +-+                  O                       .+.                  =
-   |
->        |                   O  O                    +   +                 =
-   |
->   1700 +-+               O                       .+    :                 =
-   |
->   1680 +-+      .+      .+.    .+ .+.+         .+       :         +.  .+.=
-++.|
->        |.++.+.++  :  .++   ++.+  +    +.+.++.++         +.+.++.+.+  ++   =
-   |
->   1660 +-+        : +                                                    =
-   |
->        |           +                                                     =
-   |
->   1640 +-+---------------------------------------------------------------=
----+
->
->
-> [*] bisect-good sample
-> [O] bisect-bad  sample
->
->
->
-> Disclaimer:
-> Results have been estimated based on internal Intel analysis and are prov=
-ided
-> for informational purposes only. Any difference in system hardware or sof=
-tware
-> design or configuration may affect actual performance.
->
->
-> Thanks,
-> Rong Chen
+> On 1/18/19 3:43 PM, Liam Mark wrote:
+> > On Fri, 18 Jan 2019, Andrew F. Davis wrote:
+> > 
+> >> On 1/17/19 7:04 PM, Liam Mark wrote:
+> >>> On Thu, 17 Jan 2019, Andrew F. Davis wrote:
+> >>>
+> >>>> On 1/16/19 4:48 PM, Liam Mark wrote:
+> >>>>> On Wed, 16 Jan 2019, Andrew F. Davis wrote:
+> >>>>>
+> >>>>>> On 1/15/19 1:05 PM, Laura Abbott wrote:
+> >>>>>>> On 1/15/19 10:38 AM, Andrew F. Davis wrote:
+> >>>>>>>> On 1/15/19 11:45 AM, Liam Mark wrote:
+> >>>>>>>>> On Tue, 15 Jan 2019, Andrew F. Davis wrote:
+> >>>>>>>>>
+> >>>>>>>>>> On 1/14/19 11:13 AM, Liam Mark wrote:
+> >>>>>>>>>>> On Fri, 11 Jan 2019, Andrew F. Davis wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>>> Buffers may not be mapped from the CPU so skip cache maintenance
+> >>>>>>>>>>>> here.
+> >>>>>>>>>>>> Accesses from the CPU to a cached heap should be bracketed with
+> >>>>>>>>>>>> {begin,end}_cpu_access calls so maintenance should not be needed
+> >>>>>>>>>>>> anyway.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> >>>>>>>>>>>> ---
+> >>>>>>>>>>>>   drivers/staging/android/ion/ion.c | 7 ++++---
+> >>>>>>>>>>>>   1 file changed, 4 insertions(+), 3 deletions(-)
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> diff --git a/drivers/staging/android/ion/ion.c
+> >>>>>>>>>>>> b/drivers/staging/android/ion/ion.c
+> >>>>>>>>>>>> index 14e48f6eb734..09cb5a8e2b09 100644
+> >>>>>>>>>>>> --- a/drivers/staging/android/ion/ion.c
+> >>>>>>>>>>>> +++ b/drivers/staging/android/ion/ion.c
+> >>>>>>>>>>>> @@ -261,8 +261,8 @@ static struct sg_table *ion_map_dma_buf(struct
+> >>>>>>>>>>>> dma_buf_attachment *attachment,
+> >>>>>>>>>>>>         table = a->table;
+> >>>>>>>>>>>>   -    if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
+> >>>>>>>>>>>> -            direction))
+> >>>>>>>>>>>> +    if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
+> >>>>>>>>>>>> +                  direction, DMA_ATTR_SKIP_CPU_SYNC))
+> >>>>>>>>>>>
+> >>>>>>>>>>> Unfortunately I don't think you can do this for a couple reasons.
+> >>>>>>>>>>> You can't rely on {begin,end}_cpu_access calls to do cache
+> >>>>>>>>>>> maintenance.
+> >>>>>>>>>>> If the calls to {begin,end}_cpu_access were made before the call to
+> >>>>>>>>>>> dma_buf_attach then there won't have been a device attached so the
+> >>>>>>>>>>> calls
+> >>>>>>>>>>> to {begin,end}_cpu_access won't have done any cache maintenance.
+> >>>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> That should be okay though, if you have no attachments (or all
+> >>>>>>>>>> attachments are IO-coherent) then there is no need for cache
+> >>>>>>>>>> maintenance. Unless you mean a sequence where a non-io-coherent device
+> >>>>>>>>>> is attached later after data has already been written. Does that
+> >>>>>>>>>> sequence need supporting?
+> >>>>>>>>>
+> >>>>>>>>> Yes, but also I think there are cases where CPU access can happen before
+> >>>>>>>>> in Android, but I will focus on later for now.
+> >>>>>>>>>
+> >>>>>>>>>> DMA-BUF doesn't have to allocate the backing
+> >>>>>>>>>> memory until map_dma_buf() time, and that should only happen after all
+> >>>>>>>>>> the devices have attached so it can know where to put the buffer. So we
+> >>>>>>>>>> shouldn't expect any CPU access to buffers before all the devices are
+> >>>>>>>>>> attached and mapped, right?
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Here is an example where CPU access can happen later in Android.
+> >>>>>>>>>
+> >>>>>>>>> Camera device records video -> software post processing -> video device
+> >>>>>>>>> (who does compression of raw data) and writes to a file
+> >>>>>>>>>
+> >>>>>>>>> In this example assume the buffer is cached and the devices are not
+> >>>>>>>>> IO-coherent (quite common).
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> This is the start of the problem, having cached mappings of memory that
+> >>>>>>>> is also being accessed non-coherently is going to cause issues one way
+> >>>>>>>> or another. On top of the speculative cache fills that have to be
+> >>>>>>>> constantly fought back against with CMOs like below; some coherent
+> >>>>>>>> interconnects behave badly when you mix coherent and non-coherent access
+> >>>>>>>> (snoop filters get messed up).
+> >>>>>>>>
+> >>>>>>>> The solution is to either always have the addresses marked non-coherent
+> >>>>>>>> (like device memory, no-map carveouts), or if you really want to use
+> >>>>>>>> regular system memory allocated at runtime, then all cached mappings of
+> >>>>>>>> it need to be dropped, even the kernel logical address (area as painful
+> >>>>>>>> as that would be).
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> I agree it's broken, hence my desire to remove it :)
+> >>>>>>>
+> >>>>>>> The other problem is that uncached buffers are being used for
+> >>>>>>> performance reason so anything that would involve getting
+> >>>>>>> rid of the logical address would probably negate any performance
+> >>>>>>> benefit.
+> >>>>>>>
+> >>>>>>
+> >>>>>> I wouldn't go as far as to remove them just yet.. Liam seems pretty
+> >>>>>> adamant that they have valid uses. I'm just not sure performance is one
+> >>>>>> of them, maybe in the case of software locks between devices or
+> >>>>>> something where there needs to be a lot of back and forth interleaved
+> >>>>>> access on small amounts of data?
+> >>>>>>
+> >>>>>
+> >>>>> I wasn't aware that ARM considered this not supported, I thought it was 
+> >>>>> supported but they advised against it because of the potential performance 
+> >>>>> impact.
+> >>>>>
+> >>>>
+> >>>> Not sure what you mean by "this" being not supported, do you mean mixed
+> >>>> attribute mappings? If so, it will certainly cause problems, and the
+> >>>> problems will change from platform to platform, avoid at all costs is my
+> >>>> understanding of ARM's position.
+> >>>>
+> >>>>> This is after all supported in the DMA APIs and up until now devices have 
+> >>>>> been successfully commercializing with this configurations, and I think 
+> >>>>> they will continue to commercialize with these configurations for quite a 
+> >>>>> while.
+> >>>>>
+> >>>>
+> >>>> Use of uncached memory mappings are almost always wrong in my experience
+> >>>> and are used to work around some bug or because the user doesn't want to
+> >>>> implement proper CMOs. Counter examples welcome.
+> >>>>
+> >>>
+> >>> Okay, let me first try to clarify what I am referring to, as perhaps I am 
+> >>> misunderstanding the conversation.
+> >>>
+> >>> In this discussion I was originally referring to a use case with cached 
+> >>> memory being accessed by a non io-cohernet device.
+> >>>
+> >>> "In this example assume the buffer is cached and the devices are not 
+> >>> IO-coherent (quite common)."	  
+> >>>
+> >>> to which you did not think was supported:
+> >>>
+> >>> "This is the start of the problem, having cached mappings of memory 
+> >>> that is also being accessed non-coherently is going to cause issues 
+> >>> one way or another. 
+> >>> "
+> >>>
+> >>> And I interpreted Laura's comment below as saying she wanted to remove 
+> >>> support in ION for cached memory being accessed by non io-cohernet 
+> >>> devices:
+> >>> "I agree it's broken, hence my desire to remove it :)"
+> >>>
+> >>> So assuming my understanding above is correct (and you are not talking 
+> >>> about something separate such as removing uncached ION allocation 
+> >>> support).
+> >>>
+> >>
+> >> Ah, I think here is where we diverged, I'm assuming Laura's comment to
+> >> be referencing my issue with uncached mappings being handed out without
+> >> first removing all cached mappings of the same memory. Therefore it is
+> >> uncached heaps that are broken.
+> >>
+> > 
+> > I am glad that is clarified, but can you then clarify for me your
+> > following statement, I am stil not clear what the problem is then.
+> > 
+> > In response to:
+> > "In this example assume the buffer is cached and the devices are
+> > not IO-coherent (quite common)."
+> > 
+> > You said:
+> > 
+> > "This is the start of the problem, having cached mappings of memory that
+> > is also being accessed non-coherently is going to cause issues one way or 
+> > another. "
+> > 
+> 
+> This was a parallel thought, completely my fault for any confusion here.
+> I was wanting to point out that there will inherently be some issues
+> with both situations. Not that it is a blocker, was just on my mind.
+> 
+> >>> Then I guess I am not clear why current uses which use cached memory with 
+> >>> non IO-coherent devices are considered to be working around some bug or 
+> >>> are not implementing proper CMOs.
+> >>>
+> >>> They use CPU cached mappings because that is the most effective way to 
+> >>> access the memory from the CPU side and the devices have an uncached 
+> >>> IOMMU mapping because they don't support IO-coherency, and currenlty in 
+> >>> the CPU they do cache mainteance at the time of dma map and dma umap so
+> >>> to me they are implementing correct CMOs.
+> >>>
+> >>
+> >> Fully agree here, using cached mappings and performing CMOs when needed
+> >> is the way to go when dealing with memory. IMHO the *only* time when
+> >> uncached mappings are appropriate is for memory mapped I/O (although it
+> >> looks like video memory was often treated as uncached (wc)).
+> >>
+> >>>>> It would be really unfortunate if support was removed as I think that 
+> >>>>> would drive clients away from using upstream ION.
+> >>>>>
+> >>>>
+> >>>> I'm not petitioning to remove support, but at very least lets reverse
+> >>>> the ION_FLAG_CACHED flag. Ion should hand out cached normal memory by
+> >>>> default, to get uncached you should need to add a flag to your
+> >>>> allocation command pointing out you know what you are doing.
+> >>>>
+> >>>
+> >>> You may not be petitioning to remove support for using cached memory with 
+> >>> non io-coherent devices but I interpreted Laura's comment as wanting to do 
+> >>> so, and I had concerns about that.
+> >>>
+> >>
+> >> What I would like is for the default memory handed out by Ion to be
+> >> normal cacheable memory, just like is always handed out to users-space.
+> >> DMA-BUF already provides the means to deal with the CMOs required to
+> >> work with non-io-coherent devices so all should be good here.
+> >>
+> >> If you want Ion to give out uncached memory then I think you should need
+> >> to explicitly state so with an allocation flag. And right now the
+> >> uncached memory you will get back may have other cached mappings (kernel
+> >> lowmem mappings) meaning you will have hard to predict results (on ARM
+> >> at least). 
+> > 
+> > Yes, I can understand why it would make sense to default to cached memory.
+> > 
+> >> I just don't see much use for them (uncached mappings of
+> >> regular memory) right now.
+> >>
+> > 
+> > I can understand why people don't like ION providing uncached support, but 
+> > I have been pushing to keep un-cached support in order to keep the 
+> > performance of Android ION clients on par with the previous version of ION 
+> > until a better solution can be found (either by changing ION or Android).
+> > 
+> > Basically most ION use cases don't involve any (or very little) CPU access 
+> > so for now by using uncached ION allocations we can avoid the uncessary 
+> > cache maitenance and we are safe if some CPU access is required. Of course 
+> > for use cases involving a lot of CPU access the clients switch over to 
+> > using cached buffers.
+> > 
+> 
+> If you have very few CPU accesses then there should be very few CMOs I
+> agree. It seems the problem is you are constantly detaching and
+> re-attaching devices each time the buffer is passed around between each
+> device. To me that is broken usage, the devices should all attach, use
+> the buffer, then all detach. Otherwise after detach there is no clean
+> way to know what is the right thing to do with the buffer (CMO or not).
+> 
 
+Yes it would be be great if all the devices could attach beforehand and be 
+kept attached.
+Unfortunately it would be difficult in a buffer "pipelining" use case such 
+as Android's to get all the devices to attach beforehand.
+We have spoken to the Google Android team about having some kind of 
+destructor support added so that devices could stay attached and then when 
+the use case ends be notified of the end of use case (through the 
+destructor) so that they could know when to detach. 
+Unfortunately the Google Android team said this was too difficult to add 
+as they don't track all the buffers in the system.
 
+And please note that there are other complexities to having all the 
+devices in the pipeline attached at once, for example the 
+begin_cpu_access/end_cpu_access calls currently do cache maintenance on 
+the buffer for each of the attached devices, with lots of attached devices 
+this would result in a lot of duplicated cache maintenance on the buffer. 
+You would need some way to optimally apply cache maintenance that 
+satisfies all the devices.
 
---=20
-Kees Cook
+Also you would need to not only keep the devices attached, you need to the 
+buffers dma-mapped (see thread "dma-buf: add support for mapping with dma 
+mapping attributes") for the cache maintenance to be applied correctly.
+
+> >  
+> >>>>>>>>> ION buffer is allocated.
+> >>>>>>>>>
+> >>>>>>>>> //Camera device records video
+> >>>>>>>>> dma_buf_attach
+> >>>>>>>>> dma_map_attachment (buffer needs to be cleaned)
+> >>>>>>>>
+> >>>>>>>> Why does the buffer need to be cleaned here? I just got through reading
+> >>>>>>>> the thread linked by Laura in the other reply. I do like +Brian's
+> >>>>>>>> suggestion of tracking if the buffer has had CPU access since the last
+> >>>>>>>> time and only flushing the cache if it has. As unmapped heaps never get
+> >>>>>>>> CPU mapped this would never be the case for unmapped heaps, it solves my
+> >>>>>>>> problem.
+> >>>>>>>>
+> >>>>>>>>> [camera device writes to buffer]
+> >>>>>>>>> dma_buf_unmap_attachment (buffer needs to be invalidated)
+> >>>>>>>>
+> >>>>>>>> It doesn't know there will be any further CPU access, it could get freed
+> >>>>>>>> after this for all we know, the invalidate can be saved until the CPU
+> >>>>>>>> requests access again.
+> >>>>>>>>
+> >>>>>>>>> dma_buf_detach  (device cannot stay attached because it is being sent
+> >>>>>>>>> down
+> >>>>>>>>> the pipeline and Camera doesn't know the end of the use case)
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> This seems like a broken use-case, I understand the desire to keep
+> >>>>>>>> everything as modular as possible and separate the steps, but at this
+> >>>>>>>> point no one owns this buffers backing memory, not the CPU or any
+> >>>>>>>> device. I would go as far as to say DMA-BUF should be free now to
+> >>>>>>>> de-allocate the backing storage if it wants, that way it could get ready
+> >>>>>>>> for the next attachment, which may change the required backing memory
+> >>>>>>>> completely.
+> >>>>>>>>
+> >>>>>>>> All devices should attach before the first mapping, and only let go
+> >>>>>>>> after the task is complete, otherwise this buffers data needs copied off
+> >>>>>>>> to a different location or the CPU needs to take ownership in-between.
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> Maybe it's broken but it's the status quo and we spent a good
+> >>>>>>> amount of time at plumbers concluding there isn't a great way
+> >>>>>>> to fix it :/
+> >>>>>>>
+> >>>>>>
+> >>>>>> Hmm, guess that doesn't prove there is not a great way to fix it either.. :/
+> >>>>>>
+> >>>>>> Perhaps just stronger rules on sequencing of operations? I'm not saying
+> >>>>>> I have a good solution either, I just don't see any way forward without
+> >>>>>> some use-case getting broken, so better to fix now over later.
+> >>>>>>
+> >>>>>
+> >>>>> I can see the benefits of Android doing things the way they do, I would 
+> >>>>> request that changes we make continue to support Android, or we find a way 
+> >>>>> to convice them to change, as they are the main ION client and I assume 
+> >>>>> other ION clients in the future will want to do this as well.
+> >>>>>
+> >>>>
+> >>>> Android may be the biggest user today (makes sense, Ion come out of the
+> >>>> Android project), but that can change, and getting changes into Android
+> >>>> will be easier that the upstream kernel once Ion is out of staging.
+> >>>>
+> >>>> Unlike some other big ARM vendors, we (TI) do not primarily build mobile
+> >>>> chips targeting Android, our core offerings target more traditional
+> >>>> Linux userspaces, and I'm guessing others will start to do the same as
+> >>>> ARM tries to push more into desktop, server, and other spaces again.
+> >>>>
+> >>>>> I am concerned that if you go with a solution which enforces what you 
+> >>>>> mention above, and bring ION out of staging that way, it will make it that
+> >>>>> much harder to solve this for Android and therefore harder to get 
+> >>>>> Android clients to move to the upstream ION (and get everybody off their 
+> >>>>> vendor modified Android versions).
+> >>>>>
+> >>>>
+> >>>> That would be an Android problem, reducing functionality in upstream to
+> >>>> match what some evil vendor trees do to support Android is not the way
+> >>>> forward on this. At least for us we are going to try to make all our
+> >>>> software offerings follow proper buffer ownership (including our Android
+> >>>> offering).
+> >>>>
+> >>>>>>>>> //buffer is send down the pipeline
+> >>>>>>>>>
+> >>>>>>>>> // Usersapce software post processing occurs
+> >>>>>>>>> mmap buffer
+> >>>>>>>>
+> >>>>>>>> Perhaps the invalidate should happen here in mmap.
+> >>>>>>>>
+> >>>>>>>>> DMA_BUF_IOCTL_SYNC IOCT with flags DMA_BUF_SYNC_START // No CMO since no
+> >>>>>>>>> devices attached to buffer
+> >>>>>>>>
+> >>>>>>>> And that should be okay, mmap does the sync, and if no devices are
+> >>>>>>>> attached nothing could have changed the underlying memory in the
+> >>>>>>>> mean-time, DMA_BUF_SYNC_START can safely be a no-op as they are.
+> >>>>>>>>
+> >>>>>>>>> [CPU reads/writes to the buffer]
+> >>>>>>>>> DMA_BUF_IOCTL_SYNC IOCTL with flags DMA_BUF_SYNC_END // No CMO since no
+> >>>>>>>>> devices attached to buffer
+> >>>>>>>>> munmap buffer
+> >>>>>>>>>
+> >>>>>>>>> //buffer is send down the pipeline
+> >>>>>>>>> // Buffer is send to video device (who does compression of raw data) and
+> >>>>>>>>> writes to a file
+> >>>>>>>>> dma_buf_attach
+> >>>>>>>>> dma_map_attachment (buffer needs to be cleaned)
+> >>>>>>>>> [video device writes to buffer]
+> >>>>>>>>> dma_buf_unmap_attachment
+> >>>>>>>>> dma_buf_detach  (device cannot stay attached because it is being sent
+> >>>>>>>>> down
+> >>>>>>>>> the pipeline and Video doesn't know the end of the use case)
+> >>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>>>> Also ION no longer provides DMA ready memory, so if you are not
+> >>>>>>>>>>> doing CPU
+> >>>>>>>>>>> access then there is no requirement (that I am aware of) for you to
+> >>>>>>>>>>> call
+> >>>>>>>>>>> {begin,end}_cpu_access before passing the buffer to the device and
+> >>>>>>>>>>> if this
+> >>>>>>>>>>> buffer is cached and your device is not IO-coherent then the cache
+> >>>>>>>>>>> maintenance
+> >>>>>>>>>>> in ion_map_dma_buf and ion_unmap_dma_buf is required.
+> >>>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> If I am not doing any CPU access then why do I need CPU cache
+> >>>>>>>>>> maintenance on the buffer?
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Because ION no longer provides DMA ready memory.
+> >>>>>>>>> Take the above example.
+> >>>>>>>>>
+> >>>>>>>>> ION allocates memory from buddy allocator and requests zeroing.
+> >>>>>>>>> Zeros are written to the cache.
+> >>>>>>>>>
+> >>>>>>>>> You pass the buffer to the camera device which is not IO-coherent.
+> >>>>>>>>> The camera devices writes directly to the buffer in DDR.
+> >>>>>>>>> Since you didn't clean the buffer a dirty cache line (one of the
+> >>>>>>>>> zeros) is
+> >>>>>>>>> evicted from the cache, this zero overwrites data the camera device has
+> >>>>>>>>> written which corrupts your data.
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> The zeroing *is* a CPU access, therefor it should handle the needed CMO
+> >>>>>>>> for CPU access at the time of zeroing.
+> >>>>>>>>
+> >>>>>>>> Andrew
+> >>>>>>>>
+> >>>>>>>>> Liam
+> >>>>>>>>>
+> >>>>>>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> >>>>>>>>> a Linux Foundation Collaborative Project
+> >>>>>>>>>
+> >>>>>>>
+> >>>>>>
+> >>>>>
+> >>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> >>>>> a Linux Foundation Collaborative Project
+> >>>>>
+> >>>>
+> >>>
+> >>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> >>> a Linux Foundation Collaborative Project
+> >>>
+> >>
+> > 
+> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> > a Linux Foundation Collaborative Project
+> > 
+> 
+
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+---2046127808-1948698926-1548101064=:11004--
