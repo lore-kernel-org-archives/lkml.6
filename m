@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D531AC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A630C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A30C920870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54FDB20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:46:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078406;
-	bh=NK31MLpZl/tO5KSXcZeb6tBSEOUdMqe990Nto6UnYz8=;
+	s=default; t=1548078414;
+	bh=lj7l85dW7pfXF206a/rmvf7mdR6+H26o93/gPvc92tw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mlyXUQoH+prpkcaQDYViHSS9q7YVuZGfPdtWrnTeKCaUlX4vgYiDiM6ggF42m/dnu
-	 LFPjoPWSGs+uOoW838TKEvnMcVRR/1XLu6R7aQQr5hmKvIgw4kk9b8pvG5GAxhszzA
-	 GTuFtEgJnJlCoQ5Y6qFbS5Uxcm6XWfUaNKr0Xqvk=
+	b=p+82c6zIS5u+y76NIe8NNhSg5ogBkqSMoAuRZD+MQobBP0knrAgjtv0NehQa6FS4K
+	 qM2ga4D/XkOCD8udASz0Zx2ufOUh3P3d728BydTbIUbkpjpjH2I+Tr1p86LIJkQrMp
+	 dy/6XuXupVnXxmglmjp7Ig83i73SA/lBHaFc8SjM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbfAUNqp (ORCPT
+        id S1729385AbfAUNqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:46:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55610 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:46:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbfAUNql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:46:41 -0500
+        id S1729334AbfAUNqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:46:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76F1F21019;
-        Mon, 21 Jan 2019 13:46:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BC1C20861;
+        Mon, 21 Jan 2019 13:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078400;
-        bh=NK31MLpZl/tO5KSXcZeb6tBSEOUdMqe990Nto6UnYz8=;
+        s=default; t=1548078408;
+        bh=lj7l85dW7pfXF206a/rmvf7mdR6+H26o93/gPvc92tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=if8jCQ4HEIjAExJHd3QLV1l9mbxyN9V0wHlnHduAzoByhMynno2isbI53lbDciLx9
-         VmyNSWmpD0EAu0Aw7lt0C7J3QXQtViyoCc8HvqQCv16FBB5GnLvtP+tnp9Vx40UPJa
-         LALCRmTkkYbDlnqlSKScdRuy/qkwE4t8g4zbPzr0=
+        b=yQmo+rg6k5BlTceREkVqnj4QiFp6QJGznVdkcZ1pwjCqsJPVlbxVLy0xQlDcWqHGJ
+         mPou7yY7+cxpYj0EV+vJU+L+WLO+fWIpuZnzD/EcAL7QJNjyF7WLLBDOw3TU5j8DTj
+         BHI2N8iVkWtglrPYgxNa5kTa3PJIS1pePv8M0+iY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Scott Wood <oss@buserror.net>,
+        Camelia Groza <camelia.groza@nxp.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 019/111] packet: Do not leak dev refcounts on error exit
-Date:   Mon, 21 Jan 2019 14:42:13 +0100
-Message-Id: <20190121122457.841173346@linuxfoundation.org>
+Subject: [PATCH 4.20 022/111] net: phy: add missing phy driver features
+Date:   Mon, 21 Jan 2019 14:42:16 +0100
+Message-Id: <20190121122458.228230218@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,45 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Camelia Groza <camelia.groza@nxp.com>
 
-[ Upstream commit d972f3dce8d161e2142da0ab1ef25df00e2f21a9 ]
+[ Upstream commit 40f89ebfbd73fc9439ae8d4950f60226ad176690 ]
 
-'dev' is non NULL when the addr_len check triggers so it must goto a label
-that does the dev_put otherwise dev will have a leaked refcount.
+The phy drivers for CS4340 and TN2020 are missing their
+features attributes. Add them.
 
-This bug causes the ib_ipoib module to become unloadable when using
-systemd-network as it triggers this check on InfiniBand links.
-
-Fixes: 99137b7888f4 ("packet: validate address length")
-Reported-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Acked-by: Willem de Bruijn <willemb@google.com>
+Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+Reported-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/phy/cortina.c    |    1 +
+ drivers/net/phy/teranetics.c |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2628,7 +2628,7 @@ static int tpacket_snd(struct packet_soc
- 		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
- 		if (addr && dev && saddr->sll_halen < dev->addr_len)
--			goto out;
-+			goto out_put;
- 	}
- 
- 	err = -ENXIO;
-@@ -2828,7 +2828,7 @@ static int packet_snd(struct socket *soc
- 		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
- 		if (addr && dev && saddr->sll_halen < dev->addr_len)
--			goto out;
-+			goto out_unlock;
- 	}
- 
- 	err = -ENXIO;
+--- a/drivers/net/phy/cortina.c
++++ b/drivers/net/phy/cortina.c
+@@ -88,6 +88,7 @@ static struct phy_driver cortina_driver[
+ 	.phy_id		= PHY_ID_CS4340,
+ 	.phy_id_mask	= 0xffffffff,
+ 	.name		= "Cortina CS4340",
++	.features       = PHY_10GBIT_FEATURES,
+ 	.config_init	= gen10g_config_init,
+ 	.config_aneg	= gen10g_config_aneg,
+ 	.read_status	= cortina_read_status,
+--- a/drivers/net/phy/teranetics.c
++++ b/drivers/net/phy/teranetics.c
+@@ -80,6 +80,7 @@ static struct phy_driver teranetics_driv
+ 	.phy_id		= PHY_ID_TN2020,
+ 	.phy_id_mask	= 0xffffffff,
+ 	.name		= "Teranetics TN2020",
++	.features       = PHY_10GBIT_FEATURES,
+ 	.soft_reset	= gen10g_no_soft_reset,
+ 	.aneg_done	= teranetics_aneg_done,
+ 	.config_init    = gen10g_config_init,
 
 
