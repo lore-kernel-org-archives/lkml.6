@@ -2,146 +2,210 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D58C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7E5C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2CC2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:53:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="fzX8s4zp"
+	by mail.kernel.org (Postfix) with ESMTP id 552012084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548064491;
+	bh=TS2eiepxWJ36jrgxEFb0KkiBfLQqggUtL+QTr9OTi5g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Bn7XoL0iHLKrBCn9Rx8GVRie/roGWcds+CF+7rGNvE3EQpeDXvhotV2DuEgR5hgmQ
+	 /gS/eWUS0x939ud2SePsJ++udpgLF7qqJC1LxnDq5dfSUv6zZAv3TN8Zoe4ZXl8lBx
+	 dXzYOGSrLN7nUC0z+0EynsD4lwrUTemGgJaHwWOk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728195AbfAUJxm (ORCPT
+        id S1727814AbfAUJyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:53:42 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:56608 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727240AbfAUJxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:53:42 -0500
-Received: from zn.tnic (p200300EC2BC625005DE3D5B66D6AB027.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:2500:5de3:d5b6:6d6a:b027])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CF1411EC0242;
-        Mon, 21 Jan 2019 10:53:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548064421;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=fIiUPnVpcjvsiQknAVrfBBqh9W1zC6uC2DORF8yu5bk=;
-        b=fzX8s4zptRoak0irnSIrIyA+sv4TuM81rAIhqJykRURov5aTvcgxk8EGVK08u2YImR79HO
-        mXRcVkbwFXJssFT/nKJOOQ6FaHSOySkOP9qNSXgHjs0f2GuOyySFNwdWQPWloHH5p5/PpB
-        uKJ9AKf+lYtajx5zfOWCQaFyoYavd1U=
-From:   Borislav Petkov <bp@alien8.de>
-To:     linux-kbuild@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH] kbuild: Disable extra debugging info in .s output
-Date:   Mon, 21 Jan 2019 10:53:38 +0100
-Message-Id: <20190121095338.8565-1-bp@alien8.de>
-X-Mailer: git-send-email 2.19.1
+        Mon, 21 Jan 2019 04:54:49 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34885 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727240AbfAUJys (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 04:54:48 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 81so20071975otj.2;
+        Mon, 21 Jan 2019 01:54:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=87CvBlMDEwsgkgwxIumJcsJNusyqa2h8QasIs0SSQ4A=;
+        b=Omi9Zuf57Ufdl0eirr+jkMsUaBlfJEfuAM8gaCEItwTUMqrlkuLGobHc9O9HjsCBx+
+         U3j0DFwbQFmbWHaYbMFfWwjvv9qTWB7ROb0V4pTUdsCZTBtNcsYvMUALJ9EVta1pIQxw
+         2p8mCf+JFQBJfpJBPM0F/jGnrWbTBhG4UvY7bSPNij6ptiN7177WYLU+EmJMpBBSazsD
+         Hp+mVZ+biZriG7a259jB8lIKMb/+Oswhq3PqiygIdiYep2l2TPPAByQC6DvN/JEOPsp+
+         yTl5wflce7h7IvI3yhIr1oemic2q7YcCKcom4k8DS9WmTw4+EjNfFNEgmdxgC0/hIQdG
+         QqHQ==
+X-Gm-Message-State: AJcUukdBMWXz9UMax2LXhHezJ6UGkYtsaaxeVOIZ2J/rD+QgOJwVSsLj
+        nUbDGJ3GXqX1GcOJV/Dkff5WgxedCE96qUJ1E7I=
+X-Google-Smtp-Source: ALg8bN4mJs+6oxIzHvFyi0JOQGxKe9bm5Y+j398WmftB5+ZxWAZB4K5N/Q/mstdx262rofIvON8ZuUBDmRxa8zX/J3g=
+X-Received: by 2002:a9d:2062:: with SMTP id n89mr17828386ota.244.1548064487351;
+ Mon, 21 Jan 2019 01:54:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-6-keith.busch@intel.com>
+ <CAJZ5v0jmkyrNBHzqHsOuWjLXF34tq83VnEhdBWrdFqxyiXC=cw@mail.gmail.com>
+ <CAPcyv4gH0_e_NFJNOFH4XXarSs7+TOj4nT0r-D33ZGNCfqBdxg@mail.gmail.com>
+ <20190119090129.GC10836@kroah.com> <CAPcyv4jijnkW6E=0gpT3-qy5uOgTV-D7AN+CAu7mmdrRKGHvFg@mail.gmail.com>
+ <CAJZ5v0hS8Mb-BZuzztTt9D0Rd0TPzMcod48Ev-8HCZg07BP6fw@mail.gmail.com> <CAPcyv4jsOQZxdk4TENFwanqgmqEJhGegbzrkN6q8EEsTu=UNGA@mail.gmail.com>
+In-Reply-To: <CAPcyv4jsOQZxdk4TENFwanqgmqEJhGegbzrkN6q8EEsTu=UNGA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 21 Jan 2019 10:54:33 +0100
+Message-ID: <CAJZ5v0j+GsHZoifmbO_vX=a8VnFPvwuZr5GRyaVRNuHgHgtcrA@mail.gmail.com>
+Subject: Re: [PATCHv4 05/13] Documentation/ABI: Add new node sysfs attributes
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On Sun, Jan 20, 2019 at 6:34 PM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> On Sun, Jan 20, 2019 at 8:20 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Sat, Jan 19, 2019 at 5:56 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> > >
+> > > On Sat, Jan 19, 2019 at 1:01 AM Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Fri, Jan 18, 2019 at 01:08:02PM -0800, Dan Williams wrote:
+> > > > > On Thu, Jan 17, 2019 at 3:41 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > > >
+> > > > > > On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
+> > > > > > >
+> > > > > > > Add entries for memory initiator and target node class attributes.
+> > > > > > >
+> > > > > > > Signed-off-by: Keith Busch <keith.busch@intel.com>
+> > > > > >
+> > > > > > I would recommend combining this with the previous patch, as the way
+> > > > > > it is now I need to look at two patches at the time. :-)
+> > > > > >
+> > > > > > > ---
+> > > > > > >  Documentation/ABI/stable/sysfs-devices-node | 25 ++++++++++++++++++++++++-
+> > > > > > >  1 file changed, 24 insertions(+), 1 deletion(-)
+> > > > > > >
+> > > > > > > diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
+> > > > > > > index 3e90e1f3bf0a..a9c47b4b0eee 100644
+> > > > > > > --- a/Documentation/ABI/stable/sysfs-devices-node
+> > > > > > > +++ b/Documentation/ABI/stable/sysfs-devices-node
+> > > > > > > @@ -90,4 +90,27 @@ Date:                December 2009
+> > > > > > >  Contact:       Lee Schermerhorn <lee.schermerhorn@hp.com>
+> > > > > > >  Description:
+> > > > > > >                 The node's huge page size control/query attributes.
+> > > > > > > -               See Documentation/admin-guide/mm/hugetlbpage.rst
+> > > > > > > \ No newline at end of file
+> > > > > > > +               See Documentation/admin-guide/mm/hugetlbpage.rst
+> > > > > > > +
+> > > > > > > +What:          /sys/devices/system/node/nodeX/classY/
+> > > > > > > +Date:          December 2018
+> > > > > > > +Contact:       Keith Busch <keith.busch@intel.com>
+> > > > > > > +Description:
+> > > > > > > +               The node's relationship to other nodes for access class "Y".
+> > > > > > > +
+> > > > > > > +What:          /sys/devices/system/node/nodeX/classY/initiator_nodelist
+> > > > > > > +Date:          December 2018
+> > > > > > > +Contact:       Keith Busch <keith.busch@intel.com>
+> > > > > > > +Description:
+> > > > > > > +               The node list of memory initiators that have class "Y" access
+> > > > > > > +               to this node's memory. CPUs and other memory initiators in
+> > > > > > > +               nodes not in the list accessing this node's memory may have
+> > > > > > > +               different performance.
+> > > > > >
+> > > > > > This does not follow the general "one value per file" rule of sysfs (I
+> > > > > > know that there are other sysfs files with more than one value in
+> > > > > > them, but it is better to follow this rule as long as that makes
+> > > > > > sense).
+> > > > > >
+> > > > > > > +
+> > > > > > > +What:          /sys/devices/system/node/nodeX/classY/target_nodelist
+> > > > > > > +Date:          December 2018
+> > > > > > > +Contact:       Keith Busch <keith.busch@intel.com>
+> > > > > > > +Description:
+> > > > > > > +               The node list of memory targets that this initiator node has
+> > > > > > > +               class "Y" access. Memory accesses from this node to nodes not
+> > > > > > > +               in this list may have differet performance.
+> > > > > > > --
+> > > > > >
+> > > > > > Same here.
+> > > > > >
+> > > > > > And if you follow the recommendation given in the previous message
+> > > > > > (add "initiators" and "targets" subdirs under "classX"), you won't
+> > > > > > even need the two files above.
+> > > > >
+> > > > > This recommendation is in conflict with Greg's feedback about kobject
+> > > > > usage. If these are just "vanity" subdirs I think it's better to have
+> > > > > a multi-value sysfs file. This "list" style is already commonplace for
+> > > > > the /sys/devices/system hierarchy.
+> > > >
+> > > > If you do a subdirectory "correctly" (i.e. a name for an attribute
+> > > > group), that's fine.  Just do not ever create a kobject just for a
+> > > > subdir, that will mess up userspace.
+> > > >
+> > > > And I hate the "multi-value" sysfs files, where at all possible, please
+> > > > do not copy past bad mistakes there.  If you can make them individual
+> > > > files, please do that, it makes it easier to maintain and code the
+> > > > kernel for.
+> > >
+> > > I agree in general about multi-value sysfs, but in this case we're
+> > > talking about a mask. Masks are a single value. That said I can get on
+> > > board with calling what 'cpulist' does a design mistake (human
+> > > readable mask), but otherwise switching to one file per item in the
+> > > mask is a mess for userspace to consume.
+> >
+> > Can you please refer to my response to Keith?
+>
+> Ah, ok I missed the patch4 comments and was reading this one in
+> isolation... which also bolsters your comment about squashing these
+> two patches together.
+>
+> > If you have "initiators" and "targets" under "classX" and a list of
+> > symlinks in each of them, I don't see any kind of a mess here.
+>
+> In this instance, I think having symlinks at all is "messy" vs just
+> having a mask. Yes, you're right, if we have the proposed symlinks
+> from patch4 there is no need for these _nodelist attributes, and those
+> symlinks would be better under "initiator" and "target" directories.
+> However, I'm arguing going the other way, just have the 2 mask
+> attributes and no symlinks. The HMAT erodes the concept of "numa
+> nodes" typically being a single digit number space per platform. Given
+> increasing numbers of memory target types and initiator devices its
+> going to be cumbersome to have userspace walk multiple symlinks vs
+> just reading a mask and opening the canonical path for a node
+> directly.
 
-Modern gcc adds view assignments, reset assertion checking in .loc
-directives and a couple more additional debug markers, which clutters
-the asm output unnecessarily:
+The symlinks only need to be walked once, however, and after walking
+them (once) the user space program can simply create a mask for
+itself.
 
-For example:
+To me, the question here is how to represent a graph in a filesystem,
+and since nodes are naturally represented by directories, it is also
+natural to represent connections between them as symlinks.
 
-  bsp_resume:
-  .LFB3466:
-          .loc 1 1868 1 is_stmt 1 view -0
-          .cfi_startproc
-          .loc 1 1869 2 view .LVU73
-  # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
-          .loc 1 1869 14 is_stmt 0 view .LVU74
-          movq    this_cpu(%rip), %rax    # this_cpu, this_cpu
-          movq    64(%rax), %rax  # this_cpu.94_1->c_bsp_resume, _2
-  # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
-          .loc 1 1869 5 view .LVU75
-          testq   %rax, %rax      # _2
-          je      .L8     #,
-          .loc 1 1870 3 is_stmt 1 view .LVU76
-          movq    $boot_cpu_data, %rdi    #,
-          jmp     __x86_indirect_thunk_rax
+> This is also part of the rationale for only emitting one "class"
+> (initiator / target performance profile) by default. There's an N-to-N
+> initiator-target description in the HMAT. When / if we decide emit
+> more classes the more work userspace would need to do to convert
+> directory structures back into data.
 
-or
-  	.loc 2 57 9 view .LVU478
-  	.loc 2 57 9 view .LVU479
-  	.loc 2 57 9 view .LVU480
-  	.loc 2 57 9 view .LVU481
-  .LBB1385:
-  .LBB1383:
-  .LBB1379:
-  .LBB1377:
-  .LBB1375:
-  	.loc 2 57 9 view .LVU482
-  	.loc 2 57 9 view .LVU483
-  	movl	%edi, %edx	# cpu, cpu
-  .LVL87:
-  	.loc 2 57 9 is_stmt 0 view .LVU484
+I'm not convinced by this argument, as this conversion is a one-off
+exercise.  Ultimately, a tool in user space would need to represent a
+graph anyway and how it obtains the data to do that doesn't matter too
+much to it.
 
-That MOV in there is drowned in debugging information and latter makes
-it hard to follow the asm. And that DWARF info is not really needed for
-asm output staring.
+However, IMO there is value in representing the graph in a filesystem
+in such a way that, say, a file manager program (without special
+modifications) can be used to walk it by a human.
 
-Disable the debug information generation which clutters the asm output
-unnecessarily:
-
-  bsp_resume:
-  .LFB3466:
-          .loc 1 1868 1
-  # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
-          .loc 1 1869 14
-          movq    this_cpu(%rip), %rax    # this_cpu, this_cpu
-          movq    64(%rax), %rax  # this_cpu.94_1->c_bsp_resume, _2
-  # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
-          .loc 1 1869 5
-          testq   %rax, %rax      # _2
-          je      .L8     #,
-  # arch/x86/kernel/cpu/common.c:1870:            this_cpu->c_bsp_resume(&boot_cpu_data);
-          .loc 1 1870 3
-          movq    $boot_cpu_data, %rdi    #,
-          jmp     __x86_indirect_thunk_rax
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: linux-kbuild@vger.kernel.org
----
- scripts/Makefile.build | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index fd03d60f6c5a..4f33fdab89d2 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -103,8 +103,12 @@ modkern_cflags =                                          \
- 		$(KBUILD_CFLAGS_KERNEL) $(CFLAGS_KERNEL))
- quiet_modtag = $(if $(part-of-module),[M],   )
- 
-+disable_extra_cc_dbg := $(call cc-option,-gno-as-locview-support)
-+disable_extra_cc_dbg += $(call cc-option,-fno-dwarf2-cfi-asm)
-+disable_extra_cc_dbg += $(call cc-option,-feliminate-unused-debug-symbols)
-+disable_extra_cc_dbg += $(call cc-option,-gno-statement-frontiers)
- quiet_cmd_cc_s_c = CC $(quiet_modtag)  $@
--cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) -fverbose-asm -S -o $@ $<
-+cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) $(disable_extra_cc_dbg) -fverbose-asm -S -o $@ $<
- 
- $(obj)/%.s: $(src)/%.c FORCE
- 	$(call if_changed_dep,cc_s_c)
--- 
-2.19.1
-
+Let alone the one-value-per-file rule of sysfs that doesn't need to be
+violated if symlinks are used.
