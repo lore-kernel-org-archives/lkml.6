@@ -2,92 +2,138 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52354C2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2182C2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2258220870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548085842;
-	bh=zc0wcLeAduwp78cRkVxhWlbvmk2E2Xlg6QcfpL/71WA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0RgdB4KchFm0z7v0HncM5T4qjHgIAcrdRNoCKxFM8GAvHuapFbVVXPfmNbcMs2HBs
-	 l2NMEDSC+HDQFxJRrS7AyC3N9lXT/Q+TzSJhBGkyZnOHT3fxfjZHGMtYVoWufrjQIn
-	 H96fiWCXxXH0FbuYRmC5AFM15r3SUus5MkkJ7T08=
+	by mail.kernel.org (Postfix) with ESMTP id 7533220870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:51:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730384AbfAUPuj (ORCPT
+        id S1730417AbfAUPvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:50:39 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40424 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728950AbfAUPui (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:50:38 -0500
-Received: by mail-ot1-f66.google.com with SMTP id s5so20899437oth.7;
-        Mon, 21 Jan 2019 07:50:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Iq+/bLYjYOQFTGBsWMeESxmK/uNouPHVdUiAadG+hoA=;
-        b=ILGkNu1zWFtHa9IgD0h2ywjIngHE5YH0eb0WowdlrGgBRWeoyZ6ycZ8kmwS+Ri1ILs
-         /laBW4Z5Wus9JrISNaMAshWBOfpenGbXebqXGT1bKrU7bNrRf0JJaLoISz2BmPppZjZ1
-         HvRjzQ8nUzx2IDd22pBHpFkyF4n4d8tSxsjhE3qg6Xf7Q4GYVQzJxhTfkgZnq5WHRBGY
-         XnVXebktjYsfYaFjeYTvB472VCq+46xtJH1b+ZYN87ODG9K4bQDeveS2k31lds1i2FYz
-         UT5TDp37Hr9BvycUvRwYzhVTSxK8dbaRLK02TB8I7klYKRS91SuCW9wTFe1OFZ5Gz5yA
-         q8fQ==
-X-Gm-Message-State: AJcUukeXh4S1yskNEM/4p7RtufDqki+Z4aIXlM/vnLihoHq0Fkk3yxR3
-        bbfuoVOIt/48mvlyh5ZagA==
-X-Google-Smtp-Source: ALg8bN73nQEM542DW0JcUvXY8ztyZ2JJ5R5bGcjEWGyn+Bh6cLoInwXGL4eax+O1/7ZVp10w7cmRwQ==
-X-Received: by 2002:a9d:6a4:: with SMTP id 33mr6663260otx.347.1548085838045;
-        Mon, 21 Jan 2019 07:50:38 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m89sm5754236otc.35.2019.01.21.07.50.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 07:50:37 -0800 (PST)
-Date:   Mon, 21 Jan 2019 09:50:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: reset: Add document for Broadcom STB
- reset controller
-Message-ID: <20190121155037.GA5115@bogus>
-References: <20190115184406.3164-1-f.fainelli@gmail.com>
- <20190115184406.3164-2-f.fainelli@gmail.com>
+        Mon, 21 Jan 2019 10:51:06 -0500
+Received: from foss.arm.com ([217.140.101.70]:37616 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728950AbfAUPvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:51:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E008EEBD;
+        Mon, 21 Jan 2019 07:51:05 -0800 (PST)
+Received: from [10.1.196.128] (ostrya.cambridge.arm.com [10.1.196.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 628D73F5C1;
+        Mon, 21 Jan 2019 07:51:04 -0800 (PST)
+Subject: Re: [PATCH v1] iommu/s390: Declare s390 iommu reserved regions
+To:     pmorel@linux.ibm.com, Robin Murphy <robin.murphy@arm.com>,
+        gerald.schaefer@de.ibm.com
+Cc:     linux-s390@vger.kernel.org, walling@linux.ibm.com,
+        alex.williamson@redhat.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>
+References: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
+ <cc070df1-e7dc-8cce-f443-879e0e5e2903@arm.com>
+ <3cd790d6-aa6f-e817-27ce-56d7a9b6b6e5@linux.ibm.com>
+ <668fe734-e4bf-0342-ab8c-df54d9022db4@arm.com>
+ <d180bb2d-354f-0d05-8773-7a196a4de3cb@linux.ibm.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <c189fe32-3cbe-0294-8950-e29bce606679@arm.com>
+Date:   Mon, 21 Jan 2019 15:50:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115184406.3164-2-f.fainelli@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d180bb2d-354f-0d05-8773-7a196a4de3cb@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Jan 2019 10:44:05 -0800, Florian Fainelli wrote:
-> Add a binding document for the Broadcom STB reset controller, also known
-> as SW_INIT-style reset controller.
+On 21/01/2019 11:51, Pierre Morel wrote:
+> On 18/01/2019 14:51, Jean-Philippe Brucker wrote:
+>> Hi Pierre,
+>>
+>> On 18/01/2019 13:29, Pierre Morel wrote:
+>>> On 17/01/2019 14:02, Robin Murphy wrote:
+>>>> On 15/01/2019 17:37, Pierre Morel wrote:
+>>>>> The s390 iommu can only allow DMA transactions between the zPCI device
+>>>>> entries start_dma and end_dma.
+>>>>>
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  .../bindings/reset/brcm,brcmstb-reset.txt     | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/brcm,brcmstb-reset.txt
+> ...
 > 
+>>>
+>>> I already posted a patch retrieving the geometry through
+>>> VFIO_IOMMU_GET_INFO using a specific capability for the geometry [1],
+>>> and AFAIU, Alex did not agree with this.
+>>
+>> On arm we also need to report the IOMMU geometry to userspace (max IOVA
+>> size in particular). Shameer has been working on a solution [2] that
+>> presents a unified view of both geometry and reserved regions into the
+>> VFIO_IOMMU_GET_INFO call, and I think we should go with that. If I
+>> understand correctly it's currently blocked on the RMRR problem and
+>> we're waiting for Jacob or Ashok to take a look at it, as Kevin pinged
+>> them on thread [1]?
+>>
+>> [2] https://lkml.org/lkml/2018/4/18/293
+>>
+>> Thanks,
+>> Jean
+>>
+> 
+> Hi Jean,
+> 
+> I hopped that this proposition went in the same direction based on the
+> following assumptions:
+> 
+> 
+> - The goal of the get_resv_region is defined in iommu.h as:
+> -----
+> * @get_resv_regions: Request list of reserved regions for a device
+> -----
+> 
+> - A iommu reserve region is a region which should not be mapped.
+> Isn't it exactly what happens outside the aperture?
+> Shouldn't it be reported by the iommu reserved region?
+> 
+> - If we use VFIO and want to get all reserved region we will have the
+> VFIO_IOMMU_GET_INFO call provided by Shameer and it can get all reserved
+> regions depending from the iommu driver itself at once by calling the
+> get_reserved_region callback instead of having to merge them with the
+> aperture.
+> 
+> - If there are other reserved region, depending on the system
+> configuration and not on the IOMMU itself, the VFIO_IOMMU_GET_INFO call
+> will have to merge them with the region gotten from the iommu driver.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I guess that would only happen if VFIO wanted to reserve IOVA regions
+for its own use. But I don't see how that relates to the aperture
+
+> - If we do not use QEMU nor VFIO at all, AFAIU, the standard way to
+> retrieve the reserved regions associated with a device is to call the
+> get_reserved_region callback from the associated iommu.
+> 
+> Please tell me were I am wrong.
+
+Those are good points in my opinion (assuming the new reserved regions
+for aperture is done in the core API)
+
+To be reliable though, userspace can't get the aperture from sysfs
+reserved_regions, it will have to get it from VFIO. If a new application
+expects the aperture to be described in reserved_regions but is running
+under an old kernel, it will just assume a 64-bit aperture by mistake.
+Unless we introduce a new IOMMU_RESV_* type to distinguish the aperture?
+
+Another thing to note is that we're currently adding nested support to
+VFIO for Arm and x86 archs. It requires providing low-level and
+sometimes arch-specific information about the IOMMU to userspace,
+information that is easier to describe using sysfs (e.g.
+/sys/class/iommu/<iommu>/*) than a VFIO ioctl. Among them is the input
+address size of the IOMMU, so we'll end up with redundant information in
+sysfs on x86 and Arm sides, but that's probably harmless.
+
+Thanks,
+Jean
