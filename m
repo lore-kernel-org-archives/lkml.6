@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1482C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D0DC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0C0F21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5BBD20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079239;
-	bh=Hyr52HWY0REzzh2+QQXDQIv1HKaTxOMzkxqCjelinuM=;
+	s=default; t=1548079242;
+	bh=WFgOjWOoojWBy/l0tVKW/1nvzCPiR7k25e4VaQT8SOc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1mYGxyZN7/pshwNPlLDFyWhX26Hf1OOP0nbauDjN3NdO3MypE5lQS6XiWZlhjmMqe
-	 Aclb5tMvpS6GxWobhwHY0mUhvk7u6PPLf/1t5TIPhBDQXtMIVAqOhMKFNPeKlZTeTc
-	 rqdE7vrBBa0TzftMhXNdHmpb2U3TXFmW0ypVDEX8=
+	b=DvMbwOig1hfjR3vo31z9D09J7Yu9bLhsy993we88iP0N96gxDioba3Qj7iV+22rXq
+	 0J0NhGdBRLlQd+ypgj/GPX4ZpMlpjfN3OJw3abu7JHhLWcBrMpqfr8dqR0GqRoyzSC
+	 p+5Z20sCHDrcgDBIUoseCstSSWKA3MOfyv4rWxh8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732432AbfAUOAh (ORCPT
+        id S1732491AbfAUOAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:00:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47082 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:00:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732377AbfAUOA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:29 -0500
+        id S1731942AbfAUOAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:00:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30D752084C;
-        Mon, 21 Jan 2019 14:00:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0946420879;
+        Mon, 21 Jan 2019 14:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079228;
-        bh=Hyr52HWY0REzzh2+QQXDQIv1HKaTxOMzkxqCjelinuM=;
+        s=default; t=1548079234;
+        bh=WFgOjWOoojWBy/l0tVKW/1nvzCPiR7k25e4VaQT8SOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qC8qYOGRxiiXuJJvjwPhw9lIt/StVwS814N3JTQI6Go34HLqk0F9uJkOzmITwjsum
-         d6fsW6/1B2cGQRPS9IXHIbpBfZ5y1I0Eyz9FkBMPHC+Xj25VlA1R+re1UUN5/nog0D
-         ed44Afg75QQMlcAPXE75g3WTIaEmB7flpuTCR/KM=
+        b=YJSamXN9v1Rn3UCxWGo9CTP05BtLJTSb2gsNl9LzdZmacy1SAQl9ruEqTN88KyoUn
+         QL+lkaaD3kcL0nKRQ7MFIUlznnR0Kb2dA0MM/fxyoiSZrXrA4NiGR6ewzpoy6toKbN
+         Twoeyq/0j5vr31wooRAPHlop4ZYHJ3NCVwHkuHQk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ruishuang Wang <ruishuangw@vmware.com>,
-        Bryan Tan <bryantan@vmware.com>,
-        Vishnu Dasa <vdasa@vmware.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.19 53/99] RDMA/vmw_pvrdma: Return the correct opcode when creating WR
-Date:   Mon, 21 Jan 2019 14:48:45 +0100
-Message-Id: <20190121134915.994367264@linuxfoundation.org>
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Johan Hovold <johan@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 55/99] net: dsa: realtek-smi: fix OF child-node lookup
+Date:   Mon, 21 Jan 2019 14:48:47 +0100
+Message-Id: <20190121134916.070292567@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -68,97 +65,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adit Ranadive <aditr@vmware.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 6325e01b6cdf4636b721cf7259c1616e3cf28ce2 upstream.
+commit 3f1bb6abdf19cfa89860b3bc9e7f31b44b6a0ba1 upstream.
 
-Since the IB_WR_REG_MR opcode value changed, let's set the PVRDMA device
-opcodes explicitly.
+Use the new of_get_compatible_child() helper to look up child nodes to
+avoid ever matching non-child nodes elsewhere in the tree.
 
-Reported-by: Ruishuang Wang <ruishuangw@vmware.com>
-Fixes: 9a59739bd01f ("IB/rxe: Revise the ib_wr_opcode enum")
-Cc: stable@vger.kernel.org
-Reviewed-by: Bryan Tan <bryantan@vmware.com>
-Reviewed-by: Ruishuang Wang <ruishuangw@vmware.com>
-Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
-Signed-off-by: Adit Ranadive <aditr@vmware.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Also fix up the related struct device_node leaks.
+
+Fixes: d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
+Cc: stable <stable@vger.kernel.org>     # 4.19: 36156f9241cb0
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/vmw_pvrdma/pvrdma.h    |   35 ++++++++++++++++++++++++++-
- drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c |    6 ++++
- include/uapi/rdma/vmw_pvrdma-abi.h           |    1 
- 3 files changed, 41 insertions(+), 1 deletion(-)
+ drivers/net/dsa/realtek-smi.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma.h
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma.h
-@@ -427,7 +427,40 @@ static inline enum ib_qp_state pvrdma_qp
+--- a/drivers/net/dsa/realtek-smi.c
++++ b/drivers/net/dsa/realtek-smi.c
+@@ -347,16 +347,17 @@ int realtek_smi_setup_mdio(struct realte
+ 	struct device_node *mdio_np;
+ 	int ret;
  
- static inline enum pvrdma_wr_opcode ib_wr_opcode_to_pvrdma(enum ib_wr_opcode op)
- {
--	return (enum pvrdma_wr_opcode)op;
-+	switch (op) {
-+	case IB_WR_RDMA_WRITE:
-+		return PVRDMA_WR_RDMA_WRITE;
-+	case IB_WR_RDMA_WRITE_WITH_IMM:
-+		return PVRDMA_WR_RDMA_WRITE_WITH_IMM;
-+	case IB_WR_SEND:
-+		return PVRDMA_WR_SEND;
-+	case IB_WR_SEND_WITH_IMM:
-+		return PVRDMA_WR_SEND_WITH_IMM;
-+	case IB_WR_RDMA_READ:
-+		return PVRDMA_WR_RDMA_READ;
-+	case IB_WR_ATOMIC_CMP_AND_SWP:
-+		return PVRDMA_WR_ATOMIC_CMP_AND_SWP;
-+	case IB_WR_ATOMIC_FETCH_AND_ADD:
-+		return PVRDMA_WR_ATOMIC_FETCH_AND_ADD;
-+	case IB_WR_LSO:
-+		return PVRDMA_WR_LSO;
-+	case IB_WR_SEND_WITH_INV:
-+		return PVRDMA_WR_SEND_WITH_INV;
-+	case IB_WR_RDMA_READ_WITH_INV:
-+		return PVRDMA_WR_RDMA_READ_WITH_INV;
-+	case IB_WR_LOCAL_INV:
-+		return PVRDMA_WR_LOCAL_INV;
-+	case IB_WR_REG_MR:
-+		return PVRDMA_WR_FAST_REG_MR;
-+	case IB_WR_MASKED_ATOMIC_CMP_AND_SWP:
-+		return PVRDMA_WR_MASKED_ATOMIC_CMP_AND_SWP;
-+	case IB_WR_MASKED_ATOMIC_FETCH_AND_ADD:
-+		return PVRDMA_WR_MASKED_ATOMIC_FETCH_AND_ADD;
-+	case IB_WR_REG_SIG_MR:
-+		return PVRDMA_WR_REG_SIG_MR;
-+	default:
-+		return PVRDMA_WR_ERROR;
+-	mdio_np = of_find_compatible_node(smi->dev->of_node, NULL,
+-					  "realtek,smi-mdio");
++	mdio_np = of_get_compatible_child(smi->dev->of_node, "realtek,smi-mdio");
+ 	if (!mdio_np) {
+ 		dev_err(smi->dev, "no MDIO bus node\n");
+ 		return -ENODEV;
+ 	}
+ 
+ 	smi->slave_mii_bus = devm_mdiobus_alloc(smi->dev);
+-	if (!smi->slave_mii_bus)
+-		return -ENOMEM;
++	if (!smi->slave_mii_bus) {
++		ret = -ENOMEM;
++		goto err_put_node;
 +	}
+ 	smi->slave_mii_bus->priv = smi;
+ 	smi->slave_mii_bus->name = "SMI slave MII";
+ 	smi->slave_mii_bus->read = realtek_smi_mdio_read;
+@@ -371,10 +372,15 @@ int realtek_smi_setup_mdio(struct realte
+ 	if (ret) {
+ 		dev_err(smi->dev, "unable to register MDIO bus %s\n",
+ 			smi->slave_mii_bus->id);
+-		of_node_put(mdio_np);
++		goto err_put_node;
+ 	}
+ 
+ 	return 0;
++
++err_put_node:
++	of_node_put(mdio_np);
++
++	return ret;
  }
  
- static inline enum ib_wc_status pvrdma_wc_status_to_ib(
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
-@@ -721,6 +721,12 @@ int pvrdma_post_send(struct ib_qp *ibqp,
- 		    wr->opcode == IB_WR_RDMA_WRITE_WITH_IMM)
- 			wqe_hdr->ex.imm_data = wr->ex.imm_data;
+ static int realtek_smi_probe(struct platform_device *pdev)
+@@ -457,6 +463,8 @@ static int realtek_smi_remove(struct pla
+ 	struct realtek_smi *smi = dev_get_drvdata(&pdev->dev);
  
-+		if (unlikely(wqe_hdr->opcode == PVRDMA_WR_ERROR)) {
-+			*bad_wr = wr;
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
- 		switch (qp->ibqp.qp_type) {
- 		case IB_QPT_GSI:
- 		case IB_QPT_UD:
---- a/include/uapi/rdma/vmw_pvrdma-abi.h
-+++ b/include/uapi/rdma/vmw_pvrdma-abi.h
-@@ -78,6 +78,7 @@ enum pvrdma_wr_opcode {
- 	PVRDMA_WR_MASKED_ATOMIC_FETCH_AND_ADD,
- 	PVRDMA_WR_BIND_MW,
- 	PVRDMA_WR_REG_SIG_MR,
-+	PVRDMA_WR_ERROR,
- };
+ 	dsa_unregister_switch(smi->ds);
++	if (smi->slave_mii_bus)
++		of_node_put(smi->slave_mii_bus->dev.of_node);
+ 	gpiod_set_value(smi->reset, 1);
  
- enum pvrdma_wc_status {
+ 	return 0;
 
 
