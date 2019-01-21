@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EE7C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1322DC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9EBE20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D355220879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078784;
-	bh=AdZfAEwdIVd/QMRAFRptIaANFclKt2nQPWjih9y2g3M=;
+	s=default; t=1548078788;
+	bh=8sRpxIjvJJbaYv7Q/iMJ2rYLHqiomoifsrxdl/bzzg0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZpvuJhYgYs66/sL0BhkfvWcT+Qz8pH18BqczMFiwzf3o19uDhJWfGgmIIWGxPkQcw
-	 6U1XJxizBDR96UqREVrIUgdKJN9UhJHYYidcabFuo5MieBY6gfbDYOmjsrat3XK4Ad
-	 +j884qAq2hs/kuMijJkvoIOi0QbdS8i8dnmHsFbo=
+	b=RZklZrkrsEy6yRQfgsA8NV2XFU94qia08pTHIUJE1BcBnNuWaMgGHL3c6cih/xzJQ
+	 XQXOU/QZKs9DeN145ZzXbrAdFma2H4A9T6GKCYL9qYIGocP+Mfi9J9ydENlE6fUgJI
+	 Ay8jfv9RFsEOB9cG7+tID8WIjwAAU01YTyHBQ1Is=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731194AbfAUNxC (ORCPT
+        id S1731207AbfAUNxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:53:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:53:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731169AbfAUNw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:58 -0500
+        id S1731169AbfAUNxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:53:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2F0A2089F;
-        Mon, 21 Jan 2019 13:52:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DE6D20879;
+        Mon, 21 Jan 2019 13:53:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078777;
-        bh=AdZfAEwdIVd/QMRAFRptIaANFclKt2nQPWjih9y2g3M=;
+        s=default; t=1548078783;
+        bh=8sRpxIjvJJbaYv7Q/iMJ2rYLHqiomoifsrxdl/bzzg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KYEsTVTPxlJ+GSlIzhFltZhFcdbUlZarG77qoSqPsd//a6tevimLatZkLAHot/Uw3
-         G8jkcxBAfRodP2ueMapEzdk4KQqjkn/jS+NEkcpYey/TKZuqNGXhhjLrNSEj2+lshg
-         46pQtiX3FP4E1km7TBkfNpmV4roJNxrxLJkWio1I=
+        b=roRPwwEos2mFtTGrAI9uGrZzV5dSbMIYxEITjelbQDCLh3OrKG6h9NiOJjMc1zwpG
+         b2ZKxyiFBMie5PhMOYImZ9+CU1/2GOJP0mkv25jpanv4b/lRc4+PL+gpjNjQSRfvkE
+         VzEf6K2JwfUtPZTDbRuR2MVxfv72L+Z+0AqE0s8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.14 32/59] mfd: tps6586x: Handle interrupts on suspend
-Date:   Mon, 21 Jan 2019 14:43:57 +0100
-Message-Id: <20190121122500.161999586@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        syzbot+be93025dd45dccd8923c@syzkaller.appspotmail.com,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 42/59] media: vb2: vb2_mmap: move lock up
+Date:   Mon, 21 Jan 2019 14:44:07 +0100
+Message-Id: <20190121122501.463503857@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -67,94 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonathan Hunter <jonathanh@nvidia.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-commit ac4ca4b9f4623ba5e1ea7a582f286567c611e027 upstream.
+commit cd26d1c4d1bc947b56ae404998ae2276df7b39b7 upstream.
 
-The tps6586x driver creates an irqchip that is used by its various child
-devices for managing interrupts. The tps6586x-rtc device is one of its
-children that uses the tps6586x irqchip. When using the tps6586x-rtc as
-a wake-up device from suspend, the following is seen:
+If a filehandle is dup()ped, then it is possible to close it from one fd
+and call mmap from the other. This creates a race condition in vb2_mmap
+where it is using queue data that __vb2_queue_free (called from close())
+is in the process of releasing.
 
- PM: Syncing filesystems ... done.
- Freezing user space processes ... (elapsed 0.001 seconds) done.
- OOM killer disabled.
- Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
- Disabling non-boot CPUs ...
- Entering suspend state LP1
- Enabling non-boot CPUs ...
- CPU1 is up
- tps6586x 3-0034: failed to read interrupt status
- tps6586x 3-0034: failed to read interrupt status
+By moving up the mutex_lock(mmap_lock) in vb2_mmap this race is avoided
+since __vb2_queue_free is called with the same mutex locked. So vb2_mmap
+now reads consistent buffer data.
 
-The reason why the tps6586x interrupt status cannot be read is because
-the tps6586x interrupt is not masked during suspend and when the
-tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-seen before the i2c controller has been resumed in order to read the
-tps6586x interrupt status.
-
-The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-suspend, which gets propagated to the parent tps6586x interrupt.
-However, the tps6586x-rtc driver cannot disable it's interrupt during
-suspend otherwise we would never be woken up and so the tps6586x must
-disable it's interrupt instead.
-
-Prevent the tps6586x interrupt handler from executing on exiting suspend
-before the i2c controller has been resumed by disabling the tps6586x
-interrupt on entering suspend and re-enabling it on resuming from
-suspend.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Reported-by: syzbot+be93025dd45dccd8923c@syzkaller.appspotmail.com
+Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mfd/tps6586x.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/media/v4l2-core/videobuf2-core.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -594,6 +594,29 @@ static int tps6586x_i2c_remove(struct i2
- 	return 0;
- }
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -1925,9 +1925,13 @@ int vb2_mmap(struct vb2_queue *q, struct
+ 			return -EINVAL;
+ 		}
+ 	}
++
++	mutex_lock(&q->mmap_lock);
++
+ 	if (vb2_fileio_is_active(q)) {
+ 		dprintk(1, "mmap: file io in progress\n");
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto unlock;
+ 	}
  
-+static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
+ 	/*
+@@ -1935,7 +1939,7 @@ int vb2_mmap(struct vb2_queue *q, struct
+ 	 */
+ 	ret = __find_plane_by_offset(q, off, &buffer, &plane);
+ 	if (ret)
+-		return ret;
++		goto unlock;
+ 
+ 	vb = q->bufs[buffer];
+ 
+@@ -1951,8 +1955,9 @@ int vb2_mmap(struct vb2_queue *q, struct
+ 		return -EINVAL;
+ 	}
+ 
+-	mutex_lock(&q->mmap_lock);
+ 	ret = call_memop(vb, mmap, vb->planes[plane].mem_priv, vma);
 +
-+	if (tps6586x->client->irq)
-+		disable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-+
-+	if (tps6586x->client->irq)
-+		enable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
-+			 tps6586x_i2c_resume);
-+
- static const struct i2c_device_id tps6586x_id_table[] = {
- 	{ "tps6586x", 0 },
- 	{ },
-@@ -604,6 +627,7 @@ static struct i2c_driver tps6586x_driver
- 	.driver	= {
- 		.name	= "tps6586x",
- 		.of_match_table = of_match_ptr(tps6586x_of_match),
-+		.pm	= &tps6586x_pm_ops,
- 	},
- 	.probe		= tps6586x_i2c_probe,
- 	.remove		= tps6586x_i2c_remove,
++unlock:
+ 	mutex_unlock(&q->mmap_lock);
+ 	if (ret)
+ 		return ret;
 
 
