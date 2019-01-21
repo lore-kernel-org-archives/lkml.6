@@ -2,80 +2,319 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA29C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE041C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D69B20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:34:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C9D820989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbfAUJe2 (ORCPT
+        id S1727747AbfAUJfD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:34:28 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2444 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726112AbfAUJe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:34:27 -0500
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id 38FCA3C17F9CF549A595;
-        Mon, 21 Jan 2019 09:49:09 +0800 (CST)
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.226]) by
- DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0415.000;
- Mon, 21 Jan 2019 09:49:07 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] usb: dwc3: gadget: don't remove the request if
- bus-expired
-Thread-Topic: [PATCH] usb: dwc3: gadget: don't remove the request if
- bus-expired
-Thread-Index: AQHUmGKjk/rakpJo0kSHw+luMI/lKaWuCwcAgAsZUHA=
-Date:   Mon, 21 Jan 2019 01:49:07 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED24E49C55@dggemm526-mbx.china.huawei.com>
-References: <1545339230-10520-1-git-send-email-prime.zeng@hisilicon.com>
- <87won7mzcn.fsf@linux.intel.com>
-In-Reply-To: <87won7mzcn.fsf@linux.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.222.33]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 21 Jan 2019 04:35:03 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:4954 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726133AbfAUJfD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 04:35:03 -0500
+X-IronPort-AV: E=Sophos;i="5.56,502,1539619200"; 
+   d="scan'208";a="52487020"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 21 Jan 2019 17:34:58 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 1CEB94C47E99;
+        Mon, 21 Jan 2019 17:34:56 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 21 Jan 2019 17:35:01 +0800
+Date:   Mon, 21 Jan 2019 17:33:48 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store
+ immovable memory
+Message-ID: <20190121093348.GB15754@localhost.localdomain>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+ <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
+ <20190116110158.GC15409@zn.tnic>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190116110158.GC15409@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 1CEB94C47E99.AE6FB
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgYmFsYmk6DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEZlbGlwZSBC
-YWxiaSBbbWFpbHRvOmZlbGlwZS5iYWxiaUBsaW51eC5pbnRlbC5jb21dDQo+U2VudDogTW9uZGF5
-LCBKYW51YXJ5IDE0LCAyMDE5IDQ6MTMgUE0NCj5UbzogWmVuZ3RhbyAoQikgPHByaW1lLnplbmdA
-aGlzaWxpY29uLmNvbT4NCj5DYzogWmVuZ3RhbyAoQikgPHByaW1lLnplbmdAaGlzaWxpY29uLmNv
-bT47IEdyZWcgS3JvYWgtSGFydG1hbg0KPjxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47IGxp
-bnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmc7DQo+bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0K
-PlN1YmplY3Q6IFJlOiBbUEFUQ0hdIHVzYjogZHdjMzogZ2FkZ2V0OiBkb24ndCByZW1vdmUgdGhl
-IHJlcXVlc3QgaWYNCj5idXMtZXhwaXJlZA0KPg0KPiogUEdQIFNpZ25lZCBieSBhbiB1bmtub3du
-IGtleQ0KPg0KPg0KPkhpLA0KPg0KPlplbmcgVGFvIDxwcmltZS56ZW5nQGhpc2lsaWNvbi5jb20+
-IHdyaXRlczoNCj4+IFdlIGhhdmUgYWxyZWFkeSByZXR1cm5lZCBFQUdBSU4gZm9yIGJ1cy1leHBp
-cnksIGFuZCBpdCdzIGRlc2lnbmVkIHRvDQo+PiBzdGFydCB3aXRoIGEgZnV0dXJlIEZyYW1lIG51
-bWJlciBhbmQgc3RhcnQgdGhlIHRyYW5zZmVyIGFnYWluLiBTbyB3ZQ0KPj4gc2hvdWxkIG5vdCBy
-ZW1vdmUgdGhlIHJlcXVlc3QgZm9yIHRoYXQgY2FzZS4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBa
-ZW5nIFRhbyA8cHJpbWUuemVuZ0BoaXNpbGljb24uY29tPg0KPg0KPkRvIHdlIG5lZWQgYSBGaXhl
-cyB0YWcgaGVyZT8gSG93IGFib3V0IENjIHN0YWJsZT8gQ2FuIHlvdSBzaGFyZQ0KPnRyYWNlcG9p
-bnRzIGV4cG9zaW5nIHRoZSBwcm9ibGVtPw0KPg0KDQpJIGFtIG5vdCBzdXJlIHRoYXQgd2UgbmVl
-ZCB0byBGaXhlcyB0YWcsIGl0J3Mgbm90IHJlbGF0ZWQgdG8gYW55IHNpbmdsZSBwYXRjaCwgYnV0
-DQp0aGVyZSBpcyBkZWZpbml0ZWx5IHNvbWV0aGluZyB3cm9uZywgYWZ0ZXIgcmV0aGlua2luZyBp
-dCBhZ2FpbiwgSSBmb3VuZCB0aGF0IHRoZXJlDQphcmUgc3RpbGwgc29tZSBwcm9ibGVtcyBmb3Ig
-dGhpcyBwYXRjaCwgZm9yIHRoZSByZXRpZXMgaW5zaWRlIHRoZSBkcml2ZXIsIHdlIHNob3VsZCBu
-b3QNCnJlbW92ZSB0aGUgcmVxdWVzdCwgYnV0IGlmIHdlIHJldHVybiAtRUFHQUlOIHRvIHRoZSBn
-YWRnZXQgbGF5ZXIsIHdlIHNob3VsZCBiZWNhdXNlDQp0aGUgZ2FkZ2V0IHdpbGwgcmVxdWV1ZSB0
-aGUgcmVxdWVzdCBhZ2FpbiBpZiB3ZSByZXR1cm4gLUVBR0FJTi4NCg0KQW55IHN1Z2dlc3Rpb25z
-LiANCg0KPg0KPnRoYW5rcw0KPg0KPi0tDQo+YmFsYmkNCj4NCj4qIFVua25vd24gS2V5DQo+KiAw
-eEUxMUE5OTA2DQo=
+On Wed, Jan 16, 2019 at 12:01:58PM +0100, Borislav Petkov wrote:
+>On Mon, Jan 07, 2019 at 11:22:42AM +0800, Chao Fan wrote:
+[...]
+>> +
+>> +/* Determine RSDP, based on acpi_os_get_root_pointer(). */
+>> +static acpi_physical_address get_rsdp_addr(void)
+>> +{
+>> +	acpi_physical_address pa;
+>> +
+>> +	pa = get_acpi_rsdp();
+>> +
+>> +	if (!pa)
+>> +		pa = efi_get_rsdp_addr();
+>> +
+>> +	if (!pa)
+>> +		pa = bios_get_rsdp_addr();
+>> +
+>> +	return pa;
+>> +}
+
+Hi Boris,
+
+Talking in Kairui's thread may mislead you, let me clarify:
+I mean I am going to change get_rsdp_addr(). Since I see ACPI code:
+
+>acpi_physical_address __init acpi_os_get_root_pointer(void)
+>{
+>        acpi_physical_address pa;
+>
+>#ifdef CONFIG_KEXEC
+>        if (acpi_rsdp)
+>                return acpi_rsdp;
+>#endif
+>        pa = acpi_arch_get_root_pointer();
+>        if (pa)
+>                return pa;
+
+So we need to parse boot_params->acpi_rsdp_addr also between KEXEC and
+EFI:
+
+static acpi_physical_address get_rsdp_addr(void)
+{
+        acpi_physical_address pa;
+
+        pa = get_acpi_rsdp();
+
+        if (!pa)
+/* This line will be added in next version.*/
+                pa = boot_params->acpi_rsdp_addr;
+
+        if (!pa)
+                pa = efi_get_rsdp_addr();
+
+        if (!pa)
+                pa = bios_get_rsdp_addr();
+
+/* If no acpi_rsdp_addr found in boot_params, fill in it here. */
+
+        return pa;
+}
+
+Then you said I shall fill the boot_params->acpi_rsdp_addr, so in my
+understanding, if there is no acpi_rsdp_addr found in boot_params,
+we can parse RSDP by EFI/BIOS then fill it, other wise if it's found
+int boot_params, we need't to fill it.
+
+Thanks,
+Chao Fan
+
+
+>> +
+>> +/* Compute SRAT address from RSDP. */
+>> +static struct acpi_table_header *get_acpi_srat_table(void)
+>> +{
+>> +	acpi_physical_address acpi_table;
+>> +	acpi_physical_address root_table;
+>> +	struct acpi_table_header *header;
+>> +	struct acpi_table_rsdp *rsdp;
+>> +	u32 num_entries;
+>> +	char arg[10];
+>> +	u8 *entry;
+>> +	u32 size;
+>> +	u32 len;
+>> +
+>> +	rsdp = (struct acpi_table_rsdp *)(long)get_rsdp_addr();
+>> +	if (!rsdp)
+>> +		return NULL;
+>> +
+>> +	/* Get RSDT or XSDT from RSDP. */
+>> +	if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
+>> +	    !strncmp(arg, "rsdt", 4)) &&
+>> +	    rsdp->xsdt_physical_address &&
+>> +	    rsdp->revision > 1) {
+>> +		root_table = rsdp->xsdt_physical_address;
+>> +		size = ACPI_XSDT_ENTRY_SIZE;
+>> +	} else {
+>> +		root_table = rsdp->rsdt_physical_address;
+>> +		size = ACPI_RSDT_ENTRY_SIZE;
+>> +	}
+>> +
+>> +	/* Get ACPI root table from RSDT or XSDT.*/
+>
+>This comment is wrong here - should be above.
+>
+>> +	if (!root_table)
+>> +		return NULL;
+>
+><---- newline here.
+>
+>> +	header = (struct acpi_table_header *)(long)root_table;
+>> +
+>> +	len = header->length;
+>> +	if (len < sizeof(struct acpi_table_header) + size)
+>> +		return NULL;
+>> +
+>> +	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
+>> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+>> +
+>> +	while (num_entries--) {
+>> +		u64 address64;
+>> +
+>> +		if (size == ACPI_RSDT_ENTRY_SIZE)
+>> +			acpi_table =  *ACPI_CAST_PTR(u32, entry);
+>> +		else {
+>> +			address64 = *(u64 *)entry;
+>> +			acpi_table = address64;
+>
+>The same thing as in the previous patch - get rid of address64.
+>
+>> +		}
+>> +
+>> +		if (acpi_table) {
+>> +			header = (struct acpi_table_header *)(long)acpi_table;
+>> +
+>> +			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
+>> +				return header;
+>> +		}
+>> +		entry += size;
+>> +	}
+>> +	return NULL;
+>> +}
+>> +
+>> +/*
+>> + * According to ACPI table, filter the immovable memory regions
+>> + * and store them in immovable_mem[].
+>> + */
+>> +void get_immovable_mem(void)
+>> +{
+>> +	struct acpi_table_header *table_header;
+>> +	struct acpi_subtable_header *table;
+>> +	struct acpi_srat_mem_affinity *ma;
+>> +	char arg[MAX_ACPI_ARG_LENGTH];
+>> +	unsigned long table_end;
+>> +	int i = 0;
+>> +
+>> +	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
+>> +	    !strncmp(arg, "off", 3))
+>> +		return;
+>> +
+>> +	table_header = get_acpi_srat_table();
+>> +	if (!table_header)
+>> +		return;
+>> +
+>> +	table_end = (unsigned long)table_header + table_header->length;
+>> +	table = (struct acpi_subtable_header *)
+>> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+>> +
+>> +	while (((unsigned long)table) +
+>> +		       sizeof(struct acpi_subtable_header) < table_end) {
+>> +		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+>> +			ma = (struct acpi_srat_mem_affinity *)table;
+>> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+>> +				immovable_mem[i].start = ma->base_address;
+>> +				immovable_mem[i].size = ma->length;
+>> +				i++;
+>> +			}
+>> +
+>> +			if (i >= MAX_NUMNODES*2) {
+>> +				debug_putstr("Too many immovable memory regions, aborting.\n");
+>> +				return;
+>> +			}
+>> +		}
+>> +		table = (struct acpi_subtable_header *)
+>> +			((unsigned long)table + table->length);
+>
+>That's a lot of unnecessary casting AFAICT. You can return an unsigned
+>long from get_acpi_srat_table() and get rid of all that casting here.
+>
+>
+>> +	}
+>> +	num_immovable_mem = i;
+>> +}
+>> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+>> index 9ed9709d9947..b251572e77af 100644
+>> --- a/arch/x86/boot/compressed/kaslr.c
+>> +++ b/arch/x86/boot/compressed/kaslr.c
+>> @@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
+>>  #define KASLR_COMPRESSED_BOOT
+>>  #include "../../lib/kaslr.c"
+>>  
+>> -struct mem_vector {
+>> -	unsigned long long start;
+>> -	unsigned long long size;
+>> -};
+>>  
+>>  /* Only supporting at most 4 unusable memmap regions with kaslr */
+>>  #define MAX_MEMMAP_REGIONS	4
+>> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+>> index a1d5918765f3..b49748366a5b 100644
+>> --- a/arch/x86/boot/compressed/misc.h
+>> +++ b/arch/x86/boot/compressed/misc.h
+>> @@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
+>>  			    unsigned long *output,
+>>  			    unsigned long output_size,
+>>  			    unsigned long *virt_addr);
+>> +struct mem_vector {
+>> +	unsigned long long start;
+>> +	unsigned long long size;
+>> +};
+>> +
+>>  /* cpuflags.c */
+>>  bool has_cpuflag(int flag);
+>>  #else
+>> @@ -116,3 +121,17 @@ static inline void console_init(void)
+>>  void set_sev_encryption_mask(void);
+>>  
+>>  #endif
+>> +
+>> +/* acpi.c */
+>> +#ifdef CONFIG_RANDOMIZE_BASE
+>> +/* Amount of immovable memory regions */
+>> +int num_immovable_mem;
+>> +#endif
+>> +
+>> +#ifdef CONFIG_EARLY_SRAT_PARSE
+>> +void get_immovable_mem(void);
+>> +#else
+>> +static void get_immovable_mem(void)
+>> +{
+>> +}
+>
+>Put those on a single line:
+>
+>static void get_immovable_mem(void) {}
+>
+>> +#endif
+>> -- 
+>> 2.20.1
+>> 
+>> 
+>> 
+>
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
+
+
