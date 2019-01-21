@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30ABDC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DFEC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0168620861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4020620879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080080;
-	bh=QpxeUCL91y1ZEKuF+zecWgI4jYSWw4fLojKE5+NJrgU=;
+	s=default; t=1548080084;
+	bh=Bn/3GabjgROTUGKd+iknlirjLz7W0CjCRvPsuzYU3zM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZWtbAxD9qG5iZFBDTpZjPvMJIC7TCRDZKuM2cW9788XiPTuDngJYXFF0l8saz4F4a
-	 wz/j8ChnHVAmFC66re57u1Fa1uHMJZZniRrAWMerq2k3M+e5kD4XuDLas5ExOlTtsC
-	 z0X5b5OhS5cfKUAX6h0/NXG+4RYvRAdMlYdMUafs=
+	b=Gs1SED4fG3vH1D5FQSe+G9TWaH1BX6gPUnNxxs3YUKF3v9+Glu+9HdyBKs1Y5a0bH
+	 thPu0ECxNpe3mG9yIfXbvHXWPHutcMXLjs84Krhq1uIao1SnJG8G2RQ1xkIri7JNqg
+	 OrmLBprHCR0YE5xvhJet/cO1UNCc9yyfDeyYLuN0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730980AbfAUNwJ (ORCPT
+        id S1730969AbfAUNwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:52:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35230 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:52:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730960AbfAUNwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:05 -0500
+        id S1730951AbfAUNwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92BBE2087F;
-        Mon, 21 Jan 2019 13:52:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E68842063F;
+        Mon, 21 Jan 2019 13:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078725;
-        bh=QpxeUCL91y1ZEKuF+zecWgI4jYSWw4fLojKE5+NJrgU=;
+        s=default; t=1548078722;
+        bh=Bn/3GabjgROTUGKd+iknlirjLz7W0CjCRvPsuzYU3zM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DNhNfWEwDhLbDHlMD0jYB9DJkUmu5qNqQdKMZ1/z5SvsntS7qZiQhGaodQKH++aRE
-         RFKRptuix/Lr20KWiwMBVmxp2mkkmclifXzp3bYMLe0echvVvG0Ys7aS237FtMyPQV
-         fiVqjNBXgdGQSvVC/3xG/0Iqiv1Txq2c4rAFfEF4=
+        b=Q3Qwl1+FaDPbWzb8CjDrH4XDY3zP1PVs4HqhBkdwpG7twskyyjUaURmRHEIHYdPRu
+         F6Znk5mgzDSfzDEAPlnYmlwwFVXK1we3EkvD61N+8Y6kHuEBX88HAPqMEh4OHavCbA
+         Gf2AqE2pJfsYdCdB1H06vQvnDLKzuUAfq9AX3ljE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        "Lukas F. Hartmann" <lukas@mntmn.com>,
-        Dmitry Safonov <dima@arista.com>
-Subject: [PATCH 4.14 04/59] tty: Dont hold ldisc lock in tty_reopen() if ldisc present
-Date:   Mon, 21 Jan 2019 14:43:29 +0100
-Message-Id: <20190121122456.957681790@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 21/59] crypto: authenc - fix parsing key with misaligned rta_len
+Date:   Mon, 21 Jan 2019 14:43:46 +0100
+Message-Id: <20190121122458.883489466@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -66,69 +65,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit d3736d82e8169768218ee0ef68718875918091a0 upstream.
+commit 8f9c469348487844328e162db57112f7d347c49f upstream.
 
-Try to get reference for ldisc during tty_reopen().
-If ldisc present, we don't need to do tty_ldisc_reinit() and lock the
-write side for line discipline semaphore.
-Effectively, it optimizes fast-path for tty_reopen(), but more
-importantly it won't interrupt ongoing IO on the tty as no ldisc change
-is needed.
-Fixes user-visible issue when tty_reopen() interrupted login process for
-user with a long password, observed and reported by Lukas.
+Keys for "authenc" AEADs are formatted as an rtattr containing a 4-byte
+'enckeylen', followed by an authentication key and an encryption key.
+crypto_authenc_extractkeys() parses the key to find the inner keys.
 
-Fixes: c96cf923a98d ("tty: Don't block on IO when ldisc change is pending")
-Fixes: 83d817f41070 ("tty: Hold tty_ldisc_lock() during tty_reopen()")
-Cc: Jiri Slaby <jslaby@suse.com>
-Reported-by: Lukas F. Hartmann <lukas@mntmn.com>
-Tested-by: Lukas F. Hartmann <lukas@mntmn.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+However, it fails to consider the case where the rtattr's payload is
+longer than 4 bytes but not 4-byte aligned, and where the key ends
+before the next 4-byte aligned boundary.  In this case, 'keylen -=
+RTA_ALIGN(rta->rta_len);' underflows to a value near UINT_MAX.  This
+causes a buffer overread and crash during crypto_ahash_setkey().
+
+Fix it by restricting the rtattr payload to the expected size.
+
+Reproducer using AF_ALG:
+
+	#include <linux/if_alg.h>
+	#include <linux/rtnetlink.h>
+	#include <sys/socket.h>
+
+	int main()
+	{
+		int fd;
+		struct sockaddr_alg addr = {
+			.salg_type = "aead",
+			.salg_name = "authenc(hmac(sha256),cbc(aes))",
+		};
+		struct {
+			struct rtattr attr;
+			__be32 enckeylen;
+			char keys[1];
+		} __attribute__((packed)) key = {
+			.attr.rta_len = sizeof(key),
+			.attr.rta_type = 1 /* CRYPTO_AUTHENC_KEYA_PARAM */,
+		};
+
+		fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
+		bind(fd, (void *)&addr, sizeof(addr));
+		setsockopt(fd, SOL_ALG, ALG_SET_KEY, &key, sizeof(key));
+	}
+
+It caused:
+
+	BUG: unable to handle kernel paging request at ffff88007ffdc000
+	PGD 2e01067 P4D 2e01067 PUD 2e04067 PMD 2e05067 PTE 0
+	Oops: 0000 [#1] SMP
+	CPU: 0 PID: 883 Comm: authenc Not tainted 4.20.0-rc1-00108-g00c9fe37a7f27 #13
+	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-20181126_142135-anatol 04/01/2014
+	RIP: 0010:sha256_ni_transform+0xb3/0x330 arch/x86/crypto/sha256_ni_asm.S:155
+	[...]
+	Call Trace:
+	 sha256_ni_finup+0x10/0x20 arch/x86/crypto/sha256_ssse3_glue.c:321
+	 crypto_shash_finup+0x1a/0x30 crypto/shash.c:178
+	 shash_digest_unaligned+0x45/0x60 crypto/shash.c:186
+	 crypto_shash_digest+0x24/0x40 crypto/shash.c:202
+	 hmac_setkey+0x135/0x1e0 crypto/hmac.c:66
+	 crypto_shash_setkey+0x2b/0xb0 crypto/shash.c:66
+	 shash_async_setkey+0x10/0x20 crypto/shash.c:223
+	 crypto_ahash_setkey+0x2d/0xa0 crypto/ahash.c:202
+	 crypto_authenc_setkey+0x68/0x100 crypto/authenc.c:96
+	 crypto_aead_setkey+0x2a/0xc0 crypto/aead.c:62
+	 aead_setkey+0xc/0x10 crypto/algif_aead.c:526
+	 alg_setkey crypto/af_alg.c:223 [inline]
+	 alg_setsockopt+0xfe/0x130 crypto/af_alg.c:256
+	 __sys_setsockopt+0x6d/0xd0 net/socket.c:1902
+	 __do_sys_setsockopt net/socket.c:1913 [inline]
+	 __se_sys_setsockopt net/socket.c:1910 [inline]
+	 __x64_sys_setsockopt+0x1f/0x30 net/socket.c:1910
+	 do_syscall_64+0x4a/0x180 arch/x86/entry/common.c:290
+	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: e236d4a89a2f ("[CRYPTO] authenc: Move enckeylen into key itself")
+Cc: <stable@vger.kernel.org> # v2.6.25+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ crypto/authenc.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1254,7 +1254,8 @@ static void tty_driver_remove_tty(struct
- static int tty_reopen(struct tty_struct *tty)
- {
- 	struct tty_driver *driver = tty->driver;
--	int retval;
-+	struct tty_ldisc *ld;
-+	int retval = 0;
- 
- 	if (driver->type == TTY_DRIVER_TYPE_PTY &&
- 	    driver->subtype == PTY_TYPE_MASTER)
-@@ -1266,13 +1267,18 @@ static int tty_reopen(struct tty_struct
- 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
- 		return -EBUSY;
- 
--	retval = tty_ldisc_lock(tty, 5 * HZ);
--	if (retval)
--		return retval;
--
--	if (!tty->ldisc)
--		retval = tty_ldisc_reinit(tty, tty->termios.c_line);
--	tty_ldisc_unlock(tty);
-+	ld = tty_ldisc_ref_wait(tty);
-+	if (ld) {
-+		tty_ldisc_deref(ld);
-+	} else {
-+		retval = tty_ldisc_lock(tty, 5 * HZ);
-+		if (retval)
-+			return retval;
+--- a/crypto/authenc.c
++++ b/crypto/authenc.c
+@@ -58,14 +58,22 @@ int crypto_authenc_extractkeys(struct cr
+ 		return -EINVAL;
+ 	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
+ 		return -EINVAL;
+-	if (RTA_PAYLOAD(rta) < sizeof(*param))
 +
-+		if (!tty->ldisc)
-+			retval = tty_ldisc_reinit(tty, tty->termios.c_line);
-+		tty_ldisc_unlock(tty);
-+	}
++	/*
++	 * RTA_OK() didn't align the rtattr's payload when validating that it
++	 * fits in the buffer.  Yet, the keys should start on the next 4-byte
++	 * aligned boundary.  To avoid confusion, require that the rtattr
++	 * payload be exactly the param struct, which has a 4-byte aligned size.
++	 */
++	if (RTA_PAYLOAD(rta) != sizeof(*param))
+ 		return -EINVAL;
++	BUILD_BUG_ON(sizeof(*param) % RTA_ALIGNTO);
  
- 	if (retval == 0)
- 		tty->count++;
+ 	param = RTA_DATA(rta);
+ 	keys->enckeylen = be32_to_cpu(param->enckeylen);
+ 
+-	key += RTA_ALIGN(rta->rta_len);
+-	keylen -= RTA_ALIGN(rta->rta_len);
++	key += rta->rta_len;
++	keylen -= rta->rta_len;
+ 
+ 	if (keylen < keys->enckeylen)
+ 		return -EINVAL;
 
 
