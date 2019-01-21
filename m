@@ -2,85 +2,61 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172EFC37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF74C3712F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E158F21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B44C420879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:51:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="hOn+7cxx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfAUVrR (ORCPT
+        id S1727442AbfAUVvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:47:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46612 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726004AbfAUVrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 16:47:16 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3C2F97F6CB;
-        Mon, 21 Jan 2019 21:47:16 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 118C1648AF;
-        Mon, 21 Jan 2019 21:47:15 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 7771922024A; Mon, 21 Jan 2019 16:47:15 -0500 (EST)
-Date:   Mon, 21 Jan 2019 16:47:15 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Dennis Zhou <dennis@kernel.org>,
-        cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
-Message-ID: <20190121214715.GA27713@redhat.com>
-References: <20190118103127.325-1-righi.andrea@gmail.com>
- <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
- <20190118184403.GB1535@xps-13>
- <20190118194652.gg5j2yz3h2llecpj@macbook-pro-91.dhcp.thefacebook.com>
- <20190119100827.GA1630@xps-13>
+        Mon, 21 Jan 2019 16:51:49 -0500
+Received: from a9-112.smtp-out.amazonses.com ([54.240.9.112]:32926 "EHLO
+        a9-112.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725993AbfAUVvs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 16:51:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1548107507;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=ItNSaKDGxoD1aSyvb0fxyYSFutq6GEdD+caS/lRflm8=;
+        b=hOn+7cxxXuEjteiGeR7rdjymEElIZfAkaGPapPeOkKf8NsmyUvGUt9gqwIgp/uql
+        zqPGBTEEyNSwyH+GQbJxkdXhR+I+w1WTzr2+NsCagVOfsoXdxp6uIRHtTBeMXvdfUYJ
+        MxDf0DpzxNX5drf9dZ5lRsapvxqxa3tfhYO4Imhk=
+Date:   Mon, 21 Jan 2019 21:51:47 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Davidlohr Bueso <dave@stgolabs.net>
+cc:     akpm@linux-foundation.org, dledford@redhat.com, jgg@mellanox.com,
+        jack@suse.de, ira.weiny@intel.com, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/6] mm: make mm->pinned_vm an atomic64 counter
+In-Reply-To: <20190121174220.10583-2-dave@stgolabs.net>
+Message-ID: <010001687265e644-49af6f45-e29b-41a7-9cd4-50ff8d64b9f9-000000@email.amazonses.com>
+References: <20190121174220.10583-1-dave@stgolabs.net> <20190121174220.10583-2-dave@stgolabs.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190119100827.GA1630@xps-13>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 21 Jan 2019 21:47:16 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.01.21-54.240.9.112
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 11:08:27AM +0100, Andrea Righi wrote:
+On Mon, 21 Jan 2019, Davidlohr Bueso wrote
+> Taking a sleeping lock to _only_ increment a variable is quite the
+> overkill, and pretty much all users do this. Furthermore, some drivers
+> (ie: infiniband and scif) that need pinned semantics can go to quite
+> some trouble to actually delay via workqueue (un)accounting for pinned
+> pages when not possible to acquire it.
 
-[..]
-> Alright, let's skip the root cgroup for now. I think the point here is
-> if we want to provide sync() isolation among cgroups or not.
-> 
-> According to the manpage:
-> 
->        sync()  causes  all  pending  modifications  to filesystem metadata and cached file data to be
->        written to the underlying filesystems.
-> 
-> And:
->        According to the standard specification (e.g., POSIX.1-2001), sync() schedules the writes, but
->        may  return  before  the actual writing is done.  However Linux waits for I/O completions, and
->        thus sync() or syncfs() provide the same guarantees as fsync called on every file in the  sys‐
->        tem or filesystem respectively.
-> 
-> Excluding the root cgroup, do you think a sync() issued inside a
-> specific cgroup should wait for I/O completions only for the writes that
-> have been generated by that cgroup?
+Reviewed-by: Christoph Lameter <cl@linux.com>
 
-Can we account I/O towards the cgroup which issued "sync" only if write
-rate of sync cgroup is higher than cgroup to which page belongs to. Will
-that solve problem, assuming its doable?
-
-Vivek
