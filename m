@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A70DC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C36C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECAD82089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DE8D2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078560;
-	bh=AOFLQmNjhgTd3EkdbaVo/e8C0hOdcmjO9dafYUswsAA=;
+	s=default; t=1548078564;
+	bh=+k/vbZ6X6Rf4lk0LHbiNEpca9/RF+yRcb2XJVR56UJ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KTTbcW/OjwtCbl9ckgSL5Z4iTMy0yS7gKHWOQqv77a2RSXCumESMvDfsYbbJ+5jnw
-	 BNuicILCJBcibm1tdvZM0r6XwYIsWDARdojmQ7EsMtumCF2h+w33PROmw7OMT1fy+h
-	 iY2gIGwCYcSmFxZi1F+XuIc319Bv99wMD7Ahr1NM=
+	b=kJbBYBK/TnVDVKfijSumaGh6cy474jdgr7ZeSKAEyvMDcqiqFrBakmhk/IPdVxEHb
+	 0oQDMLkUz1XIoE6p5LIa9CmZBOIiM0fUgzJ/qUi98OTA+f45tDw5XoCmOQYxEVhrFB
+	 lnPLMnROHd9ulltnXkoUZ/N0mPbvEikeW3LxNQC4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730184AbfAUNtS (ORCPT
+        id S1729631AbfAUNtW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:49:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59730 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:49:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730159AbfAUNtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:49:15 -0500
+        id S1730180AbfAUNtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:49:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AA5420879;
-        Mon, 21 Jan 2019 13:49:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E220F21019;
+        Mon, 21 Jan 2019 13:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078555;
-        bh=AOFLQmNjhgTd3EkdbaVo/e8C0hOdcmjO9dafYUswsAA=;
+        s=default; t=1548078558;
+        bh=+k/vbZ6X6Rf4lk0LHbiNEpca9/RF+yRcb2XJVR56UJ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RVKWxTF+wCdnJXGgjACHGw8NuKLpBCRbo3ISU7P+SRWvHnESaZ3WXbjIAn71Qm3xp
-         3ZQPwt1BRh7tzauAuShzKs7vE5ZPoZyWJsD0gE5tCRdQywnr99I7rQ5jZmPRQNNrz9
-         Ti7aLvfs6fvOLlWrPZ5n0Ta8raTWsL50Oae4dE9g=
+        b=TBgbRzWbq0piV5IfnUYw1fZjP3Yt36u3TOlwoXPKWi4SpX1Gb13UviE23TGbNnsSH
+         wNuVRHUEGp86uGGXoKfI41ugGOZc5dzkZ/LIrapND5cav/Gf50GKbuFSGDWDa52ki7
+         K5uFHXdKUQAAcFjG4JnbJMHZ+bYKJgFXx8TeqsT4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com,
+        syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.20 073/111] media: vivid: fix error handling of kthread_run
-Date:   Mon, 21 Jan 2019 14:43:07 +0100
-Message-Id: <20190121122504.492565486@linuxfoundation.org>
+Subject: [PATCH 4.20 074/111] media: vivid: set min width/height to a value > 0
+Date:   Mon, 21 Jan 2019 14:43:08 +0100
+Message-Id: <20190121122504.606619334@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -68,55 +68,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 701f49bc028edb19ffccd101997dd84f0d71e279 upstream.
+commit 9729d6d282a6d7ce88e64c9119cecdf79edf4e88 upstream.
 
-kthread_run returns an error pointer, but elsewhere in the code
-dev->kthread_vid_cap/out is checked against NULL.
+The capture DV timings capabilities allowed for a minimum width and
+height of 0. So passing a timings struct with 0 values is allowed
+and will later cause a division by zero.
 
-If kthread_run returns an error, then set the pointer to NULL.
-
-I chose this method over changing all kthread_vid_cap/out tests
-elsewhere since this is more robust.
+Ensure that the width and height must be >= 16 to avoid this.
 
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com
+Reported-by: syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-kthread-cap.c |    5 ++++-
- drivers/media/platform/vivid/vivid-kthread-out.c |    5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/media/platform/vivid/vivid-vid-common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-@@ -873,8 +873,11 @@ int vivid_start_generating_vid_cap(struc
- 			"%s-vid-cap", dev->v4l2_dev.name);
- 
- 	if (IS_ERR(dev->kthread_vid_cap)) {
-+		int err = PTR_ERR(dev->kthread_vid_cap);
-+
-+		dev->kthread_vid_cap = NULL;
- 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
--		return PTR_ERR(dev->kthread_vid_cap);
-+		return err;
- 	}
- 	*pstreaming = true;
- 	vivid_grab_controls(dev, true);
---- a/drivers/media/platform/vivid/vivid-kthread-out.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-out.c
-@@ -244,8 +244,11 @@ int vivid_start_generating_vid_out(struc
- 			"%s-vid-out", dev->v4l2_dev.name);
- 
- 	if (IS_ERR(dev->kthread_vid_out)) {
-+		int err = PTR_ERR(dev->kthread_vid_out);
-+
-+		dev->kthread_vid_out = NULL;
- 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
--		return PTR_ERR(dev->kthread_vid_out);
-+		return err;
- 	}
- 	*pstreaming = true;
- 	vivid_grab_controls(dev, true);
+--- a/drivers/media/platform/vivid/vivid-vid-common.c
++++ b/drivers/media/platform/vivid/vivid-vid-common.c
+@@ -21,7 +21,7 @@ const struct v4l2_dv_timings_cap vivid_d
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, MAX_WIDTH, 0, MAX_HEIGHT, 14000000, 775000000,
++	V4L2_INIT_BT_TIMINGS(16, MAX_WIDTH, 16, MAX_HEIGHT, 14000000, 775000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 		V4L2_DV_BT_STD_CVT | V4L2_DV_BT_STD_GTF,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_INTERLACED)
 
 
