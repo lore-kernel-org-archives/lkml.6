@@ -2,133 +2,132 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A17A2C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B007C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 793362084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC8492084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:44:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KCjAlSqB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfAUHn4 (ORCPT
+        id S1728942AbfAUHoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:43:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39024 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728477AbfAUHnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:43:55 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 23DAF811D3;
-        Mon, 21 Jan 2019 06:24:42 +0000 (UTC)
-Received: from localhost (ovpn-12-168.pek2.redhat.com [10.72.12.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7E70C5D6AA;
-        Mon, 21 Jan 2019 06:24:38 +0000 (UTC)
-Date:   Mon, 21 Jan 2019 14:24:35 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     kexec@lists.infradead.org, Dave Young <dyoung@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        Mon, 21 Jan 2019 02:44:12 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35738 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728485AbfAUHoM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:44:12 -0500
+Received: by mail-qk1-f195.google.com with SMTP id w204so11790168qka.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:44:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=CpPMpjhb3lB7s2KZRGykFLTqswu/y32QmJo5HrnL5As=;
+        b=KCjAlSqBfUlpr6/bNNZ+/b91cOD0xLSe3kXpnY5Yk9HPexVMeUzNhyfH6ktzaK1MAp
+         EtfDpkT/HtwBVjuWcJzqENGd+VjLy7AVtVNCWQm5BuTr7++iEfgVEbB+q/3fIaU7OzUV
+         7FVPLoGOeO68HM16Ks9S5KudqpEfUmzaZbe0I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=CpPMpjhb3lB7s2KZRGykFLTqswu/y32QmJo5HrnL5As=;
+        b=qcouVp62cPD1eKwtgUNmNl1Sis4xDX+XsOrKVzLxlni5jyza3W1sYTZcTc582OqmBW
+         S3kwxj+z63+WcUMWe+uVZ1Gcb1d86Yxj7UlO+HIndxaLiRbu/ghG3zX9oLE3VSyGuIg0
+         kaVEc34pzIUFFJDMiQuo+YalV1+ARMtuGscnxzvIjqqKwg74VoaYrZkf0xQKn392INXS
+         Bl3Qpk3ICN6hx/MXxkvvRg+hbVSia9vcRO5YWLX3a0jS0XFNOYJwGe+ujZ2KU3VaWtag
+         bzaKIIOXjnoE3BQ/+oos86bYqOF4NFsJSYxjb4q8VTGBMc9ddxz7gMNJDRv3wyLT9LLz
+         oseQ==
+X-Gm-Message-State: AJcUukfcJ5YbVdJNlnscwc3ive6AznkHAWtgSPy7SPPZx5zY/TjR16Qm
+        fjEKp9NPdY9tTZ0NK2sJXnQBHbPfLyU=
+X-Google-Smtp-Source: ALg8bN6R2/QyUJi0/wNJRBZmF/ZpIUgEZ/+Gx0loI9iAU3lObbZbx53pVBlhpwNcy1RrK9yk+hJYHA==
+X-Received: by 2002:a37:4b44:: with SMTP id y65mr22477595qka.316.1548044538138;
+        Sun, 20 Jan 2019 20:22:18 -0800 (PST)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id c48sm67891799qtd.9.2019.01.20.20.22.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 20 Jan 2019 20:22:17 -0800 (PST)
+Date:   Sun, 20 Jan 2019 23:22:11 -0500 (EST)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190121062435.GA23371@MiWiFi-R3L-srv>
-References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
+Subject: [PATCH] vgacon: unconfuse vc_origin when using soft scrollback
+Message-ID: <nycvar.YSQ.7.76.1901202317500.1525@knanqh.ubzr>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 21 Jan 2019 06:24:42 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/21/19 at 01:16pm, Pingfan Liu wrote:
-> People reported crashkernel=384M reservation failed on a high end server
-> with KASLR enabled.  In that case there is enough free memory under 896M
-> but crashkernel reservation still fails intermittently.
-> 
-> The situation is crashkernel reservation code only finds free region under
-> 896 MB with 128M aligned in case no ',high' being used.  And KASLR could
-> break the first 896M into several parts randomly thus the failure happens.
-> User has no way to predict and make sure crashkernel=xM working unless
-> he/she use 'crashkernel=xM,high'.  Since 'crashkernel=xM' is the most
-> common use case this issue is a serious bug.
-> 
-> And we can't answer questions raised from customer:
-> 1) why it doesn't succeed to reserve 896 MB;
-> 2) what's wrong with memory region under 4G;
-> 3) why I have to add ',high', I only require 384 MB, not 3840 MB.
-> 
-> This patch tries to get memory region from 896 MB firstly, then [896MB,4G],
-> finally above 4G.
-> 
-> Dave Young sent the original post, and I just re-post it with commit log
-> improvement as his requirement.
-> http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
-> There was an old discussion below (previously posted by Chao Wang):
-> https://lkml.org/lkml/2013/10/15/601
-> 
-> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: yinghai@kernel.org,
-> Cc: vgoyal@redhat.com
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: x86@kernel.org
-> Cc: linux-kernel@vger.kernel.org
+When CONFIG_VGACON_SOFT_SCROLLBACK is selected, the VGA display memory
+index and vc_visible_origin don't change when scrollback is activated.
+The actual screen content is saved away and the scrollbackdata is copied
+over it. However the vt code, and /dev/vcs devices in particular, still
+expect vc_origin to always point at the actual screen content not the
+displayed scrollback content.
 
-Looks good, ack.
+So adjust vc_origin to point at the saved screen content when scrollback
+is active and set it back to vc_visible_origin when restoring the screen.
 
-Acked-by: Baoquan He <bhe@redhat.com>
+This fixes /dev/vcsa<n> that return scrollback content when they
+shouldn't (onli /dev/vcsa without a number should), and also fixes
+/dev/vcsu that should return scrollback content when scrollback is
+active but currently doesn't.
 
-Thanks
-Baoquan
+An unnecessary call to vga_set_mem_top() is also removed.
 
-> ---
-> v6 -> v7: commit log improvement
->  arch/x86/kernel/setup.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 3d872a5..fa62c81 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -551,6 +551,22 @@ static void __init reserve_crashkernel(void)
->  						    high ? CRASH_ADDR_HIGH_MAX
->  							 : CRASH_ADDR_LOW_MAX,
->  						    crash_size, CRASH_ALIGN);
-> +#ifdef CONFIG_X86_64
-> +		/*
-> +		 * crashkernel=X reserve below 896M fails? Try below 4G
-> +		 */
-> +		if (!high && !crash_base)
-> +			crash_base = memblock_find_in_range(CRASH_ALIGN,
-> +						(1ULL << 32),
-> +						crash_size, CRASH_ALIGN);
-> +		/*
-> +		 * crashkernel=X reserve below 4G fails? Try MAXMEM
-> +		 */
-> +		if (!high && !crash_base)
-> +			crash_base = memblock_find_in_range(CRASH_ALIGN,
-> +						CRASH_ADDR_HIGH_MAX,
-> +						crash_size, CRASH_ALIGN);
-> +#endif
->  		if (!crash_base) {
->  			pr_info("crashkernel reservation failed - No suitable area found.\n");
->  			return;
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Cc: stable@vger.kernel.org # v4.19+
+
+---
+
+I tagged it for stable starting with v4.19 as this is the kernel that
+introduced /dev/vcsu* which is directly affected. Users of earlier kernels
+most likely won't care.
+
+diff --git a/drivers/video/console/vgacon.c b/drivers/video/console/vgacon.c
+index 09731b2f68..c6b3bdbbdb 100644
+--- a/drivers/video/console/vgacon.c
++++ b/drivers/video/console/vgacon.c
+@@ -271,6 +271,7 @@ static void vgacon_scrollback_update(struct vc_data *c, int t, int count)
+ 
+ static void vgacon_restore_screen(struct vc_data *c)
+ {
++	c->vc_origin = c->vc_visible_origin;
+ 	vgacon_scrollback_cur->save = 0;
+ 
+ 	if (!vga_is_gfx && !vgacon_scrollback_cur->restore) {
+@@ -287,8 +288,7 @@ static void vgacon_scrolldelta(struct vc_data *c, int lines)
+ 	int start, end, count, soff;
+ 
+ 	if (!lines) {
+-		c->vc_visible_origin = c->vc_origin;
+-		vga_set_mem_top(c);
++		vgacon_restore_screen(c);
+ 		return;
+ 	}
+ 
+@@ -298,6 +298,7 @@ static void vgacon_scrolldelta(struct vc_data *c, int lines)
+ 	if (!vgacon_scrollback_cur->save) {
+ 		vgacon_cursor(c, CM_ERASE);
+ 		vgacon_save_screen(c);
++		c->vc_origin = (unsigned long)c->vc_screenbuf;
+ 		vgacon_scrollback_cur->save = 1;
+ 	}
+ 
+@@ -335,7 +336,7 @@ static void vgacon_scrolldelta(struct vc_data *c, int lines)
+ 		int copysize;
+ 
+ 		int diff = c->vc_rows - count;
+-		void *d = (void *) c->vc_origin;
++		void *d = (void *) c->vc_visible_origin;
+ 		void *s = (void *) c->vc_screenbuf;
+ 
+ 		count *= c->vc_size_row;
