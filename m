@@ -2,106 +2,111 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CABC31680
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7570C31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C62920663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3D6020663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfAURQI (ORCPT
+        id S1727444AbfAURQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 12:16:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42466 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725879AbfAURQH (ORCPT
+        Mon, 21 Jan 2019 12:16:41 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35521 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbfAURQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 12:16:07 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LHAFjb096872
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:16:06 -0500
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q5grqvdr7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:16:06 -0500
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Mon, 21 Jan 2019 17:16:05 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 17:16:03 -0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LHG2SB22544566
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 17:16:02 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 495176A054;
-        Mon, 21 Jan 2019 17:16:02 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4EACA6A04D;
-        Mon, 21 Jan 2019 17:16:01 +0000 (GMT)
-Received: from oc6728276242.ibm.com (unknown [9.85.171.190])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 21 Jan 2019 17:16:01 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-Cc:     joel@jms.id.au, andrew@aj.id.au, benh@kernel.crashing.org,
-        Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH] fsi: sbefifo: Don't fail operations when in SBE IPL state
-Date:   Mon, 21 Jan 2019 11:15:58 -0600
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 19012117-0036-0000-0000-00000A7F1022
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010449; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01149751; UDB=6.00599111; IPR=6.00930075;
- MB=3.00025224; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-21 17:16:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012117-0037-0000-0000-00004A6E36EE
-Message-Id: <1548090958-25908-1-git-send-email-eajames@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210135
+        Mon, 21 Jan 2019 12:16:40 -0500
+Received: by mail-qt1-f193.google.com with SMTP id v11so24403381qtc.2;
+        Mon, 21 Jan 2019 09:16:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KkmENIPSWFkkOPjdjASO6jPlTgP2cZ2E0xpwv2RymMU=;
+        b=e1112uBsIRLIl1HKEq0atQY41aY8c970AidX5WGEYp60GPGJekHSvN8hqi2Z6C2x76
+         BfTqVbN6iAgvGlpW3HAD/iJHW5aQKP5dnSUVay0vX5cmwR8ppRiXME0WUWH7lwHUmCrY
+         x7SuxJGosuUrRQz+14hRmHZyzPSv5M3Cu0/Q/7ShS6XJ7/Q4iQdjsbhGrR7P9Kv5plP+
+         5BMeLq2LprcdfmrxLs1E7VMW8BnPOkl9RL+1AUAQjmDa02EbTY5Kx85Fq69yhUxFY7HQ
+         VynySRpO2aDiSedVtP9MFCXuRj4WmXje7yUsaJpdjNZ7Xx3meSNC/54/1pAtRkefDuT6
+         5/tw==
+X-Gm-Message-State: AJcUukd88DrMNp09M4CXC6RKQL0St2fiUdKLDtFC/SlF8RwEYssm3WpV
+        tLcJOMsOsGVF6LADgdYSrCyDItwjSRdNhslDfSPG7w==
+X-Google-Smtp-Source: ALg8bN66aBH7RXKQ0bXSkN8sk3VXrCUcqa6u6kZkHpSJbrpKlqHA/geIKx/EPW4fdPypG+N0UQM0nqA0hXlJjtf+fCs=
+X-Received: by 2002:a05:6214:1087:: with SMTP id o7mr26826241qvr.115.1548090999325;
+ Mon, 21 Jan 2019 09:16:39 -0800 (PST)
+MIME-Version: 1.0
+References: <20190121143951.68956db3@canb.auug.org.au>
+In-Reply-To: <20190121143951.68956db3@canb.auug.org.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 21 Jan 2019 18:16:22 +0100
+Message-ID: <CAK8P3a0Yth+f8AANE6g8c_zE0Zt1CvCdzMDFK=pr8eNqmrBV0Q@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Christian Brauner <christian@brauner.io>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SBE fifo operations should be allowed while the SBE is in any of the
-"IPL" states. Operations should succeed in this state.
+On Mon, Jan 21, 2019 at 4:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the pidfd tree got conflicts in:
+>
+>   arch/x86/entry/syscalls/syscall_32.tbl
+>   include/uapi/asm-generic/unistd.h
+>
+> between commit:
+>
+>   10a9a4dd92e6 ("arch: add split IPC system calls where needed")
+>   b1788424aa2e ("y2038: add 64-bit time_t syscalls to all 32-bit architectures")
+>
+> from the y2038 tree and commit:
+>
+>   3d2991bc7a67 ("signal: add pidfd_send_signal() syscall")
+>
+> from the pidfd tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/fsi/fsi-sbefifo.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Stephen,
 
-diff --git a/drivers/fsi/fsi-sbefifo.c b/drivers/fsi/fsi-sbefifo.c
-index c7d13ac..f7665b3 100644
---- a/drivers/fsi/fsi-sbefifo.c
-+++ b/drivers/fsi/fsi-sbefifo.c
-@@ -290,11 +290,11 @@ static int sbefifo_check_sbe_state(struct sbefifo *sbefifo)
- 	switch ((sbm & CFAM_SBM_SBE_STATE_MASK) >> CFAM_SBM_SBE_STATE_SHIFT) {
- 	case SBE_STATE_UNKNOWN:
- 		return -ESHUTDOWN;
-+	case SBE_STATE_DMT:
-+		return -EBUSY;
- 	case SBE_STATE_IPLING:
- 	case SBE_STATE_ISTEP:
- 	case SBE_STATE_MPIPL:
--	case SBE_STATE_DMT:
--		return -EBUSY;
- 	case SBE_STATE_RUNTIME:
- 	case SBE_STATE_DUMP: /* Not sure about that one */
- 		break;
--- 
-1.8.3.1
+>  +385   i386    io_pgetevents           sys_io_pgetevents_time32        __ia32_compat_sys_io_pgetevents
+>   386   i386    rseq                    sys_rseq                        __ia32_sys_rseq
+> + 387   i386    pidfd_send_signal       sys_pidfd_send_signal           __ia32_sys_pidfd_send_signal
+>  +# room for arch specific syscalls
+>  +393   i386    semget                  sys_semget                      __ia32_sys_semget
+>  +394   i386    semctl                  sys_semctl                      __ia32_compat_sys_semctl
 
+>   #define __NR_kexec_file_load 294
+>   __SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
+> - /* 295 through 402 are unassigned to sync up with generic numbers */
+> + #define __NR_pidfd_send_signal 295
+> + __SYSCALL(__NR_pidfd_send_signal, sys_pidfd_send_signal)
+> ++/* 296 through 402 are unassigned to sync up with generic numbers */
+>  +#if __BITS_PER_LONG == 32
+>  +#define __NR_clock_gettime64 403
+>  +__SYSCALL(__NR_clock_gettime64, sys_clock_gettime)
+
+If we merge my patches, then any other system calls should get numbers
+above 423 on all architectures. Part of what I did in my branch was to
+add all missing calls on architectures, and then move up to a common
+number for the newly added ones. Your merge works correctly, but
+it works against that idea by adding new numbers that conflict with
+existing ones on other architectures, e.g. 387 is already assigned
+on arm, microblaze, powerpc, and sh, and 294 is assigned almost
+everywhere other than the asm-generic version.
+
+      Arnd
