@@ -2,134 +2,170 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5425C3713C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B4AC3712F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A39120861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:19:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbSC4/cv"
+	by mail.kernel.org (Postfix) with ESMTP id 8357A20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfAUWTq (ORCPT
+        id S1727785AbfAUWZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:19:46 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43513 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfAUWTq (ORCPT
+        Mon, 21 Jan 2019 17:25:19 -0500
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:7115 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726152AbfAUWZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 17:19:46 -0500
-Received: by mail-qt1-f196.google.com with SMTP id i7so25297876qtj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 14:19:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w39eLKjc8Fh+HqynLghx8C2xg9PPv384cMHMfitskV4=;
-        b=IbSC4/cvTieRSCg/6kd4ELoBnwdDyfv7DBsoK6WwwtdNhuzJM1haWMStO33emirszj
-         XueZ8mmRCgM+ACC2EYuqs6ejScRVW6yBXGhkHTfarvTbtAogDVO7vf1lKnMgobMG7OOb
-         XiSuwAzeTx9CNeszC+cYtl2TS+x2vV51cHreXdJtXmoXHySjbMHk7zWLL5sttzx7Wg+K
-         jXbX+BOebhCWJ3l6MPyNQKHzOLAftnto+pxJlJaM20WQAd6PMEY0Og+LSEByxnJFxgym
-         ojbw04nEh6HKg+C3GndX4vUogN00lKD/CWFenzN/bB4iXVWzAMXUnJEZSUUI7qOOzAg8
-         1DDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w39eLKjc8Fh+HqynLghx8C2xg9PPv384cMHMfitskV4=;
-        b=Q4d3PpI1dSUUndmrArxJ4xd6/ETX+EcMGcGXff+1izn77+ZHWp818usU3Cs20Zq/Y/
-         YjeJNxGz4Tlo/VRDog/Uzwa9eER+LCYU1FEDg0P6up+XxCzMpjyNjtRd3jcyqnxl8kbn
-         0aRXHYLJOS15nZR/E1QJQMoiKQtPNQ0vr/2MO39r5/gBOJidecWYVHT/ptyoWONtbuYX
-         DQGfUtBfxyy/70KZRAW9DOeFmPM4KO1E7CkaB4Z79C3x40KVWSixdP516Ephs7WHELoA
-         43I+4ZLtRlQ4B51OVXwckJk/9bCjdtKJxdekbQ/Pd/2r1S1QfKbGkSuJ3KHEiovfGD/h
-         LRMg==
-X-Gm-Message-State: AJcUukeNxNCoXYvjVPLD6NpjzrfnG7tEkFP2O7CXx865BRKO1OFKxGmX
-        zpyXp0I0ERhf6+Wv5poGXprGfRBRXmFXkkfOdK4=
-X-Google-Smtp-Source: ALg8bN7MIA2dLUnNXTP3lBnjwKBZ4Pv41GvrbvcniKXNE0Fv/ZnL7l7fp2XiJJv0BMjeZDSeVZD8OukmZ0s2bA5WhT0=
-X-Received: by 2002:a0c:a8e3:: with SMTP id h35mr26873781qvc.92.1548109185242;
- Mon, 21 Jan 2019 14:19:45 -0800 (PST)
+        Mon, 21 Jan 2019 17:25:18 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl6.internode.on.net with ESMTP; 22 Jan 2019 08:54:12 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1glhzH-0001mR-QN; Tue, 22 Jan 2019 09:24:11 +1100
+Date:   Tue, 22 Jan 2019 09:24:11 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-alpha@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] fs: let filldir_t return bool instead of an error
+ code
+Message-ID: <20190121222411.GD4205@dastard>
+References: <20190118161440.220134-1-jannh@google.com>
+ <20190118161440.220134-3-jannh@google.com>
+ <20190120224059.GA4205@dastard>
+ <CAG48ez3SgejgGbctHwxON1B1k26xk-z16xdozKZkx7=-Li0aHw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190110043653.25901-1-mdf@kernel.org> <CAFqH_53Mdh6chEDTkNH_ZGC6scHhXXgp7zdDaSS2Xfd--dfrNQ@mail.gmail.com>
- <20190121184017.GA5761@archbook>
-In-Reply-To: <20190121184017.GA5761@archbook>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Mon, 21 Jan 2019 23:19:34 +0100
-Message-ID: <CAFqH_50fsPx1raFReNt719fT2DmgAb0YHwzzbmfdAy9gYigLiA@mail.gmail.com>
-Subject: Re: [PATCH v3] platform/chrome: Add cros_ec_readmem() helpers for
- I2C/SPI based ECs
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Moritz Fischer <moritz@ettus.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3SgejgGbctHwxON1B1k26xk-z16xdozKZkx7=-Li0aHw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Moritz,
-
-Missatge de Moritz Fischer <mdf@kernel.org> del dia dl., 21 de gen.
-2019 a les 19:40:
->
-> Hi Enrico,
->
-> On Mon, Jan 21, 2019 at 06:32:48PM +0100, Enric Balletbo Serra wrote:
-> > Hi Moritz,
-> >
-> > Missatge de Moritz Fischer <mdf@kernel.org> del dia dj., 10 de gen.
-> > 2019 a les 5:40:
+On Mon, Jan 21, 2019 at 04:49:45PM +0100, Jann Horn wrote:
+> On Sun, Jan 20, 2019 at 11:41 PM Dave Chinner <david@fromorbit.com> wrote:
+> > On Fri, Jan 18, 2019 at 05:14:40PM +0100, Jann Horn wrote:
+> > > As Al Viro pointed out, many filldir_t functions return error codes, but
+> > > all callers of filldir_t functions just check whether the return value is
+> > > non-zero (to determine whether to continue reading the directory); more
+> > > precise errors have to be signalled via struct dir_context.
+> > > Change all filldir_t functions to return bool instead of int.
 > > >
-> > > Add cros_ec_readmem() helpers for I2C/SPI based ECs.
-> > > Unlike the LPC based ECs the I2C/SPI based ones cannot just directly
-> > > read the mapped region, but have to resort to EC_CMD_READ_MEMMAP.
-> > >
-> > > This is useful for things like accessing fan speeds or temperatures.
-> > >
-> > > Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> > > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > Signed-off-by: Jann Horn <jannh@google.com>
 > > > ---
+> > >  arch/alpha/kernel/osf_sys.c | 12 +++----
+> > >  fs/afs/dir.c                | 30 +++++++++--------
+> > >  fs/ecryptfs/file.c          | 13 ++++----
+> > >  fs/exportfs/expfs.c         |  8 ++---
+> > >  fs/fat/dir.c                |  8 ++---
+> > >  fs/gfs2/export.c            |  6 ++--
+> > >  fs/nfsd/nfs4recover.c       |  8 ++---
+> > >  fs/nfsd/vfs.c               |  6 ++--
+> > >  fs/ocfs2/dir.c              | 10 +++---
+> > >  fs/ocfs2/journal.c          | 14 ++++----
+> > >  fs/overlayfs/readdir.c      | 24 +++++++-------
+> > >  fs/readdir.c                | 64 ++++++++++++++++++-------------------
+> > >  fs/reiserfs/xattr.c         | 20 ++++++------
+> > >  fs/xfs/scrub/dir.c          |  8 ++---
+> > >  fs/xfs/scrub/parent.c       |  4 +--
+> > >  include/linux/fs.h          | 10 +++---
+> > >  16 files changed, 125 insertions(+), 120 deletions(-)
 > > >
-> > > Hi all,
+> > > diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+> > > index db1c2144d477..14e5ae0dac50 100644
+> > > --- a/arch/alpha/kernel/osf_sys.c
+> > > +++ b/arch/alpha/kernel/osf_sys.c
+> > > @@ -108,7 +108,7 @@ struct osf_dirent_callback {
+> > >       int error;
+> > >  };
 > > >
-> > > This can be used for a hwmon or thermal driver such as [1], but also
-> > > alone can be used with 'ectool' via the ioctl() interface.
+> > > -static int
+> > > +static bool
+> > >  osf_filldir(struct dir_context *ctx, const char *name, int namlen,
+> > >           loff_t offset, u64 ino, unsigned int d_type)
+> > >  {
+> > > @@ -120,14 +120,14 @@ osf_filldir(struct dir_context *ctx, const char *name, int namlen,
 > > >
+> > >       buf->error = check_dirent_name(name, namlen);
+> > >       if (unlikely(buf->error))
+> > > -             return -EFSCORRUPTED;
+> > > +             return false;
+> > >       buf->error = -EINVAL;   /* only used if we fail */
+> > >       if (reclen > buf->count)
+> > > -             return -EINVAL;
+> > > +             return false;
 > >
-> > ooi, did you try this with a Chromebook? Or only with your device?
->
-> Nope, mine has a dead battery (and no fans ... :-/)
+> > Oh, it's because the error being returned is being squashed by
+> > dir_emit():
+> 
+> Yeah.
+> 
+> > >  struct dir_context {
+> > > @@ -3469,17 +3471,17 @@ static inline bool dir_emit(struct dir_context *ctx,
+> > >                           const char *name, int namelen,
+> > >                           u64 ino, unsigned type)
+> > >  {
+> > > -     return ctx->actor(ctx, name, namelen, ctx->pos, ino, type) == 0;
+> > > +     return ctx->actor(ctx, name, namelen, ctx->pos, ino, type);
+> > >  }
 > >
-> > I was a bit worried on the side effects to expose this command to
-> > userspace, so I did a quick test, and to be honest I didn't like the
-> > result. Issuing the ioctl resulted on a reboot on the Chromebook I
-> > tested, which is not good. I didn't investigate more but I can say
-> > that this change, at least, will need some rework. I'll try to
-> > investigate a bit more on what is happening.
->
-> That sounds bad :-/
->
-> What chromebook did you run this on (so I can look at the EC code it is
-> running and figure out what's the difference). Maybe it has a different
-> configuration. It wasn't an x86 chromebook, right?
->
+> > /me wonders if it would be cleaner to do:
+> >
+> > static inline bool dir_emit(...)
+> > {
+> >         buf->error = ctx->actor(....)
+> >         if (buf->error)
+> >                 return false;
+> >         return true;
+> > }
+> >
+> > And clean up all filldir actors just to return the error state
+> > rather than have to jump through hoops to stash the error state in
+> > the context buffer and return the error state?
+> 
+> One negative thing about that, IMO, is that it mixes up the request
+> for termination of the loop and the presence of an error.
 
-I tried with a Samsung Chromebook Plus (arm64 Chromebook)
+Doesn't the code already do that, only worse?
 
-> What was the ioctl you ran?
->
+> > That then allows callers who want/need the full error info can
+> > continue to call ctx->actor directly,
+> 
+> "continue to call ctx->actor directly"? I don't remember any code that
+> calls ctx->actor directly.
 
-The code that I ran is this: https://hastebin.com/cupecuvowi.py
-No guarantee :) I'll try to look deeper tomorrow.
+ovl_fill_real().
 
-Thanks,
-  Enric
+And the XFS directory scrubber could probably make better use of the
+error return from ctx->actor when validating the directory contents
+rather than just calling dir_emit() and aborting the scan at the
+first error encountered. We eventually want to know exactly what
+error was encountered here to determine if it is safe to continue,
+not just a "stop processing" flag. e.g. a bad name length will need
+to stop traversal because we can't trust the underlying structure,
+but an invalid file type isn't a structural flaw that prevents us
+from continuing to traverse and check the rest of the directory....
 
-> Thanks for testing,
-> Moritz
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
