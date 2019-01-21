@@ -7,54 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A98DAC31680
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7998DC31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773072085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:51:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BACB21726
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:51:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RX9RBe8v"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fYw2FSTi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728155AbfAUSvB (ORCPT
+        id S1728195AbfAUSvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:51:01 -0500
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:50094 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfAUSvB (ORCPT
+        Mon, 21 Jan 2019 13:51:19 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:56699 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726575AbfAUSvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:51:01 -0500
-Received: by mail-ot1-f74.google.com with SMTP id o8so8590689otp.16
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 10:51:00 -0800 (PST)
+        Mon, 21 Jan 2019 13:51:19 -0500
+Received: by mail-pg1-f201.google.com with SMTP id d3so14643693pgv.23
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 10:51:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=2CcbOShHUgtn+dOHqZeV18CYcxhY92wvJ5Li4R9tDvM=;
-        b=RX9RBe8vOQ2PLzL7KRnaLrYi2OfGCQJ+ZwGerxIx+sFjxkJVt+77rYuOYpEgspQU9X
-         eKMUGL7FY2X+d1tsRkIh4wK2QwIOHTKhaBTGeo297m/Sop7sZfyqxJqr4yXM4tyenpIB
-         jMetxxPiiWn5bcn8CWo7UwBhwEXSFGKctucx9gDm+1hwpnor2OxF86otxPpswLuCGQUI
-         0+l5SaNoRH/SRJkrgmEIPqSjKeMofxwyx5feVMui9/igZQqjYvykkBGy5mvzlyZxOZvR
-         sQ1Ji7AIqTzabPtU9deCshhJNtZ978pWkDM1pPorX4ef1Z95eefbljsh/WmNju7kEXW7
-         cmDQ==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=ttDeZKtDPkc6RYeRn0bjQXMJKzEwH+kUuuC5XU8aTs8=;
+        b=fYw2FSTizyV/U1RRHYmFSgKk6DYt86c/ushk+JIy6/a82gcn0qUwvUDbSWCrBAbauV
+         AKwnK9CcexEy4G4uFSPG4T3rNgyqs2LSgA4lhzIfwPY+p1BvmCevkLtKEbM4U/TP27mX
+         fViGckFu+7l3SDn/vugm73AiRsSt5hdhwvzkbyp1AJMLNiyN0x9yd/YX/qc7S196uVuV
+         38XJBtDz3wHzyeDqXJGf2OmHJak7cdZozvsXyTHpg7UQkOa4Wp9oxsKL7jEesNHEYO1e
+         o5D/+2+Javv0lMm6P2/OlEFRqFdg+r7Shitl5UdxEoizCZe7KI/iEWrOo/5DD3BrOWl9
+         lqfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=2CcbOShHUgtn+dOHqZeV18CYcxhY92wvJ5Li4R9tDvM=;
-        b=hrxrKj5pKzeBNftocnaA+0gdIYBgzv2pgcYgck3RIRVFAo60ewYG3b4Yv8QXRS5BLv
-         ivXFkAiL00388w4F5UBIBu53O35qWJl+ih0jP8mir6NhPt14/hflXJ4cMro8Y6mM8YfV
-         mc3XR3PI6Me9ABGZV9l320EPYFlzcrgd2OsyX/Bw1NlquSuPTT+FISSNP6xD3788zcfF
-         U7f8TiatCO8bBsKX2MJz+S1Aeg99o34X8WIg2Gbj0FcymCIm6exHzvk3eY0FK4gVsL3A
-         KantCYJSxHVuWt2d0UiJWjlzK3tZ9NwjbyN2ZWm8xkIbX15jyLo60rCdmhcRpdBuRNtn
-         Q/Ew==
-X-Gm-Message-State: AJcUukekVGTfVff4Ol4qGe6u4oncB0AbymyD22UmkyLXOYuOtznEd4rd
-        M0g1TrcjNiTdJL+cJuxHHpIV9GKK2CPVUA==
-X-Google-Smtp-Source: ALg8bN6hjd5+Fjp9ho1M3errF/qwHqwg76pXGpLhRQw/SVuFpHSGna1TMdBc/maaudun6b837iz9ct2dbWNOOA==
-X-Received: by 2002:a9d:7f15:: with SMTP id j21mr21240535otq.71.1548096660274;
- Mon, 21 Jan 2019 10:51:00 -0800 (PST)
-Date:   Mon, 21 Jan 2019 10:50:31 -0800
-Message-Id: <20190121185033.161015-1-shakeelb@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=ttDeZKtDPkc6RYeRn0bjQXMJKzEwH+kUuuC5XU8aTs8=;
+        b=Gmavuo/ewIyVnToHXxuo0zyaJD6HdG2lFx7acXlXAoKZpe63ZBO8GIuxsIdFZETAkN
+         ZuRmrhGpcxMyb9/XgBdyRFykv4i0zslTgeyDviDEyCgPlsO9Ry3n4F/81BFHLOs5Cj3u
+         YgwF9RlqAUv1zy8oPDaG7Vg6wYu5pIlo6VdNt00RJl+HFoEYz84Oz20fRPGzWNoI7XB5
+         DnrKNK0l+VzSzdCsBO7rtORrJEa/x3lvEUbdw+CKpUHv8UmNGgJMRCgO9Qgrywfek/TC
+         kONQq3HfV5qjvUCceYzhuVOzgYCFhDycCxdQInHsOJeXu02UKtXNxVLux6IfAHts5UF6
+         DEuQ==
+X-Gm-Message-State: AJcUukfQocP8aGjYbNg1i6G19qoBKcBXbGivShwukFSSvesfYEaNopsj
+        LTyhtalfLsf9Zpvn9bDWUqqox1Kpk372ig==
+X-Google-Smtp-Source: ALg8bN7chtpo61mycKV13Mz6uexoGRR3DjFBND6zmTxUVEBBwnmFMapT9sp49lBTdo3i+HcVKfKHSuiYldU19g==
+X-Received: by 2002:a17:902:4483:: with SMTP id l3mr10631728pld.16.1548096677859;
+ Mon, 21 Jan 2019 10:51:17 -0800 (PST)
+Date:   Mon, 21 Jan 2019 10:50:32 -0800
+In-Reply-To: <20190121185033.161015-1-shakeelb@google.com>
+Message-Id: <20190121185033.161015-2-shakeelb@google.com>
 Mime-Version: 1.0
+References: <20190121185033.161015-1-shakeelb@google.com>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
-Subject: [PATCH v2 1/2] mm, oom: fix use-after-free in oom_kill_process
+Subject: [PATCH v2 2/2] mm, oom: remove 'prefer children over parent' heuristic
 From:   Shakeel Butt <shakeelb@google.com>
 To:     Johannes Weiner <hannes@cmpxchg.org>,
         Michal Hocko <mhocko@kernel.org>,
@@ -65,78 +69,137 @@ To:     Johannes Weiner <hannes@cmpxchg.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Shakeel Butt <shakeelb@google.com>,
-        syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com,
-        Michal Hocko <mhocko@suse.com>, stable@kernel.org
+        Michal Hocko <mhocko@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Syzbot instance running on upstream kernel found a use-after-free bug
-in oom_kill_process. On further inspection it seems like the process
-selected to be oom-killed has exited even before reaching
-read_lock(&tasklist_lock) in oom_kill_process(). More specifically the
-tsk->usage is 1 which is due to get_task_struct() in oom_evaluate_task()
-and the put_task_struct within for_each_thread() frees the tsk and
-for_each_thread() tries to access the tsk. The easiest fix is to do
-get/put across the for_each_thread() on the selected task.
+From the start of the git history of Linux, the kernel after selecting
+the worst process to be oom-killed, prefer to kill its child (if the
+child does not share mm with the parent). Later it was changed to prefer
+to kill a child who is worst. If the parent is still the worst then the
+parent will be killed.
 
-Now the next question is should we continue with the oom-kill as the
-previously selected task has exited? However before adding more
-complexity and heuristics, let's answer why we even look at the
-children of oom-kill selected task? The select_bad_process() has already
-selected the worst process in the system/memcg. Due to race, the
-selected process might not be the worst at the kill time but does that
-matter? The userspace can use the oom_score_adj interface to prefer
-children to be killed before the parent. I looked at the history but it
-seems like this is there before git history.
+This heuristic assumes that the children did less work than their parent
+and by killing one of them, the work lost will be less. However this is
+very workload dependent. If there is a workload which can benefit from
+this heuristic, can use oom_score_adj to prefer children to be killed
+before the parent.
 
-Reported-by: syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com
-Fixes: 6b0c81b3be11 ("mm, oom: reduce dependency on tasklist_lock")
+The select_bad_process() has already selected the worst process in the
+system/memcg. There is no need to recheck the badness of its children
+and hoping to find a worse candidate. That's a lot of unneeded racy
+work. Also the heuristic is dangerous because it make fork bomb like
+workloads to recover much later because we constantly pick and kill
+processes which are not memory hogs. So, let's remove this whole
+heuristic.
+
 Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Reviewed-by: Roman Gushchin <guro@fb.com>
 Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Roman Gushchin <guro@fb.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: David Rientjes <rientjes@google.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: stable@kernel.org
 Cc: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org
+
 ---
 Changelog since v1:
-- Improved the commit message and added the Reported-by and Fixes tags.
+- Improved commit message based on mhocko's comment.
+- Replaced 'p' with 'victim'.
+- Removed extra pr_err message.
 
- mm/oom_kill.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ mm/oom_kill.c | 62 ++++++++-------------------------------------------
+ 1 file changed, 9 insertions(+), 53 deletions(-)
 
 diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 0930b4365be7..1a007dae1e8f 100644
+index 1a007dae1e8f..4da73e656c29 100644
 --- a/mm/oom_kill.c
 +++ b/mm/oom_kill.c
-@@ -981,6 +981,13 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	 * still freeing memory.
+@@ -943,13 +943,8 @@ static int oom_kill_memcg_member(struct task_struct *task, void *unused)
+ 
+ static void oom_kill_process(struct oom_control *oc, const char *message)
+ {
+-	struct task_struct *p = oc->chosen;
+-	unsigned int points = oc->chosen_points;
+-	struct task_struct *victim = p;
+-	struct task_struct *child;
+-	struct task_struct *t;
++	struct task_struct *victim = oc->chosen;
+ 	struct mem_cgroup *oom_group;
+-	unsigned int victim_points = 0;
+ 	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
+ 					      DEFAULT_RATELIMIT_BURST);
+ 
+@@ -958,57 +953,18 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	 * its children or threads, just give it access to memory reserves
+ 	 * so it can die quickly
  	 */
- 	read_lock(&tasklist_lock);
-+
-+	/*
-+	 * The task 'p' might have already exited before reaching here. The
-+	 * put_task_struct() will free task_struct 'p' while the loop still try
-+	 * to access the field of 'p', so, get an extra reference.
-+	 */
-+	get_task_struct(p);
- 	for_each_thread(p, t) {
- 		list_for_each_entry(child, &t->children, sibling) {
- 			unsigned int child_points;
-@@ -1000,6 +1007,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 			}
- 		}
+-	task_lock(p);
+-	if (task_will_free_mem(p)) {
+-		mark_oom_victim(p);
+-		wake_oom_reaper(p);
+-		task_unlock(p);
+-		put_task_struct(p);
++	task_lock(victim);
++	if (task_will_free_mem(victim)) {
++		mark_oom_victim(victim);
++		wake_oom_reaper(victim);
++		task_unlock(victim);
++		put_task_struct(victim);
+ 		return;
  	}
-+	put_task_struct(p);
- 	read_unlock(&tasklist_lock);
+-	task_unlock(p);
++	task_unlock(victim);
+ 
+ 	if (__ratelimit(&oom_rs))
+-		dump_header(oc, p);
+-
+-	pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
+-		message, task_pid_nr(p), p->comm, points);
+-
+-	/*
+-	 * If any of p's children has a different mm and is eligible for kill,
+-	 * the one with the highest oom_badness() score is sacrificed for its
+-	 * parent.  This attempts to lose the minimal amount of work done while
+-	 * still freeing memory.
+-	 */
+-	read_lock(&tasklist_lock);
+-
+-	/*
+-	 * The task 'p' might have already exited before reaching here. The
+-	 * put_task_struct() will free task_struct 'p' while the loop still try
+-	 * to access the field of 'p', so, get an extra reference.
+-	 */
+-	get_task_struct(p);
+-	for_each_thread(p, t) {
+-		list_for_each_entry(child, &t->children, sibling) {
+-			unsigned int child_points;
+-
+-			if (process_shares_mm(child, p->mm))
+-				continue;
+-			/*
+-			 * oom_badness() returns 0 if the thread is unkillable
+-			 */
+-			child_points = oom_badness(child,
+-				oc->memcg, oc->nodemask, oc->totalpages);
+-			if (child_points > victim_points) {
+-				put_task_struct(victim);
+-				victim = child;
+-				victim_points = child_points;
+-				get_task_struct(victim);
+-			}
+-		}
+-	}
+-	put_task_struct(p);
+-	read_unlock(&tasklist_lock);
++		dump_header(oc, victim);
  
  	/*
+ 	 * Do we need to kill the entire memory cgroup?
 -- 
 2.20.1.321.g9e740568ce-goog
 
