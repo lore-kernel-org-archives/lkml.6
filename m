@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B63C7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4706C7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1963020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:31:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B49020663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfAULbA (ORCPT
+        id S1728273AbfAULbl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:31:00 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57831 "EHLO
+        Mon, 21 Jan 2019 06:31:41 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50337 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbfAULa7 (ORCPT
+        with ESMTP id S1727735AbfAULbk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:30:59 -0500
+        Mon, 21 Jan 2019 06:31:40 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBUkLr2496607
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBVNFS2496663
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 21 Jan 2019 03:30:46 -0800
+        Mon, 21 Jan 2019 03:31:23 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBUj3i2496604;
-        Mon, 21 Jan 2019 03:30:45 -0800
-Date:   Mon, 21 Jan 2019 03:30:45 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBVMCg2496658;
+        Mon, 21 Jan 2019 03:31:22 -0800
+Date:   Mon, 21 Jan 2019 03:31:22 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Valentin Schneider <tipbot@zytor.com>
-Message-ID: <tip-b5a4e2bb0f4c86bfeb38df3e1d5b2f1272f0e673@git.kernel.org>
-Cc:     valentin.schneider@arm.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
-        torvalds@linux-foundation.org, hpa@zytor.com, peterz@infradead.org,
-        will.deacon@arm.com, akpm@linux-foundation.org, mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          torvalds@linux-foundation.org, paulmck@linux.vnet.ibm.com,
-          valentin.schneider@arm.com, akpm@linux-foundation.org,
-          will.deacon@arm.com, mingo@kernel.org, peterz@infradead.org,
-          hpa@zytor.com
-In-Reply-To: <1545243796-23224-3-git-send-email-valentin.schneider@arm.com>
-References: <1545243796-23224-3-git-send-email-valentin.schneider@arm.com>
+From:   tip-bot for Frederic Weisbecker <tipbot@zytor.com>
+Message-ID: <tip-436a49ae7b693161c4fdf98b575ef16243dc2dfa@git.kernel.org>
+Cc:     peterz@infradead.org, frederic@kernel.org,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        will.deacon@arm.com, mingo@kernel.org, paulmck@linux.vnet.ibm.com
+Reply-To: tglx@linutronix.de, will.deacon@arm.com, mingo@kernel.org,
+          paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+          frederic@kernel.org, akpm@linux-foundation.org,
+          torvalds@linux-foundation.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <1545973321-24422-2-git-send-email-frederic@kernel.org>
+References: <1545973321-24422-2-git-send-email-frederic@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] Revert "sched/core: Take the hotplug lock in
- sched_init_smp()"
-Git-Commit-ID: b5a4e2bb0f4c86bfeb38df3e1d5b2f1272f0e673
+Subject: [tip:locking/core] locking/lockdep: Simplify mark_held_locks()
+Git-Commit-ID: 436a49ae7b693161c4fdf98b575ef16243dc2dfa
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,21 +59,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b5a4e2bb0f4c86bfeb38df3e1d5b2f1272f0e673
-Gitweb:     https://git.kernel.org/tip/b5a4e2bb0f4c86bfeb38df3e1d5b2f1272f0e673
-Author:     Valentin Schneider <valentin.schneider@arm.com>
-AuthorDate: Wed, 19 Dec 2018 18:23:16 +0000
+Commit-ID:  436a49ae7b693161c4fdf98b575ef16243dc2dfa
+Gitweb:     https://git.kernel.org/tip/436a49ae7b693161c4fdf98b575ef16243dc2dfa
+Author:     Frederic Weisbecker <frederic@kernel.org>
+AuthorDate: Fri, 28 Dec 2018 06:02:00 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 21 Jan 2019 11:18:54 +0100
 
-Revert "sched/core: Take the hotplug lock in sched_init_smp()"
+locking/lockdep: Simplify mark_held_locks()
 
-This reverts commit 40fa3780bac2b654edf23f6b13f4e2dd550aea10.
+The enum mark_type appears a bit artificial here. We can directly pass
+the base enum lock_usage_bit value to mark_held_locks(). All we need
+then is to add the read index for each lock if necessary. It makes the
+code clearer.
 
-Now that we have a system-wide muting of hotplug lockdep during init,
-this is no longer needed.
-
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -82,36 +81,81 @@ Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: cai@gmx.us
-Cc: daniel.lezcano@linaro.org
-Cc: dietmar.eggemann@arm.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: longman@redhat.com
-Cc: marc.zyngier@arm.com
-Cc: mark.rutland@arm.com
-Link: https://lkml.kernel.org/r/1545243796-23224-3-git-send-email-valentin.schneider@arm.com
+Link: https://lkml.kernel.org/r/1545973321-24422-2-git-send-email-frederic@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ kernel/locking/lockdep.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b05eef7d7a1f..3c8b4dba3d2d 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5867,14 +5867,11 @@ void __init sched_init_smp(void)
- 	/*
- 	 * There's no userspace yet to cause hotplug operations; hence all the
- 	 * CPU masks are stable and all blatant races in the below code cannot
--	 * happen. The hotplug lock is nevertheless taken to satisfy lockdep,
--	 * but there won't be any contention on it.
-+	 * happen.
- 	 */
--	cpus_read_lock();
- 	mutex_lock(&sched_domains_mutex);
- 	sched_init_domains(cpu_active_mask);
- 	mutex_unlock(&sched_domains_mutex);
--	cpus_read_unlock();
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index e805fe3bf87f..1dcd8341e35b 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -2709,35 +2709,28 @@ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
+ 	return 1;
+ }
  
- 	/* Move init over to a non-isolated CPU */
- 	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_FLAG_DOMAIN)) < 0)
+-enum mark_type {
+-#define LOCKDEP_STATE(__STATE)	__STATE,
+-#include "lockdep_states.h"
+-#undef LOCKDEP_STATE
+-};
+-
+ /*
+  * Mark all held locks with a usage bit:
+  */
+ static int
+-mark_held_locks(struct task_struct *curr, enum mark_type mark)
++mark_held_locks(struct task_struct *curr, enum lock_usage_bit base_bit)
+ {
+-	enum lock_usage_bit usage_bit;
+ 	struct held_lock *hlock;
+ 	int i;
+ 
+ 	for (i = 0; i < curr->lockdep_depth; i++) {
++		enum lock_usage_bit hlock_bit = base_bit;
+ 		hlock = curr->held_locks + i;
+ 
+-		usage_bit = 2 + (mark << 2); /* ENABLED */
+ 		if (hlock->read)
+-			usage_bit += 1; /* READ */
++			hlock_bit += 1; /* READ */
+ 
+-		BUG_ON(usage_bit >= LOCK_USAGE_STATES);
++		BUG_ON(hlock_bit >= LOCK_USAGE_STATES);
+ 
+ 		if (!hlock->check)
+ 			continue;
+ 
+-		if (!mark_lock(curr, hlock, usage_bit))
++		if (!mark_lock(curr, hlock, hlock_bit))
+ 			return 0;
+ 	}
+ 
+@@ -2758,7 +2751,7 @@ static void __trace_hardirqs_on_caller(unsigned long ip)
+ 	 * We are going to turn hardirqs on, so set the
+ 	 * usage bit for all held locks:
+ 	 */
+-	if (!mark_held_locks(curr, HARDIRQ))
++	if (!mark_held_locks(curr, LOCK_ENABLED_HARDIRQ))
+ 		return;
+ 	/*
+ 	 * If we have softirqs enabled, then set the usage
+@@ -2766,7 +2759,7 @@ static void __trace_hardirqs_on_caller(unsigned long ip)
+ 	 * this bit from being set before)
+ 	 */
+ 	if (curr->softirqs_enabled)
+-		if (!mark_held_locks(curr, SOFTIRQ))
++		if (!mark_held_locks(curr, LOCK_ENABLED_SOFTIRQ))
+ 			return;
+ 
+ 	curr->hardirq_enable_ip = ip;
+@@ -2880,7 +2873,7 @@ void trace_softirqs_on(unsigned long ip)
+ 	 * enabled too:
+ 	 */
+ 	if (curr->hardirqs_enabled)
+-		mark_held_locks(curr, SOFTIRQ);
++		mark_held_locks(curr, LOCK_ENABLED_SOFTIRQ);
+ 	current->lockdep_recursion = 0;
+ }
+ 
