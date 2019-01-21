@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E428C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D92C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4556E2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 060FE20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079146;
-	bh=UiA7FTSTYOBbclCEqL/whm0QzziHz8lW0tXMI+x4SBg=;
+	s=default; t=1548079151;
+	bh=DbV1FdZPsgUgbzLQGXOpzm6F2sawJjVIYsHSPk0Bdr8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nE3xZ5FNtr6fTdyftVWgeZ8k6BBUt7xgjtsG2cpR55GDV0+MN6BACJTMlzLcQe5ti
-	 Txi/rSQh2AjcJed6NsMHoHAVQcQBwihDpYVUQQNMZPyuyUBcA9x3PIOEQI0nnt8BTn
-	 ATMoqdl4Ye7HMPTlhC2h8HbxVnY2a+mXyv9ZON40=
+	b=B1RML0R0SN+m7JGpeWGFpoMSVrwusqB7z/TXekrsYQCGXmpVN4pP6JVbRNOEIwo+E
+	 6cFHZPREqHwF4FekpVkAdoWpKH3OjMQ3Q5zu5z9UeKg2vfP1EKy8g7XDQRtPWcdpNv
+	 zUOqjybK8xSaRCFNr8cHv9nZEh9WBBfYGCe0Zqcw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbfAUN7F (ORCPT
+        id S1732139AbfAUN7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:59:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44876 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:59:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732121AbfAUN7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:59:01 -0500
+        id S1731803AbfAUN7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:59:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD14020879;
-        Mon, 21 Jan 2019 13:59:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2775E20879;
+        Mon, 21 Jan 2019 13:59:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079141;
-        bh=UiA7FTSTYOBbclCEqL/whm0QzziHz8lW0tXMI+x4SBg=;
+        s=default; t=1548079146;
+        bh=DbV1FdZPsgUgbzLQGXOpzm6F2sawJjVIYsHSPk0Bdr8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z2PTA1v6oVDuuwyvETmMJj7kfRTmwLpxvdgyXyYrNgOnLqp+E91KymK8R3dcktfSC
-         /MhEydv2A83nCMnTxoYbzXzEJHfR7PjWzZNzDnczp+OUqWqomx3G+VyNpavKc6W8++
-         6xa5D5hNPawZpjNhmORmB2m2ZFcIj0VTGNGh0imc=
+        b=1+jLuPkHktKeAhvecmesZF7U4LG14zhb7iDcaUKtN7VGJOfbzfZVe3fs3h/tJQ8CJ
+         ru0HX0odDOXoy3QdfT12FjcZn+Sdy+u421Gk09DAgL9RI9+drcToo4+nwuB3Rt+sUa
+         NhzSdwrrMGZhlj53PjDgB5PUzsJz8uxpyBfw0p4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Stanislav Fomichev <sdf@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 22/99] packet: Do not leak dev refcounts on error exit
-Date:   Mon, 21 Jan 2019 14:48:14 +0100
-Message-Id: <20190121134914.751181668@linuxfoundation.org>
+Subject: [PATCH 4.19 24/99] tun: publish tfile after its fully initialized
+Date:   Mon, 21 Jan 2019 14:48:16 +0100
+Message-Id: <20190121134914.823404472@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -67,45 +66,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Stanislav Fomichev <sdf@google.com>
 
-[ Upstream commit d972f3dce8d161e2142da0ab1ef25df00e2f21a9 ]
+[ Upstream commit 0b7959b6257322f7693b08a459c505d4938646f2 ]
 
-'dev' is non NULL when the addr_len check triggers so it must goto a label
-that does the dev_put otherwise dev will have a leaked refcount.
+BUG: unable to handle kernel NULL pointer dereference at 00000000000000d1
+Call Trace:
+ ? napi_gro_frags+0xa7/0x2c0
+ tun_get_user+0xb50/0xf20
+ tun_chr_write_iter+0x53/0x70
+ new_sync_write+0xff/0x160
+ vfs_write+0x191/0x1e0
+ __x64_sys_write+0x5e/0xd0
+ do_syscall_64+0x47/0xf0
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-This bug causes the ib_ipoib module to become unloadable when using
-systemd-network as it triggers this check on InfiniBand links.
+I think there is a subtle race between sending a packet via tap and
+attaching it:
 
-Fixes: 99137b7888f4 ("packet: validate address length")
-Reported-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Acked-by: Willem de Bruijn <willemb@google.com>
+CPU0:                    CPU1:
+tun_chr_ioctl(TUNSETIFF)
+  tun_set_iff
+    tun_attach
+      rcu_assign_pointer(tfile->tun, tun);
+                         tun_fops->write_iter()
+                           tun_chr_write_iter
+                             tun_napi_alloc_frags
+                               napi_get_frags
+                                 napi->skb = napi_alloc_skb
+      tun_napi_init
+        netif_napi_add
+          napi->skb = NULL
+                              napi->skb is NULL here
+                              napi_gro_frags
+                                napi_frags_skb
+				  skb = napi->skb
+				  skb_reset_mac_header(skb)
+				  panic()
+
+Move rcu_assign_pointer(tfile->tun) and rcu_assign_pointer(tun->tfiles) to
+be the last thing we do in tun_attach(); this should guarantee that when we
+call tun_get() we always get an initialized object.
+
+v2 changes:
+* remove extra napi_mutex locks/unlocks for napi operations
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 90e33d459407 ("tun: enable napi_gro_frags() for TUN/TAP driver")
+
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/tun.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2628,7 +2628,7 @@ static int tpacket_snd(struct packet_soc
- 		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
- 		if (addr && dev && saddr->sll_halen < dev->addr_len)
--			goto out;
-+			goto out_put;
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -859,10 +859,6 @@ static int tun_attach(struct tun_struct
+ 		err = 0;
  	}
  
- 	err = -ENXIO;
-@@ -2828,7 +2828,7 @@ static int packet_snd(struct socket *soc
- 		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
- 		if (addr && dev && saddr->sll_halen < dev->addr_len)
--			goto out;
-+			goto out_unlock;
- 	}
+-	rcu_assign_pointer(tfile->tun, tun);
+-	rcu_assign_pointer(tun->tfiles[tun->numqueues], tfile);
+-	tun->numqueues++;
+-
+ 	if (tfile->detached) {
+ 		tun_enable_queue(tfile);
+ 	} else {
+@@ -876,6 +872,13 @@ static int tun_attach(struct tun_struct
+ 	 * refcnt.
+ 	 */
  
- 	err = -ENXIO;
++	/* Publish tfile->tun and tun->tfiles only after we've fully
++	 * initialized tfile; otherwise we risk using half-initialized
++	 * object.
++	 */
++	rcu_assign_pointer(tfile->tun, tun);
++	rcu_assign_pointer(tun->tfiles[tun->numqueues], tfile);
++	tun->numqueues++;
+ out:
+ 	return err;
+ }
 
 
