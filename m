@@ -2,1009 +2,591 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D31C37123
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CA7C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1D12085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7819D2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:21:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="cqH7HT7x"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uy/3Su6H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfAUVVQ (ORCPT
+        id S1728011AbfAUVV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:21:16 -0500
-Received: from mx.kolabnow.com ([95.128.36.41]:51478 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727169AbfAUVVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 16:21:13 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTP id 2748282B;
-        Mon, 21 Jan 2019 22:21:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-transfer-encoding:content-type:content-type:mime-version
-        :message-id:date:date:subject:subject:from:from:received
-        :received:received; s=dkim20160331; t=1548105658; x=1549920059;
-         bh=HiaazzB6CtyA4VPQQ4mvji+40J3R7J6aHkfF12+nkkI=; b=cqH7HT7xkA+E
-        f1HwJa5+v0SHJ+YDTmPeQHCTXBbz4nEqDFyAuwoKiiMiu+qDcbPx9tlSEGNjclUh
-        geuEqj7XJihBgaebmVQ6d4dcK/gvnHUQRMj0Ps/GlP5bIMS5O/CWG950WQIQpvLV
-        2RpCs6kq8s5JfnX6SVYjTnZddxEaf20TB4QrpKL7KywVKmQ835d/69PzaFlwSPGN
-        hou24IMhozx4dDhV0JbOlAPwiAU7AAUkz6B6IrLEvgtHsrkvBTm9gogpV4a4rfp9
-        jIiCaG4ZYhpHiGSOTCehjFosvKeHs5IRc5sFoCViwqHcTS3hJ0uPgoOOw6S3DJUf
-        2b0E3P7GFSIInrIQ5aF4ODW7pqU176b47XKXFgRpEEeHr1C6/+JbkU0GN9LuwC8G
-        9oHmFbZJKAfeshV4r7GYa3wDD78z7vjfzop7J6OGuwYZaDOcprPzkd5OGrhygWC7
-        b3aF4kcyFobyaI8rnxS00T0q0TWeZqI+7wJ3nQj0c65ASgvi39opSQGQVNlq0PDi
-        EDIbZ3FWAI5sle0aOdFbwdtpGNUlUIS2Erc1hcB2uXpEOiMuxoR13qbTuGYXB9Xm
-        5inayzskuvWzRIHF3TUvPSfE/Z1p7RqBVSrAvypBMVJAtLC3UrNuLz3S94lNgAS6
-        dM3I8gxVOKVyLUVvn09sZL0/nZ3Rewk=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out002.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id wAZGOUgHnlbP; Mon, 21 Jan 2019 22:20:58 +0100 (CET)
-Received: from int-mx003.mykolab.com (unknown [10.9.13.3])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTPS id 1A3D8666;
-        Mon, 21 Jan 2019 22:20:58 +0100 (CET)
-Received: from ext-subm001.mykolab.com (unknown [10.9.6.1])
-        by int-mx003.mykolab.com (Postfix) with ESMTPS id A3A02A62;
-        Mon, 21 Jan 2019 22:20:57 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH V2] doc:it_IT: add translations in process/
-Date:   Mon, 21 Jan 2019 22:20:32 +0100
-Message-Id: <20190121212032.6484-1-federico.vaga@vaga.pv.it>
+        Mon, 21 Jan 2019 16:21:56 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52908 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfAUVV4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 16:21:56 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0LLLhnc084118;
+        Mon, 21 Jan 2019 15:21:43 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548105703;
+        bh=CfrQl+7F5O5ePhBcLYmSPvQt0fzvXYeKjK/uPgRNESw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=uy/3Su6HIqqEOp5KjpvjQaYSipHbS4cGIiXqLffPhYCZG7aCyTs+IX/9zEgY6QTUD
+         63Um3cUiIeucQ1OveuATNPGYiCvcfTb5/6YTjrOyuj1ap0RhHNnvb3nUBAMNChwRWY
+         /sZtoVP7lAJJGbSy0oHh6LRmr35121hwYY+J+9sI=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0LLLhO8040984
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 15:21:43 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
+ Jan 2019 15:21:42 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 21 Jan 2019 15:21:42 -0600
+Received: from [172.22.66.82] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0LLLgAL009074;
+        Mon, 21 Jan 2019 15:21:42 -0600
+Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
+ map/unmap
+To:     Brian Starkey <Brian.Starkey@arm.com>
+CC:     Liam Mark <lmark@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, nd <nd@arm.com>
+References: <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
+ <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
+ <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com>
+ <f53987d5-b7c1-61f4-de44-3d7b4a3c68fe@ti.com>
+ <20190116151946.66vc6ibbivijdzvd@DESKTOP-E1NTVVP.localdomain>
+ <4a5d4147-765d-711f-af98-9022d0253b3b@ti.com>
+ <alpine.DEB.2.10.1901161450470.10666@lmark-linux.qualcomm.com>
+ <3bf4bfce-aee6-9c52-c2f7-783dc63bfc3a@ti.com>
+ <alpine.DEB.2.10.1901171704270.12287@lmark-linux.qualcomm.com>
+ <b8b16d71-e09b-6bf9-259e-79c1de7fd15b@ti.com>
+ <20190121112235.g36qqptpv6wjuj7w@DESKTOP-E1NTVVP.localdomain>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <b89df12e-00bc-5484-6458-f7c85a362b42@ti.com>
+Date:   Mon, 21 Jan 2019 15:21:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190121112235.g36qqptpv6wjuj7w@DESKTOP-E1NTVVP.localdomain>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the Italian translation for the following documents
-in Documentation/process:
+On 1/21/19 5:22 AM, Brian Starkey wrote:
+> Hi,
+> 
+> Sorry for being a bit sporadic on this. I was out travelling last week
+> with little time for email.
+> 
+> On Fri, Jan 18, 2019 at 11:16:31AM -0600, Andrew F. Davis wrote:
+>> On 1/17/19 7:11 PM, Liam Mark wrote:
+>>> On Thu, 17 Jan 2019, Andrew F. Davis wrote:
+>>>
+>>>> On 1/16/19 4:54 PM, Liam Mark wrote:
+>>>>> On Wed, 16 Jan 2019, Andrew F. Davis wrote:
+>>>>>
+>>>>>> On 1/16/19 9:19 AM, Brian Starkey wrote:
+>>>>>>> Hi :-)
+>>>>>>>
+>>>>>>> On Tue, Jan 15, 2019 at 12:40:16PM -0600, Andrew F. Davis wrote:
+>>>>>>>> On 1/15/19 12:38 PM, Andrew F. Davis wrote:
+>>>>>>>>> On 1/15/19 11:45 AM, Liam Mark wrote:
+>>>>>>>>>> On Tue, 15 Jan 2019, Andrew F. Davis wrote:
+>>>>>>>>>>
+>>>>>>>>>>> On 1/14/19 11:13 AM, Liam Mark wrote:
+>>>>>>>>>>>> On Fri, 11 Jan 2019, Andrew F. Davis wrote:
+>>>>>>>>>>>>
+>>>>>>>>>>>>> Buffers may not be mapped from the CPU so skip cache maintenance here.
+>>>>>>>>>>>>> Accesses from the CPU to a cached heap should be bracketed with
+>>>>>>>>>>>>> {begin,end}_cpu_access calls so maintenance should not be needed anyway.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>  drivers/staging/android/ion/ion.c | 7 ++++---
+>>>>>>>>>>>>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+>>>>>>>>>>>>> index 14e48f6eb734..09cb5a8e2b09 100644
+>>>>>>>>>>>>> --- a/drivers/staging/android/ion/ion.c
+>>>>>>>>>>>>> +++ b/drivers/staging/android/ion/ion.c
+>>>>>>>>>>>>> @@ -261,8 +261,8 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
+>>>>>>>>>>>>>  
+>>>>>>>>>>>>>  	table = a->table;
+>>>>>>>>>>>>>  
+>>>>>>>>>>>>> -	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
+>>>>>>>>>>>>> -			direction))
+>>>>>>>>>>>>> +	if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
+>>>>>>>>>>>>> +			      direction, DMA_ATTR_SKIP_CPU_SYNC))
+>>>>>>>>>>>>
+>>>>>>>>>>>> Unfortunately I don't think you can do this for a couple reasons.
+>>>>>>>>>>>> You can't rely on {begin,end}_cpu_access calls to do cache maintenance.
+>>>>>>>>>>>> If the calls to {begin,end}_cpu_access were made before the call to 
+>>>>>>>>>>>> dma_buf_attach then there won't have been a device attached so the calls 
+>>>>>>>>>>>> to {begin,end}_cpu_access won't have done any cache maintenance.
+>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> That should be okay though, if you have no attachments (or all
+>>>>>>>>>>> attachments are IO-coherent) then there is no need for cache
+>>>>>>>>>>> maintenance. Unless you mean a sequence where a non-io-coherent device
+>>>>>>>>>>> is attached later after data has already been written. Does that
+>>>>>>>>>>> sequence need supporting? 
+>>>>>>>>>>
+>>>>>>>>>> Yes, but also I think there are cases where CPU access can happen before 
+>>>>>>>>>> in Android, but I will focus on later for now.
+>>>>>>>>>>
+>>>>>>>>>>> DMA-BUF doesn't have to allocate the backing
+>>>>>>>>>>> memory until map_dma_buf() time, and that should only happen after all
+>>>>>>>>>>> the devices have attached so it can know where to put the buffer. So we
+>>>>>>>>>>> shouldn't expect any CPU access to buffers before all the devices are
+>>>>>>>>>>> attached and mapped, right?
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Here is an example where CPU access can happen later in Android.
+>>>>>>>>>>
+>>>>>>>>>> Camera device records video -> software post processing -> video device 
+>>>>>>>>>> (who does compression of raw data) and writes to a file
+>>>>>>>>>>
+>>>>>>>>>> In this example assume the buffer is cached and the devices are not 
+>>>>>>>>>> IO-coherent (quite common).
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> This is the start of the problem, having cached mappings of memory that
+>>>>>>>>> is also being accessed non-coherently is going to cause issues one way
+>>>>>>>>> or another. On top of the speculative cache fills that have to be
+>>>>>>>>> constantly fought back against with CMOs like below; some coherent
+>>>>>>>>> interconnects behave badly when you mix coherent and non-coherent access
+>>>>>>>>> (snoop filters get messed up).
+>>>>>>>>>
+>>>>>>>>> The solution is to either always have the addresses marked non-coherent
+>>>>>>>>> (like device memory, no-map carveouts), or if you really want to use
+>>>>>>>>> regular system memory allocated at runtime, then all cached mappings of
+>>>>>>>>> it need to be dropped, even the kernel logical address (area as painful
+>>>>>>>>> as that would be).
+>>>>>>>
+>>>>>>> Ouch :-( I wasn't aware about these potential interconnect issues. How
+>>>>>>> "real" is that? It seems that we aren't really hitting that today on
+>>>>>>> real devices.
+>>>>>>>
+>>>>>>
+>>>>>> Sadly there is at least one real device like this now (TI AM654). We
+>>>>>> spent some time working with the ARM interconnect spec designers to see
+>>>>>> if this was allowed behavior, final conclusion was mixing coherent and
+>>>>>> non-coherent accesses is never a good idea.. So we have been working to
+>>>>>> try to minimize any cases of mixed attributes [0], if a region is
+>>>>>> coherent then everyone in the system needs to treat it as such and
+>>>>>> vice-versa, even clever CMO that work on other systems wont save you
+>>>>>> here. :(
+>>>>>>
+>>>>>> [0] https://github.com/ARM-software/arm-trusted-firmware/pull/1553
+>>>>>>
+> 
+> "Never a good idea" - but I think it should still be well defined by
+> the ARMv8 ARM (Section B2.8). Does this apply to your system?
+> 
+> "If the mismatched attributes for a memory location all assign the
+> same shareability attribute to a Location that has a cacheable
+> attribute, any loss of uniprocessor semantics, ordering, or coherency
+> within a shareability domain can be avoided by use of software cache
+> management"
+> 
+> https://developer.arm.com/docs/ddi0487/latest/arm-architecture-reference-manual-armv8-for-armv8-a-architecture-profile
+> 
+> If the cache is invalidated when switching between access types,
+> shouldn't the snoop filters get un-messed-up?
+> 
 
-- applying-patches
-- submit-checklist
-- submitting-drivers
-- changes
-- stable api nonsense
+The details of the issue are this, our coherent interconnect (MSMC) has
+a snoop filter (for those following along at home it's a list of which
+cache lines are currently inside each connected master so snoop requests
+can be filtered for masters that wont care). When a "NoSnoop"(non-cached
+or non-shareable) transaction is received for a location from any master
+it assumes that location cannot be in the cache of *any* master (as the
+correct cache-line state transition a given core will take for that line
+is not defined by ARM spec), so it drops all records of that line. The
+only way to recover from this is for every master to invalidate the line
+and pick it back up again so the snoop filer can re-learn who really has
+it again. Invalidate on one core also doesn't propagate to the different
+cores as those are requests are also blocked by the now confused snoop
+filter, so each and every core must manually do it..
 
-Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
----
- .../translations/it_IT/doc-guide/sphinx.rst   |   2 +
- .../it_IT/process/applying-patches.rst        |  12 +-
- .../translations/it_IT/process/changes.rst    | 487 +++++++++++++++++-
- .../it_IT/process/stable-api-nonsense.rst     | 202 +++++++-
- .../it_IT/process/submit-checklist.rst        | 127 ++++-
- .../it_IT/process/submitting-drivers.rst      |   8 +-
- 6 files changed, 822 insertions(+), 16 deletions(-)
+It behaves much more like later in ARMv8 ARM (Section B2.8):
 
-diff --git a/Documentation/translations/it_IT/doc-guide/sphinx.rst b/Documentation/translations/it_IT/doc-guide/sphinx.rst
-index 474b7e127893..793b5cc33403 100644
---- a/Documentation/translations/it_IT/doc-guide/sphinx.rst
-+++ b/Documentation/translations/it_IT/doc-guide/sphinx.rst
-@@ -3,6 +3,8 @@
- .. note:: Per leggere la documentazione originale in inglese:
- 	  :ref:`Documentation/doc-guide/index.rst <doc_guide>`
- 
-+.. _it_sphinxdoc:
-+
- Introduzione
- ============
- 
-diff --git a/Documentation/translations/it_IT/process/applying-patches.rst b/Documentation/translations/it_IT/process/applying-patches.rst
-index f5e9c7d0b16d..1d30e5cd2a3d 100644
---- a/Documentation/translations/it_IT/process/applying-patches.rst
-+++ b/Documentation/translations/it_IT/process/applying-patches.rst
-@@ -1,13 +1,15 @@
- .. include:: ../disclaimer-ita.rst
- 
- :Original: :ref:`Documentation/process/applying-patches.rst <applying_patches>`
--
-+:Translator: Federico Vaga <federico.vaga@vaga.pv.it>
- 
- .. _it_applying_patches:
- 
--Applicare modifiche al kernel Linux
--===================================
-+Applicare patch al kernel Linux
-++++++++++++++++++++++++++++++++
- 
--.. warning::
-+.. note::
- 
--    TODO ancora da tradurre
-+   Questo documento è obsoleto.  Nella maggior parte dei casi, piuttosto
-+   che usare ``patch`` manualmente, vorrete usare Git.  Per questo motivo
-+   il documento non verrà tradotto.
-diff --git a/Documentation/translations/it_IT/process/changes.rst b/Documentation/translations/it_IT/process/changes.rst
-index 956cf95a1214..d0874327f301 100644
---- a/Documentation/translations/it_IT/process/changes.rst
-+++ b/Documentation/translations/it_IT/process/changes.rst
-@@ -1,12 +1,495 @@
- .. include:: ../disclaimer-ita.rst
- 
- :Original: :ref:`Documentation/process/changes.rst <changes>`
-+:Translator: Federico Vaga <federico.vaga@vaga.pv.it>
- 
- .. _it_changes:
- 
- Requisiti minimi per compilare il kernel
- ++++++++++++++++++++++++++++++++++++++++
- 
--.. warning::
-+Introduzione
-+============
- 
--    TODO ancora da tradurre
-+Questo documento fornisce una lista dei software necessari per eseguire i
-+kernel 4.x.
-+
-+Questo documento è basato sul file "Changes" del kernel 2.0.x e quindi le
-+persone che lo scrissero meritano credito (Jared Mauch, Axel Boldt,
-+Alessandro Sigala, e tanti altri nella rete).
-+
-+Requisiti minimi correnti
-+*************************
-+
-+Prima di pensare d'avere trovato un baco, aggiornate i seguenti programmi
-+**almeno** alla versione indicata!  Se non siete certi della versione che state
-+usando, il comando indicato dovrebbe dirvelo.
-+
-+Questa lista presume che abbiate già un kernel Linux funzionante.  In aggiunta,
-+non tutti gli strumenti sono necessari ovunque; ovviamente, se non avete un
-+modem ISDN, per esempio, probabilmente non dovreste preoccuparvi di
-+isdn4k-utils.
-+
-+====================== =================  ========================================
-+        Programma       Versione minima       Comando per verificare la versione
-+====================== =================  ========================================
-+GNU C                  4.6                gcc --version
-+GNU make               3.81               make --version
-+binutils               2.20               ld -v
-+flex                   2.5.35             flex --version
-+bison                  2.0                bison --version
-+util-linux             2.10o              fdformat --version
-+kmod                   13                 depmod -V
-+e2fsprogs              1.41.4             e2fsck -V
-+jfsutils               1.1.3              fsck.jfs -V
-+reiserfsprogs          3.6.3              reiserfsck -V
-+xfsprogs               2.6.0              xfs_db -V
-+squashfs-tools         4.0                mksquashfs -version
-+btrfs-progs            0.18               btrfsck
-+pcmciautils            004                pccardctl -V
-+quota-tools            3.09               quota -V
-+PPP                    2.4.0              pppd --version
-+isdn4k-utils           3.1pre1            isdnctrl 2>&1|grep version
-+nfs-utils              1.0.5              showmount --version
-+procps                 3.2.0              ps --version
-+oprofile               0.9                oprofiled --version
-+udev                   081                udevd --version
-+grub                   0.93               grub --version || grub-install --version
-+mcelog                 0.6                mcelog --version
-+iptables               1.4.2              iptables -V
-+openssl & libcrypto    1.0.0              openssl version
-+bc                     1.06.95            bc --version
-+Sphinx\ [#f1]_         1.3                sphinx-build --version
-+====================== =================  ========================================
-+
-+.. [#f1] Sphinx è necessario solo per produrre la documentazione del Kernel
-+
-+Compilazione del kernel
-+***********************
-+
-+GCC
-+---
-+
-+La versione necessaria di gcc potrebbe variare a seconda del tipo di CPU nel
-+vostro calcolatore.
-+
-+Make
-+----
-+
-+Per compilare il kernel vi servirà GNU make 3.81 o successivo.
-+
-+Binutils
-+--------
-+
-+Il sistema di compilazione, dalla versione 4.13,  per la produzione dei passi
-+intermedi, si è convertito all'uso di *thin archive* (`ar T`) piuttosto che
-+all'uso del *linking* incrementale (`ld -r`). Questo richiede binutils 2.20 o
-+successivo.
-+
-+pkg-config
-+----------
-+
-+Il sistema di compilazione, dalla versione 4.18, richiede pkg-config per
-+verificare l'esistenza degli strumenti kconfig e per determinare le
-+impostazioni da usare in 'make {g,x}config'.  Precedentemente pkg-config
-+veniva usato ma non verificato o documentato.
-+
-+Flex
-+----
-+
-+Dalla versione 4.16, il sistema di compilazione, durante l'esecuzione, genera
-+un analizzatore lessicale.  Questo richiede flex 2.5.35 o successivo.
-+
-+Bison
-+-----
-+
-+Dalla versione 4.16, il sistema di compilazione, durante l'esecuzione, genera
-+un parsificatore.  Questo richiede bison 2.0 o successivo.
-+
-+Perl
-+----
-+
-+Per compilare il kernel vi servirà perl 5 e i seguenti moduli ``Getopt::Long``,
-+``Getopt::Std``, ``File::Basename``, e ``File::Find``.
-+
-+BC
-+--
-+
-+Vi servirà bc per compilare i kernel dal 3.10 in poi.
-+
-+OpenSSL
-+-------
-+
-+Il programma OpenSSL e la libreria crypto vengono usati per la firma dei moduli
-+e la gestione dei certificati; sono usati per la creazione della chiave e
-+la generazione della firma.
-+
-+Se la firma dei moduli è abilitata, allora vi servirà openssl per compilare il
-+kernel 3.7 e successivi.  Vi serviranno anche i pacchetti di sviluppo di
-+openssl per compilare il kernel 4.3 o successivi.
-+
-+
-+Strumenti di sistema
-+********************
-+
-+Modifiche architetturali
-+------------------------
-+
-+DevFS è stato reso obsoleto da udev
-+(http://www.kernel.org/pub/linux/utils/kernel/hotplug/)
-+
-+Il supporto per UID a 32-bit è ora disponibile.  Divertitevi!
-+
-+La documentazione delle funzioni in Linux è una fase di transizione
-+verso una documentazione integrata nei sorgenti stessi usando dei commenti
-+formattati in modo speciale e posizionati vicino alle funzioni che descrivono.
-+Al fine di arricchire la documentazione, questi commenti possono essere
-+combinati con i file ReST presenti in Documentation/; questi potranno
-+poi essere convertiti in formato PostScript, HTML, LaTex, ePUB o PDF.
-+Per convertire i documenti da ReST al formato che volete, avete bisogno di
-+Sphinx.
-+
-+Util-linux
-+----------
-+
-+Le versioni più recenti di util-linux: forniscono il supporto a ``fdisk`` per
-+dischi di grandi dimensioni; supportano le nuove opzioni di mount; riconoscono
-+più tipi di partizioni; hanno un fdformat che funziona con i kernel 2.4;
-+e altre chicche.  Probabilmente vorrete aggiornarlo.
-+
-+Ksymoops
-+--------
-+
-+Se l'impensabile succede e il kernel va in oops, potrebbe servirvi lo strumento
-+ksymoops per decodificarlo, ma nella maggior parte dei casi non vi servirà.
-+Generalmente è preferibile compilare il kernel con l'opzione ``CONFIG_KALLSYMS``
-+cosicché venga prodotto un output più leggibile che può essere usato così com'è
-+(produce anche un output migliore di ksymoops).  Se per qualche motivo il
-+vostro kernel non è stato compilato con ``CONFIG_KALLSYMS`` e non avete modo di
-+ricompilarlo e riprodurre l'oops con quell'opzione abilitata, allora potete
-+usare ksymoops per decodificare l'oops.
-+
-+Mkinitrd
-+--------
-+
-+I cambiamenti della struttura in ``/lib/modules`` necessita l'aggiornamento di
-+mkinitrd.
-+
-+E2fsprogs
-+---------
-+
-+L'ultima versione di ``e2fsprogs`` corregge diversi bachi in fsck e debugfs.
-+Ovviamente, aggiornarlo è una buona idea.
-+
-+JFSutils
-+--------
-+
-+Il pacchetto ``jfsutils`` contiene programmi per il file-system JFS.
-+Sono disponibili i seguenti strumenti:
-+
-+- ``fsck.jfs`` - avvia la ripetizione del log delle transizioni, e verifica e
-+  ripara una partizione formattata secondo JFS
-+
-+- ``mkfs.jfs`` - crea una partizione formattata secondo JFS
-+
-+- sono disponibili altri strumenti per il file-system.
-+
-+Reiserfsprogs
-+-------------
-+
-+Il pacchetto reiserfsprogs dovrebbe essere usato con reiserfs-3.6.x (Linux
-+kernel 2.4.x).  Questo è un pacchetto combinato che contiene versioni
-+funzionanti di ``mkreiserfs``, ``resize_reiserfs``, ``debugreiserfs`` e
-+``reiserfsck``.  Questi programmi funzionano sulle piattaforme i386 e alpha.
-+
-+Xfsprogs
-+--------
-+
-+L'ultima versione di ``xfsprogs`` contiene, fra i tanti, i programmi
-+``mkfs.xfs``, ``xfs_db`` e ``xfs_repair`` per il file-system XFS.
-+Dipendono dell'architettura e qualsiasi versione dalla 2.0.0 in poi
-+dovrebbe funzionare correttamente con la versione corrente del codice
-+XFS nel kernel (sono raccomandate le versioni 2.6.0 o successive per via
-+di importanti miglioramenti).
-+
-+PCMCIAutils
-+-----------
-+
-+PCMCIAutils sostituisce ``pcmica-cs``.  Serve ad impostare correttamente i
-+connettori PCMCIA all'avvio del sistema e a caricare i moduli necessari per
-+i dispositivi a 16-bit se il kernel è stato modularizzato e il sottosistema
-+hotplug è in uso.
-+
-+Quota-tools
-+-----------
-+
-+Il supporto per uid e gid a 32 bit richiedono l'uso della versione 2 del
-+formato quota.  La versione 3.07 e successive di quota-tools supportano
-+questo formato.  Usate la versione raccomandata nella lista qui sopra o una
-+successiva.
-+
-+Micro codice per Intel IA32
-+---------------------------
-+
-+Per poter aggiornare il micro codice per Intel IA32, è stato aggiunto un
-+apposito driver; il driver è accessibile come un normale dispositivo a
-+caratteri (misc).  Se non state usando udev probabilmente sarà necessario
-+eseguire i seguenti comandi come root prima di poterlo aggiornare::
-+
-+  mkdir /dev/cpu
-+  mknod /dev/cpu/microcode c 10 184
-+  chmod 0644 /dev/cpu/microcode
-+
-+Probabilmente, vorrete anche il programma microcode_ctl da usare con questo
-+dispositivo.
-+
-+udev
-+----
-+
-+``udev`` è un programma in spazio utente il cui scopo è quello di popolare
-+dinamicamente la cartella ``/dev`` coi dispositivi effettivamente presenti.
-+``udev`` sostituisce le funzionalità base di devfs, consentendo comunque
-+nomi persistenti per i dispositivi.
-+
-+FUSE
-+----
-+
-+Serve libfuse 2.4.0 o successiva.  Il requisito minimo assoluto è 2.3.0 ma
-+le opzioni di mount ``direct_io`` e ``kernel_cache`` non funzioneranno.
-+
-+
-+Rete
-+****
-+
-+Cambiamenti generali
-+--------------------
-+
-+Se per quanto riguarda la configurazione di rete avete esigenze di un certo
-+livello dovreste prendere in considerazione l'uso degli strumenti in ip-route2.
-+
-+Filtro dei pacchetti / NAT
-+--------------------------
-+
-+Il codice per filtraggio dei pacchetti e il NAT fanno uso degli stessi
-+strumenti come nelle versioni del kernel antecedenti la 2.4.x (iptables).
-+Include ancora moduli di compatibilità per 2.2.x ipchains e 2.0.x ipdwadm.
-+
-+PPP
-+---
-+
-+Il driver per PPP è stato ristrutturato per supportare collegamenti multipli e
-+per funzionare su diversi livelli.  Se usate PPP, aggiornate pppd almeno alla
-+versione 2.4.0.
-+
-+Se non usate udev, dovete avere un file /dev/ppp che può essere creato da root
-+col seguente comando::
-+
-+  mknod /dev/ppp c 108 0
-+
-+Isdn4k-utils
-+------------
-+
-+Per via della modifica del campo per il numero di telefono, il pacchetto
-+isdn4k-utils dev'essere ricompilato o (preferibilmente) aggiornato.
-+
-+NFS-utils
-+---------
-+
-+Nei kernel più antichi (2.4 e precedenti), il server NFS doveva essere
-+informato sui clienti ai quali si voleva fornire accesso via NFS.  Questa
-+informazione veniva passata al kernel quando un cliente montava un file-system
-+mediante ``mountd``, oppure usando ``exportfs`` all'avvio del sistema.
-+exportfs prende le informazioni circa i clienti attivi da ``/var/lib/nfs/rmtab``.
-+
-+Questo approccio è piuttosto delicato perché dipende dalla correttezza di
-+rmtab, che non è facile da garantire, in particolare quando si cerca di
-+implementare un *failover*.  Anche quando il sistema funziona bene, ``rmtab``
-+ha il problema di accumulare vecchie voci inutilizzate.
-+
-+Sui kernel più recenti il kernel ha la possibilità di informare mountd quando
-+arriva una richiesta da una macchina sconosciuta, e mountd può dare al kernel
-+le informazioni corrette per l'esportazione.  Questo rimuove la dipendenza con
-+``rmtab`` e significa che il kernel deve essere al corrente solo dei clienti
-+attivi.
-+
-+Per attivare questa funzionalità, dovete eseguire il seguente comando prima di
-+usare exportfs o mountd::
-+
-+  mount -t nfsd nfsd /proc/fs/nfsd
-+
-+Dove possibile, raccomandiamo di proteggere tutti i servizi NFS dall'accesso
-+via internet mediante un firewall.
-+
-+mcelog
-+------
-+
-+Quando ``CONFIG_x86_MCE`` è attivo, il programma mcelog processa e registra
-+gli eventi *machine check*.  Gli eventi *machine check* sono errori riportati
-+dalla CPU.  Incoraggiamo l'analisi di questi errori.
-+
-+
-+Documentazione del kernel
-+*************************
-+
-+Sphinx
-+------
-+
-+Per i dettaglio sui requisiti di Sphinx, fate riferimento a :ref:`it_sphinx_install`
-+in :ref:`Documentation/translations/it_IT/doc-guide/sphinx.rst <it_sphinxdoc>`
-+
-+Ottenere software aggiornato
-+============================
-+
-+Compilazione del kernel
-+***********************
-+
-+gcc
-+---
-+
-+- <ftp://ftp.gnu.org/gnu/gcc/>
-+
-+Make
-+----
-+
-+- <ftp://ftp.gnu.org/gnu/make/>
-+
-+Binutils
-+--------
-+
-+- <https://www.kernel.org/pub/linux/devel/binutils/>
-+
-+Flex
-+----
-+
-+- <https://github.com/westes/flex/releases>
-+
-+Bison
-+-----
-+
-+- <ftp://ftp.gnu.org/gnu/bison/>
-+
-+OpenSSL
-+-------
-+
-+- <https://www.openssl.org/>
-+
-+Strumenti di sistema
-+********************
-+
-+Util-linux
-+----------
-+
-+- <https://www.kernel.org/pub/linux/utils/util-linux/>
-+
-+Kmod
-+----
-+
-+- <https://www.kernel.org/pub/linux/utils/kernel/kmod/>
-+- <https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git>
-+
-+Ksymoops
-+--------
-+
-+- <https://www.kernel.org/pub/linux/utils/kernel/ksymoops/v2.4/>
-+
-+Mkinitrd
-+--------
-+
-+- <https://code.launchpad.net/initrd-tools/main>
-+
-+E2fsprogs
-+---------
-+
-+- <http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-1.29.tar.gz>
-+
-+JFSutils
-+--------
-+
-+- <http://jfs.sourceforge.net/>
-+
-+Reiserfsprogs
-+-------------
-+
-+- <http://www.kernel.org/pub/linux/utils/fs/reiserfs/>
-+
-+Xfsprogs
-+--------
-+
-+- <ftp://oss.sgi.com/projects/xfs/>
-+
-+Pcmciautils
-+-----------
-+
-+- <https://www.kernel.org/pub/linux/utils/kernel/pcmcia/>
-+
-+Quota-tools
-+-----------
-+
-+- <http://sourceforge.net/projects/linuxquota/>
-+
-+
-+Microcodice Intel P6
-+--------------------
-+
-+- <https://downloadcenter.intel.com/>
-+
-+udev
-+----
-+
-+- <http://www.freedesktop.org/software/systemd/man/udev.html>
-+
-+FUSE
-+----
-+
-+- <https://github.com/libfuse/libfuse/releases>
-+
-+mcelog
-+------
-+
-+- <http://www.mcelog.org/>
-+
-+Rete
-+****
-+
-+PPP
-+---
-+
-+- <ftp://ftp.samba.org/pub/ppp/>
-+
-+Isdn4k-utils
-+------------
-+
-+- <ftp://ftp.isdn4linux.de/pub/isdn4linux/utils/>
-+
-+NFS-utils
-+---------
-+
-+- <http://sourceforge.net/project/showfiles.php?group_id=14>
-+
-+Iptables
-+--------
-+
-+- <http://www.iptables.org/downloads.html>
-+
-+Ip-route2
-+---------
-+
-+- <https://www.kernel.org/pub/linux/utils/net/iproute2/>
-+
-+OProfile
-+--------
-+
-+- <http://oprofile.sf.net/download/>
-+
-+NFS-Utils
-+---------
-+
-+- <http://nfs.sourceforge.net/>
-+
-+Documentazione del kernel
-+*************************
-+
-+Sphinx
-+------
-+
-+- <http://www.sphinx-doc.org/>
-diff --git a/Documentation/translations/it_IT/process/stable-api-nonsense.rst b/Documentation/translations/it_IT/process/stable-api-nonsense.rst
-index d4fa4abf8dd3..f966962a674b 100644
---- a/Documentation/translations/it_IT/process/stable-api-nonsense.rst
-+++ b/Documentation/translations/it_IT/process/stable-api-nonsense.rst
-@@ -1,13 +1,209 @@
- .. include:: ../disclaimer-ita.rst
- 
- :Original: :ref:`Documentation/process/stable-api-nonsense.rst <stable_api_nonsense>`
--
-+:Translator: Federico Vaga <federico.vaga@vaga.pv.it>
- 
- .. _it_stable_api_nonsense:
- 
- L'interfaccia dei driver per il kernel Linux
- ============================================
- 
--.. warning::
-+(tutte le risposte alle vostre domande e altro)
-+
-+Greg Kroah-Hartman <greg@kroah.com>
-+
-+Questo è stato scritto per cercare di spiegare perché Linux **non ha
-+un'interfaccia binaria, e non ha nemmeno un'interfaccia stabile**.
-+
-+.. note::
-+
-+   Questo articolo parla di interfacce **interne al kernel**, non delle
-+   interfacce verso lo spazio utente.
-+
-+   L'interfaccia del kernel verso lo spazio utente è quella usata dai
-+   programmi, ovvero le chiamate di sistema.  Queste interfacce sono **molto**
-+   stabili nel tempo e non verranno modificate.  Ho vecchi programmi che sono
-+   stati compilati su un kernel 0.9 (circa) e tuttora funzionano sulle versioni
-+   2.6 del kernel.  Queste interfacce sono quelle che gli utenti e i
-+   programmatori possono considerare stabili.
-+
-+Riepilogo generale
-+------------------
-+
-+Pensate di volere un'interfaccia del kernel stabile, ma in realtà non la
-+volete, e nemmeno sapete di non volerla.  Quello che volete è un driver
-+stabile che funzioni, e questo può essere ottenuto solo se il driver si trova
-+nei sorgenti del kernel.  Ci sono altri vantaggi nell'avere il proprio driver
-+nei sorgenti del kernel, ognuno dei quali hanno reso Linux un sistema operativo
-+robusto, stabile e maturo; questi sono anche i motivi per cui avete scelto
-+Linux.
-+
-+Introduzione
-+------------
-+
-+Solo le persone un po' strambe vorrebbero scrivere driver per il kernel con
-+la costante preoccupazione per i cambiamenti alle interfacce interne.  Per il
-+resto del mondo, queste interfacce sono invisibili o non di particolare
-+interesse.
-+
-+Innanzitutto, non tratterò **alcun** problema legale riguardante codice
-+chiuso, nascosto, avvolto, blocchi binari, o qualsia altra cosa che descrive
-+driver che non hanno i propri sorgenti rilasciati con licenza GPL.  Per favore
-+fate riferimento ad un avvocato per qualsiasi questione legale, io sono un
-+programmatore e perciò qui vi parlerò soltanto delle questioni tecniche (non
-+per essere superficiali sui problemi legali, sono veri e dovete esserne a
-+conoscenza in ogni circostanza).
-+
-+Dunque, ci sono due tematiche principali: interfacce binarie del kernel e
-+interfacce stabili nei sorgenti.  Ognuna dipende dall'altra, ma discuteremo
-+prima delle cose binarie per toglierle di mezzo.
-+
-+Interfaccia binaria del kernel
-+------------------------------
-+
-+Supponiamo d'avere un'interfaccia stabile nei sorgenti del kernel, di
-+conseguenza un'interfaccia binaria dovrebbe essere anche'essa stabile, giusto?
-+Sbagliato.  Prendete in considerazione i seguenti fatti che riguardano il
-+kernel Linux:
-+
-+  - A seconda della versione del compilatore C che state utilizzando, diverse
-+    strutture dati del kernel avranno un allineamento diverso, e possibilmente
-+    un modo diverso di includere le funzioni (renderle inline oppure no).
-+    L'organizzazione delle singole funzioni non è poi così importante, ma la
-+    spaziatura (*padding*) nelle strutture dati, invece, lo è.
-+
-+  - In base alle opzioni che sono state selezionate per generare il kernel,
-+    un certo numero di cose potrebbero succedere:
-+
-+      - strutture dati differenti potrebbero contenere campi differenti
-+      - alcune funzioni potrebbero non essere implementate (per esempio,
-+        alcuni *lock* spariscono se compilati su sistemi mono-processore)
-+      - la memoria interna del kernel può essere allineata in differenti modi
-+        a seconda delle opzioni di compilazione.
-+
-+  - Linux funziona su una vasta gamma di architetture di processore. Non esiste
-+    alcuna possibilità che il binario di un driver per un'architettura funzioni
-+    correttamente su un'altra.
-+
-+Alcuni di questi problemi possono essere risolti compilando il proprio modulo
-+con la stessa identica configurazione del kernel, ed usando la stessa versione
-+del compilatore usato per compilare il kernel.  Questo è sufficiente se volete
-+fornire un modulo per uno specifico rilascio su una specifica distribuzione
-+Linux.  Ma moltiplicate questa singola compilazione per il numero di
-+distribuzioni Linux e il numero dei rilasci supportati da quest'ultime e vi
-+troverete rapidamente in un incubo fatto di configurazioni e piattaforme
-+hardware (differenti processori con differenti opzioni); dunque, anche per il
-+singolo rilascio di un modulo, dovreste creare differenti versioni dello
-+stesso.
-+
-+Fidatevi, se tenterete questa via, col tempo, diventerete pazzi; l'ho imparato
-+a mie spese molto tempo fa...
-+
-+
-+Interfaccia stabile nei sorgenti del kernel
-+-------------------------------------------
-+
-+Se parlate con le persone che cercano di mantenere aggiornato un driver per
-+Linux ma che non si trova nei sorgenti, allora per queste persone l'argomento
-+sarà "ostico".
-+
-+Lo sviluppo del kernel Linux è continuo e viaggia ad un ritmo sostenuto, e non
-+rallenta mai.  Perciò, gli sviluppatori del kernel trovano bachi nelle
-+interfacce attuali, o trovano modi migliori per fare le cose.  Se le trovano,
-+allora le correggeranno per migliorarle.  In questo frangente, i nomi delle
-+funzioni potrebbero cambiare, le strutture dati potrebbero diventare più grandi
-+o più piccole, e gli argomenti delle funzioni potrebbero essere ripensati.
-+Se questo dovesse succedere, nello stesso momento, tutte le istanze dove questa
-+interfaccia viene utilizzata verranno corrette, garantendo che tutto continui
-+a funzionare senza problemi.
-+
-+Portiamo ad esempio l'interfaccia interna per il sottosistema USB che ha subito
-+tre ristrutturazioni nel corso della sua vita.  Queste ristrutturazioni furono
-+fatte per risolvere diversi problemi:
-+
-+  - È stato fatto un cambiamento da un flusso di dati sincrono ad uno
-+    asincrono.  Questo ha ridotto la complessità di molti driver e ha
-+    aumentato la capacità di trasmissione di tutti i driver fino a raggiungere
-+    quasi la velocità massima possibile.
-+  - È stato fatto un cambiamento nell'allocazione dei pacchetti da parte del
-+    sottosistema USB per conto dei driver, cosicché ora i driver devono fornire
-+    più informazioni al sottosistema USB al fine di correggere un certo numero
-+    di stalli.
-+
-+Questo è completamente l'opposto di quello che succede in alcuni sistemi
-+operativi proprietari che hanno dovuto mantenere, nel tempo, il supporto alle
-+vecchie interfacce USB.  I nuovi sviluppatori potrebbero usare accidentalmente
-+le vecchie interfacce e sviluppare codice nel modo sbagliato, portando, di
-+conseguenza, all'instabilità del sistema.
-+
-+In entrambe gli scenari, gli sviluppatori hanno ritenuto che queste importanti
-+modifiche erano necessarie, e quindi le hanno fatte con qualche sofferenza.
-+Se Linux avesse assicurato di mantenere stabile l'interfaccia interna, si
-+sarebbe dovuto procedere alla creazione di una nuova, e quelle vecchie, e
-+mal funzionanti, avrebbero dovuto ricevere manutenzione, creando lavoro
-+aggiuntivo per gli sviluppatori del sottosistema USB.  Dato che gli
-+sviluppatori devono dedicare il proprio tempo a questo genere di lavoro,
-+chiedergli di dedicarne dell'altro, senza benefici, magari gratuitamente, non
-+è contemplabile.
-+
-+Le problematiche relative alla sicurezza sono molto importanti per Linux.
-+Quando viene trovato un problema di sicurezza viene corretto in breve tempo.
-+A volte, per prevenire il problema di sicurezza, si sono dovute cambiare
-+delle interfacce interne al kernel.  Quando è successo, allo stesso tempo,
-+tutti i driver che usavano quelle interfacce sono stati aggiornati, garantendo
-+la correzione definitiva del problema senza doversi preoccupare di rivederlo
-+per sbaglio in futuro.  Se non si fossero cambiate le interfacce interne,
-+sarebbe stato impossibile correggere il problema e garantire che non si sarebbe
-+più ripetuto.
-+
-+Nel tempo le interfacce del kernel subiscono qualche ripulita.  Se nessuno
-+sta più usando un'interfaccia, allora questa verrà rimossa.  Questo permette
-+al kernel di rimanere il più piccolo possibile, e garantisce che tutte le
-+potenziali interfacce sono state verificate nel limite del possibile (le
-+interfacce inutilizzate sono impossibili da verificare).
-+
-+
-+Cosa fare
-+---------
-+
-+Dunque, se avete un driver per il kernel Linux che non si trova nei sorgenti
-+principali del kernel, come sviluppatori, cosa dovreste fare?  Rilasciare un
-+file binario del driver per ogni versione del kernel e per ogni distribuzione,
-+è un incubo; inoltre, tenere il passo con tutti i cambiamenti del kernel è un
-+brutto lavoro.
-+
-+Semplicemente, fate sì che il vostro driver per il kernel venga incluso nei
-+sorgenti principali (ricordatevi, stiamo parlando di driver rilasciati secondo
-+la licenza GPL; se il vostro codice non ricade in questa categoria: buona
-+fortuna, arrangiatevi, siete delle sanguisughe)
-+
-+Se il vostro driver è nei sorgenti del kernel e un'interfaccia cambia, il
-+driver verrà corretto immediatamente dalla persona che l'ha modificata.  Questo
-+garantisce che sia sempre possibile compilare il driver, che funzioni, e tutto
-+con un minimo sforzo da parte vostra.
-+
-+Avere il proprio driver nei sorgenti principali del kernel ha i seguenti
-+vantaggi:
-+
-+  - La qualità del driver aumenterà e i costi di manutenzione (per lo
-+    sviluppatore originale) diminuiranno.
-+  - Altri sviluppatori aggiungeranno nuove funzionalità al vostro driver.
-+  - Altri persone troveranno e correggeranno bachi nel vostro driver.
-+  - Altri persone troveranno degli aggiustamenti da fare al vostro driver.
-+  - Altri persone aggiorneranno il driver quando è richiesto da un cambiamento
-+    di un'interfaccia.
-+  - Il driver sarà automaticamente reso disponibile in tutte le distribuzioni
-+    Linux senza dover chiedere a nessuna di queste di aggiungerlo.
-+
-+Dato che Linux supporta più dispositivi di qualsiasi altro sistema operativo,
-+e che girano su molti più tipi di processori di qualsiasi altro sistema
-+operativo; ciò dimostra che questo modello di sviluppo qualcosa di giusto,
-+dopo tutto, lo fa :)
-+
-+
-+
-+------
- 
--    TODO ancora da tradurre
-+Dei ringraziamenti vanno a Randy Dunlap, Andrew Morton, David Brownell,
-+Hanna Linder, Robert Love, e Nishanth Aravamudan per la loro revisione
-+e per i loro commenti sulle prime bozze di questo articolo.
-diff --git a/Documentation/translations/it_IT/process/submit-checklist.rst b/Documentation/translations/it_IT/process/submit-checklist.rst
-index b6b4dd94a660..70e65a7b3620 100644
---- a/Documentation/translations/it_IT/process/submit-checklist.rst
-+++ b/Documentation/translations/it_IT/process/submit-checklist.rst
-@@ -1,12 +1,131 @@
- .. include:: ../disclaimer-ita.rst
- 
- :Original: :ref:`Documentation/process/submit-checklist.rst <submitchecklist>`
-+:Translator: Federico Vaga <federico.vaga@vaga.pv.it>
- 
- .. _it_submitchecklist:
- 
--Lista delle cose da fare per inviare una modifica al kernel Linux
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+Lista delle verifiche da fare prima di inviare una patch per il kernel Linux
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--.. warning::
-+Qui troverete una lista di cose che uno sviluppatore dovrebbe fare per
-+vedere le proprie patch accettate più rapidamente.
- 
--    TODO ancora da tradurre
-+Tutti questi punti integrano la documentazione fornita riguardo alla
-+sottomissione delle patch, in particolare
-+:ref:`Documentation/translations/it_IT/process/submitting-patches.rst <it_submittingpatches>`.
-+
-+1) Se state usando delle funzionalità del kernel allora includete (#include)
-+   i file che le dichiarano/definiscono.  Non dipendente dal fatto che un file
-+   d'intestazione include anche quelli usati da voi.
-+
-+2) Compilazione pulita:
-+
-+  a) con le opzioni ``CONFIG`` negli stati ``=y``, ``=m`` e ``=n``. Nessun
-+     avviso/errore di ``gcc`` e nessun avviso/errore dal linker.
-+
-+  b) con ``allnoconfig``, ``allmodconfig``
-+
-+  c) quando si usa ``O=builddir``
-+
-+3) Compilare per diverse architetture di processore usando strumenti per
-+   la cross-compilazione o altri.
-+
-+4) Una buona architettura per la verifica della cross-compilazione è la ppc64
-+   perché tende ad usare ``unsigned long`` per le quantità a 64-bit.
-+
-+5) Controllate lo stile del codice della vostra patch secondo le direttive
-+   scritte in :ref:`Documentation/translations/it_IT/process/coding-style.rst <it_codingstyle>`.
-+   Prima dell'invio della patch, usate il verificatore di stile
-+   (``script/checkpatch.pl``) per scovare le violazioni più semplici.
-+   Dovreste essere in grado di giustificare tutte le violazioni rimanenti nella
-+   vostra patch.
-+
-+6) Le opzioni ``CONFIG``, nuove o modificate, non scombussolano il menu
-+   di configurazione e sono preimpostate come disabilitate a meno che non
-+   soddisfino i criteri descritti in ``Documentation/kbuild/kconfig-language.txt``
-+   alla punto "Voci di menu: valori predefiniti".
-+
-+7) Tutte le nuove opzioni ``Kconfig`` hanno un messaggio di aiuto.
-+
-+8) La patch è stata accuratamente revisionata rispetto alle più importanti
-+   configurazioni ``Kconfig``.  Questo è molto difficile da fare
-+   correttamente - un buono lavoro di testa sarà utile.
-+
-+9) Verificare con sparse.
-+
-+10) Usare ``make checkstack`` e ``make namespacecheck`` e correggere tutti i
-+    problemi rilevati.
-+
-+    .. note::
-+
-+       ``checkstack`` non evidenzia esplicitamente i problemi, ma una funzione
-+       che usa più di 512 byte sullo stack è una buona candidata per una
-+       correzione.
-+
-+11) Includete commenti :ref:`kernel-doc <kernel_doc>` per documentare API
-+    globali del kernel.  Usate ``make htmldocs`` o ``make pdfdocs`` per
-+    verificare i commenti :ref:`kernel-doc <kernel_doc>` ed eventualmente
-+    correggerli.
-+
-+12) La patch è stata verificata con le seguenti opzioni abilitate
-+    contemporaneamente: ``CONFIG_PREEMPT``, ``CONFIG_DEBUG_PREEMPT``,
-+    ``CONFIG_DEBUG_SLAB``, ``CONFIG_DEBUG_PAGEALLOC``, ``CONFIG_DEBUG_MUTEXES``,
-+    ``CONFIG_DEBUG_SPINLOCK``, ``CONFIG_DEBUG_ATOMIC_SLEEP``,
-+    ``CONFIG_PROVE_RCU`` e ``CONFIG_DEBUG_OBJECTS_RCU_HEAD``.
-+
-+13) La patch è stata compilata e verificata in esecuzione con, e senza,
-+    le opzioni ``CONFIG_SMP`` e ``CONFIG_PREEMPT``.
-+
-+14) Se la patch ha effetti sull'IO dei dischi, eccetera: allora dev'essere
-+    verificata con, e senza, l'opzione ``CONFIG_LBDAF``.
-+
-+15) Tutti i percorsi del codice sono stati verificati con tutte le funzionalità
-+    di lockdep abilitate.
-+
-+16) Tutti i nuovi elementi in ``/proc`` sono documentati in ``Documentation/``.
-+
-+17) Tutti i nuovi parametri d'avvio del kernel sono documentati in
-+    ``Documentation/admin-guide/kernel-parameters.rst``.
-+
-+18) Tutti i nuovi parametri dei moduli sono documentati con ``MODULE_PARM_DESC()``.
-+
-+19) Tutte le nuove interfacce verso lo spazio utente sono documentate in
-+    ``Documentation/ABI/``.  Leggete ``Documentation/ABI/README`` per maggiori
-+    informazioni.  Le patch che modificano le interfacce utente dovrebbero
-+    essere inviate in copia anche a linux-api@vger.kernel.org.
-+
-+20) Verifica che il kernel passi con successo ``make headers_check``
-+
-+21) La patch è stata verificata con l'iniezione di fallimenti in slab e
-+    nell'allocazione di pagine.  Vedere ``Documentation/fault-injection/``.
-+
-+    Se il nuovo codice è corposo, potrebbe essere opportuno aggiungere
-+    l'iniezione di fallimenti specifici per il sottosistema.
-+
-+22) Il nuovo codice è stato compilato con ``gcc -W`` (usate
-+    ``make EXTRA_CFLAGS=-W``).  Questo genererà molti avvisi, ma è ottimo
-+    per scovare bachi come  "warning: comparison between signed and unsigned".
-+
-+23) La patch è stata verificata dopo essere stata inclusa nella serie di patch
-+    -mm; questo al fine di assicurarsi che continui a funzionare assieme a
-+    tutte le altre patch in coda e i vari cambiamenti nei sottosistemi VM, VFS
-+    e altri.
-+
-+24) Tutte le barriere di sincronizzazione {per esempio, ``barrier()``,
-+    ``rmb()``, ``wmb()``} devono essere accompagnate da un commento nei
-+    sorgenti che ne spieghi la logica: cosa fanno e perché.
-+
-+25) Se la patch aggiunge nuove chiamate ioctl, allora aggiornate
-+    ``Documentation/ioctl/ioctl-number.txt``.
-+
-+26) Se il codice che avete modificato dipende o usa una qualsiasi interfaccia o
-+    funzionalità del kernel che è associata a uno dei seguenti simboli
-+    ``Kconfig``, allora verificate che il kernel compili con diverse
-+    configurazioni dove i simboli sono disabilitati e/o ``=m`` (se c'è la
-+    possibilità) [non tutti contemporaneamente, solo diverse combinazioni
-+    casuali]:
-+
-+    ``CONFIG_SMP``, ``CONFIG_SYSFS``, ``CONFIG_PROC_FS``, ``CONFIG_INPUT``,
-+    ``CONFIG_PCI``, ``CONFIG_BLOCK``, ``CONFIG_PM``, ``CONFIG_MAGIC_SYSRQ``,
-+    ``CONFIG_NET``, ``CONFIG_INET=n`` (ma l'ultimo con ``CONFIG_NET=y``).
-diff --git a/Documentation/translations/it_IT/process/submitting-drivers.rst b/Documentation/translations/it_IT/process/submitting-drivers.rst
-index 16df950ef808..dadd77e47613 100644
---- a/Documentation/translations/it_IT/process/submitting-drivers.rst
-+++ b/Documentation/translations/it_IT/process/submitting-drivers.rst
-@@ -1,12 +1,16 @@
- .. include:: ../disclaimer-ita.rst
- 
- :Original: :ref:`Documentation/process/submitting-drivers.rst <submittingdrivers>`
-+:Translator: Federico Vaga <federico.vaga@vaga.pv.it>
- 
- .. _it_submittingdrivers:
- 
- Sottomettere driver per il kernel Linux
- =======================================
- 
--.. warning::
-+.. note::
- 
--    TODO ancora da tradurre
-+   Questo documento è vecchio e negli ultimi anni non è stato più aggiornato;
-+   dovrebbe essere aggiornato, o forse meglio, rimosso.  La maggior parte di
-+   quello che viene detto qui può essere trovato anche negli altri documenti
-+   dedicati allo sviluppo.  Per questo motivo il documento non verrà tradotto.
--- 
-2.20.1
+"If the mismatched attributes for a Location mean that multiple
+cacheable accesses to the Location might be made with different
+shareability attributes, then uniprocessor semantics, ordering, and
+coherency are guaranteed only if:
+• Each PE that accesses the Location with a cacheable attribute performs
+a clean and invalidate of the Location before and after accessing that
+Location.
+• A DMB barrier with scope that covers the full shareability of the
+accesses is placed between any accesses to the same memory Location that
+use different attributes."
 
+>>>>>>
+>>>>>>>>>
+>>>>>>>>>> ION buffer is allocated.
+>>>>>>>>>>
+>>>>>>>>>> //Camera device records video
+>>>>>>>>>> dma_buf_attach
+>>>>>>>>>> dma_map_attachment (buffer needs to be cleaned)
+>>>>>>>>>
+>>>>>>>>> Why does the buffer need to be cleaned here? I just got through reading
+>>>>>>>>> the thread linked by Laura in the other reply. I do like +Brian's
+>>>>>>>>
+>>>>>>>> Actually +Brian this time :)
+>>>>>>>>
+>>>>>>>>> suggestion of tracking if the buffer has had CPU access since the last
+>>>>>>>>> time and only flushing the cache if it has. As unmapped heaps never get
+>>>>>>>>> CPU mapped this would never be the case for unmapped heaps, it solves my
+>>>>>>>>> problem.
+>>>>>>>>>
+>>>>>>>>>> [camera device writes to buffer]
+>>>>>>>>>> dma_buf_unmap_attachment (buffer needs to be invalidated)
+>>>>>>>>>
+>>>>>>>>> It doesn't know there will be any further CPU access, it could get freed
+>>>>>>>>> after this for all we know, the invalidate can be saved until the CPU
+>>>>>>>>> requests access again.
+>>>>>>>
+>>>>>>> We don't have any API to allow the invalidate to happen on CPU access
+>>>>>>> if all devices already detached. We need a struct device pointer to
+>>>>>>> give to the DMA API, otherwise on arm64 there'll be no invalidate.
+>>>>>>>
+>>>>>>> I had a chat with a few people internally after the previous
+>>>>>>> discussion with Liam. One suggestion was to use
+>>>>>>> DMA_ATTR_SKIP_CPU_SYNC in unmap_dma_buf, but only if there's at least
+>>>>>>> one other device attached (guarantees that we can do an invalidate in
+>>>>>>> the future if begin_cpu_access is called). If the last device
+>>>>>>> detaches, do a sync then.
+>>>>>>>
+>>>>>>> Conversely, in map_dma_buf, we would track if there was any CPU access
+>>>>>>> and use/skip the sync appropriately.
+>>>>>>>
+>>>>>>
+>>>>>> Now that I think this all through I agree this patch is probably wrong.
+>>>>>> The real fix needs to be better handling in the dma_map_sg() to deal
+>>>>>> with the case of the memory not being mapped (what I'm dealing with for
+>>>>>> unmapped heaps), and for cases when the memory in question is not cached
+>>>>>> (Liam's issue I think). For both these cases the dma_map_sg() does the
+>>>>>> wrong thing.
+>>>>>>
+>>>>>>> I did start poking the code to check out how that would look, but then
+>>>>>>> Christmas happened and I'm still catching back up.
+>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> dma_buf_detach  (device cannot stay attached because it is being sent down 
+>>>>>>>>>> the pipeline and Camera doesn't know the end of the use case)
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> This seems like a broken use-case, I understand the desire to keep
+>>>>>>>>> everything as modular as possible and separate the steps, but at this
+>>>>>>>>> point no one owns this buffers backing memory, not the CPU or any
+>>>>>>>>> device. I would go as far as to say DMA-BUF should be free now to
+>>>>>>>>> de-allocate the backing storage if it wants, that way it could get ready
+>>>>>>>>> for the next attachment, which may change the required backing memory
+>>>>>>>>> completely.
+>>>>>>>>>
+>>>>>>>>> All devices should attach before the first mapping, and only let go
+>>>>>>>>> after the task is complete, otherwise this buffers data needs copied off
+>>>>>>>>> to a different location or the CPU needs to take ownership in-between.
+>>>>>>>>>
+>>>>>>>
+>>>>>>> Yeah.. that's certainly the theory. Are there any DMA-BUF
+>>>>>>> implementations which actually do that? I hear it quoted a lot,
+>>>>>>> because that's what the docs say - but if the reality doesn't match
+>>>>>>> it, maybe we should change the docs.
+>>>>>>>
+>>>>>>
+>>>>>> Do you mean on the userspace side? I'm not sure, seems like Android
+>>>>>> might be doing this wrong from what I can gather. From kernel side if
+>>>>>> you mean the "de-allocate the backing storage", we will have some cases
+>>>>>> like this soon, so I want to make sure userspace is not abusing DMA-BUF
+>>>>>> in ways not specified in the documentation. Changing the docs to force
+>>>>>> the backing memory to always be allocated breaks the central goal in
+>>>>>> having attach/map in DMA-BUF separate.
+> 
+> Actually I meant in the kernel, in exporters. I haven't seen anyone
+> using the API as it was intended (defer allocation until first map,
+> migrate between different attachments, etc.). Mostly, backing storage
+> seems to get allocated at the point of export, and device mappings are
+> often held persistently (e.g. the DRM prime code maps the buffer at
+> import time, and keeps it mapped: drm_gem_prime_import_dev).
+> 
+
+I haven't either, which is a shame as it allows for some really useful
+management strategies for shared memory resources. I'm working on one
+such case right now, maybe I'll get to be the first to upstream one :)
+
+> I wasn't aware that CPU access before first device access was
+> considered an abuse of the API - it seems like a valid thing to want
+> to do.
+> 
+
+That's just it, I don't know if it is an abuse of API, I'm trying to get
+some clarity on that. If we do want to allow early CPU access then that
+seems to be in contrast to the idea of deferred allocation until first
+device map, what is supposed to backing the buffer if no devices have
+attached or mapped yet? Just some system memory followed by migration on
+the first attach to the proper backing? Seems too time wasteful to be
+have a valid use.
+
+Maybe it should be up to the exporter if early CPU access is allowed?
+
+I'm hoping someone with authority over the DMA-BUF framework can clarify
+original intentions here.
+
+>>>>>>
+>>>>>>>>>> //buffer is send down the pipeline
+>>>>>>>>>>
+>>>>>>>>>> // Usersapce software post processing occurs
+>>>>>>>>>> mmap buffer
+>>>>>>>>>
+>>>>>>>>> Perhaps the invalidate should happen here in mmap.
+>>>>>>>>>
+>>>>>>>>>> DMA_BUF_IOCTL_SYNC IOCT with flags DMA_BUF_SYNC_START // No CMO since no 
+>>>>>>>>>> devices attached to buffer
+>>>>>>>>>
+>>>>>>>>> And that should be okay, mmap does the sync, and if no devices are
+>>>>>>>>> attached nothing could have changed the underlying memory in the
+>>>>>>>>> mean-time, DMA_BUF_SYNC_START can safely be a no-op as they are.
+>>>>>>>
+>>>>>>> Yeah, that's true - so long as you did an invalidate in unmap_dma_buf.
+>>>>>>> Liam was saying that it's too painful for them to do that every time a
+>>>>>>> device unmaps - when in many cases (device->device, no CPU) it's not
+>>>>>>> needed.
+>>>>>>
+>>>>>> Invalidates are painless, at least compared to a real cache flush, just
+>>>>>> set the invalid bit vs actually writing out lines. I thought the issue
+>>>>>> was on the map side.
+>>>>>>
+>>>>>
+>>>>> Invalidates aren't painless for us because we have a coherent system cache 
+>>>>> so clean lines get written out.
+>>>>
+>>>> That seems very broken, why would clean lines ever need to be written
+>>>> out, that defeats the whole point of having the invalidate separate from
+>>>> clean. How do you deal with stale cache lines? I guess in your case this
+>>>> is what forces you to have to use uncached memory for DMA-able memory.
+>>>>
+>>>
+>>> My understanding is that our ARM invalidate is a clean + invalidate, I had 
+>>> concerns about the clean lines being written to the the system cache as 
+>>> part of the 'clean', but the following 'invalidate' would take care of 
+>>> actually invalidating the lines (so nothign broken).
+>>> But i am probably wrong on this and it is probably smart enough not to the 
+>>> writing of the clean lines.
+>>>
+>>
+>> You are correct that for a lot of ARM cores "invalidate" is always a
+>> "clean + invalidate". At first I thought this was kinda silly as there
+>> is now no way to mark a dirty line invalid without it getting written
+>> out first, but if you think about it any dirty cache-line can be written
+>> out (cleaned) at anytime anyway, so this doesn't actually change system
+>> behavior. You should just not write to memory (make the line dirty)
+>> anything you don't want eventually written out.
+>>
+>> Point two, it's not just smart enough to not write-out clean lines, it
+>> is guaranteed not to write them out by the spec. Otherwise since
+>> cache-lines can be randomly filled if those same clean lines got written
+>> out on invalidate operations there would be no way to maintain coherency
+>> and things would be written over top each other all over the place.
+>>
+>>> But regardless, targets supporting a coherent system cache is a legitamate 
+>>> configuration and an invalidate on this configuration does have to go to 
+>>> the bus to invalidate the system cache (which isn't free) so I dont' think
+>>> you can make the assumption that invalidates are cheap so that it is okay 
+>>> to do them (even if they are not needed) on every dma unmap.
+>>>
+>>
+>> Very true, CMOs need to be broadcast to other coherent masters on a
+>> coherent interconnect (and the interconnect itself if it has a cache as
+>> well (L3)), so not 100% free, but almost, just the infinitesimal cost of
+>> the cache tag check in hardware. If there are no non-coherent devices
+>> attached then the CMOs are no-ops, if there are then the data needs to
+>> be written out either way, doing it every access like is done with
+>> uncached memory (- any write combining) will blow away any saving made
+>> from the one less CMO. Either way you lose with uncached mappings of
+>> memory. If I'm wrong I would love to know.
+>>
+> 
+> From what I understand, the current DMA APIs are not equipped to
+> handle having coherent and non-coherent devices attached at the same
+> time. The buffer is either in "CPU land" or "Device land", there's no
+> smaller granule of "Coherent Device land" or "Non-Coherent Device
+> land".
+> 
+> I think if there's devices which are making coherent accesses, and
+> devices which are making non-coherent accesses, then we can't support
+> them being attached at the same time without some enhancements to the
+> APIs.
+> 
+
+I think you are right, we only handle sync to/from the CPU out to
+"Device land". To sync from device to device I'm not sure there is
+anything right now, they all have to be able to talk to each other
+without any maintenance from the host CPU.
+
+This will probably lead to some interesting cases like in OpenVX where a
+key selling point is keeping the host out of the loop and let the remote
+devices do all the sharing between themselves.
+
+>>>>> And these invalidates can occur on fairly large buffers.
+>>>>>
+>>>>> That is why we haven't went with using cached ION memory and "tracking CPU 
+>>>>> access" because it only solves half the problem, ie there isn't a way to 
+>>>>> safely skip the invalidate (because we can't read the future).
+>>>>> Our solution was to go with uncached ION memory (when possible), but as 
+>>>>> you can see in other discussions upstream support for uncached memory has
+>>>>> its own issues.
+>>>>>
+> 
+> @Liam, in your problematic use-cases, are both devices detached when
+> the buffer moves between them?
+> 
+>  1) dev 1 map, access, unmap
+>  2) dev 1 detach
+>  3) (maybe) CPU access
+>  4) dev 2 attach
+>  5) dev 2 map, access
+> 
+> I still think a pretty pragmatic solution is to use
+> DMA_ATTR_SKIP_CPU_SYNC until the last device detaches. That won't work
+> if your access sequence looks like above...
+> 
+> ...however, if your sequence looks like above, then you probably need
+> to keep at least one of the devices attached anyway. Otherwise, per
+> the API, the buffer could get migrated after 2)/before 5). That will
+> surely hurt a lot more than an invalidate.
+> 
+>>>>
+>>>> Sounds like you need to fix upstream support then, finding a way to drop
+>>>> all cacheable mappings of memory you want to make uncached mappings for
+>>>> seems to be the only solution.
+>>>>
+>>>
+>>> I think we can probably agree that there woudln't be a good way to remove 
+>>> cached mappings without causing an unacceptable performance degradation 
+>>> since it would fragment all the nice 1GB kernel mappings we have.
+>>>
+>>> So I am trying to find an alternative solution.
+>>>
+>>
+>> I'm not sure there is a better solution. How hard is this solution to
+>> implement anyway? The kernel already has to make gaps and cut up that
+>> nice 1GB mapping when you make a reserved memory space in the lowmem
+>> area, so all the logic is probably already implemented. Just need to
+>> allow it to be hooked into from Ion when doing doing the uncached mappings.
+>>
+> 
+> I haven't looked recently, but I'm not sure the early memblock code
+> can be reused as-is at runtime. I seem to remember it makes a bunch of
+> assumptions about the fact that it's running "early".
+> 
+> If CPU uncached mappings of normal system memory is really the way
+> forward, I could envisage a heap which maintains a pool of chunks of
+> memory which it removed from the kernel mapping. The pool could grow
+> (remove more pages from the kernel mapping)/shrink (add them back to
+> the kernel mapping) as needed.
+> 
+> John Reitan implemented a compound-page heap, which used compaction to
+> get a pool of 2MB contiguous pages. Something like that would at least
+> prevent needing full 4kB granularity when removing things from the
+> kernel mapping.
+> 
+> Even better, could it somehow be restricted to a region which is
+> already fragmented? (e.g. the one which was used for the default CMA
+> heap)
+> 
+> Thanks,
+> -Brian
+> 
+>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> [CPU reads/writes to the buffer]
+>>>>>>>>>> DMA_BUF_IOCTL_SYNC IOCTL with flags DMA_BUF_SYNC_END // No CMO since no 
+>>>>>>>>>> devices attached to buffer
+>>>>>>>>>> munmap buffer
+>>>>>>>>>>
+>>>>>>>>>> //buffer is send down the pipeline
+>>>>>>>>>> // Buffer is send to video device (who does compression of raw data) and 
+>>>>>>>>>> writes to a file
+>>>>>>>>>> dma_buf_attach
+>>>>>>>>>> dma_map_attachment (buffer needs to be cleaned)
+>>>>>>>>>> [video device writes to buffer]
+>>>>>>>>>> dma_buf_unmap_attachment 
+>>>>>>>>>> dma_buf_detach  (device cannot stay attached because it is being sent down 
+>>>>>>>>>> the pipeline and Video doesn't know the end of the use case)
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>>> Also ION no longer provides DMA ready memory, so if you are not doing CPU 
+>>>>>>>>>>>> access then there is no requirement (that I am aware of) for you to call 
+>>>>>>>>>>>> {begin,end}_cpu_access before passing the buffer to the device and if this 
+>>>>>>>>>>>> buffer is cached and your device is not IO-coherent then the cache maintenance
+>>>>>>>>>>>> in ion_map_dma_buf and ion_unmap_dma_buf is required.
+>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> If I am not doing any CPU access then why do I need CPU cache
+>>>>>>>>>>> maintenance on the buffer?
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Because ION no longer provides DMA ready memory.
+>>>>>>>>>> Take the above example.
+>>>>>>>>>>
+>>>>>>>>>> ION allocates memory from buddy allocator and requests zeroing.
+>>>>>>>>>> Zeros are written to the cache.
+>>>>>>>>>>
+>>>>>>>>>> You pass the buffer to the camera device which is not IO-coherent.
+>>>>>>>>>> The camera devices writes directly to the buffer in DDR.
+>>>>>>>>>> Since you didn't clean the buffer a dirty cache line (one of the zeros) is 
+>>>>>>>>>> evicted from the cache, this zero overwrites data the camera device has 
+>>>>>>>>>> written which corrupts your data.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> The zeroing *is* a CPU access, therefor it should handle the needed CMO
+>>>>>>>>> for CPU access at the time of zeroing.
+>>>>>>>>>
+>>>>>>>
+>>>>>>> Actually that should be at the point of the first non-coherent device
+>>>>>>> mapping the buffer right? No point in doing CMO if the future accesses
+>>>>>>> are coherent.
+>>>>>>
+>>>>>> I see your point, as long as the zeroing is guaranteed to be the first
+>>>>>> access to this buffer then it should be safe.
+>>>>>>
+>>>>>> Andrew
+>>>>>>
+>>>>>>>
+>>>>>>> Cheers,
+>>>>>>> -Brian
+>>>>>>>
+>>>>>>>>> Andrew
+>>>>>>>>>
+>>>>>>>>>> Liam
+>>>>>>>>>>
+>>>>>>>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>>>>>>>>>> a Linux Foundation Collaborative Project
+>>>>>>>>>>
+>>>>>>
+>>>>>
+>>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>>>>> a Linux Foundation Collaborative Project
+>>>>>
+>>>>
+>>>
+>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>>> a Linux Foundation Collaborative Project
+>>>
