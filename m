@@ -2,319 +2,124 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0957AC7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C44AC7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0D782084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F2772084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:30:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="oBzlO40Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbfAUMak (ORCPT
+        id S1728670AbfAUMau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:30:40 -0500
-Received: from mga04.intel.com ([192.55.52.120]:25328 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728156AbfAUMak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:30:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 04:30:38 -0800
-X-ExtLoop1: 1
+        Mon, 21 Jan 2019 07:30:50 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:41706 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728404AbfAUMat (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:30:49 -0500
 X-IronPort-AV: E=Sophos;i="5.56,503,1539673200"; 
-   d="scan'208";a="127657221"
-Received: from vkunnari-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.163])
-  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2019 04:30:32 -0800
-Date:   Mon, 21 Jan 2019 14:30:31 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        Matthew Garrett <matthewgarrett@google.com>
-Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()
-Message-ID: <20190121123031.GC9423@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-6-roberto.sassu@huawei.com>
- <20181220152122.GB10652@linux.intel.com>
- <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
- <20190118151253.GH4080@linux.intel.com>
- <a4728854-b326-2575-9d22-85566e75869f@huawei.com>
+   d="scan'208";a="25752683"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Jan 2019 05:30:48 -0700
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Mon, 21 Jan 2019 05:30:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fhfqjAKLj/VGpeNeDwnAwZwp1akzvIfSxWmUAhy4g5s=;
+ b=oBzlO40YbwkuwD0Ey9RsbHdAuov1bvIBJr70Fga+/nFrFW4NdcWx5I0VQaayenP2ebX/foQv435g4J1ERAcev3eVMhEd1sBZShMQok2P+DrQVD973iVVXy/yHgWDcV84ljGrRSo6lPlAikv7qwd9Hke4MN5iZzNkdpsEay7Wov0=
+Received: from MWHPR11MB1920.namprd11.prod.outlook.com (10.175.54.19) by
+ MWHPR11MB2064.namprd11.prod.outlook.com (10.169.236.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.26; Mon, 21 Jan 2019 12:30:46 +0000
+Received: from MWHPR11MB1920.namprd11.prod.outlook.com
+ ([fe80::d917:8496:9d53:1f55]) by MWHPR11MB1920.namprd11.prod.outlook.com
+ ([fe80::d917:8496:9d53:1f55%8]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
+ 12:30:45 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <Nicolas.Ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <Claudiu.Beznea@microchip.com>
+Subject: [PATCH 0/4] add support for the new SAM9X60's PWM controller
+Thread-Topic: [PATCH 0/4] add support for the new SAM9X60's PWM controller
+Thread-Index: AQHUsYUhBAj3SDaXMU2G5JKDX4YKbw==
+Date:   Mon, 21 Jan 2019 12:30:45 +0000
+Message-ID: <1548073783-22640-1-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR07CA0038.namprd07.prod.outlook.com
+ (2603:10b6:a03:60::15) To MWHPR11MB1920.namprd11.prod.outlook.com
+ (2603:10b6:300:110::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Claudiu.Beznea@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR11MB2064;6:hwdSvAifUZnWp3+KCYOIMC3jsjarWwj8wwixmrNUKb83XhtaKbWCH5kXUqjlICQJJRYdcGQu+OL+V0elFBrrdv8poDGaR+bcZhowWtaQBTj6faJ+oZm/MfqTJMdBYwzp8CmSgODS/CUxIuhzT5UdqUjzf+Y9i86a1ORVS65/f+3pP9+TNf74OOyeRZIw8yYgtqBSH5scJGrYkffKu6iXDBelarHOUq0T+su8bsj45WuIjm5nKznlbsvF7Jn6xbLLP3F4uUr4v2vPQoZ2+pHGzGeQBccBE2ta+7kc2WrOPYKl9z0PTgq9mexEdzgxlxal5FLKTvGzatO35tc3mxvXkBu5bl3sK7FTspuEhJeKJD3xcJqEoaDx5YlE+JdfCc7z7TlT6VkaYCGYQqR2hiQrOlIFEbyqy7GfCa0MzGRgAqlUq1g+s6A2v/WmbqyX157PJdoDW8qCa/tmFw608nQoUQ==;5:Hb82E2s0hmLAV1i06Uo+igk+FYbW6q7BnBmM4WQoTUlaZXgs2hH9WSUXsRD2RG+W1HwzJXTOVPbAlVMTcqzUXmQ4yspepc8Imyo/Uo5H6VZoT8aIoiPuQSAKQ77AHS5szuCGvM6eLP+cTEqAXCOnuO71mjoI/K5cgrfDZ7sAA31pmPjJL7ocCjC6pemkKebx7xWFLCdvqj0x+nTMmU2/Cg==;7:pbJtQ3onMFzb0YARLpA7jxfbNHczp8AWK7vOxIXoBG+fepvInlw9Hv1jgrhWjL37C9f4OQNeF4G1NqtnCCTBluWEy7D2fKNd7K10kEWd1RYzFd2IgeEquWZLMR8MI0J8/eH2cbV9/qlGMI0qFGNUgQ==
+x-ms-office365-filtering-correlation-id: ab0c8179-f24f-4f5b-8cb3-08d67f9c43ff
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB2064;
+x-ms-traffictypediagnostic: MWHPR11MB2064:
+x-microsoft-antispam-prvs: <MWHPR11MB20641C98801178C936F6CB46879F0@MWHPR11MB2064.namprd11.prod.outlook.com>
+x-forefront-prvs: 0924C6A0D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(366004)(136003)(39860400002)(189003)(199004)(186003)(6436002)(6636002)(53936002)(4326008)(50226002)(6116002)(105586002)(52116002)(106356001)(97736004)(3846002)(36756003)(7736002)(305945005)(6486002)(39060400002)(316002)(26005)(6512007)(99286004)(71200400001)(107886003)(71190400001)(86362001)(25786009)(68736007)(256004)(14444005)(14454004)(8936002)(8676002)(2906002)(81156014)(386003)(6506007)(81166006)(476003)(2616005)(2501003)(54906003)(102836004)(66066001)(72206003)(478600001)(110136005)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB2064;H:MWHPR11MB1920.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: PsY1Us0T0qTPKxz+nwDdaT2vZ1mbTzfPO3Vefzzrc+BJMgRheFbeY8RTWRfX71Ui/6yyMGLLSS97fvZ090QC3gRgm/nDk2Ajw5A2/2g82xN1NWLVN9eSSa+ZJHOmsQ/i2SYfvKogE9gZ+R43zz5vNAwi1cGoaaRzGbSbjCX7/9fYNZSTIxxqmjCd0XbdJwFPE8wGMIp3Og3iRrjHaXcLkGG/+xyU+IXi5e52g9T4AV8FslcN5eYXziW+0wZK7wMklzPTYnn9f9/CBrC7wDLXvEikam0MCv22EQ4+iRJCTEs2sqp+/fXwbQaX4h+G3B0A+HXqsvnk3GjdQ3H7PEbxaHdtrxJzrE+7l4WZLRpVvETxKnCwkYSlt757Pfz0rLWTG8AJ/7LaJsO+HLaqyIx1ENe74wgFUIFxZb8jJGSZYEE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4728854-b326-2575-9d22-85566e75869f@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab0c8179-f24f-4f5b-8cb3-08d67f9c43ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 12:30:41.5232
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB2064
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 09:11:21AM +0100, Roberto Sassu wrote:
-> On 1/18/2019 4:12 PM, Jarkko Sakkinen wrote:
-> > On Thu, Jan 17, 2019 at 08:59:00AM +0100, Roberto Sassu wrote:
-> > > On 12/20/2018 4:21 PM, Jarkko Sakkinen wrote:
-> > > > On Thu, Dec 13, 2018 at 11:29:45AM +0100, Roberto Sassu wrote:
-> > > > > Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
-> > > > > 
-> > > > > This patch modifies the definition of tpm_pcr_extend() to allow other
-> > > > > kernel subsystems to pass a digest for each algorithm supported by the TPM.
-> > > > > All digests are processed by the TPM in one operation.
-> > > > > 
-> > > > > If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
-> > > > > the TPM driver extends the remaining PCR banks with the first digest
-> > > > > passed as an argument to the function.
-> > > > > 
-> > > > > The new tpm_extend digest structure has been preferred to the tpm_digest
-> > > > > structure, to let the caller specify the size of the digest (which may be
-> > > > > unknown to the TPM driver).
-> > > > > 
-> > > > > Due to the API change, ima_pcr_extend() and pcrlock() have been modified.
-> > > > > 
-> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > ---
-> > > > >    drivers/char/tpm/tpm-interface.c   | 24 +++++---------------
-> > > > >    drivers/char/tpm/tpm.h             |  5 +++--
-> > > > >    drivers/char/tpm/tpm1-cmd.c        | 13 ++++++++---
-> > > > >    drivers/char/tpm/tpm2-cmd.c        | 35 +++++++++++++++++++++---------
-> > > > >    include/linux/tpm.h                | 13 ++++++++---
-> > > > >    security/integrity/ima/ima_queue.c |  5 ++++-
-> > > > >    security/keys/trusted.c            |  5 ++++-
-> > > > >    7 files changed, 62 insertions(+), 38 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > > > index eb7c79ca8a94..911fea19e408 100644
-> > > > > --- a/drivers/char/tpm/tpm-interface.c
-> > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > @@ -478,42 +478,30 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> > > > >     * tpm_pcr_extend - extend a PCR value in SHA1 bank.
-> > > > >     * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-> > > > >     * @pcr_idx:	the PCR to be retrieved
-> > > > > - * @hash:	the hash value used to extend the PCR value
-> > > > > + * @count:	number of tpm_extend_digest structures
-> > > > > + * @digests:	array of tpm_extend_digest structures used to extend PCRs
-> > > > >     *
-> > > > >     * Note: with TPM 2.0 extends also those banks for which no digest was
-> > > > >     * specified in order to prevent malicious use of those PCR banks.
-> > > > >     *
-> > > > >     * Return: same as with tpm_transmit_cmd()
-> > > > >     */
-> > > > > -int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > > > > +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > > > +		   const struct tpm_extend_digest *digests)
-> > > > 
-> > > > Remove const. Document how @digests is used  like the special meaning
-> > > > of the first index. I faintly remember asking this last time.
-> > > > 
-> > > > >    {
-> > > > >    	int rc;
-> > > > > -	struct tpm_digest *digest_list;
-> > > > > -	int i;
-> > > > >    	chip = tpm_find_get_ops(chip);
-> > > > >    	if (!chip)
-> > > > >    		return -ENODEV;
-> > > > >    	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> > > > > -		digest_list = kcalloc(chip->nr_allocated_banks,
-> > > > > -				      sizeof(*digest_list), GFP_KERNEL);
-> > > > > -		if (!digest_list)
-> > > > > -			return -ENOMEM;
-> > > > > -
-> > > > > -		for (i = 0; i < chip->nr_allocated_banks; i++) {
-> > > > > -			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
-> > > > > -			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-> > > > > -		}
-> > > > > -
-> > > > > -		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
-> > > > > -				     digest_list);
-> > > > > -		kfree(digest_list);
-> > > > > +		rc = tpm2_pcr_extend(chip, pcr_idx, count, digests);
-> > > > >    		tpm_put_ops(chip);
-> > > > >    		return rc;
-> > > > >    	}
-> > > > > -	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
-> > > > > +	rc = tpm1_pcr_extend(chip, pcr_idx, count, digests,
-> > > > >    			     "attempting extend a PCR value");
-> > > > 
-> > > > The validation is missing that the provided array has only one element
-> > > > and the algorithm is SHA1. Could be done also inside tpm1_pcr_extend()
-> > > > but what you are doing to that function does not make any sense so
-> > > > better to do it here.
-> > > > 
-> > > > >    	tpm_put_ops(chip);
-> > > > >    	return rc;
-> > > > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> > > > > index 64d93d26087f..6b446504d2fe 100644
-> > > > > --- a/drivers/char/tpm/tpm.h
-> > > > > +++ b/drivers/char/tpm/tpm.h
-> > > > > @@ -504,7 +504,8 @@ int tpm1_auto_startup(struct tpm_chip *chip);
-> > > > >    int tpm1_do_selftest(struct tpm_chip *chip);
-> > > > >    int tpm1_get_timeouts(struct tpm_chip *chip);
-> > > > >    unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> > > > > -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
-> > > > > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > > > +		    const struct tpm_extend_digest *digests,
-> > > > >    		    const char *log_msg);
-> > > > >    int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> > > > >    ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> > > > > @@ -551,7 +552,7 @@ int tpm2_get_timeouts(struct tpm_chip *chip);
-> > > > >    int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-> > > > >    		  struct tpm_digest *digest, u16 *digest_size_ptr);
-> > > > >    int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > > > -		    struct tpm_digest *digests);
-> > > > > +		    const struct tpm_extend_digest *digests);
-> > > > >    int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
-> > > > >    void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
-> > > > >    			    unsigned int flags);
-> > > > > diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> > > > > index 8b70a7f884a7..04ee10284b8c 100644
-> > > > > --- a/drivers/char/tpm/tpm1-cmd.c
-> > > > > +++ b/drivers/char/tpm/tpm1-cmd.c
-> > > > > @@ -449,12 +449,20 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
-> > > > >    }
-> > > > >    #define TPM_ORD_PCR_EXTEND 20
-> > > > > -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
-> > > > > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > > > +		    const struct tpm_extend_digest *digests,
-> > > > >    		    const char *log_msg)
-> > > > >    {
-> > > > >    	struct tpm_buf buf;
-> > > > > +	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-> > > > > +	const u8 *hash;
-> > > > >    	int rc;
-> > > > > +	hash = dummy_hash;
-> > > > > +	if (count)
-> > > > > +		memcpy(dummy_hash, digests[0].data,
-> > > > > +		       min(digests[0].size, (u16)sizeof(dummy_hash)));
-> > > > > +
-> > > > 
-> > > > You copy memory from one place to another without any good reason to do
-> > > > so. My suggestion is just not to change tpm1_pcr_extend() at all.
-> > > > 
-> > > > >    	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-> > > > >    	if (rc)
-> > > > >    		return rc;
-> > > > > @@ -743,7 +751,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
-> > > > >     */
-> > > > >    int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
-> > > > >    {
-> > > > > -	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-> > > > >    	struct tpm_buf buf;
-> > > > >    	unsigned int try;
-> > > > >    	int rc;
-> > > > > @@ -751,7 +758,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
-> > > > >    	/* for buggy tpm, flush pcrs with extend to selected dummy */
-> > > > >    	if (tpm_suspend_pcr)
-> > > > > -		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
-> > > > > +		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, 0, NULL,
-> > > > >    				     "extending dummy pcr before suspend");
-> > > > >    	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
-> > > > > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > > > > index 6ce5173cf0e5..77b5808270c6 100644
-> > > > > --- a/drivers/char/tpm/tpm2-cmd.c
-> > > > > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > > > > @@ -247,21 +247,22 @@ struct tpm2_null_auth_area {
-> > > > >     *
-> > > > >     * @chip:	TPM chip to use.
-> > > > >     * @pcr_idx:	index of the PCR.
-> > > > > - * @count:	number of digests passed.
-> > > > > - * @digests:	list of pcr banks and corresponding digest values to extend.
-> > > > > + * @count:	number of tpm_extend_digest passed.
-> > > > > + * @digests:	array of tpm_extend_digest with digest values to extend.
-> > > > >     *
-> > > > >     * Return: Same as with tpm_transmit_cmd.
-> > > > >     */
-> > > > 
-> > > > The documentation about @digests.
-> > > > 
-> > > > >    int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > > > -		    struct tpm_digest *digests)
-> > > > > +		    const struct tpm_extend_digest *digests)
-> > > > >    {
-> > > > >    	struct tpm_buf buf;
-> > > > >    	struct tpm2_null_auth_area auth_area;
-> > > > > +	const struct tpm_extend_digest *digest;
-> > > > > +	u8 dummy_hash[SHA512_DIGEST_SIZE] = { 0 };
-> > > > > +	const u8 *hash;
-> > > > >    	int rc;
-> > > > >    	int i;
-> > > > > -
-> > > > > -	if (count > chip->nr_allocated_banks)
-> > > > > -		return -EINVAL;
-> > > > > +	int j;
-> > > > >    	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-> > > > >    	if (rc)
-> > > > > @@ -277,11 +278,25 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > > >    	tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
-> > > > >    	tpm_buf_append(&buf, (const unsigned char *)&auth_area,
-> > > > >    		       sizeof(auth_area));
-> > > > > -	tpm_buf_append_u32(&buf, count);
-> > > > > +	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
-> > > > > +
-> > > > > +	if (count)
-> > > > > +		memcpy(dummy_hash, digests[0].data, digests[0].size);
-> > > > > +
-> > > > > +	for (i = 0; i < chip->nr_allocated_banks; i++) {
-> > > > > +		tpm_buf_append_u16(&buf, chip->allocated_banks[i].alg_id);
-> > > > > +
-> > > > > +		hash = dummy_hash;
-> > > > > +		for (j = 0; j < count; j++) {
-> > > > > +			digest = digests + j;
-> > > > > +
-> > > > > +			if (digest->alg_id == chip->allocated_banks[i].alg_id) {
-> > > > > +				hash = digest->data;
-> > > > > +				break;
-> > > > 
-> > > > I think the whole design is just wrong. I did re-read your response to
-> > > > v6 again and I'm very sorry, but I just don't get this. Caller has all
-> > > > the information (from struct tpm_chip) to give the correct data. This
-> > > > function should validate that data (check algorithm ID and that's it).
-> > > 
-> > > The question is if checking tpm->allocated_banks is a strict
-> > > requirement, or we can allow callers to use the algorithm they are
-> > > currently using, without further modifications.
-> > 
-> > If you want to know what is available, you can use that array.
-> > 
-> > > > Extending with the dummy hash should be done by the caller when
-> > > > preparing the array, not baked into this function. This kind of also
-> > > > makes obvious that we don't need this new struct. There should never be
-> > > > a local variable (whose size is BTW randomly chosen) called dummy_hash.
-> > > 
-> > > This means duplicating the code for each caller. Currently, this work is
-> > > done by the TPM driver.
-> > 
-> > It is better than fix the usage pattern like this. Not only that, but
-> > this somewhat complicated behavior now completely undocumented in the
-> > function description.
-> > 
-> > You are making strong assumptions how some other subsystem might use
-> > extend operation. I will rather accept redundancy and consider
-> > consolidation later when there are two clients. Rather keep the TPM
-> > provided function simple and stupid.
-> 
-> Ok, if I understood it correctly, every caller of tpm_pcr_extend() will pass
-> an array of tpm_digest structures.
-> 
-> I will not introduce a new structure, as the caller has to use
-> algorithms from chip->allocated_banks and passing the digest size is not
-> necessary.
-> 
-> tpm_pcr_extend() will reject incomplete arrays (one or more algorithms
-> are missing). To simplify even more tpm_pcr_extend(), I assume and check
-> that passed algorithms are in the same order as those in
-> chip->allocated_banks.
-> 
-> I will remove the 'count' parameter from tpm_pcr_extend(), as the number
-> of tpm_digest structures will be always chip->nr_allocated_banks.
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-Sounds like a plan. I think some redundancy is almost always better than
-hard to undestand API.
+This series adds support for PWM controller of the new SAM9X60. The differe=
+nce
+b/w this one and the provious AT91SAM9X5 is the counter size (32 bits compa=
+red
+with 16 bits on the previous version) thus, allowing to generate signals wi=
+th
+bigger periods and duty cycles. This series, modifies the driver to take in=
+to
+account per IP counter size by embedding this information into driver's dat=
+a.
 
-/Jarkko
+Claudiu Beznea (4):
+  pwm: atmel: add struct atmel_pwm_data
+  pwm: atmel: add support for controllers with 32 bit counters
+  pwm: atmel: add support for SAM9X60's PWM controller
+  pwm: atmel: add PWM binding for SAM9X60
+
+ .../devicetree/bindings/pwm/atmel-pwm.txt          |   1 +
+ drivers/pwm/pwm-atmel.c                            | 119 ++++++++++++++---=
+----
+ 2 files changed, 81 insertions(+), 39 deletions(-)
+
+--=20
+2.7.4
+
