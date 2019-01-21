@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035C1C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 932D6C2F3D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98D420861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58C3820879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080390;
-	bh=qM6w4+yzsFLwdNK6g5amleqeNrgmAc3BL76qCAsnCBc=;
+	s=default; t=1548080396;
+	bh=a1LdWQc0p1Nku2Zvoxyw1OpfsyflpL9nUBPhMk2WZs8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NtvjvlL+OKqzb6bNXZmEwBRd61WOyyoxigG2/hEWy+i+GbDe3tuxB1aKiOo/4u4FF
-	 SENg4XQ/ygEQB1LlQb+kj04sQ96YbLuNgUtmrTfHi6hJXS315TmL8AOBgUnSsgO5l6
-	 Zy58yc6PNMNJIOz4d5Qa98UpccTzc+DYcIqqql10=
+	b=Sl2Zai2r/J7J3kBFWwe4stzaySxpu8LK7B7+sMdPXwvOGypoZUKR4tRbyCSbT7i2Q
+	 jjeq38tSrJFKSqusaj7dPPT075NgCwMm18nOXRi13y89ZMFaa2By3JRecYWFBJdn7E
+	 eOnq6QnCNtsM9+T5EtFqfDLnu1s0lVAYsGH5LyXI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730688AbfAUOTs (ORCPT
+        id S1729921AbfAUNsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:19:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58484 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:48:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729336AbfAUNsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:48:31 -0500
+        id S1729905AbfAUNsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:48:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53E852063F;
-        Mon, 21 Jan 2019 13:48:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17E542063F;
+        Mon, 21 Jan 2019 13:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078510;
-        bh=qM6w4+yzsFLwdNK6g5amleqeNrgmAc3BL76qCAsnCBc=;
+        s=default; t=1548078499;
+        bh=a1LdWQc0p1Nku2Zvoxyw1OpfsyflpL9nUBPhMk2WZs8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=crX9BgIGc7n+RNxqlceE+LpjMU49jqvwL2Gb9+c++FM2eWRCya0P26kR56at1BlRC
-         3HJfr98IQD8APr0kqtEN98C7UyAsP1GN9wwLrJr+J8ehb3IR8nhpRfWL+YbzwE3oTZ
-         bWybAGQwWMYOmsNDpP7+0L7DjYw7EPGu/h/kxhFY=
+        b=WepoDPVi6bL6BdCCO+IhNGjSuRnRqh3UPOXOdflkJt0cJNABSRMTLZFwgi8AYS4ms
+         QWBD327JW6x5mBF2eIBQrb+WSR0/5TXVfHO5ayatzG/SaNzxABIEncToEwqDROm7SR
+         CVMOE2ErpbmG8V7xHcuqmGTo0k399odHQmTkgLzI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.20 058/111] RDMA/nldev: Dont expose unsafe global rkey to regular user
-Date:   Mon, 21 Jan 2019 14:42:52 +0100
-Message-Id: <20190121122502.277934697@linuxfoundation.org>
+        stable@vger.kernel.org, Muyu Yu <ieatmuttonchuan@gmail.com>,
+        Marcus Meissner <meissner@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 005/111] can: gw: ensure DLC boundaries after CAN frame modification
+Date:   Mon, 21 Jan 2019 14:41:59 +0100
+Message-Id: <20190121122456.378732690@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,38 +69,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit a9666c1cae8dbcd1a9aacd08a778bf2a28eea300 upstream.
+commit 0aaa81377c5a01f686bcdb8c7a6929a7bf330c68 upstream.
 
-Unsafe global rkey is considered dangerous because it exposes memory
-registered for all memory in the system. Only users with a QP on the same
-PD can use the rkey, and generally those QPs will already know the
-value. However, out of caution, do not expose the value to unprivleged
-users on the local system. Require CAP_NET_ADMIN instead.
+Muyu Yu provided a POC where user root with CAP_NET_ADMIN can create a CAN
+frame modification rule that makes the data length code a higher value than
+the available CAN frame data size. In combination with a configured checksum
+calculation where the result is stored relatively to the end of the data
+(e.g. cgw_csum_xor_rel) the tail of the skb (e.g. frag_list pointer in
+skb_shared_info) can be rewritten which finally can cause a system crash.
 
-Cc: <stable@vger.kernel.org> # 4.16
-Fixes: 29cf1351d450 ("RDMA/nldev: provide detailed PD information")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Michael Kubecek suggested to drop frames that have a DLC exceeding the
+available space after the modification process and provided a patch that can
+handle CAN FD frames too. Within this patch we also limit the length for the
+checksum calculations to the maximum of Classic CAN data length (8).
+
+CAN frames that are dropped by these additional checks are counted with the
+CGW_DELETED counter which indicates misconfigurations in can-gw rules.
+
+This fixes CVE-2019-3701.
+
+Reported-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Reported-by: Marcus Meissner <meissner@suse.de>
+Suggested-by: Michal Kubecek <mkubecek@suse.cz>
+Tested-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # >= v3.2
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/nldev.c |    4 ----
- 1 file changed, 4 deletions(-)
+ net/can/gw.c |   30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/core/nldev.c
-+++ b/drivers/infiniband/core/nldev.c
-@@ -580,10 +580,6 @@ static int fill_res_pd_entry(struct sk_b
- 	if (nla_put_u64_64bit(msg, RDMA_NLDEV_ATTR_RES_USECNT,
- 			      atomic_read(&pd->usecnt), RDMA_NLDEV_ATTR_PAD))
- 		goto err;
--	if ((pd->flags & IB_PD_UNSAFE_GLOBAL_RKEY) &&
--	    nla_put_u32(msg, RDMA_NLDEV_ATTR_RES_UNSAFE_GLOBAL_RKEY,
--			pd->unsafe_global_rkey))
--		goto err;
+--- a/net/can/gw.c
++++ b/net/can/gw.c
+@@ -416,13 +416,29 @@ static void can_can_gw_rcv(struct sk_buf
+ 	while (modidx < MAX_MODFUNCTIONS && gwj->mod.modfunc[modidx])
+ 		(*gwj->mod.modfunc[modidx++])(cf, &gwj->mod);
  
- 	if (fill_res_name_pid(msg, res))
- 		goto err;
+-	/* check for checksum updates when the CAN frame has been modified */
++	/* Has the CAN frame been modified? */
+ 	if (modidx) {
+-		if (gwj->mod.csumfunc.crc8)
++		/* get available space for the processed CAN frame type */
++		int max_len = nskb->len - offsetof(struct can_frame, data);
++
++		/* dlc may have changed, make sure it fits to the CAN frame */
++		if (cf->can_dlc > max_len)
++			goto out_delete;
++
++		/* check for checksum updates in classic CAN length only */
++		if (gwj->mod.csumfunc.crc8) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
++
+ 			(*gwj->mod.csumfunc.crc8)(cf, &gwj->mod.csum.crc8);
++		}
++
++		if (gwj->mod.csumfunc.xor) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
+ 
+-		if (gwj->mod.csumfunc.xor)
+ 			(*gwj->mod.csumfunc.xor)(cf, &gwj->mod.csum.xor);
++		}
+ 	}
+ 
+ 	/* clear the skb timestamp if not configured the other way */
+@@ -434,6 +450,14 @@ static void can_can_gw_rcv(struct sk_buf
+ 		gwj->dropped_frames++;
+ 	else
+ 		gwj->handled_frames++;
++
++	return;
++
++ out_delete:
++	/* delete frame due to misconfiguration */
++	gwj->deleted_frames++;
++	kfree_skb(nskb);
++	return;
+ }
+ 
+ static inline int cgw_register_filter(struct net *net, struct cgw_job *gwj)
 
 
