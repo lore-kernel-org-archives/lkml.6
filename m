@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD98C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C156C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E866C2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D14512084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078817;
-	bh=aNjI3KDuL4sEZAqWHOZXEbWW7lSz+xPD3oScKNAsFng=;
+	s=default; t=1548078820;
+	bh=Vxa2D0aP7dtcds2M/ZuJSFVMTpZ9Rrqq+xGeqlfri6k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m7cD9ORy5oMqUuinwrpBn0LrIv5ja3Q2C7dXNqSVyED3p6QO72lGDWZ9DiKNMLd+s
-	 IChYQ6iUqyPM6ZXPYhIceUp6D8aJTh0GUkb5zmRXJSG2k0Gf46/moS4BFVKkULkI27
-	 zY/LU8EIDjbbGJ5K+/Outr4zTqVIOZoqjLXctwZ8=
+	b=D4SvtRJp6yA6Y+xqvcwW59oLOTL7plcuEk5dz6XFuZnhsTDMcmY9HoUu2ia3+0mNk
+	 lchRoPqGHL5DJNFS6kkSHNvYiszVrXWQ6NzOdz53dLQ6+OkS4sdbvRU0Iha+HdWaBS
+	 Mw+soMDL1uOpGH5tOyl7uNAXJFfdHZzqDYhPksRk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbfAUNxf (ORCPT
+        id S1730796AbfAUNxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:53:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37334 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:53:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730609AbfAUNxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:53:32 -0500
+        id S1730659AbfAUNxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:53:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62C372084C;
-        Mon, 21 Jan 2019 13:53:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8919B2084C;
+        Mon, 21 Jan 2019 13:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078810;
-        bh=aNjI3KDuL4sEZAqWHOZXEbWW7lSz+xPD3oScKNAsFng=;
+        s=default; t=1548078816;
+        bh=Vxa2D0aP7dtcds2M/ZuJSFVMTpZ9Rrqq+xGeqlfri6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DrG+eYOkmWlmDotrZ2hpPwE/DdcZ6Wx6Xdgsje3K3ZPK6uehC4dIMWDHWxVSeN83A
-         6CLD41PT90j+BQA23Tm3tO03KMK8DQ2k0uBjSW1bNges2MIK1mVOaMyNu0HMqBeiu7
-         SceZfHpb8dVrtqQnxpFMb/kb9vOQtTnoWENRPo2c=
+        b=aaNalk4mk6Wv9XQqDdw5OmaQZVqWIIiEvUot2mOVsLJH+FOhYHtDqjL9L93IG9BT+
+         aitClpBP6q1G4u/qtswTo+uXQCgk5J7tFTGOQuLq5Qo2yyN06hRymJEeAWqwqBxlYy
+         xEwswkjphE9SCghkM3Xk5eRJ1kezmtTX/0Ei3Ds4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+06e771a754829716a327@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 51/59] tipc: fix uninit-value in tipc_nl_compat_name_table_dump
-Date:   Mon, 21 Jan 2019 14:44:16 +0100
-Message-Id: <20190121122502.390059178@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 53/59] block/loop: Dont grab "struct file" for vfs_getattr() operation.
+Date:   Mon, 21 Jan 2019 14:44:18 +0100
+Message-Id: <20190121122502.791011664@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -67,100 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ying Xue <ying.xue@windriver.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 974cb0e3e7c963ced06c4e32c5b2884173fa5e01 upstream.
+commit b1ab5fa309e6c49e4e06270ec67dd7b3e9971d04 upstream.
 
-syzbot reported:
+vfs_getattr() needs "struct path" rather than "struct file".
+Let's use path_get()/path_put() rather than get_file()/fput().
 
-BUG: KMSAN: uninit-value in __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
-BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
-BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
-CPU: 0 PID: 6290 Comm: syz-executor848 Not tainted 4.19.0-rc8+ #70
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x306/0x460 lib/dump_stack.c:113
- kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
- __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
- __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
- __fswab32 include/uapi/linux/swab.h:59 [inline]
- tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
- __tipc_nl_compat_dumpit+0x59e/0xdb0 net/tipc/netlink_compat.c:205
- tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:270
- tipc_nl_compat_handle net/tipc/netlink_compat.c:1151 [inline]
- tipc_nl_compat_recv+0x1402/0x2760 net/tipc/netlink_compat.c:1210
- genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
- genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
- genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
- netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
- netlink_unicast+0x166d/0x1720 net/netlink/af_netlink.c:1343
- netlink_sendmsg+0x1391/0x1420 net/netlink/af_netlink.c:1908
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440179
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffecec49318 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
-RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401a00
-R13: 0000000000401a90 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
- kmsan_internal_poison_shadow+0xc8/0x1d0 mm/kmsan/kmsan.c:180
- kmsan_kmalloc+0xa4/0x120 mm/kmsan/kmsan_hooks.c:104
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:113
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2727 [inline]
- __kmalloc_node_track_caller+0xb43/0x1400 mm/slub.c:4360
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x422/0xe90 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:996 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
- netlink_sendmsg+0xcaf/0x1420 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-We cannot take for granted the thing that the length of data contained
-in TLV is longer than the size of struct tipc_name_table_query in
-tipc_nl_compat_name_table_dump().
-
-Reported-by: syzbot+06e771a754829716a327@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/loop.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -815,6 +815,8 @@ static int tipc_nl_compat_name_table_dum
- 	};
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1175,7 +1175,7 @@ loop_set_status(struct loop_device *lo,
+ static int
+ loop_get_status(struct loop_device *lo, struct loop_info64 *info)
+ {
+-	struct file *file;
++	struct path path;
+ 	struct kstat stat;
+ 	int ret;
  
- 	ntq = (struct tipc_name_table_query *)TLV_DATA(msg->req);
-+	if (TLV_GET_DATA_LEN(msg->req) < sizeof(struct tipc_name_table_query))
-+		return -EINVAL;
+@@ -1200,16 +1200,16 @@ loop_get_status(struct loop_device *lo,
+ 	}
  
- 	depth = ntohl(ntq->depth);
+ 	/* Drop lo_ctl_mutex while we call into the filesystem. */
+-	file = get_file(lo->lo_backing_file);
++	path = lo->lo_backing_file->f_path;
++	path_get(&path);
+ 	mutex_unlock(&lo->lo_ctl_mutex);
+-	ret = vfs_getattr(&file->f_path, &stat, STATX_INO,
+-			  AT_STATX_SYNC_AS_STAT);
++	ret = vfs_getattr(&path, &stat, STATX_INO, AT_STATX_SYNC_AS_STAT);
+ 	if (!ret) {
+ 		info->lo_device = huge_encode_dev(stat.dev);
+ 		info->lo_inode = stat.ino;
+ 		info->lo_rdevice = huge_encode_dev(stat.rdev);
+ 	}
+-	fput(file);
++	path_put(&path);
+ 	return ret;
+ }
  
 
 
