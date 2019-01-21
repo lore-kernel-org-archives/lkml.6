@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA51C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBCFC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE2A2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4114D2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079015;
-	bh=E2qShN04BfcfO3jBKRJrOdNdR4V0GX7dH+5hMemG9tE=;
+	s=default; t=1548079019;
+	bh=GQZLVWYM+WeQ+095zxEWyI1My8t3xEjU0dLcwIBeJD8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Gier78GkBYYTkDAbf3koQLAu0SL9vs8++YB0LqWum+4Dpk4HJmNmjfQCktSdVy9Ss
-	 4O3zUYsomHrsSDMFUyjoNGPNmTEgaBfQ1ZznNA8ch9oTLnWbJ4axRNxJ6SZAmBaOtt
-	 7iIkyfmQuKYfiLkR8UxWfI3Y2/kQkck7KR7tiAPs=
+	b=L+the/TDk5MAQjxRVk7DGsRJo+oMtnCiZzekR2S3DCgZrJNhHhb+jqWBlTInSLUAL
+	 lj/R01b4sLy6M8vl36WWN58Xp6niru9gW7rhHD41cU2YqdFWfYqW0x+mcdmaOcyJYa
+	 ALWdNermION1Kn8ppEU4rsFUe72qvHCCvXF29Me8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731780AbfAUN4m (ORCPT
+        id S1731599AbfAUN45 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40382 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:56:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731753AbfAUNzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:55:38 -0500
+        id S1731957AbfAUN4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:56:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEE1E2084C;
-        Mon, 21 Jan 2019 13:55:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A6292087F;
+        Mon, 21 Jan 2019 13:56:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078937;
-        bh=E2qShN04BfcfO3jBKRJrOdNdR4V0GX7dH+5hMemG9tE=;
+        s=default; t=1548079000;
+        bh=GQZLVWYM+WeQ+095zxEWyI1My8t3xEjU0dLcwIBeJD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SAr6u/q1m9ggyTFHhJjnIiZZRM8NoqX6F+0MmvnYle+0KRYJIk8k+HAR0HmPoLRjL
-         6y/hS2fOHRO3l9bKJ5Vl4dj0vIgI5GYXJKbYckfXItcd4038YdBUa/pNND62g28zfl
-         Gr9FJB0IiWqlAcRDRzzVcyAnYZ6v70wBnzMXxVrE=
+        b=FH/Im6LIACEpTDW4mGvaHyEXd5sd2W4HiQTGDB25DdSaY9doBD9zNg0GwR23IUvnr
+         JY4JFTd77P5+QN3IuNnBRNuQMMP75TWgsynQBJ9GXihuQtJ5eqsNBS04/Pyf3mIodc
+         0hrcVyZUStFJIkbdeXcucxWiQN3uE8Q8FsL2e2MU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 06/51] Revert "f2fs: do not recover from previous remained wrong dnodes"
-Date:   Mon, 21 Jan 2019 14:44:02 +0100
-Message-Id: <20190121122454.081401886@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+e01d94b5a4c266be6e4c@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 41/51] tipc: fix uninit-value in tipc_nl_compat_link_reset_stats
+Date:   Mon, 21 Jan 2019 14:44:37 +0100
+Message-Id: <20190121122457.728897723@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -66,75 +67,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Ying Xue <ying.xue@windriver.com>
 
-commit d47b8715953ad0cf82bb0a9d30d7b11d83bc9c11 upstream.
+commit 8b66fee7f8ee18f9c51260e7a43ab37db5177a05 upstream.
 
-i_times of inode will be set with current system time which can be
-configured through 'date', so it's not safe to judge dnode block as
-garbage data or unchanged inode depend on i_times.
+syzbot reports following splat:
 
-Now, we have used enhanced 'cp_ver + cp' crc method to verify valid
-dnode block, so I expect recoverying invalid dnode is almost not
-possible.
+BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:486
+CPU: 1 PID: 11057 Comm: syz-executor0 Not tainted 4.20.0-rc7+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+ __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:295
+ strlen+0x3b/0xa0 lib/string.c:486
+ nla_put_string include/net/netlink.h:1154 [inline]
+ tipc_nl_compat_link_reset_stats+0x1f0/0x360 net/tipc/netlink_compat.c:760
+ __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
+ tipc_nl_compat_doit+0x3aa/0xaf0 net/tipc/netlink_compat.c:344
+ tipc_nl_compat_handle net/tipc/netlink_compat.c:1107 [inline]
+ tipc_nl_compat_recv+0x14d7/0x2760 net/tipc/netlink_compat.c:1210
+ genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+ genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
+ netlink_rcv_skb+0x444/0x640 net/netlink/af_netlink.c:2477
+ genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0xf40/0x1020 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x457ec9
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f2557338c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000003
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f25573396d4
+R13: 00000000004cb478 R14: 00000000004d86c8 R15: 00000000ffffffff
 
-This reverts commit 807b1e1c8e08452948495b1a9985ab46d329e5c2.
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
+ kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
+ kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
+ kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:185
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2759 [inline]
+ __kmalloc_node_track_caller+0xe18/0x1030 mm/slub.c:4383
+ __kmalloc_reserve net/core/skbuff.c:137 [inline]
+ __alloc_skb+0x309/0xa20 net/core/skbuff.c:205
+ alloc_skb include/linux/skbuff.h:998 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+ netlink_sendmsg+0xb82/0x1300 net/netlink/af_netlink.c:1892
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+The uninitialised access happened in tipc_nl_compat_link_reset_stats:
+    nla_put_string(skb, TIPC_NLA_LINK_NAME, name)
+
+This is because name string is not validated before it's used.
+
+Reported-by: syzbot+e01d94b5a4c266be6e4c@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/recovery.c |   31 +------------------------------
- 1 file changed, 1 insertion(+), 30 deletions(-)
+ net/tipc/netlink_compat.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -196,32 +196,6 @@ static void recover_inode(struct inode *
- 			ino_of_node(page), name);
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -87,6 +87,11 @@ static int tipc_skb_tailroom(struct sk_b
+ 	return limit;
  }
  
--static bool is_same_inode(struct inode *inode, struct page *ipage)
--{
--	struct f2fs_inode *ri = F2FS_INODE(ipage);
--	struct timespec disk;
--
--	if (!IS_INODE(ipage))
--		return true;
--
--	disk.tv_sec = le64_to_cpu(ri->i_ctime);
--	disk.tv_nsec = le32_to_cpu(ri->i_ctime_nsec);
--	if (timespec_compare(&inode->i_ctime, &disk) > 0)
--		return false;
--
--	disk.tv_sec = le64_to_cpu(ri->i_atime);
--	disk.tv_nsec = le32_to_cpu(ri->i_atime_nsec);
--	if (timespec_compare(&inode->i_atime, &disk) > 0)
--		return false;
--
--	disk.tv_sec = le64_to_cpu(ri->i_mtime);
--	disk.tv_nsec = le32_to_cpu(ri->i_mtime_nsec);
--	if (timespec_compare(&inode->i_mtime, &disk) > 0)
--		return false;
--
--	return true;
--}
--
- static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
++static inline int TLV_GET_DATA_LEN(struct tlv_desc *tlv)
++{
++	return TLV_GET_LEN(tlv) - TLV_SPACE(0);
++}
++
+ static int tipc_add_tlv(struct sk_buff *skb, u16 type, void *data, u16 len)
  {
- 	struct curseg_info *curseg;
-@@ -248,10 +222,7 @@ static int find_fsync_dnodes(struct f2fs
- 			goto next;
+ 	struct tlv_desc *tlv = (struct tlv_desc *)skb_tail_pointer(skb);
+@@ -166,6 +171,11 @@ static struct sk_buff *tipc_get_err_tlv(
+ 	return buf;
+ }
  
- 		entry = get_fsync_inode(head, ino_of_node(page));
--		if (entry) {
--			if (!is_same_inode(entry->inode, page))
--				goto next;
--		} else {
-+		if (!entry) {
- 			if (IS_INODE(page) && is_dent_dnode(page)) {
- 				err = recover_inode_page(sbi, page);
- 				if (err)
++static inline bool string_is_valid(char *s, int len)
++{
++	return memchr(s, '\0', len) ? true : false;
++}
++
+ static int __tipc_nl_compat_dumpit(struct tipc_nl_compat_cmd_dump *cmd,
+ 				   struct tipc_nl_compat_msg *msg,
+ 				   struct sk_buff *arg)
+@@ -741,6 +751,7 @@ static int tipc_nl_compat_link_reset_sta
+ {
+ 	char *name;
+ 	struct nlattr *link;
++	int len;
+ 
+ 	name = (char *)TLV_DATA(msg->req);
+ 
+@@ -748,6 +759,10 @@ static int tipc_nl_compat_link_reset_sta
+ 	if (!link)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
++	if (!string_is_valid(name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_LINK_NAME, name))
+ 		return -EMSGSIZE;
+ 
 
 
