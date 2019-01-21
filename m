@@ -2,58 +2,56 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD458C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0196C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC96D2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E70920879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079133;
-	bh=GJDIiy22ilWUqSxOANVreEeVQ83Dfll38upW8Fg2aOU=;
+	s=default; t=1548079136;
+	bh=MreQns33g0QQVJU7zVGMtTnZmP0G+b8/BtKMDdJx13s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iFR23UN39iVQ4U5C3trU+vfPeSImymm49jhs3eZ+e0r33fHensKDdJBTZ6aVjulqV
-	 ezxwFiMJZ+0CeNwN7mxzyb9aDR28udFYMU275blw53jd0ICZtYcm9A9pk7yfgzstTo
-	 +SFQCTd5dM6gxd5igW0yF7ZqQlss0JO7oIWPdtgE=
+	b=IK0SXXgCu9oHnBdk1CivMda8EOrvlhU1MCSl0CyHN1cYxaJxRAWeXfisQz/d4/YcN
+	 INLbnA5pL2/jkhAot1Rum+hMqzYkFUWGabDt6kjzfhAv8hqndOzax2Q+NIfPJjvaU2
+	 EYKEOANcpa0Zvm+YCeVduDfJ27eeX9XRtxcu9xeg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732081AbfAUN6v (ORCPT
+        id S1732093AbfAUN6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:58:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44528 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:58:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731588AbfAUN6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:58:49 -0500
+        id S1731588AbfAUN6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:58:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B98420879;
-        Mon, 21 Jan 2019 13:58:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 983842084C;
+        Mon, 21 Jan 2019 13:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079128;
-        bh=GJDIiy22ilWUqSxOANVreEeVQ83Dfll38upW8Fg2aOU=;
+        s=default; t=1548079132;
+        bh=MreQns33g0QQVJU7zVGMtTnZmP0G+b8/BtKMDdJx13s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pxqdjW/tVwcNRqYBlv8rJ21y/pN1w9MEEVA81ib8oxPnZgrwij9S2av44kj6ivnDX
-         km5mmXPHmk6jWKSV/1YO2viOsSo2SOUGrP6X8xZpwmaiTeeitqqLovPQp6BjUdiPt+
-         KmsyQvqGHpyANcOzshsCtHto0NJdaK6Qqv985Um0=
+        b=ObbzpeFZmxezZqSH4T61Uq+BbQBNAA7aguTfVrQDUVduAv1RFcKg9+ZaG8SWEgMmw
+         llSl4dwK69Gc5N+yfK0JsKOfsUseY53Jdpz/DZXccbxzof0ldcon0MXWbtGgOu0B4V
+         nZPupdgezMNIARNml5XWYLx2sj1zM0XWo13dvCLY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Richard Henderson <richard.henderson@linaro.org>,
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com,
         Mark Rutland <mark.rutland@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 19/99] arm64: Dont trap host pointer auth use to EL2
-Date:   Mon, 21 Jan 2019 14:48:11 +0100
-Message-Id: <20190121134914.646580377@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Dmitry Safonov <dima@arista.com>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH 4.19 02/99] tty: Hold tty_ldisc_lock() during tty_reopen()
+Date:   Mon, 21 Jan 2019 14:47:54 +0100
+Message-Id: <20190121134914.010522996@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -72,60 +70,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b3669b1e1c09890d61109a1a8ece2c5b66804714 ]
+From: Dmitry Safonov <dima@arista.com>
 
-To allow EL0 (and/or EL1) to use pointer authentication functionality,
-we must ensure that pointer authentication instructions and accesses to
-pointer authentication keys are not trapped to EL2.
+commit 83d817f41070c48bc3eb7ec18e43000a548fca5c upstream.
 
-This patch ensures that HCR_EL2 is configured appropriately when the
-kernel is booted at EL2. For non-VHE kernels we set HCR_EL2.{API,APK},
-ensuring that EL1 can access keys and permit EL0 use of instructions.
-For VHE kernels host EL0 (TGE && E2H) is unaffected by these settings,
-and it doesn't matter how we configure HCR_EL2.{API,APK}, so we don't
-bother setting them.
+tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
+nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
+But it races with anyone who expects line discipline to be the same
+after hoding read semaphore in tty_ldisc_ref().
 
-This does not enable support for KVM guests, since KVM manages HCR_EL2
-itself when running VMs.
+We've seen the following crash on v4.9.108 stable:
 
-Reviewed-by: Richard Henderson <richard.henderson@linaro.org>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+BUG: unable to handle kernel paging request at 0000000000002260
+IP: [..] n_tty_receive_buf_common+0x5f/0x86d
+Workqueue: events_unbound flush_to_ldisc
+Call Trace:
+ [..] n_tty_receive_buf2
+ [..] tty_ldisc_receive_buf
+ [..] flush_to_ldisc
+ [..] process_one_work
+ [..] worker_thread
+ [..] kthread
+ [..] ret_from_fork
+
+tty_ldisc_reinit() should be called with ldisc_sem hold for writing,
+which will protect any reader against line discipline changes.
+
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: stable@vger.kernel.org # b027e2298bd5 ("tty: fix data race between tty_init_dev and flush of buf")
+Reviewed-by: Jiri Slaby <jslaby@suse.cz>
+Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Tested-by: Tycho Andersen <tycho@tycho.ws>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/include/asm/kvm_arm.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/tty/tty_io.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index 2297284e33f2..8b284cbf8162 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -24,6 +24,8 @@
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1267,15 +1267,20 @@ static int tty_reopen(struct tty_struct
+ 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
+ 		return -EBUSY;
  
- /* Hyp Configuration Register (HCR) bits */
- #define HCR_FWB		(UL(1) << 46)
-+#define HCR_API		(UL(1) << 41)
-+#define HCR_APK		(UL(1) << 40)
- #define HCR_TEA		(UL(1) << 37)
- #define HCR_TERR	(UL(1) << 36)
- #define HCR_TLOR	(UL(1) << 35)
-@@ -87,7 +89,7 @@
- 			 HCR_AMO | HCR_SWIO | HCR_TIDCP | HCR_RW | HCR_TLOR | \
- 			 HCR_FMO | HCR_IMO)
- #define HCR_VIRT_EXCP_MASK (HCR_VSE | HCR_VI | HCR_VF)
--#define HCR_HOST_NVHE_FLAGS (HCR_RW)
-+#define HCR_HOST_NVHE_FLAGS (HCR_RW | HCR_API | HCR_APK)
- #define HCR_HOST_VHE_FLAGS (HCR_RW | HCR_TGE | HCR_E2H)
+-	tty->count++;
++	retval = tty_ldisc_lock(tty, 5 * HZ);
++	if (retval)
++		return retval;
  
- /* TCR_EL2 Registers bits */
--- 
-2.19.1
-
++	tty->count++;
+ 	if (tty->ldisc)
+-		return 0;
++		goto out_unlock;
+ 
+ 	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
+ 	if (retval)
+ 		tty->count--;
+ 
++out_unlock:
++	tty_ldisc_unlock(tty);
+ 	return retval;
+ }
+ 
 
 
