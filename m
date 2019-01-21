@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DC4C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF54C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA682089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07FFA2063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078718;
-	bh=CMkJGSzgAuYWHp/ngkisxg1cJbL0FV1njC4Yqk1i7z8=;
+	s=default; t=1548078721;
+	bh=z38FwNFTXJwBzEbJTJ/a+flRERCx7xVLuIW3cZAsZTI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v/3BKh13qG5EpwhFygBc0g8/qfU6fxnUUEecwrsMaYwkeX4Fa6V7dTOebToraIxAb
-	 6FOV+BHl4pOZsRFGNf3fl/sMWZXfxusSp2PofEuGcpTagi/3jQLOFySpGNaIySeQur
-	 qnSZK/kI+HJOvfp+jVvLk8dd4cRnmuf5ktE/TxOQ=
+	b=nxNjvjmzfnzq19p2Hf7WDfNa8s1BGAp0/fhLZWHJ5beUacqR5zkN+6U2JuDQ/KOX0
+	 jVeNn13bmJJwIXkqyOwy5bxw52ynQL6hYIpuJP6d3tIhA5+6UX0xEdNtoF6m3OpyXI
+	 NKTV80zssmUC5xKFlsVFGHmMbHWcDLy1F0lwijHs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbfAUNv4 (ORCPT
+        id S1730942AbfAUNv7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:51:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34928 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:51:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730894AbfAUNvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:51:52 -0500
+        id S1730904AbfAUNvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:51:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7689E2063F;
-        Mon, 21 Jan 2019 13:51:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18EE620879;
+        Mon, 21 Jan 2019 13:51:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078711;
-        bh=CMkJGSzgAuYWHp/ngkisxg1cJbL0FV1njC4Yqk1i7z8=;
+        s=default; t=1548078714;
+        bh=z38FwNFTXJwBzEbJTJ/a+flRERCx7xVLuIW3cZAsZTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AFCd7C3UIU9T3xMlMVpa2YP5PQQlibUsZz23F13vJF3S8SGh2UjQiLHDpOrZt4kGZ
-         PakS0nAErkTkV6BCGoAovt4yPVUgyXVsVqexLXu9uijtoQDrVRiDPOZg9Jye/7JO61
-         xz41CResy3k17dOjeJZwafCVnJyOH2sOrmG0SE5M=
+        b=tKRi4S9akCbg4m0PB8IUOaAaP1qA4oQ3QeFhv9/jSWRt9/RIlfQFIrqHRDCw+RBp/
+         6n/brL9yjjlCAtSXQue/ovy55EBjIVzXGRop1+z+naP9WCvo4z16ZVi/0HKN4ckQbu
+         MGV9uzkYhP8OxYLMmgktBGUhjoZSQwTnOLQJPYdI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 17/59] ip: on queued skb use skb_header_pointer instead of pskb_may_pull
-Date:   Mon, 21 Jan 2019 14:43:42 +0100
-Message-Id: <20190121122458.449032083@linuxfoundation.org>
+        stable@vger.kernel.org, Aymen Sghaier <aymen.sghaier@nxp.com>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 18/59] crypto: caam - fix zero-length buffer DMA mapping
+Date:   Mon, 21 Jan 2019 14:43:43 +0100
+Message-Id: <20190121122458.532190496@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -66,80 +66,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Aymen Sghaier <aymen.sghaier@nxp.com>
 
-[ Upstream commit 4a06fa67c4da20148803525151845276cdb995c1 ]
+commit 04e6d25c5bb244c1a37eb9fe0b604cc11a04e8c5 upstream.
 
-Commit 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call
-pskb_may_pull") avoided a read beyond the end of the skb linear
-segment by calling pskb_may_pull.
+Recent changes - probably DMA API related (generic and/or arm64-specific) -
+exposed a case where driver maps a zero-length buffer:
+ahash_init()->ahash_update()->ahash_final() with a zero-length string to
+hash
 
-That function can trigger a BUG_ON in pskb_expand_head if the skb is
-shared, which it is when when peeking. It can also return ENOMEM.
+kernel BUG at kernel/dma/swiotlb.c:475!
+Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 2 PID: 1823 Comm: cryptomgr_test Not tainted 4.20.0-rc1-00108-g00c9fe37a7f2 #1
+Hardware name: LS1046A RDB Board (DT)
+pstate: 80000005 (Nzcv daif -PAN -UAO)
+pc : swiotlb_tbl_map_single+0x170/0x2b8
+lr : swiotlb_map_page+0x134/0x1f8
+sp : ffff00000f79b8f0
+x29: ffff00000f79b8f0 x28: 0000000000000000
+x27: ffff0000093d0000 x26: 0000000000000000
+x25: 00000000001f3ffe x24: 0000000000200000
+x23: 0000000000000000 x22: 00000009f2c538c0
+x21: ffff800970aeb410 x20: 0000000000000001
+x19: ffff800970aeb410 x18: 0000000000000007
+x17: 000000000000000e x16: 0000000000000001
+x15: 0000000000000019 x14: c32cb8218a167fe8
+x13: ffffffff00000000 x12: ffff80097fdae348
+x11: 0000800976bca000 x10: 0000000000000010
+x9 : 0000000000000000 x8 : ffff0000091fd6c8
+x7 : 0000000000000000 x6 : 00000009f2c538bf
+x5 : 0000000000000000 x4 : 0000000000000001
+x3 : 0000000000000000 x2 : 00000009f2c538c0
+x1 : 00000000f9fff000 x0 : 0000000000000000
+Process cryptomgr_test (pid: 1823, stack limit = 0x(____ptrval____))
+Call trace:
+ swiotlb_tbl_map_single+0x170/0x2b8
+ swiotlb_map_page+0x134/0x1f8
+ ahash_final_no_ctx+0xc4/0x6cc
+ ahash_final+0x10/0x18
+ crypto_ahash_op+0x30/0x84
+ crypto_ahash_final+0x14/0x1c
+ __test_hash+0x574/0xe0c
+ test_hash+0x28/0x80
+ __alg_test_hash+0x84/0xd0
+ alg_test_hash+0x78/0x144
+ alg_test.part.30+0x12c/0x2b4
+ alg_test+0x3c/0x68
+ cryptomgr_test+0x44/0x4c
+ kthread+0xfc/0x128
+ ret_from_fork+0x10/0x18
+Code: d34bfc18 2a1a03f7 1a9f8694 35fff89a (d4210000)
 
-Avoid both by switching to safer skb_header_pointer.
-
-Fixes: 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Aymen Sghaier <aymen.sghaier@nxp.com>
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ip_sockglue.c |   12 +++++-------
- net/ipv6/datagram.c    |   10 ++++------
- 2 files changed, 9 insertions(+), 13 deletions(-)
 
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -146,19 +146,17 @@ static void ip_cmsg_recv_security(struct
+---
+ drivers/crypto/caam/caamhash.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -1109,13 +1109,16 @@ static int ahash_final_no_ctx(struct aha
  
- static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
- {
-+	__be16 _ports[2], *ports;
- 	struct sockaddr_in sin;
--	__be16 *ports;
--	int end;
--
--	end = skb_transport_offset(skb) + 4;
--	if (end > 0 && !pskb_may_pull(skb, end))
--		return;
+ 	desc = edesc->hw_desc;
  
- 	/* All current transport protocols have the port numbers in the
- 	 * first four bytes of the transport header and this function is
- 	 * written with this assumption in mind.
- 	 */
--	ports = (__be16 *)skb_transport_header(skb);
-+	ports = skb_header_pointer(skb, skb_transport_offset(skb),
-+				   sizeof(_ports), &_ports);
-+	if (!ports)
-+		return;
+-	state->buf_dma = dma_map_single(jrdev, buf, buflen, DMA_TO_DEVICE);
+-	if (dma_mapping_error(jrdev, state->buf_dma)) {
+-		dev_err(jrdev, "unable to map src\n");
+-		goto unmap;
+-	}
++	if (buflen) {
++		state->buf_dma = dma_map_single(jrdev, buf, buflen,
++						DMA_TO_DEVICE);
++		if (dma_mapping_error(jrdev, state->buf_dma)) {
++			dev_err(jrdev, "unable to map src\n");
++			goto unmap;
++		}
  
- 	sin.sin_family = AF_INET;
- 	sin.sin_addr.s_addr = ip_hdr(skb)->daddr;
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -709,17 +709,15 @@ void ip6_datagram_recv_specific_ctl(stru
- 	}
- 	if (np->rxopt.bits.rxorigdstaddr) {
- 		struct sockaddr_in6 sin6;
--		__be16 *ports;
--		int end;
-+		__be16 _ports[2], *ports;
+-	append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
++		append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
++	}
  
--		end = skb_transport_offset(skb) + 4;
--		if (end <= 0 || pskb_may_pull(skb, end)) {
-+		ports = skb_header_pointer(skb, skb_transport_offset(skb),
-+					   sizeof(_ports), &_ports);
-+		if (ports) {
- 			/* All current transport protocols have the port numbers in the
- 			 * first four bytes of the transport header and this function is
- 			 * written with this assumption in mind.
- 			 */
--			ports = (__be16 *)skb_transport_header(skb);
--
- 			sin6.sin6_family = AF_INET6;
- 			sin6.sin6_addr = ipv6_hdr(skb)->daddr;
- 			sin6.sin6_port = ports[1];
+ 	edesc->dst_dma = map_seq_out_ptr_result(desc, jrdev, req->result,
+ 						digestsize);
 
 
