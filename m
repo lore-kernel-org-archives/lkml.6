@@ -2,78 +2,117 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 827CAC2F3A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7324AC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4811B2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:39:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dQq0lzxB"
+	by mail.kernel.org (Postfix) with ESMTP id 3AE872085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:41:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548074485;
+	bh=Tk50q1UfKutfJzZ9M3BUj9Bb3fpwx49TqrQ3ftRb/GY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=r/VJQUQ3PNUtbpWFWHj3wFfjYLE5+jEMdWgM353qK9T2XHp3LqojukEvqWnyZAp1q
+	 H74bawzQ9Yk2FdhhDX64sBZPdkuIgsLUSCiDgP4kGvSgrIbN5fwlOb9dM0VXazlsNc
+	 Ng5INHsQzrrBlAC4whlA7t8jjQPuIrYg3DCAucf0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbfAUMjp (ORCPT
+        id S1728649AbfAUMlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:39:45 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:53242 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728163AbfAUMjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:39:45 -0500
-Received: from zn.tnic (p200300EC2BC62500F05176FA1988078F.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:2500:f051:76fa:1988:78f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 21E341EC01B6;
-        Mon, 21 Jan 2019 13:39:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548074384;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=0E81+HK1MLUjBEqq6zbS4tFCYla6sSBx7zaJPfEQKS4=;
-        b=dQq0lzxBpRkbITCh0D1drnJFTgMcwBzgBxGHtUSetxgNkZuxToedaW0nGB49yNv6AVv05L
-        IYyGRTpINfnfs/Kpt2XPXD5L9j/kh08BrE5n4bp/6kEAwbXHWIHXUhKVlixEVGveV4aC69
-        jH0PTa5H5VFLXgZ8Pz4VB3DM3/x6tTE=
-From:   Borislav Petkov <bp@alien8.de>
-To:     linux-edac <linux-edac@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH] EDAC: Add James Morse as a reviewer
-Date:   Mon, 21 Jan 2019 13:39:41 +0100
-Message-Id: <20190121123941.28247-1-bp@alien8.de>
-X-Mailer: git-send-email 2.19.1
+        Mon, 21 Jan 2019 07:41:23 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44788 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728163AbfAUMlX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:41:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dwwYTmqw2qqPUfHl0tZCawPhKH6w6Z+hj1+WvXLPSgc=; b=mPR8aWMVnF/F0YgJMZSlySiAk
+        RRfsQcCpbOcVm0He0ujqVSeSbWp1GuWHJL0jHSag6IhN3YGc2C0y0PIF1opvdltyvWSyOqdfgqlns
+        dnGGOgIXXYD8qLrZng11D1fMNSqVmz2p058jtEkMlwcL/CLLsFhOnFCUCtOwmdt9jK8v0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1glYso-0004OK-7f; Mon, 21 Jan 2019 12:40:54 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 9CB66112767C; Mon, 21 Jan 2019 12:40:53 +0000 (GMT)
+Date:   Mon, 21 Jan 2019 12:40:53 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        arnd@arndb.de, keescook@chromium.org, bgoswami@codeaurora.org,
+        sr@denx.de, gustavo@embeddedor.com, philburk@google.com,
+        willy@infradead.org, mchehab+samsung@kernel.org, sboyd@kernel.org,
+        vkoul@kernel.org, Baolin Wang <baolin.wang@linaro.org>,
+        daniel.thompson@linaro.org, leo.yan@linaro.org,
+        mathieu.poirier@linaro.org, srinivas.kandagatla@linaro.org,
+        anna-maria@linutronix.de, corbet@lwn.net, jmiller@neverware.com,
+        ckeepax@opensource.wolfsonmicro.com, joe@perches.com,
+        o-takashi@sakamocchi.jp, colyli@suse.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
+Message-ID: <20190121124053.GA12679@sirena.org.uk>
+References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
+ <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
+ <20190118190805.GF6260@sirena.org.uk>
+ <s5hzhrxzrez.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+In-Reply-To: <s5hzhrxzrez.wl-tiwai@suse.de>
+X-Cookie: Body by Nautilus, Brain by Mattel.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
 
-With the growing amount of ARM[,64] EDAC enablement happening, add James
-as a reviewer for the ARM bits.
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: James Morse <james.morse@arm.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, Jan 18, 2019 at 08:39:32PM +0100, Takashi Iwai wrote:
+> Mark Brown wrote:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6ce25174fa02..0f5ef1d6299a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5426,6 +5426,7 @@ F:	drivers/edac/thunderx_edac*
- EDAC-CORE
- M:	Borislav Petkov <bp@alien8.de>
- M:	Mauro Carvalho Chehab <mchehab@kernel.org>
-+R:	James Morse <james.morse@arm.com>
- L:	linux-edac@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git for-next
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac.git linux_next
--- 
-2.19.1
+> > > multiple tasks). I would probably go in this way and add more extended
+> > > permission control for the PCM device, so permissions can be restricted
+> > > for the passed descriptor to the producer or the consumer task. In this
 
+> > One concern I have with doing some ALSA-specific custom permissions
+> > thing is integration with frameworks like SELinux (they'd presumably
+> > need to learn about the ALSA specific stuff to manage it).  It also
+
+> Well, I wonder what makes it more difficult by the approach Jaroslav
+> suggested.  With O_APPEND, you can just call mmap() normally, and
+> that's all. What's the merit of dma-buf approach wrt the security?
+
+It was the bit about adding more extended permission control that I was
+worried about there, not the initial O_APPEND bit.  Indeed the O_APPEND
+bit sounds like it might also work from the base buffer sharing point of
+view, I have to confess I'd not heard of that feature before (it didn't
+come up in the discussion when Eric raised this in Prague).
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxFvc0ACgkQJNaLcl1U
+h9DIZgf/diES8I2aHgDHGiA47EDxQwSzkQCDjdVP1gzfiRds2qC+I8F2LGrRw7ds
+5KeWEpM8zfxhM1qzxaErnzvJlq7iLHij6K/azhmDQlep2uCZZu0xT0+kVH+0Sl44
+C/QbUosmDwzfDIIZo6YjubD1iKoRgTmZkmZVvGhqDQYFOTO75j7BBw445uphGTJ0
+RPSYeAWob3mluUOy9Ob0zT259QRuGKr+Xa5S//M5dl1vwzTdnOb6hx+jc0hZWe8E
+yLb6xoxfxq9UPWdt28dhBDmjrDvvYs2pPL9JiY3aIEYM2+OP2y/HKuwSG1bQpH+Y
+azcEo7jf20gO+kf2Sa6AaYnOp+5yrA==
+=SAV5
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
