@@ -4,52 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3579C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B90C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A573420989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C76420989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079363;
-	bh=YAAm7z67KrHTzXkrmkxorGaspzyMNglHcivPOjgh/WU=;
+	s=default; t=1548079367;
+	bh=s85YtZrR2NcAWvIX7Mzr15oHV+WicK1iRPGXMn9GlHA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0QH1TnfMxxfHYFqSvRxeAYBmjQA66Fk0bLAg6P0rv5fpfMzV/1GNX6BRVUw38crk3
-	 eUvdhHdv78xRZlUeJpOLAHnXBL9ZY6ZsvM0mn4ybV7b0bTINehdOkpeh9kPCN8xBDj
-	 DNCqV76hCekQ/0x/4j7kmlAKVKsVIwSsTvBV62q0=
+	b=DDcC/awN0Lwgmg/YROzdmyxTaTYm6V/2CEecblwpjhCsEYjdaxTYNbnqDPqMQPSBa
+	 otd0l0FJHYY4tCOMSaK18IcWNA684oYBLg9igu75NFKz2kvRxH0ypuyoJwdozz1/7J
+	 ZuJL/Rm5uXeyH/gxX+38CFfL4gfuWY1gy8tXLsTg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732857AbfAUOCl (ORCPT
+        id S1732870AbfAUOCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:02:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50338 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:02:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730092AbfAUOCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:02:38 -0500
+        id S1731464AbfAUOCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:02:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 704CA2089F;
-        Mon, 21 Jan 2019 14:02:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5F8020989;
+        Mon, 21 Jan 2019 14:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079356;
-        bh=YAAm7z67KrHTzXkrmkxorGaspzyMNglHcivPOjgh/WU=;
+        s=default; t=1548079362;
+        bh=s85YtZrR2NcAWvIX7Mzr15oHV+WicK1iRPGXMn9GlHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RYBaHyAg2eNOuswzljCva9JmEwaXRoj45++ZX/X7vcE8SSFce9fmm1o1QREHyWkOE
-         6WhQALFNG9+0cLYl2BVCNXo9b3JB5uqkqjHoko3mPzZ5C3gt1hUWZU6ecp18/4Msg9
-         zJBu/WXzLO4vrHP4ck52xYtxehmKE6PsOVwxf6Js=
+        b=fF74a+DZDEo41J6LzCcTU1yP6XpFDhEPF7m51TGTE6B6qk38z5dmpUwV5Z5bOaiQW
+         NTac+sbjSZff1v2iAbHhlKwzxooqYQe+swS0R/LVyeruwFFD2Eaepa7+URi3l6OmR1
+         gfb/kKifGRFM+PsdDATDRjkI7Jyi5kkm0SVChVjo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+bca0dc46634781f08b38@syzkaller.appspotmail.com,
-        syzbot+6bdb590321a7ae40c1a6@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 79/99] tipc: fix uninit-value in tipc_nl_compat_doit
-Date:   Mon, 21 Jan 2019 14:49:11 +0100
-Message-Id: <20190121134917.102773676@linuxfoundation.org>
+        stable@vger.kernel.org, Ivan Mironov <mironov.ivan@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.19 98/99] drm/fb-helper: Ignore the value of fb_var_screeninfo.pixclock
+Date:   Mon, 21 Jan 2019 14:49:30 +0100
+Message-Id: <20190121134919.998208187@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -68,94 +64,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ying Xue <ying.xue@windriver.com>
+From: Ivan Mironov <mironov.ivan@gmail.com>
 
-commit 2753ca5d9009c180dbfd4c802c80983b4b6108d1 upstream.
+commit 66a8d5bfb518f9f12d47e1d2dce1732279f9451e upstream.
 
-BUG: KMSAN: uninit-value in tipc_nl_compat_doit+0x404/0xa10 net/tipc/netlink_compat.c:335
-CPU: 0 PID: 4514 Comm: syz-executor485 Not tainted 4.16.0+ #87
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
- tipc_nl_compat_doit+0x404/0xa10 net/tipc/netlink_compat.c:335
- tipc_nl_compat_recv+0x164b/0x2700 net/tipc/netlink_compat.c:1153
- genl_family_rcv_msg net/netlink/genetlink.c:599 [inline]
- genl_rcv_msg+0x1686/0x1810 net/netlink/genetlink.c:624
- netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2447
- genl_rcv+0x63/0x80 net/netlink/genetlink.c:635
- netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
- netlink_unicast+0x166b/0x1740 net/netlink/af_netlink.c:1337
- netlink_sendmsg+0x1048/0x1310 net/netlink/af_netlink.c:1900
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
- __sys_sendmsg net/socket.c:2080 [inline]
- SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
- SyS_sendmsg+0x54/0x80 net/socket.c:2087
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43fda9
-RSP: 002b:00007ffd0c184ba8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fda9
-RDX: 0000000000000000 RSI: 0000000020023000 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004016d0
-R13: 0000000000401760 R14: 0000000000000000 R15: 0000000000000000
+Strict requirement of pixclock to be zero breaks support of SDL 1.2
+which contains hardcoded table of supported video modes with non-zero
+pixclock values[1].
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
- kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
- slab_post_alloc_hook mm/slab.h:445 [inline]
- slab_alloc_node mm/slub.c:2737 [inline]
- __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:984 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1183 [inline]
- netlink_sendmsg+0x9a6/0x1310 net/netlink/af_netlink.c:1875
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
- __sys_sendmsg net/socket.c:2080 [inline]
- SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
- SyS_sendmsg+0x54/0x80 net/socket.c:2087
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+To better understand which pixclock values are considered valid and how
+driver should handle these values, I briefly examined few existing fbdev
+drivers and documentation in Documentation/fb/. And it looks like there
+are no strict rules on that and actual behaviour varies:
 
-In tipc_nl_compat_recv(), when the len variable returned by
-nlmsg_attrlen() is 0, the message is still treated as a valid one,
-which is obviously unresonable. When len is zero, it means the
-message not only doesn't contain any valid TLV payload, but also
-TLV header is not included. Under this stituation, tlv_type field
-in TLV header is still accessed in tipc_nl_compat_dumpit() or
-tipc_nl_compat_doit(), but the field space is obviously illegal.
-Of course, it is not initialized.
+	* some drivers treat (pixclock == 0) as "use defaults" (uvesafb.c);
+	* some treat (pixclock == 0) as invalid value which leads to
+	  -EINVAL (clps711x-fb.c);
+	* some pass converted pixclock value to hardware (uvesafb.c);
+	* some are trying to find nearest value from predefined table
+          (vga16fb.c, video_gx.c).
 
-Reported-by: syzbot+bca0dc46634781f08b38@syzkaller.appspotmail.com
-Reported-by: syzbot+6bdb590321a7ae40c1a6@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Given this, I believe that it should be safe to just ignore this value if
+changing is not supported. It seems that any portable fbdev application
+which was not written only for one specific device working under one
+specific kernel version should not rely on any particular behaviour of
+pixclock anyway.
+
+However, while enabling SDL1 applications to work out of the box when
+there is no /etc/fb.modes with valid settings, this change affects the
+video mode choosing logic in SDL. Depending on current screen
+resolution, contents of /etc/fb.modes and resolution requested by
+application, this may lead to user-visible difference (not always):
+image will be displayed in a right way, but it will be aligned to the
+left instead of center. There is no "right behaviour" here as well, as
+emulated fbdev, opposing to old fbdev drivers, simply ignores any
+requsts of video mode changes with resolutions smaller than current.
+
+The easiest way to reproduce this problem is to install sdl-sopwith[2],
+remove /etc/fb.modes file if it exists, and then try to run sopwith
+from console without X. At least in Fedora 29, sopwith may be simply
+installed from standard repositories.
+
+[1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c, vesa_timings
+[2] http://sdl-sopwith.sourceforge.net/
+
+Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+Cc: stable@vger.kernel.org
+Fixes: 79e539453b34e ("DRM: i915: add mode setting support")
+Fixes: 771fe6b912fca ("drm/radeon: introduce kernel modesetting for radeon hardware")
+Fixes: 785b93ef8c309 ("drm/kms: move driver specific fb common code to helper functions (v2)")
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190108072353.28078-3-mironov.ivan@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_fb_helper.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -1249,7 +1249,7 @@ static int tipc_nl_compat_recv(struct sk
- 	}
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1690,9 +1690,14 @@ int drm_fb_helper_check_var(struct fb_va
+ 	struct drm_fb_helper *fb_helper = info->par;
+ 	struct drm_framebuffer *fb = fb_helper->fb;
  
- 	len = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
--	if (len && !TLV_OK(msg.req, len)) {
-+	if (!len || !TLV_OK(msg.req, len)) {
- 		msg.rep = tipc_get_err_tlv(TIPC_CFG_NOT_SUPPORTED);
- 		err = -EOPNOTSUPP;
- 		goto send;
+-	if (var->pixclock != 0 || in_dbg_master())
++	if (in_dbg_master())
+ 		return -EINVAL;
+ 
++	if (var->pixclock != 0) {
++		DRM_DEBUG("fbdev emulation doesn't support changing the pixel clock, value of pixclock is ignored\n");
++		var->pixclock = 0;
++	}
++
+ 	/*
+ 	 * Changes struct fb_var_screeninfo are currently not pushed back
+ 	 * to KMS, hence fail if different settings are requested.
 
 
