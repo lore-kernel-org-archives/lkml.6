@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9B7C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6600C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEA2C214D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77323214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079298;
-	bh=lLXVLHLg11MPO09G0n2JnxiarcDrez7gkxsRPIE3/50=;
+	s=default; t=1548079302;
+	bh=O9kf+tQRFyKVJ4PbL2/vl6RyU4AOiMBjVRTRrzw04lI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WRs1T0J6mJZztn6LaD+SSFA7AdeKUMuxVSfpZE+k96UKHZclvWEoAUdgs0d7Sw7XJ
-	 EvcXhgXUso8Q9+RyTPmiz3C68+yzAAJbNlT7ftwgUzepHdupZegN6QtDlnzcjR0L/+
-	 1O/rRE02/htRFvyGLZO2y4qsHPnrgqk2wDZQWnC4=
+	b=GzuGrMnfrYExh1f9NW+fnVgZ06uGtkiKYbQtYu9dtrubOtzi6g6E7vogMbkPeuL2b
+	 X0CWojgiirCgTzDT3HOpkVIFhXWdvv6TIl6WyL3UrYbJYQQmWjZkwmxGHBMoW5/LOp
+	 iFNHm4ug9Di5YXJKm4FXDWziP13tRA40MQpBwj3I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732660AbfAUOBh (ORCPT
+        id S1732668AbfAUOBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48632 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732202AbfAUOBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:33 -0500
+        id S1732207AbfAUOBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623ED21019;
-        Mon, 21 Jan 2019 14:01:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 207652089F;
+        Mon, 21 Jan 2019 14:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079292;
-        bh=lLXVLHLg11MPO09G0n2JnxiarcDrez7gkxsRPIE3/50=;
+        s=default; t=1548079296;
+        bh=O9kf+tQRFyKVJ4PbL2/vl6RyU4AOiMBjVRTRrzw04lI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OkgmftjyCVRjHF8P5JIZ8IWy2e43H+GQOSmiV6yEoDc80Cfj2Wd29niVlCNRdJGLx
-         x4phtMCIDOJJmnSfK0ZoxNHWdfdoASJood5czeKsxAo0D3BZjdB7o7NLxk44OWFo8z
-         ohIeP0813dwn4JH8Mohau4gU1Nhijt3zEkLeclIw=
+        b=sfiK6haDj0FeFP3/EQXHt3DhxshONZtNTDUZGOcxcC4MTC6sZ/usxrs4DnKhmykJt
+         HUaCr+Nj7MvjA4HIj5hIbI8q8p1OEzxLHOdcSsj6xkrZO/fLrOzzqzqru3hapnWQzS
+         5v9HzGd/5LhEdWfwEnxmUqU9ukop9QHYGT9IPerA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
+        stable@vger.kernel.org,
+        syzbot+8951a3065ee7fd6d6e23@syzkaller.appspotmail.com,
+        syzbot+75e6e042c5bbf691fc82@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 73/99] sctp: allocate sctp_sockaddr_entry with kzalloc
-Date:   Mon, 21 Jan 2019 14:49:05 +0100
-Message-Id: <20190121134916.775172280@linuxfoundation.org>
+Subject: [PATCH 4.19 74/99] tipc: fix uninit-value in in tipc_conn_rcv_sub
+Date:   Mon, 21 Jan 2019 14:49:06 +0100
+Message-Id: <20190121134916.858335225@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -69,74 +68,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Ying Xue <ying.xue@windriver.com>
 
-commit 400b8b9a2a17918f8ce00786f596f530e7f30d50 upstream.
+commit a88289f4ddee4165d5f796bd99e09eec3133c16b upstream.
 
-The similar issue as fixed in Commit 4a2eb0c37b47 ("sctp: initialize
-sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event") also exists
-in sctp_inetaddr_event, as Alexander noticed.
+syzbot reported:
 
-To fix it, allocate sctp_sockaddr_entry with kzalloc for both sctp
-ipv4 and ipv6 addresses, as does in sctp_v4/6_copy_addrlist().
+BUG: KMSAN: uninit-value in tipc_conn_rcv_sub+0x184/0x950 net/tipc/topsrv.c:373
+CPU: 0 PID: 66 Comm: kworker/u4:4 Not tainted 4.17.0-rc3+ #88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: tipc_rcv tipc_conn_recv_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+ tipc_conn_rcv_sub+0x184/0x950 net/tipc/topsrv.c:373
+ tipc_conn_rcv_from_sock net/tipc/topsrv.c:409 [inline]
+ tipc_conn_recv_work+0x3cd/0x560 net/tipc/topsrv.c:424
+ process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+ worker_thread+0x113c/0x24f0 kernel/workqueue.c:2279
+ kthread+0x539/0x720 kernel/kthread.c:239
+ ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:412
 
-Reported-by: Alexander Potapenko <glider@google.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Reported-by: syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Local variable description: ----s.i@tipc_conn_recv_work
+Variable was created at:
+ tipc_conn_recv_work+0x65/0x560 net/tipc/topsrv.c:419
+ process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+
+In tipc_conn_rcv_from_sock(), it always supposes the length of message
+received from sock_recvmsg() is not smaller than the size of struct
+tipc_subscr. However, this assumption is false. Especially when the
+length of received message is shorter than struct tipc_subscr size,
+we will end up touching uninitialized fields in tipc_conn_rcv_sub().
+
+Reported-by: syzbot+8951a3065ee7fd6d6e23@syzkaller.appspotmail.com
+Reported-by: syzbot+75e6e042c5bbf691fc82@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sctp/ipv6.c     |    5 +----
- net/sctp/protocol.c |    4 +---
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ net/tipc/topsrv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -97,11 +97,9 @@ static int sctp_inet6addr_event(struct n
- 
- 	switch (ev) {
- 	case NETDEV_UP:
--		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
-+		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v6.sin6_family = AF_INET6;
--			addr->a.v6.sin6_port = 0;
--			addr->a.v6.sin6_flowinfo = 0;
- 			addr->a.v6.sin6_addr = ifa->addr;
- 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
- 			addr->valid = 1;
-@@ -431,7 +429,6 @@ static void sctp_v6_copy_addrlist(struct
- 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v6.sin6_family = AF_INET6;
--			addr->a.v6.sin6_port = 0;
- 			addr->a.v6.sin6_addr = ifp->addr;
- 			addr->a.v6.sin6_scope_id = dev->ifindex;
- 			addr->valid = 1;
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -101,7 +101,6 @@ static void sctp_v4_copy_addrlist(struct
- 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v4.sin_family = AF_INET;
--			addr->a.v4.sin_port = 0;
- 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
- 			addr->valid = 1;
- 			INIT_LIST_HEAD(&addr->list);
-@@ -776,10 +775,9 @@ static int sctp_inetaddr_event(struct no
- 
- 	switch (ev) {
- 	case NETDEV_UP:
--		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
-+		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v4.sin_family = AF_INET;
--			addr->a.v4.sin_port = 0;
- 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
- 			addr->valid = 1;
- 			spin_lock_bh(&net->sctp.local_addr_lock);
+--- a/net/tipc/topsrv.c
++++ b/net/tipc/topsrv.c
+@@ -404,7 +404,7 @@ static int tipc_conn_rcv_from_sock(struc
+ 	ret = sock_recvmsg(con->sock, &msg, MSG_DONTWAIT);
+ 	if (ret == -EWOULDBLOCK)
+ 		return -EWOULDBLOCK;
+-	if (ret > 0) {
++	if (ret == sizeof(s)) {
+ 		read_lock_bh(&sk->sk_callback_lock);
+ 		ret = tipc_conn_rcv_sub(srv, con, &s);
+ 		read_unlock_bh(&sk->sk_callback_lock);
 
 
