@@ -2,139 +2,243 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BAEC2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB70C2F441
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07FCE20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:59:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yUFsRucj"
+	by mail.kernel.org (Postfix) with ESMTP id B947E20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbfAUP7u (ORCPT
+        id S1729800AbfAUQCb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:59:50 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35044 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728761AbfAUP7t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:59:49 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0LFxT0r107484;
-        Mon, 21 Jan 2019 09:59:29 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548086369;
-        bh=ZHPYsL2xkgsk70zv70n70ayT4Gz6Ev9RUwViMeg/gGo=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=yUFsRucjWrwpgVJzsPIsThNEoPsOzkv1qN9wfkyx/DGd0/e1B17HSyWiQE7cJLSAC
-         BzBpLY79TYpW8IXDT8l7KzukDCH5lxCB9PmqL45sFI9TbWTdAQVUOrE09e/qQfFI7G
-         /gIgdMxb9eaZqSKZfUX7Zp0kScmz6ji5q935vEfs=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0LFxTLh067437
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 09:59:29 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
- Jan 2019 09:59:29 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 21 Jan 2019 09:59:29 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0LFxT47030421;
-        Mon, 21 Jan 2019 09:59:29 -0600
-Date:   Mon, 21 Jan 2019 09:59:29 -0600
-From:   Bin Liu <b-liu@ti.com>
-To:     <min.guo@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
-        <hdegoede@redhat.com>
-Subject: Re: [PATCH v4 5/6] usb: musb: Add musb_clearb/w() interface
-Message-ID: <20190121155929.GC30080@uda0271908>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>, min.guo@mediatek.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>, chunfeng.yun@mediatek.com,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, tony@atomide.com,
-        hdegoede@redhat.com
-References: <1548073351-13739-1-git-send-email-min.guo@mediatek.com>
- <1548073351-13739-6-git-send-email-min.guo@mediatek.com>
+        Mon, 21 Jan 2019 11:02:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39390 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728761AbfAUQCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 11:02:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 53432AF8A;
+        Mon, 21 Jan 2019 16:02:29 +0000 (UTC)
+Date:   Mon, 21 Jan 2019 08:02:18 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        Xie Yongji <xieyongji@baidu.com>, zhangyu31@baidu.com,
+        liuqi16@baidu.com, yuanlinsi01@baidu.com, nixun@baidu.com,
+        lilin24@baidu.com, andrea.parri@amarulasolutions.com
+Subject: Re: [PATCH v4] sched/wake_q: Reduce reference counting for special
+ users
+Message-ID: <20190121160218.rakg7vvhlx4pqpvu@linux-r8p5>
+References: <20181217113718.GB4900@worktop.programming.kicks-ass.net>
+ <20181217205310.pvwcryyaqlrzmaex@linux-r8p5>
+ <20181218131031.GJ15430@hirez.programming.kicks-ass.net>
+ <20181218131419.GD16284@hirez.programming.kicks-ass.net>
+ <20181218185443.g5jzinm3vnrkznmm@linux-r8p5>
+ <a8767197-21b9-f470-b864-be88e020c647@redhat.com>
+ <20181218193009.ytzz5rlrsh27rjre@linux-r8p5>
+ <20181218193957.cjx34nn5tku2eaps@linux-r8p5>
+ <20181218195352.7orq3upiwfdbrdne@linux-r8p5>
+ <772085e9-35f3-1c32-1b87-f101cbc5f8f7@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1548073351-13739-6-git-send-email-min.guo@mediatek.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <772085e9-35f3-1c32-1b87-f101cbc5f8f7@redhat.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Min,
+Hi - considering that the wake_q patches were picked up for tip/urgent, can
+this one make it in as well?
 
-On Mon, Jan 21, 2019 at 08:22:30PM +0800, min.guo@mediatek.com wrote:
-> From: Min Guo <min.guo@mediatek.com>
-> 
-> Delete the const attribute of addr parameter in readb/w/l hooks, these
-> changes are for implementing clearing W1C registers.
-> Replace musb_readb/w with musb_clearb/w to clear the interrupt status.
-> 
-> Signed-off-by: Min Guo <min.guo@mediatek.com>
-> ---
-> new patch based on v3:
-> ---
->  drivers/usb/musb/musb_core.c | 32 +++++++++++++++++++++++---------
->  drivers/usb/musb/musb_core.h |  8 ++++++--
->  drivers/usb/musb/musb_io.h   |  8 +++++---
->  drivers/usb/musb/musbhsdma.c |  3 +++
->  drivers/usb/musb/sunxi.c     |  4 ++--
->  drivers/usb/musb/tusb6010.c  |  2 +-
->  6 files changed, 40 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-> index 2fe5225..5ef8848 100644
-> --- a/drivers/usb/musb/musb_core.c
-> +++ b/drivers/usb/musb/musb_core.c
+Thanks,
+Davidlohr
 
-[snip]
+On Tue, 18 Dec 2018, Waiman Long wrote:
 
-> diff --git a/drivers/usb/musb/musbhsdma.c b/drivers/usb/musb/musbhsdma.c
-> index b2394a7..7bf91cb 100644
-> --- a/drivers/usb/musb/musbhsdma.c
-> +++ b/drivers/usb/musb/musbhsdma.c
-> @@ -286,6 +286,9 @@ irqreturn_t dma_controller_irq(int irq, void *private_data)
->  
->  	int_hsdma = musb_readb(mbase, MUSB_HSDMA_INTR);
->  
-> +	/* clear pending interrupts by manual */
-> +	musb_clearb(musb->mregs, MUSB_HSDMA_INTR);
-> +
-
-Make musb_clearb/w() return the value of the _read() instead of
-_write(), so that we don't have to read twice here. The value of
-_write() is not used anyway.
-
-The change above can be:
-
-	int_hsdma = musb_clearb(mbase, MUSB_HSDMA_INTR);
-
-Please see my comments in 6/6 for details.
-
-Regards,
--Bin.
+>On 12/18/2018 02:53 PM, Davidlohr Bueso wrote:
+>> Some users, specifically futexes and rwsems, required fixes
+>> that allowed the callers to be safe when wakeups occur before
+>> they are expected by wake_up_q(). Such scenarios also play
+>> games and rely on reference counting, and until now were
+>> pivoting on wake_q doing it. With the wake_q_add() call being
+>> moved down, this can no longer be the case. As such we end up
+>> with a a double task refcounting overhead; and these callers
+>> care enough about this (being rather core-ish).
+>>
+>> This patch introduces a wake_q_add_safe() call that serves
+>> for callers that have already done refcounting and therefore the
+>> task is 'safe' from wake_q point of view (int that it requires
+>> reference throughout the entire queue/>wakeup cycle). In the one
+>> case it has internal reference counting, in the other case it
+>> consumes the reference counting.
+>>
+>> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+>> ---
+>>
+>> - Changes from v3: fixed wake_q_add_safe. While previous version
+>>  had been tested with a bootup, the failed cmpxchg path obviously
+>>  hadn't been exercised.  Sorry about the noise.
+>>
+>> include/linux/sched/wake_q.h |  4 +--
+>> kernel/futex.c               |  3 +--
+>> kernel/locking/rwsem-xadd.c  |  4 +--
+>> kernel/sched/core.c          | 60
+>> ++++++++++++++++++++++++++++++++------------
+>> 4 files changed, 48 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/include/linux/sched/wake_q.h b/include/linux/sched/wake_q.h
+>> index 545f37138057..ad826d2a4557 100644
+>> --- a/include/linux/sched/wake_q.h
+>> +++ b/include/linux/sched/wake_q.h
+>> @@ -51,8 +51,8 @@ static inline void wake_q_init(struct wake_q_head
+>> *head)
+>>     head->lastp = &head->first;
+>> }
+>>
+>> -extern void wake_q_add(struct wake_q_head *head,
+>> -               struct task_struct *task);
+>> +extern void wake_q_add(struct wake_q_head *head, struct task_struct
+>> *task);
+>> +extern void wake_q_add_safe(struct wake_q_head *head, struct
+>> task_struct *task);
+>> extern void wake_up_q(struct wake_q_head *head);
+>>
+>> #endif /* _LINUX_SCHED_WAKE_Q_H */
+>> diff --git a/kernel/futex.c b/kernel/futex.c
+>> index d14971f6ed3d..6218d98f649b 100644
+>> --- a/kernel/futex.c
+>> +++ b/kernel/futex.c
+>> @@ -1402,8 +1402,7 @@ static void mark_wake_futex(struct wake_q_head
+>> *wake_q, struct futex_q *q)
+>>      * Queue the task for later wakeup for after we've released
+>>      * the hb->lock. wake_q_add() grabs reference to p.
+>>      */
+>> -    wake_q_add(wake_q, p);
+>> -    put_task_struct(p);
+>> +    wake_q_add_safe(wake_q, p);
+>> }
+>>
+>> /*
+>> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+>> index 50d9af615dc4..fbe96341beee 100644
+>> --- a/kernel/locking/rwsem-xadd.c
+>> +++ b/kernel/locking/rwsem-xadd.c
+>> @@ -211,9 +211,7 @@ static void __rwsem_mark_wake(struct rw_semaphore
+>> *sem,
+>>          * Ensure issuing the wakeup (either by us or someone else)
+>>          * after setting the reader waiter to nil.
+>>          */
+>> -        wake_q_add(wake_q, tsk);
+>> -        /* wake_q_add() already take the task ref */
+>> -        put_task_struct(tsk);
+>> +        wake_q_add_safe(wake_q, tsk);
+>>     }
+>>
+>>     adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index d740d7a3608d..be977df66a21 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -396,19 +396,7 @@ static bool set_nr_if_polling(struct task_struct *p)
+>> #endif
+>> #endif
+>>
+>> -/**
+>> - * wake_q_add() - queue a wakeup for 'later' waking.
+>> - * @head: the wake_q_head to add @task to
+>> - * @task: the task to queue for 'later' wakeup
+>> - *
+>> - * Queue a task for later wakeup, most likely by the wake_up_q() call
+>> in the
+>> - * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
+>> - * instantly.
+>> - *
+>> - * This function must be used as-if it were wake_up_process(); IOW
+>> the task
+>> - * must be ready to be woken at this location.
+>> - */
+>> -void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+>> +static bool __wake_q_add(struct wake_q_head *head, struct task_struct
+>> *task)
+>> {
+>>     struct wake_q_node *node = &task->wake_q;
+>>
+>> @@ -422,15 +410,55 @@ void wake_q_add(struct wake_q_head *head, struct
+>> task_struct *task)
+>>      */
+>>     smp_mb__before_atomic();
+>>     if (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
+>> -        return;
+>> -
+>> -    get_task_struct(task);
+>> +        return false;
+>>
+>>     /*
+>>      * The head is context local, there can be no concurrency.
+>>      */
+>>     *head->lastp = node;
+>>     head->lastp = &node->next;
+>> +    return true;
+>> +}
+>> +
+>> +/**
+>> + * wake_q_add() - queue a wakeup for 'later' waking.
+>> + * @head: the wake_q_head to add @task to
+>> + * @task: the task to queue for 'later' wakeup
+>> + *
+>> + * Queue a task for later wakeup, most likely by the wake_up_q() call
+>> in the
+>> + * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
+>> + * instantly.
+>> + *
+>> + * This function must be used as-if it were wake_up_process(); IOW
+>> the task
+>> + * must be ready to be woken at this location.
+>> + */
+>> +void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+>> +{
+>> +    if (__wake_q_add(head, task))
+>> +        get_task_struct(task);
+>> +}
+>> +
+>> +/**
+>> + * wake_q_add_safe() - safely queue a wakeup for 'later' waking.
+>> + * @head: the wake_q_head to add @task to
+>> + * @task: the task to queue for 'later' wakeup
+>> + *
+>> + * Queue a task for later wakeup, most likely by the wake_up_q() call
+>> in the
+>> + * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
+>> + * instantly.
+>> + *
+>> + * This function must be used as-if it were wake_up_process(); IOW
+>> the task
+>> + * must be ready to be woken at this location.
+>> + *
+>> + * This function is essentially a task-safe equivalent to
+>> wake_q_add(). Callers
+>> + * that already hold reference to @task can call the 'safe' version
+>> and trust
+>> + * wake_q to do the right thing depending whether or not the @task is
+>> already
+>> + * queued for wakeup.
+>> + */
+>> +void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task)
+>> +{
+>> +    if (!__wake_q_add(head, task))
+>> +        put_task_struct(task);
+>> }
+>>
+>> void wake_up_q(struct wake_q_head *head)
+>
+>Acked-by: Waiman Long <longman@redhat.com>
+>
