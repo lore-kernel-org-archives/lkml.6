@@ -2,139 +2,86 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FF3C3712F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3899AC3713C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 510EE2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:45:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXMWVx0v"
+	by mail.kernel.org (Postfix) with ESMTP id 00E3021721
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:46:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548110811;
+	bh=OFX0YF9R48TS0Qr9AcjWCT58c5wEtgPYO9PEdkk+CS4=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=iNj+wpxU/wZZZm8kqtyFcSv93AZW/yQUIv9P7kYAJyMPRFUCBUZpui54TQf66nttH
+	 Jzxjns9VoSF5vA/SiYBg71V3eezCABBqIgzN9rUH/9gQFeU5voq0OaQ+6uXP/iRyO7
+	 GsGqel73MpiYAmauezMKNWP60ApuyZ58rQgKaYTs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfAUWpt (ORCPT
+        id S1728014AbfAUWqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:45:49 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:45705 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727179AbfAUWpt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 17:45:49 -0500
-Received: by mail-qk1-f195.google.com with SMTP id y78so13161002qka.12
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 14:45:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=of6Twt2oMsj6inFLiIX6J/DxmOcSjNQvuU8+OGt+gTM=;
-        b=KXMWVx0vY4whYy/t+uSseKAP65uuIEX3bdenETXEzVHsi+5W3M6eVDOLdeFsaSWbAq
-         Wpv27gSO50XoLjWyG6MLtuO0tcWCbYF2YY1njNAZwvTT/OyJlmYyf1+CCgVvq7REzXaS
-         Au0I1XrGV4nPq2Kb7n32/kkxvMq/CdfgoR3/x+oakUpA5+DiirPF5JT8u7a2z7TpHl85
-         PLUsGQkkUfaJ9ZA9vR3RijDl6zzpa+bDOYBCcvdglAxRBQqKxjCOBwM6YobKq9A4in8k
-         YJ1yi4Gc4fyKapJ7ofwOh83VfIyM7h3wUBntzXEsxY9Tj+Di9WvtSZBYSyWGHy4BAYjg
-         jVOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=of6Twt2oMsj6inFLiIX6J/DxmOcSjNQvuU8+OGt+gTM=;
-        b=RWrnXA/gl7lY1rBcHm3rFUMWBu+BM29xBa3+AzISp+F+CAHMRhlu+LEGsRsbX7kffm
-         fSXnBM71rtIdJPTdGeZLgNQVHXQvlO01b5EuN/KhjH3aKlFtCGMqWzI9eBUjd58fh8/G
-         /osPjgiPRqJFGtShEWTDEcIj7dKeakmpS6u7tslg7PFU9WHPcaMPcvs5MX7gNX0+Q4fv
-         WHlQEf6gu4Ib3RAk3VQBzoXW6BITlo/1u1+vkDElseZoI5OTqD60v2CpuPCUInPYrCvE
-         CFqg/LykGkdU0liEXIc4owtpqBB4CpruDgEmgShvgRO0fKK8u/dmBq3TLIbTGXI5vHnn
-         Gotw==
-X-Gm-Message-State: AJcUuke7ughHr/TpNSUjVCmZN7VAlr+9oeVIsiZROiKuHkWqrTO2wU/+
-        tKr8DeyQJTJFScB4uPaKlqAtDhqKDZ4=
-X-Google-Smtp-Source: ALg8bN4sBRIvU9PuSsykRH2Coll+Q/DZ/pC3N1DMxWQPU9omzYhSX/bBn/aBZsmWHGKzLO8v2+KbEw==
-X-Received: by 2002:a37:6801:: with SMTP id d1mr25505803qkc.283.1548110747999;
-        Mon, 21 Jan 2019 14:45:47 -0800 (PST)
-Received: from localhost.localdomain ([23.233.244.16])
-        by smtp.gmail.com with ESMTPSA id c48sm70715246qtd.9.2019.01.21.14.45.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 14:45:47 -0800 (PST)
-From:   Antoine Robertson <antoinerbrtsn@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     jslaby@suse.com, linux-kernel@vger.kernel.org,
-        Antoine Robertson <antoinerbrtsn@gmail.com>
-Subject: [PATCH v2] tty: moxa: Fix coding style issues
-Date:   Mon, 21 Jan 2019 17:45:43 -0500
-Message-Id: <20190121224543.5150-1-antoinerbrtsn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 21 Jan 2019 17:46:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbfAUWqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 17:46:49 -0500
+Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.117.83.110])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 236072089F;
+        Mon, 21 Jan 2019 22:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548110808;
+        bh=OFX0YF9R48TS0Qr9AcjWCT58c5wEtgPYO9PEdkk+CS4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tMbz6SXLWrR6D1v2mN4DXWJ6giJUZIfn7ygSMBX4Nhl308COwbKEesPNbqjErgxxg
+         MEzw3zjPzYE2iY8m2AAXKpCLo6tNLZfCd/SzvmtnRhvi9YYk9ZQwPy4Am2N/KLvbr2
+         I3ggsVwoZl9+kQsAfEzH4F6HB954UDaooNGL6hBg=
+From:   Sinan Kaya <okaya@kernel.org>
+To:     linux-next@vger.kernel.org
+Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [for next][PATCH 1/2] platform/x86: Fix unmet dependency warning for ACPI_CMPC
+Date:   Mon, 21 Jan 2019 22:46:43 +0000
+Message-Id: <20190121224644.26903-1-okaya@kernel.org>
+X-Mailer: git-send-email 2.19.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix coding style issues
+Add BACKLIGHT_LCD_SUPPORT for ACPI_CMPC to fix the
+warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
 
-Signed-off-by: Antoine Robertson <antoinerbrtsn@gmail.com>
+ACPI_CMPC selects BACKLIGHT_LCD_SUPPORT but BACKLIGHT_LCD_SUPPORT
+depends on BACKLIGHT_LCD_SUPPORT.
+
+Copy this dependency into ACPI_CMPC.
+
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/tty/moxa.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ drivers/platform/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
-index 3a1a5e0ee93f..9b6dcb4f7905 100644
---- a/drivers/tty/moxa.c
-+++ b/drivers/tty/moxa.c
-@@ -42,7 +42,7 @@
- #include <linux/slab.h>
- #include <linux/ratelimit.h>
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 5e2109c54c7c..b84c2c5b6684 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -904,7 +904,7 @@ config TOSHIBA_WMI
  
--#include <asm/io.h>
-+#include <linux/io.h>
- #include <linux/uaccess.h>
- 
- #include "moxa.h"
-@@ -74,8 +74,7 @@ enum {
- 	MOXA_BOARD_CP204J,
- };
- 
--static char *moxa_brdname[] =
--{
-+static const char * const moxa_brdname[] = {
- 	"C218 Turbo PCI series",
- 	"C218 Turbo ISA series",
- 	"C320 Turbo PCI series",
-@@ -1159,9 +1158,8 @@ static int moxa_open(struct tty_struct *tty, struct file *filp)
- 	int port;
- 
- 	port = tty->index;
--	if (port == MAX_PORTS) {
-+	if (port == MAX_PORTS)
- 		return capable(CAP_SYS_ADMIN) ? 0 : -EPERM;
--	}
- 	if (mutex_lock_interruptible(&moxa_openlock))
- 		return -ERESTARTSYS;
- 	brd = &moxa_boards[port / MAX_PORTS_PER_BOARD];
-@@ -1357,9 +1355,9 @@ static void moxa_new_dcdstate(struct moxa_port *p, u8 dcd)
-         	spin_unlock_irqrestore(&p->port.lock, flags);
- 		if (!dcd)
- 			tty_port_tty_hangup(&p->port, true);
--	}
--	else
-+	} else {
- 		spin_unlock_irqrestore(&p->port.lock, flags);
-+	}
- }
- 
- static int moxa_poll_port(struct moxa_port *p, unsigned int handle,
-@@ -1625,10 +1623,10 @@ static void MoxaPortFlushData(struct moxa_port *port, int mode)
-  *      Syntax:
-  *      void MoxaPortFlushData(int port, int mode);
-  *           int port           : port number (0 - 127)
-- *           int mode    
-- *                      0       : flush the Rx buffer 
-- *                      1       : flush the Tx buffer 
-- *                      2       : flush the Rx and Tx buffer 
-+ *           int mode
-+ *                      0       : flush the Rx buffer
-+ *                      1       : flush the Tx buffer
-+ *                      2       : flush the Rx and Tx buffer
-  *
-  *
-  *      Function 20:    Write data.
+ config ACPI_CMPC
+ 	tristate "CMPC Laptop Extras"
+-	depends on ACPI && INPUT
++	depends on ACPI && INPUT && BACKLIGHT_LCD_SUPPORT
+ 	depends on RFKILL || RFKILL=n
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	help
 -- 
-2.17.1
+2.19.0
 
