@@ -2,96 +2,91 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F36C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB75C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E822085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:37:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pE1RYGpY"
+	by mail.kernel.org (Postfix) with ESMTP id BBB5F20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729126AbfAUNg7 (ORCPT
+        id S1729005AbfAUNji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:36:59 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:56854 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728982AbfAUNg6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:36:58 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0LDSwbE023703;
-        Mon, 21 Jan 2019 13:36:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=VeapZkuR0cIdLclyZaeUTkTP3ZAnzxD9j4NtyBXQXWI=;
- b=pE1RYGpYMJf6wr7Ley2UOIFQJsSLmk+bHdodQMPIlR7mLEQrEAq2tUyFN3j7hnftHiMt
- lJTY67R8iYsJrFO+Hcq8mvJTzi8SUJXoU53nhBym19AxWZ45P0T6KYXCalSDwZkTlq4y
- uSobxWtkY6wbLMMyBdnOQXRXwMmhuurR6DMOQP65po2VpfOOPlOvvQhkyZrBurNK0UJA
- 3X1k7fDmJnUQdWQi0KxEXU62tzVPrMi55EBViIbj7Wj4cdcrs7RBEihs1jGnShl2Y27Z
- wplnb9G8fXTeyfSOSSfLKNjYuS1BY0TrPOrwhaPyBBiG8FOwRnFYB9V/9yjjxTJlIZSu xw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2q3vhrep9q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Jan 2019 13:36:51 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0LDaoHE011808
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Jan 2019 13:36:50 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0LDanmL022836;
-        Mon, 21 Jan 2019 13:36:50 GMT
-Received: from kadam (/197.157.34.164)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 21 Jan 2019 05:36:49 -0800
-Date:   Mon, 21 Jan 2019 16:36:28 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Ajay Kaher <akaher@vmware.com>
-Cc:     linux-pci@vger.kernel.org, haiyangz@microsoft.com,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        devel@linuxdriverproject.org
-Subject: Re: [PATCH 1/3] PCI: hv: Allocate physically contiguous hypercall
- params buffer
-Message-ID: <20190121133628.GI4482@kadam>
-References: <1547758038-5255-1-git-send-email-akaher@vmware.com>
- <1547758038-5255-2-git-send-email-akaher@vmware.com>
- <20190121131942.GH4482@kadam>
+        Mon, 21 Jan 2019 08:39:38 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54236 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728817AbfAUNjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:39:37 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BECDC207B2; Mon, 21 Jan 2019 14:39:34 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 848C5206A7;
+        Mon, 21 Jan 2019 14:39:34 +0100 (CET)
+Date:   Mon, 21 Jan 2019 14:39:34 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Sean Paul <sean@poorly.run>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Krzysztof Witos <kwitos@cadence.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v4 8/9] phy: Add Cadence D-PHY support
+Message-ID: <20190121133934.5e3uwk5x6vzno36w@flea>
+References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
+ <a089ce6aaefe6d2ddf6b17f5558ec7eb0ebf3774.1547026369.git-series.maxime.ripard@bootlin.com>
+ <20190117135322.GB114153@art_vandelay>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hzi2fvtnjykoiksc"
 Content-Disposition: inline
-In-Reply-To: <20190121131942.GH4482@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9142 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=963
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901210107
+In-Reply-To: <20190117135322.GB114153@art_vandelay>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 04:19:42PM +0300, Dan Carpenter wrote:
-> On Fri, Jan 18, 2019 at 02:17:16AM +0530, Ajay Kaher wrote:
-> > hv_do_hypercall() assumes that we pass a segment from a physically
-> > contiguous buffer.  A buffer allocated on the stack may not work if
-> > CONFIG_VMAP_STACK=y is set.
-> > 
-> > Use kmalloc() to allocate this buffer.
-> > 
-> 
-> Since you're going to need to resend this anyway, can you add in the
-> commit message what this looks like from a user perspective?  Presumably
-> it's an occasional crash?
-> 
 
-Never mind.  I didn't realize this was a two year old patch.
+--hzi2fvtnjykoiksc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-regards,
-dan carpenter
+Hi Sean,
 
+On Thu, Jan 17, 2019 at 08:53:22AM -0500, Sean Paul wrote:
+> On Wed, Jan 09, 2019 at 10:33:25AM +0100, Maxime Ripard wrote:
+> > +	opts->wakeup =3D cdns_dphy_get_wakeup_time_ns(dphy) * 1000;
+>=20
+> This should be "/ 1000" since the units of wakeup is us now (thanks to pa=
+tch 2).
+> You've made this change in patch 9, so I think it's just a misplaced fixu=
+p.
+
+Good catch, this was fixed in patch 9, but it definitely belongs there.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--hzi2fvtnjykoiksc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEXLlgAKCRDj7w1vZxhR
+xW+LAP4zEe1z/qdpFjO7LKfIjMbOAWFDH1HPxrfSrGKjD/8GtwEAztE37tEckDJq
+RYu3qFgjy6BMgbB4/6tjGMfKoB2b0AI=
+=rG2u
+-----END PGP SIGNATURE-----
+
+--hzi2fvtnjykoiksc--
