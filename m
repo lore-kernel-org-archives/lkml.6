@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0919C2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E792FC2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C920B2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBBD42085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:34:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730001AbfAUPeQ (ORCPT
+        id S1730093AbfAUPeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:34:16 -0500
-Received: from foss.arm.com ([217.140.101.70]:36416 "EHLO foss.arm.com"
+        Mon, 21 Jan 2019 10:34:21 -0500
+Received: from foss.arm.com ([217.140.101.70]:36450 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729773AbfAUPeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:34:12 -0500
+        id S1729773AbfAUPeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:34:17 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 840A1165C;
-        Mon, 21 Jan 2019 07:34:12 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69F3F1650;
+        Mon, 21 Jan 2019 07:34:17 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 939523F5C1;
-        Mon, 21 Jan 2019 07:34:10 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4DBA73F5C1;
+        Mon, 21 Jan 2019 07:34:15 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
@@ -32,10 +32,10 @@ Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
         Julien Thierry <julien.thierry@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v9 05/26] arm/arm64: gic-v3: Add PMR and RPR accessors
-Date:   Mon, 21 Jan 2019 15:33:24 +0000
-Message-Id: <1548084825-8803-6-git-send-email-julien.thierry@arm.com>
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v9 07/26] arm64: ptrace: Provide definitions for PMR values
+Date:   Mon, 21 Jan 2019 15:33:26 +0000
+Message-Id: <1548084825-8803-8-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
 References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
@@ -44,81 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add helper functions to access system registers related to interrupt
-priorities: PMR and RPR.
+Introduce fixed values for PMR that are going to be used to mask and
+unmask interrupts by priority.
+
+The current priority given to GIC interrupts is 0xa0, so clearing PMR's
+most significant bit is enough to mask interrupts.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
 Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
+Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm/include/asm/arch_gicv3.h   | 16 ++++++++++++++++
- arch/arm64/include/asm/arch_gicv3.h | 15 +++++++++++++++
- 2 files changed, 31 insertions(+)
+ arch/arm64/include/asm/ptrace.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/include/asm/arch_gicv3.h b/arch/arm/include/asm/arch_gicv3.h
-index 0bd5307..bef0b5d 100644
---- a/arch/arm/include/asm/arch_gicv3.h
-+++ b/arch/arm/include/asm/arch_gicv3.h
-@@ -34,6 +34,7 @@
- #define ICC_SRE				__ACCESS_CP15(c12, 0, c12, 5)
- #define ICC_IGRPEN1			__ACCESS_CP15(c12, 0, c12, 7)
- #define ICC_BPR1			__ACCESS_CP15(c12, 0, c12, 3)
-+#define ICC_RPR				__ACCESS_CP15(c12, 0, c11, 3)
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index fce22c4..05cf913 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -25,6 +25,18 @@
+ #define CurrentEL_EL1		(1 << 2)
+ #define CurrentEL_EL2		(2 << 2)
  
- #define __ICC_AP0Rx(x)			__ACCESS_CP15(c12, 0, c8, 4 | x)
- #define ICC_AP0R0			__ICC_AP0Rx(0)
-@@ -245,6 +246,21 @@ static inline void gic_write_bpr1(u32 val)
- 	write_sysreg(val, ICC_BPR1);
- }
++/*
++ * PMR values used to mask/unmask interrupts.
++ *
++ * GIC priority masking works as follows: if an IRQ's priority is a higher value
++ * than the value held in PMR, that interrupt is masked. A lower value of PMR
++ * means more IRQ priorities are masked.
++ *
++ * To mask priorities, we clear the most significant bit of PMR.
++ */
++#define GIC_PRIO_IRQON		0xf0
++#define GIC_PRIO_IRQOFF		(GIC_PRIO_IRQON & ~0x80)
++
+ /* Additional SPSR bits not exposed in the UABI */
+ #define PSR_IL_BIT		(1 << 20)
  
-+static inline u32 gic_read_pmr(void)
-+{
-+	return read_sysreg(ICC_PMR);
-+}
-+
-+static inline void gic_write_pmr(u32 val)
-+{
-+	write_sysreg(val, ICC_PMR);
-+}
-+
-+static inline u32 gic_read_rpr(void)
-+{
-+	return read_sysreg(ICC_RPR);
-+}
-+
- /*
-  * Even in 32bit systems that use LPAE, there is no guarantee that the I/O
-  * interface provides true 64bit atomic accesses, so using strd/ldrd doesn't
-diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
-index e278f94..37193e2 100644
---- a/arch/arm64/include/asm/arch_gicv3.h
-+++ b/arch/arm64/include/asm/arch_gicv3.h
-@@ -114,6 +114,21 @@ static inline void gic_write_bpr1(u32 val)
- 	write_sysreg_s(val, SYS_ICC_BPR1_EL1);
- }
- 
-+static inline u32 gic_read_pmr(void)
-+{
-+	return read_sysreg_s(SYS_ICC_PMR_EL1);
-+}
-+
-+static inline void gic_write_pmr(u32 val)
-+{
-+	write_sysreg_s(val, SYS_ICC_PMR_EL1);
-+}
-+
-+static inline u32 gic_read_rpr(void)
-+{
-+	return read_sysreg_s(SYS_ICC_RPR_EL1);
-+}
-+
- #define gic_read_typer(c)		readq_relaxed(c)
- #define gic_write_irouter(v, c)		writeq_relaxed(v, c)
- #define gic_read_lpir(c)		readq_relaxed(c)
 -- 
 1.9.1
 
