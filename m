@@ -2,111 +2,324 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9198C31680
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3099C31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD4AC21726
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:46:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hl6VTekQ"
+	by mail.kernel.org (Postfix) with ESMTP id 61BC921726
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbfAUSqM (ORCPT
+        id S1728208AbfAUSqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:46:12 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44819 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfAUSqM (ORCPT
+        Mon, 21 Jan 2019 13:46:45 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51737 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbfAUSqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:46:12 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so24549932wrt.11;
-        Mon, 21 Jan 2019 10:46:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=aVzxV0IkABr8yRf2yZfqdYegrJVqmtk73WWhqLWtCGQ=;
-        b=Hl6VTekQdfeOZTZsQB1JbhW1iMEjd1YDOZx4qSSic6Wh2ubbZsjh8qKNXow2/gjkES
-         E0eNADnN9/m6+nfkT7wm1ACSYuEabYyLjA6EMJ6VRV9HR26vMmxcf96icQaymY+Zj8XJ
-         y/7F/QC+RRks5x86dt209UcDxxlBSKUEA3sRVA1NzIxIHg+8MoRunguiCQkMO0xylJS+
-         /nHyQ6L6t3hYgawVQwJNhFqLeY2V+6PTmcOK4WpYN5knTqOkwY8fwVxJ2sNK53MpDik/
-         +4XzK4Fa61p77ueuETqfgW7EAEvXWKNG9COjCcyiLNlUp/KgE9YDWAXHNimnsEtJ4rF6
-         NDyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=aVzxV0IkABr8yRf2yZfqdYegrJVqmtk73WWhqLWtCGQ=;
-        b=aFCO65lONuKEle1MEwDGEzOryWv+4XZA6RsDMR97P4kzwiai/M1+DtHEufZMrpAEkU
-         SBx9Afq4Ty3keDHoJUMPcqSaog7AMG8PcZkLmNZcPEMTn1iDxO98JZjX89rZzfwygVSw
-         Iyt6C5l9N+hixGRVgLE4goYIkfAlCR7eV36BviJCw3iKlsEmEQBQ2rCa3YSw5IXG7TcW
-         LG8FuMHY/qL7LgPR7IQ6xIRe+iTYb+0H119G0G+wIg7Ns3ZiyrDcAAw4boyEuOexalwk
-         QCQuosxxZU7mciISCmeFk7Rbgn+b45UseSWe9Oc6hSYTwBFAxCAam3fWt5KxZ++nt28I
-         h+DQ==
-X-Gm-Message-State: AJcUukfZLZG9zhlH4gwcehr06IKDb7H1vMyrxAe+QReKf8YEzQvxXPUH
-        pbmFR293ZTEGnHiF5iKQuFvfjkS/
-X-Google-Smtp-Source: ALg8bN50ojRHw49ENmp0As8/oMRu2EVxJGJBJK+8zGGdj9+3G5b29TUieIbqRoGRRy5LPHVrLxDqPA==
-X-Received: by 2002:adf:fbc8:: with SMTP id d8mr28973974wrs.318.1548096369558;
-        Mon, 21 Jan 2019 10:46:09 -0800 (PST)
-Received: from [172.30.88.24] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id e27sm109694616wra.67.2019.01.21.10.46.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 10:46:09 -0800 (PST)
-Subject: Re: [PATCH v3 1/2] media: imx: csi: Disable SMFC before disabling
- IDMA channel
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
-Cc:     Gael PORTAY <gael.portay@collabora.com>,
-        Peter Seiderer <ps.report@gmx.net>, stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190119010457.2623-1-slongerbeam@gmail.com>
- <20190119010457.2623-2-slongerbeam@gmail.com>
- <1548071350.3287.3.camel@pengutronix.de>
- <7432d18b-12fc-34c6-832f-576fc1b8e2e8@gmail.com>
-Message-ID: <12937f2b-e25e-6cc5-0727-59a5e6224fd9@gmail.com>
-Date:   Mon, 21 Jan 2019 10:46:05 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 13:46:45 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gleak-0003E7-Cu; Mon, 21 Jan 2019 19:46:38 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gleaj-0004Pp-RH; Mon, 21 Jan 2019 19:46:37 +0100
+Date:   Mon, 21 Jan 2019 19:46:37 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: Re: [PATCH V2 2/4] drivers: pwm: pwm-bcm-kona: Switch to using
+ atomic PWM Framework
+Message-ID: <20190121184637.httmrtd3coz2m5ie@pengutronix.de>
+References: <1547669716-20070-1-git-send-email-sheetal.tigadoli@broadcom.com>
+ <1547669716-20070-3-git-send-email-sheetal.tigadoli@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <7432d18b-12fc-34c6-832f-576fc1b8e2e8@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1547669716-20070-3-git-send-email-sheetal.tigadoli@broadcom.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+On Thu, Jan 17, 2019 at 01:45:14AM +0530, Sheetal Tigadoli wrote:
+> Switch to using atomic PWM Framework on broadcom PWM kona driver
+> 
+> Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+> ---
+>  drivers/pwm/pwm-bcm-kona.c | 201 +++++++++++++++++++--------------------------
+>  1 file changed, 83 insertions(+), 118 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.c
+> index 09a95ae..fe63289 100644
+> --- a/drivers/pwm/pwm-bcm-kona.c
+> +++ b/drivers/pwm/pwm-bcm-kona.c
+> @@ -108,151 +108,116 @@ static void kona_pwmc_apply_settings(struct kona_pwmc *kp, unsigned int chan)
+>  	ndelay(400);
+>  }
+>  
+> -static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm,
+> -			    int duty_ns, int period_ns)
+> -{
+> -	struct kona_pwmc *kp = to_kona_pwmc(chip);
+> -	u64 val, div, rate;
+> -	unsigned long prescale = PRESCALE_MIN, pc, dc;
+> -	unsigned int value, chan = pwm->hwpwm;
+> -
+> -	/*
+> -	 * Find period count, duty count and prescale to suit duty_ns and
+> -	 * period_ns. This is done according to formulas described below:
+> -	 *
+> -	 * period_ns = 10^9 * (PRESCALE + 1) * PC / PWM_CLK_RATE
+> -	 * duty_ns = 10^9 * (PRESCALE + 1) * DC / PWM_CLK_RATE
+> -	 *
+> -	 * PC = (PWM_CLK_RATE * period_ns) / (10^9 * (PRESCALE + 1))
+> -	 * DC = (PWM_CLK_RATE * duty_ns) / (10^9 * (PRESCALE + 1))
+> -	 */
+> -
+> -	rate = clk_get_rate(kp->clk);
+> -
+> -	while (1) {
+> -		div = 1000000000;
+> -		div *= 1 + prescale;
+> -		val = rate * period_ns;
+> -		pc = div64_u64(val, div);
+> -		val = rate * duty_ns;
+> -		dc = div64_u64(val, div);
+> -
+> -		/* If duty_ns or period_ns are not achievable then return */
+> -		if (pc < PERIOD_COUNT_MIN || dc < DUTY_CYCLE_HIGH_MIN)
+> -			return -EINVAL;
+> -
+> -		/* If pc and dc are in bounds, the calculation is done */
+> -		if (pc <= PERIOD_COUNT_MAX && dc <= DUTY_CYCLE_HIGH_MAX)
+> -			break;
+> -
+> -		/* Otherwise, increase prescale and recalculate pc and dc */
+> -		if (++prescale > PRESCALE_MAX)
+> -			return -EINVAL;
+> -	}
+> -
+> -	/*
+> -	 * Don't apply settings if disabled. The period and duty cycle are
+> -	 * always calculated above to ensure the new values are
+> -	 * validated immediately instead of on enable.
+> -	 */
+> -	if (pwm_is_enabled(pwm)) {
+> -		kona_pwmc_prepare_for_settings(kp, chan);
+> -
+> -		value = readl(kp->base + PRESCALE_OFFSET);
+> -		value &= ~PRESCALE_MASK(chan);
+> -		value |= prescale << PRESCALE_SHIFT(chan);
+> -		writel(value, kp->base + PRESCALE_OFFSET);
+> -
+> -		writel(pc, kp->base + PERIOD_COUNT_OFFSET(chan));
+> -
+> -		writel(dc, kp->base + DUTY_CYCLE_HIGH_OFFSET(chan));
+> -
+> -		kona_pwmc_apply_settings(kp, chan);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static int kona_pwmc_set_polarity(struct pwm_chip *chip, struct pwm_device *pwm,
+> -				  enum pwm_polarity polarity)
+> +static void kona_pwmc_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  {
+>  	struct kona_pwmc *kp = to_kona_pwmc(chip);
+>  	unsigned int chan = pwm->hwpwm;
+>  	unsigned int value;
+> -	int ret;
+> -
+> -	ret = clk_prepare_enable(kp->clk);
+> -	if (ret < 0) {
+> -		dev_err(chip->dev, "failed to enable clock: %d\n", ret);
+> -		return ret;
+> -	}
+>  
+>  	kona_pwmc_prepare_for_settings(kp, chan);
+>  
+> -	value = readl(kp->base + PWM_CONTROL_OFFSET);
+> -
+> -	if (polarity == PWM_POLARITY_NORMAL)
+> -		value |= 1 << PWM_CONTROL_POLARITY_SHIFT(chan);
+> -	else
+> -		value &= ~(1 << PWM_CONTROL_POLARITY_SHIFT(chan));
+> +	/* Simulate a disable by configuring for zero duty */
+> +	writel(0, kp->base + DUTY_CYCLE_HIGH_OFFSET(chan));
+> +	writel(0, kp->base + PERIOD_COUNT_OFFSET(chan));
+>  
+> -	writel(value, kp->base + PWM_CONTROL_OFFSET);
+> +	/* Set prescale to 0 for this channel */
 
-On 1/21/19 10:43 AM, Steve Longerbeam wrote:
->
->
-> On 1/21/19 3:49 AM, Philipp Zabel wrote:
->> Also ipu_smfc_disable is refcounted, so if the other CSI is capturing
->> simultaneously, this change has no effect.
->
-> Sigh, you're right. Let me go back to disabling the CSI before the 
-> channel, the CSI enable/disable is not refcounted (it doesn't need to 
-> be since it is single use) so it doesn't have this problem.
->
-> Should we drop this patch or keep it (with a big comment)? By only 
-> changing the disable order to "CSI then channel", the hang is reliably 
-> fixed from my and Gael's testing, but my concern is that by not 
-> disabling the SMFC before the channel, the SMFC could still empty its 
-> FIFO to the channel's internal FIFO and still create a hang.
+kona_pwmc_apply uses PRESCALE_MIN instead of a plain 0. To make the
+comment more helpful tell *why* you do it instead of stating the obvious
+for the fluent C programmer.
 
-Well, as you said it will have no effect if both CSI's are streaming 
-with the SMFC, in which case the danger would still exist. Perhaps it 
-would be best to just drop this patch.
+> +	value = readl(kp->base + PRESCALE_OFFSET);
+> +	value &= ~PRESCALE_MASK(chan);
+> +	writel(value, kp->base + PRESCALE_OFFSET);
+>  
+>  	kona_pwmc_apply_settings(kp, chan);
+>  
+>  	clk_disable_unprepare(kp->clk);
+> -
+> -	return 0;
+>  }
+>  
+> -static int kona_pwmc_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+> +static int kona_pwmc_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			   struct pwm_state *state)
+>  {
+>  	struct kona_pwmc *kp = to_kona_pwmc(chip);
+> +	struct pwm_state cstate;
+> +	u64 val, div, rate;
+> +	unsigned long prescale = PRESCALE_MIN, pc, dc;
+> +	unsigned int value, chan = pwm->hwpwm;
+>  	int ret;
+>  
+> -	ret = clk_prepare_enable(kp->clk);
+> -	if (ret < 0) {
+> -		dev_err(chip->dev, "failed to enable clock: %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = kona_pwmc_config(chip, pwm, pwm_get_duty_cycle(pwm),
+> -			       pwm_get_period(pwm));
+> -	if (ret < 0) {
+> -		clk_disable_unprepare(kp->clk);
+> -		return ret;
+> -	}
+> +	pwm_get_state(pwm, &cstate);
 
-Steve
+The pwm_get_state function is designed for PWM-consumers. It is an
+implementation detail that it also works for drivers. So I'd like to see
+its usage dropped in drivers. (Note that Thierry might not agree here.)
 
+> +
+> +	if (state->enabled) {
+> +		/*
+> +		 * Find period count, duty count and prescale to suit duty_ns
+> +		 * and period_ns. This is done according to formulas described
+> +		 * below:
+> +		 *
+> +		 * period_ns = 10^9 * (PRESCALE + 1) * PC / PWM_CLK_RATE
+> +		 * duty_ns = 10^9 * (PRESCALE + 1) * DC / PWM_CLK_RATE
+> +		 *
+> +		 * PC = (PWM_CLK_RATE * period_ns) / (10^9 * (PRESCALE + 1))
+> +		 * DC = (PWM_CLK_RATE * duty_ns) / (10^9 * (PRESCALE + 1))
+> +		 */
+> +		rate = clk_get_rate(kp->clk);
+> +
+> +		while (1) {
+> +			div = 1000000000;
+> +			div *= 1 + prescale;
+> +			val = rate * state->period;
+> +			pc = div64_u64(val, div);
+> +			val = rate * state->duty_cycle;
+> +			dc = div64_u64(val, div);
+> +
+> +			/* If duty_ns or period_ns are not achievable then
+
+Please stick to the usual style for multi-line comments, i.e. "/*" on a
+separate line.
+
+> +			 * return
+> +			 */
+> +			if (pc < PERIOD_COUNT_MIN || dc < DUTY_CYCLE_HIGH_MIN)
+> +				return -EINVAL;
+> +
+> +			/* If pc & dc are in bounds, the calculation is done */
+> +			if (pc <= PERIOD_COUNT_MAX && dc <= DUTY_CYCLE_HIGH_MAX)
+> +				break;
+> +
+> +			/* Otherwise, increase prescale & recalculate pc & dc */
+> +			if (++prescale > PRESCALE_MAX)
+> +				return -EINVAL;
+> +		}
+> +
+> +		if (!cstate.enabled) {
+> +			ret = clk_prepare_enable(kp->clk);
+> +			if (ret < 0) {
+> +				dev_err(chip->dev,
+> +					"failed to enable clock: %d\n", ret);
+> +				return ret;
+> +			}
+> +		}
+>  
+> -	return 0;
+> -}
+> -
+> -static void kona_pwmc_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+> -{
+> -	struct kona_pwmc *kp = to_kona_pwmc(chip);
+> -	unsigned int chan = pwm->hwpwm;
+> -	unsigned int value;
+> +		kona_pwmc_prepare_for_settings(kp, chan);
+>  
+> -	kona_pwmc_prepare_for_settings(kp, chan);
+> +		value = readl(kp->base + PRESCALE_OFFSET);
+> +		value &= ~PRESCALE_MASK(chan);
+> +		value |= prescale << PRESCALE_SHIFT(chan);
+> +		writel(value, kp->base + PRESCALE_OFFSET);
+> +		writel(pc, kp->base + PERIOD_COUNT_OFFSET(chan));
+> +		writel(dc, kp->base + DUTY_CYCLE_HIGH_OFFSET(chan));
+>  
+> -	/* Simulate a disable by configuring for zero duty */
+> -	writel(0, kp->base + DUTY_CYCLE_HIGH_OFFSET(chan));
+> -	writel(0, kp->base + PERIOD_COUNT_OFFSET(chan));
+> +		if (cstate.polarity != state->polarity) {
+> +			value = readl(kp->base + PWM_CONTROL_OFFSET);
+> +			if (state->polarity == PWM_POLARITY_NORMAL)
+> +				value |= 1 << PWM_CONTROL_POLARITY_SHIFT(chan);
+> +			else
+> +				value &= ~(1 <<
+> +					   PWM_CONTROL_POLARITY_SHIFT(chan));
+>  
+> -	/* Set prescale to 0 for this channel */
+> -	value = readl(kp->base + PRESCALE_OFFSET);
+> -	value &= ~PRESCALE_MASK(chan);
+> -	writel(value, kp->base + PRESCALE_OFFSET);
+> +			writel(value, kp->base + PWM_CONTROL_OFFSET);
+> +		}
+>  
+> -	kona_pwmc_apply_settings(kp, chan);
+> +		kona_pwmc_apply_settings(kp, chan);
+> +	} else if (cstate.enabled) {
+> +		kona_pwmc_disable(chip, pwm);
+
+If I do:
+
+	pwm_apply_state(pwm, { .polarity = PWM_POLARITY_NORMAL, .enabled = true, ... });
+	pwm_apply_state(pwm, { .polarity = PWM_POLARITY_INVERSED, .enabled = false, ... });
+
+the output is constant low, which is wrong.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
