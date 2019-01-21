@@ -2,151 +2,134 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ADBC2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68812C2F441
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E15521019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:30:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IgcA+zu/"
+	by mail.kernel.org (Postfix) with ESMTP id 4170221019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbfAUQaN (ORCPT
+        id S1730647AbfAUQbW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 11:30:13 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39956 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729580AbfAUQaM (ORCPT
+        Mon, 21 Jan 2019 11:31:22 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:44211 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730112AbfAUQbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 11:30:12 -0500
-Received: by mail-io1-f65.google.com with SMTP id k2so16828089iog.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 08:30:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eADEIz0iwznb0TSre1LvJOXMgvWd8rOdZ80eJVALlOs=;
-        b=IgcA+zu/3zhC1gBAyy/mGl+AwjUvef+boE7Zb66yOFc2qibmGG0Jh5Z74HkztTdSgB
-         jZasnWUu68LFhIBBQvxmkQgpvppzuKDU+u7crf4NfP1kjSK+PUB1MInPaxsqCRBF7MYP
-         SCLHk/2buYs5nhGNikNiUQcrczAJtZqnnKZCg=
+        Mon, 21 Jan 2019 11:31:20 -0500
+Received: by mail-qt1-f193.google.com with SMTP id n32so24127341qte.11;
+        Mon, 21 Jan 2019 08:31:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eADEIz0iwznb0TSre1LvJOXMgvWd8rOdZ80eJVALlOs=;
-        b=N2JKhJgAWPUIs4pZkRrG9l2E7nYQXuzJwtfaimRziIdqqqc5Bbkb37KZIMRktAVZ3X
-         wPU7DIf6gnqNRRhOqFOKmWGNG9zsetnJNz7nfRigxWH9XN8CrUWye7uiC1xDmyVX3IOt
-         KIUrmoh6MkndAYCJyCzmjNWxd/bHYe372QegMUWru79TQHZHydM4A+YG2sU8jEdUmKn7
-         sGuWnLgyFNwg+Ss/1kkP6/pzkhK6faDOrVOHVxWoBnKXrpp2VgCefPjdrHCcLUow468H
-         2qcC0IHTsPOAAnHl65fl1tOE3NWYjDMTJtpo5GkNqpHXdLjTSyscCQh0SO9a6k+SYOH9
-         BX0Q==
-X-Gm-Message-State: AJcUukeHAZ6H4VqJRJ6NoGaWyIsVUOPk7Og/bUC/p2YCsZVdp0PYcbkb
-        7jkzsG3VGOf/8DzEyg9qp5NGBlA3TtkPIi3eXNP9pQ==
-X-Google-Smtp-Source: ALg8bN6Rwa3oE2P3hjVFSiGUF+4UztXQttKfRRYjOU/YoQyoCIqQxA/Gv1+ltfJOi0INVe0/3LG6Rsu6cJl+GSieOmc=
-X-Received: by 2002:a6b:5d01:: with SMTP id r1mr16148051iob.170.1548088211443;
- Mon, 21 Jan 2019 08:30:11 -0800 (PST)
+        bh=ugnN37Htp2pcGbvXPo+DEz/r4541Rca2swp85kVj/dg=;
+        b=AN4J5uEie5Hx6iRzpgTqk2T78/TYbZGWKu5NP3ScooQUyeF+pmyzaxewwf+GzaK+uP
+         nYxvf88tBZStbUoK/Lpu2lZTijjAkRYgGZdTml5XNBvpxoa8v7N78Gc64UoRdsFOM4eV
+         92y+zLsPd9e7Vb0DeQ8153pnjbQ4v9+wUCBTLieS5wVDIHNRqZslR8xxxmdMciaITTjG
+         QjZy8xIFdXDUdFOTyMMhQoc6kIUZ4QUoVLQIfpJBEdRRD6IcpD1CZs4f87OjXnqL5hO1
+         fut8e9AbtYZy8M3vl2AkJoriRYJIB6vvIV0Ob/+TXIQThjD5KPlZZBzy3BNJO5njSqKk
+         IW/g==
+X-Gm-Message-State: AJcUukdhC7yC2jcZZEZAx/kA2Af/xMeH3SmcxCgjRSzE7Bk8qsfTVphi
+        yFeYy2ypdj+52BDoVBK+QEffrKZNQpm0NdOBih0=
+X-Google-Smtp-Source: ALg8bN4IjC8153m9pB3iBWOATh3R/RnsAQ6wVGb5LY7XqftLLWs9CXLGl7GxR+zlIVcd8dP96h71Ls+Fr/txo5y0uPg=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr27326381qte.212.1548088278474;
+ Mon, 21 Jan 2019 08:31:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
- <20190121150734.GA30582@infradead.org> <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
- <20190121155908.GA8084@infradead.org> <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
- <20190121162238.GA17651@infradead.org>
-In-Reply-To: <20190121162238.GA17651@infradead.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 21 Jan 2019 17:30:00 +0100
-Message-ID: <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-30-arnd@arndb.de>
+In-Reply-To: <20190118161835.2259170-30-arnd@arndb.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 21 Jan 2019 17:31:01 +0100
+Message-ID: <CAK8P3a2grsgvLeBHFoLnnpJti7qkZFfBPTrXf+CoihtOJKySzw@mail.gmail.com>
+Subject: Re: [PATCH v2 29/29] y2038: add 64-bit time_t syscalls to all 32-bit architectures
+To:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org,
-        Christian Koenig <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Michel Daenzer <michel.daenzer@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-arch <linux-arch@vger.kernel.org>
+Cc:     Matt Turner <mattst88@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        David Miller <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 17:22, Christoph Hellwig <hch@infradead.org> wrote:
+On Fri, Jan 18, 2019 at 5:25 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Mon, Jan 21, 2019 at 05:14:37PM +0100, Ard Biesheuvel wrote:
-> > > I'll add big fat comments.  But the fact that nothing is exported
-> > > there should be a fairly big hint.
-> > >
-> >
-> > I don't follow. How do other header files 'export' things in a way
-> > that this header doesn't?
+> This adds 21 new system calls on each ABI that has 32-bit time_t
+> today. All of these have the exact same semantics as their existing
+> counterparts, and the new ones all have macro names that end in 'time64'
+> for clarification.
 >
-> Well, I'll add comments to make it more obvious..
->
-> > As far as I can tell, these drivers allocate DMA'able memory [in
-> > ttm_tt_populate()] and subsequently create their own CPU mappings for
-> > it, assuming that
-> > a) the default is cache coherent, so vmap()ing those pages with
-> > cacheable attributes works, and
->
-> Yikes.  vmaping with different attributes is generally prone to
-> create problems on a lot of architectures.
->
+> This gets us to the point of being able to safely use a C library
+> that has 64-bit time_t in user space. There are still a couple of
+> loose ends to tie up in various areas of the code, but this is the
+> big one, and should be entirely uncontroversial at this point.
 
-Indeed. But if your starting point is the assumption that DMA is
-always cache coherent, those vmap() attributes are never different.
+I've successfully tested this with musl and LTP now, using an
+i386 kernel. The musl port I used is at
+https://git.linaro.org/people/arnd.bergmann/musl-y2038.git/
+This is just an updated version of what I used for testing last
+year, using the current syscall assignment, and going back
+to the time32 versions of getitimer/setitimer and
+wait4/waitid/getusage.
 
-> > b) telling the GPU to use NoSnoop attributes makes the accesses it
-> > performs coherent with non-cacheable CPU mappings of those physical
-> > pages
-> >
-> > Since the latter is not true for many arm64 systems, I need this patch
-> > to get a working system.
->
-> Do we know that this actually works anywhere but x86?
->
+It's certainly not intended for merging like this, but a proper
+musl port is under discussion now, and this should be
+sufficient if anyone else wants to try out the new syscall
+ABI before we merge it.
 
-In theory, it could work on arm64 systems with stage2-only SMMUs and
-correctly configured PCIe RCs that set the right AMBA attributes for
-inbound transactions with the NoSnoop attributes set.
+The LTP I have is heavily hacked, and has a number of
+failures resulting from differences between musl and glibc,
+or from the way we convert between the kernel types and
+the user space types.
 
-Unfortunately, it seems that the current SMMU ARM code will clobber
-those AMBA attributes when it uses stage1 mappings, since it forces
-the memory attributes to WBWA for cache coherent devices.
+The testing found one minor bug in all the kernel syscall tables:
 
-So, as I pointed out in the commit log, the main difference between
-x86 and other arches it that it can easily tolerate when NoSnoop is
-non-functional.
+> +418    common  mq_timedsend_time64             sys_mq_timedsend
+> +419    common  mq_timedreceiv_time64           sys_mq_timedreceive
 
-> In general I would call these above sequence rather bogus and would
-> prefer we could get rid of such antipatterns in the kernel and just use
-> dma_alloc_attrs with DMA_ATTR_WRITECOMBINE if we want writecombine
-> semantics.
->
+While this would have fit in with umount(), creat() and mknod(),
+it was unintentional, and I've changed it back to
+mq_timedreceive_time64 (with an added 'e').
 
-Agreed.
-
-> Until that happens we should just change the driver ifdefs to default
-> the hacks to off and only enable them on setups where we 100%
-> positively know that they actually work.  And document that fact
-> in big fat comments.
-
-Well, as I mentioned in my commit log as well, if we default to off
-unless CONFIG_X86, we may break working setups on MIPS and Power where
-the device is in fact non-cache coherent, and relies on this
-'optimization' to get things working. The same could be true for
-non-coherent ARM systems, hence my approach to disable this hack for
-cache coherent devices on non-X86 only.
+       Arnd
