@@ -2,103 +2,122 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0EAC282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DDCC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC23F2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548061184;
-	bh=PPuvBMrSVw1Xcs84+S5r+Q9irSrkyMU09zf97ia5EVY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ahEtDA2fVI9D80fwFFC10c7CVeTSlH1zK1tosAOfcrsVJLQmH2Dyc1gd7TeRwiF2W
-	 QeaKlF38mrWwUS0frCBTdzFo1yrS3PFQxe+13ksSpSr/nD1ae7PlY1nSiKB4DtegrH
-	 JLDzn3hO6p+hnRjuSKlNgC65DpdQP0zEvSkIX9Vg=
+	by mail.kernel.org (Postfix) with ESMTP id 8AD182084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbfAUI7n (ORCPT
+        id S1726112AbfAUJDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:59:43 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33892 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728156AbfAUI7m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:59:42 -0500
-Received: by mail-lf1-f67.google.com with SMTP id p6so14935237lfc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:59:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CBPf8HOT93sc0oj4tv290B2Z61lA88aXyyFQdOpSyj0=;
-        b=L0XpPMLh/BcT5cCFI6UjEtPTYOtZ21aByEWcmMT2uSdSm5Pxl1ejuHCBuynx8VG0lV
-         7dlZy4wrIRE1W1lwzBVwhWgl0s0JmjNW9iPoVirn1R8zxjq3n6+U9yyCjznVe2q2bHDD
-         DR4T24OP6+NkZLejso+lQ8Ut3Ek/gM7Y4V81sx/zcGxlWe/DvP+V86INGMOOKBU6LEaz
-         lgFu+uEbQrZX92mj0kXK/afY2WcZwNJ7NDJaq1RknV57LjWIs03O7eJ/DOfrliiVpal2
-         r85O8EVmGuWw7yKXEnD9z7IHtjGS8PuVg2TIVl2ZvIKweJEQZcSxRmBi9VQTJZr9+xWD
-         h7Kw==
-X-Gm-Message-State: AJcUukc9kmBtvufMYrFlksR+iMU2i4OkQ5OGhoqQPw4MVQ2n3banZbl/
-        Nbzj9tOG4GiSygnMaLrAYQs=
-X-Google-Smtp-Source: ALg8bN6DKFlyHHbNBuQhh2Rrhe5wmbHn3TVTP5Dk7mbkg+PFyUtFlFcm4QqTdAZEMeiq0GYOAGEGAQ==
-X-Received: by 2002:a19:5d42:: with SMTP id p2mr18472269lfj.83.1548061179965;
-        Mon, 21 Jan 2019 00:59:39 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm2130011ljj.91.2019.01.21.00.59.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 00:59:39 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1glVQc-0000Re-GR; Mon, 21 Jan 2019 09:59:34 +0100
-Date:   Mon, 21 Jan 2019 09:59:34 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Paul Walmsley <paul@pwsan.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andreas Schwab <schwab@suse.de>, linux-kernel@vger.kernel.org,
-        Atish Patra <atish.patra@wdc.com>,
-        Anup Patel <anup@brainfault.org>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 4/5] riscv: treat cpu devicetree nodes without status as
- enabled
-Message-ID: <20190121085934.GH3691@localhost>
-References: <20190118140308.9599-1-johan@kernel.org>
- <20190118140308.9599-5-johan@kernel.org>
- <alpine.DEB.2.21.999.1901190140510.8813@utopia.booyaka.com>
+        Mon, 21 Jan 2019 04:03:47 -0500
+Received: from mga12.intel.com ([192.55.52.136]:35092 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbfAUJDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 04:03:46 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 01:03:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,502,1539673200"; 
+   d="asc'?scan'208";a="293125500"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by orsmga005.jf.intel.com with ESMTP; 21 Jan 2019 01:03:44 -0800
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     "Zengtao \(B\)" <prime.zeng@hisilicon.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] usb: dwc3: gadget: don't remove the request if bus-expired
+In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED24E49C55@dggemm526-mbx.china.huawei.com>
+References: <1545339230-10520-1-git-send-email-prime.zeng@hisilicon.com> <87won7mzcn.fsf@linux.intel.com> <678F3D1BB717D949B966B68EAEB446ED24E49C55@dggemm526-mbx.china.huawei.com>
+Date:   Mon, 21 Jan 2019 11:03:40 +0200
+Message-ID: <87lg3ejsb7.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.999.1901190140510.8813@utopia.booyaka.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 01:43:58AM +0000, Paul Walmsley wrote:
-> On Fri, 18 Jan 2019, Johan Hovold wrote:
-> 
-> > Follow the Linux convention and treat devicetree nodes without a status
-> > property as enabled rather than disabled, while also allowing "ok" as a
-> > shorthand for "okay".
-> > 
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> 
-> Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
-> 
-> ... although I probably would have phrased the commit message slightly 
-> differently - something like "Use of_device_is_available() in 
-> riscv_of_processor_hartid(), in place of an open-coded test."  That frames 
-> the change as one that removes custom code in place of an existing 
-> standard function for the same purpose.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-You're right, and that was my motivation too. In the end I decided to
-highlight the side effect in case someone was perhaps unknowingly
-relying on the current behaviour.
 
-Thanks for the review!
+Hi,
 
-Johan
+"Zengtao (B)" <prime.zeng@hisilicon.com> writes:
+>>-----Original Message-----
+>>From: Felipe Balbi [mailto:felipe.balbi@linux.intel.com]
+>>Sent: Monday, January 14, 2019 4:13 PM
+>>To: Zengtao (B) <prime.zeng@hisilicon.com>
+>>Cc: Zengtao (B) <prime.zeng@hisilicon.com>; Greg Kroah-Hartman
+>><gregkh@linuxfoundation.org>; linux-usb@vger.kernel.org;
+>>linux-kernel@vger.kernel.org
+>>Subject: Re: [PATCH] usb: dwc3: gadget: don't remove the request if
+>>bus-expired
+>>
+>>* PGP Signed by an unknown key
+>>
+>>
+>>Hi,
+>>
+>>Zeng Tao <prime.zeng@hisilicon.com> writes:
+>>> We have already returned EAGAIN for bus-expiry, and it's designed to
+>>> start with a future Frame number and start the transfer again. So we
+>>> should not remove the request for that case.
+>>>
+>>> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+>>
+>>Do we need a Fixes tag here? How about Cc stable? Can you share
+>>tracepoints exposing the problem?
+>>
+>
+> I am not sure that we need to Fixes tag, it's not related to any single p=
+atch, but
+> there is definitely something wrong, after rethinking it again, I found t=
+hat there
+> are still some problems for this patch, for the reties inside the driver,=
+ we should not
+> remove the request, but if we return -EAGAIN to the gadget layer, we shou=
+ld because
+> the gadget will requeue the request again if we return -EAGAIN.
+>
+> Any suggestions.=20
+
+Well, that needs to be patched, sure. I'm just saying that we need to
+blame a patch that was incomplete so we know which stable releases need
+this. Perhaps the patch at fault here was my patch adding the retry
+method for isoc transfers.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlxFiuwACgkQzL64meEa
+mQYn/RAAqPwza0sGcY5jJToQVdfYQj9Lf2kCljL1TmZdu2CZt5g6NSlILiPOJ204
+NCF2dJjIUckNELLUR9E9HS/PWpDzdVvRJq9GIpb0xycANvBHDEhcI5h53lZ6vKlA
+epD3/OB2H2jQJvNdMmMk7GgWZPxSw63h9uARg9/guKQosjM8ypul7igToTAvWGL7
+O9Kp20mVIRK7MrQeAcNaXD9X8+b4bYoc/t8c9Q+n6xxPB6varnN92tvh4HBrzOIJ
+0Oa6gIqQ+gMroQ130poK9lLvPuAzZzuZhMtqBXVRPSW7Zcc4pof2UnY9k8SZDKik
+/RWIQ1JC/J1RxCCT5TVApeCMyCPKURJ4tvl9CpW6DR80USbKmiStaEhuv+Ufg6xj
+fETEW6HEkC/VlnHOq9BR2HpK/mEeABtqYUUsJc+celd5ac5eqq4sIZRSGmDHrCcU
+E4ElvOhd9q+I8vZ9fVk0VWkJRzb7F4pat0CKU/TpAk5Aaepgv+ro62bnKXddHBvf
+qR+0RXg/8u8/cfHN6+VBUIpE2sIVBd6Mcjzbfhw1WnMlmM5LjFtewIUbaX8taW91
+4KjyE7KYlbZ2EeO4vyLV+2m13qUY9lCS9dsNpzKp0neAeV4pdINXxXlKyYyjJPbF
+dvT+IpexpDqnPFPh7DSGdmvmbcVN7O294Q9p/NM9y6y9qMH4jdE=
+=CPIk
+-----END PGP SIGNATURE-----
+--=-=-=--
