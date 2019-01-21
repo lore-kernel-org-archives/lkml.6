@@ -2,161 +2,113 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44005C2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AEAC2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5CD2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F31522085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ILLKqWAS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfAUPgJ (ORCPT
+        id S1730719AbfAUPgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:36:09 -0500
-Received: from foss.arm.com ([217.140.101.70]:36534 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730242AbfAUPee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:34:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10738EBD;
-        Mon, 21 Jan 2019 07:34:34 -0800 (PST)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A7CBC3F5C1;
-        Mon, 21 Jan 2019 07:34:31 -0800 (PST)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Julien Thierry <julien.thierry@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>
-Subject: [PATCH v9 14/26] arm64: alternative: Allow alternative status checking per cpufeature
-Date:   Mon, 21 Jan 2019 15:33:33 +0000
-Message-Id: <1548084825-8803-15-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        Mon, 21 Jan 2019 10:36:14 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33190 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730242AbfAUPgM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:36:12 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so6430512wmh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:36:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=gsIWm4YAdMzHSFkBaQakNMAM/i+/75SJ59wg5CyuTfI=;
+        b=ILLKqWASQ9GcKR2KmgabCHMcn46Kt5Fqhi2/syIf+dzthSJObEKL8UGqxkPZNRKvKj
+         xJ+vc2PTmx9jVMhHNB/8a9ICOlw4Q2MyNWfzlhvwGjgzyMbXoe6g9A0elSruMdLlQy3f
+         IShfp9EepVvSyyqsZgp5Y3t6Gb8zWX5nahtgjwtXRho/ygMcvQ66iPBiwiJ+jm9nVOJn
+         FaQGesxObRFiUQ3phpy8r16CXDSrtucmxK3/laDVdj+CzKK8JheB667GFHA7TUudQRSl
+         EVYESiK+Jk4954Pum4iM6qAr04VR/9d1PyJ0UFV48nSW4tMaFHxxPQbuZJVZX/+4fAWB
+         YcIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=gsIWm4YAdMzHSFkBaQakNMAM/i+/75SJ59wg5CyuTfI=;
+        b=dkYGjU/rMAv/Ko9QWz4CUQzoc8Uwk6eDp0ovzs4o2kOfQPx196czVlJfOL7Gvse/v0
+         DjWTRB4aaUc6Og2bSwO/IOKL4sMPNXfAeiAhEt+wzzux9+opUlYTs5RrG88dJWlRndZa
+         HF063aOSqyRdw4wY5HNpD6NyZYTExujaPQp57th4/b6LXShx/A9oDVlDGtkmig4BuyQf
+         8b9KNpseoUAgRbMAOXlSXiycdWbedoDGcQRBLCRKXrwhphyDRLQ+JY1k40nj6Gu9rUtL
+         14VKj/dMoUcZcr/vlOwBfWy439ktyVT1DFLP5QmlnHM2tAkB1ejgVWpYtmQbulqFIOz2
+         Ps2w==
+X-Gm-Message-State: AJcUukdMQ70tbtIXyjb6wptF/v9XDW95DtReUcxx21PjbPDKOqKOkmWF
+        LRDr5+k5DyCuqK3vKPw5OOOrD2I1IHE=
+X-Google-Smtp-Source: ALg8bN4287u8JGodm32UPUcS7IXUrJK558ctFhFfap4xkwzei3zdL2VvgHfNTD0/Yf9x8Fs+Q5yHyw==
+X-Received: by 2002:a1c:6e06:: with SMTP id j6mr26187811wmc.3.1548084970525;
+        Mon, 21 Jan 2019 07:36:10 -0800 (PST)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id e27sm108804445wra.67.2019.01.21.07.36.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 07:36:09 -0800 (PST)
+Message-ID: <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com>
+Subject: Re: [PATCH 0/3] pinctrl: meson: g12a fixes
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 21 Jan 2019 16:36:08 +0100
+In-Reply-To: <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com>
+References: <20190117102315.1833-1-jbrunet@baylibre.com>
+         <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for the application of alternatives at different points
-during the boot process, provide the possibility to check whether
-alternatives for a feature of interest was already applied instead of
-having a global boolean for all alternatives.
+On Mon, 2019-01-21 at 14:53 +0100, Linus Walleij wrote:
+> On Thu, Jan 17, 2019 at 11:23 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> 
+> > This patchset fixes the initial pinctrl support added for th g12a SoC
+> > family, which is mainly around the register regions claimed by the
+> > driver.
+> > 
+> > Linus, would it possible for you to provide a tag with these changes to
+> > Kevin ?
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-meson-fixes
+> 
+> > ATM, we can only use the devices for which the pinmux is already set by
+> > the bootloader. Enabling the broken pinctrl driver could cause regressions
+> > in kernelCI. Having a tag, would allow us to start using pinctrl on this
+> > SoC in this cycle, w/o regression. It would be nice :)
+> 
+> When you say "this cycle" do you mean I should target fixes (v5.0-rcN)
+> or next (v5.1) with these patches?
 
-Make VHE enablement code check for the VHE feature instead of considering
-all alternatives.
+I was referring to the 5.1 release but it is a good question, I did not really
+think about 5.0.
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Marc Zyngier <Marc.Zyngier@arm.com>
-Cc: Christoffer Dall <Christoffer.Dall@arm.com>
----
- arch/arm64/include/asm/alternative.h |  3 +--
- arch/arm64/kernel/alternative.c      | 21 +++++++++++++++++----
- arch/arm64/kernel/cpufeature.c       |  2 +-
- 3 files changed, 19 insertions(+), 7 deletions(-)
+Those changes are mainly fixes, so guess it could go in the 5.0 but support
+for this SoC is still in its early stages, so either way is fine by me. 
 
-diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
-index 4b650ec..9806a23 100644
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -14,8 +14,6 @@
- #include <linux/stddef.h>
- #include <linux/stringify.h>
- 
--extern int alternatives_applied;
--
- struct alt_instr {
- 	s32 orig_offset;	/* offset to original instruction */
- 	s32 alt_offset;		/* offset to replacement instruction */
-@@ -28,6 +26,7 @@ typedef void (*alternative_cb_t)(struct alt_instr *alt,
- 				 __le32 *origptr, __le32 *updptr, int nr_inst);
- 
- void __init apply_alternatives_all(void);
-+bool alternative_is_applied(u16 cpufeature);
- 
- #ifdef CONFIG_MODULES
- void apply_alternatives_module(void *start, size_t length);
-diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
-index b5d6039..c947d22 100644
---- a/arch/arm64/kernel/alternative.c
-+++ b/arch/arm64/kernel/alternative.c
-@@ -32,13 +32,23 @@
- #define ALT_ORIG_PTR(a)		__ALT_PTR(a, orig_offset)
- #define ALT_REPL_PTR(a)		__ALT_PTR(a, alt_offset)
- 
--int alternatives_applied;
-+static int all_alternatives_applied;
-+
-+static DECLARE_BITMAP(applied_alternatives, ARM64_NCAPS);
- 
- struct alt_region {
- 	struct alt_instr *begin;
- 	struct alt_instr *end;
- };
- 
-+bool alternative_is_applied(u16 cpufeature)
-+{
-+	if (WARN_ON(cpufeature >= ARM64_NCAPS))
-+		return false;
-+
-+	return test_bit(cpufeature, applied_alternatives);
-+}
-+
- /*
-  * Check if the target PC is within an alternative block.
-  */
-@@ -192,6 +202,9 @@ static void __apply_alternatives(void *alt_region, bool is_module)
- 		dsb(ish);
- 		__flush_icache_all();
- 		isb();
-+
-+		/* We applied all that was available */
-+		bitmap_copy(applied_alternatives, cpu_hwcaps, ARM64_NCAPS);
- 	}
- }
- 
-@@ -208,14 +221,14 @@ static int __apply_alternatives_multi_stop(void *unused)
- 
- 	/* We always have a CPU 0 at this point (__init) */
- 	if (smp_processor_id()) {
--		while (!READ_ONCE(alternatives_applied))
-+		while (!READ_ONCE(all_alternatives_applied))
- 			cpu_relax();
- 		isb();
- 	} else {
--		BUG_ON(alternatives_applied);
-+		BUG_ON(all_alternatives_applied);
- 		__apply_alternatives(&region, false);
- 		/* Barriers provided by the cache flushing */
--		WRITE_ONCE(alternatives_applied, 1);
-+		WRITE_ONCE(all_alternatives_applied, 1);
- 	}
- 
- 	return 0;
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 6f56e0a..d607ea3 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1118,7 +1118,7 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
- 	 * that, freshly-onlined CPUs will set tpidr_el2, so we don't need to
- 	 * do anything here.
- 	 */
--	if (!alternatives_applied)
-+	if (!alternative_is_applied(ARM64_HAS_VIRT_HOST_EXTN))
- 		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
- }
- #endif
--- 
-1.9.1
+Whatever is simpler for you I guess ;)
+
+> 
+> Yours,
+> Linus Walleij
+
 
