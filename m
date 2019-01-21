@@ -2,82 +2,125 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195E7C2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0EDC2F441
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC5F420823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:53:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="mI9oavZY"
+	by mail.kernel.org (Postfix) with ESMTP id C40F820879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:53:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbfAUPxa (ORCPT
+        id S1730597AbfAUPxc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 21 Jan 2019 10:53:32 -0500
+Received: from foss.arm.com ([217.140.101.70]:37738 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729712AbfAUPxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 10:53:30 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:45072 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730013AbfAUPxa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:53:30 -0500
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 502145C0231;
-        Mon, 21 Jan 2019 16:53:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1548086008;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=vgFqHtX8fjLIbergTlpat5cFh3/hh9idcGERWWcWmdw=;
-        b=mI9oavZYjpa7ZfZdgDwMnc86XunWhHZ5g0P29oau/kGJA5WAhU5XZJNhWxppuLbMEJI/pk
-        MoeVeG0utJiJ6Gqvs+q78fqzKqG1k8csfKepwN5B3JrcEkUVbA55SERAMxFv5wZjhc5LpX
-        PktzjaBBfqiqLiEiYES/9B7/qoPTDK0=
-From:   Stefan Agner <stefan@agner.ch>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     max.krummenacher@toradex.com, marcel.ziswiler@toradex.com,
-        dev@pschenker.ch, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] ARM: dts: colibri: use valid range configuration for weim
-Date:   Mon, 21 Jan 2019 16:53:27 +0100
-Message-Id: <20190121155327.12554-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.20.1
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF864EBD;
+        Mon, 21 Jan 2019 07:53:29 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C398E3F5C1;
+        Mon, 21 Jan 2019 07:53:26 -0800 (PST)
+Subject: Re: kmemleak panic
+To:     Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
+References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
+ <20190118143434.GE118707@arrakis.emea.arm.com>
+ <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+ <20190119132832.GA29881@MBP.local>
+ <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
+ <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
+ <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+ <20190121143704.GE29504@arrakis.emea.arm.com>
+ <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <0cecfda4-e2c3-9282-12b1-fbe300708c72@arm.com>
+Date:   Mon, 21 Jan 2019 15:53:25 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A valid WEIM range configuration must specify range entries for
-all four chip selects. This fixes an error on boot:
-  imx-weim: probe of 21b8000.weim failed with error -22
+On 21/01/2019 15:42, Rob Herring wrote:
+> +Mike Rapoport
+> 
+> On Mon, Jan 21, 2019 at 8:37 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>>
+>> On Mon, Jan 21, 2019 at 07:35:11AM -0600, Rob Herring wrote:
+>>> On Mon, Jan 21, 2019 at 6:19 AM Robin Murphy <robin.murphy@arm.com> wrote:
+>>>>
+>>>> On 21/01/2019 11:57, Marc Gonzalez wrote:
+>>>> [...]
+>>>>> # echo dump=0xffffffc021e00000 > /sys/kernel/debug/kmemleak
+>>>>> kmemleak: Object 0xffffffc021e00000 (size 2097152):
+>>>>> kmemleak:   comm "swapper/0", pid 0, jiffies 4294892296
+>>>>> kmemleak:   min_count = 0
+>>>>> kmemleak:   count = 0
+>>>>> kmemleak:   flags = 0x1
+>>>>> kmemleak:   checksum = 0
+>>>>> kmemleak:   backtrace:
+>>>>>        kmemleak_alloc_phys+0x48/0x60
+>>>>>        memblock_alloc_range_nid+0x8c/0xa4
+>>>>>        memblock_alloc_base_nid+0x4c/0x60
+>>>>>        __memblock_alloc_base+0x3c/0x4c
+>>>>>        early_init_dt_alloc_reserved_memory_arch+0x54/0xa4
+>>>>>        fdt_init_reserved_mem+0x308/0x3ec
+>>>>>        early_init_fdt_scan_reserved_mem+0x88/0xb0
+>>>>>        arm64_memblock_init+0x1dc/0x254
+>>>>>        setup_arch+0x1c8/0x4ec
+>>>>>        start_kernel+0x84/0x44c
+>>>>>        0xffffffffffffffff
+>>>>
+>>>> OK, so via the __va(phys) call in kmemleak_alloc_phys(), you end up with
+>>>> the linear map address of a no-map reservation, which unsurprisingly
+>>>> turns out not to be mapped. Is there a way to tell kmemleak that it
+>>>> can't scan within a particular object?
+>>>
+>>> There was this patch posted[1]. I never got a reply, so it hasn't been applied.
+>>>
+>>> https://patchwork.ozlabs.org/patch/995367/
+>>
+>> Thanks Rob, I wasn't aware of this patch (or I just missed it at the
+>> time).
+>>
+>> I wonder whether kmemleak should simply remove ranges passed to
+>> memblock_remove(), or at least mark them as no-scan.
+> 
+> Seems reasonable to me, but of course that impacts a lot of other
+> cases. Maybe Mike R has some thoughts?
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+In particular, might that risk crippling kmemleak on EFI arm64 EFI, 
+where we memblock_remove() the entire physical address space (but then 
+rebuild the memblock list from scratch)?
 
-diff --git a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts b/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-index f7bcc1181c4a..5ee2ddedd038 100644
---- a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-@@ -238,10 +238,11 @@
- &weim {
- 	status = "okay";
- 
--	/* weim memory map: 32MB on CS0, 32MB on CS1, 32MB on CS2 */
-+	/* weim memory map: 32MB on CS0, CS1, CS2 and CS3 */
- 	ranges = <0 0 0x08000000 0x02000000
- 		  1 0 0x0a000000 0x02000000
--		  2 0 0x0c000000 0x02000000>;
-+		  2 0 0x0c000000 0x02000000
-+		  3 0 0x0e000000 0x02000000>;
- 
- 	/* SRAM on Colibri nEXT_CS0 */
- 	sram@0,0 {
--- 
-2.20.1
+FWIW, from the reserved-memory angle I think that patch looks reasonable 
+as-is (modulo perhaps a kmemleak_no_scan_phys() wrapper for API 
+symmetry). MEMBLOCK_NOMAP is already a massive pain in the bum and I'd 
+really rather not introduce any more usage of it if at all possible.
 
+Robin.
