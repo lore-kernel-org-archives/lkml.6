@@ -2,52 +2,57 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9105EC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FA3C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A6021019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:46:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3974E21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078393;
-	bh=6CtVdVC4Db+XCZXU0jaIw+xI8T9u92E8bDCAe8pc8us=;
+	s=default; t=1548078398;
+	bh=jWIga8RehmT25iOSFC/qB/l4FU0UN2+WuRUVYwtB6eI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bAeCdNHO3/cLHpGhKVsDsgDsYY1qd77TL3nwttoZiCJafdZEK55mLHUW27wZMfDQk
-	 GRd1I0fgwmetQzLoC9m8VSFbn6zceeYwOs5w3kVog/0ATkmADuzH1aOrBvRrXRQ+Vh
-	 FReK33ClsoPA2leJGv23+SgY9qdnjQ47kT5Aa11I=
+	b=MSoynlV30pDMFMVomD1cNGM9Cd4fZ+b5DgNQWljlSHSdrCgx/7cFy/4//VJkY3+Ag
+	 2XfwPrPRiJFRk09+davKh3n94F6K82b1+jahKRl44SvPcR2dBV9CHw8hEE9FEsjMVG
+	 YenKrLR5lInM3o7eztJokVMZOjpjMNWuti/NL1cY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729237AbfAUNqc (ORCPT
+        id S1729255AbfAUNqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:46:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55286 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:46:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729206AbfAUNq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:46:29 -0500
+        id S1729131AbfAUNqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:46:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7585A2089F;
-        Mon, 21 Jan 2019 13:46:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE43D20989;
+        Mon, 21 Jan 2019 13:46:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078388;
-        bh=6CtVdVC4Db+XCZXU0jaIw+xI8T9u92E8bDCAe8pc8us=;
+        s=default; t=1548078390;
+        bh=jWIga8RehmT25iOSFC/qB/l4FU0UN2+WuRUVYwtB6eI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Js3mT+We5nOpmdkI/Z/yyX/NMwV41xToAXY2grvp2LqIAWOynmJ4/fYoVNJeVSqWx
-         wCpuNy47IcyhgY//J3Etuc8AokhzETWyEpTLrXSBudbiJzOlD9if9q5xmAa0sE7FBh
-         wePku9dWXN/JOKX6WseEDjPuWzxSgtZomu2rBb0U=
+        b=CslCBgCOI/bUsMk3/SsrACMCvci9O0F98AEt1lYKUIOm2beSp8yyeGLaUvSW1JXkT
+         UBaOBbcTZkdYrRlci4X3Sc72jFx6p3hrX6pcVyl1dj5uFCmEawj7yi2OPoii5HUQpJ
+         3Hxa5zhuxoX0A2v3dGNVf3hqRxB36J4BeXjJzZ5U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Shawn Bohrer <sbohrer@cloudflare.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.20 006/111] netfilter: nf_conncount: replace CONNCOUNT_LOCK_SLOTS with CONNCOUNT_SLOTS
-Date:   Mon, 21 Jan 2019 14:42:00 +0100
-Message-Id: <20190121122456.483037389@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 015/111] arm64/kvm: consistently handle host HCR_EL2 flags
+Date:   Mon, 21 Jan 2019 14:42:09 +0100
+Message-Id: <20190121122457.382354635@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,91 +71,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shawn Bohrer <sbohrer@cloudflare.com>
+[ Upstream commit 4eaed6aa2c628101246bcabc91b203bfac1193f8 ]
 
-commit c78e7818f16f687389174c4569243abbec8dc68f upstream.
+In KVM we define the configuration of HCR_EL2 for a VHE HOST in
+HCR_HOST_VHE_FLAGS, but we don't have a similar definition for the
+non-VHE host flags, and open-code HCR_RW. Further, in head.S we
+open-code the flags for VHE and non-VHE configurations.
 
-Most of the time these were the same value anyway, but when
-CONFIG_LOCKDEP was enabled we would use a smaller number of locks to
-reduce overhead.  Unfortunately having two values is confusing and not
-worth the complexity.
+In future, we're going to want to configure more flags for the host, so
+lets add a HCR_HOST_NVHE_FLAGS defintion, and consistently use both
+HCR_HOST_VHE_FLAGS and HCR_HOST_NVHE_FLAGS in the kvm code and head.S.
 
-This fixes a bug where tree_gc_worker() would only GC up to
-CONNCOUNT_LOCK_SLOTS trees which meant when CONFIG_LOCKDEP was enabled
-not all trees would be GCed by tree_gc_worker().
+We now use mov_q to generate the HCR_EL2 value, as we use when
+configuring other registers in head.S.
 
-Fixes: 5c789e131cbb9 ("netfilter: nf_conncount: Add list lock and gc worker, and RCU for init tree search")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Shawn Bohrer <sbohrer@cloudflare.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Reviewed-by: Richard Henderson <richard.henderson@linaro.org>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: kvmarm@lists.cs.columbia.edu
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conncount.c |   19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+ arch/arm64/include/asm/kvm_arm.h | 1 +
+ arch/arm64/kernel/head.S         | 5 ++---
+ arch/arm64/kvm/hyp/switch.c      | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/netfilter/nf_conncount.c
-+++ b/net/netfilter/nf_conncount.c
-@@ -33,12 +33,6 @@
+diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+index 2dafd936d84d..7b914c6fb855 100644
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -87,6 +87,7 @@
+ 			 HCR_AMO | HCR_SWIO | HCR_TIDCP | HCR_RW | HCR_TLOR | \
+ 			 HCR_FMO | HCR_IMO)
+ #define HCR_VIRT_EXCP_MASK (HCR_VSE | HCR_VI | HCR_VF)
++#define HCR_HOST_NVHE_FLAGS (HCR_RW)
+ #define HCR_HOST_VHE_FLAGS (HCR_RW | HCR_TGE | HCR_E2H)
  
- #define CONNCOUNT_SLOTS		256U
+ /* TCR_EL2 Registers bits */
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index 4471f570a295..b207a2ce4bc6 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -496,10 +496,9 @@ ENTRY(el2_setup)
+ #endif
  
--#ifdef CONFIG_LOCKDEP
--#define CONNCOUNT_LOCK_SLOTS	8U
--#else
--#define CONNCOUNT_LOCK_SLOTS	256U
--#endif
--
- #define CONNCOUNT_GC_MAX_NODES	8
- #define MAX_KEYLEN		5
+ 	/* Hyp configuration. */
+-	mov	x0, #HCR_RW			// 64-bit EL1
++	mov_q	x0, HCR_HOST_NVHE_FLAGS
+ 	cbz	x2, set_hcr
+-	orr	x0, x0, #HCR_TGE		// Enable Host Extensions
+-	orr	x0, x0, #HCR_E2H
++	mov_q	x0, HCR_HOST_VHE_FLAGS
+ set_hcr:
+ 	msr	hcr_el2, x0
+ 	isb
+diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+index 7cc175c88a37..f6e02cc4d856 100644
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -157,7 +157,7 @@ static void __hyp_text __deactivate_traps_nvhe(void)
+ 	mdcr_el2 |= MDCR_EL2_E2PB_MASK << MDCR_EL2_E2PB_SHIFT;
  
-@@ -60,7 +54,7 @@ struct nf_conncount_rb {
- 	struct rcu_head rcu_head;
- };
- 
--static spinlock_t nf_conncount_locks[CONNCOUNT_LOCK_SLOTS] __cacheline_aligned_in_smp;
-+static spinlock_t nf_conncount_locks[CONNCOUNT_SLOTS] __cacheline_aligned_in_smp;
- 
- struct nf_conncount_data {
- 	unsigned int keylen;
-@@ -353,7 +347,7 @@ insert_tree(struct net *net,
- 	unsigned int count = 0, gc_count = 0;
- 	bool node_found = false;
- 
--	spin_lock_bh(&nf_conncount_locks[hash % CONNCOUNT_LOCK_SLOTS]);
-+	spin_lock_bh(&nf_conncount_locks[hash]);
- 
- 	parent = NULL;
- 	rbnode = &(root->rb_node);
-@@ -430,7 +424,7 @@ insert_tree(struct net *net,
- 	rb_link_node_rcu(&rbconn->node, parent, rbnode);
- 	rb_insert_color(&rbconn->node, root);
- out_unlock:
--	spin_unlock_bh(&nf_conncount_locks[hash % CONNCOUNT_LOCK_SLOTS]);
-+	spin_unlock_bh(&nf_conncount_locks[hash]);
- 	return count;
+ 	write_sysreg(mdcr_el2, mdcr_el2);
+-	write_sysreg(HCR_RW, hcr_el2);
++	write_sysreg(HCR_HOST_NVHE_FLAGS, hcr_el2);
+ 	write_sysreg(CPTR_EL2_DEFAULT, cptr_el2);
  }
  
-@@ -499,7 +493,7 @@ static void tree_gc_worker(struct work_s
- 	struct rb_node *node;
- 	unsigned int tree, next_tree, gc_count = 0;
- 
--	tree = data->gc_tree % CONNCOUNT_LOCK_SLOTS;
-+	tree = data->gc_tree % CONNCOUNT_SLOTS;
- 	root = &data->root[tree];
- 
- 	rcu_read_lock();
-@@ -621,10 +615,7 @@ static int __init nf_conncount_modinit(v
- {
- 	int i;
- 
--	BUILD_BUG_ON(CONNCOUNT_LOCK_SLOTS > CONNCOUNT_SLOTS);
--	BUILD_BUG_ON((CONNCOUNT_SLOTS % CONNCOUNT_LOCK_SLOTS) != 0);
--
--	for (i = 0; i < CONNCOUNT_LOCK_SLOTS; ++i)
-+	for (i = 0; i < CONNCOUNT_SLOTS; ++i)
- 		spin_lock_init(&nf_conncount_locks[i]);
- 
- 	conncount_conn_cachep = kmem_cache_create("nf_conncount_tuple",
+-- 
+2.19.1
+
 
 
