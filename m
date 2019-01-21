@@ -2,130 +2,145 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8716C31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C56E4C31D64
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8344720880
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548054781;
-	bh=fYPq9sDIcxuXj2oJeKKmDJtZAaGnP2MKcLuIoeufuXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xSVWvqjzbQy0WkGZlerM22dFwrDDB9K9cXdCzqOhNskyyrVpkOYeuIPsvloLpGs+O
-	 scx1Jig/6FzHepxB0TQX24aiftJe2pmnO9i1vZHYZiep9EXk6Rzig+RBzetws+30LU
-	 bptH/KKskn4qEJ1gY4JjvanKWXjs4ikfCXQpbV2I=
+	by mail.kernel.org (Postfix) with ESMTP id 8E51820989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gu893gCs";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dw7WdVi/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbfAUHNA (ORCPT
+        id S1728058AbfAUHNH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:13:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727600AbfAUHM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:12:58 -0500
-Received: from earth.universe (unknown [194.136.232.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 21 Jan 2019 02:13:07 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43290 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727986AbfAUHNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:13:04 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5410D60A34; Mon, 21 Jan 2019 05:54:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548050041;
+        bh=TL7zgB0m7LfWtfKkA5XH+oaFc8qMHKopAjg5Aq+3o/E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gu893gCs2E//yCSZZN1lzgiZZCKjan+WcXVDUcBGSviW6CkYD2+FRvwEAMbKb7agv
+         we09e+DpyPJkTSHVOzp7FWRp0sR1dTkNFcR0fntXTYLW8/E7DRkB3KT+vh1K5H9pgN
+         DId25rC7fyIo3U5Q4Awbm8uqj1MGm9hse04buyTM=
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93502214DA;
-        Mon, 21 Jan 2019 00:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548029191;
-        bh=fYPq9sDIcxuXj2oJeKKmDJtZAaGnP2MKcLuIoeufuXk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BwziozCqczajUflZPoLAeZOyamMhL1ETYu/dYCmGCQK5TjJdVHyOW28UW0zO5xHm9
-         d2rT4GufPmoAeNUH+uALga7MlMxLzjUco12ORfD51Ghr6ade9KRzKjGbPNSqPevUAn
-         YOYKSAuyBg7gQIrITQi/Ri1NFMDIPTlZFMp1mVU8=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 71D543C08EA; Sun, 20 Jan 2019 22:41:07 +0100 (CET)
-Date:   Sun, 20 Jan 2019 22:41:07 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-pm@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: cpcap-charger: generate events for userspace
-Message-ID: <20190120214107.n2ot5mvggub4aehn@earth.universe>
-References: <20181227195221.GA11920@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="byreiu6z4ngijxep"
-Content-Disposition: inline
-In-Reply-To: <20181227195221.GA11920@amd>
-User-Agent: NeoMutt/20180716
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8E929609BD;
+        Mon, 21 Jan 2019 05:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548050040;
+        bh=TL7zgB0m7LfWtfKkA5XH+oaFc8qMHKopAjg5Aq+3o/E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Dw7WdVi/8T6G7C6y8yBGXR+rj/0SdpbO7iU56HQq4m2SarCfX1sre/pQB/lQs0YlY
+         rftBKz8sKcSwPqbYBJc5Lh2+4rTBn8u5SmU9ABAI6fQBuXEnGESkhXwstGrVfm1XPT
+         fdVfMWQWngzNV5UEv4dc4SzmwmiB/NTkmdXNmbao=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E929609BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, tfiga@chromium.org,
+        pratikp@codeaurora.org, pdaly@codeaurora.org,
+        jcrouse@codeaurora.org, Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH 3/3] iommu/arm-smmu: Add support to use system cache
+Date:   Mon, 21 Jan 2019 11:23:35 +0530
+Message-Id: <20190121055335.15430-4-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+In-Reply-To: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Few Qualcomm platforms, such as sdm845 have an additional outer
+cache called as System cache, aka. Last level cache (LLC) that
+allows non-coherent devices to upgrade to using caching.
+This last level cache sits right before the DDR, and is tightly
+coupled with the memory controller.
+The cache is available to a number of devices - coherent and
+non-coherent, present in the SoC system, and to CPUs.
+The devices request their slices from this system cache, make it
+active, and can then start using it.
 
---byreiu6z4ngijxep
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Devices can set iommu domain attributes and page protection
+while mapping the buffers to set the required memory attributes
+to use system cache for buffers and page tables.
+This change adds the support for iommu domain attributes and the
+interaction with io page table driver.
 
-Hi,
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/iommu/arm-smmu.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-On Thu, Dec 27, 2018 at 08:52:21PM +0100, Pavel Machek wrote:
-> The driver doesn't generate uevents on charger connect/disconnect.
-> This leads to UPower not detecting when AC is on or off... and that is
-> bad.
->    =20
-> Reported by Arthur D. on github (
-> https://github.com/maemo-leste/bugtracker/issues/206 ), thanks to
-> Merlijn Wajer for suggesting a fix.
->    =20
-> Cc: stable@kernel.org
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 52b300dfc096..324f3bb54c78 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -260,7 +260,8 @@ struct arm_smmu_domain {
+ 	struct mutex			init_mutex; /* Protects smmu pointer */
+ 	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
+ 	struct iommu_domain		domain;
+-#define ARM_SMMU_DOMAIN_ATTR_NON_STRICT	BIT(0)
++#define ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE	BIT(1)
++#define ARM_SMMU_DOMAIN_ATTR_NON_STRICT		BIT(0)
+ 	unsigned int			attr;
+ };
+ 
+@@ -910,6 +911,9 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+ 	    smmu_domain->stage == ARM_SMMU_DOMAIN_S1)
+ 		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_COHERENT;
+ 
++	if (smmu_domain->attr & ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE)
++		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_QCOM_SYS_CACHE;
++
+ 	smmu_domain->smmu = smmu;
+ 	pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
+ 	if (!pgtbl_ops) {
+@@ -1592,6 +1596,10 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
+ 		case DOMAIN_ATTR_NESTING:
+ 			*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
+ 			return 0;
++		case DOMAIN_ATTR_QCOM_SYS_CACHE:
++			*(int *)data = !!(smmu_domain->attr &
++					  ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE);
++			return 0;
+ 		default:
+ 			return -ENODEV;
+ 		}
+@@ -1633,6 +1641,16 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
+ 			else
+ 				smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
+ 			break;
++		case DOMAIN_ATTR_QCOM_SYS_CACHE:
++			if (smmu_domain->smmu) {
++				ret = -EPERM;
++				goto out_unlock;
++			}
++			if (*(int *)data)
++				smmu_domain->attr |= ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE;
++			else
++				smmu_domain->attr &= ~ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE;
++			break;
+ 		default:
+ 			ret = -ENODEV;
+ 		}
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
-Thanks, queued to power-supply-next.
-
--- Sebastian
-
-> diff --git a/drivers/power/supply/cpcap-charger.c b/drivers/power/supply/=
-cpcap-charger.c
-> index 9e8ff5c..7d8b4d5 100644
-> --- a/drivers/power/supply/cpcap-charger.c
-> +++ b/drivers/power/supply/cpcap-charger.c
-> @@ -576,6 +576,7 @@ static void cpcap_usb_detect(struct work_struct *work)
->  			goto out_err;
->  	}
-> =20
-> +	power_supply_changed(ddata->usb);
->  	return;
-> =20
->  out_err:
->=20
-> --=20
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/b=
-log.html
-
-
-
---byreiu6z4ngijxep
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxE6vMACgkQ2O7X88g7
-+prkABAApFEELQA6AnpA5CNX/WpKDkKWb7dVv+2gvum+GwIZR/+c4idPzHOzHHLr
-MTDkNE4AoTi/GA06Q7Ed2PE8NNgrLtDKC8edu8KMDM4TW4oo3d1RIS4JPvBDpewy
-8KkeHBEPgBT0PDzFc379lAfXYr6V38GhMOR3b/Jqcu81F9jAeOk/gmOLIgdIXjIL
-BS/CJMABO3yX5zoFdxiOYM1pkoKGf+bw+un7NW0RSkrSCaxUiDHvfl7+Et0N7ouI
-zTSL54vGGvyXGmUE0PXujLrgUQ9jYPedxotL8GlA5uHsIa4mma36My6I4ldowppa
-Y5Ys2+bglHbYnk0onp3GbpP4obdXaugsyPs18wpk6lVfxpYQ1hcY33v/E6hhKpLk
-rM6urwQ4Fin81txDMMHIuhnXdf4V+BfVQH02B0+iDYjF/0FUs4n9jmHY6nuezXAq
-RMMgMZ8sgTtllr4M7OxL2f9ZRrliqb3fAfSXgq7YFYqHQvgjAJUuSuP8OrCHvxUO
-woFPWgjhxEjrreS9mzWFQp0EWlfSqGWA2WDbVzwvOMXrZAYnavr5Sjw+4jz9gS/v
-yjLJyebiKu1k0558op7GbgwYJkdZO3CSPRvsRv1dnzuMf7cWYhUT5BH5UuUVmXaa
-n/Bvcb2knDgaybIWF9gd8nodRBnBbrIwjRsBSj9I+DBOqDiSx+c=
-=h22h
------END PGP SIGNATURE-----
-
---byreiu6z4ngijxep--
