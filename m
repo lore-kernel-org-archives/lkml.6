@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 685E9C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 808BEC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3306C20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FD8620861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078888;
-	bh=ZQhGRtDpuesN0sA/366nsdg5qRo2HoObkw6sQC6lN6c=;
+	s=default; t=1548078895;
+	bh=Z7bmrNysSk5GYYhMHmnJYusxWmezQrliKcrv5hoQkZs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FgwRf97e/+MvEfFb97emSS9M4mSG1JBYGObdJ3SkJ3oEbS8kKxBbKzF6nQRBuURxx
-	 H/7+6dmaxpG0WaeJXxIqOxmqpUCNZLcYrgcVFqzihPp0IZmfz3rRYSScg7NmZm0+uK
-	 k9WpCKW0YrbuJ9/91THh3D1HLFpp2phOklW/pZwU=
+	b=I4d827q8KLGMUa6G/EVYiaYA/a6sgznz7A9ucxvFd4n+Tr0id9QiDkeue+6HjA6xG
+	 QOsy2Gok4tPIYYO+Cm0T0F5R43/39F03e3vMNLDesxhJBZD1Yz5RbaIo5C5k9SxLNv
+	 zaHBH+uiZC2bjheoFKfAUpdR07HDhl6RvNhhFUfU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731571AbfAUNyq (ORCPT
+        id S1730852AbfAUNyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38990 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:54:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730767AbfAUNyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:54:43 -0500
+        id S1731593AbfAUNyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:54:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B853520861;
-        Mon, 21 Jan 2019 13:54:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58F1420879;
+        Mon, 21 Jan 2019 13:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078882;
-        bh=ZQhGRtDpuesN0sA/366nsdg5qRo2HoObkw6sQC6lN6c=;
+        s=default; t=1548078890;
+        bh=Z7bmrNysSk5GYYhMHmnJYusxWmezQrliKcrv5hoQkZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V19At4V8rDTU6AiccxO+P/rHgeYBI3hGYStUjT6Z1E6/iOHlqBvK7arb+1h+ANggN
-         lvDQ7pHhMSMRERF5ckkeLveMLXGt+qpxn//LOVUFESK7JzggHjY4eF+8sck2/hvYDA
-         ZK9bkcvKBdvFQelCtpPMmCE59c1VKVZ+QYCHTeyY=
+        b=Lmn4rSUb+YVMJZJ+1cKCOaIwbaeTWuexmoHkDtPb9BvyK3+RxJtQn0EV/5jzcIrgl
+         1r3IjJqD5QaM3KxmWWKZrzmLXD4pbYzVJgahE0UEevHle/jW5+eg4B2XyWXNRF7T+n
+         2S00A03GrYIYpkZD0RDekCutVRP0BMEvckvny7iw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 17/51] ip: on queued skb use skb_header_pointer instead of pskb_may_pull
-Date:   Mon, 21 Jan 2019 14:44:13 +0100
-Message-Id: <20190121122455.115057327@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Dmitry Safonov <dima@arista.com>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH 4.9 02/51] tty: Hold tty_ldisc_lock() during tty_reopen()
+Date:   Mon, 21 Jan 2019 14:43:58 +0100
+Message-Id: <20190121122453.838900027@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -67,80 +69,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Dmitry Safonov <dima@arista.com>
 
-[ Upstream commit 4a06fa67c4da20148803525151845276cdb995c1 ]
+commit 83d817f41070c48bc3eb7ec18e43000a548fca5c upstream.
 
-Commit 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call
-pskb_may_pull") avoided a read beyond the end of the skb linear
-segment by calling pskb_may_pull.
+tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
+nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
+But it races with anyone who expects line discipline to be the same
+after hoding read semaphore in tty_ldisc_ref().
 
-That function can trigger a BUG_ON in pskb_expand_head if the skb is
-shared, which it is when when peeking. It can also return ENOMEM.
+We've seen the following crash on v4.9.108 stable:
 
-Avoid both by switching to safer skb_header_pointer.
+BUG: unable to handle kernel paging request at 0000000000002260
+IP: [..] n_tty_receive_buf_common+0x5f/0x86d
+Workqueue: events_unbound flush_to_ldisc
+Call Trace:
+ [..] n_tty_receive_buf2
+ [..] tty_ldisc_receive_buf
+ [..] flush_to_ldisc
+ [..] process_one_work
+ [..] worker_thread
+ [..] kthread
+ [..] ret_from_fork
 
-Fixes: 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+tty_ldisc_reinit() should be called with ldisc_sem hold for writing,
+which will protect any reader against line discipline changes.
+
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: stable@vger.kernel.org # b027e2298bd5 ("tty: fix data race between tty_init_dev and flush of buf")
+Reviewed-by: Jiri Slaby <jslaby@suse.cz>
+Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Tested-by: Tycho Andersen <tycho@tycho.ws>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ip_sockglue.c |   12 +++++-------
- net/ipv6/datagram.c    |   10 ++++------
- 2 files changed, 9 insertions(+), 13 deletions(-)
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -133,19 +133,17 @@ static void ip_cmsg_recv_security(struct
+---
+ drivers/tty/tty_io.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1487,15 +1487,20 @@ static int tty_reopen(struct tty_struct
+ 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
+ 		return -EBUSY;
  
- static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
- {
-+	__be16 _ports[2], *ports;
- 	struct sockaddr_in sin;
--	__be16 *ports;
--	int end;
--
--	end = skb_transport_offset(skb) + 4;
--	if (end > 0 && !pskb_may_pull(skb, end))
--		return;
+-	tty->count++;
++	retval = tty_ldisc_lock(tty, 5 * HZ);
++	if (retval)
++		return retval;
  
- 	/* All current transport protocols have the port numbers in the
- 	 * first four bytes of the transport header and this function is
- 	 * written with this assumption in mind.
- 	 */
--	ports = (__be16 *)skb_transport_header(skb);
-+	ports = skb_header_pointer(skb, skb_transport_offset(skb),
-+				   sizeof(_ports), &_ports);
-+	if (!ports)
-+		return;
++	tty->count++;
+ 	if (tty->ldisc)
+-		return 0;
++		goto out_unlock;
  
- 	sin.sin_family = AF_INET;
- 	sin.sin_addr.s_addr = ip_hdr(skb)->daddr;
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -695,17 +695,15 @@ void ip6_datagram_recv_specific_ctl(stru
- 	}
- 	if (np->rxopt.bits.rxorigdstaddr) {
- 		struct sockaddr_in6 sin6;
--		__be16 *ports;
--		int end;
-+		__be16 _ports[2], *ports;
+ 	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
+ 	if (retval)
+ 		tty->count--;
  
--		end = skb_transport_offset(skb) + 4;
--		if (end <= 0 || pskb_may_pull(skb, end)) {
-+		ports = skb_header_pointer(skb, skb_transport_offset(skb),
-+					   sizeof(_ports), &_ports);
-+		if (ports) {
- 			/* All current transport protocols have the port numbers in the
- 			 * first four bytes of the transport header and this function is
- 			 * written with this assumption in mind.
- 			 */
--			ports = (__be16 *)skb_transport_header(skb);
--
- 			sin6.sin6_family = AF_INET6;
- 			sin6.sin6_addr = ipv6_hdr(skb)->daddr;
- 			sin6.sin6_port = ports[1];
++out_unlock:
++	tty_ldisc_unlock(tty);
+ 	return retval;
+ }
+ 
 
 
