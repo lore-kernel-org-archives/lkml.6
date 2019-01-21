@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B05C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BF9C2F3D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A89F620861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:12:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 328A8204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079964;
-	bh=AxZWsGuetK/HGmM+upplCTAiaMFIfoektwsVCCxegFI=;
+	s=default; t=1548079978;
+	bh=ZcHd75lXmXbqGRHrsbBw1xNzC8527OmsnpVi+QOM9CE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QnJBWUr6VA9tCwCIaNyzt9aCf/ZosNJjkj1Nh/H4+LoFp/sYz4+fJowZ6C22mTDCU
-	 ZWlcGAakTHdHa93bJUBOtc0cAHrLGEj/UdW43z9vBSgZTqz7AJSjbTISNnDrgaF2nK
-	 cJ7t3vBBiUJnP5CjpZtiP8QxIivu8JFaMm5rHX6k=
+	b=ZJUremY1eWn39CbRgcYiHU+V/YDIgZ+paB7b8qL64g4hoXKt5Qb6RAjTDWqfuxteQ
+	 7V/13eeDdAGwsjszMCA7+lxdmo8CNAsKmOPUaZGVlsNXhL/OiP+KLSK/hQ6nYcJIYt
+	 n/6s5N9h9Nhd61cGQFvy8mBU01LQTla/Wl9ld3Ks=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731639AbfAUOMm (ORCPT
+        id S1729897AbfAUOM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:12:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37392 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:12:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729897AbfAUNxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:53:34 -0500
+        id S1730507AbfAUNx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:53:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01B112089F;
-        Mon, 21 Jan 2019 13:53:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFCD32089F;
+        Mon, 21 Jan 2019 13:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078813;
-        bh=AxZWsGuetK/HGmM+upplCTAiaMFIfoektwsVCCxegFI=;
+        s=default; t=1548078807;
+        bh=ZcHd75lXmXbqGRHrsbBw1xNzC8527OmsnpVi+QOM9CE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dBvtYEeCnyT+di1dWGai14GBp0DXwB8NkSVqB/y7IQfR8dHnHOXjn/Q0QkQquNJfe
-         J05CJBR261jz24BPGOvKkYIoXVnE+JR3JFImoZNiGp7m9Ex90/folfgu/19h1p7paO
-         GvjE6fa/BNR+BAjwvqnm8VS8bj94eIE6MIuMAgM4=
+        b=bXryJeRhtKIJtZSzr4v3lgVQcEFUrY2xgjIkqIkvKj5LSOMFlcFxZk6cdi7A9VyuB
+         riQLShAMaytmFjaZZ5NyqNbvHi6pYM2+Lv3MUWTrEn3LbSS101MkPLwJfwz5hIawrK
+         ObkETN/Bzh9K6YbyGFMf7oVxwx1bCrXN50gZLAII=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+bca0dc46634781f08b38@syzkaller.appspotmail.com,
-        syzbot+6bdb590321a7ae40c1a6@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 52/59] tipc: fix uninit-value in tipc_nl_compat_doit
-Date:   Mon, 21 Jan 2019 14:44:17 +0100
-Message-Id: <20190121122502.625182872@linuxfoundation.org>
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 33/59] media: v4l: ioctl: Validate num_planes for debug messages
+Date:   Mon, 21 Jan 2019 14:43:58 +0100
+Message-Id: <20190121122500.257915781@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -67,94 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ying Xue <ying.xue@windriver.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-commit 2753ca5d9009c180dbfd4c802c80983b4b6108d1 upstream.
+commit 7fe9f01c04c2673bd6662c35b664f0f91888b96f upstream.
 
-BUG: KMSAN: uninit-value in tipc_nl_compat_doit+0x404/0xa10 net/tipc/netlink_compat.c:335
-CPU: 0 PID: 4514 Comm: syz-executor485 Not tainted 4.16.0+ #87
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
- tipc_nl_compat_doit+0x404/0xa10 net/tipc/netlink_compat.c:335
- tipc_nl_compat_recv+0x164b/0x2700 net/tipc/netlink_compat.c:1153
- genl_family_rcv_msg net/netlink/genetlink.c:599 [inline]
- genl_rcv_msg+0x1686/0x1810 net/netlink/genetlink.c:624
- netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2447
- genl_rcv+0x63/0x80 net/netlink/genetlink.c:635
- netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
- netlink_unicast+0x166b/0x1740 net/netlink/af_netlink.c:1337
- netlink_sendmsg+0x1048/0x1310 net/netlink/af_netlink.c:1900
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
- __sys_sendmsg net/socket.c:2080 [inline]
- SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
- SyS_sendmsg+0x54/0x80 net/socket.c:2087
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43fda9
-RSP: 002b:00007ffd0c184ba8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fda9
-RDX: 0000000000000000 RSI: 0000000020023000 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004016d0
-R13: 0000000000401760 R14: 0000000000000000 R15: 0000000000000000
+The num_planes field in struct v4l2_pix_format_mplane is used in a loop
+before validating it. As the use is printing a debug message in this case,
+just cap the value to the maximum allowed.
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
- kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
- slab_post_alloc_hook mm/slab.h:445 [inline]
- slab_alloc_node mm/slub.c:2737 [inline]
- __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:984 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1183 [inline]
- netlink_sendmsg+0x9a6/0x1310 net/netlink/af_netlink.c:1875
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
- __sys_sendmsg net/socket.c:2080 [inline]
- SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
- SyS_sendmsg+0x54/0x80 net/socket.c:2087
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-In tipc_nl_compat_recv(), when the len variable returned by
-nlmsg_attrlen() is 0, the message is still treated as a valid one,
-which is obviously unresonable. When len is zero, it means the
-message not only doesn't contain any valid TLV payload, but also
-TLV header is not included. Under this stituation, tlv_type field
-in TLV header is still accessed in tipc_nl_compat_dumpit() or
-tipc_nl_compat_doit(), but the field space is obviously illegal.
-Of course, it is not initialized.
-
-Reported-by: syzbot+bca0dc46634781f08b38@syzkaller.appspotmail.com
-Reported-by: syzbot+6bdb590321a7ae40c1a6@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: <stable@vger.kernel.org>      # for v4.12 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-ioctl.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -1240,7 +1240,7 @@ static int tipc_nl_compat_recv(struct sk
- 	}
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -249,6 +249,7 @@ static void v4l_print_format(const void
+ 	const struct v4l2_window *win;
+ 	const struct v4l2_sdr_format *sdr;
+ 	const struct v4l2_meta_format *meta;
++	u32 planes;
+ 	unsigned i;
  
- 	len = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
--	if (len && !TLV_OK(msg.req, len)) {
-+	if (!len || !TLV_OK(msg.req, len)) {
- 		msg.rep = tipc_get_err_tlv(TIPC_CFG_NOT_SUPPORTED);
- 		err = -EOPNOTSUPP;
- 		goto send;
+ 	pr_cont("type=%s", prt_names(p->type, v4l2_type_names));
+@@ -279,7 +280,8 @@ static void v4l_print_format(const void
+ 			prt_names(mp->field, v4l2_field_names),
+ 			mp->colorspace, mp->num_planes, mp->flags,
+ 			mp->ycbcr_enc, mp->quantization, mp->xfer_func);
+-		for (i = 0; i < mp->num_planes; i++)
++		planes = min_t(u32, mp->num_planes, VIDEO_MAX_PLANES);
++		for (i = 0; i < planes; i++)
+ 			printk(KERN_DEBUG "plane %u: bytesperline=%u sizeimage=%u\n", i,
+ 					mp->plane_fmt[i].bytesperline,
+ 					mp->plane_fmt[i].sizeimage);
 
 
