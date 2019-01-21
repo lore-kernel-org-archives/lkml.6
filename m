@@ -2,155 +2,631 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D64CC31680
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27009C31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709FB20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:24:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2F5620989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:28:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXlmhV6m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbfAUSYD (ORCPT
+        id S1727880AbfAUS2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:24:03 -0500
-Received: from mail.netline.ch ([148.251.143.178]:37126 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727179AbfAUSYD (ORCPT
+        Mon, 21 Jan 2019 13:28:03 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46275 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbfAUS2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:24:03 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 5163F2A6055;
-        Mon, 21 Jan 2019 19:24:00 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id C19kKYSv5mEf; Mon, 21 Jan 2019 19:23:59 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 480BE2A6054;
-        Mon, 21 Jan 2019 19:23:59 +0100 (CET)
-Received: from [::1]
-        by thor with esmtp (Exim 4.92-RC4)
-        (envelope-from <michel@daenzer.net>)
-        id 1gleEo-0002pr-UR; Mon, 21 Jan 2019 19:23:58 +0100
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, Junwei Zhang <Jerry.Zhang@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
- <20190121150734.GA30582@infradead.org>
- <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
- <20190121155908.GA8084@infradead.org>
- <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
- <20190121162238.GA17651@infradead.org>
- <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
- <59ccf85d-b99d-b5c8-ea87-66c2a892e197@daenzer.net>
- <CAKv+Gu8OkbHwY5UBxahpQpM_gKh2331pQ6o-4YyJdLurbFNHvw@mail.gmail.com>
- <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net>
- <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
-Date:   Mon, 21 Jan 2019 19:23:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 21 Jan 2019 13:28:03 -0500
+Received: by mail-qt1-f194.google.com with SMTP id y20so24531592qtm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 10:28:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d1TkwEiURk/99xzr1TBV8DYx2um933Qkdx6Es5eYkRs=;
+        b=jXlmhV6mpGjK8ZoOYC1ULREOKogm8qHo7V2PSaEWBeUFZObuJmbvmWuj+V3CcVtk19
+         DkIcxl4mWZB9eoST9ZDzuc5pyW74PSgEXtj3xMMmx0E0W0QbRLjp6mYNQuVcTZb9oKr/
+         tilmQCSFcPYIKJN9CvSBgHTrMks8p11d2tKubATw2vBE5An8SndEMxtktfCugBFRPDeG
+         Mpu8bjVJx0IUTMDTHF3AVdGgqY510XfMIdQXIIBV+RQopF9f47YA08TO0FigNdz5UNif
+         42DebPAOilBUKJ06lNFrmK5EFig0KuvgDAq5dhOENBFkENmvdMQe/4H+jzzIAmTCbLWD
+         osZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d1TkwEiURk/99xzr1TBV8DYx2um933Qkdx6Es5eYkRs=;
+        b=drM6Ft4fkdz7Vxlgf6bX2kvAtk7sdN3oyRzTuOY8svG8iMWgyeiOUWztPjsOKQLN16
+         Vy6IlDAExVRIOdbW+JKVU1MhxgN0pOCrN/5WjFc/HTIARzJMN6wzxz/Oe/jmas/7w8Lg
+         n/YIJb1MWOdWVhs8iF9E3oHG/LpcTUZZFMJvfhUqSSK+LqcSQVzHbFiVTFjqKaeaArN0
+         rJlJfBxvj65zC+t5qYU87Yaq1UvziumTMBfO45cc5lkmRAxfnwyYlNEvxot7gLFBXVRg
+         TQpRFYOFwODlLy3tmjarIwUXNwVE43cmPBPNJiK927eMSvnPk2LAoox+fdRI9Bi/Xs9e
+         YBbg==
+X-Gm-Message-State: AJcUukfwhJnHXZgP9WJFNKJlLSGdanWc+zb6hy13r7L8Jl09Pc/aIltt
+        fRKDb+BvY04hxdLOR5SuA5WbKAzCqeyoiS3rnIo=
+X-Google-Smtp-Source: ALg8bN4kskCENJwwXKBKFB24sMJveG+3AtvqT7/db0mk3aeBZNThoxzsaMmVtVqldqUg8pOvkt/vxhv71RiJvAYAGJI=
+X-Received: by 2002:ac8:7153:: with SMTP id h19mr26618908qtp.92.1548095281557;
+ Mon, 21 Jan 2019 10:28:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+References: <20190119113332.249720-1-cychiang@chromium.org> <20190119113332.249720-2-cychiang@chromium.org>
+In-Reply-To: <20190119113332.249720-2-cychiang@chromium.org>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Mon, 21 Jan 2019 19:27:50 +0100
+Message-ID: <CAFqH_528-BrDL0WSbijecTHV=tTJBQcae1bCx3SBdC=9F56quw@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH v4 2/2] ASoC: cros_ec_codec: Add codec driver
+ for Cros EC
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        alsa-devel@alsa-project.org, tzungbi@chromium.org,
+        Mark Brown <broonie@kernel.org>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Guenter Roeck <groeck@chromium.org>, dgreid@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-21 7:20 p.m., Ard Biesheuvel wrote:
-> On Mon, 21 Jan 2019 at 19:04, Michel Dänzer <michel@daenzer.net> wrote:
->>
->> On 2019-01-21 6:59 p.m., Ard Biesheuvel wrote:
->>> On Mon, 21 Jan 2019 at 18:55, Michel Dänzer <michel@daenzer.net> wrote:
->>>>
->>>> On 2019-01-21 5:30 p.m., Ard Biesheuvel wrote:
->>>>> On Mon, 21 Jan 2019 at 17:22, Christoph Hellwig <hch@infradead.org> wrote:
->>>>>
->>>>>> Until that happens we should just change the driver ifdefs to default
->>>>>> the hacks to off and only enable them on setups where we 100%
->>>>>> positively know that they actually work.  And document that fact
->>>>>> in big fat comments.
->>>>>
->>>>> Well, as I mentioned in my commit log as well, if we default to off
->>>>> unless CONFIG_X86, we may break working setups on MIPS and Power where
->>>>> the device is in fact non-cache coherent, and relies on this
->>>>> 'optimization' to get things working.
->>>>
->>>> FWIW, the amdgpu driver doesn't rely on non-snooped transfers for
->>>> correct basic operation (the scenario Christian brought up is a very
->>>> specialized use-case), so that shouldn't be an issue.
->>>>
->>>
->>> The point is that this is only true for x86.
->>>
->>> On other architectures, the use of non-cached mappings on the CPU side
->>> means that you /do/ rely on non-snooped transfers, since if those
->>> transfers turn out not to snoop inadvertently, the accesses are
->>> incoherent with the CPU's view of memory.
->>
->> The driver generally only uses non-cached mappings if
->> drm_arch/device_can_wc_memory returns true.
->>
-> 
-> Indeed. And so we should take care to only return 'true' from that
-> function if it is guaranteed that non-cached CPU mappings are coherent
-> with the mappings used by the GPU, either because that is always the
-> case (like on x86), or because we know that the platform in question
-> implements NoSnoop correctly throughout the interconnect.
-> 
-> What seems to be complicating matters is that in some cases, the
-> device is non-cache coherent to begin with, so regardless of whether
-> the NoSnoop attribute is used or not, those accesses will not snoop in
-> the caches and be coherent with the non-cached mappings used by the
-> CPU. So if we restrict this optimization [on non-X86] to platforms
-> that are known to implement NoSnoop correctly, we may break platforms
-> that are implicitly NoSnoop all the time.
+Hi,
 
-Since the driver generally doesn't rely on non-snooped accesses for
-correctness, that couldn't "break" anything that hasn't always been broken.
+Missatge de Cheng-Yi Chiang <cychiang@chromium.org> del dia ds., 19 de
+gen. 2019 a les 12:34:
+
+>
+> Add a codec driver to control ChromeOS EC codec.
+>
+> Use EC Host command to enable/disable I2S recording and control other
+> configurations.
+>
+> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> ---
+>  Changes in v4:
+>
+> - Fix Kconfig that SND_SOC_CROS_EC_CODEC should depend on MFD_CROS_EC.
+> - Remove usage of MAX_GAIN.
+> - Add max-dmic-gain device property.
+> - Read max-dmic-gain property and add mixer control in component probe.
+> - Rename cros_ec_dapm_widgets to cros_ec_codec_dapm_widgets for consistency.
+> - Fix missing return code in cros_ec_codec_platform_probe.
+> - Rename set_bclk to set_i2s_bclk.
+> - Add ec_command_get_gain for EC subcommand EC_CODEC_GET_GAIN, which
+>   is the only subcommand that needs response.
+> - Add ec_command_no_resp as a simplified version of ec_command for EC commands
+>   that do not need response.
+> - Simplify all static functions that uses ec_command_no_resp. Return return code
+>   directly without logging.
+> - Remove useless frame_size in cros_ec_i2s_hw_params.
+> - Remove error messages in cros_ec_i2s_hw_params for consistency.
+> - Remove error messages in get_ec_mic_gain.
+>
+>
+>  MAINTAINERS                      |   1 +
+>  sound/soc/codecs/Kconfig         |   8 +
+>  sound/soc/codecs/Makefile        |   2 +
+>  sound/soc/codecs/cros_ec_codec.c | 441 +++++++++++++++++++++++++++++++
+>  4 files changed, 452 insertions(+)
+>  create mode 100644 sound/soc/codecs/cros_ec_codec.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a5678e4041e9..e5696ab5d10a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3694,6 +3694,7 @@ S:        Maintained
+>  R:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>  R:     Guenter Roeck <groeck@chromium.org>
+>  F:     Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+> +F:     sound/soc/codecs/cros_ec_codec.*
+>
+>  CIRRUS LOGIC AUDIO CODEC DRIVERS
+>  M:     Brian Austin <brian.austin@cirrus.com>
+> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+> index 71e6e123a115..d1ef359b47bd 100644
+> --- a/sound/soc/codecs/Kconfig
+> +++ b/sound/soc/codecs/Kconfig
+> @@ -50,6 +50,7 @@ config SND_SOC_ALL_CODECS
+>         select SND_SOC_BT_SCO
+>         select SND_SOC_BD28623
+>         select SND_SOC_CQ0093VC
+> +       select SND_SOC_CROS_EC_CODEC if MFD_CROS_EC
+>         select SND_SOC_CS35L32 if I2C
+>         select SND_SOC_CS35L33 if I2C
+>         select SND_SOC_CS35L34 if I2C
+> @@ -457,6 +458,13 @@ config SND_SOC_CPCAP
+>  config SND_SOC_CQ0093VC
+>         tristate
+>
+> +config SND_SOC_CROS_EC_CODEC
+> +       tristate "codec driver for ChromeOS EC"
+> +       depends on MFD_CROS_EC
+> +       help
+> +         If you say yes here you will get support for the
+> +         ChromeOS Embedded Controller's Audio Codec.
+> +
+>  config SND_SOC_CS35L32
+>         tristate "Cirrus Logic CS35L32 CODEC"
+>         depends on I2C
+> diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
+> index 9bb3346fab2f..3cfd8f5f6170 100644
+> --- a/sound/soc/codecs/Makefile
+> +++ b/sound/soc/codecs/Makefile
+> @@ -42,6 +42,7 @@ snd-soc-bd28623-objs := bd28623.o
+>  snd-soc-bt-sco-objs := bt-sco.o
+>  snd-soc-cpcap-objs := cpcap.o
+>  snd-soc-cq93vc-objs := cq93vc.o
+> +snd-soc-cros-ec-codec-objs := cros_ec_codec.o
+>  snd-soc-cs35l32-objs := cs35l32.o
+>  snd-soc-cs35l33-objs := cs35l33.o
+>  snd-soc-cs35l34-objs := cs35l34.o
+> @@ -310,6 +311,7 @@ obj-$(CONFIG_SND_SOC_BD28623)       += snd-soc-bd28623.o
+>  obj-$(CONFIG_SND_SOC_BT_SCO)   += snd-soc-bt-sco.o
+>  obj-$(CONFIG_SND_SOC_CQ0093VC) += snd-soc-cq93vc.o
+>  obj-$(CONFIG_SND_SOC_CPCAP)    += snd-soc-cpcap.o
+> +obj-$(CONFIG_SND_SOC_CROS_EC_CODEC)    += snd-soc-cros-ec-codec.o
+>  obj-$(CONFIG_SND_SOC_CS35L32)  += snd-soc-cs35l32.o
+>  obj-$(CONFIG_SND_SOC_CS35L33)  += snd-soc-cs35l33.o
+>  obj-$(CONFIG_SND_SOC_CS35L34)  += snd-soc-cs35l34.o
+> diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
+> new file mode 100644
+> index 000000000000..b14100b6a939
+> --- /dev/null
+> +++ b/sound/soc/codecs/cros_ec_codec.c
+> @@ -0,0 +1,441 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Driver for ChromeOS Embedded Controller codec.
+> + *
+> + * This driver uses the cros-ec interface to communicate with the ChromeOS
+> + * EC for audio function.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/cros_ec.h>
+> +#include <linux/mfd/cros_ec_commands.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <sound/pcm.h>
+> +#include <sound/pcm_params.h>
+> +#include <sound/soc.h>
+> +#include <sound/tlv.h>
+> +
+> +#define DRV_NAME "cros-ec-codec"
+> +
+> +/**
+> + * struct cros_ec_codec_data - ChromeOS EC codec driver data.
+> + * @dev:               Device structure used in sysfs.
+> + * @ec_device:         cros_ec_device structure to talk to the physical device.
+> + * @component:         Pointer to the component.
+> + * @max_dmic_gain:     Maximum gain in dB supported by EC codec.
+> + */
+> +struct cros_ec_codec_data {
+> +       struct device *dev;
+> +       struct cros_ec_device *ec_device;
+> +       struct snd_soc_component *component;
+> +       unsigned int max_dmic_gain;
+> +};
+> +
+> +static const DECLARE_TLV_DB_SCALE(ec_mic_gain_tlv, 0, 100, 0);
+> +
+> +static int ec_command_get_gain(struct snd_soc_component *component,
+> +                              struct ec_param_codec_i2s *param,
+> +                              struct ec_response_codec_gain *resp)
+> +{
+> +       struct cros_ec_codec_data *codec_data =
+> +               snd_soc_component_get_drvdata(component);
+> +       struct cros_ec_device *ec_device = codec_data->ec_device;
+> +       u8 buffer[sizeof(struct cros_ec_command) +
+> +                 max(sizeof(struct ec_param_codec_i2s),
+> +                     sizeof(struct ec_response_codec_gain))];
+> +       struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
+> +       int ret;
+> +
+> +       msg->version = 0;
+> +       msg->command = EC_CMD_CODEC_I2S;
+> +       msg->outsize = sizeof(struct ec_param_codec_i2s);
+> +       msg->insize = sizeof(struct ec_response_codec_gain);
+> +
+> +       memcpy(msg->data, param, msg->outsize);
+> +
+> +       ret = cros_ec_cmd_xfer_status(ec_device, msg);
+> +       if (ret > 0)
+> +               memcpy(resp, msg->data, msg->insize);
+> +
+> +       return ret;
+> +}
+> +
+> +/*
+> + * Wrapper for EC command without response.
+> + */
+> +static int ec_command_no_resp(struct snd_soc_component *component,
+> +                             struct ec_param_codec_i2s *param)
+> +{
+> +       struct cros_ec_codec_data *codec_data =
+> +               snd_soc_component_get_drvdata(component);
+> +       struct cros_ec_device *ec_device = codec_data->ec_device;
+> +       u8 buffer[sizeof(struct cros_ec_command) +
+> +                 sizeof(struct ec_param_codec_i2s)];
+> +       struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
+> +
+> +       msg->version = 0;
+> +       msg->command = EC_CMD_CODEC_I2S;
+> +       msg->outsize = sizeof(struct ec_param_codec_i2s);
+> +       msg->insize = 0;
+> +
+> +       memcpy(msg->data, param, msg->outsize);
+> +
+> +       return cros_ec_cmd_xfer_status(ec_device, msg);
+> +}
+> +
+> +static int set_i2s_config(struct snd_soc_component *component,
+> +                         enum ec_i2s_config i2s_config)
+> +{
+> +       struct ec_param_codec_i2s param;
+> +
+> +       dev_dbg(component->dev, "%s set I2S format to %u\n", __func__,
+> +               i2s_config);
+> +
+> +       param.cmd = EC_CODEC_I2S_SET_CONFIG;
+> +       param.i2s_config = i2s_config;
+> +
+> +       return ec_command_no_resp(component, &param);
+> +}
+> +
+> +static int cros_ec_i2s_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+> +{
+> +       struct snd_soc_component *component = dai->component;
+> +       enum ec_i2s_config i2s_config;
+> +
+> +       switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+> +       case SND_SOC_DAIFMT_CBS_CFS:
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+> +       case SND_SOC_DAIFMT_NB_NF:
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+> +       case SND_SOC_DAIFMT_I2S:
+> +               i2s_config = EC_DAI_FMT_I2S;
+> +               break;
+> +
+> +       case SND_SOC_DAIFMT_RIGHT_J:
+> +               i2s_config = EC_DAI_FMT_RIGHT_J;
+> +               break;
+> +
+> +       case SND_SOC_DAIFMT_LEFT_J:
+> +               i2s_config = EC_DAI_FMT_LEFT_J;
+> +               break;
+> +
+> +       case SND_SOC_DAIFMT_DSP_A:
+> +               i2s_config = EC_DAI_FMT_PCM_A;
+> +               break;
+> +
+> +       case SND_SOC_DAIFMT_DSP_B:
+> +               i2s_config = EC_DAI_FMT_PCM_B;
+> +               break;
+> +
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       return set_i2s_config(component, i2s_config);
+> +}
+> +
+> +static int set_i2s_sample_depth(struct snd_soc_component *component,
+> +                               enum ec_sample_depth_value depth)
+> +{
+> +       struct ec_param_codec_i2s param;
+> +
+> +       dev_dbg(component->dev, "%s set depth to %u\n", __func__, depth);
+> +
+> +       param.cmd = EC_CODEC_SET_SAMPLE_DEPTH;
+> +       param.depth = depth;
+> +
+> +       return ec_command_no_resp(component, &param);
+> +}
+> +
+> +static int set_i2s_bclk(struct snd_soc_component *component, uint32_t bclk)
+> +{
+> +       struct ec_param_codec_i2s param;
+> +
+> +       dev_dbg(component->dev, "%s set i2s bclk to %u\n", __func__, bclk);
+> +
+> +       param.cmd = EC_CODEC_I2S_SET_BCLK;
+> +       param.bclk = bclk;
+> +
+> +       return ec_command_no_resp(component, &param);
+> +}
+> +
+> +static int cros_ec_i2s_hw_params(struct snd_pcm_substream *substream,
+> +                                struct snd_pcm_hw_params *params,
+> +                                struct snd_soc_dai *dai)
+> +{
+> +       struct snd_soc_component *component = dai->component;
+> +       unsigned int rate, bclk;
+> +       int ret;
+> +
+> +       rate = params_rate(params);
+> +       if (rate != 48000)
+> +               return -EINVAL;
+> +
+> +       switch (params_format(params)) {
+> +       case SNDRV_PCM_FORMAT_S16_LE:
+> +               ret = set_i2s_sample_depth(component, EC_CODEC_SAMPLE_DEPTH_16);
+> +               break;
+> +       case SNDRV_PCM_FORMAT_S24_LE:
+> +               ret = set_i2s_sample_depth(component, EC_CODEC_SAMPLE_DEPTH_24);
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       bclk = snd_soc_params_to_bclk(params);
+> +       return set_i2s_bclk(component, bclk);
+> +}
+> +
+> +static const struct snd_soc_dai_ops cros_ec_i2s_dai_ops = {
+> +       .hw_params = cros_ec_i2s_hw_params,
+> +       .set_fmt = cros_ec_i2s_set_dai_fmt,
+> +};
+> +
+> +struct snd_soc_dai_driver cros_ec_dai[] = {
+> +       {
+> +               .name = "cros_ec_codec I2S",
+> +               .id = 0,
+> +               .capture = {
+> +                       .stream_name = "I2S Capture",
+> +                       .channels_min = 2,
+> +                       .channels_max = 2,
+> +                       .rates = SNDRV_PCM_RATE_48000,
+> +                       .formats = SNDRV_PCM_FMTBIT_S16_LE |
+> +                                  SNDRV_PCM_FMTBIT_S24_LE,
+> +               },
+> +               .ops = &cros_ec_i2s_dai_ops,
+> +       }
+> +};
+> +
+> +static int get_ec_mic_gain(struct snd_soc_component *component,
+> +                          u8 *left, u8 *right)
+> +{
+> +       struct ec_param_codec_i2s param;
+> +       struct ec_response_codec_gain resp;
+> +       int ret;
+> +
+> +       param.cmd = EC_CODEC_GET_GAIN;
+> +
+> +       ret = ec_command_get_gain(component, &param, &resp);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       *left = resp.left;
+> +       *right = resp.right;
+> +
+> +       return 0;
+> +}
+> +
+> +static int mic_gain_get(struct snd_kcontrol *kcontrol,
+> +                       struct snd_ctl_elem_value *ucontrol)
+> +{
+> +       struct snd_soc_component *component =
+> +               snd_soc_kcontrol_component(kcontrol);
+> +       u8 left, right;
+> +       int ret;
+> +
+> +       ret = get_ec_mic_gain(component, &left, &right);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ucontrol->value.integer.value[0] = left;
+> +       ucontrol->value.integer.value[1] = right;
+> +
+> +       return 0;
+> +}
+> +
+> +static int set_ec_mic_gain(struct snd_soc_component *component,
+> +                          u8 left, u8 right)
+> +{
+> +       struct ec_param_codec_i2s param;
+> +
+> +       dev_dbg(component->dev, "%s set mic gain to %u, %u\n",
+> +               __func__, left, right);
+> +
+> +       param.cmd = EC_CODEC_SET_GAIN;
+> +       param.gain.left = left;
+> +       param.gain.right = right;
+> +
+> +       return ec_command_no_resp(component, &param);
+> +}
+> +
+> +static int mic_gain_put(struct snd_kcontrol *kcontrol,
+> +                       struct snd_ctl_elem_value *ucontrol)
+> +{
+> +       struct snd_soc_component *component =
+> +               snd_soc_kcontrol_component(kcontrol);
+> +       struct cros_ec_codec_data *codec_data =
+> +               snd_soc_component_get_drvdata(component);
+> +       int left = ucontrol->value.integer.value[0];
+> +       int right = ucontrol->value.integer.value[1];
+> +       unsigned int max_dmic_gain = codec_data->max_dmic_gain;
+> +
+> +       if (left > max_dmic_gain || right > max_dmic_gain)
+> +               return -EINVAL;
+> +
+> +       return set_ec_mic_gain(component, (u8)left, (u8)right);
+> +}
+> +
+> +static struct snd_kcontrol_new mic_gain_control =
+> +       SOC_DOUBLE_EXT_TLV("EC Mic Gain", SND_SOC_NOPM, SND_SOC_NOPM, 0, 0, 0,
+> +                          mic_gain_get, mic_gain_put, ec_mic_gain_tlv);
+> +
+> +static int enable_i2s(struct snd_soc_component *component, int enable)
+> +{
+> +       struct ec_param_codec_i2s param;
+> +
+> +       dev_dbg(component->dev, "%s set i2s to %u\n", __func__, enable);
+> +
+> +       param.cmd = EC_CODEC_I2S_ENABLE;
+> +       param.i2s_enable = enable;
+> +
+> +       return ec_command_no_resp(component, &param);
+> +}
+> +
+> +static int cros_ec_i2s_enable_event(struct snd_soc_dapm_widget *w,
+> +                                   struct snd_kcontrol *kcontrol, int event)
+> +{
+> +       struct snd_soc_component *component =
+> +               snd_soc_dapm_to_component(w->dapm);
+> +
+> +       switch (event) {
+> +       case SND_SOC_DAPM_PRE_PMU:
+> +               dev_dbg(component->dev,
+> +                       "%s got SND_SOC_DAPM_PRE_PMU event\n", __func__);
+> +               return enable_i2s(component, 1);
+> +
+> +       case SND_SOC_DAPM_PRE_PMD:
+> +               dev_dbg(component->dev,
+> +                       "%s got SND_SOC_DAPM_PRE_PMD event\n", __func__);
+> +               return enable_i2s(component, 0);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/*
+> + * The goal of this DAPM route is to turn on/off I2S using EC
+> + * host command when capture stream is started/stopped.
+> + */
+> +static const struct snd_soc_dapm_widget cros_ec_codec_dapm_widgets[] = {
+> +       SND_SOC_DAPM_INPUT("DMIC"),
+> +
+> +       /*
+> +        * Control EC to enable/disable I2S.
+> +        */
+> +       SND_SOC_DAPM_SUPPLY("I2S Enable", SND_SOC_NOPM,
+> +                           0, 0, cros_ec_i2s_enable_event,
+> +                           SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_PRE_PMD),
+> +
+> +       SND_SOC_DAPM_AIF_OUT("I2STX", "I2S Capture", 0, SND_SOC_NOPM, 0, 0),
+> +};
+> +
+> +static const struct snd_soc_dapm_route cros_ec_codec_dapm_routes[] = {
+> +       { "I2STX", NULL, "DMIC" },
+> +       { "I2STX", NULL, "I2S Enable" },
+> +};
+> +
+> +/*
+> + * Read maximum gain from device property and set it to mixer control.
+> + */
+> +static int cros_ec_set_gain_range(struct device *dev)
+> +{
+> +       struct soc_mixer_control *control;
+> +       struct cros_ec_codec_data *codec_data = dev_get_drvdata(dev);
+> +       int rc;
+> +
+> +       rc = device_property_read_u32(dev, "max-dmic-gain",
+> +                                     &codec_data->max_dmic_gain);
+> +       if (rc)
+> +               return rc;
+> +
+> +       control = (struct soc_mixer_control *)
+> +                               mic_gain_control.private_value;
+> +       control->max = codec_data->max_dmic_gain;
+> +       control->platform_max = codec_data->max_dmic_gain;
+> +
+> +       return 0;
+> +}
+> +
+> +static int cros_ec_codec_probe(struct snd_soc_component *component)
+> +{
+> +       int rc;
+> +
+> +       struct cros_ec_codec_data *codec_data =
+> +               snd_soc_component_get_drvdata(component);
+> +
+> +       rc = cros_ec_set_gain_range(codec_data->dev);
+> +       if (rc)
+> +               return rc;
+> +
+> +       return snd_soc_add_component_controls(component, &mic_gain_control, 1);
+> +}
+> +
+> +static const struct snd_soc_component_driver cros_ec_component_driver = {
+> +       .probe                  = cros_ec_codec_probe,
+> +       .dapm_widgets           = cros_ec_codec_dapm_widgets,
+> +       .num_dapm_widgets       = ARRAY_SIZE(cros_ec_codec_dapm_widgets),
+> +       .dapm_routes            = cros_ec_codec_dapm_routes,
+> +       .num_dapm_routes        = ARRAY_SIZE(cros_ec_codec_dapm_routes),
+> +};
+> +
+> +/*
+> + * Platform device and platform driver fro cros-ec-codec.
+> + */
+> +static int cros_ec_codec_platform_probe(struct platform_device *pd)
+> +{
+> +       struct device *dev = &pd->dev;
+> +       struct cros_ec_device *ec_device = dev_get_drvdata(pd->dev.parent);
+> +       struct cros_ec_codec_data *codec_data;
+> +
+> +       codec_data = devm_kzalloc(dev, sizeof(struct cros_ec_codec_data),
+> +                                 GFP_KERNEL);
+> +       if (!codec_data)
+> +               return -ENOMEM;
+> +
+> +       codec_data->dev = dev;
+> +       codec_data->ec_device = ec_device;
+> +
+> +       platform_set_drvdata(pd, codec_data);
+> +
+> +       return snd_soc_register_component(dev, &cros_ec_component_driver,
+> +                                         cros_ec_dai, ARRAY_SIZE(cros_ec_dai));
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id cros_ec_codec_of_match[] = {
+> +       { .compatible = "google,cros-ec-codec" },
+> +       {},
+> +};
+> +MODULE_DEVICE_TABLE(of, cros_ec_codec_of_match);
+> +#endif
+> +
+> +static struct platform_driver cros_ec_codec_platform_driver = {
+> +       .driver = {
+> +               .name = DRV_NAME,
+> +               .of_match_table = of_match_ptr(cros_ec_codec_of_match),
+> +       },
+> +       .probe = cros_ec_codec_platform_probe,
+> +};
+> +
+> +module_platform_driver(cros_ec_codec_platform_driver);
+> +
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("ChromeOS EC codec driver");
+> +MODULE_AUTHOR("Cheng-Yi Chiang <cychiang@chromium.org>");
+> +MODULE_ALIAS("platform:" DRV_NAME);
+> --
+> 2.20.1.321.g9e740568ce-goog
+>
+
+For the ChromeOS EC related stuff:
+
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
 
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
