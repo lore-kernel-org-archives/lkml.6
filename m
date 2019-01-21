@@ -2,143 +2,102 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68E0C2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39CEC2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E94A20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:12:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pbseC1Xl"
+	by mail.kernel.org (Postfix) with ESMTP id AD10E20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:12:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548087177;
+	bh=h6dKq0tGJ/aO3g1QcEsyhn55UZB7OLD0Wdk8buu4F5w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=fYkTIRTQu++xLby0H84dnKYKpv5fwcSw3N5AxCvlHl8TS5ne/ExzxC1z4+RW1/1Oq
+	 sGHzhO5epPY8c+Y25FHOVgnTjPBWbtUDQUThMerGMXT/67g7lHtqJO1P03IfwSFwBq
+	 cMDQioyPn7bAbK3dNVzb/gl9JJCWJiys4BDE8u9E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729611AbfAUQMo (ORCPT
+        id S1730018AbfAUQM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 11:12:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48420 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfAUQMo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 11:12:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=goDf/S+73Gxd3RHhen0nzqCzpgPoOwg9sSQWL8cjuwU=; b=pbseC1XltAPqeTTHg2HT393G+
-        DgIYpJuqZJnU6SbNUbxQpUkSWaprQAfh52cvLH0KpoQkJbFifXYWE5dR1C3GAiFBXfTKpHInS4gPY
-        z4rz4cGkeiO5OXt0lpf+q4Oz+nSrFtqmuBWUpZ34LEKzSwjGIsfMBt4budaR0j8aqJBpxJyfvvOzo
-        7V1GfBpy8HoH3cLGouk5sMYRMhZD2LWG98NsQsqlXg8rZFozPqlgrecB7NNy7rPevkj/MWgaxvPtl
-        DeLRrHk4U3EGEaBvqUxNlMsm0XsEtVCfA7AME2ZSRJlxPWJnn8wbEAl5qtvCYdUjqIDZKXk2dw0g0
-        bC3e5OxPg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glcBk-000296-Bb; Mon, 21 Jan 2019 16:12:40 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E345E28470710; Mon, 21 Jan 2019 17:12:37 +0100 (CET)
-Date:   Mon, 21 Jan 2019 17:12:37 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
- refcounting
-Message-ID: <20190121161237.GB13777@hirez.programming.kicks-ass.net>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-5-patrick.bellasi@arm.com>
- <20190121145929.GI27931@hirez.programming.kicks-ass.net>
- <20190121152311.7u7bwbjopuptnzcy@e110439-lin>
+        Mon, 21 Jan 2019 11:12:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726977AbfAUQMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 11:12:55 -0500
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com [209.85.161.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3B9B217D4;
+        Mon, 21 Jan 2019 16:12:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548087174;
+        bh=h6dKq0tGJ/aO3g1QcEsyhn55UZB7OLD0Wdk8buu4F5w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YmZz0+K3Wlr0YZo0c+gc7KlJGx4xEFsRjx5/DnuvAAP0rF38wjqVzJufQ75EwijHn
+         g3yz2ZdZWQhZ1hDTbUtHer8NhOYUA+70jd1HhPBQCFVnA0drRnO3UaugNDeXnaU3Dj
+         ZoebhRSuSGHO7Y5IgmmAg1p1byX/Eiew5ZYhWmys=
+Received: by mail-yw1-f48.google.com with SMTP id g75so8238885ywb.1;
+        Mon, 21 Jan 2019 08:12:54 -0800 (PST)
+X-Gm-Message-State: AJcUukdv08znk375i79Rd90rXKxtdILhcpOEPXFRqwIwJowfH+oFRcHw
+        I3fgR4bPLJ4+/CrxZy7ALjlQpNgZRsME8ZK+WA==
+X-Google-Smtp-Source: ALg8bN6GoeOGmdKZ6ggf1HGHVChgJb1ZQO+c5LNC9LZtKIv05GCMG+EcQ7N2FTx371b3598ryr5EZmu0zYLmZhtqPAA=
+X-Received: by 2002:a81:ad64:: with SMTP id l36mr29310125ywk.114.1548087173909;
+ Mon, 21 Jan 2019 08:12:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121152311.7u7bwbjopuptnzcy@e110439-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190109164343.164205-1-tmaimon77@gmail.com> <20190109164343.164205-2-tmaimon77@gmail.com>
+ <CACPK8XebHzVAO2TX25N24S0Pgg_0xA=7GN3j0oXhSyD4LmL4=w@mail.gmail.com>
+ <CAP6Zq1j=oPdVXZKBteBcaLVZcvoU7M6YbfGhSCaC44Ld9AQ9Ag@mail.gmail.com> <CACPK8XfFRigW9pN4JLrH+KcE6ACJUzX0qJV8xeph_DkfKWgBEQ@mail.gmail.com>
+In-Reply-To: <CACPK8XfFRigW9pN4JLrH+KcE6ACJUzX0qJV8xeph_DkfKWgBEQ@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 21 Jan 2019 10:12:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLn3wCpAWDTQFsrvuPJqWurTDNcu=j988PpHWtuW4Po6w@mail.gmail.com>
+Message-ID: <CAL_JsqLn3wCpAWDTQFsrvuPJqWurTDNcu=j988PpHWtuW4Po6w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-binding: iio: add NPCM ADC documentation
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Tomer Maimon <tmaimon77@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Patrick Venture <venture@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 03:23:11PM +0000, Patrick Bellasi wrote:
-> On 21-Jan 15:59, Peter Zijlstra wrote:
-> > On Tue, Jan 15, 2019 at 10:15:01AM +0000, Patrick Bellasi wrote:
-> > > @@ -835,6 +954,28 @@ static void uclamp_bucket_inc(struct uclamp_se *uc_se, unsigned int clamp_id,
-> > >  	} while (!atomic_long_try_cmpxchg(&uc_maps[bucket_id].adata,
-> > >  					  &uc_map_old.data, uc_map_new.data));
-> > >  
-> > > +	/*
-> > > +	 * Ensure each CPU tracks the correct value for this clamp bucket.
-> > > +	 * This initialization of per-CPU variables is required only when a
-> > > +	 * clamp value is requested for the first time from a slow-path.
-> > > +	 */
-> > 
-> > I'm confused; why is this needed?
-> 
-> That's a lazy initialization of the per-CPU uclamp data for a given
-> bucket, i.e. the clamp value assigned to a bucket, which happens only
-> when new clamp values are requested... usually only at system
-> boot/configuration time.
-> 
-> For example, let say we have these buckets mapped to given clamp
-> values:
-> 
->  bucket_#0: clamp value: 10% (mapped)
->  bucket_#1: clamp value: 20% (mapped)
->  bucket_#2: clamp value: 30% (mapped)
-> 
-> and then let's assume all the users of bucket_#1 are "destroyed", i.e.
-> there are no more tasks, system defaults or cgroups asking for a
-> 20% clamp value. The corresponding bucket will become free:
-> 
->  bucket_#0: clamp value: 10% (mapped)
->  bucket_#1: clamp value: 20% (free)
->  bucket_#2: clamp value: 30% (mapped)
-> 
-> If, in the future, we ask for a new clamp value, let say a task ask
-> for a 40% clamp value, then we need to map that value into a bucket.
-> Since bucket_#1 is free we can use it to fill up the hold and keep all
-> the buckets in use at the beginning of a cache line.
-> 
-> However, since now bucket_#1 tracks a different clamp value (40
-> instead of 20) we need to walk all the CPUs and updated the cached
-> value:
-> 
->  bucket_#0: clamp value: 10% (mapped)
->  bucket_#1: clamp value: 40% (mapped)
->  bucket_#2: clamp value: 30% (mapped)
-> 
-> Is that more clear ?
+On Sun, Jan 20, 2019 at 7:48 PM Joel Stanley <joel@jms.id.au> wrote:
+>
+> On Sat, 19 Jan 2019 at 02:12, Tomer Maimon <tmaimon77@gmail.com> wrote:
+> >
+> > Hi Joel,
+> >
+> > Thanks for bringing this to my attention,
+> >
+> > I think I will leave it the same way it is now because I will like to develop the reset driver and to handle the NPCM7xx SOC resets.
+>
+> You could also do that.
+>
+> But I was suggesting you use a phandle, so you could then find the
+> node you want without searching the entire device tree for the node
+> with the correct compatible.
 
-Yes, and I realized this a little while after sending this; but I'm not
-sure I have an answer to why though.
+That's not really any more efficient. You just search the entire tree
+for the matching phandle number instead. Well, that was true until we
+recently added the phandle cache.
 
-That is; why isn't the whole thing hard coded to have:
+In any case, it you plan to move to the reset binding (which would be
+good), then it's better to have nothing in the DT and add something
+rather than change the DT binding.
 
- bucket_n: clamp value: n*UCLAMP_BUCKET_DELTA
-
-We already do that division anyway (clamp_value / UCLAMP_BUCKET_DELTA),
-and from that we instantly have the right bucket index. And that allows
-us to initialize all this beforehand.
-
-> and keep all
-> the buckets in use at the beginning of a cache line.
-
-That; is that the rationale for all this? Note that per the defaults
-everything is in a single line already.
-
-
+Rob
