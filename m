@@ -2,149 +2,128 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E3EC282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED7CC282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9F52089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D27F20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:25:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="iOGDIOG1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfAUKYF (ORCPT
+        id S1727412AbfAUKZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:24:05 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52064 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726683AbfAUKYE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:24:04 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LAO0a7016848
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 05:24:03 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q59whp77n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 05:24:01 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 21 Jan 2019 10:23:23 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 10:23:17 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LANGMI62652504
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 10:23:16 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D9FA52054;
-        Mon, 21 Jan 2019 10:23:16 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.247])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 7953252050;
-        Mon, 21 Jan 2019 10:23:14 +0000 (GMT)
-Date:   Mon, 21 Jan 2019 12:23:12 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH RFC 05/24] userfaultfd: wp: add helper for writeprotect
- check
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-6-peterx@redhat.com>
+        Mon, 21 Jan 2019 05:25:06 -0500
+Received: from mail-eopbgr20086.outbound.protection.outlook.com ([40.107.2.86]:64147
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726231AbfAUKZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 05:25:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nhKsbqWj79Ubee88jWim4G6U4muyRG4bNDB2cI3gVdg=;
+ b=iOGDIOG1G3F8Xp/oCT22AdysrAXUg9xmBVl7IQne3j+JNvfeeMdDayerC0PwvLniNBED1ei7MV0YMUgs0JuBhDxCZgJTtmoQcr3dr0gJt8Gy+sNQ00MtI23iSGxoe1bPxHNkeFxZnJM3fyzDyZM7eGoxXF0AvPmsyig0S/DlyBs=
+Received: from VI1PR04MB4158.eurprd04.prod.outlook.com (52.133.15.33) by
+ VI1PR04MB4111.eurprd04.prod.outlook.com (52.133.14.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.27; Mon, 21 Jan 2019 10:25:01 +0000
+Received: from VI1PR04MB4158.eurprd04.prod.outlook.com
+ ([fe80::257e:f28a:1a8c:c9c4]) by VI1PR04MB4158.eurprd04.prod.outlook.com
+ ([fe80::257e:f28a:1a8c:c9c4%2]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
+ 10:25:01 +0000
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+CC:     Yinbo Zhu <yinbo.zhu@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>,
+        Ran Wang <ran.wang_1@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
+        Nikhil Badola <nikhil.badola@freescale.com>,
+        Suresh Gupta <suresh.gupta@freescale.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/6] usb: fsl: Set USB_EN bit to select ULPI phy
+Thread-Topic: [PATCH v2 1/6] usb: fsl: Set USB_EN bit to select ULPI phy
+Thread-Index: AQHUsXOQuCNR1eimmkSvf2OsvNDAKA==
+Date:   Mon, 21 Jan 2019 10:25:00 +0000
+Message-ID: <20190121102601.4735-1-yinbo.zhu@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2PR06CA0003.apcprd06.prod.outlook.com
+ (2603:1096:202:2e::15) To VI1PR04MB4158.eurprd04.prod.outlook.com
+ (2603:10a6:803:46::33)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yinbo.zhu@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4111;6:ACRA+xaksBABWkGcmOMgfjf7zb+2WBuGsWZECa8md1CtqFisR1rvfTf8frgleVQRegsmv5dCnUmNBnffxuXuv8wcrXJ36RFl86RydYfQ5hVXGNyrmcPbJd3WU9+TGltfVPmQ/lDvqMNl2X+DIoEI4GeCHQ7xjlv3jh3/7MGRF4V64vbVOpRhtdNxFjd4XFHui2F+/Par7yiVoJiNA074eqP98AGiaMYdyOyzxuY+aKou+4VRxpT9LxKRyWxoesu/UjW0HsYe7fSd7SeKDj+qEZQKwJFtSJfvgXa2BDjaxcNpLFgWTqxPVjlcm/vJifFBjld6ByCX0LV+tt/8gY/xG6wIsn8Egt8r8GkMhVPUKbdKR4IXkMisXtOtsIIYns3LBXYBwBA2Rfu4Pvxd7eLP/5eK4o10DmMMm6lN8ENtey4iyDYMrPxkz07Edpt2FQFbvZYbbGT1NvsXdFZOemVxfA==;5:upCN/RLwqpl34IkQlU/YlemWSsOcIJYwm6FbMuvqmlLDNgt+PfbBAJTclB5JUZ0V5XFLIJlVEoeI1bYMuuwXFACiqDtZArYwp2RRkxl6CUVUzl8suUtbwfvhPUVlDTKy4gvTElsallFp7YXPsM+bkRRfBfv2B1EMepvxD+TkZfhFoWTQwygl7CsUHAJdQgtMj7E5HNpGiKqmIyPv9BOK3w==;7:tkXjn0WsYwly3Cqoc8yB1WWUm/Pbhll2eN5E1Cnhot2TkVGHupSXOeiVdE2qFHOiZp+jBN+JVA/xO8sCDlE3hho3VACfViptAnmtBihgUv55kiNXMxpho8A+fcic7O0mjCrmB+rFVKvAexnam48uZg==
+x-ms-office365-filtering-correlation-id: df8494a1-b423-4289-6f1e-08d67f8ab2ee
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4111;
+x-ms-traffictypediagnostic: VI1PR04MB4111:
+x-microsoft-antispam-prvs: <VI1PR04MB41118ABE02D5C0CF9E728D92E99F0@VI1PR04MB4111.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0924C6A0D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(346002)(376002)(39860400002)(396003)(189003)(199004)(97736004)(106356001)(14454004)(25786009)(6436002)(2171002)(476003)(4326008)(486006)(53936002)(6486002)(44832011)(105586002)(2616005)(478600001)(66066001)(68736007)(36756003)(6512007)(6916009)(3846002)(6116002)(26005)(102836004)(81166006)(186003)(86362001)(8936002)(50226002)(8676002)(71200400001)(71190400001)(81156014)(6506007)(99286004)(316002)(52116002)(386003)(305945005)(4744005)(1076003)(256004)(7736002)(2906002)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4111;H:VI1PR04MB4158.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: rbOe6MCEkKalLNY4xfie3EEQJDY4FKRcGdioQI+g2RBqIYBAFk9mvN5ZhT8N4oasD4S7C4BXV49h8GUDJIWesJsG/fpTe3LxmRpJInEfLH5LOoPP5DUYMmVHxt4UvruAmIUb3Ajw5uZMH9EvfQwSn8UVJCkA7MO0i8X66naPqGUmRN/9XRubWpeUZepgz2FWPzm6MP7pBVG7n86is4XbGR61cSd5fXQ8iF/+wzxjPnRvov45wNuS+fmozqYL/5ozJAoHuzl8ureEYllRNRvj6R0wanwbJyqLXRHVh7ctCwuvb3qghO/KdENPwegwMOswzE2iainUgR2G6L0xSb4o2CGCAMsLRuRBWC986AErRLKNcSsB/r7VgZq8x+0Z1EoQZQZTouePBjpFywELc4r/Xj/xtX+s69jy5Se4O4pfuew=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121075722.7945-6-peterx@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19012110-0016-0000-0000-000002483C24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012110-0017-0000-0000-000032A26C89
-Message-Id: <20190121102312.GD19725@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=987 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210083
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df8494a1-b423-4289-6f1e-08d67f8ab2ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 10:24:55.7125
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 03:57:03PM +0800, Peter Xu wrote:
-> From: Shaohua Li <shli@fb.com>
-> 
-> add helper for writeprotect check. Will use it later.
+From: Nikhil Badola <nikhil.badola@freescale.com>
 
-I'd merge this with the commit that actually uses this helper.
- 
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Pavel Emelyanov <xemul@parallels.com>
-> Cc: Rik van Riel <riel@redhat.com>
-> Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Shaohua Li <shli@fb.com>
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  include/linux/userfaultfd_k.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> index 37c9eba75c98..38f748e7186e 100644
-> --- a/include/linux/userfaultfd_k.h
-> +++ b/include/linux/userfaultfd_k.h
-> @@ -50,6 +50,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
->  	return vma->vm_flags & VM_UFFD_MISSING;
->  }
-> 
-> +static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-> +{
-> +	return vma->vm_flags & VM_UFFD_WP;
-> +}
-> +
->  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
->  {
->  	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
-> @@ -94,6 +99,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
->  	return false;
->  }
-> 
-> +static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-> +{
-> +	return false;
-> +}
-> +
->  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
->  {
->  	return false;
-> -- 
-> 2.17.1
-> 
+Set USB_EN bit to select ULPI phy for USB controller version 2.5
 
--- 
-Sincerely yours,
-Mike.
+Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+---
+Change in v2:
+		replace Yinbo.Zhu with Yinbo Zhu=20
+
+ drivers/usb/host/ehci-fsl.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
+index 0a9fd20..71c4661 100644
+--- a/drivers/usb/host/ehci-fsl.c
++++ b/drivers/usb/host/ehci-fsl.c
+@@ -118,6 +118,12 @@ static int fsl_ehci_drv_probe(struct platform_device *=
+pdev)
+ 		clrsetbits_be32(hcd->regs + FSL_SOC_USB_CTRL,
+ 				CONTROL_REGISTER_W1C_MASK, 0x4);
+=20
++	/* Set USB_EN bit to select ULPI phy for USB controller version 2.5 */
++	if (pdata->controller_ver =3D=3D FSL_USB_VER_2_5 &&
++		pdata->phy_mode =3D=3D FSL_USB2_PHY_ULPI)
++		iowrite32be(USB_CTRL_USB_EN, hcd->regs + FSL_SOC_USB_CTRL);
++
++
+ 	/*
+ 	 * Enable UTMI phy and program PTS field in UTMI mode before asserting
+ 	 * controller reset for USB Controller version 2.5
+--=20
+1.7.1
 
