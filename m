@@ -2,145 +2,137 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C56E4C31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11EAC31D64
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E51820989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69A2F20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gu893gCs";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dw7WdVi/"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yuahOS1q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbfAUHNH (ORCPT
+        id S1727733AbfAUHN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:13:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43290 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727986AbfAUHNE (ORCPT
+        Mon, 21 Jan 2019 02:13:26 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33416 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728143AbfAUHNS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:13:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5410D60A34; Mon, 21 Jan 2019 05:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548050041;
-        bh=TL7zgB0m7LfWtfKkA5XH+oaFc8qMHKopAjg5Aq+3o/E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gu893gCs2E//yCSZZN1lzgiZZCKjan+WcXVDUcBGSviW6CkYD2+FRvwEAMbKb7agv
-         we09e+DpyPJkTSHVOzp7FWRp0sR1dTkNFcR0fntXTYLW8/E7DRkB3KT+vh1K5H9pgN
-         DId25rC7fyIo3U5Q4Awbm8uqj1MGm9hse04buyTM=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8E929609BD;
-        Mon, 21 Jan 2019 05:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548050040;
-        bh=TL7zgB0m7LfWtfKkA5XH+oaFc8qMHKopAjg5Aq+3o/E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dw7WdVi/8T6G7C6y8yBGXR+rj/0SdpbO7iU56HQq4m2SarCfX1sre/pQB/lQs0YlY
-         rftBKz8sKcSwPqbYBJc5Lh2+4rTBn8u5SmU9ABAI6fQBuXEnGESkhXwstGrVfm1XPT
-         fdVfMWQWngzNV5UEv4dc4SzmwmiB/NTkmdXNmbao=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E929609BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, tfiga@chromium.org,
-        pratikp@codeaurora.org, pdaly@codeaurora.org,
-        jcrouse@codeaurora.org, Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH 3/3] iommu/arm-smmu: Add support to use system cache
-Date:   Mon, 21 Jan 2019 11:23:35 +0530
-Message-Id: <20190121055335.15430-4-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
-References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+        Mon, 21 Jan 2019 02:13:18 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0L7CvFu073936;
+        Mon, 21 Jan 2019 01:12:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548054777;
+        bh=1MY2+aLxo+iQWNtqOUc8eCVRHprDMIc0zOaEbr27wQg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=yuahOS1qZlsJPXmhSwPvDweUePYI6MDLpbx3C+g72YnoykZ6h7vdBd0JyEqPf0HRp
+         Hh2nJ0tWfuZq/fV9MjaGu9hCZtuXQ17IEgN7D//9XyZSIjeXo+v2NFVEbAy3OVFtr7
+         jZZI7qwqrM4y0Vzgj9NJLtzGBtIQcuMYHZBOCSLQ=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0L7CvHY106296
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 01:12:57 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
+ Jan 2019 01:12:54 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 21 Jan 2019 01:12:54 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0L7Cokg020788;
+        Mon, 21 Jan 2019 01:12:51 -0600
+Subject: Re: [PATCH v3 3/3] arm: omap_hwmod disable ick autoidling when a
+ hwmod requires that
+To:     Tony Lindgren <tony@atomide.com>,
+        Andreas Kemnade <andreas@kemnade.info>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bcousson@baylibre.com>,
+        <paul@pwsan.com>, <letux-kernel@openphoenux.org>
+References: <20190116220429.9136-1-andreas@kemnade.info>
+ <20190116220429.9136-4-andreas@kemnade.info>
+ <20190118154807.GV5544@atomide.com> <20190118181827.7163bee4@aktux>
+ <20190118183630.GX5544@atomide.com> <20190118203832.3be7975e@aktux>
+ <20190118194536.GY5544@atomide.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <ed0928fc-add1-1f37-c907-89bf5133fc00@ti.com>
+Date:   Mon, 21 Jan 2019 09:12:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190118194536.GY5544@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Few Qualcomm platforms, such as sdm845 have an additional outer
-cache called as System cache, aka. Last level cache (LLC) that
-allows non-coherent devices to upgrade to using caching.
-This last level cache sits right before the DDR, and is tightly
-coupled with the memory controller.
-The cache is available to a number of devices - coherent and
-non-coherent, present in the SoC system, and to CPUs.
-The devices request their slices from this system cache, make it
-active, and can then start using it.
+On 18/01/2019 21:45, Tony Lindgren wrote:
+> * Andreas Kemnade <andreas@kemnade.info> [190118 19:39]:
+>> Hi,
+>>
+>> On Fri, 18 Jan 2019 10:36:30 -0800
+>> Tony Lindgren <tony@atomide.com> wrote:
+>>
+>> [...]
+>>> til the next workaround.
+>>>
+>>>> That flags also causes the iclk being enabled/disabled
+>>>> manually.
+>>>
+>>> Yes but SWSUP_IDLE for the interface clock to me currently
+>>> just means:
+>>>
+>>> "manually enable and disable ocp interface clock"
+>>>
+>> well, if we want to manually disable it and not automatically,
+>> we have to disable autoidle or it will be automatically disabled.
+>>
+>> Disabling it manually when it is already auto-disabled (by autoidle) is
+>> just practically a no-op towards the clock.
+> 
+> OK I buy that :) It should be probably added to the patch
+> description to make it clear what it changes.
+> 
+> Tero, any comments on this change?
 
-Devices can set iommu domain attributes and page protection
-while mapping the buffers to set the required memory attributes
-to use system cache for buffers and page tables.
-This change adds the support for iommu domain attributes and the
-interaction with io page table driver.
+Well, seeing the flag is pretty much only used for a handful of hwmods 
+nowadays, it should be fine. OMAP3 PM should be tested with this change 
+though, as there are couple of hwmods impacted on that platform. I 
+wonder what happens to cpuidle when display is active...
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
- drivers/iommu/arm-smmu.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+-Tero
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 52b300dfc096..324f3bb54c78 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -260,7 +260,8 @@ struct arm_smmu_domain {
- 	struct mutex			init_mutex; /* Protects smmu pointer */
- 	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
- 	struct iommu_domain		domain;
--#define ARM_SMMU_DOMAIN_ATTR_NON_STRICT	BIT(0)
-+#define ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE	BIT(1)
-+#define ARM_SMMU_DOMAIN_ATTR_NON_STRICT		BIT(0)
- 	unsigned int			attr;
- };
- 
-@@ -910,6 +911,9 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
- 	    smmu_domain->stage == ARM_SMMU_DOMAIN_S1)
- 		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_COHERENT;
- 
-+	if (smmu_domain->attr & ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE)
-+		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_QCOM_SYS_CACHE;
-+
- 	smmu_domain->smmu = smmu;
- 	pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
- 	if (!pgtbl_ops) {
-@@ -1592,6 +1596,10 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
- 		case DOMAIN_ATTR_NESTING:
- 			*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
- 			return 0;
-+		case DOMAIN_ATTR_QCOM_SYS_CACHE:
-+			*(int *)data = !!(smmu_domain->attr &
-+					  ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE);
-+			return 0;
- 		default:
- 			return -ENODEV;
- 		}
-@@ -1633,6 +1641,16 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
- 			else
- 				smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
- 			break;
-+		case DOMAIN_ATTR_QCOM_SYS_CACHE:
-+			if (smmu_domain->smmu) {
-+				ret = -EPERM;
-+				goto out_unlock;
-+			}
-+			if (*(int *)data)
-+				smmu_domain->attr |= ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE;
-+			else
-+				smmu_domain->attr &= ~ARM_SMMU_DOMAIN_ATTR_QCOM_SYS_CACHE;
-+			break;
- 		default:
- 			ret = -ENODEV;
- 		}
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> 
+>>> and with your changes it becomes:
+>>>
+>>> "manually enable and disable ocp interface clock and block
+>>>   autoidle while in use".
+>>>
+>>> So aren't we now changing the way things behave in general
+>>> for SWSUP_IDLE?
+>>>
+>> Yes, we are, so proper testing is needed. But If I read those comments
+>> it was always intended this way but not fully implemented because it
+>> appeared to be more work like needing a usecounter (which my patchset
+>> also adds) for that autoidle flag.
+> 
+> OK yeah the use count seems necessary. I'll test here
+> with my PM use cases.
+> 
+> Regards,
+> 
+> Tony
+> 
 
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
