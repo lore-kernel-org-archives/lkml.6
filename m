@@ -2,97 +2,127 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6C1C2F3A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DBCC2F3A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C3E2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C58CF2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbfAUMsx (ORCPT
+        id S1728729AbfAUMti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:48:53 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41274 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728163AbfAUMsx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:48:53 -0500
-Received: by mail-lf1-f67.google.com with SMTP id c16so15392154lfj.8;
-        Mon, 21 Jan 2019 04:48:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=1rik5yWAwK/VZEgE3GAP/26Xz0u6FKuRPpB5cNtjyms=;
-        b=DPX5QiPhJznBlN+vd9vjGMrvlZHwpxjKSnx/xYYTu78H+7dtbwb6SDDFt9k8ctKTZJ
-         jCDw1zkqT4M1gRWR+yFi+DjLwcI0sVFEkqf/UM3qd1XoCTkVcxApEH5fOh9HMSoX/4kl
-         7dp2281IwD0fTEr6I+UU42CsHYVQ5qJr6CZXZB4K7u3nz6k/Fyu0TcL6oe5DjtCnCnI7
-         s1vXtqpu6Id2g45nnsoRT4CFXERR+ZfSBXZsj4GITk3KMGTTbKYUkM1aumfQ0qfylIQd
-         w/0lJg11ZMhLkugoi5nXESvChIRZRZsVQkoufy6v7IEL8QzF7CcVeBT7ceMEAE5e4Iwi
-         vZHQ==
-X-Gm-Message-State: AJcUukcEHeptivX6crbwUNmZ/VBBHEmBt8aMFrlHwVzK9HvW/nmXoelB
-        ulj5V2TUk5e1bOYpOVVIkRc=
-X-Google-Smtp-Source: ALg8bN6Ko9Iwu5fWvCaS60yLSJRKSDsyvVKlRT85yCEdok16q+tqefY4oIBm6IlKhLSI8+XxIIXszw==
-X-Received: by 2002:a19:c70a:: with SMTP id x10mr17898358lff.88.1548074931300;
-        Mon, 21 Jan 2019 04:48:51 -0800 (PST)
-Received: from localhost.localdomain ([213.87.132.221])
-        by smtp.gmail.com with ESMTPSA id k68-v6sm2288537ljb.35.2019.01.21.04.48.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 21 Jan 2019 04:48:50 -0800 (PST)
-From:   Alexander Popov <alex.popov@linux.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        linux-kernel@vger.kernel.org,
-        Alexander Popov <alex.popov@linux.com>
-Subject: [PATCH v2] KVM: x86: Fix single-step debugging
-Date:   Mon, 21 Jan 2019 15:48:40 +0300
-Message-Id: <1548074920-10651-1-git-send-email-alex.popov@linux.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 21 Jan 2019 07:49:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:33418 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728162AbfAUMth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:49:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 317CB80D;
+        Mon, 21 Jan 2019 04:49:37 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 963913F614;
+        Mon, 21 Jan 2019 04:49:35 -0800 (PST)
+Subject: Re: [PATCH v1] iommu/s390: Declare s390 iommu reserved regions
+To:     pmorel@linux.ibm.com, gerald.schaefer@de.ibm.com
+Cc:     linux-s390@vger.kernel.org, walling@linux.ibm.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com
+References: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
+ <cc070df1-e7dc-8cce-f443-879e0e5e2903@arm.com>
+ <3cd790d6-aa6f-e817-27ce-56d7a9b6b6e5@linux.ibm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <70a30a0a-cee6-ac59-61fc-b4b018467179@arm.com>
+Date:   Mon, 21 Jan 2019 12:49:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <3cd790d6-aa6f-e817-27ce-56d7a9b6b6e5@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The single-step debugging of KVM guests on x86 is broken: if we run
-gdb 'stepi' command at the breakpoint when the guest interrupts are
-enabled, RIP always jumps to native_apic_mem_write(). Then other
-nasty effects follow.
+On 18/01/2019 13:29, Pierre Morel wrote:
+> On 17/01/2019 14:02, Robin Murphy wrote:
+>> On 15/01/2019 17:37, Pierre Morel wrote:
+>>> The s390 iommu can only allow DMA transactions between the zPCI device
+>>> entries start_dma and end_dma.
+>>>
+>>> Let's declare the regions before start_dma and after end_dma as
+>>> reserved regions using the appropriate callback in iommu_ops.
+>>>
+>>> The reserved region may later be retrieved from sysfs or from
+>>> the vfio iommu internal interface.
+>>
+>> For this particular case, I think the best solution is to give VFIO 
+>> the ability to directly interrogate the domain geometry (which s390 
+>> appears to set correctly already). The idea of reserved regions was 
+>> really for 'unexpected' holes inside the usable address space - using 
+>> them to also describe places that are entirely outside that address 
+>> space rather confuses things IMO.
+>>
+>> Furthermore, even if we *did* end up going down the route of actively 
+>> reserving addresses beyond the usable aperture, it doesn't seem 
+>> sensible for individual drivers to do it themselves when the core API 
+>> already describes the relevant information generically.
+>>
+>> Robin.
+> 
+> Robin,
+> 
+> I already posted a patch retrieving the geometry through 
+> VFIO_IOMMU_GET_INFO using a specific capability for the geometry [1], 
+> and AFAIU, Alex did not agree with this.
+> 
+> What is different in what you propose?
 
-Long investigation showed that on Jun 7, 2017 the
-commit c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
-introduced the kvm_run.debug corruption: kvm_vcpu_do_singlestep() can
-be called without X86_EFLAGS_TF set.
+I didn't mean to imply that aperture and reserved regions are mutually 
+exclusive, just that they are conceptually distinct things, i.e. there 
+is a fundamental difference between "address which could in theory be 
+mapped but wouldn't work as expected" and "address which is physically 
+impossible to map at all".
 
-Let's fix it. Please consider that for -stable.
+Admittedly I hadn't closely followed all of the previous discussions, 
+and Alex has a fair point - for VFIO users who will mostly care about 
+checking whether two address maps are compatible, it probably is more 
+useful to just describe a single list of usable regions, rather than the 
+absolute bounds plus a list of unusable holes within them. That still 
+doesn't give us any need to conflate things throughout the kernel 
+internals, though - the typical usage there is to size an IOVA allocator 
+or page table based on the aperture, then carve out any necessary 
+reservations. In that context, having to be aware of and handle 
+'impossible' reservations outside the aperture just invites bugs and 
+adds complexity that would be better avoided.
 
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
----
- arch/x86/kvm/x86.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Robin.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index f049ecf..9686068 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6407,8 +6407,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
- 		toggle_interruptibility(vcpu, ctxt->interruptibility);
- 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
- 		kvm_rip_write(vcpu, ctxt->eip);
--		if (r == EMULATE_DONE &&
--		    (ctxt->tf || (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)))
-+		if (r == EMULATE_DONE && ctxt->tf)
- 			kvm_vcpu_do_singlestep(vcpu, &r);
- 		if (!ctxt->have_exception ||
- 		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
--- 
-2.7.4
-
+> 
+> @Alex: I was hoping that this patch goes in your direction. What do you 
+> think?
+> 
+> Thanks,
+> Pierre
+> 
+> [1]: https://lore.kernel.org/patchwork/patch/1030369/
+> 
+>>
+>>>
+>>> This seems to me related with the work Shameer has started on
+>>> vfio_iommu_type1 so I add Alex and Shameer to the CC list.
+>>>
+>>>
+>>> Pierre Morel (1):
+>>>    iommu/s390: Declare s390 iommu reserved regions
+>>>
+>>>   drivers/iommu/s390-iommu.c | 29 +++++++++++++++++++++++++++++
+>>>   1 file changed, 29 insertions(+)
+>>>
+>>
+> 
+> 
