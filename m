@@ -2,145 +2,169 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD24C31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFADC31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D2820880
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:16:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DDC320880
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:17:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lfRNKBHj"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="uIcyXAAo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbfAUHQe (ORCPT
+        id S1727713AbfAUHRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:16:34 -0500
-Received: from mail-eopbgr150057.outbound.protection.outlook.com ([40.107.15.57]:63424
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727566AbfAUHQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:16:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S3SyASY1exvyKXQoXM/mj5u5kcX8oRhR0+16SyJ9MiM=;
- b=lfRNKBHj5/QEtAkiR+OodB/hNyuOU8YeOOvPf81bJzh4iZT1u0QpoO3NhhZj03HehZZM/33Di7MADUcAsS9gsDMGpWuh//RV1qb1DnZ1tiPd4dQFqkruHdE7ZAHZQZFdQR8x4d1CsLdP3Jp2sPjgkpdvJCl3VjNsy7pOCq70Dm4=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.148.143) by
- AM0PR04MB3970.eurprd04.prod.outlook.com (52.134.90.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.27; Mon, 21 Jan 2019 04:51:57 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::69ce:7da3:3bcf:d903]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::69ce:7da3:3bcf:d903%3]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
- 04:51:57 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "mst@redhat.com" <mst@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "sstabellini@kernel.org" <sstabellini@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>
-CC:     "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [RFC] virtio_ring: check dma_mem for xen_domain
-Thread-Topic: [RFC] virtio_ring: check dma_mem for xen_domain
-Thread-Index: AQHUsUUJrf+HCksNJUevQFBecw2Jmw==
-Date:   Mon, 21 Jan 2019 04:51:57 +0000
-Message-ID: <20190121050056.14325-1-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.14.1
-x-clientproxiedby: HK0PR01CA0061.apcprd01.prod.exchangelabs.com
- (2603:1096:203:a6::25) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:73::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB3970;6:5A3wuQr4F5QYQ0uU2hDLygCYBOuoSBD3QD7D8/CdPlmA0tWl1kvXREWVSP8FB+GDRcq++exTl5ruxr6IYz636d2vaWOVSahwfJASoS6W1ktQ9zA/ACQJaQ2Fh72iyFuGIi9denhl6BU6KYhC1742Q8GVxztWIQxE9SFSCztx2qBYSv/536Wbd1x7iYmjQK5ExyX7nftNpqPMvjYqOCp0RYQYsJtuTYxlMxQqMBPLMT+6MDm1ASYM241Kth9z6om8Vofa/1teJMuUtxWElxSY2YZAsuJ2QpIPLjDVMTsRu8hyIdBlCc9su0XgDLNIIqMM1XOTGPyeNk22qwlq3PPnqTsOyM0yUckj4+05ReyjT025Tw6fhwlwEjzK6U3TT3/yaq+fsIPVuuXKUALo/ZxxQsny3l3zSapp2uG29mkNUu6s95CtXxjxI9ye/tT1eaj4SFA90Uuc66bmDzIMxXtrtg==;5:aaz0KcC43PUptHjQlDnTNbljz/1tF7byUPZcxcxRKXAWSolAe9yM3cS9JObggFq252aqL25wmOuCucLLHHYlxZKqnH3qF/6t30bcVqFt9zhFNyHuiqhdrIjJ2L8s9WbeEDLRXNFf2VeJxx4nI/LntHI88HlXhk+BG54A9eJLOOguEYSlsC1KwE2ClWqznodHzZDD44Akt5gboWf/D9dRmA==;7:ZYVIMjSOPWhlhWjD82DbEugQ+7CmK0aTflsIFZyAxEHT2umGpO+aZ61qQ2QNp8svQXzNlfmN3Bjmzs5VwLgeBJO5pmDXTpBeaNl9WjaLBiJ7T65nBoGZpdTt7F8u3vs2UP3KTsmBjjgOrCADg4FUrw==
-x-ms-office365-filtering-correlation-id: a00c003a-fe34-41f0-ac74-08d67f5c2be6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB3970;
-x-ms-traffictypediagnostic: AM0PR04MB3970:
-x-microsoft-antispam-prvs: <AM0PR04MB3970FC3D806742B6E66D0620889F0@AM0PR04MB3970.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0924C6A0D5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(136003)(346002)(189003)(199004)(106356001)(53936002)(25786009)(6512007)(4326008)(478600001)(6486002)(105586002)(6436002)(14454004)(68736007)(36756003)(97736004)(66066001)(6506007)(86362001)(102836004)(44832011)(1076003)(3846002)(2616005)(476003)(486006)(7736002)(386003)(2201001)(186003)(6116002)(81166006)(316002)(305945005)(110136005)(8676002)(2906002)(99286004)(8936002)(50226002)(54906003)(81156014)(71200400001)(256004)(71190400001)(52116002)(14444005)(26005)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB3970;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: uaEzstGIx2lTKhutq8bKhRX96GyprKFk0yjtME7pRujXXElqx5JiU9YM2VKap24t951xX8npZCI9o4ESLv/U0e9P7eW7VzgomAf9ruSnG1M+Q8yau7MH0t0XM2wFIv8jWapdwjatNOPlL3emNs6D8OxPOrxoHGATeLv/K7M7tP8WEqIqNxAmeejqgQTXsQ9tq0ZoKF3coc7UPvLBbnsZT+ubDbcEO0yuPwYQ2Isx2yNC4XBJ/tI5CcXP0vqVH9tF0LgYhnOuTkyI7jE1eNVaE+lDDm4jkvLqDqFnX8oGwHcCAgzSQo1WcBr2HGx9viplxW1mIXONAOokjvqneZzEcf45grHRwfQoKqVFMsqYd2M5SDomxaAeXYLj9EZ2bfC8bahdFwND2zhL/Y+uHIPHpuyOjVT0/sBqOJg5kQMZjhU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 21 Jan 2019 02:17:06 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:44095 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726003AbfAUHRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:17:06 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43jjXp0tCfz9v4gc;
+        Mon, 21 Jan 2019 08:16:58 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=uIcyXAAo; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 61GoLOnk_gxW; Mon, 21 Jan 2019 08:16:58 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43jjXn6hrRz9v4gb;
+        Mon, 21 Jan 2019 08:16:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548055017; bh=vJv0qjC91P024h+/ge4sUI2JOyyWiTeIU9Uv+g7IJ5s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=uIcyXAAo9wkTVhUzniM7mqe9lZ0TELd7e8uQl3gNRa4eVhG199Qk+14jyam+cmb1p
+         dFlSwQEPmEw3j3tBWsaj/u5hQqa8r6mZsr8FPEyYorwLMpj/QwJ9JGWIyzmskmRrWf
+         8Y75XlG5U/xiYdlIT7LakHqaKgTJSmjy6dnE6+do=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 28B3A8B75A;
+        Mon, 21 Jan 2019 08:17:04 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id f9Nf5AXiHasr; Mon, 21 Jan 2019 08:17:04 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DEF178B74B;
+        Mon, 21 Jan 2019 08:17:03 +0100 (CET)
+Subject: Re: [PATCH v3 3/3] powerpc/32: Add KASAN support
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org
+References: <cover.1547289808.git.christophe.leroy@c-s.fr>
+ <935f9f83393affb5d55323b126468ecb90373b88.1547289808.git.christophe.leroy@c-s.fr>
+ <e4b343fa-702b-294f-7741-bb85ed877cdf@virtuozzo.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <8d433501-a5a7-8e3b-03f7-ccdd0f8622e1@c-s.fr>
+Date:   Mon, 21 Jan 2019 08:17:03 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a00c003a-fe34-41f0-ac74-08d67f5c2be6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 04:51:54.0385
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB3970
+In-Reply-To: <e4b343fa-702b-294f-7741-bb85ed877cdf@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-on i.MX8QM, M4_1 is communicating with DomU using rpmsg with a fixed
-address as the dma mem buffer which is predefined.
 
-Without this patch, the flow is:
-vring_map_one_sg -> vring_use_dma_api
-                 -> dma_map_page
-		       -> __swiotlb_map_page
-		                ->swiotlb_map_page
-				->__dma_map_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
-However we are using per device dma area for rpmsg, phys_to_virt
-could not return a correct virtual address for virtual address in
-vmalloc area. Then kernel panic.
 
-With this patch, vring_use_dma_api will return false, and
-vring_map_one_sg will return sg_phys(sg) which is the correct phys
-address in the predefined memory region.
-vring_map_one_sg -> vring_use_dma_api
-                 -> sg_phys(sg)
+Le 15/01/2019 à 18:23, Andrey Ryabinin a écrit :
+> 
+> 
+> On 1/12/19 2:16 PM, Christophe Leroy wrote:
+> 
+>> +KASAN_SANITIZE_early_32.o := n
+>> +KASAN_SANITIZE_cputable.o := n
+>> +KASAN_SANITIZE_prom_init.o := n
+>> +
+> 
+> Usually it's also good idea to disable branch profiling - define DISABLE_BRANCH_PROFILING
+> either in top of these files or via Makefile. Branch profiling redefines if() statement and calls
+> instrumented ftrace_likely_update in every if().
+> 
+> 
+> 
+>> diff --git a/arch/powerpc/mm/kasan_init.c b/arch/powerpc/mm/kasan_init.c
+>> new file mode 100644
+>> index 000000000000..3edc9c2d2f3e
+> 
+>> +void __init kasan_init(void)
+>> +{
+>> +	struct memblock_region *reg;
+>> +
+>> +	for_each_memblock(memory, reg)
+>> +		kasan_init_region(reg);
+>> +
+>> +	pr_info("KASAN init done\n");
+> 
+> Without "init_task.kasan_depth = 0;" kasan will not repot bugs.
+> 
+> There is test_kasan module. Make sure that it produce reports.
+> 
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/virtio/virtio_ring.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks for the review.
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index cd7e755484e3..8993d7cb3592 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -248,6 +248,8 @@ static inline bool virtqueue_use_indirect(struct virtqu=
-eue *_vq,
-=20
- static bool vring_use_dma_api(struct virtio_device *vdev)
- {
-+	struct device *dma_dev =3D vdev->dev.parent;
-+
- 	if (!virtio_has_iommu_quirk(vdev))
- 		return true;
-=20
-@@ -260,7 +262,7 @@ static bool vring_use_dma_api(struct virtio_device *vde=
-v)
- 	 * the DMA API if we're a Xen guest, which at least allows
- 	 * all of the sensible Xen configurations to work correctly.
- 	 */
--	if (xen_domain())
-+	if (xen_domain() && !dma_dev->dma_mem)
- 		return true;
-=20
- 	return false;
---=20
-2.14.1
+Now I get the following very early in boot, what does that mean ?
 
+[    0.000000] KASAN init done
+[    0.000000] 
+==================================================================
+[    0.000000] BUG: KASAN: unknown-crash in memblock_alloc_try_nid+0xd8/0xf0
+[    0.000000] Write of size 68 at addr c7ff5a90 by task swapper/0
+[    0.000000]
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 
+5.0.0-rc2-s3k-dev-00559-g88aa407c4bce #772
+[    0.000000] Call Trace:
+[    0.000000] [c094ded0] [c016c7e4] 
+print_address_description+0x1a0/0x2b8 (unreliable)
+[    0.000000] [c094df00] [c016caa0] kasan_report+0xe4/0x168
+[    0.000000] [c094df40] [c016b464] memset+0x2c/0x4c
+[    0.000000] [c094df60] [c08731f0] memblock_alloc_try_nid+0xd8/0xf0
+[    0.000000] [c094df90] [c0861f20] mmu_context_init+0x58/0xa0
+[    0.000000] [c094dfb0] [c085ca70] start_kernel+0x54/0x400
+[    0.000000] [c094dff0] [c0002258] start_here+0x44/0x9c
+[    0.000000]
+[    0.000000]
+[    0.000000] Memory state around the buggy address:
+[    0.000000]  c7ff5980: e2 a1 87 81 bd d4 a5 b5 f8 8d 89 e7 72 bc 20 24
+[    0.000000]  c7ff5a00: e7 b9 c1 c7 17 e9 b4 bd a4 d0 e7 a0 11 15 a5 b5
+[    0.000000] >c7ff5a80: b5 e1 83 a5 2d 65 31 3f f3 e5 a7 ef 34 b5 69 b5
+[    0.000000]                  ^
+[    0.000000]  c7ff5b00: 21 a5 c1 c1 b4 bf 2d e5 e5 c3 f5 91 e3 b8 a1 34
+[    0.000000]  c7ff5b80: ad ef 23 87 3d a6 ad b5 c3 c3 80 b7 ac b1 1f 37
+[    0.000000] 
+==================================================================
+[    0.000000] Disabling lock debugging due to kernel taint
+[    0.000000] MMU: Allocated 76 bytes of context maps for 16 contexts
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8176
+[    0.000000] Kernel command line: console=ttyCPM0,115200N8 
+ip=192.168.2.7:192.168.2.2::255.0.0.0:vgoip:eth0:off kgdboc=ttyCPM0
+[    0.000000] Dentry cache hash table entries: 16384 (order: 2, 65536 
+bytes)
+[    0.000000] Inode-cache hash table entries: 8192 (order: 1, 32768 bytes)
+[    0.000000] Memory: 99904K/131072K available (7376K kernel code, 528K 
+rwdata, 1168K rodata, 576K init, 4623K bss, 31168K reserved, 0K 
+cma-reserved)
+[    0.000000] Kernel virtual memory layout:
+[    0.000000]   * 0xffefc000..0xffffc000  : fixmap
+[    0.000000]   * 0xf7c00000..0xffc00000  : kasan shadow mem
+[    0.000000]   * 0xf7a00000..0xf7c00000  : consistent mem
+[    0.000000]   * 0xf7a00000..0xf7a00000  : early ioremap
+[    0.000000]   * 0xc9000000..0xf7a00000  : vmalloc & ioremap
+
+
+Christophe
