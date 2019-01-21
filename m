@@ -2,81 +2,113 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D32C8C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DC4C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CD222085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548065484;
-	bh=Lp9UiY8aEZ+FDUNn91RjtEtUtVn0QS93n+m/e9GABsk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=vw9CEGFiJEbTDUb+HND8n43VLKqGvVlhA91z4txt4cWBh8sFn6LvVG7Ps/X67e5Rw
-	 48X8qEVMAs5QGPUSmr8hC9OWL7u1vTFrJTIOed8tBKhDBDhDV3c6UbCocNuUN++dY/
-	 aYNJAud9yVhsrP/N9YTvdnVrn4Z/Nrb9kG429FVs=
+	by mail.kernel.org (Postfix) with ESMTP id 0D0A12085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:15:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FdAIp6ut"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbfAUKLW (ORCPT
+        id S1726814AbfAUKPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:11:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46934 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726003AbfAUKLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:11:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 69BBAAFAE;
-        Mon, 21 Jan 2019 10:11:20 +0000 (UTC)
-Date:   Mon, 21 Jan 2019 11:11:19 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/7] Input: document meanings of KEY_SCREEN and
- KEY_ZOOM
-In-Reply-To: <20190118233037.87318-1-dmitry.torokhov@gmail.com>
-Message-ID: <nycvar.YFH.7.76.1901211110190.6626@cbobk.fhfr.pm>
-References: <20190118233037.87318-1-dmitry.torokhov@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mon, 21 Jan 2019 05:15:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37988 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfAUKPP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 05:15:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uY/08fgxtflytJhqScXkleAgcZtw6KGXPG1PPyjViEM=; b=FdAIp6utYyBbVagY5PUEMAQRR
+        F/NPv3sY2g1RMByEtKDKDCWQF6UEGyU21qgik31O5X/PsUPNYXK+ux0Kmh89SexrSuHtVCVIewZfp
+        nYOfoqCbW5s+RzYih8Gl1Pl/KYZAWIWgFm7M1n92ZyjEcSq6SV3MlbVREAglD9BUVbkpZ2+SEQnaI
+        /73W6Yzydz/pYiIZv+uNdLV6BNSa47zJmXkuetMwkZewmbqAGlXRYRJy9wHobAdaHSTjzXJvc+S2x
+        bq5ooHqJsRuJ5srlSEpA/3R3oTrzrjJDExgdo+QNfMGMX6Bwvte5JeQIY/8DfZ5Jx9ydwTjTdpctE
+        brg8egXLw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glWbn-0003tt-5I; Mon, 21 Jan 2019 10:15:11 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 83AB52846C9A6; Mon, 21 Jan 2019 11:15:08 +0100 (CET)
+Date:   Mon, 21 Jan 2019 11:15:08 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 03/16] sched/core: uclamp: Map TASK's clamp values
+ into CPU's clamp buckets
+Message-ID: <20190121101508.GH27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-4-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115101513.2822-4-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Jan 2019, Dmitry Torokhov wrote:
+On Tue, Jan 15, 2019 at 10:15:00AM +0000, Patrick Bellasi wrote:
+> +/*
+> + * Number of utilization clamp buckets.
+> + *
+> + * The first clamp bucket (bucket_id=0) is used to track non clamped tasks, i.e.
+> + * util_{min,max} (0,SCHED_CAPACITY_SCALE). Thus we allocate one more bucket in
+> + * addition to the compile time configured number.
+> + */
+> +#define UCLAMP_BUCKETS (CONFIG_UCLAMP_BUCKETS_COUNT + 1)
+> +
+> +/*
+> + * Utilization clamp bucket
+> + * @value:		clamp value tracked by a clamp bucket
+> + * @bucket_id:		the bucket index used by the fast-path
+> + * @mapped:		the bucket index is valid
+> + *
+> + * A utilization clamp bucket maps a:
+> + *   clamp value (value), i.e.
+> + *   util_{min,max} value requested from userspace
+> + * to a:
+> + *   clamp bucket index (bucket_id), i.e.
+> + *   index of the per-cpu RUNNABLE tasks refcounting array
+> + *
+> + * The mapped bit is set whenever a task has been mapped on a clamp bucket for
+> + * the first time. When this bit is set, any:
+> + *   uclamp_bucket_inc() - for a new clamp value
+> + * is matched by a:
+> + *   uclamp_bucket_dec() - for the old clamp value
+> + */
+> +struct uclamp_se {
+> +	unsigned int value		: bits_per(SCHED_CAPACITY_SCALE);
+> +	unsigned int bucket_id		: bits_per(UCLAMP_BUCKETS);
+> +	unsigned int mapped		: 1;
+> +};
 
-> It is hard to say what KEY_SCREEN and KEY_ZOOM mean, but historically DVB
-> folks have used them to indicate switch to full screen mode. Later, they
-> converged on using KEY_ZOOM to switch into full screen mode and KEY)SCREEN
-> to control aspect ratio (see Documentation/media/uapi/rc/rc-tables.rst).
-> 
-> Let's commit to these uses, and define:
-> 
-> - KEY_FULL_SCREEN (and make KEY_ZOOM its alias)
-> - KEY_ASPECT_RATIO (and make KEY_SCREEN its alias)
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> 
-> Please let me know how we want merge this. Some of patches can be applied
-> independently and I tried marking them as such, but some require new key
-> names from input.h
+Do we want something like:
 
-Acked-by: Jiri Kosina <jkosina@suse.cz>
+	BUILD_BUG_ON(sizeof(struct uclamp_se) == sizeof(unsigned int));
 
-for the HID changes, and feel free to take it through your tree as a 
-whole, I don't expect any major conflicts rising up from this.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+And/or put a limit on CONFIG_UCLAMP_BUCKETS_COUNT that guarantees that ?
