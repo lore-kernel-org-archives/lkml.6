@@ -2,155 +2,163 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0C3C31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EE9C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 736C820880
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61B3220880
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZ/RorbY"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="pqr1ZMJQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbfAUHNY (ORCPT
+        id S1728246AbfAUHNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:13:24 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36179 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728147AbfAUHNW (ORCPT
+        Mon, 21 Jan 2019 02:13:37 -0500
+Received: from condef-08.nifty.com ([202.248.20.73]:37362 "EHLO
+        condef-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727791AbfAUHNe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:13:22 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b85so9699082pfc.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:13:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KOM/uD0QCo+R8A70jLNHCXKLD6NDSRQnu6GicijX3uM=;
-        b=KZ/RorbYqB6p82S5YpiClVd/+5Uz+NUJcryFloOg44jqPBITRgYtnEbxjakwy7V9EF
-         oLLehle6x6lODRX0i1emydEOoV7Wi73TctV4ahHgLt7yMok3e7Ti/CRrDPg4HaO/yi0t
-         SNguuz/pTmEgy+2nEFA+hn9LFFLU3Wvkxg58Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KOM/uD0QCo+R8A70jLNHCXKLD6NDSRQnu6GicijX3uM=;
-        b=tA0vMJ+Df2xVxMQkXzXfHYSuerdbGGFPC+EKFQKoRhUVn+XpguN6NjNC+WWcBGzzAx
-         EMGNMalmZxj0h/Blmt9hGy8Y3lZ0+slWxFtgb+IqYkrXaqpykz6Vb0UGAfc2TDZ0he4k
-         TEowg38Qpq06igaVL6iNr7n+WV5hmTXCpOkg+RLgHm129lxjIFaaQRyy8+nhidrtuOvE
-         y/lntkpkiUCgyO9OEvKSriPK1kpGdenIb631AF7/hGjlTnKtVgW4JiL6XJWTlHEObg8U
-         HyEQfy4XI0xREaGjcs6YVp9h+Z8P82PpiQzmNDW7/1sX4fr1gQ7Ag1aFMgXxaxcW7R1C
-         3jZQ==
-X-Gm-Message-State: AJcUukdtiNoMajaYZ3/OGnM7HC9bke2AXgBXvqnOt+RsPib8NHFSopd3
-        XOa2Hli5lFWfEI3vCx11hfv9
-X-Google-Smtp-Source: ALg8bN5tEuiDvy/7UjSiOHIjPc1PRhcF/jybPjBK96SHNgTi6RXlqFvivbKwuNKTKBfHsET2NRZ5LQ==
-X-Received: by 2002:a63:f65:: with SMTP id 37mr26796456pgp.238.1548050999815;
-        Sun, 20 Jan 2019 22:09:59 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:620d:6d18:8cdf:8a2:4d22:45a8])
-        by smtp.gmail.com with ESMTPSA id 186sm24903247pga.36.2019.01.20.22.09.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 20 Jan 2019 22:09:58 -0800 (PST)
-Date:   Mon, 21 Jan 2019 11:39:50 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>
-Cc:     Yang-Leo Li <leoyang.li@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        a.tropschug@ebs-systart.com, m.bittner@ebs-systart.com,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: arm: fsl: Add devicetree binding for
- Oxalis
-Message-ID: <20190121060950.GA8713@Mani-XPS-13-9360>
-References: <20190114102053.16013-1-manivannan.sadhasivam@linaro.org>
- <20190114102053.16013-3-manivannan.sadhasivam@linaro.org>
- <CAL_JsqJpRPrCpRTpqh1v6JZwpEtZnaeuLTHR+0EiMSoxbk9zeQ@mail.gmail.com>
- <20190116022100.GC15808@dragon>
- <CAL_Jsq+myeZ1n4X=KhHZjtPDHnGH=L65xxYbzMrt8Rq6Bur4Bg@mail.gmail.com>
- <20190116101441.GH15808@dragon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116101441.GH15808@dragon>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 21 Jan 2019 02:13:34 -0500
+Received: from conuserg-08.nifty.com ([10.126.8.71])by condef-08.nifty.com with ESMTP id x0L6Q2J1003802
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 15:26:03 +0900
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x0L6OouF008453;
+        Mon, 21 Jan 2019 15:24:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x0L6OouF008453
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548051891;
+        bh=3LVT/OIOW3XpkTEn5pOcQFDy+pugI4n0eFXqWzDArxM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pqr1ZMJQPNp+jAzHuRd71HwbVpEvindzk6ns5XzeREQ4g6qcsNTOjJ8RgCQREdhgG
+         3/1iO8MBGfrxEnHJBsD6CHCa+IZdZt4HfAflVvBvGZk3lp3nPqGxBG+CfxEo3aFszf
+         KjXHHa5Y6iEFxhQ/rQqPNjBISHBTaJEEZ2Odu+SHAnAsTSijxkUD5yjMDAnJti/J2U
+         eqZX0m/EqiMk1k4nyQM2g6c80JW8FDK0Tz9ddouM91mwMVJTvJ0sV7HPawImNPmgfN
+         VhXFypo5+GMVWW6bRVEG8mgEvkBHeNb03LKuExfCpMcni+0k1e9jkAdN8pULV0Qeyo
+         zZxLdQ1zIRkCQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH] mtd: rawnand: remove ->legacy.erase and single_erase()
+Date:   Mon, 21 Jan 2019 15:24:43 +0900
+Message-Id: <1548051883-8309-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 06:14:43PM +0800, Shawn Guo wrote:
-> On Tue, Jan 15, 2019 at 10:07:12PM -0600, Rob Herring wrote:
-> > On Tue, Jan 15, 2019 at 8:21 PM Shawn Guo <shawnguo@kernel.org> wrote:
-> > >
-> > > On Mon, Jan 14, 2019 at 12:02:47PM -0600, Rob Herring wrote:
-> > > > On Mon, Jan 14, 2019 at 4:21 AM Manivannan Sadhasivam
-> > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > >
-> > > > > Add devicetree binding for Oxalis board in JSON format. While adding
-> > > > > that, let's fix the description for LS1012A also.
-> > > > >
-> > > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > > > ---
-> > > > >  Documentation/devicetree/bindings/arm/fsl.yaml | 3 ++-
-> > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > > index d34fe0749199..0f30142fe316 100644
-> > > > > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > > @@ -173,12 +173,13 @@ properties:
-> > > > >                - fsl,vf610
-> > > > >                - fsl,vf610m4
-> > > > >
-> > > > > -      - description: LS1021A based Boards
-> > > > > +      - description: LS1012A based Boards
-> > > >
-> > > > Well, yes that was wrong...
-> > > >
-> > > > >          items:
-> > > > >            - enum:
-> > > > >                - fsl,ls1012a-rdb
-> > > > >                - fsl,ls1012a-frdm
-> > > > >                - fsl,ls1012a-qds
-> > > > > +              - ebs-systart,oxalis
-> > > >
-> > > > Sort alphabetically.
-> > > >
-> > > > >            - const: fsl,ls1021a
-> > > >
-> > > > And this is wrong too.
-> > > >
-> > > > I you just change it, then we will be missing an entry for LS1021A.
-> > > > What's the status of that SoC because there is no board dts file? We
-> > > > should not have .dtsi files in the kernel which don't get built.
-> > >
-> > > Hmm, I do not see any LS1021A SoC .dtsi in the tree.  I suspect it's
-> > > just a typo of LS1012A.
-> > >
-> > > @Leo, do we have a LS1021A SoC?
-> > 
-> > arch/arm/boot/dts/ls1021a.dtsi
-> 
-> Oops, I only searched arm64 folder.
-> 
-> So it seems the compatible of the boards below are missing there.
-> 
->   ls1021a-moxa-uc-8410a.dts
->   ls1021a-qds.dts
->   ls1021a-twr.dts
+Now that the last user of this hook, denali.c, stopped using it,
+we can remove the erase hook from nand_legacy.
 
-So how should we proceed here? The above mentioned boards are lacking
-compatible in dts files and I guess that's the reason they didn't get
-mentioned in "fsl" binding file.
+I squashed single_erase() because only the difference between
+single_erase() and nand_erase_op() is the number of bit shifts.
 
-Should I just go ahead and add the compatibles for these boards and list
-them in binding file?
+The status/ret conversion in nand_erase_nand() is unneeded since
+commit eb94555e9e97 ("mtd: nand: use usual return values for the
+->erase() hook"). Cleaned it up now.
 
-Thanks,
-Mani
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> 
-> Shawn
+This depends on the denali patch:
+http://patchwork.ozlabs.org/patch/1028264/
+
+
+ drivers/mtd/nand/raw/nand_base.c | 32 +++++---------------------------
+ include/linux/mtd/rawnand.h      |  2 --
+ 2 files changed, 5 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index cca4b24..690900b 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -4155,23 +4155,6 @@ static int nand_write_oob(struct mtd_info *mtd, loff_t to,
+ }
+ 
+ /**
+- * single_erase - [GENERIC] NAND standard block erase command function
+- * @chip: NAND chip object
+- * @page: the page address of the block which will be erased
+- *
+- * Standard erase command for NAND chips. Returns NAND status.
+- */
+-static int single_erase(struct nand_chip *chip, int page)
+-{
+-	unsigned int eraseblock;
+-
+-	/* Send commands to erase a block */
+-	eraseblock = page >> (chip->phys_erase_shift - chip->page_shift);
+-
+-	return nand_erase_op(chip, eraseblock);
+-}
+-
+-/**
+  * nand_erase - [MTD Interface] erase block(s)
+  * @mtd: MTD device structure
+  * @instr: erase instruction
+@@ -4194,7 +4177,7 @@ static int nand_erase(struct mtd_info *mtd, struct erase_info *instr)
+ int nand_erase_nand(struct nand_chip *chip, struct erase_info *instr,
+ 		    int allowbbt)
+ {
+-	int page, status, pages_per_block, ret, chipnr;
++	int page, pages_per_block, ret, chipnr;
+ 	loff_t len;
+ 
+ 	pr_debug("%s: start = 0x%012llx, len = %llu\n",
+@@ -4246,17 +4229,12 @@ int nand_erase_nand(struct nand_chip *chip, struct erase_info *instr,
+ 		    (page + pages_per_block))
+ 			chip->pagebuf = -1;
+ 
+-		if (chip->legacy.erase)
+-			status = chip->legacy.erase(chip,
+-						    page & chip->pagemask);
+-		else
+-			status = single_erase(chip, page & chip->pagemask);
+-
+-		/* See if block erase succeeded */
+-		if (status) {
++		ret = nand_erase_op(chip,
++				    page >> (chip->phys_erase_shift -
++					     chip->page_shift));
++		if (ret) {
+ 			pr_debug("%s: failed erase, page 0x%08x\n",
+ 					__func__, page);
+-			ret = -EIO;
+ 			instr->fail_addr =
+ 				((loff_t)page << chip->page_shift);
+ 			goto erase_exit;
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 33e240a..5e37534 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -936,7 +936,6 @@ static inline void nand_controller_init(struct nand_controller *nfc)
+  * @waitfunc: hardware specific function for wait on ready.
+  * @block_bad: check if a block is bad, using OOB markers
+  * @block_markbad: mark a block bad
+- * @erase: erase function
+  * @set_features: set the NAND chip features
+  * @get_features: get the NAND chip features
+  * @chip_delay: chip dependent delay for transferring data from array to read
+@@ -962,7 +961,6 @@ struct nand_legacy {
+ 	int (*waitfunc)(struct nand_chip *chip);
+ 	int (*block_bad)(struct nand_chip *chip, loff_t ofs);
+ 	int (*block_markbad)(struct nand_chip *chip, loff_t ofs);
+-	int (*erase)(struct nand_chip *chip, int page);
+ 	int (*set_features)(struct nand_chip *chip, int feature_addr,
+ 			    u8 *subfeature_para);
+ 	int (*get_features)(struct nand_chip *chip, int feature_addr,
+-- 
+2.7.4
+
