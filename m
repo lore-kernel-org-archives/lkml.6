@@ -4,47 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77AF6C7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E66C7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E69D2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE4BF20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbfAULhS (ORCPT
+        id S1728357AbfAULiA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:37:18 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59593 "EHLO
+        Mon, 21 Jan 2019 06:38:00 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:44255 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbfAULhR (ORCPT
+        with ESMTP id S1727679AbfAULiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:37:17 -0500
+        Mon, 21 Jan 2019 06:38:00 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBb1It2497585
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBblX92497636
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 21 Jan 2019 03:37:01 -0800
+        Mon, 21 Jan 2019 03:37:47 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBb1Ph2497582;
-        Mon, 21 Jan 2019 03:37:01 -0800
-Date:   Mon, 21 Jan 2019 03:37:01 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBblMq2497633;
+        Mon, 21 Jan 2019 03:37:47 -0800
+Date:   Mon, 21 Jan 2019 03:37:47 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-b733c2d2f2810ec8556d2d711d1b95f491bd7697@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, hpa@zytor.com, tglx@linutronix.de,
-        efault@gmx.de, bigeasy@linutronix.de,
-        tom.putzeys@be.atlascopco.com, peterz@infradead.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: peterz@infradead.org, tom.putzeys@be.atlascopco.com,
-          bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
-          efault@gmx.de, tglx@linutronix.de
-In-Reply-To: <20190107125231.GE14122@hirez.programming.kicks-ass.net>
-References: <20190107125231.GE14122@hirez.programming.kicks-ass.net>
+From:   tip-bot for Quentin Perret <tipbot@zytor.com>
+Message-ID: <tip-c8c12bb2c6c1808b1d9a47bb4b260073e5caaf2f@git.kernel.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        quentin.perret@arm.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de, hpa@zytor.com
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org, hpa@zytor.com,
+          quentin.perret@arm.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, peterz@infradead.org
+In-Reply-To: <20190110110546.8101-2-quentin.perret@arm.com>
+References: <20190110110546.8101-2-quentin.perret@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Robustify CFS-bandwidth timer locking
-Git-Commit-ID: b733c2d2f2810ec8556d2d711d1b95f491bd7697
+Subject: [tip:sched/core] PM/EM: Document the Energy Model framework
+Git-Commit-ID: c8c12bb2c6c1808b1d9a47bb4b260073e5caaf2f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,152 +56,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b733c2d2f2810ec8556d2d711d1b95f491bd7697
-Gitweb:     https://git.kernel.org/tip/b733c2d2f2810ec8556d2d711d1b95f491bd7697
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 7 Jan 2019 13:52:31 +0100
+Commit-ID:  c8c12bb2c6c1808b1d9a47bb4b260073e5caaf2f
+Gitweb:     https://git.kernel.org/tip/c8c12bb2c6c1808b1d9a47bb4b260073e5caaf2f
+Author:     Quentin Perret <quentin.perret@arm.com>
+AuthorDate: Thu, 10 Jan 2019 11:05:45 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 21 Jan 2019 11:27:55 +0100
+CommitDate: Mon, 21 Jan 2019 11:27:56 +0100
 
-sched/fair: Robustify CFS-bandwidth timer locking
+PM/EM: Document the Energy Model framework
 
-Traditionally hrtimer callbacks were run with IRQs disabled, but with
-the introduction of HRTIMER_MODE_SOFT it is possible they run from
-SoftIRQ context, which does _NOT_ have IRQs disabled.
+Introduce a documentation file summarizing the key design points and
+APIs of the newly introduced Energy Model framework.
 
-Allow for the CFS bandwidth timers (period_timer and slack_timer) to
-be ran from SoftIRQ context; this entails removing the assumption that
-IRQs are already disabled from the locking.
-
-While mainline doesn't strictly need this, -RT forces all timers not
-explicitly marked with MODE_HARD into MODE_SOFT and trips over this.
-And marking these timers as MODE_HARD doesn't make sense as they're
-not required for RT operation and can potentially be quite expensive.
-
-Reported-by: Tom Putzeys <tom.putzeys@be.atlascopco.com>
-Tested-by: Mike Galbraith <efault@gmx.de>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190107125231.GE14122@hirez.programming.kicks-ass.net
+Cc: corbet@lwn.net
+Cc: dietmar.eggemann@arm.com
+Cc: morten.rasmussen@arm.com
+Cc: patrick.bellasi@arm.com
+Cc: qais.yousef@arm.com
+Cc: rjw@rjwysocki.net
+Link: https://lkml.kernel.org/r/20190110110546.8101-2-quentin.perret@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ Documentation/power/energy-model.txt | 144 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 144 insertions(+)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 385725eb3bd6..90c7a7bf45d3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4565,7 +4565,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
- 		struct rq *rq = rq_of(cfs_rq);
- 		struct rq_flags rf;
- 
--		rq_lock(rq, &rf);
-+		rq_lock_irqsave(rq, &rf);
- 		if (!cfs_rq_throttled(cfs_rq))
- 			goto next;
- 
-@@ -4582,7 +4582,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
- 			unthrottle_cfs_rq(cfs_rq);
- 
- next:
--		rq_unlock(rq, &rf);
-+		rq_unlock_irqrestore(rq, &rf);
- 
- 		if (!remaining)
- 			break;
-@@ -4598,7 +4598,7 @@ next:
-  * period the timer is deactivated until scheduling resumes; cfs_b->idle is
-  * used to track this state.
-  */
--static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
-+static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, unsigned long flags)
- {
- 	u64 runtime, runtime_expires;
- 	int throttled;
-@@ -4640,11 +4640,11 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
- 	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
- 		runtime = cfs_b->runtime;
- 		cfs_b->distribute_running = 1;
--		raw_spin_unlock(&cfs_b->lock);
-+		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 		/* we can't nest cfs_b->lock while distributing bandwidth */
- 		runtime = distribute_cfs_runtime(cfs_b, runtime,
- 						 runtime_expires);
--		raw_spin_lock(&cfs_b->lock);
-+		raw_spin_lock_irqsave(&cfs_b->lock, flags);
- 
- 		cfs_b->distribute_running = 0;
- 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
-@@ -4753,17 +4753,18 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- {
- 	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
-+	unsigned long flags;
- 	u64 expires;
- 
- 	/* confirm we're still not at a refresh boundary */
--	raw_spin_lock(&cfs_b->lock);
-+	raw_spin_lock_irqsave(&cfs_b->lock, flags);
- 	if (cfs_b->distribute_running) {
--		raw_spin_unlock(&cfs_b->lock);
-+		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 		return;
- 	}
- 
- 	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
--		raw_spin_unlock(&cfs_b->lock);
-+		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 		return;
- 	}
- 
-@@ -4774,18 +4775,18 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 	if (runtime)
- 		cfs_b->distribute_running = 1;
- 
--	raw_spin_unlock(&cfs_b->lock);
-+	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 
- 	if (!runtime)
- 		return;
- 
- 	runtime = distribute_cfs_runtime(cfs_b, runtime, expires);
- 
--	raw_spin_lock(&cfs_b->lock);
-+	raw_spin_lock_irqsave(&cfs_b->lock, flags);
- 	if (expires == cfs_b->runtime_expires)
- 		lsub_positive(&cfs_b->runtime, runtime);
- 	cfs_b->distribute_running = 0;
--	raw_spin_unlock(&cfs_b->lock);
-+	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- }
- 
- /*
-@@ -4863,20 +4864,21 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
- {
- 	struct cfs_bandwidth *cfs_b =
- 		container_of(timer, struct cfs_bandwidth, period_timer);
-+	unsigned long flags;
- 	int overrun;
- 	int idle = 0;
- 
--	raw_spin_lock(&cfs_b->lock);
-+	raw_spin_lock_irqsave(&cfs_b->lock, flags);
- 	for (;;) {
- 		overrun = hrtimer_forward_now(timer, cfs_b->period);
- 		if (!overrun)
- 			break;
- 
--		idle = do_sched_cfs_period_timer(cfs_b, overrun);
-+		idle = do_sched_cfs_period_timer(cfs_b, overrun, flags);
- 	}
- 	if (idle)
- 		cfs_b->period_active = 0;
--	raw_spin_unlock(&cfs_b->lock);
-+	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 
- 	return idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
- }
+diff --git a/Documentation/power/energy-model.txt b/Documentation/power/energy-model.txt
+new file mode 100644
+index 000000000000..a2b0ae4c76bd
+--- /dev/null
++++ b/Documentation/power/energy-model.txt
+@@ -0,0 +1,144 @@
++                           ====================
++                           Energy Model of CPUs
++                           ====================
++
++1. Overview
++-----------
++
++The Energy Model (EM) framework serves as an interface between drivers knowing
++the power consumed by CPUs at various performance levels, and the kernel
++subsystems willing to use that information to make energy-aware decisions.
++
++The source of the information about the power consumed by CPUs can vary greatly
++from one platform to another. These power costs can be estimated using
++devicetree data in some cases. In others, the firmware will know better.
++Alternatively, userspace might be best positioned. And so on. In order to avoid
++each and every client subsystem to re-implement support for each and every
++possible source of information on its own, the EM framework intervenes as an
++abstraction layer which standardizes the format of power cost tables in the
++kernel, hence enabling to avoid redundant work.
++
++The figure below depicts an example of drivers (Arm-specific here, but the
++approach is applicable to any architecture) providing power costs to the EM
++framework, and interested clients reading the data from it.
++
++       +---------------+  +-----------------+  +---------------+
++       | Thermal (IPA) |  | Scheduler (EAS) |  |     Other     |
++       +---------------+  +-----------------+  +---------------+
++               |                   | em_pd_energy()    |
++               |                   | em_cpu_get()      |
++               +---------+         |         +---------+
++                         |         |         |
++                         v         v         v
++                        +---------------------+
++                        |    Energy Model     |
++                        |     Framework       |
++                        +---------------------+
++                           ^       ^       ^
++                           |       |       | em_register_perf_domain()
++                +----------+       |       +---------+
++                |                  |                 |
++        +---------------+  +---------------+  +--------------+
++        |  cpufreq-dt   |  |   arm_scmi    |  |    Other     |
++        +---------------+  +---------------+  +--------------+
++                ^                  ^                 ^
++                |                  |                 |
++        +--------------+   +---------------+  +--------------+
++        | Device Tree  |   |   Firmware    |  |      ?       |
++        +--------------+   +---------------+  +--------------+
++
++The EM framework manages power cost tables per 'performance domain' in the
++system. A performance domain is a group of CPUs whose performance is scaled
++together. Performance domains generally have a 1-to-1 mapping with CPUFreq
++policies. All CPUs in a performance domain are required to have the same
++micro-architecture. CPUs in different performance domains can have different
++micro-architectures.
++
++
++2. Core APIs
++------------
++
++  2.1 Config options
++
++CONFIG_ENERGY_MODEL must be enabled to use the EM framework.
++
++
++  2.2 Registration of performance domains
++
++Drivers are expected to register performance domains into the EM framework by
++calling the following API:
++
++  int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
++			      struct em_data_callback *cb);
++
++Drivers must specify the CPUs of the performance domains using the cpumask
++argument, and provide a callback function returning <frequency, power> tuples
++for each capacity state. The callback function provided by the driver is free
++to fetch data from any relevant location (DT, firmware, ...), and by any mean
++deemed necessary. See Section 3. for an example of driver implementing this
++callback, and kernel/power/energy_model.c for further documentation on this
++API.
++
++
++  2.3 Accessing performance domains
++
++Subsystems interested in the energy model of a CPU can retrieve it using the
++em_cpu_get() API. The energy model tables are allocated once upon creation of
++the performance domains, and kept in memory untouched.
++
++The energy consumed by a performance domain can be estimated using the
++em_pd_energy() API. The estimation is performed assuming that the schedutil
++CPUfreq governor is in use.
++
++More details about the above APIs can be found in include/linux/energy_model.h.
++
++
++3. Example driver
++-----------------
++
++This section provides a simple example of a CPUFreq driver registering a
++performance domain in the Energy Model framework using the (fake) 'foo'
++protocol. The driver implements an est_power() function to be provided to the
++EM framework.
++
++ -> drivers/cpufreq/foo_cpufreq.c
++
++01	static int est_power(unsigned long *mW, unsigned long *KHz, int cpu)
++02	{
++03		long freq, power;
++04
++05		/* Use the 'foo' protocol to ceil the frequency */
++06		freq = foo_get_freq_ceil(cpu, *KHz);
++07		if (freq < 0);
++08			return freq;
++09
++10		/* Estimate the power cost for the CPU at the relevant freq. */
++11		power = foo_estimate_power(cpu, freq);
++12		if (power < 0);
++13			return power;
++14
++15		/* Return the values to the EM framework */
++16		*mW = power;
++17		*KHz = freq;
++18
++19		return 0;
++20	}
++21
++22	static int foo_cpufreq_init(struct cpufreq_policy *policy)
++23	{
++24		struct em_data_callback em_cb = EM_DATA_CB(est_power);
++25		int nr_opp, ret;
++26
++27		/* Do the actual CPUFreq init work ... */
++28		ret = do_foo_cpufreq_init(policy);
++29		if (ret)
++30			return ret;
++31
++32		/* Find the number of OPPs for this policy */
++33		nr_opp = foo_get_nr_opp(policy);
++34
++35		/* And register the new performance domain */
++36		em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
++37
++38	        return 0;
++39	}
