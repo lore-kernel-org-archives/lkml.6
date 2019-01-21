@@ -2,146 +2,161 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCE8C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8466C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 801AB20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:48:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A77920663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:48:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TVCLxlcG"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d+E3DN2c";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LudqH/NN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfAUKsa (ORCPT
+        id S1727856AbfAUKsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:48:30 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35474 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727920AbfAUKsa (ORCPT
+        Mon, 21 Jan 2019 05:48:50 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57958 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbfAUKst (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:48:30 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so22773523wrb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 02:48:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1ttaux9N8+M7syJi6fIp1C2xsjMJsGRJJyi8anCnSNE=;
-        b=TVCLxlcGpRv2Gxbu4n0RwJLY9m/obf4w3VfUJcZ8qDVvKbtB7F+XoHbwgul6gnZTm7
-         elSwhQm1rT3wa/KACqmkY32KYeVjPn2GDSJJUtiXIojJU09WfKHmUhR6YgWUuSTLIZ3q
-         vS/+ZlTqCRoXxkjTsoZrXwHK3nKuHP+w0BpSw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1ttaux9N8+M7syJi6fIp1C2xsjMJsGRJJyi8anCnSNE=;
-        b=gtZ14kAoTxq/wxu/a5c0bvdZyxEQyNKhRZcxzSCmzTA4VLDLNwFViWI3s3SChmWysd
-         3q/FnvIj/5bevA4qSTyuLaxSQ6wTfz1BhenTuoEgMjhl9+Q7TTUARAddFaEuDgwaKoFZ
-         HQWMszOL+2BOkSQm7P3KzfQ2J4OUhBiONOU1no39FsJwWF/sRibBeRZCchfRmhbpWppj
-         hoMmYUaxDl49UjT9yfjRXF2tYXL8eVkCytNo1MUak+KGJLCn1q49LKrpfnDcFz+hyj0r
-         j/NeES4tbDBJqd/NMqmJCzVUTSYIF9x+RG1Hxp1aJhS/I76QWxA5pOoGGIkvCWf4vlyX
-         Wk2w==
-X-Gm-Message-State: AJcUukc3CEWEOPrd/Fb1LAnaZKAstOp1i2B6xphtTJlKo+lamGzV55r6
-        /BDJlCZJ4BWRcZWhhxd7EXtwig==
-X-Google-Smtp-Source: ALg8bN6ZHR94sgSFTbDFBw/pg/+KOlZaBo07H6jjtjHLp5kuuTC5yGUZ7cwJlNwAs5YTLbdRzws9yw==
-X-Received: by 2002:adf:c38e:: with SMTP id p14mr22292986wrf.68.1548067708263;
-        Mon, 21 Jan 2019 02:48:28 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id y138sm57934722wmc.16.2019.01.21.02.48.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 02:48:27 -0800 (PST)
-Subject: Re: [RFC PATCH] media/doc: Allow sizeimage to be set by v4l clients
-To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-References: <20190116123701.10344-1-stanimir.varbanov@linaro.org>
- <299e8aeb-6deb-b383-8f63-cf2cbf5d2e9f@xs4all.nl>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <adecdc4e-1aed-fc33-b14b-083322797c70@linaro.org>
-Date:   Mon, 21 Jan 2019 12:48:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 05:48:49 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7994A60D82; Mon, 21 Jan 2019 10:48:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548067728;
+        bh=0QHfasHGRj/c+tZG+pzV/MmNxDMvVcTPZ/a7hlGP+Ic=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=d+E3DN2cotcO/CtaHewCU/qqA0zu06TuvW5BZWEAwTBN1ilCtqaO6WCzATieokK/K
+         z+W948L04O2VJMWJusEN88WPFTIHbbv1ouP/HX3rLdVdhD1tjV+Szz/R+y3RGBpf3K
+         iui4nyKWhrpmcHnZiyVIoDL9n/zIfA5qomWTQSpY=
+Received: from [10.131.114.83] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0C37860DB1;
+        Mon, 21 Jan 2019 10:48:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548067724;
+        bh=0QHfasHGRj/c+tZG+pzV/MmNxDMvVcTPZ/a7hlGP+Ic=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LudqH/NNcoDNJ8ict+I4ko9ORMn1akIXWEFBiXlSOyhTaPhL0w6ShIly9+RqJkS7C
+         HwntGxPmSozaTe8H6GJR7XYN6b6VFGlXaGBvak96CSAFv3rSlmgpyExqx6JnBM1OWt
+         cXANmEutRqL3ulwt/KCPNbvzNuAUuA0MB8NyioDo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0C37860DB1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCHv3 3/4] coresight: etm4x: Add support to enable ETMv4.2
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <cover.1547813804.git.saiprakash.ranjan@codeaurora.org>
+ <d52546764f8570e8c07ac8e3e2841e087e66648c.1547813804.git.saiprakash.ranjan@codeaurora.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <cc71cfa9-8a11-9356-ac41-e27564a9f7b4@codeaurora.org>
+Date:   Mon, 21 Jan 2019 16:18:36 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <299e8aeb-6deb-b383-8f63-cf2cbf5d2e9f@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <d52546764f8570e8c07ac8e3e2841e087e66648c.1547813804.git.saiprakash.ranjan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
 
-On 1/18/19 11:13 AM, Hans Verkuil wrote:
-> On 1/16/19 1:37 PM, Stanimir Varbanov wrote:
->> This changes v4l2_pix_format and v4l2_plane_pix_format sizeimage
->> field description to allow v4l clients to set bigger image size
->> in case of variable length compressed data.
->>
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> ---
->>  Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst | 5 ++++-
->>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst        | 3 ++-
->>  2 files changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
->> index 7f82dad9013a..dbe0b74e9ba4 100644
->> --- a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
->> +++ b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
->> @@ -30,7 +30,10 @@ describing all planes of that format.
->>  
->>      * - __u32
->>        - ``sizeimage``
->> -      - Maximum size in bytes required for image data in this plane.
->> +      - Maximum size in bytes required for image data in this plane,
->> +        set by the driver. When the image consists of variable length
->> +        compressed data this is the maximum number of bytes required
->> +        to hold an image, and it is allowed to be set by the client.
->>      * - __u32
->>        - ``bytesperline``
->>        - Distance in bytes between the leftmost pixels in two adjacent
->> diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
->> index 71eebfc6d853..54b6d2b67bd7 100644
->> --- a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
->> +++ b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
->> @@ -89,7 +89,8 @@ Single-planar format structure
->>        - Size in bytes of the buffer to hold a complete image, set by the
->>  	driver. Usually this is ``bytesperline`` times ``height``. When
->>  	the image consists of variable length compressed data this is the
->> -	maximum number of bytes required to hold an image.
->> +	maximum number of bytes required to hold an image, and it is
->> +	allowed to be set by the client.
->>      * - __u32
->>        - ``colorspace``
->>        - Image colorspace, from enum :c:type:`v4l2_colorspace`.
->>
-> 
-> Hmm. "maximum number of bytes required to hold an image": that's not actually true
-> for bitstream formats like MPEG. It's just the size of the buffer used to store the
-> bitstream, i.e. one buffer may actually contain multiple compressed images, or a
-> compressed image is split over multiple buffers.
-> 
+On 1/18/2019 5:52 PM, Sai Prakash Ranjan wrote:
+> SDM845 has ETMv4.2 and can use the existing etm4x driver.
+> But the current etm driver checks only for ETMv4.0 and
+> errors out for other etm4x versions. This patch adds this
+> missing support to enable SoC's with ETMv4x to use same
+> driver by checking only the ETM architecture major version
+> number.
+>
+> Without this change, we get below error during etm probe:
+>
+> / # dmesg | grep etm
+> [    6.660093] coresight-etm4x: probe of 7040000.etm failed with error -22
+> [    6.666902] coresight-etm4x: probe of 7140000.etm failed with error -22
+> [    6.673708] coresight-etm4x: probe of 7240000.etm failed with error -22
+> [    6.680511] coresight-etm4x: probe of 7340000.etm failed with error -22
+> [    6.687313] coresight-etm4x: probe of 7440000.etm failed with error -22
+> [    6.694113] coresight-etm4x: probe of 7540000.etm failed with error -22
+> [    6.700914] coresight-etm4x: probe of 7640000.etm failed with error -22
+> [    6.707717] coresight-etm4x: probe of 7740000.etm failed with error -22
+>
+> With this change, etm probe is successful:
+>
+> / # dmesg | grep coresight
+> [    6.659198] coresight-etm4x 7040000.etm: CPU0: ETM v4.2 initialized
+> [    6.665848] coresight-etm4x 7140000.etm: CPU1: ETM v4.2 initialized
+> [    6.672493] coresight-etm4x 7240000.etm: CPU2: ETM v4.2 initialized
+> [    6.679129] coresight-etm4x 7340000.etm: CPU3: ETM v4.2 initialized
+> [    6.685770] coresight-etm4x 7440000.etm: CPU4: ETM v4.2 initialized
+> [    6.692403] coresight-etm4x 7540000.etm: CPU5: ETM v4.2 initialized
+> [    6.699024] coresight-etm4x 7640000.etm: CPU6: ETM v4.2 initialized
+> [    6.705646] coresight-etm4x 7740000.etm: CPU7: ETM v4.2 initialized
+>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
+>   drivers/hwtracing/coresight/coresight-etm4x.c | 2 +-
+>   drivers/hwtracing/coresight/coresight-etm4x.h | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
+> index 53e2fb6e86f6..93d5f1f3145e 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+> @@ -55,7 +55,7 @@ static void etm4_os_unlock(struct etmv4_drvdata *drvdata)
+>   
+>   static bool etm4_arch_supported(u8 arch)
+>   {
+> -	switch (arch) {
+> +	switch (arch >> 4) {
 
-Do you want me to change something in the current documentation, i.e.
-the quoted above?
 
-> Only for MJPEG is this statement true since each buffer will contain a single
-> compressed JPEG image.
-> 
-> Regards,
-> 
-> 	Hans
-> 
+While this looks good, from what it looks like arch is a combination of 
+major version
+minor version. So, will it be better to masks, and shifts macros instead 
+of a magic
+number shift.
+But, frankly it's upto Mathieu to decide the readability of this. So, I 
+leave it to him.
 
--- 
-regards,
-Stan
+Thanks
+Vivek
+
+>   	case ETM_ARCH_V4:
+>   		break;
+>   	default:
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
+> index 52786e9d8926..05d4bd330881 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x.h
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x.h
+> @@ -136,7 +136,7 @@
+>   #define ETM_MAX_RES_SEL			16
+>   #define ETM_MAX_SS_CMP			8
+>   
+> -#define ETM_ARCH_V4			0x40
+> +#define ETM_ARCH_V4			0x4
+>   #define ETMv4_SYNC_MASK			0x1F
+>   #define ETM_CYC_THRESHOLD_MASK		0xFFF
+>   #define ETM_CYC_THRESHOLD_DEFAULT       0x100
