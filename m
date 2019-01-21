@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF11C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510A9C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A09282085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:41:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AF632085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbfAUJlE (ORCPT
+        id S1728043AbfAUJlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:41:04 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:42737 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbfAUJlE (ORCPT
+        Mon, 21 Jan 2019 04:41:31 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:40834 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbfAUJlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:41:04 -0500
-Received: by mail-ua1-f67.google.com with SMTP id d21so6698358uap.9
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:41:03 -0800 (PST)
+        Mon, 21 Jan 2019 04:41:31 -0500
+Received: by mail-vk1-f194.google.com with SMTP id v70so4439121vkv.7
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:41:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tCej17OLmF62dw6BPjxSL+3gkRJfbvrCSa73IxL1IBQ=;
-        b=BzDqaVfJ1BubrBSE6ndIKpeIpnu2EfUo1h+iwzmO9u58O39iVruCGm6DXPPkAEWRCK
-         9YZdJj5N7LSfH2iS21NiQbrs0p7K+06ln5s/4G7EQffKVl301N38qE5jK5OQ5MWRGpSG
-         xelUbsXhe6yTL58LcKJA+5G1nxSjYphDnS7X6SSHrgo6oGJBus+MxqB3tD9vgBH1fL9S
-         kxhIGcneao/dBtfDJJ8td90xmL1GLcBjCo7tAvuqH7hHMPnEkKHMs6sGhQS7j07HbIJH
-         2eJfypKIhU2mmKsmjmH06BtrzITprnqjgDq3Y0t8PEhgSj06XhLoqPmi9fXgvdYlfl58
-         lAZw==
-X-Gm-Message-State: AJcUukfwy4+khCT/dEZXEvIA7uZ2aoM85ZcS9ajDBK0sTwfBSeFR0WDE
-        ++1h4OHOe2i6bNjBabSKuyUEov91PZiatgOswqKO3QKw
-X-Google-Smtp-Source: ALg8bN7OUfza8+m+VMIe0F1HQt8M1DocbaIY5aX4M1EgTHs92dPBZv+Ge8eg5vlpmuFn8/zq1P0Jvng3TcfDgmOHf5g=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr11430659ual.20.1548063663165;
- Mon, 21 Jan 2019 01:41:03 -0800 (PST)
+        bh=ZxDm1GwJyvN2+sLNUkHn4Vb6f3JwRBk2PI939aIyXUQ=;
+        b=VpV16xFoeMVZ4K866dqwt5qIwB3C89PZ+QHb3Mb2vxtyJ374j+bgUNtjEIRIatlHmq
+         KlWXMcQmBwEk9AeloIYkw9qhYAMbIVnIvmiXVkJwZi56erCXkJmhv9HgBgQY3zlzjMN1
+         zwOEdiy1Gkonn5vjtqAzy/rli18ogO3Lss6+stNRtP1hfp4biaxjrj4XWem1aTZRbuhw
+         9A/jBZ6imQEuoa5fUXaDbmKmeetro061AgawfSORY7onkwK9ouuovNu2PRX3MYgJVet9
+         0piPTpG71wGRYczrJkrz0+9h5LRQq7A8Vu0vB/4Wgsa7vD9lDRJQilloCBqagjRlp0T1
+         Caiw==
+X-Gm-Message-State: AJcUukf/qRlyDb5w4fn2HX3usP7sVhLN9EUl9QXFYZ3MHst0xMtAmVbX
+        RF5MpwOV2VSXfYErA46UQrHqawTLHPa99A616kb1ffKl
+X-Google-Smtp-Source: ALg8bN63ANY28IFt/wS2Hql5C22dW4WqKSIWGMwn2Ff5VOtK6NOi4fqrqv3JFsfwWrr6P7jdHpfjJkxz4CfmB8egAQQ=
+X-Received: by 2002:a1f:91cb:: with SMTP id t194mr11187634vkd.74.1548063690455;
+ Mon, 21 Jan 2019 01:41:30 -0800 (PST)
 MIME-Version: 1.0
-References: <e05665950235d8c8a5cc7e3e5f989b46b8e8a631.1545445081.git.fthain@telegraphics.com.au>
-In-Reply-To: <e05665950235d8c8a5cc7e3e5f989b46b8e8a631.1545445081.git.fthain@telegraphics.com.au>
+References: <dc3abf702c1f54d536c94305c44de7182f5212b6.1545445081.git.fthain@telegraphics.com.au>
+In-Reply-To: <dc3abf702c1f54d536c94305c44de7182f5212b6.1545445081.git.fthain@telegraphics.com.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 10:40:51 +0100
-Message-ID: <CAMuHMdXiKZ1yWxZAv8+bFo5Z+gTLmpLGqgyHMJ9KoKb_76bz0A@mail.gmail.com>
-Subject: Re: [PATCH] m68k/mac: Remove obsolete comment
+Date:   Mon, 21 Jan 2019 10:41:18 +0100
+Message-ID: <CAMuHMdXLSPaht7NHgeNQ+DdsT8Bn6gnbauMDipvguW4t9L0PaA@mail.gmail.com>
+Subject: Re: [PATCH] m68k/mac: Use '030 reset method on SE/30
 To:     Finn Thain <fthain@telegraphics.com.au>
 Cc:     Joshua Thompson <funaho@jurai.org>,
         linux-m68k <linux-m68k@lists.linux-m68k.org>,
@@ -56,10 +56,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sat, Dec 22, 2018 at 4:07 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> According to The Guide To Mac Family Hardware, this is the correct way
-> to disable the VBL interrupt. The confusing comment here doesn't add any
-> value so remove it.
+> The comment says that calling the ROM routine doesn't work. But testing
+> shows that the 68030 fall-back reset method does work, so just use that.
 >
+> Tested-by: Stan Johnson <userm57@yahoo.com>
 > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
 Thanks, applied and queued for v5.1.
