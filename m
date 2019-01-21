@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 898DBC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE14C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58B1C20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B7462087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078460;
-	bh=pPdJH3OkfFthRa/JVPX7WdP/P6epsj89OqxvFX2sJmQ=;
+	s=default; t=1548078464;
+	bh=ghtV6+9Bk86F7LYn4P2FxVc2vHuHok9I9X64UONXJyM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qr71lkefYlr0A+uH9hJaXmB7aCKAH9A3iJhcMJHoxVdiLquPQpNb5U0zjTMUomXmX
-	 X6tyejXn7GWeojx7OkJdlWgil0Pq345mch+4rY8tg4sKLaAG1xKxArweiVDvT++yfJ
-	 B/qcW6yaRuLjywfTfbdFa76VcHDHINMfHSEps/+w=
+	b=ctXfs0eBR0OL6CAnkvsQeoSV5WgymnzH5Wa/W8/M8Ws7WFwXXyvOcQ3J/SQ02do84
+	 j9D5kcOMhEt0GowQdNpcjbLA2/tud8oaNBb98QxnnRZDmNHesdI+eP17AYoyTc5/P8
+	 gviUvGdokWnrum2jua1VXdj8CLl2IkVO+DS7EfqA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbfAUNrj (ORCPT
+        id S1729688AbfAUNrm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:47:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57014 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:47:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728980AbfAUNrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:47:36 -0500
+        id S1729060AbfAUNrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:47:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8259C20879;
-        Mon, 21 Jan 2019 13:47:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E2C920861;
+        Mon, 21 Jan 2019 13:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078456;
-        bh=pPdJH3OkfFthRa/JVPX7WdP/P6epsj89OqxvFX2sJmQ=;
+        s=default; t=1548078458;
+        bh=ghtV6+9Bk86F7LYn4P2FxVc2vHuHok9I9X64UONXJyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V9rnF1YdEIXWFWe7DMpi3zYehCjb3eAtF9+/z1ig/8Femy2PtCFpDXZ+QwnRP3n9Z
-         uUwGckA9OiUX024akWecsu0G9+dX/FsAVHKIeG/9n7AIpEcAfAnlL0V41qQo2Onejp
-         PUsMZwlr3HRPyTQuSF1J4GTPrS+8NhWOvsCnKlYA=
+        b=vCRxKHFmZcjLy0GnHhBpQ4HQ6DC7X/3gsPfplBJPI2RvBVj5ePCcs0hL1PTvqT3NP
+         EkeC8ky9GYpuUPdBDjkl2th90gvzD3LAz7W7s/pwP2dkQnE5gT2DQ8dcRl6sPjAX/W
+         VwPUxhRWp0refXYImEP8LTI+LThEBgxSuFN8GPR4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.20 037/111] crypto: authenc - fix parsing key with misaligned rta_len
-Date:   Mon, 21 Jan 2019 14:42:31 +0100
-Message-Id: <20190121122459.987371683@linuxfoundation.org>
+Subject: [PATCH 4.20 038/111] crypto: talitos - reorder code in talitos_edesc_alloc()
+Date:   Mon, 21 Jan 2019 14:42:32 +0100
+Message-Id: <20190121122500.074438484@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,116 +66,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 8f9c469348487844328e162db57112f7d347c49f upstream.
+commit c56c2e173773097a248fd3bace91ac8f6fc5386d upstream.
 
-Keys for "authenc" AEADs are formatted as an rtattr containing a 4-byte
-'enckeylen', followed by an authentication key and an encryption key.
-crypto_authenc_extractkeys() parses the key to find the inner keys.
+This patch moves the mapping of IV after the kmalloc(). This
+avoids having to unmap in case kmalloc() fails.
 
-However, it fails to consider the case where the rtattr's payload is
-longer than 4 bytes but not 4-byte aligned, and where the key ends
-before the next 4-byte aligned boundary.  In this case, 'keylen -=
-RTA_ALIGN(rta->rta_len);' underflows to a value near UINT_MAX.  This
-causes a buffer overread and crash during crypto_ahash_setkey().
-
-Fix it by restricting the rtattr payload to the expected size.
-
-Reproducer using AF_ALG:
-
-	#include <linux/if_alg.h>
-	#include <linux/rtnetlink.h>
-	#include <sys/socket.h>
-
-	int main()
-	{
-		int fd;
-		struct sockaddr_alg addr = {
-			.salg_type = "aead",
-			.salg_name = "authenc(hmac(sha256),cbc(aes))",
-		};
-		struct {
-			struct rtattr attr;
-			__be32 enckeylen;
-			char keys[1];
-		} __attribute__((packed)) key = {
-			.attr.rta_len = sizeof(key),
-			.attr.rta_type = 1 /* CRYPTO_AUTHENC_KEYA_PARAM */,
-		};
-
-		fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
-		bind(fd, (void *)&addr, sizeof(addr));
-		setsockopt(fd, SOL_ALG, ALG_SET_KEY, &key, sizeof(key));
-	}
-
-It caused:
-
-	BUG: unable to handle kernel paging request at ffff88007ffdc000
-	PGD 2e01067 P4D 2e01067 PUD 2e04067 PMD 2e05067 PTE 0
-	Oops: 0000 [#1] SMP
-	CPU: 0 PID: 883 Comm: authenc Not tainted 4.20.0-rc1-00108-g00c9fe37a7f27 #13
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-20181126_142135-anatol 04/01/2014
-	RIP: 0010:sha256_ni_transform+0xb3/0x330 arch/x86/crypto/sha256_ni_asm.S:155
-	[...]
-	Call Trace:
-	 sha256_ni_finup+0x10/0x20 arch/x86/crypto/sha256_ssse3_glue.c:321
-	 crypto_shash_finup+0x1a/0x30 crypto/shash.c:178
-	 shash_digest_unaligned+0x45/0x60 crypto/shash.c:186
-	 crypto_shash_digest+0x24/0x40 crypto/shash.c:202
-	 hmac_setkey+0x135/0x1e0 crypto/hmac.c:66
-	 crypto_shash_setkey+0x2b/0xb0 crypto/shash.c:66
-	 shash_async_setkey+0x10/0x20 crypto/shash.c:223
-	 crypto_ahash_setkey+0x2d/0xa0 crypto/ahash.c:202
-	 crypto_authenc_setkey+0x68/0x100 crypto/authenc.c:96
-	 crypto_aead_setkey+0x2a/0xc0 crypto/aead.c:62
-	 aead_setkey+0xc/0x10 crypto/algif_aead.c:526
-	 alg_setkey crypto/af_alg.c:223 [inline]
-	 alg_setsockopt+0xfe/0x130 crypto/af_alg.c:256
-	 __sys_setsockopt+0x6d/0xd0 net/socket.c:1902
-	 __do_sys_setsockopt net/socket.c:1913 [inline]
-	 __se_sys_setsockopt net/socket.c:1910 [inline]
-	 __x64_sys_setsockopt+0x1f/0x30 net/socket.c:1910
-	 do_syscall_64+0x4a/0x180 arch/x86/entry/common.c:290
-	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: e236d4a89a2f ("[CRYPTO] authenc: Move enckeylen into key itself")
-Cc: <stable@vger.kernel.org> # v2.6.25+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/authenc.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/crypto/talitos.c |   25 +++++++------------------
+ 1 file changed, 7 insertions(+), 18 deletions(-)
 
---- a/crypto/authenc.c
-+++ b/crypto/authenc.c
-@@ -58,14 +58,22 @@ int crypto_authenc_extractkeys(struct cr
- 		return -EINVAL;
- 	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
- 		return -EINVAL;
--	if (RTA_PAYLOAD(rta) < sizeof(*param))
-+
-+	/*
-+	 * RTA_OK() didn't align the rtattr's payload when validating that it
-+	 * fits in the buffer.  Yet, the keys should start on the next 4-byte
-+	 * aligned boundary.  To avoid confusion, require that the rtattr
-+	 * payload be exactly the param struct, which has a 4-byte aligned size.
-+	 */
-+	if (RTA_PAYLOAD(rta) != sizeof(*param))
- 		return -EINVAL;
-+	BUILD_BUG_ON(sizeof(*param) % RTA_ALIGNTO);
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1361,23 +1361,18 @@ static struct talitos_edesc *talitos_ede
+ 	struct talitos_private *priv = dev_get_drvdata(dev);
+ 	bool is_sec1 = has_ftr_sec1(priv);
+ 	int max_len = is_sec1 ? TALITOS1_MAX_DATA_LEN : TALITOS2_MAX_DATA_LEN;
+-	void *err;
  
- 	param = RTA_DATA(rta);
- 	keys->enckeylen = be32_to_cpu(param->enckeylen);
+ 	if (cryptlen + authsize > max_len) {
+ 		dev_err(dev, "length exceeds h/w max limit\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
--	key += RTA_ALIGN(rta->rta_len);
--	keylen -= RTA_ALIGN(rta->rta_len);
-+	key += rta->rta_len;
-+	keylen -= rta->rta_len;
+-	if (ivsize)
+-		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
+-
+ 	if (!dst || dst == src) {
+ 		src_len = assoclen + cryptlen + authsize;
+ 		src_nents = sg_nents_for_len(src, src_len);
+ 		if (src_nents < 0) {
+ 			dev_err(dev, "Invalid number of src SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
++			return ERR_PTR(-EINVAL);
+ 		}
+ 		src_nents = (src_nents == 1) ? 0 : src_nents;
+ 		dst_nents = dst ? src_nents : 0;
+@@ -1387,16 +1382,14 @@ static struct talitos_edesc *talitos_ede
+ 		src_nents = sg_nents_for_len(src, src_len);
+ 		if (src_nents < 0) {
+ 			dev_err(dev, "Invalid number of src SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
++			return ERR_PTR(-EINVAL);
+ 		}
+ 		src_nents = (src_nents == 1) ? 0 : src_nents;
+ 		dst_len = assoclen + cryptlen + (encrypt ? authsize : 0);
+ 		dst_nents = sg_nents_for_len(dst, dst_len);
+ 		if (dst_nents < 0) {
+ 			dev_err(dev, "Invalid number of dst SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
++			return ERR_PTR(-EINVAL);
+ 		}
+ 		dst_nents = (dst_nents == 1) ? 0 : dst_nents;
+ 	}
+@@ -1425,10 +1418,10 @@ static struct talitos_edesc *talitos_ede
+ 		alloc_len += sizeof(struct talitos_desc);
  
- 	if (keylen < keys->enckeylen)
- 		return -EINVAL;
+ 	edesc = kmalloc(alloc_len, GFP_DMA | flags);
+-	if (!edesc) {
+-		err = ERR_PTR(-ENOMEM);
+-		goto error_sg;
+-	}
++	if (!edesc)
++		return ERR_PTR(-ENOMEM);
++	if (ivsize)
++		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
+ 	memset(&edesc->desc, 0, sizeof(edesc->desc));
+ 
+ 	edesc->src_nents = src_nents;
+@@ -1445,10 +1438,6 @@ static struct talitos_edesc *talitos_ede
+ 						     DMA_BIDIRECTIONAL);
+ 	}
+ 	return edesc;
+-error_sg:
+-	if (iv_dma)
+-		dma_unmap_single(dev, iv_dma, ivsize, DMA_TO_DEVICE);
+-	return err;
+ }
+ 
+ static struct talitos_edesc *aead_edesc_alloc(struct aead_request *areq, u8 *iv,
 
 
