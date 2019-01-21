@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E67C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850D8C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159F020879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54EDE2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078688;
-	bh=+PwyPFeJrfHLVealub+9xoQpfV/nFaxsigRnUeEia78=;
+	s=default; t=1548078691;
+	bh=+zYpTz3W6eoiYKAj+77j1rJqGpun2BdFPmrjEwWnPec=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mDerqHVz9kFO7fEFDZQJOW3In6DZiGZt704FHYxF0I3xvsjtknX1umsLgI3xkjH5d
-	 BTsHghL1jMNnMgRrb+22ZI6DQq37OEmpl045wGPGKLUaI3Iqt3qFiblU9P1thVm81o
-	 8U5PwVCBTiHPU7YBZVsySLgTCBoNbeEIBSTWj12Y=
+	b=xoBG0RVAZ9lJNeAgZD722cmj3obR/NglcTHRtPM6HO3zZ6x2cEwnpbpQfgJHKBDGs
+	 1k8N8ck+5KymOYnXh6icY4FFHifkJo7ClLxGtjH5blSR6a/WUn6y1xG924yKp+ABFW
+	 3AaHKhg1qIkHLmqwOOKxr+YwaE38UR/mihVkruoU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbfAUNv0 (ORCPT
+        id S1730801AbfAUNv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:51:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34316 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:51:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730770AbfAUNvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:51:24 -0500
+        id S1730770AbfAUNv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:51:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 253AC20861;
-        Mon, 21 Jan 2019 13:51:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABA1D20861;
+        Mon, 21 Jan 2019 13:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078683;
-        bh=+PwyPFeJrfHLVealub+9xoQpfV/nFaxsigRnUeEia78=;
+        s=default; t=1548078687;
+        bh=+zYpTz3W6eoiYKAj+77j1rJqGpun2BdFPmrjEwWnPec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pNV3iGBlGke8kqzY0QpNUHeyxwEFlr6EQMeWDagkke/XUxZoVNJygA0a6CBm6SbCq
-         LYpP6V787dOxQRe6PfykW3ryMrBJXQ9Sm2V8DXzlQPVskzn8cDEaAY50gystcx2qxB
-         dloqYAsRc0eh7hLLdESbh/mAEe5FctfO0iL1aqJ4=
+        b=HXBgMx6Nu234mS6reVHgxDKzZaLay85gihwawgQiFSgXsSB+PLkt7KXtskQNZeORv
+         AjKURjylvNV7VvXmOdhT0GUP6MG5AW3kdZWka16i1LLHoh2VzY45pCepRj+Ih8sihH
+         p+dMktzCEs3cAaqNOoZGkmeDDIH9y6Mr8Q6RNm9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 095/111] loop: Fold __loop_release into loop_release
-Date:   Mon, 21 Jan 2019 14:43:29 +0100
-Message-Id: <20190121122506.454137111@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 086/111] sctp: allocate sctp_sockaddr_entry with kzalloc
+Date:   Mon, 21 Jan 2019 14:43:20 +0100
+Message-Id: <20190121122505.548823333@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,64 +69,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 967d1dc144b50ad005e5eecdfadfbcfb399ffff6 upstream.
+commit 400b8b9a2a17918f8ce00786f596f530e7f30d50 upstream.
 
-__loop_release() has a single call site. Fold it there. This is
-currently not a huge win but it will make following replacement of
-loop_index_mutex more obvious.
+The similar issue as fixed in Commit 4a2eb0c37b47 ("sctp: initialize
+sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event") also exists
+in sctp_inetaddr_event, as Alexander noticed.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+To fix it, allocate sctp_sockaddr_entry with kzalloc for both sctp
+ipv4 and ipv6 addresses, as does in sctp_v4/6_copy_addrlist().
+
+Reported-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Reported-by: syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ net/sctp/ipv6.c     |    5 +----
+ net/sctp/protocol.c |    4 +---
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1641,12 +1641,15 @@ out:
- 	return err;
- }
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -97,11 +97,9 @@ static int sctp_inet6addr_event(struct n
  
--static void __lo_release(struct loop_device *lo)
-+static void lo_release(struct gendisk *disk, fmode_t mode)
- {
-+	struct loop_device *lo;
- 	int err;
+ 	switch (ev) {
+ 	case NETDEV_UP:
+-		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
++		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v6.sin6_family = AF_INET6;
+-			addr->a.v6.sin6_port = 0;
+-			addr->a.v6.sin6_flowinfo = 0;
+ 			addr->a.v6.sin6_addr = ifa->addr;
+ 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
+ 			addr->valid = 1;
+@@ -431,7 +429,6 @@ static void sctp_v6_copy_addrlist(struct
+ 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v6.sin6_family = AF_INET6;
+-			addr->a.v6.sin6_port = 0;
+ 			addr->a.v6.sin6_addr = ifp->addr;
+ 			addr->a.v6.sin6_scope_id = dev->ifindex;
+ 			addr->valid = 1;
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -101,7 +101,6 @@ static void sctp_v4_copy_addrlist(struct
+ 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v4.sin_family = AF_INET;
+-			addr->a.v4.sin_port = 0;
+ 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
+ 			addr->valid = 1;
+ 			INIT_LIST_HEAD(&addr->list);
+@@ -776,10 +775,9 @@ static int sctp_inetaddr_event(struct no
  
-+	mutex_lock(&loop_index_mutex);
-+	lo = disk->private_data;
- 	if (atomic_dec_return(&lo->lo_refcnt))
--		return;
-+		goto unlock_index;
- 
- 	mutex_lock(&loop_ctl_mutex);
- 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
-@@ -1656,7 +1659,7 @@ static void __lo_release(struct loop_dev
- 		 */
- 		err = loop_clr_fd(lo);
- 		if (!err)
--			return;
-+			goto unlock_index;
- 	} else if (lo->lo_state == Lo_bound) {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
-@@ -1667,12 +1670,7 @@ static void __lo_release(struct loop_dev
- 	}
- 
- 	mutex_unlock(&loop_ctl_mutex);
--}
--
--static void lo_release(struct gendisk *disk, fmode_t mode)
--{
--	mutex_lock(&loop_index_mutex);
--	__lo_release(disk->private_data);
-+unlock_index:
- 	mutex_unlock(&loop_index_mutex);
- }
- 
+ 	switch (ev) {
+ 	case NETDEV_UP:
+-		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
++		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v4.sin_family = AF_INET;
+-			addr->a.v4.sin_port = 0;
+ 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
+ 			addr->valid = 1;
+ 			spin_lock_bh(&net->sctp.local_addr_lock);
 
 
