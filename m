@@ -2,111 +2,184 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A22AC37121
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC45C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18EF22089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:42:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hbZxAtRm"
+	by mail.kernel.org (Postfix) with ESMTP id 6F1372089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbfAUUmb (ORCPT
+        id S1727137AbfAUUpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:42:31 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:33268 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfAUUmb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:42:31 -0500
-Received: by mail-vk1-f196.google.com with SMTP id d201so4881338vka.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:42:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dJYcVP/usOckgmCLmB4Oqgx37htYBs2I+48ZUfpqbBo=;
-        b=hbZxAtRmwPiZ1YigJp5NqAYqsSrjLJwot+V0NasW03d7S7VIAcwAbx6eoja2OIQuSk
-         7fxkjVxVX4VsTjJcMgXoW/zC5kUTAkVt41kgpg/oPG6SD5wZFJTjxUssLUBD2XTKxR/b
-         N8Z31szkDhDiaqEQAI8He116VaHJ6x+1HNCvQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dJYcVP/usOckgmCLmB4Oqgx37htYBs2I+48ZUfpqbBo=;
-        b=BG4cRH1laFtLpZsvceS87K0gBVchS6MPzaf04YX0nXOtr/a4wDNgMyQsMMmO2VRkos
-         lB8qUv7eKVotlzGi9Y5GiU69ZvbZh+x1hVGOvUkaYJjrE7xsQrJZ5KpkZxBPC96zTyFo
-         A3FcGeDBeTWL2KMtYS8esAWuirzLvDAivcyDiI0No+KI9XFjgI2W/I9SXgtC0AuULnyQ
-         ReT2t/n+yOSwc4G2ULvMaiyTqW5T380GswmacN9Q4S6zp2PIna6xCc6hSSbgkcVhViEw
-         E5F0BLdBxgdW7uauX+et0bOSv/5t03wljGddZpgHIx0g6Az3IUrdupeG+fAoEgZH4p0x
-         uIAg==
-X-Gm-Message-State: AJcUukcLa1K78f2Awuq896Pl8Q7iQ6/sbP7jNRBDQCLXM2I+yKZPYWns
-        BjbQfsZhB00Xr2cKgm9IFy40rIsUOm4=
-X-Google-Smtp-Source: ALg8bN6eV30QAIB+sTap0+nqRlGH6C/27CMdcUKF5B80a5/IskZ9E9uIU/6JceVRhBbEMiUDg+7Icg==
-X-Received: by 2002:a1f:b406:: with SMTP id d6mr11504281vkf.63.1548103348829;
-        Mon, 21 Jan 2019 12:42:28 -0800 (PST)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id w65sm27421289vsc.16.2019.01.21.12.42.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 12:42:27 -0800 (PST)
-Received: by mail-ua1-f43.google.com with SMTP id d19so7325205uaq.11
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:42:26 -0800 (PST)
-X-Received: by 2002:ab0:470d:: with SMTP id h13mr12693596uac.122.1548103346355;
- Mon, 21 Jan 2019 12:42:26 -0800 (PST)
-MIME-Version: 1.0
-References: <1548076208-6442-1-git-send-email-jsteckli@amazon.de>
- <20190121183618.GP6118@tassilo.jf.intel.com> <20190121191541.GB4026@kroah.com>
-In-Reply-To: <20190121191541.GB4026@kroah.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 22 Jan 2019 09:42:13 +1300
-X-Gmail-Original-Message-ID: <CAGXu5j+h9RKAND8+SJR6P6CQY_YO3ezjsnfuzLGsQbY=O4XCuw@mail.gmail.com>
-Message-ID: <CAGXu5j+h9RKAND8+SJR6P6CQY_YO3ezjsnfuzLGsQbY=O4XCuw@mail.gmail.com>
-Subject: Re: [RFC] x86/speculation: add L1 Terminal Fault / Foreshadow demo
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Julian Stecklina <jsteckli@amazon.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
+        Mon, 21 Jan 2019 15:45:34 -0500
+Received: from shell.v3.sk ([90.176.6.54]:52209 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726152AbfAUUpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 15:45:34 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 460CDCC076;
+        Mon, 21 Jan 2019 21:45:29 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id w-dLlgeTGokR; Mon, 21 Jan 2019 21:45:25 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 18EDDCC311;
+        Mon, 21 Jan 2019 21:45:25 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id b2yX_s3a3uiy; Mon, 21 Jan 2019 21:45:24 +0100 (CET)
+Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2AEA8CC076;
+        Mon, 21 Jan 2019 21:45:24 +0100 (CET)
+Message-ID: <4c21727d9753d4c0de667566972f2229dc9f1304.camel@v3.sk>
+Subject: Re: [PATCH 4/6] dt-bindings: display: armada: Add display subsystem
+ binding
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 21 Jan 2019 21:45:22 +0100
+In-Reply-To: <20190121175301.lremzw6dul7dyff4@e5254000004ec.dyn.armlinux.org.uk>
+References: <20190120172534.24617-1-lkundrak@v3.sk>
+         <20190120172534.24617-5-lkundrak@v3.sk>
+         <CAL_JsqLT7jEdwi7o7RR_3OcbMTxeNXmSzif8Ez2psjhu24No5Q@mail.gmail.com>
+         <3191cdde84978adf98d200a9db6f3c18e0a46390.camel@v3.sk>
+         <CAL_JsqJBh9=J+m-eCFXvKw62Fj1Y9aFCNY=Vqo0LfyKoXKSXow@mail.gmail.com>
+         <20190121175301.lremzw6dul7dyff4@e5254000004ec.dyn.armlinux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 8:15 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Jan 21, 2019 at 10:36:18AM -0800, Andi Kleen wrote:
-> > > +   /* Check the start address: needs to be page-aligned.. */
-> > > +-  if (start & ~PAGE_MASK)
-> > > ++  if (start & ~PAGE_MASK) {
-> > > ++
-> > > ++          /*
-> > > ++           * XXX Hack
-> > > ++           *
-> > > ++           * We re-use this error case to show case a cache load gadget:
-> > > ++           * There is a mispredicted branch, which leads to prefetching
-> > > ++           * the cache with attacker controlled data.
-> > > ++           */
-> > > ++          asm volatile (
-> >
-> > Obviously that can never be added to a standard kernel.
->
-> No, that's why it is a patch, right?  People want to test things, it's
-> nice to have a way to easily do this.
+On Mon, 2019-01-21 at 17:53 +0000, Russell King - ARM Linux admin
+wrote:
+> On Mon, Jan 21, 2019 at 10:07:11AM -0600, Rob Herring wrote:
+> > On Mon, Jan 21, 2019 at 9:46 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+> > > On Mon, 2019-01-21 at 09:35 -0600, Rob Herring wrote:
+> > > > On Sun, Jan 20, 2019 at 11:26 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+> > > > > The Marvell Armada DRM master device is a virtual device needed to list all
+> > > > > nodes that comprise the graphics subsystem.
+> > > > > 
+> > > > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > > > ---
+> > > > >  .../display/armada/marvell-armada-drm.txt     | 24 +++++++++++++++++++
+> > > > >  1 file changed, 24 insertions(+)
+> > > > > 
+> > > > > diff --git a/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt b/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
+> > > > > index de4cca9432c8..3dbfa8047f0b 100644
+> > > > > --- a/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
+> > > > > +++ b/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
+> > > > > @@ -1,3 +1,27 @@
+> > > > > +Marvell Armada DRM master device
+> > > > > +================================
+> > > > > +
+> > > > > +The Marvell Armada DRM master device is a virtual device needed to list all
+> > > > > +nodes that comprise the graphics subsystem.
+> > > > > +
+> > > > > +Required properties:
+> > > > > +
+> > > > > + - compatible: value should be "marvell,dove-display-subsystem",
+> > > > > +   "marvell,armada-display-subsystem"
+> > > > > + - ports: a list of phandles pointing to display interface ports of CRTC
+> > > > > +   devices
+> > > > > + - memory-region: phandle to a node describing memory to be used for the
+> > > > > +   framebuffer
+> > > > > +
+> > > > > +Example:
+> > > > > +
+> > > > > +       display-subsystem {
+> > > > > +               compatible = "marvell,dove-display-subsystem",
+> > > > > +                            "marvell,armada-display-subsystem";
+> > > > > +               memory-region = <&display_reserved>;
+> > > > > +               ports = <&lcd0_port>;
+> > > > 
+> > > > If there is only one device, you don't need this virtual node.
+> > > 
+> > > By "one device" you mean one LCD controller (CRTC)?
+> > 
+> > Yes.
+> 
+> How does that work (as far as the Linux implementation) ?  I can't see
+> a way that could work, while allowing the flexibility that Armada DRM
+> allows (two completely independent LCD controllers as two separate DRM
+> devices vs one DRM device containing both LCD controllers.)
+> 
+> > > I suppose in the (single CRTC) example case, the display-subsystem node
+> > > used to associate it with the memory region reserved for allocating the
+> > > frame buffers from. Could that be done differently?
+> > 
+> > Move memory-region to the LCD controller node.
+> 
+> That doesn't work - it would appear in the wrong part of the driver.
+> 
+> > > Also, if the node is indeed made optional, then it's going to
+> > > complicate things on the DRM side. Currently the driver that binds to
+> > > the node creates the DRM device once it sees all the components
+> > > connected to the ports appear. If we loose it, then the LCD controller
+> > > driver would somehow need to find out that it's alone and create the
+> > > DRM device itself.
+> > 
+> > DT is not the only way to create devices. The DRM driver can bind to
+> > the LCDC node and then create a child CRTC device (or even multiple
+> > ones for h/w with multiple pipelines).
+> 
+> That seems completely upside down and rediculous to me - are you
+> really suggesting that we should have some kind of virtual device
+> in DT, and omit the _real_ physical devices for that, having the
+> driver create the device with all the appropriate SoC resources?
 
-What about adding something like it to drivers/misc/lkdtm/ instead?
+Hmm, that's not how I read that. My understanding (putting aside
+practicality of the solution) is that Rob was merely suggesting that
+for the single LCDC case there would be just a single LCDC node in DT
+and the driver that binds to it would create the DRM device & CRTC
+device pair.
 
-It's not a "production" module, but it regularly get built for selftest builds.
+> > You'll also notice that there are only 3 cases of this virtual node in
+> > the tree: STi, i.MX IPU, and Rockchip. That's because we've deprecated
+> > doing these virtual nodes for some time now. IOW, there are several
+> > examples of how to do this without a virtual node.
+> 
+> This driver has been in-tree with this setup for some time, although
+> the documentation has been missing (we actually have a _lot_ of
+> instances of that.)  However, we have no in-tree DT using it.
+> 
+> I don't really see how to satisfy your comments without totally
+> restructuring the driver, which is going to be quite a big chunk
+> of work.  I'm not sure I have the motivation to do that right now.
 
--- 
-Kees Cook
+Note that the initial objection was against the display-subsystem node
+being mandatory if "there is only one [LCDC] device".
+
+My understanding is that need to include the display-subsystem node for
+the multiple LCDC setup (on Dove platform) anyways. Is that correct?
+
+Rob, I'm wondering if there would be a possibility of finding some
+middle groud? Perhaps documenting, that the display-subsystem node
+would ideally be optional for single LCDC setups, but indicating that
+the Armada DRM driver actually requires is?
+
+Note that this is not a new driver -- it has been around since 2013,
+though, without useful DT bindings. Maybe it would do just well in
+company of the other three drivers you mentioned that use similar
+bindings.
+
+(Also, there seem to have substantial discussion regarding the bindings
+design back in '13, shedding some light into why the display-subsystem
+node was deemed useful: [1])
+
+[1] https://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg40358.html
+
+Thanks,
+Lubo
+
