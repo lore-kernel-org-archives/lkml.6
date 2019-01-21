@@ -2,170 +2,121 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B4AC3712F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D71C3713C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8357A20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A088F21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:34:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="VSrcaV/J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbfAUWZT (ORCPT
+        id S1727919AbfAUWeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:25:19 -0500
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:7115 "EHLO
-        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726152AbfAUWZS (ORCPT
+        Mon, 21 Jan 2019 17:34:19 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36437 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbfAUWeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 17:25:18 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail06.adl6.internode.on.net with ESMTP; 22 Jan 2019 08:54:12 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1glhzH-0001mR-QN; Tue, 22 Jan 2019 09:24:11 +1100
-Date:   Tue, 22 Jan 2019 09:24:11 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-alpha@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] fs: let filldir_t return bool instead of an error
- code
-Message-ID: <20190121222411.GD4205@dastard>
-References: <20190118161440.220134-1-jannh@google.com>
- <20190118161440.220134-3-jannh@google.com>
- <20190120224059.GA4205@dastard>
- <CAG48ez3SgejgGbctHwxON1B1k26xk-z16xdozKZkx7=-Li0aHw@mail.gmail.com>
+        Mon, 21 Jan 2019 17:34:19 -0500
+Received: by mail-ot1-f66.google.com with SMTP id k98so21950224otk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 14:34:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rL8USB9BBkpFKFp8oWAAG6gZe7QWP4SiGavMpn/OiQU=;
+        b=VSrcaV/Jon7gPbTW9jg4tRNqMSUaZT6a1ClNX1n42YvPapOBmk8TGsvlMzLKw2k0I8
+         2h4guMZUY4+XAlPhGAyFfJB/uhAdBiv+vNaSRFG4NJgQ4SNRhnJbhNUP8n7rtItjsX+9
+         kP00IQH49Gdm8MElmoCk3/5SIrsADUB/Dsv5KU1YLKgy6oPK4qPASqsO4i1UH2O4K/9g
+         WwpIuCIkb/Ly9foHnUt3t51OPm0idJyXmrHX47FEMyYLz6oGyP4N9uSzJIqdPk7hsdiI
+         uYcDqqAexq4yXdN7NTI0lbHORH1b/1eeAsDbXQQE3o/LNZZH6AvaBZ5ccCBdZhKAhEXU
+         uqVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rL8USB9BBkpFKFp8oWAAG6gZe7QWP4SiGavMpn/OiQU=;
+        b=hDmMOwDmMbOC8Jz/eS/UqxSVsnM2ymFvl/qwBzx441xpDNkO8C1mZJdT6aa8O1jr6A
+         dah0CXaoraYPchCRqQ5SA/23kjw/nvA18x0TQFOVvChr4aks9+ERglu3+mWMvtFRWcyh
+         e0Kt6V1mPSzbMBwiMPHNWHvWWJUOWZkLbREQoNFcfDeieeIcqhkr68HwJYU+HuHfFfLQ
+         d2YsnaBoI+drdjHcOoNTafg+5SxZKYLv2/zOe+f+5069fm3QhvwgfMS43XDU+V03zW+V
+         2ZLb/by4c2LEezY8BLs9oO9yK9xgukcMrtynllaDVcy3Y2T4I5xvT1eYrPnX97tyG2da
+         fC0w==
+X-Gm-Message-State: AJcUukd9prRGkQ8QikXfEjpbXdPQtDCiO/4lRKASVpm7ZPXdb1uXkDfe
+        AaJztQgwLOpbyrohN7DNFVb6TCzmIWS9dg6dFnItWg==
+X-Google-Smtp-Source: ALg8bN5Q/qWfRPA7NNBRpljR4JFXVSlrbsIRTmpYP3XXcFn9M18RTlQmozX4sreVSOkOXrrhVFFywQ8hbguY5JkbxBA=
+X-Received: by 2002:a9d:6ac2:: with SMTP id m2mr19917774otq.353.1548110058526;
+ Mon, 21 Jan 2019 14:34:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez3SgejgGbctHwxON1B1k26xk-z16xdozKZkx7=-Li0aHw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190121075102.GA3758@richard> <CAPcyv4iGZdEw-agURohZdC7hkjrDp74M_gVdSbCB5DP-bk5YYw@mail.gmail.com>
+ <20190121205713.vai2oor3saopcja7@master>
+In-Reply-To: <20190121205713.vai2oor3saopcja7@master>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 21 Jan 2019 14:34:06 -0800
+Message-ID: <CAPcyv4g7hR34mNSQOLARTrX--UFpgg68thfg75hZOzq5AaBw5A@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm: Clarify nd_pfn_init() flow
+To:     Wei Yang <richard.weiyang@gmail.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 04:49:45PM +0100, Jann Horn wrote:
-> On Sun, Jan 20, 2019 at 11:41 PM Dave Chinner <david@fromorbit.com> wrote:
-> > On Fri, Jan 18, 2019 at 05:14:40PM +0100, Jann Horn wrote:
-> > > As Al Viro pointed out, many filldir_t functions return error codes, but
-> > > all callers of filldir_t functions just check whether the return value is
-> > > non-zero (to determine whether to continue reading the directory); more
-> > > precise errors have to be signalled via struct dir_context.
-> > > Change all filldir_t functions to return bool instead of int.
-> > >
-> > > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > ---
-> > >  arch/alpha/kernel/osf_sys.c | 12 +++----
-> > >  fs/afs/dir.c                | 30 +++++++++--------
-> > >  fs/ecryptfs/file.c          | 13 ++++----
-> > >  fs/exportfs/expfs.c         |  8 ++---
-> > >  fs/fat/dir.c                |  8 ++---
-> > >  fs/gfs2/export.c            |  6 ++--
-> > >  fs/nfsd/nfs4recover.c       |  8 ++---
-> > >  fs/nfsd/vfs.c               |  6 ++--
-> > >  fs/ocfs2/dir.c              | 10 +++---
-> > >  fs/ocfs2/journal.c          | 14 ++++----
-> > >  fs/overlayfs/readdir.c      | 24 +++++++-------
-> > >  fs/readdir.c                | 64 ++++++++++++++++++-------------------
-> > >  fs/reiserfs/xattr.c         | 20 ++++++------
-> > >  fs/xfs/scrub/dir.c          |  8 ++---
-> > >  fs/xfs/scrub/parent.c       |  4 +--
-> > >  include/linux/fs.h          | 10 +++---
-> > >  16 files changed, 125 insertions(+), 120 deletions(-)
-> > >
-> > > diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-> > > index db1c2144d477..14e5ae0dac50 100644
-> > > --- a/arch/alpha/kernel/osf_sys.c
-> > > +++ b/arch/alpha/kernel/osf_sys.c
-> > > @@ -108,7 +108,7 @@ struct osf_dirent_callback {
-> > >       int error;
-> > >  };
-> > >
-> > > -static int
-> > > +static bool
-> > >  osf_filldir(struct dir_context *ctx, const char *name, int namlen,
-> > >           loff_t offset, u64 ino, unsigned int d_type)
-> > >  {
-> > > @@ -120,14 +120,14 @@ osf_filldir(struct dir_context *ctx, const char *name, int namlen,
-> > >
-> > >       buf->error = check_dirent_name(name, namlen);
-> > >       if (unlikely(buf->error))
-> > > -             return -EFSCORRUPTED;
-> > > +             return false;
-> > >       buf->error = -EINVAL;   /* only used if we fail */
-> > >       if (reclen > buf->count)
-> > > -             return -EINVAL;
-> > > +             return false;
+On Mon, Jan 21, 2019 at 12:57 PM Wei Yang <richard.weiyang@gmail.com> wrote:
+>
+> On Mon, Jan 21, 2019 at 10:04:40AM -0800, Dan Williams wrote:
+> >On Sun, Jan 20, 2019 at 11:51 PM Wei Yang <richardw.yang@linux.intel.com> wrote:
+> >> On Fri, Jan 18, 2019 at 04:47:23PM -0800, Dan Williams wrote:
+> >[..]
+> >> Also, I have one confusion about your saying: two probes.
+> >>
+> >> If the two probes are:
+> >>
+> >>     * for dax%d.%d: 1. nd_dax_probe 2. dax_pmem_probe
+> >>     * for pfn%d.%d: 1. nd_pfn_probe 2. nd_pmem_probe
+> >>
+> >> Then, if the first probe fails, the device itself would be destroyed. How the
+> >> second probe do its job?
+> >>
+> >> >       rc = nd_pfn_validate(nd_pfn, sig);
+> >> >       if (rc != -ENODEV)
+> >> >               return rc;
 > >
-> > Oh, it's because the error being returned is being squashed by
-> > dir_emit():
-> 
-> Yeah.
-> 
-> > >  struct dir_context {
-> > > @@ -3469,17 +3471,17 @@ static inline bool dir_emit(struct dir_context *ctx,
-> > >                           const char *name, int namelen,
-> > >                           u64 ino, unsigned type)
-> > >  {
-> > > -     return ctx->actor(ctx, name, namelen, ctx->pos, ino, type) == 0;
-> > > +     return ctx->actor(ctx, name, namelen, ctx->pos, ino, type);
-> > >  }
+> >Here is an example path for a device-dax instance:
 > >
-> > /me wonders if it would be cleaner to do:
+> >    /sys/devices/platform/e820_pmem/ndbus0/region0/dax0.1/dax0.0
 > >
-> > static inline bool dir_emit(...)
-> > {
-> >         buf->error = ctx->actor(....)
-> >         if (buf->error)
-> >                 return false;
-> >         return true;
-> > }
+> >In this case the order of events is:
 > >
-> > And clean up all filldir actors just to return the error state
-> > rather than have to jump through hoops to stash the error state in
-> > the context buffer and return the error state?
-> 
-> One negative thing about that, IMO, is that it mixes up the request
-> for termination of the loop and the presence of an error.
+> >1/ region0 discovers it contains a pmem namespace and registers namespace0.0
+> >2/ The pmem namespace driver calls nd_dax_probe() to check for the
+> >presence of a device-dax configuration
+> >3/ If present, nd_pfn_validate() returns 0 and nd_dax_probe()
+> >registers the dax0.1 device (this is a libnvdimm 'personality device).
+> >4/ When nd_pmem_probe() sees nd_dax_probe() return 0 it in turn fails
+> >the probe of namespace0.0 with -ENXIO. All devm allocations during the
+> >probe of namespace0.0 are released.
+>
+> I may have another opinion here.
+>
+> The probe return error means the device will not attach to this driver.
+> But the device itself it not released.
+>
+> We allocate devm on one device and those memory will be released when
+> the device is destroyed. If I am correct.
+>
+> This means at this point, pfn_sb's memory still exists in the system.
+> Even finally we will release it, when namespace0.0 is destroyed.
 
-Doesn't the code already do that, only worse?
+No, that's not the way devm works. Memory allocated by devm is
+released at ->probe() failure, or after ->remove()
 
-> > That then allows callers who want/need the full error info can
-> > continue to call ctx->actor directly,
-> 
-> "continue to call ctx->actor directly"? I don't remember any code that
-> calls ctx->actor directly.
-
-ovl_fill_real().
-
-And the XFS directory scrubber could probably make better use of the
-error return from ctx->actor when validating the directory contents
-rather than just calling dir_emit() and aborting the scan at the
-first error encountered. We eventually want to know exactly what
-error was encountered here to determine if it is safe to continue,
-not just a "stop processing" flag. e.g. a bad name length will need
-to stop traversal because we can't trust the underlying structure,
-but an invalid file type isn't a structural flaw that prevents us
-from continuing to traverse and check the rest of the directory....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+See the devres_release_all() call in drivers/base/dd.c::really_probe()
