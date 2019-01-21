@@ -2,264 +2,175 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DATE_IN_PAST_03_06,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B24F8C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED316C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 772EA2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548058087;
-	bh=5bq2cAZr0xE+c77reIx8cwZ3owwtr16n9PT0HGql00M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TKKv2cate8rWUQzajGri+r9cI+lGeem14Ow82h2BCRhY7NHji8YQnFJou27BksvCR
-	 gmT2M222vVrn47zD/aLXKhBJacCowy8bJHtjE/aI6Tnj/oOPUQKz1VjWqbHfLaGZ/y
-	 ADxCfpnCmAkF6a0tTXzAyouBfAGEYkjTrZX01JtE=
+	by mail.kernel.org (Postfix) with ESMTP id BEBE32084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbfAUIIA (ORCPT
+        id S1728877AbfAUIIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:08:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728081AbfAUIH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:07:58 -0500
-Received: from earth.universe (unknown [194.136.232.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84E362177E;
-        Mon, 21 Jan 2019 01:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548032491;
-        bh=5bq2cAZr0xE+c77reIx8cwZ3owwtr16n9PT0HGql00M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZZKvBbP9khC8wJCDygVWRznx8t9ksIo/JT7K0BWW6ZO1S0DPvVBKrh9sSxOcVq+Yu
-         KDD1q74Q9Q34z82grYeVp8KsqowX0LF8BYpK8yUAY/5nyxZpTPcEzgV+R0bxvuNFuQ
-         zNn6oTb31pzaHsxRy/LFIDxad0vt1t/b5WpEe6pk=
-Received: by earth.universe (Postfix, from userid 1000)
-        id DC6A83C08E4; Sun, 20 Jan 2019 22:25:23 +0100 (CET)
-Date:   Sun, 20 Jan 2019 22:25:23 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: isp1704: switch to gpiod API
-Message-ID: <20190120212523.5f4zovssz6vihxsf@earth.universe>
-References: <20181213013858.23996-1-sebastian.reichel@collabora.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="esxcvnyauucu4vms"
-Content-Disposition: inline
-In-Reply-To: <20181213013858.23996-1-sebastian.reichel@collabora.com>
-User-Agent: NeoMutt/20180716
+        Mon, 21 Jan 2019 03:08:37 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38658 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729635AbfAUIEz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:04:55 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0L83mO1132171
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:04:54 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q59werwyc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:04:54 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 21 Jan 2019 08:04:51 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 21 Jan 2019 08:04:39 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0L84cJ71114462
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 08:04:39 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D32BE4C046;
+        Mon, 21 Jan 2019 08:04:38 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BBE7E4C052;
+        Mon, 21 Jan 2019 08:04:33 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.125])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 21 Jan 2019 08:04:33 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 21 Jan 2019 10:04:33 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH v2 04/21] memblock: drop memblock_alloc_base_nid()
+Date:   Mon, 21 Jan 2019 10:03:51 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19012108-4275-0000-0000-00000301E9EB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012108-4276-0000-0000-0000381015C0
+Message-Id: <1548057848-15136-5-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=833 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901210066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The memblock_alloc_base_nid() is a oneliner wrapper for
+memblock_alloc_range_nid() without any side effect.
+Replace it's usage by the direct calls to memblock_alloc_range_nid().
 
---esxcvnyauucu4vms
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ include/linux/memblock.h |  3 ---
+ mm/memblock.c            | 15 ++++-----------
+ 2 files changed, 4 insertions(+), 14 deletions(-)
 
-Hi,
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index 60e100f..f7ef313 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -490,9 +490,6 @@ static inline bool memblock_bottom_up(void)
+ phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
+ 					phys_addr_t start, phys_addr_t end,
+ 					enum memblock_flags flags);
+-phys_addr_t memblock_alloc_base_nid(phys_addr_t size,
+-					phys_addr_t align, phys_addr_t max_addr,
+-					int nid, enum memblock_flags flags);
+ phys_addr_t memblock_alloc_base(phys_addr_t size, phys_addr_t align,
+ 				phys_addr_t max_addr);
+ phys_addr_t __memblock_alloc_base(phys_addr_t size, phys_addr_t align,
+diff --git a/mm/memblock.c b/mm/memblock.c
+index a32db30..c80029e 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1346,21 +1346,14 @@ phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
+ 					flags);
+ }
+ 
+-phys_addr_t __init memblock_alloc_base_nid(phys_addr_t size,
+-					phys_addr_t align, phys_addr_t max_addr,
+-					int nid, enum memblock_flags flags)
+-{
+-	return memblock_alloc_range_nid(size, align, 0, max_addr, nid, flags);
+-}
+-
+ phys_addr_t __init memblock_phys_alloc_nid(phys_addr_t size, phys_addr_t align, int nid)
+ {
+ 	enum memblock_flags flags = choose_memblock_flags();
+ 	phys_addr_t ret;
+ 
+ again:
+-	ret = memblock_alloc_base_nid(size, align, MEMBLOCK_ALLOC_ACCESSIBLE,
+-				      nid, flags);
++	ret = memblock_alloc_range_nid(size, align, 0,
++				       MEMBLOCK_ALLOC_ACCESSIBLE, nid, flags);
+ 
+ 	if (!ret && (flags & MEMBLOCK_MIRROR)) {
+ 		flags &= ~MEMBLOCK_MIRROR;
+@@ -1371,8 +1364,8 @@ phys_addr_t __init memblock_phys_alloc_nid(phys_addr_t size, phys_addr_t align,
+ 
+ phys_addr_t __init __memblock_alloc_base(phys_addr_t size, phys_addr_t align, phys_addr_t max_addr)
+ {
+-	return memblock_alloc_base_nid(size, align, max_addr, NUMA_NO_NODE,
+-				       MEMBLOCK_NONE);
++	return memblock_alloc_range_nid(size, align, 0, max_addr, NUMA_NO_NODE,
++					MEMBLOCK_NONE);
+ }
+ 
+ phys_addr_t __init memblock_alloc_base(phys_addr_t size, phys_addr_t align, phys_addr_t max_addr)
+-- 
+2.7.4
 
-On Thu, Dec 13, 2018 at 02:38:58AM +0100, Sebastian Reichel wrote:
-> This migrates isp1704 driver from old GPIO API to new descriptor
-> based GPIO API and drops useless platform data as a side-effect.
->=20
-> Migration is simple, since all mainline users are DT based and
-> DT API does not change. Out of tree users of the platform data
-> need to migrate to gpiod_lookup_table as described here:
->=20
-> Documentation/driver-api/gpio/board.rst
->=20
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
-> Patch has been tested on Nokia N900.
-> ---
-
-Queued to power-supply-next.
-
--- Sebastian
-
->  drivers/power/supply/isp1704_charger.c | 60 ++++++--------------------
->  include/linux/power/isp1704_charger.h  | 30 -------------
->  2 files changed, 12 insertions(+), 78 deletions(-)
->  delete mode 100644 include/linux/power/isp1704_charger.h
->=20
-> diff --git a/drivers/power/supply/isp1704_charger.c b/drivers/power/suppl=
-y/isp1704_charger.c
-> index 95af5f305838..a63cb5dcfa08 100644
-> --- a/drivers/power/supply/isp1704_charger.c
-> +++ b/drivers/power/supply/isp1704_charger.c
-> @@ -30,13 +30,12 @@
->  #include <linux/power_supply.h>
->  #include <linux/delay.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
-> =20
-> +#include <linux/gpio/consumer.h>
->  #include <linux/usb/otg.h>
->  #include <linux/usb/ulpi.h>
->  #include <linux/usb/ch9.h>
->  #include <linux/usb/gadget.h>
-> -#include <linux/power/isp1704_charger.h>
-> =20
->  /* Vendor specific Power Control register */
->  #define ISP1704_PWR_CTRL		0x3d
-> @@ -60,6 +59,7 @@ struct isp1704_charger {
->  	struct device			*dev;
->  	struct power_supply		*psy;
->  	struct power_supply_desc	psy_desc;
-> +	struct gpio_desc		*enable_gpio;
->  	struct usb_phy			*phy;
->  	struct notifier_block		nb;
->  	struct work_struct		work;
-> @@ -81,18 +81,9 @@ static inline int isp1704_write(struct isp1704_charger=
- *isp, u32 reg, u32 val)
->  	return usb_phy_io_write(isp->phy, val, reg);
->  }
-> =20
-> -/*
-> - * Disable/enable the power from the isp1704 if a function for it
-> - * has been provided with platform data.
-> - */
->  static void isp1704_charger_set_power(struct isp1704_charger *isp, bool =
-on)
->  {
-> -	struct isp1704_charger_data	*board =3D isp->dev->platform_data;
-> -
-> -	if (board && board->set_power)
-> -		board->set_power(on);
-> -	else if (board)
-> -		gpio_set_value(board->enable_gpio, on);
-> +	gpiod_set_value(isp->enable_gpio, on);
->  }
-> =20
->  /*
-> @@ -405,46 +396,19 @@ static int isp1704_charger_probe(struct platform_de=
-vice *pdev)
->  	int			ret =3D -ENODEV;
->  	struct power_supply_config psy_cfg =3D {};
-> =20
-> -	struct isp1704_charger_data *pdata =3D dev_get_platdata(&pdev->dev);
-> -	struct device_node *np =3D pdev->dev.of_node;
-> -
-> -	if (np) {
-> -		int gpio =3D of_get_named_gpio(np, "nxp,enable-gpio", 0);
-> -
-> -		if (gpio < 0) {
-> -			dev_err(&pdev->dev, "missing DT GPIO nxp,enable-gpio\n");
-> -			return gpio;
-> -		}
-> -
-> -		pdata =3D devm_kzalloc(&pdev->dev,
-> -			sizeof(struct isp1704_charger_data), GFP_KERNEL);
-> -		if (!pdata) {
-> -			ret =3D -ENOMEM;
-> -			goto fail0;
-> -		}
-> -		pdata->enable_gpio =3D gpio;
-> -
-> -		dev_info(&pdev->dev, "init gpio %d\n", pdata->enable_gpio);
-> -
-> -		ret =3D devm_gpio_request_one(&pdev->dev, pdata->enable_gpio,
-> -					GPIOF_OUT_INIT_HIGH, "isp1704_reset");
-> -		if (ret) {
-> -			dev_err(&pdev->dev, "gpio request failed\n");
-> -			goto fail0;
-> -		}
-> -	}
-> -
-> -	if (!pdata) {
-> -		dev_err(&pdev->dev, "missing platform data!\n");
-> -		return -ENODEV;
-> -	}
-> -
-> -
->  	isp =3D devm_kzalloc(&pdev->dev, sizeof(*isp), GFP_KERNEL);
->  	if (!isp)
->  		return -ENOMEM;
-> =20
-> -	if (np)
-> +	isp->enable_gpio =3D devm_gpiod_get(&pdev->dev, "nxp,enable",
-> +					  GPIOD_OUT_HIGH);
-> +	if (IS_ERR(isp->enable_gpio)) {
-> +		ret =3D PTR_ERR(isp->enable_gpio);
-> +		dev_err(&pdev->dev, "Could not get reset gpio: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	if (pdev->dev.of_node)
->  		isp->phy =3D devm_usb_get_phy_by_phandle(&pdev->dev, "usb-phy", 0);
->  	else
->  		isp->phy =3D devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-> diff --git a/include/linux/power/isp1704_charger.h b/include/linux/power/=
-isp1704_charger.h
-> deleted file mode 100644
-> index 0105d9e7af85..000000000000
-> --- a/include/linux/power/isp1704_charger.h
-> +++ /dev/null
-> @@ -1,30 +0,0 @@
-> -/*
-> - * ISP1704 USB Charger Detection driver
-> - *
-> - * Copyright (C) 2011 Nokia Corporation
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 U=
-SA
-> - */
-> -
-> -
-> -#ifndef __ISP1704_CHARGER_H
-> -#define __ISP1704_CHARGER_H
-> -
-> -struct isp1704_charger_data {
-> -	void		(*set_power)(bool on);
-> -	int		enable_gpio;
-> -};
-> -
-> -#endif
-> --=20
-> 2.19.2
->=20
-
---esxcvnyauucu4vms
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxE50MACgkQ2O7X88g7
-+po4pQ//e7qYawTJsbwZB3WKbzbyGC//u56PvmGvU5awFJU4142TTZDh0ABBCBEJ
-2yxrQ1WvND1s0IoLfxgni1M6hI+FZKPjunoFDvCR1WrubATnRLwp+BN7l9CPJ/um
-LPDeNd60JsQg/p+Lp7t80by+aD8D3XJZ6ZSHuf2gY084FwKuJKiG203FHyvRrfBa
-m+ofyg4EdIkbuVQfEXM80F2X9W1emHLNN5faY3lBv4G5YoKh3egt53b5B5yUOh83
-1/zzseS67GVMrFMpflRkiJDitT1J59ILuZWM03RyMV6OdYRdejFIzbr7dqNrhRY6
-EevsB4IdwNvu0eGOo7lN2F9vm0nUSUJOeRrkr9i6vMF2mHVC1rdOc86RuOXU2Rbv
-EPk/duhN7xdj9LWIznPf+aGVr1/n3jEyZUZnoB5U6dl9LSrTxZuVme1NMwsRR4+T
-DIwx2a0/KDPiD72SynVLIhqnSr5ucoTcHRLSnbEdL5N7GGVu7PNQAstS//XEFBox
-FR4kh5AlhszgmhVj0O0lvmq2xoBByDeyjzL5aEcR3/4EjMiGvS2pSreZ0Teulzly
-xbi+N+E7JGmI4tjkQRSe0xeFtr5MIFbdrGwwDIc9QCdCPakcGuwnyjwm0rWzTkfp
-uhrRmSSOjdSjr5zD+pbK8YXvcwlI5KXOLDI8v2g51IubBz2FAwY=
-=X9W9
------END PGP SIGNATURE-----
-
---esxcvnyauucu4vms--
