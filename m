@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BCDC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D3DC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C314120989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF67120989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079350;
-	bh=H+SSyBwjKxYmN4LkbQhMamFdI5ICfg6iiTTJUcjxshU=;
+	s=default; t=1548079354;
+	bh=SQb1UvU5+nbrwnLg01DO80VHtQBoYxjFHOfeGcJwagQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qgyFE8DFoG59GJ3w45NILY30NOrhi0NVyQgwhp6KHsivBnRJYRTuu8qAxF9aY/lKd
-	 /LSQo7YEBpyG9lF6tRkaJmY0oBxRkKoaLK8iUFR5Saaz97jC6gyHuMBHMqcdb5Hb6e
-	 QWnUvXiy6uElTT5dPcv/RBLeAF7bid4rZAhBt2JQ=
+	b=jN9H9fc4zX9kY0p1zuzs3AZwnLz7wJc69/KwTMtEKnIJif59FV9Sxa01O5fl6/oTI
+	 bQzqNG9CX/1bf9TSMNd9/AH9vh7xXrel1BdU9ggGRPN7lJ7Aj45Sz60bBSmtQZTSyd
+	 E1x1ueDC8MVSQ0jJx2rcbyJBWzLm7lj6GVAAD6cc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732811AbfAUOC3 (ORCPT
+        id S1732826AbfAUOCc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:02:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49954 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:02:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732794AbfAUOC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:02:27 -0500
+        id S1732794AbfAUOCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:02:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C00A2089F;
-        Mon, 21 Jan 2019 14:02:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7017C2089F;
+        Mon, 21 Jan 2019 14:02:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079345;
-        bh=H+SSyBwjKxYmN4LkbQhMamFdI5ICfg6iiTTJUcjxshU=;
+        s=default; t=1548079348;
+        bh=SQb1UvU5+nbrwnLg01DO80VHtQBoYxjFHOfeGcJwagQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IeWElrjTnvHuDzOwd5H4nnSOM5RmcOY9RJQv/f0XD75yPdHMQglEzyhOuHonr8vK6
-         mKMULIORCIHfFMYKeTtm5sj6Gf3OxMwRAoKeqpOZ98J1Du8JD0TyQzzvN5TAmyEWXP
-         0CI7wIDGoHjsp6OgTlgXaE3ehGhEsCKcR4ZEZmR4=
+        b=R+IF+A67lLLIWlkY4qi9x8WeweVCFg2OTgPcaSBgwdcaxivPsdP9bdTgtC4Ebu705
+         83TEBCO5PRLSD5+9I/KaP1+PtiVPAjEE5sDt+nog1SKbiIpu0NjiggsGWPa23oBZYc
+         RVgI45Av+BWS4b/8laQDlEyVOv78yeTbQfFiPCNk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot 
-        <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 93/99] loop: Fix deadlock when calling blkdev_reread_part()
-Date:   Mon, 21 Jan 2019 14:49:25 +0100
-Message-Id: <20190121134918.866879956@linuxfoundation.org>
+Subject: [PATCH 4.19 94/99] loop: Avoid circular locking dependency between loop_ctl_mutex and bd_mutex
+Date:   Mon, 21 Jan 2019 14:49:26 +0100
+Message-Id: <20190121134919.270842431@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -69,107 +68,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kara <jack@suse.cz>
 
-commit 0da03cab87e6323ff2e05b14bc7d5c6fcc531efd upstream.
+commit 1dded9acf6dc9a34cd27fcf8815507e4e65b3c4f upstream.
 
-Calling blkdev_reread_part() under loop_ctl_mutex causes lockdep to
-complain about circular lock dependency between bdev->bd_mutex and
-lo->lo_ctl_mutex. The problem is that on loop device open or close
-lo_open() and lo_release() get called with bdev->bd_mutex held and they
-need to acquire loop_ctl_mutex. OTOH when loop_reread_partitions() is
-called with loop_ctl_mutex held, it will call blkdev_reread_part() which
-acquires bdev->bd_mutex. See syzbot report for details [1].
+Code in loop_change_fd() drops reference to the old file (and also the
+new file in a failure case) under loop_ctl_mutex. Similarly to a
+situation in loop_set_fd() this can create a circular locking dependency
+if this was the last reference holding the file open. Delay dropping of
+the file reference until we have released loop_ctl_mutex.
 
-Move call to blkdev_reread_part() in __loop_clr_fd() from under
-loop_ctl_mutex to finish fixing of the lockdep warning and the possible
-deadlock.
-
-[1] https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d1588
-
-Reported-by: syzbot <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>
+Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ drivers/block/loop.c |   26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -1031,12 +1031,14 @@ loop_init_xfer(struct loop_device *lo, s
- 	return err;
- }
- 
--static int __loop_clr_fd(struct loop_device *lo)
-+static int __loop_clr_fd(struct loop_device *lo, bool release)
+@@ -678,7 +678,7 @@ static int loop_validate_file(struct fil
+ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+ 			  unsigned int arg)
  {
- 	struct file *filp = NULL;
- 	gfp_t gfp = lo->old_gfp_mask;
- 	struct block_device *bdev = lo->lo_device;
- 	int err = 0;
-+	bool partscan = false;
-+	int lo_number;
+-	struct file	*file, *old_file;
++	struct file	*file = NULL, *old_file;
+ 	int		error;
+ 	bool		partscan;
  
- 	mutex_lock(&loop_ctl_mutex);
- 	if (WARN_ON_ONCE(lo->lo_state != Lo_rundown)) {
-@@ -1089,7 +1091,15 @@ static int __loop_clr_fd(struct loop_dev
- 	module_put(THIS_MODULE);
+@@ -687,21 +687,21 @@ static int loop_change_fd(struct loop_de
+ 		return error;
+ 	error = -ENXIO;
+ 	if (lo->lo_state != Lo_bound)
+-		goto out_unlock;
++		goto out_err;
+ 
+ 	/* the loop device has to be read-only */
+ 	error = -EINVAL;
+ 	if (!(lo->lo_flags & LO_FLAGS_READ_ONLY))
+-		goto out_unlock;
++		goto out_err;
+ 
+ 	error = -EBADF;
+ 	file = fget(arg);
+ 	if (!file)
+-		goto out_unlock;
++		goto out_err;
+ 
+ 	error = loop_validate_file(file, bdev);
+ 	if (error)
+-		goto out_putf;
++		goto out_err;
+ 
+ 	old_file = lo->lo_backing_file;
+ 
+@@ -709,7 +709,7 @@ static int loop_change_fd(struct loop_de
+ 
+ 	/* size of the new backing store needs to be the same */
+ 	if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
+-		goto out_putf;
++		goto out_err;
+ 
+ 	/* and ... switch */
+ 	blk_mq_freeze_queue(lo->lo_queue);
+@@ -720,18 +720,22 @@ static int loop_change_fd(struct loop_de
+ 			     lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
+ 	loop_update_dio(lo);
  	blk_mq_unfreeze_queue(lo->lo_queue);
- 
--	if (lo->lo_flags & LO_FLAGS_PARTSCAN && bdev) {
-+	partscan = lo->lo_flags & LO_FLAGS_PARTSCAN && bdev;
-+	lo_number = lo->lo_number;
-+	lo->lo_flags = 0;
-+	if (!part_shift)
-+		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
-+	loop_unprepare_queue(lo);
-+out_unlock:
-+	mutex_unlock(&loop_ctl_mutex);
-+	if (partscan) {
- 		/*
- 		 * bd_mutex has been held already in release path, so don't
- 		 * acquire it if this function is called in such case.
-@@ -1098,21 +1108,15 @@ static int __loop_clr_fd(struct loop_dev
- 		 * must be at least one and it can only become zero when the
- 		 * current holder is released.
- 		 */
--		if (!atomic_read(&lo->lo_refcnt))
-+		if (release)
- 			err = __blkdev_reread_part(bdev);
- 		else
- 			err = blkdev_reread_part(bdev);
- 		pr_warn("%s: partition scan of loop%d failed (rc=%d)\n",
--			__func__, lo->lo_number, err);
-+			__func__, lo_number, err);
- 		/* Device is gone, no point in returning error */
- 		err = 0;
- 	}
--	lo->lo_flags = 0;
--	if (!part_shift)
--		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
--	loop_unprepare_queue(lo);
--out_unlock:
--	mutex_unlock(&loop_ctl_mutex);
- 	/*
- 	 * Need not hold loop_ctl_mutex to fput backing file.
- 	 * Calling fput holding loop_ctl_mutex triggers a circular
-@@ -1153,7 +1157,7 @@ static int loop_clr_fd(struct loop_devic
- 	lo->lo_state = Lo_rundown;
+-
+-	fput(old_file);
+ 	partscan = lo->lo_flags & LO_FLAGS_PARTSCAN;
  	mutex_unlock(&loop_ctl_mutex);
++	/*
++	 * We must drop file reference outside of loop_ctl_mutex as dropping
++	 * the file ref can take bd_mutex which creates circular locking
++	 * dependency.
++	 */
++	fput(old_file);
+ 	if (partscan)
+ 		loop_reread_partitions(lo, bdev);
+ 	return 0;
  
--	return __loop_clr_fd(lo);
-+	return __loop_clr_fd(lo, false);
+-out_putf:
+-	fput(file);
+-out_unlock:
++out_err:
+ 	mutex_unlock(&loop_ctl_mutex);
++	if (file)
++		fput(file);
+ 	return error;
  }
  
- static int
-@@ -1714,7 +1718,7 @@ static void lo_release(struct gendisk *d
- 		 * In autoclear mode, stop the loop thread
- 		 * and remove configuration after last close.
- 		 */
--		__loop_clr_fd(lo);
-+		__loop_clr_fd(lo, true);
- 		return;
- 	} else if (lo->lo_state == Lo_bound) {
- 		/*
 
 
