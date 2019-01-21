@@ -5,122 +5,113 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0EDC2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C3CC2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40F820879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F60E20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730597AbfAUPxc (ORCPT
+        id S1730618AbfAUPyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:53:32 -0500
-Received: from foss.arm.com ([217.140.101.70]:37738 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729712AbfAUPxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:53:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF864EBD;
-        Mon, 21 Jan 2019 07:53:29 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C398E3F5C1;
-        Mon, 21 Jan 2019 07:53:26 -0800 (PST)
-Subject: Re: kmemleak panic
-To:     Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
-References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
- <20190118143434.GE118707@arrakis.emea.arm.com>
- <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
- <20190119132832.GA29881@MBP.local>
- <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
- <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
- <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
- <20190121143704.GE29504@arrakis.emea.arm.com>
- <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <0cecfda4-e2c3-9282-12b1-fbe300708c72@arm.com>
-Date:   Mon, 21 Jan 2019 15:53:25 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 10:54:12 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37744 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729712AbfAUPyM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:54:12 -0500
+Received: by mail-qt1-f196.google.com with SMTP id t33so24014788qtt.4;
+        Mon, 21 Jan 2019 07:54:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BolUHUemdSZNYDTaUCTkJTDa+hu/AMvXO0Ph+5Tguds=;
+        b=nS+rQk60Pq3WTGnlnXrqoLS0+adnBxu+vaPyTDGw31/e1kQLgdZXehQwEdlhJTeQVa
+         xdboAjvUexCZuLr5t7sah5rP/yJ0tAbjlTMZHdYf7ijAe+q6J8PY1UeC4z6kmsKmW1SE
+         GMDFcvmyRvRQI1fhTuCtf1GUY+ek9zqP4wZsxW+07JjI2VOT1hl9srgY57Fie1nlrMfo
+         ZGzdVPojp976Yd9qhRJ083YGNhW6lfaepETKxJpwLOyaBVQI1JZF96x74ZnxGOZKgBkP
+         O7aCWJUGLy/BWYgL+MRXh42P26gZ3uUVyA29CLgjbDrcQIO2/B2UCjyT8+vo6J/fL2eV
+         Jjcg==
+X-Gm-Message-State: AJcUukf3EAoiaWy4+UB/OebO2kdmt8ArxlVmQyRNOuy6wlSUZysAifwF
+        9pq1YuLiO3LN8TXEn2vvKgmCKbz37mYuL92SBVw=
+X-Google-Smtp-Source: ALg8bN4xhZ8yHvW/KbKdBj9RO2PeHmyu5vnU6SbfaaKJj41epoElZRzRk0KzYbg3nXv6YWZzWm/df9KJulT854RZ60g=
+X-Received: by 2002:ac8:7451:: with SMTP id h17mr26877541qtr.319.1548086050519;
+ Mon, 21 Jan 2019 07:54:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <1546530025-26014-1-git-send-email-firoz.khan@linaro.org> <20190119235650.GC26876@brain-police>
+In-Reply-To: <20190119235650.GC26876@brain-police>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 21 Jan 2019 16:53:54 +0100
+Message-ID: <CAK8P3a1kiS7oF=eKLqPs6kKTYE1uTjhz++edH_J-tCUmXY2PNQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] arm64: system call table generation for asm-generic
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Firoz Khan <firoz.khan@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/01/2019 15:42, Rob Herring wrote:
-> +Mike Rapoport
-> 
-> On Mon, Jan 21, 2019 at 8:37 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
->>
->> On Mon, Jan 21, 2019 at 07:35:11AM -0600, Rob Herring wrote:
->>> On Mon, Jan 21, 2019 at 6:19 AM Robin Murphy <robin.murphy@arm.com> wrote:
->>>>
->>>> On 21/01/2019 11:57, Marc Gonzalez wrote:
->>>> [...]
->>>>> # echo dump=0xffffffc021e00000 > /sys/kernel/debug/kmemleak
->>>>> kmemleak: Object 0xffffffc021e00000 (size 2097152):
->>>>> kmemleak:   comm "swapper/0", pid 0, jiffies 4294892296
->>>>> kmemleak:   min_count = 0
->>>>> kmemleak:   count = 0
->>>>> kmemleak:   flags = 0x1
->>>>> kmemleak:   checksum = 0
->>>>> kmemleak:   backtrace:
->>>>>        kmemleak_alloc_phys+0x48/0x60
->>>>>        memblock_alloc_range_nid+0x8c/0xa4
->>>>>        memblock_alloc_base_nid+0x4c/0x60
->>>>>        __memblock_alloc_base+0x3c/0x4c
->>>>>        early_init_dt_alloc_reserved_memory_arch+0x54/0xa4
->>>>>        fdt_init_reserved_mem+0x308/0x3ec
->>>>>        early_init_fdt_scan_reserved_mem+0x88/0xb0
->>>>>        arm64_memblock_init+0x1dc/0x254
->>>>>        setup_arch+0x1c8/0x4ec
->>>>>        start_kernel+0x84/0x44c
->>>>>        0xffffffffffffffff
->>>>
->>>> OK, so via the __va(phys) call in kmemleak_alloc_phys(), you end up with
->>>> the linear map address of a no-map reservation, which unsurprisingly
->>>> turns out not to be mapped. Is there a way to tell kmemleak that it
->>>> can't scan within a particular object?
->>>
->>> There was this patch posted[1]. I never got a reply, so it hasn't been applied.
->>>
->>> https://patchwork.ozlabs.org/patch/995367/
->>
->> Thanks Rob, I wasn't aware of this patch (or I just missed it at the
->> time).
->>
->> I wonder whether kmemleak should simply remove ranges passed to
->> memblock_remove(), or at least mark them as no-scan.
-> 
-> Seems reasonable to me, but of course that impacts a lot of other
-> cases. Maybe Mike R has some thoughts?
+n Sun, Jan 20, 2019 at 12:57 AM Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Thu, Jan 03, 2019 at 09:10:22PM +0530, Firoz Khan wrote:
+> > This will be an automated scripts to provide easy support
+> > for add/modify/delete the system call entry by add in
+> > respective *.tbl file.
+> >
+> > System call table generation support for asm-generic is
+> > provide for arm64 architecture which will use the common
+> > scripts resides in scripts directory and use syscall.tbl
+> > syscall_arm32.tbl files as inputs. This implementation
+> > will replace asm-generic/unistd.h.
+> >
+> > This patch depends on:
+> >  https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
+> >  https://lore.kernel.org/lkml/1546520681-24453-1-git-send-email-firoz.khan@linaro.org/
+>
+> I'm having a hard time understanding what the benefit of this series is,
+> given that we only support EABI compat tasks. When adding a new compat
+> system call, you can't just blindly hook it up without checking whether it
+> needs a wrapper to deal with any type conversion etc, so really we're just
+> replacing one table with another as far as I can tell. What am I missing?
 
-In particular, might that risk crippling kmemleak on EFI arm64 EFI, 
-where we memblock_remove() the entire physical address space (but then 
-rebuild the memblock list from scratch)?
+The point that is missing in the description above is that all unistd.h
+and syscall.S files are now being generated from a .tbl file, across
+all architectures. This was already done on arm32, x86 and s390
+before 4.20, but is now done on all architectures that don't use
+the uapi/asm-generic/unistd.h header, and the arm32 compat version for
+arm64.
 
-FWIW, from the reserved-memory angle I think that patch looks reasonable 
-as-is (modulo perhaps a kmemleak_no_scan_phys() wrapper for API 
-symmetry). MEMBLOCK_NOMAP is already a massive pain in the bum and I'd 
-really rather not introduce any more usage of it if at all possible.
+The newly added file has the same format as all other tables, and
+will be easier to synchronize with the arm32 version, which has
+almost the same contents (arm32 has oabi support, arm64 has
+compat support).
 
-Robin.
+> I also really don't think we should be generating the 32-bit UAPI headers
+> from the 64-bit compat system call support (if that's what you're trying to
+> do -- make headers_check fails with your patches applied). arch/arm/ is the
+> canonical place for the 32-bit UAPI, and we're just implementing that.
+
+I think you just misread what Firoz was trying to say here: The
+arm64 uapi/asm/unistd.h file is now being generated from the
+generic syscall.tbl file, while the compat asm/unistd32.h file is not
+part of the UAPI. In both cases though, the data from the old files
+is being replaced with data in the more compact and (hopefully)
+more readable format.
+
+
+    Arnd
