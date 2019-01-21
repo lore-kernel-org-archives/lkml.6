@@ -2,204 +2,142 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B51AC282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00559C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6003820823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C258C2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:12:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="1c9y8M8u"
+	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="RTEF1iCV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbfAUILu (ORCPT
+        id S1728965AbfAUIMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:11:50 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38670 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727895AbfAUILt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:11:49 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so22148897wrw.5
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:11:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FcIt9r2n/mEgqCNb5UT29WUXJF2aCPaNHWPRCZT6MPQ=;
-        b=1c9y8M8u1GlScRssrmufW1/Y7fhxLH4q1jt/CA5XKaXFsNAdtbu0w9xJ2Qx9oc50kG
-         jNFY65vUmtflsLNaOdQyDTK3ARCroDpnifxvPaAW79sXXeb4IJqUXimuiBGpaUlYHwq7
-         cZu2ZqpZUh9Yg10KJKG9SEzo7YGdtIOzH8maEzfl3X5BYCRRcQpqurbS2ftuZ5VuFZYG
-         UacqMhRQougz3i0vLt1pouYosIW92Ax47uLaYXP0teBu7W5AHJ36K+5RXmYlxJBPFWs7
-         k9pEtFLWsg+tSppbCbX1eqBgb8Kw/rb1Rb1MaEkCfsEQM56SMpRCHdZIg7MV3aRHZoW5
-         FT5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FcIt9r2n/mEgqCNb5UT29WUXJF2aCPaNHWPRCZT6MPQ=;
-        b=a2P3He+oHLRe4UTv93qwWK2sknNgYFPr/17pAgFxqZnIdwX3uXvVBGVqc11ReZseah
-         96o3jJIKmytod1p1JYutdshKyVfE8XPmWg/e+OAGrn/UoFmRefJ5bbgqvOE9m1Yu3Kzj
-         P3fR4+xXGxqNDAeLZ/uAoJm6rxbwVpucTq9++fSi6MAi6IEPwksi/4yU4QlVZ5cV8cWg
-         z7TyBTMKfm20eWeH/iYWz5zjy6JyRSm5V32SLEQEdsxOSR1T3WmcJ47CuplDvL+EUjqs
-         31IBOpdTLQF0b0lrK9+QhHv716TgA8RuKNdf2OjpVMjbvWmHH/uV3tuqM9P9UyJB0nR8
-         yT1Q==
-X-Gm-Message-State: AJcUukeGf8hh+r9PHCQ09DgMq43VvN8lZM1r2cfRjweJbgMjZr/qStG2
-        49lRoqzrArdHMnF8VDvGZ2mw9+wqnlc=
-X-Google-Smtp-Source: ALg8bN4DTv7SHsMAYfU64me5hoPQjfKcJBRkYkXoG2pmxBtf2ZQEC5d/5sRI+8BCLbZJXWgDqNZGlQ==
-X-Received: by 2002:a5d:470b:: with SMTP id y11mr25418979wrq.16.1548027694264;
-        Sun, 20 Jan 2019 15:41:34 -0800 (PST)
-Received: from localhost.localdomain ([156.212.82.83])
-        by smtp.gmail.com with ESMTPSA id e9sm76576753wro.16.2019.01.20.15.41.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 15:41:33 -0800 (PST)
-From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
-        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
-        Boris Lukashev <blukashev@sempervictus.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-Subject: [RESEND PATCH V8 09/11] KVM: Add new exit reason For ROE violations
-Date:   Mon, 21 Jan 2019 01:39:38 +0200
-Message-Id: <20190120233940.15282-10-ahmedsoliman@mena.vt.edu>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
-References: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+        Mon, 21 Jan 2019 03:12:05 -0500
+Received: from mx.kolabnow.com ([95.128.36.42]:48172 "EHLO mx.kolabnow.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727586AbfAUIMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:12:05 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id 4BEBA4041C;
+        Mon, 21 Jan 2019 09:12:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+        content-type:content-type:content-transfer-encoding:mime-version
+        :references:in-reply-to:message-id:date:date:subject:subject
+        :from:from:received:received:received; s=dkim20160331; t=
+        1548058321; x=1549872722; bh=rRK5zbJ2GLNb8GmKWoEV7fBC/nFW6gG75gs
+        gSol8LrM=; b=RTEF1iCVUubZ+3l+JoE3UtLwbnvY7+G8shNdyw9QBipJwUmNvh6
+        nTSbIQOdOgjSWxb60ywv9zSR8B6OgGgIjTOnWp+/bOPEoK/zo0PUdAwUr+3A51h3
+        zBfgKCmgVVLfKHEGMaECR9pSTTidLII93pmhcoxzc65iqeiuqKKK+9k5Cx9fDA1J
+        VmW46V1i7JSbJmCVxjAJZ1p8CuDCGqtIvaLLDgtPuT2VaYBkOP5m9mhXJoMnk1fQ
+        348SarHkPxABYeVZYy3Vu7A+MWXtB6B3IfenkQvkJNW2H8zVjkqAOS0Fn1jdS+ox
+        mSIS5ThIFUmb7a713aeQN0Z5LP6BpjqXmMRhHEjhKJI4j5uUhJ/aeWYqMIQzqGuv
+        i/P3Yp89Cunb2H8rVoJRQXZ6tZpc2L0WQ9cttWRrCD9RBovaxPTee3MvzgiHN+IK
+        t/q8MpkK9IgDzoNQAsZUJYvjC+BmRRndTcjBZd7/eCSJ8gjb8zDYrQRlqi+m80u9
+        TMZRpzNSNcd2uhsUnlGu9EvN9R29iOvMy6nsJSpNnGrE0lxxZZGZVV6oaGbbmGuB
+        T96CMCiNf+AQoxMSL7VL5w0HevEVFr+i+kh4HhRP2q4zRPPj1cUXfPhspj8nOaXW
+        MKIi/Hh8cqP/EoWC8w7628GOXahRDhpLlsJU0E8m/WzzvDvhjyM5SA5o=
+X-Virus-Scanned: amavisd-new at mykolab.com
+Received: from mx.kolabnow.com ([127.0.0.1])
+        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id njzRGPxtKfs5; Mon, 21 Jan 2019 09:12:01 +0100 (CET)
+Received: from int-mx003.mykolab.com (unknown [10.9.13.3])
+        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id 4376B403EA;
+        Mon, 21 Jan 2019 09:12:01 +0100 (CET)
+Received: from ext-subm002.mykolab.com (unknown [10.9.6.2])
+        by int-mx003.mykolab.com (Postfix) with ESMTPS id EA53BA62;
+        Mon, 21 Jan 2019 09:12:00 +0100 (CET)
+From:   Federico Vaga <federico.vaga@vaga.pv.it>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] doc:it_IT: add translations in process/
+Date:   Mon, 21 Jan 2019 09:11:58 +0100
+Message-ID: <2146324.8BP4ZdZamE@pcbe13614>
+In-Reply-To: <20190120185617.44a7f275@lwn.net>
+References: <20190119221341.3622-1-federico.vaga@vaga.pv.it> <20190120185617.44a7f275@lwn.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem is that qemu will not be able to detect ROE violations, so
-one option would be create host API to tell if a given page is ROE
-protected, or create ROE violation exit reason.
+On Monday, January 21, 2019 2:56:17 AM CET Jonathan Corbet wrote:
+> On Sat, 19 Jan 2019 23:13:41 +0100
+>=20
+> Federico Vaga <federico.vaga@vaga.pv.it> wrote:
+> > This patch adds the Italian translation for the following documents
+> > in Documentation/process:
+> >=20
+> > - applying-patches
+> > - submit-checklist
+> > - submitting-drivers
+> > - changes
+> > - stable api nonsense
+> >=20
+> > Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+>=20
+> In general, this looks good.  One thing jumped at me, though...(OK, more
+>=20
+> than one, but only one to fix):
+> > +Perl
+> > +----
+> > +
+> > +Per compilare il kernel vi servir=E0 perl 5 e i seguenti moduli
+> > ``Getopt::Long``, +``Getopt::Std``, ``File::Basename``, e ``File::Find`=
+`.
+>=20
+> Didn't Rob Landley go though some considerable pain a while back to
+> eliminate Perl from the basic kernel build?  This, perhaps, should come o=
+ut
+> of the original.  (As long as it's still there, it makes sense to be in t=
+he
+> translation, of course).
 
-Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
----
- arch/x86/kvm/x86.c       | 10 +++++++++-
- include/kvm/roe.h        | 12 ++++++++++++
- include/uapi/linux/kvm.h |  2 +-
- virt/kvm/kvm_main.c      |  1 +
- virt/kvm/roe.c           |  2 +-
- virt/kvm/roe_generic.h   |  9 +--------
- 6 files changed, 25 insertions(+), 11 deletions(-)
+I can have a deeper look and try to fix the original document too
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 19b0f2307e..368e3d99fd 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5409,6 +5409,7 @@ static int emulator_read_write(struct x86_emulate_ctxt *ctxt,
- 			const struct read_write_emulator_ops *ops)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
-+	struct kvm_memory_slot *slot;
- 	gpa_t gpa;
- 	int rc;
- 
-@@ -5450,7 +5451,14 @@ static int emulator_read_write(struct x86_emulate_ctxt *ctxt,
- 
- 	vcpu->run->mmio.len = min(8u, vcpu->mmio_fragments[0].len);
- 	vcpu->run->mmio.is_write = vcpu->mmio_is_write = ops->write;
--	vcpu->run->exit_reason = KVM_EXIT_MMIO;
-+	slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa >> PAGE_SHIFT);
-+	if (slot && ops->write && (kvm_roe_check_range(slot, gpa>>PAGE_SHIFT,
-+			gpa - (gpa & PAGE_MASK), bytes) ||
-+			gfn_is_full_roe(slot, gpa>>PAGE_SHIFT)))
-+		vcpu->run->exit_reason = KVM_EXIT_ROE;
-+	else
-+		vcpu->run->exit_reason = KVM_EXIT_MMIO;
-+
- 	vcpu->run->mmio.phys_addr = gpa;
- 
- 	return ops->read_write_exit_mmio(vcpu, gpa, val, bytes);
-diff --git a/include/kvm/roe.h b/include/kvm/roe.h
-index 6a86866623..3121a67753 100644
---- a/include/kvm/roe.h
-+++ b/include/kvm/roe.h
-@@ -13,4 +13,16 @@ void kvm_roe_arch_commit_protection(struct kvm *kvm,
- 		struct kvm_memory_slot *slot);
- int kvm_roe(struct kvm_vcpu *vcpu, u64 a0, u64 a1, u64 a2, u64 a3);
- bool kvm_roe_arch_is_userspace(struct kvm_vcpu *vcpu);
-+bool kvm_roe_check_range(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
-+		int len);
-+static inline bool gfn_is_full_roe(struct kvm_memory_slot *slot, gfn_t gfn)
-+{
-+	return test_bit(gfn - slot->base_gfn, slot->roe_bitmap);
-+
-+}
-+static inline bool gfn_is_partial_roe(struct kvm_memory_slot *slot, gfn_t gfn)
-+{
-+	return test_bit(gfn - slot->base_gfn, slot->partial_roe_bitmap);
-+}
-+
- #endif
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 6d4ea4b6c9..0a386bb5f2 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -235,7 +235,7 @@ struct kvm_hyperv_exit {
- #define KVM_EXIT_S390_STSI        25
- #define KVM_EXIT_IOAPIC_EOI       26
- #define KVM_EXIT_HYPERV           27
--
-+#define KVM_EXIT_ROE		  28
- /* For KVM_EXIT_INTERNAL_ERROR */
- /* Emulate instruction failed. */
- #define KVM_INTERNAL_ERROR_EMULATION	1
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 819033f475..d92d300539 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -62,6 +62,7 @@
- #include "async_pf.h"
- #include "vfio.h"
- #include "roe_generic.h"
-+#include <kvm/roe.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/kvm.h>
-diff --git a/virt/kvm/roe.c b/virt/kvm/roe.c
-index 4393a6a6a2..9540473f89 100644
---- a/virt/kvm/roe.c
-+++ b/virt/kvm/roe.c
-@@ -60,7 +60,7 @@ bool kvm_roe_check_range(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
- 		return false;
- 	return kvm_roe_protected_range(slot, gpa, len);
- }
--
-+EXPORT_SYMBOL_GPL(kvm_roe_check_range);
- 
- void kvm_roe_free(struct kvm_memory_slot *slot)
- {
-diff --git a/virt/kvm/roe_generic.h b/virt/kvm/roe_generic.h
-index ad121372f2..f1ce4a8aec 100644
---- a/virt/kvm/roe_generic.h
-+++ b/virt/kvm/roe_generic.h
-@@ -14,12 +14,5 @@ void kvm_roe_free(struct kvm_memory_slot *slot);
- int kvm_roe_init(struct kvm_memory_slot *slot);
- bool kvm_roe_check_range(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
- 		int len);
--static inline bool gfn_is_full_roe(struct kvm_memory_slot *slot, gfn_t gfn)
--{
--	return test_bit(gfn - slot->base_gfn, slot->roe_bitmap);
--}
--static inline bool gfn_is_partial_roe(struct kvm_memory_slot *slot, gfn_t gfn)
--{
--	return test_bit(gfn - slot->base_gfn, slot->partial_roe_bitmap);
--}
-+
- #endif
--- 
-2.19.2
+>=20
+> > +Modifiche architetturali
+> > +------------------------
+> > +
+> > +DevFS =E8 stato reso obsoleto da udev
+> > +(http://www.kernel.org/pub/linux/utils/kernel/hotplug/)
+> > +
+> > +Il supporto per UID a 32-bit =E8 ora disponibile.  Divertitevi!
+>=20
+> Speaking of stuff that should come out of the original...this is not
+> exactly news at this point...
+
+Well, generally speaking this document mix things from the past and the=20
+"present". Probably it requires a review.
+=20
+> Meanwhile, here is the thing that actually needs to be fixed:
+> > +Raiserfsprogs
+> > +-------------
+> > +
+> > +Il pacchetto raiserfsprogs dovrebbe essere usato con raiserfs-3.6.x
+> > (Linux
+> > +kernel 2.4.x).  Questo =E8 un pacchetto combinato che contiene versioni
+> > +funzionanti di ``mkreiserfs``, ``resize_reiserfs``, ``debugreiserfs`` e
+> > +``reiserfsck``.  Questi programmi funzionano sulle piattaforme i386 e
+> > alpha.
+> Even in Italian, I believe that 'Reiser" is spelled "Reiser"...
+
+oops, your are right. I will fix this and send a V2 patch. Then I will have=
+ a=20
+look at the original document and try to update it
+
+> Thanks,
+>=20
+> jon
+
+
+=2D-=20
+=46ederico Vaga
+http://www.federicovaga.it/
+
 
