@@ -2,132 +2,103 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3B2C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0EAC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:59:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED602084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:59:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dt7KNE5m"
+	by mail.kernel.org (Postfix) with ESMTP id CC23F2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548061184;
+	bh=PPuvBMrSVw1Xcs84+S5r+Q9irSrkyMU09zf97ia5EVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ahEtDA2fVI9D80fwFFC10c7CVeTSlH1zK1tosAOfcrsVJLQmH2Dyc1gd7TeRwiF2W
+	 QeaKlF38mrWwUS0frCBTdzFo1yrS3PFQxe+13ksSpSr/nD1ae7PlY1nSiKB4DtegrH
+	 JLDzn3hO6p+hnRjuSKlNgC65DpdQP0zEvSkIX9Vg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbfAUI7e (ORCPT
+        id S1729168AbfAUI7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:59:34 -0500
-Received: from mail-pg1-f180.google.com ([209.85.215.180]:44788 "EHLO
-        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728217AbfAUI7e (ORCPT
+        Mon, 21 Jan 2019 03:59:43 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33892 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728156AbfAUI7m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:59:34 -0500
-Received: by mail-pg1-f180.google.com with SMTP id t13so9174711pgr.11;
-        Mon, 21 Jan 2019 00:59:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=360KHxZXyrTLVhq9rI49yKk+gFWgJhflRUdyBDHATps=;
-        b=Dt7KNE5m0EnSQH2cqxOtTu715VMCLHpo8XNEaFdJ6VvZeeHmPuHB1JRqJ1p43shtp2
-         o3PcBm0aP+9zb/zz4a+hW97R2ZNTMFea/O62yxYlXmy1Jq3G6qrG5IzfdAspucXoio8Z
-         C1koosofe8H/A0GOPYCYtjB1SHJwAAdq7hpozZcMgZ20lE5HqqHv/a15XbgqFM1FdrsT
-         Ft/zLunpM9Bs9lXO/P4U5EUE5/b55tTtU9ac/wOiBfRIba+A7Y9bN1mI5j2ufyuBmtOo
-         jQYpJgdBvhjjtLy3Fwphru1o15UhDiF0XD6UcDXbWEZIPvBzrX7zYyCrZTs1yaJBWxyO
-         q0KQ==
+        Mon, 21 Jan 2019 03:59:42 -0500
+Received: by mail-lf1-f67.google.com with SMTP id p6so14935237lfc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:59:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=360KHxZXyrTLVhq9rI49yKk+gFWgJhflRUdyBDHATps=;
-        b=etNOB9dsge+8OdAr3KdXsErwfscoqZSwPVqQ2s8tk6U0eOL8ToEUIYijVOpNtp+AgX
-         55UQNGw3EaO8j8eLyTBum3zeZqzc4bggnzUmOU8zYKDGL7FGLya2+Yj0rHsIJaG+DzTz
-         77/x7q/2HJJYhAAJWMIzTb94FaHkCt1sZEezg38E+m+oEt5YpzpW1DfwVkunha9A9B77
-         e0/CE7tJlKD0xo0aG+DW80anZoEuCruYgT8jUOdSky9BfuWNNVrV8M7V4KZM4BC1sFr5
-         VzpaGs8ajTPoIbmLOXW3GsF302seprL4odAx3hulCdvUps7Rz6W+7w5S2oor3mlJAyRa
-         MrCw==
-X-Gm-Message-State: AJcUukcj+tayRG2ZSaQQ3rZE+E/BZgk+yneuxYDSxMV+xKzbrb2j2u/3
-        kMmjl+Wy+IJgkc9DdTu9pOGOYqFohnE=
-X-Google-Smtp-Source: ALg8bN6OxuoJm+JQ7Xxbatupmmre+GK6Rh1C7SDY2uMc12KvIT/cX5bhfIp/oEUA0vX0zf68Mk1gNg==
-X-Received: by 2002:a63:db48:: with SMTP id x8mr25079775pgi.365.1548024292189;
-        Sun, 20 Jan 2019 14:44:52 -0800 (PST)
-Received: from ?IPv6:2001:df0:0:200c:54d2:28aa:5e03:3a9a? ([2001:df0:0:200c:54d2:28aa:5e03:3a9a])
-        by smtp.gmail.com with ESMTPSA id s9sm16412450pgl.88.2019.01.20.14.44.47
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CBPf8HOT93sc0oj4tv290B2Z61lA88aXyyFQdOpSyj0=;
+        b=L0XpPMLh/BcT5cCFI6UjEtPTYOtZ21aByEWcmMT2uSdSm5Pxl1ejuHCBuynx8VG0lV
+         7dlZy4wrIRE1W1lwzBVwhWgl0s0JmjNW9iPoVirn1R8zxjq3n6+U9yyCjznVe2q2bHDD
+         DR4T24OP6+NkZLejso+lQ8Ut3Ek/gM7Y4V81sx/zcGxlWe/DvP+V86INGMOOKBU6LEaz
+         lgFu+uEbQrZX92mj0kXK/afY2WcZwNJ7NDJaq1RknV57LjWIs03O7eJ/DOfrliiVpal2
+         r85O8EVmGuWw7yKXEnD9z7IHtjGS8PuVg2TIVl2ZvIKweJEQZcSxRmBi9VQTJZr9+xWD
+         h7Kw==
+X-Gm-Message-State: AJcUukc9kmBtvufMYrFlksR+iMU2i4OkQ5OGhoqQPw4MVQ2n3banZbl/
+        Nbzj9tOG4GiSygnMaLrAYQs=
+X-Google-Smtp-Source: ALg8bN6DKFlyHHbNBuQhh2Rrhe5wmbHn3TVTP5Dk7mbkg+PFyUtFlFcm4QqTdAZEMeiq0GYOAGEGAQ==
+X-Received: by 2002:a19:5d42:: with SMTP id p2mr18472269lfj.83.1548061179965;
+        Mon, 21 Jan 2019 00:59:39 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id e5-v6sm2130011ljj.91.2019.01.21.00.59.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 14:44:51 -0800 (PST)
-Subject: Re: [v4,1/9] net-next: phy: new Asix Electronics PHY driver
-To:     Andrew Lunn <andrew@lunn.ch>, Thomas Gleixner <tglx@linutronix.de>
-Cc:     netdev@vger.kernel.org, fthain@telegraphics.com.au,
-        geert@linux-m68k.org, f.fainelli@gmail.com,
-        linux-m68k@vger.kernel.org, Michael.Karcher@fu-berlin.de,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-References: <1524103526-12240-2-git-send-email-schmitzmic@gmail.com>
- <alpine.DEB.2.21.1901181121101.1647@nanos.tec.linutronix.de>
- <20190120174312.GC15048@lunn.ch>
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <68512084-2ba5-9b58-38b5-0052fddce734@gmail.com>
-Date:   Mon, 21 Jan 2019 11:44:45 +1300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 00:59:39 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1glVQc-0000Re-GR; Mon, 21 Jan 2019 09:59:34 +0100
+Date:   Mon, 21 Jan 2019 09:59:34 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Paul Walmsley <paul@pwsan.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andreas Schwab <schwab@suse.de>, linux-kernel@vger.kernel.org,
+        Atish Patra <atish.patra@wdc.com>,
+        Anup Patel <anup@brainfault.org>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 4/5] riscv: treat cpu devicetree nodes without status as
+ enabled
+Message-ID: <20190121085934.GH3691@localhost>
+References: <20190118140308.9599-1-johan@kernel.org>
+ <20190118140308.9599-5-johan@kernel.org>
+ <alpine.DEB.2.21.999.1901190140510.8813@utopia.booyaka.com>
 MIME-Version: 1.0
-In-Reply-To: <20190120174312.GC15048@lunn.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.999.1901190140510.8813@utopia.booyaka.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Sat, Jan 19, 2019 at 01:43:58AM +0000, Paul Walmsley wrote:
+> On Fri, 18 Jan 2019, Johan Hovold wrote:
+> 
+> > Follow the Linux convention and treat devicetree nodes without a status
+> > property as enabled rather than disabled, while also allowing "ok" as a
+> > shorthand for "okay".
+> > 
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
+> 
+> Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
+> 
+> ... although I probably would have phrased the commit message slightly 
+> differently - something like "Use of_device_is_available() in 
+> riscv_of_processor_hartid(), in place of an open-coded test."  That frames 
+> the change as one that removes custom code in place of an existing 
+> standard function for the same purpose.
 
-no objection for you to pick this up as part as a larger cleanup. I've 
-tried to reconstruct how this happened (i.e. what other phy driver file 
-I used as a 'template' for asix.c) - all I can say is that the 2.0+ 
-boiler plate text was in my initial commit, and the incorrect SPDX tag 
-was added in response to checkpath complaints. So 2.0+ would be correct.
+You're right, and that was my motivation too. In the end I decided to
+highlight the side effect in case someone was perhaps unknowingly
+relying on the current behaviour.
 
-Thomas: does that suit your purpose?
+Thanks for the review!
 
-Cheers,
-
-     Michael
-
-
-On 21/01/19 6:43 AM, Andrew Lunn wrote:
-> On Fri, Jan 18, 2019 at 11:22:39AM +0100, Thomas Gleixner wrote:
->> Michael,
->>
->> On Thu, 19 Apr 2018, Michael Schmitz wrote:
->>
->>> --- /dev/null
->>> +++ b/drivers/net/phy/asix.c
->>> @@ -0,0 +1,63 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/* Driver for Asix PHYs
->>> + *
->>> + * Author: Michael Schmitz <schmitzmic@gmail.com>
->>> + *
->>> + * This program is free software; you can redistribute  it and/or modify it
->>> + * under  the terms of  the GNU General  Public License as published by the
->>> + * Free Software Foundation;  either version 2 of the  License, or (at your
->>> + * option) any later version.
->>> + *
->>> + */
->> This license information is broken. The SPDX license identifier and the
->> boiler plate text are contradicting. The SPDX id is GPL v2 only and the
->> boiler plate says v2 or later.
-> Hi Thomas
->
-> Please see:
->
-> https://www.spinics.net/lists/netdev/msg544312.html
->
-> The first two patches are simple SPDX converstions. Then it gets
-> interesting trying to sort out license inconsistencies.
->
-> 	Andrew
+Johan
