@@ -2,168 +2,118 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A13EC31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56544C31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5D3A217D4
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:43:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZhMbxlAJ"
+	by mail.kernel.org (Postfix) with ESMTP id 2609521726
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548096291;
+	bh=WkBPCGNsdmn4jUhxAXGoZLrFy2EOGBTLPTLOWLTc7Nw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=zTWZjdKoMhvEoqbRiTS5ixdazx9MZNoU5fTMgN3+2d0Hr0Hzr5Xnnaf/b2zEo6nw4
+	 8l7tIEGJHdmgxhFHRIfeapSIa9EFajxJ2OzpbGcPhI8vgsQocGHfTIt6OFfq2Smg5E
+	 pKIWDZcBcMlWFyuPg0qPecYKv76a1aGjCGbAKGTU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbfAUSnz (ORCPT
+        id S1728170AbfAUSot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:43:55 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40381 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbfAUSny (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:43:54 -0500
-Received: by mail-wr1-f68.google.com with SMTP id p4so24587118wrt.7;
-        Mon, 21 Jan 2019 10:43:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=FHN5/PCe3aat40H4Gv9HHjgJcOmlJGmHzaX3d+taWhk=;
-        b=ZhMbxlAJXdSCgajmyTpA11w57eZNlsxBHBEk8LJ5f14iV8FjOrn+F26Rw09+z9rgG+
-         qhEf8l6N832Ygxw5sGyh5XI5y/LkQbdsEZxapQpW5+sT9gHzMUFqvZ+6vYwcaoCIf2Aw
-         UeLTs68pLUihce2bZhre9NrsJczlTGftBFzil1hczNkSSGA5tko0eSn2kniy6DVV3jfK
-         X5vaE5D144/1nWltnTyL/njV5YEnfENtSycXBguI2Lsy9i68KCY+MTIKoN9pGWUZxNnh
-         mQAFfYqcHv7JABW2ioGESfS7HtdP2rypYp0NEh2Bel+w10mfcfv5hKXrLmUxeaNEQezY
-         9npA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=FHN5/PCe3aat40H4Gv9HHjgJcOmlJGmHzaX3d+taWhk=;
-        b=Kue6oNxyTt13XMyxsb0AZgb8t38DwP5SGMRzvv3gTfDKoj69AyZKl8g9Ocl1Kj81IX
-         EM9e+5O3btJnF1hoBq9sM64skdyM8mYFIXaTU54FMVnKAcW82HdIWs9UXFOHvKFYplpl
-         NDy1HXIHRsSZBdBO2u52fW1Qbw7HZJoWNN1KFVM1k4v0ThXqf/rbJ8PbUKvON9dlr4z+
-         jl2l5VwhXlz46XL/RJMYajJq4V42MBDYOuYrXdN5qhmcx2vs4MsrdkfqaKrfWMytUAbi
-         nMyQOlG81kq9vILfUkGdO7c4iqnAoXrxnQMFCykYSKQM1tSRDZOyJZni2hJLGJ9tLven
-         /m3w==
-X-Gm-Message-State: AJcUukdoVD4QIbMzJvShLQAJKZXh5V76NFEzn46SKB7UOxvTVMtdcGeb
-        qclLkdOhcVl16663TmLVnBT3EZyj
-X-Google-Smtp-Source: ALg8bN48p05FIUHHXogHd1ypRPLcSwHWr+dxAxnDGUAxzv583spSd/KFie4KUfW1M9caXlxFCS/AKw==
-X-Received: by 2002:a5d:61c4:: with SMTP id q4mr28018363wrv.308.1548096231344;
-        Mon, 21 Jan 2019 10:43:51 -0800 (PST)
-Received: from [172.30.88.24] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id c65sm50413180wma.24.2019.01.21.10.43.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 10:43:50 -0800 (PST)
-Subject: Re: [PATCH v3 1/2] media: imx: csi: Disable SMFC before disabling
- IDMA channel
-To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
-Cc:     Gael PORTAY <gael.portay@collabora.com>,
-        Peter Seiderer <ps.report@gmx.net>, stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190119010457.2623-1-slongerbeam@gmail.com>
- <20190119010457.2623-2-slongerbeam@gmail.com>
- <1548071350.3287.3.camel@pengutronix.de>
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-Message-ID: <7432d18b-12fc-34c6-832f-576fc1b8e2e8@gmail.com>
-Date:   Mon, 21 Jan 2019 10:43:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 13:44:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726353AbfAUSot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 13:44:49 -0500
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEF6C21726;
+        Mon, 21 Jan 2019 18:44:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548096288;
+        bh=WkBPCGNsdmn4jUhxAXGoZLrFy2EOGBTLPTLOWLTc7Nw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ukQfKm8OCoVpXwwuS7QE4vGrQMxA0Q+R+t7u+Cl0gJlmAGeeF3jsIPzsITocDS+gX
+         jHRs2poRKOtbXC0TEcXhBGcSnpo1mu6pEaMthQAJ8ptG+hpR+q5cMEAy5dcF1/SwK+
+         OLnjuhqlujJKMJN0IWQSqpdLQNoPyiQqgy3E1XDE=
+Received: by mail-wr1-f46.google.com with SMTP id t27so24590850wra.6;
+        Mon, 21 Jan 2019 10:44:47 -0800 (PST)
+X-Gm-Message-State: AJcUukeK2nXyGCmshOvAaK8CMPAOE9bOaUtJ4Ms+zJEo2bLTbz42+D3Q
+        rR6asa4LoqgXTCV8BDl2vgWBr1iM0a+ZPkDXlfU=
+X-Google-Smtp-Source: ALg8bN5jhLVM7PhuAyOsnPvXiFgHqX1g/kuXwBtzPZxKMWJHYa11vtn8xHyCLRMHpDn/srbc4qfsdmcu7tYK/jdu2tc=
+X-Received: by 2002:adf:b243:: with SMTP id y3mr30303350wra.184.1548096286455;
+ Mon, 21 Jan 2019 10:44:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1548071350.3287.3.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
+ <1547744074-28308-3-git-send-email-lollivier@baylibre.com>
+ <20190121171019.GA2903@bogus> <86imyhapl9.fsf@baylibre.com>
+In-Reply-To: <86imyhapl9.fsf@baylibre.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Mon, 21 Jan 2019 10:44:35 -0800
+X-Gmail-Original-Message-ID: <CAGp9LzpgZDEdKFH4ZLqxtO60unxXRJoXNsGugNT=oojHDMp+3g@mail.gmail.com>
+Message-ID: <CAGp9LzpgZDEdKFH4ZLqxtO60unxXRJoXNsGugNT=oojHDMp+3g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: gnss: add mediatek binding
+To:     Loys Ollivier <lollivier@baylibre.com>
+Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/21/19 3:49 AM, Philipp Zabel wrote:
-> Hi,
+On Mon, Jan 21, 2019 at 9:29 AM Loys Ollivier <lollivier@baylibre.com> wrote:
 >
-> On Fri, 2019-01-18 at 17:04 -0800, Steve Longerbeam wrote:
->> Disable the SMFC before disabling the IDMA channel, instead of after,
->> in csi_idmac_unsetup().
->>
->> This fixes a complete system hard lockup on the SabreAuto when streaming
->> from the ADV7180, by repeatedly sending a stream off immediately followed
->> by stream on:
->>
->> while true; do v4l2-ctl  -d4 --stream-mmap --stream-count=3; done
->>
->> Eventually this either causes the system lockup or EOF timeouts at all
->> subsequent stream on, until a system reset.
->>
->> The lockup occurs when disabling the IDMA channel at stream off. Stopping
->> the video data stream entering the IDMA channel before disabling the
->> channel itself appears to be a reliable fix for the hard lockup. That can
->> be done either by disabling the SMFC or the CSI before disabling the
->> channel. Disabling the SMFC before the channel is the easiest solution,
->> so do that.
->>
->> Fixes: 4a34ec8e470cb ("[media] media: imx: Add CSI subdev driver")
->>
->> Suggested-by: Peter Seiderer <ps.report@gmx.net>
->> Reported-by: Gaël PORTAY <gael.portay@collabora.com>
->> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> Gaël, could we get a Tested-by: for this as well?
 >
->> Cc: stable@vger.kernel.org
->> ---
->> Changes in v3:
->> - switch from disabling the CSI before the channel to disabling the
->>    SMFC before the channel.
->> Changes in v2:
->> - restore an empty line
->> - Add Fixes: and Cc: stable
->> ---
->>   drivers/staging/media/imx/imx-media-csi.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
->> index e18f58f56dfb..8610027eac97 100644
->> --- a/drivers/staging/media/imx/imx-media-csi.c
->> +++ b/drivers/staging/media/imx/imx-media-csi.c
->> @@ -560,8 +560,8 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
->>   static void csi_idmac_unsetup(struct csi_priv *priv,
->>   			      enum vb2_buffer_state state)
->>   {
->> -	ipu_idmac_disable_channel(priv->idmac_ch);
->>   	ipu_smfc_disable(priv->smfc);
->> +	ipu_idmac_disable_channel(priv->idmac_ch);
-> Steve, do you have any theory why this helps? It's a bit weird to
-> disable the SMFC module while the DMA channel is still enabled.
-
-It does fix the hang, but I only have a vague theory as to why. That by 
-disabling the DMA channel while its internal FIFO is getting filled is 
-causing the hang, maybe due to a simultaneous update of the channel's 
-internal FIFO write pointer and the channel disable bit. By disabling 
-the SMFC (or the CSI), writes to the channel's internal FIFO stop.
-
->   I think
-> this warrants a big comment, given that enable order is SMFC_EN before
-> IDMAC channel enable.
+> On Mon 21 Jan 2019 at 17:10, Rob Herring wrote:
 >
-> Also ipu_smfc_disable is refcounted, so if the other CSI is capturing
-> simultaneously, this change has no effect.
+> > On Thu, 17 Jan 2019 17:54:32 +0100, Loys Ollivier wrote:
+> >> Add binding for Mediatek-based GNSS receivers.
+> >>
+> >> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+> >> ---
+> >>
+> >> v2:
+> >> Renamed bindings from Globaltop/gtop to Mediatek/mtk.
+> >> Moved current-speed as an optional propertie.
+> >> Removed the status line in the example.
+> >> Added "mediatek,mt3339" compatible.
+> >>
+> >>  .../devicetree/bindings/gnss/mediatek.txt          | 39
+> >>  ++++++++++++++++++++++
+> >>  1 file changed, 39 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/gnss/mediatek.txt
+> >>
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> Thanks Rob,
+> If there are no objections by others, I'll stop sending these two patch
+> (1/4 and 2/4) and reference any new patch serie for 3 and 4 as depending
+> on those two.
+>
 
-Sigh, you're right. Let me go back to disabling the CSI before the 
-channel, the CSI enable/disable is not refcounted (it doesn't need to be 
-since it is single use) so it doesn't have this problem.
+Hi Loys,
 
-Should we drop this patch or keep it (with a big comment)? By only 
-changing the disable order to "CSI then channel", the hang is reliably 
-fixed from my and Gael's testing, but my concern is that by not 
-disabling the SMFC before the channel, the SMFC could still empty its 
-FIFO to the channel's internal FIFO and still create a hang.
+Thanks for adding the first GPS device driver. It's really nice to see
+more device drivers added to upstream support.
 
-Steve
+Do you mind send the series again with Cc linux-mediatek@lists.infradead.org ?
 
+Sean
+
+> --
+> -L
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
