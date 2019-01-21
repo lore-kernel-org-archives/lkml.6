@@ -2,179 +2,106 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E41C2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C15C2F43D
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0087320870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:43:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BCtyzqGC"
+	by mail.kernel.org (Postfix) with ESMTP id 7E58420870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730169AbfAUPnj (ORCPT
+        id S1730245AbfAUPnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:43:39 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40150 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729195AbfAUPni (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:43:38 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f188so11190256wmf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:43:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=6nK5Z7skk0g3LC/CfG1f/AiMAh85ZzuJOt+3kzqjet0=;
-        b=BCtyzqGCEaRnpexFp/8u0S0xLLNlc/eLc1RE+1luRPpgO2HLYQY+VS2oWTHdcc0HQ3
-         4jh6sm6O35/GKcPGP0A+eYmGY1PVK7xR2w9iULuvIWlZgTcZNuJgD4TQoD9hELoHNXTV
-         Ffh+LqclWWKwo+HtTeTnZv0GYrSmMHfCI4wGo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=6nK5Z7skk0g3LC/CfG1f/AiMAh85ZzuJOt+3kzqjet0=;
-        b=m+sw8jOVVhUiNfgHoEH2vlrThxiYM5XkZHiMYjIdLnOmSa6dEDqLPUBqYSH3XNvbcD
-         8NQT0Evn4HPLadXih0ffK+TMrB8CeEVhV9j5M4SVLedfRvIJUvSepQeAJcxhw4FqLN9C
-         UPr4awC/CwTouYsIlw0x9lYrwjVTXbg5WBM6U5fT0cEww/t3nMk6KAkGcgSECs1ABkqh
-         7PpgdDYdiXW+DcOnPnyGTz0YaVenZAaivGpnp2i2j7xxpllXdcIImlXVBdvWL9+gUGrg
-         AsncKixmEyDFE0qtN+4dEHsOkF+R7/srl6liUknP2eUkeA+8cHXMV51c33Ipc+PRLpoc
-         fNjA==
-X-Gm-Message-State: AJcUukc92KbJvoy3OMQD3gLUAkp7Ckvlxg4kSvo6q0Y6+ZKzOrIBRZW+
-        zzZNdQ7DPEA7DZlwyDV32mEULC9WRtU=
-X-Google-Smtp-Source: ALg8bN6I88MxOM7njkA7lOhPxp8KzvrOmjChQXyjD7+grSL1kJXEwy1L6wnz8lUISdyDXDZgTfFuOQ==
-X-Received: by 2002:a1c:7511:: with SMTP id o17mr24971901wmc.42.1548085415973;
-        Mon, 21 Jan 2019 07:43:35 -0800 (PST)
-Received: from localhost ([49.248.61.1])
-        by smtp.gmail.com with ESMTPSA id n15sm76230608wrt.21.2019.01.21.07.43.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 07:43:35 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
-        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
-        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Tao Wang <kevin.wangtao@hisilicon.com>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 2/9] cpufreq: Auto-register the driver as a thermal cooling device if asked
-Date:   Mon, 21 Jan 2019 21:10:27 +0530
-Message-Id: <0036de796308b8919eac74a9a910f0d7b9c0cbf8.1548084260.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
-References: <cover.1548084260.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
-References: <cover.1548084260.git.amit.kucheria@linaro.org>
+        Mon, 21 Jan 2019 10:43:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60742 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729195AbfAUPnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:43:41 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 37DD320BA8; Mon, 21 Jan 2019 16:43:38 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E945620A7D;
+        Mon, 21 Jan 2019 16:43:27 +0100 (CET)
+Date:   Mon, 21 Jan 2019 16:43:28 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Sean Paul <sean@poorly.run>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH v4 6/9] drm/bridge: cdns: Separate DSI and D-PHY
+ configuration
+Message-ID: <20190121154328.ydvz4fr5l77do3eh@flea>
+References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
+ <df619f059617d85c00efa146884e295240a07ae7.1547026369.git-series.maxime.ripard@bootlin.com>
+ <20190117133338.GA114153@art_vandelay>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l6imrxbzhtg7biw4"
+Content-Disposition: inline
+In-Reply-To: <20190117133338.GA114153@art_vandelay>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All cpufreq drivers do similar things to register as a cooling device.
-Provide a cpufreq driver flag so drivers can just ask the cpufreq core
-to register the cooling device on their behalf. This allows us to get
-rid of duplicated code in the drivers.
 
-In order to allow this, we add a struct thermal_cooling_device pointer
-to struct cpufreq_policy so that drivers don't need to store it in a
-private data structure.
+--l6imrxbzhtg7biw4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Stephen Boyd <swboyd@chromium.org>
-Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/cpufreq/cpufreq.c |  6 ++++++
- include/linux/cpufreq.h   | 25 +++++++++++++++++++++++++
- 2 files changed, 31 insertions(+)
+On Thu, Jan 17, 2019 at 08:33:38AM -0500, Sean Paul wrote:
+> > @@ -768,49 +769,90 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
+> > =20
+> >  		dsi_cfg->hsa =3D dpi_to_dsi_timing(tmp, bpp,
+> >  						 DSI_HSA_FRAME_OVERHEAD);
+> > -		dsi_htotal +=3D dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+> > -		dsi_hss_hsa_hse_hbp +=3D dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+> >  	}
+> > =20
+> >  	dsi_cfg->hact =3D dpi_to_dsi_timing(mode_valid_check ?
+> >  					  mode->hdisplay : mode->crtc_hdisplay,
+> >  					  bpp, 0);
+> > -	dsi_htotal +=3D dsi_cfg->hact;
+> > +	dsi_cfg->hfp =3D dpi_to_dsi_timing(mode_to_dpi_hfp(mode), bpp,
+> > +					 DSI_HFP_FRAME_OVERHEAD);
+>=20
+> We're throwing away the mode_valid_check switch here to flip between crtc=
+_h*
+> value and h* value. Is that intentional? We're using it above for hdispla=
+y, so
+> it's a bit confusing.
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index e35a886e00bc..cf1be057caf4 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1318,6 +1318,9 @@ static int cpufreq_online(unsigned int cpu)
- 	if (cpufreq_driver->ready)
- 		cpufreq_driver->ready(policy);
- 
-+	if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV)
-+		register_cooling_device(policy);
-+
- 	pr_debug("initialization complete\n");
- 
- 	return 0;
-@@ -1405,6 +1408,9 @@ static int cpufreq_offline(unsigned int cpu)
- 		goto unlock;
- 	}
- 
-+	if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV)
-+		unregister_cooling_device(policy);
-+
- 	if (cpufreq_driver->stop_cpu)
- 		cpufreq_driver->stop_cpu(policy);
- 
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index bd7fbd6a4478..02fc9f210aee 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -13,6 +13,7 @@
- 
- #include <linux/clk.h>
- #include <linux/cpumask.h>
-+#include <linux/cpu_cooling.h>
- #include <linux/completion.h>
- #include <linux/kobject.h>
- #include <linux/notifier.h>
-@@ -151,6 +152,11 @@ struct cpufreq_policy {
- 
- 	/* For cpufreq driver's internal use */
- 	void			*driver_data;
-+
-+#ifdef CONFIG_CPU_THERMAL
-+	/* Pointer to the cooling device if used for thermal mitigation */
-+	struct thermal_cooling_device *cdev;
-+#endif
- };
- 
- /* Only for ACPI */
-@@ -386,6 +392,12 @@ struct cpufreq_driver {
-  */
- #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING	BIT(6)
- 
-+/*
-+ * Set by drivers that want the core to automatically register the cpufreq
-+ * driver as a thermal cooling device.
-+ */
-+#define CPUFREQ_AUTO_REGISTER_COOLING_DEV	BIT(7)
-+
- int cpufreq_register_driver(struct cpufreq_driver *driver_data);
- int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
- 
-@@ -415,6 +427,19 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
- 			policy->cpuinfo.max_freq);
- }
- 
-+#ifdef CONFIG_CPU_THERMAL
-+static inline void register_cooling_device(struct cpufreq_policy *policy) {
-+	policy->cdev = of_cpufreq_cooling_register(policy);
-+}
-+
-+static inline void unregister_cooling_device(struct cpufreq_policy *policy) {
-+	cpufreq_cooling_unregister(policy->cdev);
-+	policy->cdev = NULL;
-+}
-+#else
-+static inline void register_cooling_device(struct cpufreq_policy *policy) {}
-+static inline void unregister_cooling_device(struct cpufreq_policy *policy) {}
-+#endif
- #ifdef CONFIG_CPU_FREQ
- void cpufreq_suspend(void);
- void cpufreq_resume(void);
--- 
-2.17.1
+ah, right, thanks for spotting this.
 
+I'll resend a version with those changes, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--l6imrxbzhtg7biw4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEXooAAKCRDj7w1vZxhR
+xZvQAP9c5WpWI5x2NUr+cpn0bnmw6vFHt4EsPXnMArrGqiPwFgEAlu2Dw7n4C1H9
+K0jkBgL1lQj7MoT8wU2DNLJ2gXtN1AQ=
+=fa+Q
+-----END PGP SIGNATURE-----
+
+--l6imrxbzhtg7biw4--
