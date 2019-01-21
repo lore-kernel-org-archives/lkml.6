@@ -2,93 +2,122 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA06C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC2FC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B11F2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B8IucuQw"
+	by mail.kernel.org (Postfix) with ESMTP id 2324C20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548079517;
+	bh=o6beDz6+dBB9OIbijO6dxkui/wioAJh0dV1nCeif7Rc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=eBimIPY9t4TwwwwtFHnt/a69r93Zfn9CCvJzKheBZOl11fAFPLyspkesrugvrfMdM
+	 AuZnddCDuB9Q0mK328A09nwp6ASAb6haIqP60d7ip9hCGbnhCbLDwfTzmyALG4RXGq
+	 lxnPdgDnI0IRL/wgfIvdWMgYcpuJG831X5TLU4SM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbfAUOFI (ORCPT
+        id S1732642AbfAUOB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:05:08 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33904 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731538AbfAUOFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:05:06 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u89-v6so17656297lje.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 06:05:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5b6N5TttLACwg1g+D+B1jpyp/MJX3VVfc7fpeKpb1S8=;
-        b=B8IucuQwtYIX4oEj8QC+m6MO8aaULSuxvk7TwdA/sGSV/xWuYFA5UUB0OsLvXeZ2W4
-         DKwTGq+62W9oVyU9vPM3Ecuh4i/qg3JkXZ//EcSmM+ubScpg1QVIMEfVXV4RgcFTllHt
-         nattxyHzgSziDz+zcjRr7jb+cZN/zevP9T500=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5b6N5TttLACwg1g+D+B1jpyp/MJX3VVfc7fpeKpb1S8=;
-        b=mfzR503dtGKk0+pCXEgFILa7CUEx4yKdz8IllD96Dtgw12oMcSsXW0fyfKGMbvydP6
-         4FgOKyVWIlkTV2LWGBPDZyd8tG51wLdCLnNT7TD5fxrTE1HU0OJQSMWsTNS4RkP2Xa9T
-         AtgHFnTgJU4rKPIVjRD6q5j2DwtK4dG+m5ILZH4+c3PoDLQNw4PbIkQNVN7D6naus+rw
-         hevC9MQFPqX6GUNs9Tv0muHLMekyzmp4yVeZgehdCS3MEwz1L/y9rjfM0IfoLj7G/5vS
-         angOWT81I8bqlSOvbxAliOom0sofvCektRa6rSbUlPWOHiInMXx9oPmTp+lptStOrgH2
-         wuwA==
-X-Gm-Message-State: AJcUukcPp6f9tf0uNMlEHKj8042T2A+FORoxPPk4I8od28kpIkQMbgHx
-        SeS6yNtSlFi9YEi7mq0uymyF7gSWz/JXzIAHNZFfww==
-X-Google-Smtp-Source: ALg8bN7q6sTy+2/CGyjdCIo2gr9X3OSRKEJtp6H6qjoB1V59SR04M4lIX8XIwmwQR3BSqoT/G3x+dIvV760LRil4kS4=
-X-Received: by 2002:a2e:9e16:: with SMTP id e22-v6mr17883188ljk.4.1548079503786;
- Mon, 21 Jan 2019 06:05:03 -0800 (PST)
+        Mon, 21 Jan 2019 09:01:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48386 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732154AbfAUOBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:22 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD60C2089F;
+        Mon, 21 Jan 2019 14:01:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548079281;
+        bh=o6beDz6+dBB9OIbijO6dxkui/wioAJh0dV1nCeif7Rc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xlfbIryRfB+lZ5QNfRMJYQ4GDPPPfOTkTaecRlRYvVcuv9kK6b7dN8Vz89N8V4d54
+         UEvKUSLvxuVHnBeJWMDtNXXVC1R040gTTa94WajYcWKEnI4NxgU0+4SfG1UC6aRgHk
+         Ad5vW0eYN5e59L2gRaFHBmm5LGvKBH+EJEJ9lcHQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 69/99] netfilter: ebtables: account ebt_table_info to kmemcg
+Date:   Mon, 21 Jan 2019 14:49:01 +0100
+Message-Id: <20190121134916.606265438@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
+References: <20190121134913.924726465@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20190118134244.22253-1-brgl@bgdev.pl> <20190118134244.22253-5-brgl@bgdev.pl>
-In-Reply-To: <20190118134244.22253-5-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 21 Jan 2019 15:04:51 +0100
-Message-ID: <CACRpkdYkX2XK2G0WmjjJSdAWGJsBndtYJsdNPS+hWwpqaH8Z1A@mail.gmail.com>
-Subject: Re: [PATCH 04/13] dt-bindings: gpio: add DT bindings for max77650
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 2:43 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Add the DT binding document for the GPIO module of max77650.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+------------------
 
-Very simple so not much to complain about :)
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+From: Shakeel Butt <shakeelb@google.com>
 
-Yours,
-Linus Walleij
+commit e2c8d550a973bb34fc28bc8d0ec996f84562fb8a upstream.
+
+The [ip,ip6,arp]_tables use x_tables_info internally and the underlying
+memory is already accounted to kmemcg. Do the same for ebtables. The
+syzbot, by using setsockopt(EBT_SO_SET_ENTRIES), was able to OOM the
+whole system from a restricted memcg, a potential DoS.
+
+By accounting the ebt_table_info, the memory used for ebt_table_info can
+be contained within the memcg of the allocating process. However the
+lifetime of ebt_table_info is independent of the allocating process and
+is tied to the network namespace. So, the oom-killer will not be able to
+relieve the memory pressure due to ebt_table_info memory. The memory for
+ebt_table_info is allocated through vmalloc. Currently vmalloc does not
+handle the oom-killed allocating process correctly and one large
+allocation can bypass memcg limit enforcement. So, with this patch,
+at least the small allocations will be contained. For large allocations,
+we need to fix vmalloc.
+
+Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ net/bridge/netfilter/ebtables.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -1137,14 +1137,16 @@ static int do_replace(struct net *net, c
+ 	tmp.name[sizeof(tmp.name) - 1] = 0;
+ 
+ 	countersize = COUNTER_OFFSET(tmp.nentries) * nr_cpu_ids;
+-	newinfo = vmalloc(sizeof(*newinfo) + countersize);
++	newinfo = __vmalloc(sizeof(*newinfo) + countersize, GFP_KERNEL_ACCOUNT,
++			    PAGE_KERNEL);
+ 	if (!newinfo)
+ 		return -ENOMEM;
+ 
+ 	if (countersize)
+ 		memset(newinfo->counters, 0, countersize);
+ 
+-	newinfo->entries = vmalloc(tmp.entries_size);
++	newinfo->entries = __vmalloc(tmp.entries_size, GFP_KERNEL_ACCOUNT,
++				     PAGE_KERNEL);
+ 	if (!newinfo->entries) {
+ 		ret = -ENOMEM;
+ 		goto free_newinfo;
+
+
