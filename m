@@ -2,166 +2,130 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3D8C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F8FC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473AA2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548060989;
-	bh=ljoqcITDvkcqTfkTIOdLmre0eIJ7TDdk3SpkC0S0AGo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nHZe5iLSIjAcVGRwNctcROjm4WJHBaI04x+gH9JIyFHOq6Vw+jh7gvFm38y2fAjiI
-	 XsCZj1w7ePQ0PbV94kSCQ1Mv4lnIdmwkrU1IT0hSTsvzDhioHB9hh3ViAaDe8g+lNI
-	 SzUK4h6To/CR2XjTlt6ynV92BbtkxMVA8NosanMo=
+	by mail.kernel.org (Postfix) with ESMTP id 28C8C2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbfAUI41 (ORCPT
+        id S1730038AbfAUI4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:56:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39038 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729906AbfAUI4X (ORCPT
+        Mon, 21 Jan 2019 03:56:31 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:37589 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729971AbfAUI40 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:56:23 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t9-v6so16810872ljh.6;
-        Mon, 21 Jan 2019 00:56:21 -0800 (PST)
+        Mon, 21 Jan 2019 03:56:26 -0500
+Received: by mail-vs1-f66.google.com with SMTP id n13so12183765vsk.4;
+        Mon, 21 Jan 2019 00:56:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=71c5hyAY1EO0S0MOpM0Em5vA0o1Gvicjzd3MBEoNQCA=;
-        b=YSjUJuA3k/wPEQzhAm5g9oTNo9Bl+8XeOO/Fywk+2447YnrmRNLPv1axuiWOIHAejE
-         YlWy8DZdoh9I4HlLGQ3/GIbRC7WKsyn2sLy5kGWlzjVyx585Cvr9McP6yEP83HkWY5dX
-         F7YUrsDRBS8TrJoNGFqVWo0hBxxrob+m4lNrJEU+uxiQPQFprfEo+1Unia434/BFCBKY
-         G43uyMYHcA6bZGK7xKbeOLd4tFb8vBQLJ4AaqB8tj32yrxwaMCQp+cMIOb2ojswe9JJ0
-         rG+3z2bZAl9FIynS57jV+OyoN63omlWfAJgidsCwpmsXO3QwoL3pT2lZ9/wu6C7IBbtY
-         9taw==
-X-Gm-Message-State: AJcUukf6xAlmcodI5xv4Emo5ia2biMAfnmtkZxNpgy/aWU+pCwkskJ2P
-        zJfLkztVvPmXwbHMqmH3FdgM22rZ
-X-Google-Smtp-Source: ALg8bN5V5F7mb0JqjYWPXZkemIKmk0W2dwrw8GFZ1oJPMXrJUKMnH9xI044Gfv2KhSpp+0encx/5Xw==
-X-Received: by 2002:a2e:3218:: with SMTP id y24-v6mr1782139ljy.157.1548060980222;
-        Mon, 21 Jan 2019 00:56:20 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id f1sm2172504lfm.22.2019.01.21.00.56.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 00:56:19 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1glVNN-0000QF-T7; Mon, 21 Jan 2019 09:56:14 +0100
-Date:   Mon, 21 Jan 2019 09:56:13 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
- change command
-Message-ID: <20190121085613.GG3691@localhost>
-References: <61301df80bd6a8ee0265b31b7f6a3aa1@codeaurora.org>
- <20190111013707.GD261387@google.com>
- <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
- <20190111235633.GK261387@google.com>
- <a6e083d245baebc019b6e7163fd6f133@codeaurora.org>
- <20190115234628.GQ261387@google.com>
- <20190117160944.GV3691@localhost>
- <20190117172109.GU261387@google.com>
- <20190118094416.GB3691@localhost>
- <20190119003109.GD261387@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gZ5xKfwCuPvjsbs8ypviK2wVON115JbrXd6QLz3o9YM=;
+        b=bHADKebxrqlhIG5XMxev/TeKvRHwYPxkUnLwFwnvUCi/5vHpmRA63HSlijAEcbAxvc
+         NMngcDHCI1ROYq98D8pE/SJBcFeSaytXK212uzydt7PN3WPWtHACtTz5UcFPNTiCBY2k
+         Dee+Xgwe/Xt4yhjiBttzSLjHem8ZB6zDmvkX5zfEnNMaFhYSxWBbDiwlFU8eyez5VccI
+         kM7SH9oZWvvF+avF6RQ/Zt0VHy7Hns8qSRl7woVXnAzfUIVMXTm8bqx6/vdkKCo2THsL
+         YDq1XtzmWmG7QLD5iCWT9vvJQjC5Uu9hTgDqDFsBy1nsaH2xcQGCyN6qeyqs9GPdozA8
+         h74w==
+X-Gm-Message-State: AJcUukeODy/Zyn10VHLunphFNiXdTmE4OBhNYsXwZj0LujD7kPSb3BhJ
+        8tkLSjd2nX0KJ5xKLZPFuhAkcJLaK0n4POVaujM=
+X-Google-Smtp-Source: ALg8bN6oQTjQTvMkhu0RSRQU3eG9DnGNZiAO15hurqtwS01M6srTDPs1MhTBku760Abay4RjwT0+IVQlARbp3cdEMM8=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr11527790vsj.11.1548060984197;
+ Mon, 21 Jan 2019 00:56:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190119003109.GD261387@google.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-30-arnd@arndb.de>
+In-Reply-To: <20190118161835.2259170-30-arnd@arndb.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 21 Jan 2019 09:56:11 +0100
+Message-ID: <CAMuHMdV2z_nacfpuqatsy6cer_7xy+7-i0MhJNbNdcz7Aw-fSw@mail.gmail.com>
+Subject: Re: [PATCH v2 29/29] y2038: add 64-bit time_t syscalls to all 32-bit architectures
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 04:31:09PM -0800, Matthias Kaehlcke wrote:
-> On Fri, Jan 18, 2019 at 10:44:16AM +0100, Johan Hovold wrote:
-> > On Thu, Jan 17, 2019 at 09:21:09AM -0800, Matthias Kaehlcke wrote:
-> > 
-> > > I observed that the qcom_geni_serial driver doesn't raise RTS with
-> > > flow control disabled. It seems we have to investigate why that's the
-> > > case. I agree that the driver should be platform agnostic.
-> > 
-> > Sounds like a driver bug, unless the hardware is just "odd". The
-> > driver implementation of this looks very non-standard judging from a
-> > quick peek.
-> > 
-> > In fact, qcom_geni_serial_get_mctrl() is currently a no-op if hardware
-> > flow control is not enabled:
-> > 
-> > 	if (uart_console(uport) || !uart_cts_enabled(uport))
-> > 		return;
-> > 
-> > Perhaps dropping the !uart_cts_enabled() test is sufficient.
-> 
-> Thanks for taking a look Johan, that was indeed the problem (also
-> in set_mctrl()). I posted a fix: https://lore.kernel.org/patchwork/patch/1033611/
+On Fri, Jan 18, 2019 at 5:25 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> This adds 21 new system calls on each ABI that has 32-bit time_t
+> today. All of these have the exact same semantics as their existing
+> counterparts, and the new ones all have macro names that end in 'time64'
+> for clarification.
+>
+> This gets us to the point of being able to safely use a C library
+> that has 64-bit time_t in user space. There are still a couple of
+> loose ends to tie up in various areas of the code, but this is the
+> big one, and should be entirely uncontroversial at this point.
+>
+> In particular, there are four system calls (getitimer, setitimer,
+> waitid, and getrusage) that don't have a 64-bit counterpart yet,
+> but these can all be safely implemented in the C library by wrapping
+> around the existing system calls because the 32-bit time_t they
+> pass only counts elapsed time, not time since the epoch. They
+> will be dealt with later.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Nice (I did mean set_mctrl() above, as I think you noticed).
+>  arch/m68k/kernel/syscalls/syscall.tbl       | 20 +++++++++
 
-> Balakrishna, the following (applied on top of your patch) works for me
-> with the UART patch above:
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index 9d5e41f159c78f..60bfdf01f72841 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -1080,7 +1080,7 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->  {
->  	unsigned int speed, qca_baudrate;
->  	struct qca_serdev *qcadev;
-> -	int ret;
-> +	int ret = 0;
->  
->  	if (speed_type == QCA_INIT_SPEED) {
->  		speed = qca_get_speed(hu, QCA_INIT_SPEED);
-> @@ -1097,22 +1097,27 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->  		 * the old speed.
->  		 */
->  		qcadev = serdev_device_get_drvdata(hu->serdev);
-> -		if (qcadev->btsoc_type == QCA_WCN3990)
-> +		if (qcadev->btsoc_type == QCA_WCN3990) {
-> +			hci_uart_set_flow_control(hu, true);
+For m68k:
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Wow, yeah, this parameter inversion is indeed confusing...
 
->  			serdev_device_set_rts(hu->serdev, false);
-> +		}
+Gr{oetje,eeting}s,
 
-But looking at hci_uart_set_flow_control() now, it actually also
-deasserts RTS. So all you need here is the hci_uart_set_flow_control()
-call.  
+                        Geert
 
-And that makes the inversion make a bit more sense too, even if the
-naming is a bit unfortunate with respect to
-serdev_device_set_flow_control() at least.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->  		qca_baudrate = qca_get_baudrate_value(speed);
->  		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
->  		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
->  		if (ret)
-> -			return ret;
-> +			goto out;
->  
->  		host_set_baudrate(hu, speed);
->  
-> -		if (qcadev->btsoc_type == QCA_WCN3990)
-> +out:
-> +		if (qcadev->btsoc_type == QCA_WCN3990) {
-> +			hci_uart_set_flow_control(hu, false);
->  			serdev_device_set_rts(hu->serdev, true);
-> +		}
-
-And same here.
-
-Johan
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
