@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0D3C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD09EC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF67C2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:04:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0C2420989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:04:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079486;
-	bh=mjrQNC2FXTy7T4UbAGzC8qQaNI3UjU9kAyvTzgbIgxQ=;
+	s=default; t=1548079494;
+	bh=/xMuehMlbpqmixqxHspZEWOgQWYim2WlsdNEm0cpimc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kHLspqdJq6GurrWkjlOjoS/664L+IUCIpvsfblFUtj1tM1dYtrrKKGTtkcyLszWuv
-	 bSSWMX6rt9Q7V1YZoNcNRiGAfTHNjcF7LMJtl2LbxlVOGMauXHii0pAbg1bNssPEt4
-	 Yz+Yc9zgTDSdzfPck7pzKPcEJGPP0zHrQCvwguyU=
+	b=vrIb3bZX5LH5i9cWzmdxF0NP0gzn656LSrXPI7UsK+TLPBPSyMlCUhqiVdvH/O3SX
+	 LLk2W27zYxWSMuckKbIPzvzEX+a2ZpqKcyk8+G93RleDIpgueWcZHkDc/c2erIFijg
+	 jHUlxacmkj/+DgrXWtGb16vIZJ10NS2lcp4bUC8M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731004AbfAUOEo (ORCPT
+        id S1732676AbfAUOBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:04:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49134 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731802AbfAUOBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:54 -0500
+        id S1732666AbfAUOBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F5B321721;
-        Mon, 21 Jan 2019 14:01:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE2FA2089F;
+        Mon, 21 Jan 2019 14:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079313;
-        bh=mjrQNC2FXTy7T4UbAGzC8qQaNI3UjU9kAyvTzgbIgxQ=;
+        s=default; t=1548079300;
+        bh=/xMuehMlbpqmixqxHspZEWOgQWYim2WlsdNEm0cpimc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CevyQWDvl7Ou7JI/HxPCJEMNPKG6c5kDRT9clg4epzAdyTyOPr2MZzkXy0JuEYrp9
-         K1j60mOqs8Y2qmbmc0i85a7I+mCr2MKlKtp8RkdkN5QOOszkBM8JH+umDdA19sppGR
-         q6/DxjCLmy65QSYQfKqTN7OH4kdxNZgVKo+6CTn4=
+        b=MXsM4WuPlvuBCd8Xr0POa/5JxOYdjvONStoJelv3o+NytxvjHck9DIXbBOAnLduL2
+         LwEkcH2cf2gq3mTrD4m0C6ArJDgT4sxD291C/zLSqRUvag0Lyxm7iuPymzqPklku90
+         pFJP/zfhqMJ4hC2KehijodXWdXAA1FbBUdSOrpak=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Mironov <mironov.ivan@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 44/99] scsi: sd: Fix cache_type_store()
-Date:   Mon, 21 Jan 2019 14:48:36 +0100
-Message-Id: <20190121134915.647452402@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+e01d94b5a4c266be6e4c@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 75/99] tipc: fix uninit-value in tipc_nl_compat_link_reset_stats
+Date:   Mon, 21 Jan 2019 14:49:07 +0100
+Message-Id: <20190121134916.920895246@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -64,62 +66,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Mironov <mironov.ivan@gmail.com>
+From: Ying Xue <ying.xue@windriver.com>
 
-commit 44759979a49bfd2d20d789add7fa81a21eb1a4ab upstream.
+commit 8b66fee7f8ee18f9c51260e7a43ab37db5177a05 upstream.
 
-Changing of caching mode via /sys/devices/.../scsi_disk/.../cache_type may
-fail if device responds to MODE SENSE command with DPOFUA flag set, and
-then checks this flag to be not set on MODE SELECT command.
+syzbot reports following splat:
 
-In this scenario, when trying to change cache_type, write always fails:
+BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:486
+CPU: 1 PID: 11057 Comm: syz-executor0 Not tainted 4.20.0-rc7+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+ __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:295
+ strlen+0x3b/0xa0 lib/string.c:486
+ nla_put_string include/net/netlink.h:1154 [inline]
+ tipc_nl_compat_link_reset_stats+0x1f0/0x360 net/tipc/netlink_compat.c:760
+ __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
+ tipc_nl_compat_doit+0x3aa/0xaf0 net/tipc/netlink_compat.c:344
+ tipc_nl_compat_handle net/tipc/netlink_compat.c:1107 [inline]
+ tipc_nl_compat_recv+0x14d7/0x2760 net/tipc/netlink_compat.c:1210
+ genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+ genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
+ netlink_rcv_skb+0x444/0x640 net/netlink/af_netlink.c:2477
+ genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0xf40/0x1020 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x457ec9
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f2557338c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000003
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f25573396d4
+R13: 00000000004cb478 R14: 00000000004d86c8 R15: 00000000ffffffff
 
-	# echo "none" >cache_type
-	bash: echo: write error: Invalid argument
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
+ kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
+ kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
+ kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:185
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2759 [inline]
+ __kmalloc_node_track_caller+0xe18/0x1030 mm/slub.c:4383
+ __kmalloc_reserve net/core/skbuff.c:137 [inline]
+ __alloc_skb+0x309/0xa20 net/core/skbuff.c:205
+ alloc_skb include/linux/skbuff.h:998 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+ netlink_sendmsg+0xb82/0x1300 net/netlink/af_netlink.c:1892
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-And following appears in dmesg:
+The uninitialised access happened in tipc_nl_compat_link_reset_stats:
+    nla_put_string(skb, TIPC_NLA_LINK_NAME, name)
 
-	[13007.865745] sd 1:0:1:0: [sda] Sense Key : Illegal Request [current]
-	[13007.865753] sd 1:0:1:0: [sda] Add. Sense: Invalid field in parameter list
+This is because name string is not validated before it's used.
 
->From SBC-4 r15, 6.5.1 "Mode pages overview", description of DEVICE-SPECIFIC
-PARAMETER field in the mode parameter header:
-	...
-	The write protect (WP) bit for mode data sent with a MODE SELECT
-	command shall be ignored by the device server.
-	...
-	The DPOFUA bit is reserved for mode data sent with a MODE SELECT
-	command.
-	...
-
-The remaining bits in the DEVICE-SPECIFIC PARAMETER byte are also reserved
-and shall be set to zero.
-
-[mkp: shuffled commentary to commit description]
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reported-by: syzbot+e01d94b5a4c266be6e4c@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/tipc/netlink_compat.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -205,6 +205,12 @@ cache_type_store(struct device *dev, str
- 	sp = buffer_data[0] & 0x80 ? 1 : 0;
- 	buffer_data[0] &= ~0x80;
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -87,6 +87,11 @@ static int tipc_skb_tailroom(struct sk_b
+ 	return limit;
+ }
  
-+	/*
-+	 * Ensure WP, DPOFUA, and RESERVED fields are cleared in
-+	 * received mode parameter buffer before doing MODE SELECT.
-+	 */
-+	data.device_specific = 0;
++static inline int TLV_GET_DATA_LEN(struct tlv_desc *tlv)
++{
++	return TLV_GET_LEN(tlv) - TLV_SPACE(0);
++}
 +
- 	if (scsi_mode_select(sdp, 1, sp, 8, buffer_data, len, SD_TIMEOUT,
- 			     SD_MAX_RETRIES, &data, &sshdr)) {
- 		if (scsi_sense_valid(&sshdr))
+ static int tipc_add_tlv(struct sk_buff *skb, u16 type, void *data, u16 len)
+ {
+ 	struct tlv_desc *tlv = (struct tlv_desc *)skb_tail_pointer(skb);
+@@ -166,6 +171,11 @@ static struct sk_buff *tipc_get_err_tlv(
+ 	return buf;
+ }
+ 
++static inline bool string_is_valid(char *s, int len)
++{
++	return memchr(s, '\0', len) ? true : false;
++}
++
+ static int __tipc_nl_compat_dumpit(struct tipc_nl_compat_cmd_dump *cmd,
+ 				   struct tipc_nl_compat_msg *msg,
+ 				   struct sk_buff *arg)
+@@ -750,6 +760,7 @@ static int tipc_nl_compat_link_reset_sta
+ {
+ 	char *name;
+ 	struct nlattr *link;
++	int len;
+ 
+ 	name = (char *)TLV_DATA(msg->req);
+ 
+@@ -757,6 +768,10 @@ static int tipc_nl_compat_link_reset_sta
+ 	if (!link)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
++	if (!string_is_valid(name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_LINK_NAME, name))
+ 		return -EMSGSIZE;
+ 
 
 
