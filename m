@@ -2,399 +2,94 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C454C282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8866C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AEE720823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 777E32084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUk0nlUQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729808AbfAUIFc (ORCPT
+        id S1729811AbfAUIFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:05:32 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43178 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729795AbfAUIF3 (ORCPT
+        Mon, 21 Jan 2019 03:05:39 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34911 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729336AbfAUIFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:05:29 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0L83nOl132200
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:05:29 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q59werxuh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:05:29 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 21 Jan 2019 08:05:26 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 08:05:15 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0L85Eq952232262
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 08:05:14 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2717111C06E;
-        Mon, 21 Jan 2019 08:05:14 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 437CC11C069;
-        Mon, 21 Jan 2019 08:05:09 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.125])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 21 Jan 2019 08:05:09 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 21 Jan 2019 10:05:08 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dennis Zhou <dennis@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Mark Salter <msalter@redhat.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stafford Horne <shorne@gmail.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
-        xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH v2 10/21] memblock: refactor internal allocation functions
-Date:   Mon, 21 Jan 2019 10:03:57 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
-References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19012108-4275-0000-0000-00000301E9F9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012108-4276-0000-0000-0000381015D1
-Message-Id: <1548057848-15136-11-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210066
+        Mon, 21 Jan 2019 03:05:36 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z9so9772687pfi.2;
+        Mon, 21 Jan 2019 00:05:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=WgEsgGcp3+eolPgDUpIcJ3Mj29Uglkush+HiUCCyvXI=;
+        b=nUk0nlUQlznj3wf/1qw0J3Y8jT9RU0fgXOKEnzailUeIBhn87vhvPad70vbB7shJH0
+         Kcf4pj7BXyNRMMMhwD8/lKt5AxWScIGW3K6+iWHg9E/aRJ6zkdTmvkVUibTaGTN4D/7v
+         XTFt2RT4EYhjwsBWbQcLKJLngDH1MhcBw3oKvTAtp1U8QOA7U/endrpxqtZrPj6jbhSf
+         F9MU4i8im9PxqMRTpFfjad82guWoD0dUNeGoOkneENgstO3kPJax7QvUg41G2IX4NHHC
+         BJMOgTlJGmocBz/T/mAR64VSswCPQt1eyhPEEnbKBdTGXHmmt9hAR9w3s2+IYlwFwtcX
+         j1eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WgEsgGcp3+eolPgDUpIcJ3Mj29Uglkush+HiUCCyvXI=;
+        b=FjVmeVr8Rf9rnk+03hT6gJUia0MBsbNYCk/gkBqPT/bOG3kYAEDlGrAmxVvbew83Pg
+         T46fteD74TbrWuoSf8q0SAn9QtyMiSOKA0bdU5opj10RWxLC+HCnlJquUwSxFkYwENMa
+         Kovjcjpoqg3zOCtm52cGFOoIxZeg7gWGQqzO/ahsyJffquYNd40Xtf1aL7pZFlpOgJqR
+         XmepecL30HNxCPWMfhjpnyxG6dRWyA1XEjBvGDxipfGk+0akQWLAhiqGpQZWK+byENbu
+         0rHwzej3PHUSTPx4LOjURIUgfQMxs0Bahl0iq+FxfBU4+XkqaiSO91sBt7G85PFT+EVN
+         zy/g==
+X-Gm-Message-State: AJcUukdjmHmS2xUqYyU4w77xymVG7Jd4vMNaODRjN9lA24WZzMarI/cw
+        NjK8U/yVaY+ZAObmNlkf6A1u7549BiE=
+X-Google-Smtp-Source: ALg8bN7+LIGl7TaApfRvZDiaBbQFEnmcRWcNXyTIxwHZshKypc+uCjVP8oyCK7WkbLx3ODe8glICOw==
+X-Received: by 2002:a63:ce08:: with SMTP id y8mr26156376pgf.388.1548035389972;
+        Sun, 20 Jan 2019 17:49:49 -0800 (PST)
+Received: from localhost.localdomain ([103.232.108.130])
+        by smtp.gmail.com with ESMTPSA id o4sm26438963pgs.12.2019.01.20.17.49.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 17:49:49 -0800 (PST)
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, davem@davemloft.net, y2038@lists.linaro.org
+Subject: [PATCH] input: Fix the CONFIG_SPARC64 mixup
+Date:   Sun, 20 Jan 2019 17:49:14 -0800
+Message-Id: <20190121014914.2328-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, memblock has several internal functions with overlapping
-functionality. They all call memblock_find_in_range_node() to find free
-memory and then reserve the allocated range and mark it with kmemleak.
-However, there is difference in the allocation constraints and in fallback
-strategies.
+Arnd Bergmann pointed out that CONFIG_* cannot be used
+in a uapi header. Override with an equivalent conditional.
 
-The allocations returning physical address first attempt to find free
-memory on the specified node within mirrored memory regions, then retry on
-the same node without the requirement for memory mirroring and finally fall
-back to all available memory.
-
-The allocations returning virtual address start with clamping the allowed
-range to memblock.current_limit, attempt to allocate from the specified
-node from regions with mirroring and with user defined minimal address. If
-such allocation fails, next attempt is done with node restriction lifted.
-Next, the allocation is retried with minimal address reset to zero and at
-last without the requirement for mirrored regions.
-
-Let's consolidate various fallbacks handling and make them more consistent
-for physical and virtual variants. Most of the fallback handling is moved
-to memblock_alloc_range_nid() and it now handles node and mirror fallbacks.
-
-The memblock_alloc_internal() uses memblock_alloc_range_nid() to get a
-physical address of the allocated range and converts it to virtual address.
-
-The fallback for allocation below the specified minimal address remains in
-memblock_alloc_internal() because memblock_alloc_range_nid() is used by CMA
-with exact requirement for lower bounds.
-
-The memblock_phys_alloc_nid() function is completely dropped as it is not
-used anywhere outside memblock and its only usage can be replaced by a call
-to memblock_alloc_range_nid().
-
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Fixes: 2e746942ebac ("Input: input_event - provide override for sparc64")
+Fixes: 152194fe9c3f ("Input: extend usable life of event timestamps to 2106 on 32 bit systems")
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 ---
- include/linux/memblock.h |   1 -
- mm/memblock.c            | 173 +++++++++++++++++++++--------------------------
- 2 files changed, 78 insertions(+), 96 deletions(-)
+ include/uapi/linux/input.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index 6874fdc..cf4cd9c 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -371,7 +371,6 @@ static inline int memblock_get_region_node(const struct memblock_region *r)
- 
- phys_addr_t memblock_phys_alloc_range(phys_addr_t size, phys_addr_t align,
- 				      phys_addr_t start, phys_addr_t end);
--phys_addr_t memblock_phys_alloc_nid(phys_addr_t size, phys_addr_t align, int nid);
- phys_addr_t memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid);
- 
- static inline phys_addr_t memblock_phys_alloc(phys_addr_t size,
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 531fa77..739f769 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1312,30 +1312,84 @@ __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
- 
- #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
- 
-+/**
-+ * memblock_alloc_range_nid - allocate boot memory block
-+ * @size: size of memory block to be allocated in bytes
-+ * @align: alignment of the region and block's size
-+ * @start: the lower bound of the memory region to allocate (phys address)
-+ * @end: the upper bound of the memory region to allocate (phys address)
-+ * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
-+ *
-+ * The allocation is performed from memory region limited by
-+ * memblock.current_limit if @max_addr == %MEMBLOCK_ALLOC_ACCESSIBLE.
-+ *
-+ * If the specified node can not hold the requested memory the
-+ * allocation falls back to any node in the system
-+ *
-+ * For systems with memory mirroring, the allocation is attempted first
-+ * from the regions with mirroring enabled and then retried from any
-+ * memory region.
-+ *
-+ * In addition, function sets the min_count to 0 using kmemleak_alloc_phys for
-+ * allocated boot memory block, so that it is never reported as leaks.
-+ *
-+ * Return:
-+ * Physical address of allocated memory block on success, %0 on failure.
-+ */
- static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
- 					phys_addr_t align, phys_addr_t start,
--					phys_addr_t end, int nid,
--					enum memblock_flags flags)
-+					phys_addr_t end, int nid)
- {
-+	enum memblock_flags flags = choose_memblock_flags();
- 	phys_addr_t found;
- 
-+	if (WARN_ONCE(nid == MAX_NUMNODES, "Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead\n"))
-+		nid = NUMA_NO_NODE;
-+
- 	if (!align) {
- 		/* Can't use WARNs this early in boot on powerpc */
- 		dump_stack();
- 		align = SMP_CACHE_BYTES;
- 	}
- 
-+	if (end > memblock.current_limit)
-+		end = memblock.current_limit;
-+
-+again:
- 	found = memblock_find_in_range_node(size, align, start, end, nid,
- 					    flags);
--	if (found && !memblock_reserve(found, size)) {
-+	if (found && !memblock_reserve(found, size))
-+		goto done;
-+
-+	if (nid != NUMA_NO_NODE) {
-+		found = memblock_find_in_range_node(size, align, start,
-+						    end, NUMA_NO_NODE,
-+						    flags);
-+		if (found && !memblock_reserve(found, size))
-+			goto done;
-+	}
-+
-+	if (flags & MEMBLOCK_MIRROR) {
-+		flags &= ~MEMBLOCK_MIRROR;
-+		pr_warn("Could not allocate %pap bytes of mirrored memory\n",
-+			&size);
-+		goto again;
-+	}
-+
-+	return 0;
-+
-+done:
-+	/* Skip kmemleak for kasan_init() due to high volume. */
-+	if (end != MEMBLOCK_ALLOC_KASAN)
- 		/*
--		 * The min_count is set to 0 so that memblock allocations are
--		 * never reported as leaks.
-+		 * The min_count is set to 0 so that memblock allocated
-+		 * blocks are never reported as leaks. This is because many
-+		 * of these blocks are only referred via the physical
-+		 * address which is not looked up by kmemleak.
- 		 */
- 		kmemleak_alloc_phys(found, size, 0, 0);
--		return found;
--	}
--	return 0;
-+
-+	return found;
- }
- 
- phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
-@@ -1343,35 +1397,13 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
- 					     phys_addr_t start,
- 					     phys_addr_t end)
- {
--	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE,
--					MEMBLOCK_NONE);
--}
--
--phys_addr_t __init memblock_phys_alloc_nid(phys_addr_t size, phys_addr_t align, int nid)
--{
--	enum memblock_flags flags = choose_memblock_flags();
--	phys_addr_t ret;
--
--again:
--	ret = memblock_alloc_range_nid(size, align, 0,
--				       MEMBLOCK_ALLOC_ACCESSIBLE, nid, flags);
--
--	if (!ret && (flags & MEMBLOCK_MIRROR)) {
--		flags &= ~MEMBLOCK_MIRROR;
--		goto again;
--	}
--	return ret;
-+	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE);
- }
- 
- phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid)
- {
--	phys_addr_t res = memblock_phys_alloc_nid(size, align, nid);
--
--	if (res)
--		return res;
--	return memblock_alloc_range_nid(size, align, 0,
--					MEMBLOCK_ALLOC_ACCESSIBLE,
--					NUMA_NO_NODE, MEMBLOCK_NONE);
-+	return memblock_alloc_range_nid(size, align, 0, nid,
-+					MEMBLOCK_ALLOC_ACCESSIBLE);
- }
- 
- /**
-@@ -1382,19 +1414,13 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
-  * @max_addr: the upper bound of the memory region to allocate (phys address)
-  * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
-  *
-- * The @min_addr limit is dropped if it can not be satisfied and the allocation
-- * will fall back to memory below @min_addr. Also, allocation may fall back
-- * to any node in the system if the specified node can not
-- * hold the requested memory.
-- *
-- * The allocation is performed from memory region limited by
-- * memblock.current_limit if @max_addr == %MEMBLOCK_ALLOC_ACCESSIBLE.
-- *
-- * The phys address of allocated boot memory block is converted to virtual and
-- * allocated memory is reset to 0.
-+ * Allocates memory block using memblock_alloc_range_nid() and
-+ * converts the returned physical address to virtual.
-  *
-- * In addition, function sets the min_count to 0 using kmemleak_alloc for
-- * allocated boot memory block, so that it is never reported as leaks.
-+ * The @min_addr limit is dropped if it can not be satisfied and the allocation
-+ * will fall back to memory below @min_addr. Other constraints, such
-+ * as node and mirrored memory will be handled again in
-+ * memblock_alloc_range_nid().
-  *
-  * Return:
-  * Virtual address of allocated memory block on success, NULL on failure.
-@@ -1405,11 +1431,6 @@ static void * __init memblock_alloc_internal(
- 				int nid)
- {
- 	phys_addr_t alloc;
--	void *ptr;
--	enum memblock_flags flags = choose_memblock_flags();
--
--	if (WARN_ONCE(nid == MAX_NUMNODES, "Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead\n"))
--		nid = NUMA_NO_NODE;
- 
- 	/*
- 	 * Detect any accidental use of these APIs after slab is ready, as at
-@@ -1419,54 +1440,16 @@ static void * __init memblock_alloc_internal(
- 	if (WARN_ON_ONCE(slab_is_available()))
- 		return kzalloc_node(size, GFP_NOWAIT, nid);
- 
--	if (!align) {
--		dump_stack();
--		align = SMP_CACHE_BYTES;
--	}
--
--	if (max_addr > memblock.current_limit)
--		max_addr = memblock.current_limit;
--again:
--	alloc = memblock_find_in_range_node(size, align, min_addr, max_addr,
--					    nid, flags);
--	if (alloc && !memblock_reserve(alloc, size))
--		goto done;
--
--	if (nid != NUMA_NO_NODE) {
--		alloc = memblock_find_in_range_node(size, align, min_addr,
--						    max_addr, NUMA_NO_NODE,
--						    flags);
--		if (alloc && !memblock_reserve(alloc, size))
--			goto done;
--	}
--
--	if (min_addr) {
--		min_addr = 0;
--		goto again;
--	}
--
--	if (flags & MEMBLOCK_MIRROR) {
--		flags &= ~MEMBLOCK_MIRROR;
--		pr_warn("Could not allocate %pap bytes of mirrored memory\n",
--			&size);
--		goto again;
--	}
-+	alloc = memblock_alloc_range_nid(size, align, min_addr, max_addr, nid);
- 
--	return NULL;
--done:
--	ptr = phys_to_virt(alloc);
-+	/* retry allocation without lower limit */
-+	if (!alloc && min_addr)
-+		alloc = memblock_alloc_range_nid(size, align, 0, max_addr, nid);
- 
--	/* Skip kmemleak for kasan_init() due to high volume. */
--	if (max_addr != MEMBLOCK_ALLOC_KASAN)
--		/*
--		 * The min_count is set to 0 so that bootmem allocated
--		 * blocks are never reported as leaks. This is because many
--		 * of these blocks are only referred via the physical
--		 * address which is not looked up by kmemleak.
--		 */
--		kmemleak_alloc(ptr, size, 0, 0);
-+	if (!alloc)
-+		return NULL;
- 
--	return ptr;
-+	return phys_to_virt(alloc);
- }
- 
- /**
+diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+index ffab958bc512..f056b2a00d5c 100644
+--- a/include/uapi/linux/input.h
++++ b/include/uapi/linux/input.h
+@@ -32,7 +32,7 @@ struct input_event {
+ #define input_event_usec time.tv_usec
+ #else
+ 	__kernel_ulong_t __sec;
+-#ifdef CONFIG_SPARC64
++#if defined(__sparc__) && defined(__arch64__)
+ 	unsigned int __usec;
+ #else
+ 	__kernel_ulong_t __usec;
 -- 
-2.7.4
+2.17.1
 
