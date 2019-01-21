@@ -7,62 +7,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEB3C282DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DB5C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99AFF20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6633214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:34:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nOxgppnb"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ih3ouotV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfAUHeQ (ORCPT
+        id S1728497AbfAUHeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:34:16 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:32955 "EHLO
+        Mon, 21 Jan 2019 02:34:20 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36292 "EHLO
         mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfAUHeP (ORCPT
+        with ESMTP id S1728138AbfAUHeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:34:15 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so9409415plo.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:34:15 -0800 (PST)
+        Mon, 21 Jan 2019 02:34:18 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g9so9402477plo.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:34:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kvMKzn4llhsAXCz7nClSb99WoKQyMTJND7jRr4yO2iA=;
-        b=nOxgppnbpHw50AVMZDSmtm88nYauhe/jyJcoo16iiXD7iNhca6GM6mNI2OQfOgZJM5
-         07moG3u2Ap52DonJmLUMmAl1T9jVXaenWMCijenreumSR8uRWlA5dpuao9pGU4C69II6
-         OAPZ1h6OsAFw0NoI9VbJPB4yJbN8sQjt5ThPE=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+hmdyO+P7OhnxtWxgXzXr5h3FZef89nOTZIJP5d5FhI=;
+        b=Ih3ouotVPm9Czxle1biBqpvAo/Snbb+l7E7QHDXERYBaKN8C29vG8ltB9Dg4s11e2g
+         BEZyjFIxrUwVRje83XZnK7OWTAO/8glD3mYT/K2qPKnO6ng/ziRz37Gsk6VH5nBRrHMQ
+         1RY7TFUBIkW/qmEA/zwVcVYK+04HhZ01m13aQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kvMKzn4llhsAXCz7nClSb99WoKQyMTJND7jRr4yO2iA=;
-        b=KP5Dfn52jXB1zPGiiqtN/AGq+1kI36S63LPkh1sz2IlIj/wZNI3f4uwPzlorbzpfWI
-         Y3Lt2Ul1GzcJG1tjeWcR0F1VqLA8aNI+/voD8ho2DQbrBGCZn5woUymIcxU7pMAmGztR
-         wLSTwJnhnOWF+QRHAg+njDmTYNCvCFKgeDoeIYnFFpTsVH5N5w8h45NFYh6q0VAjQZen
-         ZaO+5sat2aOXNx+lG5YIgSa0cCUoMIqjjCqPVuT6TMbjvfqP78BmOj7h0BjESVMTknpc
-         R20w5Q4xPyBkCX8AzBPh/RB/2tJ3pgd0xRG282imoCckw+YYBeA9nYhG7raas+mP1XFv
-         ksow==
-X-Gm-Message-State: AJcUukdcnoy5UOCYg46KCUwMbslHoBtTCX5dWrMbNA1VTJVwi6YFG/7H
-        n3aSXtQv5Lkch109RbtlezOTNQ==
-X-Google-Smtp-Source: ALg8bN7Ts/JgTi7B8Nb2cXk7y524UViJHL1pgAqv+4LF/3R8UE8zTOP7O8CqUFYqRNGgb15KG6rO+w==
-X-Received: by 2002:a17:902:5066:: with SMTP id f35mr29208580plh.78.1548056054979;
-        Sun, 20 Jan 2019 23:34:14 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+hmdyO+P7OhnxtWxgXzXr5h3FZef89nOTZIJP5d5FhI=;
+        b=g97F5NqdIaJrf1e6CyJAEjMuctuAdR98vK6+p4VTQ4atF+OQmAAhUecHd73MJXbsE5
+         WA2tOXtk+IU4US6tb3qqIzi5r2UgHk9g8h3QjIZWL5xe7+GvT9Sqka0xbsrda278cPF9
+         cxbzOQ0xQs5CPdXtT4fghSI/ghfJ7Cq5V1IhRNUeHdk2Nnht+8KTpY3QAu0EEyFufrzi
+         4LOQ/Smn5aKtxu9FFDhwkzlin/PAINP88vzAo+7I363TZV1RVUDFTv/3e5/Se4D3ZoM5
+         ARESA2PyaCkv8U6YmXgL2zilwnG5mXKdDLQg1wyklSO4KQqKPwP1M47hPKjLZSCHniPw
+         Ah9w==
+X-Gm-Message-State: AJcUukesPkg5zAOMQCwygu6x/wslwL3WtLZVK8OSN+QvTsRq79Ekj9oc
+        zCPWIRLrxPGs/ZQAneIlcPjjSQ==
+X-Google-Smtp-Source: ALg8bN79em6x5NhHPF5tMk1F4ff43D118VqGvJk2fMPHOx7NBFjfZoz7F7oQ+MSntuArcjsWBFEdJw==
+X-Received: by 2002:a17:902:4624:: with SMTP id o33mr28598916pld.289.1548056057171;
+        Sun, 20 Jan 2019 23:34:17 -0800 (PST)
 Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
-        by smtp.googlemail.com with ESMTPSA id r6sm19483243pgk.91.2019.01.20.23.34.13
+        by smtp.googlemail.com with ESMTPSA id r6sm19483243pgk.91.2019.01.20.23.34.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 23:34:14 -0800 (PST)
+        Sun, 20 Jan 2019 23:34:16 -0800 (PST)
 From:   Pi-Hsun Shih <pihsun@chromium.org>
 Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
         (REMOTEPROC) SUBSYSTEM), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/2] remoteproc: Add __iomem to return of rproc_da_to_va.
-Date:   Mon, 21 Jan 2019 15:34:07 +0800
-Message-Id: <20190121073408.56557-1-pihsun@chromium.org>
+Subject: [PATCH 2/2] remoteproc: elf_loader: Use memset_io instead of memset.
+Date:   Mon, 21 Jan 2019 15:34:08 +0800
+Message-Id: <20190121073408.56557-2-pihsun@chromium.org>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+In-Reply-To: <20190121073408.56557-1-pihsun@chromium.org>
+References: <20190121073408.56557-1-pihsun@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To:     unlisted-recipients:; (no To-header on input)
@@ -71,63 +73,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The return value of rproc_da_to_va would probably be device memory. Add
-__iomem annotation to it.
+Use memset_io and memcpy_toio instead of memset and memcpy in
+rproc_elf_load_segments, since the target ptr may be device memory.
 
 Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 ---
-I feel that there might be more things that need to be changed
-(especially for the carveouts things). I didn't change them since I
-don't know how to test that part. Comments needed.
+This fix issue while trying to load ELF firmware based on
+https://lore.kernel.org/patchwork/patch/1033804/, that the memset(...,
+0) would use "dc zva" instruction on aarch64, which cause kernel crash
+since the target is device memory.
 ---
- drivers/remoteproc/remoteproc_core.c     | 4 ++--
- drivers/remoteproc/remoteproc_internal.h | 2 +-
- include/linux/remoteproc.h               | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/remoteproc/remoteproc_elf_loader.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 54ec38fc5dca62..7cb8393e1b39f6 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -190,10 +190,10 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
-  * here the output of the DMA API for the carveouts, which should be more
-  * correct.
-  */
--void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+void __iomem *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- {
- 	struct rproc_mem_entry *carveout;
--	void *ptr = NULL;
-+	void __iomem *ptr = NULL;
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index b17d72ec8603bc..17f1815757dc54 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -159,7 +159,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 		u32 memsz = phdr->p_memsz;
+ 		u32 filesz = phdr->p_filesz;
+ 		u32 offset = phdr->p_offset;
+-		void *ptr;
++		void __iomem *ptr;
  
- 	if (rproc->ops->da_to_va) {
- 		ptr = rproc->ops->da_to_va(rproc, da, len);
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index f6cad243d7cac9..df7abe049cdef2 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -51,7 +51,7 @@ void rproc_exit_sysfs(void);
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 		if (phdr->p_type != PT_LOAD)
+ 			continue;
+@@ -191,7 +191,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
  
--void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
-+void __iomem *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
- int rproc_trigger_recovery(struct rproc *rproc);
+ 		/* put the segment where the remote processor expects it */
+ 		if (phdr->p_filesz)
+-			memcpy(ptr, elf_data + phdr->p_offset, filesz);
++			memcpy_toio(ptr, elf_data + phdr->p_offset, filesz);
  
- int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 68e72f33c705e1..065a68a5e6e577 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -356,7 +356,7 @@ struct rproc_ops {
- 	int (*start)(struct rproc *rproc);
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
--	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
-+	void __iomem *(*da_to_va)(struct rproc *rproc, u64 da, int len);
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
- 	struct resource_table *(*find_loaded_rsc_table)(
- 				struct rproc *rproc, const struct firmware *fw);
+ 		/*
+ 		 * Zero out remaining memory for this segment.
+@@ -201,7 +201,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 		 * this.
+ 		 */
+ 		if (memsz > filesz)
+-			memset(ptr + filesz, 0, memsz - filesz);
++			memset_io(ptr + filesz, 0, memsz - filesz);
+ 	}
+ 
+ 	return ret;
 -- 
 2.20.1.321.g9e740568ce-goog
 
