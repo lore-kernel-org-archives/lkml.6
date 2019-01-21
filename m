@@ -2,102 +2,199 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA5BC7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F07C7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A24D20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A96B420663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbfAULXA (ORCPT
+        id S1728499AbfAULXK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:23:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59960 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbfAULW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:22:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFAA6EBD;
-        Mon, 21 Jan 2019 03:22:57 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7EEE3F5C1;
-        Mon, 21 Jan 2019 03:22:55 -0800 (PST)
-Date:   Mon, 21 Jan 2019 11:22:48 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Pramod Kumar <pramod.kumar@broadcom.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/1] arm64: Use PSCI calls for CPU stop when hotplug
- is supported
-Message-ID: <20190121112248.GA27784@e107155-lin>
-References: <1547790380-6276-1-git-send-email-pramod.kumar@broadcom.com>
- <20190118113242.GA8928@e107155-lin>
- <CAJ+tv6+6yqT1xkmkY3x6SNQ83K+J6zqKZr7PV5A_ffvyEzceqg@mail.gmail.com>
+        Mon, 21 Jan 2019 06:23:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53321 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbfAULXJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 06:23:09 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBMWIS2493654
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 21 Jan 2019 03:22:32 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBMWv82493651;
+        Mon, 21 Jan 2019 03:22:32 -0800
+Date:   Mon, 21 Jan 2019 03:22:32 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andrew Murray <tipbot@zytor.com>
+Message-ID: <tip-88dbe3c94e2773cbe200bf58dd88abacf27053e7@git.kernel.org>
+Cc:     shawnguo@kernel.org, andrew.murray@arm.com, bp@alien8.de,
+        will.deacon@arm.com, peterz@infradead.org, hpa@zytor.com,
+        acme@kernel.org, mpe@ellerman.id.au, tglx@linutronix.de,
+        mingo@kernel.org, mark.rutland@arm.com,
+        torvalds@linux-foundation.org, ink@jurassic.park.msu.ru,
+        linux-kernel@vger.kernel.org, s.hauer@pengutronix.de,
+        linux@armlinux.org.uk, mattst88@gmail.com, rth@twiddle.net,
+        paulus@samba.org, benh@kernel.crashing.org
+Reply-To: will.deacon@arm.com, hpa@zytor.com, peterz@infradead.org,
+          shawnguo@kernel.org, bp@alien8.de, andrew.murray@arm.com,
+          mattst88@gmail.com, linux@armlinux.org.uk,
+          linux-kernel@vger.kernel.org, s.hauer@pengutronix.de,
+          torvalds@linux-foundation.org, ink@jurassic.park.msu.ru,
+          benh@kernel.crashing.org, rth@twiddle.net, paulus@samba.org,
+          mpe@ellerman.id.au, acme@kernel.org, mingo@kernel.org,
+          mark.rutland@arm.com, tglx@linutronix.de
+In-Reply-To: <1547128414-50693-12-git-send-email-andrew.murray@arm.com>
+References: <1547128414-50693-12-git-send-email-andrew.murray@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/core, arch/x86: Strengthen exclusion checks
+ with PERF_PMU_CAP_NO_EXCLUDE
+Git-Commit-ID: 88dbe3c94e2773cbe200bf58dd88abacf27053e7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAJ+tv6+6yqT1xkmkY3x6SNQ83K+J6zqKZr7PV5A_ffvyEzceqg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:28:27AM +0530, Pramod Kumar wrote:
-> On Fri, Jan 18, 2019 at 5:02 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > On Fri, Jan 18, 2019 at 11:16:20AM +0530, Pramod Kumar wrote:
-> > > If CPU hotplug is supported, ipi_cpu_stop should use PSCI cpudie
-> > > call to stop the CPU. This call ensures L1/L2 cache flush,
-> > > CPUs cache-cohenrecy setting w.r.to interconnect.
-> >
-> > Firstly, this is not specific to PSCI and I don't see any PSCI calls as
-> > $subject claims.
->
-> I had seen all the other cpu ops methods where only PSCI supports only
-> cpu_die features hence used PSCI reference in my subject line to be more
-> clear where this die gets converted in last.
->
+Commit-ID:  88dbe3c94e2773cbe200bf58dd88abacf27053e7
+Gitweb:     https://git.kernel.org/tip/88dbe3c94e2773cbe200bf58dd88abacf27053e7
+Author:     Andrew Murray <andrew.murray@arm.com>
+AuthorDate: Thu, 10 Jan 2019 13:53:33 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 21 Jan 2019 11:01:29 +0100
 
-OK, but since you are not directly dealing with PSCI APIs, it's misleading.
+perf/core, arch/x86: Strengthen exclusion checks with PERF_PMU_CAP_NO_EXCLUDE
 
-> > Next, you fail to explain why do you have to ensure
-> > caches are cleaned and why do you need that in ipi_cpu_stop ?
-> > What's the use case ?
-> >
-> Need comes from a specific use case where one Accelerator card(SoC) is
-> plugged in a sever over a PCIe interface.  This Card gets supply from a
-> battery, which could provide very less power for a very small time, in case
-> of any power loss. Once Card switches to battery, this has to reduce its
-> power consumption to its lowest point and back-up the DDR contents asap
-> before battery gets fully drained off.
->
+For x86 PMUs that do not support context exclusion let's advertise the
+PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that perf will
+prevent us from handling events where any exclusion flags are set.
+Let's also remove the now unnecessary check for exclusion flags.
 
-OK, but I was expecting the complete call path for this use-case.
+This change means that amd/iommu and amd/uncore will now also
+indicate that they do not support exclude_{hv|idle} and intel/uncore
+that it does not support exclude_{guest|host}.
 
-> Since battery can provide limited power for a very short time hence need to
-> transition to lowest power. As per the transition process , CPUs power
-> domain has to be off but before that it needs to flush out its content to
-> system memory(L3) so that content could be backed-up by a MCU, a controller
-> consuming very less power. Since we can not afford plugging-out every
-> individual CPUs in sequence hence uses  ipi_cpu_stop for all other CPUs
+Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: robin.murphy@arm.com
+Cc: suzuki.poulose@arm.com
+Link: https://lkml.kernel.org/r/1547128414-50693-12-git-send-email-andrew.murray@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/events/amd/iommu.c    | 6 +-----
+ arch/x86/events/amd/uncore.c   | 7 ++-----
+ arch/x86/events/intel/uncore.c | 9 +--------
+ 3 files changed, 4 insertions(+), 18 deletions(-)
 
-So, you are randomly using ipi_cpu_stop for something it's not supposed to
-be used. What do you exactly want to achieve in that context where you need
-to save power ? Why system off or reset not sufficient ?
-
---
-Regards,
-Sudeep
-
+diff --git a/arch/x86/events/amd/iommu.c b/arch/x86/events/amd/iommu.c
+index 3210fee27e7f..7635c23f7d82 100644
+--- a/arch/x86/events/amd/iommu.c
++++ b/arch/x86/events/amd/iommu.c
+@@ -223,11 +223,6 @@ static int perf_iommu_event_init(struct perf_event *event)
+ 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+ 		return -EINVAL;
+ 
+-	/* IOMMU counters do not have usr/os/guest/host bits */
+-	if (event->attr.exclude_user || event->attr.exclude_kernel ||
+-	    event->attr.exclude_host || event->attr.exclude_guest)
+-		return -EINVAL;
+-
+ 	if (event->cpu < 0)
+ 		return -EINVAL;
+ 
+@@ -414,6 +409,7 @@ static const struct pmu iommu_pmu __initconst = {
+ 	.read		= perf_iommu_read,
+ 	.task_ctx_nr	= perf_invalid_context,
+ 	.attr_groups	= amd_iommu_attr_groups,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ };
+ 
+ static __init int init_one_iommu(unsigned int idx)
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index 398df6eaa109..79cfd3b30ceb 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -201,11 +201,6 @@ static int amd_uncore_event_init(struct perf_event *event)
+ 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+ 		return -EINVAL;
+ 
+-	/* NB and Last level cache counters do not have usr/os/guest/host bits */
+-	if (event->attr.exclude_user || event->attr.exclude_kernel ||
+-	    event->attr.exclude_host || event->attr.exclude_guest)
+-		return -EINVAL;
+-
+ 	/* and we do not enable counter overflow interrupts */
+ 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
+ 	hwc->idx = -1;
+@@ -307,6 +302,7 @@ static struct pmu amd_nb_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ };
+ 
+ static struct pmu amd_llc_pmu = {
+@@ -317,6 +313,7 @@ static struct pmu amd_llc_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ };
+ 
+ static struct amd_uncore *amd_uncore_alloc(unsigned int cpu)
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 27a461414b30..d516161c00c4 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -695,14 +695,6 @@ static int uncore_pmu_event_init(struct perf_event *event)
+ 	if (pmu->func_id < 0)
+ 		return -ENOENT;
+ 
+-	/*
+-	 * Uncore PMU does measure at all privilege level all the time.
+-	 * So it doesn't make sense to specify any exclude bits.
+-	 */
+-	if (event->attr.exclude_user || event->attr.exclude_kernel ||
+-			event->attr.exclude_hv || event->attr.exclude_idle)
+-		return -EINVAL;
+-
+ 	/* Sampling not supported yet */
+ 	if (hwc->sample_period)
+ 		return -EINVAL;
+@@ -800,6 +792,7 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
+ 			.stop		= uncore_pmu_event_stop,
+ 			.read		= uncore_pmu_event_read,
+ 			.module		= THIS_MODULE,
++			.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 		};
+ 	} else {
+ 		pmu->pmu = *pmu->type->pmu;
