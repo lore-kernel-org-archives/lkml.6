@@ -2,940 +2,270 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A063C31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED23C31D64
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD84F20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1800520823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:19:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hr4cwdvj"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QP3H+wS+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfAUHS4 (ORCPT
+        id S1726191AbfAUHS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:18:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45155 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727726AbfAUHSx (ORCPT
+        Mon, 21 Jan 2019 02:18:58 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:16706 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727881AbfAUHSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:18:53 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so9684871pfd.12
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:18:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6et+qvUFTAKmO57YuA7DNtdKxnUXNPofpzb5NMwyKBM=;
-        b=Hr4cwdvj92iQ5TK26HUmnbn/ge2h3+DUQhvIWKWnj7ZekdVGclev6undh8v2Y2wlNQ
-         qmgf53AFwMzZyDAWhzng/mfFjKo+v+poF0kAjBgdrNJJiwkQcbwxTxZQ/190cjkfXfmR
-         yWqTDjI4REmsTe5o+MvoPUaM3YSAsf92Mcrd4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6et+qvUFTAKmO57YuA7DNtdKxnUXNPofpzb5NMwyKBM=;
-        b=As7ETnZ9n6B3aT8/bFyn5xygwGtCI5Tg/qn1RZoO5MgX+DVZgUGORWKdIMZbwwByVj
-         SGnxcfDXuQXZQ0TZ5un9wEuAa0k3WjKB6Pj8Vvh/ld2e8xth4dkX9d7r49Ax0LcOjEwg
-         ZHIEZPKJvoKXRFfKO//982sj5PChPeaeC544kuM5G3PHmnmq+tjHjFZvVkRCvx5TCDpR
-         BiI9pr+nRfCSlaZNsXOnrNH2aJXlvNrZ6sbYRoZKoSC//cAkkoVtiQ/wtIjrMPD1oh8B
-         J6aLEMpwt6hyTFBj/NFbKAsLXv1blcpVISvxzgvpcLbMcUiEjtawJ5acOXdDw5GG1eZD
-         WsXg==
-X-Gm-Message-State: AJcUukeDW+TRWDyYTADZ1r18a1Vdv0uQ/FlV2uk68NWj+d/D9tKhGzkl
-        NoZfZDR105FrmH6nft7P0dzLHQ==
-X-Google-Smtp-Source: ALg8bN6DupPiIAmFZEcSD6RNIxICDzjI6MMWK32mjd4DzQNE3GbGYqBNemr7Fqh0Ubka+XAbrp1JYA==
-X-Received: by 2002:a63:658:: with SMTP id 85mr27023548pgg.373.1548055132140;
-        Sun, 20 Jan 2019 23:18:52 -0800 (PST)
-Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
-        by smtp.googlemail.com with ESMTPSA id v15sm14941843pfn.94.2019.01.20.23.18.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 23:18:51 -0800 (PST)
-From:   Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Erin Lo <erin.lo@mediatek.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
-        (REMOTEPROC) SUBSYSTEM),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support),
-        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support)
-Subject: [RFC v3 2/5] remoteproc/mediatek: add SCP support for mt8183
-Date:   Mon, 21 Jan 2019 15:18:30 +0800
-Message-Id: <20190121071833.43443-3-pihsun@chromium.org>
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
-In-Reply-To: <20190121071833.43443-1-pihsun@chromium.org>
-References: <20190121071833.43443-1-pihsun@chromium.org>
+        Mon, 21 Jan 2019 02:18:46 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190121022843epoutp0187d63641fd210d8b8b76a74c8ce30843~7vBt1PW2b1003910039epoutp01J
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 02:28:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190121022843epoutp0187d63641fd210d8b8b76a74c8ce30843~7vBt1PW2b1003910039epoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548037723;
+        bh=mGIncaGDAKEyfajmtTpj+ctWctNGcUzGQdzOuWC0uYU=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=QP3H+wS+GkybvlzNyuoJUsFMio9ERLXlhIQUeKh24YPI1wl2Hobk5SMghq6cPDXhh
+         jtcl0Prfo538yik4O4ujzez6eOUSoGDispiBEkudDWuobuA6LSwOzGi5zjplo8pEVx
+         Luh1uYnIWDQLRTgb9CcCqIBdBdjhbONkkhBMpvfo=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.154]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190121022839epcas1p2d96889e44ec3fc96763938bf14a2bd02~7vBq_Fm831215112151epcas1p2n;
+        Mon, 21 Jan 2019 02:28:39 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9A.3C.04074.55E254C5; Mon, 21 Jan 2019 11:28:37 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190121022837epcas1p47a2692895f039b87fc12fa30b72f100f~7vBocPxoE0987409874epcas1p45;
+        Mon, 21 Jan 2019 02:28:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190121022837epsmtrp215523147adb9cd63101c52264c5ac1d9~7vBobCiXK2465124651epsmtrp2L;
+        Mon, 21 Jan 2019 02:28:37 +0000 (GMT)
+X-AuditID: b6c32a35-297ff70000000fea-66-5c452e55e93c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        57.A2.03971.55E254C5; Mon, 21 Jan 2019 11:28:37 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190121022837epsmtip18ba545c95b6a9e3d954c1a01616385ac~7vBoTTOVJ2204122041epsmtip1X;
+        Mon, 21 Jan 2019 02:28:37 +0000 (GMT)
+Subject: Re: [PATCH] PM / devfreq: consistent indentation
+To:     myungjoo.ham@samsung.com,
+        "tiny.windzz@gmail.com" <tiny.windzz@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?7LWc7LCs7JqwIChzYW1zdW5nLmNvbSk=?= 
+        <cw00.choi@samsung.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <eb5b190b-0940-1ab1-5d28-0803f31e9448@samsung.com>
+Date:   Mon, 21 Jan 2019 11:28:37 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20190121021940epcms1p57620581b960dba9805dfddee903ccd6c@epcms1p5>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEJsWRmVeSWpSXmKPExsWy7bCmgW6onmuMwcuL2hbXvzxntbi8aw6b
+        xefeI4wWtxtXsFnM/T2BzYHVY+esu+wefVtWMXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r
+        5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFJJoSwxpxQoFJBYXKykb2dTlF9akqqQ
+        kV9cYquUWpCSU2BZoFecmFtcmpeul5yfa2VoYGBkClSYkJ1x7dwR1oKjOhVbXr1nbGB8qtTF
+        yMEhIWAi8eK/ThcjF4eQwA5GiX2TdzBDOJ8YJQ4c+skI4XxjlGj/8hjI4QTreDO/CapqL6PE
+        qeUvoareM0pMb17IDlIlLGApseXSXxYQW0Sgg1FizvV4kCJmgU5GiWlvbrOBJNgEtCT2v7gB
+        ZvMLKEpc/QGxglfATqLn+kOwOIuAqsTWJ1tZQWxRgQiJjvur2SBqBCVOznwCtoBTwE9i8+e5
+        YDXMAuISt57MZ4Kw5SWat84GO1VC4DqbxLIT65khfnCR2No8E8oWlnh1fAs7hC0l8fndXjYI
+        u1pi5ckjbBDNQB9s2X+BFSJhLLF/6WQmUPAxC2hKrN+lD7GMT+Ld1x5WSKjySnS0CUFUK0tc
+        fnCXCcKWlFjc3gk13kOiv+ExywRGxVlI3pmF5IVZSF6YhbBsASPLKkax1ILi3PTUYsMCQ+To
+        3sQITo9apjsYp5zzOcQowMGoxMP7455LjBBrYllxZe4hRgkOZiUR3ozjzjFCvCmJlVWpRfnx
+        RaU5qcWHGE2BoT2RWUo0OR+YuvNK4g1NjYyNjS1MDM1MDQ2VxHnXOwA1CaQnlqRmp6YWpBbB
+        9DFxcEo1MLI+63nAd0F54e1/P6dZbjzyzeCG6t0fuooNmlGTj8l8vdl768VKDWH1R/KTrOUZ
+        Re0NU7sfbc1au+YY79T6+JO511NULs/+v6VcP1324Ixz+yd6TZ7G4zpt9Uc/+80pEzlili2o
+        imZv/l7JsP2s+KSQH7+314f8zVp2OEK05rCE4bGVh2erZAsrsRRnJBpqMRcVJwIAGOUvF6UD
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsWy7bCSnG6onmuMwfHjPBbXvzxntbi8aw6b
+        xefeI4wWtxtXsFnM/T2BzYHVY+esu+wefVtWMXp83iQXwBzFZZOSmpNZllqkb5fAlXHt3BHW
+        gqM6FVtevWdsYHyq1MXIySEhYCLxZn4TM4gtJLCbUWJaYwREXFJi2sWjQHEOIFtY4vDh4i5G
+        LqCSt4wS98/OZQOpERawlNhy6S8LSEJEoINRYuv6NkYQh1mgk1Fi4bZPrBAtUxklbmz6wwrS
+        wiagJbH/xQ2wdn4BRYmrPx4zgti8AnYSPdcfgsVZBFQltj7ZClYvKhAhcfblOqgaQYmTM5+w
+        gNicAn4Smz/PBathFlCX+DPvEjOELS5x68l8JghbXqJ562zmCYzCs5C0z0LSMgtJyywkLQsY
+        WVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgRHipbmDsbLS+IPMQpwMCrx8P645xIj
+        xJpYVlyZe4hRgoNZSYQ347hzjBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHep3nHIoUE0hNLUrNT
+        UwtSi2CyTBycUg2M81LONd74VRWn4cLKucHzxqOiVpmNTe/KE6s6GVfzRxgkbJwwf/eCWm39
+        zTwH5qkc/7btUbhLS73H/vuhOce37u7IUqyunMk0yUvhwuarYmWdqzfq+1/kuS4SNtFrmktV
+        f+rNN6IabZUBfFy8TwwEDZSm1kgKLwg+YFR+MePkzE1nVDd6qCYpsRRnJBpqMRcVJwIAbRj/
+        y5ACAAA=
+X-CMS-MailID: 20190121022837epcas1p47a2692895f039b87fc12fa30b72f100f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190121021940epcms1p57620581b960dba9805dfddee903ccd6c
+References: <CGME20190121021940epcms1p57620581b960dba9805dfddee903ccd6c@epcms1p5>
+        <20190121021940epcms1p57620581b960dba9805dfddee903ccd6c@epcms1p5>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erin Lo <erin.lo@mediatek.com>
+On 19. 1. 21. 오전 11:19, MyungJoo Ham wrote:
+> Following up with complaints on inconsistent indentation from
+> Yangtao Li, this fixes indentation inconsistency.
+> 
+> In principle, this tries to put arguments aligned to the left
+> including the first argument except for in the case where
+> the first argument is on the far-right side.
+> 
+> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> ---
+>  drivers/devfreq/devfreq.c | 49 +++++++++++++++++++++++------------------------
+>  1 file changed, 24 insertions(+), 25 deletions(-)
 
-Provide a basic driver to control Cortex M4 co-processor
+Looks better before.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
----
-Changes from v2:
- - Squash patch 3 from v2 (separate the ipi interface) into this patch.
- - Remove unused name argument from scp_ipi_register.
- - Add scp_ipi_unregister for proper cleanup.
- - Move IPI ids in sync with firmware.
- - Add mb() in proper place, and correctly clear the run->signaled.
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 4af608a..428a1de 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -528,7 +528,7 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+>  		mutex_lock(&devfreq->lock);
+>  		if (!devfreq->stop_polling)
+>  			queue_delayed_work(devfreq_wq, &devfreq->work,
+> -			      msecs_to_jiffies(devfreq->profile->polling_ms));
+> +				msecs_to_jiffies(devfreq->profile->polling_ms));
+>  	}
+>  out:
+>  	mutex_unlock(&devfreq->lock);
+> @@ -537,7 +537,7 @@ EXPORT_SYMBOL(devfreq_interval_update);
+>  
+>  /**
+>   * devfreq_notifier_call() - Notify that the device frequency requirements
+> - *			   has been changed out of devfreq framework.
+> + *			     has been changed out of devfreq framework.
+>   * @nb:		the notifier_block (supposed to be devfreq->nb)
+>   * @type:	not used
+>   * @devp:	not used
+> @@ -683,12 +683,11 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>  		goto err_out;
+>  	}
+>  
+> -	devfreq->trans_table =
+> -		devm_kzalloc(&devfreq->dev,
+> -			     array3_size(sizeof(unsigned int),
+> -					 devfreq->profile->max_state,
+> -					 devfreq->profile->max_state),
+> -			     GFP_KERNEL);
+> +	devfreq->trans_table = devm_kzalloc(&devfreq->dev,
+> +			array3_size(sizeof(unsigned int),
+> +				    devfreq->profile->max_state,
+> +				    devfreq->profile->max_state),
+> +			GFP_KERNEL);
+>  	if (!devfreq->trans_table) {
+>  		mutex_unlock(&devfreq->lock);
+>  		err = -ENOMEM;
+> @@ -696,9 +695,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>  	}
+>  
+>  	devfreq->time_in_state = devm_kcalloc(&devfreq->dev,
+> -						devfreq->profile->max_state,
+> -						sizeof(unsigned long),
+> -						GFP_KERNEL);
+> +			devfreq->profile->max_state,
+> +			sizeof(unsigned long),
+> +			GFP_KERNEL);
+>  	if (!devfreq->time_in_state) {
+>  		mutex_unlock(&devfreq->lock);
+>  		err = -ENOMEM;
+> @@ -1184,7 +1183,7 @@ static ssize_t available_governors_show(struct device *d,
+>  	 */
+>  	if (df->governor->immutable) {
+>  		count = scnprintf(&buf[count], DEVFREQ_NAME_LEN,
+> -				   "%s ", df->governor_name);
+> +				  "%s ", df->governor_name);
+>  	/*
+>  	 * The devfreq device shows the registered governor except for
+>  	 * immutable governors such as passive governor .
+> @@ -1497,8 +1496,8 @@ EXPORT_SYMBOL(devfreq_recommended_opp);
+>  
+>  /**
+>   * devfreq_register_opp_notifier() - Helper function to get devfreq notified
+> - *				   for any changes in the OPP availability
+> - *				   changes
+> + *				     for any changes in the OPP availability
+> + *				     changes
+>   * @dev:	The devfreq user device. (parent of devfreq)
+>   * @devfreq:	The devfreq object.
+>   */
+> @@ -1510,8 +1509,8 @@ EXPORT_SYMBOL(devfreq_register_opp_notifier);
+>  
+>  /**
+>   * devfreq_unregister_opp_notifier() - Helper function to stop getting devfreq
+> - *				     notified for any changes in the OPP
+> - *				     availability changes anymore.
+> + *				       notified for any changes in the OPP
+> + *				       availability changes anymore.
+>   * @dev:	The devfreq user device. (parent of devfreq)
+>   * @devfreq:	The devfreq object.
+>   *
+> @@ -1530,8 +1529,8 @@ static void devm_devfreq_opp_release(struct device *dev, void *res)
+>  }
+>  
+>  /**
+> - * devm_ devfreq_register_opp_notifier()
+> - *		- Resource-managed devfreq_register_opp_notifier()
+> + * devm_devfreq_register_opp_notifier() - Resource-managed
+> + *					  devfreq_register_opp_notifier()
+>   * @dev:	The devfreq user device. (parent of devfreq)
+>   * @devfreq:	The devfreq object.
+>   */
+> @@ -1559,8 +1558,8 @@ int devm_devfreq_register_opp_notifier(struct device *dev,
+>  EXPORT_SYMBOL(devm_devfreq_register_opp_notifier);
+>  
+>  /**
+> - * devm_devfreq_unregister_opp_notifier()
+> - *		- Resource-managed devfreq_unregister_opp_notifier()
+> + * devm_devfreq_unregister_opp_notifier() - Resource-managed
+> + *					    devfreq_unregister_opp_notifier()
+>   * @dev:	The devfreq user device. (parent of devfreq)
+>   * @devfreq:	The devfreq object.
+>   */
+> @@ -1579,8 +1578,8 @@ EXPORT_SYMBOL(devm_devfreq_unregister_opp_notifier);
+>   * @list:	DEVFREQ_TRANSITION_NOTIFIER.
+>   */
+>  int devfreq_register_notifier(struct devfreq *devfreq,
+> -				struct notifier_block *nb,
+> -				unsigned int list)
+> +			      struct notifier_block *nb,
+> +			      unsigned int list)
+>  {
+>  	int ret = 0;
+>  
+> @@ -1686,9 +1685,9 @@ EXPORT_SYMBOL(devm_devfreq_register_notifier);
+>   * @list:	DEVFREQ_TRANSITION_NOTIFIER.
+>   */
+>  void devm_devfreq_unregister_notifier(struct device *dev,
+> -				struct devfreq *devfreq,
+> -				struct notifier_block *nb,
+> -				unsigned int list)
+> +				      struct devfreq *devfreq,
+> +				      struct notifier_block *nb,
+> +				      unsigned int list)
+>  {
+>  	WARN_ON(devres_release(dev, devm_devfreq_notifier_release,
+>  			       devm_devfreq_dev_match, devfreq));
+> 
 
-Changes from v1:
- - Extract functions and rename variables in mtk_scp.c.
----
- drivers/remoteproc/Kconfig            |   9 +
- drivers/remoteproc/Makefile           |   1 +
- drivers/remoteproc/mtk_common.h       |  72 +++++
- drivers/remoteproc/mtk_scp.c          | 437 ++++++++++++++++++++++++++
- drivers/remoteproc/mtk_scp_ipi.c      | 126 ++++++++
- include/linux/platform_data/mtk_scp.h | 135 ++++++++
- 6 files changed, 780 insertions(+)
- create mode 100644 drivers/remoteproc/mtk_common.h
- create mode 100644 drivers/remoteproc/mtk_scp.c
- create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
- create mode 100644 include/linux/platform_data/mtk_scp.h
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index f0abd260804473..ee0bda23768938 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -22,6 +22,15 @@ config IMX_REMOTEPROC
- 
- 	  It's safe to say N here.
- 
-+config MTK_SCP
-+        tristate "Mediatek SCP support"
-+        depends on ARCH_MEDIATEK
-+        help
-+          Say y here to support Mediatek's SCP (Cortex M4
-+          on MT8183) via the remote processor framework.
-+
-+          It's safe to say N here.
-+
- config OMAP_REMOTEPROC
- 	tristate "OMAP remoteproc support"
- 	depends on ARCH_OMAP4 || SOC_OMAP5
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index ce5d061e92be52..16b3e5e7a81c8e 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -10,6 +10,7 @@ remoteproc-y				+= remoteproc_sysfs.o
- remoteproc-y				+= remoteproc_virtio.o
- remoteproc-y				+= remoteproc_elf_loader.o
- obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
-+obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-new file mode 100644
-index 00000000000000..5b682e7a890b27
---- /dev/null
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2018 MediaTek Inc.
-+
-+#ifndef __RPROC_MTK_COMMON_H
-+#define __RPROC_MTK_COMMON_H
-+
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+
-+#define MT8183_SW_RSTN			0x0
-+#define MT8183_SW_RSTN_BIT		BIT(0)
-+#define MT8183_SCP_TO_HOST		0x1C
-+#define MT8183_SCP_IPC_INT_BIT		BIT(0)
-+#define MT8183_SCP_WDT_INT_BIT		BIT(8)
-+#define MT8183_HOST_TO_SCP		0x28
-+#define MT8183_HOST_IPC_INT_BIT		BIT(0)
-+#define MT8183_SCP_SRAM_PDN		0x402C
-+
-+#define SCP_FW_VER_LEN		32
-+
-+struct scp_run {
-+	u32 signaled;
-+	s8 fw_ver[SCP_FW_VER_LEN];
-+	u32 dec_capability;
-+	u32 enc_capability;
-+	wait_queue_head_t wq;
-+};
-+
-+struct scp_ipi_desc {
-+	scp_ipi_handler_t handler;
-+	void *priv;
-+};
-+
-+struct mtk_scp {
-+	struct device *dev;
-+	struct rproc *rproc;
-+	struct clk *clk;
-+	void __iomem *reg_base;
-+	void __iomem *sram_base;
-+	size_t sram_size;
-+
-+	struct share_obj *recv_buf;
-+	struct share_obj *send_buf;
-+	struct scp_run run;
-+	struct mutex scp_mutex; /* for protecting mtk_scp data structure */
-+	struct scp_ipi_desc ipi_desc[SCP_IPI_MAX];
-+	bool ipi_id_ack[SCP_IPI_MAX];
-+	wait_queue_head_t ack_wq;
-+
-+	void __iomem *cpu_addr;
-+	phys_addr_t phys_addr;
-+	size_t dram_size;
-+};
-+
-+/**
-+ * struct share_obj - SRAM buffer shared with
-+ *		      AP and SCP
-+ *
-+ * @id:		IPI id
-+ * @len:	share buffer length
-+ * @share_buf:	share buffer data
-+ */
-+struct share_obj {
-+	s32 id;
-+	u32 len;
-+	u8 share_buf[288];
-+};
-+
-+#endif
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-new file mode 100644
-index 00000000000000..37325a92464524
---- /dev/null
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -0,0 +1,437 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2018 MediaTek Inc.
-+
-+#include <asm/barrier.h>
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_data/mtk_scp.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+
-+#include "mtk_common.h"
-+#include "remoteproc_internal.h"
-+
-+#define MAX_CODE_SIZE 0x500000
-+
-+struct platform_device *scp_get_plat_device(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *scp_node;
-+	struct platform_device *scp_pdev;
-+
-+	scp_node = of_parse_phandle(dev->of_node, "mediatek,scp", 0);
-+	if (!scp_node) {
-+		dev_err(dev, "can't get scp node\n");
-+		return NULL;
-+	}
-+
-+	scp_pdev = of_find_device_by_node(scp_node);
-+	if (WARN_ON(!scp_pdev)) {
-+		dev_err(dev, "scp pdev failed\n");
-+		of_node_put(scp_node);
-+		return NULL;
-+	}
-+
-+	return scp_pdev;
-+}
-+EXPORT_SYMBOL_GPL(scp_get_plat_device);
-+
-+static void scp_wdt_handler(struct mtk_scp *scp)
-+{
-+	rproc_report_crash(scp->rproc, RPROC_WATCHDOG);
-+}
-+
-+static void scp_init_ipi_handler(void *data, unsigned int len, void *priv)
-+{
-+	struct mtk_scp *scp = (struct mtk_scp *)priv;
-+	struct scp_run *run = (struct scp_run *)data;
-+
-+	scp->run.signaled = run->signaled;
-+	strncpy(scp->run.fw_ver, run->fw_ver, SCP_FW_VER_LEN);
-+	scp->run.dec_capability = run->dec_capability;
-+	scp->run.enc_capability = run->enc_capability;
-+	wake_up_interruptible(&scp->run.wq);
-+}
-+
-+static void scp_ipi_handler(struct mtk_scp *scp)
-+{
-+	struct share_obj *rcv_obj = scp->recv_buf;
-+	struct scp_ipi_desc *ipi_desc = scp->ipi_desc;
-+	u8 tmp_data[288];
-+
-+	if (rcv_obj->id < SCP_IPI_MAX && ipi_desc[rcv_obj->id].handler) {
-+		memcpy_fromio(tmp_data, &rcv_obj->share_buf, rcv_obj->len);
-+		ipi_desc[rcv_obj->id].handler(&tmp_data[0],
-+					      rcv_obj->len,
-+					      ipi_desc[rcv_obj->id].priv);
-+		scp->ipi_id_ack[rcv_obj->id] = true;
-+		wake_up(&scp->ack_wq);
-+	} else {
-+		dev_err(scp->dev, "No such ipi id = %d\n", rcv_obj->id);
-+	}
-+}
-+
-+static int scp_ipi_init(struct mtk_scp *scp)
-+{
-+	size_t send_offset = 0x800 - sizeof(struct share_obj);
-+	size_t recv_offset = send_offset - sizeof(struct share_obj);
-+
-+	/* Disable SCP to host interrupt */
-+	writel(MT8183_SCP_IPC_INT_BIT, scp->reg_base + MT8183_SCP_TO_HOST);
-+
-+	/* shared buffer initialization */
-+	scp->recv_buf = (__force struct share_obj *)(scp->sram_base +
-+						recv_offset);
-+	scp->send_buf = (__force struct share_obj *)(scp->sram_base +
-+						send_offset);
-+	memset_io(scp->recv_buf, 0, sizeof(scp->recv_buf));
-+	memset_io(scp->send_buf, 0, sizeof(scp->send_buf));
-+
-+	return 0;
-+}
-+
-+static void mtk_scp_reset_assert(const struct mtk_scp *scp)
-+{
-+	u32 val;
-+
-+	val = readl(scp->reg_base + MT8183_SW_RSTN);
-+	val &= ~MT8183_SW_RSTN_BIT;
-+	writel(val, scp->reg_base + MT8183_SW_RSTN);
-+}
-+
-+static void mtk_scp_reset_deassert(const struct mtk_scp *scp)
-+{
-+	u32 val;
-+
-+	val = readl(scp->reg_base + MT8183_SW_RSTN);
-+	val |= MT8183_SW_RSTN_BIT;
-+	writel(val, scp->reg_base + MT8183_SW_RSTN);
-+}
-+
-+static irqreturn_t scp_irq_handler(int irq, void *priv)
-+{
-+	struct mtk_scp *scp = priv;
-+	u32 scp_to_host;
-+
-+	scp_to_host = readl(scp->reg_base + MT8183_SCP_TO_HOST);
-+	if (scp_to_host & MT8183_SCP_IPC_INT_BIT) {
-+		scp_ipi_handler(scp);
-+	} else {
-+		dev_err(scp->dev, "scp watchdog timeout! 0x%x", scp_to_host);
-+		scp_wdt_handler(scp);
-+	}
-+
-+	mb();
-+	/* SCP won't send another interrupt until we set SCP_TO_HOST to 0. */
-+	writel(MT8183_SCP_IPC_INT_BIT | MT8183_SCP_WDT_INT_BIT,
-+	       scp->reg_base + MT8183_SCP_TO_HOST);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int mtk_scp_load(struct rproc *rproc, const struct firmware *fw)
-+{
-+	const struct mtk_scp *scp = rproc->priv;
-+	struct device *dev = scp->dev;
-+	int ret;
-+
-+	/* Hold SCP in reset while loading FW. */
-+	mtk_scp_reset_assert(scp);
-+
-+	ret = clk_prepare_enable(scp->clk);
-+	if (ret) {
-+		dev_err(dev, "failed to enable clocks\n");
-+		return ret;
-+	}
-+
-+	writel(0x0, scp->reg_base + MT8183_SCP_SRAM_PDN);
-+
-+	memcpy(scp->sram_base, fw->data, fw->size);
-+	return ret;
-+}
-+
-+static int mtk_scp_start(struct rproc *rproc)
-+{
-+	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-+	struct device *dev = scp->dev;
-+	struct scp_run *run;
-+	int ret;
-+
-+	ret = clk_prepare_enable(scp->clk);
-+	if (ret) {
-+		dev_err(dev, "failed to enable clocks\n");
-+		return ret;
-+	}
-+
-+	run = &scp->run;
-+	run->signaled = false;
-+
-+	mtk_scp_reset_deassert(scp);
-+
-+	ret = wait_event_interruptible_timeout(
-+					run->wq,
-+					run->signaled,
-+					msecs_to_jiffies(2000));
-+
-+	if (ret == 0) {
-+		dev_err(dev, "wait scp initialization timeout!\n");
-+		ret = -ETIME;
-+		goto stop;
-+	}
-+	if (ret == -ERESTARTSYS) {
-+		dev_err(dev, "wait scp interrupted by a signal!\n");
-+		goto stop;
-+	}
-+	dev_info(dev, "scp is ready. Fw version %s\n", run->fw_ver);
-+
-+	return 0;
-+
-+stop:
-+	mtk_scp_reset_assert(scp);
-+	clk_disable_unprepare(scp->clk);
-+	return ret;
-+}
-+
-+static void *mtk_scp_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-+	int offset;
-+
-+	if (da < scp->sram_size) {
-+		offset = da;
-+		if (offset >= 0 && ((offset + len) < scp->sram_size)) {
-+			return (__force void *)(scp->sram_base + offset);
-+		}
-+	} else if (da >= scp->sram_size && da < (scp->sram_size + MAX_CODE_SIZE)) {
-+		offset = da - scp->sram_size;
-+		if (offset >= 0 && (offset + len) < MAX_CODE_SIZE) {
-+			return scp->cpu_addr + offset;
-+		}
-+	} else {
-+		offset = da - scp->phys_addr;
-+		if (offset >= 0 && (offset + len) < (scp->dram_size - MAX_CODE_SIZE)) {
-+			return scp->cpu_addr + offset;
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
-+static int mtk_scp_stop(struct rproc *rproc)
-+{
-+	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-+
-+	mtk_scp_reset_assert(scp);
-+	clk_disable_unprepare(scp->clk);
-+
-+	return 0;
-+}
-+
-+static const struct rproc_ops mtk_scp_ops = {
-+	.start		= mtk_scp_start,
-+	.stop		= mtk_scp_stop,
-+	.load		= mtk_scp_load,
-+	.da_to_va	= mtk_scp_da_to_va,
-+};
-+
-+unsigned int scp_get_vdec_hw_capa(struct platform_device *pdev)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+
-+	return scp->run.dec_capability;
-+}
-+EXPORT_SYMBOL_GPL(scp_get_vdec_hw_capa);
-+
-+unsigned int scp_get_venc_hw_capa(struct platform_device *pdev)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+
-+	return scp->run.enc_capability;
-+}
-+EXPORT_SYMBOL_GPL(scp_get_venc_hw_capa);
-+
-+void *scp_mapping_dm_addr(struct platform_device *pdev, u32 mem_addr)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+	void *ptr = NULL;
-+
-+	ptr = mtk_scp_da_to_va(scp->rproc, mem_addr, 0);
-+
-+	if (ptr)
-+		return ptr;
-+	else
-+		return ERR_PTR(-EINVAL);
-+}
-+EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
-+
-+static int scp_map_memory_region(struct mtk_scp *scp)
-+{
-+	struct device_node *node;
-+	struct resource r;
-+	int ret;
-+
-+	node = of_parse_phandle(scp->dev->of_node, "memory-region", 0);
-+	if (!node) {
-+		dev_err(scp->dev, "no memory-region specified\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_address_to_resource(node, 0, &r);
-+	if (ret)
-+		return ret;
-+
-+	scp->phys_addr = r.start;
-+	scp->dram_size = resource_size(&r);
-+	scp->cpu_addr = devm_ioremap_wc(scp->dev, scp->phys_addr, scp->dram_size);
-+
-+	if (!scp->cpu_addr) {
-+		dev_err(scp->dev, "unable to map memory region: %pa+%zx\n",
-+			&r.start, scp->dram_size);
-+		return -EBUSY;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mtk_scp_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct mtk_scp *scp;
-+	struct rproc *rproc;
-+	struct resource *res;
-+	char *fw_name = "scp.img";
-+	int ret;
-+
-+	rproc = rproc_alloc(dev,
-+			    np->name,
-+			    &mtk_scp_ops,
-+			    fw_name,
-+			    sizeof(*scp));
-+	if (!rproc) {
-+		dev_err(dev, "unable to allocate remoteproc\n");
-+		return -ENOMEM;
-+	}
-+
-+	scp = (struct mtk_scp *)rproc->priv;
-+	scp->rproc = rproc;
-+	scp->dev = dev;
-+	platform_set_drvdata(pdev, scp);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
-+	scp->sram_base = devm_ioremap_resource(dev, res);
-+	scp->sram_size = resource_size(res);
-+	if (IS_ERR((__force void *)scp->sram_base)) {
-+		dev_err(dev, "Failed to parse and map sram memory\n");
-+		ret = PTR_ERR((__force void *)scp->sram_base);
-+		goto free_rproc;
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
-+	scp->reg_base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR((__force void *)scp->reg_base)) {
-+		dev_err(dev, "Failed to parse and map cfg memory\n");
-+		ret = PTR_ERR((__force void *)scp->reg_base);
-+		goto free_rproc;
-+	}
-+
-+	ret = scp_map_memory_region(scp);
-+	if (ret)
-+		goto free_rproc;
-+
-+	scp->clk = devm_clk_get(dev, "main");
-+	if (IS_ERR(scp->clk)) {
-+		dev_err(dev, "Failed to get clock\n");
-+		ret = PTR_ERR(scp->clk);
-+		goto free_rproc;
-+	}
-+
-+	ret = clk_prepare_enable(scp->clk);
-+	if (ret) {
-+		dev_err(dev, "failed to enable clocks\n");
-+		goto free_rproc;
-+	}
-+
-+	ret = scp_ipi_init(scp);
-+	clk_disable_unprepare(scp->clk);
-+	if (ret) {
-+		dev_err(dev, "Failed to init ipi\n");
-+		goto free_rproc;
-+	}
-+
-+	/* register scp initialization IPI */
-+	ret = scp_ipi_register(pdev,
-+			       SCP_IPI_INIT,
-+			       scp_init_ipi_handler,
-+			       scp);
-+	if (ret) {
-+		dev_err(dev, "Failed to register IPI_SCP_INIT\n");
-+		goto free_rproc;
-+	}
-+
-+	ret = devm_request_irq(dev,
-+			       platform_get_irq(pdev, 0),
-+			       scp_irq_handler,
-+			       0,
-+			       pdev->name,
-+			       scp);
-+
-+	if (ret) {
-+		dev_err(dev, "failed to request irq\n");
-+		goto free_rproc;
-+	}
-+
-+	mutex_init(&scp->scp_mutex);
-+
-+	init_waitqueue_head(&scp->run.wq);
-+	init_waitqueue_head(&scp->ack_wq);
-+
-+	ret = rproc_add(rproc);
-+	if (ret)
-+		goto destroy_mutex;
-+
-+	return ret;
-+
-+destroy_mutex:
-+	mutex_destroy(&scp->scp_mutex);
-+free_rproc:
-+	rproc_free(rproc);
-+
-+	return ret;
-+}
-+
-+static int mtk_scp_remove(struct platform_device *pdev)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+
-+	rproc_del(scp->rproc);
-+	rproc_free(scp->rproc);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mtk_scp_of_match[] = {
-+	{ .compatible = "mediatek,mt8183-scp"},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
-+
-+static struct platform_driver mtk_scp_driver = {
-+	.probe = mtk_scp_probe,
-+	.remove = mtk_scp_remove,
-+	.driver = {
-+		.name = "mtk-scp",
-+		.of_match_table = of_match_ptr(mtk_scp_of_match),
-+	},
-+};
-+
-+module_platform_driver(mtk_scp_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MediaTek scp control driver");
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-new file mode 100644
-index 00000000000000..f74acdf68f3867
---- /dev/null
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -0,0 +1,126 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2018 MediaTek Inc.
-+
-+#include <asm/barrier.h>
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_data/mtk_scp.h>
-+#include <linux/platform_device.h>
-+
-+#include "mtk_common.h"
-+
-+int scp_ipi_register(struct platform_device *pdev,
-+		     enum scp_ipi_id id,
-+		     scp_ipi_handler_t handler,
-+		     void *priv)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+	struct scp_ipi_desc *ipi_desc;
-+
-+	if (!scp) {
-+		dev_err(&pdev->dev, "scp device is not ready\n");
-+		return -EPROBE_DEFER;
-+	}
-+
-+	if (WARN(id < 0 ||  id >= SCP_IPI_MAX || handler == NULL,
-+	    "register scp ipi id %d with invalid arguments\n", id))
-+		return -EINVAL;
-+
-+	ipi_desc = scp->ipi_desc;
-+	ipi_desc[id].handler = handler;
-+	ipi_desc[id].priv = priv;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(scp_ipi_register);
-+
-+void scp_ipi_unregister(struct platform_device *pdev, enum scp_ipi_id id)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+	struct scp_ipi_desc *ipi_desc;
-+
-+	if (!scp)
-+		return;
-+
-+	if (WARN(id < 0 || id >= SCP_IPI_MAX,
-+		 "unregister scp ipi id %d with invalid arguments\n", id))
-+		return;
-+
-+	ipi_desc = scp->ipi_desc;
-+	ipi_desc[id].handler = NULL;
-+	ipi_desc[id].priv = NULL;
-+}
-+EXPORT_SYMBOL_GPL(scp_ipi_unregister);
-+
-+int scp_ipi_send(struct platform_device *pdev,
-+		 enum scp_ipi_id id,
-+		 void *buf,
-+		 unsigned int len,
-+		 unsigned int wait)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+	struct share_obj *send_obj = scp->send_buf;
-+	unsigned long timeout;
-+	int ret;
-+
-+	if (WARN(id <= SCP_IPI_INIT || id >= SCP_IPI_MAX ||
-+	    len > sizeof(send_obj->share_buf) || !buf,
-+	    "failed to send ipi message\n"))
-+		return -EINVAL;
-+
-+	ret = clk_prepare_enable(scp->clk);
-+	if (ret) {
-+		dev_err(scp->dev, "failed to enable clock\n");
-+		return ret;
-+	}
-+
-+	mutex_lock(&scp->scp_mutex);
-+
-+	 /* Wait until SCP receives the last command */
-+	timeout = jiffies + msecs_to_jiffies(2000);
-+	do {
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
-+			ret = -EIO;
-+			mutex_unlock(&scp->scp_mutex);
-+			goto clock_disable;
-+		}
-+	} while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
-+
-+	memcpy(send_obj->share_buf, buf, len);
-+	send_obj->len = len;
-+	send_obj->id = id;
-+
-+	scp->ipi_id_ack[id] = false;
-+	mb();
-+	/* send the command to SCP */
-+	writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
-+
-+	mutex_unlock(&scp->scp_mutex);
-+
-+	if (wait) {
-+		/* wait for SCP's ACK */
-+		timeout = msecs_to_jiffies(wait);
-+		ret = wait_event_timeout(scp->ack_wq,
-+					 scp->ipi_id_ack[id],
-+					 timeout);
-+		scp->ipi_id_ack[id] = false;
-+		if (WARN(!ret,
-+			 "scp ipi %d ack time out !", id))
-+			ret = -EIO;
-+		else
-+			ret = 0;
-+	}
-+
-+clock_disable:
-+	clk_disable_unprepare(scp->clk);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(scp_ipi_send);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MediaTek scp IPI interface");
-diff --git a/include/linux/platform_data/mtk_scp.h b/include/linux/platform_data/mtk_scp.h
-new file mode 100644
-index 00000000000000..0e999ec319446b
---- /dev/null
-+++ b/include/linux/platform_data/mtk_scp.h
-@@ -0,0 +1,135 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018 MediaTek Inc.
-+ */
-+
-+#ifndef _MTK_SCP_H
-+#define _MTK_SCP_H
-+
-+#include <linux/platform_device.h>
-+
-+typedef void (*scp_ipi_handler_t) (void *data,
-+				   unsigned int len,
-+				   void *priv);
-+
-+/**
-+ * enum ipi_id - the id of inter-processor interrupt
-+ *
-+ * @SCP_IPI_INIT:	 The interrupt from scp is to notfiy kernel
-+ *			 SCP initialization completed.
-+ *			 IPI_SCP_INIT is sent from SCP when firmware is
-+ *			 loaded. AP doesn't need to send IPI_SCP_INIT
-+ *			 command to SCP.
-+ *			 For other IPI below, AP should send the request
-+ *			 to SCP to trigger the interrupt.
-+ * @IPI_MAX:		 The maximum IPI number
-+ */
-+
-+enum scp_ipi_id {
-+	SCP_IPI_INIT = 0,
-+	SCP_IPI_VDEC_H264,
-+	SCP_IPI_VDEC_VP8,
-+	SCP_IPI_VDEC_VP9,
-+	SCP_IPI_VENC_H264,
-+	SCP_IPI_VENC_VP8,
-+	SCP_IPI_MDP,
-+	SCP_IPI_CROS_HOST_CMD,
-+	SCP_IPI_MAX,
-+};
-+
-+/**
-+ * scp_ipi_register - register an ipi function
-+ *
-+ * @pdev:	SCP platform device
-+ * @id:		IPI ID
-+ * @handler:	IPI handler
-+ * @priv:	private data for IPI handler
-+ *
-+ * Register an ipi function to receive ipi interrupt from SCP.
-+ *
-+ * Return: Return 0 if ipi registers successfully, otherwise it is failed.
-+ */
-+int scp_ipi_register(struct platform_device *pdev,
-+		     enum scp_ipi_id id,
-+		     scp_ipi_handler_t handler,
-+		     void *priv);
-+
-+/**
-+ * scp_ipi_unregister - unregister an ipi function
-+ *
-+ * @pdev:	SCP platform device
-+ * @id:		IPI ID
-+ *
-+ * Unregister an ipi function to receive ipi interrupt from SCP.
-+ */
-+void scp_ipi_unregister(struct platform_device *pdev, enum scp_ipi_id id);
-+
-+/**
-+ * scp_ipi_send - send data from AP to scp.
-+ *
-+ * @pdev:	SCP platform device
-+ * @id:		IPI ID
-+ * @buf:	the data buffer
-+ * @len:	the data buffer length
-+ * @wait:	1: need ack
-+ *
-+ * This function is thread-safe. When this function returns,
-+ * SCP has received the data and starts the processing.
-+ * When the processing completes, IPI handler registered
-+ * by scp_ipi_register will be called in interrupt context.
-+ *
-+ * Return: Return 0 if sending data successfully, otherwise it is failed.
-+ **/
-+int scp_ipi_send(struct platform_device *pdev,
-+		 enum scp_ipi_id id,
-+		 void *buf,
-+		 unsigned int len,
-+		 unsigned int wait);
-+
-+/**
-+ * scp_get_plat_device - get SCP's platform device
-+ *
-+ * @pdev:	the platform device of the module requesting SCP platform
-+ *		device for using SCP API.
-+ *
-+ * Return: Return NULL if it is failed.
-+ * otherwise it is SCP's platform device
-+ **/
-+struct platform_device *scp_get_plat_device(struct platform_device *pdev);
-+
-+/**
-+ * scp_get_vdec_hw_capa - get video decoder hardware capability
-+ *
-+ * @pdev:	SCP platform device
-+ *
-+ * Return: video decoder hardware capability
-+ **/
-+unsigned int scp_get_vdec_hw_capa(struct platform_device *pdev);
-+
-+/**
-+ * scp_get_venc_hw_capa - get video encoder hardware capability
-+ *
-+ * @pdev:	SCP platform device
-+ *
-+ * Return: video encoder hardware capability
-+ **/
-+unsigned int scp_get_venc_hw_capa(struct platform_device *pdev);
-+
-+/**
-+ * scp_mapping_dm_addr - Mapping SRAM/DRAM to kernel virtual address
-+ *
-+ * @pdev:	SCP platform device
-+ * @mem_addr:	SCP views memory address
-+ *
-+ * Mapping the SCP's SRAM address /
-+ * DMEM (Data Extended Memory) memory address /
-+ * Working buffer memory address to
-+ * kernel virtual address.
-+ *
-+ * Return: Return ERR_PTR(-EINVAL) if mapping failed,
-+ * otherwise the mapped kernel virtual address
-+ **/
-+void *scp_mapping_dm_addr(struct platform_device *pdev,
-+			  u32 mem_addr);
-+
-+#endif /* _MTK_SCP_H */
 -- 
-2.20.1.321.g9e740568ce-goog
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
