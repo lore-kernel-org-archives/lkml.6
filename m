@@ -2,173 +2,678 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB9DC31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C655EC316B6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E4820861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8979120989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfAUTEs (ORCPT
+        id S1727993AbfAUTFy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 14:04:48 -0500
-Received: from mail.netline.ch ([148.251.143.178]:37801 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfAUTEs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 14:04:48 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 43A562A6055;
-        Mon, 21 Jan 2019 20:04:44 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id dHAATxsRZUT5; Mon, 21 Jan 2019 20:04:43 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 871E62A6054;
-        Mon, 21 Jan 2019 20:04:42 +0100 (CET)
-Received: from [::1]
-        by thor with esmtp (Exim 4.92-RC4)
-        (envelope-from <michel@daenzer.net>)
-        id 1glesE-0003AO-4C; Mon, 21 Jan 2019 20:04:42 +0100
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, Junwei Zhang <Jerry.Zhang@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
- <20190121150734.GA30582@infradead.org>
- <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
- <20190121155908.GA8084@infradead.org>
- <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
- <20190121162238.GA17651@infradead.org>
- <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
- <59ccf85d-b99d-b5c8-ea87-66c2a892e197@daenzer.net>
- <CAKv+Gu8OkbHwY5UBxahpQpM_gKh2331pQ6o-4YyJdLurbFNHvw@mail.gmail.com>
- <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net>
- <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
- <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
- <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net>
-Date:   Mon, 21 Jan 2019 20:04:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 21 Jan 2019 14:05:54 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2284 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726575AbfAUTFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 14:05:54 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8D2518280DAD8E635086;
+        Tue, 22 Jan 2019 03:05:50 +0800 (CST)
+Received: from localhost (10.47.84.8) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Tue, 22 Jan 2019
+ 03:05:47 +0800
+Date:   Mon, 21 Jan 2019 19:05:32 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>
+CC:     "jic23@kernel.org" <jic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] iio: adc: Add AD7768-1 ADC basic support
+Message-ID: <20190121190532.00004a6b@huawei.com>
+In-Reply-To: <1548073995.9460.5.camel@analog.com>
+References: <1547555591-2048-1-git-send-email-stefan.popa@analog.com>
+        <20190119175522.3861b0d3@archlinux>
+        <1548073995.9460.5.camel@analog.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.47.84.8]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-21 7:28 p.m., Ard Biesheuvel wrote:
-> On Mon, 21 Jan 2019 at 19:24, Michel DÃ¤nzer <michel@daenzer.net> wrote:
->> On 2019-01-21 7:20 p.m., Ard Biesheuvel wrote:
->>> On Mon, 21 Jan 2019 at 19:04, Michel DÃ¤nzer <michel@daenzer.net> wrote:
->>>> On 2019-01-21 6:59 p.m., Ard Biesheuvel wrote:
->>>>> On Mon, 21 Jan 2019 at 18:55, Michel DÃ¤nzer <michel@daenzer.net> wrote:
->>>>>> On 2019-01-21 5:30 p.m., Ard Biesheuvel wrote:
->>>>>>> On Mon, 21 Jan 2019 at 17:22, Christoph Hellwig <hch@infradead.org> wrote:
->>>>>>>
->>>>>>>> Until that happens we should just change the driver ifdefs to default
->>>>>>>> the hacks to off and only enable them on setups where we 100%
->>>>>>>> positively know that they actually work.  And document that fact
->>>>>>>> in big fat comments.
->>>>>>>
->>>>>>> Well, as I mentioned in my commit log as well, if we default to off
->>>>>>> unless CONFIG_X86, we may break working setups on MIPS and Power where
->>>>>>> the device is in fact non-cache coherent, and relies on this
->>>>>>> 'optimization' to get things working.
->>>>>>
->>>>>> FWIW, the amdgpu driver doesn't rely on non-snooped transfers for
->>>>>> correct basic operation (the scenario Christian brought up is a very
->>>>>> specialized use-case), so that shouldn't be an issue.
->>>>>
->>>>> The point is that this is only true for x86.
->>>>>
->>>>> On other architectures, the use of non-cached mappings on the CPU side
->>>>> means that you /do/ rely on non-snooped transfers, since if those
->>>>> transfers turn out not to snoop inadvertently, the accesses are
->>>>> incoherent with the CPU's view of memory.
->>>>
->>>> The driver generally only uses non-cached mappings if
->>>> drm_arch/device_can_wc_memory returns true.
->>>
->>> Indeed. And so we should take care to only return 'true' from that
->>> function if it is guaranteed that non-cached CPU mappings are coherent
->>> with the mappings used by the GPU, either because that is always the
->>> case (like on x86), or because we know that the platform in question
->>> implements NoSnoop correctly throughout the interconnect.
->>>
->>> What seems to be complicating matters is that in some cases, the
->>> device is non-cache coherent to begin with, so regardless of whether
->>> the NoSnoop attribute is used or not, those accesses will not snoop in
->>> the caches and be coherent with the non-cached mappings used by the
->>> CPU. So if we restrict this optimization [on non-X86] to platforms
->>> that are known to implement NoSnoop correctly, we may break platforms
->>> that are implicitly NoSnoop all the time.
->>
->> Since the driver generally doesn't rely on non-snooped accesses for
->> correctness, that couldn't "break" anything that hasn't always been broken.
+On Mon, 21 Jan 2019 12:33:16 +0000
+"Popa, Stefan Serban" <StefanSerban.Popa@analog.com> wrote:
+
+> On Sb, 2019-01-19 at 17:55 +0000, Jonathan Cameron wrote:
+> > Use caution when clicking links or attachments as this email originated
+> > outside of Analog Devices.
+> > 
+> > 
+> > On Tue, 15 Jan 2019 14:33:11 +0200
+> > Stefan Popa <stefan.popa@analog.com> wrote:
+> >   
+> > > 
+> > > The ad7768-1 is a single channel, precision 24-bit analog to digital
+> > > converter (ADC).
+> > > 
+> > > This basic patch configures the device in fast mode, with 32 kSPS and
+> > > leaves the default sinc5 filter.
+> > > 
+> > > Two data conversion modes are made available. When data is retrieved by
+> > > using the read_raw attribute, one shot single conversion mode is set.
+> > > The continuous conversion mode is enabled when the triggered buffer
+> > > mechanism is used. To assure correct data retrieval, the driver waits
+> > > for the interrupt triggered by the low to high transition of the DRDY
+> > > pin.
+> > > 
+> > > Datasheets:
+> > > Link: https://www.analog.com/media/en/technical-documentation/data-shee
+> > > ts/ad7768-1.pdf
+> > > 
+> > > Signed-off-by: Stefan Popa <stefan.popa@analog.com>  
+> > Hi Stefan,
+> > 
+> > Driver is fine, but the licensing needs clarification.
+> > "GPL" in module license means GPL v2 or later, but the SPDX is GPL v2
+> > only.
+> > 
+> > I had a question out to Michael for some of his older drivers on
+> > exactly this.  We need to fix this one and tidy those up to
+> > be clear one way or the other.
+> > If you just let me know which one is right, I'll fix it up rather than
+> > you having
+> > to send a v3.
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> >   
+> Hi Jonathan,
 > 
-> Again, that is only true on x86.
+> Thank you for your review. Michael informed me that our drivers are
+> typically GPL v2 only.
 > 
-> On other architectures, DMA writes from the device may allocate in the
-> caches, and be invisible to the CPU when it uses non-cached mappings.
+> I will check the other drivers that we've sent upstream and provide a patch
+> to fix the wrong licenses. 
 
-Let me try one last time:
+Great, thanks!  It's some of the really old ones in staging that we noticed this
+in IIRC.
 
-If drm_arch_can_wc_memory returns false, the driver falls back to the
-normal mode of operation, using a cacheable CPU mapping and snooped GPU
-transfers, even if userspace asks (as a performance optimization) for a
-write-combined CPU mapping and non-snooped GPU transfers via
-AMDGPU_GEM_CREATE_CPU_GTT_USWC. This normal mode of operation is also
-used for the ring buffers at the heart of the driver's operation. If
-there is a platform where this normal mode of operation doesn't work,
-the driver could never have worked reliably on that platform, since
-before AMDGPU_GEM_CREATE_CPU_GTT_USWC or drm_arch_can_wc_memory even
-existed.
+Jonathan
+
+> 
+> -Stefan
+> 
+> > > 
+> > > ---
+> > > Changes in v2:
+> > >       - Added values to all the elements of ad7768_pwrmode enum.
+> > >       - Removed the ad7768_ids enum, as the driver supports only one
+> > > device.
+> > >       - Added a new data union which is part of the ad7768_state
+> > > struct. This
+> > >         union, now includes a d8 field.
+> > >       - Used spi_write_then_read() in ad7768_spi_reg_read().
+> > >       - Called spi_read() instead of spi_sync_transfer() in
+> > > ad7768_trigger_handler().
+> > >       - Used the devm_request_irq() instead of
+> > > devm_request_threaded_irq(); called
+> > >         iio_trigger_poll() instead of iio_trigger_poll_chained().
+> > > 
+> > >  MAINTAINERS                |   7 +
+> > >  drivers/iio/adc/Kconfig    |  13 ++
+> > >  drivers/iio/adc/Makefile   |   1 +
+> > >  drivers/iio/adc/ad7768-1.c | 459
+> > > +++++++++++++++++++++++++++++++++++++++++++++
+> > >  4 files changed, 480 insertions(+)
+> > >  create mode 100644 drivers/iio/adc/ad7768-1.c
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index d039f66..3ba3811 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -862,6 +862,13 @@ S:       Supported
+> > >  F:   drivers/iio/adc/ad7606.c
+> > >  F:   Documentation/devicetree/bindings/iio/adc/ad7606.txt
+> > > 
+> > > +ANALOG DEVICES INC AD7768-1 DRIVER
+> > > +M:   Stefan Popa <stefan.popa@analog.com>
+> > > +L:   linux-iio@vger.kernel.org
+> > > +W:   http://ez.analog.com/community/linux-device-drivers
+> > > +S:   Supported
+> > > +F:   drivers/iio/adc/ad7768-1.c
+> > > +
+> > >  ANALOG DEVICES INC AD9389B DRIVER
+> > >  M:   Hans Verkuil <hans.verkuil@cisco.com>
+> > >  L:   linux-media@vger.kernel.org
+> > > diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> > > index f3cc7a3..6c19dfe 100644
+> > > --- a/drivers/iio/adc/Kconfig
+> > > +++ b/drivers/iio/adc/Kconfig
+> > > @@ -108,6 +108,19 @@ config AD7766
+> > >         To compile this driver as a module, choose M here: the module
+> > > will be
+> > >         called ad7766.
+> > > 
+> > > +config AD7768_1
+> > > +     tristate "Analog Devices AD7768-1 ADC driver"
+> > > +     depends on SPI
+> > > +     select IIO_BUFFER
+> > > +     select IIO_TRIGGER
+> > > +     select IIO_TRIGGERED_BUFFER
+> > > +     help
+> > > +       Say yes here to build support for Analog Devices AD7768-1 SPI
+> > > +       simultaneously sampling sigma-delta analog to digital converter
+> > > (ADC).
+> > > +
+> > > +       To compile this driver as a module, choose M here: the module
+> > > will be
+> > > +       called ad7768-1.
+> > > +
+> > >  config AD7791
+> > >       tristate "Analog Devices AD7791 ADC driver"
+> > >       depends on SPI
+> > > diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> > > index ea50313..9d50f7b 100644
+> > > --- a/drivers/iio/adc/Makefile
+> > > +++ b/drivers/iio/adc/Makefile
+> > > @@ -15,6 +15,7 @@ obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
+> > >  obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
+> > >  obj-$(CONFIG_AD7606) += ad7606.o
+> > >  obj-$(CONFIG_AD7766) += ad7766.o
+> > > +obj-$(CONFIG_AD7768_1) += ad7768-1.o
+> > >  obj-$(CONFIG_AD7791) += ad7791.o
+> > >  obj-$(CONFIG_AD7793) += ad7793.o
+> > >  obj-$(CONFIG_AD7887) += ad7887.o
+> > > diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> > > new file mode 100644
+> > > index 0000000..fdcb966
+> > > --- /dev/null
+> > > +++ b/drivers/iio/adc/ad7768-1.c
+> > > @@ -0,0 +1,459 @@
+> > > +// SPDX-License-Identifier: GPL-2.0  
+> > This is GPl v2 only.  The MODULE_LICENSE is GPL v2 or later.
+> >   
+> > > 
+> > > +/*
+> > > + * Analog Devices AD7768-1 SPI ADC driver
+> > > + *
+> > > + * Copyright 2017 Analog Devices Inc.
+> > > + */
+> > > +#include <linux/bitfield.h>
+> > > +#include <linux/clk.h>
+> > > +#include <linux/delay.h>
+> > > +#include <linux/device.h>
+> > > +#include <linux/err.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/regulator/consumer.h>
+> > > +#include <linux/sysfs.h>
+> > > +#include <linux/spi/spi.h>
+> > > +
+> > > +#include <linux/iio/buffer.h>
+> > > +#include <linux/iio/iio.h>
+> > > +#include <linux/iio/sysfs.h>
+> > > +#include <linux/iio/trigger.h>
+> > > +#include <linux/iio/triggered_buffer.h>
+> > > +#include <linux/iio/trigger_consumer.h>
+> > > +
+> > > +/* AD7768 registers definition */
+> > > +#define AD7768_REG_CHIP_TYPE         0x3
+> > > +#define AD7768_REG_PROD_ID_L         0x4
+> > > +#define AD7768_REG_PROD_ID_H         0x5
+> > > +#define AD7768_REG_CHIP_GRADE                0x6
+> > > +#define AD7768_REG_SCRATCH_PAD               0x0A
+> > > +#define AD7768_REG_VENDOR_L          0x0C
+> > > +#define AD7768_REG_VENDOR_H          0x0D
+> > > +#define AD7768_REG_INTERFACE_FORMAT  0x14
+> > > +#define AD7768_REG_POWER_CLOCK               0x15
+> > > +#define AD7768_REG_ANALOG            0x16
+> > > +#define AD7768_REG_ANALOG2           0x17
+> > > +#define AD7768_REG_CONVERSION                0x18
+> > > +#define AD7768_REG_DIGITAL_FILTER    0x19
+> > > +#define AD7768_REG_SINC3_DEC_RATE_MSB        0x1A
+> > > +#define AD7768_REG_SINC3_DEC_RATE_LSB        0x1B
+> > > +#define AD7768_REG_DUTY_CYCLE_RATIO  0x1C
+> > > +#define AD7768_REG_SYNC_RESET                0x1D
+> > > +#define AD7768_REG_GPIO_CONTROL              0x1E
+> > > +#define AD7768_REG_GPIO_WRITE                0x1F
+> > > +#define AD7768_REG_GPIO_READ         0x20
+> > > +#define AD7768_REG_OFFSET_HI         0x21
+> > > +#define AD7768_REG_OFFSET_MID                0x22
+> > > +#define AD7768_REG_OFFSET_LO         0x23
+> > > +#define AD7768_REG_GAIN_HI           0x24
+> > > +#define AD7768_REG_GAIN_MID          0x25
+> > > +#define AD7768_REG_GAIN_LO           0x26
+> > > +#define AD7768_REG_SPI_DIAG_ENABLE   0x28
+> > > +#define AD7768_REG_ADC_DIAG_ENABLE   0x29
+> > > +#define AD7768_REG_DIG_DIAG_ENABLE   0x2A
+> > > +#define AD7768_REG_ADC_DATA          0x2C
+> > > +#define AD7768_REG_MASTER_STATUS     0x2D
+> > > +#define AD7768_REG_SPI_DIAG_STATUS   0x2E
+> > > +#define AD7768_REG_ADC_DIAG_STATUS   0x2F
+> > > +#define AD7768_REG_DIG_DIAG_STATUS   0x30
+> > > +#define AD7768_REG_MCLK_COUNTER              0x31
+> > > +
+> > > +/* AD7768_REG_CONVERSION */
+> > > +#define AD7768_CONV_MODE_MSK         GENMASK(2, 0)
+> > > +#define AD7768_CONV_MODE(x)          FIELD_PREP(AD7768_CONV_MODE_MSK,
+> > > x)
+> > > +
+> > > +#define AD7768_RD_FLAG_MSK(x)                (BIT(6) | ((x) & 0x3F))
+> > > +#define AD7768_WR_FLAG_MSK(x)                ((x) & 0x3F)
+> > > +
+> > > +enum ad7768_conv_mode {
+> > > +     AD7768_CONTINUOUS,
+> > > +     AD7768_ONE_SHOT,
+> > > +     AD7768_SINGLE,
+> > > +     AD7768_PERIODIC,
+> > > +     AD7768_STANDBY
+> > > +};
+> > > +
+> > > +enum ad7768_pwrmode {
+> > > +     AD7768_ECO_MODE = 0,
+> > > +     AD7768_MED_MODE = 2,
+> > > +     AD7768_FAST_MODE = 3
+> > > +};
+> > > +
+> > > +static const struct iio_chan_spec ad7768_channels[] = {
+> > > +     {
+> > > +             .type = IIO_VOLTAGE,
+> > > +             .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> > > +             .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
+> > > +             .indexed = 1,
+> > > +             .channel = 0,
+> > > +             .scan_index = 0,
+> > > +             .scan_type = {
+> > > +                     .sign = 'u',
+> > > +                     .realbits = 24,
+> > > +                     .storagebits = 32,
+> > > +                     .shift = 8,
+> > > +                     .endianness = IIO_BE,
+> > > +             },
+> > > +     },
+> > > +};
+> > > +
+> > > +struct ad7768_state {
+> > > +     struct spi_device *spi;
+> > > +     struct regulator *vref;
+> > > +     struct mutex lock;
+> > > +     struct completion completion;
+> > > +     struct iio_trigger *trig;
+> > > +     /*
+> > > +      * DMA (thus cache coherency maintenance) requires the
+> > > +      * transfer buffers to live in their own cache lines.
+> > > +      */
+> > > +     union {
+> > > +             __be32 d32;
+> > > +             u8 d8[2];
+> > > +     } data ____cacheline_aligned;
+> > > +};
+> > > +
+> > > +static int ad7768_spi_reg_read(struct ad7768_state *st, unsigned int
+> > > addr,
+> > > +                            unsigned int len)
+> > > +{
+> > > +     unsigned int shift;
+> > > +     int ret;
+> > > +
+> > > +     shift = 32 - (8 * len);
+> > > +     st->data.d8[0] = AD7768_RD_FLAG_MSK(addr);
+> > > +
+> > > +     ret = spi_write_then_read(st->spi, st->data.d8, 1,
+> > > +                               &st->data.d32, len);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > > +
+> > > +     return (be32_to_cpu(st->data.d32) >> shift);
+> > > +}
+> > > +
+> > > +static int ad7768_spi_reg_write(struct ad7768_state *st,
+> > > +                             unsigned int addr,
+> > > +                             unsigned int val)
+> > > +{
+> > > +     st->data.d8[0] = AD7768_WR_FLAG_MSK(addr);
+> > > +     st->data.d8[1] = val & 0xFF;
+> > > +
+> > > +     return spi_write(st->spi, st->data.d8, 2);
+> > > +}
+> > > +
+> > > +static int ad7768_set_mode(struct ad7768_state *st,
+> > > +                        enum ad7768_conv_mode mode)
+> > > +{
+> > > +     int regval;
+> > > +
+> > > +     regval = ad7768_spi_reg_read(st, AD7768_REG_CONVERSION, 1);
+> > > +     if (regval < 0)
+> > > +             return regval;
+> > > +
+> > > +     regval &= ~AD7768_CONV_MODE_MSK;
+> > > +     regval |= AD7768_CONV_MODE(mode);
+> > > +
+> > > +     return ad7768_spi_reg_write(st, AD7768_REG_CONVERSION, regval);
+> > > +}
+> > > +
+> > > +static int ad7768_scan_direct(struct iio_dev *indio_dev)
+> > > +{
+> > > +     struct ad7768_state *st = iio_priv(indio_dev);
+> > > +     int readval, ret;
+> > > +
+> > > +     reinit_completion(&st->completion);
+> > > +
+> > > +     ret = ad7768_set_mode(st, AD7768_ONE_SHOT);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > > +
+> > > +     ret = wait_for_completion_timeout(&st->completion,
+> > > +                                       msecs_to_jiffies(1000));
+> > > +     if (!ret)
+> > > +             return -ETIMEDOUT;
+> > > +
+> > > +     readval = ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
+> > > +     if (readval < 0)
+> > > +             return readval;
+> > > +     /*
+> > > +      * Any SPI configuration of the AD7768-1 can only be
+> > > +      * performed in continuous conversion mode.
+> > > +      */
+> > > +     ret = ad7768_set_mode(st, AD7768_CONTINUOUS);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > > +
+> > > +     return readval;
+> > > +}
+> > > +
+> > > +static int ad7768_reg_access(struct iio_dev *indio_dev,
+> > > +                          unsigned int reg,
+> > > +                          unsigned int writeval,
+> > > +                          unsigned int *readval)
+> > > +{
+> > > +     struct ad7768_state *st = iio_priv(indio_dev);
+> > > +     int ret;
+> > > +
+> > > +     mutex_lock(&st->lock);
+> > > +     if (readval) {
+> > > +             ret = ad7768_spi_reg_read(st, reg, 1);
+> > > +             if (ret < 0)
+> > > +                     goto err_unlock;
+> > > +             *readval = ret;
+> > > +             ret = 0;
+> > > +     } else {
+> > > +             ret = ad7768_spi_reg_write(st, reg, writeval);
+> > > +     }
+> > > +err_unlock:
+> > > +     mutex_unlock(&st->lock);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > > +static int ad7768_read_raw(struct iio_dev *indio_dev,
+> > > +                        struct iio_chan_spec const *chan,
+> > > +                        int *val, int *val2, long info)
+> > > +{
+> > > +     struct ad7768_state *st = iio_priv(indio_dev);
+> > > +     int scale_uv, ret;
+> > > +
+> > > +     switch (info) {
+> > > +     case IIO_CHAN_INFO_RAW:
+> > > +             ret = iio_device_claim_direct_mode(indio_dev);
+> > > +             if (ret)
+> > > +                     return ret;
+> > > +
+> > > +             ret = ad7768_scan_direct(indio_dev);
+> > > +             if (ret >= 0)
+> > > +                     *val = ret;
+> > > +
+> > > +             iio_device_release_direct_mode(indio_dev);
+> > > +             if (ret < 0)
+> > > +                     return ret;
+> > > +
+> > > +             return IIO_VAL_INT;
+> > > +
+> > > +     case IIO_CHAN_INFO_SCALE:
+> > > +             scale_uv = regulator_get_voltage(st->vref);
+> > > +             if (scale_uv < 0)
+> > > +                     return scale_uv;
+> > > +
+> > > +             *val = (scale_uv * 2) / 1000;
+> > > +             *val2 = chan->scan_type.realbits;
+> > > +
+> > > +             return IIO_VAL_FRACTIONAL_LOG2;
+> > > +     }
+> > > +
+> > > +     return -EINVAL;
+> > > +}
+> > > +
+> > > +static const struct iio_info ad7768_info = {
+> > > +     .read_raw = &ad7768_read_raw,
+> > > +     .debugfs_reg_access = &ad7768_reg_access,
+> > > +};
+> > > +
+> > > +static int ad7768_setup(struct ad7768_state *st)
+> > > +{
+> > > +     int ret;
+> > > +
+> > > +     /*
+> > > +      * Two writes to the SPI_RESET[1:0] bits are required to initiate
+> > > +      * a software reset. The bits must first be set to 11, and then
+> > > +      * to 10. When the sequence is detected, the reset occurs.
+> > > +      * See the datasheet, page 70.
+> > > +      */
+> > > +     ret = ad7768_spi_reg_write(st, AD7768_REG_SYNC_RESET, 0x3);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     ret = ad7768_spi_reg_write(st, AD7768_REG_SYNC_RESET, 0x2);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     /* Set power mode to fast */
+> > > +     return ad7768_spi_reg_write(st, AD7768_REG_POWER_CLOCK,
+> > > +                                 AD7768_FAST_MODE);
+> > > +}
+> > > +
+> > > +static irqreturn_t ad7768_trigger_handler(int irq, void *p)
+> > > +{
+> > > +     struct iio_poll_func *pf = p;
+> > > +     struct iio_dev *indio_dev = pf->indio_dev;
+> > > +     struct ad7768_state *st = iio_priv(indio_dev);
+> > > +     int ret;
+> > > +
+> > > +     mutex_lock(&st->lock);
+> > > +
+> > > +     ret = spi_read(st->spi, &st->data.d32, 3);
+> > > +     if (ret < 0)
+> > > +             goto err_unlock;
+> > > +
+> > > +     iio_push_to_buffers_with_timestamp(indio_dev, &st->data.d32,
+> > > +                                        iio_get_time_ns(indio_dev));
+> > > +
+> > > +     iio_trigger_notify_done(indio_dev->trig);
+> > > +err_unlock:
+> > > +     mutex_unlock(&st->lock);
+> > > +
+> > > +     return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +static irqreturn_t ad7768_interrupt(int irq, void *dev_id)
+> > > +{
+> > > +     struct iio_dev *indio_dev = dev_id;
+> > > +     struct ad7768_state *st = iio_priv(indio_dev);
+> > > +
+> > > +     if (iio_buffer_enabled(indio_dev))
+> > > +             iio_trigger_poll(st->trig);
+> > > +     else
+> > > +             complete(&st->completion);
+> > > +
+> > > +     return IRQ_HANDLED;
+> > > +};
+> > > +
+> > > +static int ad7768_buffer_postenable(struct iio_dev *indio_dev)
+> > > +{
+> > > +     struct ad7768_state *st = iio_priv(indio_dev);
+> > > +
+> > > +     iio_triggered_buffer_postenable(indio_dev);
+> > > +     /*
+> > > +      * Write a 1 to the LSB of the INTERFACE_FORMAT register to enter
+> > > +      * continuous read mode. Subsequent data reads do not require an
+> > > +      * initial 8-bit write to query the ADC_DATA register.
+> > > +      */
+> > > +     return ad7768_spi_reg_write(st, AD7768_REG_INTERFACE_FORMAT,
+> > > 0x01);
+> > > +}
+> > > +
+> > > +static int ad7768_buffer_predisable(struct iio_dev *indio_dev)
+> > > +{
+> > > +     struct ad7768_state *st = iio_priv(indio_dev);
+> > > +     int ret;
+> > > +
+> > > +     /*
+> > > +      * To exit continuous read mode, perform a single read of the
+> > > ADC_DATA
+> > > +      * reg (0x2C), which allows further configuration of the device.
+> > > +      */
+> > > +     ret = ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > > +
+> > > +     return iio_triggered_buffer_predisable(indio_dev);
+> > > +}
+> > > +
+> > > +static const struct iio_buffer_setup_ops ad7768_buffer_ops = {
+> > > +     .postenable = &ad7768_buffer_postenable,
+> > > +     .predisable = &ad7768_buffer_predisable,
+> > > +};
+> > > +
+> > > +static const struct iio_trigger_ops ad7768_trigger_ops = {
+> > > +     .validate_device = iio_trigger_validate_own_device,
+> > > +};
+> > > +
+> > > +static void ad7768_regulator_disable(void *data)
+> > > +{
+> > > +     struct ad7768_state *st = data;
+> > > +
+> > > +     regulator_disable(st->vref);
+> > > +}
+> > > +
+> > > +static int ad7768_probe(struct spi_device *spi)
+> > > +{
+> > > +     struct ad7768_state *st;
+> > > +     struct iio_dev *indio_dev;
+> > > +     int ret;
+> > > +
+> > > +     indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> > > +     if (!indio_dev)
+> > > +             return -ENOMEM;
+> > > +
+> > > +     st = iio_priv(indio_dev);
+> > > +     st->spi = spi;
+> > > +
+> > > +     st->vref = devm_regulator_get(&spi->dev, "vref");
+> > > +     if (IS_ERR(st->vref))
+> > > +             return PTR_ERR(st->vref);
+> > > +
+> > > +     ret = regulator_enable(st->vref);
+> > > +     if (ret) {
+> > > +             dev_err(&spi->dev, "Failed to enable specified vref
+> > > supply\n");
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     ret = devm_add_action_or_reset(&spi->dev,
+> > > ad7768_regulator_disable, st);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     spi_set_drvdata(spi, indio_dev);
+> > > +     mutex_init(&st->lock);
+> > > +
+> > > +     indio_dev->channels = ad7768_channels;
+> > > +     indio_dev->num_channels = ARRAY_SIZE(ad7768_channels);
+> > > +     indio_dev->dev.parent = &spi->dev;
+> > > +     indio_dev->name = spi_get_device_id(spi)->name;
+> > > +     indio_dev->info = &ad7768_info;
+> > > +     indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_TRIGGERED;
+> > > +
+> > > +     ret = ad7768_setup(st);
+> > > +     if (ret < 0) {
+> > > +             dev_err(&spi->dev, "AD7768 setup failed\n");
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     st->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
+> > > +                                       indio_dev->name, indio_dev-  
+> > > >id);  
+> > > +     if (!st->trig)
+> > > +             return -ENOMEM;
+> > > +
+> > > +     st->trig->ops = &ad7768_trigger_ops;
+> > > +     st->trig->dev.parent = &spi->dev;
+> > > +     iio_trigger_set_drvdata(st->trig, indio_dev);
+> > > +     ret = devm_iio_trigger_register(&spi->dev, st->trig);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     indio_dev->trig = iio_trigger_get(st->trig);
+> > > +
+> > > +     init_completion(&st->completion);
+> > > +
+> > > +     ret = devm_request_irq(&spi->dev, spi->irq,
+> > > +                            &ad7768_interrupt,
+> > > +                            IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+> > > +                            indio_dev->name, indio_dev);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
+> > > +                                           &iio_pollfunc_store_time,
+> > > +                                           &ad7768_trigger_handler,
+> > > +                                           &ad7768_buffer_ops);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     return devm_iio_device_register(&spi->dev, indio_dev);
+> > > +}
+> > > +
+> > > +static const struct spi_device_id ad7768_id_table[] = {
+> > > +     { "ad7768-1", 0 },
+> > > +     {}
+> > > +};
+> > > +MODULE_DEVICE_TABLE(spi, ad7768_id_table);
+> > > +
+> > > +static const struct of_device_id ad7768_of_match[] = {
+> > > +     { .compatible = "adi,ad7768-1" },
+> > > +     { },
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, ad7768_of_match);
+> > > +
+> > > +static struct spi_driver ad7768_driver = {
+> > > +     .driver = {
+> > > +             .name = "ad7768-1",
+> > > +             .of_match_table = ad7768_of_match,
+> > > +     },
+> > > +     .probe = ad7768_probe,
+> > > +     .id_table = ad7768_id_table,
+> > > +};
+> > > +module_spi_driver(ad7768_driver);
+> > > +
+> > > +MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
+> > > +MODULE_DESCRIPTION("Analog Devices AD7768-1 ADC driver");
+> > > +MODULE_LICENSE("GPL");  
+> > Mixed license. This is GPL v2 or later according to module.h.
+> >  
 
 
--- 
-Earthling Michel DÃ¤nzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
