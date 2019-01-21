@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1FBC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 678D7C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B3B920879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F5082087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078766;
-	bh=YenEyqfZo3iDX7VBWyzcMgLFPEyC5pulIxfCBBHCv98=;
+	s=default; t=1548078769;
+	bh=Ed/kZ/Ja50aRv6IIqtTR9SCFlA7rF7doPLuiu1kubEY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jXcpdQZdgrg8XQju1YEOwy2ErEq6/Sek5vJcBHUnoUjdYaRrQcT9n6YZKq6uwaPts
-	 vIwXNBO8biM+EjQeN9OcY22KB7W3cpLYgRrmUv0jw8NWnjSf8sjGTIkPceOykF+yxw
-	 sldvviaenYDBbL+kcH7NilT793KLHwyv1MR1Zr74=
+	b=wWq9+vryEFi6yNk7ee2w3v9RPRZcsVWXG9KJUBCAtIUXVQgGB92UfR73hSCKwbkuK
+	 FcKm4IA38abBKQ+VTrrsiNz9OMy78liquGy6fClmF2eL8SdEP0x2q72jyhiR/d3YA/
+	 I+VG5AQ5lQIsiuoGqytBU9CFnuNumazAsNsagBMg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730619AbfAUNwo (ORCPT
+        id S1731140AbfAUNwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:52:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35966 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:52:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730241AbfAUNwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:41 -0500
+        id S1731117AbfAUNwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C62EB2084C;
-        Mon, 21 Jan 2019 13:52:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4D7F2084C;
+        Mon, 21 Jan 2019 13:52:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078760;
-        bh=YenEyqfZo3iDX7VBWyzcMgLFPEyC5pulIxfCBBHCv98=;
+        s=default; t=1548078763;
+        bh=Ed/kZ/Ja50aRv6IIqtTR9SCFlA7rF7doPLuiu1kubEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K7IpnaA6HZrH3HIuHO/kql645U9OlfdJaF+Hns6/UNNLSSbvmuTCwHPEpn3XqB9s6
-         s58b8byYAMZm+xdpTe6dHG4bzzXwuQ4V600AGWrN1z3+GJldHlk9kx1vMvpiM8/iCa
-         GDYe0QeRBWI+Bg7wN3dQbVL1o8FoTfjmt3LH/cTA=
+        b=inH3GreeazALLZM2Jy0A1vi3EOCA0xl3QhxevYd40dN89NzoTtrONn9m7edUlMasz
+         oWfjIVpn9k6Y9/PbUqpslZbKfMirvj2PNuGvfdC5eowwg+TGX0VrJaMeeTsiMDho6Q
+         VCQ/+Z2BLq342mq1gR6JJbmwDn3wPkbQONNVXkO4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "stable@vger.kernel.org, Mauro Carvalho Chehab" 
-        <mchehab+samsung@kernel.org>, Ben Hutchings <ben@decadent.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 07/59] media: em28xx: Fix misplaced reset of dev->v4l::field_count
-Date:   Mon, 21 Jan 2019 14:43:32 +0100
-Message-Id: <20190121122457.283855347@linuxfoundation.org>
+        stable@vger.kernel.org, Xunlei Pang <xlpang@linux.alibaba.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alakesh Haloi <alakeshh@amazon.com>,
+        Ben Segall <bsegall@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 08/59] sched/fair: Fix bandwidth timer clock drift condition
+Date:   Mon, 21 Jan 2019 14:43:33 +0100
+Message-Id: <20190121122457.405562328@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -67,39 +70,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Xunlei Pang <xlpang@linux.alibaba.com>
 
-The backport of commit afeaade90db4 "media: em28xx: make
-v4l2-compliance happier by starting sequence on zero" added a
-reset on em28xx_v4l2::field_count to em28xx_enable_analog_tuner()
-but it should be done in em28xx_start_analog_streaming().
+commit 512ac999d2755d2b7109e996a76b6fb8b888631d upstream.
 
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+I noticed that cgroup task groups constantly get throttled even
+if they have low CPU usage, this causes some jitters on the response
+time to some of our business containers when enabling CPU quotas.
+
+It's very simple to reproduce:
+
+  mkdir /sys/fs/cgroup/cpu/test
+  cd /sys/fs/cgroup/cpu/test
+  echo 100000 > cpu.cfs_quota_us
+  echo $$ > tasks
+
+then repeat:
+
+  cat cpu.stat | grep nr_throttled  # nr_throttled will increase steadily
+
+After some analysis, we found that cfs_rq::runtime_remaining will
+be cleared by expire_cfs_rq_runtime() due to two equal but stale
+"cfs_{b|q}->runtime_expires" after period timer is re-armed.
+
+The current condition to judge clock drift in expire_cfs_rq_runtime()
+is wrong, the two runtime_expires are actually the same when clock
+drift happens, so this condtion can never hit. The orginal design was
+correctly done by this commit:
+
+  a9cf55b28610 ("sched: Expire invalid runtime")
+
+... but was changed to be the current implementation due to its locking bug.
+
+This patch introduces another way, it adds a new field in both structures
+cfs_rq and cfs_bandwidth to record the expiration update sequence, and
+uses them to figure out if clock drift happens (true if they are equal).
+
+Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+[alakeshh: backport: Fixed merge conflicts:
+ - sched.h: Fix the indentation and order in which the variables are
+   declared to match with coding style of the existing code in 4.14
+   Struct members of same type were declared in separate lines in
+   upstream patch which has been changed back to having multiple
+   members of same type in the same line.
+   e.g. int a; int b; ->  int a, b; ]
+Signed-off-by: Alakesh Haloi <alakeshh@amazon.com>
+Reviewed-by: Ben Segall <bsegall@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org> # 4.14.x
+Fixes: 51f2176d74ac ("sched/fair: Fix unlocked reads of some cfs_b->quota/period")
+Link: http://lkml.kernel.org/r/20180620101834.24455-1-xlpang@linux.alibaba.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/em28xx/em28xx-video.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c  |   14 ++++++++------
+ kernel/sched/sched.h |    4 +++-
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/drivers/media/usb/em28xx/em28xx-video.c
-+++ b/drivers/media/usb/em28xx/em28xx-video.c
-@@ -900,8 +900,6 @@ static int em28xx_enable_analog_tuner(st
- 	if (!mdev || !v4l2->decoder)
- 		return 0;
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4087,6 +4087,7 @@ void __refill_cfs_bandwidth_runtime(stru
+ 	now = sched_clock_cpu(smp_processor_id());
+ 	cfs_b->runtime = cfs_b->quota;
+ 	cfs_b->runtime_expires = now + ktime_to_ns(cfs_b->period);
++	cfs_b->expires_seq++;
+ }
  
--	dev->v4l2->field_count = 0;
+ static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
+@@ -4109,6 +4110,7 @@ static int assign_cfs_rq_runtime(struct
+ 	struct task_group *tg = cfs_rq->tg;
+ 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(tg);
+ 	u64 amount = 0, min_amount, expires;
++	int expires_seq;
+ 
+ 	/* note: this is a positive sum as runtime_remaining <= 0 */
+ 	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
+@@ -4125,6 +4127,7 @@ static int assign_cfs_rq_runtime(struct
+ 			cfs_b->idle = 0;
+ 		}
+ 	}
++	expires_seq = cfs_b->expires_seq;
+ 	expires = cfs_b->runtime_expires;
+ 	raw_spin_unlock(&cfs_b->lock);
+ 
+@@ -4134,8 +4137,10 @@ static int assign_cfs_rq_runtime(struct
+ 	 * spread between our sched_clock and the one on which runtime was
+ 	 * issued.
+ 	 */
+-	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
++	if (cfs_rq->expires_seq != expires_seq) {
++		cfs_rq->expires_seq = expires_seq;
+ 		cfs_rq->runtime_expires = expires;
++	}
+ 
+ 	return cfs_rq->runtime_remaining > 0;
+ }
+@@ -4161,12 +4166,9 @@ static void expire_cfs_rq_runtime(struct
+ 	 * has not truly expired.
+ 	 *
+ 	 * Fortunately we can check determine whether this the case by checking
+-	 * whether the global deadline has advanced. It is valid to compare
+-	 * cfs_b->runtime_expires without any locks since we only care about
+-	 * exact equality, so a partial write will still work.
++	 * whether the global deadline(cfs_b->expires_seq) has advanced.
+ 	 */
 -
- 	/*
- 	 * This will find the tuner that is connected into the decoder.
- 	 * Technically, this is not 100% correct, as the device may be
-@@ -1074,6 +1072,8 @@ int em28xx_start_analog_streaming(struct
+-	if (cfs_rq->runtime_expires != cfs_b->runtime_expires) {
++	if (cfs_rq->expires_seq == cfs_b->expires_seq) {
+ 		/* extend local deadline, drift is bounded above by 2 ticks */
+ 		cfs_rq->runtime_expires += TICK_NSEC;
+ 	} else {
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -281,8 +281,9 @@ struct cfs_bandwidth {
+ 	u64 quota, runtime;
+ 	s64 hierarchical_quota;
+ 	u64 runtime_expires;
++	int expires_seq;
  
- 	em28xx_videodbg("%s\n", __func__);
+-	int idle, period_active;
++	short idle, period_active;
+ 	struct hrtimer period_timer, slack_timer;
+ 	struct list_head throttled_cfs_rq;
  
-+	dev->v4l2->field_count = 0;
-+
- 	/* Make sure streaming is not already in progress for this type
- 	   of filehandle (e.g. video, vbi) */
- 	rc = res_get(dev, vq->type);
+@@ -488,6 +489,7 @@ struct cfs_rq {
+ 
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 	int runtime_enabled;
++	int expires_seq;
+ 	u64 runtime_expires;
+ 	s64 runtime_remaining;
+ 
 
 
