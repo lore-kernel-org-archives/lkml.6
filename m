@@ -2,194 +2,188 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA81C37123
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB9CC41518
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 409DB20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:59:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n7q7YrH9"
+	by mail.kernel.org (Postfix) with ESMTP id ADFA920861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548104482;
+	bh=nIfadnoZjEn3rAN0/XlzhcQBbOzuKLSocbBKNt07FyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=cPVH6XTEsjjcVO/eDFnnkTyzmDO6PLpgUihKwGo0dFklb95UuX3MZEPhu5o7mcqI+
+	 unmr2vz5aCuDgiw3rB+AswT+0Z9bCF8A22A9zPf4F8OeraM3tPHoXXVur7iZ1WYkkI
+	 kJoay45PGNc6JGMC6tHHSkeDiOoeawi59vTyOQTo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfAUU7D (ORCPT
+        id S1727596AbfAUVBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:59:03 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40325 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfAUU7D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:59:03 -0500
-Received: by mail-qt1-f196.google.com with SMTP id k12so25065419qtf.7;
-        Mon, 21 Jan 2019 12:59:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=H/O+b8GHgbKyVwOKnVjreanleL+qjiqt6qZj2WCDncU=;
-        b=n7q7YrH9x0qsPNT1MFJaTcBzyEc3BlKAAJm5hoFIHsdxrPCh6XD+w63HS0xYsnVMTh
-         qF+7wUHUMK9njy26cD3vYazHc0dl0c2NuO0ZtF3tktbf+uY7OAUAUxQgTe2gRzpGHn/M
-         sZG81qJzFHzwX2bUn0JfJg3pPS/1xCbeVCA194tQG/cuOcASDo74H+xU0O4lugTZRPsD
-         AB25aHxbmR3Cq9s7/E1oQJQWwWCGWi4YiRpG3BQWwgIxCgVz2yb2cZCiq6MlIUObcrMF
-         QmbfJ2zBmdLwglqUNE0ZfBgmYGs+rjceRpJNi0Ee/85Kx4n8JqmpPUvcAfb7c7ioxxt7
-         soaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=H/O+b8GHgbKyVwOKnVjreanleL+qjiqt6qZj2WCDncU=;
-        b=VSHRaoO1OVVQIG1wKI8ywtZc10rb3lZUvWlsp/0X0P58Bkew8tKcD+VgioZnv7t/98
-         9WZuycz+FLCcAvVB9wlYrboEPP56CdDK7XRrpdvLsGUBio8EJDtzpIOD73+AAJHG+NQu
-         yO75VQlZkNuhNLiymEqDTKNd2J1pGtMb+cl5Wtn+rrbQmdd2xz8ceemhLYx/TpsPcQly
-         hhXe4gfVuJw/3jsiGU0ba/3f750KGlHrlRSOAGFbrDqVjvWD5bgvIJcfjgZE8BM56BlZ
-         bV5bRGAvw/RhIbD8YpLUH8Yj0c5KcQ1rBWepk3XvpYsTn1s+Y2+ATaS3rFngcDgI57NB
-         S9nw==
-X-Gm-Message-State: AJcUukfsWI2XfUud7RYXxXwlpPynASfacGTiRyQ7hQV/JqLMMeJkhyTc
-        IlpJdBEh79fKVxg9GMvFuME=
-X-Google-Smtp-Source: ALg8bN4oXoT29F5uGdbn/NgxlHDxCJmcTIeApTtzE0ARXORx+cvLT0J1Y4+OtHpq5h4nUtutDi8FMA==
-X-Received: by 2002:a0c:89b4:: with SMTP id 49mr27168786qvr.85.1548104341615;
-        Mon, 21 Jan 2019 12:59:01 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id o42sm74475118qtc.90.2019.01.21.12.58.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 12:59:00 -0800 (PST)
-Date:   Mon, 21 Jan 2019 18:58:57 -0200
-From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To:     Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/vkms: Fix license inconsistent
-Message-ID: <20190121205857.pmd26boqrkp4pzjv@smtp.gmail.com>
+        Mon, 21 Jan 2019 16:01:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33806 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726004AbfAUVBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 16:01:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C6DFFAD6B;
+        Mon, 21 Jan 2019 21:01:17 +0000 (UTC)
+Date:   Mon, 21 Jan 2019 22:01:16 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, osalvador@suse.de,
+        catalin.marinas@arm.com, vbabka@suse.cz, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/hotplug: invalid PFNs from pfn_to_online_page()
+Message-ID: <20190121210116.GZ4087@dhcp22.suse.cz>
+References: <20190121200435.22488-1-cai@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190121200435.22488-1-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes license inconsistent related to the VKMS driver and remove the
-redundant boilerplate comment.
+On Mon 21-01-19 15:04:35, Qian Cai wrote:
+> On an arm64 ThunderX2 server, the first kmemleak scan would crash [1]
+> with CONFIG_DEBUG_VM_PGFLAGS=y due to page_to_nid() found a pfn that is
+> not directly mapped (MEMBLOCK_NOMAP). Hence, the page->flags is
+> uninitialized.
+> 
+> This is due to the commit 9f1eb38e0e11 ("mm, kmemleak: little
+> optimization while scanning") starts to use pfn_to_online_page() instead
+> of pfn_valid(). However, in the CONFIG_MEMORY_HOTPLUG=y case,
+> pfn_to_online_page() does not call memblock_is_map_memory() while
+> pfn_valid() does.
+> 
+> Historically, the commit 68709f45385a ("arm64: only consider memblocks
+> with NOMAP cleared for linear mapping") causes pages marked as nomap
+> being no long reassigned to the new zone in memmap_init_zone() by
+> calling __init_single_page().
+> 
+> Since the commit 2d070eab2e82 ("mm: consider zone which is not fully
+> populated to have holes") introduced pfn_to_online_page() and was
+> designed to return a valid pfn only, but it is clearly broken on arm64.
 
-Fixes: 854502fa0a38 ("drm/vkms: Add basic CRTC initialization")
+I still have some problem with this paragraph because it doesn't really
+reflect the documentation as explained already
+(http://lkml.kernel.org/r/20190121183613.GY4087@dhcp22.suse.cz). Calling
+pfn_to_online_page on an invalid pfn is clearly underdocumented but
+that doesn't make the API broken. Error prone, I do agree with.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/gpu/drm/vkms/vkms_crc.c    | 3 ++-
- drivers/gpu/drm/vkms/vkms_crtc.c   | 8 +-------
- drivers/gpu/drm/vkms/vkms_drv.c    | 7 +------
- drivers/gpu/drm/vkms/vkms_drv.h    | 2 ++
- drivers/gpu/drm/vkms/vkms_gem.c    | 8 +-------
- drivers/gpu/drm/vkms/vkms_output.c | 8 +-------
- drivers/gpu/drm/vkms/vkms_plane.c  | 8 +-------
- 7 files changed, 9 insertions(+), 35 deletions(-)
+> Therefore, let pfn_to_online_page() calls pfn_valid_within(), so it can
+> handle nomap thanks to the commit f52bb98f5ade ("arm64: mm: always
+> enable CONFIG_HOLES_IN_ZONE"), while it will be optimized away on
+> architectures where have no HOLES_IN_ZONE.
+> 
+> [1]
+> [  102.195320] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000006
+> [  102.204113] Mem abort info:
+> [  102.206921]   ESR = 0x96000005
+> [  102.209997]   Exception class = DABT (current EL), IL = 32 bits
+> [  102.215926]   SET = 0, FnV = 0
+> [  102.218993]   EA = 0, S1PTW = 0
+> [  102.222150] Data abort info:
+> [  102.225047]   ISV = 0, ISS = 0x00000005
+> [  102.228887]   CM = 0, WnR = 0
+> [  102.231866] user pgtable: 64k pages, 48-bit VAs, pgdp = (____ptrval____)
+> [  102.238572] [0000000000000006] pgd=0000000000000000, pud=0000000000000000
+> [  102.245448] Internal error: Oops: 96000005 [#1] SMP
+> [  102.264062] CPU: 60 PID: 1408 Comm: kmemleak Not tainted 5.0.0-rc2+ #8
+> [  102.280403] pstate: 60400009 (nZCv daif +PAN -UAO)
+> [  102.280409] pc : page_mapping+0x24/0x144
+> [  102.280415] lr : __dump_page+0x34/0x3dc
+> [  102.292923] sp : ffff00003a5cfd10
+> [  102.296229] x29: ffff00003a5cfd10 x28: 000000000000802f
+> [  102.301533] x27: 0000000000000000 x26: 0000000000277d00
+> [  102.306835] x25: ffff000010791f56 x24: ffff7fe000000000
+> [  102.312138] x23: ffff000010772f8b x22: ffff00001125f670
+> [  102.317442] x21: ffff000011311000 x20: ffff000010772f8b
+> [  102.322747] x19: fffffffffffffffe x18: 0000000000000000
+> [  102.328049] x17: 0000000000000000 x16: 0000000000000000
+> [  102.333352] x15: 0000000000000000 x14: ffff802698b19600
+> [  102.338654] x13: ffff802698b1a200 x12: ffff802698b16f00
+> [  102.343956] x11: ffff802698b1a400 x10: 0000000000001400
+> [  102.349260] x9 : 0000000000000001 x8 : ffff00001121a000
+> [  102.354563] x7 : 0000000000000000 x6 : ffff0000102c53b8
+> [  102.359868] x5 : 0000000000000000 x4 : 0000000000000003
+> [  102.365173] x3 : 0000000000000100 x2 : 0000000000000000
+> [  102.370476] x1 : ffff000010772f8b x0 : ffffffffffffffff
+> [  102.375782] Process kmemleak (pid: 1408, stack limit = 0x(____ptrval____))
+> [  102.382648] Call trace:
+> [  102.385091]  page_mapping+0x24/0x144
+> [  102.388659]  __dump_page+0x34/0x3dc
+> [  102.392140]  dump_page+0x28/0x4c
+> [  102.395363]  kmemleak_scan+0x4ac/0x680
+> [  102.399106]  kmemleak_scan_thread+0xb4/0xdc
+> [  102.403285]  kthread+0x12c/0x13c
+> [  102.406509]  ret_from_fork+0x10/0x18
+> [  102.410080] Code: d503201f f9400660 36000040 d1000413 (f9400661)
+> [  102.416357] ---[ end trace 4d4bd7f573490c8e ]---
+> [  102.420966] Kernel panic - not syncing: Fatal exception
+> [  102.426293] SMP: stopping secondary CPUs
+> [  102.431830] Kernel Offset: disabled
+> [  102.435311] CPU features: 0x002,20000c38
+> [  102.439223] Memory Limit: none
+> [  102.442384] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> 
+> Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to
+> have holes")
 
-diff --git a/drivers/gpu/drm/vkms/vkms_crc.c b/drivers/gpu/drm/vkms/vkms_crc.c
-index 9d9e8146db90..d7b409a3c0f8 100644
---- a/drivers/gpu/drm/vkms/vkms_crc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crc.c
-@@ -1,4 +1,5 @@
--// SPDX-License-Identifier: GPL-2.0
-+// SPDX-License-Identifier: GPL-2.0+
-+
- #include "vkms_drv.h"
- #include <linux/crc32.h>
- #include <drm/drm_atomic.h>
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index 177bbcb38306..eb56ee893761 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -1,10 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- #include "vkms_drv.h"
- #include <drm/drm_atomic_helper.h>
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index 2a16b86196dc..944908c486f3 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -1,9 +1,4 @@
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- /**
-  * DOC: vkms (Virtual Kernel Modesetting)
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index e4469cd3d254..81f1cfbeb936 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -1,3 +1,5 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+
- #ifndef _VKMS_DRV_H_
- #define _VKMS_DRV_H_
- 
-diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-index 80311daed47a..138b0bb325cf 100644
---- a/drivers/gpu/drm/vkms/vkms_gem.c
-+++ b/drivers/gpu/drm/vkms/vkms_gem.c
-@@ -1,10 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- #include <linux/shmem_fs.h>
- 
-diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-index 271a0eb9042c..4173e4f48334 100644
---- a/drivers/gpu/drm/vkms/vkms_output.c
-+++ b/drivers/gpu/drm/vkms/vkms_output.c
-@@ -1,10 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- #include "vkms_drv.h"
- #include <drm/drm_crtc_helper.h>
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index 418817600ad1..0e67d2d42f0c 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -1,10 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- #include "vkms_drv.h"
- #include <drm/drm_plane_helper.h>
+And I still maintain that the Fixes tag is misleading at best. I would
+say that the above issue is caused by 9f1eb38e0e11 ("mm, kmemleak:
+little optimization while scanning"). Or do you know of any other bug
+caused by the newly added API before then?
+
+> Signed-off-by: Qian Cai <cai@lca.pw>
+
+Other than that, I do agree with the change
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+> 
+> v2: update the changelog; keep the bound check; use pfn_valid_within().
+> 
+>  include/linux/memory_hotplug.h | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+> index 07da5c6c5ba0..cdeecd9bd87e 100644
+> --- a/include/linux/memory_hotplug.h
+> +++ b/include/linux/memory_hotplug.h
+> @@ -21,14 +21,15 @@ struct vmem_altmap;
+>   * walkers which rely on the fully initialized page->flags and others
+>   * should use this rather than pfn_valid && pfn_to_page
+>   */
+> -#define pfn_to_online_page(pfn)				\
+> -({							\
+> -	struct page *___page = NULL;			\
+> -	unsigned long ___nr = pfn_to_section_nr(pfn);	\
+> -							\
+> -	if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr))\
+> -		___page = pfn_to_page(pfn);		\
+> -	___page;					\
+> +#define pfn_to_online_page(pfn)					   \
+> +({								   \
+> +	struct page *___page = NULL;				   \
+> +	unsigned long ___nr = pfn_to_section_nr(pfn);		   \
+> +								   \
+> +	if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr) && \
+> +	    pfn_valid_within(pfn))				   \
+> +		___page = pfn_to_page(pfn);			   \
+> +	___page;						   \
+>  })
+>  
+>  /*
+> -- 
+> 2.17.2 (Apple Git-113)
+> 
+
 -- 
-2.20.1
-
+Michal Hocko
+SUSE Labs
