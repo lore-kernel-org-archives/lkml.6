@@ -2,128 +2,115 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E73C2F43D
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB60C2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78EA220870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548085342;
-	bh=w+vaaNuwR+b7JilUMpCmSZIY5nBV1f66YFttvClFKlg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=U/XKM3zNXShiEq/iIHsQpwf3vHrXvjjYYnwiFxKA+saANBPQzCUD1n1sNVDlBh2de
-	 Ht2ajl1U0dHtlFrjtn8/xDM9Yc1BXr4+EMec327Bajxs6ClbZWPf1E2UxMnW92GnG6
-	 fazJPS7FopNLG5odJnXOBOYQdG7TfNQYCdlFbAY8=
+	by mail.kernel.org (Postfix) with ESMTP id 1F7B220870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:42:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fR/Gwm5u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbfAUPmV (ORCPT
+        id S1730087AbfAUPml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:42:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729864AbfAUPmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:42:20 -0500
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A89E2087F
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 15:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548085339;
-        bh=w+vaaNuwR+b7JilUMpCmSZIY5nBV1f66YFttvClFKlg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DuyQLTURzSwtYFeb0DGYcD/JbGhBFD/EPqTLdydAoKZMrbMYvcXQhlvjVZ9X845V3
-         i8/PjLTkWRnHY12rjgQK7dnhks/0M6QNjCJO/m4aBFsEny4XDcJykO3R5+dpZLV51r
-         BDEvERyYRSaE4V/kVQG8JPeR7y06KJfz+CEyz4SA=
-Received: by mail-qt1-f178.google.com with SMTP id p17so24013470qtl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:42:19 -0800 (PST)
-X-Gm-Message-State: AJcUukcsAQXjzjXsVBZNSpXT9ByqfiDrX8W414Ygwf5FKRXRuNOp6N+g
-        srcfekLOvF1vWGQt9tuBe11lHYE0DC2lGYttvQ==
-X-Google-Smtp-Source: ALg8bN5+56fGfeF8dyQAV7F4YxObcFbfURazVQrQh8ZhVlJoObaGJpzN7ALEzVImqsNrlUvn3qbkzfgmJ0kBHV8ujIA=
-X-Received: by 2002:aed:29a6:: with SMTP id o35mr26531779qtd.257.1548085338299;
- Mon, 21 Jan 2019 07:42:18 -0800 (PST)
-MIME-Version: 1.0
-References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr> <20190118143434.GE118707@arrakis.emea.arm.com>
- <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr> <20190119132832.GA29881@MBP.local>
- <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr> <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
- <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com> <20190121143704.GE29504@arrakis.emea.arm.com>
-In-Reply-To: <20190121143704.GE29504@arrakis.emea.arm.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 21 Jan 2019 09:42:07 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
-Message-ID: <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
-Subject: Re: kmemleak panic
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 21 Jan 2019 10:42:41 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38739 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729851AbfAUPmk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:42:40 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m22so11300996wml.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:42:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=mOHRY9GecvR+zxuWJYSMLBDQ2KcwLpDTRI+yrgkHn2w=;
+        b=fR/Gwm5uDyVf8kvr7f/Rw+Or8RDtRiDTXnbpdc5hGFstxhrTrpkL+utGhNw6JbRWJ5
+         92PsbST9aFJTObXUv5gw86T8+fuD1QF9SgnC1v7qnKqLqyQbUn9K2It1FwHfRSATE4GD
+         /EbNTH+2oc1l8/DiC2tkH6PAlsWStqza59+A4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=mOHRY9GecvR+zxuWJYSMLBDQ2KcwLpDTRI+yrgkHn2w=;
+        b=ZJHtyIqLBOUrEeFEDVR5CqzDySzKB/2X13Ui1O0HdnHle4iJnCNZGARbijt8E7qhoG
+         4JUA8IfrlmlyZuF9wa6SPOwKziotgsQaf8vAa1ZOmRBE9I3qrDsFskXWNdfri5EmXzQz
+         da1fZHmrBzBr4JBs1JIidS81UFOBHWgk6xW7Vhb329o9oQDLnB4qisrqkMXJLWchnlTa
+         93vSd7Sh9CTE9r55TNN/VmqotxyBUo2y89s6M/QsTuXBIWzbHV1qfOf4Jf6crQglsMYi
+         9yKRqjllBH8Ky9VggBFW5b8u5HrJ/UcmEUD+wi1gvn0JrbGL2YBY3WCfys7u4mSnkEuV
+         NSdA==
+X-Gm-Message-State: AJcUukf90QS6vKW+TKiSrGNBCmgC0X/CTcBOLX/G1DESQpZKCK+hMokG
+        n9A4ipgwogPAhFFF1bbhKrQiBZkkJmk=
+X-Google-Smtp-Source: ALg8bN7mVEEGu84AIvoar7FCr2bfqmiVOHSGNUBmImtZ5e3qFO1ZC7+JOhHGhdI7osyWe8coUpPUBg==
+X-Received: by 2002:a1c:c008:: with SMTP id q8mr22990286wmf.99.1548085357709;
+        Mon, 21 Jan 2019 07:42:37 -0800 (PST)
+Received: from localhost ([49.248.61.1])
+        by smtp.gmail.com with ESMTPSA id n127sm57377257wmd.20.2019.01.21.07.42.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 07:42:37 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
+        mka@chromium.org, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2 1/9] thermal: cpu_cooling: Require thermal core to be compiled in
+Date:   Mon, 21 Jan 2019 21:10:26 +0530
+Message-Id: <3f3e38e55c2de4b730fd7c6aa30c125f3a6a8704.1548084260.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
+References: <cover.1548084260.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
+References: <cover.1548084260.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Mike Rapoport
+The CPU cooling driver (cpu_cooling.c) allows the platform's cpufreq
+driver to register as a cooling device and cool down the platform by
+throttling the CPU frequency. In order to be able to auto-register a
+cpufreq driver as a cooling device from the cpufreq core, we need access
+to code inside cpu_cooling.c which, in turn, accesses code inside
+thermal core.
 
-On Mon, Jan 21, 2019 at 8:37 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
->
-> On Mon, Jan 21, 2019 at 07:35:11AM -0600, Rob Herring wrote:
-> > On Mon, Jan 21, 2019 at 6:19 AM Robin Murphy <robin.murphy@arm.com> wrote:
-> > >
-> > > On 21/01/2019 11:57, Marc Gonzalez wrote:
-> > > [...]
-> > > > # echo dump=0xffffffc021e00000 > /sys/kernel/debug/kmemleak
-> > > > kmemleak: Object 0xffffffc021e00000 (size 2097152):
-> > > > kmemleak:   comm "swapper/0", pid 0, jiffies 4294892296
-> > > > kmemleak:   min_count = 0
-> > > > kmemleak:   count = 0
-> > > > kmemleak:   flags = 0x1
-> > > > kmemleak:   checksum = 0
-> > > > kmemleak:   backtrace:
-> > > >       kmemleak_alloc_phys+0x48/0x60
-> > > >       memblock_alloc_range_nid+0x8c/0xa4
-> > > >       memblock_alloc_base_nid+0x4c/0x60
-> > > >       __memblock_alloc_base+0x3c/0x4c
-> > > >       early_init_dt_alloc_reserved_memory_arch+0x54/0xa4
-> > > >       fdt_init_reserved_mem+0x308/0x3ec
-> > > >       early_init_fdt_scan_reserved_mem+0x88/0xb0
-> > > >       arm64_memblock_init+0x1dc/0x254
-> > > >       setup_arch+0x1c8/0x4ec
-> > > >       start_kernel+0x84/0x44c
-> > > >       0xffffffffffffffff
-> > >
-> > > OK, so via the __va(phys) call in kmemleak_alloc_phys(), you end up with
-> > > the linear map address of a no-map reservation, which unsurprisingly
-> > > turns out not to be mapped. Is there a way to tell kmemleak that it
-> > > can't scan within a particular object?
-> >
-> > There was this patch posted[1]. I never got a reply, so it hasn't been applied.
-> >
-> > https://patchwork.ozlabs.org/patch/995367/
->
-> Thanks Rob, I wasn't aware of this patch (or I just missed it at the
-> time).
->
-> I wonder whether kmemleak should simply remove ranges passed to
-> memblock_remove(), or at least mark them as no-scan.
+CPU_FREQ is a bool while THERMAL is tristate.  In some configurations
+(e.g. allmodconfig), CONFIG_THERMAL ends up as a module while
+CONFIG_CPU_FREQ is compiled in. This leads to following error:
 
-Seems reasonable to me, but of course that impacts a lot of other
-cases. Maybe Mike R has some thoughts?
+drivers/cpufreq/cpufreq.o: In function `cpufreq_offline':
+cpufreq.c:(.text+0x407c): undefined reference to `cpufreq_cooling_unregister'
+drivers/cpufreq/cpufreq.o: In function `cpufreq_online':
+cpufreq.c:(.text+0x70c0): undefined reference to `of_cpufreq_cooling_register'
 
-Rob
+Given that platforms using CPU_THERMAL usually want it compiled-in so it
+is available early in boot, make CPU_THERMAL depend on THERMAL being
+compiled-in instead of allowing it to be a module.
+
+Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ drivers/thermal/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 30323426902e..58bb7d72dc2b 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -152,6 +152,7 @@ config CPU_THERMAL
+ 	bool "generic cpu cooling support"
+ 	depends on CPU_FREQ
+ 	depends on THERMAL_OF
++	depends on THERMAL=y
+ 	help
+ 	  This implements the generic cpu cooling mechanism through frequency
+ 	  reduction. An ACPI version of this already exists
+-- 
+2.17.1
+
