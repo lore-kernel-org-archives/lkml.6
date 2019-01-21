@@ -2,214 +2,103 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3442C7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC63C7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B22882084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B8D22084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:25:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UEIZcR8I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728757AbfAUMXi (ORCPT
+        id S1728434AbfAUMZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:23:38 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:4877 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728261AbfAUMXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:23:33 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 535D913F8BB;
-        Mon, 21 Jan 2019 13:22:54 +0100 (CET)
-Subject: Re: kmemleak panic
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sachin Nikam <snikam@nvidia.com>, Qian Cai <cai@lca.pw>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
- <20190118143434.GE118707@arrakis.emea.arm.com>
- <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
- <20190119132832.GA29881@MBP.local>
- <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
-Message-ID: <156d4c5d-ec06-0fc3-2d82-c8907656f9d2@free.fr>
-Date:   Mon, 21 Jan 2019 13:22:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 07:25:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44058 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727926AbfAUMZe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:25:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AyS4kcH3KILuE4E2F2as1z3uNLds1VWJsElfbbWdDDc=; b=UEIZcR8IK5lJ4UtIlnq83kCAM
+        O9ydTokCT1cl8zwm/WWn6dgwHcjfokPS8thakzzoKnVPiI9Rft09q0IFtB6Jie9fsmg0JuMKypbiM
+        QicUMyFfOVIBrpaBmVQHkkJYo5U8oN0u6D8fcYsSNJ8ylVubu3OtNmydOkcJ4zLgFmaqguKvXlWk/
+        x1dXyNSNG1CmqkwWobiESrofBYTHGCyY0OERGJ9gpdgefqG/e6MTS9nVz8t28LAcgXzh2op2FZfME
+        sERn250nbc/oako9vSHWavr2WLEtFFgpsS/3nxaeTeT5e2uWw0NA1o469oFK2wEsL0Kc28DVm5eqI
+        sfA/A3tyQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glYdt-0006Zy-FD; Mon, 21 Jan 2019 12:25:29 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 090C920267E52; Mon, 21 Jan 2019 13:25:27 +0100 (CET)
+Date:   Mon, 21 Jan 2019 13:25:26 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] sched: Use READ_ONCE()/WRITE_ONCE() in
+ task_cpu()/__set_task_cpu()
+Message-ID: <20190121122526.GA13777@hirez.programming.kicks-ass.net>
+References: <20190116184218.13757-1-andrea.parri@amarulasolutions.com>
+ <20190121104707.GA5883@andrea>
 MIME-Version: 1.0
-In-Reply-To: <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121104707.GA5883@andrea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/01/2019 12:57, Marc Gonzalez wrote:
+On Mon, Jan 21, 2019 at 11:51:21AM +0100, Andrea Parri wrote:
+> On Wed, Jan 16, 2019 at 07:42:18PM +0100, Andrea Parri wrote:
+> > The smp_wmb() in move_queued_task() (c.f., __set_task_cpu()) pairs with
+> > the composition of the dependency and the ACQUIRE in task_rq_lock():
+> > 
+> > 	move_queued_task()		task_rq_lock()
+> > 
+> > 	[S] ->on_rq = MIGRATING		[L] rq = task_rq()
+> > 	WMB (__set_task_cpu())		ACQUIRE (rq->lock);
+> > 	[S] ->cpu = new_cpu		[L] ->on_rq
+> > 
+> > where "[L] rq = task_rq()" is ordered before "ACQUIRE (rq->lock)" by an
+> > address dependency and, in turn, "ACQUIRE (rq->lock)" is ordered before
+> > "[L] ->on_rq" by the ACQUIRE itself.
+> > 
+> > Use READ_ONCE() to load ->cpu in task_rq() (c.f., task_cpu()) to honour
+> > this address dependency between loads; also, mark the store to ->cpu in
+> > __set_task_cpu() by using WRITE_ONCE() in order to tell the compiler to
+> > not mess/tear this (synchronizing) memory access.
+> 
+> In the light of the recent discussion about the integration of plain
+> accesses in the LKMM (c.f., e.g., [1] and discussion thereof), I was
+> considering even further changes to this in order to "reinforce" the
+> above smp_wmb().  Here's two approaches (one of):
+> 
+>  1) replace this smp_wmb()+WRITE_ONCE() with an smp_store_release();
+> 
+>  2) or keep this smp_wmb()+WRITE_ONCE(), but use {WRITE,READ}_ONCE()
+>     also for the accesses to ->on_rq.
 
-> On 19/01/2019 14:28, Catalin Marinas wrote:
-> 
->> As per Robin's remark, this address seems to be pretty easy to
->> reproduce. It also happens via scan_gray_list() which indicates an
->> object kmemleak was informed about via kmemleak_alloc() (so this
->> excludes the pfn that Qian noticed).
->>
->> Can you configure the kernel with CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN off
->> just to avoid the bug being triggered early and run:
->>
->>   mount -t debugfs nodev /sys/kernel/debug/
->>   echo dump=0xffffffc021e00000 > /sys/kernel/debug/kmemleak
->>
->> Then run another scan to make sure this is the address that triggered
->> the page fault:
->>
->>   echo scan > /sys/kernel/debug/kmemleak
->>
->> The above should tell us where the object that kmemleak is trying to
->> scan came from.
-> 
-> Here are the remap requests on my system:
-> 
-> REMAP: PA=17a00000 VA=ffffff8010040000 SIZE=10000
-> REMAP: PA=17b00000 VA=ffffff8010c00000 SIZE=100000
-> REMAP: PA=17920000 VA=ffffff8010005000 SIZE=1000
-> REMAP: PA=17921000 VA=ffffff801000d000 SIZE=1000
-> REMAP: PA=17921000 VA=ffffff8010015000 SIZE=1000
-> REMAP: PA=01f40000 VA=ffffff8010fa0000 SIZE=20000
-> REMAP: PA=86000000 VA=ffffff8011000000 SIZE=200000
-> REMAP: PA=00100000 VA=ffffff8011300000 SIZE=b0000
-> REMAP: PA=17911000 VA=ffffff8010025000 SIZE=1000
-> REMAP: PA=00778000 VA=ffffff80115d0000 SIZE=7000
-> REMAP: PA=0c1b0000 VA=ffffff801002d000 SIZE=1000
-> 
-> 
-> # echo dump=0xffffffc021e00000 > /sys/kernel/debug/kmemleak
-> kmemleak: Object 0xffffffc021e00000 (size 2097152):
-> kmemleak:   comm "swapper/0", pid 0, jiffies 4294892296
-> kmemleak:   min_count = 0
-> kmemleak:   count = 0
-> kmemleak:   flags = 0x1
-> kmemleak:   checksum = 0
-> kmemleak:   backtrace:
->      kmemleak_alloc_phys+0x48/0x60
->      memblock_alloc_range_nid+0x8c/0xa4
->      memblock_alloc_base_nid+0x4c/0x60
->      __memblock_alloc_base+0x3c/0x4c
->      early_init_dt_alloc_reserved_memory_arch+0x54/0xa4
->      fdt_init_reserved_mem+0x308/0x3ec
->      early_init_fdt_scan_reserved_mem+0x88/0xb0
->      arm64_memblock_init+0x1dc/0x254
->      setup_arch+0x1c8/0x4ec
->      start_kernel+0x84/0x44c
->      0xffffffffffffffff
-> 
-> # echo scan > /sys/kernel/debug/kmemleak
-> Unable to handle kernel paging request at virtual address ffffffc021e00000
-> Mem abort info:
->   ESR = 0x96000006
->   Exception class = DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
-> Data abort info:
->   ISV = 0, ISS = 0x00000006
->   CM = 0, WnR = 0
-> swapper pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
-> [ffffffc021e00000] pgd=000000017e3ba803, pud=000000017e3ba803, pmd=0000000000000000
-> Internal error: Oops: 96000006 [#1] PREEMPT SMP
-> CPU: 4 PID: 508 Comm: sh Tainted: G S                5.0.0-rc1 #11
-> Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
-> pstate: 80000085 (Nzcv daIf -PAN -UAO)
-> pc : scan_block+0x70/0x180
-> lr : scan_block+0x6c/0x180
-> sp : ffffff8011a2bb40
-> x29: ffffff8011a2bb40 x28: ffffffc0f8375e80 
-> x27: ffffff8010b8a000 x26: 0000000000000080 
-> x25: ffffff8010b8a668 x24: ffffffc0f8cc0000 
-> x23: ffffff8010b8a000 x22: ffffff8010a4b8c8 
-> x21: ffffffc021e00ff9 x20: ffffffc021e01000 
-> x19: ffffffc021e00000 x18: 0000000000000000 
-> x17: 0000000000000200 x16: 0000000000000000 
-> x15: ffffffffffffffff x14: ffffffff00000000 
-> x13: ffffffffffffffff x12: 0000000000000020 
-> x11: 0101010101010101 x10: 00000000004bfd20 
-> x9 : 7f7f7f7f7f7f7f7f x8 : fefeff096d606272 
-> x7 : 00000000dc3c0000 x6 : 0000000000000018 
-> x5 : ffffffbf03f8efc8 x4 : ffffffbf03f8efc7 
-> x3 : 5b36396f4e7d4000 x2 : ffffffc0f8cc0000 
-> x1 : ffffffc0f6689880 x0 : 0000000000000000 
-> Process sh (pid: 508, stack limit = 0x(____ptrval____))
-> Call trace:
->  scan_block+0x70/0x180
->  scan_gray_list+0xe0/0x190
->  kmemleak_scan+0x2bc/0x540
->  kmemleak_write+0x328/0x3d0
->  full_proxy_write+0x68/0xa0
->  __vfs_write+0x60/0x190
->  vfs_write+0xac/0x1a0
->  ksys_write+0x6c/0xe0
->  __arm64_sys_write+0x24/0x30
->  el0_svc_handler+0xb8/0x140
->  el0_svc+0x8/0xc
-> Code: f9000fb4 d503201f 97ffffd2 35000540 (f9400260) 
-> ---[ end trace 754cbd2624bb2b91 ]---
-> note: sh[508] exited with preempt_count 2
-> 
-> 
-> __reserved_mem_alloc_size() printed:
-> OF: reserved mem: allocated memory for 'rmtfs' node: base 0x00000000a1e00000, size 2 MiB
-> 
-> See git show c7833949564ec
-> 
-> The corresponding node is:
-> 
-> 	reserved-memory {
-> 		#address-cells = <2>;
-> 		#size-cells = <2>;
-> 		ranges;
-> 
-> 		memory@85800000 {
-> 			reg = <0x0 0x85800000 0x0 0x800000>;
-> 			no-map;
-> 		};
-> 
-> 		smem_mem: smem-mem@86000000 {
-> 			reg = <0x0 0x86000000 0x0 0x200000>;
-> 			no-map;
-> 		};
-> 
-> 		memory@86200000 {
-> 			reg = <0x0 0x86200000 0x0 0x2600000>;
-> 			no-map;
-> 		};
-> 
-> 		rmtfs {
-> 			compatible = "qcom,rmtfs-mem";
-> 
-> 			size = <0x0 0x200000>;
-> 			alloc-ranges = <0x0 0xa0000000 0x0 0x2000000>;
-> 			no-map;
-> 
-> 			qcom,client-id = <1>;
-> 			qcom,vmid = <15>;
-> 		};
-> 	};
+That should be the least painful I think. Note that we never store a
+value larger than a single byte in that word, so tearing shouldn't be a
+problem, but yes, that makes it all neat and tidy.
 
-Complete boot log using 'loglevel=7 memblock=debug'
-https://pastebin.ubuntu.com/p/2BN2csSYkx/
+> What do you think?  (maybe I'm just being too paranoid?)
+> 
+> Adding Will to the Cc:  ((1) should be "painless" for x86, not sure
+> about arm64...)
 
-Regards.
+ARM64 should be fine, it is 32bit ARM that will suffer, because it uses
+smp_mb() to implement acquire/release.
