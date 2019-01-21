@@ -7,130 +7,124 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 354A2C31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF7BC31680
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08DAB217D4
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8464F21721
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:42:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ngihcul7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAIhZnp1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbfAUSkX (ORCPT
+        id S1727856AbfAUSmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:40:23 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44133 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727302AbfAUSkV (ORCPT
+        Mon, 21 Jan 2019 13:42:18 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40665 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfAUSmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:40:21 -0500
-Received: by mail-pg1-f195.google.com with SMTP id t13so9835920pgr.11;
-        Mon, 21 Jan 2019 10:40:20 -0800 (PST)
+        Mon, 21 Jan 2019 13:42:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i12so10500385pfo.7;
+        Mon, 21 Jan 2019 10:42:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=sZsk6vvGCcnh9xoFjveyaxa38aXnCTNvSw7q14lYqqw=;
-        b=Ngihcul7EBqKIopYwKq2tAWaEGIy7Mhuy+dCyFzmT1HU1+kQCopmRfz9ujVaE8QmNY
-         8F01Y2+q6g/7/k7YZrxHjB0fjgqLYiMKNrUaCaa28t9waVy8ASMrsZUTM1xVx4ERJmh1
-         Et5jwnC30u/0CCQBcatKM3cDQKOxZ7Hmoy/2bRbDYHUAxSKXHuCfBcpK8CyQtFiSIMqU
-         KQ+xDJE5pE0YtcuBMgPOXU68Jr8ejigvxKfT9N6wMMXj89oEK1zaVUr8wPYdEaz75t/1
-         WKSj1vUsFpk4JDSACBMJgdrLaN9+V+XE728V0py54KSJdTMPo1WhKzaOksMGhljKZPGW
-         G/Lg==
+        bh=Tho6tTJTRW3eGHjW6h7SQd8J4U8YlHciARPw/Wk8/EQ=;
+        b=IAIhZnp1ioya5yeXVnaly993vKDt902JVb3NTR5RLfQffQCkTfhJYGECNF4wLI0OZc
+         P90Wbui8t5eYLLzvofZhzIw3rUZHsf86dVnUjwaLOxGTtbMa1nSvp4yt8DM04iClAG0L
+         DlG9O1B22MI7Wfm8kQa2ylERaXann+KipUeP5m4WIGz+qnX3NEx52YyNhV/z1SB+O1jS
+         ohl7XcHP4IEDTsPjAm2TJ15jDlEx3E0FWLS/+k1rydWgUps794KWguLvQa/dy21/ykAo
+         NfqInkncxaHNIWJoHSpDnx17kkeF+15cTZ3EY2g6rnrw1m98HAlExKKVTqYUBrd1EIFE
+         gqog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sZsk6vvGCcnh9xoFjveyaxa38aXnCTNvSw7q14lYqqw=;
-        b=jgua2NlcVcHmKjWwFIVUAjOmg9rC7MprSXn3GBtQO+Q5Kp+LLUACO0LyVZ21YbjeWH
-         /tt39AlU36/WoE39vwpb7zw4OUqLTHOTSvPAKU9Lh0FbxWZaVJjp6vU2dTrTQMZsLBb0
-         bzUCEFgbZa04jACaA8KZy34zQN/epU1/MvcPduinknd5/MVEiICnTEyM6hFZOZrImc8W
-         9pBz9zyrv48x2y0/q/UD75Jh4uyx3hqSVCJ7uOH0MUjVr476bf84k01PiB6mBz9kzZzJ
-         2K2ZDTA43Ki8WWHe9CJBLglxscnJr4fXD+/JJwPkr2+R403odw3hveUMpOkTDOtsgPLR
-         jU6A==
-X-Gm-Message-State: AJcUuke+4ZXm3trme8H7tjfc0aHcMkDCfQQm+L87a2MyCoBuJYKrJNOW
-        xXo9Pxn46Qe7C9H7lQPlvCiGpkLK
-X-Google-Smtp-Source: ALg8bN7QILEW1VPM4lDNNcAF+7tm6zZ5NN7tO6GL7t1ERKNQhCgKxovGvIMNgq4HU9r+4erpuAGaSw==
-X-Received: by 2002:a63:1e17:: with SMTP id e23mr28814543pge.130.1548096019839;
-        Mon, 21 Jan 2019 10:40:19 -0800 (PST)
+        bh=Tho6tTJTRW3eGHjW6h7SQd8J4U8YlHciARPw/Wk8/EQ=;
+        b=QTjr2UNxm/kTz66cVW0xrcHuViFu0X79ZfnJ8ZyEDfPjFDitFi4sYDDnpj62aeeN3x
+         Jsinahzdw13wY50DNC6HtJOaHAq2czc4mtVcTWQutuRspzTp81Fw2RdBAGonK2npnoLd
+         P5Z+OqHkb+VyvksqaZSUh89HEg1RkmJoTjPZyFX9UqoXovX6vQba2qr04MPlXmk0oZ/F
+         TsveS8/M5AxJPmWmQskOc2b5HJNmz08/pYKiOs0rCMonGe14BOkN1lV0ELJZUwpRXGa6
+         giv/GuZsRDgdFtzZA9f+8eguq/1W0t/U+uPel65VMwsyZzKqnBYuo7c3F2uXGHVMACGv
+         L8gQ==
+X-Gm-Message-State: AJcUuke65uThwt1P0IB+2olFZm96hyjtzIoOU0ZdajRub8pjHCz/aU+u
+        b6iU0vPoZEhXAH6xBjy7lxViG/Ex
+X-Google-Smtp-Source: ALg8bN70AeU7Nb5zXcMFbI8AxXp6yB7Z7hKXao3yfNXP+0XMkcNUVmI0xZFvLmtGEu4y48UdcfPM3w==
+X-Received: by 2002:a63:8441:: with SMTP id k62mr28995129pgd.392.1548096137151;
+        Mon, 21 Jan 2019 10:42:17 -0800 (PST)
 Received: from localhost ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id i62sm15870285pge.44.2019.01.21.10.40.18
+        by smtp.gmail.com with ESMTPSA id 184sm20686433pfe.106.2019.01.21.10.42.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 10:40:19 -0800 (PST)
+        Mon, 21 Jan 2019 10:42:16 -0800 (PST)
 From:   Xin Long <lucien.xin@gmail.com>
 To:     linux-kernel@vger.kernel.org, network dev <netdev@vger.kernel.org>,
         linux-sctp@vger.kernel.org
 Cc:     davem@davemloft.net,
         Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         Neil Horman <nhorman@tuxdriver.com>
-Subject: [PATCH net] sctp: improve the events for sctp stream adding
-Date:   Tue, 22 Jan 2019 02:40:12 +0800
-Message-Id: <a4261c440ed5821ddd5943ec7ed163004953d8b8.1548096012.git.lucien.xin@gmail.com>
+Subject: [PATCH net] sctp: set chunk transport correctly when it's a new asoc
+Date:   Tue, 22 Jan 2019 02:42:09 +0800
+Message-Id: <d08f8708003363950333c0690960ce3d97897bd4.1548096129.git.lucien.xin@gmail.com>
 X-Mailer: git-send-email 2.1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to improve sctp stream adding events in 2 places:
+In the paths:
 
-  1. In sctp_process_strreset_addstrm_out(), move up SCTP_MAX_STREAM
-     and in stream allocation failure checks, as the adding has to
-     succeed after reconf_timer stops for the in stream adding
-     request retransmission.
+  sctp_sf_do_unexpected_init() ->
+    sctp_make_init_ack()
+  sctp_sf_do_dupcook_a/b()() ->
+    sctp_sf_do_5_1D_ce()
 
-  3. In sctp_process_strreset_addstrm_in(), no event should be sent,
-     as no in or out stream is added here.
+The new chunk 'retval' transport is set from the incoming chunk 'chunk'
+transport. However, 'retval' transport belong to the new asoc, which
+is a different one from 'chunk' transport's asoc.
 
-Fixes: 50a41591f110 ("sctp: implement receiver-side procedures for the Add Outgoing Streams Request Parameter")
-Fixes: c5c4ebb3ab87 ("sctp: implement receiver-side procedures for the Add Incoming Streams Request Parameter")
+It will cause that the 'retval' chunk gets set with a wrong transport.
+Later when sending it and because of Commit b9fd683982c9 ("sctp: add
+sctp_packet_singleton"), sctp_packet_singleton() will set some fields,
+like vtag to 'retval' chunk from that wrong transport's asoc.
+
+This patch is to fix it by setting 'retval' transport correctly which
+belongs to the right asoc in sctp_make_init_ack() and
+sctp_sf_do_5_1D_ce().
+
+Fixes: b9fd683982c9 ("sctp: add sctp_packet_singleton")
 Reported-by: Ying Xu <yinxu@redhat.com>
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
 ---
- net/sctp/stream.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ net/sctp/sm_make_chunk.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/net/sctp/stream.c b/net/sctp/stream.c
-index 6c188b0..80e0ae5 100644
---- a/net/sctp/stream.c
-+++ b/net/sctp/stream.c
-@@ -866,6 +866,14 @@ struct sctp_chunk *sctp_process_strreset_addstrm_out(
- 	if (!(asoc->strreset_enable & SCTP_ENABLE_CHANGE_ASSOC_REQ))
- 		goto out;
+diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
+index f4ac6c5..d05c576 100644
+--- a/net/sctp/sm_make_chunk.c
++++ b/net/sctp/sm_make_chunk.c
+@@ -495,7 +495,10 @@ struct sctp_chunk *sctp_make_init_ack(const struct sctp_association *asoc,
+ 	 *
+ 	 * [INIT ACK back to where the INIT came from.]
+ 	 */
+-	retval->transport = chunk->transport;
++	if (chunk->transport)
++		retval->transport =
++			sctp_assoc_lookup_paddr(asoc,
++						&chunk->transport->ipaddr);
  
-+	in = ntohs(addstrm->number_of_streams);
-+	incnt = stream->incnt + in;
-+	if (!in || incnt > SCTP_MAX_STREAM)
-+		goto out;
-+
-+	if (sctp_stream_alloc_in(stream, incnt, GFP_ATOMIC))
-+		goto out;
-+
- 	if (asoc->strreset_chunk) {
- 		if (!sctp_chunk_lookup_strreset_param(
- 			asoc, 0, SCTP_PARAM_RESET_ADD_IN_STREAMS)) {
-@@ -889,14 +897,6 @@ struct sctp_chunk *sctp_process_strreset_addstrm_out(
- 		}
- 	}
+ 	retval->subh.init_hdr =
+ 		sctp_addto_chunk(retval, sizeof(initack), &initack);
+@@ -642,8 +645,10 @@ struct sctp_chunk *sctp_make_cookie_ack(const struct sctp_association *asoc,
+ 	 *
+ 	 * [COOKIE ACK back to where the COOKIE ECHO came from.]
+ 	 */
+-	if (retval && chunk)
+-		retval->transport = chunk->transport;
++	if (retval && chunk && chunk->transport)
++		retval->transport =
++			sctp_assoc_lookup_paddr(asoc,
++						&chunk->transport->ipaddr);
  
--	in = ntohs(addstrm->number_of_streams);
--	incnt = stream->incnt + in;
--	if (!in || incnt > SCTP_MAX_STREAM)
--		goto out;
--
--	if (sctp_stream_alloc_in(stream, incnt, GFP_ATOMIC))
--		goto out;
--
- 	stream->incnt = incnt;
- 
- 	result = SCTP_STRRESET_PERFORMED;
-@@ -966,9 +966,6 @@ struct sctp_chunk *sctp_process_strreset_addstrm_in(
- 
- 	result = SCTP_STRRESET_PERFORMED;
- 
--	*evp = sctp_ulpevent_make_stream_change_event(asoc,
--		0, 0, ntohs(addstrm->number_of_streams), GFP_ATOMIC);
--
- out:
- 	sctp_update_strreset_result(asoc, result);
- err:
+ 	return retval;
+ }
 -- 
 2.1.0
 
