@@ -2,196 +2,118 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DCBC37121
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8395C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 384F820844
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:24:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 739DB20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:25:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks-com.20150623.gappssmtp.com header.i=@gateworks-com.20150623.gappssmtp.com header.b="EPRfLJWB"
+	dkim=pass (2048-bit key) header.d=melexis.com header.i=@melexis.com header.b="duNSyzCn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbfAUUYz (ORCPT
+        id S1728284AbfAUUZi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:24:55 -0500
-Received: from mail-wr1-f52.google.com ([209.85.221.52]:33734 "EHLO
-        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727997AbfAUUYy (ORCPT
+        Mon, 21 Jan 2019 15:25:38 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:45079 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbfAUUZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:24:54 -0500
-Received: by mail-wr1-f52.google.com with SMTP id c14so24929522wrr.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:24:52 -0800 (PST)
+        Mon, 21 Jan 2019 15:25:37 -0500
+Received: by mail-vk1-f196.google.com with SMTP id n126so4846947vke.12
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:25:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
+        d=melexis.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+kNxBWcx9FlQtYo+QTClvu5wwFACfZ6lH7rIFaQJ/dA=;
-        b=EPRfLJWBNnQ6sKNrd5Rg3vtNCWbJNFvXNvXET2uu5r2GX/7y0p3p0PSzXgm8W58VAr
-         lAfhnL+sVx58kjvIsGE/vKfrZbvmzVb7CgS1A4CKEe/vl6TRl9ocSNB3mo+hSF+hymCB
-         9KbZF3eV+ihm03Js53l80nHJxMDTIw6zDCcPQC08ukFsPtfYE86w4gcj0CRzZrV5zrz6
-         2NJYBq7btGdZH3V3selQo4ZFHp+PiiY/4VqkA6IQngviFJLOP8tzp8hZSib9R8WmvGrF
-         Dj76MCayhMpwHg9QcHhDExgYOXgmba78ItOyjlZOZJx2h1nG2LO8OcW/Tg6VcfsJRBlJ
-         PjMg==
+        bh=wVMi40kJJBnZyDdlQUsJhig7OCy1+OLmvOMehMVnCgk=;
+        b=duNSyzCnehl4IWXlHY9/nwFXPPbRsApqPg96nwTBFXqJ9F0hyyQAIP9EMtqeXoubV3
+         wqhdcEYvOQwydFBL/FCbTe4WXvYZ8459t51T/Bnfax/n91nJsDDa+CRiE+MDHzY30Udo
+         B0wbVWGPy+082BrAeYxKisee1gPKusjvmB0yu6uTez2rwqKZYH3fpbMJTfOUqiEKeBoT
+         r6YNFKX0YqAWqINc+iX3cO30P+64Rzk+nzt6DO9wjcSSsh3fXpa/vugkHWV/FASuaQij
+         ZEjPh7Qf0w9RhCiLPba2mH8B7FLNtZA35yXXXIqhFf3D4SsRA5cfu+h6jnBO5szsYlT4
+         Srjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+kNxBWcx9FlQtYo+QTClvu5wwFACfZ6lH7rIFaQJ/dA=;
-        b=dzjiN9Exxr/puZuc0R9O8kcSLwXAJHoWP5Qmzts2Cd9wCdgKpnM2dbdFELF2KJAAfJ
-         BgKxbVScH1pHlJVqoi1OR/sWtf22JzmR82wfD/rAmai/E4YKGcMNB73WkAeIV97y4MpF
-         EefJGGQ4mvYTuA76CtV0pJYdsicx31TEtasFWONuqPSR5usWdOLodPBBKTF1g4HWP9/T
-         gv7MauC2H98QTMy8iv2af7aEc6TJi8Z4hk0S5NE/L6Sd1eXfJZKLn44NbQ3M9Nkq1+n8
-         fULXBOhr45haiPseMQLNEu88PwfUXqujvGUPUjp0YWBeymmVikf+gkvGNCFeHrveNP4/
-         Rhxg==
-X-Gm-Message-State: AJcUukcH7C5QE2ggWwohvB2TbzS+YKYybL06Qdp0VLtCSdRuFsd3ej1y
-        Ggi6P3hZq2vFA2pX3/FWtSb/Sgq8z+hYSBEXV5edGW7rEig=
-X-Google-Smtp-Source: ALg8bN5CuUdNZ9TvCJun7Gu4xw6sRgJKIs5mTOxeUSPNaSOFmIRIBKN6ljoGRW+LcesO3hnY2iIeIlbSJgsFLZyv4TM=
-X-Received: by 2002:adf:9b11:: with SMTP id b17mr30007249wrc.168.1548102291697;
- Mon, 21 Jan 2019 12:24:51 -0800 (PST)
+        bh=wVMi40kJJBnZyDdlQUsJhig7OCy1+OLmvOMehMVnCgk=;
+        b=HTcqJq4N8+RULUmNrz+p1pdG+O+pwPDartPjlWVRbZXh8NkKJxcecW6xHX7FGSGUxv
+         IQxKa9fJ0YOtMcvHmF21xLzUR4nNMjqcMAEp8hVB0Ln3MqcOBGmQ8iFVKS4Ib4N1w9dL
+         xPhN7ht3JDCXy0IXH2nQkPSHE9hxLQqOQKAl5EKul4syH3OREWlvxAfmNRkrWg556IMy
+         hlJAcUoxTlgOtA8tDXGKh5D0EiegnDz8fViK2HVqlBAxlN3FQ9SA+3jOvSNd+as/I3Cd
+         v108g2knWK/LRxBR29rxTk56hAJREsIY7NvUKGDDy7E43zW+YjAhCqtxmGiDh99OvXWJ
+         R8Og==
+X-Gm-Message-State: AJcUukfN87eq7irYuJNCWI5RYQ9cf5Uve3GDbxEB+W9WBxlxbcZcfKr3
+        4WnjV6TXxE5mfQu6u0JbUx2UabG3lvkdXwXzGjbJtA==
+X-Google-Smtp-Source: ALg8bN4QMSdPukZgNDoOhxCcycRy3WgUtmWJpS66FrNZUwdHPQR2x+WEqUMum3CJnla9A/Ke9uZ3YrgM3r+uaYmn9Nk=
+X-Received: by 2002:a1f:4d47:: with SMTP id a68mr12083806vkb.34.1548102336281;
+ Mon, 21 Jan 2019 12:25:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20190109183014.20466-1-slongerbeam@gmail.com> <20190109183014.20466-12-slongerbeam@gmail.com>
- <CAJ+vNU1r86n1=9gKDw-bTO0sWJL7NMjZcdKMQO23a+WOR1H9tw@mail.gmail.com> <6b4c3fb1-929b-8894-e2f9-aca2f392f0e5@gmail.com>
-In-Reply-To: <6b4c3fb1-929b-8894-e2f9-aca2f392f0e5@gmail.com>
-From:   Tim Harvey <tharvey@gateworks.com>
-Date:   Mon, 21 Jan 2019 12:24:40 -0800
-Message-ID: <CAJ+vNU2827H8C3PN=v++XRjd0LP6Uf1KzMAs0bFTgbX93v7atg@mail.gmail.com>
-Subject: Re: [PATCH v8 11/11] media: imx.rst: Update doc to reflect fixes to
- interlaced capture
-To:     Steve Longerbeam <slongerbeam@gmail.com>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+References: <20190119151450.26879-1-Florian.LaRoche@googlemail.com> <CAHk-=wjruxUdKWjn-PvZMOPn3pGO5yTcbc_J4hc4TrS0P15vaw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjruxUdKWjn-PvZMOPn3pGO5yTcbc_J4hc4TrS0P15vaw@mail.gmail.com>
+From:   Crt Mori <cmo@melexis.com>
+Date:   Mon, 21 Jan 2019 21:25:00 +0100
+Message-ID: <CAKv63uu+-gF_zci8NrRDB4g7ujkbz7dPnAEAjY6_ZVXB9NOWGA@mail.gmail.com>
+Subject: Re: fix int_sqrt() for very large numbers
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Florian La Roche <florian.laroche@googlemail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 3:54 PM Steve Longerbeam <slongerbeam@gmail.com> wrote:
+On Mon, 21 Jan 2019 at 01:20, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Hi Tim,
->
-> On 1/15/19 1:58 PM, Tim Harvey wrote:
-> > On Wed, Jan 9, 2019 at 10:30 AM Steve Longerbeam <slongerbeam@gmail.com> wrote:
-> >> Also add an example pipeline for unconverted capture with interweave
-> >> on SabreAuto.
-> >>
-> >> Cleanup some language in various places in the process.
-> >>
-> >> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> >> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> >> ---
-> >> Changes since v4:
-> >> - Make clear that it is IDMAC channel that does pixel reordering and
-> >>    interweave, not the CSI. Caught by Philipp Zabel.
-> >> Changes since v3:
-> >> - none.
-> >> Changes since v2:
-> >> - expand on idmac interweave behavior in CSI subdev.
-> >> - switch second SabreAuto pipeline example to PAL to give
-> >>    both NTSC and PAL examples.
-> >> - Cleanup some language in various places.
-> >> ---
-> >>   Documentation/media/v4l-drivers/imx.rst | 103 +++++++++++++++---------
-> >>   1 file changed, 66 insertions(+), 37 deletions(-)
-> >>
-> > <snip>
-> >>   Capture Pipelines
-> >>   -----------------
-> >> @@ -516,10 +522,33 @@ On the SabreAuto, an on-board ADV7180 SD decoder is connected to the
-> >>   parallel bus input on the internal video mux to IPU1 CSI0.
-> >>
-> >>   The following example configures a pipeline to capture from the ADV7180
-> >> -video decoder, assuming NTSC 720x480 input signals, with Motion
-> >> -Compensated de-interlacing. Pad field types assume the adv7180 outputs
-> >> -"interlaced". $outputfmt can be any format supported by the ipu1_ic_prpvf
-> >> -entity at its output pad:
-> >> +video decoder, assuming NTSC 720x480 input signals, using simple
-> >> +interweave (unconverted and without motion compensation). The adv7180
-> >> +must output sequential or alternating fields (field type 'seq-bt' for
-> >> +NTSC, or 'alternate'):
-> >> +
-> >> +.. code-block:: none
-> >> +
-> >> +   # Setup links
-> >> +   media-ctl -l "'adv7180 3-0021':0 -> 'ipu1_csi0_mux':1[1]"
-> >> +   media-ctl -l "'ipu1_csi0_mux':2 -> 'ipu1_csi0':0[1]"
-> >> +   media-ctl -l "'ipu1_csi0':2 -> 'ipu1_csi0 capture':0[1]"
-> >> +   # Configure pads
-> >> +   media-ctl -V "'adv7180 3-0021':0 [fmt:UYVY2X8/720x480 field:seq-bt]"
-> >> +   media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x480]"
-> >> +   media-ctl -V "'ipu1_csi0':2 [fmt:AYUV32/720x480]"
-> >> +   # Configure "ipu1_csi0 capture" interface (assumed at /dev/video4)
-> >> +   v4l2-ctl -d4 --set-fmt-video=field=interlaced_bt
-> >> +
-> >> +Streaming can then begin on /dev/video4. The v4l2-ctl tool can also be
-> >> +used to select any supported YUV pixelformat on /dev/video4.
-> >> +
-> > Hi Steve,
+> On Sun, Jan 20, 2019 at 4:15 AM Florian La Roche
+> <florian.laroche@googlemail.com> wrote:
 > >
-> > I'm testing 4.20 with this patchset on top.
+> > @@ -52,7 +52,7 @@ u32 int_sqrt64(u64 x)
+> >         if (x <= ULONG_MAX)
+> >                 return int_sqrt((unsigned long) x);
 > >
-> > I'm on a GW5104 which has an IMX6Q with the adv7180 on ipu1_csi0 like
-> > the SabeAuto example above I can't get the simple interveave example
-> > to work:
-> >
-> > media-ctl -r # reset all links
-> > # Setup links (ADV7180 IPU1_CSI0)
-> > media-ctl -l '"adv7180 2-0020":0 -> "ipu1_csi0_mux":1[1]'
-> > media-ctl -l '"ipu1_csi0_mux":2 -> "ipu1_csi0":0[1]'
-> > media-ctl -l '"ipu1_csi0":2 -> "ipu1_csi0 capture":0[1]' # /dev/video4
-> > # Configure pads
-> > media-ctl -V "'adv7180 2-0020':0 [fmt:UYVY2X8/720x480 field:seq-bt]"
-> > media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x480]"
-> > media-ctl -V "'ipu1_csi0':0 [fmt:AYUV32/720x480]"
+> > -       m = 1ULL << (fls64(x) & ~1ULL);
+> > +       m = 1ULL << ((fls64(x) - 1) & ~1ULL);
 >
-> This is the reason. The adv7180 is only allowing to configure alternate
-> field mode, and thus it reports the field height on the mbus, not the
-> full frame height. Imx deals with alternate field mode by capturing a
-> full frame, so the CSI entity sets the output pad height to double the
-> height.
->
-> So the CSI input pad needs to be configured with the field height:
->
-> media-ctl -V "'ipu1_csi0':0 [fmt:AYUV32/720x240]"
->
-> It should work for you after doing that. And better yet, don't bother
-> configuring the input pad, because media-ctl will propagate formats from
-> source to sink pads for you, so it's better to rely on the propagation,
-> and set the CSI output pad format instead (full frame height at output pad):
->
-> media-ctl -V "'ipu1_csi0':2 [fmt:AYUV32/720x480]"
+> I've applied this part of the patch as commit fbfaf851902c ("fix
+> int_sqrt64() for very large numbers") with slightly edited commit
+> log.
 >
 
-Steve,
+Thanks for the patch - I its indeed my copy-paste error, because
+__fls64 does not exist on 32bit CPU, but the fls64 is not "equal"
+replacement. I am very sorry for the bug.
 
-Thanks - that makes sense.
-
-I also noticed that if I setup one of the vdic pipelines first then
-went back after a 'media-ctl -r' and setup the example that failed it
-no longer failed. I'm thinking that this is because 'media-ctl -r'
-make reset all the links but does not reset all the V4L2 formats on
-pads?
-
->
-> Final note: the imx.rst doc is technically correct even though it is
-> showing full frame heights being configured at the pads, because it is
-> expecting the adv7180 has accepted 'seq-bt'. But even the example given
-> in that doc works for alternate field mode, because the pad heights are
-> forced to the correct field height for alternate mode.
+> I still think there are some oddities in here in the types. I
+> mentioned the caller that unnecessarily does the int_sqrt64() twice,
+> even though the outer one doesn't actually take a 64-bit value.
 >
 
-hmmm... I don't quite follow this statement. It sounds like the
-example would only be correct if you were setting 'field:alternate'
-but the example sets 'field:seq-bt' instead.
+True. This is oddity is originating from time where mlx90632 used its
+own function for int_sqrt64 on 32bit.
 
-I wonder if you should add some verbiage explaining the difference in
-format (resolution specifically) between the input and output pads
-and/or change the example to set the output pad format so people don't
-run into what I did trying to follow the example.
+> But in the very line above, there's another type oddity: the "& ~1ULL"
+> is entirely the wrong type. The shift *count* shouldn't be an unsigned
+> long long, so that type doesn't make much sense. It should be just a
+> ~1, or even just "62".
+>
 
-Tim
+This was also inline with above copy-paste and variable expansion to
+force the 64bit everywhere. I will prepare a patch to clean this line
+to ~1, question is why does the int_sqrt is having UL if this should
+just be "62". I was thinking because we want to cast to the type
+before we shift.
+
+> But I didn't actually start micro-editing the patch, and just did that
+> one-liner off-by-one fix.
+>
+>              Linus
