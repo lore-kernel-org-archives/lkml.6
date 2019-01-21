@@ -2,108 +2,124 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA557C282DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1128C282E5
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A248D2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C242520989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:49:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhKBAw61"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbfAUHsl (ORCPT
+        id S1728435AbfAUHty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:48:41 -0500
-Received: from shell.v3.sk ([90.176.6.54]:49608 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727952AbfAUHsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:48:33 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B2E6ECB386;
-        Mon, 21 Jan 2019 07:31:44 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id DBQyThTAYcvx; Mon, 21 Jan 2019 07:31:38 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B95ADCB1C9;
-        Mon, 21 Jan 2019 07:31:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NtmVQoYllHRz; Mon, 21 Jan 2019 07:31:37 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 23B7DCB32B;
-        Mon, 21 Jan 2019 07:31:37 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 2/2] clk: mmp2: separate LCDC peripheral clk form the display clock
-Date:   Mon, 21 Jan 2019 07:31:29 +0100
-Message-Id: <20190121063129.552580-3-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121063129.552580-1-lkundrak@v3.sk>
-References: <20190121063129.552580-1-lkundrak@v3.sk>
+        Mon, 21 Jan 2019 02:49:54 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39616 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727882AbfAUHty (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:49:54 -0500
+Received: by mail-pf1-f193.google.com with SMTP id r136so9740668pfc.6;
+        Sun, 20 Jan 2019 23:49:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=oMUSXr5QsF43bcIcsIiuh+5ymsAO1eFL7kdTCvBXLWI=;
+        b=nhKBAw61LBsc1KZvQRmxBkPBknsCXawIVZAdBMR00NyVT3zwFiGabAhsTyCDO0VO4g
+         mUBSoLtGzh9mwWstNx7/DGl8PlY3oRefvQRBz+K7qdqNheS/Zu5AfzcuUl4G1hI7CFcS
+         FUTPkJxc9An4I9Bwxs8q7TExmOdP97G9GdS8BwesLNhZsijjXO3mA6uirK4T2RtWNZjP
+         0c2wRbaNMmEBjwHIwBVaYlTtx4MUcSg4gOarQ38CHH4t3yrw4TmlXIubmxWxb/NvOtma
+         YpkJQgfd3zLyWAyDd4CqP+7+V4cfxBmISOSZlGbPHPVBI5l9hFmWfbmH1xCWfevOZSPC
+         DiGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=oMUSXr5QsF43bcIcsIiuh+5ymsAO1eFL7kdTCvBXLWI=;
+        b=li055qVZ1pyZKs85tWT/nsvi2UsiqDaEn6JCDU6vVa78qCaiZkzqoMZJab8thy+pLp
+         fi80Ngkc8YUfq0r0n3dSrMqlfs0D3G5nKEJWZyLvoBFX5VKbTww75j/nLWvmXOZBFtw5
+         kpX3YadeWiRJcHVxjwGapQm/gaKtY75Abiv+O72czvXaZlK43CwjGDhyxYfORWLv4kyT
+         2Umf6qpMRkpqYSO/3EOLKYBv6cZkrqHS+7DuMEnKffUb1IfYzodk+hi3QPFwr7xzClOe
+         hTOhvEtb68i5PfRQGxInz0P8sjqHD3NFTRj9g6VEY+foYxmNpa9IA2YefdvJbHhaA1DG
+         9WEw==
+X-Gm-Message-State: AJcUukdjCzFu/G/wvD0HVyFG+s4fLCsJRQExcmegcb/WatLPuRGEYeI7
+        w7JFlIc4guwtHUUBoELnQB4rCIU=
+X-Google-Smtp-Source: ALg8bN7IS+OseEJcGrMGJ3Qx7LLRPIrTleJj4d2q5EAJkJbSWmYtih9VDuMdMeJWN6tf2H9CMhDMLQ==
+X-Received: by 2002:a62:9657:: with SMTP id c84mr28960807pfe.77.1548042310585;
+        Sun, 20 Jan 2019 19:45:10 -0800 (PST)
+Received: from genru-archlinux (220-135-242-25.HINET-IP.hinet.net. [220.135.242.25])
+        by smtp.gmail.com with ESMTPSA id c4sm22977095pfm.151.2019.01.20.19.45.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 20 Jan 2019 19:45:10 -0800 (PST)
+From:   Jun-Ru Chang <jrjang@gmail.com>
+X-Google-Original-From: Jun-Ru Chang <jrjang@realtek.com>
+Date:   Mon, 21 Jan 2019 11:45:05 +0800
+To:     ralf@linux-mips.org
+Cc:     paul.burton@mips.com, jhogan@kernel.org, macro@mips.com,
+        tonywu@realtek.com, mingo@kernel.org, peterz@infradead.org,
+        jrjang@realtek.com, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: Remove function size check in get_frame_info()
+Message-ID: <20190121034505.GA1522@genru-archlinux>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are in fact two clocks, they shouldn't be exposed as one. One is
-required for accessing LCD controller registers (peripheral clock), while
-other (AXI clock) can be optionally used as a pixel clock source for the
-panel.
+Patch (b6c7a324df37b "MIPS: Fix get_frame_info() handling of
+microMIPS function size.") introduces additional function size
+check for microMIPS by only checking insn between ip and ip + func_size.
+However, func_size in get_frame_info() is always 0 if KALLSYMS is not
+enabled. This causes get_frame_info() to return immediately without
+calculating correct frame_size, which in turn causes "Can't analyze
+schedule() prologue" warning messages at boot time.
 
-LCDC can alternatively use different clocks than the Display 1 AXI clock
-for generating the pixel clock: the second AXI clock (fixed in this
-commit too), the HDMI PLL, or the AXI bus clock.
+This patch removes func_size check, and let the frame_size check run
+up to 128 insns for both MIPS and microMIPS.
 
-They should really be controlled independently.
-
-Link: https://lists.freedesktop.org/archives/dri-devel/2019-January/20397=
-5.html
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Jun-Ru Chang <jrjang@realtek.com>
+Signed-off-by: Tony Wu <tonywu@realtek.com>
+Fixes: b6c7a324df37b ("MIPS: Fix get_frame_info() handling of microMIPS function size.")
 ---
- drivers/clk/mmp/clk-of-mmp2.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/mips/kernel/process.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.=
-c
-index d083b860f083..a60a1be937ad 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -229,9 +229,10 @@ static struct mmp_param_gate_clk apmu_gate_clks[] =3D=
+diff --git a/arch/mips/kernel/process.c b/arch/mips/kernel/process.c
+index 6829a064aac8..339870ed92f7 100644
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -371,7 +371,7 @@ static inline int is_sp_move_ins(union mips_instruction *ip, int *frame_size)
+ static int get_frame_info(struct mips_frame_info *info)
  {
- 	{MMP2_CLK_SDH1, "sdh1_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SD=
-H1, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP2_CLK_SDH2, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SD=
-H2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP2_CLK_SDH3, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SD=
-H3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
--	{MMP2_CLK_DISP0, "disp0_clk", "disp0_div", CLK_SET_RATE_PARENT, APMU_DI=
-SP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
-+	{MMP2_CLK_DISP0, "disp0_clk", "disp0_div", CLK_SET_RATE_PARENT, APMU_DI=
-SP0, 0x09, 0x09, 0x0, 0, &disp0_lock},
-+	{MMP2_CLK_DISP0_LCDC, "disp0_lcdc_clk", "disp0_mux", CLK_SET_RATE_PAREN=
-T, APMU_DISP0, 0x12, 0x12, 0x0, 0, &disp0_lock},
- 	{MMP2_CLK_DISP0_SPHY, "disp0_sphy_clk", "disp0_sphy_div", CLK_SET_RATE_=
-PARENT, APMU_DISP0, 0x1024, 0x1024, 0x0, 0, &disp0_lock},
--	{MMP2_CLK_DISP1, "disp1_clk", "disp1_div", CLK_SET_RATE_PARENT, APMU_DI=
-SP1, 0x1b, 0x1b, 0x0, 0, &disp1_lock},
-+	{MMP2_CLK_DISP1, "disp1_clk", "disp1_div", CLK_SET_RATE_PARENT, APMU_DI=
-SP1, 0x09, 0x09, 0x0, 0, &disp1_lock},
- 	{MMP2_CLK_CCIC_ARBITER, "ccic_arbiter", "vctcxo", CLK_SET_RATE_PARENT, =
-APMU_CCIC0, 0x1800, 0x1800, 0x0, 0, &ccic0_lock},
- 	{MMP2_CLK_CCIC0, "ccic0_clk", "ccic0_mix_clk", CLK_SET_RATE_PARENT, APM=
-U_CCIC0, 0x1b, 0x1b, 0x0, 0, &ccic0_lock},
- 	{MMP2_CLK_CCIC0_PHY, "ccic0_phy_clk", "ccic0_mix_clk", CLK_SET_RATE_PAR=
-ENT, APMU_CCIC0, 0x24, 0x24, 0x0, 0, &ccic0_lock},
---=20
+ 	bool is_mmips = IS_ENABLED(CONFIG_CPU_MICROMIPS);
+-	union mips_instruction insn, *ip, *ip_end;
++	union mips_instruction insn, *ip;
+ 	const unsigned int max_insns = 128;
+ 	unsigned int last_insn_size = 0;
+ 	unsigned int i;
+@@ -384,10 +384,9 @@ static int get_frame_info(struct mips_frame_info *info)
+ 	if (!ip)
+ 		goto err;
+ 
+-	ip_end = (void *)ip + info->func_size;
+-
+-	for (i = 0; i < max_insns && ip < ip_end; i++) {
++	for (i = 0; i < max_insns; i++) {
+ 		ip = (void *)ip + last_insn_size;
++
+ 		if (is_mmips && mm_insn_16bit(ip->halfword[0])) {
+ 			insn.word = ip->halfword[0] << 16;
+ 			last_insn_size = 2;
+-- 
 2.20.1
 
