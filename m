@@ -2,186 +2,203 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FB7C282DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AF6C282DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3B1820989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C59420989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:35:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="BG7Xzotr"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XRYcoj5s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbfAUHfR (ORCPT
+        id S1728635AbfAUHfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:35:17 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:37830 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728476AbfAUHfP (ORCPT
+        Mon, 21 Jan 2019 02:35:11 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56688 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728544AbfAUHfI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:35:15 -0500
-Received: from mailhost.synopsys.com (dc2-mailhost.synopsys.com [10.12.135.161])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 259FA10C0AC3;
-        Sun, 20 Jan 2019 16:27:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548030472; bh=wXfNAq2KCPBfTxmQY2PhAPmT4Q2wMBxshHfR59RZ08s=;
-        h=To:CC:From:Subject:Date:From;
-        b=BG7XzotrduAaonklJGFjaElleP1RQPwJEf8zfQBLlHBAjbhT2FqsPyAWASTiF5GuT
-         UiNxzOnjIqgAqWuHabC6EHcBF2iuekN4Bucuni21VzayJA7P5Mc/QMsUaxTqQWt+vO
-         MulIHpT+h5uSMdJB8ZdraQypRDYDBiOBSAcMKtgyCWhi8HhcETLou4CXem/Seif4VX
-         XZnue59d5Eqmm2xcbMzAi+7tmEm3Vsgg1HAhxpDjJyS1m0m8APyHgVDL4n3pQcA/i6
-         HfyL/u7s5bnPAxF/P+4Fv3ocZ7U9uL27/0aD1qTL7sNJSVW2uc41uhxW3S+9lWrAF4
-         UsRNqQQH4qxFg==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 8D55FA008B;
-        Mon, 21 Jan 2019 00:27:44 +0000 (UTC)
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Sun, 20 Jan 2019 16:26:44 -0800
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 21 Jan 2019 05:56:45 +0530
-Received: from [10.12.196.21] (10.12.196.21) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 21 Jan 2019 05:56:44 +0530
-X-Mozilla-News-Host: news://gmane.comp.lib.uclibc.buildroot:119
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-CC:     lkml <linux-kernel@vger.kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-Subject: [GIT PULL] ARC updates for 5.0-rc3
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <0bc45ec8-3470-917b-fff6-6ddffafeda98@synopsys.com>
-Date:   Sun, 20 Jan 2019 16:26:29 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 02:35:08 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0L7Z5AQ106434;
+        Mon, 21 Jan 2019 01:35:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548056105;
+        bh=GUh9FXpXcAI6DF2YdGQGzCD19/FTKxOn8DpjbDpT3V4=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=XRYcoj5sf9fgi8Sb0Kl/YVupfN18npolBAeiELXuHwrKEVwCWFxvBcOPyQ4jjHZpa
+         HjaC90k25Sr/hii4HeEUmgqc+5cTSQsNoSdkc2Yzi1ZqYqnLYTFIUfhe2p0FaQG5mn
+         /3OvFGK0moxl3GrIIWfCjR9usAVw/nVX5ANBfOjo=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0L7Z5KY057665
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 01:35:05 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
+ Jan 2019 01:35:05 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 21 Jan 2019 01:35:05 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0L7YwI9026303;
+        Mon, 21 Jan 2019 01:35:03 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Sekhar Nori <nsekhar@ti.com>, Roger Quadros <rogerq@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 2/3] dt-bindings: phy: ti: Add dt binding documentation for SERDES in AM654x SoC
+Date:   Mon, 21 Jan 2019 12:18:12 +0530
+Message-ID: <20190121064813.18444-3-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190121064813.18444-1-kishon@ti.com>
+References: <20190121064813.18444-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.12.196.21]
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+AM654x has two SERDES instances. Each instance has three input clocks
+(left input, externel reference clock and right input) and two output
+clocks (left output and right output) in addition to a PLL mux clock
+which the SERDES uses for Clock Multiplier Unit (CMU refclock).
+The PLL mux clock can select from one of the three input clocks.
+The right output can select between left input and external reference
+clock while the left output can select between the right input and
+external reference clock.
 
-ARC updates for 5.0-rc3 (or rc4, it is likely too late for sunday)
+The left and right input reference clock of SERDES0 and SERDES1
+respectively are connected to the SoC clock. In the case of two lane
+SERDES personality card, the left input of SERDES1 is connected to
+the right output of SERDES0 in a chained fashion.
 
-Please pull !
+See section "Reference Clock Distribution" of AM65x Sitara Processors
+TRM (SPRUID7 – April 2018) for more details.
 
-Thx,
--Vineet
-------------------------------->
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+Add dt-binding documentation in order to represent all these different
+configurations in device tree.
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+ .../devicetree/bindings/phy/ti-phy.txt        | 77 +++++++++++++++++++
+ include/dt-bindings/phy/phy-am654-serdes.h    | 13 ++++
+ 2 files changed, 90 insertions(+)
+ create mode 100644 include/dt-bindings/phy/phy-am654-serdes.h
 
-are available in the git repository at:
+diff --git a/Documentation/devicetree/bindings/phy/ti-phy.txt b/Documentation/devicetree/bindings/phy/ti-phy.txt
+index 57dfda8a7a1d..fc2fff6b2c37 100644
+--- a/Documentation/devicetree/bindings/phy/ti-phy.txt
++++ b/Documentation/devicetree/bindings/phy/ti-phy.txt
+@@ -132,3 +132,80 @@ sata_phy: phy@4a096000 {
+ 	syscon-pllreset = <&scm_conf 0x3fc>;
+ 	#phy-cells = <0>;
+ };
++
++
++TI AM654 SERDES
++
++Required properties:
++ - compatible: Should be "ti,phy-am654-serdes"
++ - reg : Address and length of the register set for the device.
++ - reg-names: Should be "serdes" which corresponds to the register space
++	populated in "reg".
++ - #phy-cells: determine the number of cells that should be given in the
++	phandle while referencing this phy. Should be "2". The 1st cell
++	corresponds to the phy type (should be one of the types specified in
++	include/dt-bindings/phy/phy.h) and the 2nd cell should be the serdes
++	lane function.
++	If SERDES0 is referenced 2nd cell should be:
++		0 - USB3
++		1 - PCIe0 Lane0
++		2 - ICSS2 SGMII Lane0
++	If SERDES1 is referenced 2nd cell should be:
++		0 - PCIe1 Lane0
++		1 - PCIe0 Lane1
++		2 - ICSS2 SGMII Lane1
++ - clocks: List of clock-specifiers representing the input to the SERDES.
++	Should have 3 items representing the left input clock, external
++	reference clock and right input clock in that order.
++ - clock-output-names: List of clock names for each of the clock outputs of
++	SERDES. Should have 3 items for CMU reference clock,
++	left output clock and right output clock in that order.
++ - assigned-clocks: As defined in
++	Documentation/devicetree/bindings/clock/clock-bindings.txt
++ - assigned-clock-parents: As defined in
++	Documentation/devicetree/bindings/clock/clock-bindings.txt
++ - #clock-cells: Should be <1> to choose between the 3 output clocks.
++	Defined in Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++   The following macros are defined in dt-bindings/phy/phy-am654-serdes.h
++   for selecting the correct reference clock. This can be used while
++   specifying the clocks created by SERDES.
++	=> AM654_SERDES_CMU_REFCLK
++	=> AM654_SERDES_LO_REFCLK
++	=> AM654_SERDES_RO_REFCLK
++
++ - mux-controls: phandle to the multiplexer
++
++Example:
++
++Example for SERDES0 is given below. It has 3 clock inputs;
++left input reference clock as indicated by <&k3_clks 153 4>, external
++reference clock as indicated by <&k3_clks 153 1> and right input
++reference clock as indicated by <&serdes1 AM654_SERDES_LO_REFCLK>. (The
++right input of SERDES0 is connected to the left output of SERDES1).
++
++SERDES0 registers 3 clock outputs as indicated in clock-output-names. The
++first refers to the CMU reference clock, second refers to the left output
++reference clock and the third refers to the right output reference clock.
++
++The assigned-clocks and assigned-clock-parents is used here to set the
++parent of left input reference clock to MAINHSDIV_CLKOUT4 and parent of
++CMU reference clock to left input reference clock.
++
++serdes0: serdes@900000 {
++	compatible = "ti,phy-am654-serdes";
++	reg = <0x0 0x900000 0x0 0x2000>;
++	reg-names = "serdes";
++	#phy-cells = <2>;
++	power-domains = <&k3_pds 153>;
++	clocks = <&k3_clks 153 4>, <&k3_clks 153 1>,
++			<&serdes1 AM654_SERDES_LO_REFCLK>;
++	clock-output-names = "serdes0_cmu_refclk", "serdes0_lo_refclk",
++				"serdes0_ro_refclk";
++	assigned-clocks = <&k3_clks 153 4>, <&serdes0 AM654_SERDES_CMU_REFCLK>;
++	assigned-clock-parents = <&k3_clks 153 8>, <&k3_clks 153 4>;
++	ti,serdes-clk = <&serdes0_clk>;
++	mux-controls = <&serdes_mux 0>;
++	#clock-cells = <1>;
++	status = "disabled";
++};
+diff --git a/include/dt-bindings/phy/phy-am654-serdes.h b/include/dt-bindings/phy/phy-am654-serdes.h
+new file mode 100644
+index 000000000000..e8d901729ed9
+--- /dev/null
++++ b/include/dt-bindings/phy/phy-am654-serdes.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides constants for AM654 SERDES.
++ */
++
++#ifndef _DT_BINDINGS_AM654_SERDES
++#define _DT_BINDINGS_AM654_SERDES
++
++#define AM654_SERDES_CMU_REFCLK	0
++#define AM654_SERDES_LO_REFCLK	1
++#define AM654_SERDES_RO_REFCLK	2
++
++#endif /* _DT_BINDINGS_AM654_SERDES */
+-- 
+2.17.1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-5.0-rc3
-
-for you to fetch changes up to e6a72b7daeeb521753803550f0ed711152bb2555:
-
-  ARCv2: lib: memeset: fix doing prefetchw outside of buffer (2019-01-17 16:24:39
--0800)
-
-----------------------------------------------------------------
-ARC updates for 5.0-rc3
-
- - Perf support for raw events
-
- - boot log printing: return stack, action points
-
- - fix memset to avoid prefetchw bleeding past end of buffer
-
- - do_page_fault fix for mmap_sem held while returning to userspace
-
- - other miscll fixes
-
-----------------------------------------------------------------
-Eugeniy Paltsev (8):
-      ARC: fix __ffs return value to avoid build warnings
-      ARC: adjust memblock_reserve of kernel memory
-      ARC: perf: map generic branches to correct hardware condition
-      ARC: perf: trivial code cleanup
-      ARC: perf: introduce Kernel PMU events support
-      ARC: perf: move HW events mapping to separate function
-      ARC: perf: avoid kernel killing where it is possible
-      ARCv2: lib: memeset: fix doing prefetchw outside of buffer
-
-Masahiro Yamada (1):
-      arc: remove redundant kernel-space generic-y
-
-Vineet Gupta (5):
-      ARCv2: boot log: BPU return stack depth
-      ARC: boot log: print Action point details
-      ARC: show_regs: lockdep: avoid page allocator...
-      ARC: show_regs: lockdep: re-enable preemption
-      ARC: mm: do_page_fault fixes #1: relinquish mmap_sem if signal arrives while
-handle_mm_fault
-
- arch/arc/include/asm/Kbuild       |   4 -
- arch/arc/include/asm/arcregs.h    |  12 +-
- arch/arc/include/asm/bitops.h     |   6 +-
- arch/arc/include/asm/perf_event.h |   3 +-
- arch/arc/kernel/perf_event.c      | 241 ++++++++++++++++++++++++++++----------
- arch/arc/kernel/setup.c           |  27 +++--
- arch/arc/kernel/troubleshoot.c    |  30 +++--
- arch/arc/lib/memset-archs.S       |  40 +++++--
- arch/arc/mm/fault.c               |  13 +-
- arch/arc/mm/init.c                |   3 +-
- 10 files changed, 276 insertions(+), 103 deletions(-)
