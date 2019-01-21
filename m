@@ -2,98 +2,109 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9975C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D656AC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953712089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cKW1OxKR"
+	by mail.kernel.org (Postfix) with ESMTP id A4A2A2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548079576;
+	bh=wHo3zoN7egvUHjiHU/hvBuDLBBi+4sI0GAgwo9ji/HE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=D/NcVU+Ome40G2PbHVmdsIksbriAY4xrexwbgJ7B9ZwixxWcxhsCjQH+BuED0t+kz
+	 k/DFIbkh43T3o5xkmKhypWPIxncdB5IsHiugvtvQtsoIIrOh3gzr5y0KbQfYU1IE5n
+	 qUTGXVqzhXnFm6XC/ztjB2zIak7dqfm/94x4w8aw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732462AbfAUOAi (ORCPT
+        id S1731234AbfAUOGO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 21 Jan 2019 09:06:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732446AbfAUOAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 09:00:38 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:50814 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732402AbfAUOAf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:35 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0LDrfaX080600;
-        Mon, 21 Jan 2019 14:00:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=A4wVZmOOJCL8R0T9Pq1cwkdwDQB1+Kktn4+P/8BRZRg=;
- b=cKW1OxKRMnSU6i2nRge+05dTf+jVCruUkadvUnEqXh4OpSMNtDni/N5ANk2AhJukMEbU
- qvjvp0VFH3pEFU6ZKxenDOwMB9N/9RRbMMxaeZ2JvSrRYFqQDboIIIUVMyD6UcKIlHQU
- lgwkjB9dZhDlbuCh8Pl8kixxMhrL4BgDUmsY/+ZicdiivYh0pr9480K38yhMSwu9jANl
- SEq/dT3sdZ0MeCNzrl3E/FZ/zDFaMzMkdcz8qUUBtxx8IyAYMRZDYnlsAnmN2C901jEw
- x1iUK5qgZqlWSSPNdFhtIowMXMmC+JiUjnGNh5Ats3bIRdOmjdHNwoCVTlXYahgnQv9I 5Q== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2q3uauexjd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Jan 2019 14:00:33 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0LE0Woq012188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Jan 2019 14:00:32 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0LE0WMC008989;
-        Mon, 21 Jan 2019 14:00:32 GMT
-Received: from kadam (/197.157.34.164)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 21 Jan 2019 06:00:31 -0800
-Date:   Mon, 21 Jan 2019 17:00:11 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] lib/test_kmod: Potential double free in error handling
-Message-ID: <20190121140011.GA14283@kadam>
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A9762084C;
+        Mon, 21 Jan 2019 14:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548079237;
+        bh=wHo3zoN7egvUHjiHU/hvBuDLBBi+4sI0GAgwo9ji/HE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BBmdgofa4L2l69iftTIEuhsG9kMI1cLlH8H9SEoJ6AOrsJQBrNyoyeb+/ixHWeSH7
+         cUAskDvs4RRFiyTrPH45YKfdj6UGnJJdoVa2URDLtvZPkFkrs2zZspi3tnr1bMe+sV
+         aDYpv5wptVzYgh94tIhkTOSTShy2780KD/59h9hk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Yue Hu <huyue2@yulong.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.19 56/99] pstore/ram: Avoid allocation and leak of platform data
+Date:   Mon, 21 Jan 2019 14:48:48 +0100
+Message-Id: <20190121134916.107440276@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
+References: <20190121134913.924726465@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9142 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901210110
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a copy and paste bug so we set "config->test_driver" to NULL
-twice instead of setting "config->test_fs".  Smatch complains that it
-leads to a double free:
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-lib/test_kmod.c:840 __kmod_config_init() warn: 'config->test_fs' double freed
+------------------
 
-Fixes: d9c6a72d6fa2 ("kmod: add test driver to stress test the module loader")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Kees Cook <keescook@chromium.org>
+
+commit 5631e8576a3caf606cdc375f97425a67983b420c upstream.
+
+Yue Hu noticed that when parsing device tree the allocated platform data
+was never freed. Since it's not used beyond the function scope, this
+switches to using a stack variable instead.
+
+Reported-by: Yue Hu <huyue2@yulong.com>
+Fixes: 35da60941e44 ("pstore/ram: add Device Tree bindings")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- lib/test_kmod.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/pstore/ram.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/lib/test_kmod.c b/lib/test_kmod.c
-index d82d022111e0..9cf77628fc91 100644
---- a/lib/test_kmod.c
-+++ b/lib/test_kmod.c
-@@ -632,7 +632,7 @@ static void __kmod_config_free(struct test_config *config)
- 	config->test_driver = NULL;
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -713,18 +713,15 @@ static int ramoops_probe(struct platform
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ramoops_platform_data *pdata = dev->platform_data;
++	struct ramoops_platform_data pdata_local;
+ 	struct ramoops_context *cxt = &oops_cxt;
+ 	size_t dump_mem_sz;
+ 	phys_addr_t paddr;
+ 	int err = -EINVAL;
  
- 	kfree_const(config->test_fs);
--	config->test_driver = NULL;
-+	config->test_fs = NULL;
- }
+ 	if (dev_of_node(dev) && !pdata) {
+-		pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+-		if (!pdata) {
+-			pr_err("cannot allocate platform data buffer\n");
+-			err = -ENOMEM;
+-			goto fail_out;
+-		}
++		pdata = &pdata_local;
++		memset(pdata, 0, sizeof(*pdata));
  
- static void kmod_config_free(struct kmod_test_device *test_dev)
--- 
-2.17.1
+ 		err = ramoops_parse_dt(pdev, pdata);
+ 		if (err < 0)
+
 
