@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5369C2F3C7
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FF4C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9441B20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7419C20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078853;
-	bh=2dn0MAVV2ZCGmHT7cb8UZ+3DBr/iovJxRuTVNB6p2aI=;
+	s=default; t=1548078864;
+	bh=QZ0bQ4DabjyfwiiNrNAdPx/LJhQJ9khLEKNXEK63jL4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FRHiQvjnXkW+pXz9g9RSC5VMI7eCZYfZKNhhipp1LNd0U6yjOBtE+J3xxfB1Ldwtv
-	 SRjy9177DWF+09W1liHe3zBrLYYXHxEULBXi19Pyx5OwwyrzmO1/huSogD+Fs2Vkee
-	 Se4QrRL5NaS1TnGtMSXYM9sKC2m0jC2iMVpeo5Ag=
+	b=k87cNu6NlYJJMlzDGfBbvocOcmqU915n7nQBHSEbXt+yzrdzpUgberUPwVA6UzAF0
+	 hKaqXheytvwoWfQp17TMwk0DO5pa17q9u89nysNF/jJKrrY2EDjv76EtvkmP7iYwMm
+	 D5JaC+l5FkLerovDQGohuiJkpLN2JjFeMT6FTPr4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731430AbfAUNyM (ORCPT
+        id S1731481AbfAUNyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:54:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38222 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:54:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729827AbfAUNyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:54:09 -0500
+        id S1731047AbfAUNyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:54:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D62F2089F;
-        Mon, 21 Jan 2019 13:54:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2BE521019;
+        Mon, 21 Jan 2019 13:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078848;
-        bh=2dn0MAVV2ZCGmHT7cb8UZ+3DBr/iovJxRuTVNB6p2aI=;
+        s=default; t=1548078859;
+        bh=QZ0bQ4DabjyfwiiNrNAdPx/LJhQJ9khLEKNXEK63jL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GV70GDSCISZpXdsT0gfhbHk8xo/kOVAAAzdvmg/2YhLMeyQf/B1ercO7L5EFNcOdI
-         lEZVmmdN5BNPG4bJkL+pCv4BvVrXKQRjUJbJ5edfz+2K8GjalQKRIclbNG5ex2roRU
-         H3ST/JCxHY5BB4nGp0A83UIAd0jpHIiVtyrwVSVs=
+        b=dn0XpUiKJ/lnh2ml6bpFkanSqUHga8yrXDTy+JzW4cXOlznQSnpnWlmGNwByxzx+b
+         Mn1fhLhPaWmK0r45kHmEJOAR5Znp3UKqtiFeqM7CIpR3Q06AHSNJufAzCoWwyttM4v
+         YyGLPyoRXlJSQ4Ifn8+AasGmuok3c6/imPzMHmCM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 38/59] media: vivid: fix error handling of kthread_run
-Date:   Mon, 21 Jan 2019 14:44:03 +0100
-Message-Id: <20190121122501.038931320@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.9 01/51] tty/ldsem: Wake up readers after timed out down_write()
+Date:   Mon, 21 Jan 2019 14:43:57 +0100
+Message-Id: <20190121122453.777085254@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
-References: <20190121122456.529172919@linuxfoundation.org>
+In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
+References: <20190121122453.700446926@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,61 +63,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Dmitry Safonov <dima@arista.com>
 
-commit 701f49bc028edb19ffccd101997dd84f0d71e279 upstream.
+commit 231f8fd0cca078bd4396dd7e380db813ac5736e2 upstream.
 
-kthread_run returns an error pointer, but elsewhere in the code
-dev->kthread_vid_cap/out is checked against NULL.
+ldsem_down_read() will sleep if there is pending writer in the queue.
+If the writer times out, readers in the queue should be woken up,
+otherwise they may miss a chance to acquire the semaphore until the last
+active reader will do ldsem_up_read().
 
-If kthread_run returns an error, then set the pointer to NULL.
+There was a couple of reports where there was one active reader and
+other readers soft locked up:
+  Showing all locks held in the system:
+  2 locks held by khungtaskd/17:
+   #0:  (rcu_read_lock){......}, at: watchdog+0x124/0x6d1
+   #1:  (tasklist_lock){.+.+..}, at: debug_show_all_locks+0x72/0x2d3
+  2 locks held by askfirst/123:
+   #0:  (&tty->ldisc_sem){.+.+.+}, at: ldsem_down_read+0x46/0x58
+   #1:  (&ldata->atomic_read_lock){+.+...}, at: n_tty_read+0x115/0xbe4
 
-I chose this method over changing all kthread_vid_cap/out tests
-elsewhere since this is more robust.
+Prevent readers wait for active readers to release ldisc semaphore.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Link: lkml.kernel.org/r/20171121132855.ajdv4k6swzhvktl6@wfg-t540p.sh.intel.com
+Link: lkml.kernel.org/r/20180907045041.GF1110@shao2-debian
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-kthread-cap.c |    5 ++++-
- drivers/media/platform/vivid/vivid-kthread-out.c |    5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/tty/tty_ldsem.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-@@ -877,8 +877,11 @@ int vivid_start_generating_vid_cap(struc
- 			"%s-vid-cap", dev->v4l2_dev.name);
- 
- 	if (IS_ERR(dev->kthread_vid_cap)) {
-+		int err = PTR_ERR(dev->kthread_vid_cap);
+--- a/drivers/tty/tty_ldsem.c
++++ b/drivers/tty/tty_ldsem.c
+@@ -307,6 +307,16 @@ down_write_failed(struct ld_semaphore *s
+ 	if (!locked)
+ 		ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
+ 	list_del(&waiter.list);
 +
-+		dev->kthread_vid_cap = NULL;
- 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
--		return PTR_ERR(dev->kthread_vid_cap);
-+		return err;
- 	}
- 	*pstreaming = true;
- 	vivid_grab_controls(dev, true);
---- a/drivers/media/platform/vivid/vivid-kthread-out.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-out.c
-@@ -248,8 +248,11 @@ int vivid_start_generating_vid_out(struc
- 			"%s-vid-out", dev->v4l2_dev.name);
- 
- 	if (IS_ERR(dev->kthread_vid_out)) {
-+		int err = PTR_ERR(dev->kthread_vid_out);
++	/*
++	 * In case of timeout, wake up every reader who gave the right of way
++	 * to writer. Prevent separation readers into two groups:
++	 * one that helds semaphore and another that sleeps.
++	 * (in case of no contention with a writer)
++	 */
++	if (!locked && list_empty(&sem->write_wait))
++		__ldsem_wake_readers(sem);
 +
-+		dev->kthread_vid_out = NULL;
- 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
--		return PTR_ERR(dev->kthread_vid_out);
-+		return err;
- 	}
- 	*pstreaming = true;
- 	vivid_grab_controls(dev, true);
+ 	raw_spin_unlock_irq(&sem->wait_lock);
+ 
+ 	__set_task_state(tsk, TASK_RUNNING);
 
 
