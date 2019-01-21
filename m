@@ -2,71 +2,71 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E8AC3712F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127A0C3712F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 970A32089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548108013;
-	bh=gysH0vObyoQeCBPejdV0ZE/imP8En1ypYG1dGi0qnHM=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=KJ2LSF4AB1Ml9eWB7sWFexCOP4sMdWvVjzyJyFSu9lLCjIqCCIWDmn4PDXb3ak4cs
-	 y/PVZb/VTI1PPsRTWIKLBW6hW1SoSpBwVcyoVFR8QURJELsXGjFXwiDzvZbnc1DIa1
-	 8GC+WB126w6m/ZD/fKbRDMnXnqJPF5VVMR/ZLFN0=
+	by mail.kernel.org (Postfix) with ESMTP id C99D02089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:02:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="GuRKALKV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbfAUWAM (ORCPT
+        id S1727683AbfAUWCi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:00:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbfAUWAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 17:00:05 -0500
-Subject: Re: [GIT PULL] pstore fixes for v5.0-rc4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548108004;
-        bh=gysH0vObyoQeCBPejdV0ZE/imP8En1ypYG1dGi0qnHM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=n1/7VjoZHTfSa0S5kULpP9Mu6NrQdRxJ1dZlN8/z277H9VMwvlEEjZoXbfX4rtLGz
-         jTsgNgvJX4amKWp3Tl0xWTzu++KMsgayj+pUmAVM7TnsPmhxeaLApYqlrFKiutvaXx
-         k7M2XX6AxMhoaGMffpVBrTJ5O/eExyy7l8Xd60OU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190120230608.GA20111@beast>
-References: <20190120230608.GA20111@beast>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190120230608.GA20111@beast>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
- tags/pstore-v5.0-rc4
-X-PR-Tracked-Commit-Id: 5631e8576a3caf606cdc375f97425a67983b420c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1e556ba3b673166e28d5489b80c11e0605a86403
-Message-Id: <154810800469.17432.8877255202707005539.pr-tracker-bot@kernel.org>
-Date:   Mon, 21 Jan 2019 22:00:04 +0000
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Yue Hu <huyue2@yulong.com>
+        Mon, 21 Jan 2019 17:02:38 -0500
+Received: from a9-34.smtp-out.amazonses.com ([54.240.9.34]:51214 "EHLO
+        a9-34.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725993AbfAUWCh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 17:02:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1548108156;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=OJCgqsaZ+wmR6x0X309IC98tvTtpLA7MmmS/XOpDQfc=;
+        b=GuRKALKV2VCcr4jAbByx0u0oiNeiB4CSPat1WTFMtNriM8UmrZ/OntXWBFDYRvMe
+        elpi405dUNq+OuDa8zhLri7SlJ3XFdTVKrMt1Z8CWIRgEu8L6W2+Q8ypTqiG8N7yfcN
+        EESFVbiUwIJPQprgTCvW5t0Ar0FRiBrf/RmXa1ik=
+Date:   Mon, 21 Jan 2019 22:02:36 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Miles Chen <miles.chen@mediatek.com>
+cc:     Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] mm/slub: use WARN_ON() for some slab errors
+In-Reply-To: <1548063490-545-1-git-send-email-miles.chen@mediatek.com>
+Message-ID: <01000168726fcf15-81d8feb3-26f0-44d6-bbd8-62aa149118b5-000000@email.amazonses.com>
+References: <1548063490-545-1-git-send-email-miles.chen@mediatek.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.01.21-54.240.9.34
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 20 Jan 2019 15:06:08 -0800:
+On Mon, 21 Jan 2019, miles.chen@mediatek.com wrote:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/pstore-v5.0-rc4
+> From: Miles Chen <miles.chen@mediatek.com>
+>
+> When debugging with slub.c, sometimes we have to trigger a panic in
+> order to get the coredump file. To do that, we have to modify slub.c and
+> rebuild kernel. To make debugging easier, use WARN_ON() for these slab
+> errors so we can dump stack trace by default or set panic_on_warn to
+> trigger a panic.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1e556ba3b673166e28d5489b80c11e0605a86403
+These locations really should dump stack and not terminate. There is
+subsequent processing that should be done.
 
-Thank you!
+Slub terminates by default. The messages you are modifying are only
+enabled if the user specified that special debugging should be one
+(typically via a kernel parameter slub_debug).
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+It does not make sense to terminate the process here.
