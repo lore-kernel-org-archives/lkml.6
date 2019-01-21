@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7729DC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 898DBC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4809720989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58B1C20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078457;
-	bh=HulYPTH4inzvGZLBH/+5kwxtLNIM4dSrBDB6C613tnI=;
+	s=default; t=1548078460;
+	bh=pPdJH3OkfFthRa/JVPX7WdP/P6epsj89OqxvFX2sJmQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ttkv7XiMPnyFxWWtYLvtL5n0TfD1LCPfJGDpftZWVwvyxwtBkydXgsinRvF6dOv2T
-	 0uJ6FZY5XXxflHTpM+ka4o9V2U+q72XgFobtD1yfNhVwl5ALIUalE1PTETHdjbQe9A
-	 e/rwOXI1REcxXWR0/LatgMMy8iLwQuzgIBDUOMRI=
+	b=qr71lkefYlr0A+uH9hJaXmB7aCKAH9A3iJhcMJHoxVdiLquPQpNb5U0zjTMUomXmX
+	 X6tyejXn7GWeojx7OkJdlWgil0Pq345mch+4rY8tg4sKLaAG1xKxArweiVDvT++yfJ
+	 B/qcW6yaRuLjywfTfbdFa76VcHDHINMfHSEps/+w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbfAUNrf (ORCPT
+        id S1729671AbfAUNrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:47:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56970 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:47:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729633AbfAUNre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:47:34 -0500
+        id S1728980AbfAUNrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:47:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00C5020861;
-        Mon, 21 Jan 2019 13:47:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8259C20879;
+        Mon, 21 Jan 2019 13:47:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078453;
-        bh=HulYPTH4inzvGZLBH/+5kwxtLNIM4dSrBDB6C613tnI=;
+        s=default; t=1548078456;
+        bh=pPdJH3OkfFthRa/JVPX7WdP/P6epsj89OqxvFX2sJmQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f+fUYmDeI0jG8YWlE/Z5MUp4KfkCUu57dFjf/nZUyvw8EajZiF+i05993Ce/OetCR
-         VvcYjMu+f086TODwpQsid69F7LJoKpojt7jTJm7gLpkjwtsHHwqteWmQUd1c4Bt7WZ
-         93GGavMbU2rkEvFe06VdZm8qHQIqJUvnDpTvS738=
+        b=V9rnF1YdEIXWFWe7DMpi3zYehCjb3eAtF9+/z1ig/8Femy2PtCFpDXZ+QwnRP3n9Z
+         uUwGckA9OiUX024akWecsu0G9+dX/FsAVHKIeG/9n7AIpEcAfAnlL0V41qQo2Onejp
+         PUsMZwlr3HRPyTQuSF1J4GTPrS+8NhWOvsCnKlYA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.20 036/111] crypto: bcm - convert to use crypto_authenc_extractkeys()
-Date:   Mon, 21 Jan 2019 14:42:30 +0100
-Message-Id: <20190121122459.861924762@linuxfoundation.org>
+Subject: [PATCH 4.20 037/111] crypto: authenc - fix parsing key with misaligned rta_len
+Date:   Mon, 21 Jan 2019 14:42:31 +0100
+Message-Id: <20190121122459.987371683@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -67,120 +67,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit ab57b33525c3221afaebd391458fa0cbcd56903d upstream.
+commit 8f9c469348487844328e162db57112f7d347c49f upstream.
 
-Convert the bcm crypto driver to use crypto_authenc_extractkeys() so
-that it picks up the fix for broken validation of rtattr::rta_len.
+Keys for "authenc" AEADs are formatted as an rtattr containing a 4-byte
+'enckeylen', followed by an authentication key and an encryption key.
+crypto_authenc_extractkeys() parses the key to find the inner keys.
 
-This also fixes the DES weak key check to actually be done on the right
-key. (It was checking the authentication key, not the encryption key...)
+However, it fails to consider the case where the rtattr's payload is
+longer than 4 bytes but not 4-byte aligned, and where the key ends
+before the next 4-byte aligned boundary.  In this case, 'keylen -=
+RTA_ALIGN(rta->rta_len);' underflows to a value near UINT_MAX.  This
+causes a buffer overread and crash during crypto_ahash_setkey().
 
-Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
-Cc: <stable@vger.kernel.org> # v4.11+
+Fix it by restricting the rtattr payload to the expected size.
+
+Reproducer using AF_ALG:
+
+	#include <linux/if_alg.h>
+	#include <linux/rtnetlink.h>
+	#include <sys/socket.h>
+
+	int main()
+	{
+		int fd;
+		struct sockaddr_alg addr = {
+			.salg_type = "aead",
+			.salg_name = "authenc(hmac(sha256),cbc(aes))",
+		};
+		struct {
+			struct rtattr attr;
+			__be32 enckeylen;
+			char keys[1];
+		} __attribute__((packed)) key = {
+			.attr.rta_len = sizeof(key),
+			.attr.rta_type = 1 /* CRYPTO_AUTHENC_KEYA_PARAM */,
+		};
+
+		fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
+		bind(fd, (void *)&addr, sizeof(addr));
+		setsockopt(fd, SOL_ALG, ALG_SET_KEY, &key, sizeof(key));
+	}
+
+It caused:
+
+	BUG: unable to handle kernel paging request at ffff88007ffdc000
+	PGD 2e01067 P4D 2e01067 PUD 2e04067 PMD 2e05067 PTE 0
+	Oops: 0000 [#1] SMP
+	CPU: 0 PID: 883 Comm: authenc Not tainted 4.20.0-rc1-00108-g00c9fe37a7f27 #13
+	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-20181126_142135-anatol 04/01/2014
+	RIP: 0010:sha256_ni_transform+0xb3/0x330 arch/x86/crypto/sha256_ni_asm.S:155
+	[...]
+	Call Trace:
+	 sha256_ni_finup+0x10/0x20 arch/x86/crypto/sha256_ssse3_glue.c:321
+	 crypto_shash_finup+0x1a/0x30 crypto/shash.c:178
+	 shash_digest_unaligned+0x45/0x60 crypto/shash.c:186
+	 crypto_shash_digest+0x24/0x40 crypto/shash.c:202
+	 hmac_setkey+0x135/0x1e0 crypto/hmac.c:66
+	 crypto_shash_setkey+0x2b/0xb0 crypto/shash.c:66
+	 shash_async_setkey+0x10/0x20 crypto/shash.c:223
+	 crypto_ahash_setkey+0x2d/0xa0 crypto/ahash.c:202
+	 crypto_authenc_setkey+0x68/0x100 crypto/authenc.c:96
+	 crypto_aead_setkey+0x2a/0xc0 crypto/aead.c:62
+	 aead_setkey+0xc/0x10 crypto/algif_aead.c:526
+	 alg_setkey crypto/af_alg.c:223 [inline]
+	 alg_setsockopt+0xfe/0x130 crypto/af_alg.c:256
+	 __sys_setsockopt+0x6d/0xd0 net/socket.c:1902
+	 __do_sys_setsockopt net/socket.c:1913 [inline]
+	 __se_sys_setsockopt net/socket.c:1910 [inline]
+	 __x64_sys_setsockopt+0x1f/0x30 net/socket.c:1910
+	 do_syscall_64+0x4a/0x180 arch/x86/entry/common.c:290
+	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: e236d4a89a2f ("[CRYPTO] authenc: Move enckeylen into key itself")
+Cc: <stable@vger.kernel.org> # v2.6.25+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/Kconfig      |    1 +
- drivers/crypto/bcm/cipher.c |   44 +++++++++++++-------------------------------
- 2 files changed, 14 insertions(+), 31 deletions(-)
+ crypto/authenc.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -692,6 +692,7 @@ config CRYPTO_DEV_BCM_SPU
- 	depends on ARCH_BCM_IPROC
- 	depends on MAILBOX
- 	default m
-+	select CRYPTO_AUTHENC
- 	select CRYPTO_DES
- 	select CRYPTO_MD5
- 	select CRYPTO_SHA1
---- a/drivers/crypto/bcm/cipher.c
-+++ b/drivers/crypto/bcm/cipher.c
-@@ -2845,44 +2845,28 @@ static int aead_authenc_setkey(struct cr
- 	struct spu_hw *spu = &iproc_priv.spu;
- 	struct iproc_ctx_s *ctx = crypto_aead_ctx(cipher);
- 	struct crypto_tfm *tfm = crypto_aead_tfm(cipher);
--	struct rtattr *rta = (void *)key;
--	struct crypto_authenc_key_param *param;
--	const u8 *origkey = key;
--	const unsigned int origkeylen = keylen;
--
--	int ret = 0;
-+	struct crypto_authenc_keys keys;
-+	int ret;
- 
- 	flow_log("%s() aead:%p key:%p keylen:%u\n", __func__, cipher, key,
- 		 keylen);
- 	flow_dump("  key: ", key, keylen);
- 
--	if (!RTA_OK(rta, keylen))
--		goto badkey;
--	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
-+	ret = crypto_authenc_extractkeys(&keys, key, keylen);
-+	if (ret)
- 		goto badkey;
+--- a/crypto/authenc.c
++++ b/crypto/authenc.c
+@@ -58,14 +58,22 @@ int crypto_authenc_extractkeys(struct cr
+ 		return -EINVAL;
+ 	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
+ 		return -EINVAL;
 -	if (RTA_PAYLOAD(rta) < sizeof(*param))
--		goto badkey;
--
--	param = RTA_DATA(rta);
--	ctx->enckeylen = be32_to_cpu(param->enckeylen);
++
++	/*
++	 * RTA_OK() didn't align the rtattr's payload when validating that it
++	 * fits in the buffer.  Yet, the keys should start on the next 4-byte
++	 * aligned boundary.  To avoid confusion, require that the rtattr
++	 * payload be exactly the param struct, which has a 4-byte aligned size.
++	 */
++	if (RTA_PAYLOAD(rta) != sizeof(*param))
+ 		return -EINVAL;
++	BUILD_BUG_ON(sizeof(*param) % RTA_ALIGNTO);
+ 
+ 	param = RTA_DATA(rta);
+ 	keys->enckeylen = be32_to_cpu(param->enckeylen);
  
 -	key += RTA_ALIGN(rta->rta_len);
 -	keylen -= RTA_ALIGN(rta->rta_len);
--
--	if (keylen < ctx->enckeylen)
--		goto badkey;
--	if (ctx->enckeylen > MAX_KEY_SIZE)
-+	if (keys.enckeylen > MAX_KEY_SIZE ||
-+	    keys.authkeylen > MAX_KEY_SIZE)
- 		goto badkey;
++	key += rta->rta_len;
++	keylen -= rta->rta_len;
  
--	ctx->authkeylen = keylen - ctx->enckeylen;
--
--	if (ctx->authkeylen > MAX_KEY_SIZE)
--		goto badkey;
-+	ctx->enckeylen = keys.enckeylen;
-+	ctx->authkeylen = keys.authkeylen;
- 
--	memcpy(ctx->enckey, key + ctx->authkeylen, ctx->enckeylen);
-+	memcpy(ctx->enckey, keys.enckey, keys.enckeylen);
- 	/* May end up padding auth key. So make sure it's zeroed. */
- 	memset(ctx->authkey, 0, sizeof(ctx->authkey));
--	memcpy(ctx->authkey, key, ctx->authkeylen);
-+	memcpy(ctx->authkey, keys.authkey, keys.authkeylen);
- 
- 	switch (ctx->alg->cipher_info.alg) {
- 	case CIPHER_ALG_DES:
-@@ -2890,7 +2874,7 @@ static int aead_authenc_setkey(struct cr
- 			u32 tmp[DES_EXPKEY_WORDS];
- 			u32 flags = CRYPTO_TFM_RES_WEAK_KEY;
- 
--			if (des_ekey(tmp, key) == 0) {
-+			if (des_ekey(tmp, keys.enckey) == 0) {
- 				if (crypto_aead_get_flags(cipher) &
- 				    CRYPTO_TFM_REQ_WEAK_KEY) {
- 					crypto_aead_set_flags(cipher, flags);
-@@ -2905,7 +2889,7 @@ static int aead_authenc_setkey(struct cr
- 		break;
- 	case CIPHER_ALG_3DES:
- 		if (ctx->enckeylen == (DES_KEY_SIZE * 3)) {
--			const u32 *K = (const u32 *)key;
-+			const u32 *K = (const u32 *)keys.enckey;
- 			u32 flags = CRYPTO_TFM_RES_BAD_KEY_SCHED;
- 
- 			if (!((K[0] ^ K[2]) | (K[1] ^ K[3])) ||
-@@ -2956,9 +2940,7 @@ static int aead_authenc_setkey(struct cr
- 		ctx->fallback_cipher->base.crt_flags &= ~CRYPTO_TFM_REQ_MASK;
- 		ctx->fallback_cipher->base.crt_flags |=
- 		    tfm->crt_flags & CRYPTO_TFM_REQ_MASK;
--		ret =
--		    crypto_aead_setkey(ctx->fallback_cipher, origkey,
--				       origkeylen);
-+		ret = crypto_aead_setkey(ctx->fallback_cipher, key, keylen);
- 		if (ret) {
- 			flow_log("  fallback setkey() returned:%d\n", ret);
- 			tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
+ 	if (keylen < keys->enckeylen)
+ 		return -EINVAL;
 
 
