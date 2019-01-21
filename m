@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8784C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3102BC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942DA20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFA8420861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078669;
-	bh=/f9ZobIft1/qI3+ZFeZJI3XZYe2CoVA2XjtWKxppwD8=;
+	s=default; t=1548078673;
+	bh=XZdxHRKt6D38ZaIOFsOGbu0yTj9SPmjmrABCdcV5x60=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=trUXrCROfD+PlMSxqxOZnNkwi3YNbBSBmOnVkjTNly/PJr36QHB4CHRMrEnX0NrmE
-	 oCJW9c064kwnmJHNO/t3WY+0n8tr2VHsNIYuT1BVYOzw7/sdKh32rZq2Q6uuqCYQv7
-	 Zes8WrTHWdKgij0MlWvIsX6Qhjh+M70PhRHBEPVs=
+	b=S5qwUMgxIRrfBbChrW7xdDNe0TUHjwwUigfSuYYvfrVyWRaUnBveJZwVuE0j+JwNE
+	 i4MxI9KFgbWi4MbW/w45lNWOkBCmxHSY6CPCI2CFuSaCDfxLoXZnRGtEPREaENia7J
+	 kYTopTPbfdqkw8FzDZidF0Swp/YR02B/CHwnbEo4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730719AbfAUNvH (ORCPT
+        id S1730729AbfAUNvL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:51:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33920 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:51:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729757AbfAUNvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:51:04 -0500
+        id S1730714AbfAUNvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:51:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90AD420879;
-        Mon, 21 Jan 2019 13:51:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3038F20879;
+        Mon, 21 Jan 2019 13:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078664;
-        bh=/f9ZobIft1/qI3+ZFeZJI3XZYe2CoVA2XjtWKxppwD8=;
+        s=default; t=1548078666;
+        bh=XZdxHRKt6D38ZaIOFsOGbu0yTj9SPmjmrABCdcV5x60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xl8Y64q83pgnxemqSN2HEoMM+tjVpO1QEq6RP15vRgtqoXUF7VKxCfEaySY0aJs94
-         Qur+5FVbCAh2nmup1tu4Xr3+aaSyRUCS44INO5WBj/4bWwU04F+SoYGkon5Xc7jFI1
-         E+8JrCRi3fcmdFLcgQ6qQqTxCcL2B13siNbC+Q10=
+        b=PHUV+VlkHtVGf02LdbHip/9anMTjPrHFz8gCpcnqwgIqTOIlPD5srpDvRzw7R2xdJ
+         n0WAHl8RYCG9J4KfaE4ih4RaDxx7qDgwRuXTuOs7kC2TOkou91E211qyLvQufbktPx
+         yIfE0Urs4Y1CGunvJBYQL8Nvb5TpiPttTYY49Q58=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Mironov <mironov.ivan@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.20 111/111] drm/fb-helper: Ignore the value of fb_var_screeninfo.pixclock
-Date:   Mon, 21 Jan 2019 14:43:45 +0100
-Message-Id: <20190121122507.181066754@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 089/111] tipc: fix uninit-value in tipc_nl_compat_bearer_enable
+Date:   Mon, 21 Jan 2019 14:43:23 +0100
+Message-Id: <20190121122505.791312613@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,80 +67,189 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Mironov <mironov.ivan@gmail.com>
+From: Ying Xue <ying.xue@windriver.com>
 
-commit 66a8d5bfb518f9f12d47e1d2dce1732279f9451e upstream.
+commit 0762216c0ad2a2fccd63890648eca491f2c83d9a upstream.
 
-Strict requirement of pixclock to be zero breaks support of SDL 1.2
-which contains hardcoded table of supported video modes with non-zero
-pixclock values[1].
+syzbot reported:
 
-To better understand which pixclock values are considered valid and how
-driver should handle these values, I briefly examined few existing fbdev
-drivers and documentation in Documentation/fb/. And it looks like there
-are no strict rules on that and actual behaviour varies:
+BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:484
+CPU: 1 PID: 6371 Comm: syz-executor652 Not tainted 4.19.0-rc8+ #70
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x306/0x460 lib/dump_stack.c:113
+ kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
+ __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
+ strlen+0x3b/0xa0 lib/string.c:484
+ nla_put_string include/net/netlink.h:1011 [inline]
+ tipc_nl_compat_bearer_enable+0x238/0x7b0 net/tipc/netlink_compat.c:389
+ __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
+ tipc_nl_compat_doit+0x39f/0xae0 net/tipc/netlink_compat.c:344
+ tipc_nl_compat_recv+0x147c/0x2760 net/tipc/netlink_compat.c:1107
+ genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+ genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
+ netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
+ genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+ netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+ netlink_unicast+0x166d/0x1720 net/netlink/af_netlink.c:1343
+ netlink_sendmsg+0x1391/0x1420 net/netlink/af_netlink.c:1908
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440179
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fffef7beee8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401a00
+R13: 0000000000401a90 R14: 0000000000000000 R15: 0000000000000000
 
-	* some drivers treat (pixclock == 0) as "use defaults" (uvesafb.c);
-	* some treat (pixclock == 0) as invalid value which leads to
-	  -EINVAL (clps711x-fb.c);
-	* some pass converted pixclock value to hardware (uvesafb.c);
-	* some are trying to find nearest value from predefined table
-          (vga16fb.c, video_gx.c).
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
+ kmsan_internal_poison_shadow+0xc8/0x1d0 mm/kmsan/kmsan.c:180
+ kmsan_kmalloc+0xa4/0x120 mm/kmsan/kmsan_hooks.c:104
+ kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:113
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2727 [inline]
+ __kmalloc_node_track_caller+0xb43/0x1400 mm/slub.c:4360
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x422/0xe90 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:996 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
+ netlink_sendmsg+0xcaf/0x1420 net/netlink/af_netlink.c:1883
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-Given this, I believe that it should be safe to just ignore this value if
-changing is not supported. It seems that any portable fbdev application
-which was not written only for one specific device working under one
-specific kernel version should not rely on any particular behaviour of
-pixclock anyway.
+The root cause is that we don't validate whether bear name is a valid
+string in tipc_nl_compat_bearer_enable().
 
-However, while enabling SDL1 applications to work out of the box when
-there is no /etc/fb.modes with valid settings, this change affects the
-video mode choosing logic in SDL. Depending on current screen
-resolution, contents of /etc/fb.modes and resolution requested by
-application, this may lead to user-visible difference (not always):
-image will be displayed in a right way, but it will be aligned to the
-left instead of center. There is no "right behaviour" here as well, as
-emulated fbdev, opposing to old fbdev drivers, simply ignores any
-requsts of video mode changes with resolutions smaller than current.
+Meanwhile, we also fix the same issue in the following functions:
+tipc_nl_compat_bearer_disable()
+tipc_nl_compat_link_stat_dump()
+tipc_nl_compat_media_set()
+tipc_nl_compat_bearer_set()
 
-The easiest way to reproduce this problem is to install sdl-sopwith[2],
-remove /etc/fb.modes file if it exists, and then try to run sopwith
-from console without X. At least in Fedora 29, sopwith may be simply
-installed from standard repositories.
-
-[1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c, vesa_timings
-[2] http://sdl-sopwith.sourceforge.net/
-
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-Cc: stable@vger.kernel.org
-Fixes: 79e539453b34e ("DRM: i915: add mode setting support")
-Fixes: 771fe6b912fca ("drm/radeon: introduce kernel modesetting for radeon hardware")
-Fixes: 785b93ef8c309 ("drm/kms: move driver specific fb common code to helper functions (v2)")
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190108072353.28078-3-mironov.ivan@gmail.com
+Reported-by: syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_fb_helper.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/tipc/netlink_compat.c |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -1690,9 +1690,14 @@ int drm_fb_helper_check_var(struct fb_va
- 	struct drm_fb_helper *fb_helper = info->par;
- 	struct drm_framebuffer *fb = fb_helper->fb;
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -389,6 +389,7 @@ static int tipc_nl_compat_bearer_enable(
+ 	struct nlattr *prop;
+ 	struct nlattr *bearer;
+ 	struct tipc_bearer_config *b;
++	int len;
  
--	if (var->pixclock != 0 || in_dbg_master())
-+	if (in_dbg_master())
- 		return -EINVAL;
+ 	b = (struct tipc_bearer_config *)TLV_DATA(msg->req);
  
-+	if (var->pixclock != 0) {
-+		DRM_DEBUG("fbdev emulation doesn't support changing the pixel clock, value of pixclock is ignored\n");
-+		var->pixclock = 0;
-+	}
+@@ -396,6 +397,10 @@ static int tipc_nl_compat_bearer_enable(
+ 	if (!bearer)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
++	if (!string_is_valid(b->name, len))
++		return -EINVAL;
 +
- 	/*
- 	 * Changes struct fb_var_screeninfo are currently not pushed back
- 	 * to KMS, hence fail if different settings are requested.
+ 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, b->name))
+ 		return -EMSGSIZE;
+ 
+@@ -421,6 +426,7 @@ static int tipc_nl_compat_bearer_disable
+ {
+ 	char *name;
+ 	struct nlattr *bearer;
++	int len;
+ 
+ 	name = (char *)TLV_DATA(msg->req);
+ 
+@@ -428,6 +434,10 @@ static int tipc_nl_compat_bearer_disable
+ 	if (!bearer)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
++	if (!string_is_valid(name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, name))
+ 		return -EMSGSIZE;
+ 
+@@ -488,6 +498,7 @@ static int tipc_nl_compat_link_stat_dump
+ 	struct nlattr *prop[TIPC_NLA_PROP_MAX + 1];
+ 	struct nlattr *stats[TIPC_NLA_STATS_MAX + 1];
+ 	int err;
++	int len;
+ 
+ 	if (!attrs[TIPC_NLA_LINK])
+ 		return -EINVAL;
+@@ -514,6 +525,11 @@ static int tipc_nl_compat_link_stat_dump
+ 		return err;
+ 
+ 	name = (char *)TLV_DATA(msg->req);
++
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
++	if (!string_is_valid(name, len))
++		return -EINVAL;
++
+ 	if (strcmp(name, nla_data(link[TIPC_NLA_LINK_NAME])) != 0)
+ 		return 0;
+ 
+@@ -654,6 +670,7 @@ static int tipc_nl_compat_media_set(stru
+ 	struct nlattr *prop;
+ 	struct nlattr *media;
+ 	struct tipc_link_config *lc;
++	int len;
+ 
+ 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
+ 
+@@ -661,6 +678,10 @@ static int tipc_nl_compat_media_set(stru
+ 	if (!media)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_MEDIA_NAME);
++	if (!string_is_valid(lc->name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_MEDIA_NAME, lc->name))
+ 		return -EMSGSIZE;
+ 
+@@ -681,6 +702,7 @@ static int tipc_nl_compat_bearer_set(str
+ 	struct nlattr *prop;
+ 	struct nlattr *bearer;
+ 	struct tipc_link_config *lc;
++	int len;
+ 
+ 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
+ 
+@@ -688,6 +710,10 @@ static int tipc_nl_compat_bearer_set(str
+ 	if (!bearer)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_MEDIA_NAME);
++	if (!string_is_valid(lc->name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, lc->name))
+ 		return -EMSGSIZE;
+ 
 
 
