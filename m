@@ -2,199 +2,333 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FD1C31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E32D5C31680
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD69A2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACCBB204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:42:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbfAURmx (ORCPT
+        id S1728232AbfAURm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 12:42:53 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50094 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725908AbfAURmw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 12:42:52 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LHcl8b023244
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:42:51 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q5ffph4wa-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:42:50 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 21 Jan 2019 17:42:48 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 17:42:41 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LHgepq22085682
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 17:42:40 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 752F852051;
-        Mon, 21 Jan 2019 17:42:40 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.247])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id BDE415204E;
-        Mon, 21 Jan 2019 17:42:37 +0000 (GMT)
-Date:   Mon, 21 Jan 2019 19:42:35 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: kmemleak panic
-References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
- <20190118143434.GE118707@arrakis.emea.arm.com>
- <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
- <20190119132832.GA29881@MBP.local>
- <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
- <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
- <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
- <20190121143704.GE29504@arrakis.emea.arm.com>
- <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19012117-0016-0000-0000-000002486B64
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012117-0017-0000-0000-000032A29EA4
-Message-Id: <20190121174234.GC26461@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210138
+        Mon, 21 Jan 2019 12:42:57 -0500
+Received: from smtp2.provo.novell.com ([137.65.250.81]:57489 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfAURm4 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Mon, 21 Jan 2019 12:42:56 -0500
+Received: from localhost.localdomain (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Mon, 21 Jan 2019 10:42:44 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     akpm@linux-foundation.org
+Cc:     dledford@redhat.com, jgg@mellanox.com, jack@suse.de,
+        ira.weiny@intel.com, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 1/6] mm: make mm->pinned_vm an atomic64 counter
+Date:   Mon, 21 Jan 2019 09:42:15 -0800
+Message-Id: <20190121174220.10583-2-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20190121174220.10583-1-dave@stgolabs.net>
+References: <20190121174220.10583-1-dave@stgolabs.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 09:42:07AM -0600, Rob Herring wrote:
-> +Mike Rapoport
-> 
-> On Mon, Jan 21, 2019 at 8:37 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> >
-> > On Mon, Jan 21, 2019 at 07:35:11AM -0600, Rob Herring wrote:
-> > > On Mon, Jan 21, 2019 at 6:19 AM Robin Murphy <robin.murphy@arm.com> wrote:
-> > > >
-> > > > On 21/01/2019 11:57, Marc Gonzalez wrote:
-> > > > [...]
-> > > > > # echo dump=0xffffffc021e00000 > /sys/kernel/debug/kmemleak
-> > > > > kmemleak: Object 0xffffffc021e00000 (size 2097152):
-> > > > > kmemleak:   comm "swapper/0", pid 0, jiffies 4294892296
-> > > > > kmemleak:   min_count = 0
-> > > > > kmemleak:   count = 0
-> > > > > kmemleak:   flags = 0x1
-> > > > > kmemleak:   checksum = 0
-> > > > > kmemleak:   backtrace:
-> > > > >       kmemleak_alloc_phys+0x48/0x60
-> > > > >       memblock_alloc_range_nid+0x8c/0xa4
-> > > > >       memblock_alloc_base_nid+0x4c/0x60
-> > > > >       __memblock_alloc_base+0x3c/0x4c
-> > > > >       early_init_dt_alloc_reserved_memory_arch+0x54/0xa4
-> > > > >       fdt_init_reserved_mem+0x308/0x3ec
-> > > > >       early_init_fdt_scan_reserved_mem+0x88/0xb0
-> > > > >       arm64_memblock_init+0x1dc/0x254
-> > > > >       setup_arch+0x1c8/0x4ec
-> > > > >       start_kernel+0x84/0x44c
-> > > > >       0xffffffffffffffff
-> > > >
-> > > > OK, so via the __va(phys) call in kmemleak_alloc_phys(), you end up with
-> > > > the linear map address of a no-map reservation, which unsurprisingly
-> > > > turns out not to be mapped. Is there a way to tell kmemleak that it
-> > > > can't scan within a particular object?
-> > >
-> > > There was this patch posted[1]. I never got a reply, so it hasn't been applied.
-> > >
-> > > https://patchwork.ozlabs.org/patch/995367/
-> >
-> > Thanks Rob, I wasn't aware of this patch (or I just missed it at the
-> > time).
-> >
-> > I wonder whether kmemleak should simply remove ranges passed to
-> > memblock_remove(), or at least mark them as no-scan.
+Taking a sleeping lock to _only_ increment a variable is quite the
+overkill, and pretty much all users do this. Furthermore, some drivers
+(ie: infiniband and scif) that need pinned semantics can go to quite
+some trouble to actually delay via workqueue (un)accounting for pinned
+pages when not possible to acquire it.
 
-I'm not sure that would be possible. Normal use of memblock_remove() is as
-a counterpart of memblock_add() which does not involve kmemleak.
-As memblock_remove() essentially hides range of the physical memory from
-the system, it's not clear how it can communicate to kmemleak what region
-should not be scanned.
+By making the counter atomic we no longer need to hold the mmap_sem
+and can simply some code around it for pinned_vm users. The counter
+is 64-bit such that we need not worry about overflows such as rdma
+user input controlled from userspace.
 
-> Seems reasonable to me, but of course that impacts a lot of other
-> cases. Maybe Mike R has some thoughts?
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ drivers/infiniband/core/umem.c             | 12 ++++++------
+ drivers/infiniband/hw/hfi1/user_pages.c    |  6 +++---
+ drivers/infiniband/hw/qib/qib_user_pages.c |  4 ++--
+ drivers/infiniband/hw/usnic/usnic_uiom.c   |  8 ++++----
+ drivers/misc/mic/scif/scif_rma.c           |  6 +++---
+ fs/proc/task_mmu.c                         |  2 +-
+ include/linux/mm_types.h                   |  2 +-
+ kernel/events/core.c                       |  8 ++++----
+ kernel/fork.c                              |  2 +-
+ mm/debug.c                                 |  3 ++-
+ 10 files changed, 27 insertions(+), 26 deletions(-)
 
-If I understood correctly, the trouble comes from no-map range allocated in 
-early_init_dt_alloc_reserved_memory_arch().
-
-There's indeed imbalance, because memblock_alloc() does kmemleak_alloc(), but
-memblock_remove() does not do kmemleak_free().
-
-I think the best way is to replace __memblock_alloc_base() with
-memblock_find_in_range(), e.g something like:
-
-
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index 1977ee0adcb1..6807a1cffe55 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -37,21 +37,16 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
- 	 */
- 	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
- 	align = !align ? SMP_CACHE_BYTES : align;
--	base = __memblock_alloc_base(size, align, end);
-+	base = memblock_find_in_range(size, align, start, end);
- 	if (!base)
- 		return -ENOMEM;
+diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+index 1efe0a74e06b..678abe1afcba 100644
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -166,13 +166,13 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
+ 	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
  
--	/*
--	 * Check if the allocated region fits in to start..end window
--	 */
--	if (base < start) {
--		memblock_free(base, size);
--		return -ENOMEM;
--	}
--
- 	*res_base = base;
- 	if (nomap)
- 		return memblock_remove(base, size);
-+	else
-+		return memblock_reserve(base, size);
-+
+ 	down_write(&mm->mmap_sem);
+-	if (check_add_overflow(mm->pinned_vm, npages, &new_pinned) ||
+-	    (new_pinned > lock_limit && !capable(CAP_IPC_LOCK))) {
++	new_pinned = atomic64_read(&mm->pinned_vm) + npages;
++	if (new_pinned > lock_limit && !capable(CAP_IPC_LOCK)) {
+ 		up_write(&mm->mmap_sem);
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	mm->pinned_vm = new_pinned;
++	atomic64_set(&mm->pinned_vm, new_pinned);
+ 	up_write(&mm->mmap_sem);
+ 
+ 	cur_base = addr & PAGE_MASK;
+@@ -234,7 +234,7 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
+ 	__ib_umem_release(context->device, umem, 0);
+ vma:
+ 	down_write(&mm->mmap_sem);
+-	mm->pinned_vm -= ib_umem_num_pages(umem);
++	atomic64_sub(ib_umem_num_pages(umem), &mm->pinned_vm);
+ 	up_write(&mm->mmap_sem);
+ out:
+ 	if (vma_list)
+@@ -263,7 +263,7 @@ static void ib_umem_release_defer(struct work_struct *work)
+ 	struct ib_umem *umem = container_of(work, struct ib_umem, work);
+ 
+ 	down_write(&umem->owning_mm->mmap_sem);
+-	umem->owning_mm->pinned_vm -= ib_umem_num_pages(umem);
++	atomic64_sub(ib_umem_num_pages(umem), &umem->owning_mm->pinned_vm);
+ 	up_write(&umem->owning_mm->mmap_sem);
+ 
+ 	__ib_umem_release_tail(umem);
+@@ -302,7 +302,7 @@ void ib_umem_release(struct ib_umem *umem)
+ 	} else {
+ 		down_write(&umem->owning_mm->mmap_sem);
+ 	}
+-	umem->owning_mm->pinned_vm -= ib_umem_num_pages(umem);
++	atomic64_sub(ib_umem_num_pages(umem), &umem->owning_mm->pinned_vm);
+ 	up_write(&umem->owning_mm->mmap_sem);
+ 
+ 	__ib_umem_release_tail(umem);
+diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
+index e341e6dcc388..40a6e434190f 100644
+--- a/drivers/infiniband/hw/hfi1/user_pages.c
++++ b/drivers/infiniband/hw/hfi1/user_pages.c
+@@ -92,7 +92,7 @@ bool hfi1_can_pin_pages(struct hfi1_devdata *dd, struct mm_struct *mm,
+ 	size = DIV_ROUND_UP(size, PAGE_SIZE);
+ 
+ 	down_read(&mm->mmap_sem);
+-	pinned = mm->pinned_vm;
++	pinned = atomic64_read(&mm->pinned_vm);
+ 	up_read(&mm->mmap_sem);
+ 
+ 	/* First, check the absolute limit against all pinned pages. */
+@@ -112,7 +112,7 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsigned long vaddr, size_t np
+ 		return ret;
+ 
+ 	down_write(&mm->mmap_sem);
+-	mm->pinned_vm += ret;
++	atomic64_add(ret, &mm->pinned_vm);
+ 	up_write(&mm->mmap_sem);
+ 
+ 	return ret;
+@@ -131,7 +131,7 @@ void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
+ 
+ 	if (mm) { /* during close after signal, mm can be NULL */
+ 		down_write(&mm->mmap_sem);
+-		mm->pinned_vm -= npages;
++		atomic64_sub(npages, &mm->pinned_vm);
+ 		up_write(&mm->mmap_sem);
+ 	}
+ }
+diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
+index 16543d5e80c3..602387bf98e7 100644
+--- a/drivers/infiniband/hw/qib/qib_user_pages.c
++++ b/drivers/infiniband/hw/qib/qib_user_pages.c
+@@ -75,7 +75,7 @@ static int __qib_get_user_pages(unsigned long start_page, size_t num_pages,
+ 			goto bail_release;
+ 	}
+ 
+-	current->mm->pinned_vm += num_pages;
++	atomic64_add(num_pages, &current->mm->pinned_vm);
+ 
+ 	ret = 0;
+ 	goto bail;
+@@ -156,7 +156,7 @@ void qib_release_user_pages(struct page **p, size_t num_pages)
+ 	__qib_release_user_pages(p, num_pages, 1);
+ 
+ 	if (current->mm) {
+-		current->mm->pinned_vm -= num_pages;
++		atomic64_sub(num_pages, &current->mm->pinned_vm);
+ 		up_write(&current->mm->mmap_sem);
+ 	}
+ }
+diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
+index ce01a59fccc4..854436a2b437 100644
+--- a/drivers/infiniband/hw/usnic/usnic_uiom.c
++++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
+@@ -129,7 +129,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
+ 	uiomr->owning_mm = mm = current->mm;
+ 	down_write(&mm->mmap_sem);
+ 
+-	locked = npages + current->mm->pinned_vm;
++	locked = npages + atomic64_read(&current->mm->pinned_vm);
+ 	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+ 
+ 	if ((locked > lock_limit) && !capable(CAP_IPC_LOCK)) {
+@@ -187,7 +187,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
+ 	if (ret < 0)
+ 		usnic_uiom_put_pages(chunk_list, 0);
+ 	else {
+-		mm->pinned_vm = locked;
++		atomic64_set(&mm->pinned_vm, locked);
+ 		mmgrab(uiomr->owning_mm);
+ 	}
+ 
+@@ -441,7 +441,7 @@ static void usnic_uiom_release_defer(struct work_struct *work)
+ 		container_of(work, struct usnic_uiom_reg, work);
+ 
+ 	down_write(&uiomr->owning_mm->mmap_sem);
+-	uiomr->owning_mm->pinned_vm -= usnic_uiom_num_pages(uiomr);
++	atomic64_sub(usnic_uiom_num_pages(uiomr), &uiomr->owning_mm->pinned_vm);
+ 	up_write(&uiomr->owning_mm->mmap_sem);
+ 
+ 	__usnic_uiom_release_tail(uiomr);
+@@ -469,7 +469,7 @@ void usnic_uiom_reg_release(struct usnic_uiom_reg *uiomr,
+ 	} else {
+ 		down_write(&uiomr->owning_mm->mmap_sem);
+ 	}
+-	uiomr->owning_mm->pinned_vm -= usnic_uiom_num_pages(uiomr);
++	atomic64_sub(usnic_uiom_num_pages(uiomr), &uiomr->owning_mm->pinned_vm);
+ 	up_write(&uiomr->owning_mm->mmap_sem);
+ 
+ 	__usnic_uiom_release_tail(uiomr);
+diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+index 749321eb91ae..2448368f181e 100644
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -285,7 +285,7 @@ __scif_dec_pinned_vm_lock(struct mm_struct *mm,
+ 	} else {
+ 		down_write(&mm->mmap_sem);
+ 	}
+-	mm->pinned_vm -= nr_pages;
++	atomic64_sub(nr_pages, &mm->pinned_vm);
+ 	up_write(&mm->mmap_sem);
+ 	return 0;
+ }
+@@ -299,7 +299,7 @@ static inline int __scif_check_inc_pinned_vm(struct mm_struct *mm,
+ 		return 0;
+ 
+ 	locked = nr_pages;
+-	locked += mm->pinned_vm;
++	locked += atomic64_read(&mm->pinned_vm);
+ 	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+ 	if ((locked > lock_limit) && !capable(CAP_IPC_LOCK)) {
+ 		dev_err(scif_info.mdev.this_device,
+@@ -307,7 +307,7 @@ static inline int __scif_check_inc_pinned_vm(struct mm_struct *mm,
+ 			locked, lock_limit);
+ 		return -ENOMEM;
+ 	}
+-	mm->pinned_vm = locked;
++	atomic64_set(&mm->pinned_vm, locked);
  	return 0;
  }
  
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 6976e17dba68..640ae8a47c73 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -59,7 +59,7 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+ 	SEQ_PUT_DEC("VmPeak:\t", hiwater_vm);
+ 	SEQ_PUT_DEC(" kB\nVmSize:\t", total_vm);
+ 	SEQ_PUT_DEC(" kB\nVmLck:\t", mm->locked_vm);
+-	SEQ_PUT_DEC(" kB\nVmPin:\t", mm->pinned_vm);
++	SEQ_PUT_DEC(" kB\nVmPin:\t", atomic64_read(&mm->pinned_vm));
+ 	SEQ_PUT_DEC(" kB\nVmHWM:\t", hiwater_rss);
+ 	SEQ_PUT_DEC(" kB\nVmRSS:\t", total_rss);
+ 	SEQ_PUT_DEC(" kB\nRssAnon:\t", anon);
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 6312b02d65ed..0c8be6f9c92d 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -404,7 +404,7 @@ struct mm_struct {
  
-> Rob
-> 
-
+ 		unsigned long total_vm;	   /* Total pages mapped */
+ 		unsigned long locked_vm;   /* Pages that have PG_mlocked set */
+-		unsigned long pinned_vm;   /* Refcount permanently increased */
++		atomic64_t    pinned_vm;   /* Refcount permanently increased */
+ 		unsigned long data_vm;	   /* VM_WRITE & ~VM_SHARED & ~VM_STACK */
+ 		unsigned long exec_vm;	   /* VM_EXEC & ~VM_WRITE & ~VM_STACK */
+ 		unsigned long stack_vm;	   /* VM_STACK */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3cd13a30f732..8df0b77a4687 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5459,7 +5459,7 @@ static void perf_mmap_close(struct vm_area_struct *vma)
+ 
+ 		/* now it's safe to free the pages */
+ 		atomic_long_sub(rb->aux_nr_pages, &mmap_user->locked_vm);
+-		vma->vm_mm->pinned_vm -= rb->aux_mmap_locked;
++		atomic64_sub(rb->aux_mmap_locked, &vma->vm_mm->pinned_vm);
+ 
+ 		/* this has to be the last one */
+ 		rb_free_aux(rb);
+@@ -5532,7 +5532,7 @@ static void perf_mmap_close(struct vm_area_struct *vma)
+ 	 */
+ 
+ 	atomic_long_sub((size >> PAGE_SHIFT) + 1, &mmap_user->locked_vm);
+-	vma->vm_mm->pinned_vm -= mmap_locked;
++	atomic64_sub(mmap_locked, &vma->vm_mm->pinned_vm);
+ 	free_uid(mmap_user);
+ 
+ out_put:
+@@ -5680,7 +5680,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+ 
+ 	lock_limit = rlimit(RLIMIT_MEMLOCK);
+ 	lock_limit >>= PAGE_SHIFT;
+-	locked = vma->vm_mm->pinned_vm + extra;
++	locked = atomic64_read(&vma->vm_mm->pinned_vm) + extra;
+ 
+ 	if ((locked > lock_limit) && perf_paranoid_tracepoint_raw() &&
+ 		!capable(CAP_IPC_LOCK)) {
+@@ -5721,7 +5721,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+ unlock:
+ 	if (!ret) {
+ 		atomic_long_add(user_extra, &user->locked_vm);
+-		vma->vm_mm->pinned_vm += extra;
++		atomic64_add(extra, &vma->vm_mm->pinned_vm);
+ 
+ 		atomic_inc(&event->mmap_count);
+ 	} else if (rb) {
+diff --git a/kernel/fork.c b/kernel/fork.c
+index c48e9e244a89..a68de9032ced 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -981,7 +981,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+ 	mm_pgtables_bytes_init(mm);
+ 	mm->map_count = 0;
+ 	mm->locked_vm = 0;
+-	mm->pinned_vm = 0;
++	atomic64_set(&mm->pinned_vm, 0);
+ 	memset(&mm->rss_stat, 0, sizeof(mm->rss_stat));
+ 	spin_lock_init(&mm->page_table_lock);
+ 	spin_lock_init(&mm->arg_lock);
+diff --git a/mm/debug.c b/mm/debug.c
+index 0abb987dad9b..bcf70e365a77 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -166,7 +166,8 @@ void dump_mm(const struct mm_struct *mm)
+ 		mm_pgtables_bytes(mm),
+ 		mm->map_count,
+ 		mm->hiwater_rss, mm->hiwater_vm, mm->total_vm, mm->locked_vm,
+-		mm->pinned_vm, mm->data_vm, mm->exec_vm, mm->stack_vm,
++		atomic64_read(&mm->pinned_vm),
++		mm->data_vm, mm->exec_vm, mm->stack_vm,
+ 		mm->start_code, mm->end_code, mm->start_data, mm->end_data,
+ 		mm->start_brk, mm->brk, mm->start_stack,
+ 		mm->arg_start, mm->arg_end, mm->env_start, mm->env_end,
 -- 
-Sincerely yours,
-Mike.
+2.16.4
 
