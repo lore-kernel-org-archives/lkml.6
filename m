@@ -2,321 +2,201 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F3FC282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6453C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E29D520823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C792084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:11:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QkBeIhYg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfAUILd (ORCPT
+        id S1728744AbfAUILp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:11:33 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32830 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727137AbfAUILd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:11:33 -0500
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id B33AF7609158E95A7EFA;
-        Mon, 21 Jan 2019 08:11:31 +0000 (GMT)
-Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 21 Jan
- 2019 08:11:25 +0000
-Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest structures
- to tpm_pcr_extend()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        "Matthew Garrett" <matthewgarrett@google.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-6-roberto.sassu@huawei.com>
- <20181220152122.GB10652@linux.intel.com>
- <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
- <20190118151253.GH4080@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <a4728854-b326-2575-9d22-85566e75869f@huawei.com>
-Date:   Mon, 21 Jan 2019 09:11:21 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 21 Jan 2019 03:11:45 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43108 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbfAUILp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:11:45 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0L5k5Vs045886;
+        Sun, 20 Jan 2019 23:46:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548049565;
+        bh=fJ+3K0FzBt7yJEByNGvfREYMrBKYn44IKqiRvYxCScY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=QkBeIhYgDsy9/JVjyiVAfix9yNvToDYK0ZrRrhjRWkydOrxB6r11cQXn+DcVRJCpP
+         QfIN5rJL+jm11NXnpH4qxPO3Yn3dMRo/pXlHT4WvliwkXCuDEyvMknl2DPotedcMKf
+         Y2apO8OxK6yrbo1+Qm1ZbdAvgJEVxRFJ0hiun/DI=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0L5k536033692
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 20 Jan 2019 23:46:05 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 20
+ Jan 2019 23:46:04 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Sun, 20 Jan 2019 23:46:04 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0L5k1Xn001534;
+        Sun, 20 Jan 2019 23:46:02 -0600
+Subject: Re: [PATCH v5 2/2] phy: zynqmp: Add phy driver for xilinx zynqmp phy
+ core
+To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>
+CC:     Michal Simek <michals@xilinx.com>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
+        sundeep subbaraya <sundeep.lkml@gmail.com>,
+        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <1545140733-20689-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <1545140733-20689-3-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <b521679a-0c79-44b1-8a2b-1f3391a362ae@ti.com>
+ <BYAPR02MB5591E4BF4C547C3E29D9CF8AA7830@BYAPR02MB5591.namprd02.prod.outlook.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <6f0c2f35-f6cd-88ec-32b9-9be247fab4e5@ti.com>
+Date:   Mon, 21 Jan 2019 11:15:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190118151253.GH4080@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <BYAPR02MB5591E4BF4C547C3E29D9CF8AA7830@BYAPR02MB5591.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.149]
-X-CFilter-Loop: Reflected
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/2019 4:12 PM, Jarkko Sakkinen wrote:
-> On Thu, Jan 17, 2019 at 08:59:00AM +0100, Roberto Sassu wrote:
->> On 12/20/2018 4:21 PM, Jarkko Sakkinen wrote:
->>> On Thu, Dec 13, 2018 at 11:29:45AM +0100, Roberto Sassu wrote:
->>>> Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
->>>>
->>>> This patch modifies the definition of tpm_pcr_extend() to allow other
->>>> kernel subsystems to pass a digest for each algorithm supported by the TPM.
->>>> All digests are processed by the TPM in one operation.
->>>>
->>>> If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
->>>> the TPM driver extends the remaining PCR banks with the first digest
->>>> passed as an argument to the function.
->>>>
->>>> The new tpm_extend digest structure has been preferred to the tpm_digest
->>>> structure, to let the caller specify the size of the digest (which may be
->>>> unknown to the TPM driver).
->>>>
->>>> Due to the API change, ima_pcr_extend() and pcrlock() have been modified.
->>>>
->>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>> ---
->>>>    drivers/char/tpm/tpm-interface.c   | 24 +++++---------------
->>>>    drivers/char/tpm/tpm.h             |  5 +++--
->>>>    drivers/char/tpm/tpm1-cmd.c        | 13 ++++++++---
->>>>    drivers/char/tpm/tpm2-cmd.c        | 35 +++++++++++++++++++++---------
->>>>    include/linux/tpm.h                | 13 ++++++++---
->>>>    security/integrity/ima/ima_queue.c |  5 ++++-
->>>>    security/keys/trusted.c            |  5 ++++-
->>>>    7 files changed, 62 insertions(+), 38 deletions(-)
->>>>
->>>> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->>>> index eb7c79ca8a94..911fea19e408 100644
->>>> --- a/drivers/char/tpm/tpm-interface.c
->>>> +++ b/drivers/char/tpm/tpm-interface.c
->>>> @@ -478,42 +478,30 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->>>>     * tpm_pcr_extend - extend a PCR value in SHA1 bank.
->>>>     * @chip:	a &struct tpm_chip instance, %NULL for the default chip
->>>>     * @pcr_idx:	the PCR to be retrieved
->>>> - * @hash:	the hash value used to extend the PCR value
->>>> + * @count:	number of tpm_extend_digest structures
->>>> + * @digests:	array of tpm_extend_digest structures used to extend PCRs
->>>>     *
->>>>     * Note: with TPM 2.0 extends also those banks for which no digest was
->>>>     * specified in order to prevent malicious use of those PCR banks.
->>>>     *
->>>>     * Return: same as with tpm_transmit_cmd()
->>>>     */
->>>> -int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->>>> +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->>>> +		   const struct tpm_extend_digest *digests)
->>>
->>> Remove const. Document how @digests is used  like the special meaning
->>> of the first index. I faintly remember asking this last time.
->>>
->>>>    {
->>>>    	int rc;
->>>> -	struct tpm_digest *digest_list;
->>>> -	int i;
->>>>    	chip = tpm_find_get_ops(chip);
->>>>    	if (!chip)
->>>>    		return -ENODEV;
->>>>    	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->>>> -		digest_list = kcalloc(chip->nr_allocated_banks,
->>>> -				      sizeof(*digest_list), GFP_KERNEL);
->>>> -		if (!digest_list)
->>>> -			return -ENOMEM;
->>>> -
->>>> -		for (i = 0; i < chip->nr_allocated_banks; i++) {
->>>> -			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
->>>> -			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
->>>> -		}
->>>> -
->>>> -		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
->>>> -				     digest_list);
->>>> -		kfree(digest_list);
->>>> +		rc = tpm2_pcr_extend(chip, pcr_idx, count, digests);
->>>>    		tpm_put_ops(chip);
->>>>    		return rc;
->>>>    	}
->>>> -	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
->>>> +	rc = tpm1_pcr_extend(chip, pcr_idx, count, digests,
->>>>    			     "attempting extend a PCR value");
->>>
->>> The validation is missing that the provided array has only one element
->>> and the algorithm is SHA1. Could be done also inside tpm1_pcr_extend()
->>> but what you are doing to that function does not make any sense so
->>> better to do it here.
->>>
->>>>    	tpm_put_ops(chip);
->>>>    	return rc;
->>>> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->>>> index 64d93d26087f..6b446504d2fe 100644
->>>> --- a/drivers/char/tpm/tpm.h
->>>> +++ b/drivers/char/tpm/tpm.h
->>>> @@ -504,7 +504,8 @@ int tpm1_auto_startup(struct tpm_chip *chip);
->>>>    int tpm1_do_selftest(struct tpm_chip *chip);
->>>>    int tpm1_get_timeouts(struct tpm_chip *chip);
->>>>    unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
->>>> -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
->>>> +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->>>> +		    const struct tpm_extend_digest *digests,
->>>>    		    const char *log_msg);
->>>>    int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
->>>>    ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
->>>> @@ -551,7 +552,7 @@ int tpm2_get_timeouts(struct tpm_chip *chip);
->>>>    int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
->>>>    		  struct tpm_digest *digest, u16 *digest_size_ptr);
->>>>    int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->>>> -		    struct tpm_digest *digests);
->>>> +		    const struct tpm_extend_digest *digests);
->>>>    int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
->>>>    void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
->>>>    			    unsigned int flags);
->>>> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
->>>> index 8b70a7f884a7..04ee10284b8c 100644
->>>> --- a/drivers/char/tpm/tpm1-cmd.c
->>>> +++ b/drivers/char/tpm/tpm1-cmd.c
->>>> @@ -449,12 +449,20 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
->>>>    }
->>>>    #define TPM_ORD_PCR_EXTEND 20
->>>> -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
->>>> +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->>>> +		    const struct tpm_extend_digest *digests,
->>>>    		    const char *log_msg)
->>>>    {
->>>>    	struct tpm_buf buf;
->>>> +	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
->>>> +	const u8 *hash;
->>>>    	int rc;
->>>> +	hash = dummy_hash;
->>>> +	if (count)
->>>> +		memcpy(dummy_hash, digests[0].data,
->>>> +		       min(digests[0].size, (u16)sizeof(dummy_hash)));
->>>> +
->>>
->>> You copy memory from one place to another without any good reason to do
->>> so. My suggestion is just not to change tpm1_pcr_extend() at all.
->>>
->>>>    	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
->>>>    	if (rc)
->>>>    		return rc;
->>>> @@ -743,7 +751,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
->>>>     */
->>>>    int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
->>>>    {
->>>> -	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
->>>>    	struct tpm_buf buf;
->>>>    	unsigned int try;
->>>>    	int rc;
->>>> @@ -751,7 +758,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
->>>>    	/* for buggy tpm, flush pcrs with extend to selected dummy */
->>>>    	if (tpm_suspend_pcr)
->>>> -		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
->>>> +		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, 0, NULL,
->>>>    				     "extending dummy pcr before suspend");
->>>>    	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
->>>> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->>>> index 6ce5173cf0e5..77b5808270c6 100644
->>>> --- a/drivers/char/tpm/tpm2-cmd.c
->>>> +++ b/drivers/char/tpm/tpm2-cmd.c
->>>> @@ -247,21 +247,22 @@ struct tpm2_null_auth_area {
->>>>     *
->>>>     * @chip:	TPM chip to use.
->>>>     * @pcr_idx:	index of the PCR.
->>>> - * @count:	number of digests passed.
->>>> - * @digests:	list of pcr banks and corresponding digest values to extend.
->>>> + * @count:	number of tpm_extend_digest passed.
->>>> + * @digests:	array of tpm_extend_digest with digest values to extend.
->>>>     *
->>>>     * Return: Same as with tpm_transmit_cmd.
->>>>     */
->>>
->>> The documentation about @digests.
->>>
->>>>    int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->>>> -		    struct tpm_digest *digests)
->>>> +		    const struct tpm_extend_digest *digests)
->>>>    {
->>>>    	struct tpm_buf buf;
->>>>    	struct tpm2_null_auth_area auth_area;
->>>> +	const struct tpm_extend_digest *digest;
->>>> +	u8 dummy_hash[SHA512_DIGEST_SIZE] = { 0 };
->>>> +	const u8 *hash;
->>>>    	int rc;
->>>>    	int i;
->>>> -
->>>> -	if (count > chip->nr_allocated_banks)
->>>> -		return -EINVAL;
->>>> +	int j;
->>>>    	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
->>>>    	if (rc)
->>>> @@ -277,11 +278,25 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->>>>    	tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
->>>>    	tpm_buf_append(&buf, (const unsigned char *)&auth_area,
->>>>    		       sizeof(auth_area));
->>>> -	tpm_buf_append_u32(&buf, count);
->>>> +	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
->>>> +
->>>> +	if (count)
->>>> +		memcpy(dummy_hash, digests[0].data, digests[0].size);
->>>> +
->>>> +	for (i = 0; i < chip->nr_allocated_banks; i++) {
->>>> +		tpm_buf_append_u16(&buf, chip->allocated_banks[i].alg_id);
->>>> +
->>>> +		hash = dummy_hash;
->>>> +		for (j = 0; j < count; j++) {
->>>> +			digest = digests + j;
->>>> +
->>>> +			if (digest->alg_id == chip->allocated_banks[i].alg_id) {
->>>> +				hash = digest->data;
->>>> +				break;
->>>
->>> I think the whole design is just wrong. I did re-read your response to
->>> v6 again and I'm very sorry, but I just don't get this. Caller has all
->>> the information (from struct tpm_chip) to give the correct data. This
->>> function should validate that data (check algorithm ID and that's it).
+Hi Anurag,
+
+On 17/01/19 9:39 PM, Anurag Kumar Vulisha wrote:
+> Hi Kishon,
+> 
+>> -----Original Message-----
+>> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
+>> Sent: Wednesday, January 16, 2019 1:38 PM
+>> To: Anurag Kumar Vulisha <anuragku@xilinx.com>; robh+dt@kernel.org; Mark
+>> Rutland <mark.rutland@arm.com>; vivek.gautam@codeaurora.org
+>> Cc: Michal Simek <michals@xilinx.com>; v.anuragkumar@gmail.com; sundeep
+>> subbaraya <sundeep.lkml@gmail.com>; Ajay Yugalkishore Pandey
+>> <APANDEY@xilinx.com>; linux-kernel@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org; devicetree@vger.kernel.org
+>> Subject: Re: [PATCH v5 2/2] phy: zynqmp: Add phy driver for xilinx zynqmp phy core
 >>
->> The question is if checking tpm->allocated_banks is a strict
->> requirement, or we can allow callers to use the algorithm they are
->> currently using, without further modifications.
-> 
-> If you want to know what is available, you can use that array.
-> 
->>> Extending with the dummy hash should be done by the caller when
->>> preparing the array, not baked into this function. This kind of also
->>> makes obvious that we don't need this new struct. There should never be
->>> a local variable (whose size is BTW randomly chosen) called dummy_hash.
+>> Hi,
 >>
->> This means duplicating the code for each caller. Currently, this work is
->> done by the TPM driver.
+>> On 18/12/18 7:15 PM, Anurag Kumar Vulisha wrote:
+>>> ZynqMP SoC has a Gigabit Transceiver with four lanes. All the high
+>>> speed peripherals such as USB, SATA, PCIE, Display Port and Ethernet
+>>> SGMII can rely on any of the four GT lanes for PHY layer. This patch
+>>> adds driver for that ZynqMP GT core.
+>>>
+>>> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+>>> ---
+>>> Changes in v5:
+>>> 	1. No functional changes. Added missing Author name
+>>>
+>>> Changes in v4:
+>>> 	1. Moved include/dt-bindings/phy/phy.h into patch 1 as suggested by
+>>> 	   "Rob Herring"
+>>>
+>>> Changes in v3:
+>>> 	1. Corrected the Documentation as suggested by "Vivek Gautam"
+>>>
+>>> Changes in v2:
+>>> 	1. Fixed the compilation error when compiled phy-zynqmp.c as a module
+>>> 	2. Added CONFIG_PM macro in phy-zynqmp.c driver
+>>> ---
+>>>  drivers/phy/Kconfig            |    8 +
+>>>  drivers/phy/Makefile           |    1 +
+>>>  drivers/phy/phy-zynqmp.c       | 1582
+>> ++++++++++++++++++++++++++++++++++++++++
+>>>  include/linux/phy/phy-zynqmp.h |   52 ++
+>>>  4 files changed, 1643 insertions(+)
+>>>  create mode 100644 drivers/phy/phy-zynqmp.c  create mode 100644
+>>> include/linux/phy/phy-zynqmp.h
+>>>
+>>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig index
+>>> 60f949e..7a3c900 100644
+>>> --- a/drivers/phy/Kconfig
+>>> +++ b/drivers/phy/Kconfig
+>>> @@ -40,6 +40,14 @@ config PHY_XGENE
+>>>  	help
+>>>  	  This option enables support for APM X-Gene SoC multi-purpose PHY.
+>>>
+>>> +config PHY_XILINX_ZYNQMP
+>>> +	tristate "Xilinx ZynqMP PHY driver"
+>>> +	depends on ARCH_ZYNQMP
+>>> +	select GENERIC_PHY
+>>> +	help
+>>> +	  Enable this to support ZynqMP High Speed Gigabit Transceiver
+>>> +	  that is part of ZynqMP SoC.
+>>> +
+>>>  source "drivers/phy/allwinner/Kconfig"
+>>>  source "drivers/phy/amlogic/Kconfig"
+>>>  source "drivers/phy/broadcom/Kconfig"
+>>> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile index
+>>> 0301e25..2335e85 100644
+>>> --- a/drivers/phy/Makefile
+>>> +++ b/drivers/phy/Makefile
+>>> +/**
+>>> +
+>>> +/**
+>>> + * xpsgtr_override_deemph - override PIPE TX de-emphasis
+>>> + * @phy: pointer to phy
+>>> + * @plvl: pre-emphasis level
+>>> + * @vlvl: voltage swing level
+>>> + *
+>>> + * Return: None
+>>> + */
+>>> +void xpsgtr_override_deemph(struct phy *phy, u8 plvl, u8 vlvl) {
+>>> +	struct xpsgtr_phy *gtr_phy = phy_get_drvdata(phy);
+>>> +	struct xpsgtr_dev *gtr_dev = gtr_phy->data;
+>>> +	static u8 pe[4][4] = { { 0x2, 0x2, 0x2, 0x2 },
+>>> +			       { 0x1, 0x1, 0x1, 0xFF },
+>>> +			       { 0x0, 0x0, 0xFF, 0xFF },
+>>> +			       { 0xFF, 0xFF, 0xFF, 0xFF } };
+>>> +
+>>> +	writel(pe[plvl][vlvl],
+>>> +	       gtr_dev->serdes + gtr_phy->lane * L0_TX_ANA_TM_18_OFFSET +
+>>> +	       L0_TX_ANA_TM_18);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(xpsgtr_override_deemph);
+>>
+>> I thought I gave a feedback to get rid of export symbol. This will make the consumer
+>> driver tied to this PHY driver.
+>>
 > 
-> It is better than fix the usage pattern like this. Not only that, but
-> this somewhat complicated behavior now completely undocumented in the
-> function description.
+> Thanks a lot for spending your time in reviewing this patch. With the current implementation,
+> if phy-zynqmp.c driver is not compiled and consumer driver calls xpsgtr_override_deemph()
+> routine, static inline function in phy-zynqmp.h gets called and error -ENODEV is returned. So,
+> with the current implementation the consumer driver is already depending on phy-zynqmp.c
+> driver. Please correct me if  my understanding is wrong
+
+If the same consumer is used with 5 different PHYs, we would be adding 5
+different APIs for PHY functionality. We would also like to avoid the compiling
+out option if we use something like a multi_v7_defconfig where a single image
+is used for multiple platforms.
+
+Thanks
+Kishon
+
 > 
-> You are making strong assumptions how some other subsystem might use
-> extend operation. I will rather accept redundancy and consider
-> consolidation later when there are two clients. Rather keep the TPM
-> provided function simple and stupid.
-
-Ok, if I understood it correctly, every caller of tpm_pcr_extend() will 
-pass an array of tpm_digest structures.
-
-I will not introduce a new structure, as the caller has to use
-algorithms from chip->allocated_banks and passing the digest size is not
-necessary.
-
-tpm_pcr_extend() will reject incomplete arrays (one or more algorithms
-are missing). To simplify even more tpm_pcr_extend(), I assume and check
-that passed algorithms are in the same order as those in
-chip->allocated_banks.
-
-I will remove the 'count' parameter from tpm_pcr_extend(), as the number
-of tpm_digest structures will be always chip->nr_allocated_banks.
-
-Roberto
-
-
-> /Jarkko
+> Best Regards,
+> Anurag Kumar Vulisha
 > 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
