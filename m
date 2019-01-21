@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D059DC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71920C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A13792089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42CF920989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079531;
-	bh=qO4hrlfJeRROVq4QeOaayvUXPtCNXiyUW+7J75zUQdw=;
+	s=default; t=1548079539;
+	bh=9G4wA0261+V50vaxRwCUIJsVvAKQJLWambaTq0ElsDg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YmxoZnyqHVQODzKVbWIW3MJbj9c6ZiFWH/zLflLqrsDahePogodLobat/gHMQ2TLF
-	 7VHbInpEizHF5sei4kKrHnR8uHgjc4yeGHy3wiG4tap2QqZJdc7UWu0FdVSqUNfgWk
-	 0Dx/k83Kh8bxHv2qvW3oD9vWvGInCss04e4qIdrc=
+	b=1p/aLYlwORS5he9Ke2vJ4tvWXveYfKefnIsj2h4A+7Bw0LDaeIEgOsdSgUhvRpJTw
+	 fzRtZFybbvjc/LFw96y1wUzeH8voohaFZMbcBesivVboHz26TB6d40s8b8lCv7PE44
+	 zCBYhZpFCNYVqS0ssG5GQGBKwEuPoN7fe45bdk3A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732586AbfAUOBL (ORCPT
+        id S1732563AbfAUOBE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48062 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732545AbfAUOBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:08 -0500
+        id S1732099AbfAUOBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E2162084C;
-        Mon, 21 Jan 2019 14:01:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA5F02084C;
+        Mon, 21 Jan 2019 14:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079267;
-        bh=qO4hrlfJeRROVq4QeOaayvUXPtCNXiyUW+7J75zUQdw=;
+        s=default; t=1548079261;
+        bh=9G4wA0261+V50vaxRwCUIJsVvAKQJLWambaTq0ElsDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HyAaGz4V8s9q6qAgfpu+BGkZM+SSPUgdyZOGxWgF5+6Y6IPY8Lnr3emLgTvciLfdt
-         NERWEuesskyTtsocus4v1UlO1wEYMUZTL4G5m0dp1EN3x3BnoEZcKwMzXK2jbrQfqO
-         yKVM7rV9MIAcuyn1NnSFiQh7m6FJXHe+vNzXfP3w=
+        b=kcKy6GMbr7T3aTMJOXsS4crdOxJXVzOsmoW9maJmf5Fb0G/QyfBOV8Yg6zPqY/dtb
+         6nV1RfVGo7NEHhsrkSv2s+uEAFbuNLY+jNk9/I74XWUzqXMW/PZc39jGKa2leefgrr
+         WwPurbFuph5jsDna3htVuEvGIRCKAGqBo9r60lpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Piotr Sawicki <p.sawicki2@partner.samsung.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 65/99] ipv6: make icmp6_send() robust against null skb->dev
-Date:   Mon, 21 Jan 2019 14:48:57 +0100
-Message-Id: <20190121134916.434406493@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 63/99] media: vivid: set min width/height to a value > 0
+Date:   Mon, 21 Jan 2019 14:48:55 +0100
+Message-Id: <20190121134916.365872390@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -68,81 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 8d933670452107e41165bea70a30dffbd281bef1 upstream.
+commit 9729d6d282a6d7ce88e64c9119cecdf79edf4e88 upstream.
 
-syzbot was able to crash one host with the following stack trace :
+The capture DV timings capabilities allowed for a minimum width and
+height of 0. So passing a timings struct with 0 values is allowed
+and will later cause a division by zero.
 
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8625 Comm: syz-executor4 Not tainted 4.20.0+ #8
-RIP: 0010:dev_net include/linux/netdevice.h:2169 [inline]
-RIP: 0010:icmp6_send+0x116/0x2d30 net/ipv6/icmp.c:426
- icmpv6_send
- smack_socket_sock_rcv_skb
- security_sock_rcv_skb
- sk_filter_trim_cap
- __sk_receive_skb
- dccp_v6_do_rcv
- release_sock
+Ensure that the width and height must be >= 16 to avoid this.
 
-This is because a RX packet found socket owned by user and
-was stored into socket backlog. Before leaving RCU protected section,
-skb->dev was cleared in __sk_receive_skb(). When socket backlog
-was finally handled at release_sock() time, skb was fed to
-smack_socket_sock_rcv_skb() then icmp6_send()
-
-We could fix the bug in smack_socket_sock_rcv_skb(), or simply
-make icmp6_send() more robust against such possibility.
-
-In the future we might provide to icmp6_send() the net pointer
-instead of infering it.
-
-Fixes: d66a8acbda92 ("Smack: Inform peer that IPv6 traffic has been blocked")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Piotr Sawicki <p.sawicki2@partner.samsung.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reported-by: syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv6/icmp.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/media/platform/vivid/vivid-vid-common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/icmp.c
-+++ b/net/ipv6/icmp.c
-@@ -421,10 +421,10 @@ static int icmp6_iif(const struct sk_buf
- static void icmp6_send(struct sk_buff *skb, u8 type, u8 code, __u32 info,
- 		       const struct in6_addr *force_saddr)
- {
--	struct net *net = dev_net(skb->dev);
- 	struct inet6_dev *idev = NULL;
- 	struct ipv6hdr *hdr = ipv6_hdr(skb);
- 	struct sock *sk;
-+	struct net *net;
- 	struct ipv6_pinfo *np;
- 	const struct in6_addr *saddr = NULL;
- 	struct dst_entry *dst;
-@@ -435,12 +435,16 @@ static void icmp6_send(struct sk_buff *s
- 	int iif = 0;
- 	int addr_type = 0;
- 	int len;
--	u32 mark = IP6_REPLY_MARK(net, skb->mark);
-+	u32 mark;
- 
- 	if ((u8 *)hdr < skb->head ||
- 	    (skb_network_header(skb) + sizeof(*hdr)) > skb_tail_pointer(skb))
- 		return;
- 
-+	if (!skb->dev)
-+		return;
-+	net = dev_net(skb->dev);
-+	mark = IP6_REPLY_MARK(net, skb->mark);
- 	/*
- 	 *	Make sure we respect the rules
- 	 *	i.e. RFC 1885 2.4(e)
+--- a/drivers/media/platform/vivid/vivid-vid-common.c
++++ b/drivers/media/platform/vivid/vivid-vid-common.c
+@@ -21,7 +21,7 @@ const struct v4l2_dv_timings_cap vivid_d
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, MAX_WIDTH, 0, MAX_HEIGHT, 14000000, 775000000,
++	V4L2_INIT_BT_TIMINGS(16, MAX_WIDTH, 16, MAX_HEIGHT, 14000000, 775000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 		V4L2_DV_BT_STD_CVT | V4L2_DV_BT_STD_GTF,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_INTERLACED)
 
 
