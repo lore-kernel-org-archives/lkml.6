@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD35C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D743C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22F1D20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F09EB20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078511;
-	bh=e2Q79qmfSoPszl37lDfrbfGqxYpAW776ofdsQIIZbzw=;
+	s=default; t=1548078516;
+	bh=isJkATP3SMeMWgxgsMnqADB2Ji1BP6PSW0gFqdoEeQQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=03kU8xzZEeuL8Kl8VNbIE8SA2tab67kXp42DDXOttFlQRLRUqFP8SSNYSIuD34FKY
-	 zRcelAqJg1ZEo7nHX3HdNYRJ7gJTXFJxtF/9INp4WcUzwT3IZE5v91EcUYL6J06Hin
-	 aUeRpm6P9hSDWRhqmh8xMP+j5GK2nN4hB6bCpypg=
+	b=0KyunUK0phZomEKv8YsNErV9TKait2isW8nuWLS3eVCvcS4jL+EKNyIazX1YXpwA8
+	 CLZgwuBpbyzRDVnkCdlSy94RqlDRnTQGBo85Tk1TN/kx/uBwAnZ53gefNc+qYIuA7T
+	 +Sg320V3cd9iaJ0Ge7I62Wxm9FigRBDbB6YZOKhQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbfAUNs3 (ORCPT
+        id S1729974AbfAUNse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:48:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58354 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:48:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729948AbfAUNs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:48:26 -0500
+        id S1729956AbfAUNs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:48:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C75F12063F;
-        Mon, 21 Jan 2019 13:48:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 667792087F;
+        Mon, 21 Jan 2019 13:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078505;
-        bh=e2Q79qmfSoPszl37lDfrbfGqxYpAW776ofdsQIIZbzw=;
+        s=default; t=1548078507;
+        bh=isJkATP3SMeMWgxgsMnqADB2Ji1BP6PSW0gFqdoEeQQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S5a0ZdWxJcY+KyyRXi52bq5rsvv22B+uipFFtaohFB93c5U2gBq/LO2cx5xzte+WA
-         Ltq3fxgt6O1ATeC519RbjS/RyAMbLFDnxsNZOzVDk7NOi9qcGKsnJI04xcyrVa7ogG
-         JJWNakV7LZAvwjA3cZ3i7VelMHYYcvcRByAlTC88=
+        b=ihjFIwn++dLNFebiD1XTvtok7dRtSq37BIK7uFlmBA8WzXGF5gOWVkb89BSGuUMGD
+         4iASeNciU//BNplnbgny+AGftp3ArHDIVH3+I7SuBhi/OpD0WLZouHee8EBbHWIS+w
+         ZHzldaIwoBcUP5ecGtMGE0E8XbiQfZFYGNE2iFvM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.20 056/111] media: v4l: ioctl: Validate num_planes for debug messages
-Date:   Mon, 21 Jan 2019 14:42:50 +0100
-Message-Id: <20190121122502.043630494@linuxfoundation.org>
+Subject: [PATCH 4.20 057/111] media: vim2m: only cancel work if it is for right context
+Date:   Mon, 21 Jan 2019 14:42:51 +0100
+Message-Id: <20190121122502.138942878@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -68,45 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-commit 7fe9f01c04c2673bd6662c35b664f0f91888b96f upstream.
+commit 240809ef6630a4ce57c273c2d79ffb657cd361eb upstream.
 
-The num_planes field in struct v4l2_pix_format_mplane is used in a loop
-before validating it. As the use is printing a debug message in this case,
-just cap the value to the maximum allowed.
+cancel_delayed_work_sync() was called for any queue, but it should only
+be called for the queue that is associated with the currently running job.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Otherwise, if two filehandles are streaming at the same time, then closing the
+first will cancel the work which might still be running for a job from the
+second filehandle. As a result the second filehandle will never be able to
+finish the job and an attempt to stop streaming on that second filehandle will
+stall.
+
+Fixes: 52117be68b82 ("media: vim2m: use cancel_delayed_work_sync instead of flush_schedule_work")
+
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: <stable@vger.kernel.org>      # for v4.12 and up
+Cc: <stable@vger.kernel.org>      # for v4.20 and up
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c |    4 +++-
+ drivers/media/platform/vim2m.c |    4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -286,6 +286,7 @@ static void v4l_print_format(const void
- 	const struct v4l2_window *win;
- 	const struct v4l2_sdr_format *sdr;
- 	const struct v4l2_meta_format *meta;
-+	u32 planes;
- 	unsigned i;
+--- a/drivers/media/platform/vim2m.c
++++ b/drivers/media/platform/vim2m.c
+@@ -809,7 +809,9 @@ static void vim2m_stop_streaming(struct
+ 	struct vb2_v4l2_buffer *vbuf;
+ 	unsigned long flags;
  
- 	pr_cont("type=%s", prt_names(p->type, v4l2_type_names));
-@@ -316,7 +317,8 @@ static void v4l_print_format(const void
- 			prt_names(mp->field, v4l2_field_names),
- 			mp->colorspace, mp->num_planes, mp->flags,
- 			mp->ycbcr_enc, mp->quantization, mp->xfer_func);
--		for (i = 0; i < mp->num_planes; i++)
-+		planes = min_t(u32, mp->num_planes, VIDEO_MAX_PLANES);
-+		for (i = 0; i < planes; i++)
- 			printk(KERN_DEBUG "plane %u: bytesperline=%u sizeimage=%u\n", i,
- 					mp->plane_fmt[i].bytesperline,
- 					mp->plane_fmt[i].sizeimage);
+-	cancel_delayed_work_sync(&dev->work_run);
++	if (v4l2_m2m_get_curr_priv(dev->m2m_dev) == ctx)
++		cancel_delayed_work_sync(&dev->work_run);
++
+ 	for (;;) {
+ 		if (V4L2_TYPE_IS_OUTPUT(q->type))
+ 			vbuf = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
 
 
