@@ -2,118 +2,108 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8395C37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73B2C37121
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 739DB20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:25:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=melexis.com header.i=@melexis.com header.b="duNSyzCn"
+	by mail.kernel.org (Postfix) with ESMTP id BA3F720844
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:28:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbfAUUZi (ORCPT
+        id S1728187AbfAUU22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:25:38 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:45079 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbfAUUZh (ORCPT
+        Mon, 21 Jan 2019 15:28:28 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41299 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727651AbfAUU20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:25:37 -0500
-Received: by mail-vk1-f196.google.com with SMTP id n126so4846947vke.12
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:25:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=melexis.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wVMi40kJJBnZyDdlQUsJhig7OCy1+OLmvOMehMVnCgk=;
-        b=duNSyzCnehl4IWXlHY9/nwFXPPbRsApqPg96nwTBFXqJ9F0hyyQAIP9EMtqeXoubV3
-         wqhdcEYvOQwydFBL/FCbTe4WXvYZ8459t51T/Bnfax/n91nJsDDa+CRiE+MDHzY30Udo
-         B0wbVWGPy+082BrAeYxKisee1gPKusjvmB0yu6uTez2rwqKZYH3fpbMJTfOUqiEKeBoT
-         r6YNFKX0YqAWqINc+iX3cO30P+64Rzk+nzt6DO9wjcSSsh3fXpa/vugkHWV/FASuaQij
-         ZEjPh7Qf0w9RhCiLPba2mH8B7FLNtZA35yXXXIqhFf3D4SsRA5cfu+h6jnBO5szsYlT4
-         Srjg==
+        Mon, 21 Jan 2019 15:28:26 -0500
+Received: by mail-qt1-f194.google.com with SMTP id l12so24951873qtf.8;
+        Mon, 21 Jan 2019 12:28:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wVMi40kJJBnZyDdlQUsJhig7OCy1+OLmvOMehMVnCgk=;
-        b=HTcqJq4N8+RULUmNrz+p1pdG+O+pwPDartPjlWVRbZXh8NkKJxcecW6xHX7FGSGUxv
-         IQxKa9fJ0YOtMcvHmF21xLzUR4nNMjqcMAEp8hVB0Ln3MqcOBGmQ8iFVKS4Ib4N1w9dL
-         xPhN7ht3JDCXy0IXH2nQkPSHE9hxLQqOQKAl5EKul4syH3OREWlvxAfmNRkrWg556IMy
-         hlJAcUoxTlgOtA8tDXGKh5D0EiegnDz8fViK2HVqlBAxlN3FQ9SA+3jOvSNd+as/I3Cd
-         v108g2knWK/LRxBR29rxTk56hAJREsIY7NvUKGDDy7E43zW+YjAhCqtxmGiDh99OvXWJ
-         R8Og==
-X-Gm-Message-State: AJcUukfN87eq7irYuJNCWI5RYQ9cf5Uve3GDbxEB+W9WBxlxbcZcfKr3
-        4WnjV6TXxE5mfQu6u0JbUx2UabG3lvkdXwXzGjbJtA==
-X-Google-Smtp-Source: ALg8bN4QMSdPukZgNDoOhxCcycRy3WgUtmWJpS66FrNZUwdHPQR2x+WEqUMum3CJnla9A/Ke9uZ3YrgM3r+uaYmn9Nk=
-X-Received: by 2002:a1f:4d47:: with SMTP id a68mr12083806vkb.34.1548102336281;
- Mon, 21 Jan 2019 12:25:36 -0800 (PST)
+        bh=kD6IFPEOKNOz9iNntsGiu85pLEy/bbFmo7y1npa4eOs=;
+        b=EOJdDBLoCxPPDTZPaxlq6LXDWq5W81M1oEqwDVFUVQzfhApV+1gWmI88OEQrbynIZc
+         nUNnTg2wNiLi0OZAGiwjAsX1Be7v5VX77nWK1j/SJ9fgkGR9/rvv+xNAkPI3n03IFLRn
+         6kGo3Iw9GxEpXCO6+bvlAmIbYA9yA31FbP3y/yuhnTS7xV3n0tKhXtgEstSEA6aBNfXg
+         Hd09FvBGs6kkFHrE7nJcMMANP6PHw/d4O2I1hfxHz2wThmQZxHKHo87ywaLnKaaqMA2C
+         O1bItyw+SoG1AshD2uEi6x3NhqC6Q9GMjk1bC48qv1DbsKqsCRvTNg6Bj16GXr+b6xYv
+         ACfg==
+X-Gm-Message-State: AJcUukecrA8No6tIdbvGe8gcCXrxnDr4WhXWMR0eHqgQlIWxoDvGZSzg
+        TtFAZ8mCT9f9ta3ZtplTtudV5kWhqhKIHsHO8GDdNw==
+X-Google-Smtp-Source: ALg8bN6mLscM+pbjX9xQ6/wy1A9ikEOKpuR+5XAFBodnDm12Xj0LxRlfII1AhYmWMPLWezvh7DcCeu+FaKZ+CS1nC+w=
+X-Received: by 2002:ac8:2c34:: with SMTP id d49mr28748763qta.152.1548102504937;
+ Mon, 21 Jan 2019 12:28:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20190119151450.26879-1-Florian.LaRoche@googlemail.com> <CAHk-=wjruxUdKWjn-PvZMOPn3pGO5yTcbc_J4hc4TrS0P15vaw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjruxUdKWjn-PvZMOPn3pGO5yTcbc_J4hc4TrS0P15vaw@mail.gmail.com>
-From:   Crt Mori <cmo@melexis.com>
-Date:   Mon, 21 Jan 2019 21:25:00 +0100
-Message-ID: <CAKv63uu+-gF_zci8NrRDB4g7ujkbz7dPnAEAjY6_ZVXB9NOWGA@mail.gmail.com>
-Subject: Re: fix int_sqrt() for very large numbers
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Florian La Roche <florian.laroche@googlemail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
+References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-15-arnd@arndb.de>
+ <CAMuHMdWaJyNqUeq4qu3AgU0fYrQdZ_zbo0DFFiM97Y5HESYYnA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWaJyNqUeq4qu3AgU0fYrQdZ_zbo0DFFiM97Y5HESYYnA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 21 Jan 2019 21:28:08 +0100
+Message-ID: <CAK8P3a1BxBHfHZCvTM6aoBiiN+EpnD4P9LM=Ked5Sc_QwF7hCg@mail.gmail.com>
+Subject: Re: [PATCH v2 14/29] arch: add pkey and rseq syscall numbers everywhere
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 01:20, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Mon, Jan 21, 2019 at 9:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> On Sun, Jan 20, 2019 at 4:15 AM Florian La Roche
-> <florian.laroche@googlemail.com> wrote:
-> >
-> > @@ -52,7 +52,7 @@ u32 int_sqrt64(u64 x)
-> >         if (x <= ULONG_MAX)
-> >                 return int_sqrt((unsigned long) x);
-> >
-> > -       m = 1ULL << (fls64(x) & ~1ULL);
-> > +       m = 1ULL << ((fls64(x) - 1) & ~1ULL);
->
-> I've applied this part of the patch as commit fbfaf851902c ("fix
-> int_sqrt64() for very large numbers") with slightly edited commit
-> log.
->
+> Note that all architectures that already define pkey syscalls, list
+> pkey_mprotect first.
 
-Thanks for the patch - I its indeed my copy-paste error, because
-__fls64 does not exist on 32bit CPU, but the fls64 is not "equal"
-replacement. I am very sorry for the bug.
+It's easy enough to change, so I've reordered them for consistency now.
 
-> I still think there are some oddities in here in the types. I
-> mentioned the caller that unnecessarily does the int_sqrt64() twice,
-> even though the outer one doesn't actually take a 64-bit value.
->
+> Regardless, for m68k:
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-True. This is oddity is originating from time where mlx90632 used its
-own function for int_sqrt64 on 32bit.
+Thanks,
 
-> But in the very line above, there's another type oddity: the "& ~1ULL"
-> is entirely the wrong type. The shift *count* shouldn't be an unsigned
-> long long, so that type doesn't make much sense. It should be just a
-> ~1, or even just "62".
->
-
-This was also inline with above copy-paste and variable expansion to
-force the 64bit everywhere. I will prepare a patch to clean this line
-to ~1, question is why does the int_sqrt is having UL if this should
-just be "62". I was thinking because we want to cast to the type
-before we shift.
-
-> But I didn't actually start micro-editing the patch, and just did that
-> one-liner off-by-one fix.
->
->              Linus
+     Arnd
