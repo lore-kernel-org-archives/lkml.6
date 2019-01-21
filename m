@@ -2,231 +2,134 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5ADC7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAB1C7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFEE720663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:22:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E4F720663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:22:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a1+EKVe9"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i1C9FTzE";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YUjJIC90"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbfAULWS (ORCPT
+        id S1728389AbfAULWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:22:18 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46930 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbfAULWQ (ORCPT
+        Mon, 21 Jan 2019 06:22:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33190 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728345AbfAULWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:22:16 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0LBMEgD022369;
-        Mon, 21 Jan 2019 05:22:14 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548069734;
-        bh=WMTI/YrGlQJ/cBrxm0VNwSJsONbucUADX9l3HfQNrms=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=a1+EKVe9WzmghRlgwLafHdbP6LdoI/v1YNombYpHMibgvrLqx/7wKjxwY6fJIgWbL
-         HzSnaM0w9FpO1Go66TfyTHiAlEm5/iqJOd7fvS1YjABSIa8FaZVaEcyPLVBx/BpOKV
-         OYoxlNdxvQjuKIdBR74QlTDxfF2cNS0MQH2JWNGo=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0LBMEce073482
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 05:22:14 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
- Jan 2019 05:22:13 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 21 Jan 2019 05:22:13 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0LBMBSA014732;
-        Mon, 21 Jan 2019 05:22:12 -0600
-Subject: Re: [PATCH 2/3] dt-bindings: phy: ti: Add dt binding documentation
- for SERDES in AM654x SoC
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190121064813.18444-1-kishon@ti.com>
- <20190121064813.18444-3-kishon@ti.com> <5C4596F8.7030009@ti.com>
- <b619ace8-f2be-8eb0-080e-0ae7a43799df@ti.com>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C45AB63.4010005@ti.com>
-Date:   Mon, 21 Jan 2019 13:22:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
-MIME-Version: 1.0
-In-Reply-To: <b619ace8-f2be-8eb0-080e-0ae7a43799df@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 21 Jan 2019 06:22:18 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2072B608CD; Mon, 21 Jan 2019 11:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548069737;
+        bh=vD5MTXyLS/qkTnSNYHFn5UkX/UYasOxBeZwiEyrO4hM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=i1C9FTzE3IWmWs1kivPPDE3tcdNuMhj+iR5wAh82umzdKLOMYAvOLpfd5Db6mCDT6
+         HMTmk5tyvjnCmRZwFmxlqrOlRH3o5BAtKjtWCPX1mbtR+RNv+GiDqoqMOaH4csMUf4
+         y4Ovwg0oJKrFfzdNvqVxMcQmJMKoIU3815IK9Fys=
+Received: from alokc-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: alokc@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2F44A608CB;
+        Mon, 21 Jan 2019 11:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548069734;
+        bh=vD5MTXyLS/qkTnSNYHFn5UkX/UYasOxBeZwiEyrO4hM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YUjJIC90BwZzYqFJzmuwiRHdv1Bt7bBDHqlWqSU0ZAU+7ebQpQwsg9u0oaiL7mSEU
+         jd2KfQnsyiCNYllABmTOxyEUKlbIcDAgvRVLZmHIFXMQQp2OuLQYLlaJWIdJDcnSUA
+         6W9IXJCOPcSpZHcQjgDgNSbIIyA98fR8GH9+2qWM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F44A608CB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=alokc@codeaurora.org
+From:   Alok Chauhan <alokc@codeaurora.org>
+To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        georgi.djakov@linaro.org, dianders@chromium.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org,
+        Alok Chauhan <alokc@codeaurora.org>
+Subject: [PATCH 4/6] spi: spi-geni-qcom: Add interconnect support
+Date:   Mon, 21 Jan 2019 16:51:41 +0530
+Message-Id: <1548069703-26595-5-git-send-email-alokc@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1548069703-26595-1-git-send-email-alokc@codeaurora.org>
+References: <1548069703-26595-1-git-send-email-alokc@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Get the interconnect paths for SPI based Serial Engine device
+and vote accordingly based on maximum supported SPI frequency.
 
+Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
+---
+ drivers/spi/spi-geni-qcom.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-On 21/01/19 12:47, Kishon Vijay Abraham I wrote:
-> Hi Roger,
-> 
-> On 21/01/19 3:25 PM, Roger Quadros wrote:
->> Kishon,
->>
->> On 21/01/19 08:48, Kishon Vijay Abraham I wrote:
->>> AM654x has two SERDES instances. Each instance has three input clocks
->>> (left input, externel reference clock and right input) and two output
->>> clocks (left output and right output) in addition to a PLL mux clock
->>> which the SERDES uses for Clock Multiplier Unit (CMU refclock).
->>> The PLL mux clock can select from one of the three input clocks.
->>> The right output can select between left input and external reference
->>> clock while the left output can select between the right input and
->>> external reference clock.
->>>
->>> The left and right input reference clock of SERDES0 and SERDES1
->>> respectively are connected to the SoC clock. In the case of two lane
->>> SERDES personality card, the left input of SERDES1 is connected to
->>> the right output of SERDES0 in a chained fashion.
->>>
->>> See section "Reference Clock Distribution" of AM65x Sitara Processors
->>> TRM (SPRUID7 – April 2018) for more details.
->>>
->>> Add dt-binding documentation in order to represent all these different
->>> configurations in device tree.
->>>
->>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>> ---
->>>  .../devicetree/bindings/phy/ti-phy.txt        | 77 +++++++++++++++++++
->>>  include/dt-bindings/phy/phy-am654-serdes.h    | 13 ++++
->>>  2 files changed, 90 insertions(+)
->>>  create mode 100644 include/dt-bindings/phy/phy-am654-serdes.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/phy/ti-phy.txt b/Documentation/devicetree/bindings/phy/ti-phy.txt
->>> index 57dfda8a7a1d..fc2fff6b2c37 100644
->>> --- a/Documentation/devicetree/bindings/phy/ti-phy.txt
->>> +++ b/Documentation/devicetree/bindings/phy/ti-phy.txt
->>> @@ -132,3 +132,80 @@ sata_phy: phy@4a096000 {
->>>  	syscon-pllreset = <&scm_conf 0x3fc>;
->>>  	#phy-cells = <0>;
->>>  };
->>> +
->>> +
->>> +TI AM654 SERDES
->>> +
->>> +Required properties:
->>> + - compatible: Should be "ti,phy-am654-serdes"
->>> + - reg : Address and length of the register set for the device.
->>> + - reg-names: Should be "serdes" which corresponds to the register space
->>> +	populated in "reg".
->>> + - #phy-cells: determine the number of cells that should be given in the
->>> +	phandle while referencing this phy. Should be "2". The 1st cell
->>> +	corresponds to the phy type (should be one of the types specified in
->>> +	include/dt-bindings/phy/phy.h) and the 2nd cell should be the serdes
->>> +	lane function.
->>> +	If SERDES0 is referenced 2nd cell should be:
->>> +		0 - USB3
->>> +		1 - PCIe0 Lane0
->>> +		2 - ICSS2 SGMII Lane0
->>> +	If SERDES1 is referenced 2nd cell should be:
->>> +		0 - PCIe1 Lane0
->>> +		1 - PCIe0 Lane1
->>> +		2 - ICSS2 SGMII Lane1
->>
->> Can we have a way to change default lane at probe time without having any user dependencies.
->>
->> e.g. To work in USB2.0 mode I don't want SERDES0 to be in lane 0 (which is SoC default).
->> But at the same time the application might not be using PCIe or SGMII, so there is no
->> PHY user to change the lane to 1 or 2.
->>
->> A DT property to allow selection of a default lane at probe time would help
-> Ideally we should be disabling the module that is not used ("status" property
-> of SERDES0 dt would be "disabled"). So there is no guarantee SERDES will be probed.
-> 
-
-OK. Is there something that can be done at the serdes_mux?
-As per bindings/mux/mmio-mux.txt
-
-Optional properties:
-- idle-states : if present, the state the muxes will have when idle. The
-                special state MUX_IDLE_AS_IS is the default.
-
-Could that be used?
-
-> 
->>
->>
->>> + - clocks: List of clock-specifiers representing the input to the SERDES.
->>> +	Should have 3 items representing the left input clock, external
->>> +	reference clock and right input clock in that order.
->>> + - clock-output-names: List of clock names for each of the clock outputs of
->>> +	SERDES. Should have 3 items for CMU reference clock,
->>> +	left output clock and right output clock in that order.
->>> + - assigned-clocks: As defined in
->>> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
->>> + - assigned-clock-parents: As defined in
->>> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
->>> + - #clock-cells: Should be <1> to choose between the 3 output clocks.
->>> +	Defined in Documentation/devicetree/bindings/clock/clock-bindings.txt
->>> +
->>> +   The following macros are defined in dt-bindings/phy/phy-am654-serdes.h
->>> +   for selecting the correct reference clock. This can be used while
->>> +   specifying the clocks created by SERDES.
->>> +	=> AM654_SERDES_CMU_REFCLK
->>> +	=> AM654_SERDES_LO_REFCLK
->>> +	=> AM654_SERDES_RO_REFCLK
->>> +
->>> + - mux-controls: phandle to the multiplexer
->>> +
->>> +Example:
->>> +
->>> +Example for SERDES0 is given below. It has 3 clock inputs;
->>> +left input reference clock as indicated by <&k3_clks 153 4>, external
->>> +reference clock as indicated by <&k3_clks 153 1> and right input
->>> +reference clock as indicated by <&serdes1 AM654_SERDES_LO_REFCLK>. (The
->>> +right input of SERDES0 is connected to the left output of SERDES1).
->>> +
->>> +SERDES0 registers 3 clock outputs as indicated in clock-output-names. The
->>> +first refers to the CMU reference clock, second refers to the left output
->>> +reference clock and the third refers to the right output reference clock.
->>> +
->>> +The assigned-clocks and assigned-clock-parents is used here to set the
->>> +parent of left input reference clock to MAINHSDIV_CLKOUT4 and parent of
->>> +CMU reference clock to left input reference clock.
->>> +
->>> +serdes0: serdes@900000 {
->>> +	compatible = "ti,phy-am654-serdes";
->>> +	reg = <0x0 0x900000 0x0 0x2000>;
->>> +	reg-names = "serdes";
->>> +	#phy-cells = <2>;
->>> +	power-domains = <&k3_pds 153>;
->>> +	clocks = <&k3_clks 153 4>, <&k3_clks 153 1>,
->>> +			<&serdes1 AM654_SERDES_LO_REFCLK>;
->>> +	clock-output-names = "serdes0_cmu_refclk", "serdes0_lo_refclk",
->>> +				"serdes0_ro_refclk";
->>> +	assigned-clocks = <&k3_clks 153 4>, <&serdes0 AM654_SERDES_CMU_REFCLK>;
->>> +	assigned-clock-parents = <&k3_clks 153 8>, <&k3_clks 153 4>;
->>> +	ti,serdes-clk = <&serdes0_clk>;
->>> +	mux-controls = <&serdes_mux 0>;
->>> +	#clock-cells = <1>;
->>> +	status = "disabled";
->>
->> We don't keep status "disabled" for AM6. All nodes are enabled by default.
-> 
-> Should all nodes be enabled by default? Is it not based on the features
-> supported by the EVM?
-
-Yes, enabled in the SoC. EVM is supposed to disable nodes that are not required.
-See https://www.spinics.net/lists/arm-kernel/msg700105.html
-
-cheers,
--roger
+diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+index fdb7cb88..7bbbe9d 100644
+--- a/drivers/spi/spi-geni-qcom.c
++++ b/drivers/spi/spi-geni-qcom.c
+@@ -12,6 +12,7 @@
+ #include <linux/qcom-geni-se.h>
+ #include <linux/spi/spi.h>
+ #include <linux/spinlock.h>
++#include <linux/interconnect.h>
+ 
+ /* SPI SE specific registers and respective register fields */
+ #define SE_SPI_CPHA		0x224
+@@ -589,6 +590,15 @@ static int spi_geni_probe(struct platform_device *pdev)
+ 	spin_lock_init(&mas->lock);
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	/* Set the bus quota to a reasonable value */
++	mas->se.avg_bw = Bps_to_icc(2500);
++	mas->se.peak_bw = Bps_to_icc(200000000);
++	ret = geni_interconnect_init(&mas->se);
++	if (ret) {
++		dev_err(&pdev->dev, "interconnect_init failed %d\n", ret);
++		return ret;
++	}
++
+ 	ret = spi_geni_init(mas);
+ 	if (ret)
+ 		goto spi_geni_probe_runtime_disable;
+@@ -628,8 +638,15 @@ static int __maybe_unused spi_geni_runtime_suspend(struct device *dev)
+ {
+ 	struct spi_master *spi = dev_get_drvdata(dev);
+ 	struct spi_geni_master *mas = spi_master_get_devdata(spi);
++	int ret;
+ 
+-	return geni_se_resources_off(&mas->se);
++	ret = geni_se_resources_off(&mas->se);
++	if (ret)
++		return ret;
++
++	geni_icc_update_bw(&mas->se, false);
++
++	return 0;
+ }
+ 
+ static int __maybe_unused spi_geni_runtime_resume(struct device *dev)
+@@ -637,6 +654,7 @@ static int __maybe_unused spi_geni_runtime_resume(struct device *dev)
+ 	struct spi_master *spi = dev_get_drvdata(dev);
+ 	struct spi_geni_master *mas = spi_master_get_devdata(spi);
+ 
++	geni_icc_update_bw(&mas->se, true);
+ 	return geni_se_resources_on(&mas->se);
+ }
+ 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
