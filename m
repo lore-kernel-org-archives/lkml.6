@@ -2,163 +2,123 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBB9C2F42E
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB158C2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAFBE2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EEEE2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548084220;
+	bh=pXlDdFTKiVEnXoJSyGsOaxNG/NYdvCPYkNqoMMSTNLk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=aqrNeJT8yvQzWxKRFMDy6Eo3XcX1K52X8iar3j90PQ+xDqEX4RXM/nqklZB1VURr2
+	 8U/UWvJ8HDv5MBYvU8NzetHeBaG3ezna9mrODo/3tJdS6pmNRE2QFB3W8nNg6a0D9z
+	 9cpQ/oqoxoOVE04naia0B0NOYJM2bDU4yukDD55I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730035AbfAUPXS (ORCPT
+        id S1730126AbfAUPXj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:23:18 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36218 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728580AbfAUPXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:23:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 081EAEBD;
-        Mon, 21 Jan 2019 07:23:17 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 143973F5C1;
-        Mon, 21 Jan 2019 07:23:13 -0800 (PST)
-Date:   Mon, 21 Jan 2019 15:23:11 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
- refcounting
-Message-ID: <20190121152311.7u7bwbjopuptnzcy@e110439-lin>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-5-patrick.bellasi@arm.com>
- <20190121145929.GI27931@hirez.programming.kicks-ass.net>
+        Mon, 21 Jan 2019 10:23:39 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45834 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730080AbfAUPXh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:23:37 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so20784805ota.12;
+        Mon, 21 Jan 2019 07:23:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=BTprJiQSSd9oFHbZyZXiPAZoKdv8sPvXoKx1czOhrmU=;
+        b=SF2/88uvEYmkjXxscUcv7ZE7xQ1gTC4jzQpsVTfZlk4ssZ2LOaC9LaAf+NJ47jfLY6
+         HC2nmtu9Oz6fFCbGJjzOF15qTIwe5qEuJi1WcrdzhRMWvWQBWUrXQL4um5QpQI78yoPI
+         E8NYfU5cSwR33V/rgOMUS+4Stre8QoNp3MT13u64sKR27ojcZY0oVBOtAtr+6z25sSq9
+         GGXtPQJqgfln/YfIeKuRKvSy1vOKASJbphQbiZVeJSda3fxpXr4Kx5TtqYbiialevev8
+         HdgBiP0Agt4PcAd50fVYzfDfY8En6/alSkoQvrNCOOmXfiFOd4MOlOfjjOKotk8F7u4k
+         CWjQ==
+X-Gm-Message-State: AJcUukfpZcJYBl/7WHdZXD7t/Dx9NF0f5MEPIfBHoz/PXzxftPzfv7DR
+        LxEsPHVf+9OjjdFlZ1mB+kl3Q4c=
+X-Google-Smtp-Source: ALg8bN6xc+jSfPAKy2Jra85r9CopBZTNymVHnRS/reb5iZw0WoCBIEeYC1EJ5mp4BFF+u1O3X6KY4g==
+X-Received: by 2002:a05:6830:1453:: with SMTP id w19mr14226713otp.213.1548084216296;
+        Mon, 21 Jan 2019 07:23:36 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i7sm5256034oth.57.2019.01.21.07.23.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 07:23:35 -0800 (PST)
+Date:   Mon, 21 Jan 2019 09:23:35 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     Viorel Suman <viorel.suman@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "timur@kernel.org" <timur@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "viorel.suman@gmail.com" <viorel.suman@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
+Message-ID: <20190121152335.GA12284@bogus>
+References: <1547729177-14317-1-git-send-email-viorel.suman@nxp.com>
+ <20190117161804.GA5760@bogus>
+ <1547817384.11482.33.camel@nxp.com>
+ <20190118194642.GA11798@Asurada-Nvidia.nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190121145929.GI27931@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190118194642.GA11798@Asurada-Nvidia.nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-Jan 15:59, Peter Zijlstra wrote:
-> On Tue, Jan 15, 2019 at 10:15:01AM +0000, Patrick Bellasi wrote:
-> > @@ -835,6 +954,28 @@ static void uclamp_bucket_inc(struct uclamp_se *uc_se, unsigned int clamp_id,
-> >  	} while (!atomic_long_try_cmpxchg(&uc_maps[bucket_id].adata,
-> >  					  &uc_map_old.data, uc_map_new.data));
-> >  
-> > +	/*
-> > +	 * Ensure each CPU tracks the correct value for this clamp bucket.
-> > +	 * This initialization of per-CPU variables is required only when a
-> > +	 * clamp value is requested for the first time from a slow-path.
-> > +	 */
+On Fri, Jan 18, 2019 at 11:46:42AM -0800, Nicolin Chen wrote:
+> On Fri, Jan 18, 2019 at 01:16:24PM +0000, Viorel Suman wrote:
+> > > > 1. Moved "dais" node from machine driver DTS node to device driver
+> > > > DTS node
+> > > >   as suggested by Rob.
+> > > That was not what I suggested. You still have a virtual node which
+> > > looks to me to be unnecessary.
+> > 
+> > To me removing virtual node implies that AUDMIX machine driver (imx-
+> > audmix.c + virtual node) shall be removed and machine driver code
+> > merged into device driver (fsl_audmix.c + device node) - please let me
+> > know if my understanding is wrong.
 > 
-> I'm confused; why is this needed?
+> We could use a non-DT configuration right? From the driver logic,
+> DT just registers a device corresponding to the machine driver so
+> that it can probe(). We could register one in fsl_audmix instead.
+> Please refer to how fsl_ssi registers the sound card device. The
+> machine driver can get audmix_np from the parent device pointer,
+> and I think that's all you need.
 
-That's a lazy initialization of the per-CPU uclamp data for a given
-bucket, i.e. the clamp value assigned to a bucket, which happens only
-when new clamp values are requested... usually only at system
-boot/configuration time.
+Yes.
 
-For example, let say we have these buckets mapped to given clamp
-values:
+> Or maybe someone else would provide a better way. But it'd work.
 
- bucket_#0: clamp value: 10% (mapped)
- bucket_#1: clamp value: 20% (mapped)
- bucket_#2: clamp value: 30% (mapped)
+Or the machine driver could create the audmix device. That probably 
+makes less sense, but either way there doesn't have to be a 1-1 
+correspondence of DT nodes and (platform) devices.
 
-and then let's assume all the users of bucket_#1 are "destroyed", i.e.
-there are no more tasks, system defaults or cgroups asking for a
-20% clamp value. The corresponding bucket will become free:
+I'm not an ASoC expert, but why can't the machine driver just control 
+the audmix directly (with DAIs as separate drivers)? Is the audmix ever 
+going to a be a component for a different machine driver?
 
- bucket_#0: clamp value: 10% (mapped)
- bucket_#1: clamp value: 20% (free)
- bucket_#2: clamp value: 30% (mapped)
+Rob
 
-If, in the future, we ask for a new clamp value, let say a task ask
-for a 40% clamp value, then we need to map that value into a bucket.
-Since bucket_#1 is free we can use it to fill up the hold and keep all
-the buckets in use at the beginning of a cache line.
-
-However, since now bucket_#1 tracks a different clamp value (40
-instead of 20) we need to walk all the CPUs and updated the cached
-value:
-
- bucket_#0: clamp value: 10% (mapped)
- bucket_#1: clamp value: 40% (mapped)
- bucket_#2: clamp value: 30% (mapped)
-
-Is that more clear ?
-
-
-In the following code:
-
-> 
-> > +	if (unlikely(!uc_map_old.se_count)) {
-
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This condition is matched by clamp buckets which needs the
-initialization described above. These are buckets without a client so
-fare and that have been selected to map/track a new clamp value.
-That's why we have an unlikely... quite likely tasks/cgroups will keep
-asking for the same (limited number of) clamp values and thus we find
-a bucket already properly initialized for them.
-
-
-> > +		for_each_possible_cpu(cpu) {
-> > +			struct uclamp_cpu *uc_cpu =
-> > +				&cpu_rq(cpu)->uclamp[clamp_id];
-> > +
-> > +			/* CPU's tasks count must be 0 for free buckets */
-> > +			SCHED_WARN_ON(uc_cpu->bucket[bucket_id].tasks);
-> > +			if (unlikely(uc_cpu->bucket[bucket_id].tasks))
-> > +				uc_cpu->bucket[bucket_id].tasks = 0;
-
-That's a safety check, we expect that (free) buckets do not refcount
-any task. That's one of the conditions for a bucket to be considered
-free. Here we do just a sanity check, that's because we use unlikely.
-If the check matches there is a data corruption, which is reported by
-the previous SCHED_WARN_ON and "fixed" by the if branch.
-
-In my tests I have s/SCHED_WARN_ON/BUG_ON/ and never hit that bug...
-thus the refcounting code should be ok and this check is there just to
-be more on the safe side for future changes.
-
-> > +
-> > +			/* Minimize cache lines invalidation */
-> > +			if (uc_cpu->bucket[bucket_id].value == bucket_value)
-> > +				continue;
-
-If by any chance we get a request for a new clamp value which happened
-to be already used before... we can skip the initialization to avoid.
-
-> > +			uc_cpu->bucket[bucket_id].value = bucket_value;
-> > +		}
-> > +	}
-> > +
-> >  	uc_se->value = clamp_value;
-> >  	uc_se->bucket_id = bucket_id;
-> >  
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
