@@ -3,209 +3,226 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7E5C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5E0C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 552012084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548064491;
-	bh=TS2eiepxWJ36jrgxEFb0KkiBfLQqggUtL+QTr9OTi5g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Bn7XoL0iHLKrBCn9Rx8GVRie/roGWcds+CF+7rGNvE3EQpeDXvhotV2DuEgR5hgmQ
-	 /gS/eWUS0x939ud2SePsJ++udpgLF7qqJC1LxnDq5dfSUv6zZAv3TN8Zoe4ZXl8lBx
-	 dXzYOGSrLN7nUC0z+0EynsD4lwrUTemGgJaHwWOk=
+	by mail.kernel.org (Postfix) with ESMTP id 43D7D2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:55:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wL5m/Oyg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfAUJyt (ORCPT
+        id S1728152AbfAUJzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:54:49 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34885 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbfAUJys (ORCPT
+        Mon, 21 Jan 2019 04:55:09 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:51472 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727240AbfAUJzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:54:48 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 81so20071975otj.2;
-        Mon, 21 Jan 2019 01:54:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=87CvBlMDEwsgkgwxIumJcsJNusyqa2h8QasIs0SSQ4A=;
-        b=Omi9Zuf57Ufdl0eirr+jkMsUaBlfJEfuAM8gaCEItwTUMqrlkuLGobHc9O9HjsCBx+
-         U3j0DFwbQFmbWHaYbMFfWwjvv9qTWB7ROb0V4pTUdsCZTBtNcsYvMUALJ9EVta1pIQxw
-         2p8mCf+JFQBJfpJBPM0F/jGnrWbTBhG4UvY7bSPNij6ptiN7177WYLU+EmJMpBBSazsD
-         Hp+mVZ+biZriG7a259jB8lIKMb/+Oswhq3PqiygIdiYep2l2TPPAByQC6DvN/JEOPsp+
-         yTl5wflce7h7IvI3yhIr1oemic2q7YcCKcom4k8DS9WmTw4+EjNfFNEgmdxgC0/hIQdG
-         QqHQ==
-X-Gm-Message-State: AJcUukdBMWXz9UMax2LXhHezJ6UGkYtsaaxeVOIZ2J/rD+QgOJwVSsLj
-        nUbDGJ3GXqX1GcOJV/Dkff5WgxedCE96qUJ1E7I=
-X-Google-Smtp-Source: ALg8bN4mJs+6oxIzHvFyi0JOQGxKe9bm5Y+j398WmftB5+ZxWAZB4K5N/Q/mstdx262rofIvON8ZuUBDmRxa8zX/J3g=
-X-Received: by 2002:a9d:2062:: with SMTP id n89mr17828386ota.244.1548064487351;
- Mon, 21 Jan 2019 01:54:47 -0800 (PST)
+        Mon, 21 Jan 2019 04:55:09 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0L9t668020126;
+        Mon, 21 Jan 2019 03:55:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548064506;
+        bh=V22rgboLW80Cn2cGzd7ZKw3/rGoAEGZdc3f2GUjIuhw=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=wL5m/Oyg61nIT34Dm+DaFaSMBlprW37JlW6NoliMrh2FZxCkN7HugEjxvH8w+7nOh
+         LgSaIvfC1lX4Z2PpjyHE92qdLIQhO2rpiVIbDIpKEscA5JtfDIwfTpnWzFQVJMvKk8
+         EQxvdWXozyUlgOS6jpWb5RatZY2Cle08J55jeCGU=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0L9t6Dj028182
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 03:55:06 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
+ Jan 2019 03:55:06 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 21 Jan 2019 03:55:06 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0L9t4KH000777;
+        Mon, 21 Jan 2019 03:55:05 -0600
+Subject: Re: [PATCH 2/3] dt-bindings: phy: ti: Add dt binding documentation
+ for SERDES in AM654x SoC
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20190121064813.18444-1-kishon@ti.com>
+ <20190121064813.18444-3-kishon@ti.com>
+CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C4596F8.7030009@ti.com>
+Date:   Mon, 21 Jan 2019 11:55:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-6-keith.busch@intel.com>
- <CAJZ5v0jmkyrNBHzqHsOuWjLXF34tq83VnEhdBWrdFqxyiXC=cw@mail.gmail.com>
- <CAPcyv4gH0_e_NFJNOFH4XXarSs7+TOj4nT0r-D33ZGNCfqBdxg@mail.gmail.com>
- <20190119090129.GC10836@kroah.com> <CAPcyv4jijnkW6E=0gpT3-qy5uOgTV-D7AN+CAu7mmdrRKGHvFg@mail.gmail.com>
- <CAJZ5v0hS8Mb-BZuzztTt9D0Rd0TPzMcod48Ev-8HCZg07BP6fw@mail.gmail.com> <CAPcyv4jsOQZxdk4TENFwanqgmqEJhGegbzrkN6q8EEsTu=UNGA@mail.gmail.com>
-In-Reply-To: <CAPcyv4jsOQZxdk4TENFwanqgmqEJhGegbzrkN6q8EEsTu=UNGA@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 21 Jan 2019 10:54:33 +0100
-Message-ID: <CAJZ5v0j+GsHZoifmbO_vX=a8VnFPvwuZr5GRyaVRNuHgHgtcrA@mail.gmail.com>
-Subject: Re: [PATCHv4 05/13] Documentation/ABI: Add new node sysfs attributes
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190121064813.18444-3-kishon@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 20, 2019 at 6:34 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Sun, Jan 20, 2019 at 8:20 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Sat, Jan 19, 2019 at 5:56 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > >
-> > > On Sat, Jan 19, 2019 at 1:01 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Fri, Jan 18, 2019 at 01:08:02PM -0800, Dan Williams wrote:
-> > > > > On Thu, Jan 17, 2019 at 3:41 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > > > >
-> > > > > > On Wed, Jan 16, 2019 at 6:59 PM Keith Busch <keith.busch@intel.com> wrote:
-> > > > > > >
-> > > > > > > Add entries for memory initiator and target node class attributes.
-> > > > > > >
-> > > > > > > Signed-off-by: Keith Busch <keith.busch@intel.com>
-> > > > > >
-> > > > > > I would recommend combining this with the previous patch, as the way
-> > > > > > it is now I need to look at two patches at the time. :-)
-> > > > > >
-> > > > > > > ---
-> > > > > > >  Documentation/ABI/stable/sysfs-devices-node | 25 ++++++++++++++++++++++++-
-> > > > > > >  1 file changed, 24 insertions(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
-> > > > > > > index 3e90e1f3bf0a..a9c47b4b0eee 100644
-> > > > > > > --- a/Documentation/ABI/stable/sysfs-devices-node
-> > > > > > > +++ b/Documentation/ABI/stable/sysfs-devices-node
-> > > > > > > @@ -90,4 +90,27 @@ Date:                December 2009
-> > > > > > >  Contact:       Lee Schermerhorn <lee.schermerhorn@hp.com>
-> > > > > > >  Description:
-> > > > > > >                 The node's huge page size control/query attributes.
-> > > > > > > -               See Documentation/admin-guide/mm/hugetlbpage.rst
-> > > > > > > \ No newline at end of file
-> > > > > > > +               See Documentation/admin-guide/mm/hugetlbpage.rst
-> > > > > > > +
-> > > > > > > +What:          /sys/devices/system/node/nodeX/classY/
-> > > > > > > +Date:          December 2018
-> > > > > > > +Contact:       Keith Busch <keith.busch@intel.com>
-> > > > > > > +Description:
-> > > > > > > +               The node's relationship to other nodes for access class "Y".
-> > > > > > > +
-> > > > > > > +What:          /sys/devices/system/node/nodeX/classY/initiator_nodelist
-> > > > > > > +Date:          December 2018
-> > > > > > > +Contact:       Keith Busch <keith.busch@intel.com>
-> > > > > > > +Description:
-> > > > > > > +               The node list of memory initiators that have class "Y" access
-> > > > > > > +               to this node's memory. CPUs and other memory initiators in
-> > > > > > > +               nodes not in the list accessing this node's memory may have
-> > > > > > > +               different performance.
-> > > > > >
-> > > > > > This does not follow the general "one value per file" rule of sysfs (I
-> > > > > > know that there are other sysfs files with more than one value in
-> > > > > > them, but it is better to follow this rule as long as that makes
-> > > > > > sense).
-> > > > > >
-> > > > > > > +
-> > > > > > > +What:          /sys/devices/system/node/nodeX/classY/target_nodelist
-> > > > > > > +Date:          December 2018
-> > > > > > > +Contact:       Keith Busch <keith.busch@intel.com>
-> > > > > > > +Description:
-> > > > > > > +               The node list of memory targets that this initiator node has
-> > > > > > > +               class "Y" access. Memory accesses from this node to nodes not
-> > > > > > > +               in this list may have differet performance.
-> > > > > > > --
-> > > > > >
-> > > > > > Same here.
-> > > > > >
-> > > > > > And if you follow the recommendation given in the previous message
-> > > > > > (add "initiators" and "targets" subdirs under "classX"), you won't
-> > > > > > even need the two files above.
-> > > > >
-> > > > > This recommendation is in conflict with Greg's feedback about kobject
-> > > > > usage. If these are just "vanity" subdirs I think it's better to have
-> > > > > a multi-value sysfs file. This "list" style is already commonplace for
-> > > > > the /sys/devices/system hierarchy.
-> > > >
-> > > > If you do a subdirectory "correctly" (i.e. a name for an attribute
-> > > > group), that's fine.  Just do not ever create a kobject just for a
-> > > > subdir, that will mess up userspace.
-> > > >
-> > > > And I hate the "multi-value" sysfs files, where at all possible, please
-> > > > do not copy past bad mistakes there.  If you can make them individual
-> > > > files, please do that, it makes it easier to maintain and code the
-> > > > kernel for.
-> > >
-> > > I agree in general about multi-value sysfs, but in this case we're
-> > > talking about a mask. Masks are a single value. That said I can get on
-> > > board with calling what 'cpulist' does a design mistake (human
-> > > readable mask), but otherwise switching to one file per item in the
-> > > mask is a mess for userspace to consume.
-> >
-> > Can you please refer to my response to Keith?
->
-> Ah, ok I missed the patch4 comments and was reading this one in
-> isolation... which also bolsters your comment about squashing these
-> two patches together.
->
-> > If you have "initiators" and "targets" under "classX" and a list of
-> > symlinks in each of them, I don't see any kind of a mess here.
->
-> In this instance, I think having symlinks at all is "messy" vs just
-> having a mask. Yes, you're right, if we have the proposed symlinks
-> from patch4 there is no need for these _nodelist attributes, and those
-> symlinks would be better under "initiator" and "target" directories.
-> However, I'm arguing going the other way, just have the 2 mask
-> attributes and no symlinks. The HMAT erodes the concept of "numa
-> nodes" typically being a single digit number space per platform. Given
-> increasing numbers of memory target types and initiator devices its
-> going to be cumbersome to have userspace walk multiple symlinks vs
-> just reading a mask and opening the canonical path for a node
-> directly.
+Kishon,
 
-The symlinks only need to be walked once, however, and after walking
-them (once) the user space program can simply create a mask for
-itself.
+On 21/01/19 08:48, Kishon Vijay Abraham I wrote:
+> AM654x has two SERDES instances. Each instance has three input clocks
+> (left input, externel reference clock and right input) and two output
+> clocks (left output and right output) in addition to a PLL mux clock
+> which the SERDES uses for Clock Multiplier Unit (CMU refclock).
+> The PLL mux clock can select from one of the three input clocks.
+> The right output can select between left input and external reference
+> clock while the left output can select between the right input and
+> external reference clock.
+> 
+> The left and right input reference clock of SERDES0 and SERDES1
+> respectively are connected to the SoC clock. In the case of two lane
+> SERDES personality card, the left input of SERDES1 is connected to
+> the right output of SERDES0 in a chained fashion.
+> 
+> See section "Reference Clock Distribution" of AM65x Sitara Processors
+> TRM (SPRUID7 – April 2018) for more details.
+> 
+> Add dt-binding documentation in order to represent all these different
+> configurations in device tree.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  .../devicetree/bindings/phy/ti-phy.txt        | 77 +++++++++++++++++++
+>  include/dt-bindings/phy/phy-am654-serdes.h    | 13 ++++
+>  2 files changed, 90 insertions(+)
+>  create mode 100644 include/dt-bindings/phy/phy-am654-serdes.h
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/ti-phy.txt b/Documentation/devicetree/bindings/phy/ti-phy.txt
+> index 57dfda8a7a1d..fc2fff6b2c37 100644
+> --- a/Documentation/devicetree/bindings/phy/ti-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/ti-phy.txt
+> @@ -132,3 +132,80 @@ sata_phy: phy@4a096000 {
+>  	syscon-pllreset = <&scm_conf 0x3fc>;
+>  	#phy-cells = <0>;
+>  };
+> +
+> +
+> +TI AM654 SERDES
+> +
+> +Required properties:
+> + - compatible: Should be "ti,phy-am654-serdes"
+> + - reg : Address and length of the register set for the device.
+> + - reg-names: Should be "serdes" which corresponds to the register space
+> +	populated in "reg".
+> + - #phy-cells: determine the number of cells that should be given in the
+> +	phandle while referencing this phy. Should be "2". The 1st cell
+> +	corresponds to the phy type (should be one of the types specified in
+> +	include/dt-bindings/phy/phy.h) and the 2nd cell should be the serdes
+> +	lane function.
+> +	If SERDES0 is referenced 2nd cell should be:
+> +		0 - USB3
+> +		1 - PCIe0 Lane0
+> +		2 - ICSS2 SGMII Lane0
+> +	If SERDES1 is referenced 2nd cell should be:
+> +		0 - PCIe1 Lane0
+> +		1 - PCIe0 Lane1
+> +		2 - ICSS2 SGMII Lane1
 
-To me, the question here is how to represent a graph in a filesystem,
-and since nodes are naturally represented by directories, it is also
-natural to represent connections between them as symlinks.
+Can we have a way to change default lane at probe time without having any user dependencies.
 
-> This is also part of the rationale for only emitting one "class"
-> (initiator / target performance profile) by default. There's an N-to-N
-> initiator-target description in the HMAT. When / if we decide emit
-> more classes the more work userspace would need to do to convert
-> directory structures back into data.
+e.g. To work in USB2.0 mode I don't want SERDES0 to be in lane 0 (which is SoC default).
+But at the same time the application might not be using PCIe or SGMII, so there is no
+PHY user to change the lane to 1 or 2.
 
-I'm not convinced by this argument, as this conversion is a one-off
-exercise.  Ultimately, a tool in user space would need to represent a
-graph anyway and how it obtains the data to do that doesn't matter too
-much to it.
+A DT property to allow selection of a default lane at probe time would help.
 
-However, IMO there is value in representing the graph in a filesystem
-in such a way that, say, a file manager program (without special
-modifications) can be used to walk it by a human.
 
-Let alone the one-value-per-file rule of sysfs that doesn't need to be
-violated if symlinks are used.
+> + - clocks: List of clock-specifiers representing the input to the SERDES.
+> +	Should have 3 items representing the left input clock, external
+> +	reference clock and right input clock in that order.
+> + - clock-output-names: List of clock names for each of the clock outputs of
+> +	SERDES. Should have 3 items for CMU reference clock,
+> +	left output clock and right output clock in that order.
+> + - assigned-clocks: As defined in
+> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
+> + - assigned-clock-parents: As defined in
+> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
+> + - #clock-cells: Should be <1> to choose between the 3 output clocks.
+> +	Defined in Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +   The following macros are defined in dt-bindings/phy/phy-am654-serdes.h
+> +   for selecting the correct reference clock. This can be used while
+> +   specifying the clocks created by SERDES.
+> +	=> AM654_SERDES_CMU_REFCLK
+> +	=> AM654_SERDES_LO_REFCLK
+> +	=> AM654_SERDES_RO_REFCLK
+> +
+> + - mux-controls: phandle to the multiplexer
+> +
+> +Example:
+> +
+> +Example for SERDES0 is given below. It has 3 clock inputs;
+> +left input reference clock as indicated by <&k3_clks 153 4>, external
+> +reference clock as indicated by <&k3_clks 153 1> and right input
+> +reference clock as indicated by <&serdes1 AM654_SERDES_LO_REFCLK>. (The
+> +right input of SERDES0 is connected to the left output of SERDES1).
+> +
+> +SERDES0 registers 3 clock outputs as indicated in clock-output-names. The
+> +first refers to the CMU reference clock, second refers to the left output
+> +reference clock and the third refers to the right output reference clock.
+> +
+> +The assigned-clocks and assigned-clock-parents is used here to set the
+> +parent of left input reference clock to MAINHSDIV_CLKOUT4 and parent of
+> +CMU reference clock to left input reference clock.
+> +
+> +serdes0: serdes@900000 {
+> +	compatible = "ti,phy-am654-serdes";
+> +	reg = <0x0 0x900000 0x0 0x2000>;
+> +	reg-names = "serdes";
+> +	#phy-cells = <2>;
+> +	power-domains = <&k3_pds 153>;
+> +	clocks = <&k3_clks 153 4>, <&k3_clks 153 1>,
+> +			<&serdes1 AM654_SERDES_LO_REFCLK>;
+> +	clock-output-names = "serdes0_cmu_refclk", "serdes0_lo_refclk",
+> +				"serdes0_ro_refclk";
+> +	assigned-clocks = <&k3_clks 153 4>, <&serdes0 AM654_SERDES_CMU_REFCLK>;
+> +	assigned-clock-parents = <&k3_clks 153 8>, <&k3_clks 153 4>;
+> +	ti,serdes-clk = <&serdes0_clk>;
+> +	mux-controls = <&serdes_mux 0>;
+> +	#clock-cells = <1>;
+> +	status = "disabled";
+
+We don't keep status "disabled" for AM6. All nodes are enabled by default.
+
+> +};
+> diff --git a/include/dt-bindings/phy/phy-am654-serdes.h b/include/dt-bindings/phy/phy-am654-serdes.h
+> new file mode 100644
+> index 000000000000..e8d901729ed9
+> --- /dev/null
+> +++ b/include/dt-bindings/phy/phy-am654-serdes.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * This header provides constants for AM654 SERDES.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AM654_SERDES
+> +#define _DT_BINDINGS_AM654_SERDES
+> +
+> +#define AM654_SERDES_CMU_REFCLK	0
+> +#define AM654_SERDES_LO_REFCLK	1
+> +#define AM654_SERDES_RO_REFCLK	2
+> +
+> +#endif /* _DT_BINDINGS_AM654_SERDES */
+> 
+
+cheers,
+-roger
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
