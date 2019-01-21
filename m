@@ -7,51 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0196C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D42AC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E70920879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D882E2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079136;
-	bh=MreQns33g0QQVJU7zVGMtTnZmP0G+b8/BtKMDdJx13s=;
+	s=default; t=1548079140;
+	bh=/ayrwnttDrSNYXOrj2rM9VDhjdwwq9CeF23sstG4PXg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IK0SXXgCu9oHnBdk1CivMda8EOrvlhU1MCSl0CyHN1cYxaJxRAWeXfisQz/d4/YcN
-	 INLbnA5pL2/jkhAot1Rum+hMqzYkFUWGabDt6kjzfhAv8hqndOzax2Q+NIfPJjvaU2
-	 EYKEOANcpa0Zvm+YCeVduDfJ27eeX9XRtxcu9xeg=
+	b=Nc3wlI+h0rJmQMIwg8QN5Ys5aDGBw2cUSwvT0v9ON+JmT4jy9GBu4pWdmrg7Mnj/i
+	 WR1+kAzZYDnRpmLSBf4KKweEP3XHhH4JEo+8GBiZJ5GPmbmqaUK1NYejznOAumLq+K
+	 dj/+xauuTqJYv/CtU0wI+ySFeCDaFW1enRXBJBGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732093AbfAUN6z (ORCPT
+        id S1732106AbfAUN66 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:58:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44616 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:58:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731588AbfAUN6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:58:52 -0500
+        id S1732090AbfAUN64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:58:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 983842084C;
-        Mon, 21 Jan 2019 13:58:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11F0F2084C;
+        Mon, 21 Jan 2019 13:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079132;
-        bh=MreQns33g0QQVJU7zVGMtTnZmP0G+b8/BtKMDdJx13s=;
+        s=default; t=1548079134;
+        bh=/ayrwnttDrSNYXOrj2rM9VDhjdwwq9CeF23sstG4PXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ObbzpeFZmxezZqSH4T61Uq+BbQBNAA7aguTfVrQDUVduAv1RFcKg9+ZaG8SWEgMmw
-         llSl4dwK69Gc5N+yfK0JsKOfsUseY53Jdpz/DZXccbxzof0ldcon0MXWbtGgOu0B4V
-         nZPupdgezMNIARNml5XWYLx2sj1zM0XWo13dvCLY=
+        b=XPNabNMeTd3xp4/oL6xY4DAHkk8VXObhP4I0DNk6FPyfXq1j85FzopSzLuMJRssDt
+         k6ZDnUezEAZoZvvatP+atqJMhgrI+3pTRslC61MRsOukcsls0v9SOKs0hsRKGw5SN6
+         A2VWzW/guzWkIVxbCp0oZUdDyDNQWDD5ZFljG0Fc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Safonov <dima@arista.com>,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH 4.19 02/99] tty: Hold tty_ldisc_lock() during tty_reopen()
-Date:   Mon, 21 Jan 2019 14:47:54 +0100
-Message-Id: <20190121134914.010522996@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 20/99] ipv6: fix kernel-infoleak in ipv6_local_error()
+Date:   Mon, 21 Jan 2019 14:48:12 +0100
+Message-Id: <20190121134914.681139794@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -70,71 +66,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 83d817f41070c48bc3eb7ec18e43000a548fca5c upstream.
+[ Upstream commit 7d033c9f6a7fd3821af75620a0257db87c2b552a ]
 
-tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
-nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
-But it races with anyone who expects line discipline to be the same
-after hoding read semaphore in tty_ldisc_ref().
+This patch makes sure the flow label in the IPv6 header
+forged in ipv6_local_error() is initialized.
 
-We've seen the following crash on v4.9.108 stable:
-
-BUG: unable to handle kernel paging request at 0000000000002260
-IP: [..] n_tty_receive_buf_common+0x5f/0x86d
-Workqueue: events_unbound flush_to_ldisc
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+CPU: 1 PID: 24675 Comm: syz-executor1 Not tainted 4.20.0-rc7+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
- [..] n_tty_receive_buf2
- [..] tty_ldisc_receive_buf
- [..] flush_to_ldisc
- [..] process_one_work
- [..] worker_thread
- [..] kthread
- [..] ret_from_fork
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+ kmsan_internal_check_memory+0x455/0xb00 mm/kmsan/kmsan.c:675
+ kmsan_copy_to_user+0xab/0xc0 mm/kmsan/kmsan_hooks.c:601
+ _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+ copy_to_user include/linux/uaccess.h:177 [inline]
+ move_addr_to_user+0x2e9/0x4f0 net/socket.c:227
+ ___sys_recvmsg+0x5d7/0x1140 net/socket.c:2284
+ __sys_recvmsg net/socket.c:2327 [inline]
+ __do_sys_recvmsg net/socket.c:2337 [inline]
+ __se_sys_recvmsg+0x2fa/0x450 net/socket.c:2334
+ __x64_sys_recvmsg+0x4a/0x70 net/socket.c:2334
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x457ec9
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f8750c06c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+RDX: 0000000000002000 RSI: 0000000020000400 RDI: 0000000000000005
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f8750c076d4
+R13: 00000000004c4a60 R14: 00000000004d8140 R15: 00000000ffffffff
 
-tty_ldisc_reinit() should be called with ldisc_sem hold for writing,
-which will protect any reader against line discipline changes.
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:219 [inline]
+ kmsan_internal_chain_origin+0x134/0x230 mm/kmsan/kmsan.c:439
+ __msan_chain_origin+0x70/0xe0 mm/kmsan/kmsan_instr.c:200
+ ipv6_recv_error+0x1e3f/0x1eb0 net/ipv6/datagram.c:475
+ udpv6_recvmsg+0x398/0x2ab0 net/ipv6/udp.c:335
+ inet_recvmsg+0x4fb/0x600 net/ipv4/af_inet.c:830
+ sock_recvmsg_nosec net/socket.c:794 [inline]
+ sock_recvmsg+0x1d1/0x230 net/socket.c:801
+ ___sys_recvmsg+0x4d5/0x1140 net/socket.c:2278
+ __sys_recvmsg net/socket.c:2327 [inline]
+ __do_sys_recvmsg net/socket.c:2337 [inline]
+ __se_sys_recvmsg+0x2fa/0x450 net/socket.c:2334
+ __x64_sys_recvmsg+0x4a/0x70 net/socket.c:2334
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: stable@vger.kernel.org # b027e2298bd5 ("tty: fix data race between tty_init_dev and flush of buf")
-Reviewed-by: Jiri Slaby <jslaby@suse.cz>
-Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Tested-by: Tycho Andersen <tycho@tycho.ws>
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
+ kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
+ kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
+ kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:185
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2759 [inline]
+ __kmalloc_node_track_caller+0xe18/0x1030 mm/slub.c:4383
+ __kmalloc_reserve net/core/skbuff.c:137 [inline]
+ __alloc_skb+0x309/0xa20 net/core/skbuff.c:205
+ alloc_skb include/linux/skbuff.h:998 [inline]
+ ipv6_local_error+0x1a7/0x9e0 net/ipv6/datagram.c:334
+ __ip6_append_data+0x129f/0x4fd0 net/ipv6/ip6_output.c:1311
+ ip6_make_skb+0x6cc/0xcf0 net/ipv6/ip6_output.c:1775
+ udpv6_sendmsg+0x3f8e/0x45d0 net/ipv6/udp.c:1384
+ inet_sendmsg+0x54a/0x720 net/ipv4/af_inet.c:798
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ __sys_sendto+0x8c4/0xac0 net/socket.c:1788
+ __do_sys_sendto net/socket.c:1800 [inline]
+ __se_sys_sendto+0x107/0x130 net/socket.c:1796
+ __x64_sys_sendto+0x6e/0x90 net/socket.c:1796
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+Bytes 4-7 of 28 are uninitialized
+Memory access of size 28 starts at ffff8881937bfce0
+Data copied to user address 0000000020000000
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/tty_io.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/ipv6/datagram.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1267,15 +1267,20 @@ static int tty_reopen(struct tty_struct
- 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
- 		return -EBUSY;
+--- a/net/ipv6/datagram.c
++++ b/net/ipv6/datagram.c
+@@ -341,6 +341,7 @@ void ipv6_local_error(struct sock *sk, i
+ 	skb_reset_network_header(skb);
+ 	iph = ipv6_hdr(skb);
+ 	iph->daddr = fl6->daddr;
++	ip6_flow_hdr(iph, 0, 0);
  
--	tty->count++;
-+	retval = tty_ldisc_lock(tty, 5 * HZ);
-+	if (retval)
-+		return retval;
- 
-+	tty->count++;
- 	if (tty->ldisc)
--		return 0;
-+		goto out_unlock;
- 
- 	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
- 	if (retval)
- 		tty->count--;
- 
-+out_unlock:
-+	tty_ldisc_unlock(tty);
- 	return retval;
- }
- 
+ 	serr = SKB_EXT_ERR(skb);
+ 	serr->ee.ee_errno = err;
 
 
