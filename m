@@ -2,91 +2,72 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0788C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3E6C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F5D72085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:45:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DKw4iSCu"
+	by mail.kernel.org (Postfix) with ESMTP id C3549214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfAUJpc (ORCPT
+        id S1728033AbfAUJpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:45:32 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55132 "EHLO mail.skyhub.de"
+        Mon, 21 Jan 2019 04:45:46 -0500
+Received: from 8bytes.org ([81.169.241.247]:58524 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbfAUJpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:45:32 -0500
-Received: from zn.tnic (p200300EC2BC625005DE3D5B66D6AB027.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:2500:5de3:d5b6:6d6a:b027])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EE49F1EC01B6;
-        Mon, 21 Jan 2019 10:45:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548063931;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=EUxLhEQmrRhU3Tx/rm3Y1Pz35MW5aKfYD3ET+nNDIJU=;
-        b=DKw4iSCuiQVISLYIq4w37noxhzhLCHbttGzzqtbEYPcGOLJSazmsPsjsIdwaNS4ZyHFTto
-        sTs/T6PiEr3ronNJrSadwMiFpk99s91/eNVY3pURy1gpZkRaTT/n4ljGpVpjqmCJnNJjt9
-        i1WZiS2z5Mv1rYvEuCMerTVeVmtyLjo=
-Date:   Mon, 21 Jan 2019 10:45:24 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
-        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store
- immovable memory
-Message-ID: <20190121094524.GD29166@zn.tnic>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
- <20190116110158.GC15409@zn.tnic>
- <20190121093348.GB15754@localhost.localdomain>
- <20190121094214.GC15754@localhost.localdomain>
+        id S1726133AbfAUJpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 04:45:45 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id E8CE6451; Mon, 21 Jan 2019 10:45:43 +0100 (CET)
+Date:   Mon, 21 Jan 2019 10:45:42 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [git pull] IOMMU Fixes for Linux v5.0-rc1
+Message-ID: <20190121094536.si5x3wltlllsxcod@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121094214.GC15754@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 05:42:14PM +0800, Chao Fan wrote:
-> Or I clear this function as:
-> static acpi_physical_address get_rsdp_addr(void)
-> {
->         acpi_physical_address pa;
-> 
->         pa = get_acpi_rsdp();
-> 
->         if (!pa)
->                 pa = boot_params->acpi_rsdp_addr;
-> 
->         if (!pa)
->                 pa = efi_get_rsdp_addr();
-> 
->         if (!pa)
->                 pa = bios_get_rsdp_addr();
-> 
->         if (pa && !boot_params->acpi_rsdp_addr)
->                 boot_params->acpi_rsdp_addr = pa;
+Hi Linus,
 
-Or simply:
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-	if (pa)
-		boot_params->acpi_rsdp_addr = pa;
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
--- 
-Regards/Gruss,
-    Boris.
+are available in the git repository at:
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v5.0-rc3
+
+for you to fetch changes up to e8e683ae9a736407a20135df7809090a446db707:
+
+  iommu/of: Fix probe-deferral (2019-01-11 12:28:24 +0100)
+
+----------------------------------------------------------------
+IOMMU Fix for Linux v5.0-rc3
+
+One fix only for now:
+
+	- Fix probe deferral in iommu/of code (broke with recent changes
+	  to iommu_ops->add_device invocation)
+
+----------------------------------------------------------------
+Robin Murphy (1):
+      iommu/of: Fix probe-deferral
+
+ drivers/iommu/of_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Please pull.
+
+Thanks,
+
+	Joerg
