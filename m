@@ -7,37 +7,36 @@ X-Spam-Status: No, score=-6.5 required=3.0 tests=DATE_IN_FUTURE_12_24,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD56C26640
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 17:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D516EC26640
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 17:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F215E20880
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 17:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 946C32085A
+	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 17:40:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Re8a6+it"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Y31ZAOvy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfATRkD (ORCPT
+        id S1727630AbfATRkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 12:40:03 -0500
-Received: from mail-eopbgr710061.outbound.protection.outlook.com ([40.107.71.61]:52533
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Sun, 20 Jan 2019 12:40:09 -0500
+Received: from mail-eopbgr790071.outbound.protection.outlook.com ([40.107.79.71]:41448
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727178AbfATRkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 12:40:02 -0500
+        id S1727178AbfATRkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 20 Jan 2019 12:40:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mw50xk2s4ClZk9xRIA7SCxOsGwJHCnEeNvuT9mFY4tU=;
- b=Re8a6+it5eIwa7/jW4ChmDHUNd/td+etcFjpYjcGIEwX7mrPQ9oYQn4kOITtb7WIMAcTWSkFGh4NrEjQAOGeAWN8WaNzx1T/TF7Kw3B5Mpv6Nm3/atkTPrbkECeELLrNXPfhUXpCt16ho3Q3rcwgqM6TWz8+V6jRLV0RUFUXldM=
-Received: from MWHPR02CA0051.namprd02.prod.outlook.com (2603:10b6:301:60::40)
- by BYAPR02MB4454.namprd02.prod.outlook.com (2603:10b6:a03:57::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1537.25; Sun, 20 Jan
- 2019 17:39:54 +0000
-Received: from SN1NAM02FT008.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::206) by MWHPR02CA0051.outlook.office365.com
- (2603:10b6:301:60::40) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1537.27 via Frontend
- Transport; Sun, 20 Jan 2019 17:39:54 +0000
+ bh=jF81Ebz/i1HNTI9kWeRGPVYV6q5ca1KtBsKg68aXIyg=;
+ b=Y31ZAOvyV71Xw+YXlsqdxmDe1b/Rmbyuopcv2NopwhtJPMzCIQx0TNUaDEZz4Sh9s6JVUkVLX8VvFKGI93xceLE92/NqHVcQ0rjadlRo/yrcjDHE36g4D9VXb6ZIqMd3VfkMpmFaSZUBow3kx+Z4v66yvdrPV0VmrOa3vrYgBeI=
+Received: from DM6PR02CA0010.namprd02.prod.outlook.com (2603:10b6:5:1c::23) by
+ DM6PR02MB4458.namprd02.prod.outlook.com (2603:10b6:5:29::27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.26; Sun, 20 Jan 2019 17:40:04 +0000
+Received: from SN1NAM02FT018.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::201) by DM6PR02CA0010.outlook.office365.com
+ (2603:10b6:5:1c::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1537.24 via Frontend
+ Transport; Sun, 20 Jan 2019 17:40:04 +0000
 Authentication-Results: spf=pass (sender IP is 149.199.60.100)
  smtp.mailfrom=xilinx.com; kernel.org; dkim=none (message not signed)
  header.d=none;kernel.org; dmarc=bestguesspass action=none
@@ -46,35 +45,34 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.100 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
 Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- SN1NAM02FT008.mail.protection.outlook.com (10.152.72.119) with Microsoft SMTP
+ SN1NAM02FT018.mail.protection.outlook.com (10.152.72.122) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1558.11
- via Frontend Transport; Sun, 20 Jan 2019 17:39:53 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:56541 helo=xsj-pvapsmtp01)
+ via Frontend Transport; Sun, 20 Jan 2019 17:40:03 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:56606 helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <nava.manne@xilinx.com>)
-        id 1glH4b-0001kk-6R; Sun, 20 Jan 2019 09:39:53 -0800
+        id 1glH4l-0001kq-Fj; Sun, 20 Jan 2019 09:40:03 -0800
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <nava.manne@xilinx.com>)
-        id 1glH4W-0002us-28; Sun, 20 Jan 2019 09:39:48 -0800
-Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x0KHdjPc027285;
-        Sun, 20 Jan 2019 09:39:45 -0800
+        id 1glH4g-0002wC-B3; Sun, 20 Jan 2019 09:39:58 -0800
+Received: from xsj-pvapsmtp01 (mail.xilinx.com [149.199.38.66] (may be forged))
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x0KHdpB7022699;
+        Sun, 20 Jan 2019 09:39:51 -0800
 Received: from [172.23.37.118] (helo=xhdnavam40.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <nava.manne@xilinx.com>)
-        id 1glH4T-0002tH-6X; Sun, 20 Jan 2019 09:39:45 -0800
+        id 1glH4Y-0002tH-Oz; Sun, 20 Jan 2019 09:39:51 -0800
 From:   Nava kishore Manne <nava.manne@xilinx.com>
 To:     <mark.rutland@arm.com>, <michals@xilinx.com>, <RAJANV@xilinx.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <JOLLYS@xilinx.com>, <chinnikishore369@gmail.com>,
         <robh+dt@kernel.org>
-CC:     Nava kishore Manne <nava.manne@xilinx.com>,
-        Jolly Shah <jollys@xilinx.com>
-Subject: [PATCH v3 3/6] dt-bindings: reset: Add bindings for ZynqMP reset driver
-Date:   Mon, 21 Jan 2019 23:08:32 +0530
-Message-ID: <20190121173835.21173-4-nava.manne@xilinx.com>
+CC:     Rajan Vaja <rajan.vaja@xilinx.com>, Jolly Shah <jollys@xilinx.com>
+Subject: [PATCH v3 4/6] dt-bindings: pinctrl: Add ZynqMP pin controller bindings
+Date:   Mon, 21 Jan 2019 23:08:33 +0530
+Message-ID: <20190121173835.21173-5-nava.manne@xilinx.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190121173835.21173-1-nava.manne@xilinx.com>
 References: <20190121173835.21173-1-nava.manne@xilinx.com>
@@ -83,269 +81,357 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(39850400004)(396003)(136003)(2980300002)(189003)(199004)(476003)(446003)(356004)(6666004)(14444005)(4326008)(77096007)(76176011)(336012)(2201001)(126002)(36756003)(426003)(2616005)(186003)(26005)(305945005)(11346002)(478600001)(486006)(81156014)(81166006)(47776003)(8676002)(50226002)(54906003)(110136005)(39060400002)(9786002)(48376002)(2906002)(1076003)(36386004)(16586007)(316002)(50466002)(8936002)(106466001)(51416003)(106002)(63266004)(7696005)(107886003)(107986001)(5001870100001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4454;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT008;1:11Zgxne5reiReVekkJATLJWz4C8+CqqSV3pO+PKvapPDnBzrZfpJ5rBsqqOtiEXrTpGYz8EKDfYeDPmwi2XDIQgL7hKw2Nas8x1zde/lotN+1i/0vxwySsSef8ZS0viXAKDP/4IWEj52w1LY/wGu/u6z6LrYXP8D4DiXL2tB0nQ=
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39850400004)(136003)(376002)(346002)(2980300002)(189003)(199004)(2906002)(63266004)(336012)(106466001)(16586007)(186003)(50466002)(106002)(316002)(2201001)(478600001)(39060400002)(305945005)(4326008)(107886003)(14444005)(54906003)(110136005)(8676002)(8936002)(81156014)(81166006)(50226002)(356004)(6666004)(47776003)(7696005)(51416003)(76176011)(9786002)(1076003)(30864003)(426003)(486006)(48376002)(11346002)(36386004)(2616005)(77096007)(476003)(26005)(446003)(126002)(36756003)(42866002)(107986001)(2101003)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4458;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT018;1:AiRVTl9RB/pK8VYLeWghO8Y7oH/E7jj3El8N/pi/qtDemJGTx1X2ruaxKziq+SDY2ZNo3VEG6W4gC0zNPJRTR6uxWXfJVwOTtCONbs+eHjzdOsKp80WXFLVW6KQHtTV4k7LDl36l4oZB5iyLevQnNMEcYJiF/pVfCsMIWYj7MkQ=
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 90bc12ab-c905-4e4d-675d-08d67efe4982
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:BYAPR02MB4454;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;3:cy4utsyx7auug62y2eOeuUA2uR+wIkOfSOS6quUp12mDkVZvfpvD5Ss1TwKNP92YkXzcQ6T7IY433v375Q1gPq35H64yZL+A+datQDvq6EOhKSBVBdR1mTThkwL1VTnmF1PBZ56hiMd7CdjuaJWmQotO+hSae55mrSv0mm4WqOJ1L7cZUMf3JNSXFfumd/wSK7iEJcQAOhXoKu4O1K5EhJpw3CzhyOa7ZoGiwmaPt//KtdkPqDPVFfy82qPHT9JmH0X1C3mRJ++wV01+OEFjWrzjgv9onmtpIb1slN0DjMODhisx097dPhryKNQRyEsjuVWeAe3/bgYC0wtkTOHl19kqIHnwocjQnihStUlqCh2bcTqhgPsIRxrZuSbtyYuy;25:bTO4q3K8T9ezZ24MpsIq4FzWAKtsFUzdZzxhoLjwpl1SLM82shIMUp2KlQpgDuHK44HL6jEIsP1DtJsnag2ucZfwmdSKBb9jlmSHyUaS+5OcjOOXKsmF7JHWXRdZfH7XsxYt+vsTeKTtmUVZLM3yce+viIeFDFHDBHwghsYe8Zo0RBmGTYIgULJDTDXE5Hcrz285hR0smbfwlhDE+zaQ9TtMh0qFoKEbfCYG+ApGKGDYlvJdJgqI6Yp5Red0GiMKdE7tAd3fGz3L7QpL5XCbuDZeOmSXk/hXIWxkdvxqcMlZkHYpjmhZh9d26SKDfPa7KdaXZm7tQ4sRhK+RBtZZDQ==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4454:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;31:uuzl07mw71dleeU3N/5e/kPCTOrMZOKHV/Sq/ko7ipopD/8e6bAexBy4fT8pRDBcCmflg8lzcjG5Ge+nvgvP5EMwWsjh/zne/Bwj4Pvhod7oLiHFc7HplgR98KWHrmv/h88C5nBCIls+9cd3BdniB5Qn4/3SRNKrgo0XSJU/r2eyVfmuORCq79UFMKlyeDnx1t5lTn3mBCK510dCfBNHeUQu8bIOaIsJReVhKanekJ8=;20:Bu6v+VrJmKMLM21DKSqLTQ70onD3mHUwlQO2NmxCoCqCP/nXkDjmI9xB0yfIdN9v/eNolNBeLOO/3sfywc7hw7Yym8hF3MnvlrWAb5k+v18i0yzTL7PWOv0nSNYr73M/2bcV7bRHgGYLrGWI4uVuda7mcqHewSDX+V1rCHTqVPdGPnzy6oo4lZK9iWVA/pph8eeL+JYFWT9U99YgSvz1IeHBg3Y+nMwormmf5G4rJ8ZuRkhwjH278ZSUacssKfK7fgiOAp0BbhsMUjoltDdVWwUCzGXLWIrLq5wvCxDTOJJ/4ooYfsuKlbCRtb6nWbktU721poCSTFMBsbWGsCtqniIfVrKMT9vsCmuDT7WnjfAKv5rRHODwJ6HZTmXWIT2zj4mR2hplWZ87toc59Jv7GcK4OgAGVSh3LwHvP4De/TuD1B7XvUisn09qgSPBw3w4+f54jSvnkGg8i4UU1jvmFbzf9RL3wIfEsgQBUtTSWTQ2hUcCqargD3ZsK4jwFUoV
+X-MS-Office365-Filtering-Correlation-Id: db6009ac-492f-4a9f-d32f-08d67efe4fa8
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:DM6PR02MB4458;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4458;3:x7V8Z3UFp2J/rFM5Z3Yi20X9J97Fv8JDDGG70ssd1hijeEQlxJ9DkleoQP2xIRL0lMoVKSq0ZvC6fU7en+JpvthIamEtB4H6wTWUeRuzHc2CDEE+ObS4Vz3U+6YDbooh5SUhIzlT0g1kozxeFSHbPkyVHbU/wWj6NnmVW8S+6ZC+nqAzGj+NVbSV3x9dWvL2L/elARzsZ+L2sJqYAPXlfss+2Y9BMYUeMQVIKkEL4tmdvsZTEdnNSQf0/Zj8EuT51gsfgkrI3eOuB5XtjAKTgRnHF0ieUZipUd5sOdZn4qHtDUCAxODKEnriSqzGkl6rz6m8a6ecTdRfYRncMq2iXlBUw20iFq9pwXqow35P6tCHkqQaD8bwPZG4lK33klZT;25:CU3lDYIcTcD+0dXk5efLFekEiekWpguCK3BybB2gCQSbKQ2iQDw2v0H1xSo10YYr1FNPhK9kAhlrsT2C9ovcKLTSlwP5TysnifJspz2t6IVUHUuTN13NiKDLGCiNzJ2DtIIedz76mA4MuqUQEaTsulr+C5atDSXqD1LmiVat+q4SH60iqP5E0EBPU3rSKmDq+hxHMQaxR/6SXgAZMzZN7NCY5z/8y/lGiVL9clG57IA6R1dCwALsG6AX5UMC13y91J2wwSYI/E/7zrJkFcuoscKlEfB+g4JALLmSy6dEOUgLKDu0xxz7T+xnipp3VGouOOABqZR2LLGE8z5euAD3Zg==
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4458:
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4458;31:Exat3TwrvOnmswqGq0xA0LzxXCt8TyS2CiEogtdxrehvRmhUCBXfT51+XaqtZeCOeEkhahcxoYEV/9tyKOPmfxTZczzt2eAz7xV6dHUHEQ80WbNdvxnEFX1042bCpCpzibXnShRuDiGdptA2imUVz6oRRyghFeyo5clbsjI4NQpSK8evmjq/HWK6ygpgGF5p0aV4LyMtdSHFcxfb4wY5KiM6pYtSFp3zAIErY/xAkYE=;20:sqsJgazfh2g9wa3DUp/30xRcrzfSwg3Y4dLdt/x1ccVAvGVwEfLZ8q+02hagGkRPGje2faz9DdjUcDOC9TFxoFB2cWLUviZc/lDn2DjmenvfunQoWTRjn9CEBzMHxwlhxfWTmMDdzm5qT0d8bav98kwpJPaybzUnAFEESDw69VDyt0JejDirHUcZ2OsELiC1SVi1YsIci5XpKwzemsbKaO9hS09mgl/Y8lVjw+r+ihLghOy0SqvEiQEMOGMQg3B+PiZHXGUphJrONNVxvZm5eSFx9YsjszLY2Pxcb941F0N/Gki/bhJK878HyD13UaMO2Bcgf44sj57MKxSI7e1a4BrzLuKbxevQWnYqrf1yuZ6B0Bhftgk5iUgDuVonksHMZ7IWndxhzYi4imfL1WeLWEg8WCsOQNc1NV15MymQwbsd6h8/m6ibeKiQ5+zosCMHV8oGo4UfzrrjyAug7SjgC11YJTgGymlR3znmU6oeVoA/VT2qc1DDoamDG5zMJ7tt
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB44548B5AFBA3170ABB5D9080C29E0@BYAPR02MB4454.namprd02.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;4:XD1wj3UUUlp/jGYzrmbm06siKNyX8Gw7/2GPjO68pg7LF66ngspCCA4gUdIN5CZ88gxEprNUZMls+huYD2baf/hLe7nGA9vN/i/C+V2uQwYc6iGEN1Cc/JUwDljSFfpa4EjeD+0QCCo5MfRiXUp+bwnFv6qV1h/4MceZVqnb8MfGrWKvhC/JE1NxHDGp4JWuljNDNa0uqUKFgZfPjm6LR7WmwKAjdCY3ZShvJfYeB3hVPF5lmf421u3l0lylOQ8pEjhMoBN2E72VoqIjPLwc+S5Pe8n1tp0qSXAVALfGP49T5+cC3G5+/JBrGiFfVxe7
+X-Microsoft-Antispam-PRVS: <DM6PR02MB445829B52B8D9B66C9D87F59C29E0@DM6PR02MB4458.namprd02.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4458;4:XkNiPdTmPzXwb0u0lO20FXoNjz53OS8eQYyPxbcIKkUVK/Ag1Z3snIavgdzffsnHZ8dfgoTUpAga1UgcP+8iinscGNTV9uEnAXNAf+5iq+Y77sv6v3yLt03mX1tnXHbD/tNVuUgC21G7Vl0Ak882aqmAR02tky1OIfQH71blHpdhyxLSCwAYwYUJqlcnQqyGKuoU5DsHy0bEUg6Fi4477UhBPBWe8k2Uffh0SkTh6esoKr0TRmaF389kaWG1Xxit+vB0BAlWgPHQSu97QgNGgpjbdk+XY4rNGoEq+VRGVYM=
 X-Forefront-PRVS: 0923977CCA
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4454;23:3PNgujj6IrUVJM0repkVaHF2Cel7Mo/5bVoEiUlau?=
- =?us-ascii?Q?iUgdL3woJ2hAjBHd0n5blwHFdRb0NgUBzB8OPD5acyX/ByZsSWRtGWkL1z3a?=
- =?us-ascii?Q?ZQqXg49L9f5eyFdWQp/1Zgwk63w53cOx5gbisvo8RJWQo1Na5FOsmkhfA+dm?=
- =?us-ascii?Q?50i10xhTDDvsx67uI0Z3jvcw5KfQuf9mtLKZ72wV0sGVccTTCoaBo0M1RCNU?=
- =?us-ascii?Q?MnUhIb1HWMPH4B/A7Ci5b88ApJ7bQtG0095vwBe6kRJBHTPluTWDzANbcJ6Q?=
- =?us-ascii?Q?YIfFwK5yKkFSLwJmDfaq1+Mxp+8FSBLPXlSLamSlEcwKE+1srbDPNAHzyw7F?=
- =?us-ascii?Q?7Bjcy3q6O6c9/COceWYEXWesAIvHtac3B9/3MUI5Ag8lvaNwb6LHv4CT4ACk?=
- =?us-ascii?Q?VBzu6qv7z0EpRGEGGT3YYDVCCA7C6AugN4YRDhG3b97kyIf+q2+tDzbqYZSg?=
- =?us-ascii?Q?q+FtWjsT7BzQydV4SFTbueWmXQywPD0UzByrcNtlZEbCA26Gsj8t9XiudWPb?=
- =?us-ascii?Q?asGY4tsVU0ett12n4li+3S957HNEJkWTVoT/WBlnf8Xg4eIlPOSNXFDHB7F5?=
- =?us-ascii?Q?PUSat7SB5E1Qa4MUzaOjh5htjFfz5mKPml9Be1HU1akw+alSd2+QjhghqmYz?=
- =?us-ascii?Q?UVKo8Ly9kzY44+xOKhpEDyS0Tkwm4ETOBHpdEme83PXqdnYRLwvM5Jd22InE?=
- =?us-ascii?Q?ne74SO1j/4CJruYybUT+0DfulzdKpfQiu01WB2DoHBcot1o0Ec4KOg3v1Ntg?=
- =?us-ascii?Q?+jTpCm+AsWQ3eI+1EJhXvygzzxb6DT6MkcJYIRJXoqFhkz12MM/vLkDNzfFk?=
- =?us-ascii?Q?TiSr6kaB7MG44XXdsUHF1vD+AuaQlmFIaLZ0GDzp+FIqClGd2wlSMYiPTzO+?=
- =?us-ascii?Q?KI1pBEwBBd93al4E3kOLP38xOWIYKHxQ4RbdAdwtKJnDMhdh6XlnNPXqRwfA?=
- =?us-ascii?Q?ngoOBIzv9kTP57D0Z2GjU4jle++EMJ9fVSn2kyqGUvykg98t7phqVeOXo+SD?=
- =?us-ascii?Q?4hMd2g5fKX0tc0fGkzBtxkV4TOnaGDf0czWJZz6lmqHax3rTV4X8tGcdUhzZ?=
- =?us-ascii?Q?GirBI/MnQdzm0/ljJud1h/PcoSiWVlEUHuIKHp1DiW1Yl/APS6G3t8MtIkp3?=
- =?us-ascii?Q?KKAZueBJqF0m9hu7Q8taCV14fpiWPsO0bZTrrGiENUcxfN/c+WDYIHv4RF6R?=
- =?us-ascii?Q?b+Sg413mN3tugyCv6chO6EgiPEhIoq+qk9s?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR02MB4458;23:Z/3P0d9cnxCvHT/2lpIAvrRu3kIDo/gy9Rk1PoR4g?=
+ =?us-ascii?Q?xMOYFg4GaLd7xbg/fzZQm5POdD2oyIEvewNCmb9wq4m1Fk62uiUl8Y9Rz5BO?=
+ =?us-ascii?Q?CxSZ3CgzPm56taA5lGtjnKxq16OMB6zyG3W4TO8WzybXGdPP0cq8jBVLAUfk?=
+ =?us-ascii?Q?/tRe33hnOPC9TjaWINsc6smPflYUTM9BJDRaNMhV8HFYA5zOkRRaVD+Wmb7b?=
+ =?us-ascii?Q?768h7+bGBS6gqQ7e/t4UsMELmRzJYJH4rSObo0mbi85IRNZe8vnoclfSkI9K?=
+ =?us-ascii?Q?utBm8xpjVU+W8mQ1a/vk4Pr1PPdXyk5nixRDj5vpyLPQeCsuKsUu5QbRjJCr?=
+ =?us-ascii?Q?5IG7zgIsPQByhygNyYYM/JuyDx4ILWUiJlyQWRGrf0gndLk+QESs+GFdFwKZ?=
+ =?us-ascii?Q?5Bvd6P2/QBl9LbisfeJsML/BOvWM7Dq7O5xImndUWd5SNxRiMC9bKi9pwOKp?=
+ =?us-ascii?Q?o9uIn42Z3jo4+zeEdlHoIHuS04jXjDc0ND3l+j46YnKjNQ3N5IV40FjaiRuV?=
+ =?us-ascii?Q?61jBukFY2pz8+Ma0qoOqyvwZdN3MH/i+PyxaL5XJzGbFu441tS9z3OraDxAF?=
+ =?us-ascii?Q?9SQqTRrH1Sj3BzQ+h8mkVJW3N7e0eu3jWDgZwWEwI0eEtUfUao7ZiQTchnWA?=
+ =?us-ascii?Q?QB6N5zC2RYBK1pZSCrd+xuyHYp6vpnIAVHSERa7ngq1sBZLo/qlHnMHOVUF/?=
+ =?us-ascii?Q?uuQCaY4eh5zy2lSkuAjzMbitAEUmltEhoWdX5i623viT4hpsKQN0K651dHHi?=
+ =?us-ascii?Q?wZQJhTJxhX5zxjnD3n7TcvoBTnssTKvBK3HcDTjCTv3ViTJbuDRbuz2uTC7v?=
+ =?us-ascii?Q?RQrq9/tMhhxIjDkxpTQd9be0HGmDz67yAQmNPR247b4DLYkOkZ3eM0H647PG?=
+ =?us-ascii?Q?6OwRhR/kqVqox9FXZFYB/zIiZzDujHLOj4QRXJSKTONsE9HoPm9c6wE7et4n?=
+ =?us-ascii?Q?ReJ5SVvnz94s4es6Ws+cjRZvhnxif182afGu8w2pS+iJGe+BkV/tfo4QhNI2?=
+ =?us-ascii?Q?niHQH7vaIb6W1QEjlK2M/ZoaeHDzXjAjB9P1f8w4ul8TmniQcuLF/w/uoq7o?=
+ =?us-ascii?Q?oubIrUxicInnNNdtrtzFepVq8LgJ0JPqjqZvELyFu1W2xFB9nvnxlW0jqwzC?=
+ =?us-ascii?Q?n0qUdY0JM98tudf9MB0pNEinzh6WMlAvWkznrAeK1Us48fhuVJ8DajwaOkCK?=
+ =?us-ascii?Q?5a2qUDMrXIa5/tuBkoXvvWyhATXWzKyoxUscbNYzhvJKJwhK0hWerpBl125S?=
+ =?us-ascii?Q?16gbN6ZeLbDYzKJqf8=3D?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: U+V1pZP/kj3tCM4cPuSyNVePxW+ghNkBzLJ5X91TZYNEs9qRcoGoiMCaeCdmJrv01WPqm60le7vcjSz2HEvYrYf5MeJA42Ct9HUx9QDuphooVL9QW4t3VrrMMuxRIRU8MmIKg0DEqYJRmA2OfOlE3qV7pb+LscuSiWE8iqFsQMeFkTn4PCAFTWIHYU2BML0Uq62syVwRAc/jtd3ESbqCmKf74XKrpRgQ/Nnlpex5Swt0xxvbLGSHHSp+olF/IsqVBKWtbV4yDrEvIbD+6IvlAfNls0fYAjrJG4zIjxO6xkuxJEu/kWdjwY/CX0DYsbQ12iRA6TEeAjtlk/k2RhnKm0Uhh6TNojv4M20TGOtxh20nvyEYpuQMeKE7Vsq6681pSMVxIJAPeHHzvKsFbc+hp9R2WPFElos6/VT3EyZkwMM=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;6:vqRVCDM4+12/ywW0dReeEdAIDI7akvnxP3bV2Qqg5CX8IffuJwQ8GMZCNeI/CDVeWjHaoTInW6ho787wr2pkGbLMR3dJM7Hbc9wfROkK+bk9CQPU3PXzuoj2K5/HE0ML3AvMW1Hx/7mvV2Bo5TmxTq1J8dUsOehNr0t6wGYdUjEl/+JdlE/kmdkTPu71a3sVCWidcpM2VrFjiiHPOkKW7g8wLPFJnzAcmlKW2rw6umKHTO5ncng3B7aYo1K1LAPHE9P9NlLVhoQkDLq3RPGsK6gXDpMSUoRVMwVMn9Zj59n6qS4i9hfMHXRQADAHA+elgMYNVTWUnDyCcOJB+xQpc584A1NzjANOe7FkzGs/jYMVbu3fULKeFsvMFlbZt0qo9/fap+GmJc1d4DNAQqFiDLNtk6/YA9a4sFBlMAVjLbUVs6aXNvd2Z1nVxLjqGAN9EaWt3oPs+9TPvaqmYT6xoQ==;5:mE1mqteo2P28roI0lu51EaDjCqq/09l4Q8hRNBtQmwIBvZ4DFyH1wK/oA7RyAUnVsEIuOcaYEF3YO9r6X6YTcy3TrCEgLb9skozG/j85Uwh2F0Dy/GSAKQEkoFSxc48mboGJIRx4Df/yjoHqMhymXZ7u5LuJttgfh7tXoUlbd9O7fzBGTbcb14fu/yJorq+9SOSjqD6nxxHeQzJpf5+oLQ==;7:XwcVtXVxI/MFCoNhRm8QCphqQybtRlWFttJnIJfOnH/IiOvdVcFmbNKcyxKRQeDQN2sKjJTR8Sddz7n9prWpA5xdCSksLJb1PfgHl/GYMU8Mu3nLiSQd5tta4sCkoD/F9tKw/Fs34gtHTSe/0fJ7oQ==
+X-Microsoft-Antispam-Message-Info: 5uqu+QkU6ArUytCna7kPldjJEhZQEmtUFVfk6NLdAyvjYmuz+6o1z314yJZEGla8rnh0E5octALInyKf/s7aN0D3ueYONpjiSOsoP0As7ZPBThVFEGV+y8TvEvzFMgTcvnHnzAxpdtCIuTbDBz2a49CTKGXQCQZEDlGwRC15CRNMli8Z0ryf1bpcN8BWB6jqJZt7URljXCu5xpftoDxceHmdPIsO6ATeZPH1xyHKdFUXqmI50oXFOOZ8gQcvjI3ZV9zhv9PWawo24ea5cFgpJpMdsfkMmGBcBA45lB+UNYkxXP/skFyx9H7UgHwdbOi1J5NBv/zF6elQw6+JYY9KjcnB0ufP2IwQUbsbP/WCXxuymIsUB5UgNvTFjeXlNqgOih6E71LEbveb6ZZn5EqOf2ib2Nclc6PdbYmusFAUlG0=
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4458;6:riekQuIgHZqtkqMi/LxbXxbmVKy3p293aD8hxZDRFGj0numOhn5Vhlgn7IZbw5LyAEDqq3fWKHEl+HqcFS8Jlnkh8bhIJNnNtr7WBL+244MPhrS+y5Q3NEIg+zBp0QVrjlenLlksbW8YlHovZipsUe3fzBt+vhgTv1ofinJha+r1PlBtsnqJTrHWLbeSkzKEMeyRhNe4sdF6s79zZwWOiY9lNmHsfFpPRUi4SyhiceG0SSZlex8bhqi5S18XiZuZJjFjFXt1cWfgWPbB2M/a9C07gY/zyrRsQyxbIJu/UceehqLtAnPx+t8zd+DiAOgss6g9rQJbhDntVOVJdRI9d7yI+Ke+j35cxLJo8uaLt/svT/8exDK3nqcILA/mAB856t7yY5zw1840ssk11ljqNCbSqEpA5MWiB1Ao0jPEJW0a57NWgVuh6BK0aMAcex8moNCidKh4vFEst+dUHugigw==;5:VCWILgVjrAoHGVe9YB0mxuNlCRTI6QaA6unwg7cFnMOlWOYepGUbcrOpNWus/tDC8vca1Tx7w6XrShGhxercpWZv/Cm9oQUzazZI502Jws45TAm3w36ZoJB1tLeZ1UDGEor8eAPBn5xpzfcH+W7swP20YDc9BwHp0nGSsxkKXFnfvz8vNDGQ/GQMJbxo7Mr/zbBOnuuEuHUaSNiQA6H6CA==;7:/jjzrUK39OgAeuvzeg8WqpGUaZmr5MZcTsRM1j8HaoBppxWfPxOjNgwasTa1t97Z0pE/jvJT9VTLsihYwXm02/CQlmnLMX8R1HyAoF3rSWMhkaZk33y7rRaIedBfQFHgYrlcDREZaGDyU48yJqCWig==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2019 17:39:53.6454
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2019 17:40:03.9167
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90bc12ab-c905-4e4d-675d-08d67efe4982
+X-MS-Exchange-CrossTenant-Network-Message-Id: db6009ac-492f-4a9f-d32f-08d67efe4fa8
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4454
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4458
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation to describe Xilinx ZynqMP reset driver
+From: Rajan Vaja <rajan.vaja@xilinx.com>
+
+Add documentation to describe Xilinx ZynqMP pin controller
 bindings.
 
-Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
 Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 Changes for v3:
-		-Moved reset outputs definitions info into
-		 a header file(xlnx-zynqmp-resets.h).
+		-None.
 
- .../bindings/reset/xlnx,zynqmp-reset.txt      |  52 +++++++
- .../dt-bindings/reset/xlnx-zynqmp-resets.h    | 130 ++++++++++++++++++
- 2 files changed, 182 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.txt
- create mode 100644 include/dt-bindings/reset/xlnx-zynqmp-resets.h
+ .../bindings/pinctrl/xlnx,zynqmp-pinctrl.txt  | 275 ++++++++++++++++++
+ 1 file changed, 275 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.txt
 
-diff --git a/Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.txt b/Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.txt
+diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.txt
 new file mode 100644
-index 000000000000..27a45fe5ecf1
+index 000000000000..acf44a5d3778
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.txt
-@@ -0,0 +1,52 @@
-+--------------------------------------------------------------------------
-+ =  Zynq UltraScale+ MPSoC reset driver binding =
-+--------------------------------------------------------------------------
-+The Zynq UltraScale+ MPSoC has several different resets.
++++ b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.txt
+@@ -0,0 +1,275 @@
++	Binding for Xilinx ZynqMP Pinctrl
 +
-+See Chapter 36 of the Zynq UltraScale+ MPSoC TRM (UG) for more information
-+about zynqmp resets.
++Required properties:
++- compatible: "xlnx,zynqmp-pinctrl"
 +
-+Please also refer to reset.txt in this directory for common reset
-+controller binding usage.
++Please refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices, including the meaning of the
++phrase "pin configuration node".
 +
-+Required Properties:
-+- compatible:	"xlnx,zynqmp-reset"
-+- #reset-cells:	Specifies the number of cells needed to encode reset
-+		line, should be 1
++ZynqMP's pin configuration nodes act as a container for an arbitrary number of
++subnodes. Each of these subnodes represents some desired configuration for a
++pin, a group, or a list of pins or groups. This configuration can include the
++mux function to select on those pin(s)/group(s), and various pin configuration
++parameters, such as pull-up, slew rate, etc.
 +
-+-------
-+Example
-+-------
++Each configuration node can consist of multiple nodes describing the pinmux and
++pinconf options. Those nodes can be pinmux nodes or pinconf nodes.
++
++The name of each subnode is not important; all subnodes should be enumerated
++and processed purely based on their content.
++
++Required properties for pinmux nodes are:
++ - groups: A list of pinmux groups.
++ - function: The name of a pinmux function to activate for the specified set
++   of groups.
++
++Required properties for configuration nodes:
++One of:
++ - pins: A list of pin names
++ - groups: A list of pinmux groups.
++
++The following generic properties as defined in pinctrl-bindings.txt are valid
++to specify in a pinmux subnode:
++ groups, function
++
++The following generic properties as defined in pinctrl-bindings.txt are valid
++to specify in a pinconf subnode:
++ groups, pins, bias-disable, bias-pull-up, bias-pull-down, slew-rate
++
++ Valid arguments for 'slew-rate' are 'SLEW_RATE_SLOW' and 'SLEW_RATE_FAST' to
++ select between slow and fast respectively.
++
++ Valid values for groups are:
++ ethernet0_0_grp, ethernet1_0_grp, ethernet2_0_grp,
++ ethernet3_0_grp, gemtsu0_0_grp, gemtsu0_1_grp,
++ gemtsu0_2_grp, mdio0_0_grp, mdio1_0_grp,
++ mdio1_1_grp, mdio2_0_grp, mdio3_0_grp,
++ qspi0_0_grp, qspi_ss_0_grp, qspi_fbclk_0_grp,
++ spi0_0_grp, spi0_ss_0_grp, spi0_ss_1_grp,
++ spi0_ss_2_grp, spi0_1_grp, spi0_ss_3_grp,
++ spi0_ss_4_grp, spi0_ss_5_grp, spi0_2_grp,
++ spi0_ss_6_grp, spi0_ss_7_grp, spi0_ss_8_grp,
++ spi0_3_grp, spi0_ss_9_grp, spi0_ss_10_grp,
++ spi0_ss_11_grp, spi0_4_grp, spi0_ss_12_grp,
++ spi0_ss_13_grp, spi0_ss_14_grp, spi0_5_grp,
++ spi0_ss_15_grp, spi0_ss_16_grp, spi0_ss_17_grp,
++ spi1_0_grp, spi1_ss_0_grp, spi1_ss_1_grp,
++ spi1_ss_2_grp, spi1_1_grp, spi1_ss_3_grp,
++ spi1_ss_4_grp, spi1_ss_5_grp, spi1_2_grp,
++ spi1_ss_6_grp, spi1_ss_7_grp, spi1_ss_8_grp,
++ spi1_3_grp, spi1_ss_9_grp, spi1_ss_10_grp,
++ spi1_ss_11_grp, spi1_4_grp, spi1_ss_12_grp,
++ spi1_ss_13_grp, spi1_ss_14_grp, spi1_5_grp,
++ spi1_ss_15_grp, spi1_ss_16_grp, spi1_ss_17_grp,
++ sdio0_0_grp, sdio0_1_grp, sdio0_2_grp,
++ sdio0_3_grp, sdio0_4_grp, sdio0_5_grp,
++ sdio0_6_grp, sdio0_7_grp, sdio0_8_grp,
++ sdio0_9_grp, sdio0_10_grp, sdio0_11_grp,
++ sdio0_12_grp, sdio0_13_grp, sdio0_14_grp,
++ sdio0_15_grp, sdio0_16_grp, sdio0_17_grp,
++ sdio0_18_grp, sdio0_19_grp, sdio0_20_grp,
++ sdio0_21_grp, sdio0_22_grp, sdio0_23_grp,
++ sdio0_24_grp, sdio0_25_grp, sdio0_26_grp,
++ sdio0_27_grp, sdio0_28_grp, sdio0_29_grp,
++ sdio0_30_grp, sdio0_31_grp, sdio0_32_grp,
++ sdio0_pc_0_grp, sdio0_cd_0_grp, sdio0_wp_0_grp,
++ sdio0_pc_1_grp, sdio0_cd_1_grp, sdio0_wp_1_grp,
++ sdio0_pc_2_grp, sdio0_cd_2_grp, sdio0_wp_2_grp,
++ sdio1_0_grp, sdio1_1_grp, sdio1_2_grp,
++ sdio1_3_grp, sdio1_4_grp, sdio1_5_grp,
++ sdio1_6_grp, sdio1_7_grp, sdio1_8_grp,
++ sdio1_9_grp, sdio1_10_grp, sdio1_11_grp,
++ sdio1_12_grp, sdio1_13_grp, sdio1_14_grp,
++ sdio1_15_grp, sdio1_pc_0_grp, sdio1_cd_0_grp,
++ sdio1_wp_0_grp, sdio1_pc_1_grp, sdio1_cd_1_grp,
++ sdio1_wp_1_grp, nand0_0_grp, nand0_ce_0_grp,
++ nand0_rb_0_grp, nand0_dqs_0_grp, nand0_ce_1_grp,
++ nand0_rb_1_grp, nand0_dqs_1_grp, can0_0_grp,
++ can0_1_grp, can0_2_grp, can0_3_grp,
++ can0_4_grp, can0_5_grp, can0_6_grp,
++ can0_7_grp, can0_8_grp, can0_9_grp,
++ can0_10_grp, can0_11_grp, can0_12_grp,
++ can0_13_grp, can0_14_grp, can0_15_grp,
++ can0_16_grp, can0_17_grp, can0_18_grp,
++ can1_0_grp, can1_1_grp, can1_2_grp,
++ can1_3_grp, can1_4_grp, can1_5_grp,
++ can1_6_grp, can1_7_grp, can1_8_grp,
++ can1_9_grp, can1_10_grp, can1_11_grp,
++ can1_12_grp, can1_13_grp, can1_14_grp,
++ can1_15_grp, can1_16_grp, can1_17_grp,
++ can1_18_grp, can1_19_grp, uart0_0_grp,
++ uart0_1_grp, uart0_2_grp, uart0_3_grp,
++ uart0_4_grp, uart0_5_grp, uart0_6_grp,
++ uart0_7_grp, uart0_8_grp, uart0_9_grp,
++ uart0_10_grp, uart0_11_grp, uart0_12_grp,
++ uart0_13_grp, uart0_14_grp, uart0_15_grp,
++ uart0_16_grp, uart0_17_grp, uart0_18_grp,
++ uart1_0_grp, uart1_1_grp, uart1_2_grp,
++ uart1_3_grp, uart1_4_grp, uart1_5_grp,
++ uart1_6_grp, uart1_7_grp, uart1_8_grp,
++ uart1_9_grp, uart1_10_grp, uart1_11_grp,
++ uart1_12_grp, uart1_13_grp, uart1_14_grp,
++ uart1_15_grp, uart1_16_grp, uart1_17_grp,
++ uart1_18_grp, i2c0_0_grp, i2c0_1_grp,
++ i2c0_2_grp, i2c0_3_grp, i2c0_4_grp,
++ i2c0_5_grp, i2c0_6_grp, i2c0_7_grp,
++ i2c0_8_grp, i2c0_9_grp, i2c0_10_grp,
++ i2c0_11_grp, i2c0_12_grp, i2c0_13_grp,
++ i2c0_14_grp, i2c0_15_grp, i2c0_16_grp,
++ i2c0_17_grp, i2c0_18_grp, i2c1_0_grp,
++ i2c1_1_grp, i2c1_2_grp, i2c1_3_grp,
++ i2c1_4_grp, i2c1_5_grp, i2c1_6_grp,
++ i2c1_7_grp, i2c1_8_grp, i2c1_9_grp,
++ i2c1_10_grp, i2c1_11_grp, i2c1_12_grp,
++ i2c1_13_grp, i2c1_14_grp, i2c1_15_grp,
++ i2c1_16_grp, i2c1_17_grp, i2c1_18_grp,
++ i2c1_19_grp, ttc0_clk_0_grp, ttc0_wav_0_grp,
++ ttc0_clk_1_grp, ttc0_wav_1_grp, ttc0_clk_2_grp,
++ ttc0_wav_2_grp, ttc0_clk_3_grp, ttc0_wav_3_grp,
++ ttc0_clk_4_grp, ttc0_wav_4_grp, ttc0_clk_5_grp,
++ ttc0_wav_5_grp, ttc0_clk_6_grp, ttc0_wav_6_grp,
++ ttc0_clk_7_grp, ttc0_wav_7_grp, ttc0_clk_8_grp,
++ ttc0_wav_8_grp, ttc1_clk_0_grp, ttc1_wav_0_grp,
++ ttc1_clk_1_grp, ttc1_wav_1_grp, ttc1_clk_2_grp,
++ ttc1_wav_2_grp, ttc1_clk_3_grp, ttc1_wav_3_grp,
++ ttc1_clk_4_grp, ttc1_wav_4_grp, ttc1_clk_5_grp,
++ ttc1_wav_5_grp, ttc1_clk_6_grp, ttc1_wav_6_grp,
++ ttc1_clk_7_grp, ttc1_wav_7_grp, ttc1_clk_8_grp,
++ ttc1_wav_8_grp, ttc2_clk_0_grp, ttc2_wav_0_grp,
++ ttc2_clk_1_grp, ttc2_wav_1_grp, ttc2_clk_2_grp,
++ ttc2_wav_2_grp, ttc2_clk_3_grp, ttc2_wav_3_grp,
++ ttc2_clk_4_grp, ttc2_wav_4_grp, ttc2_clk_5_grp,
++ ttc2_wav_5_grp, ttc2_clk_6_grp, ttc2_wav_6_grp,
++ ttc2_clk_7_grp, ttc2_wav_7_grp, ttc2_clk_8_grp,
++ ttc2_wav_8_grp, ttc3_clk_0_grp, ttc3_wav_0_grp,
++ ttc3_clk_1_grp, ttc3_wav_1_grp, ttc3_clk_2_grp,
++ ttc3_wav_2_grp, ttc3_clk_3_grp, ttc3_wav_3_grp,
++ ttc3_clk_4_grp, ttc3_wav_4_grp, ttc3_clk_5_grp,
++ ttc3_wav_5_grp, ttc3_clk_6_grp, ttc3_wav_6_grp,
++ ttc3_clk_7_grp, ttc3_wav_7_grp, ttc3_clk_8_grp,
++ ttc3_wav_8_grp, swdt0_clk_0_grp, swdt0_rst_0_grp,
++ swdt0_clk_1_grp, swdt0_rst_1_grp, swdt0_clk_2_grp,
++ swdt0_rst_2_grp, swdt0_clk_3_grp, swdt0_rst_3_grp,
++ swdt0_clk_4_grp, swdt0_rst_4_grp, swdt0_clk_5_grp,
++ swdt0_rst_5_grp, swdt0_clk_6_grp, swdt0_rst_6_grp,
++ swdt0_clk_7_grp, swdt0_rst_7_grp, swdt0_clk_8_grp,
++ swdt0_rst_8_grp, swdt0_clk_9_grp, swdt0_rst_9_grp,
++ swdt0_clk_10_grp, swdt0_rst_10_grp, swdt0_clk_11_grp,
++ swdt0_rst_11_grp, swdt0_clk_12_grp, swdt0_rst_12_grp,
++ swdt1_clk_0_grp, swdt1_rst_0_grp, swdt1_clk_1_grp,
++ swdt1_rst_1_grp, swdt1_clk_2_grp, swdt1_rst_2_grp,
++ swdt1_clk_3_grp, swdt1_rst_3_grp, swdt1_clk_4_grp,
++ swdt1_rst_4_grp, swdt1_clk_5_grp, swdt1_rst_5_grp,
++ swdt1_clk_6_grp, swdt1_rst_6_grp, swdt1_clk_7_grp,
++ swdt1_rst_7_grp, swdt1_clk_8_grp, swdt1_rst_8_grp,
++ swdt1_clk_9_grp, swdt1_rst_9_grp, swdt1_clk_10_grp,
++ swdt1_rst_10_grp, swdt1_clk_11_grp, swdt1_rst_11_grp,
++ swdt1_clk_12_grp, swdt1_rst_12_grp, gpio0_0_grp,
++ gpio0_1_grp, gpio0_2_grp, gpio0_3_grp,
++ gpio0_4_grp, gpio0_5_grp, gpio0_6_grp,
++ gpio0_7_grp, gpio0_8_grp, gpio0_9_grp,
++ gpio0_10_grp, gpio0_11_grp, gpio0_12_grp,
++ gpio0_13_grp, gpio0_14_grp, gpio0_15_grp,
++ gpio0_16_grp, gpio0_17_grp, gpio0_18_grp,
++ gpio0_19_grp, gpio0_20_grp, gpio0_21_grp,
++ gpio0_22_grp, gpio0_23_grp, gpio0_24_grp,
++ gpio0_25_grp, gpio0_26_grp, gpio0_27_grp,
++ gpio0_28_grp, gpio0_29_grp, gpio0_30_grp,
++ gpio0_31_grp, gpio0_32_grp, gpio0_33_grp,
++ gpio0_34_grp, gpio0_35_grp, gpio0_36_grp,
++ gpio0_37_grp, gpio0_38_grp, gpio0_39_grp,
++ gpio0_40_grp, gpio0_41_grp, gpio0_42_grp,
++ gpio0_43_grp, gpio0_44_grp, gpio0_45_grp,
++ gpio0_46_grp, gpio0_47_grp, gpio0_48_grp,
++ gpio0_49_grp, gpio0_50_grp, gpio0_51_grp,
++ gpio0_52_grp, gpio0_53_grp, gpio0_54_grp,
++ gpio0_55_grp, gpio0_56_grp, gpio0_57_grp,
++ gpio0_58_grp, gpio0_59_grp, gpio0_60_grp,
++ gpio0_61_grp, gpio0_62_grp, gpio0_63_grp,
++ gpio0_64_grp, gpio0_65_grp, gpio0_66_grp,
++ gpio0_67_grp, gpio0_68_grp, gpio0_69_grp,
++ gpio0_70_grp, gpio0_71_grp, gpio0_72_grp,
++ gpio0_73_grp, gpio0_74_grp, gpio0_75_grp,
++ gpio0_76_grp, gpio0_77_grp, usb0_0_grp,
++ usb1_0_grp, pmu0_0_grp, pmu0_1_grp,
++ pmu0_2_grp, pmu0_3_grp, pmu0_4_grp,
++ pmu0_5_grp, pmu0_6_grp, pmu0_7_grp,
++ pmu0_8_grp, pmu0_9_grp, pmu0_10_grp,
++ pmu0_11_grp, pcie0_0_grp, pcie0_1_grp,
++ pcie0_2_grp, pcie0_3_grp, pcie0_4_grp,
++ pcie0_5_grp, pcie0_6_grp, pcie0_7_grp,
++ csu0_0_grp, csu0_1_grp, csu0_2_grp,
++ csu0_3_grp, csu0_4_grp, csu0_5_grp,
++ csu0_6_grp, csu0_7_grp, csu0_8_grp,
++ csu0_9_grp, csu0_10_grp, csu0_11_grp,
++ dpaux0_0_grp, dpaux0_1_grp, dpaux0_2_grp,
++ dpaux0_3_grp, pjtag0_0_grp, pjtag0_1_grp,
++ pjtag0_2_grp, pjtag0_3_grp, pjtag0_4_grp,
++ pjtag0_5_grp, trace0_0_grp, trace0_clk_0_grp,
++ trace0_1_grp, trace0_clk_1_grp, trace0_2_grp,
++ trace0_clk_2_grp, testscan0_0_grp
++
++ Valid values for pins are:
++   MIO0 - MIO77
++
++ Valid values for function are:
++   ethernet0, ethernet1, ethernet2, ethernet3, gemtsu0, usb0, usb1, mdio0,
++   mdio1, mdio2, mdio3, qspi0, qspi_fbclk, qspi_ss, spi0, spi1, spi0_ss,
++   spi1_ss, sdio0, sdio0_pc, sdio0_wp, sdio0_cd, sdio1, sdio1_pc, sdio1_wp,
++   sdio1_cd, nand0, nand0_ce, nand0_rb, nand0_dqs, can0, can1, uart0, uart1,
++   i2c0, i2c1, ttc0_clk, ttc0_wav, ttc1_clk, ttc1_wav, ttc2_clk, ttc2_wav,
++   ttc3_clk, ttc3_wav, swdt0_clk, swdt0_rst, swdt1_clk, swdt1_rst, gpio0, pmu0,
++   pcie0, csu0, dpaux0, pjtag0, trace0, trace0_clk, testscan0
++
++The following driver-specific properties as defined here are valid to specify in
++a pin configuration subnode:
++ - io-standard: Configure the pin to use the selected IO standard. Valid
++   arguments are 'IO_STANDARD_LVCMOS33' and 'IO_STANDARD_LVCMOS18'.
++ - schmitt-cmos: Selects either Schmitt or CMOS input for MIO pins. Valid
++   arguments are 'PIN_INPUT_TYPE_SCHMITT' and 'PIN_INPUT_TYPE_CMOS'.
++
++Example:
 +
 +firmware {
 +	zynqmp_firmware: zynqmp-firmware {
 +		compatible = "xlnx,zynqmp-firmware";
 +		method = "smc";
 +
-+		zynqmp_reset: reset-controller {
-+			compatible = "xlnx,zynqmp-reset";
-+			#reset-cells = <1>;
++		pinctrl0: pinctrl@ff180000 {
++			compatible = "xlnx,zynqmp-pinctrl";
++
++			pinctrl_uart1_default: uart1-default {
++				mux {
++					groups = "uart0_4_grp";
++					function = "uart0";
++				};
++
++				conf {
++					groups = "uart0_4_grp";
++					slew-rate = <SLEW_RATE_SLOW>;
++					io-standard = <IO_STANDARD_LVCMOS18>;
++				};
++
++				conf-rx {
++					pins = "MIO18";
++					bias-high-impedance;
++				};
++
++				conf-tx {
++					pins = "MIO19";
++					bias-disable;
++					schmitt-cmos = <PIN_INPUT_TYPE_CMOS>;
++				};
++			};
 +		};
 +	};
 +};
 +
-+Specifying reset lines connected to IP modules
-+==============================================
-+
-+Device nodes that need access to reset lines should
-+specify them as a reset phandle in their corresponding node as
-+specified in reset.txt.
-+
-+For list of all valid reset indicies see
-+<dt-bindings/reset/xlnx-zynqmp-resets.h>
-+
-+Example:
-+
-+serdes: zynqmp_phy@fd400000 {
++uart1 {
++	...
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_uart1_default>;
 +	...
 +
-+	resets = <&zynqmp_reset ZYNQMP_RESET_SATA>;
-+	reset-names = "sata_rst";
-+
-+	...
 +};
-diff --git a/include/dt-bindings/reset/xlnx-zynqmp-resets.h b/include/dt-bindings/reset/xlnx-zynqmp-resets.h
-new file mode 100644
-index 000000000000..e295fd5d824e
---- /dev/null
-+++ b/include/dt-bindings/reset/xlnx-zynqmp-resets.h
-@@ -0,0 +1,130 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ *  Copyright (C) 2018 Xilinx, Inc.
-+ */
-+
-+#ifndef _DT_BINDINGS_ZYNQMP_RESETS_H
-+#define _DT_BINDINGS_ZYNQMP_RESETS_H
-+
-+#define		ZYNQMP_RESET_PCIE_CFG		0
-+#define		ZYNQMP_RESET_PCIE_BRIDGE	1
-+#define		ZYNQMP_RESET_PCIE_CTRL		2
-+#define		ZYNQMP_RESET_DP			3
-+#define		ZYNQMP_RESET_SWDT_CRF		4
-+#define		ZYNQMP_RESET_AFI_FM5		5
-+#define		ZYNQMP_RESET_AFI_FM4		6
-+#define		ZYNQMP_RESET_AFI_FM3		7
-+#define		ZYNQMP_RESET_AFI_FM2		8
-+#define		ZYNQMP_RESET_AFI_FM1		9
-+#define		ZYNQMP_RESET_AFI_FM0		10
-+#define		ZYNQMP_RESET_GDMA		11
-+#define		ZYNQMP_RESET_GPU_PP1		12
-+#define		ZYNQMP_RESET_GPU_PP0		13
-+#define		ZYNQMP_RESET_GPU		14
-+#define		ZYNQMP_RESET_GT			15
-+#define		ZYNQMP_RESET_SATA		16
-+#define		ZYNQMP_RESET_ACPU3_PWRON	17
-+#define		ZYNQMP_RESET_ACPU2_PWRON	18
-+#define		ZYNQMP_RESET_ACPU1_PWRON	19
-+#define		ZYNQMP_RESET_ACPU0_PWRON	20
-+#define		ZYNQMP_RESET_APU_L2		21
-+#define		ZYNQMP_RESET_ACPU3		22
-+#define		ZYNQMP_RESET_ACPU2		23
-+#define		ZYNQMP_RESET_ACPU1		24
-+#define		ZYNQMP_RESET_ACPU0		25
-+#define		ZYNQMP_RESET_DDR		26
-+#define		ZYNQMP_RESET_APM_FPD		27
-+#define		ZYNQMP_RESET_SOFT		28
-+#define		ZYNQMP_RESET_GEM0		29
-+#define		ZYNQMP_RESET_GEM1		30
-+#define		ZYNQMP_RESET_GEM2		31
-+#define		ZYNQMP_RESET_GEM3		32
-+#define		ZYNQMP_RESET_QSPI		33
-+#define		ZYNQMP_RESET_UART0		34
-+#define		ZYNQMP_RESET_UART1		35
-+#define		ZYNQMP_RESET_SPI0		36
-+#define		ZYNQMP_RESET_SPI1		37
-+#define		ZYNQMP_RESET_SDIO0		38
-+#define		ZYNQMP_RESET_SDIO1		39
-+#define		ZYNQMP_RESET_CAN0		40
-+#define		ZYNQMP_RESET_CAN1		41
-+#define		ZYNQMP_RESET_I2C0		42
-+#define		ZYNQMP_RESET_I2C1		43
-+#define		ZYNQMP_RESET_TTC0		44
-+#define		ZYNQMP_RESET_TTC1		45
-+#define		ZYNQMP_RESET_TTC2		46
-+#define		ZYNQMP_RESET_TTC3		47
-+#define		ZYNQMP_RESET_SWDT_CRL		48
-+#define		ZYNQMP_RESET_NAND		49
-+#define		ZYNQMP_RESET_ADMA		50
-+#define		ZYNQMP_RESET_GPIO		51
-+#define		ZYNQMP_RESET_IOU_CC		52
-+#define		ZYNQMP_RESET_TIMESTAMP		53
-+#define		ZYNQMP_RESET_RPU_R50		54
-+#define		ZYNQMP_RESET_RPU_R51		55
-+#define		ZYNQMP_RESET_RPU_AMBA		56
-+#define		ZYNQMP_RESET_OCM		57
-+#define		ZYNQMP_RESET_RPU_PGE		58
-+#define		ZYNQMP_RESET_USB0_CORERESET	59
-+#define		ZYNQMP_RESET_USB1_CORERESET	60
-+#define		ZYNQMP_RESET_USB0_HIBERRESET	61
-+#define		ZYNQMP_RESET_USB1_HIBERRESET	62
-+#define		ZYNQMP_RESET_USB0_APB		63
-+#define		ZYNQMP_RESET_USB1_APB		64
-+#define		ZYNQMP_RESET_IPI		65
-+#define		ZYNQMP_RESET_APM_LPD		66
-+#define		ZYNQMP_RESET_RTC		67
-+#define		ZYNQMP_RESET_SYSMON		68
-+#define		ZYNQMP_RESET_AFI_FM6		69
-+#define		ZYNQMP_RESET_LPD_SWDT		70
-+#define		ZYNQMP_RESET_FPD		71
-+#define		ZYNQMP_RESET_RPU_DBG1		72
-+#define		ZYNQMP_RESET_RPU_DBG0		73
-+#define		ZYNQMP_RESET_DBG_LPD		74
-+#define		ZYNQMP_RESET_DBG_FPD		75
-+#define		ZYNQMP_RESET_APLL		76
-+#define		ZYNQMP_RESET_DPLL		77
-+#define		ZYNQMP_RESET_VPLL		78
-+#define		ZYNQMP_RESET_IOPLL		79
-+#define		ZYNQMP_RESET_RPLL		80
-+#define		ZYNQMP_RESET_GPO3_PL_0		81
-+#define		ZYNQMP_RESET_GPO3_PL_1		82
-+#define		ZYNQMP_RESET_GPO3_PL_2		83
-+#define		ZYNQMP_RESET_GPO3_PL_3		84
-+#define		ZYNQMP_RESET_GPO3_PL_4		85
-+#define		ZYNQMP_RESET_GPO3_PL_5		86
-+#define		ZYNQMP_RESET_GPO3_PL_6		87
-+#define		ZYNQMP_RESET_GPO3_PL_7		88
-+#define		ZYNQMP_RESET_GPO3_PL_8		89
-+#define		ZYNQMP_RESET_GPO3_PL_9		90
-+#define		ZYNQMP_RESET_GPO3_PL_10		91
-+#define		ZYNQMP_RESET_GPO3_PL_11		92
-+#define		ZYNQMP_RESET_GPO3_PL_12		93
-+#define		ZYNQMP_RESET_GPO3_PL_13		94
-+#define		ZYNQMP_RESET_GPO3_PL_14		95
-+#define		ZYNQMP_RESET_GPO3_PL_15		96
-+#define		ZYNQMP_RESET_GPO3_PL_16		97
-+#define		ZYNQMP_RESET_GPO3_PL_17		98
-+#define		ZYNQMP_RESET_GPO3_PL_18		99
-+#define		ZYNQMP_RESET_GPO3_PL_19		100
-+#define		ZNQMP_RESET_GPO3_PL_20		101
-+#define		ZYNQMP_RESET_GPO3_PL_21		102
-+#define		ZYNQMP_RESET_GPO3_PL_22		103
-+#define		ZYNQMP_RESET_GPO3_PL_23		104
-+#define		ZYNQMP_RESET_GPO3_PL_24		105
-+#define		ZYNQMP_RESET_GPO3_PL_25		106
-+#define		ZYNQMP_RESET_GPO3_PL_26		107
-+#define		ZYNQMP_RESET_GPO3_PL_27		108
-+#define		ZYNQMP_RESET_GPO3_PL_28		109
-+#define		ZYNQMP_RESET_GPO3_PL_29		110
-+#define		ZYNQMP_RESET_GPO3_PL_30		111
-+#define		ZYNQMP_RESET_GPO3_PL_31		112
-+#define		ZYNQMP_RESET_RPU_LS		113
-+#define		ZYNQMP_RESET_PS_ONLY		114
-+#define		ZYNQMP_RESET_PL			115
-+#define		ZYNQMP_RESET_PS_PL0		116
-+#define		ZYNQMP_RESET_PS_PL1		117
-+#define		ZYNQMP_RESET_PS_PL2		118
-+#define		ZYNQMP_RESET_PS_PL3		119
-+
-+#endif
 -- 
 2.18.0
 
