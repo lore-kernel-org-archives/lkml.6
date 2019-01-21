@@ -2,167 +2,185 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A56D5C7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F1DC7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61CC220870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:50:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="avzHkoLF"
+	by mail.kernel.org (Postfix) with ESMTP id 1C3552085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:51:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbfAULt7 (ORCPT
+        id S1728247AbfAULvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:49:59 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:42152 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbfAULt7 (ORCPT
+        Mon, 21 Jan 2019 06:51:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48968 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727544AbfAULvW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:49:59 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0LBnuTJ086776;
-        Mon, 21 Jan 2019 05:49:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548071396;
-        bh=5TxD4tkdborkMhOuzEaW88Ki689yLurLd1lVU2WAlNo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=avzHkoLFc+uaBMHrCqtTkYzeOHsPLnRSJHBGKmKP5XAz29vx0Ff9OUN4dZgHWGNFf
-         89MDbT440Hnxml9Nk+cmMAwdyyBQwVqV8N352SNsAArk7jNm4XukMGxjZsJ3ZN1rbv
-         dlOABZBalcdBzj5a6/xqa5me0kL8uf7oGjBzHuKI=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0LBnuT5099469
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 05:49:56 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
- Jan 2019 05:49:56 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 21 Jan 2019 05:49:56 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0LBns86019837;
-        Mon, 21 Jan 2019 05:49:54 -0600
-Subject: Re: [PATCH 2/3] dt-bindings: phy: ti: Add dt binding documentation
- for SERDES in AM654x SoC
-To:     Roger Quadros <rogerq@ti.com>, Rob Herring <robh+dt@kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20190121064813.18444-1-kishon@ti.com>
- <20190121064813.18444-3-kishon@ti.com> <5C4596F8.7030009@ti.com>
- <b619ace8-f2be-8eb0-080e-0ae7a43799df@ti.com> <5C45AB63.4010005@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <7980b15c-0187-32e1-c728-d3d98e4c8c0e@ti.com>
-Date:   Mon, 21 Jan 2019 17:19:27 +0530
+        Mon, 21 Jan 2019 06:51:22 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LBnUd6139957
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 06:51:21 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q5chmayat-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 06:51:21 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Mon, 21 Jan 2019 11:51:19 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 21 Jan 2019 11:51:16 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LBpFPh20971522
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 11:51:15 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0008942045;
+        Mon, 21 Jan 2019 11:51:14 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9754D42047;
+        Mon, 21 Jan 2019 11:51:14 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 21 Jan 2019 11:51:14 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v1] iommu/s390: Declare s390 iommu reserved regions
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, gerald.schaefer@de.ibm.com
+Cc:     linux-s390@vger.kernel.org, walling@linux.ibm.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com
+References: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
+ <cc070df1-e7dc-8cce-f443-879e0e5e2903@arm.com>
+ <3cd790d6-aa6f-e817-27ce-56d7a9b6b6e5@linux.ibm.com>
+ <668fe734-e4bf-0342-ab8c-df54d9022db4@arm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Mon, 21 Jan 2019 12:51:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <5C45AB63.4010005@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <668fe734-e4bf-0342-ab8c-df54d9022db4@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-TM-AS-GCONF: 00
+x-cbid: 19012111-0020-0000-0000-000003094932
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012111-0021-0000-0000-0000215A77EF
+Message-Id: <d180bb2d-354f-0d05-8773-7a196a4de3cb@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901210094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 18/01/2019 14:51, Jean-Philippe Brucker wrote:
+> Hi Pierre,
+> 
+> On 18/01/2019 13:29, Pierre Morel wrote:
+>> On 17/01/2019 14:02, Robin Murphy wrote:
+>>> On 15/01/2019 17:37, Pierre Morel wrote:
+>>>> The s390 iommu can only allow DMA transactions between the zPCI device
+>>>> entries start_dma and end_dma.
+>>>>
 
-On 21/01/19 4:52 PM, Roger Quadros wrote:
-> 
-> 
-> On 21/01/19 12:47, Kishon Vijay Abraham I wrote:
->> Hi Roger,
+...
+
 >>
->> On 21/01/19 3:25 PM, Roger Quadros wrote:
->>> Kishon,
+>> I already posted a patch retrieving the geometry through
+>> VFIO_IOMMU_GET_INFO using a specific capability for the geometry [1],
+>> and AFAIU, Alex did not agree with this.
+> 
+> On arm we also need to report the IOMMU geometry to userspace (max IOVA
+> size in particular). Shameer has been working on a solution [2] that
+> presents a unified view of both geometry and reserved regions into the
+> VFIO_IOMMU_GET_INFO call, and I think we should go with that. If I
+> understand correctly it's currently blocked on the RMRR problem and
+> we're waiting for Jacob or Ashok to take a look at it, as Kevin pinged
+> them on thread [1]?
+> 
+> [2] https://lkml.org/lkml/2018/4/18/293
+> 
+> Thanks,
+> Jean
+> 
+
+Hi Jean,
+
+I hopped that this proposition went in the same direction based on the 
+following assumptions:
+
+
+- The goal of the get_resv_region is defined in iommu.h as:
+-----
+* @get_resv_regions: Request list of reserved regions for a device
+-----
+
+- A iommu reserve region is a region which should not be mapped.
+Isn't it exactly what happens outside the aperture?
+Shouldn't it be reported by the iommu reserved region?
+
+- If we use VFIO and want to get all reserved region we will have the 
+VFIO_IOMMU_GET_INFO call provided by Shameer and it can get all reserved 
+regions depending from the iommu driver itself at once by calling the 
+get_reserved_region callback instead of having to merge them with the 
+aperture.
+
+- If there are other reserved region, depending on the system 
+configuration and not on the IOMMU itself, the VFIO_IOMMU_GET_INFO call 
+will have to merge them with the region gotten from the iommu driver.
+
+- If we do not use QEMU nor VFIO at all, AFAIU, the standard way to 
+retrieve the reserved regions associated with a device is to call the 
+get_reserved_region callback from the associated iommu.
+
+Please tell me were I am wrong.
+
+Regards,
+Pierre
+
+
+>>
+>> What is different in what you propose?
+>>
+>> @Alex: I was hoping that this patch goes in your direction. What do you
+>> think?
+>>
+>> Thanks,
+>> Pierre
+>>
+>> [1]: https://lore.kernel.org/patchwork/patch/1030369/
+>>
 >>>
->>> On 21/01/19 08:48, Kishon Vijay Abraham I wrote:
->>>> AM654x has two SERDES instances. Each instance has three input clocks
->>>> (left input, externel reference clock and right input) and two output
->>>> clocks (left output and right output) in addition to a PLL mux clock
->>>> which the SERDES uses for Clock Multiplier Unit (CMU refclock).
->>>> The PLL mux clock can select from one of the three input clocks.
->>>> The right output can select between left input and external reference
->>>> clock while the left output can select between the right input and
->>>> external reference clock.
 >>>>
->>>> The left and right input reference clock of SERDES0 and SERDES1
->>>> respectively are connected to the SoC clock. In the case of two lane
->>>> SERDES personality card, the left input of SERDES1 is connected to
->>>> the right output of SERDES0 in a chained fashion.
+>>>> This seems to me related with the work Shameer has started on
+>>>> vfio_iommu_type1 so I add Alex and Shameer to the CC list.
 >>>>
->>>> See section "Reference Clock Distribution" of AM65x Sitara Processors
->>>> TRM (SPRUID7 – April 2018) for more details.
 >>>>
->>>> Add dt-binding documentation in order to represent all these different
->>>> configurations in device tree.
+>>>> Pierre Morel (1):
+>>>>     iommu/s390: Declare s390 iommu reserved regions
 >>>>
->>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>> ---
->>>>  .../devicetree/bindings/phy/ti-phy.txt        | 77 +++++++++++++++++++
->>>>  include/dt-bindings/phy/phy-am654-serdes.h    | 13 ++++
->>>>  2 files changed, 90 insertions(+)
->>>>  create mode 100644 include/dt-bindings/phy/phy-am654-serdes.h
+>>>>    drivers/iommu/s390-iommu.c | 29 +++++++++++++++++++++++++++++
+>>>>    1 file changed, 29 insertions(+)
 >>>>
->>>> diff --git a/Documentation/devicetree/bindings/phy/ti-phy.txt b/Documentation/devicetree/bindings/phy/ti-phy.txt
->>>> index 57dfda8a7a1d..fc2fff6b2c37 100644
->>>> --- a/Documentation/devicetree/bindings/phy/ti-phy.txt
->>>> +++ b/Documentation/devicetree/bindings/phy/ti-phy.txt
->>>> @@ -132,3 +132,80 @@ sata_phy: phy@4a096000 {
->>>>  	syscon-pllreset = <&scm_conf 0x3fc>;
->>>>  	#phy-cells = <0>;
->>>>  };
->>>> +
->>>> +
->>>> +TI AM654 SERDES
->>>> +
->>>> +Required properties:
->>>> + - compatible: Should be "ti,phy-am654-serdes"
->>>> + - reg : Address and length of the register set for the device.
->>>> + - reg-names: Should be "serdes" which corresponds to the register space
->>>> +	populated in "reg".
->>>> + - #phy-cells: determine the number of cells that should be given in the
->>>> +	phandle while referencing this phy. Should be "2". The 1st cell
->>>> +	corresponds to the phy type (should be one of the types specified in
->>>> +	include/dt-bindings/phy/phy.h) and the 2nd cell should be the serdes
->>>> +	lane function.
->>>> +	If SERDES0 is referenced 2nd cell should be:
->>>> +		0 - USB3
->>>> +		1 - PCIe0 Lane0
->>>> +		2 - ICSS2 SGMII Lane0
->>>> +	If SERDES1 is referenced 2nd cell should be:
->>>> +		0 - PCIe1 Lane0
->>>> +		1 - PCIe0 Lane1
->>>> +		2 - ICSS2 SGMII Lane1
 >>>
->>> Can we have a way to change default lane at probe time without having any user dependencies.
->>>
->>> e.g. To work in USB2.0 mode I don't want SERDES0 to be in lane 0 (which is SoC default).
->>> But at the same time the application might not be using PCIe or SGMII, so there is no
->>> PHY user to change the lane to 1 or 2.
->>>
->>> A DT property to allow selection of a default lane at probe time would help
->> Ideally we should be disabling the module that is not used ("status" property
->> of SERDES0 dt would be "disabled"). So there is no guarantee SERDES will be probed.
+>>
 >>
 > 
-> OK. Is there something that can be done at the serdes_mux?
-> As per bindings/mux/mmio-mux.txt
-> 
-> Optional properties:
-> - idle-states : if present, the state the muxes will have when idle. The
->                 special state MUX_IDLE_AS_IS is the default.
-> 
-> Could that be used?
 
-Looks like that's something we could use.
 
-Thanks
-Kishon
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
