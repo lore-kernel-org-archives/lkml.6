@@ -2,55 +2,50 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10568C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1029C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D28842084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1F7E20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079119;
-	bh=dKhWut6x0oD5RkUalPfUYb4qgmyXqd9ZSQyXetdLguE=;
+	s=default; t=1548079121;
+	bh=5W1ALWuo4aSKflE2zyhzoOykiHHGaYEumgxXBYj6a1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eB/Pt8VdX2JKSb49SypyOadK0f2fDHkDo8RaekpeJH6lg0K+Lk/k45PDZJHAHCMSD
-	 V1YOw1edLGCDGlLCtOUzW6OI5xZi5/VDdpv9n8YXE6wC5LNlLWkVX6ffSVB4Mkn4Tg
-	 /EYOW5VmHEPVRAT6W4Sku3s2G5ekRwOoP7poYn1Y=
+	b=mvQ6UW0ynSfTFRY7/t7wZIV4Bnc1BCVprFErWINwgxDd47iPpgPfNP8ncpYh4atH6
+	 bqocN8NY/HXE5S6mxNB7bHWSZPEZp94Vk8TL9SqRJon6665Lb4KMn8EmTYptzP0Z9V
+	 5R9mdiBrlFHu7Lp/xX2RiCRqJGIyHZTYMc0y+/TM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732042AbfAUN6j (ORCPT
+        id S1732055AbfAUN6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:58:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44148 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:58:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731822AbfAUN6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:58:35 -0500
+        id S1732034AbfAUN6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:58:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AEA220879;
-        Mon, 21 Jan 2019 13:58:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3554E2084C;
+        Mon, 21 Jan 2019 13:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079115;
-        bh=dKhWut6x0oD5RkUalPfUYb4qgmyXqd9ZSQyXetdLguE=;
+        s=default; t=1548079117;
+        bh=5W1ALWuo4aSKflE2zyhzoOykiHHGaYEumgxXBYj6a1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZAtZfaB41cBGTAAkq66kd/40+AeULv2lUQ0922yWVz+iMlRgAl9uydXFR6DDYY/dg
-         uovuKYyN8u8Rsusf3WBqz1gKzbz8/S+obSv+Xkm290RjOefWPF9HdN6ZOQA4uSPO/Q
-         ciIX3V70utMVx7CuxotO8ScxLw9LpV6KxKyCQsLY=
+        b=P3BxoYTqlKpFX/vG5W1HtXO9/gRhXvCF4iCnoj+X5MraXIcg42Inu/CKilWBklhzH
+         GVEYSwBtuEve/yeIXGDaxsP2UnHgowRR2VfplfcIXtOe/u93sygbJ9C5p2fubA3sF+
+         62H7c/7N+8giK6kIyLtKIjMJGmUwbJw/vxHK7xrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonid Segal <leonid.s@variscite.com>,
-        Manabu Igusa <migusa@arrowjapan.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.19 14/99] mmc: sdhci-msm: Disable CDR function on TX
-Date:   Mon, 21 Jan 2019 14:48:06 +0100
-Message-Id: <20190121134914.465637968@linuxfoundation.org>
+        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 15/99] Revert "scsi: target: iscsi: cxgbit: fix csk leak"
+Date:   Mon, 21 Jan 2019 14:48:07 +0100
+Message-Id: <20190121134914.499267920@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -69,112 +64,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Loic Poulain <loic.poulain@linaro.org>
+This reverts commit c9cef2c71a89a2c926dae8151f9497e72f889315.
 
-commit a89e7bcb18081c611eb6cf50edd440fa4983a71a upstream.
+A wrong commit message was used for the stable commit because of a human
+error (and duplicate commit subject lines).
 
-The Clock Data Recovery (CDR) circuit allows to automatically adjust
-the RX sampling-point/phase for high frequency cards (SDR104, HS200...).
-CDR is automatically enabled during DLL configuration.
-However, according to the APQ8016 reference manual, this function
-must be disabled during TX and tuning phase in order to prevent any
-interferences during tuning challenges and unexpected phase alteration
-during TX transfers.
+This patch reverts this error, and the following patches add the two
+upstream commits.
 
-This patch enables/disables CDR according to the current transfer mode.
-
-This fixes sporadic write transfer issues observed with some SDR104 and
-HS200 cards.
-
-Inspired by sdhci-msm downstream patch:
-https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/432516/
-
-Reported-by: Leonid Segal <leonid.s@variscite.com>
-Reported-by: Manabu Igusa <migusa@arrowjapan.com>
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Georgi Djakov <georgi.djakov@linaro.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[georgi: backport to v4.19+]
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-msm.c |   43 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -258,6 +258,8 @@ struct sdhci_msm_host {
- 	bool mci_removed;
- 	const struct sdhci_msm_variant_ops *var_ops;
- 	const struct sdhci_msm_offset *offset;
-+	bool use_cdr;
-+	u32 transfer_mode;
- };
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_cm.c b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+index b289b90ae6dc..8de16016b6de 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+@@ -631,11 +631,8 @@ static void cxgbit_send_halfclose(struct cxgbit_sock *csk)
  
- static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
-@@ -1025,6 +1027,26 @@ out:
- 	return ret;
+ static void cxgbit_arp_failure_discard(void *handle, struct sk_buff *skb)
+ {
+-	struct cxgbit_sock *csk = handle;
+-
+ 	pr_debug("%s cxgbit_device %p\n", __func__, handle);
+ 	kfree_skb(skb);
+-	cxgbit_put_csk(csk);
  }
  
-+static void sdhci_msm_set_cdr(struct sdhci_host *host, bool enable)
-+{
-+	const struct sdhci_msm_offset *msm_offset = sdhci_priv_msm_offset(host);
-+	u32 config, oldconfig = readl_relaxed(host->ioaddr +
-+					      msm_offset->core_dll_config);
-+
-+	config = oldconfig;
-+	if (enable) {
-+		config |= CORE_CDR_EN;
-+		config &= ~CORE_CDR_EXT_EN;
-+	} else {
-+		config &= ~CORE_CDR_EN;
-+		config |= CORE_CDR_EXT_EN;
-+	}
-+
-+	if (config != oldconfig)
-+		writel_relaxed(config, host->ioaddr +
-+			       msm_offset->core_dll_config);
-+}
-+
- static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
- {
- 	struct sdhci_host *host = mmc_priv(mmc);
-@@ -1042,8 +1064,14 @@ static int sdhci_msm_execute_tuning(stru
- 	if (host->clock <= CORE_FREQ_100MHZ ||
- 	    !(ios.timing == MMC_TIMING_MMC_HS400 ||
- 	    ios.timing == MMC_TIMING_MMC_HS200 ||
--	    ios.timing == MMC_TIMING_UHS_SDR104))
-+	    ios.timing == MMC_TIMING_UHS_SDR104)) {
-+		msm_host->use_cdr = false;
-+		sdhci_msm_set_cdr(host, false);
- 		return 0;
-+	}
-+
-+	/* Clock-Data-Recovery used to dynamically adjust RX sampling point */
-+	msm_host->use_cdr = true;
+ static void cxgbit_abort_arp_failure(void *handle, struct sk_buff *skb)
+@@ -1193,7 +1190,7 @@ cxgbit_pass_accept_rpl(struct cxgbit_sock *csk, struct cpl_pass_accept_req *req)
+ 	rpl5->opt0 = cpu_to_be64(opt0);
+ 	rpl5->opt2 = cpu_to_be32(opt2);
+ 	set_wr_txq(skb, CPL_PRIORITY_SETUP, csk->ctrlq_idx);
+-	t4_set_arp_err_handler(skb, csk, cxgbit_arp_failure_discard);
++	t4_set_arp_err_handler(skb, NULL, cxgbit_arp_failure_discard);
+ 	cxgbit_l2t_send(csk->com.cdev, skb, csk->l2t);
+ }
  
- 	/*
- 	 * For HS400 tuning in HS200 timing requires:
-@@ -1525,6 +1553,19 @@ static int __sdhci_msm_check_write(struc
- 	case SDHCI_POWER_CONTROL:
- 		req_type = !val ? REQ_BUS_OFF : REQ_BUS_ON;
- 		break;
-+	case SDHCI_TRANSFER_MODE:
-+		msm_host->transfer_mode = val;
-+		break;
-+	case SDHCI_COMMAND:
-+		if (!msm_host->use_cdr)
-+			break;
-+		if ((msm_host->transfer_mode & SDHCI_TRNS_READ) &&
-+		    SDHCI_GET_CMD(val) != MMC_SEND_TUNING_BLOCK_HS200 &&
-+		    SDHCI_GET_CMD(val) != MMC_SEND_TUNING_BLOCK)
-+			sdhci_msm_set_cdr(host, true);
-+		else
-+			sdhci_msm_set_cdr(host, false);
-+		break;
- 	}
- 
- 	if (req_type) {
+-- 
+2.19.1
+
 
 
