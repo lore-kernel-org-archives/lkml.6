@@ -2,78 +2,125 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9919CC31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7243BC31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68135217F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D461217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:11:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YruTm/4N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfAUHL2 (ORCPT
+        id S1727405AbfAUHLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:11:28 -0500
-Received: from mga01.intel.com ([192.55.52.88]:12335 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbfAUHL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:11:27 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 17:50:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,501,1539673200"; 
-   d="scan'208";a="136321136"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Jan 2019 17:50:07 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1glOj1-000GUB-BF; Mon, 21 Jan 2019 09:50:07 +0800
-Date:   Mon, 21 Jan 2019 09:49:19 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Jordan Crouse <jcrouse@codeaurora.org>
-Cc:     kbuild-all@01.org, freedreno@lists.freedesktop.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>
-Subject: Re: [PATCH v8] arm64: dts: sdm845: Add gpu and gmu device nodes
-Message-ID: <201901210901.DmsvvntI%fengguang.wu@intel.com>
-References: <1547661809-31184-1-git-send-email-jcrouse@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547661809-31184-1-git-send-email-jcrouse@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 21 Jan 2019 02:11:35 -0500
+Received: from condef-07.nifty.com ([202.248.20.72]:49611 "EHLO
+        condef-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfAUHLe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:11:34 -0500
+Received: from conuserg-07.nifty.com ([10.126.8.70])by condef-07.nifty.com with ESMTP id x0L4rHHu014595
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 13:53:23 +0900
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x0L4qBI2028292;
+        Mon, 21 Jan 2019 13:52:12 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x0L4qBI2028292
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548046332;
+        bh=hNK5faw4hFSOBOK912B0tZ/yjjxR6feiPy2LU0UJiOE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YruTm/4N0JaW1TJ5H8MfRo+phnImsq6kZw3VDa9/YmoRBEo0Zsq5qmZegsFCO+ujE
+         Qgepzvu2Qbj9D9pXR3jnjp41C9O+1ppQhq6u+tAD+M11JRcGvgBDU7ROdxWoFA966Y
+         p+dPFuIn7QAeB31VGkgT9/ywm/loqX3SZnH3Qtn8fw5TKjIWsm5IPTQ8Pxsn2q2CYi
+         i4H5FtujPIFalAqszEEOucZncKPdOQ/A5KHkgAnyM0b4YLfbliuKKxMSGYqIFRGoCH
+         +XhwoeqStvbubOPa3F1HbpdaZzPteEGJiLrowdmp3/5hcR3ij/nFB6eMSh5I1uAYws
+         6Y9NCsIVc2SZw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH] mtd: rawnand: denali: remove ->erase hook
+Date:   Mon, 21 Jan 2019 13:52:06 +0900
+Message-Id: <1548046326-26776-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jordan,
+Commit f9ebd1bb4103 ("mtd: rawnand: Deprecate ->erase()") discouraged
+the use of this hook, so I am happy to follow the suggestion.
 
-Thank you for the patch! Yet something to improve:
+Although the Denali IP provides a special MAP10 command for erasing,
+using it would not buy us much. The Denali IP actually works with the
+generic erasing by single_erase() + ->cmdfunc hook (nand_command_lp)
++ ->cmd_ctrl hook (denali_cmd_ctrl).
 
-[auto build test ERROR on v5.0-rc2]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+This method is also deprecated, but denali_erase() can go away
+irrespective of ->exec_op conversion.
 
-url:    https://github.com/0day-ci/linux/commits/Jordan-Crouse/arm64-dts-sdm845-Add-gpu-and-gmu-device-nodes/20190118-051651
-config: arm64-allyesconfig
-compiler: aarch64-linux-gnu-gcc (Debian 8.2.0-11) 8.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        GCC_VERSION=8.2.0 make.cross ARCH=arm64  allyesconfig
-        GCC_VERSION=8.2.0 make.cross ARCH=arm64 
-
-All errors (new ones prefixed by >>):
-
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+ drivers/mtd/nand/raw/denali.c | 21 ---------------------
+ 1 file changed, 21 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index 6e8edc9..21320b1 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -37,9 +37,6 @@
+ #define DENALI_MAP11_ADDR	((DENALI_MAP11) | 1)	/* address cycle */
+ #define DENALI_MAP11_DATA	((DENALI_MAP11) | 2)	/* data cycle */
+ 
+-/* MAP10 commands */
+-#define DENALI_ERASE		0x01
+-
+ #define DENALI_BANK(denali)	((denali)->active_bank << 24)
+ 
+ #define DENALI_INVALID_BANK	-1
+@@ -903,23 +900,6 @@ static int denali_waitfunc(struct nand_chip *chip)
+ 	return irq_status & INTR__INT_ACT ? 0 : NAND_STATUS_FAIL;
+ }
+ 
+-static int denali_erase(struct nand_chip *chip, int page)
+-{
+-	struct denali_nand_info *denali = mtd_to_denali(nand_to_mtd(chip));
+-	uint32_t irq_status;
+-
+-	denali_reset_irq(denali);
+-
+-	denali->host_write(denali, DENALI_MAP10 | DENALI_BANK(denali) | page,
+-			   DENALI_ERASE);
+-
+-	/* wait for erase to complete or failure to occur */
+-	irq_status = denali_wait_for_irq(denali,
+-					 INTR__ERASE_COMP | INTR__ERASE_FAIL);
+-
+-	return irq_status & INTR__ERASE_COMP ? 0 : -EIO;
+-}
+-
+ static int denali_setup_data_interface(struct nand_chip *chip, int chipnr,
+ 				       const struct nand_data_interface *conf)
+ {
+@@ -1244,7 +1224,6 @@ static int denali_attach_chip(struct nand_chip *chip)
+ 	chip->ecc.write_page_raw = denali_write_page_raw;
+ 	chip->ecc.read_oob = denali_read_oob;
+ 	chip->ecc.write_oob = denali_write_oob;
+-	chip->legacy.erase = denali_erase;
+ 
+ 	ret = denali_multidev_fixup(denali);
+ 	if (ret)
+-- 
+2.7.4
+
