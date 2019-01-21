@@ -2,211 +2,146 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D48C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCE8C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6868B20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 801AB20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:48:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hgXR0s7r"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TVCLxlcG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfAUKsK (ORCPT
+        id S1727945AbfAUKsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:48:10 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33002 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbfAUKsK (ORCPT
+        Mon, 21 Jan 2019 05:48:30 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35474 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727920AbfAUKsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:48:10 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0LAm79T017401;
-        Mon, 21 Jan 2019 04:48:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548067687;
-        bh=ka93w2z4sSKtjdrXotLsP2olqn67KItvJ5B/TVMlCNU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hgXR0s7rJX+sLkONfHjRZki5StlrOC1CuT71HJdxJGP2FUAY6hW5GHvCmcDN7buCP
-         bt7KdCrGe1LyVzYEyPMR93mr1DXke2mqjG9epsF4kxbELh8RR2RIfa5PnHDAaLSO1g
-         wGFa1EPBwANyczyEE8ybyBYdkRoXJC59CT/HQZ7w=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0LAm7TE083978
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 04:48:07 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
- Jan 2019 04:48:06 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 21 Jan 2019 04:48:06 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0LAm4XQ028210;
-        Mon, 21 Jan 2019 04:48:05 -0600
-Subject: Re: [PATCH 2/3] dt-bindings: phy: ti: Add dt binding documentation
- for SERDES in AM654x SoC
-To:     Roger Quadros <rogerq@ti.com>, Rob Herring <robh+dt@kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20190121064813.18444-1-kishon@ti.com>
- <20190121064813.18444-3-kishon@ti.com> <5C4596F8.7030009@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <b619ace8-f2be-8eb0-080e-0ae7a43799df@ti.com>
-Date:   Mon, 21 Jan 2019 16:17:38 +0530
+        Mon, 21 Jan 2019 05:48:30 -0500
+Received: by mail-wr1-f68.google.com with SMTP id 96so22773523wrb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 02:48:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1ttaux9N8+M7syJi6fIp1C2xsjMJsGRJJyi8anCnSNE=;
+        b=TVCLxlcGpRv2Gxbu4n0RwJLY9m/obf4w3VfUJcZ8qDVvKbtB7F+XoHbwgul6gnZTm7
+         elSwhQm1rT3wa/KACqmkY32KYeVjPn2GDSJJUtiXIojJU09WfKHmUhR6YgWUuSTLIZ3q
+         vS/+ZlTqCRoXxkjTsoZrXwHK3nKuHP+w0BpSw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1ttaux9N8+M7syJi6fIp1C2xsjMJsGRJJyi8anCnSNE=;
+        b=gtZ14kAoTxq/wxu/a5c0bvdZyxEQyNKhRZcxzSCmzTA4VLDLNwFViWI3s3SChmWysd
+         3q/FnvIj/5bevA4qSTyuLaxSQ6wTfz1BhenTuoEgMjhl9+Q7TTUARAddFaEuDgwaKoFZ
+         HQWMszOL+2BOkSQm7P3KzfQ2J4OUhBiONOU1no39FsJwWF/sRibBeRZCchfRmhbpWppj
+         hoMmYUaxDl49UjT9yfjRXF2tYXL8eVkCytNo1MUak+KGJLCn1q49LKrpfnDcFz+hyj0r
+         j/NeES4tbDBJqd/NMqmJCzVUTSYIF9x+RG1Hxp1aJhS/I76QWxA5pOoGGIkvCWf4vlyX
+         Wk2w==
+X-Gm-Message-State: AJcUukc3CEWEOPrd/Fb1LAnaZKAstOp1i2B6xphtTJlKo+lamGzV55r6
+        /BDJlCZJ4BWRcZWhhxd7EXtwig==
+X-Google-Smtp-Source: ALg8bN6ZHR94sgSFTbDFBw/pg/+KOlZaBo07H6jjtjHLp5kuuTC5yGUZ7cwJlNwAs5YTLbdRzws9yw==
+X-Received: by 2002:adf:c38e:: with SMTP id p14mr22292986wrf.68.1548067708263;
+        Mon, 21 Jan 2019 02:48:28 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id y138sm57934722wmc.16.2019.01.21.02.48.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 02:48:27 -0800 (PST)
+Subject: Re: [RFC PATCH] media/doc: Allow sizeimage to be set by v4l clients
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
+References: <20190116123701.10344-1-stanimir.varbanov@linaro.org>
+ <299e8aeb-6deb-b383-8f63-cf2cbf5d2e9f@xs4all.nl>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <adecdc4e-1aed-fc33-b14b-083322797c70@linaro.org>
+Date:   Mon, 21 Jan 2019 12:48:26 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <5C4596F8.7030009@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <299e8aeb-6deb-b383-8f63-cf2cbf5d2e9f@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roger,
+Hi Hans,
 
-On 21/01/19 3:25 PM, Roger Quadros wrote:
-> Kishon,
-> 
-> On 21/01/19 08:48, Kishon Vijay Abraham I wrote:
->> AM654x has two SERDES instances. Each instance has three input clocks
->> (left input, externel reference clock and right input) and two output
->> clocks (left output and right output) in addition to a PLL mux clock
->> which the SERDES uses for Clock Multiplier Unit (CMU refclock).
->> The PLL mux clock can select from one of the three input clocks.
->> The right output can select between left input and external reference
->> clock while the left output can select between the right input and
->> external reference clock.
+On 1/18/19 11:13 AM, Hans Verkuil wrote:
+> On 1/16/19 1:37 PM, Stanimir Varbanov wrote:
+>> This changes v4l2_pix_format and v4l2_plane_pix_format sizeimage
+>> field description to allow v4l clients to set bigger image size
+>> in case of variable length compressed data.
 >>
->> The left and right input reference clock of SERDES0 and SERDES1
->> respectively are connected to the SoC clock. In the case of two lane
->> SERDES personality card, the left input of SERDES1 is connected to
->> the right output of SERDES0 in a chained fashion.
->>
->> See section "Reference Clock Distribution" of AM65x Sitara Processors
->> TRM (SPRUID7 – April 2018) for more details.
->>
->> Add dt-binding documentation in order to represent all these different
->> configurations in device tree.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 >> ---
->>  .../devicetree/bindings/phy/ti-phy.txt        | 77 +++++++++++++++++++
->>  include/dt-bindings/phy/phy-am654-serdes.h    | 13 ++++
->>  2 files changed, 90 insertions(+)
->>  create mode 100644 include/dt-bindings/phy/phy-am654-serdes.h
+>>  Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst | 5 ++++-
+>>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst        | 3 ++-
+>>  2 files changed, 6 insertions(+), 2 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/phy/ti-phy.txt b/Documentation/devicetree/bindings/phy/ti-phy.txt
->> index 57dfda8a7a1d..fc2fff6b2c37 100644
->> --- a/Documentation/devicetree/bindings/phy/ti-phy.txt
->> +++ b/Documentation/devicetree/bindings/phy/ti-phy.txt
->> @@ -132,3 +132,80 @@ sata_phy: phy@4a096000 {
->>  	syscon-pllreset = <&scm_conf 0x3fc>;
->>  	#phy-cells = <0>;
->>  };
->> +
->> +
->> +TI AM654 SERDES
->> +
->> +Required properties:
->> + - compatible: Should be "ti,phy-am654-serdes"
->> + - reg : Address and length of the register set for the device.
->> + - reg-names: Should be "serdes" which corresponds to the register space
->> +	populated in "reg".
->> + - #phy-cells: determine the number of cells that should be given in the
->> +	phandle while referencing this phy. Should be "2". The 1st cell
->> +	corresponds to the phy type (should be one of the types specified in
->> +	include/dt-bindings/phy/phy.h) and the 2nd cell should be the serdes
->> +	lane function.
->> +	If SERDES0 is referenced 2nd cell should be:
->> +		0 - USB3
->> +		1 - PCIe0 Lane0
->> +		2 - ICSS2 SGMII Lane0
->> +	If SERDES1 is referenced 2nd cell should be:
->> +		0 - PCIe1 Lane0
->> +		1 - PCIe0 Lane1
->> +		2 - ICSS2 SGMII Lane1
+>> diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
+>> index 7f82dad9013a..dbe0b74e9ba4 100644
+>> --- a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
+>> +++ b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
+>> @@ -30,7 +30,10 @@ describing all planes of that format.
+>>  
+>>      * - __u32
+>>        - ``sizeimage``
+>> -      - Maximum size in bytes required for image data in this plane.
+>> +      - Maximum size in bytes required for image data in this plane,
+>> +        set by the driver. When the image consists of variable length
+>> +        compressed data this is the maximum number of bytes required
+>> +        to hold an image, and it is allowed to be set by the client.
+>>      * - __u32
+>>        - ``bytesperline``
+>>        - Distance in bytes between the leftmost pixels in two adjacent
+>> diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
+>> index 71eebfc6d853..54b6d2b67bd7 100644
+>> --- a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
+>> +++ b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
+>> @@ -89,7 +89,8 @@ Single-planar format structure
+>>        - Size in bytes of the buffer to hold a complete image, set by the
+>>  	driver. Usually this is ``bytesperline`` times ``height``. When
+>>  	the image consists of variable length compressed data this is the
+>> -	maximum number of bytes required to hold an image.
+>> +	maximum number of bytes required to hold an image, and it is
+>> +	allowed to be set by the client.
+>>      * - __u32
+>>        - ``colorspace``
+>>        - Image colorspace, from enum :c:type:`v4l2_colorspace`.
+>>
 > 
-> Can we have a way to change default lane at probe time without having any user dependencies.
+> Hmm. "maximum number of bytes required to hold an image": that's not actually true
+> for bitstream formats like MPEG. It's just the size of the buffer used to store the
+> bitstream, i.e. one buffer may actually contain multiple compressed images, or a
+> compressed image is split over multiple buffers.
 > 
-> e.g. To work in USB2.0 mode I don't want SERDES0 to be in lane 0 (which is SoC default).
-> But at the same time the application might not be using PCIe or SGMII, so there is no
-> PHY user to change the lane to 1 or 2.
-> 
-> A DT property to allow selection of a default lane at probe time would help
-Ideally we should be disabling the module that is not used ("status" property
-of SERDES0 dt would be "disabled"). So there is no guarantee SERDES will be probed.
 
+Do you want me to change something in the current documentation, i.e.
+the quoted above?
 
+> Only for MJPEG is this statement true since each buffer will contain a single
+> compressed JPEG image.
 > 
+> Regards,
 > 
->> + - clocks: List of clock-specifiers representing the input to the SERDES.
->> +	Should have 3 items representing the left input clock, external
->> +	reference clock and right input clock in that order.
->> + - clock-output-names: List of clock names for each of the clock outputs of
->> +	SERDES. Should have 3 items for CMU reference clock,
->> +	left output clock and right output clock in that order.
->> + - assigned-clocks: As defined in
->> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
->> + - assigned-clock-parents: As defined in
->> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
->> + - #clock-cells: Should be <1> to choose between the 3 output clocks.
->> +	Defined in Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +   The following macros are defined in dt-bindings/phy/phy-am654-serdes.h
->> +   for selecting the correct reference clock. This can be used while
->> +   specifying the clocks created by SERDES.
->> +	=> AM654_SERDES_CMU_REFCLK
->> +	=> AM654_SERDES_LO_REFCLK
->> +	=> AM654_SERDES_RO_REFCLK
->> +
->> + - mux-controls: phandle to the multiplexer
->> +
->> +Example:
->> +
->> +Example for SERDES0 is given below. It has 3 clock inputs;
->> +left input reference clock as indicated by <&k3_clks 153 4>, external
->> +reference clock as indicated by <&k3_clks 153 1> and right input
->> +reference clock as indicated by <&serdes1 AM654_SERDES_LO_REFCLK>. (The
->> +right input of SERDES0 is connected to the left output of SERDES1).
->> +
->> +SERDES0 registers 3 clock outputs as indicated in clock-output-names. The
->> +first refers to the CMU reference clock, second refers to the left output
->> +reference clock and the third refers to the right output reference clock.
->> +
->> +The assigned-clocks and assigned-clock-parents is used here to set the
->> +parent of left input reference clock to MAINHSDIV_CLKOUT4 and parent of
->> +CMU reference clock to left input reference clock.
->> +
->> +serdes0: serdes@900000 {
->> +	compatible = "ti,phy-am654-serdes";
->> +	reg = <0x0 0x900000 0x0 0x2000>;
->> +	reg-names = "serdes";
->> +	#phy-cells = <2>;
->> +	power-domains = <&k3_pds 153>;
->> +	clocks = <&k3_clks 153 4>, <&k3_clks 153 1>,
->> +			<&serdes1 AM654_SERDES_LO_REFCLK>;
->> +	clock-output-names = "serdes0_cmu_refclk", "serdes0_lo_refclk",
->> +				"serdes0_ro_refclk";
->> +	assigned-clocks = <&k3_clks 153 4>, <&serdes0 AM654_SERDES_CMU_REFCLK>;
->> +	assigned-clock-parents = <&k3_clks 153 8>, <&k3_clks 153 4>;
->> +	ti,serdes-clk = <&serdes0_clk>;
->> +	mux-controls = <&serdes_mux 0>;
->> +	#clock-cells = <1>;
->> +	status = "disabled";
+> 	Hans
 > 
-> We don't keep status "disabled" for AM6. All nodes are enabled by default.
 
-Should all nodes be enabled by default? Is it not based on the features
-supported by the EVM?
-
-Thanks
-Kishon
+-- 
+regards,
+Stan
