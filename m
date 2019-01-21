@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E73CC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0707C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF4E920861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE8F620861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079807;
-	bh=W1+h1GTf58Y8BIDtSyGHUUzak7SpinLe0fI5vbXuT4A=;
+	s=default; t=1548079825;
+	bh=q70DH8/VftqPwg01+y2Rk+IFs7OQuOY0y9LUtELI5cE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UePPdrqVaFvZKRJ+ueppeACpjdKWfVWQQyQ4f2Wnxni0tgUFUYkoB8P/Trsrsg2V/
-	 bD2bR1ZR4aNRHsKwQCt2nNw2wgZoyGceOCJKqRvVyKB9R9eY2u2dnRfi/jOpaXv70v
-	 VpKSzFV7UTG6zJxwLOA6Rd5BJU/lcNuepqKH64fA=
+	b=I1BjgAyGa9etO+ifOSZiznpUrOteFsYrj+78uLIIoQTdwh9NPoXc1kEp5huTDgCUO
+	 gkVhtPMvu71fIxr4za9GNaUfD7i8OI4jI64tCPhzsmqrFDCL7H5vqPG/pWlMO6m3Ho
+	 zkUiURRlVSqvn0pOEnpANPah1jqOXF4dA8SxDd20=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731632AbfAUOKF (ORCPT
+        id S1731744AbfAUOKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:10:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39122 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:10:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731581AbfAUNyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:54:49 -0500
+        id S1730782AbfAUNyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:54:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEC602084C;
-        Mon, 21 Jan 2019 13:54:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F7E02084C;
+        Mon, 21 Jan 2019 13:54:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078888;
-        bh=W1+h1GTf58Y8BIDtSyGHUUzak7SpinLe0fI5vbXuT4A=;
+        s=default; t=1548078879;
+        bh=q70DH8/VftqPwg01+y2Rk+IFs7OQuOY0y9LUtELI5cE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bzQIqiYZOeOt/VijerjL73d4QREa+bHTsnPKDGODx65y5kGvgvV+XygKgfYIun4u+
-         uwpJLL29FeX9qkscaxmtc1w0l26xjWw5UQQScMZqkrrvQkinZEUFkXx1rv43xeLEyi
-         P5/zcci9VzcM731dFENid+IdeO7Y5tdFK4+k9yBA=
+        b=kaFOhcO4626f04QPFVqe54MIkrgSCZU6JAnL65C390N0wDah/vu3SbxTNvN/mzt8p
+         mc31C1NRsLRFia1BcfRz9in/pjLwug5bQ6vdqC3fHAuIKWsqVVbdbjJ3OGy8opGIAU
+         2oCI8Vb9TZMETYPSatZMVR9gh7KLY8rZbTuumMiM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harsh Jain <harsh@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 19/51] crypto: authencesn - Avoid twice completion call in decrypt path
-Date:   Mon, 21 Jan 2019 14:44:15 +0100
-Message-Id: <20190121122455.294951065@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 16/51] bonding: update nest level on unlink
+Date:   Mon, 21 Jan 2019 14:44:12 +0100
+Message-Id: <20190121122455.021801579@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -64,67 +66,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Harsh Jain <harsh@chelsio.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit a7773363624b034ab198c738661253d20a8055c2 upstream.
+[ Upstream commit 001e465f09a18857443489a57e74314a3368c805 ]
 
-Authencesn template in decrypt path unconditionally calls aead_request_complete
-after ahash_verify which leads to following kernel panic in after decryption.
+A network device stack with multiple layers of bonding devices can
+trigger a false positive lockdep warning. Adding lockdep nest levels
+fixes this. Update the level on both enslave and unlink, to avoid the
+following series of events ..
 
-[  338.539800] BUG: unable to handle kernel NULL pointer dereference at 0000000000000004
-[  338.548372] PGD 0 P4D 0
-[  338.551157] Oops: 0000 [#1] SMP PTI
-[  338.554919] CPU: 0 PID: 0 Comm: swapper/0 Kdump: loaded Tainted: G        W I       4.19.7+ #13
-[  338.564431] Hardware name: Supermicro X8ST3/X8ST3, BIOS 2.0        07/29/10
-[  338.572212] RIP: 0010:esp_input_done2+0x350/0x410 [esp4]
-[  338.578030] Code: ff 0f b6 68 10 48 8b 83 c8 00 00 00 e9 8e fe ff ff 8b 04 25 04 00 00 00 83 e8 01 48 98 48 8b 3c c5 10 00 00 00 e9 f7 fd ff ff <8b> 04 25 04 00 00 00 83 e8 01 48 98 4c 8b 24 c5 10 00 00 00 e9 3b
-[  338.598547] RSP: 0018:ffff911c97803c00 EFLAGS: 00010246
-[  338.604268] RAX: 0000000000000002 RBX: ffff911c4469ee00 RCX: 0000000000000000
-[  338.612090] RDX: 0000000000000000 RSI: 0000000000000130 RDI: ffff911b87c20400
-[  338.619874] RBP: 0000000000000000 R08: ffff911b87c20498 R09: 000000000000000a
-[  338.627610] R10: 0000000000000001 R11: 0000000000000004 R12: 0000000000000000
-[  338.635402] R13: ffff911c89590000 R14: ffff911c91730000 R15: 0000000000000000
-[  338.643234] FS:  0000000000000000(0000) GS:ffff911c97800000(0000) knlGS:0000000000000000
-[  338.652047] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  338.658299] CR2: 0000000000000004 CR3: 00000001ec20a000 CR4: 00000000000006f0
-[  338.666382] Call Trace:
-[  338.669051]  <IRQ>
-[  338.671254]  esp_input_done+0x12/0x20 [esp4]
-[  338.675922]  chcr_handle_resp+0x3b5/0x790 [chcr]
-[  338.680949]  cpl_fw6_pld_handler+0x37/0x60 [chcr]
-[  338.686080]  chcr_uld_rx_handler+0x22/0x50 [chcr]
-[  338.691233]  uldrx_handler+0x8c/0xc0 [cxgb4]
-[  338.695923]  process_responses+0x2f0/0x5d0 [cxgb4]
-[  338.701177]  ? bitmap_find_next_zero_area_off+0x3a/0x90
-[  338.706882]  ? matrix_alloc_area.constprop.7+0x60/0x90
-[  338.712517]  ? apic_update_irq_cfg+0x82/0xf0
-[  338.717177]  napi_rx_handler+0x14/0xe0 [cxgb4]
-[  338.722015]  net_rx_action+0x2aa/0x3e0
-[  338.726136]  __do_softirq+0xcb/0x280
-[  338.730054]  irq_exit+0xde/0xf0
-[  338.733504]  do_IRQ+0x54/0xd0
-[  338.736745]  common_interrupt+0xf/0xf
+    ip netns add test
+    ip netns exec test bash
+    ip link set dev lo addr 00:11:22:33:44:55
+    ip link set dev lo down
 
-Fixes: 104880a6b470 ("crypto: authencesn - Convert to new AEAD...")
-Signed-off-by: Harsh Jain <harsh@chelsio.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+    ip link add dev bond1 type bond
+    ip link add dev bond2 type bond
+
+    ip link set dev lo master bond1
+    ip link set dev bond1 master bond2
+
+    ip link set dev bond1 nomaster
+    ip link set dev bond2 master bond1
+
+.. from still generating a splat:
+
+    [  193.652127] ======================================================
+    [  193.658231] WARNING: possible circular locking dependency detected
+    [  193.664350] 4.20.0 #8 Not tainted
+    [  193.668310] ------------------------------------------------------
+    [  193.674417] ip/15577 is trying to acquire lock:
+    [  193.678897] 00000000a40e3b69 (&(&bond->stats_lock)->rlock#3/3){+.+.}, at: bond_get_stats+0x58/0x290
+    [  193.687851]
+    	       but task is already holding lock:
+    [  193.693625] 00000000807b9d9f (&(&bond->stats_lock)->rlock#2/2){+.+.}, at: bond_get_stats+0x58/0x290
+
+    [..]
+
+    [  193.851092]        lock_acquire+0xa7/0x190
+    [  193.855138]        _raw_spin_lock_nested+0x2d/0x40
+    [  193.859878]        bond_get_stats+0x58/0x290
+    [  193.864093]        dev_get_stats+0x5a/0xc0
+    [  193.868140]        bond_get_stats+0x105/0x290
+    [  193.872444]        dev_get_stats+0x5a/0xc0
+    [  193.876493]        rtnl_fill_stats+0x40/0x130
+    [  193.880797]        rtnl_fill_ifinfo+0x6c5/0xdc0
+    [  193.885271]        rtmsg_ifinfo_build_skb+0x86/0xe0
+    [  193.890091]        rtnetlink_event+0x5b/0xa0
+    [  193.894320]        raw_notifier_call_chain+0x43/0x60
+    [  193.899225]        netdev_change_features+0x50/0xa0
+    [  193.904044]        bond_compute_features.isra.46+0x1ab/0x270
+    [  193.909640]        bond_enslave+0x141d/0x15b0
+    [  193.913946]        do_set_master+0x89/0xa0
+    [  193.918016]        do_setlink+0x37c/0xda0
+    [  193.921980]        __rtnl_newlink+0x499/0x890
+    [  193.926281]        rtnl_newlink+0x48/0x70
+    [  193.930238]        rtnetlink_rcv_msg+0x171/0x4b0
+    [  193.934801]        netlink_rcv_skb+0xd1/0x110
+    [  193.939103]        rtnetlink_rcv+0x15/0x20
+    [  193.943151]        netlink_unicast+0x3b5/0x520
+    [  193.947544]        netlink_sendmsg+0x2fd/0x3f0
+    [  193.951942]        sock_sendmsg+0x38/0x50
+    [  193.955899]        ___sys_sendmsg+0x2ba/0x2d0
+    [  193.960205]        __x64_sys_sendmsg+0xad/0x100
+    [  193.964687]        do_syscall_64+0x5a/0x460
+    [  193.968823]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: 7e2556e40026 ("bonding: avoid lockdep confusion in bond_get_stats()")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- crypto/authencesn.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/bonding/bond_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/crypto/authencesn.c
-+++ b/crypto/authencesn.c
-@@ -279,7 +279,7 @@ static void authenc_esn_verify_ahash_don
- 	struct aead_request *req = areq->data;
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1900,6 +1900,9 @@ static int __bond_release_one(struct net
+ 	if (!bond_has_slaves(bond)) {
+ 		bond_set_carrier(bond);
+ 		eth_hw_addr_random(bond_dev);
++		bond->nest_level = SINGLE_DEPTH_NESTING;
++	} else {
++		bond->nest_level = dev_get_nest_level(bond_dev) + 1;
+ 	}
  
- 	err = err ?: crypto_authenc_esn_decrypt_tail(req, 0);
--	aead_request_complete(req, err);
-+	authenc_esn_request_complete(req, err);
- }
- 
- static int crypto_authenc_esn_decrypt(struct aead_request *req)
+ 	unblock_netpoll_tx();
 
 
