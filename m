@@ -2,198 +2,181 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBE4C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D02DC2F3CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3801D21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:03:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079398;
-	bh=rCbwB7vVAtEaRAzs8l7W6vU0J1n3cvQJ54V51eC9XqI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=b/NzW/Q5l9fanNGtfSWAu/NsRDMbzNx8UfJNm8XbdE65hKC7/GpN7rABMrOn7fqTc
-	 jqBPtXASTYZ5ktxVl4f2squkqvbe6MNSopG1bOr4i+1KzuFuBDOHzS9iJ8Q6CydVri
-	 6eTxb+vbTKyKwwCuSlXm5i1LvpJTyRdPAsYA0wys=
+	by mail.kernel.org (Postfix) with ESMTP id 766F921019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732943AbfAUODK (ORCPT
+        id S1730408AbfAUODI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:03:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732919AbfAUODF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:03:05 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9BC22089F;
-        Mon, 21 Jan 2019 14:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079384;
-        bh=rCbwB7vVAtEaRAzs8l7W6vU0J1n3cvQJ54V51eC9XqI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d+QKpdqh/deg1fZ3mAH+ckHnGZqymgfdPKq+ytS+FRZCc6XwzBlR78DcqodPk3tKC
-         LZxD9TN38JmMOsiVFd0JCYSAiamBwKsfkEoAFNCeJ+PXrmO6EahiQRCzGopWuu9i59
-         safW7eUXUo0ZUek2znm2KQUmT1ateLRFwQdNI8Qc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 86/99] loop: Push loop_ctl_mutex down into loop_clr_fd()
-Date:   Mon, 21 Jan 2019 14:49:18 +0100
-Message-Id: <20190121134917.434547729@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
-References: <20190121134913.924726465@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 21 Jan 2019 09:03:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41550 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732915AbfAUODE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:03:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CC71EAE41;
+        Mon, 21 Jan 2019 14:03:01 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4F3BC1E1584; Mon, 21 Jan 2019 15:03:01 +0100 (CET)
+Date:   Mon, 21 Jan 2019 15:03:01 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 4.20 085/111] blockdev: Fix livelocks on loop device
+Message-ID: <20190121140301.GA16096@quack2.suse.cz>
+References: <20190121122455.819406896@linuxfoundation.org>
+ <20190121122505.487073207@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121122505.487073207@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Mon 21-01-19 14:43:19, Greg Kroah-Hartman wrote:
+> 4.20-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+Greg, when applying this, you should also apply commit c8a83a6b54d0 "nbd:
+Use set_blocksize() to set device blocksize". Otherwise some nbd
+functionality would regress.
 
-From: Jan Kara <jack@suse.cz>
+								Honza
 
-commit 7ccd0791d98531df7cd59e92d55e4f063d48a070 upstream.
-
-loop_clr_fd() has a weird locking convention that is expects
-loop_ctl_mutex held, releases it on success and keeps it on failure.
-Untangle the mess by moving locking of loop_ctl_mutex into
-loop_clr_fd().
-
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/block/loop.c |   49 +++++++++++++++++++++++++++++--------------------
- 1 file changed, 29 insertions(+), 20 deletions(-)
-
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1028,15 +1028,22 @@ loop_init_xfer(struct loop_device *lo, s
- 
- static int __loop_clr_fd(struct loop_device *lo)
- {
--	struct file *filp = lo->lo_backing_file;
-+	struct file *filp = NULL;
- 	gfp_t gfp = lo->old_gfp_mask;
- 	struct block_device *bdev = lo->lo_device;
-+	int err = 0;
- 
--	if (WARN_ON_ONCE(lo->lo_state != Lo_rundown))
--		return -ENXIO;
-+	mutex_lock(&loop_ctl_mutex);
-+	if (WARN_ON_ONCE(lo->lo_state != Lo_rundown)) {
-+		err = -ENXIO;
-+		goto out_unlock;
-+	}
- 
--	if (filp == NULL)
--		return -EINVAL;
-+	filp = lo->lo_backing_file;
-+	if (filp == NULL) {
-+		err = -EINVAL;
-+		goto out_unlock;
-+	}
- 
- 	/* freeze request queue during the transition */
- 	blk_mq_freeze_queue(lo->lo_queue);
-@@ -1083,6 +1090,7 @@ static int __loop_clr_fd(struct loop_dev
- 	if (!part_shift)
- 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
- 	loop_unprepare_queue(lo);
-+out_unlock:
- 	mutex_unlock(&loop_ctl_mutex);
- 	/*
- 	 * Need not hold loop_ctl_mutex to fput backing file.
-@@ -1090,14 +1098,22 @@ static int __loop_clr_fd(struct loop_dev
- 	 * lock dependency possibility warning as fput can take
- 	 * bd_mutex which is usually taken before loop_ctl_mutex.
- 	 */
--	fput(filp);
--	return 0;
-+	if (filp)
-+		fput(filp);
-+	return err;
- }
- 
- static int loop_clr_fd(struct loop_device *lo)
- {
--	if (lo->lo_state != Lo_bound)
-+	int err;
-+
-+	err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+	if (err)
-+		return err;
-+	if (lo->lo_state != Lo_bound) {
-+		mutex_unlock(&loop_ctl_mutex);
- 		return -ENXIO;
-+	}
- 	/*
- 	 * If we've explicitly asked to tear down the loop device,
- 	 * and it has an elevated reference count, set it for auto-teardown when
-@@ -1114,6 +1130,7 @@ static int loop_clr_fd(struct loop_devic
- 		return 0;
- 	}
- 	lo->lo_state = Lo_rundown;
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	return __loop_clr_fd(lo);
- }
-@@ -1448,14 +1465,7 @@ static int lo_ioctl(struct block_device
- 		mutex_unlock(&loop_ctl_mutex);
- 		break;
- 	case LOOP_CLR_FD:
--		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
--		if (err)
--			return err;
--		/* loop_clr_fd would have unlocked loop_ctl_mutex on success */
--		err = loop_clr_fd(lo);
--		if (err)
--			mutex_unlock(&loop_ctl_mutex);
--		break;
-+		return loop_clr_fd(lo);
- 	case LOOP_SET_STATUS:
- 		err = -EPERM;
- 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN)) {
-@@ -1691,7 +1701,6 @@ out:
- static void lo_release(struct gendisk *disk, fmode_t mode)
- {
- 	struct loop_device *lo;
--	int err;
- 
- 	mutex_lock(&loop_ctl_mutex);
- 	lo = disk->private_data;
-@@ -1702,13 +1711,13 @@ static void lo_release(struct gendisk *d
- 		if (lo->lo_state != Lo_bound)
- 			goto out_unlock;
- 		lo->lo_state = Lo_rundown;
-+		mutex_unlock(&loop_ctl_mutex);
- 		/*
- 		 * In autoclear mode, stop the loop thread
- 		 * and remove configuration after last close.
- 		 */
--		err = __loop_clr_fd(lo);
--		if (!err)
--			return;
-+		__loop_clr_fd(lo);
-+		return;
- 	} else if (lo->lo_state == Lo_bound) {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
-
-
+> 
+> ------------------
+> 
+> From: Jan Kara <jack@suse.cz>
+> 
+> commit 04906b2f542c23626b0ef6219b808406f8dddbe9 upstream.
+> 
+> bd_set_size() updates also block device's block size. This is somewhat
+> unexpected from its name and at this point, only blkdev_open() uses this
+> functionality. Furthermore, this can result in changing block size under
+> a filesystem mounted on a loop device which leads to livelocks inside
+> __getblk_gfp() like:
+> 
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1
+> CPU: 1 PID: 10863 Comm: syz-executor0 Not tainted 4.18.0-rc5+ #151
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+> 01/01/2011
+> RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x50 kernel/kcov.c:106
+> ...
+> Call Trace:
+>  init_page_buffers+0x3e2/0x530 fs/buffer.c:904
+>  grow_dev_page fs/buffer.c:947 [inline]
+>  grow_buffers fs/buffer.c:1009 [inline]
+>  __getblk_slow fs/buffer.c:1036 [inline]
+>  __getblk_gfp+0x906/0xb10 fs/buffer.c:1313
+>  __bread_gfp+0x2d/0x310 fs/buffer.c:1347
+>  sb_bread include/linux/buffer_head.h:307 [inline]
+>  fat12_ent_bread+0x14e/0x3d0 fs/fat/fatent.c:75
+>  fat_ent_read_block fs/fat/fatent.c:441 [inline]
+>  fat_alloc_clusters+0x8ce/0x16e0 fs/fat/fatent.c:489
+>  fat_add_cluster+0x7a/0x150 fs/fat/inode.c:101
+>  __fat_get_block fs/fat/inode.c:148 [inline]
+> ...
+> 
+> Trivial reproducer for the problem looks like:
+> 
+> truncate -s 1G /tmp/image
+> losetup /dev/loop0 /tmp/image
+> mkfs.ext4 -b 1024 /dev/loop0
+> mount -t ext4 /dev/loop0 /mnt
+> losetup -c /dev/loop0
+> l /mnt
+> 
+> Fix the problem by moving initialization of a block device block size
+> into a separate function and call it when needed.
+> 
+> Thanks to Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> for help with
+> debugging the problem.
+> 
+> Reported-by: syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  fs/block_dev.c |   28 ++++++++++++++++++----------
+>  1 file changed, 18 insertions(+), 10 deletions(-)
+> 
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -104,6 +104,20 @@ void invalidate_bdev(struct block_device
+>  }
+>  EXPORT_SYMBOL(invalidate_bdev);
+>  
+> +static void set_init_blocksize(struct block_device *bdev)
+> +{
+> +	unsigned bsize = bdev_logical_block_size(bdev);
+> +	loff_t size = i_size_read(bdev->bd_inode);
+> +
+> +	while (bsize < PAGE_SIZE) {
+> +		if (size & bsize)
+> +			break;
+> +		bsize <<= 1;
+> +	}
+> +	bdev->bd_block_size = bsize;
+> +	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
+> +}
+> +
+>  int set_blocksize(struct block_device *bdev, int size)
+>  {
+>  	/* Size must be a power of two, and between 512 and PAGE_SIZE */
+> @@ -1408,18 +1422,9 @@ EXPORT_SYMBOL(check_disk_change);
+>  
+>  void bd_set_size(struct block_device *bdev, loff_t size)
+>  {
+> -	unsigned bsize = bdev_logical_block_size(bdev);
+> -
+>  	inode_lock(bdev->bd_inode);
+>  	i_size_write(bdev->bd_inode, size);
+>  	inode_unlock(bdev->bd_inode);
+> -	while (bsize < PAGE_SIZE) {
+> -		if (size & bsize)
+> -			break;
+> -		bsize <<= 1;
+> -	}
+> -	bdev->bd_block_size = bsize;
+> -	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
+>  }
+>  EXPORT_SYMBOL(bd_set_size);
+>  
+> @@ -1496,8 +1501,10 @@ static int __blkdev_get(struct block_dev
+>  				}
+>  			}
+>  
+> -			if (!ret)
+> +			if (!ret) {
+>  				bd_set_size(bdev,(loff_t)get_capacity(disk)<<9);
+> +				set_init_blocksize(bdev);
+> +			}
+>  
+>  			/*
+>  			 * If the device is invalidated, rescan partition
+> @@ -1532,6 +1539,7 @@ static int __blkdev_get(struct block_dev
+>  				goto out_clear;
+>  			}
+>  			bd_set_size(bdev, (loff_t)bdev->bd_part->nr_sects << 9);
+> +			set_init_blocksize(bdev);
+>  		}
+>  
+>  		if (bdev->bd_bdi == &noop_backing_dev_info)
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
