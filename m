@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66858C2F43B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BA4C2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 403712085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 847FF20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730589AbfAUPfI (ORCPT
+        id S1730582AbfAUPe7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:35:08 -0500
-Received: from foss.arm.com ([217.140.101.70]:36714 "EHLO foss.arm.com"
+        Mon, 21 Jan 2019 10:34:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:36674 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730564AbfAUPfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:35:02 -0500
+        id S1730440AbfAUPez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:34:55 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51DEA15BE;
-        Mon, 21 Jan 2019 07:35:02 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A385EBD;
+        Mon, 21 Jan 2019 07:34:55 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 57AD63F5C1;
-        Mon, 21 Jan 2019 07:35:00 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7CE6E3F5C1;
+        Mon, 21 Jan 2019 07:34:53 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         joel@joelfernandes.org, marc.zyngier@arm.com,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v9 26/26] arm64: Enable the support of pseudo-NMIs
-Date:   Mon, 21 Jan 2019 15:33:45 +0000
-Message-Id: <1548084825-8803-27-git-send-email-julien.thierry@arm.com>
+        Julien Thierry <julien.thierry@arm.com>,
+        Dave Martin <dave.martin@arm.com>
+Subject: [PATCH v9 23/26] arm64: Handle serror in NMI context
+Date:   Mon, 21 Jan 2019 15:33:42 +0000
+Message-Id: <1548084825-8803-24-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
 References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
@@ -43,86 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a build option and a command line parameter to build and enable the
-support of pseudo-NMIs.
+Per definition of the daifflags, Serrors can occur during any interrupt
+context, that includes NMI contexts. Trying to nmi_enter in an nmi context
+will crash.
 
+Skip nmi_enter/nmi_exit when serror occurred during an NMI.
+
+Suggested-by: James Morse <james.morse@arm.com>
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Dave Martin <dave.martin@arm.com>
+Cc: James Morse <james.morse@arm.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  6 ++++++
- arch/arm64/Kconfig                              | 14 ++++++++++++++
- arch/arm64/kernel/cpufeature.c                  | 11 ++++++++++-
- 3 files changed, 30 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/traps.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index b799bcf..173e2cc 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1197,6 +1197,12 @@
- 			to discrete, to make X server driver able to add WB
- 			entry later. This parameter enables that.
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 4e2fb87..8ad119c 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -898,13 +898,17 @@ bool arm64_is_fatal_ras_serror(struct pt_regs *regs, unsigned int esr)
  
-+	enable_pseudo_nmi [ARM64]
-+			Enables support for pseudo-NMIs in the kernel. This
-+			requires both the kernel to be built with
-+			CONFIG_ARM64_PSEUDO_NMI and to be running on a
-+			platform with GICv3.
-+
- 	enable_timer_pin_1 [X86]
- 			Enable PIN 1 of APIC timer
- 			Can be useful to work around chipset bugs
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a4168d3..8d84bfd 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1328,6 +1328,20 @@ config ARM64_MODULE_PLTS
- 	bool
- 	select HAVE_MOD_ARCH_SPECIFIC
- 
-+config ARM64_PSEUDO_NMI
-+	bool "Support for NMI-like interrupts"
-+	select CONFIG_ARM_GIC_V3
-+	help
-+	  Adds support for mimicking Non-Maskable Interrupts through the use of
-+	  GIC interrupt priority. This support requires version 3 or later of
-+	  Arm GIC.
-+
-+	  This high priority configuration for interrupts need to be
-+	  explicitly enabled through the new kernel parameter
-+	  "enable_pseudo_nmi".
-+
-+	  If unsure, say N
-+
- config RELOCATABLE
- 	bool
- 	help
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index b530fb24..e66d778 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1207,10 +1207,19 @@ static void cpu_enable_address_auth(struct arm64_cpu_capabilities const *cap)
- #endif /* CONFIG_ARM64_PTR_AUTH */
- 
- #ifdef CONFIG_ARM64_PSEUDO_NMI
-+static bool enable_pseudo_nmi;
-+
-+static int __init early_enable_pseudo_nmi(char *p)
-+{
-+	enable_pseudo_nmi = true;
-+	return 0;
-+}
-+early_param("enable_pseudo_nmi", early_enable_pseudo_nmi);
-+
- static bool can_use_gic_priorities(const struct arm64_cpu_capabilities *entry,
- 				   int scope)
+ asmlinkage void do_serror(struct pt_regs *regs, unsigned int esr)
  {
--	return false;
-+	return enable_pseudo_nmi && has_useable_gicv3_cpuif(entry, scope);
- }
- #endif
+-	nmi_enter();
++	const bool was_in_nmi = in_nmi();
++
++	if (!was_in_nmi)
++		nmi_enter();
  
+ 	/* non-RAS errors are not containable */
+ 	if (!arm64_is_ras_serror(esr) || arm64_is_fatal_ras_serror(regs, esr))
+ 		arm64_serror_panic(regs, esr);
+ 
+-	nmi_exit();
++	if (!was_in_nmi)
++		nmi_exit();
+ }
+ 
+ void __pte_error(const char *file, int line, unsigned long val)
 -- 
 1.9.1
 
