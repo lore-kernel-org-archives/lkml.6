@@ -2,520 +2,186 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D50BC37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38634C37121
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE75221019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 001DE21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:04:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vyt5CZqR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AhFPAgXs"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="d6KIasyX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728155AbfAUUEa (ORCPT
+        id S1728189AbfAUUE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:04:30 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53314 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727699AbfAUUE3 (ORCPT
+        Mon, 21 Jan 2019 15:04:56 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:36669 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727699AbfAUUE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:04:29 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 62E2C60850; Mon, 21 Jan 2019 20:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548101067;
-        bh=Et7Ec3kGGwZyuesnJdnkZ1lwkdI0qDw+fKLFU2oa0xA=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=Vyt5CZqR6FjSF9t3tTqrENcWeKcMFrkERlesoQqC8WDNRbf1KoJxdUowoQxFDUsQy
-         6RYy30BGxys/98Th1n84QpawTVSRrgfmuDbrz3Xb0ZLvMrzyJ2jtSOSDOntdKTnoRx
-         aTo2lUV7qDmij/EJIel3Qer9VtSGCW2FmX+7lvZQ=
-Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: lmark@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0862760791;
-        Mon, 21 Jan 2019 20:04:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548101064;
-        bh=Et7Ec3kGGwZyuesnJdnkZ1lwkdI0qDw+fKLFU2oa0xA=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=AhFPAgXseqiPinLMdEGvumCVUaGYaDYEOe/gmWZCm4eU3/oLbyvSi+QKHaUsl4DQT
-         xkuz2XG8EUmEza5z3KUALsGHsO6PBRFisVCI292cTQp1GG8ZaU9UhkXWsulWossSa3
-         Z1Usc/EXfGrKXC1rX4uoSGYsdnBd2rqdFiWaDQvw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0862760791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
-Date:   Mon, 21 Jan 2019 12:04:23 -0800 (PST)
-From:   Liam Mark <lmark@codeaurora.org>
-X-X-Sender: lmark@lmark-linux.qualcomm.com
-To:     "Andrew F. Davis" <afd@ti.com>
-cc:     Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?ISO-8859-15?Q?Arve_Hj=F8nnev=E5g?= <arve@android.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
- map/unmap
-In-Reply-To: <ca892630-48b7-120c-8822-db308b03c6ca@ti.com>
-Message-ID: <alpine.DEB.2.10.1901211203320.11004@lmark-linux.qualcomm.com>
-References: <20190111180523.27862-1-afd@ti.com> <20190111180523.27862-14-afd@ti.com> <alpine.DEB.2.10.1901140910130.23879@lmark-linux.qualcomm.com> <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com> <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
- <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com> <b6cb5596-6beb-73e0-0d8c-d9a13466d626@redhat.com> <99ca0b08-02bd-64fd-d43c-c330f0d11639@ti.com> <alpine.DEB.2.10.1901161441280.10666@lmark-linux.qualcomm.com> <7620534f-b749-76f9-0f53-f73e3f12e9a9@ti.com>
- <alpine.DEB.2.10.1901171700490.12287@lmark-linux.qualcomm.com> <678589f7-055f-7a2e-3ade-c0c0aa37aeac@ti.com> <alpine.DEB.2.10.1901181340590.9328@lmark-linux.qualcomm.com> <ca892630-48b7-120c-8822-db308b03c6ca@ti.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
-MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="-2046127808-1948698926-1548101064=:11004"
+        Mon, 21 Jan 2019 15:04:56 -0500
+Received: by mail-qk1-f195.google.com with SMTP id o125so12958305qkf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:04:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=k2dHOgXBPVvudi8O6cbRdOpoT1phSwmSQNMgMhhbmL8=;
+        b=d6KIasyXHoA7bbOyVzmDjd6CsKeI7JjP6HltgjXqUstCBfy7DWRPaUqqZkZFgPMWta
+         I2i5gTmqaD6AZDRcr+lz5GG2dlnj+7svhq8rICA0jJI0dg/dduUt1rQ4H5CeyqCdH3W4
+         8yfRxgMe+g0kee7adcB/8e0HaLCVEiCeC5LvcELGPGmWWtSXhMuQOkTkMH7dctkWEVOy
+         S7+aZoNFdnB4Scs14CKIev+mXQvXXkKXmmWtb6z8vczWdR/Hj32lHQplisAz8oj5E5xx
+         pviuITHOu+zApuoGmlDEtwiu34bPBEIDS6kL3sKaX3Gww4aQiyl6ALl0Uzyo53/vqrEC
+         1Vkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=k2dHOgXBPVvudi8O6cbRdOpoT1phSwmSQNMgMhhbmL8=;
+        b=l/JdNQWJwcaiNm+lnCEJjHxkhhpukX+xR1Z4Gj/DxYAw3pq8wch6E3cLO7NFfz5iu0
+         v4Zq0vAqHLG12FWoy+xxtWmVKDG2Ndb5CVXbAU1exQp3eiK955qm1wengW5iQoJvHT4X
+         u9RO/BYJJA/AZB3RmJub6tY4X1WBoJ7+GGkdbLjhd3HabBCoddpa8TatFFawtTFpNlww
+         Q0weff7/FOrwil+ZFn2CptHbVu1M8Yby5Ma1AUsrdCN0qIw6z0wnXme3XiTlLQovwOtK
+         5GZ1A/ytMSlz8fmxyrQw48+OZe7WGU7N1N1NihLtT8tz978Kq5KuGzJ83vg1DHHsjqs2
+         S2nA==
+X-Gm-Message-State: AJcUukeZvQz2939ewrYgqIfCIk3/zTedN5u05zlwf37ITFkG1M20I1Yg
+        GaVIJpY34QonRi2kydtLdJjL6GaNKYk=
+X-Google-Smtp-Source: ALg8bN7LjVI4Yf5Dl1Ag0UUFmVVGSk+pwfWtZsIR0j/4SfnyR0GE8HdQxiZMflyrpgYdWAKM0YH0FA==
+X-Received: by 2002:a37:b942:: with SMTP id j63mr26050279qkf.67.1548101094463;
+        Mon, 21 Jan 2019 12:04:54 -0800 (PST)
+Received: from ovpn-120-54.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id c202sm58098647qkb.19.2019.01.21.12.04.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 12:04:53 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     osalvador@suse.de, catalin.marinas@arm.com, vbabka@suse.cz,
+        mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] mm/hotplug: invalid PFNs from pfn_to_online_page()
+Date:   Mon, 21 Jan 2019 15:04:35 -0500
+Message-Id: <20190121200435.22488-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On an arm64 ThunderX2 server, the first kmemleak scan would crash [1]
+with CONFIG_DEBUG_VM_PGFLAGS=y due to page_to_nid() found a pfn that is
+not directly mapped (MEMBLOCK_NOMAP). Hence, the page->flags is
+uninitialized.
 
----2046127808-1948698926-1548101064=:11004
-Content-Type: TEXT/PLAIN; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+This is due to the commit 9f1eb38e0e11 ("mm, kmemleak: little
+optimization while scanning") starts to use pfn_to_online_page() instead
+of pfn_valid(). However, in the CONFIG_MEMORY_HOTPLUG=y case,
+pfn_to_online_page() does not call memblock_is_map_memory() while
+pfn_valid() does.
 
-On Mon, 21 Jan 2019, Andrew F. Davis wrote:
+Historically, the commit 68709f45385a ("arm64: only consider memblocks
+with NOMAP cleared for linear mapping") causes pages marked as nomap
+being no long reassigned to the new zone in memmap_init_zone() by
+calling __init_single_page().
 
-> On 1/18/19 3:43 PM, Liam Mark wrote:
-> > On Fri, 18 Jan 2019, Andrew F. Davis wrote:
-> > 
-> >> On 1/17/19 7:04 PM, Liam Mark wrote:
-> >>> On Thu, 17 Jan 2019, Andrew F. Davis wrote:
-> >>>
-> >>>> On 1/16/19 4:48 PM, Liam Mark wrote:
-> >>>>> On Wed, 16 Jan 2019, Andrew F. Davis wrote:
-> >>>>>
-> >>>>>> On 1/15/19 1:05 PM, Laura Abbott wrote:
-> >>>>>>> On 1/15/19 10:38 AM, Andrew F. Davis wrote:
-> >>>>>>>> On 1/15/19 11:45 AM, Liam Mark wrote:
-> >>>>>>>>> On Tue, 15 Jan 2019, Andrew F. Davis wrote:
-> >>>>>>>>>
-> >>>>>>>>>> On 1/14/19 11:13 AM, Liam Mark wrote:
-> >>>>>>>>>>> On Fri, 11 Jan 2019, Andrew F. Davis wrote:
-> >>>>>>>>>>>
-> >>>>>>>>>>>> Buffers may not be mapped from the CPU so skip cache maintenance
-> >>>>>>>>>>>> here.
-> >>>>>>>>>>>> Accesses from the CPU to a cached heap should be bracketed with
-> >>>>>>>>>>>> {begin,end}_cpu_access calls so maintenance should not be needed
-> >>>>>>>>>>>> anyway.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> >>>>>>>>>>>> ---
-> >>>>>>>>>>>>   drivers/staging/android/ion/ion.c | 7 ++++---
-> >>>>>>>>>>>>   1 file changed, 4 insertions(+), 3 deletions(-)
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> diff --git a/drivers/staging/android/ion/ion.c
-> >>>>>>>>>>>> b/drivers/staging/android/ion/ion.c
-> >>>>>>>>>>>> index 14e48f6eb734..09cb5a8e2b09 100644
-> >>>>>>>>>>>> --- a/drivers/staging/android/ion/ion.c
-> >>>>>>>>>>>> +++ b/drivers/staging/android/ion/ion.c
-> >>>>>>>>>>>> @@ -261,8 +261,8 @@ static struct sg_table *ion_map_dma_buf(struct
-> >>>>>>>>>>>> dma_buf_attachment *attachment,
-> >>>>>>>>>>>>         table = a->table;
-> >>>>>>>>>>>>   -    if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
-> >>>>>>>>>>>> -            direction))
-> >>>>>>>>>>>> +    if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
-> >>>>>>>>>>>> +                  direction, DMA_ATTR_SKIP_CPU_SYNC))
-> >>>>>>>>>>>
-> >>>>>>>>>>> Unfortunately I don't think you can do this for a couple reasons.
-> >>>>>>>>>>> You can't rely on {begin,end}_cpu_access calls to do cache
-> >>>>>>>>>>> maintenance.
-> >>>>>>>>>>> If the calls to {begin,end}_cpu_access were made before the call to
-> >>>>>>>>>>> dma_buf_attach then there won't have been a device attached so the
-> >>>>>>>>>>> calls
-> >>>>>>>>>>> to {begin,end}_cpu_access won't have done any cache maintenance.
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> That should be okay though, if you have no attachments (or all
-> >>>>>>>>>> attachments are IO-coherent) then there is no need for cache
-> >>>>>>>>>> maintenance. Unless you mean a sequence where a non-io-coherent device
-> >>>>>>>>>> is attached later after data has already been written. Does that
-> >>>>>>>>>> sequence need supporting?
-> >>>>>>>>>
-> >>>>>>>>> Yes, but also I think there are cases where CPU access can happen before
-> >>>>>>>>> in Android, but I will focus on later for now.
-> >>>>>>>>>
-> >>>>>>>>>> DMA-BUF doesn't have to allocate the backing
-> >>>>>>>>>> memory until map_dma_buf() time, and that should only happen after all
-> >>>>>>>>>> the devices have attached so it can know where to put the buffer. So we
-> >>>>>>>>>> shouldn't expect any CPU access to buffers before all the devices are
-> >>>>>>>>>> attached and mapped, right?
-> >>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> Here is an example where CPU access can happen later in Android.
-> >>>>>>>>>
-> >>>>>>>>> Camera device records video -> software post processing -> video device
-> >>>>>>>>> (who does compression of raw data) and writes to a file
-> >>>>>>>>>
-> >>>>>>>>> In this example assume the buffer is cached and the devices are not
-> >>>>>>>>> IO-coherent (quite common).
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> This is the start of the problem, having cached mappings of memory that
-> >>>>>>>> is also being accessed non-coherently is going to cause issues one way
-> >>>>>>>> or another. On top of the speculative cache fills that have to be
-> >>>>>>>> constantly fought back against with CMOs like below; some coherent
-> >>>>>>>> interconnects behave badly when you mix coherent and non-coherent access
-> >>>>>>>> (snoop filters get messed up).
-> >>>>>>>>
-> >>>>>>>> The solution is to either always have the addresses marked non-coherent
-> >>>>>>>> (like device memory, no-map carveouts), or if you really want to use
-> >>>>>>>> regular system memory allocated at runtime, then all cached mappings of
-> >>>>>>>> it need to be dropped, even the kernel logical address (area as painful
-> >>>>>>>> as that would be).
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> I agree it's broken, hence my desire to remove it :)
-> >>>>>>>
-> >>>>>>> The other problem is that uncached buffers are being used for
-> >>>>>>> performance reason so anything that would involve getting
-> >>>>>>> rid of the logical address would probably negate any performance
-> >>>>>>> benefit.
-> >>>>>>>
-> >>>>>>
-> >>>>>> I wouldn't go as far as to remove them just yet.. Liam seems pretty
-> >>>>>> adamant that they have valid uses. I'm just not sure performance is one
-> >>>>>> of them, maybe in the case of software locks between devices or
-> >>>>>> something where there needs to be a lot of back and forth interleaved
-> >>>>>> access on small amounts of data?
-> >>>>>>
-> >>>>>
-> >>>>> I wasn't aware that ARM considered this not supported, I thought it was 
-> >>>>> supported but they advised against it because of the potential performance 
-> >>>>> impact.
-> >>>>>
-> >>>>
-> >>>> Not sure what you mean by "this" being not supported, do you mean mixed
-> >>>> attribute mappings? If so, it will certainly cause problems, and the
-> >>>> problems will change from platform to platform, avoid at all costs is my
-> >>>> understanding of ARM's position.
-> >>>>
-> >>>>> This is after all supported in the DMA APIs and up until now devices have 
-> >>>>> been successfully commercializing with this configurations, and I think 
-> >>>>> they will continue to commercialize with these configurations for quite a 
-> >>>>> while.
-> >>>>>
-> >>>>
-> >>>> Use of uncached memory mappings are almost always wrong in my experience
-> >>>> and are used to work around some bug or because the user doesn't want to
-> >>>> implement proper CMOs. Counter examples welcome.
-> >>>>
-> >>>
-> >>> Okay, let me first try to clarify what I am referring to, as perhaps I am 
-> >>> misunderstanding the conversation.
-> >>>
-> >>> In this discussion I was originally referring to a use case with cached 
-> >>> memory being accessed by a non io-cohernet device.
-> >>>
-> >>> "In this example assume the buffer is cached and the devices are not 
-> >>> IO-coherent (quite common)."	  
-> >>>
-> >>> to which you did not think was supported:
-> >>>
-> >>> "This is the start of the problem, having cached mappings of memory 
-> >>> that is also being accessed non-coherently is going to cause issues 
-> >>> one way or another. 
-> >>> "
-> >>>
-> >>> And I interpreted Laura's comment below as saying she wanted to remove 
-> >>> support in ION for cached memory being accessed by non io-cohernet 
-> >>> devices:
-> >>> "I agree it's broken, hence my desire to remove it :)"
-> >>>
-> >>> So assuming my understanding above is correct (and you are not talking 
-> >>> about something separate such as removing uncached ION allocation 
-> >>> support).
-> >>>
-> >>
-> >> Ah, I think here is where we diverged, I'm assuming Laura's comment to
-> >> be referencing my issue with uncached mappings being handed out without
-> >> first removing all cached mappings of the same memory. Therefore it is
-> >> uncached heaps that are broken.
-> >>
-> > 
-> > I am glad that is clarified, but can you then clarify for me your
-> > following statement, I am stil not clear what the problem is then.
-> > 
-> > In response to:
-> > "In this example assume the buffer is cached and the devices are
-> > not IO-coherent (quite common)."
-> > 
-> > You said:
-> > 
-> > "This is the start of the problem, having cached mappings of memory that
-> > is also being accessed non-coherently is going to cause issues one way or 
-> > another. "
-> > 
-> 
-> This was a parallel thought, completely my fault for any confusion here.
-> I was wanting to point out that there will inherently be some issues
-> with both situations. Not that it is a blocker, was just on my mind.
-> 
-> >>> Then I guess I am not clear why current uses which use cached memory with 
-> >>> non IO-coherent devices are considered to be working around some bug or 
-> >>> are not implementing proper CMOs.
-> >>>
-> >>> They use CPU cached mappings because that is the most effective way to 
-> >>> access the memory from the CPU side and the devices have an uncached 
-> >>> IOMMU mapping because they don't support IO-coherency, and currenlty in 
-> >>> the CPU they do cache mainteance at the time of dma map and dma umap so
-> >>> to me they are implementing correct CMOs.
-> >>>
-> >>
-> >> Fully agree here, using cached mappings and performing CMOs when needed
-> >> is the way to go when dealing with memory. IMHO the *only* time when
-> >> uncached mappings are appropriate is for memory mapped I/O (although it
-> >> looks like video memory was often treated as uncached (wc)).
-> >>
-> >>>>> It would be really unfortunate if support was removed as I think that 
-> >>>>> would drive clients away from using upstream ION.
-> >>>>>
-> >>>>
-> >>>> I'm not petitioning to remove support, but at very least lets reverse
-> >>>> the ION_FLAG_CACHED flag. Ion should hand out cached normal memory by
-> >>>> default, to get uncached you should need to add a flag to your
-> >>>> allocation command pointing out you know what you are doing.
-> >>>>
-> >>>
-> >>> You may not be petitioning to remove support for using cached memory with 
-> >>> non io-coherent devices but I interpreted Laura's comment as wanting to do 
-> >>> so, and I had concerns about that.
-> >>>
-> >>
-> >> What I would like is for the default memory handed out by Ion to be
-> >> normal cacheable memory, just like is always handed out to users-space.
-> >> DMA-BUF already provides the means to deal with the CMOs required to
-> >> work with non-io-coherent devices so all should be good here.
-> >>
-> >> If you want Ion to give out uncached memory then I think you should need
-> >> to explicitly state so with an allocation flag. And right now the
-> >> uncached memory you will get back may have other cached mappings (kernel
-> >> lowmem mappings) meaning you will have hard to predict results (on ARM
-> >> at least). 
-> > 
-> > Yes, I can understand why it would make sense to default to cached memory.
-> > 
-> >> I just don't see much use for them (uncached mappings of
-> >> regular memory) right now.
-> >>
-> > 
-> > I can understand why people don't like ION providing uncached support, but 
-> > I have been pushing to keep un-cached support in order to keep the 
-> > performance of Android ION clients on par with the previous version of ION 
-> > until a better solution can be found (either by changing ION or Android).
-> > 
-> > Basically most ION use cases don't involve any (or very little) CPU access 
-> > so for now by using uncached ION allocations we can avoid the uncessary 
-> > cache maitenance and we are safe if some CPU access is required. Of course 
-> > for use cases involving a lot of CPU access the clients switch over to 
-> > using cached buffers.
-> > 
-> 
-> If you have very few CPU accesses then there should be very few CMOs I
-> agree. It seems the problem is you are constantly detaching and
-> re-attaching devices each time the buffer is passed around between each
-> device. To me that is broken usage, the devices should all attach, use
-> the buffer, then all detach. Otherwise after detach there is no clean
-> way to know what is the right thing to do with the buffer (CMO or not).
-> 
+Since the commit 2d070eab2e82 ("mm: consider zone which is not fully
+populated to have holes") introduced pfn_to_online_page() and was
+designed to return a valid pfn only, but it is clearly broken on arm64.
 
-Yes it would be be great if all the devices could attach beforehand and be 
-kept attached.
-Unfortunately it would be difficult in a buffer "pipelining" use case such 
-as Android's to get all the devices to attach beforehand.
-We have spoken to the Google Android team about having some kind of 
-destructor support added so that devices could stay attached and then when 
-the use case ends be notified of the end of use case (through the 
-destructor) so that they could know when to detach. 
-Unfortunately the Google Android team said this was too difficult to add 
-as they don't track all the buffers in the system.
+Therefore, let pfn_to_online_page() calls pfn_valid_within(), so it can
+handle nomap thanks to the commit f52bb98f5ade ("arm64: mm: always
+enable CONFIG_HOLES_IN_ZONE"), while it will be optimized away on
+architectures where have no HOLES_IN_ZONE.
 
-And please note that there are other complexities to having all the 
-devices in the pipeline attached at once, for example the 
-begin_cpu_access/end_cpu_access calls currently do cache maintenance on 
-the buffer for each of the attached devices, with lots of attached devices 
-this would result in a lot of duplicated cache maintenance on the buffer. 
-You would need some way to optimally apply cache maintenance that 
-satisfies all the devices.
+[1]
+[  102.195320] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000006
+[  102.204113] Mem abort info:
+[  102.206921]   ESR = 0x96000005
+[  102.209997]   Exception class = DABT (current EL), IL = 32 bits
+[  102.215926]   SET = 0, FnV = 0
+[  102.218993]   EA = 0, S1PTW = 0
+[  102.222150] Data abort info:
+[  102.225047]   ISV = 0, ISS = 0x00000005
+[  102.228887]   CM = 0, WnR = 0
+[  102.231866] user pgtable: 64k pages, 48-bit VAs, pgdp = (____ptrval____)
+[  102.238572] [0000000000000006] pgd=0000000000000000, pud=0000000000000000
+[  102.245448] Internal error: Oops: 96000005 [#1] SMP
+[  102.264062] CPU: 60 PID: 1408 Comm: kmemleak Not tainted 5.0.0-rc2+ #8
+[  102.280403] pstate: 60400009 (nZCv daif +PAN -UAO)
+[  102.280409] pc : page_mapping+0x24/0x144
+[  102.280415] lr : __dump_page+0x34/0x3dc
+[  102.292923] sp : ffff00003a5cfd10
+[  102.296229] x29: ffff00003a5cfd10 x28: 000000000000802f
+[  102.301533] x27: 0000000000000000 x26: 0000000000277d00
+[  102.306835] x25: ffff000010791f56 x24: ffff7fe000000000
+[  102.312138] x23: ffff000010772f8b x22: ffff00001125f670
+[  102.317442] x21: ffff000011311000 x20: ffff000010772f8b
+[  102.322747] x19: fffffffffffffffe x18: 0000000000000000
+[  102.328049] x17: 0000000000000000 x16: 0000000000000000
+[  102.333352] x15: 0000000000000000 x14: ffff802698b19600
+[  102.338654] x13: ffff802698b1a200 x12: ffff802698b16f00
+[  102.343956] x11: ffff802698b1a400 x10: 0000000000001400
+[  102.349260] x9 : 0000000000000001 x8 : ffff00001121a000
+[  102.354563] x7 : 0000000000000000 x6 : ffff0000102c53b8
+[  102.359868] x5 : 0000000000000000 x4 : 0000000000000003
+[  102.365173] x3 : 0000000000000100 x2 : 0000000000000000
+[  102.370476] x1 : ffff000010772f8b x0 : ffffffffffffffff
+[  102.375782] Process kmemleak (pid: 1408, stack limit = 0x(____ptrval____))
+[  102.382648] Call trace:
+[  102.385091]  page_mapping+0x24/0x144
+[  102.388659]  __dump_page+0x34/0x3dc
+[  102.392140]  dump_page+0x28/0x4c
+[  102.395363]  kmemleak_scan+0x4ac/0x680
+[  102.399106]  kmemleak_scan_thread+0xb4/0xdc
+[  102.403285]  kthread+0x12c/0x13c
+[  102.406509]  ret_from_fork+0x10/0x18
+[  102.410080] Code: d503201f f9400660 36000040 d1000413 (f9400661)
+[  102.416357] ---[ end trace 4d4bd7f573490c8e ]---
+[  102.420966] Kernel panic - not syncing: Fatal exception
+[  102.426293] SMP: stopping secondary CPUs
+[  102.431830] Kernel Offset: disabled
+[  102.435311] CPU features: 0x002,20000c38
+[  102.439223] Memory Limit: none
+[  102.442384] ---[ end Kernel panic - not syncing: Fatal exception ]---
 
-Also you would need to not only keep the devices attached, you need to the 
-buffers dma-mapped (see thread "dma-buf: add support for mapping with dma 
-mapping attributes") for the cache maintenance to be applied correctly.
+Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to
+have holes")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
 
-> >  
-> >>>>>>>>> ION buffer is allocated.
-> >>>>>>>>>
-> >>>>>>>>> //Camera device records video
-> >>>>>>>>> dma_buf_attach
-> >>>>>>>>> dma_map_attachment (buffer needs to be cleaned)
-> >>>>>>>>
-> >>>>>>>> Why does the buffer need to be cleaned here? I just got through reading
-> >>>>>>>> the thread linked by Laura in the other reply. I do like +Brian's
-> >>>>>>>> suggestion of tracking if the buffer has had CPU access since the last
-> >>>>>>>> time and only flushing the cache if it has. As unmapped heaps never get
-> >>>>>>>> CPU mapped this would never be the case for unmapped heaps, it solves my
-> >>>>>>>> problem.
-> >>>>>>>>
-> >>>>>>>>> [camera device writes to buffer]
-> >>>>>>>>> dma_buf_unmap_attachment (buffer needs to be invalidated)
-> >>>>>>>>
-> >>>>>>>> It doesn't know there will be any further CPU access, it could get freed
-> >>>>>>>> after this for all we know, the invalidate can be saved until the CPU
-> >>>>>>>> requests access again.
-> >>>>>>>>
-> >>>>>>>>> dma_buf_detach  (device cannot stay attached because it is being sent
-> >>>>>>>>> down
-> >>>>>>>>> the pipeline and Camera doesn't know the end of the use case)
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> This seems like a broken use-case, I understand the desire to keep
-> >>>>>>>> everything as modular as possible and separate the steps, but at this
-> >>>>>>>> point no one owns this buffers backing memory, not the CPU or any
-> >>>>>>>> device. I would go as far as to say DMA-BUF should be free now to
-> >>>>>>>> de-allocate the backing storage if it wants, that way it could get ready
-> >>>>>>>> for the next attachment, which may change the required backing memory
-> >>>>>>>> completely.
-> >>>>>>>>
-> >>>>>>>> All devices should attach before the first mapping, and only let go
-> >>>>>>>> after the task is complete, otherwise this buffers data needs copied off
-> >>>>>>>> to a different location or the CPU needs to take ownership in-between.
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> Maybe it's broken but it's the status quo and we spent a good
-> >>>>>>> amount of time at plumbers concluding there isn't a great way
-> >>>>>>> to fix it :/
-> >>>>>>>
-> >>>>>>
-> >>>>>> Hmm, guess that doesn't prove there is not a great way to fix it either.. :/
-> >>>>>>
-> >>>>>> Perhaps just stronger rules on sequencing of operations? I'm not saying
-> >>>>>> I have a good solution either, I just don't see any way forward without
-> >>>>>> some use-case getting broken, so better to fix now over later.
-> >>>>>>
-> >>>>>
-> >>>>> I can see the benefits of Android doing things the way they do, I would 
-> >>>>> request that changes we make continue to support Android, or we find a way 
-> >>>>> to convice them to change, as they are the main ION client and I assume 
-> >>>>> other ION clients in the future will want to do this as well.
-> >>>>>
-> >>>>
-> >>>> Android may be the biggest user today (makes sense, Ion come out of the
-> >>>> Android project), but that can change, and getting changes into Android
-> >>>> will be easier that the upstream kernel once Ion is out of staging.
-> >>>>
-> >>>> Unlike some other big ARM vendors, we (TI) do not primarily build mobile
-> >>>> chips targeting Android, our core offerings target more traditional
-> >>>> Linux userspaces, and I'm guessing others will start to do the same as
-> >>>> ARM tries to push more into desktop, server, and other spaces again.
-> >>>>
-> >>>>> I am concerned that if you go with a solution which enforces what you 
-> >>>>> mention above, and bring ION out of staging that way, it will make it that
-> >>>>> much harder to solve this for Android and therefore harder to get 
-> >>>>> Android clients to move to the upstream ION (and get everybody off their 
-> >>>>> vendor modified Android versions).
-> >>>>>
-> >>>>
-> >>>> That would be an Android problem, reducing functionality in upstream to
-> >>>> match what some evil vendor trees do to support Android is not the way
-> >>>> forward on this. At least for us we are going to try to make all our
-> >>>> software offerings follow proper buffer ownership (including our Android
-> >>>> offering).
-> >>>>
-> >>>>>>>>> //buffer is send down the pipeline
-> >>>>>>>>>
-> >>>>>>>>> // Usersapce software post processing occurs
-> >>>>>>>>> mmap buffer
-> >>>>>>>>
-> >>>>>>>> Perhaps the invalidate should happen here in mmap.
-> >>>>>>>>
-> >>>>>>>>> DMA_BUF_IOCTL_SYNC IOCT with flags DMA_BUF_SYNC_START // No CMO since no
-> >>>>>>>>> devices attached to buffer
-> >>>>>>>>
-> >>>>>>>> And that should be okay, mmap does the sync, and if no devices are
-> >>>>>>>> attached nothing could have changed the underlying memory in the
-> >>>>>>>> mean-time, DMA_BUF_SYNC_START can safely be a no-op as they are.
-> >>>>>>>>
-> >>>>>>>>> [CPU reads/writes to the buffer]
-> >>>>>>>>> DMA_BUF_IOCTL_SYNC IOCTL with flags DMA_BUF_SYNC_END // No CMO since no
-> >>>>>>>>> devices attached to buffer
-> >>>>>>>>> munmap buffer
-> >>>>>>>>>
-> >>>>>>>>> //buffer is send down the pipeline
-> >>>>>>>>> // Buffer is send to video device (who does compression of raw data) and
-> >>>>>>>>> writes to a file
-> >>>>>>>>> dma_buf_attach
-> >>>>>>>>> dma_map_attachment (buffer needs to be cleaned)
-> >>>>>>>>> [video device writes to buffer]
-> >>>>>>>>> dma_buf_unmap_attachment
-> >>>>>>>>> dma_buf_detach  (device cannot stay attached because it is being sent
-> >>>>>>>>> down
-> >>>>>>>>> the pipeline and Video doesn't know the end of the use case)
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>>> Also ION no longer provides DMA ready memory, so if you are not
-> >>>>>>>>>>> doing CPU
-> >>>>>>>>>>> access then there is no requirement (that I am aware of) for you to
-> >>>>>>>>>>> call
-> >>>>>>>>>>> {begin,end}_cpu_access before passing the buffer to the device and
-> >>>>>>>>>>> if this
-> >>>>>>>>>>> buffer is cached and your device is not IO-coherent then the cache
-> >>>>>>>>>>> maintenance
-> >>>>>>>>>>> in ion_map_dma_buf and ion_unmap_dma_buf is required.
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> If I am not doing any CPU access then why do I need CPU cache
-> >>>>>>>>>> maintenance on the buffer?
-> >>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> Because ION no longer provides DMA ready memory.
-> >>>>>>>>> Take the above example.
-> >>>>>>>>>
-> >>>>>>>>> ION allocates memory from buddy allocator and requests zeroing.
-> >>>>>>>>> Zeros are written to the cache.
-> >>>>>>>>>
-> >>>>>>>>> You pass the buffer to the camera device which is not IO-coherent.
-> >>>>>>>>> The camera devices writes directly to the buffer in DDR.
-> >>>>>>>>> Since you didn't clean the buffer a dirty cache line (one of the
-> >>>>>>>>> zeros) is
-> >>>>>>>>> evicted from the cache, this zero overwrites data the camera device has
-> >>>>>>>>> written which corrupts your data.
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> The zeroing *is* a CPU access, therefor it should handle the needed CMO
-> >>>>>>>> for CPU access at the time of zeroing.
-> >>>>>>>>
-> >>>>>>>> Andrew
-> >>>>>>>>
-> >>>>>>>>> Liam
-> >>>>>>>>>
-> >>>>>>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> >>>>>>>>> a Linux Foundation Collaborative Project
-> >>>>>>>>>
-> >>>>>>>
-> >>>>>>
-> >>>>>
-> >>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> >>>>> a Linux Foundation Collaborative Project
-> >>>>>
-> >>>>
-> >>>
-> >>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> >>> a Linux Foundation Collaborative Project
-> >>>
-> >>
-> > 
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> > a Linux Foundation Collaborative Project
-> > 
-> 
+v2: update the changelog; keep the bound check; use pfn_valid_within().
 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
----2046127808-1948698926-1548101064=:11004--
+ include/linux/memory_hotplug.h | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 07da5c6c5ba0..cdeecd9bd87e 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -21,14 +21,15 @@ struct vmem_altmap;
+  * walkers which rely on the fully initialized page->flags and others
+  * should use this rather than pfn_valid && pfn_to_page
+  */
+-#define pfn_to_online_page(pfn)				\
+-({							\
+-	struct page *___page = NULL;			\
+-	unsigned long ___nr = pfn_to_section_nr(pfn);	\
+-							\
+-	if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr))\
+-		___page = pfn_to_page(pfn);		\
+-	___page;					\
++#define pfn_to_online_page(pfn)					   \
++({								   \
++	struct page *___page = NULL;				   \
++	unsigned long ___nr = pfn_to_section_nr(pfn);		   \
++								   \
++	if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr) && \
++	    pfn_valid_within(pfn))				   \
++		___page = pfn_to_page(pfn);			   \
++	___page;						   \
+ })
+ 
+ /*
+-- 
+2.17.2 (Apple Git-113)
+
