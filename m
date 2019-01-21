@@ -2,101 +2,181 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F88C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539C1C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D992084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E7A820855
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:21:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729794AbfAUIVp (ORCPT
+        id S1729833AbfAUIVu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:21:45 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44926 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729770AbfAUIVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:21:42 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1B6E5AD334B1C99E46CE;
-        Mon, 21 Jan 2019 16:21:40 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 21 Jan 2019 16:21:31 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/stm: ltdc: remove set but not used variable 'src_h'
-Date:   Mon, 21 Jan 2019 08:27:21 +0000
-Message-ID: <1548059241-148022-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1538131180-34108-1-git-send-email-yuehaibing@huawei.com>
-References: <1538131180-34108-1-git-send-email-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        Mon, 21 Jan 2019 03:21:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:28070 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728764AbfAUIVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:21:49 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 28229C059B80;
+        Mon, 21 Jan 2019 08:21:48 +0000 (UTC)
+Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF7825D6AA;
+        Mon, 21 Jan 2019 08:21:38 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V14 14/18] block: enable multipage bvecs
+Date:   Mon, 21 Jan 2019 16:18:01 +0800
+Message-Id: <20190121081805.32727-15-ming.lei@redhat.com>
+In-Reply-To: <20190121081805.32727-1-ming.lei@redhat.com>
+References: <20190121081805.32727-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 21 Jan 2019 08:21:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+This patch pulls the trigger for multi-page bvecs.
 
-drivers/gpu/drm/stm/ltdc.c: In function 'ltdc_plane_atomic_check':
-drivers/gpu/drm/stm/ltdc.c:694:13: warning:
- variable 'src_y' set but not used [-Wunused-but-set-variable]
-  u32 src_x, src_y, src_w, src_h;
-             ^
-             ^
-drivers/gpu/drm/stm/ltdc.c:694:6: warning:
- variable 'src_x' set but not used [-Wunused-but-set-variable]
-  u32 src_x, src_y, src_w, src_h;
-      ^
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- drivers/gpu/drm/stm/ltdc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ block/bio.c         | 22 +++++++++++++++-------
+ fs/iomap.c          |  4 ++--
+ fs/xfs/xfs_aops.c   |  4 ++--
+ include/linux/bio.h |  2 +-
+ 4 files changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index 61dd661..a91e041 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -691,7 +691,7 @@ static int ltdc_plane_atomic_check(struct drm_plane *plane,
- 				   struct drm_plane_state *state)
+diff --git a/block/bio.c b/block/bio.c
+index 968b12fea564..83a2dfa417ca 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -753,6 +753,8 @@ EXPORT_SYMBOL(bio_add_pc_page);
+  * @page: page to add
+  * @len: length of the data to add
+  * @off: offset of the data in @page
++ * @same_page: if %true only merge if the new data is in the same physical
++ *		page as the last segment of the bio.
+  *
+  * Try to add the data at @page + @off to the last bvec of @bio.  This is a
+  * a useful optimisation for file systems with a block size smaller than the
+@@ -761,19 +763,25 @@ EXPORT_SYMBOL(bio_add_pc_page);
+  * Return %true on success or %false on failure.
+  */
+ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+-		unsigned int len, unsigned int off)
++		unsigned int len, unsigned int off, bool same_page)
  {
- 	struct drm_framebuffer *fb = state->fb;
--	u32 src_x, src_y, src_w, src_h;
-+	u32 src_w, src_h;
+ 	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+ 		return false;
  
- 	DRM_DEBUG_DRIVER("\n");
+ 	if (bio->bi_vcnt > 0) {
+ 		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
++		phys_addr_t vec_end_addr = page_to_phys(bv->bv_page) +
++			bv->bv_offset + bv->bv_len - 1;
++		phys_addr_t page_addr = page_to_phys(page);
  
-@@ -699,8 +699,6 @@ static int ltdc_plane_atomic_check(struct drm_plane *plane,
- 		return 0;
+-		if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len) {
+-			bv->bv_len += len;
+-			bio->bi_iter.bi_size += len;
+-			return true;
+-		}
++		if (vec_end_addr + 1 != page_addr + off)
++			return false;
++		if (same_page && (vec_end_addr & PAGE_MASK) != page_addr)
++			return false;
++
++		bv->bv_len += len;
++		bio->bi_iter.bi_size += len;
++		return true;
+ 	}
+ 	return false;
+ }
+@@ -819,7 +827,7 @@ EXPORT_SYMBOL_GPL(__bio_add_page);
+ int bio_add_page(struct bio *bio, struct page *page,
+ 		 unsigned int len, unsigned int offset)
+ {
+-	if (!__bio_try_merge_page(bio, page, len, offset)) {
++	if (!__bio_try_merge_page(bio, page, len, offset, false)) {
+ 		if (bio_full(bio))
+ 			return 0;
+ 		__bio_add_page(bio, page, len, offset);
+diff --git a/fs/iomap.c b/fs/iomap.c
+index af736acd9006..0c350e658b7f 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -318,7 +318,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	 */
+ 	sector = iomap_sector(iomap, pos);
+ 	if (ctx->bio && bio_end_sector(ctx->bio) == sector) {
+-		if (__bio_try_merge_page(ctx->bio, page, plen, poff))
++		if (__bio_try_merge_page(ctx->bio, page, plen, poff, true))
+ 			goto done;
+ 		is_contig = true;
+ 	}
+@@ -349,7 +349,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 		ctx->bio->bi_end_io = iomap_read_end_io;
+ 	}
  
- 	/* convert src_ from 16:16 format */
--	src_x = state->src_x >> 16;
--	src_y = state->src_y >> 16;
- 	src_w = state->src_w >> 16;
- 	src_h = state->src_h >> 16;
+-	__bio_add_page(ctx->bio, page, plen, poff);
++	bio_add_page(ctx->bio, page, plen, poff);
+ done:
+ 	/*
+ 	 * Move the caller beyond our range so that it keeps making progress.
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 1f1829e506e8..b9fd44168f61 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -616,12 +616,12 @@ xfs_add_to_ioend(
+ 				bdev, sector);
+ 	}
  
-
-
-
-
+-	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff)) {
++	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff, true)) {
+ 		if (iop)
+ 			atomic_inc(&iop->write_count);
+ 		if (bio_full(wpc->ioend->io_bio))
+ 			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
+-		__bio_add_page(wpc->ioend->io_bio, page, len, poff);
++		bio_add_page(wpc->ioend->io_bio, page, len, poff);
+ 	}
+ 
+ 	wpc->ioend->io_size += len;
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index e6a6f3d78afd..af288f6e8ab0 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -441,7 +441,7 @@ extern int bio_add_page(struct bio *, struct page *, unsigned int,unsigned int);
+ extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
+ 			   unsigned int, unsigned int);
+ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+-		unsigned int len, unsigned int off);
++		unsigned int len, unsigned int off, bool same_page);
+ void __bio_add_page(struct bio *bio, struct page *page,
+ 		unsigned int len, unsigned int off);
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
+-- 
+2.9.5
 
