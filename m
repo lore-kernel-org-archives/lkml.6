@@ -2,106 +2,163 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC038C2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBB9C2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C30B82085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:23:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAFBE2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbfAUPXA (ORCPT
+        id S1730035AbfAUPXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:23:00 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:60294 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728580AbfAUPW7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:22:59 -0500
-Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id T3Nw1z00L3XaVaC013NwxV; Mon, 21 Jan 2019 16:22:57 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1glbPc-0003yf-8s; Mon, 21 Jan 2019 16:22:56 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1glbPc-0007Zk-6K; Mon, 21 Jan 2019 16:22:56 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Guan Xuetao <gxt@pku.edu.cn>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] unicore32: Stop printing the virtual memory layout
-Date:   Mon, 21 Jan 2019 16:22:54 +0100
-Message-Id: <20190121152254.29079-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mon, 21 Jan 2019 10:23:18 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36218 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728580AbfAUPXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:23:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 081EAEBD;
+        Mon, 21 Jan 2019 07:23:17 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 143973F5C1;
+        Mon, 21 Jan 2019 07:23:13 -0800 (PST)
+Date:   Mon, 21 Jan 2019 15:23:11 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
+ refcounting
+Message-ID: <20190121152311.7u7bwbjopuptnzcy@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-5-patrick.bellasi@arm.com>
+ <20190121145929.GI27931@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121145929.GI27931@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit ad67b74d2469d9b8 ("printk: hash addresses printed with
-%p"), the virtual memory layout printed during boot up contains "ptrval"
-instead of actual addresses.
+On 21-Jan 15:59, Peter Zijlstra wrote:
+> On Tue, Jan 15, 2019 at 10:15:01AM +0000, Patrick Bellasi wrote:
+> > @@ -835,6 +954,28 @@ static void uclamp_bucket_inc(struct uclamp_se *uc_se, unsigned int clamp_id,
+> >  	} while (!atomic_long_try_cmpxchg(&uc_maps[bucket_id].adata,
+> >  					  &uc_map_old.data, uc_map_new.data));
+> >  
+> > +	/*
+> > +	 * Ensure each CPU tracks the correct value for this clamp bucket.
+> > +	 * This initialization of per-CPU variables is required only when a
+> > +	 * clamp value is requested for the first time from a slow-path.
+> > +	 */
+> 
+> I'm confused; why is this needed?
 
-Instead of changing the printing to "%px", and leaking virtual memory
-layout information again, just remove the printing completely, cfr. e.g.
-commits 071929dbdd865f77 ("arm64: Stop printing the virtual memory
-layout") and  31833332f7987636 ("m68k/mm: Stop printing the virtual
-memory layout").
+That's a lazy initialization of the per-CPU uclamp data for a given
+bucket, i.e. the clamp value assigned to a bucket, which happens only
+when new clamp values are requested... usually only at system
+boot/configuration time.
 
-All interesting information (actual section sizes) is already printed by
-mem_init_print_info() just above anyway.
+For example, let say we have these buckets mapped to given clamp
+values:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Kees Cook <keescook@chromium.org>
----
-v2:
-  - Add Reviewed-by,
-  - Rebased on top of memblock conversion.
----
- arch/unicore32/mm/init.c | 24 ------------------------
- 1 file changed, 24 deletions(-)
+ bucket_#0: clamp value: 10% (mapped)
+ bucket_#1: clamp value: 20% (mapped)
+ bucket_#2: clamp value: 30% (mapped)
 
-diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
-index 85ef2c62409034ff..74b6a2e29809a8b0 100644
---- a/arch/unicore32/mm/init.c
-+++ b/arch/unicore32/mm/init.c
-@@ -274,30 +274,6 @@ void __init mem_init(void)
- 	memblock_free_all();
- 
- 	mem_init_print_info(NULL);
--	printk(KERN_NOTICE "Virtual kernel memory layout:\n"
--		"    vector  : 0x%08lx - 0x%08lx   (%4ld kB)\n"
--		"    vmalloc : 0x%08lx - 0x%08lx   (%4ld MB)\n"
--		"    lowmem  : 0x%08lx - 0x%08lx   (%4ld MB)\n"
--		"    modules : 0x%08lx - 0x%08lx   (%4ld MB)\n"
--		"      .init : 0x%p" " - 0x%p" "   (%4d kB)\n"
--		"      .text : 0x%p" " - 0x%p" "   (%4d kB)\n"
--		"      .data : 0x%p" " - 0x%p" "   (%4d kB)\n",
--
--		VECTORS_BASE, VECTORS_BASE + PAGE_SIZE,
--		DIV_ROUND_UP(PAGE_SIZE, SZ_1K),
--		VMALLOC_START, VMALLOC_END,
--		DIV_ROUND_UP((VMALLOC_END - VMALLOC_START), SZ_1M),
--		PAGE_OFFSET, (unsigned long)high_memory,
--		DIV_ROUND_UP(((unsigned long)high_memory - PAGE_OFFSET), SZ_1M),
--		MODULES_VADDR, MODULES_END,
--		DIV_ROUND_UP((MODULES_END - MODULES_VADDR), SZ_1M),
--
--		__init_begin, __init_end,
--		DIV_ROUND_UP((__init_end - __init_begin), SZ_1K),
--		_stext, _etext,
--		DIV_ROUND_UP((_etext - _stext), SZ_1K),
--		_sdata, _edata,
--		DIV_ROUND_UP((_edata - _sdata), SZ_1K));
- 
- 	BUILD_BUG_ON(TASK_SIZE				> MODULES_VADDR);
- 	BUG_ON(TASK_SIZE				> MODULES_VADDR);
+and then let's assume all the users of bucket_#1 are "destroyed", i.e.
+there are no more tasks, system defaults or cgroups asking for a
+20% clamp value. The corresponding bucket will become free:
+
+ bucket_#0: clamp value: 10% (mapped)
+ bucket_#1: clamp value: 20% (free)
+ bucket_#2: clamp value: 30% (mapped)
+
+If, in the future, we ask for a new clamp value, let say a task ask
+for a 40% clamp value, then we need to map that value into a bucket.
+Since bucket_#1 is free we can use it to fill up the hold and keep all
+the buckets in use at the beginning of a cache line.
+
+However, since now bucket_#1 tracks a different clamp value (40
+instead of 20) we need to walk all the CPUs and updated the cached
+value:
+
+ bucket_#0: clamp value: 10% (mapped)
+ bucket_#1: clamp value: 40% (mapped)
+ bucket_#2: clamp value: 30% (mapped)
+
+Is that more clear ?
+
+
+In the following code:
+
+> 
+> > +	if (unlikely(!uc_map_old.se_count)) {
+
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This condition is matched by clamp buckets which needs the
+initialization described above. These are buckets without a client so
+fare and that have been selected to map/track a new clamp value.
+That's why we have an unlikely... quite likely tasks/cgroups will keep
+asking for the same (limited number of) clamp values and thus we find
+a bucket already properly initialized for them.
+
+
+> > +		for_each_possible_cpu(cpu) {
+> > +			struct uclamp_cpu *uc_cpu =
+> > +				&cpu_rq(cpu)->uclamp[clamp_id];
+> > +
+> > +			/* CPU's tasks count must be 0 for free buckets */
+> > +			SCHED_WARN_ON(uc_cpu->bucket[bucket_id].tasks);
+> > +			if (unlikely(uc_cpu->bucket[bucket_id].tasks))
+> > +				uc_cpu->bucket[bucket_id].tasks = 0;
+
+That's a safety check, we expect that (free) buckets do not refcount
+any task. That's one of the conditions for a bucket to be considered
+free. Here we do just a sanity check, that's because we use unlikely.
+If the check matches there is a data corruption, which is reported by
+the previous SCHED_WARN_ON and "fixed" by the if branch.
+
+In my tests I have s/SCHED_WARN_ON/BUG_ON/ and never hit that bug...
+thus the refcounting code should be ok and this check is there just to
+be more on the safe side for future changes.
+
+> > +
+> > +			/* Minimize cache lines invalidation */
+> > +			if (uc_cpu->bucket[bucket_id].value == bucket_value)
+> > +				continue;
+
+If by any chance we get a request for a new clamp value which happened
+to be already used before... we can skip the initialization to avoid.
+
+> > +			uc_cpu->bucket[bucket_id].value = bucket_value;
+> > +		}
+> > +	}
+> > +
+> >  	uc_se->value = clamp_value;
+> >  	uc_se->bucket_id = bucket_id;
+> >  
+
 -- 
-2.17.1
+#include <best/regards.h>
 
+Patrick Bellasi
