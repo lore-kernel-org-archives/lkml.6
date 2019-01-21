@@ -2,226 +2,136 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CD7C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD521C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD82920989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CF6A20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:33:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="hIytj5Bo"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="aoDuywxm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfAUJa6 (ORCPT
+        id S1727280AbfAUJd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:30:58 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:59092 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbfAUJa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:30:57 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43jmWF1zRMz9v3wl;
-        Mon, 21 Jan 2019 10:30:49 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=hIytj5Bo; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id leApUuGXDrxc; Mon, 21 Jan 2019 10:30:49 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43jmWF0jPhz9v3wk;
-        Mon, 21 Jan 2019 10:30:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548063049; bh=UbgCdASS/NfnsXEzoq8G1ErQtI53lUSLqab2fWj7UAo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hIytj5BoDVU2x1+2codn6GYRz8mWvvdsfj9OtfwoKjwojmb5OC+ECg1zDeuXUihGs
-         LLK8zAaCAA/+fCTVZDXLyZjXOIiZgtDOw8iI90/+JyXeTj2YFGzxIwMPDYuSVQWy6W
-         EqFMQfTEe3h/05prhaU8pvsT5Kz2BReX37G5cyU4=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 74C098B79C;
-        Mon, 21 Jan 2019 10:30:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id Gh0IDk4Yupl9; Mon, 21 Jan 2019 10:30:55 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 322708B799;
-        Mon, 21 Jan 2019 10:30:55 +0100 (CET)
-Subject: Re: [PATCH v3 3/3] powerpc/32: Add KASAN support
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Alexander Potapenko <glider@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-References: <cover.1547289808.git.christophe.leroy@c-s.fr>
- <935f9f83393affb5d55323b126468ecb90373b88.1547289808.git.christophe.leroy@c-s.fr>
- <e4b343fa-702b-294f-7741-bb85ed877cdf@virtuozzo.com>
- <8d433501-a5a7-8e3b-03f7-ccdd0f8622e1@c-s.fr>
- <CACT4Y+Z+UbN1rjHr3T5rgHpCJUknupPvEPw0SHs1-qjWBDhm3Q@mail.gmail.com>
- <d2f85bee-c551-ec9d-1a13-6d3364788cc1@c-s.fr>
- <CACT4Y+Y9H8LhpODFk6TE00kZWCU_V2QK1CStWxBt4EnWpLuCcQ@mail.gmail.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <b05f9674-daee-bbc6-0ee0-58d056a4f321@c-s.fr>
-Date:   Mon, 21 Jan 2019 10:30:55 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 21 Jan 2019 04:33:28 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:32921 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbfAUJd2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 04:33:28 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p6so16069759eds.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:33:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vJJmz1F33uDUMdkUhN2i1lu9e9r2W3zTHmnCrEgEfgE=;
+        b=aoDuywxm36siEX5jtExL4YXSDt9wtFIXrhn0PHxmLMDeArOc4141fZpsLLxDTLHKKg
+         xVSn7zz2lXXGjAcUMhCzL/rU7ZgUkFjrCF1qs4holcLY29UptQD8CARgYq7vxRo80ymy
+         k2vCyRFZOU04ReQcy7z2jb22mz/nMPcn83v6o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=vJJmz1F33uDUMdkUhN2i1lu9e9r2W3zTHmnCrEgEfgE=;
+        b=jvQoU5F/04fcJkjlBQx9gV6kCfrwV8M+2BQr25Rl5xuzaPj8fwg9Ef2n+reEU7lJtP
+         icuTg1xmXJO3MepDVSzTbkeaa8SzIDmVo0TZZpkRllz4OZ36bybTXPa6Yb1RIP0/9GvI
+         QNAzU03lZA/6DMbI3BdRJDhw47GKIT1pMBUka0T9JgvDOC49VAPth5Xosl84E9PM+9eJ
+         oAoaOAov7OiBwl+X5oGYY8+Vc2XvL9I1KwpByeFeqARh5RZouuPd9HtlyT1rKaHXcf2t
+         5c17Mqm7W4EXla4NY69CEhOCl6mAnZwAe9OOBklhtKrgSR7jNo2DbC0g5vkAXfugRg2H
+         RoTA==
+X-Gm-Message-State: AJcUukcjtXe1vKaZwjlWOAy8mFlPpJhC1JP+b53k6JIuSUx28EfgbnUY
+        SvyTVQghybxE9AqS2GB1yHQznZskVtE=
+X-Google-Smtp-Source: ALg8bN4prQsXk21dEc704x8byi2xuCRygyRQms2I92rzi13aVUfXugdHMY8UKT7KyKe+y6UQlVBsmQ==
+X-Received: by 2002:a17:906:f146:: with SMTP id gw6mr736903ejb.176.1548063206291;
+        Mon, 21 Jan 2019 01:33:26 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id b45sm8980515eda.34.2019.01.21.01.33.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 01:33:25 -0800 (PST)
+Date:   Mon, 21 Jan 2019 10:33:23 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] drm/bridge: lvds-encoder: remove surplus NULL checks
+Message-ID: <20190121093323.GP3271@phenom.ffwll.local>
+Mail-Followup-To: Peter Rosin <peda@axentia.se>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+References: <be258481-b3e4-8051-abb2-ca430ecc2836@samsung.com>
+ <20190118231129.8281-1-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Y9H8LhpODFk6TE00kZWCU_V2QK1CStWxBt4EnWpLuCcQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118231129.8281-1-peda@axentia.se>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 21/01/2019 à 10:24, Dmitry Vyukov a écrit :
-> On Mon, Jan 21, 2019 at 9:37 AM Christophe Leroy
-> <christophe.leroy@c-s.fr> wrote:
->>
->>
->>
->> Le 21/01/2019 à 09:30, Dmitry Vyukov a écrit :
->>> On Mon, Jan 21, 2019 at 8:17 AM Christophe Leroy
->>> <christophe.leroy@c-s.fr> wrote:
->>>>
->>>>
->>>>
->>>> Le 15/01/2019 à 18:23, Andrey Ryabinin a écrit :
->>>>>
->>>>>
->>>>> On 1/12/19 2:16 PM, Christophe Leroy wrote:
->>>>>
->>>>>> +KASAN_SANITIZE_early_32.o := n
->>>>>> +KASAN_SANITIZE_cputable.o := n
->>>>>> +KASAN_SANITIZE_prom_init.o := n
->>>>>> +
->>>>>
->>>>> Usually it's also good idea to disable branch profiling - define DISABLE_BRANCH_PROFILING
->>>>> either in top of these files or via Makefile. Branch profiling redefines if() statement and calls
->>>>> instrumented ftrace_likely_update in every if().
->>>>>
->>>>>
->>>>>
->>>>>> diff --git a/arch/powerpc/mm/kasan_init.c b/arch/powerpc/mm/kasan_init.c
->>>>>> new file mode 100644
->>>>>> index 000000000000..3edc9c2d2f3e
->>>>>
->>>>>> +void __init kasan_init(void)
->>>>>> +{
->>>>>> +    struct memblock_region *reg;
->>>>>> +
->>>>>> +    for_each_memblock(memory, reg)
->>>>>> +            kasan_init_region(reg);
->>>>>> +
->>>>>> +    pr_info("KASAN init done\n");
->>>>>
->>>>> Without "init_task.kasan_depth = 0;" kasan will not repot bugs.
->>>>>
->>>>> There is test_kasan module. Make sure that it produce reports.
->>>>>
->>>>
->>>> Thanks for the review.
->>>>
->>>> Now I get the following very early in boot, what does that mean ?
->>>
->>> This looks like an instrumented memset call before kasan shadow is
->>> mapped, or kasan shadow is not zeros. Does this happen before or after
->>> mapping of kasan_early_shadow_page?
->>
->> This is after the mapping of kasan_early_shadow_page.
->>
->>> This version seems to miss what x86 code has to clear the early shadow:
->>>
->>> /*
->>> * kasan_early_shadow_page has been used as early shadow memory, thus
->>> * it may contain some garbage. Now we can clear and write protect it,
->>> * since after the TLB flush no one should write to it.
->>> */
->>> memset(kasan_early_shadow_page, 0, PAGE_SIZE);
->>
->> In the early part, kasan_early_shadow_page is mapped read-only so I
->> assumed this reset of its content was unneccessary.
->>
->> I'll try with it.
->>
->> Christophe
+On Fri, Jan 18, 2019 at 11:11:38PM +0000, Peter Rosin wrote:
+> The gpio API explicitly allows skipping the NULL check, precisely to
+> allow for neat support for optional gpios. Which is exactly what is at
+> play here.
 > 
-> As far as I understand machine memory contains garbage after boot, and
-> that page needs to be all 0's so we need to explicitly memset it.
+> Reported-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-That page is in BSS so it is zeroed before kasan_early_init().
+lgtm, Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Though as expected, that memset() doesn't fix the issue.
+btw plan to stick around a bit in drm land, i.e. want commit rights for
+drm-misc?
+-Daniel
 
-Indeed the problem is in kasan_init() : memblock_phys_alloc() doesn't 
-zeroize the allocated memory. I changed it to memblock_alloc() and now 
-it works.
-
-Thanks for your help,
-Christophe
-
-
+> ---
+>  drivers/gpu/drm/bridge/lvds-encoder.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/bridge/lvds-encoder.c b/drivers/gpu/drm/bridge/lvds-encoder.c
+> index 36d8557bc097..584007eaf6e1 100644
+> --- a/drivers/gpu/drm/bridge/lvds-encoder.c
+> +++ b/drivers/gpu/drm/bridge/lvds-encoder.c
+> @@ -36,8 +36,7 @@ static void lvds_encoder_enable(struct drm_bridge *bridge)
+>  							 struct lvds_encoder,
+>  							 bridge);
+>  
+> -	if (lvds_encoder->powerdown_gpio)
+> -		gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 0);
+> +	gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 0);
+>  }
+>  
+>  static void lvds_encoder_disable(struct drm_bridge *bridge)
+> @@ -46,8 +45,7 @@ static void lvds_encoder_disable(struct drm_bridge *bridge)
+>  							 struct lvds_encoder,
+>  							 bridge);
+>  
+> -	if (lvds_encoder->powerdown_gpio)
+> -		gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 1);
+> +	gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 1);
+>  }
+>  
+>  static struct drm_bridge_funcs funcs = {
+> -- 
+> 2.11.0
 > 
->>>> [    0.000000] KASAN init done
->>>> [    0.000000]
->>>> ==================================================================
->>>> [    0.000000] BUG: KASAN: unknown-crash in memblock_alloc_try_nid+0xd8/0xf0
->>>> [    0.000000] Write of size 68 at addr c7ff5a90 by task swapper/0
->>>> [    0.000000]
->>>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
->>>> 5.0.0-rc2-s3k-dev-00559-g88aa407c4bce #772
->>>> [    0.000000] Call Trace:
->>>> [    0.000000] [c094ded0] [c016c7e4]
->>>> print_address_description+0x1a0/0x2b8 (unreliable)
->>>> [    0.000000] [c094df00] [c016caa0] kasan_report+0xe4/0x168
->>>> [    0.000000] [c094df40] [c016b464] memset+0x2c/0x4c
->>>> [    0.000000] [c094df60] [c08731f0] memblock_alloc_try_nid+0xd8/0xf0
->>>> [    0.000000] [c094df90] [c0861f20] mmu_context_init+0x58/0xa0
->>>> [    0.000000] [c094dfb0] [c085ca70] start_kernel+0x54/0x400
->>>> [    0.000000] [c094dff0] [c0002258] start_here+0x44/0x9c
->>>> [    0.000000]
->>>> [    0.000000]
->>>> [    0.000000] Memory state around the buggy address:
->>>> [    0.000000]  c7ff5980: e2 a1 87 81 bd d4 a5 b5 f8 8d 89 e7 72 bc 20 24
->>>> [    0.000000]  c7ff5a00: e7 b9 c1 c7 17 e9 b4 bd a4 d0 e7 a0 11 15 a5 b5
->>>> [    0.000000] >c7ff5a80: b5 e1 83 a5 2d 65 31 3f f3 e5 a7 ef 34 b5 69 b5
->>>> [    0.000000]                  ^
->>>> [    0.000000]  c7ff5b00: 21 a5 c1 c1 b4 bf 2d e5 e5 c3 f5 91 e3 b8 a1 34
->>>> [    0.000000]  c7ff5b80: ad ef 23 87 3d a6 ad b5 c3 c3 80 b7 ac b1 1f 37
->>>> [    0.000000]
->>>> ==================================================================
->>>> [    0.000000] Disabling lock debugging due to kernel taint
->>>> [    0.000000] MMU: Allocated 76 bytes of context maps for 16 contexts
->>>> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8176
->>>> [    0.000000] Kernel command line: console=ttyCPM0,115200N8
->>>> ip=192.168.2.7:192.168.2.2::255.0.0.0:vgoip:eth0:off kgdboc=ttyCPM0
->>>> [    0.000000] Dentry cache hash table entries: 16384 (order: 2, 65536
->>>> bytes)
->>>> [    0.000000] Inode-cache hash table entries: 8192 (order: 1, 32768 bytes)
->>>> [    0.000000] Memory: 99904K/131072K available (7376K kernel code, 528K
->>>> rwdata, 1168K rodata, 576K init, 4623K bss, 31168K reserved, 0K
->>>> cma-reserved)
->>>> [    0.000000] Kernel virtual memory layout:
->>>> [    0.000000]   * 0xffefc000..0xffffc000  : fixmap
->>>> [    0.000000]   * 0xf7c00000..0xffc00000  : kasan shadow mem
->>>> [    0.000000]   * 0xf7a00000..0xf7c00000  : consistent mem
->>>> [    0.000000]   * 0xf7a00000..0xf7a00000  : early ioremap
->>>> [    0.000000]   * 0xc9000000..0xf7a00000  : vmalloc & ioremap
->>>>
->>>>
->>>> Christophe
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
