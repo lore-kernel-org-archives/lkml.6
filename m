@@ -2,101 +2,191 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A8FC37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA668C37121
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8163A20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:56:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E30020861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:57:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="j3o57IRu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbfAUT4x (ORCPT
+        id S1728281AbfAUT5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 14:56:53 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36224 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728129AbfAUT4r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 14:56:47 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LJsdBs062729
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 14:56:46 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q5m4y12wu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 14:56:46 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Mon, 21 Jan 2019 19:56:45 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 19:56:42 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LJufAm8323156
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 19:56:41 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D8F4DAE067;
-        Mon, 21 Jan 2019 19:56:40 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3EB2EAE062;
-        Mon, 21 Jan 2019 19:56:40 +0000 (GMT)
-Received: from oc6728276242.ibm.com (unknown [9.85.171.190])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 21 Jan 2019 19:56:40 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-hwmon@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, jdelvare@suse.com,
-        linux@roeck-us.net, joel@jms.id.au, tglx@linutronix.de,
-        Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH 2/2] fsi: occ: Fix license header
-Date:   Mon, 21 Jan 2019 13:56:32 -0600
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1548100592-50383-1-git-send-email-eajames@linux.ibm.com>
-References: <1548100592-50383-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19012119-0072-0000-0000-000003ED4129
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010449; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01149804; UDB=6.00599143; IPR=6.00930129;
- MB=3.00025225; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-21 19:56:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012119-0073-0000-0000-00004AE47698
-Message-Id: <1548100592-50383-3-git-send-email-eajames@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=723 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210155
+        Mon, 21 Jan 2019 14:57:24 -0500
+Received: from mail-eopbgr00061.outbound.protection.outlook.com ([40.107.0.61]:50176
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728245AbfAUT5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 14:57:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g5npQ+qOO9Lfd701ciRodMbUhzbb2Z5tw4HJKtsT9/U=;
+ b=j3o57IRuDy0yXxMc3y8TgtXJo9bbU/fWh8GDnRqtlKpPST8AajzoWL1KtK6UHbt5PUKbpI8mjqq2dAU6bSMDt5hCymw8fONX2fqf3QUVCgTBF3VXNvzc0W4DLiSFmbJQz2CQupwWXEUXYvY+6SXl2NXQLLWlX+DGdz4TGUmtFo8=
+Received: from AM6PR04MB5863.eurprd04.prod.outlook.com (20.179.1.11) by
+ AM6PR04MB5014.eurprd04.prod.outlook.com (20.177.34.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.31; Mon, 21 Jan 2019 19:57:20 +0000
+Received: from AM6PR04MB5863.eurprd04.prod.outlook.com
+ ([fe80::b800:e18:108b:416d]) by AM6PR04MB5863.eurprd04.prod.outlook.com
+ ([fe80::b800:e18:108b:416d%4]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
+ 19:57:20 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "a.tropschug@ebs-systart.com" <a.tropschug@ebs-systart.com>,
+        "m.bittner@ebs-systart.com" <m.bittner@ebs-systart.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: RE: [PATCH v2 2/3] dt-bindings: arm: fsl: Add devicetree binding for
+ Oxalis
+Thread-Topic: [PATCH v2 2/3] dt-bindings: arm: fsl: Add devicetree binding for
+ Oxalis
+Thread-Index: AQHUq/Lk15my91rUHUKDVZZyCZSL36WvDtCAgAIdiYCAAB2rAIAAZq+AgAeXPACAAOZ8UA==
+Date:   Mon, 21 Jan 2019 19:57:20 +0000
+Message-ID: <AM6PR04MB5863AE2A3DD74882BEC680CA8F9F0@AM6PR04MB5863.eurprd04.prod.outlook.com>
+References: <20190114102053.16013-1-manivannan.sadhasivam@linaro.org>
+ <20190114102053.16013-3-manivannan.sadhasivam@linaro.org>
+ <CAL_JsqJpRPrCpRTpqh1v6JZwpEtZnaeuLTHR+0EiMSoxbk9zeQ@mail.gmail.com>
+ <20190116022100.GC15808@dragon>
+ <CAL_Jsq+myeZ1n4X=KhHZjtPDHnGH=L65xxYbzMrt8Rq6Bur4Bg@mail.gmail.com>
+ <20190116101441.GH15808@dragon> <20190121060950.GA8713@Mani-XPS-13-9360>
+In-Reply-To: <20190121060950.GA8713@Mani-XPS-13-9360>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB5014;6:iNxkU7ZTMFOs2g45j8Rmq+rvCu45N0QxbNlnAYGHOkH/ROaIvsIlmsGPtyMtz78+/wCsUSM4PnDEhv/gvW5LrRJCVwj/jLuBpK/Q3poyxri2xZCjHyyx4I/BhxL/3n9lWxAvWLmw8ITGex0UkJNFTBBPATyQMqI4pL7teant83QqhqeWlkKk+NBU9bXr1iW/Wv7veat1J5DjuMqmdxqUpEpo/ZdAchdLvLgsauHf/kJVRTqA5z1U8FjOwA+iEZ5B9St2L4ngTtPPSBAStOT+cBOLKg5yl3hrWnOWwvXr8q6qlT5MHowvyGKdgC5lfAZNxM7vB237hYSwGELMxlXZRWbLLsZEvycKqU/PKjBpLQIS0w0BjRr7L/AfCfQ1nSqltwQhn5hUh0Pi1rrQHK07FNdphfnDxm80fYspuclIOcoedURWcun6OG5sxRuaXgGrZVdgpF7b7BVAqFNICu/P3Q==;5:S7/p1BA+jkm0pxcdXxp7g8TRq1MVKP7PjgYiDWcxdRY8nxs7Wd3egHLUWn/T5sBMxlpsjJEc5sG4nbj97VxrzXQ9Tb4WC0WV7JxfyVX8fS8Wlsr4ITLxCROIZGKR0YqYWBrMHYIbzQNAW8LpMm60qOm7s47WGc2xiaZ8JLbDAQFVfT1/9nxvi6y4xkWqH9+MBJg4LAnibgGisjwfaZobOA==;7:ouyjTg41x/GPOpNFPcK2xYHJhub6GI13RRkXSWhwJZip0+ti/rwGCFv4H7W1Dd9LlIeP+Fpg1F7p44t1pnTXWnHAnKTiYqA2uJCwvIIfQpHzDY0d6D6T1eH3TviPf8+YR2Hlh0jQ8GG89XHLV8uYBQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 250f64fa-99c8-46e0-4bfd-08d67fdaa762
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5014;
+x-ms-traffictypediagnostic: AM6PR04MB5014:
+x-microsoft-antispam-prvs: <AM6PR04MB5014D1C4F3DE6CF1D007339D8F9F0@AM6PR04MB5014.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0924C6A0D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(366004)(136003)(39860400002)(13464003)(199004)(189003)(102836004)(81166006)(97736004)(6506007)(74316002)(53546011)(26005)(7736002)(66066001)(3846002)(6116002)(71200400001)(71190400001)(186003)(4326008)(99286004)(8676002)(305945005)(81156014)(2906002)(6436002)(105586002)(486006)(14444005)(256004)(476003)(93886005)(25786009)(446003)(33656002)(229853002)(6246003)(7696005)(316002)(11346002)(106356001)(8936002)(76176011)(478600001)(53936002)(54906003)(110136005)(55016002)(14454004)(9686003)(68736007)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5014;H:AM6PR04MB5863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: j4TeJPYXoLuYcuASVQnzkfDTlc33CplNbSAoTF1qcffsA8MZpfOTJIhFQkpKbyA+/iZywdsm1Hg7iYkjQIvOCoPhB5Ujgkfz7Fgp+tofa2AduSL80o4DCWgwADoraB07Yq6bDGjMytEpSVjh0M5zDUxwzp085VTlq0HfN0TlaTL7CMZiSM+zupRqeH9ts3o3/aRy8uzFT3iGzHaJI0a1Cw5xpBkOU4kBBgqCkwnbk9gmwj2IP+EYOSgwnusVZt1IKj/p6hMEoabM3cTj3YnF8fW1b0OKe4N4pNHZnO1obKib8nYHXnwHTepal0Uay+MuLsXr23Yx7i3qOJNQx/wdFeqBUwCvY2oTuYMLKE19eZL9RVSGag2uA7grqFlPA24earyRMD7IAyq5ufuoPHrTHmJ3K1fPpiZFrDi7FYmL764=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 250f64fa-99c8-46e0-4bfd-08d67fdaa762
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 19:57:20.5927
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OCC driver source is missing the IBM Copyright
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/fsi/fsi-occ.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/fsi/fsi-occ.c b/drivers/fsi/fsi-occ.c
-index a2301ce..d75038f 100644
---- a/drivers/fsi/fsi-occ.c
-+++ b/drivers/fsi/fsi-occ.c
-@@ -1,4 +1,5 @@
--// SPDX-License-Identifier: GPL-2.0
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright IBM Corp 2019
- 
- #include <linux/device.h>
- #include <linux/err.h>
--- 
-1.8.3.1
+> -----Original Message-----
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Sent: Monday, January 21, 2019 12:10 AM
+> To: Shawn Guo <shawnguo@kernel.org>; Rob Herring <robh+dt@kernel.org>
+> Cc: Leo Li <leoyang.li@nxp.com>; moderated list:ARM/FREESCALE IMX / MXC
+> ARM ARCHITECTURE <linux-arm-kernel@lists.infradead.org>;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> a.tropschug@ebs-systart.com; m.bittner@ebs-systart.com; Amit Kucheria
+> <amit.kucheria@linaro.org>
+> Subject: Re: [PATCH v2 2/3] dt-bindings: arm: fsl: Add devicetree binding=
+ for
+> Oxalis
+>=20
+> On Wed, Jan 16, 2019 at 06:14:43PM +0800, Shawn Guo wrote:
+> > On Tue, Jan 15, 2019 at 10:07:12PM -0600, Rob Herring wrote:
+> > > On Tue, Jan 15, 2019 at 8:21 PM Shawn Guo <shawnguo@kernel.org>
+> wrote:
+> > > >
+> > > > On Mon, Jan 14, 2019 at 12:02:47PM -0600, Rob Herring wrote:
+> > > > > On Mon, Jan 14, 2019 at 4:21 AM Manivannan Sadhasivam
+> > > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > > >
+> > > > > > Add devicetree binding for Oxalis board in JSON format. While
+> > > > > > adding that, let's fix the description for LS1012A also.
+> > > > > >
+> > > > > > Signed-off-by: Manivannan Sadhasivam
+> > > > > > <manivannan.sadhasivam@linaro.org>
+> > > > > > ---
+> > > > > >  Documentation/devicetree/bindings/arm/fsl.yaml | 3 ++-
+> > > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > > > > b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > > > > index d34fe0749199..0f30142fe316 100644
+> > > > > > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > > > > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > > > > @@ -173,12 +173,13 @@ properties:
+> > > > > >                - fsl,vf610
+> > > > > >                - fsl,vf610m4
+> > > > > >
+> > > > > > -      - description: LS1021A based Boards
+> > > > > > +      - description: LS1012A based Boards
+> > > > >
+> > > > > Well, yes that was wrong...
+> > > > >
+> > > > > >          items:
+> > > > > >            - enum:
+> > > > > >                - fsl,ls1012a-rdb
+> > > > > >                - fsl,ls1012a-frdm
+> > > > > >                - fsl,ls1012a-qds
+> > > > > > +              - ebs-systart,oxalis
+> > > > >
+> > > > > Sort alphabetically.
+> > > > >
+> > > > > >            - const: fsl,ls1021a
+> > > > >
+> > > > > And this is wrong too.
+> > > > >
+> > > > > I you just change it, then we will be missing an entry for LS1021=
+A.
+> > > > > What's the status of that SoC because there is no board dts
+> > > > > file? We should not have .dtsi files in the kernel which don't ge=
+t built.
+> > > >
+> > > > Hmm, I do not see any LS1021A SoC .dtsi in the tree.  I suspect
+> > > > it's just a typo of LS1012A.
+> > > >
+> > > > @Leo, do we have a LS1021A SoC?
+> > >
+> > > arch/arm/boot/dts/ls1021a.dtsi
+> >
+> > Oops, I only searched arm64 folder.
+> >
+> > So it seems the compatible of the boards below are missing there.
+> >
+> >   ls1021a-moxa-uc-8410a.dts
+> >   ls1021a-qds.dts
+> >   ls1021a-twr.dts
+>=20
+> So how should we proceed here? The above mentioned boards are lacking
+> compatible in dts files and I guess that's the reason they didn't get
+> mentioned in "fsl" binding file.
+>=20
+> Should I just go ahead and add the compatibles for these boards and list
+> them in binding file?
 
+Please go ahead and do that.  One thing is that the moxa-uc-8410a board is =
+a 3rd-party board, not sure if it should belong to the fsl binding file.
+
+Regards,
+Leo
