@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E8DC37121
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4847C37121
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D7E2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CA9F21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:36:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JO8s7M9R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8iLK1cU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726002AbfAUXgG (ORCPT
+        id S1726124AbfAUXgK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 18:36:06 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46387 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfAUXgE (ORCPT
+        Mon, 21 Jan 2019 18:36:10 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35348 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfAUXgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 18:36:04 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t13so10478091ply.13;
-        Mon, 21 Jan 2019 15:36:04 -0800 (PST)
+        Mon, 21 Jan 2019 18:36:07 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p8so10506759plo.2;
+        Mon, 21 Jan 2019 15:36:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7mt13rUi4jE9dYaj01KrE4gIkA7gm0/yil0LZB/81Rk=;
-        b=JO8s7M9RnAqcT25lPti3cHqi504z6BdpoX+Ir+3FEiJSpZq/MrgHwxE1ZBGfjgAcQa
-         VwDWWUSWRdJgz3GJPEfyikHtRBHT2+RxjA87wETiVL94O7+R85vjDpu8jCeQY+I+CwhH
-         iqtGJzTGpNSuhAERql9XUKxJeYO5bI85l3CM1B3u5Ufh/9O1rBHRLx3humkUeBNy9Oa8
-         oXIwK4CRDbV2wnI/ded8gwtkzejuvIoybgpVW2Zdbg2UVYJRXFeMT0vv2l0GR3XN83Om
-         tfhLLaB3NbAIbW8cWog5rDaLEVp3a3rJQpSELC1G/t9SP+9z12UlWlIN5q15+wZ+L8Z7
-         A7ew==
+        bh=B0uYN7ReRsHit1t5QoNp2KlyRKVVuxnnmNKWWSOG+BA=;
+        b=i8iLK1cUCK8R5lFlPcF4uaRgmC/ohyTMnNY6Is6URWyJibZNN7s0WQT5TAuyrUERDx
+         89tnmB1EMt/cGx/HkObEN7EZGryo/R5jZ072YPSCyMD/QKc7LoceTRdY5H8HKlzY7QeJ
+         Ga9tOJoVvWRan6xmdxWjAf+HmTPeM6lpx9ETRnUKB9ZpK0XuYp7j8LstfdtBqBHlTcUU
+         CX7wa7/jCtsrX8BZIzSPr+D5m0sPcl1/a/r4qKTk/yVEgZOsFt5+pFMMT+79jEQHMACo
+         nkkDbIXo4/5A3hj40OYTcr4lQex7DR+b9Qje+U+3Wbjg0B5yrs2ixxrtRI+4epBg/exx
+         /n3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7mt13rUi4jE9dYaj01KrE4gIkA7gm0/yil0LZB/81Rk=;
-        b=tPYHuhdLhB/M6Onbyvtd8iItngLd9LCETkz36uaDShGLuP0uEyDqYnFi4QBw1pUCeI
-         7b4Ob0F0gCFu6rDgTwX5uTj4DWWF4BdVzj+o5HANttFm838CU9A63mxYPr2k9idWfvyM
-         N8ZNnlMiiCJ7dwUEC3+07+qYpmV6tzbrDsVTP5Te4KNcY5Onid5xeTu6QYsrjU1chV5S
-         VNLdZaUX41B4+oW1e7aBdAprwBU/go37bnHdRJ1K2z2yGiWEtYqHAi3pt+wTNPixGOd4
-         Ew4DpIoaA/zUV277dN47SBrgx2gdqZBgSNJcndyNfZWqMUkjgyOAJnnSJYSeMzoVKpJW
-         9hGw==
-X-Gm-Message-State: AJcUukfGPYpit2aM2y6eHQXVdFvEP8mwMW6HAcXETFnyjMzSGl8jfGH4
-        CntOro74MjIVCWRrzHSiHx70neVthuY=
-X-Google-Smtp-Source: ALg8bN5BhyC10v/Aes/Bttmq1Q4H5Y2mwxUW4Q8OWIiTQTLs4yIFUZFurguB+lqPnJLgqQ5OPfdW2A==
-X-Received: by 2002:a17:902:a6:: with SMTP id a35mr32030468pla.201.1548113763031;
-        Mon, 21 Jan 2019 15:36:03 -0800 (PST)
+        bh=B0uYN7ReRsHit1t5QoNp2KlyRKVVuxnnmNKWWSOG+BA=;
+        b=cHT3b0PTFMFhD1RG7IdK7rj1ERH/eo3cVFC47DtF1Zwg5iUR7xWxq//MQ4FV6CzPfF
+         UE7bNp6KcWo6tdXWVB73Qv4usD9QfIpgJj47dvF4l+NMorAD3ctNPFOfrnz7Ufp+pPy6
+         c/zITImn9l6A48rabEffSuScSoB0DtRoB8nV+2InDwk/CCckLIs4w9Un0kfXI3dyVIHU
+         5CzzksEnzcKp0xBELHeA53vaOK6eDsXzqBJAeh4G8VoKZcLRv5Q6/ddGeLC1D4N00pxo
+         wJCE7nb68fSNHuBT0VaZYK3cRu7U8+tcNMt/BPHMgGp+Br2X5oskVaIaGVVsNXeohJ9g
+         qm1A==
+X-Gm-Message-State: AJcUukeY9tzWRjfs07Il3KTmFXmJCAhoHhkba6LqVdmLeEEkH+PzJo+x
+        /To/1ZVA3mSolMHfeNcVVHjak1YDQKA=
+X-Google-Smtp-Source: ALg8bN4lCxCQw5Zo5JBjcpZkmu+LUZrMNMNA/eOPwksIz2MM/UBczAXSylCso6wswBhxo+J1Z6swCA==
+X-Received: by 2002:a17:902:2a0a:: with SMTP id i10mr31436769plb.323.1548113766047;
+        Mon, 21 Jan 2019 15:36:06 -0800 (PST)
 Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id y9sm14016345pfi.74.2019.01.21.15.36.01
+        by smtp.googlemail.com with ESMTPSA id y9sm14016345pfi.74.2019.01.21.15.36.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 15:36:02 -0800 (PST)
+        Mon, 21 Jan 2019 15:36:05 -0800 (PST)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 To:     linux-media@vger.kernel.org
 Cc:     Gael PORTAY <gael.portay@collabora.com>,
@@ -66,9 +66,9 @@ Cc:     Gael PORTAY <gael.portay@collabora.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 1/3] media: imx: csi: Disable CSI immediately after last EOF
-Date:   Mon, 21 Jan 2019 15:35:50 -0800
-Message-Id: <20190121233552.20001-2-slongerbeam@gmail.com>
+Subject: [PATCH v4 3/3] media: imx: prpencvf: Stop upstream before disabling IDMA channel
+Date:   Mon, 21 Jan 2019 15:35:52 -0800
+Message-Id: <20190121233552.20001-4-slongerbeam@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190121233552.20001-1-slongerbeam@gmail.com>
 References: <20190121233552.20001-1-slongerbeam@gmail.com>
@@ -80,94 +80,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Disable the CSI immediately after receiving the last EOF before stream
-off (and thus before disabling the IDMA channel). Do this by moving the
-wait for EOF completion into a new function csi_idmac_wait_last_eof().
+Upstream must be stopped immediately after receiving the last EOF and
+before disabling the IDMA channel. This can be accomplished by moving
+upstream stream off to just after receiving the last EOF completion in
+prp_stop(). For symmetry also move upstream stream on to end of
+prp_start().
 
 This fixes a complete system hard lockup on the SabreAuto when streaming
 from the ADV7180, by repeatedly sending a stream off immediately followed
 by stream on:
 
-while true; do v4l2-ctl  -d4 --stream-mmap --stream-count=3; done
+while true; do v4l2-ctl  -d1 --stream-mmap --stream-count=3; done
 
 Eventually this either causes the system lockup or EOF timeouts at all
 subsequent stream on, until a system reset.
 
-The lockup occurs when disabling the IDMA channel at stream off. Disabling
-the CSI before disabling the IDMA channel appears to be a reliable fix for
-the hard lockup.
+The lockup occurs when disabling the IDMA channel at stream off. Stopping
+the video data stream entering the IDMA channel before disabling the
+channel itself appears to be a reliable fix for the hard lockup.
 
-Fixes: 4a34ec8e470cb ("[media] media: imx: Add CSI subdev driver")
+Fixes: f0d9c8924e2c3 ("[media] media: imx: Add IC subdev drivers")
 
 Reported-by: Gaël PORTAY <gael.portay@collabora.com>
+Tested-by: Gaël PORTAY <gael.portay@collabora.com>
 Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 Cc: stable@vger.kernel.org
 ---
 Changes in v4:
-- Disabling SMFC will have no effect if both CSI's are streaming. So
-  go back to disabling CSI before channel as in v2, but split up
-  csi_idmac_stop such that ipu_csi_disable can still be called within
-  csi_stop.
+- none.
 Changes in v3:
-- switch from disabling the CSI before the channel to disabling the
-  SMFC before the channel.
+- Reword the commit subject and message. No functional changes.
 Changes in v2:
-- restore an empty line
 - Add Fixes: and Cc: stable
 ---
- drivers/staging/media/imx/imx-media-csi.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/staging/media/imx/imx-ic-prpencvf.c | 26 ++++++++++++++-------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 7abfe0aa1418..920e38885292 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -662,7 +662,7 @@ static int csi_idmac_start(struct csi_priv *priv)
- 	return ret;
- }
- 
--static void csi_idmac_stop(struct csi_priv *priv)
-+static void csi_idmac_wait_last_eof(struct csi_priv *priv)
- {
- 	unsigned long flags;
- 	int ret;
-@@ -679,7 +679,10 @@ static void csi_idmac_stop(struct csi_priv *priv)
- 		&priv->last_eof_comp, msecs_to_jiffies(IMX_MEDIA_EOF_TIMEOUT));
- 	if (ret == 0)
- 		v4l2_warn(&priv->sd, "wait last EOF timeout\n");
-+}
- 
-+static void csi_idmac_stop(struct csi_priv *priv)
-+{
- 	devm_free_irq(priv->dev, priv->eof_irq, priv);
- 	devm_free_irq(priv->dev, priv->nfb4eof_irq, priv);
- 
-@@ -786,6 +789,16 @@ static int csi_start(struct csi_priv *priv)
- 
- static void csi_stop(struct csi_priv *priv)
- {
-+	if (priv->dest == IPU_CSI_DEST_IDMAC)
-+		csi_idmac_wait_last_eof(priv);
-+
-+	/*
-+	 * Disable the CSI asap, after syncing with the last EOF.
-+	 * Doing so after the IDMA channel is disabled has shown to
-+	 * create hard system-wide hangs.
-+	 */
-+	ipu_csi_disable(priv->csi);
-+
- 	if (priv->dest == IPU_CSI_DEST_IDMAC) {
- 		csi_idmac_stop(priv);
- 
-@@ -793,8 +806,6 @@ static void csi_stop(struct csi_priv *priv)
- 		if (priv->fim)
- 			imx_media_fim_set_stream(priv->fim, NULL, false);
+diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
+index 053a911d477a..3637693c2bc8 100644
+--- a/drivers/staging/media/imx/imx-ic-prpencvf.c
++++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+@@ -706,12 +706,23 @@ static int prp_start(struct prp_priv *priv)
+ 		goto out_free_nfb4eof_irq;
  	}
--
--	ipu_csi_disable(priv->csi);
- }
  
- static const struct csi_skip_desc csi_skip[12] = {
++	/* start upstream */
++	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, 1);
++	ret = (ret && ret != -ENOIOCTLCMD) ? ret : 0;
++	if (ret) {
++		v4l2_err(&ic_priv->sd,
++			 "upstream stream on failed: %d\n", ret);
++		goto out_free_eof_irq;
++	}
++
+ 	/* start the EOF timeout timer */
+ 	mod_timer(&priv->eof_timeout_timer,
+ 		  jiffies + msecs_to_jiffies(IMX_MEDIA_EOF_TIMEOUT));
+ 
+ 	return 0;
+ 
++out_free_eof_irq:
++	devm_free_irq(ic_priv->dev, priv->eof_irq, priv);
+ out_free_nfb4eof_irq:
+ 	devm_free_irq(ic_priv->dev, priv->nfb4eof_irq, priv);
+ out_unsetup:
+@@ -743,6 +754,12 @@ static void prp_stop(struct prp_priv *priv)
+ 	if (ret == 0)
+ 		v4l2_warn(&ic_priv->sd, "wait last EOF timeout\n");
+ 
++	/* stop upstream */
++	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, 0);
++	if (ret && ret != -ENOIOCTLCMD)
++		v4l2_warn(&ic_priv->sd,
++			  "upstream stream off failed: %d\n", ret);
++
+ 	devm_free_irq(ic_priv->dev, priv->eof_irq, priv);
+ 	devm_free_irq(ic_priv->dev, priv->nfb4eof_irq, priv);
+ 
+@@ -1173,15 +1190,6 @@ static int prp_s_stream(struct v4l2_subdev *sd, int enable)
+ 	if (ret)
+ 		goto out;
+ 
+-	/* start/stop upstream */
+-	ret = v4l2_subdev_call(priv->src_sd, video, s_stream, enable);
+-	ret = (ret && ret != -ENOIOCTLCMD) ? ret : 0;
+-	if (ret) {
+-		if (enable)
+-			prp_stop(priv);
+-		goto out;
+-	}
+-
+ update_count:
+ 	priv->stream_count += enable ? 1 : -1;
+ 	if (priv->stream_count < 0)
 -- 
 2.17.1
 
