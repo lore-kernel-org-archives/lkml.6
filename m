@@ -2,192 +2,143 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40534C2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A68E0C2F441
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 073EB20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E94A20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:12:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HwkEIyaL"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pbseC1Xl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbfAUQIG (ORCPT
+        id S1729611AbfAUQMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 11:08:06 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36728 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729270AbfAUQIG (ORCPT
+        Mon, 21 Jan 2019 11:12:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48420 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbfAUQMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 11:08:06 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0LG7oxI110789;
-        Mon, 21 Jan 2019 10:07:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548086870;
-        bh=hTmZ+nvPQsoBq3Sseg38xKH5XD++JfQ0yG6JJda2FF4=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=HwkEIyaLPsYpz9KoPhz3s/TZDNSiuOCRTJzxmgxKPOgnctcEB0KenCQQjco8SF93e
-         6Ih0gf//ZcCZak0XmocfWmUsf/gtoyfwJnIyn7l2vlzoQJKs1PK9zwIMnPfwl56AlO
-         0KfsLbyTgQEjZBGZEiXunDNEDCPeZvnnNF6IYEqQ=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0LG7ord023278
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 10:07:50 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
- Jan 2019 10:07:50 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 21 Jan 2019 10:07:50 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0LG7nlY019577;
-        Mon, 21 Jan 2019 10:07:49 -0600
-Date:   Mon, 21 Jan 2019 10:07:49 -0600
-From:   Bin Liu <b-liu@ti.com>
-To:     <min.guo@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
-        <hdegoede@redhat.com>, Yonglong Wu <yonglong.wu@mediatek.com>
-Subject: Re: [PATCH v4 6/6] usb: musb: Add support for MediaTek musb
- controller
-Message-ID: <20190121160749.GD30080@uda0271908>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>, min.guo@mediatek.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>, chunfeng.yun@mediatek.com,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, tony@atomide.com,
-        hdegoede@redhat.com, Yonglong Wu <yonglong.wu@mediatek.com>
-References: <1548073351-13739-1-git-send-email-min.guo@mediatek.com>
- <1548073351-13739-7-git-send-email-min.guo@mediatek.com>
+        Mon, 21 Jan 2019 11:12:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=goDf/S+73Gxd3RHhen0nzqCzpgPoOwg9sSQWL8cjuwU=; b=pbseC1XltAPqeTTHg2HT393G+
+        DgIYpJuqZJnU6SbNUbxQpUkSWaprQAfh52cvLH0KpoQkJbFifXYWE5dR1C3GAiFBXfTKpHInS4gPY
+        z4rz4cGkeiO5OXt0lpf+q4Oz+nSrFtqmuBWUpZ34LEKzSwjGIsfMBt4budaR0j8aqJBpxJyfvvOzo
+        7V1GfBpy8HoH3cLGouk5sMYRMhZD2LWG98NsQsqlXg8rZFozPqlgrecB7NNy7rPevkj/MWgaxvPtl
+        DeLRrHk4U3EGEaBvqUxNlMsm0XsEtVCfA7AME2ZSRJlxPWJnn8wbEAl5qtvCYdUjqIDZKXk2dw0g0
+        bC3e5OxPg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glcBk-000296-Bb; Mon, 21 Jan 2019 16:12:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E345E28470710; Mon, 21 Jan 2019 17:12:37 +0100 (CET)
+Date:   Mon, 21 Jan 2019 17:12:37 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
+ refcounting
+Message-ID: <20190121161237.GB13777@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-5-patrick.bellasi@arm.com>
+ <20190121145929.GI27931@hirez.programming.kicks-ass.net>
+ <20190121152311.7u7bwbjopuptnzcy@e110439-lin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548073351-13739-7-git-send-email-min.guo@mediatek.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20190121152311.7u7bwbjopuptnzcy@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Min,
-
-On Mon, Jan 21, 2019 at 08:22:31PM +0800, min.guo@mediatek.com wrote:
-> From: Min Guo <min.guo@mediatek.com>
+On Mon, Jan 21, 2019 at 03:23:11PM +0000, Patrick Bellasi wrote:
+> On 21-Jan 15:59, Peter Zijlstra wrote:
+> > On Tue, Jan 15, 2019 at 10:15:01AM +0000, Patrick Bellasi wrote:
+> > > @@ -835,6 +954,28 @@ static void uclamp_bucket_inc(struct uclamp_se *uc_se, unsigned int clamp_id,
+> > >  	} while (!atomic_long_try_cmpxchg(&uc_maps[bucket_id].adata,
+> > >  					  &uc_map_old.data, uc_map_new.data));
+> > >  
+> > > +	/*
+> > > +	 * Ensure each CPU tracks the correct value for this clamp bucket.
+> > > +	 * This initialization of per-CPU variables is required only when a
+> > > +	 * clamp value is requested for the first time from a slow-path.
+> > > +	 */
+> > 
+> > I'm confused; why is this needed?
 > 
-> This adds support for MediaTek musb controller in
-> host, peripheral and otg mode.
-> There are some quirk of MediaTek musb controller, such as:
->  -W1C interrupt status registers
->  -Private data toggle registers
->  -No dedicated DMA interrupt line
+> That's a lazy initialization of the per-CPU uclamp data for a given
+> bucket, i.e. the clamp value assigned to a bucket, which happens only
+> when new clamp values are requested... usually only at system
+> boot/configuration time.
 > 
-> Signed-off-by: Min Guo <min.guo@mediatek.com>
-> Signed-off-by: Yonglong Wu <yonglong.wu@mediatek.com>
-> ---
-> changes in v4:
-> 1. no changes
+> For example, let say we have these buckets mapped to given clamp
+> values:
 > 
-> changes in v3:
-> suggested by Bin:
-> 1. Remove 'u8/u16 data' parameter in clearb/w() hooks
-> 2. Replace musb_readb/w() with musb_clearb/w() to clear interrupts status
+>  bucket_#0: clamp value: 10% (mapped)
+>  bucket_#1: clamp value: 20% (mapped)
+>  bucket_#2: clamp value: 30% (mapped)
 > 
-> changes in v2:
-> suggested by Bin:
-> 1. Add summarize of MediaTek musb controller differences in the commit log
-> 2. Add "|| COMPILE_TEST" in Kconfig
-> 3. Move MediaTek's private toggle registers from musb_regs.h to mediatek.c
-> 4. Replace musb_readl() with musb_readw() to read 16bit toggle register
-> ---
->  drivers/usb/musb/Kconfig    |   8 +-
->  drivers/usb/musb/Makefile   |   1 +
->  drivers/usb/musb/mediatek.c | 624 ++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 632 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/usb/musb/mediatek.c
+> and then let's assume all the users of bucket_#1 are "destroyed", i.e.
+> there are no more tasks, system defaults or cgroups asking for a
+> 20% clamp value. The corresponding bucket will become free:
 > 
+>  bucket_#0: clamp value: 10% (mapped)
+>  bucket_#1: clamp value: 20% (free)
+>  bucket_#2: clamp value: 30% (mapped)
+> 
+> If, in the future, we ask for a new clamp value, let say a task ask
+> for a 40% clamp value, then we need to map that value into a bucket.
+> Since bucket_#1 is free we can use it to fill up the hold and keep all
+> the buckets in use at the beginning of a cache line.
+> 
+> However, since now bucket_#1 tracks a different clamp value (40
+> instead of 20) we need to walk all the CPUs and updated the cached
+> value:
+> 
+>  bucket_#0: clamp value: 10% (mapped)
+>  bucket_#1: clamp value: 40% (mapped)
+>  bucket_#2: clamp value: 30% (mapped)
+> 
+> Is that more clear ?
 
-[snip]
+Yes, and I realized this a little while after sending this; but I'm not
+sure I have an answer to why though.
 
-> +static irqreturn_t generic_interrupt(int irq, void *__hci)
-> +{
-> +	unsigned long flags;
-> +	irqreturn_t retval = IRQ_NONE;
-> +	struct musb *musb = __hci;
-> +
-> +	spin_lock_irqsave(&musb->lock, flags);
-> +	musb->int_usb = musb_readb(musb->mregs, MUSB_INTRUSB) &
-> +	    musb_readb(musb->mregs, MUSB_INTRUSBE);
-> +	musb->int_tx = musb_readw(musb->mregs, MUSB_INTRTX)
-> +	    & musb_readw(musb->mregs, MUSB_INTRTXE);
-> +	musb->int_rx = musb_readw(musb->mregs, MUSB_INTRRX)
-> +	    & musb_readw(musb->mregs, MUSB_INTRRXE);
+That is; why isn't the whole thing hard coded to have:
 
-Based on my comment in 5/6, the above 3 musb_readb/w() can be changed to
+ bucket_n: clamp value: n*UCLAMP_BUCKET_DELTA
 
-> +	/* MediaTek controller interrupt status is W1C */
-> +	musb_clearw(musb->mregs, MUSB_INTRRX);
-> +	musb_clearw(musb->mregs, MUSB_INTRTX);
-> +	musb_clearb(musb->mregs, MUSB_INTRUSB);
+We already do that division anyway (clamp_value / UCLAMP_BUCKET_DELTA),
+and from that we instantly have the right bucket index. And that allows
+us to initialize all this beforehand.
 
-	musb->int_usb = musb_clearb(musb->mregs, MUSB_INTRUSB)
-	musb->int_tx = musb_clearw(musb->mregs, MUSB_INTRTX);
-	musb->int_rx = musb_clearw(musb->mregs, MUSB_INTRRX);
+> and keep all
+> the buckets in use at the beginning of a cache line.
 
-> +
-> +	if (musb->int_usb || musb->int_tx || musb->int_rx)
-> +		retval = musb_interrupt(musb);
-> +
-> +	spin_unlock_irqrestore(&musb->lock, flags);
-> +
-> +	return retval;
-> +}
-> +
-
-[snip]
-
-> +
-> +static u8 mtk_musb_clearb(void __iomem *addr, unsigned int offset)
-> +{
-> +	u8 data;
-> +
-> +	/* W1C */
-> +	data = musb_readb(addr, offset);
-> +	musb_writeb(addr, offset, data);
-> +	return musb_readb(addr, offset);
-
-	return data;
-
-> +}
-> +
-> +static u16 mtk_musb_clearw(void __iomem *addr, unsigned int offset)
-> +{
-> +	u16 data;
-> +
-> +	/* W1C */
-> +	data = musb_readw(addr, offset);
-> +	musb_writew(addr, offset, data);
-> +	return musb_readw(addr, offset);
-
-	return data;
+That; is that the rationale for all this? Note that per the defaults
+everything is in a single line already.
 
 
-Regards,
--Bin.
