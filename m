@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F7FC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1269AC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5334A20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:55:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D647A20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078903;
-	bh=Zn15jCNdKS36PgQUdgBWv/F88tomBwup5MGXK0KCGic=;
+	s=default; t=1548078905;
+	bh=t6oz3AMI0IkELIQGGVUVD4yLAmFRT+QNXyWTjg/c+o4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rpWoKvhZeOPV80IwqsWp+kdgSjhNiTEIWStUfPv8e7pndBppsrnY/BQPbjS+owhDa
-	 eQERgyqLeXvfNzKZSLfpczaW65eevo2mdOckYmcdXHh1WG2SXLcjiyRdY/lM5SYK+C
-	 OwolT7We9TC0Y4X303OVnzAXkkzeAV9xPbGA6MhI=
+	b=sXesVyC/wbGZYk4b7JOvq9nTIDhogHp9k2DYk7qNDe4EWSfhK1Q98iH9QTAfZOY+y
+	 8jT+s0LTjJYp6gNgp4WDFsSOG7K4tpCiRPYWfLZs+5lC5drZre1pv/yEirDLBeWeDX
+	 iRkfKerTgUxuartPzz64vkuq05AKfNhJe/ww9+/Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731648AbfAUNzB (ORCPT
+        id S1731659AbfAUNzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:55:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39390 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:55:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731631AbfAUNy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:54:59 -0500
+        id S1731646AbfAUNzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:55:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47B4E20861;
-        Mon, 21 Jan 2019 13:54:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD3C92084C;
+        Mon, 21 Jan 2019 13:55:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078898;
-        bh=Zn15jCNdKS36PgQUdgBWv/F88tomBwup5MGXK0KCGic=;
+        s=default; t=1548078901;
+        bh=t6oz3AMI0IkELIQGGVUVD4yLAmFRT+QNXyWTjg/c+o4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Is7e8i+qUeCfX3id7k97kO+yjCCiy+o15QTbpoeTYvy+gIQdteb+vfrzAyFqrwOZe
-         9KY1qWdGKYYAx3nAWhCcJBi2/VPn6fqJi2QROe3pH4weE7ODVYvOWFZJg1jXt7O/PO
-         xSyflYt5S8/C6EpsR5V0OnyyHVqmubo3sifxGPwE=
+        b=q1+3WxQTrQLlnXlg/oRi/QB1jyJZ8WjBHPPodBjpx9PLKonyODBspmkAgMkGKPcFI
+         feAOPQnm+Xe6bxz/Pvg0LvdGrBHIejNwIVIIO3RLYLXn/IVefOWuRxOA9PXCP7GQHE
+         fxTOxjwrhKunO/FN++vcEMAPsw3pbENhDe2QZv6I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com,
-        Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.9 22/51] Yama: Check for pid death before checking ancestry
-Date:   Mon, 21 Jan 2019 14:44:18 +0100
-Message-Id: <20190121122455.586108864@linuxfoundation.org>
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 23/51] scsi: core: Synchronize request queue PM status only on successful resume
+Date:   Mon, 21 Jan 2019 14:44:19 +0100
+Message-Id: <20190121122455.693289438@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -68,38 +66,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Stanley Chu <stanley.chu@mediatek.com>
 
-commit 9474f4e7cd71a633fa1ef93b7daefd44bbdfd482 upstream.
+commit 3f7e62bba0003f9c68f599f5997c4647ef5b4f4e upstream.
 
-It's possible that a pid has died before we take the rcu lock, in which
-case we can't walk the ancestry list as it may be detached. Instead, check
-for death first before doing the walk.
+The commit 356fd2663cff ("scsi: Set request queue runtime PM status back to
+active on resume") fixed up the inconsistent RPM status between request
+queue and device. However changing request queue RPM status shall be done
+only on successful resume, otherwise status may be still inconsistent as
+below,
 
-Reported-by: syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com
-Fixes: 2d514487faf1 ("security: Yama LSM")
+Request queue: RPM_ACTIVE
+Device: RPM_SUSPENDED
+
+This ends up soft lockup because requests can be submitted to underlying
+devices but those devices and their required resource are not resumed.
+
+For example,
+
+After above inconsistent status happens, IO request can be submitted to UFS
+device driver but required resource (like clock) is not resumed yet thus
+lead to warning as below call stack,
+
+WARN_ON(hba->clk_gating.state != CLKS_ON);
+ufshcd_queuecommand
+scsi_dispatch_cmd
+scsi_request_fn
+__blk_run_queue
+cfq_insert_request
+__elv_add_request
+blk_flush_plug_list
+blk_finish_plug
+jbd2_journal_commit_transaction
+kjournald2
+
+We may see all behind IO requests hang because of no response from storage
+host or device and then soft lockup happens in system. In the end, system
+may crash in many ways.
+
+Fixes: 356fd2663cff (scsi: Set request queue runtime PM status back to active on resume)
 Cc: stable@vger.kernel.org
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/yama/yama_lsm.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/scsi_pm.c |   26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -359,7 +359,9 @@ static int yama_ptrace_access_check(stru
- 			break;
- 		case YAMA_SCOPE_RELATIONAL:
- 			rcu_read_lock();
--			if (!task_is_descendant(current, child) &&
-+			if (!pid_alive(child))
-+				rc = -EPERM;
-+			if (!rc && !task_is_descendant(current, child) &&
- 			    !ptracer_exception_found(current, child) &&
- 			    !ns_capable(__task_cred(child)->user_ns, CAP_SYS_PTRACE))
- 				rc = -EPERM;
+--- a/drivers/scsi/scsi_pm.c
++++ b/drivers/scsi/scsi_pm.c
+@@ -79,8 +79,22 @@ static int scsi_dev_type_resume(struct d
+ 
+ 	if (err == 0) {
+ 		pm_runtime_disable(dev);
+-		pm_runtime_set_active(dev);
++		err = pm_runtime_set_active(dev);
+ 		pm_runtime_enable(dev);
++
++		/*
++		 * Forcibly set runtime PM status of request queue to "active"
++		 * to make sure we can again get requests from the queue
++		 * (see also blk_pm_peek_request()).
++		 *
++		 * The resume hook will correct runtime PM status of the disk.
++		 */
++		if (!err && scsi_is_sdev_device(dev)) {
++			struct scsi_device *sdev = to_scsi_device(dev);
++
++			if (sdev->request_queue->dev)
++				blk_set_runtime_active(sdev->request_queue);
++		}
+ 	}
+ 
+ 	return err;
+@@ -139,16 +153,6 @@ static int scsi_bus_resume_common(struct
+ 	else
+ 		fn = NULL;
+ 
+-	/*
+-	 * Forcibly set runtime PM status of request queue to "active" to
+-	 * make sure we can again get requests from the queue (see also
+-	 * blk_pm_peek_request()).
+-	 *
+-	 * The resume hook will correct runtime PM status of the disk.
+-	 */
+-	if (scsi_is_sdev_device(dev) && pm_runtime_suspended(dev))
+-		blk_set_runtime_active(to_scsi_device(dev)->request_queue);
+-
+ 	if (fn) {
+ 		async_schedule_domain(fn, dev, &scsi_sd_pm_domain);
+ 
 
 
