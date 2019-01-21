@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2F0C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8C3C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AA4620879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7003E20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079158;
-	bh=CPcezwfmSyA5WvfAvEqwMVLj8nDqXSCoaiuWdY1IPns=;
+	s=default; t=1548079162;
+	bh=spSRsRAWG8sg17XdavLPxWEHFURDOgWAaziahICidpE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nu+LmQw7ZxbON9B06PjnIofPwxsEM+msPGI/vAmlScjQr2nO6PBRZ0SHqeXWDfLGB
-	 +LRHwnsGckoQfJJOdozV0a5zzhXf6fBZ24QnevTglAsE82HoIi2umgAZqsn5oLEeSb
-	 9HTtEb69iXiUQe3beEdsvBl8D73S0gWUOc4JstOo=
+	b=dA15OLzjKCeVSbf0rQH++xBG1CS+iNDftkonxZBoWnlzEpzE9n9FiCXoYVHy4lFaC
+	 x/4Q24qBpclpTGGOVr1NXlL3a9brxuuYdl9jccIXrfaMJn/N5FUO1tfWMxEnmInzQv
+	 RqcBnuRPU5bmIqx6Da/w9TabR29zgudnijVn8Rbs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbfAUN7Q (ORCPT
+        id S1731954AbfAUN7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:59:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45166 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:59:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732144AbfAUN7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:59:12 -0500
+        id S1731776AbfAUN7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:59:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA7CD20879;
-        Mon, 21 Jan 2019 13:59:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93A182084C;
+        Mon, 21 Jan 2019 13:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079152;
-        bh=CPcezwfmSyA5WvfAvEqwMVLj8nDqXSCoaiuWdY1IPns=;
+        s=default; t=1548079158;
+        bh=spSRsRAWG8sg17XdavLPxWEHFURDOgWAaziahICidpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xbquy5xqXuzz9BRrYzPq+Q70AtSTzPeY0b9QeKx+Xkqu2ETuCJTIj1MLgzyB5p6zp
-         /agb4NqexbGV/cCMBINCwBqeQZV0aG4ui7kKagl2WKzfZ9aVSgKRpVbfkEu6/Pl+0L
-         uEJ4VHbJhg0p2onFNp82vbYNAdRswhadfQbgtojc=
+        b=ak3kfMctKKwykJMcHIbRl/LjtZJyXo45VX9MjQJK0a2gF2nZnvOpVAodDz+nNV4IF
+         GCLjlSK4wn92+X1LeeSLHGexQj1RVb64su9p5jtpI0Jm1dJ76H82HgGt2qdiuvN/vX
+         7VMjBVMh9roFbLvtEHAsPw13T2oWcn5RlOsPbpr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com,
-        syzbot+e3132895630f957306bc@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+fbd1e5476e4c94c7b34e@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 26/99] smc: move unhash as early as possible in smc_release()
-Date:   Mon, 21 Jan 2019 14:48:18 +0100
-Message-Id: <20190121134914.893010219@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 28/99] bonding: update nest level on unlink
+Date:   Mon, 21 Jan 2019 14:48:20 +0100
+Message-Id: <20190121134914.970613365@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -69,46 +66,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 26d92e951fe0a44ee4aec157cabb65a818cc8151 ]
+[ Upstream commit 001e465f09a18857443489a57e74314a3368c805 ]
 
-In smc_release() we release smc->clcsock before unhash the smc
-sock, but a parallel smc_diag_dump() may be still reading
-smc->clcsock, therefore this could cause a use-after-free as
-reported by syzbot.
+A network device stack with multiple layers of bonding devices can
+trigger a false positive lockdep warning. Adding lockdep nest levels
+fixes this. Update the level on both enslave and unlink, to avoid the
+following series of events ..
 
-Reported-and-tested-by: syzbot+fbd1e5476e4c94c7b34e@syzkaller.appspotmail.com
-Fixes: 51f1de79ad8e ("net/smc: replace sock_put worker by socket refcounting")
-Cc: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
-Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
+    ip netns add test
+    ip netns exec test bash
+    ip link set dev lo addr 00:11:22:33:44:55
+    ip link set dev lo down
+
+    ip link add dev bond1 type bond
+    ip link add dev bond2 type bond
+
+    ip link set dev lo master bond1
+    ip link set dev bond1 master bond2
+
+    ip link set dev bond1 nomaster
+    ip link set dev bond2 master bond1
+
+.. from still generating a splat:
+
+    [  193.652127] ======================================================
+    [  193.658231] WARNING: possible circular locking dependency detected
+    [  193.664350] 4.20.0 #8 Not tainted
+    [  193.668310] ------------------------------------------------------
+    [  193.674417] ip/15577 is trying to acquire lock:
+    [  193.678897] 00000000a40e3b69 (&(&bond->stats_lock)->rlock#3/3){+.+.}, at: bond_get_stats+0x58/0x290
+    [  193.687851]
+    	       but task is already holding lock:
+    [  193.693625] 00000000807b9d9f (&(&bond->stats_lock)->rlock#2/2){+.+.}, at: bond_get_stats+0x58/0x290
+
+    [..]
+
+    [  193.851092]        lock_acquire+0xa7/0x190
+    [  193.855138]        _raw_spin_lock_nested+0x2d/0x40
+    [  193.859878]        bond_get_stats+0x58/0x290
+    [  193.864093]        dev_get_stats+0x5a/0xc0
+    [  193.868140]        bond_get_stats+0x105/0x290
+    [  193.872444]        dev_get_stats+0x5a/0xc0
+    [  193.876493]        rtnl_fill_stats+0x40/0x130
+    [  193.880797]        rtnl_fill_ifinfo+0x6c5/0xdc0
+    [  193.885271]        rtmsg_ifinfo_build_skb+0x86/0xe0
+    [  193.890091]        rtnetlink_event+0x5b/0xa0
+    [  193.894320]        raw_notifier_call_chain+0x43/0x60
+    [  193.899225]        netdev_change_features+0x50/0xa0
+    [  193.904044]        bond_compute_features.isra.46+0x1ab/0x270
+    [  193.909640]        bond_enslave+0x141d/0x15b0
+    [  193.913946]        do_set_master+0x89/0xa0
+    [  193.918016]        do_setlink+0x37c/0xda0
+    [  193.921980]        __rtnl_newlink+0x499/0x890
+    [  193.926281]        rtnl_newlink+0x48/0x70
+    [  193.930238]        rtnetlink_rcv_msg+0x171/0x4b0
+    [  193.934801]        netlink_rcv_skb+0xd1/0x110
+    [  193.939103]        rtnetlink_rcv+0x15/0x20
+    [  193.943151]        netlink_unicast+0x3b5/0x520
+    [  193.947544]        netlink_sendmsg+0x2fd/0x3f0
+    [  193.951942]        sock_sendmsg+0x38/0x50
+    [  193.955899]        ___sys_sendmsg+0x2ba/0x2d0
+    [  193.960205]        __x64_sys_sendmsg+0xad/0x100
+    [  193.964687]        do_syscall_64+0x5a/0x460
+    [  193.968823]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: 7e2556e40026 ("bonding: avoid lockdep confusion in bond_get_stats()")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/smc/af_smc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/bonding/bond_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -144,6 +144,9 @@ static int smc_release(struct socket *so
- 		sock_set_flag(sk, SOCK_DEAD);
- 		sk->sk_shutdown |= SHUTDOWN_MASK;
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1947,6 +1947,9 @@ static int __bond_release_one(struct net
+ 	if (!bond_has_slaves(bond)) {
+ 		bond_set_carrier(bond);
+ 		eth_hw_addr_random(bond_dev);
++		bond->nest_level = SINGLE_DEPTH_NESTING;
++	} else {
++		bond->nest_level = dev_get_nest_level(bond_dev) + 1;
  	}
-+
-+	sk->sk_prot->unhash(sk);
-+
- 	if (smc->clcsock) {
- 		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
- 			/* wake up clcsock accept */
-@@ -168,7 +171,6 @@ static int smc_release(struct socket *so
- 		smc_conn_free(&smc->conn);
- 	release_sock(sk);
  
--	sk->sk_prot->unhash(sk);
- 	sock_put(sk); /* final sock_put */
- out:
- 	return rc;
+ 	unblock_netpoll_tx();
 
 
