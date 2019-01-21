@@ -2,221 +2,151 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2284C2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ADBC2F441
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6173521019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:29:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E15521019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:30:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lEq3HqOn"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IgcA+zu/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730457AbfAUQ3r (ORCPT
+        id S1730565AbfAUQaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 11:29:47 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54791 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbfAUQ3r (ORCPT
+        Mon, 21 Jan 2019 11:30:13 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39956 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729580AbfAUQaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 11:29:47 -0500
-Received: by mail-it1-f196.google.com with SMTP id i145so17161230ita.4
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 08:29:46 -0800 (PST)
+        Mon, 21 Jan 2019 11:30:12 -0500
+Received: by mail-io1-f65.google.com with SMTP id k2so16828089iog.7
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 08:30:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BPMrAw0VYjVeTLtgHSgwvU76nQdwPVRJhRGf5cyWYnU=;
-        b=lEq3HqOnCIHKAhCVvOWHBUAqlTInb5n29l1d0Lczqtee0bVpT5F1JleSKkAUTvbizy
-         z48G1YoRGFz2AzapKtcJGnKVCPmpcvyaacvtYpbnE6X25w0BKp6GNt5dRcOT3E1UTtd0
-         BbRKJHsR3x32AZsIOqZMvBNDoaAlX36GIvgTfu+haqDLz9MUlFYMzrDlrLIdwBJaFvwt
-         N7HISpeC9PJsMSKh1xrmStQ1RtFN7kuEXPr8XKL8s+8heeaYQu6CGY5Y0G5MhA6fXBSw
-         ces+zCN9O3meFto6XFUSo89W2KjtGPhxHvUieasEZNbGfZRsUfZc0+4c3Tc8R0+0ShjE
-         IqPA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eADEIz0iwznb0TSre1LvJOXMgvWd8rOdZ80eJVALlOs=;
+        b=IgcA+zu/3zhC1gBAyy/mGl+AwjUvef+boE7Zb66yOFc2qibmGG0Jh5Z74HkztTdSgB
+         jZasnWUu68LFhIBBQvxmkQgpvppzuKDU+u7crf4NfP1kjSK+PUB1MInPaxsqCRBF7MYP
+         SCLHk/2buYs5nhGNikNiUQcrczAJtZqnnKZCg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BPMrAw0VYjVeTLtgHSgwvU76nQdwPVRJhRGf5cyWYnU=;
-        b=YmI0hoXqLr/pznXPL2KawvXjDe7tpYqwtW3GK6a3boGAyU8RMe2kd5eYFfU0SsNcPq
-         ih5q8zPW0ej8vHv4JOB32yklQnT6W8KMnU3WHiLvet8uHM1nBhPiHX56kynHjOaF1x+d
-         EhTGGvJ+xoExmexZf2T2Crzc2CR4REXWr1+E7gJ9wg3wI1dhHZNk0zjqJlX5WsuIlYKH
-         iYz7pUbedDxD9p42TQYaVy/meTi/lIbP4rApvJwnPhY2Ex62amCZxhDAG9/wf8Zdz4QL
-         JtbDsVGTPZfw9nqcT3PHVwX0uxaC7tzIQbA+5baVBC4js6T+qlyt8FUBl9SDxZv85CUY
-         KZ8g==
-X-Gm-Message-State: AJcUukdNr1/NWeT/UBwcboDes8kpHQFgi8iy0qLmnM8muSwBB3FB/BX8
-        bPTRQ3YMUIawCydFUsngCX8=
-X-Google-Smtp-Source: AHgI3IaN9nZ/Wki8LeRLRZOZd/MI5pBRGgv9ByCJA8CXsJ949ib1uABImJGi7vNU+TTLYUeazvTvww==
-X-Received: by 2002:a24:1a90:: with SMTP id 138mr42619iti.171.1548088185910;
-        Mon, 21 Jan 2019 08:29:45 -0800 (PST)
-Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
-        by smtp.gmail.com with ESMTPSA id h139sm6525077ith.24.2019.01.21.08.29.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 08:29:45 -0800 (PST)
-Date:   Mon, 21 Jan 2019 11:29:38 -0500
-From:   Kimberly Brown <kimbrownkd@gmail.com>
-To:     Stephen Hemminger <stephen@networkplumber.org>
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] Drivers: hv: vmbus: Expose counters for interrupts
- and full conditions
-Message-ID: <20190121162938.GA3544@ubu-Virtual-Machine>
-References: <20190105043518.GA4072@ubu-Virtual-Machine>
- <20190117043759.GA3395@ubu-Virtual-Machine>
- <KU1P153MB0166DA6E76D0080C4AD43E01BF830@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
- <20190117091019.1fb0c186@hermes.lan>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eADEIz0iwznb0TSre1LvJOXMgvWd8rOdZ80eJVALlOs=;
+        b=N2JKhJgAWPUIs4pZkRrG9l2E7nYQXuzJwtfaimRziIdqqqc5Bbkb37KZIMRktAVZ3X
+         wPU7DIf6gnqNRRhOqFOKmWGNG9zsetnJNz7nfRigxWH9XN8CrUWye7uiC1xDmyVX3IOt
+         KIUrmoh6MkndAYCJyCzmjNWxd/bHYe372QegMUWru79TQHZHydM4A+YG2sU8jEdUmKn7
+         sGuWnLgyFNwg+Ss/1kkP6/pzkhK6faDOrVOHVxWoBnKXrpp2VgCefPjdrHCcLUow468H
+         2qcC0IHTsPOAAnHl65fl1tOE3NWYjDMTJtpo5GkNqpHXdLjTSyscCQh0SO9a6k+SYOH9
+         BX0Q==
+X-Gm-Message-State: AJcUukeHAZ6H4VqJRJ6NoGaWyIsVUOPk7Og/bUC/p2YCsZVdp0PYcbkb
+        7jkzsG3VGOf/8DzEyg9qp5NGBlA3TtkPIi3eXNP9pQ==
+X-Google-Smtp-Source: ALg8bN6Rwa3oE2P3hjVFSiGUF+4UztXQttKfRRYjOU/YoQyoCIqQxA/Gv1+ltfJOi0INVe0/3LG6Rsu6cJl+GSieOmc=
+X-Received: by 2002:a6b:5d01:: with SMTP id r1mr16148051iob.170.1548088211443;
+ Mon, 21 Jan 2019 08:30:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117091019.1fb0c186@hermes.lan>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
+ <20190121150734.GA30582@infradead.org> <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
+ <20190121155908.GA8084@infradead.org> <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
+ <20190121162238.GA17651@infradead.org>
+In-Reply-To: <20190121162238.GA17651@infradead.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 21 Jan 2019 17:30:00 +0100
+Message-ID: <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
+ devices on non-x86
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org,
+        Christian Koenig <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        Michel Daenzer <michel.daenzer@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Will Deacon <will.deacon@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 09:11:03AM -0800, Stephen Hemminger wrote:
-> 
-> 
-> > +static ssize_t channel_intr_in_full_show(const struct vmbus_channel
-> > *channel,
-> > +					 char *buf)
-> > +{
-> > +	return sprintf(buf, "%llu\n", channel->intr_in_full);
-> > +}
-> 
-> 
-> intr_in_full is u64, which is not the same as unsigned long long.
-> to be correct you need a cast here.
+On Mon, 21 Jan 2019 at 17:22, Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Mon, Jan 21, 2019 at 05:14:37PM +0100, Ard Biesheuvel wrote:
+> > > I'll add big fat comments.  But the fact that nothing is exported
+> > > there should be a fairly big hint.
+> > >
+> >
+> > I don't follow. How do other header files 'export' things in a way
+> > that this header doesn't?
+>
+> Well, I'll add comments to make it more obvious..
+>
+> > As far as I can tell, these drivers allocate DMA'able memory [in
+> > ttm_tt_populate()] and subsequently create their own CPU mappings for
+> > it, assuming that
+> > a) the default is cache coherent, so vmap()ing those pages with
+> > cacheable attributes works, and
+>
+> Yikes.  vmaping with different attributes is generally prone to
+> create problems on a lot of architectures.
 >
 
-Thanks for the feedback. I'll fix this issue in all four of the "_show"
-functions that are added in this patch.
+Indeed. But if your starting point is the assumption that DMA is
+always cache coherent, those vmap() attributes are never different.
 
-
-> > > diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-> > > index dcb6977afce9..7e5239123276 100644
-> > > --- a/include/linux/hyperv.h
-> > > +++ b/include/linux/hyperv.h
-> > > @@ -751,6 +751,27 @@ struct vmbus_channel {
-> > >  	u64	interrupts;	/* Host to Guest interrupts */
-> > >  	u64	sig_events;	/* Guest to Host events */
-> > > 
-> > > +	/* Interrupt counts for 2 types of Guest to Host interrupts */
-> > > +	u64 intr_in_full;	/* in ring buffer, full to not full */
-> > > +	u64 intr_out_empty;	/* out ring buffer, empty to not empty */
-> > > +
-> > > +	/*
-> > > +	 * The total number of write operations that encountered a full
-> > > +	 * outbound ring buffer.
-> > > +	 */
-> > > +	u64 out_full_total;
-> > > +	/*
-> > > +	 * The number of write operations that were the first to encounter a
-> > > +	 * full outbound ring buffer.
-> > > +	 */
-> > > +	u64 out_full_first;
-> 
-> Adding more fields changes cache layout which can cause
-> additional cache miss in the hot path.  
+> > b) telling the GPU to use NoSnoop attributes makes the accesses it
+> > performs coherent with non-cacheable CPU mappings of those physical
+> > pages
+> >
+> > Since the latter is not true for many arm64 systems, I need this patch
+> > to get a working system.
+>
+> Do we know that this actually works anywhere but x86?
 >
 
-Good point. I think that the "intr_out_empty" field is in a good
-location, but the "intr_in_full", "out_full_first", and "out_full_total"
-fields could be moved to the end of the struct. These variables are used
-only when ring buffer full conditions occur. Ring buffer full conditions
-shouldn't be encountered often, and, if they are, they're a signal that
-changes should probably be made to prevent them.
+In theory, it could work on arm64 systems with stage2-only SMMUs and
+correctly configured PCIe RCs that set the right AMBA attributes for
+inbound transactions with the NoSnoop attributes set.
 
-If you have any other suggestions for this, please let me know.
+Unfortunately, it seems that the current SMMU ARM code will clobber
+those AMBA attributes when it uses stage1 mappings, since it forces
+the memory attributes to WBWA for cache coherent devices.
 
+So, as I pointed out in the commit log, the main difference between
+x86 and other arches it that it can easily tolerate when NoSnoop is
+non-functional.
 
-> > > +	/*
-> > > +	 * Indicates that a full outbound ring buffer was encountered. The flag
-> > > +	 * is set to true when a full outbound ring buffer is encountered and
-> > > +	 * set to false when a write to the outbound ring buffer is completed.
-> > > +	 */
-> > > +	bool out_full_flag;
-> 
-> Discussion on kernel mailing list. Recommends against putting bool
-> in structures since that pads to full sizeof(int).  Could this be
-> part of a bitfield?
-> 
-
-There are currently 4 other bool variables in this struct. Maybe some or
-all of the bool variables could be placed adjacent to each other and
-changed into bitfields. I'll need to look into this.
-
-
-> > >  	/* Channel callback's invoked in softirq context */
-> > >  	struct tasklet_struct callback_event;
-> > >  	void (*onchannel_callback)(void *context);
-> > > @@ -936,6 +957,23 @@ static inline void *get_per_channel_state(struct
-> > > vmbus_channel *c)
-> > >  static inline void set_channel_pending_send_size(struct vmbus_channel *c,
-> > >  						 u32 size)
-> > >  {
-> > > +	unsigned long flags;
-> > > +
-> > > +	spin_lock_irqsave(&c->outbound.ring_lock, flags);
-> > > +
-> > > +	if (size) {
-> > > +		++c->out_full_total;
-> > > +
-> > > +		if (!c->out_full_flag) {
-> > > +			++c->out_full_first;
-> > > +			c->out_full_flag = true;
-> > > +		}
-> > > +	} else {
-> > > +		c->out_full_flag = false;
-> > > +	}
-> > > +
-> > > +	spin_unlock_irqrestore(&c->outbound.ring_lock, flags);
-> 
-> If this is called often, the additional locking will impact performance.
+> In general I would call these above sequence rather bogus and would
+> prefer we could get rid of such antipatterns in the kernel and just use
+> dma_alloc_attrs with DMA_ATTR_WRITECOMBINE if we want writecombine
+> semantics.
 >
 
-In hv_sock, each call of "hvs_stream_has_space()" results in a call to
-"channel_set_pending_send_size()", so this could be a concern. I'll work
-on addressing this issue.
+Agreed.
 
+> Until that happens we should just change the driver ifdefs to default
+> the hacks to off and only enable them on setups where we 100%
+> positively know that they actually work.  And document that fact
+> in big fat comments.
 
-> > >  	c->outbound.ring_buffer->pending_send_sz = size;
-> > >  }
-> > > 
-> 
-> Could I propose another alternative.
-> 
-> It might be more useful to count the guest to host interaction events
-> rather than the ring buffer.
-> 
-> For example the number of calls to:
-> 	vmbus_set_event which means host exit call
-> 	vmbus_setevent fastpath using sync_set_bit
-> 	calls to rinbuffer_write that returned -EAGAIN
-> 
-> These would require less locking, reuse existing code paths
-> and not require additional state.
-> 
-
-I'm not sure that this approach would provide the data that we're
-looking for. For example, we're interested in evaluating how often ring
-buffer write operations encounter full conditions. For this, we need to
-know how many interaction events were caused by the ring buffer being
-full. Counting the number of calls to "vmbus_set_event()" and
-"vmbus_setevent()" wouldn't allow us to determine what caused the events.
-
-For counting the full conditions, the number of calls to
-"ring_buffer_write()" that returned -EAGAIN isn't sufficient because
-hv_sock doesn't use the -EAGAIN path to determine that the ring buffer is
-full. Therefore, we need to count the number of full conditions in both
-"ring_buffer_write()" and "set_channel_pending_send_size()".
-
+Well, as I mentioned in my commit log as well, if we default to off
+unless CONFIG_X86, we may break working setups on MIPS and Power where
+the device is in fact non-cache coherent, and relies on this
+'optimization' to get things working. The same could be true for
+non-coherent ARM systems, hence my approach to disable this hack for
+cache coherent devices on non-X86 only.
