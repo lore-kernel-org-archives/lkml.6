@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B004C2F3D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6BDC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B19F2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FBF321721
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:07:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079653;
-	bh=fTHtBozCz//Kn43bqWyf4ntn0BA8U1bAq0Rj4guMi54=;
+	s=default; t=1548079667;
+	bh=wL86xlASy9Gn8LwvMPz4tLpbEAjFTPh8SmI/dC1KvE8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fhfEVSEkYjAEJNuFUPHLVWCpH9fmNrjtABn4Vr5U7RJUlwjmXQkmVbGy9ZOU6OwP6
-	 QFAYgHdIKamNlxUKKY2XVcqWMW15o8OO3FLycWVfdjNBMxxY2LsG9buJs9+5mGnaQd
-	 6BbogE0BxeIaKzglZnz8pWynNXoWtHhp5QIFHVe4=
+	b=F15CW84DrHqY/MbRUUJtAnmKf5+z/GNvrS1DKZC7iLqJJSdE23Mbfuo3ZuCE+gpXC
+	 I8xVTBOdXos1xqOgGHMZZ1IjsiIVYWz/OpWUlS9A9Bivws3mFcfEn6ekYr7ihgKIgl
+	 0O5QwDnr6Q4dtntanfMzvmGrLgPnIZeFIfze73Ec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732237AbfAUN7n (ORCPT
+        id S1732176AbfAUN7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:59:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45764 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:59:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731299AbfAUN7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:59:40 -0500
+        id S1731776AbfAUN7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:59:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7591520879;
-        Mon, 21 Jan 2019 13:59:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E85442084C;
+        Mon, 21 Jan 2019 13:59:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079178;
-        bh=fTHtBozCz//Kn43bqWyf4ntn0BA8U1bAq0Rj4guMi54=;
+        s=default; t=1548079161;
+        bh=wL86xlASy9Gn8LwvMPz4tLpbEAjFTPh8SmI/dC1KvE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vYFXuhBSygepwV93dWy5ZSPitb6zcTaCjdMQD2+0yJEDumPPzSxNqrDJbGVJi1+L3
-         snENqdoXB8uLWoPQ7SAkhNmxxQwJsR+G2UvwXy0XS52v9r0Jg3fv5k3o1ciYmidBq+
-         wXNAi6Mz3MqCmpUpsy7t+TI7vik+7JJh3xVx/f9s=
+        b=1LHNHujwTSTiw2xnUpm7rFRBRjot3PE6S7IPgPMulNrEcDQf679VLI/uAYmkBEWdl
+         TfJo5O+sM3RZwnM5WS6w9M7xpCAqPqvZvpTqibTJOidqNUQMsoY/t+C2rGE4lUCVEX
+         eSVBFPG4HxSEYvXc/nF10lWjFA+4MvfODmB3sEIg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 34/99] crypto: ccree - convert to use crypto_authenc_extractkeys()
-Date:   Mon, 21 Jan 2019 14:48:26 +0100
-Message-Id: <20190121134915.194108703@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 29/99] ip: on queued skb use skb_header_pointer instead of pskb_may_pull
+Date:   Mon, 21 Jan 2019 14:48:21 +0100
+Message-Id: <20190121134915.009484349@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -65,107 +67,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit dc95b5350a8f07d73d6bde3a79ef87289698451d upstream.
+[ Upstream commit 4a06fa67c4da20148803525151845276cdb995c1 ]
 
-Convert the ccree crypto driver to use crypto_authenc_extractkeys() so
-that it picks up the fix for broken validation of rtattr::rta_len.
+Commit 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call
+pskb_may_pull") avoided a read beyond the end of the skb linear
+segment by calling pskb_may_pull.
 
-Fixes: ff27e85a85bb ("crypto: ccree - add AEAD support")
-Cc: <stable@vger.kernel.org> # v4.17+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+That function can trigger a BUG_ON in pskb_expand_head if the skb is
+shared, which it is when when peeking. It can also return ENOMEM.
+
+Avoid both by switching to safer skb_header_pointer.
+
+Fixes: 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/crypto/ccree/cc_aead.c |   40 +++++++++++++++++++---------------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
+ net/ipv4/ip_sockglue.c |   12 +++++-------
+ net/ipv6/datagram.c    |   10 ++++------
+ 2 files changed, 9 insertions(+), 13 deletions(-)
 
---- a/drivers/crypto/ccree/cc_aead.c
-+++ b/drivers/crypto/ccree/cc_aead.c
-@@ -540,13 +540,12 @@ static int cc_aead_setkey(struct crypto_
- 			  unsigned int keylen)
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -148,19 +148,17 @@ static void ip_cmsg_recv_security(struct
+ 
+ static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
  {
- 	struct cc_aead_ctx *ctx = crypto_aead_ctx(tfm);
--	struct rtattr *rta = (struct rtattr *)key;
- 	struct cc_crypto_req cc_req = {};
--	struct crypto_authenc_key_param *param;
- 	struct cc_hw_desc desc[MAX_AEAD_SETKEY_SEQ];
--	int rc = -EINVAL;
- 	unsigned int seq_len = 0;
- 	struct device *dev = drvdata_to_dev(ctx->drvdata);
-+	const u8 *enckey, *authkey;
-+	int rc;
++	__be16 _ports[2], *ports;
+ 	struct sockaddr_in sin;
+-	__be16 *ports;
+-	int end;
+-
+-	end = skb_transport_offset(skb) + 4;
+-	if (end > 0 && !pskb_may_pull(skb, end))
+-		return;
  
- 	dev_dbg(dev, "Setting key in context @%p for %s. key=%p keylen=%u\n",
- 		ctx, crypto_tfm_alg_name(crypto_aead_tfm(tfm)), key, keylen);
-@@ -554,35 +553,33 @@ static int cc_aead_setkey(struct crypto_
- 	/* STAT_PHASE_0: Init and sanity checks */
+ 	/* All current transport protocols have the port numbers in the
+ 	 * first four bytes of the transport header and this function is
+ 	 * written with this assumption in mind.
+ 	 */
+-	ports = (__be16 *)skb_transport_header(skb);
++	ports = skb_header_pointer(skb, skb_transport_offset(skb),
++				   sizeof(_ports), &_ports);
++	if (!ports)
++		return;
  
- 	if (ctx->auth_mode != DRV_HASH_NULL) { /* authenc() alg. */
--		if (!RTA_OK(rta, keylen))
--			goto badkey;
--		if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
--			goto badkey;
--		if (RTA_PAYLOAD(rta) < sizeof(*param))
--			goto badkey;
--		param = RTA_DATA(rta);
--		ctx->enc_keylen = be32_to_cpu(param->enckeylen);
--		key += RTA_ALIGN(rta->rta_len);
--		keylen -= RTA_ALIGN(rta->rta_len);
--		if (keylen < ctx->enc_keylen)
-+		struct crypto_authenc_keys keys;
-+
-+		rc = crypto_authenc_extractkeys(&keys, key, keylen);
-+		if (rc)
- 			goto badkey;
--		ctx->auth_keylen = keylen - ctx->enc_keylen;
-+		enckey = keys.enckey;
-+		authkey = keys.authkey;
-+		ctx->enc_keylen = keys.enckeylen;
-+		ctx->auth_keylen = keys.authkeylen;
+ 	sin.sin_family = AF_INET;
+ 	sin.sin_addr.s_addr = ip_hdr(skb)->daddr;
+--- a/net/ipv6/datagram.c
++++ b/net/ipv6/datagram.c
+@@ -701,17 +701,15 @@ void ip6_datagram_recv_specific_ctl(stru
+ 	}
+ 	if (np->rxopt.bits.rxorigdstaddr) {
+ 		struct sockaddr_in6 sin6;
+-		__be16 *ports;
+-		int end;
++		__be16 _ports[2], *ports;
  
- 		if (ctx->cipher_mode == DRV_CIPHER_CTR) {
- 			/* the nonce is stored in bytes at end of key */
-+			rc = -EINVAL;
- 			if (ctx->enc_keylen <
- 			    (AES_MIN_KEY_SIZE + CTR_RFC3686_NONCE_SIZE))
- 				goto badkey;
- 			/* Copy nonce from last 4 bytes in CTR key to
- 			 *  first 4 bytes in CTR IV
+-		end = skb_transport_offset(skb) + 4;
+-		if (end <= 0 || pskb_may_pull(skb, end)) {
++		ports = skb_header_pointer(skb, skb_transport_offset(skb),
++					   sizeof(_ports), &_ports);
++		if (ports) {
+ 			/* All current transport protocols have the port numbers in the
+ 			 * first four bytes of the transport header and this function is
+ 			 * written with this assumption in mind.
  			 */
--			memcpy(ctx->ctr_nonce, key + ctx->auth_keylen +
--			       ctx->enc_keylen - CTR_RFC3686_NONCE_SIZE,
--			       CTR_RFC3686_NONCE_SIZE);
-+			memcpy(ctx->ctr_nonce, enckey + ctx->enc_keylen -
-+			       CTR_RFC3686_NONCE_SIZE, CTR_RFC3686_NONCE_SIZE);
- 			/* Set CTR key size */
- 			ctx->enc_keylen -= CTR_RFC3686_NONCE_SIZE;
- 		}
- 	} else { /* non-authenc - has just one key */
-+		enckey = key;
-+		authkey = NULL;
- 		ctx->enc_keylen = keylen;
- 		ctx->auth_keylen = 0;
- 	}
-@@ -594,13 +591,14 @@ static int cc_aead_setkey(struct crypto_
- 	/* STAT_PHASE_1: Copy key to ctx */
- 
- 	/* Get key material */
--	memcpy(ctx->enckey, key + ctx->auth_keylen, ctx->enc_keylen);
-+	memcpy(ctx->enckey, enckey, ctx->enc_keylen);
- 	if (ctx->enc_keylen == 24)
- 		memset(ctx->enckey + 24, 0, CC_AES_KEY_SIZE_MAX - 24);
- 	if (ctx->auth_mode == DRV_HASH_XCBC_MAC) {
--		memcpy(ctx->auth_state.xcbc.xcbc_keys, key, ctx->auth_keylen);
-+		memcpy(ctx->auth_state.xcbc.xcbc_keys, authkey,
-+		       ctx->auth_keylen);
- 	} else if (ctx->auth_mode != DRV_HASH_NULL) { /* HMAC */
--		rc = cc_get_plain_hmac_key(tfm, key, ctx->auth_keylen);
-+		rc = cc_get_plain_hmac_key(tfm, authkey, ctx->auth_keylen);
- 		if (rc)
- 			goto badkey;
- 	}
+-			ports = (__be16 *)skb_transport_header(skb);
+-
+ 			sin6.sin6_family = AF_INET6;
+ 			sin6.sin6_addr = ipv6_hdr(skb)->daddr;
+ 			sin6.sin6_port = ports[1];
 
 
