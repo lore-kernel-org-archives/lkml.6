@@ -6,59 +6,62 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E78C37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E54C3712F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75B9220861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38A1020861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:30:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SyFvu6eT"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MRFxsVSt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbfAUV3v (ORCPT
+        id S1728014AbfAUVac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:29:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55128 "EHLO
+        Mon, 21 Jan 2019 16:30:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55174 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbfAUV3v (ORCPT
+        with ESMTP id S1727605AbfAUVac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 16:29:51 -0500
+        Mon, 21 Jan 2019 16:30:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9iIaPQrmUoxImEoqMmApMU/TQ6QplGJaZRBlEZeaw1w=; b=SyFvu6eTFI7hrB2JROBDfean3
-        /qfWXZFG/pQJrOObQr8Mf4HsLPMOqO26YjxB0kjWE+Nw4u2EwC/oqZU7HvtLjcNmXVFsGSqu70c2q
-        HGDDdLAORY80a5uz9TimVUYwWtkyU4hoBRG0SI9J0DiC78p1P49KZMZvLGix7BcDwYoNQhxQR+2qP
-        Q9oGTGwXbNiFSJIAoGjrvclcGkrODPIObiBKgy40Fgr3nBhKXGd1rVooJNtfG/hLcawW+911JcVWV
-        dBHxFJxKEtKP3DsZNEe5r94uGKGFL1fF5XiBPhz28dy1pJR+gYa9yt359BIV/dd3twYqZEnrsmJU8
-        cLw4yoyDA==;
+         bh=IDcb7s4cNraG/2a1cXf3u05xgct90adkEl26XoaC8RY=; b=MRFxsVStKsekj4UYcs0XPLSpx
+        bSj7Ak2pDhMBrwVMo5FXRWO6rvWvKdTuzFTNnhR4ez40SnpfDuY0jmU5zztKhBVfjtWbVvEiYY4g0
+        RUvOgGtt8ZPjtJrVSkgvJOKe9En8oXFp4OlIiES6R8cAfSeigME/YYLvFChNqYD+Y4r2YytEdTYqT
+        XpB0UxG1qjvpQrWER4N5v6SfzqTz1jx1IPMjiorDIQoDewUH4bJli/Cc6S2q8OQOWoPnOx3Xd2ryt
+        g5Q6MJeT1NBICzaN5m+6TwRfV2aMMPUY4hQVFLz2YkDJ/lA+aQJnhQNwa/aJc9rRaubLqfegpLzAX
+        ArZ+TudDQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glh8d-0007Si-I2; Mon, 21 Jan 2019 21:29:47 +0000
-Date:   Mon, 21 Jan 2019 13:29:47 -0800
+        id 1glh9I-0000Ls-Lu; Mon, 21 Jan 2019 21:30:28 +0000
+Date:   Mon, 21 Jan 2019 13:30:28 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Liam Mark <lmark@codeaurora.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+Cc:     "Andrew F. Davis" <afd@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
         Laura Abbott <labbott@redhat.com>, sumit.semwal@linaro.org,
         arve@android.com, tkjos@android.com, maco@android.com,
         joel@joelfernandes.org, christian@brauner.io,
         devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
         linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        afd@ti.com, john.stultz@linaro.org
+        john.stultz@linaro.org
 Subject: Re: [PATCH 3/4] dma-buf: add support for mapping with dma mapping
  attributes
-Message-ID: <20190121212947.GA28620@infradead.org>
+Message-ID: <20190121213028.GB28620@infradead.org>
 References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
  <1547836667-13695-4-git-send-email-lmark@codeaurora.org>
  <20190119102527.GA17723@infradead.org>
  <7ae73c39-9049-bcf6-775f-b0817ba0ec5f@redhat.com>
  <20190121083046.GD12420@infradead.org>
  <alpine.DEB.2.10.1901211142560.9631@lmark-linux.qualcomm.com>
+ <0ed7875f-15e9-184f-5b99-9a53df7c8d14@ti.com>
+ <alpine.DEB.2.10.1901211214570.11004@lmark-linux.qualcomm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.10.1901211142560.9631@lmark-linux.qualcomm.com>
+In-Reply-To: <alpine.DEB.2.10.1901211214570.11004@lmark-linux.qualcomm.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,13 +69,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:44:10AM -0800, Liam Mark wrote:
-> The main use case is for allowing clients to pass in 
-> DMA_ATTR_SKIP_CPU_SYNC in order to skip the default cache maintenance 
-> which happens in dma_buf_map_attachment and dma_buf_unmap_attachment. In 
-> ION the buffers aren't usually accessed from the CPU so this allows 
-> clients to often avoid doing unnecessary cache maintenance.
+On Mon, Jan 21, 2019 at 12:20:42PM -0800, Liam Mark wrote:
+> I have left this to clients, but if they own the buffer they can have the 
+> knowledge as to whether CPU access is needed in that use case (example for 
+> post-processing).
 
-This can't work.  The cpu can still easily speculate into this area.
-Moreover in general these operations should be cheap if the addresses
-aren't cached.
+That is an API design which the user is more likely to get wrong than
+right and thus does not pass the smell test.
+
