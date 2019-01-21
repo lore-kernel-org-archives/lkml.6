@@ -2,116 +2,209 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 342E7C31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA529C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB2221773
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:12:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=c0d3.blue header.i=@c0d3.blue header.b="KQJjYS4l"
+	by mail.kernel.org (Postfix) with ESMTP id 9341521773
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:12:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbfAUHMQ (ORCPT
+        id S1727895AbfAUHMY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:12:16 -0500
-Received: from mail.aperture-lab.de ([138.201.29.205]:41508 "EHLO
-        mail.aperture-lab.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbfAUHMN (ORCPT
+        Mon, 21 Jan 2019 02:12:24 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:43933 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727556AbfAUHMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:12:13 -0500
-From:   =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue; s=2018;
-        t=1548052003; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=sEhfWJYqA29Pz16OCpp7Wty9NiKkb3D8sgprmFvRLBk=;
-        b=KQJjYS4l0OBXklqoxJiqz7Cf8zDgzDU4DIN1K/KUkoHQ3qQUqWnlgYPo4ocBs1X6vnRI+v
-        nmszf0WQF5SqHjep7/oH9IZNCkk2sEV3hKeKPnySeg0w9gJ6wG/0EpVedd6O69+d/uoC6j
-        Y4TkcyIr/W0VmscCKnAHCbAsxxqgzQkBqDHqg2IBoNZXm24EaiV6dE9hSCcqWOWZ3F7OPd
-        wg+A7FYTkgABQBUcOOFU7tIzxZpIw8GsIfK8kuxiwRetPRfW6Ine6mMPCJo6gASeGWM9iR
-        1dsBG5NfpwJ3iD4MnkUJTcaOgglcp/atYWr2vAsrvTAH0kmAxReXsQYvRRYylw==
-To:     netdev@vger.kernel.org
-Cc:     Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        bridge@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 0/4] bridge: implement Multicast Router Discovery (RFC4286)
-Date:   Mon, 21 Jan 2019 07:26:24 +0100
-Message-Id: <20190121062628.2710-1-linus.luessing@c0d3.blue>
+        Mon, 21 Jan 2019 02:12:24 -0500
+Received: by mail-it1-f197.google.com with SMTP id 128so9844426itw.8
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:12:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=RKWG0lkPh1RDT/J5vz53cnfMPUpRyauX16PNwBznA58=;
+        b=KWUqVEEIQP+bOvnWdCuOfibsWJCnKvl3iYlEaJ6q236rEhm0UEmqDX6AP5y98r23wO
+         YzYd12gvKj+BCzMoe6zvmYWtrGueiQILjKHRhi+PgvQ6/82S7vOGoxv0POJbanNrcq8c
+         OEvvHOflKVW/5LDWRz5Dc9K+MX0GgeYFEQ5GhcH/BtfKJc6clpRYqAECD+qWBLmhK+S+
+         ivRHL9eVdj9oXvUhGtUxbU+C23qWfvRHj4z1tBdpG5/0BaYsjNQpY0ZJJxH1KW3RD0V2
+         Yp5N6woKga3YCLE0eLEmwTcs9imAVS/lKl/JSz0MCqnFviWczF9ApxJtpQePeOtxMJKz
+         nsbQ==
+X-Gm-Message-State: AJcUukeoXHDoQQGf8ZR4BY7epvEDSr6IU9Uvhfz+PM05vu8Zv5q5Zdj/
+        PYhWzWNgxXcCT39HYbsR8hhEz9Jc2a/AaPHgfdW8HI9r+rUh
+X-Google-Smtp-Source: ALg8bN7rpeMQsteiPlv5L/osvomJPscYDCa34a9qazyd2CZk3BmO/p4p7ZDlMV2H1aFcsq5zFRzq+EG5OK0iVZoFo7AnbFZkxREX
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue;
-        s=2018; t=1548052003; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=sEhfWJYqA29Pz16OCpp7Wty9NiKkb3D8sgprmFvRLBk=;
-        b=SBRm6wrIRs07nT0drDrdj3MblQ8D3GZUgRQSIMHZ+4Y+s33TkUb758FY6i9zP5z0fBf/Mu
-        x39YpsdGO2BDb6xJo/MssiHQkVgqh12puYy5FBNj0XFfmNFumdbZU9EKomuEs43vcM+ynr
-        OhY2bayaVSPM1MZeTaMMsS/acaRWdrfOR96zErqmVFCtCOIMpsTufWAyQIWnT/v7m22z6W
-        Y4R+rpPd9+ASXSxdxMxXt8L9E3BViF2IMVgRYIISptJVifFPsmY1vd14H12s3TQBBWX6ob
-        IsnvNkPS5DFblHLMz7CvAagax/FRn3dayo06XJ7ictHlFaUImCqXv8Lp3XCxWA==
-ARC-Seal: i=1; s=2018; d=c0d3.blue; t=1548052003; a=rsa-sha256; cv=none;
-        b=cBN/NRu9mt6YKTTfYMTYAwqF19gfDKbsmsTHMtxt2m8nFUvYF6qHFS1/QtkY/zUXLMlyzx
-        HKiImdsVBo8U+3YN6zortaG4DYVtWqRgJTN2LIU/OoconUYnYB9fIUA40xqZjrrolVkwI6
-        FaposmuO9+YsGQS7bWbng/MYvblM1fhXyT75AKyYwwFckMX43txGp3yDJvghAoRUfXoe7V
-        cpR9gbhfaGYAJ1dELLUrwq2ypNNDeYRtorySc5+dT7nPY32OtY6iJlUahUFHrdWvKdyeXO
-        SDG7bV3Hqxg+JPbL70rYJtlDJx/CgTO79BBVr8xjONBSRZpSFVClJhqbB7pVbg==
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
-Authentication-Results: ORIGINATING;
-        auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
+X-Received: by 2002:a24:fe42:: with SMTP id w63mr19608276ith.13.1548053103667;
+ Sun, 20 Jan 2019 22:45:03 -0800 (PST)
+Date:   Sun, 20 Jan 2019 22:45:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005676f8057ff2335f@google.com>
+Subject: KASAN: use-after-free Read in oom_kill_process
+From:   syzbot <syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, ebiederm@xmission.com, guro@fb.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com, yuzhoujian@didichuxing.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello,
 
-This patchset adds initial Multicast Router Discovery support to
-the Linux bridge (RFC4286). With MRD it is possible to detect multicast
-routers and mark bridge ports and forward multicast packets to such routers
-accordingly.
+syzbot found the following crash on:
 
-So far, multicast routers are detected via IGMP/MLD queries and PIM
-messages in the Linux bridge. As there is only one active, selected
-querier at a time RFC4541 ("Considerations for Internet Group Management
-Protocol (IGMP) and Multicast Listener Discovery (MLD) Snooping
-Switches") section 2.1.1.a) recommends snooping Multicast Router
-Advertisements as provided by MRD (RFC4286).
+HEAD commit:    47bfa6d9dc8c Merge tag 'selinux-pr-20190115' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=123af46b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8a4dffabfb4e36f9
+dashboard link: https://syzkaller.appspot.com/bug?extid=7fbbfa368521945f0e3d
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
+Unfortunately, I don't have any reproducer for this crash yet.
 
-The first two patches are refactoring some existing code which is reused
-for parsing the Multicast Router Advertisements later in the fourth
-patch. The third patch lets the bridge join the all-snoopers multicast
-address to be able to reliably receive the Multicast Router
-Advertisements.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com
 
+kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+Memory cgroup stats for /syz1: cache:28KB rss:274692KB rss_huge:190464KB  
+shmem:64KB mapped_file:0KB dirty:0KB writeback:0KB swap:0KB  
+inactive_anon:222780KB active_anon:4152KB inactive_file:0KB active_file:0KB  
+unevictable:47872KB
+oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=syz1,mems_allowed=0-1,oom_memcg=/syz1,task_memcg=/syz1,task=syz-executor1,pid=15858,uid=0
+Memory cgroup out of memory: Kill process 15858 (syz-executor1) score 1148  
+or sacrifice child
+==================================================================
+BUG: KASAN: use-after-free in oom_kill_process.cold+0x484/0x9d4  
+mm/oom_kill.c:978
+Read of size 8 at addr ffff8880595f6c40 by task syz-executor1/15817
 
-What is not implemented yet from RFC4286 yet:
+CPU: 1 PID: 15817 Comm: syz-executor1 Not tainted 5.0.0-rc2+ #29
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  oom_kill_process.cold+0x484/0x9d4 mm/oom_kill.c:978
+  out_of_memory+0x885/0x1420 mm/oom_kill.c:1133
+  mem_cgroup_out_of_memory+0x160/0x210 mm/memcontrol.c:1393
+  mem_cgroup_oom mm/memcontrol.c:1721 [inline]
+  try_charge+0xd44/0x19b0 mm/memcontrol.c:2283
+  memcg_kmem_charge_memcg+0x7c/0x130 mm/memcontrol.c:2591
+  memcg_kmem_charge+0x13b/0x340 mm/memcontrol.c:2624
+  __alloc_pages_nodemask+0x7b8/0xdc0 mm/page_alloc.c:4559
+  __alloc_pages include/linux/gfp.h:473 [inline]
+  __alloc_pages_node include/linux/gfp.h:486 [inline]
+  alloc_pages_node include/linux/gfp.h:500 [inline]
+  alloc_thread_stack_node kernel/fork.c:246 [inline]
+  dup_task_struct kernel/fork.c:849 [inline]
+  copy_process+0x847/0x8710 kernel/fork.c:1753
+  _do_fork+0x1a9/0x1170 kernel/fork.c:2227
+  __do_sys_clone kernel/fork.c:2334 [inline]
+  __se_sys_clone kernel/fork.c:2328 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2328
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457ec9
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f36f091cc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457ec9
+RDX: 9999999999999999 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 000000000073bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f36f091d6d4
+R13: 00000000004be2a0 R14: 00000000004ce760 R15: 00000000ffffffff
 
-* Sending Multicast Router Solicitations:
-  -> RFC4286: "[...] may be sent when [...] an interface is
-     (re-)initialized [or] MRD is enabled"
-* Snooping Multicast Router Terminations:
-  -> currently this only relies on our own timeouts
-* Adjusting timeouts with the values provided in the announcements
+Allocated by task 15809:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_kmalloc mm/kasan/common.c:496 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+  kasan_kmalloc mm/kasan/common.c:504 [inline]
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:411
+  kmem_cache_alloc_node+0x144/0x710 mm/slab.c:3633
+  alloc_task_struct_node kernel/fork.c:158 [inline]
+  dup_task_struct kernel/fork.c:845 [inline]
+  copy_process+0x405b/0x8710 kernel/fork.c:1753
+  _do_fork+0x1a9/0x1170 kernel/fork.c:2227
+  __do_sys_clone kernel/fork.c:2334 [inline]
+  __se_sys_clone kernel/fork.c:2328 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2328
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
+Freed by task 15817:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+  __cache_free mm/slab.c:3487 [inline]
+  kmem_cache_free+0x86/0x260 mm/slab.c:3749
+  free_task_struct kernel/fork.c:163 [inline]
+  free_task+0x170/0x1f0 kernel/fork.c:458
+  __put_task_struct+0x2e0/0x630 kernel/fork.c:731
+  put_task_struct+0x4b/0x60 include/linux/sched/task.h:98
+  oom_kill_process.cold+0x93a/0x9d4 mm/oom_kill.c:990
+  out_of_memory+0x885/0x1420 mm/oom_kill.c:1133
+  mem_cgroup_out_of_memory+0x160/0x210 mm/memcontrol.c:1393
+  mem_cgroup_oom mm/memcontrol.c:1721 [inline]
+  try_charge+0xd44/0x19b0 mm/memcontrol.c:2283
+  memcg_kmem_charge_memcg+0x7c/0x130 mm/memcontrol.c:2591
+  memcg_kmem_charge+0x13b/0x340 mm/memcontrol.c:2624
+  __alloc_pages_nodemask+0x7b8/0xdc0 mm/page_alloc.c:4559
+  __alloc_pages include/linux/gfp.h:473 [inline]
+  __alloc_pages_node include/linux/gfp.h:486 [inline]
+  alloc_pages_node include/linux/gfp.h:500 [inline]
+  alloc_thread_stack_node kernel/fork.c:246 [inline]
+  dup_task_struct kernel/fork.c:849 [inline]
+  copy_process+0x847/0x8710 kernel/fork.c:1753
+  _do_fork+0x1a9/0x1170 kernel/fork.c:2227
+  __do_sys_clone kernel/fork.c:2334 [inline]
+  __se_sys_clone kernel/fork.c:2328 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2328
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Regards, Linus
+The buggy address belongs to the object at ffff8880595f6540
+  which belongs to the cache task_struct(33:syz1) of size 6080
+The buggy address is located 1792 bytes inside of
+  6080-byte region [ffff8880595f6540, ffff8880595f7d00)
+The buggy address belongs to the page:
+page:ffffea0001657d80 count:1 mapcount:0 mapping:ffff888091f65840 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea00028b3288 ffffea0002612788 ffff888091f65840
+raw: 0000000000000000 ffff8880595f6540 0000000100000001 ffff888057fe2b00
+page dumped because: kasan: bad access detected
+page->mem_cgroup:ffff888057fe2b00
+
+Memory state around the buggy address:
+  ffff8880595f6b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880595f6b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8880595f6c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                            ^
+  ffff8880595f6c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880595f6d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+
 
 ---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changes in v2:
-
-* rebased to current net-next/master (no conflicts/changes)
-
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
