@@ -2,93 +2,82 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F48C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61076C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 418A42085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 183AF2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:42:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IVDeJR3n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbfAUJmT convert rfc822-to-8bit (ORCPT
+        id S1728136AbfAUJmd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:42:19 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:33054 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbfAUJmT (ORCPT
+        Mon, 21 Jan 2019 04:42:33 -0500
+Received: from mail-wr1-f54.google.com ([209.85.221.54]:45146 "EHLO
+        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727869AbfAUJmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:42:19 -0500
-Received: by mail-vs1-f67.google.com with SMTP id p74so12251383vsc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:42:18 -0800 (PST)
+        Mon, 21 Jan 2019 04:42:32 -0500
+Received: by mail-wr1-f54.google.com with SMTP id t6so22416241wrr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:42:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=BF1tNERhAp9Dv8KkuTpsxbYR1BCLOGcza7snJ26RIdI=;
+        b=IVDeJR3nJPmBaTkiGHcEi46XAPjGMi+RGvhh21kTad0apV5ligeyYTVDjtyfPhe4T2
+         iwcAVvbCvDptWOUjbQO5L8MCuuxgX4zDAnS++nmFhtqyMgWoJXPxhKHDsdlWLo6zlh8N
+         6pUpbLwwVFy2w4Biv2XZZQvguej0+Z8Hhqi7I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=C5ic4E2IG2SyNNDklQlj08JgbFz3wtfNUsXeIyZKwtw=;
-        b=bpfK2LVTJiLbfDuEAtKf1tSx0zpWK575hDxy37LJYSFLI7xvm7i90L+c7eGEZ7v4Av
-         9koyMuT3O1wPxa+/SYIoFNejRXHCrbbMxpuXsVu14tH/E1FjGS9H7L3PDlzdgNclr6NB
-         e/14Q/bY0JYLl1pPjyc6wG3DMqeualV2ladEw7E+HY4S76Ny4JstzBZNUcJfN7beFd+u
-         XbExDteNRMayQ6ja5mF4hHj7o34mL5MKYr8Fp2lA4OOrubr5tpMeiinYAHSPLFjTXbIY
-         Sryv2wG5vGyYg2Kyr+f03d8FvgLZOsHn8nYFjyRQJJ7UIA4z+dEkQHGer+w9u30FM1VQ
-         vLGQ==
-X-Gm-Message-State: AJcUukeuSo2OwQHkR0L6q6K1GMdfYisIIQQ6j4J778mgifY0CEDk1Oq8
-        4kargiZxiw9XZP3Bo7Bjn8cyUCriryJGatsPrX8=
-X-Google-Smtp-Source: ALg8bN47wpyETBaqqt/WMsGhl1AYmSa/cGWXj8IDpbrFX0CiqtCgV1Jz5vOeC0HMb0KQ8v8rseFcbIpHN6nbg6CJvKc=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr12020221vsp.166.1548063738277;
- Mon, 21 Jan 2019 01:42:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20190107092952.14691-1-geert@linux-m68k.org> <CAK8P3a35ZwkrE-zxRVbwvNEs4RZTuV+-eu3uRD2OaSnVnBG3EQ@mail.gmail.com>
- <CAMuHMdWG_s3Oc4DH=70CAKRCGn-bLwO+Gq2UsBd1reeqWE7_Cg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWG_s3Oc4DH=70CAKRCGn-bLwO+Gq2UsBd1reeqWE7_Cg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 10:42:06 +0100
-Message-ID: <CAMuHMdW0v5NuQ4tWZ1PCDT=ze4eSNTf0eG9mKK0SfMrgFs9wiw@mail.gmail.com>
-Subject: Re: [PATCH] m68k/atari: Avoid VLA use in atari_switches_setup()
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BF1tNERhAp9Dv8KkuTpsxbYR1BCLOGcza7snJ26RIdI=;
+        b=VRKjL+5vT32QjefI5MTGXyVAWJFkCqiKly6iepWHEXrIXilpQOBCFxWx6+8vCIUFBP
+         ThhH1MQpkHKgsGX2/hIwKGS0Ch6JA3uyntToafbSkLa41Nt8w7wbllcqgeFTwfGZw5ic
+         dtWQYIWr4d3/q1TE0gbLlvVN3se3nulqxf1TDLw0a0NhcaDj/bb299uaa6b91/Lh5x9p
+         Hpevl/tjxZabxPUFQ/mq9BXAfVjPPyBRghklA8PI6RTnmBsuF4wQG2VOir2bNVcwaMsb
+         i6qPVfctB2JMxHMMlC7qXYsjTMUPCU0Fu61YziBUDK8lmYbOd6shtM0rw7Z0gOxrAFqI
+         i1tA==
+X-Gm-Message-State: AJcUukc8FMHRpY41UWQSiJCsMHjEeEmc87m5oclYJktsWl8I+PBJBbZN
+        ZyJ03bvcHlcwqlbgzboZnIZFStB3Adk=
+X-Google-Smtp-Source: ALg8bN50LOdZCwkJtZTZHGaQHx2QAIaOi92EEQYkb/oB9MY2MkCe3f5Udmz8tMal1peWhBmjDF2Y9g==
+X-Received: by 2002:adf:e08c:: with SMTP id c12mr26068189wri.199.1548063750478;
+        Mon, 21 Jan 2019 01:42:30 -0800 (PST)
+Received: from localhost ([49.248.61.1])
+        by smtp.gmail.com with ESMTPSA id o81sm75669742wmd.10.2019.01.21.01.42.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 01:42:29 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
+        swboyd@chromium.org, Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        linux-pm@vger.kernel.org (open list:THERMAL)
+Subject: [PATCH v1 0/2] thermal: trivial fixes to error messages
+Date:   Mon, 21 Jan 2019 15:12:21 +0530
+Message-Id: <cover.1548063429.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 2:47 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Jan 8, 2019 at 2:25 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Mon, Jan 7, 2019 at 10:29 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > With gcc 7.3.0:
-> > >
-> > >     arch/m68k/atari/config.c: In function ‘atari_switches_setup’:
-> > >     arch/m68k/atari/config.c:151:2: warning: ISO C90 forbids variable length array ‘switches’ [-Wvla]
-> > >       char switches[strlen(str) + 1];
-> > >       ^~~~
-> > >
-> > > Replace the variable size by the maximum kernel command line size (512
-> > > bytes), which is an upper limit for all suboptions.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >
-> > Seems fine as long as COMMAND_LINE_SIZE never grows a lot. Some
->
-> If that ever happens, it will be caught by -Wframe-larger-than=1024.
->
-> > architectures use 1024 or 2048, but m68k currently has 256 (you write
-> > 512 here).
->
-> Thanks for noticing, will fix!
+Fix up a couple of error messages
 
-Thanks, fixed, and applied and queued for v5.1.
+Amit Kucheria (2):
+  thermal: of-thermal: Print name of device node with error
+  thermal: cpu_cooling: Clarify error message
 
-Gr{oetje,eeting}s,
-
-                        Geert
+ drivers/thermal/cpu_cooling.c | 2 +-
+ drivers/thermal/of-thermal.c  | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
