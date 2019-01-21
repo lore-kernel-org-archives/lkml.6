@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DD2C37121
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF77BC37121
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9868920989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5F2F20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:16:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbfAUUQQ (ORCPT
+        id S1728136AbfAUUPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:16:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55626 "EHLO mx1.suse.de"
+        Mon, 21 Jan 2019 15:15:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55518 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728272AbfAUUPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:15:16 -0500
+        id S1727699AbfAUUPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 15:15:13 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 511A7AFF9;
-        Mon, 21 Jan 2019 20:15:15 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 7B9C0AFF4;
+        Mon, 21 Jan 2019 20:15:12 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -33,9 +33,9 @@ Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrea Parri <andrea.parri@amarulasolutions.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v2 07/13] epoll: call ep_add_event_to_uring() from ep_poll_callback()
-Date:   Mon, 21 Jan 2019 21:14:50 +0100
-Message-Id: <20190121201456.28338-8-rpenyaev@suse.de>
+Subject: [RFC PATCH v2 01/13] epoll: move private helpers from a header to the source
+Date:   Mon, 21 Jan 2019 21:14:44 +0100
+Message-Id: <20190121201456.28338-2-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190121201456.28338-1-rpenyaev@suse.de>
 References: <20190121201456.28338-1-rpenyaev@suse.de>
@@ -47,13 +47,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each ep_poll_callback() is called when fd calls wakeup() on epfd.
-So account new event in user ring.
+Those helpers will access private eventpoll structure in future patches,
+so keep those helpers close to callers.
 
-The tricky part here is EPOLLONESHOT.  Since we are lockless we
-have to be deal with ep_poll_callbacks() called in parallel, thus
-use cmpxchg to clear public event bits and filter out concurrent
-call from another cpu.
+Nothing important here.
 
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -66,72 +63,55 @@ Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- fs/eventpoll.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ fs/eventpoll.c                 | 13 +++++++++++++
+ include/uapi/linux/eventpoll.h | 12 ------------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 26d837252ba4..1d0039b334b8 100644
+index 4a0e98d87fcc..2cc183e86a29 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -1406,6 +1406,29 @@ struct file *get_epoll_tfile_raw_ptr(struct file *file, int tfd,
- }
- #endif /* CONFIG_CHECKPOINT_RESTORE */
+@@ -466,6 +466,19 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
  
-+/**
-+ * Atomically clear public event bits and return %true if the old value has
-+ * public event bits set.
-+ */
-+static inline bool ep_clear_public_event_bits(struct epitem *epi)
+ #endif /* CONFIG_NET_RX_BUSY_POLL */
+ 
++#ifdef CONFIG_PM_SLEEP
++static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
 +{
-+	__poll_t old, flags;
-+
-+	/*
-+	 * Here we race with ourselves and with ep_modify(), which can
-+	 * change the event bits.  In order not to override events updated
-+	 * by ep_modify() we have to do cmpxchg.
-+	 */
-+
-+	old = epi->event.events;
-+	do {
-+		flags = old;
-+	} while ((old = cmpxchg(&epi->event.events, flags,
-+				flags & EP_PRIVATE_BITS)) != flags);
-+
-+	return flags & ~EP_PRIVATE_BITS;
++	if ((epev->events & EPOLLWAKEUP) && !capable(CAP_BLOCK_SUSPEND))
++		epev->events &= ~EPOLLWAKEUP;
 +}
++#else
++static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
++{
++	epev->events &= ~EPOLLWAKEUP;
++}
++#endif /* CONFIG_PM_SLEEP */
 +
  /**
-  * Adds a new entry to the tail of the list in a lockless way, i.e.
-  * multiple CPUs are allowed to call this function concurrently.
-@@ -1525,6 +1548,20 @@ static int ep_poll_callback(struct epitem *epi, __poll_t pollflags)
- 	if (pollflags && !(pollflags & epi->event.events))
- 		goto out_unlock;
+  * ep_call_nested - Perform a bound (possibly) nested call, by checking
+  *                  that the recursion limit is not exceeded, and that
+diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
+index 8a3432d0f0dc..39dfc29f0f52 100644
+--- a/include/uapi/linux/eventpoll.h
++++ b/include/uapi/linux/eventpoll.h
+@@ -79,16 +79,4 @@ struct epoll_event {
+ 	__u64 data;
+ } EPOLL_PACKED;
  
-+	if (ep_polled_by_user(ep)) {
-+		/*
-+		 * For polled descriptor from user we have to disable events on
-+		 * callback path in case of one-shot.
-+		 */
-+		if ((epi->event.events & EPOLLONESHOT) &&
-+		    !ep_clear_public_event_bits(epi))
-+			/* Race is lost, another callback has cleared events */
-+			goto out_unlock;
-+
-+		ep_add_event_to_uring(epi, pollflags);
-+		goto wakeup;
-+	}
-+
- 	/*
- 	 * If we are transferring events to userspace, we can hold no locks
- 	 * (because we're accessing user memory, and because of linux f_op->poll()
-@@ -1544,6 +1581,7 @@ static int ep_poll_callback(struct epitem *epi, __poll_t pollflags)
- 		ep_pm_stay_awake_rcu(epi);
- 	}
- 
-+wakeup:
- 	/*
- 	 * Wake up ( if active ) both the eventpoll wait list and the ->poll()
- 	 * wait list.
+-#ifdef CONFIG_PM_SLEEP
+-static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
+-{
+-	if ((epev->events & EPOLLWAKEUP) && !capable(CAP_BLOCK_SUSPEND))
+-		epev->events &= ~EPOLLWAKEUP;
+-}
+-#else
+-static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
+-{
+-	epev->events &= ~EPOLLWAKEUP;
+-}
+-#endif
+ #endif /* _UAPI_LINUX_EVENTPOLL_H */
 -- 
 2.19.1
 
