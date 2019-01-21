@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81DAC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FDAC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73CB20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A980720861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079767;
-	bh=Xd7RkH0h/qmc0mCl/9jAwcldtwdtPVJr1MTL8jwz620=;
+	s=default; t=1548079774;
+	bh=wR5w45Yb4/fud0h/RZD6NHFIn1QttTT1pZaqaUfQPDs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VjIhQJLk8r1HL3mUPeFvFZoUaVrWF4DhSJjVVwniVtibAszm6co7KbedC1orgNDYP
-	 hy0Ez+eTLtkcwVAQYWx7xrRDlBGRJVKe5NHR+mPdp3Mgih7KwaQybHRRgQLqOBPdY/
-	 nyUGFFcV/St01572svectfX9KOXdEmCkLnbvPCu4=
+	b=2fB3YmKhloEXGKQA6F+DrP4++/wrZPfxlc28/Xt3iTId+CZAE1qwDnP/QcewRPlP8
+	 YT0AVy6/8Q5zSSKXcpQcWa3skoaH1yca3cR/9RWzXxanYntIMi+M99uy5IgsAYkimD
+	 5Iv7EeG3gTkTShyO8VXkxJro5jd03csB170ggtWA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731288AbfAUOJ0 (ORCPT
+        id S1731709AbfAUOJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:09:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39848 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:09:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731679AbfAUNzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:55:16 -0500
+        id S1730551AbfAUNzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:55:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CFB32084C;
-        Mon, 21 Jan 2019 13:55:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F5E520861;
+        Mon, 21 Jan 2019 13:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078916;
-        bh=Xd7RkH0h/qmc0mCl/9jAwcldtwdtPVJr1MTL8jwz620=;
+        s=default; t=1548078912;
+        bh=wR5w45Yb4/fud0h/RZD6NHFIn1QttTT1pZaqaUfQPDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mufkVxFN9L4u0nNU/weMI516gqdgTYANUGJuOHHNdhroLlgpnKsAifHV5elkpE3iE
-         224qxMjKSYY36tSfgrPeiUsBUWSWbNJH/IYZdbsaL3GJl7IqaU/u38XR8HeNgkeo/3
-         BBtpxVyOp6CH5qYmhupPEY8LHp+ASIZCJozXIFZc=
+        b=DWOKMncHA38jq0HiaNOMCyL9cx4M7tvvwY2mCeLhJuTisQiBnqALz6dn6cUvyN5h3
+         9dtsvas5twS3xoEKLZcFHkPz5gbnLkbhJwPQigCZW1XC1RTOJepL6hqCSgVdw6nnXs
+         PqwXRaZ+eb5GufkAn7rulDm1iccgy3+aWPqna360=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.9 28/51] mfd: tps6586x: Handle interrupts on suspend
-Date:   Mon, 21 Jan 2019 14:44:24 +0100
-Message-Id: <20190121122456.215402890@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.9 27/51] mips: fix n32 compat_ipc_parse_version
+Date:   Mon, 21 Jan 2019 14:44:23 +0100
+Message-Id: <20190121122456.105302155@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -67,94 +65,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonathan Hunter <jonathanh@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit ac4ca4b9f4623ba5e1ea7a582f286567c611e027 upstream.
+commit 5a9372f751b5350e0ce3d2ee91832f1feae2c2e5 upstream.
 
-The tps6586x driver creates an irqchip that is used by its various child
-devices for managing interrupts. The tps6586x-rtc device is one of its
-children that uses the tps6586x irqchip. When using the tps6586x-rtc as
-a wake-up device from suspend, the following is seen:
+While reading through the sysvipc implementation, I noticed that the n32
+semctl/shmctl/msgctl system calls behave differently based on whether
+o32 support is enabled or not: Without o32, the IPC_64 flag passed by
+user space is rejected but calls without that flag get IPC_64 behavior.
 
- PM: Syncing filesystems ... done.
- Freezing user space processes ... (elapsed 0.001 seconds) done.
- OOM killer disabled.
- Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
- Disabling non-boot CPUs ...
- Entering suspend state LP1
- Enabling non-boot CPUs ...
- CPU1 is up
- tps6586x 3-0034: failed to read interrupt status
- tps6586x 3-0034: failed to read interrupt status
+As far as I can tell, this was inadvertently changed by a cleanup patch
+but never noticed by anyone, possibly nobody has tried using sysvipc
+on n32 after linux-3.19.
 
-The reason why the tps6586x interrupt status cannot be read is because
-the tps6586x interrupt is not masked during suspend and when the
-tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-seen before the i2c controller has been resumed in order to read the
-tps6586x interrupt status.
+Change it back to the old behavior now.
 
-The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-suspend, which gets propagated to the parent tps6586x interrupt.
-However, the tps6586x-rtc driver cannot disable it's interrupt during
-suspend otherwise we would never be woken up and so the tps6586x must
-disable it's interrupt instead.
-
-Prevent the tps6586x interrupt handler from executing on exiting suspend
-before the i2c controller has been resumed by disabling the tps6586x
-interrupt on entering suspend and re-enabling it on resuming from
-suspend.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: 78aaf956ba3a ("MIPS: Compat: Fix build error if CONFIG_MIPS32_COMPAT but no compat ABI.")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: stable@vger.kernel.org # 3.19+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mfd/tps6586x.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/mips/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -594,6 +594,29 @@ static int tps6586x_i2c_remove(struct i2
- 	return 0;
- }
- 
-+static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-+
-+	if (tps6586x->client->irq)
-+		disable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-+
-+	if (tps6586x->client->irq)
-+		enable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
-+			 tps6586x_i2c_resume);
-+
- static const struct i2c_device_id tps6586x_id_table[] = {
- 	{ "tps6586x", 0 },
- 	{ },
-@@ -604,6 +627,7 @@ static struct i2c_driver tps6586x_driver
- 	.driver	= {
- 		.name	= "tps6586x",
- 		.of_match_table = of_match_ptr(tps6586x_of_match),
-+		.pm	= &tps6586x_pm_ops,
- 	},
- 	.probe		= tps6586x_i2c_probe,
- 	.remove		= tps6586x_i2c_remove,
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -3135,6 +3135,7 @@ config MIPS32_O32
+ config MIPS32_N32
+ 	bool "Kernel support for n32 binaries"
+ 	depends on 64BIT
++	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+ 	select COMPAT
+ 	select MIPS32_COMPAT
+ 	select SYSVIPC_COMPAT if SYSVIPC
 
 
