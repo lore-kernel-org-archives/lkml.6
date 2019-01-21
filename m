@@ -2,243 +2,157 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB70C2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A87C0C2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B947E20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CFD820844
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 16:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729800AbfAUQCb convert rfc822-to-8bit (ORCPT
+        id S1730027AbfAUQFF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 11:02:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39390 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728761AbfAUQCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 11:02:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 53432AF8A;
-        Mon, 21 Jan 2019 16:02:29 +0000 (UTC)
-Date:   Mon, 21 Jan 2019 08:02:18 -0800
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        Xie Yongji <xieyongji@baidu.com>, zhangyu31@baidu.com,
-        liuqi16@baidu.com, yuanlinsi01@baidu.com, nixun@baidu.com,
-        lilin24@baidu.com, andrea.parri@amarulasolutions.com
-Subject: Re: [PATCH v4] sched/wake_q: Reduce reference counting for special
- users
-Message-ID: <20190121160218.rakg7vvhlx4pqpvu@linux-r8p5>
-References: <20181217113718.GB4900@worktop.programming.kicks-ass.net>
- <20181217205310.pvwcryyaqlrzmaex@linux-r8p5>
- <20181218131031.GJ15430@hirez.programming.kicks-ass.net>
- <20181218131419.GD16284@hirez.programming.kicks-ass.net>
- <20181218185443.g5jzinm3vnrkznmm@linux-r8p5>
- <a8767197-21b9-f470-b864-be88e020c647@redhat.com>
- <20181218193009.ytzz5rlrsh27rjre@linux-r8p5>
- <20181218193957.cjx34nn5tku2eaps@linux-r8p5>
- <20181218195352.7orq3upiwfdbrdne@linux-r8p5>
- <772085e9-35f3-1c32-1b87-f101cbc5f8f7@redhat.com>
+        Mon, 21 Jan 2019 11:05:05 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:54551 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728761AbfAUQFF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 11:05:05 -0500
+Received: (qmail 24530 invoked by uid 500); 21 Jan 2019 11:05:03 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 21 Jan 2019 11:05:03 -0500
+Date:   Mon, 21 Jan 2019 11:05:03 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
+In-Reply-To: <20190121131816.GC17749@hirez.programming.kicks-ass.net>
+Message-ID: <Pine.LNX.4.44L0.1901211103000.24162-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <772085e9-35f3-1c32-1b87-f101cbc5f8f7@redhat.com>
-User-Agent: NeoMutt/20180323
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi - considering that the wake_q patches were picked up for tip/urgent, can
-this one make it in as well?
+On Mon, 21 Jan 2019, Peter Zijlstra wrote:
 
-Thanks,
-Davidlohr
+> On Mon, Jan 21, 2019 at 10:52:37AM +0100, Dmitry Vyukov wrote:
+> > On Wed, Jan 16, 2019 at 1:51 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> 
+> > > KCOV uses refcounts in a very simple canonical way, so no hidden
+> > > ordering implied.
+> > >
+> > > Am I missing something or refcount_dec_and_test does not in fact
+> > > provide ACQUIRE ordering?
+> > >
+> > > +case 5) - decrement-based RMW ops that return a value
+> > > +-----------------------------------------------------
+> > > +
+> > > +Function changes:
+> > > +                atomic_dec_and_test() --> refcount_dec_and_test()
+> > > +                atomic_sub_and_test() --> refcount_sub_and_test()
+> > > +                no atomic counterpart --> refcount_dec_if_one()
+> > > +                atomic_add_unless(&var, -1, 1) --> refcount_dec_not_one(&var)
+> > > +
+> > > +Memory ordering guarantees changes:
+> > > +                fully ordered --> RELEASE ordering + control dependency
+> > >
+> > > I think that's against the expected refcount guarantees. When I
+> > > privatize an  atomic_dec_and_test I would expect that not only stores,
+> > > but also loads act on a quiescent object. But loads can hoist outside
+> > > of the control dependency.
+> > >
+> > > Consider the following example, is it the case that the BUG_ON can still fire?
+> > >
+> > > struct X {
+> > >   refcount_t rc; // == 2
+> > >   int done1, done2; // == 0
+> > > };
+> > >
+> > > // thread 1:
+> > > x->done1 = 1;
+> > > if (refcount_dec_and_test(&x->rc))
+> > >   BUG_ON(!x->done2);
+> > >
+> > > // thread 2:
+> > > x->done2 = 1;
+> > > if (refcount_dec_and_test(&x->rc))
+> > >   BUG_ON(!x->done1);
+> 
+> I'm the one responsible for that refcount_t ordering.
+> 
+> The rationale for REL+CTRL is that for the final put we want to ensure
+> all prior load/store are complete, because any later access could be a
+> UAF; consider:
+> 
+> 
+> P0()
+> {
+> 	x->foo=0;
+> 	if (refcount_dec_and_test(&x->rc))
+> 		free(x);
+> }
+> 
+> P1()
+> {
+> 	x->bar=1;
+> 	if (refcount_dec_and_test(&->rc))
+> 		free(x);
+> }
+> 
+> 
+> without release, if would be possible for either (foo,bar) store to
+> happen after the free().
+> 
+> Additionally we also need the CTRL to ensure that the actual free()
+> happens _after_ the dec_and_test, freeing early would be bad.
+> 
+> But after these two requirements, the basic refcounting works.
+> 
+> > The refcount_dec_and_test guarantees look too weak to me, see the
+> > example above. Shouldn't refcount_dec_and_test returning true give the
+> > object in fully quiescent state? Why only control dependency? Loads
+> > can hoist across control dependency, no?
+> 
+> Yes, loads can escape like you say.
+> 
+> Any additional ordering; like the one you have above; are not strictly
+> required for the proper functioning of the refcount. Rather, you rely on
+> additional ordering and will need to provide this explicitly:
+> 
+> 
+> 	if (refcount_dec_and_text(&x->rc)) {
+> 		/*
+> 		 * Comment that explains what we order against....
+> 		 */
+> 		smp_mb__after_atomic();
+> 		BUG_ON(!x->done*);
+> 		free(x);
+> 	}
+> 
+> 
+> Also; these patches explicitly mention that refcount_t is weaker,
+> specifically to make people aware of this difference.
+> 
+> A full smp_mb() (or two) would also be much more expensive on a number
+> of platforms and in the vast majority of the cases it is not required.
 
-On Tue, 18 Dec 2018, Waiman Long wrote:
+How about adding smp_rmb() into refcount_dec_and_test()?  That would
+give acq+rel semantics, which seems to be what people will expect.  And
+it wouldn't be nearly as expensive as a full smp_mb().
 
->On 12/18/2018 02:53 PM, Davidlohr Bueso wrote:
->> Some users, specifically futexes and rwsems, required fixes
->> that allowed the callers to be safe when wakeups occur before
->> they are expected by wake_up_q(). Such scenarios also play
->> games and rely on reference counting, and until now were
->> pivoting on wake_q doing it. With the wake_q_add() call being
->> moved down, this can no longer be the case. As such we end up
->> with a a double task refcounting overhead; and these callers
->> care enough about this (being rather core-ish).
->>
->> This patch introduces a wake_q_add_safe() call that serves
->> for callers that have already done refcounting and therefore the
->> task is 'safe' from wake_q point of view (int that it requires
->> reference throughout the entire queue/>wakeup cycle). In the one
->> case it has internal reference counting, in the other case it
->> consumes the reference counting.
->>
->> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
->> ---
->>
->> - Changes from v3: fixed wake_q_add_safe. While previous version
->>  had been tested with a bootup, the failed cmpxchg path obviously
->>  hadn't been exercised.  Sorry about the noise.
->>
->> include/linux/sched/wake_q.h |  4 +--
->> kernel/futex.c               |  3 +--
->> kernel/locking/rwsem-xadd.c  |  4 +--
->> kernel/sched/core.c          | 60
->> ++++++++++++++++++++++++++++++++------------
->> 4 files changed, 48 insertions(+), 23 deletions(-)
->>
->> diff --git a/include/linux/sched/wake_q.h b/include/linux/sched/wake_q.h
->> index 545f37138057..ad826d2a4557 100644
->> --- a/include/linux/sched/wake_q.h
->> +++ b/include/linux/sched/wake_q.h
->> @@ -51,8 +51,8 @@ static inline void wake_q_init(struct wake_q_head
->> *head)
->>     head->lastp = &head->first;
->> }
->>
->> -extern void wake_q_add(struct wake_q_head *head,
->> -               struct task_struct *task);
->> +extern void wake_q_add(struct wake_q_head *head, struct task_struct
->> *task);
->> +extern void wake_q_add_safe(struct wake_q_head *head, struct
->> task_struct *task);
->> extern void wake_up_q(struct wake_q_head *head);
->>
->> #endif /* _LINUX_SCHED_WAKE_Q_H */
->> diff --git a/kernel/futex.c b/kernel/futex.c
->> index d14971f6ed3d..6218d98f649b 100644
->> --- a/kernel/futex.c
->> +++ b/kernel/futex.c
->> @@ -1402,8 +1402,7 @@ static void mark_wake_futex(struct wake_q_head
->> *wake_q, struct futex_q *q)
->>      * Queue the task for later wakeup for after we've released
->>      * the hb->lock. wake_q_add() grabs reference to p.
->>      */
->> -    wake_q_add(wake_q, p);
->> -    put_task_struct(p);
->> +    wake_q_add_safe(wake_q, p);
->> }
->>
->> /*
->> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
->> index 50d9af615dc4..fbe96341beee 100644
->> --- a/kernel/locking/rwsem-xadd.c
->> +++ b/kernel/locking/rwsem-xadd.c
->> @@ -211,9 +211,7 @@ static void __rwsem_mark_wake(struct rw_semaphore
->> *sem,
->>          * Ensure issuing the wakeup (either by us or someone else)
->>          * after setting the reader waiter to nil.
->>          */
->> -        wake_q_add(wake_q, tsk);
->> -        /* wake_q_add() already take the task ref */
->> -        put_task_struct(tsk);
->> +        wake_q_add_safe(wake_q, tsk);
->>     }
->>
->>     adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index d740d7a3608d..be977df66a21 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -396,19 +396,7 @@ static bool set_nr_if_polling(struct task_struct *p)
->> #endif
->> #endif
->>
->> -/**
->> - * wake_q_add() - queue a wakeup for 'later' waking.
->> - * @head: the wake_q_head to add @task to
->> - * @task: the task to queue for 'later' wakeup
->> - *
->> - * Queue a task for later wakeup, most likely by the wake_up_q() call
->> in the
->> - * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
->> - * instantly.
->> - *
->> - * This function must be used as-if it were wake_up_process(); IOW
->> the task
->> - * must be ready to be woken at this location.
->> - */
->> -void wake_q_add(struct wake_q_head *head, struct task_struct *task)
->> +static bool __wake_q_add(struct wake_q_head *head, struct task_struct
->> *task)
->> {
->>     struct wake_q_node *node = &task->wake_q;
->>
->> @@ -422,15 +410,55 @@ void wake_q_add(struct wake_q_head *head, struct
->> task_struct *task)
->>      */
->>     smp_mb__before_atomic();
->>     if (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
->> -        return;
->> -
->> -    get_task_struct(task);
->> +        return false;
->>
->>     /*
->>      * The head is context local, there can be no concurrency.
->>      */
->>     *head->lastp = node;
->>     head->lastp = &node->next;
->> +    return true;
->> +}
->> +
->> +/**
->> + * wake_q_add() - queue a wakeup for 'later' waking.
->> + * @head: the wake_q_head to add @task to
->> + * @task: the task to queue for 'later' wakeup
->> + *
->> + * Queue a task for later wakeup, most likely by the wake_up_q() call
->> in the
->> + * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
->> + * instantly.
->> + *
->> + * This function must be used as-if it were wake_up_process(); IOW
->> the task
->> + * must be ready to be woken at this location.
->> + */
->> +void wake_q_add(struct wake_q_head *head, struct task_struct *task)
->> +{
->> +    if (__wake_q_add(head, task))
->> +        get_task_struct(task);
->> +}
->> +
->> +/**
->> + * wake_q_add_safe() - safely queue a wakeup for 'later' waking.
->> + * @head: the wake_q_head to add @task to
->> + * @task: the task to queue for 'later' wakeup
->> + *
->> + * Queue a task for later wakeup, most likely by the wake_up_q() call
->> in the
->> + * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
->> + * instantly.
->> + *
->> + * This function must be used as-if it were wake_up_process(); IOW
->> the task
->> + * must be ready to be woken at this location.
->> + *
->> + * This function is essentially a task-safe equivalent to
->> wake_q_add(). Callers
->> + * that already hold reference to @task can call the 'safe' version
->> and trust
->> + * wake_q to do the right thing depending whether or not the @task is
->> already
->> + * queued for wakeup.
->> + */
->> +void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task)
->> +{
->> +    if (!__wake_q_add(head, task))
->> +        put_task_struct(task);
->> }
->>
->> void wake_up_q(struct wake_q_head *head)
->
->Acked-by: Waiman Long <longman@redhat.com>
->
+Alan Stern
+
