@@ -2,152 +2,78 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D009AC2F3A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827CAC2F3A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A27652085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4811B2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:39:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dQq0lzxB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbfAUMim (ORCPT
+        id S1728630AbfAUMjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:38:42 -0500
-Received: from foss.arm.com ([217.140.101.70]:33274 "EHLO foss.arm.com"
+        Mon, 21 Jan 2019 07:39:45 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53242 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728163AbfAUMil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:38:41 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F17EE80D;
-        Mon, 21 Jan 2019 04:38:40 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 782BD3F614;
-        Mon, 21 Jan 2019 04:38:39 -0800 (PST)
-Date:   Mon, 21 Jan 2019 12:38:37 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Elena Reshetova <elena.reshetova@intel.com>
-Cc:     akpm@linux-foundation.org, aryabinin@virtuozzo.com,
-        anders.roxell@linaro.org, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        peterz@infradead.org
-Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
-Message-ID: <20190121123836.GC47506@lakrids.cambridge.arm.com>
-References: <1547634429-772-1-git-send-email-elena.reshetova@intel.com>
+        id S1728163AbfAUMjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:39:45 -0500
+Received: from zn.tnic (p200300EC2BC62500F05176FA1988078F.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:2500:f051:76fa:1988:78f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 21E341EC01B6;
+        Mon, 21 Jan 2019 13:39:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548074384;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=0E81+HK1MLUjBEqq6zbS4tFCYla6sSBx7zaJPfEQKS4=;
+        b=dQq0lzxBpRkbITCh0D1drnJFTgMcwBzgBxGHtUSetxgNkZuxToedaW0nGB49yNv6AVv05L
+        IYyGRTpINfnfs/Kpt2XPXD5L9j/kh08BrE5n4bp/6kEAwbXHWIHXUhKVlixEVGveV4aC69
+        jH0PTa5H5VFLXgZ8Pz4VB3DM3/x6tTE=
+From:   Borislav Petkov <bp@alien8.de>
+To:     linux-edac <linux-edac@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>
+Subject: [PATCH] EDAC: Add James Morse as a reviewer
+Date:   Mon, 21 Jan 2019 13:39:41 +0100
+Message-Id: <20190121123941.28247-1-bp@alien8.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547634429-772-1-git-send-email-elena.reshetova@intel.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 12:27:09PM +0200, Elena Reshetova wrote:
-> atomic_t variables are currently used to implement reference
-> counters with the following properties:
->  - counter is initialized to 1 using atomic_set()
->  - a resource is freed upon counter reaching zero
->  - once counter reaches zero, its further
->    increments aren't allowed
->  - counter schema uses basic atomic operations
->    (set, inc, inc_not_zero, dec_and_test, etc.)
-> 
-> Such atomic variables should be converted to a newly provided
-> refcount_t type and API that prevents accidental counter overflows
-> and underflows. This is important since overflows and underflows
-> can lead to use-after-free situation and be exploitable.
-> 
-> The variable kcov.refcount is used as pure reference counter.
-> Convert it to refcount_t and fix up the operations.
-> 
-> **Important note for maintainers:
-> 
-> Some functions from refcount_t API defined in lib/refcount.c
-> have different memory ordering guarantees than their atomic
-> counterparts.
-> The full comparison can be seen in
-> https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
-> in state to be merged to the documentation tree.
-> Normally the differences should not matter since refcount_t provides
-> enough guarantees to satisfy the refcounting use cases, but in
-> some rare cases it might matter.
-> Please double check that you don't have some undocumented
-> memory guarantees for this variable usage.
-> 
-> For the kcov.refcount it might make a difference
-> in following places:
->  - kcov_put(): decrement in refcount_dec_and_test() only
->    provides RELEASE ordering and control dependency on success
->    vs. fully ordered atomic counterpart
-> 
-> Suggested-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: David Windsor <dwindsor@gmail.com>
-> Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
-> Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+From: Borislav Petkov <bp@suse.de>
 
-Just to check, has this been tested with CONFIG_REFCOUNT_FULL and
-something poking kcov?
+With the growing amount of ARM[,64] EDAC enablement happening, add James
+as a reviewer for the ARM bits.
 
-Given lib/refcount.c is instrumented, the refcount_*() calls will
-recurse back into the kcov code. It looks like that's fine, given these
-are only manipulated in setup/teardown paths, but it would be nice to be
-sure.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: James Morse <james.morse@arm.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Mark.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6ce25174fa02..0f5ef1d6299a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5426,6 +5426,7 @@ F:	drivers/edac/thunderx_edac*
+ EDAC-CORE
+ M:	Borislav Petkov <bp@alien8.de>
+ M:	Mauro Carvalho Chehab <mchehab@kernel.org>
++R:	James Morse <james.morse@arm.com>
+ L:	linux-edac@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git for-next
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac.git linux_next
+-- 
+2.19.1
 
-> ---
->  kernel/kcov.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/kcov.c b/kernel/kcov.c
-> index c2277db..051e86e 100644
-> --- a/kernel/kcov.c
-> +++ b/kernel/kcov.c
-> @@ -20,6 +20,7 @@
->  #include <linux/debugfs.h>
->  #include <linux/uaccess.h>
->  #include <linux/kcov.h>
-> +#include <linux/refcount.h>
->  #include <asm/setup.h>
->  
->  /* Number of 64-bit words written per one comparison: */
-> @@ -44,7 +45,7 @@ struct kcov {
->  	 *  - opened file descriptor
->  	 *  - task with enabled coverage (we can't unwire it from another task)
->  	 */
-> -	atomic_t		refcount;
-> +	refcount_t		refcount;
->  	/* The lock protects mode, size, area and t. */
->  	spinlock_t		lock;
->  	enum kcov_mode		mode;
-> @@ -228,12 +229,12 @@ EXPORT_SYMBOL(__sanitizer_cov_trace_switch);
->  
->  static void kcov_get(struct kcov *kcov)
->  {
-> -	atomic_inc(&kcov->refcount);
-> +	refcount_inc(&kcov->refcount);
->  }
->  
->  static void kcov_put(struct kcov *kcov)
->  {
-> -	if (atomic_dec_and_test(&kcov->refcount)) {
-> +	if (refcount_dec_and_test(&kcov->refcount)) {
->  		vfree(kcov->area);
->  		kfree(kcov);
->  	}
-> @@ -312,7 +313,7 @@ static int kcov_open(struct inode *inode, struct file *filep)
->  	if (!kcov)
->  		return -ENOMEM;
->  	kcov->mode = KCOV_MODE_DISABLED;
-> -	atomic_set(&kcov->refcount, 1);
-> +	refcount_set(&kcov->refcount, 1);
->  	spin_lock_init(&kcov->lock);
->  	filep->private_data = kcov;
->  	return nonseekable_open(inode, filep);
-> -- 
-> 2.7.4
-> 
