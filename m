@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A36C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE69C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FFA02085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C6B22085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079643;
-	bh=4y/ELLAHrrxDsXhegWJW6mpHDr5B6oQ1PRm/axThNc4=;
+	s=default; t=1548079647;
+	bh=/WL4GbxRQtmFVSRKKUT+qLx0n+06oBq40oexvoRgqF0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=17S6s0czvM0QHctMhRRpBsDvwHmA+JZU/eRZxWrAfVYsbl9W767Y87qgLuEdYahtS
-	 33pAOE4eAK8wks/FHmk0MruNwHbSZuL/N1hovYfKtAGqeR7j0l/bry04d/ggcOslrG
-	 TrVeRhAV8n17j6faQvJyrOXy3bD0UQfHH3eRh5lU=
+	b=ldtVwRySVG89+NFF4seB7lhqjxoEE4s0xvxbMRuONjvojpCLxOmkRSsLDiV9fX1yQ
+	 lhDxKyr3nlbYhWTfHRfbHsm6s6lbegQacXKp4wQGopXrikVHkru0PIRFpyDyrB4eOF
+	 NnOdkSjE4M4jv4lLEYHVeK1QdxfflGPokKSohHNw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732249AbfAUN7q (ORCPT
+        id S1731479AbfAUOHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:59:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45692 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:07:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732214AbfAUN7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:59:36 -0500
+        id S1732242AbfAUN7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:59:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52FBA2087F;
-        Mon, 21 Jan 2019 13:59:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E1A220879;
+        Mon, 21 Jan 2019 13:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079175;
-        bh=4y/ELLAHrrxDsXhegWJW6mpHDr5B6oQ1PRm/axThNc4=;
+        s=default; t=1548079184;
+        bh=/WL4GbxRQtmFVSRKKUT+qLx0n+06oBq40oexvoRgqF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p54IVxfx3YR7KZRf+Y96E5/bJpIMyFLTorb6eoJQgXPb/JJP8hVn76SJ18n94gBCr
-         57BJhkiX1TeZLhYQupbQwaZr+PZ7err+6adrlsBJrxm7bAACBgghUYgdRiwaqEvmnp
-         +NTQZRd/mNm/BDoX07LXoA1rtH77sTjosu5aJZFw=
+        b=jUJ0Ie0Hkh8qNUnFtfBFdTYt7eL0HEeywO/sw4jzDEiqZDc6V/nzRs91VyDO/NcpH
+         qbz3aVaAM3XCgVEXELbO51rlETLEISYoa0hgxa/PrtdZmh6xqdkHoaggVDSzjzI1+w
+         1UXi4/TC2QWGbPPEx8Qsu5WLnUihjEFwUI5g5Lto=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harsh Jain <harsh@chelsio.com>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 33/99] crypto: authencesn - Avoid twice completion call in decrypt path
-Date:   Mon, 21 Jan 2019 14:48:25 +0100
-Message-Id: <20190121134915.157123894@linuxfoundation.org>
+Subject: [PATCH 4.19 36/99] crypto: authenc - fix parsing key with misaligned rta_len
+Date:   Mon, 21 Jan 2019 14:48:28 +0100
+Message-Id: <20190121134915.267806368@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -65,67 +65,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Harsh Jain <harsh@chelsio.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit a7773363624b034ab198c738661253d20a8055c2 upstream.
+commit 8f9c469348487844328e162db57112f7d347c49f upstream.
 
-Authencesn template in decrypt path unconditionally calls aead_request_complete
-after ahash_verify which leads to following kernel panic in after decryption.
+Keys for "authenc" AEADs are formatted as an rtattr containing a 4-byte
+'enckeylen', followed by an authentication key and an encryption key.
+crypto_authenc_extractkeys() parses the key to find the inner keys.
 
-[  338.539800] BUG: unable to handle kernel NULL pointer dereference at 0000000000000004
-[  338.548372] PGD 0 P4D 0
-[  338.551157] Oops: 0000 [#1] SMP PTI
-[  338.554919] CPU: 0 PID: 0 Comm: swapper/0 Kdump: loaded Tainted: G        W I       4.19.7+ #13
-[  338.564431] Hardware name: Supermicro X8ST3/X8ST3, BIOS 2.0        07/29/10
-[  338.572212] RIP: 0010:esp_input_done2+0x350/0x410 [esp4]
-[  338.578030] Code: ff 0f b6 68 10 48 8b 83 c8 00 00 00 e9 8e fe ff ff 8b 04 25 04 00 00 00 83 e8 01 48 98 48 8b 3c c5 10 00 00 00 e9 f7 fd ff ff <8b> 04 25 04 00 00 00 83 e8 01 48 98 4c 8b 24 c5 10 00 00 00 e9 3b
-[  338.598547] RSP: 0018:ffff911c97803c00 EFLAGS: 00010246
-[  338.604268] RAX: 0000000000000002 RBX: ffff911c4469ee00 RCX: 0000000000000000
-[  338.612090] RDX: 0000000000000000 RSI: 0000000000000130 RDI: ffff911b87c20400
-[  338.619874] RBP: 0000000000000000 R08: ffff911b87c20498 R09: 000000000000000a
-[  338.627610] R10: 0000000000000001 R11: 0000000000000004 R12: 0000000000000000
-[  338.635402] R13: ffff911c89590000 R14: ffff911c91730000 R15: 0000000000000000
-[  338.643234] FS:  0000000000000000(0000) GS:ffff911c97800000(0000) knlGS:0000000000000000
-[  338.652047] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  338.658299] CR2: 0000000000000004 CR3: 00000001ec20a000 CR4: 00000000000006f0
-[  338.666382] Call Trace:
-[  338.669051]  <IRQ>
-[  338.671254]  esp_input_done+0x12/0x20 [esp4]
-[  338.675922]  chcr_handle_resp+0x3b5/0x790 [chcr]
-[  338.680949]  cpl_fw6_pld_handler+0x37/0x60 [chcr]
-[  338.686080]  chcr_uld_rx_handler+0x22/0x50 [chcr]
-[  338.691233]  uldrx_handler+0x8c/0xc0 [cxgb4]
-[  338.695923]  process_responses+0x2f0/0x5d0 [cxgb4]
-[  338.701177]  ? bitmap_find_next_zero_area_off+0x3a/0x90
-[  338.706882]  ? matrix_alloc_area.constprop.7+0x60/0x90
-[  338.712517]  ? apic_update_irq_cfg+0x82/0xf0
-[  338.717177]  napi_rx_handler+0x14/0xe0 [cxgb4]
-[  338.722015]  net_rx_action+0x2aa/0x3e0
-[  338.726136]  __do_softirq+0xcb/0x280
-[  338.730054]  irq_exit+0xde/0xf0
-[  338.733504]  do_IRQ+0x54/0xd0
-[  338.736745]  common_interrupt+0xf/0xf
+However, it fails to consider the case where the rtattr's payload is
+longer than 4 bytes but not 4-byte aligned, and where the key ends
+before the next 4-byte aligned boundary.  In this case, 'keylen -=
+RTA_ALIGN(rta->rta_len);' underflows to a value near UINT_MAX.  This
+causes a buffer overread and crash during crypto_ahash_setkey().
 
-Fixes: 104880a6b470 ("crypto: authencesn - Convert to new AEAD...")
-Signed-off-by: Harsh Jain <harsh@chelsio.com>
-Cc: stable@vger.kernel.org
+Fix it by restricting the rtattr payload to the expected size.
+
+Reproducer using AF_ALG:
+
+	#include <linux/if_alg.h>
+	#include <linux/rtnetlink.h>
+	#include <sys/socket.h>
+
+	int main()
+	{
+		int fd;
+		struct sockaddr_alg addr = {
+			.salg_type = "aead",
+			.salg_name = "authenc(hmac(sha256),cbc(aes))",
+		};
+		struct {
+			struct rtattr attr;
+			__be32 enckeylen;
+			char keys[1];
+		} __attribute__((packed)) key = {
+			.attr.rta_len = sizeof(key),
+			.attr.rta_type = 1 /* CRYPTO_AUTHENC_KEYA_PARAM */,
+		};
+
+		fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
+		bind(fd, (void *)&addr, sizeof(addr));
+		setsockopt(fd, SOL_ALG, ALG_SET_KEY, &key, sizeof(key));
+	}
+
+It caused:
+
+	BUG: unable to handle kernel paging request at ffff88007ffdc000
+	PGD 2e01067 P4D 2e01067 PUD 2e04067 PMD 2e05067 PTE 0
+	Oops: 0000 [#1] SMP
+	CPU: 0 PID: 883 Comm: authenc Not tainted 4.20.0-rc1-00108-g00c9fe37a7f27 #13
+	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-20181126_142135-anatol 04/01/2014
+	RIP: 0010:sha256_ni_transform+0xb3/0x330 arch/x86/crypto/sha256_ni_asm.S:155
+	[...]
+	Call Trace:
+	 sha256_ni_finup+0x10/0x20 arch/x86/crypto/sha256_ssse3_glue.c:321
+	 crypto_shash_finup+0x1a/0x30 crypto/shash.c:178
+	 shash_digest_unaligned+0x45/0x60 crypto/shash.c:186
+	 crypto_shash_digest+0x24/0x40 crypto/shash.c:202
+	 hmac_setkey+0x135/0x1e0 crypto/hmac.c:66
+	 crypto_shash_setkey+0x2b/0xb0 crypto/shash.c:66
+	 shash_async_setkey+0x10/0x20 crypto/shash.c:223
+	 crypto_ahash_setkey+0x2d/0xa0 crypto/ahash.c:202
+	 crypto_authenc_setkey+0x68/0x100 crypto/authenc.c:96
+	 crypto_aead_setkey+0x2a/0xc0 crypto/aead.c:62
+	 aead_setkey+0xc/0x10 crypto/algif_aead.c:526
+	 alg_setkey crypto/af_alg.c:223 [inline]
+	 alg_setsockopt+0xfe/0x130 crypto/af_alg.c:256
+	 __sys_setsockopt+0x6d/0xd0 net/socket.c:1902
+	 __do_sys_setsockopt net/socket.c:1913 [inline]
+	 __se_sys_setsockopt net/socket.c:1910 [inline]
+	 __x64_sys_setsockopt+0x1f/0x30 net/socket.c:1910
+	 do_syscall_64+0x4a/0x180 arch/x86/entry/common.c:290
+	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: e236d4a89a2f ("[CRYPTO] authenc: Move enckeylen into key itself")
+Cc: <stable@vger.kernel.org> # v2.6.25+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/authencesn.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/authenc.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/crypto/authencesn.c
-+++ b/crypto/authencesn.c
-@@ -279,7 +279,7 @@ static void authenc_esn_verify_ahash_don
- 	struct aead_request *req = areq->data;
+--- a/crypto/authenc.c
++++ b/crypto/authenc.c
+@@ -58,14 +58,22 @@ int crypto_authenc_extractkeys(struct cr
+ 		return -EINVAL;
+ 	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
+ 		return -EINVAL;
+-	if (RTA_PAYLOAD(rta) < sizeof(*param))
++
++	/*
++	 * RTA_OK() didn't align the rtattr's payload when validating that it
++	 * fits in the buffer.  Yet, the keys should start on the next 4-byte
++	 * aligned boundary.  To avoid confusion, require that the rtattr
++	 * payload be exactly the param struct, which has a 4-byte aligned size.
++	 */
++	if (RTA_PAYLOAD(rta) != sizeof(*param))
+ 		return -EINVAL;
++	BUILD_BUG_ON(sizeof(*param) % RTA_ALIGNTO);
  
- 	err = err ?: crypto_authenc_esn_decrypt_tail(req, 0);
--	aead_request_complete(req, err);
-+	authenc_esn_request_complete(req, err);
- }
+ 	param = RTA_DATA(rta);
+ 	keys->enckeylen = be32_to_cpu(param->enckeylen);
  
- static int crypto_authenc_esn_decrypt(struct aead_request *req)
+-	key += RTA_ALIGN(rta->rta_len);
+-	keylen -= RTA_ALIGN(rta->rta_len);
++	key += rta->rta_len;
++	keylen -= rta->rta_len;
+ 
+ 	if (keylen < keys->enckeylen)
+ 		return -EINVAL;
 
 
