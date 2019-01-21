@@ -7,53 +7,52 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82899C7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F080BC7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D6DE20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C54BA20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfAULTL (ORCPT
+        id S1727940AbfAULUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:19:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43319 "EHLO
+        Mon, 21 Jan 2019 06:20:03 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52037 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbfAULTL (ORCPT
+        with ESMTP id S1727679AbfAULUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:19:11 -0500
+        Mon, 21 Jan 2019 06:20:02 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBIZZt2493027
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBJFWv2493075
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 21 Jan 2019 03:18:36 -0800
+        Mon, 21 Jan 2019 03:19:15 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBIZrV2493024;
-        Mon, 21 Jan 2019 03:18:35 -0800
-Date:   Mon, 21 Jan 2019 03:18:35 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBJFv42493072;
+        Mon, 21 Jan 2019 03:19:15 -0800
+Date:   Mon, 21 Jan 2019 03:19:15 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Andrew Murray <tipbot@zytor.com>
-Message-ID: <tip-1d899c0e9bc2a17895762b9457ac336cdee8e072@git.kernel.org>
-Cc:     acme@kernel.org, mingo@kernel.org, mattst88@gmail.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, will.deacon@arm.com,
-        bp@alien8.de, ink@jurassic.park.msu.ru, linux@armlinux.org.uk,
-        benh@kernel.crashing.org, tglx@linutronix.de, peterz@infradead.org,
-        mpe@ellerman.id.au, rth@twiddle.net, paulus@samba.org,
-        andrew.murray@arm.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        hpa@zytor.com
-Reply-To: mark.rutland@arm.com, hpa@zytor.com,
-          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-          rth@twiddle.net, paulus@samba.org, andrew.murray@arm.com,
-          benh@kernel.crashing.org, tglx@linutronix.de,
-          peterz@infradead.org, mpe@ellerman.id.au, acme@kernel.org,
-          mattst88@gmail.com, mingo@kernel.org, s.hauer@pengutronix.de,
-          shawnguo@kernel.org, will.deacon@arm.com, bp@alien8.de,
-          ink@jurassic.park.msu.ru, linux@armlinux.org.uk
-In-Reply-To: <1547128414-50693-6-git-send-email-andrew.murray@arm.com>
-References: <1547128414-50693-6-git-send-email-andrew.murray@arm.com>
+Message-ID: <tip-cafa780e7b012453d0155c3da3488b877a2fd133@git.kernel.org>
+Cc:     mingo@kernel.org, acme@kernel.org, torvalds@linux-foundation.org,
+        mattst88@gmail.com, mpe@ellerman.id.au, shawnguo@kernel.org,
+        ink@jurassic.park.msu.ru, peterz@infradead.org, hpa@zytor.com,
+        will.deacon@arm.com, andrew.murray@arm.com, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, paulus@samba.org,
+        benh@kernel.crashing.org, tglx@linutronix.de, mark.rutland@arm.com,
+        bp@alien8.de, s.hauer@pengutronix.de, rth@twiddle.net
+Reply-To: peterz@infradead.org, will.deacon@arm.com, hpa@zytor.com,
+          mingo@kernel.org, torvalds@linux-foundation.org, acme@kernel.org,
+          mpe@ellerman.id.au, mattst88@gmail.com, ink@jurassic.park.msu.ru,
+          shawnguo@kernel.org, benh@kernel.crashing.org,
+          tglx@linutronix.de, bp@alien8.de, mark.rutland@arm.com,
+          rth@twiddle.net, s.hauer@pengutronix.de, andrew.murray@arm.com,
+          paulus@samba.org, linux@armlinux.org.uk,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <1547128414-50693-7-git-send-email-andrew.murray@arm.com>
+References: <1547128414-50693-7-git-send-email-andrew.murray@arm.com>
 To:     linux-tip-commits@vger.kernel.org
 Subject: [tip:perf/core] perf/core, arch/arm: Use PERF_PMU_CAP_NO_EXCLUDE
- conditionally
-Git-Commit-ID: 1d899c0e9bc2a17895762b9457ac336cdee8e072
+ for exclusion incapable PMUs
+Git-Commit-ID: cafa780e7b012453d0155c3da3488b877a2fd133
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,27 +66,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1d899c0e9bc2a17895762b9457ac336cdee8e072
-Gitweb:     https://git.kernel.org/tip/1d899c0e9bc2a17895762b9457ac336cdee8e072
+Commit-ID:  cafa780e7b012453d0155c3da3488b877a2fd133
+Gitweb:     https://git.kernel.org/tip/cafa780e7b012453d0155c3da3488b877a2fd133
 Author:     Andrew Murray <andrew.murray@arm.com>
-AuthorDate: Thu, 10 Jan 2019 13:53:27 +0000
+AuthorDate: Thu, 10 Jan 2019 13:53:28 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 21 Jan 2019 11:01:22 +0100
+CommitDate: Mon, 21 Jan 2019 11:01:23 +0100
 
-perf/core, arch/arm: Use PERF_PMU_CAP_NO_EXCLUDE conditionally
+perf/core, arch/arm: Use PERF_PMU_CAP_NO_EXCLUDE for exclusion incapable PMUs
 
-The ARM PMU driver can be used to represent a variety of ARM based
-PMUs. Some of these PMUs do not provide support for context
-exclusion, where this is the case we advertise the
-PERF_PMU_CAP_NO_EXCLUDE capability to ensure that perf prevents us
-from handling events where any exclusion flags are set.
-
-Where an ARM PMU driver has the set_event_filter function implemented,
-we rely on it to perform exclusion checks. At present some of these
-functions do not test for all of the available exclude flags.
+For drivers that do not support context exclusion let's advertise the
+PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that perf will
+prevent us from handling events where any exclusion flags are set.
+Let's also remove the now unnecessary check for exclusion flags.
 
 Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 Acked-by: Will Deacon <will.deacon@arm.com>
 Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
@@ -102,55 +97,69 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Richard Henderson <rth@twiddle.net>
 Cc: Russell King <linux@armlinux.org.uk>
 Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linuxppc-dev@lists.ozlabs.org
 Cc: robin.murphy@arm.com
 Cc: suzuki.poulose@arm.com
-Link: https://lkml.kernel.org/r/1547128414-50693-6-git-send-email-andrew.murray@arm.com
+Link: https://lkml.kernel.org/r/1547128414-50693-7-git-send-email-andrew.murray@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/perf/arm_pmu.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ arch/arm/mach-imx/mmdc.c     | 9 ++-------
+ arch/arm/mm/cache-l2x0-pmu.c | 9 +--------
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-index d0b7dd8fb184..eec75b97e7ea 100644
---- a/drivers/perf/arm_pmu.c
-+++ b/drivers/perf/arm_pmu.c
-@@ -356,13 +356,6 @@ static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
- 	return ret;
- }
- 
--static int
--event_requires_mode_exclusion(struct perf_event_attr *attr)
--{
--	return attr->exclude_idle || attr->exclude_user ||
--	       attr->exclude_kernel || attr->exclude_hv;
--}
--
- static int
- __hw_perf_event_init(struct perf_event *event)
- {
-@@ -393,9 +386,8 @@ __hw_perf_event_init(struct perf_event *event)
- 	/*
- 	 * Check whether we need to exclude the counter from certain modes.
- 	 */
--	if ((!armpmu->set_event_filter ||
--	     armpmu->set_event_filter(hwc, &event->attr)) &&
--	     event_requires_mode_exclusion(&event->attr)) {
-+	if (armpmu->set_event_filter &&
-+	    armpmu->set_event_filter(hwc, &event->attr)) {
- 		pr_debug("ARM performance counters do not support "
- 			 "mode exclusion\n");
+diff --git a/arch/arm/mach-imx/mmdc.c b/arch/arm/mach-imx/mmdc.c
+index e49e06834516..fce4b426c379 100644
+--- a/arch/arm/mach-imx/mmdc.c
++++ b/arch/arm/mach-imx/mmdc.c
+@@ -294,13 +294,7 @@ static int mmdc_pmu_event_init(struct perf_event *event)
  		return -EOPNOTSUPP;
-@@ -867,6 +859,9 @@ int armpmu_register(struct arm_pmu *pmu)
- 	if (ret)
- 		return ret;
+ 	}
  
-+	if (!pmu->set_event_filter)
-+		pmu->pmu.capabilities |= PERF_PMU_CAP_NO_EXCLUDE;
-+
- 	ret = perf_pmu_register(&pmu->pmu, pmu->name, -1);
- 	if (ret)
- 		goto out_destroy;
+-	if (event->attr.exclude_user		||
+-			event->attr.exclude_kernel	||
+-			event->attr.exclude_hv		||
+-			event->attr.exclude_idle	||
+-			event->attr.exclude_host	||
+-			event->attr.exclude_guest	||
+-			event->attr.sample_period)
++	if (event->attr.sample_period)
+ 		return -EINVAL;
+ 
+ 	if (cfg < 0 || cfg >= MMDC_NUM_COUNTERS)
+@@ -456,6 +450,7 @@ static int mmdc_pmu_init(struct mmdc_pmu *pmu_mmdc,
+ 			.start          = mmdc_pmu_event_start,
+ 			.stop           = mmdc_pmu_event_stop,
+ 			.read           = mmdc_pmu_event_update,
++			.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 		},
+ 		.mmdc_base = mmdc_base,
+ 		.dev = dev,
+diff --git a/arch/arm/mm/cache-l2x0-pmu.c b/arch/arm/mm/cache-l2x0-pmu.c
+index afe5b4c7b164..99bcd074916a 100644
+--- a/arch/arm/mm/cache-l2x0-pmu.c
++++ b/arch/arm/mm/cache-l2x0-pmu.c
+@@ -314,14 +314,6 @@ static int l2x0_pmu_event_init(struct perf_event *event)
+ 	    event->attach_state & PERF_ATTACH_TASK)
+ 		return -EINVAL;
+ 
+-	if (event->attr.exclude_user   ||
+-	    event->attr.exclude_kernel ||
+-	    event->attr.exclude_hv     ||
+-	    event->attr.exclude_idle   ||
+-	    event->attr.exclude_host   ||
+-	    event->attr.exclude_guest)
+-		return -EINVAL;
+-
+ 	if (event->cpu < 0)
+ 		return -EINVAL;
+ 
+@@ -544,6 +536,7 @@ static __init int l2x0_pmu_init(void)
+ 		.del = l2x0_pmu_event_del,
+ 		.event_init = l2x0_pmu_event_init,
+ 		.attr_groups = l2x0_pmu_attr_groups,
++		.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	l2x0_pmu_reset();
