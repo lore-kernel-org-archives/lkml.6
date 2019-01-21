@@ -2,97 +2,111 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0309BC3713C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BE7C3712F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABED52089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33BB92089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:44:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZfYt7JPs"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="B6hG/CQo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbfAUWmH (ORCPT
+        id S1727858AbfAUWoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:42:07 -0500
-Received: from ozlabs.org ([203.11.71.1]:34965 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726290AbfAUWmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 17:42:06 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43k64D3CDjz9s9G;
-        Tue, 22 Jan 2019 09:42:04 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548110524;
-        bh=gGg0L8dNjmlZKLrdoXWclm8cvn1Znl+Ah/Nd+RnquUo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ZfYt7JPsVFPamM+PNM+SfJxcGcQaNPzI9K+EgeM9GptfvApEcGoCdwBFPXqUTsCB6
-         ZHceuAp29G/Dn4P/9HJcUdn0XBQn0PXwwXx/dVU1qWsDMByCW+D4RdjQUIBVBvi76a
-         1vuCBNk5sibD8IM7f0klG+0A/PERwD+nlme30mRImL2yECHYthGIfu/lMqbWbLb+Uf
-         STT3dc6QwKa8OeOVRg+vE6fqz/c/xCgzPtbEa+UF9M7kPTijD6Iyl03m8L/M9g24Qt
-         UAGZQLZh15r1ISPjkWQCvXLsLlLYBWh6pyaGvO8MXkaIJZS++OykaL/d3YOpxxphF7
-         uqUuTt4B2pd8Q==
-Date:   Tue, 22 Jan 2019 09:42:03 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Mon, 21 Jan 2019 17:44:23 -0500
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:44663 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbfAUWoW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 17:44:22 -0500
+Received: by mail-pf1-f182.google.com with SMTP id u6so10740471pfh.11
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 14:44:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8tlNCZiTVTFXRRGmrQnWWjppReDSvWAoc8TD0PHMa/k=;
+        b=B6hG/CQooNh3/SP1yvWyyxqpKZK7o5G8APj51L6aC6yLrvZ6ORKmKzPvE1ldy6VGEh
+         qjGRA8kJ/sJWcf+/wJhtf5cSC40CF5fyRYj1lS22RgDg6D+0ldSsV7BHtLiF4QKQ1Dbg
+         QN3CmqXYN7B5tYZAoiGIFr0oPv4kvzpr9mfmvuiiHB+uy4oPZwXr9060SAIYnIitzkDH
+         0ILvJ/6UToNShGk2hLw+W1rx660s7S+XVaX7JuhRkIe/+OR1LYgMfHVffyiLuQg505iC
+         KOQH2wXh6Amy9L44OH27aW7wYTvYo6O6LTlc9cDZjZ9Yx8AjLaqFz1vmp7UQ8LHjMQ/l
+         y7iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8tlNCZiTVTFXRRGmrQnWWjppReDSvWAoc8TD0PHMa/k=;
+        b=WPbAZ3B/6bS3sprTJqwxfQ2aisVxKEF7e1pMwlN/pAqv7xLKARbI8DEW6CjlvZ7h3k
+         AonN5sYa619s1vBosZsBsu95O4Qicpa1+KvVQaq6ZZzKINc6ImYDpKpuVX+Gc5gnBPsC
+         tCIY59i7DZR+VuxKUfvyyqnF3NmRfBvS8fTNoAU/qHWoz8aMPoCE45wDxxNKy/2qaA+T
+         AZMS6lXtsyR+38xY46qCv04jaX/AfwskyXcEkTGZPTowd9hU/dteGcMf47feq9crUBjt
+         kvpoT5Y2uWCHDJjHwuW4Ml2cNteeJ5cbmS1179uB3iTVCYb8jMoxIipa6BPYGng8s3zu
+         pS3Q==
+X-Gm-Message-State: AJcUukekmjyd03PtLSk8Gbu+1V+teLucEAwbY/dhJzSSDoFFcn1p68VU
+        S+5Uv2eepiQcuXHbFWyEuYXC1g==
+X-Google-Smtp-Source: ALg8bN5AMFxbFEQcqws9JhbC69GA5NqV3HA8tzLfbjkPQosJYLvJlNE2Wq7HQtmkoOmupRMBUc9kvg==
+X-Received: by 2002:a63:451a:: with SMTP id s26mr17060669pga.150.1548110661566;
+        Mon, 21 Jan 2019 14:44:21 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id n73sm19123751pfj.148.2019.01.21.14.44.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 14:44:20 -0800 (PST)
+Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
+To:     Christian Brauner <christian@brauner.io>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: linux-next: Fixes tag needs some work in the pinctrl tree
-Message-ID: <20190122094203.54570662@canb.auug.org.au>
+        linux-arch <linux-arch@vger.kernel.org>
+References: <20190121143951.68956db3@canb.auug.org.au>
+ <CAK8P3a0Yth+f8AANE6g8c_zE0Zt1CvCdzMDFK=pr8eNqmrBV0Q@mail.gmail.com>
+ <20190121191306.ifga5aw5atu2vvb7@brauner.io>
+ <CAK8P3a2CkXJ=giXQgxEcQAeH1Wt8jKc_P+YTOLJpUPVKYU8m9g@mail.gmail.com>
+ <20190121202328.rgrv54lybilsvitu@brauner.io>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
+Date:   Mon, 21 Jan 2019 15:44:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9oi3s5XDxr69yehg7+C6bLZ"; protocol="application/pgp-signature"
+In-Reply-To: <20190121202328.rgrv54lybilsvitu@brauner.io>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9oi3s5XDxr69yehg7+C6bLZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/21/19 1:23 PM, Christian Brauner wrote:
+> On Mon, Jan 21, 2019 at 09:15:27PM +0100, Arnd Bergmann wrote:
+>> On Mon, Jan 21, 2019 at 8:13 PM Christian Brauner <christian@brauner.io> wrote:
+>>> On Mon, Jan 21, 2019 at 06:16:22PM +0100, Arnd Bergmann wrote:
+>>>> On Mon, Jan 21, 2019 at 4:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>
+>>> I plan on sending the pidfd branch with the new pidfd_send_signal()
+>>> syscall for the 5.1 window. Should we somehow coordinate so that our
+>>> branches don't conflict? Any suggestions?
+>>
+>> A conflict can't be avoided, but if you pick system call number 427
+>> for pidfd_send_signal, and Jens picks numbers 424 through 426 for
+> 
+> That sounds good to me. Since it's only one syscall for the pidfd branch
+> is there anything that speaks against me using 424? Given that the other
+> patchset has 4 new syscalls. :)
+> Jens, any objections?
 
-Hi Linus,
+I'm fine with either one, I'll have to renumber in any case. But it's 3
+new syscalls (424, 425, 426), not 4.
 
-In commit
+Arnd, what's the best way to make this switch now, in my tree? Would be
+great if I didn't have to change it again once I make the change.
 
-  15d90c339a7f ("pinctrl: sunxi: Correct number of IRQ banks on H6 main pin=
- controller")
+-- 
+Jens Axboe
 
-Fixes tag
-
-  Fixes: c8a830904991 ("pinctrl: sunxi: add support for the Allwinner H6
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fixes: tags over more than 1 line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9oi3s5XDxr69yehg7+C6bLZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxGSrsACgkQAVBC80lX
-0Gx1tggAiOhilq5/5UdLah4RSfv3BEye2oUOX4Em2WQRcR3K2SAFV/WqkRbc/qB4
-GCDa6DAUUXs94QXDln3tV25PmHAp3WrxcN4DcThaqKCmtvHCsI2xDJ4RNKutS6JY
-jfMCReXfSDX1+ehCnJtgB/C0Y1Oia2kn/OEPWnsqpAemF07ydRyVZRk65QT7dNEY
-v341Y2WoZlGl1d1Rta9drHo35hqOWzW6pjh45aNx6inIZLeY+lw1kWKn3fDz4H5e
-GmgvkluVQ2WaHv9If3QTVdX9xCsPMxEN+/kMELKkXqMWuVVegxkCIfZJS6v0YGV/
-tMckmzxle9XFEc9drxFU/lG42ZzPEw==
-=X9vq
------END PGP SIGNATURE-----
-
---Sig_/9oi3s5XDxr69yehg7+C6bLZ--
