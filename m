@@ -2,125 +2,128 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DATE_IN_PAST_06_12,
-	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA18C31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74365C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9995320880
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42F7420880
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ovavreme"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xs/4UlIj";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A7n7B4m5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbfAUHOD (ORCPT
+        id S1728281AbfAUHOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:14:03 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:33208 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbfAUHOC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 02:14:02 -0500
-Received: by mail-yw1-f68.google.com with SMTP id p65so7690585ywe.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:14:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uyipLOZTSIwpZWsR1TcE0z4tQjeXZYKEV1wzcg4NrdU=;
-        b=Ovavreme06i/tytbU8X7EJC4RV8sMcflD5xhosuyrSWqXc5eM8szEctbmKg9M8LNKO
-         aGWQ/xCrNFp00v4VVDGlrSp5ZJdOv6vieT/xlAUKbKPx2yN1vNDJ4iIxj5U936gukCoY
-         U9GgQD2k1/pm7VBpzCy0Pe2TCP+E8h22TCV01Fy/em6ASXf5FXqEWUh1YfPaHys/CMq1
-         RGaGlIbSDi2TTl6ckosGRJIH3lHT83h1ZzX5z67li1hUGBhnx+A3/slKkvkMPZnCGMg+
-         UfjYti0gPSaUYxN1VhlPkjC4XW9A36VerlF7d4Tk9cGFLaTLRlwo8tOika7BfzZhp5MZ
-         WT7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uyipLOZTSIwpZWsR1TcE0z4tQjeXZYKEV1wzcg4NrdU=;
-        b=kRclXEFQt7hwirZQy5w8xRU5UtC01VCszzPUKk7KcTgcOlQbINQgIkn5XTfUXYqAWP
-         PYPwIsVgvw04u2oOIxpjBb4uxjT5PWragMz7FRJcvDPNnWyKQWhslB2ibrQK7XTO8Mh/
-         29UR9JIkJYB2Z4H/YZ8K08J8rSBn3ndrni77WU5cAe6KU5J4M/3OHuMFcfji//LfMN3Q
-         2vZPpt0pe2jwMdIm4cosMotyCthrb5JZ9iQDKinGBPlK8AVXc4nF9nqp7aAG49rXUhd6
-         S9FMr9ZADfwqMm1vAo5PZgfbCNVAlv9Q3PyP+pDTO/+ukJtCQ4yA7EXB7jDm19Un70we
-         DPpg==
-X-Gm-Message-State: AJcUukc+Lkb/P0LFIfx+nlTT1ij9IYYHgmnZ+Yquk/+nFn/BANNY4DMh
-        GRBRxHsUrbQvVvEepq37b1MtO2YodnamPxTPiDQk1WrQ+Lg=
-X-Google-Smtp-Source: ALg8bN7duwdDk5JK1h87DBVWJL+DtD+PdtVzIgEpXIJiCrqL5BteFdBGwjM7HQJUFjBIQLleYVSCz88/LiMRLWbUtB4=
-X-Received: by 2002:a81:60c4:: with SMTP id u187mr25686411ywb.345.1548015796908;
- Sun, 20 Jan 2019 12:23:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20190119005022.61321-1-shakeelb@google.com> <02f74c47-4f35-3d59-f767-268844cb875e@i-love.sakura.ne.jp>
-In-Reply-To: <02f74c47-4f35-3d59-f767-268844cb875e@i-love.sakura.ne.jp>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Sun, 20 Jan 2019 12:23:06 -0800
-Message-ID: <CALvZod4h7ouNE7p2ouTix9uK3XLUvP6UYNDPEkR-y5PZRJRDnw@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm, oom: fix use-after-free in oom_kill_process
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Received: from smtp.codeaurora.org ([198.145.29.96]:43272 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727920AbfAUHNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:13:04 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 78F47608BA; Mon, 21 Jan 2019 05:53:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548050032;
+        bh=4mDXwAKHFSc10cR+k82iN/G4anm4O+nQXiSjDjukJ9E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Xs/4UlIjpWtE/38obAbEUQYGPqNjN4R+mOKk8kr4h1S+TK+0PrcyAIH1XwB5yXp1C
+         Wi9juo6Tw4hd/VnQyB/eWlyeehoC3xWxB8xB4bK5JV8AP4gPMWhFx2O33iL2d4d+O2
+         twpFBOVeUrso7f/BtjYjkQHJ5kvHqHxTMLJbKvyA=
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 441566020B;
+        Mon, 21 Jan 2019 05:53:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548050031;
+        bh=4mDXwAKHFSc10cR+k82iN/G4anm4O+nQXiSjDjukJ9E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=A7n7B4m5rAc5QToi9qamk/lPuXijQkDh0YIFRtv+Ku3l12hOlgK9FHgAbLFMywE3x
+         w/aMMEhshHhzRNXFWosXrtLWrr3YRVdZhPNhoLB1hkgbtJrjAhFzAm+d4e4hU206lQ
+         Cl2KzUIKR8kagaBcNuWUc/Mqr1wNr9ecdXBx8AQI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 441566020B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, tfiga@chromium.org,
+        pratikp@codeaurora.org, pdaly@codeaurora.org,
+        jcrouse@codeaurora.org, Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH 1/3] iommu/arm-smmu: Move to bitmap for arm_smmu_domain atrributes
+Date:   Mon, 21 Jan 2019 11:23:33 +0530
+Message-Id: <20190121055335.15430-2-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+In-Reply-To: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 7:35 PM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2019/01/19 9:50, Shakeel Butt wrote:
-> > On looking further it seems like the process selected to be oom-killed
-> > has exited even before reaching read_lock(&tasklist_lock) in
-> > oom_kill_process(). More specifically the tsk->usage is 1 which is due
-> > to get_task_struct() in oom_evaluate_task() and the put_task_struct
-> > within for_each_thread() frees the tsk and for_each_thread() tries to
-> > access the tsk. The easiest fix is to do get/put across the
-> > for_each_thread() on the selected task.
->
-> Good catch. p->usage can become 1 while printk()ing a lot at dump_header().
->
-> > @@ -981,6 +981,13 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
-> >        * still freeing memory.
-> >        */
-> >       read_lock(&tasklist_lock);
-> > +
-> > +     /*
-> > +      * The task 'p' might have already exited before reaching here. The
-> > +      * put_task_struct() will free task_struct 'p' while the loop still try
-> > +      * to access the field of 'p', so, get an extra reference.
-> > +      */
-> > +     get_task_struct(p);
-> >       for_each_thread(p, t) {
-> >               list_for_each_entry(child, &t->children, sibling) {
-> >                       unsigned int child_points;
-> > @@ -1000,6 +1007,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
-> >                       }
-> >               }
-> >       }
-> > +     put_task_struct(p);
->
-> Moving put_task_struct(p) to after read_unlock(&tasklist_lock) will reduce
-> latency of a write_lock(&tasklist_lock) waiter.
->
-> >       read_unlock(&tasklist_lock);
-> >
-> >       /*
-> >
->
-> By the way, p->usage is already 1 implies that p->mm == NULL due to already
-> completed exit_mm(p). Then, process_shares_mm(child, p->mm) might fail to
-> return true for some of children. Not critical but might lead to unnecessary
-> oom_badness() calls for child selection. Maybe we want to use same logic
-> __oom_kill_process() uses (i.e. bail out if find_task_lock_mm(p) failed)?
+A number of arm_smmu_domain's attributes can be assigned based
+on the iommu domains's attributes. These local attributes better
+be managed by a bitmap.
+So remove boolean flags and move to a 32-bit bitmap, and enable
+each bits separtely.
 
-Thanks for the review. I am thinking of removing the whole children
-selection heuristic for now.
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/iommu/arm-smmu.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Shakeel
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 7ebbcf1b2eb3..52b300dfc096 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -257,10 +257,11 @@ struct arm_smmu_domain {
+ 	const struct iommu_gather_ops	*tlb_ops;
+ 	struct arm_smmu_cfg		cfg;
+ 	enum arm_smmu_domain_stage	stage;
+-	bool				non_strict;
+ 	struct mutex			init_mutex; /* Protects smmu pointer */
+ 	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
+ 	struct iommu_domain		domain;
++#define ARM_SMMU_DOMAIN_ATTR_NON_STRICT	BIT(0)
++	unsigned int			attr;
+ };
+ 
+ struct arm_smmu_option_prop {
+@@ -901,7 +902,7 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+ 	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+ 		pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
+ 
+-	if (smmu_domain->non_strict)
++	if (smmu_domain->attr & ARM_SMMU_DOMAIN_ATTR_NON_STRICT)
+ 		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
+ 
+ 	/* Non coherent page table mappings only for Stage-1 */
+@@ -1598,7 +1599,8 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
+ 	case IOMMU_DOMAIN_DMA:
+ 		switch (attr) {
+ 		case DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE:
+-			*(int *)data = smmu_domain->non_strict;
++			*(int *)data = !!(smmu_domain->attr &
++					  ARM_SMMU_DOMAIN_ATTR_NON_STRICT);
+ 			return 0;
+ 		default:
+ 			return -ENODEV;
+@@ -1638,7 +1640,7 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
+ 	case IOMMU_DOMAIN_DMA:
+ 		switch (attr) {
+ 		case DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE:
+-			smmu_domain->non_strict = *(int *)data;
++			smmu_domain->attr |= ARM_SMMU_DOMAIN_ATTR_NON_STRICT;
+ 			break;
+ 		default:
+ 			ret = -ENODEV;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
