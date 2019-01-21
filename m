@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBA1C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AE2C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FEAB20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 051E02087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079167;
-	bh=XmAfEcltjVxSY9D5kU8caeP4+M0px1n5q7CYEd6BweM=;
+	s=default; t=1548079172;
+	bh=98OTRqafMgqhZ0Zntq+roO5MwbjzFSroaZw8PesDdy8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DfR/JNKVUHi/8vkVxgcG9tTOQf6uYjYF4iZGRr3A4H4Cc/1y2FXBHHLaLr0FIvYri
-	 B3ILvtk+YMnsbJ7jmabtaySGTElcgQEL8hujxKJQaP89eJFnZy6XY95cVMAtp3bkYO
-	 7OhM8h1BlVQrifrz3ZBnbI9DkOpJatTXKR2ngRqc=
+	b=VXmp05FHnpy9h41Tk7hZUXkSro0EkKGSlgG+0+dayD6xf8TQTvcQY5N3xu1MzpmNQ
+	 KxXucfEn8FROs0DIIJI78/hDOPIleNATv+qP77ssxtFLICPJkOph6er3AyyC4sY2w7
+	 mxiRqqVOEnFYOmvgPnCf5PAwAMR7LPoHy32q+CY0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732189AbfAUN70 (ORCPT
+        id S1732199AbfAUN7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:59:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45410 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:59:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732172AbfAUN7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:59:24 -0500
+        id S1731351AbfAUN71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:59:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88B3820879;
-        Mon, 21 Jan 2019 13:59:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3B7E2084C;
+        Mon, 21 Jan 2019 13:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079164;
-        bh=XmAfEcltjVxSY9D5kU8caeP4+M0px1n5q7CYEd6BweM=;
+        s=default; t=1548079167;
+        bh=98OTRqafMgqhZ0Zntq+roO5MwbjzFSroaZw8PesDdy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nOJNaLUZFJ9pC396+ZeQTFed2U55hK7jRDz49PmeozE9fOqX83qHtEXnkbdEVMNV0
-         wBYTQ3H5HlPjKV52l+E3KmH0iAETCwfiKHj7gA4/VSk+MinTwqGqKPAp/yLb4uoDgI
-         tvGn0TftRCuX1hZdJ59ZsUtrctuTu1bYOAHlROVg=
+        b=1x9IeEXWg/fOmtXIobT4LTe8XKFg2A22qAEU7mxVEP+LVm+h/SVrBE+M20FAvgXSs
+         0Ar1IrQvRoQGv4oMG9vDCRDiAuHovg+IGBJ7qKqJaXSQLfU5jkeg6IZzg+Cx5fpmwj
+         x+GGdjayHIzdYrtKkuxqxINj6Www8LzI9qhrwpV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Safonov <dima@arista.com>
-Subject: [PATCH 4.19 03/99] tty: Simplify tty->count math in tty_reopen()
-Date:   Mon, 21 Jan 2019 14:47:55 +0100
-Message-Id: <20190121134914.048479004@linuxfoundation.org>
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 30/99] r8169: load Realtek PHY driver module before r8169
+Date:   Mon, 21 Jan 2019 14:48:22 +0100
+Message-Id: <20190121134915.043367282@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -67,48 +65,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-commit cf62a1a13749db0d32b5cdd800ea91a4087319de upstream.
+[ Upstream commit 11287b693d03830010356339e4ceddf47dee34fa ]
 
-As notted by Jiri, tty_ldisc_reinit() shouldn't rely on tty counter.
-Simplify math by increasing the counter after reinit success.
+This soft dependency works around an issue where sometimes the genphy
+driver is used instead of the dedicated PHY driver. The root cause of
+the issue isn't clear yet. People reported the unloading/re-loading
+module r8169 helps, and also configuring this soft dependency in
+the modprobe config files. Important just seems to be that the
+realtek module is loaded before r8169.
 
-Cc: Jiri Slaby <jslaby@suse.com>
-Link: lkml.kernel.org/r/<20180829022353.23568-2-dima@arista.com>
-Suggested-by: Jiri Slaby <jslaby@suse.com>
-Reviewed-by: Jiri Slaby <jslaby@suse.cz>
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+Once this has been applied preliminary fix 38af4b903210 ("net: phy:
+add workaround for issue where PHY driver doesn't bind to the device")
+will be removed.
+
+Fixes: f1e911d5d0df ("r8169: add basic phylib support")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/tty_io.c |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1271,16 +1271,13 @@ static int tty_reopen(struct tty_struct
- 	if (retval)
- 		return retval;
- 
--	tty->count++;
--	if (tty->ldisc)
--		goto out_unlock;
-+	if (!tty->ldisc)
-+		retval = tty_ldisc_reinit(tty, tty->termios.c_line);
-+	tty_ldisc_unlock(tty);
- 
--	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
--	if (retval)
--		tty->count--;
-+	if (retval == 0)
-+		tty->count++;
- 
--out_unlock:
--	tty_ldisc_unlock(tty);
- 	return retval;
- }
- 
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -717,6 +717,7 @@ module_param(use_dac, int, 0);
+ MODULE_PARM_DESC(use_dac, "Enable PCI DAC. Unsafe on 32 bit PCI slot.");
+ module_param_named(debug, debug.msg_enable, int, 0);
+ MODULE_PARM_DESC(debug, "Debug verbosity level (0=none, ..., 16=all)");
++MODULE_SOFTDEP("pre: realtek");
+ MODULE_LICENSE("GPL");
+ MODULE_FIRMWARE(FIRMWARE_8168D_1);
+ MODULE_FIRMWARE(FIRMWARE_8168D_2);
 
 
