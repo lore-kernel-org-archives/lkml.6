@@ -2,235 +2,194 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D6AC282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C75FFC282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3F5720855
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:30:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EA582084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:30:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T5aexcgo"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="irk0kpYT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbfAUIaL (ORCPT
+        id S1729393AbfAUIal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:30:11 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:36180 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728802AbfAUIaL (ORCPT
+        Mon, 21 Jan 2019 03:30:41 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42829 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728554AbfAUIal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:30:11 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0L5vkqg106309;
-        Sun, 20 Jan 2019 23:57:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548050266;
-        bh=lzqQLpS/P25NCb7i+MtaLYfVAV05RMu1f8HW1xXwa2s=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=T5aexcgouMoSzguDqm7Lm+DU+nsP8jtHamonafApRHCx5mJqFCLiB5bOxMFF6woTo
-         pgbPjFERBvpY52klmmeO8ktCz6yJA8HEFlLpnOn/1TbAAnCyyxsJF5J4lFkizb/7Bl
-         endhyKpmKxDTf0bmPXOrAnIuRgvM82VGz2Hs9mLw=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0L5vkup043839
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 20 Jan 2019 23:57:46 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 20
- Jan 2019 23:57:46 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sun, 20 Jan 2019 23:57:46 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0L5vfUG032183;
-        Sun, 20 Jan 2019 23:57:44 -0600
-Subject: Re: [PATCH v3 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>
-CC:     "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190116103027.22657-1-vigneshr@ti.com>
- <20190116103027.22657-3-vigneshr@ti.com>
- <6e6f7c3a-4772-1a17-0f5f-547ea9809283@microchip.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <1fc56694-fdac-ea99-79d3-cd0fad196c3c@ti.com>
-Date:   Mon, 21 Jan 2019 11:28:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 03:30:41 -0500
+Received: by mail-io1-f68.google.com with SMTP id x6so15743044ioa.9
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:30:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ww085OACm4i7mqE67ZdIQ/eDnX5lMbW7fzlbmIgXAEk=;
+        b=irk0kpYTWl+fMLn717tgCoPUMr7EWiqL5y7s82Xc9j0VPLy6PAEnLNMuGjDMoFV0Yy
+         2s6vFd/lJb8XWemgbmryxsgj9dEtQNcd32fDPLB1HsPt+SCVEUwFg4/boDUMEJovqRzI
+         tq52Q6C+gt6cf5wqYzISfoTdLLYBN02u3ujIZskb8jftLw92rTGZZjnJz1hsV9wXrDwk
+         QqRqk/lF7M+Uqv3JWbLC6qUiCXDAOeAg6XTvtuBeOl8E/SF/msImGHKEtZ9pK7L5/RlO
+         LT2jzgZDAGSaMmD8El1xkmk10aw+dR7ee7ENpuhltHJDDXl+vMsj0KbQTq6Ym/yi89P7
+         X1ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ww085OACm4i7mqE67ZdIQ/eDnX5lMbW7fzlbmIgXAEk=;
+        b=if8Yt9QWU7nf1/HvRVHy8CYywuUfDR9VyZllUyVROqfMG5Cp08VFc/cjgRzWU55YTE
+         TtyJm5iMh9ADyYXRyOSp2sMeX5FwvTvUG8pWCD2hb97sreZ9EN2lCO9HQ8k9N8Y+5TsO
+         8iyaHxExPoE/E6VwoChpquu8T2Kz+CgIV9SH2FbIqujStAQQDW78YWQAst3+6ziHzPGq
+         UDYXJHK14V2XvCm7n8MO2SQtAvb2kSTtzDPKDKpsv0TaYCeGRxrqQ/Wq1AICr14ZTo0Z
+         3GcVNN+icB4i5sgZClXqeNptnMq7CUjx6P3XMB5A9NPNBqag3/+Sjf3p7Q9c3qXuDvwi
+         zs3g==
+X-Gm-Message-State: AJcUukeXuC5HIPu/E01H/VkhNeANIMtew3IG77gbMBL+kxlX61UgiXZz
+        k1lQHp64w6i2c1Jz8f2Qym9ICKvrYrI/OfZBJENVdw==
+X-Google-Smtp-Source: ALg8bN6pVSUQAGPoALJVcBXrooWWBo6DjGveKj9PCGXAw/Gya0V/2bdBH5M4qgvqAI4lru73E5WrUgt3rKufK0pKDe8=
+X-Received: by 2002:a5d:8491:: with SMTP id t17mr16024815iom.11.1548059439657;
+ Mon, 21 Jan 2019 00:30:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <6e6f7c3a-4772-1a17-0f5f-547ea9809283@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <cover.1547289808.git.christophe.leroy@c-s.fr> <935f9f83393affb5d55323b126468ecb90373b88.1547289808.git.christophe.leroy@c-s.fr>
+ <e4b343fa-702b-294f-7741-bb85ed877cdf@virtuozzo.com> <8d433501-a5a7-8e3b-03f7-ccdd0f8622e1@c-s.fr>
+In-Reply-To: <8d433501-a5a7-8e3b-03f7-ccdd0f8622e1@c-s.fr>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 21 Jan 2019 09:30:27 +0100
+Message-ID: <CACT4Y+Z+UbN1rjHr3T5rgHpCJUknupPvEPw0SHs1-qjWBDhm3Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] powerpc/32: Add KASAN support
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Alexander Potapenko <glider@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Tudor,
+On Mon, Jan 21, 2019 at 8:17 AM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+>
+>
+>
+> Le 15/01/2019 =C3=A0 18:23, Andrey Ryabinin a =C3=A9crit :
+> >
+> >
+> > On 1/12/19 2:16 PM, Christophe Leroy wrote:
+> >
+> >> +KASAN_SANITIZE_early_32.o :=3D n
+> >> +KASAN_SANITIZE_cputable.o :=3D n
+> >> +KASAN_SANITIZE_prom_init.o :=3D n
+> >> +
+> >
+> > Usually it's also good idea to disable branch profiling - define DISABL=
+E_BRANCH_PROFILING
+> > either in top of these files or via Makefile. Branch profiling redefine=
+s if() statement and calls
+> > instrumented ftrace_likely_update in every if().
+> >
+> >
+> >
+> >> diff --git a/arch/powerpc/mm/kasan_init.c b/arch/powerpc/mm/kasan_init=
+.c
+> >> new file mode 100644
+> >> index 000000000000..3edc9c2d2f3e
+> >
+> >> +void __init kasan_init(void)
+> >> +{
+> >> +    struct memblock_region *reg;
+> >> +
+> >> +    for_each_memblock(memory, reg)
+> >> +            kasan_init_region(reg);
+> >> +
+> >> +    pr_info("KASAN init done\n");
+> >
+> > Without "init_task.kasan_depth =3D 0;" kasan will not repot bugs.
+> >
+> > There is test_kasan module. Make sure that it produce reports.
+> >
+>
+> Thanks for the review.
+>
+> Now I get the following very early in boot, what does that mean ?
 
-On 20/01/19 8:26 PM, Tudor.Ambarus@microchip.com wrote:
-> Hi, Vignesh,
-> 
-> On 01/16/2019 12:30 PM, Vignesh R wrote:
->> Cadence OSPI controller IP supports Octal IO (x8 IO lines),
->> It also has an integrated PHY. IP register layout is very
->> similar to existing QSPI IP except for additional bits to support Octal
->> and Octal DDR mode. Therefore, extend current driver to support Octal
->> mode.
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> ---
->> v3: No changes
->>
->> v2:
->> Declare Octal mode capability based on compatible.
->>
->>  drivers/mtd/spi-nor/cadence-quadspi.c | 54 +++++++++++++++++++++------
->>  1 file changed, 42 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
->> index 04cedd3a2bf6..31ed50f78972 100644
->> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
->> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
->> @@ -93,6 +93,11 @@ struct cqspi_st {
->>  	struct cqspi_flash_pdata f_pdata[CQSPI_MAX_CHIPSELECT];
->>  };
->>  
->> +struct cqspi_driver_platdata {
->> +	u32 hwcaps_mask;
->> +	u8 quirks;
->> +};
->> +
->>  /* Operation timeout value */
->>  #define CQSPI_TIMEOUT_MS			500
->>  #define CQSPI_READ_TIMEOUT_MS			10
->> @@ -101,6 +106,7 @@ struct cqspi_st {
->>  #define CQSPI_INST_TYPE_SINGLE			0
->>  #define CQSPI_INST_TYPE_DUAL			1
->>  #define CQSPI_INST_TYPE_QUAD			2
->> +#define CQSPI_INST_TYPE_OCTAL			3
->>  
->>  #define CQSPI_DUMMY_CLKS_PER_BYTE		8
->>  #define CQSPI_DUMMY_BYTES_MAX			4
->> @@ -911,6 +917,9 @@ static int cqspi_set_protocol(struct spi_nor *nor, const int read)
->>  		case SNOR_PROTO_1_1_4:
->>  			f_pdata->data_width = CQSPI_INST_TYPE_QUAD;
->>  			break;
->> +		case SNOR_PROTO_1_1_8:
->> +			f_pdata->data_width = CQSPI_INST_TYPE_OCTAL;
->> +			break;
->>  		default:
->>  			return -EINVAL;
->>  		}
->> @@ -1213,21 +1222,19 @@ static void cqspi_request_mmap_dma(struct cqspi_st *cqspi)
->>  
->>  static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
->>  {
->> -	const struct spi_nor_hwcaps hwcaps = {
->> -		.mask = SNOR_HWCAPS_READ |
->> -			SNOR_HWCAPS_READ_FAST |
->> -			SNOR_HWCAPS_READ_1_1_2 |
->> -			SNOR_HWCAPS_READ_1_1_4 |
->> -			SNOR_HWCAPS_PP,
->> -	};
->>  	struct platform_device *pdev = cqspi->pdev;
->>  	struct device *dev = &pdev->dev;
->> +	struct cqspi_driver_platdata *ddata;
-> 
-> const struct cqspi_driver_platdata *ddata;
-> 
->> +	struct spi_nor_hwcaps hwcaps;
->>  	struct cqspi_flash_pdata *f_pdata;
->>  	struct spi_nor *nor;
->>  	struct mtd_info *mtd;
->>  	unsigned int cs;
->>  	int i, ret;
->>  
->> +	ddata = (struct cqspi_driver_platdata *)of_device_get_match_data(dev);
-> 
-> You forgot to check for NULL. Also, I would expect an implicit type cast, you
-> can drop the explicit cast.
-> 
->> +	hwcaps.mask = ddata->hwcaps_mask;
->> +
->>  	/* Get flash device data */
->>  	for_each_available_child_of_node(dev->of_node, np) {
->>  		ret = of_property_read_u32(np, "reg", &cs);
->> @@ -1310,7 +1317,7 @@ static int cqspi_probe(struct platform_device *pdev)
->>  	struct cqspi_st *cqspi;
->>  	struct resource *res;
->>  	struct resource *res_ahb;
->> -	unsigned long data;
->> +	struct cqspi_driver_platdata *ddata;
-> 
-> const struct cqspi_driver_platdata *ddata;
-> 
->>  	int ret;
->>  	int irq;
->>  
->> @@ -1377,8 +1384,8 @@ static int cqspi_probe(struct platform_device *pdev)
->>  	}
->>  
->>  	cqspi->master_ref_clk_hz = clk_get_rate(cqspi->clk);
->> -	data  = (unsigned long)of_device_get_match_data(dev);
->> -	if (data & CQSPI_NEEDS_WR_DELAY)
->> +	ddata  = (struct cqspi_driver_platdata *)of_device_get_match_data(dev);
-> 
-> I would expect an implicit type cast, you can drop the explicit cast.
-> 
->> +	if (ddata && (ddata->quirks & CQSPI_NEEDS_WR_DELAY))
->>  		cqspi->wr_delay = 5 * DIV_ROUND_UP(NSEC_PER_SEC,
->>  						   cqspi->master_ref_clk_hz);
->>  
->> @@ -1460,14 +1467,37 @@ static const struct dev_pm_ops cqspi__dev_pm_ops = {
->>  #define CQSPI_DEV_PM_OPS	NULL
->>  #endif
->>  
->> +#define cqspi_base_hwcaps_mask					\
->> +	(SNOR_HWCAPS_READ | SNOR_HWCAPS_READ_FAST |		\
->> +	SNOR_HWCAPS_READ_1_1_2 | SNOR_HWCAPS_READ_1_1_4 |	\
->> +	SNOR_HWCAPS_PP)
->> +
->> +static const struct cqspi_driver_platdata cdns_qspi = {
->> +	.hwcaps_mask = cqspi_base_hwcaps_mask,
->> +};
->> +
->> +static const struct cqspi_driver_platdata k2g_qspi = {
->> +	.hwcaps_mask = cqspi_base_hwcaps_mask,
->> +	.quirks = CQSPI_NEEDS_WR_DELAY,
->> +};
->> +
->> +static const struct cqspi_driver_platdata am654_ospi = {
->> +	.hwcaps_mask = cqspi_base_hwcaps_mask | SNOR_HWCAPS_READ_1_1_8,
->> +	.quirks = CQSPI_NEEDS_WR_DELAY,
->> +};
->> +
->>  static const struct of_device_id cqspi_dt_ids[] = {
->>  	{
->>  		.compatible = "cdns,qspi-nor",
->> -		.data = (void *)0,
->> +		.data = (void *)&cdns_qspi,
-> 
-> You can drop the (void *) cast.
-> 
-> Looks good. Did you test the octal mode with mt35xu512aba? If yes, it would be
-> nice to specify this in the commit message.
-> 
+This looks like an instrumented memset call before kasan shadow is
+mapped, or kasan shadow is not zeros. Does this happen before or after
+mapping of kasan_early_shadow_page?
+This version seems to miss what x86 code has to clear the early shadow:
 
-Yes, octal mode was tested with mt35xu512aba flash. I will address all
-the comments in v4. Thanks for the review!
+/*
+* kasan_early_shadow_page has been used as early shadow memory, thus
+* it may contain some garbage. Now we can clear and write protect it,
+* since after the TLB flush no one should write to it.
+*/
+memset(kasan_early_shadow_page, 0, PAGE_SIZE);
 
 
--- 
-Regards
-Vignesh
+> [    0.000000] KASAN init done
+> [    0.000000]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [    0.000000] BUG: KASAN: unknown-crash in memblock_alloc_try_nid+0xd8/0=
+xf0
+> [    0.000000] Write of size 68 at addr c7ff5a90 by task swapper/0
+> [    0.000000]
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
+> 5.0.0-rc2-s3k-dev-00559-g88aa407c4bce #772
+> [    0.000000] Call Trace:
+> [    0.000000] [c094ded0] [c016c7e4]
+> print_address_description+0x1a0/0x2b8 (unreliable)
+> [    0.000000] [c094df00] [c016caa0] kasan_report+0xe4/0x168
+> [    0.000000] [c094df40] [c016b464] memset+0x2c/0x4c
+> [    0.000000] [c094df60] [c08731f0] memblock_alloc_try_nid+0xd8/0xf0
+> [    0.000000] [c094df90] [c0861f20] mmu_context_init+0x58/0xa0
+> [    0.000000] [c094dfb0] [c085ca70] start_kernel+0x54/0x400
+> [    0.000000] [c094dff0] [c0002258] start_here+0x44/0x9c
+> [    0.000000]
+> [    0.000000]
+> [    0.000000] Memory state around the buggy address:
+> [    0.000000]  c7ff5980: e2 a1 87 81 bd d4 a5 b5 f8 8d 89 e7 72 bc 20 24
+> [    0.000000]  c7ff5a00: e7 b9 c1 c7 17 e9 b4 bd a4 d0 e7 a0 11 15 a5 b5
+> [    0.000000] >c7ff5a80: b5 e1 83 a5 2d 65 31 3f f3 e5 a7 ef 34 b5 69 b5
+> [    0.000000]                  ^
+> [    0.000000]  c7ff5b00: 21 a5 c1 c1 b4 bf 2d e5 e5 c3 f5 91 e3 b8 a1 34
+> [    0.000000]  c7ff5b80: ad ef 23 87 3d a6 ad b5 c3 c3 80 b7 ac b1 1f 37
+> [    0.000000]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [    0.000000] Disabling lock debugging due to kernel taint
+> [    0.000000] MMU: Allocated 76 bytes of context maps for 16 contexts
+> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 817=
+6
+> [    0.000000] Kernel command line: console=3DttyCPM0,115200N8
+> ip=3D192.168.2.7:192.168.2.2::255.0.0.0:vgoip:eth0:off kgdboc=3DttyCPM0
+> [    0.000000] Dentry cache hash table entries: 16384 (order: 2, 65536
+> bytes)
+> [    0.000000] Inode-cache hash table entries: 8192 (order: 1, 32768 byte=
+s)
+> [    0.000000] Memory: 99904K/131072K available (7376K kernel code, 528K
+> rwdata, 1168K rodata, 576K init, 4623K bss, 31168K reserved, 0K
+> cma-reserved)
+> [    0.000000] Kernel virtual memory layout:
+> [    0.000000]   * 0xffefc000..0xffffc000  : fixmap
+> [    0.000000]   * 0xf7c00000..0xffc00000  : kasan shadow mem
+> [    0.000000]   * 0xf7a00000..0xf7c00000  : consistent mem
+> [    0.000000]   * 0xf7a00000..0xf7a00000  : early ioremap
+> [    0.000000]   * 0xc9000000..0xf7a00000  : vmalloc & ioremap
+>
+>
+> Christophe
