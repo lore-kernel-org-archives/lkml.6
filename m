@@ -2,73 +2,97 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48311C3712F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0309BC3713C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045E021019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABED52089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:42:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZfYt7JPs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbfAUWkQ (ORCPT
+        id S1727783AbfAUWmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:40:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46902 "EHLO mx1.redhat.com"
+        Mon, 21 Jan 2019 17:42:07 -0500
+Received: from ozlabs.org ([203.11.71.1]:34965 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726290AbfAUWkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 17:40:15 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726290AbfAUWmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 17:42:06 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A00C58762E;
-        Mon, 21 Jan 2019 22:40:15 +0000 (UTC)
-Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B464919744;
-        Mon, 21 Jan 2019 22:40:14 +0000 (UTC)
-Date:   Mon, 21 Jan 2019 17:40:12 -0500
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] livepatch: Handle failing allocation of shadow
- variables in the selftest
-Message-ID: <20190121224012.GB8766@redhat.com>
-References: <20190116161720.796-1-pmladek@suse.com>
- <20190116161720.796-3-pmladek@suse.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 43k64D3CDjz9s9G;
+        Tue, 22 Jan 2019 09:42:04 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548110524;
+        bh=gGg0L8dNjmlZKLrdoXWclm8cvn1Znl+Ah/Nd+RnquUo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZfYt7JPsVFPamM+PNM+SfJxcGcQaNPzI9K+EgeM9GptfvApEcGoCdwBFPXqUTsCB6
+         ZHceuAp29G/Dn4P/9HJcUdn0XBQn0PXwwXx/dVU1qWsDMByCW+D4RdjQUIBVBvi76a
+         1vuCBNk5sibD8IM7f0klG+0A/PERwD+nlme30mRImL2yECHYthGIfu/lMqbWbLb+Uf
+         STT3dc6QwKa8OeOVRg+vE6fqz/c/xCgzPtbEa+UF9M7kPTijD6Iyl03m8L/M9g24Qt
+         UAGZQLZh15r1ISPjkWQCvXLsLlLYBWh6pyaGvO8MXkaIJZS++OykaL/d3YOpxxphF7
+         uqUuTt4B2pd8Q==
+Date:   Tue, 22 Jan 2019 09:42:03 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: linux-next: Fixes tag needs some work in the pinctrl tree
+Message-ID: <20190122094203.54570662@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116161720.796-3-pmladek@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 21 Jan 2019 22:40:15 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9oi3s5XDxr69yehg7+C6bLZ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 05:17:18PM +0100, Petr Mladek wrote:
-> Do not dereference pointers to the shadow variables when either
-> klp_shadow_alloc() or klp_shadow_get() fail.
-> 
-> There is no need to check the other locations explicitly. The test
-> would fail if any allocation fails. And the existing messages, printed
-> during the test, provide enough information to debug eventual problems.
-> 
+--Sig_/9oi3s5XDxr69yehg7+C6bLZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I didn't run the test under those failing conditions, but at looking at
-the code, I think it would simply skip the "expected <conditions> found"
-and the test script would complain about not seeing that msg.
+Hi Linus,
 
-Would it be easier to just bite the bullet and verify sv[0-4] at their
-allocation sites?  Then later uses (ie, the sv3 dereference that
-Miroslav spotted at the bottom) or new code wouldn't fall through the
-cracks.
+In commit
 
--- Joe
+  15d90c339a7f ("pinctrl: sunxi: Correct number of IRQ banks on H6 main pin=
+ controller")
+
+Fixes tag
+
+  Fixes: c8a830904991 ("pinctrl: sunxi: add support for the Allwinner H6
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes: tags over more than 1 line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9oi3s5XDxr69yehg7+C6bLZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxGSrsACgkQAVBC80lX
+0Gx1tggAiOhilq5/5UdLah4RSfv3BEye2oUOX4Em2WQRcR3K2SAFV/WqkRbc/qB4
+GCDa6DAUUXs94QXDln3tV25PmHAp3WrxcN4DcThaqKCmtvHCsI2xDJ4RNKutS6JY
+jfMCReXfSDX1+ehCnJtgB/C0Y1Oia2kn/OEPWnsqpAemF07ydRyVZRk65QT7dNEY
+v341Y2WoZlGl1d1Rta9drHo35hqOWzW6pjh45aNx6inIZLeY+lw1kWKn3fDz4H5e
+GmgvkluVQ2WaHv9If3QTVdX9xCsPMxEN+/kMELKkXqMWuVVegxkCIfZJS6v0YGV/
+tMckmzxle9XFEc9drxFU/lG42ZzPEw==
+=X9vq
+-----END PGP SIGNATURE-----
+
+--Sig_/9oi3s5XDxr69yehg7+C6bLZ--
