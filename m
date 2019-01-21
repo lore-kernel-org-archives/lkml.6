@@ -2,132 +2,99 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AD9C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CD5C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942D32084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:21:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 399A82084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729664AbfAUIVD (ORCPT
+        id S1729680AbfAUIVM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:21:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60777 "EHLO mx1.redhat.com"
+        Mon, 21 Jan 2019 03:21:12 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:39867 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729190AbfAUIVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:21:01 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 97BC7C0B2014;
-        Mon, 21 Jan 2019 08:21:00 +0000 (UTC)
-Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 85D09608E1;
-        Mon, 21 Jan 2019 08:20:59 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
-        Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V14 11/18] block: loop: pass multi-page bvec to iov_iter
-Date:   Mon, 21 Jan 2019 16:17:58 +0800
-Message-Id: <20190121081805.32727-12-ming.lei@redhat.com>
-In-Reply-To: <20190121081805.32727-1-ming.lei@redhat.com>
-References: <20190121081805.32727-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 21 Jan 2019 08:21:01 +0000 (UTC)
+        id S1729279AbfAUIVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:21:10 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5F3E22078C; Mon, 21 Jan 2019 09:21:07 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B9DF9206DC;
+        Mon, 21 Jan 2019 09:21:06 +0100 (CET)
+Date:   Mon, 21 Jan 2019 09:21:06 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-mtd@lists.infradead.org>,
+        Liang Yang <liang.yang@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Add entry for Amlogic NAND controller
+ driver
+Message-ID: <20190121092106.2c97ebe2@xps13>
+In-Reply-To: <3f098e44-9d9b-3d0a-3e19-5913077aeb07@amlogic.com>
+References: <1547917355-13179-1-git-send-email-jianxin.pan@amlogic.com>
+        <20190120160605.33689354@xps13>
+        <3f098e44-9d9b-3d0a-3e19-5913077aeb07@amlogic.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-iov_iter is implemented on bvec itererator helpers, so it is safe to pass
-multi-page bvec to it, and this way is much more efficient than passing one
-page in each bvec.
+Hi Jianxin,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/block/loop.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Jianxin Pan <jianxin.pan@amlogic.com> wrote on Mon, 21 Jan 2019
+12:18:18 +0800:
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index cf5538942834..168a151aba49 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -511,21 +511,22 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 		     loff_t pos, bool rw)
- {
- 	struct iov_iter iter;
-+	struct req_iterator rq_iter;
- 	struct bio_vec *bvec;
- 	struct request *rq = blk_mq_rq_from_pdu(cmd);
- 	struct bio *bio = rq->bio;
- 	struct file *file = lo->lo_backing_file;
-+	struct bio_vec tmp;
- 	unsigned int offset;
--	int segments = 0;
-+	int nr_bvec = 0;
- 	int ret;
- 
-+	rq_for_each_mp_bvec(tmp, rq, rq_iter)
-+		nr_bvec++;
-+
- 	if (rq->bio != rq->biotail) {
--		struct req_iterator iter;
--		struct bio_vec tmp;
- 
--		__rq_for_each_bio(bio, rq)
--			segments += bio_segments(bio);
--		bvec = kmalloc_array(segments, sizeof(struct bio_vec),
-+		bvec = kmalloc_array(nr_bvec, sizeof(struct bio_vec),
- 				     GFP_NOIO);
- 		if (!bvec)
- 			return -EIO;
-@@ -534,10 +535,10 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 		/*
- 		 * The bios of the request may be started from the middle of
- 		 * the 'bvec' because of bio splitting, so we can't directly
--		 * copy bio->bi_iov_vec to new bvec. The rq_for_each_segment
-+		 * copy bio->bi_iov_vec to new bvec. The rq_for_each_mp_bvec
- 		 * API will take care of all details for us.
- 		 */
--		rq_for_each_segment(tmp, rq, iter) {
-+		rq_for_each_mp_bvec(tmp, rq, rq_iter) {
- 			*bvec = tmp;
- 			bvec++;
- 		}
-@@ -551,11 +552,10 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 		 */
- 		offset = bio->bi_iter.bi_bvec_done;
- 		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
--		segments = bio_segments(bio);
- 	}
- 	atomic_set(&cmd->ref, 2);
- 
--	iov_iter_bvec(&iter, rw, bvec, segments, blk_rq_bytes(rq));
-+	iov_iter_bvec(&iter, rw, bvec, nr_bvec, blk_rq_bytes(rq));
- 	iter.iov_offset = offset;
- 
- 	cmd->iocb.ki_pos = pos;
--- 
-2.9.5
+> Hi Miquel,
+> 
+> On 2019/1/20 23:06, Miquel Raynal wrote:
+> > Hi Jianxin,
+> > 
+> > Jianxin Pan <jianxin.pan@amlogic.com> wrote on Sun, 20 Jan 2019
+> > 01:02:35 +0800:
+> >   
+> >> Add entry for Amlogic NAND controller driver and its bindings[0].
+> >>
+> >> [0] https://lore.kernel.org/lkml/1547566684-57472-1-git-send-email-jianxin.pan@amlogic.com/
+> >>
+> >> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+> >> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>  
+> > 
+> > If you are the author of the patch your Signed-off-by should come first.  
+> OK.
+> > 
+> > Also, why is Liang the Maintainer? Why not you?
+> >   
+> Yangliang is Amlogic maintainer for NAND controller. And all patches about amlogic NAND controller are from him.
 
+Maybe but he never wrote to the ML, the maintainer may be someone else
+than the original author, I just want someone to review patches and
+help to maintain the driver.
+
+Yangliang are you willing to do that?
+
+
+Thanks,
+Miquèl
