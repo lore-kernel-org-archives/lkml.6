@@ -2,124 +2,104 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0155C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02620C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D3A20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD83220879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548079905;
+	bh=a4Z/VIJhSfaXp8+alFgL9AoiTm6KJS/oPZk8IPnJNZU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uwUisl9CAK5cD8obocfEe1JtvCzB2a3YOkl8f0fHbcY+VqzjTR/bP6roAY7cfpxrw
+	 6jb5azw5DrUS5PghgaQM0FsiMmISyg3CZJNL9E3EqM307i6754I3CeP6jjpT35RcE0
+	 S3t+TwpJKuIRz8gEA6+nAY3mFDfL9Fzj8mcXj5qE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbfAUOLg (ORCPT
+        id S1731404AbfAUNyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:11:36 -0500
-Received: from mga06.intel.com ([134.134.136.31]:47949 "EHLO mga06.intel.com"
+        Mon, 21 Jan 2019 08:54:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729764AbfAUOLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:11:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 06:11:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,503,1539673200"; 
-   d="scan'208";a="127675435"
-Received: from mylly.fi.intel.com (HELO mylly.fi.intel.com.) ([10.237.72.159])
-  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2019 06:11:31 -0800
-From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
+        id S1731393AbfAUNyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:54:02 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D32B2084C;
+        Mon, 21 Jan 2019 13:54:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548078841;
+        bh=a4Z/VIJhSfaXp8+alFgL9AoiTm6KJS/oPZk8IPnJNZU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IYmcOilvumaC6j7jleJRrGXIFd8hzOkhFlwBpc7R//BPDROGPYfCUfrIJ/y7kS8Xq
+         c1ftv3QpOoNMMIrZMwSLQG4qJSXV3CZwrFaNbIpGWTFfl0gtPqjJFByfmgUnBtGl8r
+         ySNW0rn5aZuatPCRy4yfwsIxdNCpqvn+NeH6tqYM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        linux-i2c@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Stable <stable@vger.kernel.org>
-Subject: [PATCH] mfd: Fix I2C_DESIGNWARE_PLATFORM dependencies
-Date:   Mon, 21 Jan 2019 16:11:28 +0200
-Message-Id: <20190121141128.5283-1-jarkko.nikula@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, YunQiang Su <ysu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
+        linux-mips@vger.kernel.org, aaro.koskinen@iki.fi
+Subject: [PATCH 4.14 36/59] Disable MSI also when pcie-octeon.pcie_disable on
+Date:   Mon, 21 Jan 2019 14:44:01 +0100
+Message-Id: <20190121122500.659521204@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
+References: <20190121122456.529172919@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-INTEL_SOC_PMIC, INTEL_SOC_PMIC_CHTWC and MFD_TPS68470 select the
-I2C_DESIGNWARE_PLATFORM without its dependencies making it possible to see
-warning and build error like below:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-WARNING: unmet direct dependencies detected for I2C_DESIGNWARE_PLATFORM
-  Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ACPI [=y] && COMMON_CLK [=n] || !ACPI [=y])
-  Selected by [y]:
-  - MFD_TPS68470 [=y] && HAS_IOMEM [=y] && ACPI [=y] && I2C [=y]=y
+------------------
 
-/usr/bin/ld: drivers/i2c/busses/i2c-designware-platdrv.o: in function `dw_i2c_plat_resume':
-i2c-designware-platdrv.c:(.text+0x62): undefined reference to `i2c_dw_prepare_clk'
-/usr/bin/ld: drivers/i2c/busses/i2c-designware-platdrv.o: in function `dw_i2c_plat_suspend':
-i2c-designware-platdrv.c:(.text+0x9a): undefined reference to `i2c_dw_prepare_clk'
-/usr/bin/ld: drivers/i2c/busses/i2c-designware-platdrv.o: in function `dw_i2c_plat_probe':
-i2c-designware-platdrv.c:(.text+0x41c): undefined reference to `i2c_dw_prepare_clk'
-/usr/bin/ld: i2c-designware-platdrv.c:(.text+0x438): undefined reference to `i2c_dw_read_comp_param'
-/usr/bin/ld: i2c-designware-platdrv.c:(.text+0x545): undefined reference to `i2c_dw_probe'
-/usr/bin/ld: i2c-designware-platdrv.c:(.text+0x727): undefined reference to `i2c_dw_probe_slave'
+From: YunQiang Su <ysu@wavecomp.com>
 
-Fix this by making above options to depend on I2C_DESIGNWARE_PLATFORM
-being built-in. I2C_DESIGNWARE_PLATFORM is a visible symbol with
-dependencies so in general the select should be avoided.
+commit a214720cbf50cd8c3f76bbb9c3f5c283910e9d33 upstream.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Fixes: acebcff9eda8 ("mfd: intel_soc_pmic: Select designware i2c-bus driver")
-Fixes: de85d79f4aab ("mfd: Add Cherry Trail Whiskey Cove PMIC driver")
-Fixes: 9bbf6a15ce19 ("mfd: Add support for TPS68470 device")
-Cc: Stable <stable@vger.kernel.org> # v4.14+
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Octeon has an boot-time option to disable pcie.
+
+Since MSI depends on PCI-E, we should also disable MSI also with
+this option is on in order to avoid inadvertently accessing PCIe
+registers.
+
+Signed-off-by: YunQiang Su <ysu@wavecomp.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: pburton@wavecomp.com
+Cc: linux-mips@vger.kernel.org
+Cc: aaro.koskinen@iki.fi
+Cc: stable@vger.kernel.org # v3.3+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/mfd/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/pci/msi-octeon.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f461460a2aeb..6a84a8ecd4a9 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -519,10 +519,10 @@ config INTEL_SOC_PMIC
- 	bool "Support for Crystal Cove PMIC"
- 	depends on ACPI && HAS_IOMEM && I2C=y && GPIOLIB && COMMON_CLK
- 	depends on X86 || COMPILE_TEST
-+	depends on I2C_DESIGNWARE_PLATFORM=y
- 	select MFD_CORE
- 	select REGMAP_I2C
- 	select REGMAP_IRQ
--	select I2C_DESIGNWARE_PLATFORM
- 	help
- 	  Select this option to enable support for Crystal Cove PMIC
- 	  on some Intel SoC systems. The PMIC provides ADC, GPIO,
-@@ -548,10 +548,10 @@ config INTEL_SOC_PMIC_CHTWC
- 	bool "Support for Intel Cherry Trail Whiskey Cove PMIC"
- 	depends on ACPI && HAS_IOMEM && I2C=y && COMMON_CLK
- 	depends on X86 || COMPILE_TEST
-+	depends on I2C_DESIGNWARE_PLATFORM=y
- 	select MFD_CORE
- 	select REGMAP_I2C
- 	select REGMAP_IRQ
--	select I2C_DESIGNWARE_PLATFORM
- 	help
- 	  Select this option to enable support for the Intel Cherry Trail
- 	  Whiskey Cove PMIC found on some Intel Cherry Trail systems.
-@@ -1420,9 +1420,9 @@ config MFD_TPS65217
- config MFD_TPS68470
- 	bool "TI TPS68470 Power Management / LED chips"
- 	depends on ACPI && I2C=y
-+	depends on I2C_DESIGNWARE_PLATFORM=y
- 	select MFD_CORE
- 	select REGMAP_I2C
--	select I2C_DESIGNWARE_PLATFORM
- 	help
- 	  If you say yes here you get support for the TPS68470 series of
- 	  Power Management / LED chips.
--- 
-2.20.1
+--- a/arch/mips/pci/msi-octeon.c
++++ b/arch/mips/pci/msi-octeon.c
+@@ -369,7 +369,9 @@ int __init octeon_msi_initialize(void)
+ 	int irq;
+ 	struct irq_chip *msi;
+ 
+-	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
++	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_INVALID) {
++		return 0;
++	} else if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
+ 		msi_rcv_reg[0] = CVMX_PEXP_NPEI_MSI_RCV0;
+ 		msi_rcv_reg[1] = CVMX_PEXP_NPEI_MSI_RCV1;
+ 		msi_rcv_reg[2] = CVMX_PEXP_NPEI_MSI_RCV2;
+
 
