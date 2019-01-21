@@ -2,100 +2,128 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43817C2F3A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C461C2F3A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1443920861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:06:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34FC72084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:07:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fMP/756s"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wXCI3GF6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbfAUNGX (ORCPT
+        id S1728795AbfAUNHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:06:23 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40935 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727449AbfAUNGW (ORCPT
+        Mon, 21 Jan 2019 08:07:06 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:47345 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727449AbfAUNHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:06:22 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v5so15432780lfe.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 05:06:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wh6rtqcOPEJtHrYy9mDdNoDWZqOoR5R3Bb2MsKxUt64=;
-        b=fMP/756s/lIb6khu1FsWLzq6C29tMcVEeF8nnxSp0vmBFV1aKvDVfMQvQBoQJ+H7+q
-         aHQ+XCZnVqg/vSsK0q7xDGzYWpJ44Sw9TBsTD8ZS1/ZZktUfBtCXftkiYkGf0v2+DWFD
-         tUJl2eCrEu7SD9fUxFnerffulK3mBxDkAj26s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wh6rtqcOPEJtHrYy9mDdNoDWZqOoR5R3Bb2MsKxUt64=;
-        b=DDs9gsxfYZNVKCfWWe8MlG/FkaoChQA6baQG1W87Byht128rjBY28oKcmozWzssr2f
-         Imruo9vGt9qyghMOlfq7C5CfMERIbK9Jk3tP8GZ2aDbEH23XhpmUkzRZk93wdPBAkQT3
-         sjvMDM+2b4YXEthSCFK4Sc435+KjeUfWI+G8E63C0LykQSAWgQ2gusrcnI/tyxqrtOke
-         X+t4begMBzTGWj8mzfYPDAlLOdb6O/+ia+Bgp41vYoiLm88Ufdj5gedeSYgQJiaah2Pj
-         AgMGly2yM9qXjQgfu80jGnSHbGNFIihgri1tpt62QwZSdjA3T2hLbS+c8Jt5jSoq4qyK
-         WFhA==
-X-Gm-Message-State: AJcUukdd+suflLzncGczxzHGBBF0V4gx8Oif3pcVMtEhLWdSQd8Cgrzj
-        jAd0MFoC9FXNRwpC5APZwKQrentAmy7De4UPwDP8rw==
-X-Google-Smtp-Source: ALg8bN7dHjNpFRD612HBwZ3luZTNTh5+6Uh4hWkSGRYdeGQngTHIVcGKAooE0qnuIyW8Izn/dT4QKZN1gT9xcVxrdO4=
-X-Received: by 2002:a19:789:: with SMTP id 131mr19417273lfh.11.1548075980531;
- Mon, 21 Jan 2019 05:06:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20190116093158.2850-1-thomas.petazzoni@bootlin.com> <20190116093158.2850-2-thomas.petazzoni@bootlin.com>
-In-Reply-To: <20190116093158.2850-2-thomas.petazzoni@bootlin.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 21 Jan 2019 14:06:08 +0100
-Message-ID: <CACRpkdYg3mUhetVO7nFOgGkpbeK+6355p-74wLWAH09JZcN8hQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: pca953x: use a per instance irq_chip structure
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marex@denx.de>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 21 Jan 2019 08:07:05 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x0LD5exQ027454;
+        Mon, 21 Jan 2019 22:05:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x0LD5exQ027454
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548075941;
+        bh=oDS6K478k8S9TuIPdGCS0e12SPNRa7vs+WnpfNLNJ18=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wXCI3GF6HAanitgdyzFucM1iCB+qgXsVG5mMXCrqtHocFPjGYFN91iGSNnyR5Goph
+         FuipL0/OXmon/BTB5PeReDS9a/F1UN6xu8cLrBaUoGA6YIr+CTk4JLXwtrlVyU39z4
+         rQQD8Ml/CRJkECI4rgQ1tJcNuizXUYEYixqDNEmyzS6HvameSpqzklX2TN8k7JI2qP
+         o6yLJwbwVga/1N+KoJTTCjObWjlpnKbnS1QW8o/m/Sp7SatvVnsjURI9+5WlvG/NKd
+         QKTLUJ2hjMCWTP2wCVc/QAZbeldjWrbqXDR813seBx8bARje5IPUHU/PZ8oq8TkcOd
+         Qac5lPE9EP05g==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH] mtd: rawnand: check return code of nand_reset() and nand_readid_op()
+Date:   Mon, 21 Jan 2019 22:05:34 +0900
+Message-Id: <1548075934-19963-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:32 AM Thomas Petazzoni
-<thomas.petazzoni@bootlin.com> wrote:
+nand_scan_ident() iterates over maxchips to find as many homogeneous
+chips as possible.
 
-> When a system has two PCA953x GPIO expanders, the kernel complains with:
->
-> gpio gpiochip2: (0-0021): detected irqchip that is shared with multiple gpiochips: please fix the driver.
->
-> Indeed, there is a single instance of "struct irq_chip" that gets
-> re-used for both PCA953x instance. This commit moves the "struct
-> irq_chip" to be part of the "struct pca953x_chip", so that we have one
-> "struct irq_chip" per PCA953X instance.
->
-> As part of this, the name of the irq_chip is also made different on a
-> per-instance basis, now using the dev_name() of the I2C device. This
-> changes what is visible in /proc/interrupts.
->
-> Before:
->
->  47:          0          0   pca953x  10 Edge      e0100000.sdhci cd
->  48:          0          0   pca953x   6 Edge      e0101000.sdhci cd
->
-> After:
->
->  47:          0          0    0-0020  10 Edge      e0100000.sdhci cd
->  48:          2          0    0-0020   6 Edge      e0101000.sdhci cd
->
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Currently, this loop bails out only when manufacturer or device ID
+unmatches. The reason of unmatch is most likely no chip is connected
+to that chip select. In this case, nand_reset() has already failed,
+and the following nand_readid_op() is pointless.
 
-Patch applied.
+Before ->exec_op hook was introduced, drivers had no way to tell
+the failure of NAND_CMD_RESET to the framework because the legacy
+->cmdfunc() has void return type. Now drivers implementing ->exec_op
+hook can return the error code. You can save nand_readid_op() by
+checking the return value of nand_reset(). The return value of
+nand_readid_op() should be checked as well. If it fails, probably
+id[0] and id[1] are undefined values.
 
-Yours,
-Linus Walleij
+Just for consistency, it should be sensible to check the return
+code in nand_do_write_oob() as well.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/mtd/nand/raw/nand_base.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 7ea3f10..3407523 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -457,7 +457,7 @@ static int nand_do_write_oob(struct nand_chip *chip, loff_t to,
+ 			     struct mtd_oob_ops *ops)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+-	int chipnr, page, status, len;
++	int chipnr, page, status, len, ret;
+ 
+ 	pr_debug("%s: to = 0x%08x, len = %i\n",
+ 			 __func__, (unsigned int)to, (int)ops->ooblen);
+@@ -479,7 +479,9 @@ static int nand_do_write_oob(struct nand_chip *chip, loff_t to,
+ 	 * if we don't do this. I have no clue why, but I seem to have 'fixed'
+ 	 * it in the doc2000 driver in August 1999.  dwmw2.
+ 	 */
+-	nand_reset(chip, chipnr);
++	ret = nand_reset(chip, chipnr);
++	if (ret)
++		return ret;
+ 
+ 	nand_select_target(chip, chipnr);
+ 
+@@ -5037,11 +5039,15 @@ static int nand_scan_ident(struct nand_chip *chip, unsigned int maxchips,
+ 		u8 id[2];
+ 
+ 		/* See comment in nand_get_flash_type for reset */
+-		nand_reset(chip, i);
++		ret = nand_reset(chip, i);
++		if (ret)
++			break;
+ 
+ 		nand_select_target(chip, i);
+ 		/* Send the command for reading device ID */
+-		nand_readid_op(chip, 0, id, sizeof(id));
++		ret = nand_readid_op(chip, 0, id, sizeof(id));
++		if (ret)
++			break;
+ 		/* Read manufacturer and device IDs */
+ 		if (nand_maf_id != id[0] || nand_dev_id != id[1]) {
+ 			nand_deselect_target(chip);
+-- 
+2.7.4
+
