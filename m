@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EFEC7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F5CC7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20CB520870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E125D20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:17:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbfAULRH (ORCPT
+        id S1727814AbfAULRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:17:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40869 "EHLO
+        Mon, 21 Jan 2019 06:17:25 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43261 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfAULRG (ORCPT
+        with ESMTP id S1726165AbfAULRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:17:06 -0500
+        Mon, 21 Jan 2019 06:17:24 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBG2jR2492470
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBGfXS2492625
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 21 Jan 2019 03:16:02 -0800
+        Mon, 21 Jan 2019 03:16:41 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBG0iK2492466;
-        Mon, 21 Jan 2019 03:16:00 -0800
-Date:   Mon, 21 Jan 2019 03:16:00 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBGf5H2492621;
+        Mon, 21 Jan 2019 03:16:41 -0800
+Date:   Mon, 21 Jan 2019 03:16:41 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Andrew Murray <tipbot@zytor.com>
-Message-ID: <tip-23e232bd986a3024d589cbdbd64e078574d70794@git.kernel.org>
-Cc:     acme@kernel.org, linux@armlinux.org.uk, ink@jurassic.park.msu.ru,
-        tglx@linutronix.de, benh@kernel.crashing.org,
-        s.hauer@pengutronix.de, rth@twiddle.net,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, paulus@samba.org,
-        shawnguo@kernel.org, mattst88@gmail.com, andrew.murray@arm.com,
-        hpa@zytor.com, bp@alien8.de, mpe@ellerman.id.au,
-        peterz@infradead.org, will.deacon@arm.com,
-        torvalds@linux-foundation.org, mark.rutland@arm.com
-Reply-To: linux@armlinux.org.uk, acme@kernel.org, ink@jurassic.park.msu.ru,
-          tglx@linutronix.de, benh@kernel.crashing.org,
-          s.hauer@pengutronix.de, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, rth@twiddle.net, paulus@samba.org,
-          shawnguo@kernel.org, mattst88@gmail.com, andrew.murray@arm.com,
-          hpa@zytor.com, mpe@ellerman.id.au, bp@alien8.de,
-          peterz@infradead.org, will.deacon@arm.com,
-          torvalds@linux-foundation.org, mark.rutland@arm.com
-In-Reply-To: <1547128414-50693-2-git-send-email-andrew.murray@arm.com>
-References: <1547128414-50693-2-git-send-email-andrew.murray@arm.com>
+Message-ID: <tip-486efe9f8e30bac1e236f867df164f4966f3e207@git.kernel.org>
+Cc:     paulus@samba.org, andrew.murray@arm.com, mingo@kernel.org,
+        mpe@ellerman.id.au, linux@armlinux.org.uk, mattst88@gmail.com,
+        peterz@infradead.org, acme@kernel.org,
+        linux-kernel@vger.kernel.org, s.hauer@pengutronix.de,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        ink@jurassic.park.msu.ru, rth@twiddle.net, mark.rutland@arm.com,
+        bp@alien8.de, shawnguo@kernel.org, hpa@zytor.com,
+        will.deacon@arm.com, benh@kernel.crashing.org
+Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de,
+          ink@jurassic.park.msu.ru, mark.rutland@arm.com, rth@twiddle.net,
+          bp@alien8.de, shawnguo@kernel.org, hpa@zytor.com,
+          will.deacon@arm.com, benh@kernel.crashing.org, paulus@samba.org,
+          mingo@kernel.org, andrew.murray@arm.com, mpe@ellerman.id.au,
+          linux@armlinux.org.uk, mattst88@gmail.com, peterz@infradead.org,
+          acme@kernel.org, linux-kernel@vger.kernel.org,
+          s.hauer@pengutronix.de
+In-Reply-To: <1547128414-50693-3-git-send-email-andrew.murray@arm.com>
+References: <1547128414-50693-3-git-send-email-andrew.murray@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/doc: Update design.txt for
- exclude_{host|guest} flags
-Git-Commit-ID: 23e232bd986a3024d589cbdbd64e078574d70794
+Subject: [tip:perf/core] perf/core: Add function to test for event exclusion
+ flags
+Git-Commit-ID: 486efe9f8e30bac1e236f867df164f4966f3e207
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,17 +67,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  23e232bd986a3024d589cbdbd64e078574d70794
-Gitweb:     https://git.kernel.org/tip/23e232bd986a3024d589cbdbd64e078574d70794
+Commit-ID:  486efe9f8e30bac1e236f867df164f4966f3e207
+Gitweb:     https://git.kernel.org/tip/486efe9f8e30bac1e236f867df164f4966f3e207
 Author:     Andrew Murray <andrew.murray@arm.com>
-AuthorDate: Thu, 10 Jan 2019 13:53:23 +0000
+AuthorDate: Thu, 10 Jan 2019 13:53:24 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 21 Jan 2019 11:01:18 +0100
+CommitDate: Mon, 21 Jan 2019 11:01:19 +0100
 
-perf/doc: Update design.txt for exclude_{host|guest} flags
+perf/core: Add function to test for event exclusion flags
 
-Update design.txt to reflect the presence of the exclude_host
-and exclude_guest perf flags.
+Add a function that tests if any of the perf event exclusion flags
+are set on a given event.
 
 Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -101,24 +101,29 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: linuxppc-dev@lists.ozlabs.org
 Cc: robin.murphy@arm.com
 Cc: suzuki.poulose@arm.com
-Link: https://lkml.kernel.org/r/1547128414-50693-2-git-send-email-andrew.murray@arm.com
+Link: https://lkml.kernel.org/r/1547128414-50693-3-git-send-email-andrew.murray@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/perf/design.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/perf_event.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/tools/perf/design.txt b/tools/perf/design.txt
-index a28dca2582aa..0453ba26cdbd 100644
---- a/tools/perf/design.txt
-+++ b/tools/perf/design.txt
-@@ -222,6 +222,10 @@ The 'exclude_user', 'exclude_kernel' and 'exclude_hv' bits provide a
- way to request that counting of events be restricted to times when the
- CPU is in user, kernel and/or hypervisor mode.
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1d5c551a5add..54a78d22f0a6 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1004,6 +1004,15 @@ perf_event__output_id_sample(struct perf_event *event,
+ extern void
+ perf_log_lost_samples(struct perf_event *event, u64 lost);
  
-+Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
-+to request counting of events restricted to guest and host contexts when
-+using Linux as the hypervisor.
++static inline bool event_has_any_exclude_flag(struct perf_event *event)
++{
++	struct perf_event_attr *attr = &event->attr;
 +
- The 'mmap' and 'munmap' bits allow recording of PROT_EXEC mmap/munmap
- operations, these can be used to relate userspace IP addresses to actual
- code, even after the mapping (or even the whole process) is gone,
++	return attr->exclude_idle || attr->exclude_user ||
++	       attr->exclude_kernel || attr->exclude_hv ||
++	       attr->exclude_guest || attr->exclude_host;
++}
++
+ static inline bool is_sampling_event(struct perf_event *event)
+ {
+ 	return event->attr.sample_period != 0;
