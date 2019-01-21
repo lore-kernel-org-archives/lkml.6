@@ -2,89 +2,92 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423BBC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFFCC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11AA520823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:28:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D8F520861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:30:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="ci2JZzI4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfAUO2A (ORCPT
+        id S1729240AbfAUOac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:28:00 -0500
-Received: from mga11.intel.com ([192.55.52.93]:12640 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728998AbfAUO17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:27:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 06:27:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,503,1539673200"; 
-   d="scan'208";a="313554180"
-Received: from epg-ubt28.iil.intel.com (HELO [143.185.152.137]) ([143.185.152.137])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Jan 2019 06:27:57 -0800
-Subject: Re: pinctrl: -EAGAIN not supported but documented
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <94b9acab-a739-a014-b068-768f40de38ec@linux.intel.com>
- <CACRpkdYPBf6sYzbk1W-znYxaaaGvvO=tT_rXt7SXBwDRa6fJ1w@mail.gmail.com>
-From:   Ramon Fried <ramon.fried@linux.intel.com>
-Message-ID: <81fc986c-10b1-d1b1-9f60-241ec2abd446@linux.intel.com>
-Date:   Mon, 21 Jan 2019 16:27:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 09:30:32 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:43982 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729126AbfAUOac (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:30:32 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 713CC5C0DDF;
+        Mon, 21 Jan 2019 15:30:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1548081030;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S8TpjwAbO652mHYXiF9FJrLILmgvaCiBjhUMapdS/NQ=;
+        b=ci2JZzI4ukuzyQd3PmMDSntR5gn1pN6+5Jbt3PfFSCojzLv1gLNp1BxjlndwodsqVfDw0a
+        XJrAmWNeZDdadiRAi2Kg2s3A7FeUPR6JLilFAPJ9DrDah6AKsTjpXplA6MhmFMBgRBqlhb
+        nEpI10T4X2h+GXgqZsf04uzvcSbOusg=
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYPBf6sYzbk1W-znYxaaaGvvO=tT_rXt7SXBwDRa6fJ1w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Date:   Mon, 21 Jan 2019 15:30:30 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de
+Cc:     max.krummenacher@toradex.com, marcel.ziswiler@toradex.com,
+        dev@pschenker.ch, kernel@pengutronix.de, fabio.estevam@nxp.com,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: imx6qdl-apalis: add phy-supply
+In-Reply-To: <20190118133218.19917-1-stefan@agner.ch>
+References: <20190118133218.19917-1-stefan@agner.ch>
+Message-ID: <54c6b91cf908bd7553027d77244414f8@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 18.01.2019 14:32, Stefan Agner wrote:
+> Use the VDD I/O rail as phy-supply regulator. Technically, the
+> regulator has multiple rails, but currently the driver only
+> supports a single phy-supply. The VDD I/O rail has the highest
+> power consumption when software power down is used and hence
+> the highest saving potential.
 
-On 1/21/19 4:26 PM, Linus Walleij wrote:
-> On Mon, Jan 21, 2019 at 2:28 PM Ramon Fried <ramon.fried@linux.intel.com> wrote:
->
->> Stated in Documentation/driver-api/pinctl.rst:
->>
->> Since some controllers have special logic for handling entire groups of pins
->> they can exploit the special whole-group pin control function. The
->> pin_config_group_set() callback is allowed to return the error code -EAGAIN,
->> for groups it does not want to handle, or if it just wants to do some
->> group-level handling and then fall through to iterate over all pins, in
->> which
->> case each individual pin will be treated by separate pin_config_set()
->> calls as
->> well.
->>
->> ----
->>
->> This is not supported, and there's no code for handling it.
->>
->> Should we add the necessary code or just remove the wrong documentation.
-> The idea was removed in:
-> commit ad42fc6c84795d19972e7f7dee70fe74bec4c2d8
-> "pinctrl: rip out the direct pinconf API"
->
-> I think we should just remove the documentation.
->
-> Do you want me to look into it or do you want to send a patch?
->
-> Yours,
-> Linus Walleij
+Please don't merge this patch. The vgen5_reg is also used as a pull-up
+for USB ID pin, it would not be safe for the FEC driver to disable this
+rail.
 
-I'll send a patch shortly.
+--
+Stefan
 
-Thanks.
 
-Ramon.
-
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  arch/arm/boot/dts/imx6qdl-apalis.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> index 0b47aecf336a..cf66f9ececbd 100644
+> --- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> @@ -241,6 +241,7 @@
+>  	phy-handle = <&ethphy>;
+>  	phy-reset-duration = <10>;
+>  	phy-reset-gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
+> +	phy-supply = <&vgen5_reg>;
+>  	status = "okay";
+>  
+>  	mdio {
