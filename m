@@ -2,193 +2,110 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2811BC2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33267C2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B3820879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD522085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:37:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="cE0L7b7G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730474AbfAUPgl (ORCPT
+        id S1730510AbfAUPhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:36:41 -0500
-Received: from foss.arm.com ([217.140.101.70]:36468 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730006AbfAUPeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:34:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E051E1688;
-        Mon, 21 Jan 2019 07:34:19 -0800 (PST)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A90B73F5C1;
-        Mon, 21 Jan 2019 07:34:17 -0800 (PST)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Julien Thierry <julien.thierry@arm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: [PATCH v9 08/26] arm64: Make PMR part of task context
-Date:   Mon, 21 Jan 2019 15:33:27 +0000
-Message-Id: <1548084825-8803-9-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        Mon, 21 Jan 2019 10:37:17 -0500
+Received: from mail-eopbgr60095.outbound.protection.outlook.com ([40.107.6.95]:52480
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728807AbfAUPhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:37:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bwpwSRIKl/gG/zFRSSKtELSdgxzjssTmBdAjqvYR7as=;
+ b=cE0L7b7Gx7fhSxIqP2lAAcbavWZOzjS4kTbaBwm9Xu1Z8LU4HXWUich164hPzvmy8T2U2Mr/ZtFDZ4ePV3Dm2qh3TcGqTDn+81ymXOC4Yzgan2/uCKZU23KOA9YPHooP+at9AT901qmyxdBi9Dq0naOUWng+VEm1P3xU3ZCR+Y8=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB2430.eurprd05.prod.outlook.com (10.168.135.150) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.29; Mon, 21 Jan 2019 15:37:12 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::edef:e9d3:e4e3:e7c3]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::edef:e9d3:e4e3:e7c3%2]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
+ 15:37:11 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "stefan@agner.ch" <stefan@agner.ch>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "fugang.duan@nxp.com" <fugang.duan@nxp.com>
+CC:     Max Krummenacher <max.krummenacher@toradex.com>,
+        "dev@pschenker.ch" <dev@pschenker.ch>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: fec: get regulator optional
+Thread-Topic: [PATCH] net: fec: get regulator optional
+Thread-Index: AQHUsZnW7v1WwT/wsUWY6dCbzJ2PcaW52yQA
+Date:   Mon, 21 Jan 2019 15:37:11 +0000
+Message-ID: <d1e9d19d78fb41480b21aadc7f273dca12f7472a.camel@toradex.com>
+References: <20190121145847.30223-1-stefan@agner.ch>
+In-Reply-To: <20190121145847.30223-1-stefan@agner.ch>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2430;6:CTLGeqG+iXtAtxk2axBvSitdLaVgK+z1UN2PT0nwzwBRQ12LMrcKZ6/sPthHJ3QQtOBzxCfs5Xf/4H3KijCHJfFyEanUcjQEyNvjPz8HDaTMPK5Bw7HdPHBkurLUMcQekWxCLs0nNOztJlpibrwnCHCP7ITNi6RQvjwJT48tAvVcSy8z4ofuE2mGt+nzS68d7Qwv/rvHcZXsW5iiqTpQW4yx+UtY2mUORPGSwSuI0mJUTbJUDHqCOMqwF4ZbkLtTYZNZi1zkY8jvEntRdtiCTALLiPbt9iqzpK+K/v6R/7TuGN/idGoCc8odnIyB+3g+43ZmpIb+3fDk2KylSz7ptMpc5pFNPCpt4CvvR9dcL+fEyn30K8fmKU54hPTavXUhlVz5VXcTUKs6av5h9I4o+OeTdS5lDGurkoVGl603YW/gpKL840F8Z1ah3TJaXxzXYJmnhuasHz3kOG4EnVfAOA==;5:zA4Irh+AwVvwkhx1Zpx8Gk4znxEz37iaZU/4Ob5PuQIugqEs9UfFwAer2AxPdhMdlOzm29mrIfiE7YpFz9HzQkiO9e3hrl1wuaKDgMPCGOKxkpazqtyKP7+yeULMOWmAgyIenolX1vNIG9hL6BmhRHXyPKT6vWr5O7e40Wq5J+HXvEk03WN7KV6Pg+obSLu9jU/YUn9dspnb+Z4ejFLKiA==;7:9utkILjcqeguCbyfQJLam1qP9FpLqV+v+oYahSgRiNUymonOuumfOFyo7lOTAUXHfkgQrl3FQ2gCewuWOomhVtz8lhvb2P/JIpiV+PXuCQ4z0Uaf8FztGrXw2LJDwdYhg3eBywS5hYCq5SJiVHdfcQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(39850400004)(396003)(136003)(199004)(189003)(26005)(229853002)(186003)(6506007)(25786009)(11346002)(110136005)(54906003)(102836004)(86362001)(6116002)(2201001)(446003)(76176011)(53936002)(3846002)(99286004)(6512007)(6246003)(6486002)(6436002)(316002)(68736007)(4326008)(2616005)(476003)(2501003)(44832011)(97736004)(486006)(256004)(36756003)(71190400001)(14444005)(81166006)(14454004)(2906002)(71200400001)(305945005)(106356001)(81156014)(8676002)(478600001)(118296001)(8936002)(105586002)(66066001)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2430;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 6379497d-e60c-439e-0ab7-08d67fb64fb8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2430;
+x-ms-traffictypediagnostic: VI1PR0501MB2430:
+x-microsoft-antispam-prvs: <VI1PR0501MB24305909CD3E25830EDA0208FB9F0@VI1PR0501MB2430.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0924C6A0D5
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /NmtqBhXJrcYP6VrtMIvKbbbUIUBBbiRqTDapDDPbHfF2f1bIRYHfaGfCaa8R4a54Rntme54OgPpYtuFD5qWsrWCuxXsgKlbzoZVrSQjn6xWPCS/SJ8SXrQZlVMlnuvVESUHx679mXatFh1h7+3zcOynSEo7R4ovsrRWVC7/fsZMgnr26lCLPTo18hplNtTZibzVlcS2NgNBiiXMybuDD69Mhy5Lm9cWm6ahbJiyiQDx29QuGy2A6wi19tk4Ee4y03PDE3xt4TK4ODIec7jqFp7tXwBNeZaR6Y7/IFGqu4OaCOUU0N2NtST77Wl0NfcuW4zMzPtGPVKXz3/6DT0i2T3bvNbSsoupUV2sbwAPoxeWjeEtNbt4K3HzxuxsPxUCdStcRCEcnInpzWLzmIx+WDvvTXy4VDBRS9rt55z8ed0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E1DB8CFA9089B1488B7008B086DFD823@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6379497d-e60c-439e-0ab7-08d67fb64fb8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 15:37:11.6479
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2430
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to replace PSR.I interrupt disabling/enabling with ICC_PMR_EL1
-interrupt masking, ICC_PMR_EL1 needs to be saved/restored when
-taking/returning from an exception. This mimics the way hardware saves
-and restores PSR.I bit in spsr_el1 for exceptions and ERET.
-
-Add PMR to the registers to save in the pt_regs struct upon kernel entry,
-and restore it before ERET. Also, initialize it to a sane value when
-creating new tasks.
-
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Dave Martin <Dave.Martin@arm.com>
----
- arch/arm64/include/asm/processor.h |  3 +++
- arch/arm64/include/asm/ptrace.h    | 14 +++++++++++---
- arch/arm64/kernel/asm-offsets.c    |  1 +
- arch/arm64/kernel/entry.S          | 14 ++++++++++++++
- arch/arm64/kernel/process.c        |  6 ++++++
- 5 files changed, 35 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index f1a7ab1..5d9ce62 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -191,6 +191,9 @@ static inline void start_thread_common(struct pt_regs *regs, unsigned long pc)
- 	memset(regs, 0, sizeof(*regs));
- 	forget_syscall(regs);
- 	regs->pc = pc;
-+
-+	if (system_uses_irq_prio_masking())
-+		regs->pmr_save = GIC_PRIO_IRQON;
- }
- 
- static inline void start_thread(struct pt_regs *regs, unsigned long pc,
-diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
-index 05cf913..43e5df5 100644
---- a/arch/arm64/include/asm/ptrace.h
-+++ b/arch/arm64/include/asm/ptrace.h
-@@ -19,6 +19,8 @@
- #ifndef __ASM_PTRACE_H
- #define __ASM_PTRACE_H
- 
-+#include <asm/cpufeature.h>
-+
- #include <uapi/asm/ptrace.h>
- 
- /* Current Exception Level values, as contained in CurrentEL */
-@@ -179,7 +181,8 @@ struct pt_regs {
- #endif
- 
- 	u64 orig_addr_limit;
--	u64 unused;	// maintain 16 byte alignment
-+	/* Only valid when ARM64_HAS_IRQ_PRIO_MASKING is enabled. */
-+	u64 pmr_save;
- 	u64 stackframe[2];
- };
- 
-@@ -214,8 +217,13 @@ static inline void forget_syscall(struct pt_regs *regs)
- #define processor_mode(regs) \
- 	((regs)->pstate & PSR_MODE_MASK)
- 
--#define interrupts_enabled(regs) \
--	(!((regs)->pstate & PSR_I_BIT))
-+#define irqs_priority_unmasked(regs)					\
-+	(system_uses_irq_prio_masking() ?				\
-+		(regs)->pmr_save == GIC_PRIO_IRQON :			\
-+		true)
-+
-+#define interrupts_enabled(regs)			\
-+	(!((regs)->pstate & PSR_I_BIT) && irqs_priority_unmasked(regs))
- 
- #define fast_interrupts_enabled(regs) \
- 	(!((regs)->pstate & PSR_F_BIT))
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 65b8afc..90ab2cf 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -81,6 +81,7 @@ int main(void)
-   DEFINE(S_ORIG_X0,		offsetof(struct pt_regs, orig_x0));
-   DEFINE(S_SYSCALLNO,		offsetof(struct pt_regs, syscallno));
-   DEFINE(S_ORIG_ADDR_LIMIT,	offsetof(struct pt_regs, orig_addr_limit));
-+  DEFINE(S_PMR_SAVE,		offsetof(struct pt_regs, pmr_save));
-   DEFINE(S_STACKFRAME,		offsetof(struct pt_regs, stackframe));
-   DEFINE(S_FRAME_SIZE,		sizeof(struct pt_regs));
-   BLANK();
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 0ec0c46..35a47f6 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -249,6 +249,12 @@ alternative_else_nop_endif
- 	msr	sp_el0, tsk
- 	.endif
- 
-+	/* Save pmr */
-+alternative_if ARM64_HAS_IRQ_PRIO_MASKING
-+	mrs_s	x20, SYS_ICC_PMR_EL1
-+	str	x20, [sp, #S_PMR_SAVE]
-+alternative_else_nop_endif
-+
- 	/*
- 	 * Registers that may be useful after this macro is invoked:
- 	 *
-@@ -269,6 +275,14 @@ alternative_else_nop_endif
- 	/* No need to restore UAO, it will be restored from SPSR_EL1 */
- 	.endif
- 
-+	/* Restore pmr */
-+alternative_if ARM64_HAS_IRQ_PRIO_MASKING
-+	ldr	x20, [sp, #S_PMR_SAVE]
-+	msr_s	SYS_ICC_PMR_EL1, x20
-+	/* Ensure priority change is seen by redistributor */
-+	dsb	sy
-+alternative_else_nop_endif
-+
- 	ldp	x21, x22, [sp, #S_PC]		// load ELR, SPSR
- 	.if	\el == 0
- 	ct_user_enter
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index a0f985a..6d410fc 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -232,6 +232,9 @@ void __show_regs(struct pt_regs *regs)
- 
- 	printk("sp : %016llx\n", sp);
- 
-+	if (system_uses_irq_prio_masking())
-+		printk("pmr_save: %08llx\n", regs->pmr_save);
-+
- 	i = top_reg;
- 
- 	while (i >= 0) {
-@@ -363,6 +366,9 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
- 		if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
- 			childregs->pstate |= PSR_SSBS_BIT;
- 
-+		if (system_uses_irq_prio_masking())
-+			childregs->pmr_save = GIC_PRIO_IRQON;
-+
- 		p->thread.cpu_context.x19 = stack_start;
- 		p->thread.cpu_context.x20 = stk_sz;
- 	}
--- 
-1.9.1
-
+T24gTW9uLCAyMDE5LTAxLTIxIGF0IDE1OjU4ICswMTAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
+IEFjY29yZGluZyB0byB0aGUgZGV2aWNlIHRyZWUgYmluZGluZyB0aGUgcGh5LXN1cHBseSBwcm9w
+ZXJ0eSBpcw0KPiBvcHRpb25hbC4gVXNlIHRoZSByZWd1bGF0b3JfZ2V0X29wdGlvbmFsIEFQSSBh
+Y2NvcmRpbmdseS4gVGhlDQo+IGNvZGUgYWxyZWFkeSBoYW5kbGVzIE5VTEwganVzdCBmaW5lLg0K
+PiANCj4gVGhpcyBnZXRzIHJpZCBvZiB0aGUgZm9sbG93aW5nIHdhcm5pbmc6DQo+ICAgZmVjIDIx
+ODgwMDAuZXRoZXJuZXQ6IDIxODgwMDAuZXRoZXJuZXQgc3VwcGx5IHBoeSBub3QgZm91bmQsIHVz
+aW5nDQo+IGR1bW15IHJlZ3VsYXRvcg0KPiANCj4gU2lnbmVkLW9mZi1ieTogU3RlZmFuIEFnbmVy
+IDxzdGVmYW5AYWduZXIuY2g+DQoNClJldmlld2VkLWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNl
+bC56aXN3aWxlckB0b3JhZGV4LmNvbT4NCg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0
+L2ZyZWVzY2FsZS9mZWNfbWFpbi5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRo
+ZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVl
+c2NhbGUvZmVjX21haW4uYw0KPiBpbmRleCA2ZGI2OWJhMzBkY2QuLmM4MzE1ZDg4MGM4YyAxMDA2
+NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4g
+KysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4gQEAgLTM0
+NzksNyArMzQ3OSw3IEBAIGZlY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0K
+PiAgCWlmIChyZXQpDQo+ICAJCWdvdG8gZmFpbGVkX2Nsa19pcGc7DQo+ICANCj4gLQlmZXAtPnJl
+Z19waHkgPSBkZXZtX3JlZ3VsYXRvcl9nZXQoJnBkZXYtPmRldiwgInBoeSIpOw0KPiArCWZlcC0+
+cmVnX3BoeSA9IGRldm1fcmVndWxhdG9yX2dldF9vcHRpb25hbCgmcGRldi0+ZGV2LCAicGh5Iik7
+DQo+ICAJaWYgKCFJU19FUlIoZmVwLT5yZWdfcGh5KSkgew0KPiAgCQlyZXQgPSByZWd1bGF0b3Jf
+ZW5hYmxlKGZlcC0+cmVnX3BoeSk7DQo+ICAJCWlmIChyZXQpIHsNCg==
