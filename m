@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D55C2F42E
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13336C2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9B752085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1B552085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730667AbfAUPfc (ORCPT
+        id S1730465AbfAUPeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:35:32 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36646 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730477AbfAUPev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:34:51 -0500
+        Mon, 21 Jan 2019 10:34:50 -0500
+Received: from foss.arm.com ([217.140.101.70]:36626 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730394AbfAUPes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:34:48 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB5541A25;
-        Mon, 21 Jan 2019 07:34:50 -0800 (PST)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7A4DC3F5C1;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B74315BE;
         Mon, 21 Jan 2019 07:34:48 -0800 (PST)
+Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EF89A3F5C1;
+        Mon, 21 Jan 2019 07:34:45 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
@@ -34,9 +34,9 @@ Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         Julien Thierry <julien.thierry@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH v9 21/26] irqchip/gic: Add functions to access irq priorities
-Date:   Mon, 21 Jan 2019 15:33:40 +0000
-Message-Id: <1548084825-8803-22-git-send-email-julien.thierry@arm.com>
+Subject: [PATCH v9 20/26] irqchip/gic-v3: Handle pseudo-NMIs
+Date:   Mon, 21 Jan 2019 15:33:39 +0000
+Message-Id: <1548084825-8803-21-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
 References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
@@ -45,51 +45,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add accessors to the GIC distributor/redistributors priority registers.
+Provide a higher priority to be used for pseudo-NMIs. When such an
+interrupt is received, keep interrupts fully disabled at CPU level to
+prevent receiving other pseudo-NMIs while handling the current one.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Jason Cooper <jason@lakedaemon.net>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/irqchip/irq-gic-common.c | 10 ++++++++++
- drivers/irqchip/irq-gic-common.h |  2 ++
- 2 files changed, 12 insertions(+)
+ drivers/irqchip/irq-gic-v3.c | 42 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 36 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-index 3c93c6f..04eadbc 100644
---- a/drivers/irqchip/irq-gic-common.c
-+++ b/drivers/irqchip/irq-gic-common.c
-@@ -110,6 +110,16 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
- 	return ret;
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 5374b43..4df1e94 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -41,6 +41,8 @@
+ 
+ #include "irq-gic-common.h"
+ 
++#define GICD_INT_NMI_PRI	(GICD_INT_DEF_PRI & ~0x80)
++
+ #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
+ 
+ struct redist_region {
+@@ -381,12 +383,45 @@ static u64 gic_mpidr_to_affinity(unsigned long mpidr)
+ 	return aff;
  }
  
-+void gic_set_irq_prio(unsigned int irq, void __iomem *base, u8 prio)
++static inline void gic_deactivate_unexpected_irq(u32 irqnr)
 +{
-+	writeb_relaxed(prio, base + GIC_DIST_PRI + irq);
++	if (static_branch_likely(&supports_deactivate_key)) {
++		if (irqnr < 8192)
++			gic_write_dir(irqnr);
++	} else {
++		gic_write_eoir(irqnr);
++	}
 +}
 +
-+u8 gic_get_irq_prio(unsigned int irq, void __iomem *base)
++static inline void gic_handle_nmi(u32 irqnr, struct pt_regs *regs)
 +{
-+	return readb_relaxed(base + GIC_DIST_PRI + irq);
++	int err;
++
++	if (static_branch_likely(&supports_deactivate_key))
++		gic_write_eoir(irqnr);
++	/*
++	 * Leave the PSR.I bit set to prevent other NMIs to be
++	 * received while handling this one.
++	 * PSR.I will be restored when we ERET to the
++	 * interrupted context.
++	 */
++	err = handle_domain_nmi(gic_data.domain, irqnr, regs);
++	if (err)
++		gic_deactivate_unexpected_irq(irqnr);
 +}
 +
- void gic_dist_config(void __iomem *base, int gic_irqs,
- 		     void (*sync_access)(void))
+ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
  {
-diff --git a/drivers/irqchip/irq-gic-common.h b/drivers/irqchip/irq-gic-common.h
-index 97e58fb..f1c6f5a 100644
---- a/drivers/irqchip/irq-gic-common.h
-+++ b/drivers/irqchip/irq-gic-common.h
-@@ -38,6 +38,8 @@ void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
- 		void *data);
- void gic_enable_of_quirks(const struct device_node *np,
- 			  const struct gic_quirk *quirks, void *data);
-+void gic_set_irq_prio(unsigned int irq, void __iomem *base, u8 prio);
-+u8 gic_get_irq_prio(unsigned int irq, void __iomem *base);
+ 	u32 irqnr;
  
- void gic_set_kvm_info(const struct gic_kvm_info *info);
+ 	irqnr = gic_read_iar();
  
++	if (gic_supports_nmi() &&
++	    unlikely(gic_read_rpr() == GICD_INT_NMI_PRI)) {
++		gic_handle_nmi(irqnr, regs);
++		return;
++	}
++
+ 	if (gic_prio_masking_enabled()) {
+ 		gic_pmr_mask_irqs();
+ 		gic_arch_enable_irqs();
+@@ -403,12 +438,7 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
+ 		err = handle_domain_irq(gic_data.domain, irqnr, regs);
+ 		if (err) {
+ 			WARN_ONCE(true, "Unexpected interrupt received!\n");
+-			if (static_branch_likely(&supports_deactivate_key)) {
+-				if (irqnr < 8192)
+-					gic_write_dir(irqnr);
+-			} else {
+-				gic_write_eoir(irqnr);
+-			}
++			gic_deactivate_unexpected_irq(irqnr);
+ 		}
+ 		return;
+ 	}
 -- 
 1.9.1
 
