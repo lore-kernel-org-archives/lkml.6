@@ -2,164 +2,107 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51107C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D7AC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD4220989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080176;
-	bh=oi8hMJJHrPmr4mgfEkY/GCJaZH5r7L3PJVaqs2VccKs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d5kzhNRQBpB0IVX7lKtj79wEU9f31rnC5aSOsP9v2WeqlQxuciH1xtpQaN7WOx9e+
-	 sV29TS2TOSp34mPV83/oxepOdf4+ZYxHLFmfN+OcvR8KWyZKSNMT3cSO0KaEVlGf4+
-	 08bZ9rxNIganrPTCY1TGQ9eu/XwHEU8ad6cg4oKk=
+	by mail.kernel.org (Postfix) with ESMTP id B318A20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="1D+te2Cw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730156AbfAUOQP (ORCPT
+        id S1730804AbfAUOQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:16:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34080 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:16:20 -0500
+Received: from mail1.perex.cz ([77.48.224.245]:51002 "EHLO mail1.perex.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730714AbfAUNvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:51:13 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728912AbfAUOQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:16:13 -0500
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 18F46A003F;
+        Mon, 21 Jan 2019 15:16:10 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 18F46A003F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+        t=1548080170; bh=76PQpHjdWkznrgU8kgzdFeuWWXQJHOzN6h0Tkk8zCkU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=1D+te2CwbmlN2CdKNhj65apbLi5aDoGSUke4Vpj3fvyyOV+uP5BM4jz0wK9v1zqMh
+         obWVtAoCcs9hy/YkLiVGtBSvPaeagpQ2qyQWGCLX6QaNYmyQbYgSfHP80OnAFYv9Zt
+         LdP0Icqy7iubYqkwHZP4vA8qoEVg/BgiSmVtt0c8=
+Received: from p50.perex-int.cz (unknown [192.168.100.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 916512063F;
-        Mon, 21 Jan 2019 13:51:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078672;
-        bh=oi8hMJJHrPmr4mgfEkY/GCJaZH5r7L3PJVaqs2VccKs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QhHIyg/1aE354lyLqwoIvjEZ5ZA6O6n8U8+C+yafAj7fUZNHddplFbtECBUBYYPq7
-         nWSvnFlfv+2OtyYQkZWGaTmoFwTqhPku0WKoB21TGleKkogLJpzyvgeSUFxu2OgS97
-         t0riDrdYuuhsRsHRZLzXul+3HuytG+KzUpRimZNg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+06e771a754829716a327@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 091/111] tipc: fix uninit-value in tipc_nl_compat_name_table_dump
-Date:   Mon, 21 Jan 2019 14:43:25 +0100
-Message-Id: <20190121122506.015717407@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
-References: <20190121122455.819406896@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        (Authenticated sender: perex)
+        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+        Mon, 21 Jan 2019 15:15:43 +0100 (CET)
+Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
+To:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>
+Cc:     alsa-devel@alsa-project.org, arnd@arndb.de, keescook@chromium.org,
+        bgoswami@codeaurora.org, sr@denx.de, gustavo@embeddedor.com,
+        philburk@google.com, willy@infradead.org,
+        mchehab+samsung@kernel.org, sboyd@kernel.org, vkoul@kernel.org,
+        Baolin Wang <baolin.wang@linaro.org>,
+        daniel.thompson@linaro.org, leo.yan@linaro.org,
+        mathieu.poirier@linaro.org, srinivas.kandagatla@linaro.org,
+        anna-maria@linutronix.de, corbet@lwn.net, jmiller@neverware.com,
+        ckeepax@opensource.wolfsonmicro.com, joe@perches.com,
+        o-takashi@sakamocchi.jp, colyli@suse.de,
+        linux-kernel@vger.kernel.org
+References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
+ <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
+ <20190118190805.GF6260@sirena.org.uk> <s5hzhrxzrez.wl-tiwai@suse.de>
+ <20190121124053.GA12679@sirena.org.uk>
+From:   Jaroslav Kysela <perex@perex.cz>
+Message-ID: <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz>
+Date:   Mon, 21 Jan 2019 15:15:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190121124053.GA12679@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+Dne 21.1.2019 v 13:40 Mark Brown napsal(a):
+> On Fri, Jan 18, 2019 at 08:39:32PM +0100, Takashi Iwai wrote:
+>> Mark Brown wrote:
+> 
+>>>> multiple tasks). I would probably go in this way and add more extended
+>>>> permission control for the PCM device, so permissions can be restricted
+>>>> for the passed descriptor to the producer or the consumer task. In this
+> 
+>>> One concern I have with doing some ALSA-specific custom permissions
+>>> thing is integration with frameworks like SELinux (they'd presumably
+>>> need to learn about the ALSA specific stuff to manage it).  It also
+> 
+>> Well, I wonder what makes it more difficult by the approach Jaroslav
+>> suggested.  With O_APPEND, you can just call mmap() normally, and
+>> that's all. What's the merit of dma-buf approach wrt the security?
+> 
+> It was the bit about adding more extended permission control that I was
+> worried about there, not the initial O_APPEND bit.  Indeed the O_APPEND
+> bit sounds like it might also work from the base buffer sharing point of
+> view, I have to confess I'd not heard of that feature before (it didn't
+> come up in the discussion when Eric raised this in Prague).
 
-------------------
+With permissions, I meant to make possible to restrict the file
+descriptor operations (ioctls) for the depending task (like access to
+the DMA buffer, synchronize it for the non-coherent platforms and maybe
+read/write the actual position, delay etc.). It should be relatively
+easy to implement using the snd_pcm_file structure.
 
-From: Ying Xue <ying.xue@windriver.com>
+Even with the full operation mode, it's difficult imagine what the
+depending task can break with the sound interface except probably annoy
+users with some cracks for the playback or start/stop the streaming rapidly.
 
-commit 974cb0e3e7c963ced06c4e32c5b2884173fa5e01 upstream.
+					Jaroslav
 
-syzbot reported:
-
-BUG: KMSAN: uninit-value in __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
-BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
-BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
-CPU: 0 PID: 6290 Comm: syz-executor848 Not tainted 4.19.0-rc8+ #70
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x306/0x460 lib/dump_stack.c:113
- kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
- __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
- __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
- __fswab32 include/uapi/linux/swab.h:59 [inline]
- tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
- __tipc_nl_compat_dumpit+0x59e/0xdb0 net/tipc/netlink_compat.c:205
- tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:270
- tipc_nl_compat_handle net/tipc/netlink_compat.c:1151 [inline]
- tipc_nl_compat_recv+0x1402/0x2760 net/tipc/netlink_compat.c:1210
- genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
- genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
- genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
- netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
- netlink_unicast+0x166d/0x1720 net/netlink/af_netlink.c:1343
- netlink_sendmsg+0x1391/0x1420 net/netlink/af_netlink.c:1908
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440179
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffecec49318 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
-RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401a00
-R13: 0000000000401a90 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
- kmsan_internal_poison_shadow+0xc8/0x1d0 mm/kmsan/kmsan.c:180
- kmsan_kmalloc+0xa4/0x120 mm/kmsan/kmsan_hooks.c:104
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:113
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2727 [inline]
- __kmalloc_node_track_caller+0xb43/0x1400 mm/slub.c:4360
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x422/0xe90 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:996 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
- netlink_sendmsg+0xcaf/0x1420 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-We cannot take for granted the thing that the length of data contained
-in TLV is longer than the size of struct tipc_name_table_query in
-tipc_nl_compat_name_table_dump().
-
-Reported-by: syzbot+06e771a754829716a327@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/tipc/netlink_compat.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -824,6 +824,8 @@ static int tipc_nl_compat_name_table_dum
- 	};
- 
- 	ntq = (struct tipc_name_table_query *)TLV_DATA(msg->req);
-+	if (TLV_GET_DATA_LEN(msg->req) < sizeof(struct tipc_name_table_query))
-+		return -EINVAL;
- 
- 	depth = ntohl(ntq->depth);
- 
-
-
+-- 
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
