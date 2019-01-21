@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18788C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0291DC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6C720861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7B71214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080203;
-	bh=7tbCnHWATkhPa98WT36bcE6R+wjoeH0VqDR+kE3Ya5g=;
+	s=default; t=1548080224;
+	bh=xNs6CjLslVpddPXwywXaeiETLRukd9pKjJlfDb3RaNI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hCWkwh+4r5Ui5VL/J93m45tlAaKvYjqoVV2bkVr9epZGCXX97iCmYbuw1q0uo9axG
-	 fAHgm2MMr+GFw4c215gy/0IcfBMB0V30HVEvvhAGZzPHoVzB55I1ctVq9i9zTLaK8u
-	 LZTclXLniAIw5j1zGltptC8e5GiNwj6tLqXY0qUE=
+	b=hCdJeu0b5/VTAqSkWMgcDZ3llUSf4K7EjHJRUmwow3TPGMXEcTe1dfqb5XzlYOWjS
+	 Jc6TpsNrr4ANAF/b+p5jX5c53h8rI5SnPIjURA5UVCmt79NySddUsMOTlJ8/Y0uGPE
+	 /ehdB/grBMXapHbwHSznb9twieJgqA/o11MEQumI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbfAUOQm (ORCPT
+        id S1730604AbfAUNuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:16:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33816 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:50:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729313AbfAUNu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:59 -0500
+        id S1730586AbfAUNuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 634592063F;
-        Mon, 21 Jan 2019 13:50:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E84C2063F;
+        Mon, 21 Jan 2019 13:50:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078658;
-        bh=7tbCnHWATkhPa98WT36bcE6R+wjoeH0VqDR+kE3Ya5g=;
+        s=default; t=1548078636;
+        bh=xNs6CjLslVpddPXwywXaeiETLRukd9pKjJlfDb3RaNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CjJWC1qu4NfKxjPZ1c9PM/QvOMWbgeNR/jRmZ4Wz/IGbTZzlNVunMpNNz2wxtvch1
-         YTGYQc2IO7NCfW02oSUkIhEtX2B+ewBIAUKXU6S6Bwy7mUsmdjEix/yOmYf9f6iKXz
-         1EJuth3f1Y/StA63AHTSadJy5EXwWYKAzD2PWmKI=
+        b=edKLL1NEzt9ONb9ScFM4XH6iwNU3ebEvHKB6OvHW4JHANh98Ta3LeVgkBp1S4D3MI
+         IoZgjj+4vlv4/WE0TJ0+Ao4fNS/j5a4dZWiy+Jd0TDUdPHhnMIp1P5NnWdwsHM7X01
+         ar6mA9uixJpFEnrHdbcgVfuBNX1BFWd1WBFZNZeU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 109/111] loop: Fix double mutex_unlock(&loop_ctl_mutex) in loop_control_ioctl()
-Date:   Mon, 21 Jan 2019 14:43:43 +0100
-Message-Id: <20190121122507.074297753@linuxfoundation.org>
+Subject: [PATCH 4.20 102/111] loop: Push loop_ctl_mutex down to loop_set_fd()
+Date:   Mon, 21 Jan 2019 14:43:36 +0100
+Message-Id: <20190121122506.734440877@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -68,40 +65,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Jan Kara <jack@suse.cz>
 
-commit 628bd85947091830a8c4872adfd5ed1d515a9cf2 upstream.
+commit 757ecf40b7e029529768eb5f9562d5eeb3002106 upstream.
 
-Commit 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex") forgot to
-remove mutex_unlock(&loop_ctl_mutex) from loop_control_ioctl() when
-replacing loop_index_mutex with loop_ctl_mutex.
+Push lo_ctl_mutex down to loop_set_fd(). We will need this to be able to
+call loop_reread_partitions() without lo_ctl_mutex.
 
-Fixes: 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex")
-Reported-by: syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/block/loop.c |   26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -2074,12 +2074,10 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
--			mutex_unlock(&loop_ctl_mutex);
- 			break;
- 		}
- 		if (atomic_read(&lo->lo_refcnt) > 0) {
- 			ret = -EBUSY;
--			mutex_unlock(&loop_ctl_mutex);
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
+@@ -918,13 +918,17 @@ static int loop_set_fd(struct loop_devic
+ 	if (!file)
+ 		goto out;
+ 
++	error = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	if (error)
++		goto out_putf;
++
+ 	error = -EBUSY;
+ 	if (lo->lo_state != Lo_unbound)
+-		goto out_putf;
++		goto out_unlock;
+ 
+ 	error = loop_validate_file(file, bdev);
+ 	if (error)
+-		goto out_putf;
++		goto out_unlock;
+ 
+ 	mapping = file->f_mapping;
+ 	inode = mapping->host;
+@@ -936,10 +940,10 @@ static int loop_set_fd(struct loop_devic
+ 	error = -EFBIG;
+ 	size = get_loop_size(lo, file);
+ 	if ((loff_t)(sector_t)size != size)
+-		goto out_putf;
++		goto out_unlock;
+ 	error = loop_prepare_queue(lo);
+ 	if (error)
+-		goto out_putf;
++		goto out_unlock;
+ 
+ 	error = 0;
+ 
+@@ -978,11 +982,14 @@ static int loop_set_fd(struct loop_devic
+ 	 * put /dev/loopXX inode. Later in __loop_clr_fd() we bdput(bdev).
+ 	 */
+ 	bdgrab(bdev);
++	mutex_unlock(&loop_ctl_mutex);
+ 	return 0;
+ 
+- out_putf:
++out_unlock:
++	mutex_unlock(&loop_ctl_mutex);
++out_putf:
+ 	fput(file);
+- out:
++out:
+ 	/* This is safe: open() is still holding a reference. */
+ 	module_put(THIS_MODULE);
+ 	return error;
+@@ -1460,12 +1467,7 @@ static int lo_ioctl(struct block_device
+ 
+ 	switch (cmd) {
+ 	case LOOP_SET_FD:
+-		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
+-		if (err)
+-			return err;
+-		err = loop_set_fd(lo, mode, bdev, arg);
+-		mutex_unlock(&loop_ctl_mutex);
+-		break;
++		return loop_set_fd(lo, mode, bdev, arg);
+ 	case LOOP_CHANGE_FD:
+ 		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
+ 		if (err)
 
 
