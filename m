@@ -2,182 +2,296 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8609EC282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EFDC282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 496CB20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:04:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qeB2X7xw"
+	by mail.kernel.org (Postfix) with ESMTP id BDE8720823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:04:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbfAUIEa (ORCPT
+        id S1729521AbfAUIEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:04:30 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53066 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728683AbfAUIEa (ORCPT
+        Mon, 21 Jan 2019 03:04:34 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42146 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729477AbfAUIEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:04:30 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m1so9795536wml.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:04:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Zn+mYzQzEqwQHCFEAdrOQXPMQ3QYNEZOgWJdy3hOx4o=;
-        b=qeB2X7xwjzn3CUw2dhxU0e/X3Jr09/YMZTyYUC3oMDOA1zazGB5YR013jiQw9sed9s
-         eEsWiqZ5WVQT2EYQoCPJtYobDD10LdAQPUwvq8YPGUhoVixswFmlEG4K7htnEkPAYwnD
-         9hDnwsSagg0CPBMLNxzBEvF7aAYiZYx8cI9lT6SSrTSCC/M/sM47JtHFcIfL5oEgRPFY
-         5bRpFFLw0f3yrnVRhA4vFg96Fml06UpwL4TQp7sTPxB+/GJlohF1pNjTwepYKXIZkDwL
-         FjRDbM6inqJxVIdUCJaITtPDxnUNq7+PYiWxeVsJzbuQSN8Jt1WYwRwdXlE0dSowL95g
-         UWqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zn+mYzQzEqwQHCFEAdrOQXPMQ3QYNEZOgWJdy3hOx4o=;
-        b=GOf/bMw87pU/YCaZiRiCbaDOu3W8L+QCrH8Br0VTIH/imOtunrjnu4jvwHbwgvylIZ
-         EcbG9Sce+u/0Oe9uYTRh6pCdS+QCSuSg+cJ0yMpwJXXAa2gjU+WxmMwql8+Ct1svoTXA
-         de4QXt1oSm8cWCXKQrM3ruO6hL+loFe5yOZZH0x6n6tFpKZaidjAv8HigX2xKblpNz5r
-         dCy3Ipn7Jq8bjaa5OSWNo/QJ3xccJ7dnQi851bSvBl++XhlBqGmDTO7SG5UuvdA6rlHk
-         Rh9QXyr3iP7IrzjjMGzIrseWVKuO5LjKa/KQuWw70U4+pEMNepSuRlPpowSw6jWHLmuq
-         8E0A==
-X-Gm-Message-State: AJcUukd0DjlWn0bVPJa9ozeZeGgwZSOkms/dxPSQQHrbGLIlc86J0ys7
-        WHn5jtipXXtcQtHeOIYFjQDZa+7dW9Dd9WyYQT1zST+Y
-X-Google-Smtp-Source: ALg8bN4NoPH54Y62XEnwsxal8earNBQxget9c6efIW7qn1zpHPheQwy6042j5muRh4JMN0IGLnXPp2pWF/dd2LbOKfM=
-X-Received: by 2002:a1c:b14:: with SMTP id 20mr24501716wml.103.1548057867289;
- Mon, 21 Jan 2019 00:04:27 -0800 (PST)
-MIME-Version: 1.0
-References: <1548030067-37105-1-git-send-email-yang.yang29@zte.com.cn>
-In-Reply-To: <1548030067-37105-1-git-send-email-yang.yang29@zte.com.cn>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Mon, 21 Jan 2019 09:04:15 +0100
-Message-ID: <CAFLxGvwEuw7tO8fV_K10f8B_SFOb9z7-+LyFMfjPWvwNGYkv2A@mail.gmail.com>
-Subject: Re: [PATCH] jffs2: check dstlen for jffs2_zlib_compress()
-To:     Yang Yang <yang.yang29@zte.com.cn>
-Cc:     David Woodhouse <dwmw2@infradead.org>, wang.yi59@zte.com.cn,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        xue.zhihong@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 21 Jan 2019 03:04:32 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0L83r8q038728
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:04:31 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q58e74k68-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:04:31 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 21 Jan 2019 08:04:27 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 21 Jan 2019 08:04:16 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0L84FDr5177650
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 08:04:15 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 94DC0AE051;
+        Mon, 21 Jan 2019 08:04:15 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A62EFAE045;
+        Mon, 21 Jan 2019 08:04:10 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.125])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 21 Jan 2019 08:04:10 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 21 Jan 2019 10:04:09 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH v2 00/21] Refine memblock API
+Date:   Mon, 21 Jan 2019 10:03:47 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19012108-0020-0000-0000-000003092E92
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012108-0021-0000-0000-0000215A5BD8
+Message-Id: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=819 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901210066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 1:21 AM Yang Yang <yang.yang29@zte.com.cn> wrote:
->
-> KASAN reports a BUG when download file in jffs2 filesystem.
-> The board name is nxp-ls1043ardb-ls1043a.
-> It is because when dstlen == 1, cpage_out will write array out of bounds.
-> Actually, there's no meaning for jffs2_zlib_compress() to compress
-> any data with length less than 3.
-> In that case, data will not be compressed.
+Hi,
 
-I sent already a patch for this:
-https://patchwork.ozlabs.org/patch/1013958/
+Current memblock API is quite extensive and, which is more annoying,
+duplicated. Except the low-level functions that allow searching for a free
+memory region and marking it as reserved, memblock provides three (well,
+two and a half) sets of functions to allocate memory. There are several
+overlapping functions that return a physical address and there are
+functions that return virtual address. Those that return the virtual
+address may also clear the allocated memory. And, on top of all that, some
+allocators panic and some return NULL in case of error.
 
-> [  393.799778] BUG: KASAN: slab-out-of-bounds in jffs2_rtime_compress+0x214/0x2f0 at addr ffff800062e3b281
-> [  393.809166] Write of size 1 by task tftp/2918
-> [  393.813526] CPU: 3 PID: 2918 Comm: tftp Tainted: G    B           4.9.115-rt93-EMBSYS-CGEL-6.1.R6-dirty #1
-> [  393.823173] Hardware name: LS1043A RDB Board (DT)
-> [  393.827870] Call trace:
-> [  393.830322] [<ffff20000808c700>] dump_backtrace+0x0/0x2f0
-> [  393.835721] [<ffff20000808ca04>] show_stack+0x14/0x20
-> [  393.840774] [<ffff2000086ef700>] dump_stack+0x90/0xb0
-> [  393.845829] [<ffff20000827b19c>] kasan_object_err+0x24/0x80
-> [  393.851402] [<ffff20000827b404>] kasan_report_error+0x1b4/0x4d8
-> [  393.857323] [<ffff20000827bae8>] kasan_report+0x38/0x40
-> [  393.862548] [<ffff200008279d44>] __asan_store1+0x4c/0x58
-> [  393.867859] [<ffff2000084ce2ec>] jffs2_rtime_compress+0x214/0x2f0
-> [  393.873955] [<ffff2000084bb3b0>] jffs2_selected_compress+0x178/0x2a0
-> [  393.880308] [<ffff2000084bb530>] jffs2_compress+0x58/0x478
-> [  393.885796] [<ffff2000084c5b34>] jffs2_write_inode_range+0x13c/0x450
-> [  393.892150] [<ffff2000084be0b8>] jffs2_write_end+0x2a8/0x4a0
-> [  393.897811] [<ffff2000081f3008>] generic_perform_write+0x1c0/0x280
-> [  393.903990] [<ffff2000081f5074>] __generic_file_write_iter+0x1c4/0x228
-> [  393.910517] [<ffff2000081f5210>] generic_file_write_iter+0x138/0x288
-> [  393.916870] [<ffff20000829ec1c>] __vfs_write+0x1b4/0x238
-> [  393.922181] [<ffff20000829ff00>] vfs_write+0xd0/0x238
-> [  393.927232] [<ffff2000082a1ba8>] SyS_write+0xa0/0x110
-> [  393.932283] [<ffff20000808429c>] __sys_trace_return+0x0/0x4
-> [  393.937851] Object at ffff800062e3b280, in cache kmalloc-64 size: 64
-> [  393.944197] Allocated:
-> [  393.946552] PID = 2918
-> [  393.948913]  save_stack_trace_tsk+0x0/0x220
-> [  393.953096]  save_stack_trace+0x18/0x20
-> [  393.956932]  kasan_kmalloc+0xd8/0x188
-> [  393.960594]  __kmalloc+0x144/0x238
-> [  393.963994]  jffs2_selected_compress+0x48/0x2a0
-> [  393.968524]  jffs2_compress+0x58/0x478
-> [  393.972273]  jffs2_write_inode_range+0x13c/0x450
-> [  393.976889]  jffs2_write_end+0x2a8/0x4a0
-> [  393.980810]  generic_perform_write+0x1c0/0x280
-> [  393.985251]  __generic_file_write_iter+0x1c4/0x228
-> [  393.990040]  generic_file_write_iter+0x138/0x288
-> [  393.994655]  __vfs_write+0x1b4/0x238
-> [  393.998228]  vfs_write+0xd0/0x238
-> [  394.001543]  SyS_write+0xa0/0x110
-> [  394.004856]  __sys_trace_return+0x0/0x4
-> [  394.008684] Freed:
-> [  394.010691] PID = 2918
-> [  394.013051]  save_stack_trace_tsk+0x0/0x220
-> [  394.017233]  save_stack_trace+0x18/0x20
-> [  394.021069]  kasan_slab_free+0x88/0x188
-> [  394.024902]  kfree+0x6c/0x1d8
-> [  394.027868]  jffs2_sum_write_sumnode+0x2c4/0x880
-> [  394.032486]  jffs2_do_reserve_space+0x198/0x598
-> [  394.037016]  jffs2_reserve_space+0x3f8/0x4d8
-> [  394.041286]  jffs2_write_inode_range+0xf0/0x450
-> [  394.045816]  jffs2_write_end+0x2a8/0x4a0
-> [  394.049737]  generic_perform_write+0x1c0/0x280
-> [  394.054179]  __generic_file_write_iter+0x1c4/0x228
-> [  394.058968]  generic_file_write_iter+0x138/0x288
-> [  394.063583]  __vfs_write+0x1b4/0x238
-> [  394.067157]  vfs_write+0xd0/0x238
-> [  394.070470]  SyS_write+0xa0/0x110
-> [  394.073783]  __sys_trace_return+0x0/0x4
-> [  394.077612] Memory state around the buggy address:
-> [  394.082404]  ffff800062e3b180: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-> [  394.089623]  ffff800062e3b200: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-> [  394.096842] >ffff800062e3b280: 01 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [  394.104056]                    ^
-> [  394.107283]  ffff800062e3b300: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> [  394.114502]  ffff800062e3b380: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> [  394.121718] ==================================================================
->
-> Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
-> ---
->  fs/jffs2/compr_rtime.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/jffs2/compr_rtime.c b/fs/jffs2/compr_rtime.c
-> index 406d9cc..c69f01e 100644
-> --- a/fs/jffs2/compr_rtime.c
-> +++ b/fs/jffs2/compr_rtime.c
-> @@ -36,6 +36,8 @@ static int jffs2_rtime_compress(unsigned char *data_in,
->         unsigned short positions[256];
->         int outpos = 0;
->         int pos=0;
-> +       if (*dstlen <= 3)
-> +               return -1;
->
->         memset(positions,0,sizeof(positions));
->
-> --
-> 2.15.2
->
->
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+This set tries to reduce the mess, and trim down the amount of memblock
+allocation methods.
+
+Patches 1-10 consolidate the functions that return physical address of
+the allocated memory
+
+Patches 11-13 are some trivial cleanups
+
+Patches 14-19 add checks for the return value of memblock_alloc*() and
+panics in case of errors. The patches 14-18 include some minor refactoring
+to have better readability of the resulting code and patch 19 is a
+mechanical addition of
+
+	if (!ptr)
+		panic();
+
+after memblock_alloc*() calls.
+
+And, finally, patches 20 and 21 remove panic() calls memblock and _nopanic
+variants from memblock.
+
+v2 changes:
+* replace some more %lu with %zu
+* remove panics where they are not needed in s390 and in printk
+* collect Acked-by and Reviewed-by.
 
 
+Christophe Leroy (1):
+  powerpc: use memblock functions returning virtual address
+
+Mike Rapoport (20):
+  openrisc: prefer memblock APIs returning virtual address
+  memblock: replace memblock_alloc_base(ANYWHERE) with memblock_phys_alloc
+  memblock: drop memblock_alloc_base_nid()
+  memblock: emphasize that memblock_alloc_range() returns a physical address
+  memblock: memblock_phys_alloc_try_nid(): don't panic
+  memblock: memblock_phys_alloc(): don't panic
+  memblock: drop __memblock_alloc_base()
+  memblock: drop memblock_alloc_base()
+  memblock: refactor internal allocation functions
+  memblock: make memblock_find_in_range_node() and choose_memblock_flags() static
+  arch: use memblock_alloc() instead of memblock_alloc_from(size, align, 0)
+  arch: don't memset(0) memory returned by memblock_alloc()
+  ia64: add checks for the return value of memblock_alloc*()
+  sparc: add checks for the return value of memblock_alloc*()
+  mm/percpu: add checks for the return value of memblock_alloc*()
+  init/main: add checks for the return value of memblock_alloc*()
+  swiotlb: add checks for the return value of memblock_alloc*()
+  treewide: add checks for the return value of memblock_alloc*()
+  memblock: memblock_alloc_try_nid: don't panic
+  memblock: drop memblock_alloc_*_nopanic() variants
+
+ arch/alpha/kernel/core_cia.c              |   5 +-
+ arch/alpha/kernel/core_marvel.c           |   6 +
+ arch/alpha/kernel/pci-noop.c              |  13 +-
+ arch/alpha/kernel/pci.c                   |  11 +-
+ arch/alpha/kernel/pci_iommu.c             |  16 +-
+ arch/alpha/kernel/setup.c                 |   2 +-
+ arch/arc/kernel/unwind.c                  |   3 +-
+ arch/arc/mm/highmem.c                     |   4 +
+ arch/arm/kernel/setup.c                   |   6 +
+ arch/arm/mm/init.c                        |   6 +-
+ arch/arm/mm/mmu.c                         |  14 +-
+ arch/arm64/kernel/setup.c                 |   8 +-
+ arch/arm64/mm/kasan_init.c                |  10 ++
+ arch/arm64/mm/mmu.c                       |   2 +
+ arch/arm64/mm/numa.c                      |   4 +
+ arch/c6x/mm/dma-coherent.c                |   4 +
+ arch/c6x/mm/init.c                        |   4 +-
+ arch/csky/mm/highmem.c                    |   5 +
+ arch/h8300/mm/init.c                      |   4 +-
+ arch/ia64/kernel/mca.c                    |  25 +--
+ arch/ia64/mm/contig.c                     |   8 +-
+ arch/ia64/mm/discontig.c                  |   4 +
+ arch/ia64/mm/init.c                       |  38 ++++-
+ arch/ia64/mm/tlb.c                        |   6 +
+ arch/ia64/sn/kernel/io_common.c           |   3 +
+ arch/ia64/sn/kernel/setup.c               |  12 +-
+ arch/m68k/atari/stram.c                   |   4 +
+ arch/m68k/mm/init.c                       |   3 +
+ arch/m68k/mm/mcfmmu.c                     |   7 +-
+ arch/m68k/mm/motorola.c                   |   9 ++
+ arch/m68k/mm/sun3mmu.c                    |   6 +
+ arch/m68k/sun3/sun3dvma.c                 |   3 +
+ arch/microblaze/mm/init.c                 |  10 +-
+ arch/mips/cavium-octeon/dma-octeon.c      |   3 +
+ arch/mips/kernel/setup.c                  |   3 +
+ arch/mips/kernel/traps.c                  |   5 +-
+ arch/mips/mm/init.c                       |   5 +
+ arch/nds32/mm/init.c                      |  12 ++
+ arch/openrisc/mm/init.c                   |   5 +-
+ arch/openrisc/mm/ioremap.c                |   8 +-
+ arch/powerpc/kernel/dt_cpu_ftrs.c         |   8 +-
+ arch/powerpc/kernel/irq.c                 |   5 -
+ arch/powerpc/kernel/paca.c                |   6 +-
+ arch/powerpc/kernel/pci_32.c              |   3 +
+ arch/powerpc/kernel/prom.c                |   5 +-
+ arch/powerpc/kernel/rtas.c                |   6 +-
+ arch/powerpc/kernel/setup-common.c        |   3 +
+ arch/powerpc/kernel/setup_32.c            |  26 ++--
+ arch/powerpc/kernel/setup_64.c            |   4 +
+ arch/powerpc/lib/alloc.c                  |   3 +
+ arch/powerpc/mm/hash_utils_64.c           |  11 +-
+ arch/powerpc/mm/mmu_context_nohash.c      |   9 ++
+ arch/powerpc/mm/numa.c                    |   4 +
+ arch/powerpc/mm/pgtable-book3e.c          |  12 +-
+ arch/powerpc/mm/pgtable-book3s64.c        |   3 +
+ arch/powerpc/mm/pgtable-radix.c           |   9 +-
+ arch/powerpc/mm/ppc_mmu_32.c              |   3 +
+ arch/powerpc/platforms/pasemi/iommu.c     |   3 +
+ arch/powerpc/platforms/powermac/nvram.c   |   3 +
+ arch/powerpc/platforms/powernv/opal.c     |   3 +
+ arch/powerpc/platforms/powernv/pci-ioda.c |   8 +
+ arch/powerpc/platforms/ps3/setup.c        |   3 +
+ arch/powerpc/sysdev/dart_iommu.c          |   3 +
+ arch/powerpc/sysdev/msi_bitmap.c          |   3 +
+ arch/s390/kernel/crash_dump.c             |   3 +
+ arch/s390/kernel/setup.c                  |  16 ++
+ arch/s390/kernel/smp.c                    |   9 +-
+ arch/s390/kernel/topology.c               |   6 +
+ arch/s390/numa/mode_emu.c                 |   3 +
+ arch/s390/numa/numa.c                     |   6 +-
+ arch/sh/boards/mach-ap325rxa/setup.c      |   5 +-
+ arch/sh/boards/mach-ecovec24/setup.c      |  10 +-
+ arch/sh/boards/mach-kfr2r09/setup.c       |   5 +-
+ arch/sh/boards/mach-migor/setup.c         |   5 +-
+ arch/sh/boards/mach-se/7724/setup.c       |  10 +-
+ arch/sh/kernel/machine_kexec.c            |   3 +-
+ arch/sh/mm/init.c                         |   8 +-
+ arch/sh/mm/numa.c                         |   4 +
+ arch/sparc/kernel/prom_32.c               |   6 +-
+ arch/sparc/kernel/setup_64.c              |   6 +
+ arch/sparc/kernel/smp_64.c                |  12 ++
+ arch/sparc/mm/init_32.c                   |   2 +-
+ arch/sparc/mm/init_64.c                   |  11 ++
+ arch/sparc/mm/srmmu.c                     |  18 ++-
+ arch/um/drivers/net_kern.c                |   3 +
+ arch/um/drivers/vector_kern.c             |   3 +
+ arch/um/kernel/initrd.c                   |   2 +
+ arch/um/kernel/mem.c                      |  16 ++
+ arch/unicore32/kernel/setup.c             |   4 +
+ arch/unicore32/mm/mmu.c                   |  15 +-
+ arch/x86/kernel/acpi/boot.c               |   3 +
+ arch/x86/kernel/apic/io_apic.c            |   5 +
+ arch/x86/kernel/e820.c                    |   5 +-
+ arch/x86/kernel/setup_percpu.c            |  10 +-
+ arch/x86/mm/kasan_init_64.c               |  14 +-
+ arch/x86/mm/numa.c                        |  12 +-
+ arch/x86/platform/olpc/olpc_dt.c          |   3 +
+ arch/x86/xen/p2m.c                        |  11 +-
+ arch/xtensa/mm/kasan_init.c               |  10 +-
+ arch/xtensa/mm/mmu.c                      |   3 +
+ drivers/clk/ti/clk.c                      |   3 +
+ drivers/firmware/memmap.c                 |   2 +-
+ drivers/macintosh/smu.c                   |   5 +-
+ drivers/of/fdt.c                          |   8 +-
+ drivers/of/of_reserved_mem.c              |   7 +-
+ drivers/of/unittest.c                     |   8 +-
+ drivers/usb/early/xhci-dbc.c              |   2 +-
+ drivers/xen/swiotlb-xen.c                 |   7 +-
+ include/linux/memblock.h                  |  59 +------
+ init/main.c                               |  26 +++-
+ kernel/dma/swiotlb.c                      |  21 ++-
+ kernel/power/snapshot.c                   |   3 +
+ kernel/printk/printk.c                    |   9 +-
+ lib/cpumask.c                             |   3 +
+ mm/cma.c                                  |  10 +-
+ mm/kasan/init.c                           |  10 +-
+ mm/memblock.c                             | 249 ++++++++++--------------------
+ mm/page_alloc.c                           |  10 +-
+ mm/page_ext.c                             |   2 +-
+ mm/percpu.c                               |  84 +++++++---
+ mm/sparse.c                               |  25 ++-
+ 121 files changed, 860 insertions(+), 412 deletions(-)
 
 -- 
-Thanks,
-//richard
+2.7.4
+
