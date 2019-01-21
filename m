@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EA8C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B65C2F3D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDE8B20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AD0E20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080482;
-	bh=GUnkFqWrqxkDzPRvFYd5VBUdZNbsAAbKw4v0ccebPAc=;
+	s=default; t=1548080492;
+	bh=Rty9TqHV/ld7RqdsK53FxMbrbev41kPEKjS8Q2LlNd4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BudmSxYpFr9eDICZoGp0su9U/+Xa2l+RBYVzzkTjc/7j/Tb22xrncmKwaj6ZYHm+D
-	 CgORgMf8xqG9koSrwwGWV9tClQ2bDhamNQG8VLueK3Q0/klf10KilhZApnmqh4HZTu
-	 spj5pVjcaZdCdPs3sVDDRAD+VEKs+tOHaGKLQvds=
+	b=I1M5UT/3s4Zk9Ufy8yXBEq8GjeqJh4G1DutVcJG552xGbsce5X1ichH1wDdPaDkZO
+	 5XxBLyGTItS69VMFbMILsS1Trrf4KAgnB3KVHzf1yba4PhXy8oXQ9LVKSAmXwzdufy
+	 3GgAZgG/TmO4UIJ6Bti/997E7SgKxPjivmR7CqZc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729508AbfAUNrL (ORCPT
+        id S1729426AbfAUNrA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:47:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56242 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:47:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729472AbfAUNrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:47:07 -0500
+        id S1729380AbfAUNq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:46:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB0FF2087F;
-        Mon, 21 Jan 2019 13:47:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5432020861;
+        Mon, 21 Jan 2019 13:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078426;
-        bh=GUnkFqWrqxkDzPRvFYd5VBUdZNbsAAbKw4v0ccebPAc=;
+        s=default; t=1548078417;
+        bh=Rty9TqHV/ld7RqdsK53FxMbrbev41kPEKjS8Q2LlNd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RWShROT+jGDMmSXUMmI64owwQ2qvBmOJCnFAeqKJ7NZ4N2qDHC2SXnu6mV/beev0V
-         NVoqKaj+2hHXvJ91RioyKvAmdzsQUGgUUZGEE9RoAPNNcBjs7/oRsUycDfhsuBFtfo
-         pOu13zGIqoaCrQZuVwzeElT36xY1i+mjnLV7gHHE=
+        b=2M9O9pT4VsVNtXYK9XFOsVX+CWHr4u+2L3e6yGEjy6tkhTKQU/bJwOd5NzYyfkLle
+         FeVkQFQbRMX8n5jjkPWIrRAdSZSux1Aba9zOp7fynwkmmL5bWtmOmFaGc1AUm8si3e
+         R36FDS3BDRqgEGJ1i13MDpBgMGqeR8VEEAgiOCe4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 027/111] r8169: load Realtek PHY driver module before r8169
-Date:   Mon, 21 Jan 2019 14:42:21 +0100
-Message-Id: <20190121122458.787737579@linuxfoundation.org>
+        stable@vger.kernel.org, Shawn Bohrer <sbohrer@cloudflare.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.20 007/111] netfilter: nf_conncount: dont skip eviction when age is negative
+Date:   Mon, 21 Jan 2019 14:42:01 +0100
+Message-Id: <20190121122456.588981223@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,38 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 11287b693d03830010356339e4ceddf47dee34fa ]
+commit 4cd273bb91b3001f623f516ec726c49754571b1a upstream.
 
-This soft dependency works around an issue where sometimes the genphy
-driver is used instead of the dedicated PHY driver. The root cause of
-the issue isn't clear yet. People reported the unloading/re-loading
-module r8169 helps, and also configuring this soft dependency in
-the modprobe config files. Important just seems to be that the
-realtek module is loaded before r8169.
+age is signed integer, so result can be negative when the timestamps
+have a large delta.  In this case we want to discard the entry.
 
-Once this has been applied preliminary fix 38af4b903210 ("net: phy:
-add workaround for issue where PHY driver doesn't bind to the device")
-will be removed.
+Instead of using age >= 2 || age < 0, just make it unsigned.
 
-Fixes: f1e911d5d0df ("r8169: add basic phylib support")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b36e4523d4d56 ("netfilter: nf_conncount: fix garbage collection confirm race")
+Reviewed-by: Shawn Bohrer <sbohrer@cloudflare.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/realtek/r8169.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -714,6 +714,7 @@ module_param(use_dac, int, 0);
- MODULE_PARM_DESC(use_dac, "Enable PCI DAC. Unsafe on 32 bit PCI slot.");
- module_param_named(debug, debug.msg_enable, int, 0);
- MODULE_PARM_DESC(debug, "Debug verbosity level (0=none, ..., 16=all)");
-+MODULE_SOFTDEP("pre: realtek");
- MODULE_LICENSE("GPL");
- MODULE_FIRMWARE(FIRMWARE_8168D_1);
- MODULE_FIRMWARE(FIRMWARE_8168D_2);
+---
+ net/netfilter/nf_conncount.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/netfilter/nf_conncount.c
++++ b/net/netfilter/nf_conncount.c
+@@ -155,7 +155,7 @@ find_or_evict(struct net *net, struct nf
+ 	const struct nf_conntrack_tuple_hash *found;
+ 	unsigned long a, b;
+ 	int cpu = raw_smp_processor_id();
+-	__s32 age;
++	u32 age;
+ 
+ 	found = nf_conntrack_find_get(net, &conn->zone, &conn->tuple);
+ 	if (found)
 
 
