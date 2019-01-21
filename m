@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B79C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C623C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4A42087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AA8E21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078551;
-	bh=L/OhfWKQcfGNXkyAwiH5qSl1wLYmVMEvpZ1qeXK3oTU=;
+	s=default; t=1548078555;
+	bh=v1b2PlIZBpk1AdGwMwaBUdHWFLtgcZpEdNt31epOjWE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=afRTcgXZsug7Sk7WmjKNmcPF1CHtGMRciX0b/RWB3nIIQdEZWtS6u8kDJddmJeND/
-	 Zwl082wb8uatP7q03Ejlg9Q5lt/AzAgg+l8XRa5rNPkBcCeV4I8/nCyGbVQ9rDYSLW
-	 PGVfztq7IKnAUe/cB+BMOPuaJkngM+HH/RgKeYK0=
+	b=rPpav7aNZRDkvoCMUnx4hju5ITUfbwMU6ohZN20WP3xnGGopfkSaV2Wp9fZosEIH1
+	 FBnxjnuKaOCGTg0km5D/2RVMIZ9cvYCad7ViJDTGQOwlmkPf0ykhOOOwUZP6hJeNFz
+	 1lEiEncTliM6tALnZQBloMq7o6ARRBA9t0gII9yY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730126AbfAUNtK (ORCPT
+        id S1730151AbfAUNtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:49:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59452 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:49:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730114AbfAUNtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:49:07 -0500
+        id S1730119AbfAUNtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:49:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ECF620861;
-        Mon, 21 Jan 2019 13:49:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE98B2063F;
+        Mon, 21 Jan 2019 13:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078546;
-        bh=L/OhfWKQcfGNXkyAwiH5qSl1wLYmVMEvpZ1qeXK3oTU=;
+        s=default; t=1548078549;
+        bh=v1b2PlIZBpk1AdGwMwaBUdHWFLtgcZpEdNt31epOjWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IZ4lWWOk+A+zdBK2ZXKWQhcEm9W5hNdTplZwPf6S2bK/tyCrfIjwCwZadD2TvQhIO
-         Wlz3kY8qCD2b93UGkQhbrWqk6zxOuGVu8R8IIswdt14yfJTtKeISDm1+AXCJVPVpYQ
-         G9uCVPlcS1QqT1WuyHD7NA/YwH3Epo7us+PFzusw=
+        b=fH/olC4ouNJecsujpJAJ1eDMl36vm9GHBUCl0XyY/Pt6OirfuFP4PuucW8Q42IN4K
+         GcoRlYfnvzeUKWXP8svRRlB0jaNiHsy0Ax4ql85iSD17GIK4ifiK+4K6NPGPsvLeIk
+         r15JUiDc++xGKtI5IplbKoOJxl1siMGzAzm76ws0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YunQiang Su <ysu@wavecomp.com>,
-        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
-        linux-mips@vger.kernel.org, aaro.koskinen@iki.fi
-Subject: [PATCH 4.20 070/111] Disable MSI also when pcie-octeon.pcie_disable on
-Date:   Mon, 21 Jan 2019 14:43:04 +0100
-Message-Id: <20190121122504.187489530@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Florian La Roche <Florian.LaRoche@googlemail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 071/111] fix int_sqrt64() for very large numbers
+Date:   Mon, 21 Jan 2019 14:43:05 +0100
+Message-Id: <20190121122504.288671493@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,40 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YunQiang Su <ysu@wavecomp.com>
+From: Florian La Roche <florian.laroche@googlemail.com>
 
-commit a214720cbf50cd8c3f76bbb9c3f5c283910e9d33 upstream.
+commit fbfaf851902cd9293f392f3a1735e0543016d530 upstream.
 
-Octeon has an boot-time option to disable pcie.
+If an input number x for int_sqrt64() has the highest bit set, then
+fls64(x) is 64.  (1UL << 64) is an overflow and breaks the algorithm.
 
-Since MSI depends on PCI-E, we should also disable MSI also with
-this option is on in order to avoid inadvertently accessing PCIe
-registers.
+Subtracting 1 is a better guess for the initial value of m anyway and
+that's what also done in int_sqrt() implicitly [*].
 
-Signed-off-by: YunQiang Su <ysu@wavecomp.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: pburton@wavecomp.com
-Cc: linux-mips@vger.kernel.org
-Cc: aaro.koskinen@iki.fi
-Cc: stable@vger.kernel.org # v3.3+
+[*] Note how int_sqrt() uses __fls() with two underscores, which already
+    returns the proper raw bit number.
+
+    In contrast, int_sqrt64() used fls64(), and that returns bit numbers
+    illogically starting at 1, because of error handling for the "no
+    bits set" case. Will points out that he bug probably is due to a
+    copy-and-paste error from the regular int_sqrt() case.
+
+Signed-off-by: Florian La Roche <Florian.LaRoche@googlemail.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/pci/msi-octeon.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ lib/int_sqrt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/pci/msi-octeon.c
-+++ b/arch/mips/pci/msi-octeon.c
-@@ -369,7 +369,9 @@ int __init octeon_msi_initialize(void)
- 	int irq;
- 	struct irq_chip *msi;
+--- a/lib/int_sqrt.c
++++ b/lib/int_sqrt.c
+@@ -52,7 +52,7 @@ u32 int_sqrt64(u64 x)
+ 	if (x <= ULONG_MAX)
+ 		return int_sqrt((unsigned long) x);
  
--	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
-+	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_INVALID) {
-+		return 0;
-+	} else if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
- 		msi_rcv_reg[0] = CVMX_PEXP_NPEI_MSI_RCV0;
- 		msi_rcv_reg[1] = CVMX_PEXP_NPEI_MSI_RCV1;
- 		msi_rcv_reg[2] = CVMX_PEXP_NPEI_MSI_RCV2;
+-	m = 1ULL << (fls64(x) & ~1ULL);
++	m = 1ULL << ((fls64(x) - 1) & ~1ULL);
+ 	while (m != 0) {
+ 		b = y + m;
+ 		y >>= 1;
 
 
