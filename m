@@ -2,119 +2,124 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DATE_IN_PAST_06_12,
-	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A2EC282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2D3C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D127720823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:59:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wFXz6VS4"
+	by mail.kernel.org (Postfix) with ESMTP id 34AE820823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbfAUH7A (ORCPT
+        id S1729288AbfAUH7H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:59:00 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:35744 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728830AbfAUH65 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:58:57 -0500
-Received: by mail-yb1-f195.google.com with SMTP id h81so6515073ybg.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:58:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OEpEYG/0P2v/J4M7joVpRo9Cq+8rhRHs87h/EEaaWhM=;
-        b=wFXz6VS4TmhgouhKBWxlxWByBoXZkf2HrzTbE8WN+Dj7vO9iNqt2PlNf79wXHK6K7t
-         DqkIk4JyhQKnE6i7KrzX9ckrklJya/+NOLgw6TcbN3fdRLrm5B+opnxsMvyCNI3qESWz
-         UasD7zjHsyPwMupwmGDJay/h1cV6OK0mht750/xWv2LLUKRdkwDJcfxBocsHdXWpi4Vx
-         RH+dYE8wwc8HwH/iNVsBkP+2C0kdSGi+BA8lOoFFNJL+D+QNBabJ/OP8FMyz9SjTC0ar
-         WKpzWQD1y0jIZg6taiGQavg38enlOwwjUjSU5BeCv4Du/5BFak3bl7t3TBnPL6d8fybZ
-         qlww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OEpEYG/0P2v/J4M7joVpRo9Cq+8rhRHs87h/EEaaWhM=;
-        b=YdWEvuPXu0Or5DDTSD/gUtWzXweGm63uaH1V64g0/OQ49Bzy1MxFWwsWRghnmolGNJ
-         BR3YN0DRxhDCgVjwY7cTuw+ywj4RVkxxY4RMIzjXq2NAwJkvXFQk1u1iZ00s/z4f5Xq3
-         oGNK5U8cXrhDS1DAcrWm6NUC1LJBiic0GX64IQl8csKEFNYkcgHbf5niyagcaPmGFPiQ
-         bvUtCmBINwblG5F1+Kst24vT3nltLO6WoMTxxVH/N4qVwuH1iF6Q4xHhsSTJQyNLmJXm
-         kRnPbF383fdS2Yj26ScHzb7NfOIGkqcARaGJoH3QS78f+GxQ/RXEzmvnR2WKjvp654n9
-         +ABQ==
-X-Gm-Message-State: AJcUukcxv2SjJEiGl4IlztHncG2sQ+ui4fKtPhVCth0vdTaLfdMiaW0A
-        cLa2O8FM+xxJu9XCXkr1vA3LZLayspUyOJdFMqBHDrelnhk=
-X-Google-Smtp-Source: ALg8bN4Lc5AT3/6z9ICm7STuaFDqZ6qlHNK6fPVkuyjZ6PjVk+EDgjzdCnz979HSopmOCPxFgAo2eCAoW6/FLGjpCD8=
-X-Received: by 2002:a25:5d7:: with SMTP id 206mr14246404ybf.164.1548015668260;
- Sun, 20 Jan 2019 12:21:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20190119005022.61321-1-shakeelb@google.com> <20190119015843.GB15935@castle.DHCP.thefacebook.com>
-In-Reply-To: <20190119015843.GB15935@castle.DHCP.thefacebook.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Sun, 20 Jan 2019 12:20:57 -0800
-Message-ID: <CALvZod6zRy69bHoXvEWED28OFZ8u4o8JBAL7nyjKMmUjBb5n4w@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm, oom: fix use-after-free in oom_kill_process
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 21 Jan 2019 02:59:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34980 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728605AbfAUH7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:59:05 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9A1EB9FDD4;
+        Mon, 21 Jan 2019 07:59:05 +0000 (UTC)
+Received: from xz-x1.nay.redhat.com (dhcp-14-116.nay.redhat.com [10.66.14.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 62EC9608C2;
+        Mon, 21 Jan 2019 07:58:57 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Hugh Dickins <hughd@google.com>, Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, peterx@redhat.com,
+        Martin Cracauer <cracauer@cons.org>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: [PATCH RFC 11/24] userfaultfd: wp: userfaultfd_pte/huge_pmd_wp() helpers
+Date:   Mon, 21 Jan 2019 15:57:09 +0800
+Message-Id: <20190121075722.7945-12-peterx@redhat.com>
+In-Reply-To: <20190121075722.7945-1-peterx@redhat.com>
+References: <20190121075722.7945-1-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 21 Jan 2019 07:59:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 5:58 PM Roman Gushchin <guro@fb.com> wrote:
->
-> Hi Shakeel!
->
-> >
-> > On looking further it seems like the process selected to be oom-killed
-> > has exited even before reaching read_lock(&tasklist_lock) in
-> > oom_kill_process(). More specifically the tsk->usage is 1 which is due
-> > to get_task_struct() in oom_evaluate_task() and the put_task_struct
-> > within for_each_thread() frees the tsk and for_each_thread() tries to
-> > access the tsk. The easiest fix is to do get/put across the
-> > for_each_thread() on the selected task.
->
-> Please, feel free to add
-> Reviewed-by: Roman Gushchin <guro@fb.com>
-> for this part.
->
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-Thanks.
+Implement helpers methods to invoke userfaultfd wp faults more
+selectively: not only when a wp fault triggers on a vma with
+vma->vm_flags VM_UFFD_WP set, but only if the _PAGE_UFFD_WP bit is set
+in the pagetable too.
 
-> >
-> > Now the next question is should we continue with the oom-kill as the
-> > previously selected task has exited? However before adding more
-> > complexity and heuristics, let's answer why we even look at the
-> > children of oom-kill selected task? The select_bad_process() has already
-> > selected the worst process in the system/memcg. Due to race, the
-> > selected process might not be the worst at the kill time but does that
-> > matter matter? The userspace can play with oom_score_adj to prefer
-> > children to be killed before the parent. I looked at the history but it
-> > seems like this is there before git history.
->
-> I'd totally support you in an attempt to remove this logic,
-> unless someone has a good example of its usefulness.
->
-> I believe it's a very old hack to select children over parents
-> in case they have the same oom badness (e.g. share most of the memory).
->
-> Maybe we can prefer older processes in case of equal oom badness,
-> and it will be enough.
->
-> Thanks!
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ include/linux/userfaultfd_k.h | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-I am thinking of removing the whole logic of selecting children.
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index e82f3156f4e9..0d3b32b54e2a 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -14,6 +14,8 @@
+ #include <linux/userfaultfd.h> /* linux/include/uapi/linux/userfaultfd.h */
+ 
+ #include <linux/fcntl.h>
++#include <linux/mm.h>
++#include <asm-generic/pgtable_uffd.h>
+ 
+ /*
+  * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
+@@ -57,6 +59,18 @@ static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+ 	return vma->vm_flags & VM_UFFD_WP;
+ }
+ 
++static inline bool userfaultfd_pte_wp(struct vm_area_struct *vma,
++				      pte_t pte)
++{
++	return userfaultfd_wp(vma) && pte_uffd_wp(pte);
++}
++
++static inline bool userfaultfd_huge_pmd_wp(struct vm_area_struct *vma,
++					   pmd_t pmd)
++{
++	return userfaultfd_wp(vma) && pmd_uffd_wp(pmd);
++}
++
+ static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+ {
+ 	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
+@@ -106,6 +120,19 @@ static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+ 	return false;
+ }
+ 
++static inline bool userfaultfd_pte_wp(struct vm_area_struct *vma,
++				      pte_t pte)
++{
++	return false;
++}
++
++static inline bool userfaultfd_huge_pmd_wp(struct vm_area_struct *vma,
++					   pmd_t pmd)
++{
++	return false;
++}
++
++
+ static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+ {
+ 	return false;
+-- 
+2.17.1
 
-Shakeel
