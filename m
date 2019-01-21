@@ -2,76 +2,108 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2519FC2F420
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CE8C2F420
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF8262085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EC9B2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:38:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="Kxkg6VdQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbfAUOi1 (ORCPT
+        id S1729461AbfAUOip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:38:27 -0500
-Received: from mga01.intel.com ([192.55.52.88]:44420 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729176AbfAUOi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:38:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 06:38:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,503,1539673200"; 
-   d="scan'208";a="127679745"
-Received: from epg-ubt28.iil.intel.com ([143.185.152.137])
-  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2019 06:38:24 -0800
-From:   Ramon Fried <ramon.fried@linux.intel.com>
-To:     linus.walleij@linaro.org, corbet@lwn.net
-Cc:     linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ramon Fried <ramon.fried@linux.intel.com>
-Subject: [PATCH] pinctrl.txt: Remove outdated information
-Date:   Mon, 21 Jan 2019 16:38:22 +0200
-Message-Id: <20190121143822.20225-1-ramon.fried@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 21 Jan 2019 09:38:45 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:14246 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729174AbfAUOio (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:38:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1548081520;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=9aXyl3XX6X2NaqAV5Jbua+GONqAlosKe6poqf11l4ww=;
+        b=Kxkg6VdQAcbjBrajIaoR++oi0rWkLXwm/AkcT5gjfMvlsmaGm7ds1tdc8sw7up3nKL
+        gxsTZh43OrjwQhhFpJc9p9ZoIrPslYAqxAPEeaL25EhptIU8BJFxvSPzs12tD2xdADOZ
+        Tt/ztANlY7eIR1uVmW0FpP71kY22uPLvg7TW7999Mw4QPwk4x9hrDecwwsl6ElBhu1xE
+        0nU2f2my2KbBdm9R4mIGBFxlbvDgbQEkQzxgHSh7QYqxN+NMLkM1aefma0wdGujACW7h
+        eHfSia+HquF7Rn/6MYCb28dl8bg4TUCEl6rJxrJ36P4Utk+K+lBTGb7uaxcWAOOh43YA
+        VPEA==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkOjx+xiVEQyUhLZzRcZ7jq/ONwjw=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:11e9:3359:3c07:dcab]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv0LEccO8n
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 21 Jan 2019 15:38:38 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <871403f2-fa7d-de15-89eb-070432e15c69@xenosoft.de>
+ <20190118112842.GA9115@lst.de>
+ <a2ca0118-5915-8b1c-7cfa-71cb4b43eaa6@xenosoft.de>
+ <20190118121810.GA13327@lst.de>
+ <eceebeda-0e18-00f6-06e7-def2eb0aa961@xenosoft.de>
+ <20190118125500.GA15657@lst.de>
+ <e11e61b1-6468-122e-fc2b-3b3f857186bb@xenosoft.de>
+ <f39d4fc6-7e4e-9132-c03f-59f1b52260e0@xenosoft.de>
+ <b9e5e081-a3cc-2625-4e08-2d55c2ba224b@xenosoft.de>
+ <20190119130222.GA24346@lst.de> <20190119140452.GA25198@lst.de>
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+Message-ID: <bfe4adcc-01c1-7b46-f40a-8e020ff77f58@xenosoft.de>
+Date:   Mon, 21 Jan 2019 15:38:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190119140452.GA25198@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Returning -EAGAIN is no longer supported by pin_config_group_set()
-since ad42fc6c8479 ("pinctrl: rip out the direct pinconf API")
+Hello Christoph,
 
-Remove the relevant section from the documentation.
+Thanks for your reply. I successfully compiled a kernel (uImage) for the 
+X5000 from your Git 'powerpc-dma.6-debug' (both patches) today.
 
-Signed-off-by: Ramon Fried <ramon.fried@linux.intel.com>
----
- Documentation/driver-api/pinctl.rst | 9 ---------
- 1 file changed, 9 deletions(-)
+It detects the SATA hard disk drive and boots without any problems. I 
+will test the first patch in next days.
 
-diff --git a/Documentation/driver-api/pinctl.rst b/Documentation/driver-api/pinctl.rst
-index 6cb68d67fa75..2bb1bc484278 100644
---- a/Documentation/driver-api/pinctl.rst
-+++ b/Documentation/driver-api/pinctl.rst
-@@ -274,15 +274,6 @@ configuration in the pin controller ops like this::
- 		.confops = &foo_pconf_ops,
- 	};
- 
--Since some controllers have special logic for handling entire groups of pins
--they can exploit the special whole-group pin control function. The
--pin_config_group_set() callback is allowed to return the error code -EAGAIN,
--for groups it does not want to handle, or if it just wants to do some
--group-level handling and then fall through to iterate over all pins, in which
--case each individual pin will be treated by separate pin_config_set() calls as
--well.
--
--
- Interaction with the GPIO subsystem
- ===================================
- 
--- 
-2.17.1
+Thanks for your help,
+
+Christian
+
+
+On 19 January 2019 at 3:04PM, Christoph Hellwig wrote:
+> On Sat, Jan 19, 2019 at 02:02:22PM +0100, Christoph Hellwig wrote:
+>> Interesting.  This suggest it is related to the use of ZONE_DMA by
+>> the FSL SOCs that your board uses.  Let me investigate this a bit more.
+> As a hack to check that theory I've pushed a new commit to the
+> powerpc-dma.6-debug branch to use old powerpc GFP_DMA selection
+> with the new dma direct code:
+>
+> http://git.infradead.org/users/hch/misc.git/commitdiff/5c532d07c2f3c3972104de505d06b8d85f403f06
+>
+> And another one that drops the addressability checks that powerpc
+> never had:
+>
+> http://git.infradead.org/users/hch/misc.git/commitdiff/18e7629b38465ca98f8e7eed639123a13ac3b669
+>
+> Can you first test with both patches, and then just with the first
+> in case that worked?
+>
+>
 
