@@ -2,203 +2,145 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E897C282E6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A2CC282E6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04AA02084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E65CC2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:51:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUifWiu/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbfAUHve (ORCPT
+        id S1728925AbfAUHvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:51:34 -0500
-Received: from mga03.intel.com ([134.134.136.65]:43657 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728223AbfAUHvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:51:33 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 23:51:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,502,1539673200"; 
-   d="scan'208";a="136376927"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.37])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Jan 2019 23:51:31 -0800
-Date:   Mon, 21 Jan 2019 15:51:02 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org,
-        Wei Yang <richardw.yang@linux.intel.com>,
+        Mon, 21 Jan 2019 02:51:52 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34404 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727634AbfAUHvw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:51:52 -0500
+Received: by mail-pf1-f196.google.com with SMTP id h3so9758315pfg.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:51:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=VwtpKFkarJQTrnp91bAROukJhzGrFDojqjTq9xzyvLM=;
+        b=QUifWiu/dxnIP6lpjGUy3QpJG0R+7KqDRevW7A9+I0xyIC0m0J5rhjA2YDs+iy3nHz
+         TsfjOzNxqmnMXrWyakTOqaMRetpwYFlfV1EUBhQRN4ErmLGwjlW5xQU0guk7Z7ml+ErP
+         ntvRjMF+eC/DuPjBygVuLGCATuTSZcAL7tFNBhIdzyE6CuF6EbkskaHEaGuFRKtXUelh
+         ujGOYF9mcfJDyIEK0nKVqNv+DNz3ErJzdTbhMfn7j2E4Ner4ygiSzw8TpxjsLsO6Ur9+
+         jb+keQXX+gQurfaA7WcPgwlluG3CxDNywcDuZoYyjEnSvVjRm877C9h1X8cQsisTBKSq
+         HzuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VwtpKFkarJQTrnp91bAROukJhzGrFDojqjTq9xzyvLM=;
+        b=NiRHw9S6PMSG8cGBVy6mm+2KmOMzHV9anCySANb0e6pucBTPT66lG1STx8pkT3c2t0
+         Z1nupasrADg1C6mWtxMohhTbUhiCSPd+jbS8K1gANhQT9nlne4Ixq2pLDsZXvFz7r1Tw
+         +6lqYu40RfBAgifxwFnyyShjtwW0FFA8z5EQydPLmKp9Lu5MGmSqfRSH0JfoI2jH9fVI
+         eQxBDf504TvrU8ktEpUry7FnMEobiAIXv0vGtBOPTWNv4SHdwjc4bs/gCo/XglmBjX1h
+         R53qyMZ8AZ9cQkTTbDkJiRkHcw2QuWDHA671An7htY94w5blDJsTt2dd8VqzpASuwPgc
+         D6AA==
+X-Gm-Message-State: AJcUukdL41EffZHDxNcYecukoKFWsk+Dr0JHigGMgZRIo1J5IJnP3qDD
+        rG1mks3NWgSlAOZzYiHtztI8DtECcw==
+X-Google-Smtp-Source: ALg8bN6yx1jcaJKdqldfgFOXsjSWmgnYMe4fc14wSsbAQhH4w86lYENcV7kXUKPCAAqrQ+8hSY9j7Q==
+X-Received: by 2002:a62:11c7:: with SMTP id 68mr28350595pfr.21.1548047790887;
+        Sun, 20 Jan 2019 21:16:30 -0800 (PST)
+Received: from mylaptop.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id k24sm16755208pfj.13.2019.01.20.21.16.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 21:16:30 -0800 (PST)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     kexec@lists.infradead.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, yinghai@kernel.org,
+        vgoyal@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] libnvdimm: Clarify nd_pfn_init() flow
-Message-ID: <20190121075102.GA3758@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Subject: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X consistent with kaslr
+Date:   Mon, 21 Jan 2019 13:16:08 +0800
+Message-Id: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 04:47:23PM -0800, Dan Williams wrote:
->In recent days, 2 engineers, including the original author of
->nd_pfn_init(), overlooked the internal call to nd_pfn_validate() and the
->implications to memory allocation.
->
->Clarify this situation to help anyone that reads through this code in
->the future.
->
->Reported-by: Wei Yang <richardw.yang@linux.intel.com>
->Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->---
-> drivers/nvdimm/btt_devs.c |    5 +++++
-> drivers/nvdimm/dax_devs.c |    5 +++++
-> drivers/nvdimm/pfn_devs.c |   21 +++++++++++++++++++++
-> 3 files changed, 31 insertions(+)
->
->diff --git a/drivers/nvdimm/btt_devs.c b/drivers/nvdimm/btt_devs.c
->index 795ad4ff35ca..e0a6f2491e57 100644
->--- a/drivers/nvdimm/btt_devs.c
->+++ b/drivers/nvdimm/btt_devs.c
->@@ -354,6 +354,11 @@ int nd_btt_probe(struct device *dev, struct nd_namespace_common *ndns)
-> 		put_device(btt_dev);
-> 	}
-> 
->+	/*
->+	 * Successful probe indicates to the caller that an nd_btt
->+	 * personality device has been registered and the caller can
->+	 * fail the probe of the baseline namespace device.
->+	 */
-> 	return rc;
-> }
-> EXPORT_SYMBOL(nd_btt_probe);
->diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
->index 0453f49dc708..65010d955fa7 100644
->--- a/drivers/nvdimm/dax_devs.c
->+++ b/drivers/nvdimm/dax_devs.c
->@@ -136,6 +136,11 @@ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns)
-> 	} else
-> 		__nd_device_register(dax_dev);
-> 
->+	/*
->+	 * Successful probe indicates to the caller that a device-dax
->+	 * personality device has been registered and the caller can
->+	 * fail the probe of the baseline namespace device.
->+	 */
-> 	return rc;
-> }
-> EXPORT_SYMBOL(nd_dax_probe);
->diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
->index 6f22272e8d80..a8783b5a76ba 100644
->--- a/drivers/nvdimm/pfn_devs.c
->+++ b/drivers/nvdimm/pfn_devs.c
->@@ -576,6 +576,11 @@ int nd_pfn_probe(struct device *dev, struct nd_namespace_common *ndns)
-> 	} else
-> 		__nd_device_register(pfn_dev);
-> 
->+	/*
->+	 * Successful probe indicates to the caller that an nd_pfn
->+	 * personality device has been registered and the caller can
->+	 * fail the probe of the baseline namespace device.
->+	 */
-> 	return rc;
-> }
-> EXPORT_SYMBOL(nd_pfn_probe);
->@@ -706,6 +711,22 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
-> 		sig = DAX_SIG;
-> 	else
-> 		sig = PFN_SIG;
->+
->+	/*
->+	 * Check for an existing 'pfn' superblock before writing a new
->+	 * one. The intended flow is that on the first probe of an
->+	 * nd_{pfn,dax} device the superblock is calculated and written
->+	 * to the namespace. In this case nd_pfn_validate() returns
->+	 * -ENODEV because no valid superblock exists currently.
->+	 *
->+	 * On subsequent probes nd_pfn_validate() will find a valid
->+	 * superblock and return 0.
->+	 *
->+	 * If an assumption of the superblock has been violated, like a
->+	 * change to the physical alignment of the namespace,
->+	 * nd_pfn_validate() will return an error other than -ENODEV to
->+	 * fail probing.
->+	 */
+People reported crashkernel=384M reservation failed on a high end server
+with KASLR enabled.  In that case there is enough free memory under 896M
+but crashkernel reservation still fails intermittently.
 
-Let me reply in this thread. Sorry for my poor understand, I don't get it
-clearly now.
+The situation is crashkernel reservation code only finds free region under
+896 MB with 128M aligned in case no ',high' being used.  And KASLR could
+break the first 896M into several parts randomly thus the failure happens.
+User has no way to predict and make sure crashkernel=xM working unless
+he/she use 'crashkernel=xM,high'.  Since 'crashkernel=xM' is the most
+common use case this issue is a serious bug.
 
-To be honest, the structure is a little bit complicated, if my understanding
-is not correct, please forgive my poor understand.
+And we can't answer questions raised from customer:
+1) why it doesn't succeed to reserve 896 MB;
+2) what's wrong with memory region under 4G;
+3) why I have to add ',high', I only require 384 MB, not 3840 MB.
 
-Below is a code flow. To simply analysis, I setup kernel parameter memmap to
-emulate, and configure one namespace to mode devdax. So that we would have the
-same root for code flow.
+This patch tries to get memory region from 896 MB firstly, then [896MB,4G],
+finally above 4G.
 
-Let's start with nd_region_driver:
+Dave Young sent the original post, and I just re-post it with commit log
+improvement as his requirement.
+http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
+There was an old discussion below (previously posted by Chao Wang):
+https://lkml.org/lkml/2013/10/15/601
 
-    nd_region_probe
-        nd_region_register_namespaces
-	    create_namespaces
-	nd_region->btt_seed = nd_btt_create(nd_region);
-	nd_region->pfn_seed = nd_pfn_create(nd_region);
-	nd_region->dax_seed = nd_dax_create(nd_region);
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: yinghai@kernel.org,
+Cc: vgoyal@redhat.com
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v6 -> v7: commit log improvement
+ arch/x86/kernel/setup.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-After this, there are 4 devices created:
-
-	namespace0.0, btt0.0, pfn0.0, dax0.0
-
-And there are two drivers related to these devices. The relationship between
-devices and drivers are:
-
-	nd_pmem_driver: namespace0.0, btt0.0, pfn0.0
-	dax_pmem_driver: dax0.0
-
-Only the probe function on namespace0.0 succeed. Even others get -ENODEV,
-those devices themself is not released.
-
-Then let's look at the probe on namespace0.0:
-
-    nd_pmem_probe
-        nd_btt_probe
-	nd_pfn_probe
-	nd_dax_probe
-
-When namespace is configured as devdax, only nd_dax_probe do some real work.
-
-Then I see some different behavior as your description.
-
-    * nd_dax_probe->nd_pfn_validate() return 0 instead of -ENODEV.
-    * so device dax0.1 is created
-    * dax_pmem_probe is called on dax0.1 and nd_pfn_validate() return 0 too
-
-This means pfn_sb is created twice in following functions:
-
-    * nd_dax_probe
-    * dax_pmem_probe
-
-Also, I have one confusion about your saying: two probes.
-
-If the two probes are:
-
-    * for dax%d.%d: 1. nd_dax_probe 2. dax_pmem_probe   
-    * for pfn%d.%d: 1. nd_pfn_probe 2. nd_pmem_probe    
-
-Then, if the first probe fails, the device itself would be destroyed. How the
-second probe do its job?
-
-> 	rc = nd_pfn_validate(nd_pfn, sig);
-> 	if (rc != -ENODEV)
-> 		return rc;
-
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 3d872a5..fa62c81 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -551,6 +551,22 @@ static void __init reserve_crashkernel(void)
+ 						    high ? CRASH_ADDR_HIGH_MAX
+ 							 : CRASH_ADDR_LOW_MAX,
+ 						    crash_size, CRASH_ALIGN);
++#ifdef CONFIG_X86_64
++		/*
++		 * crashkernel=X reserve below 896M fails? Try below 4G
++		 */
++		if (!high && !crash_base)
++			crash_base = memblock_find_in_range(CRASH_ALIGN,
++						(1ULL << 32),
++						crash_size, CRASH_ALIGN);
++		/*
++		 * crashkernel=X reserve below 4G fails? Try MAXMEM
++		 */
++		if (!high && !crash_base)
++			crash_base = memblock_find_in_range(CRASH_ALIGN,
++						CRASH_ADDR_HIGH_MAX,
++						crash_size, CRASH_ALIGN);
++#endif
+ 		if (!crash_base) {
+ 			pr_info("crashkernel reservation failed - No suitable area found.\n");
+ 			return;
 -- 
-Wei Yang
-Help you, Help me
+2.7.4
+
