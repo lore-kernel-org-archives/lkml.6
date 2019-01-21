@@ -2,432 +2,170 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8746C37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12090C3712F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E94B2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8CA621019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:56:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="REy2laeu"
+	dkim=pass (1024-bit key) header.d=mit.edu header.i=@mit.edu header.b="YpTQtwx1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbfAUV4s (ORCPT
+        id S1727752AbfAUV45 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:56:48 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:41656 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfAUV4s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 16:56:48 -0500
-Received: from mailhost.synopsys.com (dc8-mailhost.synopsys.com [10.13.135.209])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 5E21410C18DA;
-        Mon, 21 Jan 2019 13:56:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548107807; bh=UAzc6nNqDgY+buiqoXpv2TpdXL/mkNrIoaMhzYSEToU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=REy2laeubv9Msc8oQgWgRV34KqtjFwr0UmwyHfqdaDuZzOoCglj5forBOsJif6eAW
-         urNpTDVoByiEO0YF4w4DUIuPcU9jLW9poGawNbshROhsdSudkzQM+Aq1Wk+1Tjjcv7
-         aSp8HyE03QFuISADB7/8Ijb+qf9ZAo4ezLq93oVdJgr9sp36vsoh3hdYUa39IHu0LS
-         fE6uj+WOHuV/rP+H1egPrkHOTxZcFLGoItcROZ0f0V8q4nXVyVsukp7E5isaoyiYqN
-         RcXmgT5wAG9Xt0rpTvY8b42LekNi02kFrva9txnU/U0J/Q0f5SPcZpkEHWsgsdyfpV
-         9qKj8jZva1kPw==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 4FB78A008A;
-        Mon, 21 Jan 2019 21:56:47 +0000 (UTC)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 21 Jan 2019 13:56:33 -0800
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 22 Jan 2019 03:26:34 +0530
-Received: from [10.10.161.70] (10.10.161.70) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 22 Jan 2019 03:26:34 +0530
-Subject: Re: [PATCH] ARC: prevent showing irrelevant exception info in signal
- message
-To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
-        <linux-snps-arc@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc
-References: <20190121170735.5511-1-Eugeniy.Paltsev@synopsys.com>
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <82e89101-423f-9937-f093-a24697dba7d7@synopsys.com>
-Date:   Mon, 21 Jan 2019 13:56:25 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 16:56:57 -0500
+Received: from mail-eopbgr760109.outbound.protection.outlook.com ([40.107.76.109]:58708
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725993AbfAUV4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 16:56:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kYvqp4hrgCFQ836s5UO6vH3TJDt91NQ8hh7mp7rPDg4=;
+ b=YpTQtwx1zrNSQUuRwnKpcKWDpSLFbk0SKu0JJCZnHHfX0WKbhinqHaP9ksODm/TTkvagk4wa4KxJvu0mKWiTZhvMWycyN+ZBV2MZQy7tZeMc1NNsIDZ5i2YBC2udXCzfxyT8e0TeUAiPdfW93xPd3gde5C1BKZTYBDco1hNXzbo=
+Received: from SN2PR01CA0070.prod.exchangelabs.com (2603:10b6:800::38) by
+ DM5PR01MB3211.prod.exchangelabs.com (2603:10b6:3:fa::12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.24; Mon, 21 Jan 2019 21:54:59 +0000
+Received: from DM3NAM03FT033.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e49::208) by SN2PR01CA0070.outlook.office365.com
+ (2603:10b6:800::38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1537.26 via Frontend
+ Transport; Mon, 21 Jan 2019 21:54:58 +0000
+Authentication-Results: spf=pass (sender IP is 18.9.28.11)
+ smtp.mailfrom=mit.edu; zeniv.linux.org.uk; dkim=none (message not signed)
+ header.d=none;zeniv.linux.org.uk; dmarc=bestguesspass action=none
+ header.from=mit.edu;
+Received-SPF: Pass (protection.outlook.com: domain of mit.edu designates
+ 18.9.28.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=18.9.28.11; helo=outgoing.mit.edu;
+Received: from outgoing.mit.edu (18.9.28.11) by
+ DM3NAM03FT033.mail.protection.outlook.com (10.152.82.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.11 via Frontend Transport; Mon, 21 Jan 2019 21:54:57 +0000
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x0LLstj7018541
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Jan 2019 16:54:55 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id C217B7A4C30; Mon, 21 Jan 2019 16:54:54 -0500 (EST)
+Date:   Mon, 21 Jan 2019 16:54:54 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Jann Horn <jannh@google.com>
+CC:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        <linux-fsdevel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        <linux-alpha@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Pavel Machek <pavel@ucw.cz>, <linux-arch@vger.kernel.org>,
+        <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] fs: hoist EFSCORRUPTED definition into uapi header
+Message-ID: <20190121215454.GA12996@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jann Horn <jannh@google.com>, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org
+References: <20190118161440.220134-1-jannh@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190121170735.5511-1-Eugeniy.Paltsev@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190118161440.220134-1-jannh@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:18.9.28.11;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(376002)(39860400002)(2980300002)(54094003)(189003)(199004)(86362001)(88552002)(229853002)(126002)(786003)(54906003)(36906005)(58126008)(23726003)(42186006)(16586007)(316002)(7416002)(26005)(478600001)(106002)(52956003)(336012)(76176011)(486006)(2906002)(11346002)(476003)(33656002)(6916009)(446003)(2616005)(186003)(36756003)(97756001)(90966002)(75432002)(103686004)(106466001)(46406003)(39060400002)(6246003)(246002)(47776003)(26826003)(1076003)(305945005)(6266002)(50466002)(4326008)(8936002)(356004)(8676002)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR01MB3211;H:outgoing.mit.edu;FPR:;SPF:Pass;LANG:en;PTR:outgoing-auth-1.mit.edu;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM03FT033;1:blzaCQoRML2WPWYM82aNIqCLMp98sKaBp/1OJRHmOG0GaquLSHus2yL8p22YwZob+fj+OLJ3Q3ky+5V9X9N8x7pnmmCfgYsth6oqvlL82zLQmv09xwYuJHG6YpAoTx29UsQvXUPtwZGNP7nJEMMMVcPG3n7smLQ0tCzlZeMYP5o=
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b028e0e6-b436-4e5d-9242-08d67feb163f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:DM5PR01MB3211;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR01MB3211;3:vlIYeirAcuv0BZYACfmeaI5n3qb5NE/Phf9WISkHu/NVI5F1vneOaIrmCMtGdi6WZLUAUJ/TUZpNivVVcIn9Sd9xZDxO+hnzIlkvmnvfba6hNe21J5Dfl5A8YeteASDBqYyQZrEifSdrSvK0sjK6Up/4smAkdzSpe8aswkZZup2t1txD9OXltZ1C+ETOzB7Sz1xzT9og38zG+svB/HZRvcxpK9PXhSleAttXMogo28+ySkHFL6PEXep0P/EuZlNMvOahPOTl+wz2ciZhreiALV6INbLcGcoC9LAsmuOF6+350Zybbi/skSVYS5UdhRV465lCY1OxqMdIJKUN5utBHeZ6XpejZwzw3+lEw/Q3NCxs3SJ5xQUM98rTxng2dzdl;25:3+jKSLdQ6MjmL09GIp9N16TJYy4FzXl+CPG964XfUkGb8+2HOVPLOTm4icZFw1w5D0gNTrQIeVQALs8VeqKwsP9IccqFYwqZHxQ5XYVTBQPgttDqXzot2uKmTaNdto7ADlJEKfSW3Ir7btt10WY2t1Ttu6u9Zq60EkPb6Dt0H01oA7SOCa+qy9qpB65X+oWqVx99MNb0EM3i+u4zbtdWiC5hmVDizAhmTyQIDpnncxAoCN23ZEQ8seT2jE3LBFlmLbMKJovQvGsMbQdHU0fIqZzEfCmEttTo81db/DM3S1yWPwE/5KokIiVqxrZKrwzj7i9dT+ULYSyB58hS3PTGRQ==
+X-MS-TrafficTypeDiagnostic: DM5PR01MB3211:
+X-LD-Processed: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR01MB3211;31:7TvF0CXF5Ret914xCRVIyZbrthJcH/srW/DLdaniDpebbO0lNeXdplHf+Pnb/hg48m63+tS7SxB7ehke3MfXGGQ1LGX+ibmHS25HqGMf1ZrdbISkwhJrDiRtRgNLswwc5g00zN0gS11iJ3e78cu0imKfvhOZXakRh+IUzA4U7U0rDhN1+x19or4sTajire3Po8+gXA0YbRsuXu8LKtIuo3B6dWpHS3lECdYkryBf+0M=;20:ebtY8PGy3q/R4q3Ij0hY63EpZh3Dh8aCrNfnnawHvxZ+1GbCAMuagvo2FGLmyCAQQu6Kvdb9f2d26TXfchzVIiCsA6gcj4z8QHd/VDXadNsheHS7Vmdkd8vKUR7DihCkg1MYi62gGZ4yroS4MYpqsdMmwGT/+3r22ZJMEQv8+jb43CppTBhPY8oXx2yJqZXmh7hrNbp5Gvteg4b2RurIBd8RuMrJnp03brA60WpfBQDPdVymPIl0UMpb+vqOfKXCeqdVoGAVEu9GTpxWWvljtpiIbPv4bOQnG+ZAx7xwdEfyrhZtjbxDEDvRl+F1UCDFLTFI9eNer1feZgp1ZrcxeL3J6nbLNcWgu5aWYQjROZrSyt0jhhSrk3e7tJh06v8W6MKZbxzot8mxAvrWigmb3viI9G982pKJtyvxtbEMI4/CKnCgElKkeG6OwBwI2zZeDocfnwQYIDmwmTV6zd91AVbIqtNmlFqNnACzCduBnYDSIEJLlDykaKUjB0hcYohpE6TfGaf4jaEdkeIduOmQTZ1Z2LFh6OUOsjPhYr/Mv+zuEkoQGUkA4Jz05jhFNVUfDZEpYD/Zh/B5/msJFx3DtHtT0iRsn2tRzPwBB4RyFuY=
+X-Microsoft-Antispam-PRVS: <DM5PR01MB321138871B29B25F029D55E7B59F0@DM5PR01MB3211.prod.exchangelabs.com>
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR01MB3211;4:RQzmg36BGgth+Dp53Cu8UvlpLMGF+g3PK87zsGx0sdCa+v3pApClsj7WZfGPMkZNzK9h5CFBY1LTUEMbJzk1FTFkr05MRZLF7j42+QvT5G7lYj/9hNpIFOm8sTkEQJX1VNIr8sXKhhkw0kB7gtUWvzPP+v1mVdxOc8/63yCqGn6cVRsKIzWxj5iCIV+K64HsMZCStH9Agn7xdsiMYyxe7aDH1prcAHpi9nLrkoFa+G7UUDe5SEW6t3ETSX+Wklhe6bpzJBB2C3kES0sJ0NmvhkxiNrQuR9Au8cEVZEtn6UeCxgec3lfyHZbD1PtOoqHG
+X-Forefront-PRVS: 0924C6A0D5
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR01MB3211;23:7Zhk9YHnFFDUcuU6Hb9Z0PKxybUMsd5GOnieEv4oT?=
+ =?us-ascii?Q?eosFwV6wME8+dq7ddG3RyHXasFoSR2YMWeTpcKUniUzBgPN4bei37mzpSLqk?=
+ =?us-ascii?Q?/2zQuC1ZYxBjgdkEmDxzebcHSuuLp9/RI8ZBA8xI7PIdZIP4/qNzj55Y+gMb?=
+ =?us-ascii?Q?3GuamgkGNeWvebMJY5d/J33w9gxYtrg5NH27zLPOqFZ8+Mnx7iXvrL1FqZzc?=
+ =?us-ascii?Q?kpTMXlCWAoXxUGIuBOs9NhOAEtN6J69NIMd4YxSRlhuxBy0OfJeUKnKROSV6?=
+ =?us-ascii?Q?x6+EdPkbO/nlWLUZaRbB17xH4eIhRKJwyteE2yCgNsHJSNsGCrGHg9B0Chn9?=
+ =?us-ascii?Q?Z1f0amZi+Thc/xatKVx8soissilGKHBpbJJnv8NmuPgDdq6ke7c5Efj6oE6w?=
+ =?us-ascii?Q?bjB16dUlrezrX0UyuRARICU2JPfuWK2Rd+qdPCYEeqhA7PcoazpDYL/i7kXE?=
+ =?us-ascii?Q?ifF8CEnVowdYWvng37pwEUbgB7SvBcZdFN/cEtCwe/l7LdIDpjSWXk77CZOf?=
+ =?us-ascii?Q?nb1Sz6L2C7vgiDhpXvf0J6gY0P7hGh++QIZSFw6NNknacNc43UTxomP9rJvt?=
+ =?us-ascii?Q?UB1gQBDOOTV8t7D8oY2iqIgjdaLwVuooMuJ/ovS9H6TQn0UcZ/1BN0p9X1Ds?=
+ =?us-ascii?Q?ZDpctNmtotcP2yOosn4Yw4AqyLtRwkfO9TYA8GEAeAfXpdvrwwc6F73pM42d?=
+ =?us-ascii?Q?xULAOCh954+xKw+TyvT7vtUsGVpsqAm+5n6Ie98dhPBTBxmp0KvMSgk/IYxh?=
+ =?us-ascii?Q?MpOMBFVv1ft70ReSv9pQ20lQdY2HbPLatsj8fZ+gEEe2t1TyLOudIL7g4uFL?=
+ =?us-ascii?Q?lBQ3jCsK1vvLotYeXZsuvaHo4zDwyMOFwxwGEWulg5ccSUu9Ptsjf5sNSOXf?=
+ =?us-ascii?Q?ROaMzdzLxkhwKG+JZMTfykMVOY94Zk8VKAYZPv8B8AusZ+Nz75qaTzqsiODd?=
+ =?us-ascii?Q?/6gjxVG46oLvh+KZyq8QNmArQVk1n9zM4RSfjHzdv7/KSIYhkBPq9aCQueQU?=
+ =?us-ascii?Q?ZogYfotZZzAJYmO5RczI0F4fjIOGyp/sdY1rWAP9Z/kwd/bhvaMFAbdrkdeq?=
+ =?us-ascii?Q?wyWZ6Pns/W8a784etiPI/QJUqSS6/AsoqSKSvddDl3j5cY2NQdJjw6weZUzn?=
+ =?us-ascii?Q?SPBH8HdQGAEj4YMEig78V8pp2u5rjz1SLZB7ogoqlC8RJEbUN3ITicb+8Q3T?=
+ =?us-ascii?Q?I86M1H5kP6MXOJXA0uSK1lWMIxXZjyFz27Hz4tk7mASb9lBXJ9kD5ap8RDp0?=
+ =?us-ascii?Q?V4NO612z6DGakjBpXRMs1VqCC5hqBsmI1x715Z8?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: +NpxNIZriifmsS5Gs4w95LZBd/7gbU46GK+/IAit0U5dG/abSI6d/lLztAhocinFMNPVTiJQgFM1zZ6DphrtGXKgrlX10rIK3UoqjuljdMRxKl5eLnoALIrPkMN0UGHSPevRF5C4+uphqM/2eS8cdYhVPqCeFL1PCIvvHSSo9247glwfiqhy6SZdqCQvC4QfbDKgPnuIw16ICo/FTqXq+rrBr0Ns2K6d1du8hdx8Bi9MHsIEG7l+hcnWdbRqMNjmbUm/TE/UqkoLk6HF/93x8xhNmMo5HYLagWP68gZUL8BqwzCmRhT7mNsHha3vb5K8GE/gAj37Gj+WUWu5oYg3iUeVrWsIK7KVBO3ArjHhI92gJkuLsVNFBtLuln3Wj3KEL1eFH8B8WOyZOhUWZizMgYXnT0Hxtkq1+hCp9F7oYck=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR01MB3211;6:RXkyO6/7wOsH+mMdB6JzQyoEI9PMH82ceB5m3VnMX9GU1LnbL9xIZeMuc4qMHWRakf5V5BX+Opm2jWD140cqVAxqlo01bD0fyzUhh1/J9TL2Ukpuiz40o3HXIz7qywmA0Lw/BL9i1IwpSEGebKfot38+hno05+UhQ/DDKDL5aKsl+ACvP79YP4uIBg7P+c33sRHF00QgTA72weV+/rgJyN6Aa+KW/vGxS+4g8EvQdg1/AMBJcLgLZh3NTfT/hX8nMZH6xLFv92+wWwvia+CBgTWTNEb3rx8dGuoZZg9NuR9hVwuVfeRkoU/ApA2uLxRcCg4DN9SRGbtDz17FJeYxI/+/O8RdeVsSHAzhP5VIBbGKkbfCJ8saxj+O/Gm0Ck5hlmDzJ8WOQy0BD5y7DMRgdibsyIBi/kWjo6fRwXCUFHBAX1+TrAG5+MbNl40Zfe+zqFb2fnqMOI7lMKOmjjXl3g==;5:s2ZjGvd0XCsWZ8oecYF5VVrV5UebxwQDxcH6IxEWYQAKC2j1Dc2xxa4h4TEsdJRPf853QeFF205t2uqXonIL4Tw6FhbmyS3DOhnj2BFRkoTW5+Pl8cNqPswSuDHSXdq23a4tYCX/fPsF1hTrRhUNC2QiVyXhDB4+12MN1Pmq0CJA5yLHeUaPjwvi+/ZXGVyZ6hxomj+6/wYrLv+K+RtV6g==;7:/YZFbOaiiWLmNEOz0A7oeldLMfLwTflisKNURtCAMcfunfkBBnwAg6vDpte9cOHcaEdjTn3oAT1bRXV2elJNXq/PozaVYmgxuEaAMEDErue/ld5wVrUYZ9xZWhBx6P45XFz0U0fHQ5KT3/0MYGPiSg==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mit.edu
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2019 21:54:57.7435
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b028e0e6-b436-4e5d-9242-08d67feb163f
+X-MS-Exchange-CrossTenant-Id: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=64afd9ba-0ecf-4acf-bc36-935f6235ba8b;Ip=[18.9.28.11];Helo=[outgoing.mit.edu]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR01MB3211
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/21/19 9:07 AM, Eugeniy Paltsev wrote:
-> We process signals in the end of syscall/exception handler.
-> If the signal is fatal we print register's content using
-> show_regs function. show_regs() also prints information about
-> last exception happened.
+On Fri, Jan 18, 2019 at 05:14:38PM +0100, Jann Horn wrote:
+> Multiple filesystems can already return EFSCORRUPTED errors to userspace;
+> however, so far, definitions of EFSCORRUPTED were in filesystem-private
+> headers.
 > 
-> In case of multicore system we can catch the situation when we
-> will print wrong information about exception. See the example:
-> ______________________________
-> CPU-0: started to handle page fault
-> CPU-1: sent signal to process, which is executed on CPU-0
-> CPU-0: ended page fault handle. Started to process signal before
->        returnig to userspace. Process signal, which is send from
->        CPU-0. As th signal is fatal we call show_regs().
->        show_regs() will show information about last exception
->        which is *page fault* (instead of "trap" which is used for
->        signals and happened on CPU-0)
+> I wanted to use EUCLEAN to indicate data corruption in the VFS layer;
+> Dave Chinner says that I should instead hoist the definitions of
+> EFSCORRUPTED into the UAPI header and then use EFSCORRUPTED.
 > 
-> So we will get message like this:
->    # ./waitpid02
->   potentially unexpected fatal signal 8.
->   Path: /home/waitpid02
->   CPU: 0 PID: 100 Comm: waitpid02 Not tainted 4.10.0-rc4 #2
->   task: 9f11c200 task.stack: 9f3ae000
+> This patch is marked for stable backport because it is a prerequisite for
+> the following patch.
 > 
->   [ECR   ]: 0x00050200 => Invalid Write @ 0x00000000 by insn @ 0x000123ec
->   [EFA   ]: 0x00000000
->   [BLINK ]: 0x123ea
->   [ERET  ]: 0x123ec
->     @off 0x123ec in [/home/waitpid02]
->     VMA: 0x00010000 to 0x00016000
->   [STAT32]: 0x80080882 : IE U
->   BTA: 0x000123ea  SP: 0x5ffd3db0  FP: 0x00000000
->   LPS: 0x20031684 LPE: 0x2003169a LPC: 0x00000006
->   [-----other-info-----]
-> 
-> This message is confusing because it show information about page fault
-> ( [ECR   ]: 0x00050200 => Invalid Write ) which is absolutely irrelevant
-> to signal.
-> 
-> This situation was reproduced with waitpid02 LTP test.
-> _____________________________
-> 
-> So remove printing information about exceptions from show_regs()
-> to avoid confusing messages. Print information about exceptions
-> only in required places instead of show_regs()
+> Cc: stable@vger.kernel.org
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-That is fine, but as I mentioned in your last posting, this is still not complete.
-If printing reg file confuses us in case of termination by signal from some other
-task, I don't see how just leaving out the exception regs, but still printing rest
-of the reg file is the complete solution. It is still bogus and any fixes to that
-effect are band aids.
+Before we enshrine the overloading of EUCLEAN and EFSCORRUPTED, I
+wonder if we should at least consider the option of assigning a new
+error code number for EFSCORRUPTED.  The downside of doing this is
+that for a while, older versions glibc won't have strerror/perror
+translation for the new error code.  On the other hand, I'm not sure
+it will be that much more confusing to the average user than
+"Structure needs cleaning".  :-)
 
-> 
-> Now we don't print information about exceptions if signal is simply
-> send by another userspace app. So in case of waitpid02 we will print
-> next message:
+The upside of assigning a new error code is that in a year or two,
+we'll actually have an intelligible error message showing up in log
+files and in user's terminals.
 
-So all we are skipping is the decoding of ECR as you seem to be printing the raw
-value anyways.
-
-> _____________________________
->    # ./waitpid02
->   potentially unexpected fatal signal 8.
->   Path: /root/waitpid02
->   CPU: 2 PID: 105 Comm: waitpid02 Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
->   [ECR   ]: 0x00050100
->   [EFA   ]: 0x00000000
->   [BLINK ]: 0x20001486
->   [-----other-info-----]
-> _____________________________
-> 
-> This patch fix
-> STAR 9001146055: waitpid02: Invalid Write @ 0x00000000 by insn @ 0x000123ec
-> 
-> NOTE:
-> To be more clear I give examples of different faults (signal-based,
-> userspace/kernelspace exception-based) with different values of
-> "/proc/sys/kernel/print-fatal-signals" option.
-> 
-> 0) NULL pointer access from user space, print-fatal-signals == 1:
-> ------------>8---------------
->  # ./arc_hell
-> Exception: arc_hell[103]: at 0x2003a35c [off 0x2e35c in /lib/libuClibc-1.0.18.so, VMA: 2000c000:20072000]
->   ECR: 0x00050100 => Invalid Read @ 0x00000000 by insn @ 0x2003a35c
-> potentially unexpected fatal signal 11.
-> Path: /root/arc_hell
-> CPU: 1 PID: 103 Comm: arc_hell Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
-> [ECR   ]: 0x00050100
-
-So we are printing the ECR twice. Sorry this approach is not going to work.
-
-
-> [EFA   ]: 0x00000000
-> [BLINK ]: 0x20039ef8
-> [ERET  ]: 0x2003a35c
-...
-> 
-> Segmentation fault
-> ------------>8---------------
-> 
-> 1) NULL pointer access from user space, print-fatal-signals == 0:
-> ------------>8---------------
->  # ./arc_hell
-> Exception: arc_hell[107]: at 0x2003a35c [off 0x2e35c in /lib/libuClibc-1.0.18.so, VMA: 2000c000:20072000]
->   ECR: 0x00050100 => Invalid Read @ 0x00000000 by insn @ 0x2003a35c
-> Segmentation fault
-> ------------>8---------------
-> 
-> 2) Process killed by signal (waitpid02 test), print-fatal-signals == 1:
-> ------------>8---------------
->  # ./waitpid02
-> potentially unexpected fatal signal 8.
-> Path: /root/waitpid02
-> CPU: 2 PID: 105 Comm: waitpid02 Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
-> [ECR   ]: 0x00050100
-> [EFA   ]: 0x00000000
-> [BLINK ]: 0x20001486
-> [ERET  ]: 0x2000146c
-> [STAT32]: 0x80080082 : IE U
-> BTA: 0x20000fc4  SP: 0x5fa21d64  FP: 0x00000000
-> LPS: 0x200524a0 LPE: 0x200524b6 LPC: 0x00000006
-> r00: 0x2000c0dc r01: 0x00000018 r02: 0x0001159a
-> r03: 0x00000001 r04: 0x00000000 r05: 0x00000045
-> r06: 0x0000004e r07: 0x01010101 r08: 0x000000dc
-> r09: 0x200a31e0 r10: 0x20003a5c r11: 0x20004038
-> r12: 0x20001486 r13: 0x20004174 r14: 0x07ca2bc0
-> r15: 0x20004078 r16: 0x00000000 r17: 0x20004038
-> r18: 0x00000001 r19: 0x00000000 r20: 0x0001159a
-> r21: 0x00000001 r22: 0x00000000 r23: 0x00000004
-> r24: 0x2000d1fc r25: 0x20004cd0
-
-This is the part I really object to. We should not print any register when they
-are not relevant. Not decoding the ECR is not enough IMO.
-
-
-> ------------>8---------------
-> 
-> 3) Process killed by signal (waitpid02 test), print-fatal-signals == 0:
-> ------------>8---------------
->  # ./waitpid02
-
-...
-> 
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> ---
-> Changes v3->v4:
->  * Rebase onto last ARC changes.
-> 
-> Changes v2->v3:
->  * Don't show exception message if the corresponding signal is
->    handled by application (inspired by x86 implementation)
->  * Rebase onto v4.19-rc8
-> 
-> Changes v1->v2:
->  * Change format of message about exception.
-> 
->  arch/arc/include/asm/bug.h     |  1 +
->  arch/arc/kernel/traps.c        |  3 +++
->  arch/arc/kernel/troubleshoot.c | 46 ++++++++++++++++++++++++++++++++----------
->  arch/arc/mm/fault.c            |  9 +++++++++
->  4 files changed, 48 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arc/include/asm/bug.h b/arch/arc/include/asm/bug.h
-> index 21ec82466d62..b68f7f82f2d8 100644
-> --- a/arch/arc/include/asm/bug.h
-> +++ b/arch/arc/include/asm/bug.h
-> @@ -16,6 +16,7 @@
->  struct task_struct;
->  
->  void show_regs(struct pt_regs *regs);
-> +void show_exception_mesg(struct pt_regs *regs);
->  void show_stacktrace(struct task_struct *tsk, struct pt_regs *regs);
->  void show_kernel_fault_diag(const char *str, struct pt_regs *regs,
->  			    unsigned long address);
-> diff --git a/arch/arc/kernel/traps.c b/arch/arc/kernel/traps.c
-> index a7fcbc0d3943..b94b13120bff 100644
-> --- a/arch/arc/kernel/traps.c
-> +++ b/arch/arc/kernel/traps.c
-> @@ -50,6 +50,9 @@ unhandled_exception(const char *str, struct pt_regs *regs,
->  
->  		tsk->thread.fault_address = (__force unsigned int)addr;
->  
-> +		if (unhandled_signal(tsk, signo))
-> +			show_exception_mesg(regs);
-> +
->  		force_sig_fault(signo, si_code, addr, tsk);
->  
->  	} else {
-> diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
-> index 215f515442e0..64e9867a1a65 100644
-> --- a/arch/arc/kernel/troubleshoot.c
-> +++ b/arch/arc/kernel/troubleshoot.c
-> @@ -106,13 +106,13 @@ static void show_faulting_vma(unsigned long address)
->  			if (IS_ERR(nm))
->  				nm = "?";
->  		}
-> -		pr_info("    @off 0x%lx in [%s]\n"
-> -			"    VMA: 0x%08lx to 0x%08lx\n",
-> +
-> +		pr_cont("[off 0x%lx in %s, VMA: %08lx:%08lx] ",
->  			vma->vm_start < TASK_UNMAPPED_BASE ?
->  				address : address - vma->vm_start,
->  			nm, vma->vm_start, vma->vm_end);
->  	} else
-> -		pr_info("    @No matching VMA found\n");
-> +		pr_cont("[No matching VMA found] ");
->  
->  	up_read(&active_mm->mmap_sem);
->  }
-> @@ -122,7 +122,7 @@ static void show_ecr_verbose(struct pt_regs *regs)
->  	unsigned int vec, cause_code;
->  	unsigned long address;
->  
-> -	pr_info("\n[ECR   ]: 0x%08lx => ", regs->event);
-> +	pr_cont("\n  ECR: 0x%08lx => ", regs->event);
->  
->  	/* For Data fault, this is data address not instruction addr */
->  	address = current->thread.fault_address;
-> @@ -170,10 +170,37 @@ static void show_ecr_verbose(struct pt_regs *regs)
->  	}
->  }
->  
-> +static inline void show_exception_mesg_u(struct pt_regs *regs)
-> +{
-> +	struct task_struct *tsk = current;
-> +
-> +	pr_info("Exception: %s[%d]: at %pS ",
-> +		tsk->comm, task_pid_nr(tsk), (void *)regs->ret);
-> +
-> +	show_faulting_vma(regs->ret);
-> +
-> +	show_ecr_verbose(regs);
-> +}
-> +
-> +static inline void show_exception_mesg_k(struct pt_regs *regs)
-> +{
-> +	pr_info("Exception: at %pS:", (void *)regs->ret);
-> +
-> +	show_ecr_verbose(regs);
-> +}
-> +
->  /************************************************************************
->   *  API called by rest of kernel
->   ***********************************************************************/
->  
-> +void show_exception_mesg(struct pt_regs *regs)
-> +{
-> +	if (user_mode(regs))
-> +		show_exception_mesg_u(regs);
-> +	else
-> +		show_exception_mesg_k(regs);
-> +}
-> +
->  void show_regs(struct pt_regs *regs)
->  {
->  	struct task_struct *tsk = current;
-> @@ -188,15 +215,10 @@ void show_regs(struct pt_regs *regs)
->  	print_task_path_n_nm(tsk);
->  	show_regs_print_info(KERN_INFO);
->  
-> -	show_ecr_verbose(regs);
-> -
-> -	pr_info("[EFA   ]: 0x%08lx\n[BLINK ]: %pS\n[ERET  ]: %pS\n",
-> -		current->thread.fault_address,
-> +	pr_info("[ECR   ]: 0x%08lx\n[EFA   ]: 0x%08lx\n[BLINK ]: %pS\n[ERET  ]: %pS\n",
-> +		regs->event, current->thread.fault_address,
->  		(void *)regs->blink, (void *)regs->ret);
->  
-> -	if (user_mode(regs))
-> -		show_faulting_vma(regs->ret); /* faulting code, not data */
-> -
->  	pr_info("[STAT32]: 0x%08lx", regs->status32);
->  
->  #define STS_BIT(r, bit)	r->status32 & STATUS_##bit##_MASK ? #bit" " : ""
-> @@ -239,6 +261,8 @@ void show_kernel_fault_diag(const char *str, struct pt_regs *regs,
->  	/* Show fault description */
->  	pr_info("\n%s\n", str);
->  
-> +	show_exception_mesg(regs);
-> +
->  	/* Caller and Callee regs */
->  	show_regs(regs);
->  
-> diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-> index 8df1638259f3..e44b64107adb 100644
-> --- a/arch/arc/mm/fault.c
-> +++ b/arch/arc/mm/fault.c
-> @@ -202,7 +202,12 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
->  	/* User mode accesses just cause a SIGSEGV */
->  	if (user_mode(regs)) {
->  		tsk->thread.fault_address = address;
-> +
-> +		if (unhandled_signal(tsk, SIGSEGV))
-> +			show_exception_mesg(regs);
-> +
->  		force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
-> +
->  		return;
->  	}
->  
-> @@ -237,5 +242,9 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
->  		goto no_context;
->  
->  	tsk->thread.fault_address = address;
-> +
-> +	if (unhandled_signal(tsk, SIGBUS))
-> +		show_exception_mesg(regs);
-> +
->  	force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)address, tsk);
->  }
-> 
-
+					- Ted
