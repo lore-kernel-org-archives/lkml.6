@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B35C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD8DC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED70520879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B012420879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079029;
-	bh=FfH7sJJcjvBg/s9hb1q6gILAcYyBIl/JGM7qheNnK1I=;
+	s=default; t=1548079033;
+	bh=MKkmEPYRSLAp2IrMkL99Q3odUpyNmgjsUKjFH1+N6vg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DyQBGsvbn3FzK6nl7hHAjU3D8gTpR/w5jaQM7n/z0uPVqOMvIAY6QF4fpa1Qg1kGv
-	 xhTMAkuisqSaGjoNGggZdZHbA3LjqtFrBF6CzyS3v98Q/+JJfcnBT+jHrkBOC9cZQp
-	 fBFqoREy3DLqVYo4of36d5xHmxImjqjjkQbhMtAo=
+	b=QYAOj+/p/4KYqGA39qa/wUDsBgB1Er45tSxoQHHwsoq0XCJS45UdAD+jbb5GbpJ3z
+	 kpyn9bs6TjOQ6DhgE9TxG0nt0hoZfO4SPLtnSgxMbyzJrSB9QxPrji7Vek17V2D5X+
+	 5J6LBGL7zAOY5buat84tcqPbISFTDcnWEwYV3lzg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731992AbfAUN4k (ORCPT
+        id S1731121AbfAUN4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:56:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41964 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:56:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731957AbfAUN4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:56:36 -0500
+        id S1731318AbfAUN4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:56:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 945182084C;
-        Mon, 21 Jan 2019 13:56:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAC5720879;
+        Mon, 21 Jan 2019 13:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078995;
-        bh=FfH7sJJcjvBg/s9hb1q6gILAcYyBIl/JGM7qheNnK1I=;
+        s=default; t=1548078992;
+        bh=MKkmEPYRSLAp2IrMkL99Q3odUpyNmgjsUKjFH1+N6vg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=etKuTBRp/SwFLCZWtjMWjq7wGpcer4srLZGONq6BX902838PEOo7EfJjSsqxqbONS
-         +85fd+fq8IkmqF5hnacy9YlzdZv0DoVP2ARILxWNcdKH2eYoY9HH75XnpA8VqballJ
-         8FA7pUDePEZYFfJOMwDsTwO3TjAKix6Oa96+Y20E=
+        b=1NTia49beA5S4wAjjxdmyx9QKB7hEsnzadSKVRq9FsqeCQxulwOJ3amUgWRk2Fb/t
+         WsqvcTCLA14I1CeC+X5S5PeT31R3iEyxNdVYRtxoRXBHu5AURekB7QXpMiS1RnL2E4
+         x0qrNAcdIoNbsLO0/MvhxwWvvh+w2s70QmNes3QY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 39/51] blockdev: Fix livelocks on loop device
-Date:   Mon, 21 Jan 2019 14:44:35 +0100
-Message-Id: <20190121122457.524242671@linuxfoundation.org>
+        syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 4.9 38/51] selinux: fix GPF on invalid policy
+Date:   Mon, 21 Jan 2019 14:44:34 +0100
+Message-Id: <20190121122457.387079145@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -66,123 +67,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Stephen Smalley <sds@tycho.nsa.gov>
 
-commit 04906b2f542c23626b0ef6219b808406f8dddbe9 upstream.
+commit 5b0e7310a2a33c06edc7eb81ffc521af9b2c5610 upstream.
 
-bd_set_size() updates also block device's block size. This is somewhat
-unexpected from its name and at this point, only blkdev_open() uses this
-functionality. Furthermore, this can result in changing block size under
-a filesystem mounted on a loop device which leads to livelocks inside
-__getblk_gfp() like:
+levdatum->level can be NULL if we encounter an error while loading
+the policy during sens_read prior to initializing it.  Make sure
+sens_destroy handles that case correctly.
 
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 10863 Comm: syz-executor0 Not tainted 4.18.0-rc5+ #151
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
-01/01/2011
-RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x50 kernel/kcov.c:106
-...
-Call Trace:
- init_page_buffers+0x3e2/0x530 fs/buffer.c:904
- grow_dev_page fs/buffer.c:947 [inline]
- grow_buffers fs/buffer.c:1009 [inline]
- __getblk_slow fs/buffer.c:1036 [inline]
- __getblk_gfp+0x906/0xb10 fs/buffer.c:1313
- __bread_gfp+0x2d/0x310 fs/buffer.c:1347
- sb_bread include/linux/buffer_head.h:307 [inline]
- fat12_ent_bread+0x14e/0x3d0 fs/fat/fatent.c:75
- fat_ent_read_block fs/fat/fatent.c:441 [inline]
- fat_alloc_clusters+0x8ce/0x16e0 fs/fat/fatent.c:489
- fat_add_cluster+0x7a/0x150 fs/fat/inode.c:101
- __fat_get_block fs/fat/inode.c:148 [inline]
-...
-
-Trivial reproducer for the problem looks like:
-
-truncate -s 1G /tmp/image
-losetup /dev/loop0 /tmp/image
-mkfs.ext4 -b 1024 /dev/loop0
-mount -t ext4 /dev/loop0 /mnt
-losetup -c /dev/loop0
-l /mnt
-
-Fix the problem by moving initialization of a block device block size
-into a separate function and call it when needed.
-
-Thanks to Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> for help with
-debugging the problem.
-
-Reported-by: syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com
+Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/block_dev.c |   28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ security/selinux/ss/policydb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -114,6 +114,20 @@ void invalidate_bdev(struct block_device
- }
- EXPORT_SYMBOL(invalidate_bdev);
- 
-+static void set_init_blocksize(struct block_device *bdev)
-+{
-+	unsigned bsize = bdev_logical_block_size(bdev);
-+	loff_t size = i_size_read(bdev->bd_inode);
-+
-+	while (bsize < PAGE_SIZE) {
-+		if (size & bsize)
-+			break;
-+		bsize <<= 1;
-+	}
-+	bdev->bd_block_size = bsize;
-+	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
-+}
-+
- int set_blocksize(struct block_device *bdev, int size)
- {
- 	/* Size must be a power of two, and between 512 and PAGE_SIZE */
-@@ -1209,18 +1223,9 @@ EXPORT_SYMBOL(check_disk_change);
- 
- void bd_set_size(struct block_device *bdev, loff_t size)
- {
--	unsigned bsize = bdev_logical_block_size(bdev);
--
- 	inode_lock(bdev->bd_inode);
- 	i_size_write(bdev->bd_inode, size);
- 	inode_unlock(bdev->bd_inode);
--	while (bsize < PAGE_SIZE) {
--		if (size & bsize)
--			break;
--		bsize <<= 1;
--	}
--	bdev->bd_block_size = bsize;
--	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
- }
- EXPORT_SYMBOL(bd_set_size);
- 
-@@ -1297,8 +1302,10 @@ static int __blkdev_get(struct block_dev
- 				}
- 			}
- 
--			if (!ret)
-+			if (!ret) {
- 				bd_set_size(bdev,(loff_t)get_capacity(disk)<<9);
-+				set_init_blocksize(bdev);
-+			}
- 
- 			/*
- 			 * If the device is invalidated, rescan partition
-@@ -1333,6 +1340,7 @@ static int __blkdev_get(struct block_dev
- 				goto out_clear;
- 			}
- 			bd_set_size(bdev, (loff_t)bdev->bd_part->nr_sects << 9);
-+			set_init_blocksize(bdev);
- 		}
- 	} else {
- 		if (bdev->bd_contains == bdev) {
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -726,7 +726,8 @@ static int sens_destroy(void *key, void
+ 	kfree(key);
+ 	if (datum) {
+ 		levdatum = datum;
+-		ebitmap_destroy(&levdatum->level->cat);
++		if (levdatum->level)
++			ebitmap_destroy(&levdatum->level->cat);
+ 		kfree(levdatum->level);
+ 	}
+ 	kfree(datum);
 
 
