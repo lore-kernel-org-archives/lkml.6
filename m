@@ -2,134 +2,131 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13336C2F42E
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900CDC2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B552085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EA6B2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iYoirHZ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730465AbfAUPeu (ORCPT
+        id S1730673AbfAUPfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:34:50 -0500
-Received: from foss.arm.com ([217.140.101.70]:36626 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730394AbfAUPes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:34:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B74315BE;
-        Mon, 21 Jan 2019 07:34:48 -0800 (PST)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EF89A3F5C1;
-        Mon, 21 Jan 2019 07:34:45 -0800 (PST)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Julien Thierry <julien.thierry@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH v9 20/26] irqchip/gic-v3: Handle pseudo-NMIs
-Date:   Mon, 21 Jan 2019 15:33:39 +0000
-Message-Id: <1548084825-8803-21-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        Mon, 21 Jan 2019 10:35:46 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16064 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730399AbfAUPeo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:34:44 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c45e6710000>; Mon, 21 Jan 2019 07:34:09 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 21 Jan 2019 07:34:43 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 21 Jan 2019 07:34:43 -0800
+Received: from localhost (10.124.1.5) by HQMAIL101.nvidia.com (172.20.187.10)
+ with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 21 Jan 2019 15:34:42
+ +0000
+Date:   Mon, 21 Jan 2019 16:34:40 +0100
+From:   Thierry Reding <treding@nvidia.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+CC:     <iommu@lists.linux-foundation.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <m.szyprowski@samsung.com>,
+        <hch@lst.de>, <rmk+kernel@armlinux.org.uk>, <bskeggs@redhat.com>,
+        <tjakobi@math.uni-bielefeld.de>, <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: dma-mapping: Clear DMA ops on teardown
+Message-ID: <20190121153439.GA21078@ulmo>
+References: <2f5833b7639543d614095cd3f5ab0dc0274e26d6.1548081277.git.robin.murphy@arm.com>
+MIME-Version: 1.0
+In-Reply-To: <2f5833b7639543d614095cd3f5ab0dc0274e26d6.1548081277.git.robin.murphy@arm.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548084849; bh=10LZ1mtxpIfqj+R9CVQkhdg+32AqVCTSZIVyHC9oUxM=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:In-Reply-To:X-NVConfidentiality:User-Agent:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:
+         Content-Disposition;
+        b=iYoirHZ1CuEkXMqTPnnak45ZTCLsmEUxDlyYGhn1yGZ0qkxZCzc2EIGWEnDqNmlnI
+         tXY+dzsLO769NT4XOfzo8Bx3097ShU5u1ti6kHD0qJQeJYUQV7iylcJF4qRH17+4Zw
+         q2i+kRu0nbL7KpRZpGPNYWqFRRb4OjVErhhROB33df1i+h9IGbkXN26cHK76bOMDDk
+         d+1MrtFG62YusvLz1ZWa0mocChM2j+RIAiCrwvYvhDuDZK9weoNUjukFj7jjzJHzX3
+         fRS31qblheD6TqbKq0xXVuPswizofLV9bOYjYaoOg9Wlj0SoLYHFAhPLusoIs02TuA
+         A6sVW8WxEGO5Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a higher priority to be used for pseudo-NMIs. When such an
-interrupt is received, keep interrupts fully disabled at CPU level to
-prevent receiving other pseudo-NMIs while handling the current one.
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/irq-gic-v3.c | 42 ++++++++++++++++++++++++++++++++++++------
- 1 file changed, 36 insertions(+), 6 deletions(-)
+On Mon, Jan 21, 2019 at 02:52:16PM +0000, Robin Murphy wrote:
+> Installing the appropriate non-IOMMU DMA ops in arm_iommu_detch_device()
+> serves the case where IOMMU-aware drivers choose to control their own
+> mapping but still make DMA API calls, however it also affects the case
+> when the arch code itself tears down the mapping upon driver unbinding,
+> where the ops now get left in place and can inhibit arch_setup_dma_ops()
+> on subsequent re-probe attempts.
+>=20
+> Fix the latter case by making sure that arch_teardown_dma_ops() cleans
+> up whenever the ops were automatically installed by its counterpart.
+>=20
+> Reported-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: 1874619a7df4 "ARM: dma-mapping: Set proper DMA ops in arm_iommu_de=
+tach_device()"
+> Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+>=20
+> Sorry for the delay - there was a giant email infrastructure cock-up just
+> at the point I wanted to go back through my archive and double-check the
+> discussion around the original commit...
+>=20
+> Robin.
+>=20
+>  arch/arm/mm/dma-mapping.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 5374b43..4df1e94 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -41,6 +41,8 @@
- 
- #include "irq-gic-common.h"
- 
-+#define GICD_INT_NMI_PRI	(GICD_INT_DEF_PRI & ~0x80)
-+
- #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
- 
- struct redist_region {
-@@ -381,12 +383,45 @@ static u64 gic_mpidr_to_affinity(unsigned long mpidr)
- 	return aff;
- }
- 
-+static inline void gic_deactivate_unexpected_irq(u32 irqnr)
-+{
-+	if (static_branch_likely(&supports_deactivate_key)) {
-+		if (irqnr < 8192)
-+			gic_write_dir(irqnr);
-+	} else {
-+		gic_write_eoir(irqnr);
-+	}
-+}
-+
-+static inline void gic_handle_nmi(u32 irqnr, struct pt_regs *regs)
-+{
-+	int err;
-+
-+	if (static_branch_likely(&supports_deactivate_key))
-+		gic_write_eoir(irqnr);
-+	/*
-+	 * Leave the PSR.I bit set to prevent other NMIs to be
-+	 * received while handling this one.
-+	 * PSR.I will be restored when we ERET to the
-+	 * interrupted context.
-+	 */
-+	err = handle_domain_nmi(gic_data.domain, irqnr, regs);
-+	if (err)
-+		gic_deactivate_unexpected_irq(irqnr);
-+}
-+
- static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
- {
- 	u32 irqnr;
- 
- 	irqnr = gic_read_iar();
- 
-+	if (gic_supports_nmi() &&
-+	    unlikely(gic_read_rpr() == GICD_INT_NMI_PRI)) {
-+		gic_handle_nmi(irqnr, regs);
-+		return;
-+	}
-+
- 	if (gic_prio_masking_enabled()) {
- 		gic_pmr_mask_irqs();
- 		gic_arch_enable_irqs();
-@@ -403,12 +438,7 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
- 		err = handle_domain_irq(gic_data.domain, irqnr, regs);
- 		if (err) {
- 			WARN_ONCE(true, "Unexpected interrupt received!\n");
--			if (static_branch_likely(&supports_deactivate_key)) {
--				if (irqnr < 8192)
--					gic_write_dir(irqnr);
--			} else {
--				gic_write_eoir(irqnr);
--			}
-+			gic_deactivate_unexpected_irq(irqnr);
- 		}
- 		return;
- 	}
--- 
-1.9.1
+I had also tested your draft on Tegra last week and this looks
+identical, so:
 
+Tested-by: Thierry Reding <treding@nvidia.com>
+
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxF5osACgkQ3SOs138+
+s6Hu1w/+PREMHDE0jWgKBN3n9eINXN6aliHOhCeWQxco5/iJjCSeCofcMvFzuKx2
+p8nZ8OfIMZvj4AatYeryqn7bPLSQiRfwVtC8qOfERTv7z+8m4F+o4rPSKmr0/1qI
+rSqpTFY4exsTlp7Lp7DHsg2sbd0Av6UvgiNJSLpTLai0loCYfPuF+lvbdlw/x6wC
+CNa6SBE+rI/u+QRNY1jRPkgEMovOnsvkKY4bf7+v3elI3X7bZhObqyNLnTLkNpYL
+w01hvCpxpo4vrX12kTDzuhOxxnKF1md/QrlviZWl/K6CI5L/UqlP1ttSj3p5INna
+nGQ4Zjr+ykq1enUBHlLwkfVGD7mV//BaVxvIyMtKtWewJ3YoQbPhrcWCAg1pqjJ7
+C9ksb5Njf7vOyF5KPGdcyePUIVw7NaIytAQrRE3ww7iuZg78fBs7oxjdzyK4D6G5
++2DcaumIx18jwD44wP8g6z0foo1GgN6IitWoAcH/UhVX9ID/eMl5KNxHogW1N2bW
+GJDagpZCD09vxmKBcYFctXGbL3RoLKS4+mVu93vjPNhRs813nXAPMC5E+NZcI6vZ
+l7CYkq3/V6af54QGr7/0K87mIT6dIjkOCVYNjH4ZHPLjJolBZ8iS5636DyDoldk0
+SlUgLWwfZ80fcqNh19syiJRaVIpW2CahirFJilXtoFd2cvDOLPM=
+=LcGP
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
