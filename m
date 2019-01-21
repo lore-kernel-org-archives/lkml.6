@@ -2,102 +2,150 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CFEC282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C64C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 569A720663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 610A420663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:43:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z27qnR4d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n59Qo4yb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfAUKn0 (ORCPT
+        id S1727713AbfAUKnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:43:26 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51565 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbfAUKn0 (ORCPT
+        Mon, 21 Jan 2019 05:43:37 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42830 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727556AbfAUKnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:43:26 -0500
-Received: by mail-it1-f194.google.com with SMTP id w18so15828824ite.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 02:43:25 -0800 (PST)
+        Mon, 21 Jan 2019 05:43:37 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q18so22674816wrx.9;
+        Mon, 21 Jan 2019 02:43:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BQXb0zgoJ2mCoNOejW9tOHoVJWqC6dyFJgLtkR+K7VM=;
-        b=Z27qnR4dsnp7AYzCCgtZ6dyL9Z3KONJQXeXGIMAaSDb/UtUnfoc6A9Az381jndlEi0
-         dlpiMFeA3VGF98Hgi5g/povXhCcUKmDD7DLoXbnvUvYgQZzylEZFQ97WPvZhS76jhicN
-         FFhdd9OE7BUkW3dt8hlLF5aDJX2U9opvYRryA=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rhqmqw30SFNlUyMoNlB85kG0doKZfQWelxbBtseKkAs=;
+        b=n59Qo4ybLmG+zIwayrNljMdcivBletoeQWbHMfKi/iG6c0yAd4DgxoaZVmzgzY45hB
+         lnfLowTLzA163D8T4NmAI9wI485d9O5ZbyJkDNK7Bj5OJ+rngJ/+fD/PpxsEhV8MebBH
+         FrWwO2Axz6bIIZu89h5gjy1f0+z28ewAqNxq6mudMmfp+ja5MPEaW0p2yZLhz+Ps13tk
+         tgSj0I/uqJBPcDl6l5T+eUmHmhaNrdPndJqyrNsLlWBbozqTM9tr4wPd80bBwGxJvw5J
+         DYe2pB1SpdOxnbS/H777yCy0BnfDjuiHrBm3rQO1iat+ea/1U3UI2FJAu/6eSkcbriv/
+         SaYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BQXb0zgoJ2mCoNOejW9tOHoVJWqC6dyFJgLtkR+K7VM=;
-        b=bL+xaOH3rErulG+j5w/BnV2RmcpgisjqAqbmM8ha8L71SgxXQTd247fWe0VRcAMIYZ
-         F71Fr4usulnuC8dzk/5zgKx2NnxkpJhhpgCa50BYTjJl5Z6sjR6bfxpOFoGnEEwhKJvz
-         Uilr9Mwj2+bsgQJICy9PQyJOUSRviCjGGACL+t+M+KzLv1CYgU3efO5FyusGSitqeScN
-         3yGmnWKqPNt4Svd4AM/KKoe3zEXxKJHwg+6TR2imYbqaovEB6MSBlZMyHyQglI7AMaUt
-         xLzifGyCqQyUFouf/Rn2dJg2QnIwOHO3LH6Ef43gzA5ReSjKD1RdKky3z4iMijYL+d1w
-         kQYA==
-X-Gm-Message-State: AJcUukdoDv4YI8ynhvwQ9mcahOOm9hMerUMkt2Z9b90BfOjHY6FXzOGR
-        2vRpBBP18RJsdSUjAlAXOIXzpwyCH3iroil679qV3g==
-X-Google-Smtp-Source: ALg8bN5WGvBMiF44LaTui5bstwU8eNuQkUryJQpFe200XNIaEcVCdAWtEKNAxGYKSfMBhwSsgSfsyx3F1Sgg+th4rPQ=
-X-Received: by 2002:a24:edc4:: with SMTP id r187mr18358127ith.158.1548067405296;
- Mon, 21 Jan 2019 02:43:25 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rhqmqw30SFNlUyMoNlB85kG0doKZfQWelxbBtseKkAs=;
+        b=ef4v+qwsIi5Q9Z7U5wORhyE86iSQW9IFQ6rx34wggmlf9lv69A/bMYRi/5uVR4m/aM
+         plpvSiJ3I4WlkleBjb/yYkQYGhShAuR55iy8dYIxEOtC+36UeGq3bJgy45zvRbIVvtta
+         Vgu/K62ZL/9hpN0+H5hMnNy1PTmvhxYong4IfKOytBFxOp15idash2Te37jqDFv+2qyi
+         p7uCyVAdC+Vm3abTzPxHFTt/zOc9RNaDzqGCDRZN2JYdg1CblxwL2wzaREN9gVUFMkkg
+         yz/GaC58nTHsJx3BzjOyzTxWWacx+2eY5EE+EscMVBR2pbSoM5AmHIpRmGHXwgOSIafZ
+         WsLw==
+X-Gm-Message-State: AJcUukdK9FH07a8rnp+Ez16vtV5QJ4l08hBkOKElVkbkXOzPU/Bfw4Ut
+        HCj9gl+POc7S0TYz3kPHXhY=
+X-Google-Smtp-Source: ALg8bN74wzuhD7Iz+qYIJPWdTD3koZoodg5TMx0LJ7202PeFwdw8DqKuXpRSnok2l+eB9cXc0FGxHA==
+X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr28304371wrx.298.1548067415069;
+        Mon, 21 Jan 2019 02:43:35 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id x81sm50586856wmg.17.2019.01.21.02.43.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 02:43:34 -0800 (PST)
+Date:   Mon, 21 Jan 2019 11:43:33 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com,
+        chunyan.zhang@unisoc.com, jonathanh@nvidia.com,
+        adrian.hunter@intel.com, ulf.hansson@linaro.org, anrao@nvidia.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH V9 1/3] dt-bindings: mmc: tegra: Add supports-cqe property
+Message-ID: <20190121104333.GD16756@ulmo>
+References: <1547579032-18314-1-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-References: <1548062959-31860-1-git-send-email-sumit.garg@linaro.org>
- <1548062959-31860-5-git-send-email-sumit.garg@linaro.org> <20190121103026.GB15590@kroah.com>
-In-Reply-To: <20190121103026.GB15590@kroah.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 21 Jan 2019 11:43:14 +0100
-Message-ID: <CAKv+Gu9xT87twvnfvnxZqZ-Yj-Xmw5+2wkw6yCRhF7iuz+y-TA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] hwrng: add OP-TEE based rng driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Sumit Garg <sumit.garg@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mpm@selenic.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+Content-Disposition: inline
+In-Reply-To: <1547579032-18314-1-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 11:30, Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Jan 21, 2019 at 02:59:19PM +0530, Sumit Garg wrote:
-> > --- /dev/null
-> > +++ b/drivers/char/hw_random/optee-rng.c
-> > @@ -0,0 +1,272 @@
-> > +// SPDX-License-Identifier: GPL-2.0
->
-> Nice, but:
->
-> <snip>
->
-> > +MODULE_LICENSE("GPL");
->
-> This string means "GPL2+", you need "GPLv2" here instead.
->
 
-I think you need a space there: "GPL v2" or it doesn't get picked up
-correctly (or at least, it didn't use to)
+--NklN7DEeGtkPCoo3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Yeah, it's a pain, and everyone gets it wrong, we need to add a
-> checkpatch.pl rule for this to keep it from being added in new code.
->
-> thanks,
->
-> greg k-h
+On Tue, Jan 15, 2019 at 11:03:50AM -0800, Sowjanya Komatineni wrote:
+> Add supports-cqe optional property for Tegra SDMMC.
+>=20
+> Tegra186 and Tegra194 supports HW Command queue only
+> on SDMMC4 controller. This property is used to identify
+> command queue support controller in the tegra sdhci driver.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.t=
+xt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> index 32b4b4e41923..fb14c2c8d7ee 100644
+> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> @@ -72,6 +72,10 @@ Optional properties for Tegra210 and Tegra186:
+>  - nvidia,default-trim : Specify the default outbound clock trimmer
+>    value.
+>  - nvidia,dqs-trim : Specify DQS trim value for HS400 timing
+> +- supports-cqe : The presence of this property indicates that the
+> +  corresponding controller supports HW command queue feature.
+> +  Tegra186 and Tegra194 has 4 SDMMC Controllers and only SDMMC4
+> +  controller supports HW Command Queue with eMMC device.
+
+Hi Rob,
+
+are you okay with the property name for this. I'm wondering if it should
+have a vendor prefix or not, but I suspect that something like this may
+be needed for other vendors as well, so not having a vendor prefix could
+be warranted in this case.
+
+Thierry
+
+> =20
+>    Notes on the pad calibration pull up and pulldown offset values:
+>      - The property values are drive codes which are programmed into the
+> --=20
+> 2.7.4
+>=20
+
+--NklN7DEeGtkPCoo3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxFolUACgkQ3SOs138+
+s6E7EQ//UNWSE3hytU7lm2GZMzGWL1JIUUfBHox5c+CLYu0FbjJb8hpsjBG8PM5K
+61CBgHndu7TCuU/6J+HRKLCBETJEJUa6h+Xkj7zWaPeKItFTYF0b+BB4O/WL5bHb
+1sXuktkVFezv2UM2m7Xy4AX4sIFzqj1eeWCi6xh2V6FkM3rofOawygqpN+DPhzuz
+aLJxuZ9+qIeNtzYdJqBs2AmMHenbvjhlwcNunyuCDyqTMnYf/bt9ny/gIwQ9X7xc
+UYsBKoirf7uBJDYyuDG2Bz3sk6+gr5X0Dc9NqtyUBEhZXmog4rr1oEnHQYjuqrXo
+UO+DMhNzKj9PNYzLnAbQG02GkcmMFTtx05+7igbI3pRoVr9SnLlALQUUP3bwcj2/
+JweBB1j75HH7g+TKJuiALOdQ46i9moTDUszSo8EByhmNUESbuZiXl7yGO6Iv/7HU
+dXyRENbiBx4lHTqoeI2z6vqnmdIfg6PL5f22Ei36t6j2ZtGmFrOrbT/BfWK7DSPB
+EvsTM20IGIUvUQwwAS9qPan7zeYMmVQkXcMxiMYLzTEfSMFzDMXNvrugRgndprff
+8rah2BMB0PeY97bXmLFagsrG8fmlTknEdBooWnSkZrICQonXbGo8A8psd7cNMK2c
+4Wmz3oNj8HEhxKOH+Rb/yp6iyAiHSPwVGIx67EDN8kAwiCowS28=
+=cgdy
+-----END PGP SIGNATURE-----
+
+--NklN7DEeGtkPCoo3--
