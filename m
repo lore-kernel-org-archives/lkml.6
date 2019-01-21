@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54107C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961E6C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F5620879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 661972063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078538;
-	bh=iCAjZKFux/eGfJTBKSCXoTkjwDxGLSYbg1OuQHcAxLM=;
+	s=default; t=1548078540;
+	bh=ZPu5VjXHNIi76KjtVapQlZTgeBRtJDvw15Z0u8x/duk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Z8CsNf5vkbHK9SBGM14GSimXiHURz5Gqr96JSmVkA/khbHOhj2haniSYJnSH9lZhO
-	 Q/FKbFiz4NtUPlifiTC79iXlD8tFURzZ64efiLN2mbsJkSR6xHMxniWOOjMn2p1jd1
-	 1UCOadI/Ts3mCDkaDOSZffUfSWsZJmiyJxW2hpxY=
+	b=D4Pjtyxo6Bmcwm7KFXjT0FtpDwNvSWMWaTsPr9TlX7zk+fSvES6zq4xkQVenDiPhP
+	 e+qq153RN+6HX93aH+lB2QdXipEFrvuvEMHBwt0ysUozYICYqeU4J0i8MPvc0RMnoQ
+	 I78bxYs/fWyd+bXjv8lGn/KikjgohvQsRqSA782I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbfAUNs4 (ORCPT
+        id S1729517AbfAUNs7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:48:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58972 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:48:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729441AbfAUNsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:48:50 -0500
+        id S1730059AbfAUNsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:48:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBF7320879;
-        Mon, 21 Jan 2019 13:48:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97D532063F;
+        Mon, 21 Jan 2019 13:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078529;
-        bh=iCAjZKFux/eGfJTBKSCXoTkjwDxGLSYbg1OuQHcAxLM=;
+        s=default; t=1548078535;
+        bh=ZPu5VjXHNIi76KjtVapQlZTgeBRtJDvw15Z0u8x/duk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0r95DyN8khz91o9Tkv93tKnfavuuHQCWBpJFO7lUCRsAfSIdbq/96Rrip5QxjifQo
-         o/J4Q2Wp8CYoG5PAp8jJXoptmoAWTkXjOAtPqL/staFWbCjkLptmgYTxg89KAhVXEV
-         pWp30MPL1nbR8hRKL/XktZfKXicuqpn5m6hultrQ=
+        b=T0mkOF+6DTCBU5V2ZhIo6gNZs1gWpY6m4IyRB+oie3EFJMnXL0RmFxGcLcenbsLTh
+         8N25fTa3EZCv9UXgMKP5E8kcFQ/tBmYTBnO5lShzFAKJTf7uc4xnwV8sOtotOGaOKk
+         P43jT+bGNkR1HrgDY7k2DWpvM2z2Z5UTPwm1PAyk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.20 065/111] SUNRPC: Fix TCP receive code on archs with flush_dcache_page()
-Date:   Mon, 21 Jan 2019 14:42:59 +0100
-Message-Id: <20190121122503.621264445@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>,
+        Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.20 066/111] powerpc/tm: Limit TM code inside PPC_TRANSACTIONAL_MEM
+Date:   Mon, 21 Jan 2019 14:43:00 +0100
+Message-Id: <20190121122503.764750006@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,69 +67,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Breno Leitao <leitao@debian.org>
 
-commit 6a829eb8619fbdde6d7d627ad582fe119805f39d upstream.
+commit 897bc3df8c5aebb54c32d831f917592e873d0559 upstream.
 
-After receiving data into the page cache, we need to call flush_dcache_page()
-for the architectures that define it.
+Commit e1c3743e1a20 ("powerpc/tm: Set MSR[TS] just prior to recheckpoint")
+moved a code block around and this block uses a 'msr' variable outside of
+the CONFIG_PPC_TRANSACTIONAL_MEM, however the 'msr' variable is declared
+inside a CONFIG_PPC_TRANSACTIONAL_MEM block, causing a possible error when
+CONFIG_PPC_TRANSACTION_MEM is not defined.
 
-Fixes: 277e4ab7d530b ("SUNRPC: Simplify TCP receive code by switching...")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org # v4.20
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+	error: 'msr' undeclared (first use in this function)
+
+This is not causing a compilation error in the mainline kernel, because
+'msr' is being used as an argument of MSR_TM_ACTIVE(), which is defined as
+the following when CONFIG_PPC_TRANSACTIONAL_MEM is *not* set:
+
+	#define MSR_TM_ACTIVE(x) 0
+
+This patch just fixes this issue avoiding the 'msr' variable usage outside
+the CONFIG_PPC_TRANSACTIONAL_MEM block, avoiding trusting in the
+MSR_TM_ACTIVE() definition.
+
+Cc: stable@vger.kernel.org
+Reported-by: Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
+Fixes: e1c3743e1a20 ("powerpc/tm: Set MSR[TS] just prior to recheckpoint")
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/xprtsock.c |   22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/powerpc/kernel/signal_64.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -48,6 +48,7 @@
- #include <net/udp.h>
- #include <net/tcp.h>
- #include <linux/bvec.h>
-+#include <linux/highmem.h>
- #include <linux/uio.h>
- 
- #include <trace/events/sunrpc.h>
-@@ -380,6 +381,26 @@ xs_read_discard(struct socket *sock, str
- 	return sock_recvmsg(sock, msg, flags);
- }
- 
-+#if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE
-+static void
-+xs_flush_bvec(const struct bio_vec *bvec, size_t count, size_t seek)
-+{
-+	struct bvec_iter bi = {
-+		.bi_size = count,
-+	};
-+	struct bio_vec bv;
-+
-+	bvec_iter_advance(bvec, &bi, seek & PAGE_MASK);
-+	for_each_bvec(bv, bvec, bi, bi)
-+		flush_dcache_page(bv.bv_page);
-+}
-+#else
-+static inline void
-+xs_flush_bvec(const struct bio_vec *bvec, size_t count, size_t seek)
-+{
-+}
-+#endif
-+
- static ssize_t
- xs_read_xdr_buf(struct socket *sock, struct msghdr *msg, int flags,
- 		struct xdr_buf *buf, size_t count, size_t seek, size_t *read)
-@@ -413,6 +434,7 @@ xs_read_xdr_buf(struct socket *sock, str
- 				seek + buf->page_base);
- 		if (ret <= 0)
- 			goto sock_err;
-+		xs_flush_bvec(buf->bvec, ret, seek + buf->page_base);
- 		offset += ret - buf->page_base;
- 		if (offset == count || msg->msg_flags & (MSG_EOR|MSG_TRUNC))
- 			goto out;
+--- a/arch/powerpc/kernel/signal_64.c
++++ b/arch/powerpc/kernel/signal_64.c
+@@ -755,11 +755,12 @@ SYSCALL_DEFINE0(rt_sigreturn)
+ 		if (restore_tm_sigcontexts(current, &uc->uc_mcontext,
+ 					   &uc_transact->uc_mcontext))
+ 			goto badframe;
+-	}
++	} else
+ #endif
+-	/* Fall through, for non-TM restore */
+-	if (!MSR_TM_ACTIVE(msr)) {
++	{
+ 		/*
++		 * Fall through, for non-TM restore
++		 *
+ 		 * Unset MSR[TS] on the thread regs since MSR from user
+ 		 * context does not have MSR active, and recheckpoint was
+ 		 * not called since restore_tm_sigcontexts() was not called
 
 
