@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E69FC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9B7C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BACC2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEA2C214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079294;
-	bh=Ipa1bCBlV1JZQqjfHk5wS3yVDDxUYDSzqVlzbf88n4g=;
+	s=default; t=1548079298;
+	bh=lLXVLHLg11MPO09G0n2JnxiarcDrez7gkxsRPIE3/50=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N4V031cfE0v1hgKBVIko8p5I3zABvVqYX1AcWCwPt0kGXys/jyD8TzUfpS6PWIfSr
-	 0LgwTYrendgkCkKwxoGQ0LyYHTyTrJAxfD/BbehFTL1DDR6l6B3UDPRpRE4LzCEzqm
-	 795cVmWaB1bmKhAq6gmBYmjZX/5NajpkWDyn/Xqg=
+	b=WRs1T0J6mJZztn6LaD+SSFA7AdeKUMuxVSfpZE+k96UKHZclvWEoAUdgs0d7Sw7XJ
+	 EvcXhgXUso8Q9+RyTPmiz3C68+yzAAJbNlT7ftwgUzepHdupZegN6QtDlnzcjR0L/+
+	 1O/rRE02/htRFvyGLZO2y4qsHPnrgqk2wDZQWnC4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732653AbfAUOBd (ORCPT
+        id S1732660AbfAUOBh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48594 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729579AbfAUOBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:31 -0500
+        id S1732202AbfAUOBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1C8B21019;
-        Mon, 21 Jan 2019 14:01:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 623ED21019;
+        Mon, 21 Jan 2019 14:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079290;
-        bh=Ipa1bCBlV1JZQqjfHk5wS3yVDDxUYDSzqVlzbf88n4g=;
+        s=default; t=1548079292;
+        bh=lLXVLHLg11MPO09G0n2JnxiarcDrez7gkxsRPIE3/50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MyDVR0HKS1KpfEtmDLYxeXIs1TFpPCYdk4Q/49qO1oI3/wmLeYLNIvZii5XON6Czi
-         OCtQj3rm5qh+Dk90y+zE4JXrk/eGsjxj6ElAGkQX4URjpuwnS6iP9ezPvBhpUBNYnD
-         6zhA906K2VMkI8RskK01tSidO2Jj8hn6MtqipJ5c=
+        b=OkgmftjyCVRjHF8P5JIZ8IWy2e43H+GQOSmiV6yEoDc80Cfj2Wd29niVlCNRdJGLx
+         x4phtMCIDOJJmnSfK0ZoxNHWdfdoASJood5czeKsxAo0D3BZjdB7o7NLxk44OWFo8z
+         ohIeP0813dwn4JH8Mohau4gU1Nhijt3zEkLeclIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 72/99] blockdev: Fix livelocks on loop device
-Date:   Mon, 21 Jan 2019 14:49:04 +0100
-Message-Id: <20190121134916.736211742@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 73/99] sctp: allocate sctp_sockaddr_entry with kzalloc
+Date:   Mon, 21 Jan 2019 14:49:05 +0100
+Message-Id: <20190121134916.775172280@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -66,123 +69,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 04906b2f542c23626b0ef6219b808406f8dddbe9 upstream.
+commit 400b8b9a2a17918f8ce00786f596f530e7f30d50 upstream.
 
-bd_set_size() updates also block device's block size. This is somewhat
-unexpected from its name and at this point, only blkdev_open() uses this
-functionality. Furthermore, this can result in changing block size under
-a filesystem mounted on a loop device which leads to livelocks inside
-__getblk_gfp() like:
+The similar issue as fixed in Commit 4a2eb0c37b47 ("sctp: initialize
+sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event") also exists
+in sctp_inetaddr_event, as Alexander noticed.
 
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 10863 Comm: syz-executor0 Not tainted 4.18.0-rc5+ #151
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
-01/01/2011
-RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x50 kernel/kcov.c:106
-...
-Call Trace:
- init_page_buffers+0x3e2/0x530 fs/buffer.c:904
- grow_dev_page fs/buffer.c:947 [inline]
- grow_buffers fs/buffer.c:1009 [inline]
- __getblk_slow fs/buffer.c:1036 [inline]
- __getblk_gfp+0x906/0xb10 fs/buffer.c:1313
- __bread_gfp+0x2d/0x310 fs/buffer.c:1347
- sb_bread include/linux/buffer_head.h:307 [inline]
- fat12_ent_bread+0x14e/0x3d0 fs/fat/fatent.c:75
- fat_ent_read_block fs/fat/fatent.c:441 [inline]
- fat_alloc_clusters+0x8ce/0x16e0 fs/fat/fatent.c:489
- fat_add_cluster+0x7a/0x150 fs/fat/inode.c:101
- __fat_get_block fs/fat/inode.c:148 [inline]
-...
+To fix it, allocate sctp_sockaddr_entry with kzalloc for both sctp
+ipv4 and ipv6 addresses, as does in sctp_v4/6_copy_addrlist().
 
-Trivial reproducer for the problem looks like:
-
-truncate -s 1G /tmp/image
-losetup /dev/loop0 /tmp/image
-mkfs.ext4 -b 1024 /dev/loop0
-mount -t ext4 /dev/loop0 /mnt
-losetup -c /dev/loop0
-l /mnt
-
-Fix the problem by moving initialization of a block device block size
-into a separate function and call it when needed.
-
-Thanks to Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> for help with
-debugging the problem.
-
-Reported-by: syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Reported-by: syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/block_dev.c |   28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ net/sctp/ipv6.c     |    5 +----
+ net/sctp/protocol.c |    4 +---
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -104,6 +104,20 @@ void invalidate_bdev(struct block_device
- }
- EXPORT_SYMBOL(invalidate_bdev);
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -97,11 +97,9 @@ static int sctp_inet6addr_event(struct n
  
-+static void set_init_blocksize(struct block_device *bdev)
-+{
-+	unsigned bsize = bdev_logical_block_size(bdev);
-+	loff_t size = i_size_read(bdev->bd_inode);
-+
-+	while (bsize < PAGE_SIZE) {
-+		if (size & bsize)
-+			break;
-+		bsize <<= 1;
-+	}
-+	bdev->bd_block_size = bsize;
-+	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
-+}
-+
- int set_blocksize(struct block_device *bdev, int size)
- {
- 	/* Size must be a power of two, and between 512 and PAGE_SIZE */
-@@ -1408,18 +1422,9 @@ EXPORT_SYMBOL(check_disk_change);
+ 	switch (ev) {
+ 	case NETDEV_UP:
+-		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
++		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v6.sin6_family = AF_INET6;
+-			addr->a.v6.sin6_port = 0;
+-			addr->a.v6.sin6_flowinfo = 0;
+ 			addr->a.v6.sin6_addr = ifa->addr;
+ 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
+ 			addr->valid = 1;
+@@ -431,7 +429,6 @@ static void sctp_v6_copy_addrlist(struct
+ 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v6.sin6_family = AF_INET6;
+-			addr->a.v6.sin6_port = 0;
+ 			addr->a.v6.sin6_addr = ifp->addr;
+ 			addr->a.v6.sin6_scope_id = dev->ifindex;
+ 			addr->valid = 1;
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -101,7 +101,6 @@ static void sctp_v4_copy_addrlist(struct
+ 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v4.sin_family = AF_INET;
+-			addr->a.v4.sin_port = 0;
+ 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
+ 			addr->valid = 1;
+ 			INIT_LIST_HEAD(&addr->list);
+@@ -776,10 +775,9 @@ static int sctp_inetaddr_event(struct no
  
- void bd_set_size(struct block_device *bdev, loff_t size)
- {
--	unsigned bsize = bdev_logical_block_size(bdev);
--
- 	inode_lock(bdev->bd_inode);
- 	i_size_write(bdev->bd_inode, size);
- 	inode_unlock(bdev->bd_inode);
--	while (bsize < PAGE_SIZE) {
--		if (size & bsize)
--			break;
--		bsize <<= 1;
--	}
--	bdev->bd_block_size = bsize;
--	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
- }
- EXPORT_SYMBOL(bd_set_size);
- 
-@@ -1496,8 +1501,10 @@ static int __blkdev_get(struct block_dev
- 				}
- 			}
- 
--			if (!ret)
-+			if (!ret) {
- 				bd_set_size(bdev,(loff_t)get_capacity(disk)<<9);
-+				set_init_blocksize(bdev);
-+			}
- 
- 			/*
- 			 * If the device is invalidated, rescan partition
-@@ -1532,6 +1539,7 @@ static int __blkdev_get(struct block_dev
- 				goto out_clear;
- 			}
- 			bd_set_size(bdev, (loff_t)bdev->bd_part->nr_sects << 9);
-+			set_init_blocksize(bdev);
- 		}
- 
- 		if (bdev->bd_bdi == &noop_backing_dev_info)
+ 	switch (ev) {
+ 	case NETDEV_UP:
+-		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
++		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v4.sin_family = AF_INET;
+-			addr->a.v4.sin_port = 0;
+ 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
+ 			addr->valid = 1;
+ 			spin_lock_bh(&net->sctp.local_addr_lock);
 
 
