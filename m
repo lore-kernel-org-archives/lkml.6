@@ -2,36 +2,36 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FFAC7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 912F4C7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45CCD2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B6D32085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:23:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728580AbfAUMW4 (ORCPT
+        id S1728628AbfAUMW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:22:56 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:22047 "EHLO
+        Mon, 21 Jan 2019 07:22:58 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:55969 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728261AbfAUMWy (ORCPT
+        with ESMTP id S1728081AbfAUMW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:22:54 -0500
-X-UUID: 47c3d43e764e45e399778b3d0b8068a6-20190121
-X-UUID: 47c3d43e764e45e399778b3d0b8068a6-20190121
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        Mon, 21 Jan 2019 07:22:57 -0500
+X-UUID: a982f667b1734478baf4c65681294810-20190121
+X-UUID: a982f667b1734478baf4c65681294810-20190121
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
         (envelope-from <min.guo@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 149142710; Mon, 21 Jan 2019 20:22:46 +0800
+        with ESMTP id 269036502; Mon, 21 Jan 2019 20:22:36 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
  MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 21 Jan 2019 20:22:44 +0800
+ 15.0.1395.4; Mon, 21 Jan 2019 20:22:35 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 21 Jan 2019 20:22:43 +0800
+ Transport; Mon, 21 Jan 2019 20:22:34 +0800
 From:   <min.guo@mediatek.com>
 To:     Bin Liu <b-liu@ti.com>, Rob Herring <robh+dt@kernel.org>
 CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -43,12 +43,10 @@ CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
         <hdegoede@redhat.com>, Min Guo <min.guo@mediatek.com>
-Subject: [PATCH v4 3/6] usb: musb: Add get/set toggle hooks
-Date:   Mon, 21 Jan 2019 20:22:28 +0800
-Message-ID: <1548073351-13739-4-git-send-email-min.guo@mediatek.com>
+Subject: [PATCH v4 0/6] Add MediaTek MUSB Controller Driver
+Date:   Mon, 21 Jan 2019 20:22:25 +0800
+Message-ID: <1548073351-13739-1-git-send-email-min.guo@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1548073351-13739-1-git-send-email-min.guo@mediatek.com>
-References: <1548073351-13739-1-git-send-email-min.guo@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -59,235 +57,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Min Guo <min.guo@mediatek.com>
 
-Add get/set toggle hooks in struct musb_io and struct musb_platform_ops
-for special platform; remove function musb_save_toggle, use the set/get
-callback to handle toggle.
+These patches introduce the MediaTek MUSB controller driver.
 
-Signed-off-by: Min Guo <min.guo@mediatek.com>
----
-new patch based on v3:
----
- drivers/usb/musb/musb_core.c | 42 ++++++++++++++++++++++++++++++++++++++++
- drivers/usb/musb/musb_core.h |  5 +++++
- drivers/usb/musb/musb_host.c | 46 ++++++++++----------------------------------
- drivers/usb/musb/musb_io.h   |  4 ++++
- 4 files changed, 61 insertions(+), 36 deletions(-)
+The driver can be configured as Dual-Role Device (DRD),
+Peripheral Only and Host Only modes. This has beed tested on
+MT2701 with a variety of devices in host mode and with the 
+f_mass gadget driver in peripheral mode, plugging otg cables
+in/out a lot of times in all possible imaginable plug orders.
 
-diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-index b7d5627..2fe5225 100644
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -274,6 +274,38 @@ static void musb_default_writew(void __iomem *addr, unsigned offset, u16 data)
- 	__raw_writew(data, addr + offset);
- }
- 
-+static u16 musb_default_get_toggle(struct musb_qh *qh, int is_out)
-+{
-+	void __iomem *epio = qh->hw_ep->regs;
-+	u16 csr;
-+
-+	if (is_out)
-+		csr = musb_readw(epio, MUSB_TXCSR) & MUSB_TXCSR_H_DATATOGGLE;
-+	else
-+		csr = musb_readw(epio, MUSB_RXCSR) & MUSB_RXCSR_H_DATATOGGLE;
-+
-+	return csr;
-+}
-+
-+static u16 musb_default_set_toggle(struct musb_qh *qh, int is_out,
-+				   struct urb *urb)
-+{
-+	u16 csr;
-+	u16 toggle;
-+
-+	toggle = usb_gettoggle(urb->dev, qh->epnum, is_out);
-+
-+	if (is_out)
-+		csr = toggle ? (MUSB_TXCSR_H_WR_DATATOGGLE
-+				| MUSB_TXCSR_H_DATATOGGLE)
-+				: MUSB_TXCSR_CLRDATATOG;
-+	else
-+		csr = toggle ? (MUSB_RXCSR_H_WR_DATATOGGLE
-+				| MUSB_RXCSR_H_DATATOGGLE) : 0;
-+
-+	return csr;
-+}
-+
- /*
-  * Load an endpoint's FIFO
-  */
-@@ -2277,6 +2309,16 @@ static void musb_deassert_reset(struct work_struct *work)
- 	else
- 		musb->io.write_fifo = musb_default_write_fifo;
- 
-+	if (musb->ops->get_toggle)
-+		musb->io.get_toggle = musb->ops->get_toggle;
-+	else
-+		musb->io.get_toggle = musb_default_get_toggle;
-+
-+	if (musb->ops->set_toggle)
-+		musb->io.set_toggle = musb->ops->set_toggle;
-+	else
-+		musb->io.set_toggle = musb_default_set_toggle;
-+
- 	if (!musb->xceiv->io_ops) {
- 		musb->xceiv->io_dev = musb->controller;
- 		musb->xceiv->io_priv = musb->mregs;
-diff --git a/drivers/usb/musb/musb_core.h b/drivers/usb/musb/musb_core.h
-index 04203b7..9f5a69c 100644
---- a/drivers/usb/musb/musb_core.h
-+++ b/drivers/usb/musb/musb_core.h
-@@ -27,6 +27,7 @@
- struct musb;
- struct musb_hw_ep;
- struct musb_ep;
-+struct musb_qh;
- 
- /* Helper defines for struct musb->hwvers */
- #define MUSB_HWVERS_MAJOR(x)	((x >> 10) & 0x1f)
-@@ -123,6 +124,8 @@ enum musb_g_ep0_state {
-  * @writew:	write 16 bits
-  * @read_fifo:	reads the fifo
-  * @write_fifo:	writes to fifo
-+ * @get_toggle:	platform specific get toggle function
-+ * @set_toggle:	platform specific set toggle function
-  * @dma_init:	platform specific dma init function
-  * @dma_exit:	platform specific dma exit function
-  * @init:	turns on clocks, sets up platform-specific registers, etc
-@@ -167,6 +170,8 @@ struct musb_platform_ops {
- 	void	(*writew)(void __iomem *addr, unsigned offset, u16 data);
- 	void	(*read_fifo)(struct musb_hw_ep *hw_ep, u16 len, u8 *buf);
- 	void	(*write_fifo)(struct musb_hw_ep *hw_ep, u16 len, const u8 *buf);
-+	u16	(*get_toggle)(struct musb_qh *qh, int is_out);
-+	u16	(*set_toggle)(struct musb_qh *qh, int is_out, struct urb *urb);
- 	struct dma_controller *
- 		(*dma_init) (struct musb *musb, void __iomem *base);
- 	void	(*dma_exit)(struct dma_controller *c);
-diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
-index b59ce9a..b97fbf9 100644
---- a/drivers/usb/musb/musb_host.c
-+++ b/drivers/usb/musb/musb_host.c
-@@ -286,26 +286,6 @@ static void musb_giveback(struct musb *musb, struct urb *urb, int status)
- 	spin_lock(&musb->lock);
- }
- 
--/* For bulk/interrupt endpoints only */
--static inline void musb_save_toggle(struct musb_qh *qh, int is_in,
--				    struct urb *urb)
--{
--	void __iomem		*epio = qh->hw_ep->regs;
--	u16			csr;
--
--	/*
--	 * FIXME: the current Mentor DMA code seems to have
--	 * problems getting toggle correct.
--	 */
--
--	if (is_in)
--		csr = musb_readw(epio, MUSB_RXCSR) & MUSB_RXCSR_H_DATATOGGLE;
--	else
--		csr = musb_readw(epio, MUSB_TXCSR) & MUSB_TXCSR_H_DATATOGGLE;
--
--	usb_settoggle(urb->dev, qh->epnum, !is_in, csr ? 1 : 0);
--}
--
- /*
-  * Advance this hardware endpoint's queue, completing the specified URB and
-  * advancing to either the next URB queued to that qh, or else invalidating
-@@ -320,6 +300,7 @@ static void musb_advance_schedule(struct musb *musb, struct urb *urb,
- 	struct musb_hw_ep	*ep = qh->hw_ep;
- 	int			ready = qh->is_ready;
- 	int			status;
-+	u16			toggle;
- 
- 	status = (urb->status == -EINPROGRESS) ? 0 : urb->status;
- 
-@@ -327,7 +308,8 @@ static void musb_advance_schedule(struct musb *musb, struct urb *urb,
- 	switch (qh->type) {
- 	case USB_ENDPOINT_XFER_BULK:
- 	case USB_ENDPOINT_XFER_INT:
--		musb_save_toggle(qh, is_in, urb);
-+		toggle = musb->io.get_toggle(qh, !is_in);
-+		usb_settoggle(urb->dev, qh->epnum, !is_in, toggle ? 1 : 0);
- 		break;
- 	case USB_ENDPOINT_XFER_ISOC:
- 		if (status == 0 && urb->error_count)
-@@ -772,13 +754,8 @@ static void musb_ep_program(struct musb *musb, u8 epnum,
- 					);
- 			csr |= MUSB_TXCSR_MODE;
- 
--			if (!hw_ep->tx_double_buffered) {
--				if (usb_gettoggle(urb->dev, qh->epnum, 1))
--					csr |= MUSB_TXCSR_H_WR_DATATOGGLE
--						| MUSB_TXCSR_H_DATATOGGLE;
--				else
--					csr |= MUSB_TXCSR_CLRDATATOG;
--			}
-+			if (!hw_ep->tx_double_buffered)
-+				csr |= musb->io.set_toggle(qh, is_out, urb);
- 
- 			musb_writew(epio, MUSB_TXCSR, csr);
- 			/* REVISIT may need to clear FLUSHFIFO ... */
-@@ -860,17 +837,12 @@ static void musb_ep_program(struct musb *musb, u8 epnum,
- 
- 	/* IN/receive */
- 	} else {
--		u16	csr;
-+		u16 csr = 0;
- 
- 		if (hw_ep->rx_reinit) {
- 			musb_rx_reinit(musb, qh, epnum);
-+			csr |= musb->io.set_toggle(qh, is_out, urb);
- 
--			/* init new state: toggle and NYET, maybe DMA later */
--			if (usb_gettoggle(urb->dev, qh->epnum, 0))
--				csr = MUSB_RXCSR_H_WR_DATATOGGLE
--					| MUSB_RXCSR_H_DATATOGGLE;
--			else
--				csr = 0;
- 			if (qh->type == USB_ENDPOINT_XFER_INT)
- 				csr |= MUSB_RXCSR_DISNYET;
- 
-@@ -933,6 +905,7 @@ static void musb_bulk_nak_timeout(struct musb *musb, struct musb_hw_ep *ep,
- 	void __iomem		*epio = ep->regs;
- 	struct musb_qh		*cur_qh, *next_qh;
- 	u16			rx_csr, tx_csr;
-+	u16			toggle;
- 
- 	musb_ep_select(mbase, ep->epnum);
- 	if (is_in) {
-@@ -970,7 +943,8 @@ static void musb_bulk_nak_timeout(struct musb *musb, struct musb_hw_ep *ep,
- 			urb->actual_length += dma->actual_len;
- 			dma->actual_len = 0L;
- 		}
--		musb_save_toggle(cur_qh, is_in, urb);
-+		toggle = musb->io.get_toggle(cur_qh, !is_in);
-+		usb_settoggle(urb->dev, cur_qh->epnum, !is_in, toggle ? 1 : 0);
- 
- 		if (is_in) {
- 			/* move cur_qh to end of queue */
-diff --git a/drivers/usb/musb/musb_io.h b/drivers/usb/musb/musb_io.h
-index 8058a58..8179334 100644
---- a/drivers/usb/musb/musb_io.h
-+++ b/drivers/usb/musb/musb_io.h
-@@ -22,6 +22,8 @@
-  * @read_fifo:	platform specific function to read fifo
-  * @write_fifo:	platform specific function to write fifo
-  * @busctl_offset: platform specific function to get busctl offset
-+ * @get_toggle: platform specific function to get toggle
-+ * @set_toggle: platform specific function to set toggle
-  */
- struct musb_io {
- 	u32	(*ep_offset)(u8 epnum, u16 offset);
-@@ -30,6 +32,8 @@ struct musb_io {
- 	void	(*read_fifo)(struct musb_hw_ep *hw_ep, u16 len, u8 *buf);
- 	void	(*write_fifo)(struct musb_hw_ep *hw_ep, u16 len, const u8 *buf);
- 	u32	(*busctl_offset)(u8 epnum, u16 offset);
-+	u16	(*get_toggle)(struct musb_qh *qh, int is_out);
-+	u16	(*set_toggle)(struct musb_qh *qh, int is_out, struct urb *urb);
- };
- 
- /* Do not add new entries here, add them the struct musb_io instead */
+changes in v4:
+changes of dt-bindings suggested by Sergei:
+1. String alignment
+changes of driver suggested by Tony and Bin:
+1. Add a new patch for set/get_toggle()
+2. Add a new patch for noirq type of dma
+3. Add a new patch musb_clearb/w()
+4. Abondon patch "usb: musb: Delete the const attribute of addr parameter in readb/w/l hooks"
+
+changes in v3:
+changes of driver suggested by Bin:
+1. Add a new patch for musb_readb/w/l() to remove const attribute 
+2. Use is_out as function parameter in set_toggle/get_toggle() hooks
+3. Remove 'u8/u16 data' parameter in clearb/w() hooks
+4. Remove musb_default_clearb/w()
+5. Replace musb_readb/w() with musb_clearb/w() to clear pending interrupts 
+6. Add comments to clearb/w() hooks
+7. Replace musb_save_toggle() with musb->io.get_toggle()
+8. Replace musb_set_toggle() with musb->io.set_toggle()
+
+changes in v2:
+changes of dt-bindings suggested by Rob and Bin:
+1. Modify DRC to DRD
+2. Drop the "<soc-model>-musb" in compatible
+3. Remove phy-names
+4. Add space after comma in clock-names
+dtsi:
+1. Remove phy-names
+changes of driver suggested by Bin:
+1. Add a new patch for musb_set_toggle
+2. Add summarize of MediaTek musb controller differences in the commit log
+3. Abondon patch "usb: musb: Move musbhsdma macro definition to musb_dma.h"
+4. Add "|| COMPILE_TEST" in Kconfig
+5. Add musb_clearb() and musb_clearw() hooks
+6. Add get_toggle() and set_toggle() hooks
+7. Replace musb_readl() with musb_readw() to read 16bit toggle register
+8. Move MediaTek's private toggle registers from musb_regs.h to mediatek.c
+9. Create musbhs_dma_controller_create_noirq()
+
+Min Guo (6):
+  dt-bindings: usb: musb: Add support for MediaTek musb controller
+  arm: dts: mt2701: Add usb2 device nodes
+  usb: musb: Add get/set toggle hooks
+  usb: musb: Add noirq type of dma create interface
+  usb: musb: Add musb_clearb/w() interface
+  usb: musb: Add support for MediaTek musb controller
+
+ .../devicetree/bindings/usb/mediatek,musb.txt      |  43 ++
+ arch/arm/boot/dts/mt2701-evb.dts                   |  21 +
+ arch/arm/boot/dts/mt2701.dtsi                      |  33 ++
+ drivers/usb/musb/Kconfig                           |   8 +-
+ drivers/usb/musb/Makefile                          |   1 +
+ drivers/usb/musb/mediatek.c                        | 624 +++++++++++++++++++++
+ drivers/usb/musb/musb_core.c                       |  74 ++-
+ drivers/usb/musb/musb_core.h                       |  13 +-
+ drivers/usb/musb/musb_dma.h                        |   9 +
+ drivers/usb/musb/musb_host.c                       |  46 +-
+ drivers/usb/musb/musb_io.h                         |  12 +-
+ drivers/usb/musb/musbhsdma.c                       |  57 +-
+ drivers/usb/musb/sunxi.c                           |   4 +-
+ drivers/usb/musb/tusb6010.c                        |   2 +-
+ 14 files changed, 876 insertions(+), 71 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/mediatek,musb.txt
+ create mode 100644 drivers/usb/musb/mediatek.c
+
 -- 
 1.9.1
 
