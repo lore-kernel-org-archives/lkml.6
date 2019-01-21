@@ -2,128 +2,77 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F5CC7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EAEC7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E125D20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:17:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A40FF20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfAULRZ (ORCPT
+        id S1727909AbfAULRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:17:25 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43261 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfAULRY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:17:24 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBGfXS2492625
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 21 Jan 2019 03:16:41 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBGf5H2492621;
-        Mon, 21 Jan 2019 03:16:41 -0800
-Date:   Mon, 21 Jan 2019 03:16:41 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andrew Murray <tipbot@zytor.com>
-Message-ID: <tip-486efe9f8e30bac1e236f867df164f4966f3e207@git.kernel.org>
-Cc:     paulus@samba.org, andrew.murray@arm.com, mingo@kernel.org,
-        mpe@ellerman.id.au, linux@armlinux.org.uk, mattst88@gmail.com,
-        peterz@infradead.org, acme@kernel.org,
-        linux-kernel@vger.kernel.org, s.hauer@pengutronix.de,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        ink@jurassic.park.msu.ru, rth@twiddle.net, mark.rutland@arm.com,
-        bp@alien8.de, shawnguo@kernel.org, hpa@zytor.com,
-        will.deacon@arm.com, benh@kernel.crashing.org
-Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de,
-          ink@jurassic.park.msu.ru, mark.rutland@arm.com, rth@twiddle.net,
-          bp@alien8.de, shawnguo@kernel.org, hpa@zytor.com,
-          will.deacon@arm.com, benh@kernel.crashing.org, paulus@samba.org,
-          mingo@kernel.org, andrew.murray@arm.com, mpe@ellerman.id.au,
-          linux@armlinux.org.uk, mattst88@gmail.com, peterz@infradead.org,
-          acme@kernel.org, linux-kernel@vger.kernel.org,
-          s.hauer@pengutronix.de
-In-Reply-To: <1547128414-50693-3-git-send-email-andrew.murray@arm.com>
-References: <1547128414-50693-3-git-send-email-andrew.murray@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/core: Add function to test for event exclusion
- flags
-Git-Commit-ID: 486efe9f8e30bac1e236f867df164f4966f3e207
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 21 Jan 2019 06:17:31 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59762 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbfAULRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 06:17:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19434EBD;
+        Mon, 21 Jan 2019 03:17:31 -0800 (PST)
+Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 046553F5C1;
+        Mon, 21 Jan 2019 03:17:28 -0800 (PST)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     corbet@lwn.net, peterz@infradead.org, rjw@rjwysocki.net,
+        juri.lelli@redhat.com
+Cc:     mingo@redhat.com, morten.rasmussen@arm.com, qais.yousef@arm.com,
+        patrick.bellasi@arm.com, dietmar.eggemann@arm.com,
+        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Documentation: Explain EAS and EM
+Date:   Mon, 21 Jan 2019 11:17:21 +0000
+Message-Id: <20190121111724.18234-1-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  486efe9f8e30bac1e236f867df164f4966f3e207
-Gitweb:     https://git.kernel.org/tip/486efe9f8e30bac1e236f867df164f4966f3e207
-Author:     Andrew Murray <andrew.murray@arm.com>
-AuthorDate: Thu, 10 Jan 2019 13:53:24 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 21 Jan 2019 11:01:19 +0100
+The recently introduced Energy Aware Scheduling (EAS) feature relies on
+a large set of concepts, assumptions, and design choices that are
+probably not obvious for an outsider. Moreover, enabling EAS on a
+particular platform isn't straightforward because of all its
+dependencies. This series tries to address this by introducing proper
+documentation files for the scheduler's part of EAS and for the newly
+introduced Energy Model (EM) framework. These are meant to explain not
+only the design choices of EAS but also to list its dependencies in a
+human-readable location.
 
-perf/core: Add function to test for event exclusion flags
+Changes in v2:
+ - Fixed typos and style in sched-energy.txt (Juri)
+ - Moved EM doc under Documentation/driver-api/pm/ (Rafael)
+ - Translated EM doc into .rst (Rafael)
+ - Fixed EM kerneldoc comments to avoid htmldoc build errors
 
-Add a function that tests if any of the perf event exclusion flags
-are set on a given event.
+Quentin Perret (3):
+  PM / EM: Fix broken kerneldoc
+  PM / EM: Document the Energy Model framework
+  sched: Document Energy Aware Scheduling
 
-Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: robin.murphy@arm.com
-Cc: suzuki.poulose@arm.com
-Link: https://lkml.kernel.org/r/1547128414-50693-3-git-send-email-andrew.murray@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/perf_event.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/driver-api/pm/energy-model.rst | 150 +++++++
+ Documentation/driver-api/pm/index.rst        |   1 +
+ Documentation/scheduler/sched-energy.txt     | 431 +++++++++++++++++++
+ include/linux/energy_model.h                 |   4 +-
+ kernel/power/energy_model.c                  |   2 +-
+ 5 files changed, 585 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/driver-api/pm/energy-model.rst
+ create mode 100644 Documentation/scheduler/sched-energy.txt
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1d5c551a5add..54a78d22f0a6 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1004,6 +1004,15 @@ perf_event__output_id_sample(struct perf_event *event,
- extern void
- perf_log_lost_samples(struct perf_event *event, u64 lost);
- 
-+static inline bool event_has_any_exclude_flag(struct perf_event *event)
-+{
-+	struct perf_event_attr *attr = &event->attr;
-+
-+	return attr->exclude_idle || attr->exclude_user ||
-+	       attr->exclude_kernel || attr->exclude_hv ||
-+	       attr->exclude_guest || attr->exclude_host;
-+}
-+
- static inline bool is_sampling_event(struct perf_event *event)
- {
- 	return event->attr.sample_period != 0;
+-- 
+2.20.1
+
