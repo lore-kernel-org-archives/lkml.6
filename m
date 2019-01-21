@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47B6C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162DBC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B39022085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB3DF2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbfAUJke (ORCPT
+        id S1727930AbfAUJks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:40:34 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:37767 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbfAUJkd (ORCPT
+        Mon, 21 Jan 2019 04:40:48 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37779 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727416AbfAUJkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:40:33 -0500
-Received: by mail-vs1-f67.google.com with SMTP id n13so12249798vsk.4
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:40:33 -0800 (PST)
+        Mon, 21 Jan 2019 04:40:47 -0500
+Received: by mail-vs1-f68.google.com with SMTP id n13so12250124vsk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:40:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FwDN2PoeIRDfiXS8gQMJSDzON1Ib+Zgi21D2jod52eg=;
-        b=g8UGwvrTGA1voY74IAsYEJR4LHdz/WReEjled8f70g681mQ0sMTMTKAr+WHazS3Xcm
-         Kyfl4CZsGgPLE56FgxtDqmVRkkjj+tdJqMIvXZIejkzrr5gLxhz5ipjiDgBnxwFMQiAK
-         Xw8jqoUOjhC6wK4EL00NsJQxnQApYN8wqtihBWnlwlgMmSFAhiU/GIfhxkpEWpAIKNFN
-         n4MTJzeKNdKsjaTwMfUP5eCGrs8NiqN9mcPky92JBcBB3vgBT4p5XamwkPnNU+veaijY
-         OaYprIjdVxGw5sgjrnXXqL8fowdwthEIVREh8d6uE2JGv1Ww2HPIT+aDLmWXiTjb3Nxd
-         AA6Q==
-X-Gm-Message-State: AJcUukerRRluUaY99NoARxauLQgKX7oSxhmGGnQzsfjEQIacnYKS4Gmb
-        qW4/1LhZiFbxv15xK9mKkCwhvI8N0IDPz34ryuA=
-X-Google-Smtp-Source: ALg8bN7u4r3ClaikfRgUX0uXviGCHiexAA+W9cPEu06FMtYIvhGaSbpHhoXX2MmiwUlyRMNbrCyxAiQQCTQpgigtwRc=
-X-Received: by 2002:a67:b60d:: with SMTP id d13mr12251484vsm.152.1548063632586;
- Mon, 21 Jan 2019 01:40:32 -0800 (PST)
+        bh=1v9X5itBPerT+/BcgahBj3Yz//WH8Xc1/qMC7ThRjxs=;
+        b=S7xZDSyBZVQujETIw/4/qcDHaA0YoBLEsxcepmcv/+JYuVvM+D6FucgYTktpgawcVN
+         2N/1NrZ/XKtgDQ5FAL9lltSR4EvTDzLLK+BRyoJ82koyv+bgcRUm+91y9oTuLCwFUarG
+         qFG6VZoAloeh6CAff/OTw9ygPn8L909SdcBE7zkzjDAHydf2sIPesNIzkqAXlxyXhHPz
+         cNmy7MqVBWM2YGCvS6oah2h+hZ0QcDErU7Uo42DoF+5zx5QSIYxWeW+f4wwQmW6tM4hW
+         hckVZ5X/mnYMBkc94NHp29OLKCptAa+l351HxPleDn9YOF00QIV9TIAfLJHKAPINkqE/
+         3k3A==
+X-Gm-Message-State: AJcUukeGFb/mlHlkIK0tRuuLJ2K734C2aFnA/5taUBC0LvCFkVTVvjvW
+        7f3tTZYA40lNG6FIOMC8lHApqVpIp/jH8mRiiQk=
+X-Google-Smtp-Source: ALg8bN7NU4LQd1XARB4uj+W+Sqg/vaYLTZAnlGtbjEXkVivWlnhxWLQdncVdOJi26KKCV/OG/oEgnU5n985NdKT3jlw=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr10403261vsi.96.1548063646998;
+ Mon, 21 Jan 2019 01:40:46 -0800 (PST)
 MIME-Version: 1.0
-References: <d31f51f45a7e36d59aca55575edc69933cd4481c.1545445081.git.fthain@telegraphics.com.au>
-In-Reply-To: <d31f51f45a7e36d59aca55575edc69933cd4481c.1545445081.git.fthain@telegraphics.com.au>
+References: <ed9f2567365292fd4f6ca081beb31a9aa8eae0df.1545445081.git.fthain@telegraphics.com.au>
+In-Reply-To: <ed9f2567365292fd4f6ca081beb31a9aa8eae0df.1545445081.git.fthain@telegraphics.com.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 10:40:21 +0100
-Message-ID: <CAMuHMdVXgEMoT1VMKsy21yHfKq1UhQBK82z7g4Rq76UduAOnsw@mail.gmail.com>
-Subject: Re: [PATCH] m68k/mac: Clean up unused timer definitions
+Date:   Mon, 21 Jan 2019 10:40:35 +0100
+Message-ID: <CAMuHMdWh+fS-e7U3mU3tDNJhFL+3x-vbpTWRYqeokBP7P+0ifA@mail.gmail.com>
+Subject: Re: [PATCH] m68k/mac: Skip VIA port setup unless RTC is connected
 To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
+Cc:     Joshua Thompson <funaho@jurai.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,7 +55,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 4:06 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+On Sat, Dec 22, 2018 at 4:07 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> Those Mac models which don't connect their RTC to VIA1 port B probably
+> have something else connected to those pins. Just leave them the way we
+> found them. Make the port B setup conditional on via_type, to match the
+> RTC accessors in arch/m68k/mac/misc.c.
+>
 > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
 Thanks, applied and queued for v5.1.
