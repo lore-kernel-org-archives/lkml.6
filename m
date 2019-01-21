@@ -2,93 +2,147 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 437EEC2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C81C2F43D
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A3920870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:46:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548085569;
-	bh=Gyl+Fze3OBARskjAUZXONNCtDc+KqG9ieGinQCfmFAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Mnpb7cHUuV6fzCUaR+8DQ6L1EJNXdlPfgTyfNmHDkal75tU5ND5O6tPhyBQt/y8PK
-	 fY9T6cnztiVHtS2NfCh5fU90BLQbfCIZnst4Sbnn7IFrywgaV9oWKpeNhR7XaYkVcd
-	 Gwqe9p5UzACj+OnXXZ/VhkTjtJsiJ4YeyXMasOLM=
+	by mail.kernel.org (Postfix) with ESMTP id C1D6420879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730564AbfAUPqH (ORCPT
+        id S1730595AbfAUPqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:46:07 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35313 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729851AbfAUPqG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:46:06 -0500
-Received: by mail-oi1-f195.google.com with SMTP id v6so14889697oif.2;
-        Mon, 21 Jan 2019 07:46:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ha4x6ul4D1MkN/u9NGKVHR88B0fKxkfsJVzB1Wl7ytc=;
-        b=oMFxVzUboJYivO2Sqws2+A1b7y060HIfwGOkpWiK5nk1+J8kWepf6PK547+SJsnjCL
-         eBklIdwpxO1eLkgsvZC27xoQi5DLJ2LEAuBCpHqEDNWnHDVuk1tJY8An21GzCBCPwxJk
-         O413vmdll2v8nIKhORLnLPoDIigaCkfqDe2vC76iHSwxvUEwckPAJSUeD5P8D3ju8pKn
-         2YFnDTaxTWZfT5u78MBCXGIMf4yhaxP7J5RxnYT7esBamyFutitk6oZipRDts8AvqR6f
-         LGzcto+YAnj/FMPQV5B0Xz6lZsZCS1g8JLaoUdhL8YGoD5TUh9/UkC1UtAPPTmDHk1ZO
-         2SLw==
-X-Gm-Message-State: AJcUukc8vIG9go0PENg3eGtYd4nRziA9m3q/Vm0I4DLqi9IjNA7txdGm
-        Od84aFLJWgBm5z3VRvDXBQ==
-X-Google-Smtp-Source: ALg8bN5v1cWPqknWj916R9twcYnGsRfn95vwAPSo41mss88VjKmQqC9Ng8VbLOBSRJ8Z4kftiroMUQ==
-X-Received: by 2002:aca:a11:: with SMTP id 17mr5734647oik.15.1548085565792;
-        Mon, 21 Jan 2019 07:46:05 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n130sm6198661oif.10.2019.01.21.07.46.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 07:46:05 -0800 (PST)
-Date:   Mon, 21 Jan 2019 09:46:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Nava kishore Manne <nava.manne@xilinx.com>
-Cc:     mark.rutland@arm.com, michals@xilinx.com, RAJANV@xilinx.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, JOLLYS@xilinx.com,
-        chinnikishore369@gmail.com, robh+dt@kernel.org,
-        Nava kishore Manne <nava.manne@xilinx.com>,
-        Jolly Shah <jollys@xilinx.com>
-Subject: Re: [PATCH v3 3/6] dt-bindings: reset: Add bindings for ZynqMP reset
- driver
-Message-ID: <20190121154604.GA30149@bogus>
-References: <20190121173835.21173-1-nava.manne@xilinx.com>
- <20190121173835.21173-4-nava.manne@xilinx.com>
+        Mon, 21 Jan 2019 10:46:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:32871 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730567AbfAUPqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:46:09 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E33AC2078C; Mon, 21 Jan 2019 16:46:05 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A228220BCD;
+        Mon, 21 Jan 2019 16:45:55 +0100 (CET)
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH v5 0/9] phy: Add configuration interface for MIPI D-PHY devices
+Date:   Mon, 21 Jan 2019 16:45:45 +0100
+Message-Id: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121173835.21173-4-nava.manne@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 23:08:32 +0530, Nava kishore Manne wrote:
-> Add documentation to describe Xilinx ZynqMP reset driver
-> bindings.
-> 
-> Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> ---
-> Changes for v3:
-> 		-Moved reset outputs definitions info into
-> 		 a header file(xlnx-zynqmp-resets.h).
-> 
->  .../bindings/reset/xlnx,zynqmp-reset.txt      |  52 +++++++
->  .../dt-bindings/reset/xlnx-zynqmp-resets.h    | 130 ++++++++++++++++++
->  2 files changed, 182 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.txt
->  create mode 100644 include/dt-bindings/reset/xlnx-zynqmp-resets.h
-> 
+Hi,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Here is a set of patches to allow the phy framework consumers to test and
+apply runtime configurations.
+
+This is needed to support more phy classes that require tuning based on
+parameters depending on the current use case of the device, in addition to
+the power state management already provided by the current functions.
+
+A first test bed for that API are the MIPI D-PHY devices. There's a number
+of solutions that have been used so far to support these phy, most of the
+time being an ad-hoc driver in the consumer.
+
+That approach has a big shortcoming though, which is that this is quite
+difficult to deal with consumers integrated with multiple variants of phy,
+of multiple consumers integrated with the same phy.
+
+The latter case can be found in the Cadence DSI bridge, and the CSI
+transceiver and receivers. All of them are integrated with the same phy, or
+can be integrated with different phy, depending on the implementation.
+
+I've looked at all the MIPI DSI drivers I could find, and gathered all the
+parameters I could find. The interface should be complete, and most of the
+drivers can be converted in the future. The current set converts two of
+them: the above mentionned Cadence DSI driver so that the v4l2 drivers can
+use them, and the Allwinner MIPI-DSI driver.
+
+Let me know what you think,
+Maxime
+
+Changes from v4:
+  - Removed regression on the variable calculation
+  - Fixed the wakeup unit
+  - Collected Sean Acked-by on the last patch
+  - Collected Sakari Reviewed-by on the first patch
+
+Changes from v3
+  - Rebased on 5.0-rc1
+  - Added the fixes suggested by Sakari
+
+Changes from v2:
+  - Rebased on next
+  - Changed the interface to accomodate for the new submodes
+  - Changed the timings units from nanoseconds to picoseconds
+  - Added minimum and maximum boundaries to the documentation
+  - Moved the clock enabling to phy_power_on in the Cadence DPHY driver
+  - Exported the phy_configure and phy_validate symbols
+  - Rework the phy pll divider computation in the cadence dphy driver
+
+Changes from v1:
+  - Rebased on top of 4.20-rc1
+  - Removed the bus mode and timings parameters from the MIPI D-PHY
+    parameters, since that shouldn't have any impact on the PHY itself.
+  - Reworked the Cadence DSI and D-PHY drivers to take this into account.
+  - Remove the mode parameter from phy_configure
+  - Added phy_configure and phy_validate stubs
+  - Return -EOPNOTSUPP in phy_configure and phy_validate when the operation
+    is not implemented
+
+Maxime Ripard (9):
+  phy: dphy: Remove unused header
+  phy: dphy: Change units of wakeup and init parameters
+  phy: dphy: Clarify lanes parameter documentation
+  sun6i: dsi: Convert to generic phy handling
+  phy: Move Allwinner A31 D-PHY driver to drivers/phy/
+  drm/bridge: cdns: Separate DSI and D-PHY configuration
+  dt-bindings: phy: Move the Cadence D-PHY bindings
+  phy: Add Cadence D-PHY support
+  drm/bridge: cdns: Convert to phy framework
+
+ Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt |  21 +-
+ Documentation/devicetree/bindings/phy/cdns,dphy.txt           |  20 +-
+ drivers/gpu/drm/bridge/Kconfig                                |   1 +-
+ drivers/gpu/drm/bridge/cdns-dsi.c                             | 538 +------
+ drivers/gpu/drm/sun4i/Kconfig                                 |   3 +-
+ drivers/gpu/drm/sun4i/Makefile                                |   5 +-
+ drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c                       | 292 +----
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c                        |  31 +-
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h                        |  17 +-
+ drivers/phy/allwinner/Kconfig                                 |  12 +-
+ drivers/phy/allwinner/Makefile                                |   1 +-
+ drivers/phy/allwinner/phy-sun6i-mipi-dphy.c                   | 318 ++++-
+ drivers/phy/cadence/Kconfig                                   |  13 +-
+ drivers/phy/cadence/Makefile                                  |   1 +-
+ drivers/phy/cadence/cdns-dphy.c                               | 389 +++++-
+ drivers/phy/phy-core-mipi-dphy.c                              |   8 +-
+ include/linux/phy/phy-mipi-dphy.h                             |  13 +-
+ 17 files changed, 894 insertions(+), 789 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/cdns,dphy.txt
+ delete mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c
+ create mode 100644 drivers/phy/allwinner/phy-sun6i-mipi-dphy.c
+ create mode 100644 drivers/phy/cadence/cdns-dphy.c
+
+base-commit: bfeffd155283772bbe78c6a05dec7c0128ee500c
+-- 
+git-series 0.9.1
