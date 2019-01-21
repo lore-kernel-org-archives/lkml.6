@@ -2,154 +2,94 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 474CBC7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CDFC7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21DED2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 612472084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbfAUMUL (ORCPT
+        id S1728490AbfAUMVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:20:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60964 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728258AbfAUMUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:20:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B5EA80D;
-        Mon, 21 Jan 2019 04:20:10 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 531CE3F614;
-        Mon, 21 Jan 2019 04:20:09 -0800 (PST)
-From:   James Morse <james.morse@arm.com>
-Subject: Re: [PATCH v2 4/4] arm64: kprobes: Use
- arch_populate_kprobe_blacklist()
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Pratyush Anand <panand@redhat.com>,
-        "David A . Long" <dave.long@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <154753341900.31541.8135985235882849464.stgit@devbox>
- <154753353370.31541.14485875717131836689.stgit@devbox>
-Message-ID: <7f840cc8-4e62-e1d7-9035-4361204fc134@arm.com>
-Date:   Mon, 21 Jan 2019 12:20:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <154753353370.31541.14485875717131836689.stgit@devbox>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Mon, 21 Jan 2019 07:21:02 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43928 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727926AbfAUMVB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:21:01 -0500
+Received: by mail-lf1-f68.google.com with SMTP id u18so15320404lff.10;
+        Mon, 21 Jan 2019 04:21:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=MnVtObA1fJy4gD+z1gL9LPKcmKRhWMJ7sii8yrEXzQM=;
+        b=dGOwpX5RMI2P2azKteXJzfXlLDMvLDfEiY1mnYVgqik7vmhNCy4yEitcVf4IR45k+m
+         5Cred5MV/U2jjPgNi2TdO929b5iqzEEBu/DLzor3qoeCs92AqOkcdfishzjcJAip70tu
+         M4FXkMPaM9Nhp01hlKlv79JCSm32caf0u5dQrYKJ5ENQ5EHVIMbQ/Je9ubP7HO7W1Nz7
+         IqCXRfPqdup1vyVyOLiC6aIbZTeX+BgTvdjuAjcmYWudAKo++eEiPwKCU4oaqq++b7sV
+         hXV2lagGprHb+D9OLArz0zLl2H6Hw2lHaKv1W6jTuft/ftYxR1JVSio1CcA/olErVpzn
+         rJxw==
+X-Gm-Message-State: AJcUukflIFUP36VOdhkm02zRCf6iTo2zbT6zgwBMpp/pKXrq+HJfv39V
+        ElN7XJlU4398KEIB9HJ60/Q=
+X-Google-Smtp-Source: ALg8bN7DaRXNO4htnXb7bQ9aYJzD0ErtwNDHpFyoNT+R5TOQPCqXKF/fIoRjSqDcmVrUMylc+LF6xg==
+X-Received: by 2002:a19:cd50:: with SMTP id d77mr17894241lfg.125.1548073259875;
+        Mon, 21 Jan 2019 04:20:59 -0800 (PST)
+Received: from localhost.localdomain ([213.87.132.221])
+        by smtp.gmail.com with ESMTPSA id 10sm2256354lff.62.2019.01.21.04.20.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 21 Jan 2019 04:20:59 -0800 (PST)
+From:   Alexander Popov <alex.popov@linux.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        H Peter Anvin <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        linux-kernel@vger.kernel.org,
+        Alexander Popov <alex.popov@linux.com>
+Subject: [PATCH] KVM: x86: Fix single-step debugging
+Date:   Mon, 21 Jan 2019 15:20:24 +0300
+Message-Id: <1548073224-5363-1-git-send-email-alex.popov@linux.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The single-step debugging of KVM guests on x86 is broken: if we run
+gdb 'stepi' command at the breakpoint when the guest interrupts are
+enabled, RIP always jumps to native_apic_mem_write(). Then other
+nasty effects follow.
 
-On 15/01/2019 06:25, Masami Hiramatsu wrote:
-> Use arch_populate_kprobe_blacklist() instead of
-> arch_within_kprobe_blacklist() so that we can see the full
-> blacklisted symbols under the debugfs.
-> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-> index b9e9758b6534..6c066c34c8a4 100644
-> --- a/arch/arm64/kernel/probes/kprobes.c
-> +++ b/arch/arm64/kernel/probes/kprobes.c
-> @@ -465,26 +465,30 @@ kprobe_breakpoint_handler(struct pt_regs *regs, unsigned int esr)
->  	return DBG_HOOK_HANDLED;
->  }
->  
-> -bool arch_within_kprobe_blacklist(unsigned long addr)
-> +int __init arch_populate_kprobe_blacklist(void)
->  {
-> -	if ((addr >= (unsigned long)__kprobes_text_start &&
-> -	    addr < (unsigned long)__kprobes_text_end) ||
-> -	    (addr >= (unsigned long)__entry_text_start &&
-> -	    addr < (unsigned long)__entry_text_end) ||
-> -	    (addr >= (unsigned long)__idmap_text_start &&
-> -	    addr < (unsigned long)__idmap_text_end) ||
+Long investigation showed that the commit c8401dda2f0a00cd25c0 (Jun 7 2017)
+introduced the kvm_run.debug corruption: kvm_vcpu_do_singlestep() can
+be called without X86_EFLAGS_TF set.
 
-> -	    in_exception_text(addr))
+Let's fix it. Please consider that for -stable.
+---
+ arch/x86/kvm/x86.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-You added this one in the previous patch, but it disappears here.
-
-
-> -		return true;
-> -
-> -	if (!is_kernel_in_hyp_mode()) {
-> -		if ((addr >= (unsigned long)__hyp_text_start &&
-> -		    addr < (unsigned long)__hyp_text_end) ||
-> -		    (addr >= (unsigned long)__hyp_idmap_text_start &&
-> -		    addr < (unsigned long)__hyp_idmap_text_end))
-> -			return true;
-> -	}
-> -
-> -	return false;
-> +	int ret;
-
-
-> +	ret = kprobe_add_area_blacklist((unsigned long)__kprobes_text_start,
-> +					(unsigned long)__kprobes_text_end);
-> +	if (ret)
-> +		return ret;
-
-Now that we have arch_populate_kprobe_blacklist(), does the arch-code need to
-blacklist the kprobes section itself?
-
-The weak arch_within_kprobe_blacklist() will test it at kprobe-load time, and
-populate_kprobe_blacklist() adds it to the list before it calls
-arch_populate_kprobe_blacklist().
-
-Won't this result in duplicate entries?
-
-
-> +	ret = kprobe_add_area_blacklist((unsigned long)__entry_text_start,
-> +					(unsigned long)__entry_text_end);
-> +	if (ret)
-> +		return ret;
-
-> +	ret = kprobe_add_area_blacklist((unsigned long)__idmap_text_start,
-> +					(unsigned long)__idmap_text_end);
-
-> +	if (ret || is_kernel_in_hyp_mode())
-> +		return ret;
-
-
-Hmmm, I think we have a bug here today.
-
-This is saying we can kprobe KVM when we have VHE, because all of KVMs code runs
-at the same exception-level as the kernel. Which is true...
-But KVM switches VBAR_EL1, so if we run over one of kprobes BRK instructions,
-we're going to hyp-panic, because KVM doesn't handle synchronous exceptions from
-EL2.
-
-The __hyp_text also contains the guest entry/exit code, which we mustn't probe,
-even on VHE.
-
-I think we should always blacklist the __hyp_text, and KVM should mark its
-vhe-only functions with __kprobes. I'll post patches for this.
-
-
-Thanks,
-
-James
-
-
-> +	ret = kprobe_add_area_blacklist((unsigned long)__hyp_text_start,
-> +					(unsigned long)__hyp_text_end);
-> +	if (ret)
-> +		return ret;
-> +	ret = kprobe_add_area_blacklist((unsigned long)__hyp_idmap_text_start,
-> +					(unsigned long)__hyp_idmap_text_end);
-> +	return ret;
->  }
->  
->  void __kprobes __used *trampoline_probe_handler(struct pt_regs *regs)
-> 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index f049ecf..9686068 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6407,8 +6407,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
+ 		toggle_interruptibility(vcpu, ctxt->interruptibility);
+ 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
+ 		kvm_rip_write(vcpu, ctxt->eip);
+-		if (r == EMULATE_DONE &&
+-		    (ctxt->tf || (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)))
++		if (r == EMULATE_DONE && ctxt->tf)
+ 			kvm_vcpu_do_singlestep(vcpu, &r);
+ 		if (!ctxt->have_exception ||
+ 		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
+-- 
+2.7.4
 
