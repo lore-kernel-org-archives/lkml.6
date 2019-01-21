@@ -2,124 +2,151 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51349C3712F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A87C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B72E20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:34:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B358220861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:35:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TQExef8B"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Jizh9qBr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbfAUVe2 (ORCPT
+        id S1728156AbfAUVfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:34:28 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40251 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbfAUVe1 (ORCPT
+        Mon, 21 Jan 2019 16:35:38 -0500
+Received: from mail.efficios.com ([167.114.142.138]:35144 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727580AbfAUVfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 16:34:27 -0500
-Received: by mail-lj1-f196.google.com with SMTP id n18-v6so18751821lji.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 13:34:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S+WR6rqAsLY69fD2RIr7nPQbgUQg3CjnO+p2nEngDOk=;
-        b=TQExef8BYuFuhUIec2v8/tK/ThxEecByouWzOklfmVJDiYgFEEKGLzjB9hbWTxFtL4
-         JY+mT0Ej2EuK6JP8jCTn2BxG5zTFTZ0wWcCanAy/+ruFYiij/zRVq2EnkR1uLfo7NN95
-         zmop9OoFXTVgtt6R+mqm51INMBS6gfKeItd2g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S+WR6rqAsLY69fD2RIr7nPQbgUQg3CjnO+p2nEngDOk=;
-        b=ErbNwv+V8nREKePfyUH5noamCuCq5YXf9s5wCIbfqslYsSHAaqMEI72OiHix5hETpo
-         Iu69Fds5oZdSX3UCNWywziXEY5XBAdsi9b/evLjfm5QjYvQvBpo+mLa/Dcb9bECs4jmE
-         HG127C8RM4pQqUp3FdzFrPKnErRqL5MTLSD6iS+vGIMlKsK4x7DcuYAu70qRy710KYv6
-         mTgt+yZOYWuC3LVRsxHlo4VlQ68qtK8OD0DRcc3bsrsjh+AOmBdko2uxPqNkLzCtxpjC
-         eckR9x76paoeQSx90caqrqouLBOVOiPXK+UGY38zLV6S9G1kKHZwKCS9VJBwWhLWV2A5
-         S4sg==
-X-Gm-Message-State: AJcUukf4UYtNDLpcBpXBRspyoAPgY5UTLeqWK3DG9DF2TVtywu24uSst
-        A1PzpMSezJ4/77k9MrmlGaiJnkF3SEjyNg==
-X-Google-Smtp-Source: ALg8bN59EdElYl6uw2ccunYcGLVxaHgdrOdFzlE4Q9Dl3H0H+dFZFGZuxUyRUgMmFActJ73ekZ7plw==
-X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr18302970lje.117.1548106465316;
-        Mon, 21 Jan 2019 13:34:25 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id n8-v6sm2705251lji.90.2019.01.21.13.34.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 13:34:23 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id g11-v6so18769076ljk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 13:34:23 -0800 (PST)
-X-Received: by 2002:a2e:9c7:: with SMTP id 190-v6mr17001678ljj.120.1548106463124;
- Mon, 21 Jan 2019 13:34:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20190121201456.28338-1-rpenyaev@suse.de> <20190121201456.28338-3-rpenyaev@suse.de>
-In-Reply-To: <20190121201456.28338-3-rpenyaev@suse.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 22 Jan 2019 10:34:06 +1300
-X-Gmail-Original-Message-ID: <CAHk-=wh16im2u1fHcZgMa-Z19Ri=UD2aY+r9=1rO4hginjcnBQ@mail.gmail.com>
-Message-ID: <CAHk-=wh16im2u1fHcZgMa-Z19Ri=UD2aY+r9=1rO4hginjcnBQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 02/13] epoll: introduce user structures for polling
- from userspace
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Jason Baron <jbaron@akamai.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Mon, 21 Jan 2019 16:35:38 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 046D0B4FE9;
+        Mon, 21 Jan 2019 16:35:36 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id jt5yF3_WzJu5; Mon, 21 Jan 2019 16:35:35 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 6663CB4FCD;
+        Mon, 21 Jan 2019 16:35:35 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6663CB4FCD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1548106535;
+        bh=emmEvvmvg4LpJ76voI4pvfqiprYl4MAXxEB0bZnS5JQ=;
+        h=From:To:Date:Message-Id;
+        b=Jizh9qBrya/Q0V864umhXR3X0rA2rEM5kNDJ3OwNfSQCHqxi9QF9i+Z5J8pTjDDUB
+         gqoy12CgBmnnSb7Ux8D/7LFIvxbo7g68ZBYmAmmBhbhXVwWMphrFPyDyx0QTwcz8nf
+         WQFxbmPWLb2tP545uqfRNwOuVnsjpvwZQjasZdFf7c2YBgCyWMsguiMeXz3LxsL4Ro
+         /YZ6ydxjVt0LEgAAxvbNNURl7wCy12DYxgZxG15/4Mv2JVvz5bC5NY9tDRoIcQFImD
+         ci2aKWaX039ObPA1shUO/smP0n//OfqBTeCPaHBR4fJJiYf2TYgTmiOQYJeKA+Lx6X
+         EZneLj37YhuxA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id YKUJdvS9u63V; Mon, 21 Jan 2019 16:35:35 -0500 (EST)
+Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id 0F53DB4FBD;
+        Mon, 21 Jan 2019 16:35:35 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Carlos O'Donell <carlos@redhat.com>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha@sourceware.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: [RFC PATCH glibc 2/4] glibc: sched_getcpu(): use rseq cpu_id TLS on Linux
+Date:   Mon, 21 Jan 2019 16:35:28 -0500
+Message-Id: <20190121213530.23803-2-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190121213530.23803-1-mathieu.desnoyers@efficios.com>
+References: <20190121213530.23803-1-mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So I'm not entirely convinced, but I guess actual numbers and users
-might convince me otherwise.
+When available, use the cpu_id field from __rseq_abi on Linux to
+implement sched_getcpu(). Fall-back on the vgetcpu vDSO if unavailable.
 
-However, a quick comment:
+Benchmarks:
 
-On Tue, Jan 22, 2019 at 9:15 AM Roman Penyaev <rpenyaev@suse.de> wrote:
->
-> +struct epoll_uitem {
-> +       __poll_t ready_events;
-> +       struct epoll_event event;
-> +};
+x86-64: Intel E5-2630 v3@2.40GHz, 16-core, hyperthreading
 
-This really ends up being a horrible data structure.
+glibc sched_getcpu():                     13.7 ns (baseline)
+glibc sched_getcpu() using rseq:           2.5 ns (speedup:  5.5x)
+inline load cpuid from __rseq_abi TLS:     0.8 ns (speedup: 17.1x)
 
-struct epoll_event is declared as
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Carlos O'Donell <carlos@redhat.com>
+CC: Florian Weimer <fweimer@redhat.com>
+CC: Joseph Myers <joseph@codesourcery.com>
+CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ben Maurer <bmaurer@fb.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Dave Watson <davejwatson@fb.com>
+CC: Paul Turner <pjt@google.com>
+CC: libc-alpha@sourceware.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-api@vger.kernel.org
+---
+ sysdeps/unix/sysv/linux/sched_getcpu.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-    struct epoll_event {
-            __poll_t events;
-            __u64 data;
-    } EPOLL_PACKED;
+diff --git a/sysdeps/unix/sysv/linux/sched_getcpu.c b/sysdeps/unix/sysv/linux/sched_getcpu.c
+index b69eeda15c..37fda59d36 100644
+--- a/sysdeps/unix/sysv/linux/sched_getcpu.c
++++ b/sysdeps/unix/sysv/linux/sched_getcpu.c
+@@ -24,8 +24,8 @@
+ #endif
+ #include <sysdep-vdso.h>
+ 
+-int
+-sched_getcpu (void)
++static int
++vsyscall_sched_getcpu (void)
+ {
+ #ifdef __NR_getcpu
+   unsigned int cpu;
+@@ -37,3 +37,24 @@ sched_getcpu (void)
+   return -1;
+ #endif
+ }
++
++#ifdef __NR_rseq
++#include <linux/rseq.h>
++
++extern __attribute__ ((tls_model ("initial-exec")))
++__thread volatile struct rseq __rseq_abi;
++
++int
++sched_getcpu (void)
++{
++  int cpu_id = __rseq_abi.cpu_id;
++
++  return cpu_id >= 0 ? cpu_id : vsyscall_sched_getcpu ();
++}
++#else
++int
++sched_getcpu (void)
++{
++  return vsyscall_sched_getcpu ();
++}
++#endif
+-- 
+2.17.1
 
-and __poll_t is "unsigned". So on pretty much all 64-bit architectures
-except for x86-64 (which sets that packed attribute), you have a
-packing hole there in between the events and the data, and "struct
-epoll_event" has 8-byte alignment.
-
-Now, in "struct epoll_uitem", you end up having *another* packing hold
-in between "ready_events" and "struct epoll_event".
-
-So this data structure that has 16 bytes of actual data, ends up being
-24 bytes in size.
-
-Again, x86-64 happens to be the exception to this, but that's a random
-small implementation detail, not a design thing.
-
-I think "struct epoll_event" was badly designed to begin with to have
-this issue, but it shouldn't then be an excuse to make things even
-worse with this array of "struct epoll_uitem" things.
-
-Hmm?
-
-              Linus
