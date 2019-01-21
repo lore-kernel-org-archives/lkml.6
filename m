@@ -2,150 +2,106 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B28C2F420
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C26DC2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A0D020870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548082746;
-	bh=t0OsnDWd7cr+f9sahwAKvtT5SLU5mQ0DUQmCWdZTc64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=o01RV6+YIl62BOnuQZtwVXUKzmGD0puMrGzSCasFC1Cj9iy8L8hRb9qty5CY5LqLU
-	 DMoC0bjtUFc3uNJFjeee19yGsy/zofXpD1aF4yFAadd7mHQGXvUCwGoTCAt/TsCKZW
-	 19TbEi0nLO4wEVOE4N3kKYqtDl28pqv5RBt4YMU8=
+	by mail.kernel.org (Postfix) with ESMTP id 4AB0F20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:59:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lfMXZm5h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729865AbfAUO7E (ORCPT
+        id S1729890AbfAUO7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:59:04 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43059 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729474AbfAUO7E (ORCPT
+        Mon, 21 Jan 2019 09:59:40 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48940 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729474AbfAUO7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:59:04 -0500
-Received: by mail-oi1-f194.google.com with SMTP id u18so14716910oie.10;
-        Mon, 21 Jan 2019 06:59:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C/9Uug1Ejuv4f8YRQX5ceM4h66n/a0h50B849R+4uA8=;
-        b=IpXCWDJz7e4WIubWJ1I0H+LL8c4IHWVnkmbs2LfbS9rvgp3u9uibhv+snqBZlybBQ+
-         s9xclapgYBbOHiMot8NJiLPesi7OSxZLSkaDJan0087ryAHntOoI3KOQroh64LZOqXCJ
-         Xcxjr4EseoKwcpAy2JQvHG4ToVOFF18KIFaNdy92n9JInyzkrixrtQvDQQ/ZuoGabTKH
-         5qz6jSE1ZHw3Ap/hi2C/1I7ElC9zmddkx7bBtq+1j7XGKu522gohzw1Hav5bDIBrbm5M
-         VldJBhijrR3bk23qNnmJtSskAEmvRIeVt4qbmBsADfRSoYviZA0vcGXD8kMTJke+qZxV
-         3qnQ==
-X-Gm-Message-State: AJcUukdyLIiXHpKNQJJpnyS/gfaiToXYC+VBkPrpR5J0QfFecSIZYBGn
-        SMUvT4V7TfKTVhh0vKkUjA==
-X-Google-Smtp-Source: ALg8bN401f+OXx2xpMJU9jIWKbBAfydSwLBnDZh+3Vs/dVKpKl0Nw/Cq6Dt6z72aRCOajW93SemtZA==
-X-Received: by 2002:aca:3403:: with SMTP id b3mr5647994oia.242.1548082743063;
-        Mon, 21 Jan 2019 06:59:03 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u136sm6309367oie.38.2019.01.21.06.59.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 06:59:02 -0800 (PST)
-Date:   Mon, 21 Jan 2019 08:59:02 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     palmer@sifive.com, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org, thierry.reding@gmail.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com,
-        paul.walmsley@sifive.com
-Subject: Re: [PATCH v4 1/2] pwm: sifive: Add DT documentation for SiFive PWM
- Controller
-Message-ID: <20190121145901.GA7547@bogus>
-References: <1548066043-1252-1-git-send-email-yash.shah@sifive.com>
- <1548066043-1252-2-git-send-email-yash.shah@sifive.com>
+        Mon, 21 Jan 2019 09:59:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+XkP6BjBOoguOx02ypGLg2Qbad4YbXufumxqfvbyOgo=; b=lfMXZm5hjEwlCw+4TqCeYF5mM
+        kvenuIAuRzFYsU/vhChWqDhCjjEpHQZ7xOPkUtsYKMtnughlRpUAogubV+1uSmTEbZg0Hi5jR4lmg
+        u2wO7Sx15bYX2/qw3Izqapybq0LC4o9QPoVidVURmrBP8qb9OPcO3ynW9h5wZDiBxj/vhko0AlskK
+        vHq1CE9Pzb8PSI4ZAF1Lo8O1MeTKE6zz0VgT/F98qZup3ZfeuDTqbbGAIH4sJLM0GQUJ+tL83eZuv
+        R1S3UD9J8AQZ+U2U3q/CONzYTaTfp8M93v4lGzJrO23Fht72zoMKUNMqWZhbu6YwV8asnBm9Oi9Zq
+        5WiFWnLIQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glb2y-00063P-6z; Mon, 21 Jan 2019 14:59:32 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 91FF8284706C0; Mon, 21 Jan 2019 15:59:29 +0100 (CET)
+Date:   Mon, 21 Jan 2019 15:59:29 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
+ refcounting
+Message-ID: <20190121145929.GI27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-5-patrick.bellasi@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548066043-1252-2-git-send-email-yash.shah@sifive.com>
+In-Reply-To: <20190115101513.2822-5-patrick.bellasi@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 03:50:42PM +0530, Yash Shah wrote:
-> DT documentation for PWM controller added.
-> 
-> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> [Atish: Compatible string update]
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> ---
->  .../devicetree/bindings/pwm/pwm-sifive.txt         | 37 ++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> new file mode 100644
-> index 0000000..b207908
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> @@ -0,0 +1,37 @@
-> +SiFive PWM controller
+On Tue, Jan 15, 2019 at 10:15:01AM +0000, Patrick Bellasi wrote:
+> @@ -835,6 +954,28 @@ static void uclamp_bucket_inc(struct uclamp_se *uc_se, unsigned int clamp_id,
+>  	} while (!atomic_long_try_cmpxchg(&uc_maps[bucket_id].adata,
+>  					  &uc_map_old.data, uc_map_new.data));
+>  
+> +	/*
+> +	 * Ensure each CPU tracks the correct value for this clamp bucket.
+> +	 * This initialization of per-CPU variables is required only when a
+> +	 * clamp value is requested for the first time from a slow-path.
+> +	 */
+
+I'm confused; why is this needed?
+
+> +	if (unlikely(!uc_map_old.se_count)) {
+> +		for_each_possible_cpu(cpu) {
+> +			struct uclamp_cpu *uc_cpu =
+> +				&cpu_rq(cpu)->uclamp[clamp_id];
 > +
-> +Unlike most other PWM controllers, the SiFive PWM controller currently only
-> +supports one period for all channels in the PWM. This is set globally in DTS.
-> +The period also has significant restrictions on the values it can achieve,
-> +which the driver rounds to the nearest achievable frequency.
+> +			/* CPU's tasks count must be 0 for free buckets */
+> +			SCHED_WARN_ON(uc_cpu->bucket[bucket_id].tasks);
+> +			if (unlikely(uc_cpu->bucket[bucket_id].tasks))
+> +				uc_cpu->bucket[bucket_id].tasks = 0;
 > +
-> +Required properties:
-> +- compatible: Should be "sifive,pwmX" and "sifive,$socname-pwm".
-
-The order here is wrong.
-
-You still need to enumeration valid version numbers. Is 'sifive,pwm20' 
-valid?
-
-> +  Please refer to sifive-blocks-ip-versioning.txt for details.
-> +- reg: physical base address and length of the controller's registers
-> +- clocks: Should contain a clock identifier for the PWM's parent clock.
-> +- #pwm-cells: Should be 2.
-> +  Refer to bindings/pwm/pwm.txt for details.
-> +- sifive,period-ns: the driver will get as close to this period as it can
-> +- interrupts: one interrupt per PWM channel
-
-How many channels? If variable, is the a max number?
-
+> +			/* Minimize cache lines invalidation */
+> +			if (uc_cpu->bucket[bucket_id].value == bucket_value)
+> +				continue;
+> +			uc_cpu->bucket[bucket_id].value = bucket_value;
+> +		}
+> +	}
 > +
-> +PWM RTL that corresponds to the IP block version numbers can be found
-> +here:
-> +
-> +https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
-
-Put this in the description at the top.
-
-> +
-> +Further information on the format of the IP
-> +block-specific version numbers can be found in
-> +Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
-
-You already said this.
-
-> +
-> +Examples:
-> +
-> +pwm:  pwm@10020000 {
-> +	compatible = "sifive,fu540-c000-pwm","sifive,pwm0";
-
-Space after the ',' needed.
-
-> +	reg = <0x0 0x10020000 0x0 0x1000>;
-> +	clocks = <&tlclk>;
-> +	interrupt-parent = <&plic>;
-> +	interrupts = <42 43 44 45>;
-> +	#pwm-cells = <2>;
-> +	sifive,period-ns = <1000000>;
-> +};
-> -- 
-> 1.9.1
-> 
+>  	uc_se->value = clamp_value;
+>  	uc_se->bucket_id = bucket_id;
+>  
