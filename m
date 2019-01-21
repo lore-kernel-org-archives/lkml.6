@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF2AC2F3C7
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE466C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 987CC2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F99320861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078841;
-	bh=00Yu7RH7OsQHDDjWqygQy7M8dOkvd7Qq7fW2KGWuW8E=;
+	s=default; t=1548078842;
+	bh=V+Py7lsDOtG0VPogni5BUvu+gUFKcnpr4ihqoTL6pvU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=V/E4QybKurlJEsnKV5cBjZsWJm94K4e11+DWqIADCA77GLjI1YsSv70iGTbv37Eab
-	 qKAGKQhO66i3llFO9oFN86ssLmU8Bhk1mXI5PRhLoU5TyVrw68kgtVRPTQHa3u2ol2
-	 Puc0FVujsSk0MqYCN94Qwv9ZWy0v6cV2zpj5y/Lk=
+	b=W3IaVy7xJoMK81ub3unN6DeZX/L7oGe/beunR5Lw8eg+LPeFYsngts87R9JKeEHTR
+	 tz+mHA25XG6R1pwf/MGRjf3lAjHKUiJL6mZJ4z6GzTxE4Zx+bf9bqrDPTv6mKTjrgs
+	 wrX8UcIAZaZNgA4NviC3gKvrrF6q+fJMK0C7J+Ew=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730957AbfAUNyA (ORCPT
+        id S1729072AbfAUNyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:54:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37914 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:54:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730965AbfAUNx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:53:56 -0500
+        id S1730726AbfAUNx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:53:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 763EA2084C;
-        Mon, 21 Jan 2019 13:53:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85D2F2087F;
+        Mon, 21 Jan 2019 13:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078836;
-        bh=00Yu7RH7OsQHDDjWqygQy7M8dOkvd7Qq7fW2KGWuW8E=;
+        s=default; t=1548078839;
+        bh=V+Py7lsDOtG0VPogni5BUvu+gUFKcnpr4ihqoTL6pvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JN7bYy6zk9t82gbkH3fHB6t0VdMAkimWrGWKygMybcMJxwmQmL9WRp3wgK++n4SWb
-         qZkdtPkT8ZoHILKkm9sbPq9dPb14YnEcnynqzcj+6RZk7gA7z8JeOC01dJFKrRcZiG
-         whQb+JlRnfYjJe2H/sx500pZe9rbDR6m5krkadEE=
+        b=C7ST3AAtbmsSJT0HK5zMkIY3r9HHUBPmx9UInDF26/SeOAS50hktDTdqoLsKxraDy
+         cQG1k/coZ4FBLPlb4mRaDY0wYs6ZTSbu72y4zPAiyPatyerG2LKLcPp/8Xj8F+KsuM
+         1v7eUGfOpJSmkyBGZx+/8eOBPLTb4J99fIXp9MUw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yue Hu <huyue2@yulong.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 34/59] pstore/ram: Avoid allocation and leak of platform data
-Date:   Mon, 21 Jan 2019 14:43:59 +0100
-Message-Id: <20190121122500.378592160@linuxfoundation.org>
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.14 35/59] arm64: kaslr: ensure randomized quantities are clean to the PoC
+Date:   Mon, 21 Jan 2019 14:44:00 +0100
+Message-Id: <20190121122500.516756443@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -65,47 +66,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 5631e8576a3caf606cdc375f97425a67983b420c upstream.
+commit 1598ecda7b239e9232dda032bfddeed9d89fab6c upstream.
 
-Yue Hu noticed that when parsing device tree the allocated platform data
-was never freed. Since it's not used beyond the function scope, this
-switches to using a stack variable instead.
+kaslr_early_init() is called with the kernel mapped at its
+link time offset, and if it returns with a non-zero offset,
+the kernel is unmapped and remapped again at the randomized
+offset.
 
-Reported-by: Yue Hu <huyue2@yulong.com>
-Fixes: 35da60941e44 ("pstore/ram: add Device Tree bindings")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+During its execution, kaslr_early_init() also randomizes the
+base of the module region and of the linear mapping of DRAM,
+and sets two variables accordingly. However, since these
+variables are assigned with the caches on, they may get lost
+during the cache maintenance that occurs when unmapping and
+remapping the kernel, so ensure that these values are cleaned
+to the PoC.
+
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: f80fb3a3d508 ("arm64: add support for kernel ASLR")
+Cc: <stable@vger.kernel.org> # v4.6+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pstore/ram.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/arm64/kernel/kaslr.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -711,18 +711,15 @@ static int ramoops_probe(struct platform
+--- a/arch/arm64/kernel/kaslr.c
++++ b/arch/arm64/kernel/kaslr.c
+@@ -14,6 +14,7 @@
+ #include <linux/sched.h>
+ #include <linux/types.h>
+ 
++#include <asm/cacheflush.h>
+ #include <asm/fixmap.h>
+ #include <asm/kernel-pgtable.h>
+ #include <asm/memory.h>
+@@ -43,7 +44,7 @@ static __init u64 get_kaslr_seed(void *f
+ 	return ret;
+ }
+ 
+-static __init const u8 *get_cmdline(void *fdt)
++static __init const u8 *kaslr_get_cmdline(void *fdt)
  {
- 	struct device *dev = &pdev->dev;
- 	struct ramoops_platform_data *pdata = dev->platform_data;
-+	struct ramoops_platform_data pdata_local;
- 	struct ramoops_context *cxt = &oops_cxt;
- 	size_t dump_mem_sz;
- 	phys_addr_t paddr;
- 	int err = -EINVAL;
+ 	static __initconst const u8 default_cmdline[] = CONFIG_CMDLINE;
  
- 	if (dev_of_node(dev) && !pdata) {
--		pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
--		if (!pdata) {
--			pr_err("cannot allocate platform data buffer\n");
--			err = -ENOMEM;
--			goto fail_out;
--		}
-+		pdata = &pdata_local;
-+		memset(pdata, 0, sizeof(*pdata));
+@@ -109,7 +110,7 @@ u64 __init kaslr_early_init(u64 dt_phys)
+ 	 * Check if 'nokaslr' appears on the command line, and
+ 	 * return 0 if that is the case.
+ 	 */
+-	cmdline = get_cmdline(fdt);
++	cmdline = kaslr_get_cmdline(fdt);
+ 	str = strstr(cmdline, "nokaslr");
+ 	if (str == cmdline || (str > cmdline && *(str - 1) == ' '))
+ 		return 0;
+@@ -180,5 +181,8 @@ u64 __init kaslr_early_init(u64 dt_phys)
+ 	module_alloc_base += (module_range * (seed & ((1 << 21) - 1))) >> 21;
+ 	module_alloc_base &= PAGE_MASK;
  
- 		err = ramoops_parse_dt(pdev, pdata);
- 		if (err < 0)
++	__flush_dcache_area(&module_alloc_base, sizeof(module_alloc_base));
++	__flush_dcache_area(&memstart_offset_seed, sizeof(memstart_offset_seed));
++
+ 	return offset;
+ }
 
 
