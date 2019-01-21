@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17791C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD0BC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC1F520879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5E0620861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079882;
-	bh=rp+Gn/oITmHk8Tw5EnsncLeitXtEYK0Ik8TtaMbzoLo=;
+	s=default; t=1548079887;
+	bh=L1pb08f6z7zxYR16XpGyT9bxk/+ZvD8S0Gmc66ELjOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iPjtqlg3tmm1aY/aIrME7tdi30AeiNADSUfS90URklzyBmc64Z4Caygl54Vfgt2Ft
-	 YBAMbOLD63iOA3L3GhUsBnNinYNb9h/bRSguupDiXrCsCHmSTfW/rhPtfGZSnSkuwH
-	 GweWapiXkiDX3LmVkkJv7BCMWFBglITUdnuH+26Y=
+	b=S32Cp2ucmY2Ts3N52zjQv7LNoTfl+3r//Bb6Vfy5bFpwM0wKTVXBDTbdPdFPOElLE
+	 KqtcEJKoD9pOhXw9QwZKqNAlliQ9wJnuWHb6o+6hC2c88+7xCkyx5t2mPEYtWUcAyu
+	 9XI7Ha2IUKRqAjUbkwEAFdLYJG1VRl3H3VzcWroU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731470AbfAUNyU (ORCPT
+        id S1731456AbfAUNyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:54:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731457AbfAUNyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 08:54:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731424AbfAUNyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:54:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D0BC2084C;
-        Mon, 21 Jan 2019 13:54:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D43C621019;
+        Mon, 21 Jan 2019 13:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078856;
-        bh=rp+Gn/oITmHk8Tw5EnsncLeitXtEYK0Ik8TtaMbzoLo=;
+        s=default; t=1548078851;
+        bh=L1pb08f6z7zxYR16XpGyT9bxk/+ZvD8S0Gmc66ELjOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tJ+gcSaVIRSW0JZgjJzP56DqHtNZHnweZW9wTDXmJSLRbyxzetiAE7EX43imC+657
-         Ao+B9aLSnyAHvAvDpZALat7zj8lJXK55XtLkyVAKN5u5kuUS4eQ/mKQypJKlUvvRI1
-         +eM9o99cxdF4MGEBqjrCpLSp2Djyddrs0G12ejwU=
+        b=xnRINeOW6hVLEltryZBqtiD7Kkh+nogldrZ3HbagjYaYsdmavCpPAQfATS6BAn8ri
+         KE/sIM2mYuDKi0h7oJvQk5Zx0thtpO0HAu/6UhoYULzZwqDzwGMXq39Sx89jkhXk3j
+         raZRLjvG+r+pvapURWYyVSLua6b4h6SGFgZpTHb8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.14 31/59] OF: properties: add missing of_node_put
-Date:   Mon, 21 Jan 2019 14:43:56 +0100
-Message-Id: <20190121122500.064006559@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 39/59] media: vivid: set min width/height to a value > 0
+Date:   Mon, 21 Jan 2019 14:44:04 +0100
+Message-Id: <20190121122501.140288298@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -65,51 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 28b170e88bc0c7509e6724717c15cb4b5686026e upstream.
+commit 9729d6d282a6d7ce88e64c9119cecdf79edf4e88 upstream.
 
-Add an of_node_put when the result of of_graph_get_remote_port_parent is
-not available.
+The capture DV timings capabilities allowed for a minimum width and
+height of 0. So passing a timings struct with 0 values is allowed
+and will later cause a division by zero.
 
-The semantic match that finds this problem is as follows
-(http://coccinelle.lip6.fr):
+Ensure that the width and height must be >= 16 to avoid this.
 
-// <smpl>
-@r exists@
-local idexpression e;
-expression x;
-@@
-e = of_graph_get_remote_port_parent(...);
-... when != x = e
-    when != true e == NULL
-    when != of_node_put(e)
-    when != of_fwnode_handle(e)
-(
-return e;
-|
-*return ...;
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: stable@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reported-by: syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/property.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/vivid/vivid-vid-common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -810,6 +810,7 @@ struct device_node *of_graph_get_remote_
- 
- 	if (!of_device_is_available(remote)) {
- 		pr_debug("not available for remote node\n");
-+		of_node_put(remote);
- 		return NULL;
- 	}
- 
+--- a/drivers/media/platform/vivid/vivid-vid-common.c
++++ b/drivers/media/platform/vivid/vivid-vid-common.c
+@@ -33,7 +33,7 @@ const struct v4l2_dv_timings_cap vivid_d
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, MAX_WIDTH, 0, MAX_HEIGHT, 14000000, 775000000,
++	V4L2_INIT_BT_TIMINGS(16, MAX_WIDTH, 16, MAX_HEIGHT, 14000000, 775000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 		V4L2_DV_BT_STD_CVT | V4L2_DV_BT_STD_GTF,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_INTERLACED)
 
 
