@@ -2,127 +2,281 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DATE_IN_FUTURE_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BED9C7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC89DC7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D779D2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:02:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97B212085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbfAULCC (ORCPT
+        id S1727784AbfAULCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:02:02 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:23652 "EHLO mxhk.zte.com.cn"
+        Mon, 21 Jan 2019 06:02:07 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:41442 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727430AbfAULCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:02:02 -0500
+        id S1727430AbfAULCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 06:02:06 -0500
 Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id BF4EC4446D4E27B9BDB4;
-        Mon, 21 Jan 2019 19:01:59 +0800 (CST)
+        by Forcepoint Email with ESMTPS id 094667809B3C50EB1F53;
+        Mon, 21 Jan 2019 19:02:02 +0800 (CST)
 Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x0LB1p1o011547;
-        Mon, 21 Jan 2019 19:01:51 +0800 (GMT-8)
+        by mse01.zte.com.cn with ESMTP id x0LB1rex011562;
+        Mon, 21 Jan 2019 19:01:53 +0800 (GMT-8)
         (envelope-from peng.hao2@zte.com.cn)
 Received: from localhost.localdomain.localdomain ([10.74.120.59])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019012119015933-23367708 ;
-          Mon, 21 Jan 2019 19:01:59 +0800 
+          with ESMTP id 2019012119020142-23367731 ;
+          Mon, 21 Jan 2019 19:02:01 +0800 
 From:   Peng Hao <peng.hao2@zte.com.cn>
 To:     gregkh@linuxfoundation.org, arnd@arndb.de,
         andy.shevchenko@gmail.com
 Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH 1/6]  misc/pvpanic : preparing for pvpanic driver framework
-Date:   Tue, 22 Jan 2019 03:25:06 +0800
-Message-Id: <1548098711-52497-1-git-send-email-peng.hao2@zte.com.cn>
+Subject: [PATCH 2/6]  misc/pvpanic: Add pvpanic driver framework
+Date:   Tue, 22 Jan 2019 03:25:07 +0800
+Message-Id: <1548098711-52497-2-git-send-email-peng.hao2@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1548098711-52497-1-git-send-email-peng.hao2@zte.com.cn>
+References: <1548098711-52497-1-git-send-email-peng.hao2@zte.com.cn>
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-01-21 19:01:59,
+ 21, 2013) at 2019-01-21 19:02:01,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-01-21 19:01:51,
-        Serialize complete at 2019-01-21 19:01:51
-X-MAIL: mse01.zte.com.cn x0LB1p1o011547
+ 2019-01-21 19:01:53,
+        Serialize complete at 2019-01-21 19:01:53
+X-MAIL: mse01.zte.com.cn x0LB1rex011562
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Preparing for pvpanic driver framework. Create a pvpanic driver
-directory and move current driver file to new directory.
+Add pvpanic driver framework.
 
 Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 ---
- drivers/misc/Kconfig                 | 9 +--------
- drivers/misc/Makefile                | 2 +-
- drivers/misc/pvpanic/Kconfig         | 7 +++++++
- drivers/misc/pvpanic/Makefile        | 5 +++++
- drivers/misc/{ => pvpanic}/pvpanic.c | 0
- 5 files changed, 14 insertions(+), 9 deletions(-)
- create mode 100644 drivers/misc/pvpanic/Kconfig
- create mode 100644 drivers/misc/pvpanic/Makefile
- rename drivers/misc/{ => pvpanic}/pvpanic.c (100%)
+ drivers/misc/pvpanic/pvpanic.c | 171 ++++++++++-------------------------------
+ 1 file changed, 39 insertions(+), 132 deletions(-)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index f417b06..aa3a805 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -513,14 +513,7 @@ config MISC_RTSX
- 	tristate
- 	default MISC_RTSX_PCI || MISC_RTSX_USB
+diff --git a/drivers/misc/pvpanic/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
+index 595ac06..6380540 100644
+--- a/drivers/misc/pvpanic/pvpanic.c
++++ b/drivers/misc/pvpanic/pvpanic.c
+@@ -8,15 +8,20 @@
  
--config PVPANIC
--	tristate "pvpanic device support"
--	depends on HAS_IOMEM && (ACPI || OF)
--	help
--	  This driver provides support for the pvpanic device.  pvpanic is
--	  a paravirtualized device provided by QEMU; it lets a virtual machine
--	  (guest) communicate panic events to the host.
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+-#include <linux/acpi.h>
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/types.h>
+ 
+-static void __iomem *base;
++static struct {
++	struct platform_device *pdev;
++	void __iomem *base;
++	bool is_ioport;
++} pvpanic_data = {
++	.pdev = NULL,
++	.is_ioport = false,
++};
+ 
+ #define PVPANIC_PANICKED        (1 << 0)
+ 
+@@ -27,7 +32,7 @@
+ static void
+ pvpanic_send_event(unsigned int event)
+ {
+-	iowrite8(event, base);
++	iowrite8(event, pvpanic_data.base);
+ }
+ 
+ static int
+@@ -43,150 +48,52 @@
+ 	.priority = 1, /* let this called before broken drm_fb_helper */
+ };
+ 
+-#ifdef CONFIG_ACPI
+-static int pvpanic_add(struct acpi_device *device);
+-static int pvpanic_remove(struct acpi_device *device);
 -
-+source "drivers/misc/pvpanic/Kconfig"
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index e39ccbb..cfe20b3 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -58,4 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-y				+= cardreader/
--obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
-+obj-$(CONFIG_PVPANIC)   	+= pvpanic/
-diff --git a/drivers/misc/pvpanic/Kconfig b/drivers/misc/pvpanic/Kconfig
-new file mode 100644
-index 0000000..3e612c6
---- /dev/null
-+++ b/drivers/misc/pvpanic/Kconfig
-@@ -0,0 +1,7 @@
-+config PVPANIC
-+	tristate "pvpanic device support"
-+	depends on HAS_IOMEM && (ACPI || OF)
-+	help
-+	  This driver provides support for the pvpanic device.  pvpanic is
-+	  a paravirtualized device provided by QEMU; it lets a virtual machine
-+	  (guest) communicate panic events to the host.
-diff --git a/drivers/misc/pvpanic/Makefile b/drivers/misc/pvpanic/Makefile
-new file mode 100644
-index 0000000..6394224
---- /dev/null
-+++ b/drivers/misc/pvpanic/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (c) 2018 ZTE Ltd.
+-static const struct acpi_device_id pvpanic_device_ids[] = {
+-	{ "QEMU0001", 0 },
+-	{ "", 0 }
+-};
+-MODULE_DEVICE_TABLE(acpi, pvpanic_device_ids);
+-
+-static struct acpi_driver pvpanic_driver = {
+-	.name =		"pvpanic",
+-	.class =	"QEMU",
+-	.ids =		pvpanic_device_ids,
+-	.ops =		{
+-				.add =		pvpanic_add,
+-				.remove =	pvpanic_remove,
+-			},
+-	.owner =	THIS_MODULE,
+-};
+-
+-static acpi_status
+-pvpanic_walk_resources(struct acpi_resource *res, void *context)
++static int pvpanic_platform_probe(struct platform_device *pdev)
+ {
+-	struct resource r;
+-
+-	if (acpi_dev_resource_io(res, &r)) {
+-		base = ioport_map(r.start, resource_size(&r));
+-		return AE_OK;
+-	} else if (acpi_dev_resource_memory(res, &r)) {
+-		base = ioremap(r.start, resource_size(&r));
+-		return AE_OK;
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	void __iomem *base;
 +
-+obj-$(CONFIG_PVPANIC)            += pvpanic.o
-diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
-similarity index 100%
-rename from drivers/misc/pvpanic.c
-rename to drivers/misc/pvpanic/pvpanic.c
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (res) {
++		base = devm_ioremap_resource(dev, res);
++		if (IS_ERR(base))
++			return -ENODEV;
++	} else {
++		res = platform_get_resource(pdev, IORESOURCE_IO, 0);
++		if (!res)
++			return -ENODEV;
++
++		base = ioport_map(res->start, resource_size(res));
++		if (!base)
++			return -ENODEV;
++		pvpanic_data.is_ioport = true;
+ 	}
+ 
+-	return AE_ERROR;
+-}
+-
+-static int pvpanic_add(struct acpi_device *device)
+-{
+-	int ret;
+-
+-	ret = acpi_bus_get_status(device);
+-	if (ret < 0)
+-		return ret;
+-
+-	if (!device->status.enabled || !device->status.functional)
+-		return -ENODEV;
+-
+-	acpi_walk_resources(device->handle, METHOD_NAME__CRS,
+-			    pvpanic_walk_resources, NULL);
+-
+-	if (!base)
+-		return -ENODEV;
+-
++	pvpanic_data.base = base;
+ 	atomic_notifier_chain_register(&panic_notifier_list,
+ 				       &pvpanic_panic_nb);
+ 
+ 	return 0;
+ }
+ 
+-static int pvpanic_remove(struct acpi_device *device)
++static int pvpanic_platform_remove(struct platform_device *pdev)
+ {
+-
+ 	atomic_notifier_chain_unregister(&panic_notifier_list,
+ 					 &pvpanic_panic_nb);
+-	iounmap(base);
+-
+-	return 0;
+-}
+-
+-static int pvpanic_register_acpi_driver(void)
+-{
+-	return acpi_bus_register_driver(&pvpanic_driver);
+-}
+-
+-static void pvpanic_unregister_acpi_driver(void)
+-{
+-	acpi_bus_unregister_driver(&pvpanic_driver);
+-}
+-#else
+-static int pvpanic_register_acpi_driver(void)
+-{
+-	return -ENODEV;
+-}
+ 
+-static void pvpanic_unregister_acpi_driver(void) {}
+-#endif
+-
+-static int pvpanic_mmio_probe(struct platform_device *pdev)
+-{
+-	struct resource *mem;
+-
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem)
+-		return -EINVAL;
+-
+-	base = devm_ioremap_resource(&pdev->dev, mem);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	atomic_notifier_chain_register(&panic_notifier_list,
+-				       &pvpanic_panic_nb);
+-
+-	return 0;
+-}
+-
+-static int pvpanic_mmio_remove(struct platform_device *pdev)
+-{
+-
+-	atomic_notifier_chain_unregister(&panic_notifier_list,
+-					 &pvpanic_panic_nb);
++	if (pvpanic_data.is_ioport)
++		iounmap(pvpanic_data.base);
+ 
+ 	return 0;
+ }
+ 
+-static const struct of_device_id pvpanic_mmio_match[] = {
+-	{ .compatible = "qemu,pvpanic-mmio", },
+-	{}
+-};
+-
+-static struct platform_driver pvpanic_mmio_driver = {
++static struct platform_driver pvpanic_driver = {
++	.probe = pvpanic_platform_probe,
++	.remove = pvpanic_platform_remove,
+ 	.driver = {
+-		.name = "pvpanic-mmio",
+-		.of_match_table = pvpanic_mmio_match,
+-	},
+-	.probe = pvpanic_mmio_probe,
+-	.remove = pvpanic_mmio_remove,
++		.name = "pvpanic",
++	}
+ };
+ 
+-static int __init pvpanic_mmio_init(void)
+-{
+-	if (acpi_disabled)
+-		return platform_driver_register(&pvpanic_mmio_driver);
+-	else
+-		return pvpanic_register_acpi_driver();
+-}
+-
+-static void __exit pvpanic_mmio_exit(void)
+-{
+-	if (acpi_disabled)
+-		platform_driver_unregister(&pvpanic_mmio_driver);
+-	else
+-		pvpanic_unregister_acpi_driver();
+-}
+-
+-module_init(pvpanic_mmio_init);
+-module_exit(pvpanic_mmio_exit);
++module_platform_driver(pvpanic_driver);
 -- 
 1.8.3.1
 
