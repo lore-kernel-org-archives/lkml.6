@@ -2,87 +2,103 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D5BC282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470EEC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED4A5214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22EA52084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbfAUJu7 (ORCPT
+        id S1727688AbfAUJwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:50:59 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:39008 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727977AbfAUJuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:50:54 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A46DF1A013E;
-        Mon, 21 Jan 2019 10:50:52 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7CB2C1A00C7;
-        Mon, 21 Jan 2019 10:50:42 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 3C5F3402FF;
-        Mon, 21 Jan 2019 17:50:30 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
-        lorenzo.pieralisi@arm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
-        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
-        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv5 4/4] misc: pci_endpoint_test: Add the layerscape EP device support
-Date:   Mon, 21 Jan 2019 17:45:00 +0800
-Message-Id: <20190121094500.10657-4-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190121094500.10657-1-xiaowei.bao@nxp.com>
-References: <20190121094500.10657-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 21 Jan 2019 04:52:31 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:35961 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726133AbfAUJwb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 04:52:31 -0500
+X-IronPort-AV: E=Sophos;i="5.56,502,1539619200"; 
+   d="scan'208";a="52488180"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 21 Jan 2019 17:52:29 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 34F484C47E9A;
+        Mon, 21 Jan 2019 17:52:29 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 21 Jan 2019 17:52:33 +0800
+Date:   Mon, 21 Jan 2019 17:51:23 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store
+ immovable memory
+Message-ID: <20190121095123.GD15754@localhost.localdomain>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+ <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
+ <20190116110158.GC15409@zn.tnic>
+ <20190121093348.GB15754@localhost.localdomain>
+ <20190121094214.GC15754@localhost.localdomain>
+ <20190121094524.GD29166@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190121094524.GD29166@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 34F484C47E9A.AC07A
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the layerscape EP device support in pci_endpoint_test driver.
+On Mon, Jan 21, 2019 at 10:45:24AM +0100, Borislav Petkov wrote:
+>On Mon, Jan 21, 2019 at 05:42:14PM +0800, Chao Fan wrote:
+>> Or I clear this function as:
+>> static acpi_physical_address get_rsdp_addr(void)
+>> {
+>>         acpi_physical_address pa;
+>> 
+>>         pa = get_acpi_rsdp();
+>> 
+>>         if (!pa)
+>>                 pa = boot_params->acpi_rsdp_addr;
+>> 
+>>         if (!pa)
+>>                 pa = efi_get_rsdp_addr();
+>> 
+>>         if (!pa)
+>>                 pa = bios_get_rsdp_addr();
+>> 
+>>         if (pa && !boot_params->acpi_rsdp_addr)
+>>                 boot_params->acpi_rsdp_addr = pa;
+>
+>Or simply:
+>
+>	if (pa)
+>		boot_params->acpi_rsdp_addr = pa;
+>
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-Reviewed-by: Minghuan Lian <minghuan.lian@nxp.com>
-Reviewed-by: Zhiqiang Hou <zhiqiang.hou@nxp.com>
-Reviewed-by: Greg KH <gregkh@linuxfoundation.org>
----
-v2:
- - no change
-v3:
- - no change
-v4:
- - delate the comments.
-v5:
- - no change.
+Make sense. If pa is not zero, boot_params->acpi_rsdp_addr is zero or
+the same as pa, so will change it.
 
- drivers/misc/pci_endpoint_test.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Thanks,
+Chao Fan
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 896e2df..29582fe 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -788,6 +788,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
- 	{ }
- };
--- 
-1.7.1
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
+
 
