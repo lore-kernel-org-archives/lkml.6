@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAE8C2F3D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DD5C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE8220861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86BB820989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080350;
-	bh=1A6ot/xE7bjmz8qrOjxhlGfc87fVLeztcdwp3io4lu4=;
+	s=default; t=1548080356;
+	bh=LuFmAiC5N0UnbUuVaLBNIfwD7mEdaeyPj80tFjd7c8c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PGccsF7SrPgNqGiSUUOYErNKVdbPwnN3OT/vxlVKXNFK7GzICzgoCavPfZxbDF2au
-	 yCvoSfSJZ5GzALfAFaTHiFkEr17T/cGiq5SDKa3B5dKw0/u2woRJX4IzG0RO4tdSWo
-	 CGlCj7kKBTCdZok5SHrb94zQuBX/yIn6gu/MHxeo=
+	b=XA5o1nAyqWcnQcqgwREsrUqcZhyAPaqiKVMEazLmThPOHKUHNRyRRuyixfGcLmm4w
+	 PBAAYgIIdVlyuvmvCZCttYLbk7h5dmUjjUF3otLMqKqd8vJpzOA6Anbhw9lLTsKr1D
+	 dEWEc4MSwlBqWTiYxM+hqoII1Cg6ScSn7SrHV1T8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfAUOTI (ORCPT
+        id S1730039AbfAUNsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:19:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59302 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:48:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729504AbfAUNtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:49:01 -0500
+        id S1730017AbfAUNsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:48:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 775E720861;
-        Mon, 21 Jan 2019 13:49:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29BA42063F;
+        Mon, 21 Jan 2019 13:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078541;
-        bh=1A6ot/xE7bjmz8qrOjxhlGfc87fVLeztcdwp3io4lu4=;
+        s=default; t=1548078526;
+        bh=LuFmAiC5N0UnbUuVaLBNIfwD7mEdaeyPj80tFjd7c8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Doc5HLwDuqiFXCrrzf9spUwAadDboLSjHLRdo57rLhpkO9Vum80f+eIRw8cjaiV8+
-         g8DzgiT+rZeXX496i4nRsAgejdjhihBedngw1q/3IpgpjTV/txyX+WsWk3HMlsbFv0
-         Ct1ffPs32FKsTgdNHLu0uTDeFd/mztQuCr2JWN8M=
+        b=TNJIYLpAzIDs0TmuMOxDbLBoljretuUaP5DJnBw52Vtx/96dFgas2eMKlqeE1U6df
+         quEUbcNbhsp0m+Sgry6kvQ9dKtIAWw8SUcGeBmRPrTafQhj3Mmpx1thrYHaNCgSp29
+         xtDJdlLNRDoSOkPkvrKqCJEHfn3F8GniCIju+xr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 4.20 068/111] arm64: dts: marvell: armada-ap806: reserve PSCI area
-Date:   Mon, 21 Jan 2019 14:43:02 +0100
-Message-Id: <20190121122503.971094755@linuxfoundation.org>
+        stable@vger.kernel.org, Yue Hu <huyue2@yulong.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.20 064/111] pstore/ram: Avoid allocation and leak of platform data
+Date:   Mon, 21 Jan 2019 14:42:58 +0100
+Message-Id: <20190121122503.436421257@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,49 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Heinrich Schuchardt <xypron.glpk@gmx.de>
+From: Kees Cook <keescook@chromium.org>
 
-commit 132ac39cffbcfed80ada38ef0fc6d34d95da7be6 upstream.
+commit 5631e8576a3caf606cdc375f97425a67983b420c upstream.
 
-The memory area [0x4000000-0x4200000[ is occupied by the PSCI firmware. Any
-attempt to access it from Linux leads to an immediate crash.
+Yue Hu noticed that when parsing device tree the allocated platform data
+was never freed. Since it's not used beyond the function scope, this
+switches to using a stack variable instead.
 
-So let's make the same memory reservation as the vendor kernel.
-
-[gregory: added as comment that this region matches the mainline U-boot]
-Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Reported-by: Yue Hu <huyue2@yulong.com>
+Fixes: 35da60941e44 ("pstore/ram: add Device Tree bindings")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ fs/pstore/ram.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -28,6 +28,23 @@
- 		method = "smc";
- 	};
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -723,18 +723,15 @@ static int ramoops_probe(struct platform
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ramoops_platform_data *pdata = dev->platform_data;
++	struct ramoops_platform_data pdata_local;
+ 	struct ramoops_context *cxt = &oops_cxt;
+ 	size_t dump_mem_sz;
+ 	phys_addr_t paddr;
+ 	int err = -EINVAL;
  
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/*
-+		 * This area matches the mapping done with a
-+		 * mainline U-Boot, and should be updated by the
-+		 * bootloader.
-+		 */
-+
-+		psci-area@4000000 {
-+			reg = <0x0 0x4000000 0x0 0x200000>;
-+			no-map;
-+		};
-+	};
-+
- 	ap806 {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
+ 	if (dev_of_node(dev) && !pdata) {
+-		pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+-		if (!pdata) {
+-			pr_err("cannot allocate platform data buffer\n");
+-			err = -ENOMEM;
+-			goto fail_out;
+-		}
++		pdata = &pdata_local;
++		memset(pdata, 0, sizeof(*pdata));
+ 
+ 		err = ramoops_parse_dt(pdev, pdata);
+ 		if (err < 0)
 
 
