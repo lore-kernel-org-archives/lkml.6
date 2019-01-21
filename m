@@ -2,115 +2,100 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA79C31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7561AC31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB45E21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 430BF21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:27:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548098515;
-	bh=RWy6sdDMBTjc4YRkkGmHRyLY8eAxQBE3TihOE9CwNZ0=;
+	s=default; t=1548098846;
+	bh=BrVdYNYYszJhVFPK9o23wgjCHPleqChFkc+lA8V2ASg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QTJIGepGjbaYprCGqXXo6680Mhx7V77ZiCZ0yCqlJ61S3NG1BCc9fTPRXRHUYJ5Io
-	 FL8xZCMtCOMtYngkFP1coTyNqt/Za/S5TYfac/cl7vlCCNbYwf8zTG6hDMmbYzncDB
-	 lcU3HBUBuAcjnXLt5kgcD9ZIW8/1xK0kRGzmja8w=
+	b=C4aqaVU8qpFLbvHh8R1YEY6EuWr67N66XoaPKackOtDebCqATNE55vuGTzUD031Bl
+	 Yqn44eKNZ07FYBtEwEkUa7HpiBJaeK71rtxQFqUmpdolJgSNJaj+GwUgZz0mwUZWir
+	 KgzRBewrx3xpzsxrLW7FhYFIo+1HaRIEpxyGkgOU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbfAUTVx (ORCPT
+        id S1727803AbfAUT1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 14:21:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727735AbfAUTVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 14:21:52 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42E3221019;
-        Mon, 21 Jan 2019 19:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548098511;
-        bh=RWy6sdDMBTjc4YRkkGmHRyLY8eAxQBE3TihOE9CwNZ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k/awcj5WbXIjbGustIcFdrkXdB/bT4svW/AFFW/anM+6Qx4d+qMantFAJVYsXYxNn
-         UTLSNlRObr3zhGSXvPtCCTpLlMbSuVv3oPSyy/a9yafqL92xE3Bl/tnDeFsYS/I+1C
-         eYXNnBbm+JEUDJis9NF8fUhWw1VXoDEaCRuXWS+0=
-Date:   Mon, 21 Jan 2019 20:21:48 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     ian.kumlien@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4.20 000/111] 4.20.4-stable review
-Message-ID: <20190121192148.GC4026@kroah.com>
-References: <CAA85sZum33M+1NRcfWkua+66CBTxM8ope+hoGASv6mR8NrwPTg@mail.gmail.com>
- <20190121151020.GB4717@kroah.com>
- <CAA85sZtizu_uvHhevg_B1Ok7K=O_J=agAmG5ic7M=1by5BCurw@mail.gmail.com>
- <20190121.104824.1888946069199769292.davem@davemloft.net>
+        Mon, 21 Jan 2019 14:27:21 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34769 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbfAUT1U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 14:27:20 -0500
+Received: by mail-oi1-f195.google.com with SMTP id r62so15479912oie.1;
+        Mon, 21 Jan 2019 11:27:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u78zeQLnEiaEcVYTkjWLiAWx9FjiEZbwxsLUR2wCYxQ=;
+        b=qyhIHHuQFnoFr3zTcJTqoRCShtL8e5btfKkrqJiNzgWYfiHiDl5I2Tvp7Uk2PIhaBM
+         d95WCpZp8kKaqbcwP8xl8QYPP0le+4NoqG/qE7pKwZyRYtD0Z0d0q0C7DXmgSMmxeUKJ
+         Ujn3JjG6NaKFEvm13vA2t/GmgcoIWt1t4ABN3NtW6FtokH6HamA46tGyvzJhX/jbMva0
+         DuxE6dIVzrNTspsOaqBmhIAzlycAZPxiDCATuOC3pCLvoRIx/wml1CV6Tb+BNeFV+9P9
+         /dqy7dXCtjgFZ5+gleYXcoh4OAMWp1hziGno6ROiQlWMfmEO8er0gHigDIzzah+6rYiX
+         2lsQ==
+X-Gm-Message-State: AJcUukeLv+OJlOZhAR7+OhixRaSL/fYNBo0JulJJ8iuQk9LdPu+M/Xq3
+        ldxQMqVU/hxMQPAgRSX9bg==
+X-Google-Smtp-Source: ALg8bN4Z7tf1tIK+kBWnZfOPK9nm3UiiiDfhY740Nd9iZcxDhgbHPH625PZvGV2A7Wv2QKH1GNdFZA==
+X-Received: by 2002:aca:3541:: with SMTP id c62mr6111449oia.330.1548098840013;
+        Mon, 21 Jan 2019 11:27:20 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f34sm5894509otb.25.2019.01.21.11.27.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 11:27:19 -0800 (PST)
+Date:   Mon, 21 Jan 2019 13:27:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ben Whitten <ben.whitten@gmail.com>
+Cc:     linux-lpwan@lists.infradead.org, afaerber@suse.de,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH lora-next 1/4] dt-bindings: lora: sx130x: add basic
+ documentation
+Message-ID: <20190121192718.GA8189@bogus>
+References: <20190108084132.10214-1-ben.whitten@gmail.com>
+ <20190121191420.GA7878@bogus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121.104824.1888946069199769292.davem@davemloft.net>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190121191420.GA7878@bogus>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 10:48:24AM -0800, David Miller wrote:
-> From: Ian Kumlien <ian.kumlien@gmail.com>
-> Date: Mon, 21 Jan 2019 16:38:11 +0100
-> 
-> > Hi David,
+On Mon, Jan 21, 2019 at 01:14:20PM -0600, Rob Herring wrote:
+> On Tue, Jan 08, 2019 at 05:41:29PM +0900, Ben Whitten wrote:
+> > Add basic documentation in YAML format for the sx130x series concentrators
+> > from Semtech.
+> > Required is; the location on the SPI bus, the reset gpio and the node for
+> > downstream IQ radios, typically sx125x.
 > > 
-> > could we have your blessing to add the following patch to -stable for 4.20.4:
-> > commit 41d1c8839e5f8cb781cc635f12791decee8271b7
-> > Author: Paolo Abeni <pabeni@redhat.com>
-> > Date:   Tue Jan 8 18:45:05 2019 +0100
+> > Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+> > ---
+> >  .../bindings/lora/semtech,sx130x.yaml         | 87 +++++++++++++++++++
+> >  1 file changed, 87 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/lora/semtech,sx130x.yaml
+> 
+> A schema binding. Yay!
+> 
 > > 
-> >     net: clear skb->tstamp in bridge forwarding path
-> 
-> It is already in my -stable queue:
-> 
-> https://patchwork.ozlabs.org/bundle/davem/stable/?series=&submitter=&state=*&q=&archive=
-> 
-> I honestly don't know why I bother putting forth such an effort to publish
-> what is in my -stable queue if people don't bother checking it. :-(
+> > diff --git a/Documentation/devicetree/bindings/lora/semtech,sx130x.yaml b/Documentation/devicetree/bindings/lora/semtech,sx130x.yaml
+> > new file mode 100644
+> > index 000000000000..ad263bc4e60d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/lora/semtech,sx130x.yaml
+> > @@ -0,0 +1,87 @@
+> > +# SPDX-License-Identifier: GPL-2.0
 
-We should add a link to it in the stable_rules.rst file so that more
-people know to check it.
+Also, I'd like new bindings to be dual GPL-2.0 and BSD-2-Clause if you 
+don't mind. This will make it easier to move the schema out of the 
+kernel if/when we ever do that.
 
-Something like the patch below?
-
-thanks,
-
-greg k-h
-
---------------------------
-
-Subject: [PATCH] stable-kernel-rules.rst: add link to networking patch queue
-
-The networking maintainer keeps a public list of the patches being
-queued up for the next round of stable releases.  Be sure to check there
-before asking for a patch to be applied so that you do not waste
-people's time.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
-diff --git a/Documentation/process/stable-kernel-rules.rst b/Documentation/process/stable-kernel-rules.rst
-index 0de6f6145cc6..7ba8cd567f84 100644
---- a/Documentation/process/stable-kernel-rules.rst
-+++ b/Documentation/process/stable-kernel-rules.rst
-@@ -38,6 +38,9 @@ Procedure for submitting patches to the -stable tree
-  - If the patch covers files in net/ or drivers/net please follow netdev stable
-    submission guidelines as described in
-    :ref:`Documentation/networking/netdev-FAQ.rst <netdev-FAQ>`
-+   after first checking the stable networking queue at
-+   https://patchwork.ozlabs.org/bundle/davem/stable/?series=&submitter=&state=*&q=&archive=
-+   to ensure the requested patch is not already queued up.
-  - Security patches should not be handled (solely) by the -stable review
-    process but should follow the procedures in
-    :ref:`Documentation/admin-guide/security-bugs.rst <securitybugs>`.
+Rob
