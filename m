@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D23DC282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DDC3C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76AFC20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 562F52084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729969AbfAUI4Y (ORCPT
+        id S1729907AbfAUI4V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:56:24 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:43551 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729860AbfAUI4V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 03:56:21 -0500
-Received: by mail-vs1-f65.google.com with SMTP id x1so12141390vsc.10;
-        Mon, 21 Jan 2019 00:56:19 -0800 (PST)
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:33785 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729453AbfAUI4S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:56:18 -0500
+Received: by mail-vs1-f67.google.com with SMTP id p74so12182062vsc.0;
+        Mon, 21 Jan 2019 00:56:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Uun2AU3eJW+aX9fhOUjPPIC4XfawfY9i9oS9NgvU6Z4=;
-        b=PA94EDL2K5Zfg09NwyH7gxdqMe6rq+6Bkpa47ZcNK5VdQjSTqyqa6JZ1fXWyPhowNt
-         c6IClQjbx8pFE/DO5rNy0KHS6RVO0Z+e8l+54jRGpTjt/3Z3MvtdLyEe1yvkjhXNRfWI
-         Jb19x2LXb/cYhYPzJwzqsFh08m4oULnJw4cbmRAYyrBjslBCh6QNXjEu8NMYC//eiEaI
-         8q2SyHlZzA6PLW2azL2DHW41QNoL7qSQtWVaUe1rbaCVmwV/ZIMGcMe9KT6VoBZs1V7P
-         0pHpWjj1pUONqi0Hsr9coxDhg2flvzYOExkA+SWNwgB6xb7QRbyJJ2B2bU8pd1G85f5q
-         TbBg==
-X-Gm-Message-State: AJcUukd0PKrObwi5L7kBSeX3zvIe9pZX09bWlI24/MY9yfaYyfnZ/5XX
-        Hs8I2lClRVTqzqukhDI8jX3mUww2/jAy30NFx84=
-X-Google-Smtp-Source: ALg8bN5Zv5T9HgEze01gQpDUuzyqM6YeldP0GcLXE8vieJqOlkOh/z7Dnz2dgUAbu8nwMIPAviPimX4i+NMBPPzq9wY=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr11966034vsp.166.1548060979206;
- Mon, 21 Jan 2019 00:56:19 -0800 (PST)
+        bh=E/6v0ZVPaXQi5FWJ19dLuHcLgd/E9ZECv5IjLmf6PoI=;
+        b=EyAzTbPENUpPmTYgJxaA1sXp7UQHbKfwqLjssiVYRmV6kNSCGAT9BG/JsSu5+RIxmy
+         H9r4grTvIlZatxclZAGLWfkcrB+qY0TWen9dm+LUXI15aisNr8iFt2MPUfbstKCGHx1l
+         e9kmDE4G29S90ispupcoxwnoQ/+W9J4tIyLFQd4CIJs5p3DJ8vR+mf6218hPExefSlAa
+         pbT+I04ocE0trQ2YFzGQ8Mzp5XnYV6gDcq4tOz83gZVOcsX+ZKSDI+fDxhAy7dcUtCby
+         O45ML/nX9aTj7ewUxjMnvODnVSYJGq4/70tFFd4qrbJRyarnlMCP7uQObSJWsXNZh3qP
+         UDqQ==
+X-Gm-Message-State: AJcUukdObH7NbWqu2LTNEGUl3d+7V8JwkmhidtHkHmiIiAXvvq5RY6EP
+        t+wrENt6kUytwxj7JF/ttgWEdzcd/zAXe7D8KQU=
+X-Google-Smtp-Source: ALg8bN6mqPPGjY0mRgSzvQIVAiUYVEkzmmA1fTVJs4P5AJXGDwVjqnqovDI8HCxNMByb80ziNpDqZXxAv1iGgV8yZxk=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr10358537vsi.96.1548060976721;
+ Mon, 21 Jan 2019 00:56:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-29-arnd@arndb.de>
-In-Reply-To: <20190118161835.2259170-29-arnd@arndb.de>
+References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-27-arnd@arndb.de>
+In-Reply-To: <20190118161835.2259170-27-arnd@arndb.de>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 09:56:06 +0100
-Message-ID: <CAMuHMdVxSVpP0KcBpCSVh0iKBCh3WtGqExtZGPH86hn2TOpTXg@mail.gmail.com>
-Subject: Re: [PATCH v2 28/29] y2038: rename old time and utime syscalls
+Date:   Mon, 21 Jan 2019 09:56:02 +0100
+Message-ID: <CAMuHMdWiHTjDT9-tnjgJy9qCWRr+qUgsJa6LjpRDJQzhoJqnzw@mail.gmail.com>
+Subject: Re: [PATCH v2 26/29] y2038: use time32 syscall names on 32-bit
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
         Linux API <linux-api@vger.kernel.org>,
@@ -94,37 +94,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, Jan 18, 2019 at 5:21 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> The time, stime, utime, utimes, and futimesat system calls are only
-> used on older architectures, and we do not provide y2038 safe variants
-> of them, as they are replaced by clock_gettime64, clock_settime64,
-> and utimensat_time64.
+> This is the big flip, where all 32-bit architectures set COMPAT_32BIT_TIME
+> abd use the _time32 system calls from the former compat layer instead
+> of the system calls that take __kernel_timespec and similar arguments.
 >
-> However, for consistency it seems better to have the 32-bit architectures
-> that still use them call the "time32" entry points (leaving the
-> traditional handlers for the 64-bit architectures), like we do for system
-> calls that now require two versions.
+> The temporary redirects for __kernel_timespec, __kernel_itimerspec
+> and __kernel_timex can get removed with this.
 >
-> Note: We used to always define __ARCH_WANT_SYS_TIME and
-> __ARCH_WANT_SYS_UTIME and only set __ARCH_WANT_COMPAT_SYS_TIME and
-> __ARCH_WANT_SYS_UTIME32 for compat mode on 64-bit kernels. Now this is
-> reversed: only 64-bit architectures set __ARCH_WANT_SYS_TIME/UTIME, while
-> we need __ARCH_WANT_SYS_TIME32/UTIME32 for 32-bit architectures and compat
-> mode. The resulting asm/unistd.h changes look a bit counterintuitive.
->
-> This is only a cleanup patch and it should not change any behavior.
+> It would be easy to split this commit by architecture, but with the new
+> generated system call tables, it's easy enough to do it all at once,
+> which makes it a little easier to check that the changes are the same
+> in each table.
 >
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
->  arch/m68k/include/asm/unistd.h              |  4 ++--
->  arch/m68k/kernel/syscalls/syscall.tbl       | 10 +++++-----
+>  arch/m68k/kernel/syscalls/syscall.tbl       | 42 +++++------
 
 For m68k:
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
+
 Gr{oetje,eeting}s,
 
                         Geert
-
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
