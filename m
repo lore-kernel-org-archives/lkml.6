@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1FAC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAD6C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BED3520879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9FB221726
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079268;
-	bh=sVimhKRKUvf8mL2dqL9j8bIMjFJb5tJK6/99IC75Lus=;
+	s=default; t=1548079275;
+	bh=WuTaU9eVdZFP9pjF3TqSMaanf/a+dJ3PcVScrjuN0t4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k4BeMJ41ZJDinQpqYTEWLDgfjkmBYeFNA9gvcBAQLA89WGxzlAngK+gtiFn5jRVwV
-	 cgYnucvuUUzHc1ETWnDo4eR42/Nm3m+cDVjSmtalBQd2pMJ6RdT0wqA16ynIFgdRwE
-	 fEngcMesZc8YElfqzHGOYRSeM5ZI5aiZv/qSO1GM=
+	b=F7Yms74w2+ctta2Mko2f0iMcRYe1+gikC7Yc5wLjeBhWZZ+YI/ZrajPzVv7ueduf3
+	 Px7qH4cpjKkEsnvNh2WdQ4yQeuuQwm5QOhoz/WdUHrVc7tbkAZ6jlGolQJYBMrT73Z
+	 S8VReYcobt7Mya3GNc71QedIgxoW7sSi/jZ6Tvn8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732572AbfAUOBH (ORCPT
+        id S1732597AbfAUOBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47898 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732545AbfAUOA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:59 -0500
+        id S1732581AbfAUOBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1122421019;
-        Mon, 21 Jan 2019 14:00:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 500162087F;
+        Mon, 21 Jan 2019 14:01:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079258;
-        bh=sVimhKRKUvf8mL2dqL9j8bIMjFJb5tJK6/99IC75Lus=;
+        s=default; t=1548079269;
+        bh=WuTaU9eVdZFP9pjF3TqSMaanf/a+dJ3PcVScrjuN0t4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1LRTjD1rpQo1B58La4zk40c2cQXRMIQ4uMjIb6yark3FhffuC+l0HNabCnMSNcrhM
-         lplMbX71ObccmitG4kxbQJ71EfzAVpOBhWhHo1mgVYB8zsJggYcYApeJvfaXidYlYv
-         Z84kA1KdF8EsNbywotBN7XG0d8Nc8130KL+8Jf8Y=
+        b=Rzx1heIHy6vQA3TwOHH3+/EG28nwez69oX9pCjCWOmF56GYNpiBa2JzHUNZf4fmsN
+         rJMqBUqQIMuzpQf51kzW4I+1XJzjzxXJ134QYpx36ic3al2/Yf5d5nzmCBXERwXAPN
+         zuucQt49wKTdLURGLfkX2ZSJArOAWP8czXk5Hd7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 62/99] media: vivid: fix error handling of kthread_run
-Date:   Mon, 21 Jan 2019 14:48:54 +0100
-Message-Id: <20190121134916.327226190@linuxfoundation.org>
+        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <james.morris@microsoft.com>,
+        syzbot+69ca07954461f189e808@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 66/99] LSM: Check for NULL cred-security on free
+Date:   Mon, 21 Jan 2019 14:48:58 +0100
+Message-Id: <20190121134916.470893606@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -66,57 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: James Morris <james.morris@microsoft.com>
 
-commit 701f49bc028edb19ffccd101997dd84f0d71e279 upstream.
+commit a5795fd38ee8194451ba3f281f075301a3696ce2 upstream.
 
-kthread_run returns an error pointer, but elsewhere in the code
-dev->kthread_vid_cap/out is checked against NULL.
+From: Casey Schaufler <casey@schaufler-ca.com>
 
-If kthread_run returns an error, then set the pointer to NULL.
+Check that the cred security blob has been set before trying
+to clean it up. There is a case during credential initialization
+that could result in this.
 
-I chose this method over changing all kthread_vid_cap/out tests
-elsewhere since this is more robust.
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
+Reported-by: syzbot+69ca07954461f189e808@syzkaller.appspotmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-kthread-cap.c |    5 ++++-
- drivers/media/platform/vivid/vivid-kthread-out.c |    5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ security/security.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-@@ -865,8 +865,11 @@ int vivid_start_generating_vid_cap(struc
- 			"%s-vid-cap", dev->v4l2_dev.name);
+--- a/security/security.c
++++ b/security/security.c
+@@ -1003,6 +1003,13 @@ int security_cred_alloc_blank(struct cre
  
- 	if (IS_ERR(dev->kthread_vid_cap)) {
-+		int err = PTR_ERR(dev->kthread_vid_cap);
+ void security_cred_free(struct cred *cred)
+ {
++	/*
++	 * There is a failure case in prepare_creds() that
++	 * may result in a call here with ->security being NULL.
++	 */
++	if (unlikely(cred->security == NULL))
++		return;
 +
-+		dev->kthread_vid_cap = NULL;
- 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
--		return PTR_ERR(dev->kthread_vid_cap);
-+		return err;
- 	}
- 	*pstreaming = true;
- 	vivid_grab_controls(dev, true);
---- a/drivers/media/platform/vivid/vivid-kthread-out.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-out.c
-@@ -236,8 +236,11 @@ int vivid_start_generating_vid_out(struc
- 			"%s-vid-out", dev->v4l2_dev.name);
+ 	call_void_hook(cred_free, cred);
+ }
  
- 	if (IS_ERR(dev->kthread_vid_out)) {
-+		int err = PTR_ERR(dev->kthread_vid_out);
-+
-+		dev->kthread_vid_out = NULL;
- 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
--		return PTR_ERR(dev->kthread_vid_out);
-+		return err;
- 	}
- 	*pstreaming = true;
- 	vivid_grab_controls(dev, true);
 
 
