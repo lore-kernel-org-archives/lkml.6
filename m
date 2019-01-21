@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E39D9C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5D4C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B36CA2063F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E4F920879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078657;
-	bh=xBjduPOz16xQhYaAE4btfiJQxGmAdlN2uDd0iEm2Egw=;
+	s=default; t=1548078662;
+	bh=BAXXkusMzR9ZP5jRnYfm/coPVdWS/tUFSUJKqIA9L3E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VmOeZEla63vlGtkt5w0ySk4liGvBsJ2Cnu+wkHUobciKQ3D0wJN0ZmGiXuPwFYLMS
-	 8OjAj2aELmiJH4VGrfCwgTD4AKw7uclicjzeJ+dqMvQgAhyR/qJzpwv8v8TawKtO1u
-	 ksP0yGdXgbWj+olQeUlcJwUKbMtgYhob6x8OJbaU=
+	b=TJc5tBXJwZS4uEx1M8/TBu4T3nTQsHP/M5jItvRzjuXA6xd79gfHr+gp1ITHljyeq
+	 6nwKwQzHovN3HbMVfNTjtZvlQKNo+iNuOJ4PxsxGaKXQh45O+AgPWo3j/NexMw5TRw
+	 t+wZVmdbcz1Gd+OI1zzF08WRMk40X9KEHD4LX05o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbfAUNu4 (ORCPT
+        id S1728981AbfAUNvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:50:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33684 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:51:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730668AbfAUNuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:54 -0500
+        id S1730683AbfAUNu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A64A2063F;
-        Mon, 21 Jan 2019 13:50:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D11CA2063F;
+        Mon, 21 Jan 2019 13:50:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078652;
-        bh=xBjduPOz16xQhYaAE4btfiJQxGmAdlN2uDd0iEm2Egw=;
+        s=default; t=1548078655;
+        bh=BAXXkusMzR9ZP5jRnYfm/coPVdWS/tUFSUJKqIA9L3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dkcsqvsClcRtHZz3NiVDeMa869+eGQQaRfNFkeMps6Gk9BCuSEXYtUYZ2R8+DV2o8
-         sEFn+W5XwhSabAV1WuOxIzrc2pY4nr1nqoUQi5Fx3XtZgybq8A/PUafK92WDr4RtBh
-         YlffKei1o7qxGW7sKN/6Gi4l9q41OhTll/fSK5t8=
+        b=IsNPhBfC9Q5MALWFQbuZYHIJUB6iFm7kGz30l11S8omMpS5vzp9onPJ9RTBXMgXZW
+         MuvDftrwZoF1092oQImmc6lonKpHhcYM5OEGz9Wkofgfd3vdIsZ/FT1ih0/qjROvNR
+         Y33AY3AFyNBj4GhcbCOul61BiJ8ymH+H+zB5NwbU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 107/111] loop: Avoid circular locking dependency between loop_ctl_mutex and bd_mutex
-Date:   Mon, 21 Jan 2019 14:43:41 +0100
-Message-Id: <20190121122506.972806750@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.20 108/111] loop: Get rid of nested acquisition of loop_ctl_mutex
+Date:   Mon, 21 Jan 2019 14:43:42 +0100
+Message-Id: <20190121122507.021764057@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -68,96 +67,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kara <jack@suse.cz>
 
-commit 1dded9acf6dc9a34cd27fcf8815507e4e65b3c4f upstream.
+commit c28445fa06a3a54e06938559b9514c5a7f01c90f upstream.
 
-Code in loop_change_fd() drops reference to the old file (and also the
-new file in a failure case) under loop_ctl_mutex. Similarly to a
-situation in loop_set_fd() this can create a circular locking dependency
-if this was the last reference holding the file open. Delay dropping of
-the file reference until we have released loop_ctl_mutex.
+The nested acquisition of loop_ctl_mutex (->lo_ctl_mutex back then) has
+been introduced by commit f028f3b2f987e "loop: fix circular locking in
+loop_clr_fd()" to fix lockdep complains about bd_mutex being acquired
+after lo_ctl_mutex during partition rereading. Now that these are
+properly fixed, let's stop fooling lockdep.
 
-Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/block/loop.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -677,7 +677,7 @@ static int loop_validate_file(struct fil
- static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
- 			  unsigned int arg)
- {
--	struct file	*file, *old_file;
-+	struct file	*file = NULL, *old_file;
+@@ -681,7 +681,7 @@ static int loop_change_fd(struct loop_de
  	int		error;
  	bool		partscan;
  
-@@ -686,21 +686,21 @@ static int loop_change_fd(struct loop_de
+-	error = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	error = mutex_lock_killable(&loop_ctl_mutex);
+ 	if (error)
  		return error;
  	error = -ENXIO;
- 	if (lo->lo_state != Lo_bound)
--		goto out_unlock;
-+		goto out_err;
- 
- 	/* the loop device has to be read-only */
- 	error = -EINVAL;
- 	if (!(lo->lo_flags & LO_FLAGS_READ_ONLY))
--		goto out_unlock;
-+		goto out_err;
- 
- 	error = -EBADF;
- 	file = fget(arg);
+@@ -919,7 +919,7 @@ static int loop_set_fd(struct loop_devic
  	if (!file)
--		goto out_unlock;
-+		goto out_err;
+ 		goto out;
  
- 	error = loop_validate_file(file, bdev);
+-	error = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	error = mutex_lock_killable(&loop_ctl_mutex);
  	if (error)
--		goto out_putf;
-+		goto out_err;
+ 		goto out_putf;
  
- 	old_file = lo->lo_backing_file;
+@@ -1135,7 +1135,7 @@ static int loop_clr_fd(struct loop_devic
+ {
+ 	int err;
  
-@@ -708,7 +708,7 @@ static int loop_change_fd(struct loop_de
+-	err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	err = mutex_lock_killable(&loop_ctl_mutex);
+ 	if (err)
+ 		return err;
+ 	if (lo->lo_state != Lo_bound) {
+@@ -1172,7 +1172,7 @@ loop_set_status(struct loop_device *lo,
+ 	struct block_device *bdev;
+ 	bool partscan = false;
  
- 	/* size of the new backing store needs to be the same */
- 	if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
--		goto out_putf;
-+		goto out_err;
+-	err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	err = mutex_lock_killable(&loop_ctl_mutex);
+ 	if (err)
+ 		return err;
+ 	if (lo->lo_encrypt_key_size &&
+@@ -1277,7 +1277,7 @@ loop_get_status(struct loop_device *lo,
+ 	struct kstat stat;
+ 	int ret;
  
- 	/* and ... switch */
- 	blk_mq_freeze_queue(lo->lo_queue);
-@@ -719,18 +719,22 @@ static int loop_change_fd(struct loop_de
- 			     lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
- 	loop_update_dio(lo);
- 	blk_mq_unfreeze_queue(lo->lo_queue);
--
--	fput(old_file);
- 	partscan = lo->lo_flags & LO_FLAGS_PARTSCAN;
- 	mutex_unlock(&loop_ctl_mutex);
-+	/*
-+	 * We must drop file reference outside of loop_ctl_mutex as dropping
-+	 * the file ref can take bd_mutex which creates circular locking
-+	 * dependency.
-+	 */
-+	fput(old_file);
- 	if (partscan)
- 		loop_reread_partitions(lo, bdev);
- 	return 0;
+-	ret = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	ret = mutex_lock_killable(&loop_ctl_mutex);
+ 	if (ret)
+ 		return ret;
+ 	if (lo->lo_state != Lo_bound) {
+@@ -1466,7 +1466,7 @@ static int lo_simple_ioctl(struct loop_d
+ {
+ 	int err;
  
--out_putf:
--	fput(file);
--out_unlock:
-+out_err:
- 	mutex_unlock(&loop_ctl_mutex);
-+	if (file)
-+		fput(file);
- 	return error;
- }
- 
+-	err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	err = mutex_lock_killable(&loop_ctl_mutex);
+ 	if (err)
+ 		return err;
+ 	switch (cmd) {
 
 
