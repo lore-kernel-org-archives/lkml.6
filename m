@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF116C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 986EFC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55FC2063F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6589D2063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078710;
-	bh=PtuhXk7dGUDUxjJP/ZdRnuGO4zPbWzGL9I7baJefNtc=;
+	s=default; t=1548078715;
+	bh=npXX+ILnVMUd5A6LTfyDNIx5kViwu5akOR/Cb2CZ9Bc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Svu2ecx1Pj7YhDDs0eGhD9JXlvVq6I1qi+Li1eoIPJe5x9nvaJxlr0WH38vPZwZ8D
-	 /8qxDooqDHJtbx+o5sJI8OPXqix/cjFiCit43GSPJGaYQQS/nl2PxxWa8O0C0X/lbP
-	 YF6IjF3PqTFeJSAPq5x+FREoTYtaxvJPGDcl9Pyc=
+	b=ghkQY/5+V50EBbqzjMrycANpDh16B2hzdNi8kd+sr3rYnfLa/Bqz/rfk8FjhZ0UjG
+	 1hvj4dkL197YLzmUvjuLFYo78jx97OtlZ2dpM/TP7waCUBkrUbH8o0O5IPlolaRet/
+	 u6yTgSIZ7/9GMmU1mfIU2YEwuvjACOTVnQYFcEqs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbfAUNvt (ORCPT
+        id S1730477AbfAUNvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:51:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:51:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730855AbfAUNvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:51:45 -0500
+        id S1728907AbfAUNvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:51:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDFE62063F;
-        Mon, 21 Jan 2019 13:51:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECE3820879;
+        Mon, 21 Jan 2019 13:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078704;
-        bh=PtuhXk7dGUDUxjJP/ZdRnuGO4zPbWzGL9I7baJefNtc=;
+        s=default; t=1548078709;
+        bh=npXX+ILnVMUd5A6LTfyDNIx5kViwu5akOR/Cb2CZ9Bc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U4c2jT+zkVhNCw529GmZ7DakGW4QLCXipwPRVy+Hkan0R64ox730LimTCL0IjD52X
-         Z+o6C1s73YAsQbhM1mdQj2Ras9xJ4U6+CLvrXYK8kK36UYA+bD8OgGDrfvSJgJJN6u
-         iHxaSBXaPNxS21MWh9CMrR39eSTwBRWoIr3+SAs4=
+        b=L5gSiX9cY/fVSL2dW3tsIyaYbbLCAYMDMxEfsBgOv7UqlY4Th8pnBInTDE3eEQaIu
+         1oSpd6sIceUOUi1v65wSd+hfmbTFXQDumRG3fcxZ57DU+EPihqaLvcmoPB+b8HffOg
+         6wN03AtTZwIE7Qwl9IlSw9EsClYQeYuCe/FbIHpw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, JianJhen Chen <kchen@synology.com>,
-        JinLin Chen <jlchen@synology.com>,
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 14/59] net: bridge: fix a bug on using a neighbour cache entry without checking its state
-Date:   Mon, 21 Jan 2019 14:43:39 +0100
-Message-Id: <20190121122458.119171067@linuxfoundation.org>
+Subject: [PATCH 4.14 16/59] bonding: update nest level on unlink
+Date:   Mon, 21 Jan 2019 14:43:41 +0100
+Message-Id: <20190121122458.337178985@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -65,41 +65,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: JianJhen Chen <kchen@synology.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 4c84edc11b76590859b1e45dd676074c59602dc4 ]
+[ Upstream commit 001e465f09a18857443489a57e74314a3368c805 ]
 
-When handling DNAT'ed packets on a bridge device, the neighbour cache entry
-from lookup was used without checking its state. It means that a cache entry
-in the NUD_STALE state will be used directly instead of entering the NUD_DELAY
-state to confirm the reachability of the neighbor.
+A network device stack with multiple layers of bonding devices can
+trigger a false positive lockdep warning. Adding lockdep nest levels
+fixes this. Update the level on both enslave and unlink, to avoid the
+following series of events ..
 
-This problem becomes worse after commit 2724680bceee ("neigh: Keep neighbour
-cache entries if number of them is small enough."), since all neighbour cache
-entries in the NUD_STALE state will be kept in the neighbour table as long as
-the number of cache entries does not exceed the value specified in gc_thresh1.
+    ip netns add test
+    ip netns exec test bash
+    ip link set dev lo addr 00:11:22:33:44:55
+    ip link set dev lo down
 
-This commit validates the state of a neighbour cache entry before using
-the entry.
+    ip link add dev bond1 type bond
+    ip link add dev bond2 type bond
 
-Signed-off-by: JianJhen Chen <kchen@synology.com>
-Reviewed-by: JinLin Chen <jlchen@synology.com>
+    ip link set dev lo master bond1
+    ip link set dev bond1 master bond2
+
+    ip link set dev bond1 nomaster
+    ip link set dev bond2 master bond1
+
+.. from still generating a splat:
+
+    [  193.652127] ======================================================
+    [  193.658231] WARNING: possible circular locking dependency detected
+    [  193.664350] 4.20.0 #8 Not tainted
+    [  193.668310] ------------------------------------------------------
+    [  193.674417] ip/15577 is trying to acquire lock:
+    [  193.678897] 00000000a40e3b69 (&(&bond->stats_lock)->rlock#3/3){+.+.}, at: bond_get_stats+0x58/0x290
+    [  193.687851]
+    	       but task is already holding lock:
+    [  193.693625] 00000000807b9d9f (&(&bond->stats_lock)->rlock#2/2){+.+.}, at: bond_get_stats+0x58/0x290
+
+    [..]
+
+    [  193.851092]        lock_acquire+0xa7/0x190
+    [  193.855138]        _raw_spin_lock_nested+0x2d/0x40
+    [  193.859878]        bond_get_stats+0x58/0x290
+    [  193.864093]        dev_get_stats+0x5a/0xc0
+    [  193.868140]        bond_get_stats+0x105/0x290
+    [  193.872444]        dev_get_stats+0x5a/0xc0
+    [  193.876493]        rtnl_fill_stats+0x40/0x130
+    [  193.880797]        rtnl_fill_ifinfo+0x6c5/0xdc0
+    [  193.885271]        rtmsg_ifinfo_build_skb+0x86/0xe0
+    [  193.890091]        rtnetlink_event+0x5b/0xa0
+    [  193.894320]        raw_notifier_call_chain+0x43/0x60
+    [  193.899225]        netdev_change_features+0x50/0xa0
+    [  193.904044]        bond_compute_features.isra.46+0x1ab/0x270
+    [  193.909640]        bond_enslave+0x141d/0x15b0
+    [  193.913946]        do_set_master+0x89/0xa0
+    [  193.918016]        do_setlink+0x37c/0xda0
+    [  193.921980]        __rtnl_newlink+0x499/0x890
+    [  193.926281]        rtnl_newlink+0x48/0x70
+    [  193.930238]        rtnetlink_rcv_msg+0x171/0x4b0
+    [  193.934801]        netlink_rcv_skb+0xd1/0x110
+    [  193.939103]        rtnetlink_rcv+0x15/0x20
+    [  193.943151]        netlink_unicast+0x3b5/0x520
+    [  193.947544]        netlink_sendmsg+0x2fd/0x3f0
+    [  193.951942]        sock_sendmsg+0x38/0x50
+    [  193.955899]        ___sys_sendmsg+0x2ba/0x2d0
+    [  193.960205]        __x64_sys_sendmsg+0xad/0x100
+    [  193.964687]        do_syscall_64+0x5a/0x460
+    [  193.968823]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: 7e2556e40026 ("bonding: avoid lockdep confusion in bond_get_stats()")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/br_netfilter_hooks.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/bonding/bond_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/bridge/br_netfilter_hooks.c
-+++ b/net/bridge/br_netfilter_hooks.c
-@@ -275,7 +275,7 @@ int br_nf_pre_routing_finish_bridge(stru
- 		struct nf_bridge_info *nf_bridge = nf_bridge_info_get(skb);
- 		int ret;
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1928,6 +1928,9 @@ static int __bond_release_one(struct net
+ 	if (!bond_has_slaves(bond)) {
+ 		bond_set_carrier(bond);
+ 		eth_hw_addr_random(bond_dev);
++		bond->nest_level = SINGLE_DEPTH_NESTING;
++	} else {
++		bond->nest_level = dev_get_nest_level(bond_dev) + 1;
+ 	}
  
--		if (neigh->hh.hh_len) {
-+		if ((neigh->nud_state & NUD_CONNECTED) && neigh->hh.hh_len) {
- 			neigh_hh_bridge(&neigh->hh, skb);
- 			skb->dev = nf_bridge->physindev;
- 			ret = br_handle_frame_finish(net, sk, skb);
+ 	unblock_netpoll_tx();
 
 
