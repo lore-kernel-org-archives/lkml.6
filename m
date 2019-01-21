@@ -2,149 +2,137 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED50C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6E2C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63DEE20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F201E2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:26:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U44LmsnC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbfAUHZV convert rfc822-to-8bit (ORCPT
+        id S1728332AbfAUH0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:25:21 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55309 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728249AbfAUHZO (ORCPT
+        Mon, 21 Jan 2019 02:26:16 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:53330 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbfAUH0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:25:14 -0500
-Received: from mail-pf1-f197.google.com ([209.85.210.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1glQB1-0005ka-FJ
-        for linux-kernel@vger.kernel.org; Mon, 21 Jan 2019 03:23:07 +0000
-Received: by mail-pf1-f197.google.com with SMTP id 74so14981587pfk.12
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 19:23:07 -0800 (PST)
+        Mon, 21 Jan 2019 02:26:15 -0500
+Received: by mail-it1-f193.google.com with SMTP id g85so15172369ita.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:26:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ajYMFC2reghOmzcthv0vHrytNzOAbc6ti5YAojE+CZM=;
+        b=U44LmsnC/9sS1fBgJPAdNPCuCUDcsd3tgK4roX5+ENPyA8ZkQf02E40wJJWNxe4xoM
+         NkDPOIPlBKjLgWJc41d/3Grx7wkY+qpMgQEC5cjXn0EA3bYE06pGlYLLRHwkWlK8E1P2
+         iPnD+AU0lgplUJtxXnQKuD4tWXPPAcLuXVqeQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hNsAa6wv+dSNeG8IKATINmSLaxs9oG/WprRcuUr87aM=;
-        b=nfJFo+baUDBFT1RohC2OUyHkWTm0HJU2rb0jSG7soW9LpikC60G2Xo8UBH20FnCNuP
-         Opx7D5bdKhDzN1U8vkd4b8gMT7+0gkK3duOOjzXrupuRtFDrR9QMYUsw66ID31JEezBb
-         ND25PmXDwGO9zc3mxwqw/wydaGmiSDaPCq6znYEgYu0HyIH+X4ae/HwOBtmHkqxGokfi
-         nMawXyLELG843fScnSo51lgKG9PqEYECwdihpjESF5kGSkgjCZrpqND1VLBTvPq4Cbsk
-         EIVLfqnJpvy341gRrledMEPjcmQRqEr/7opkyNy8a3mt0fHnE0CWWPEwlTplYkWs543Z
-         UB8g==
-X-Gm-Message-State: AJcUukfDSUZVStOIriKGH6q/UTqqCuzcfa3gtH7ZcR6cGdk1QtuoTf2Z
-        aL+0cG9Uoo5B/xuc8kj3gollX7DIV0TkOvZ07pGaXoBO6oiS4wUiTl1IrzAHVAnNWYRPRhYXMfU
-        IKkzB3KkJN3+pwVxstPH8A6IvIjDNfFHvO0cN/swBtA==
-X-Received: by 2002:a62:1542:: with SMTP id 63mr28395797pfv.230.1548040985238;
-        Sun, 20 Jan 2019 19:23:05 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5gphZGliDZdFrQd86EYN51sJbMBgipnSQkWFjI4xwKRG03Dbewr3Fu0e0WXk9CTMzsPicTxA==
-X-Received: by 2002:a62:1542:: with SMTP id 63mr28395778pfv.230.1548040984872;
-        Sun, 20 Jan 2019 19:23:04 -0800 (PST)
-Received: from 2001-b011-380f-13aa-3031-6e36-b157-234b.dynamic-ip6.hinet.net (2001-b011-380f-13aa-3031-6e36-b157-234b.dynamic-ip6.hinet.net. [2001:b011:380f:13aa:3031:6e36:b157:234b])
-        by smtp.gmail.com with ESMTPSA id h8sm12639097pgv.27.2019.01.20.19.23.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 19:23:04 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] HID: i2c-hid: Disable runtime PM on Goodix touchpad
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAO-hwJ+OQAsJkJj2YRGOE=8NcXhS=XWwdfGSaLjY9Bdvcfn7BQ@mail.gmail.com>
-Date:   Mon, 21 Jan 2019 11:23:01 +0800
-Cc:     Hans de Goede <hdegoede@redhat.com>, anisse@astier.eu,
-        Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <0FFF8A37-B386-46A6-B790-403288E91EB4@canonical.com>
-References: <20190114084734.3362-1-kai.heng.feng@canonical.com>
- <nycvar.YFH.7.76.1901141217550.6626@cbobk.fhfr.pm>
- <663EE74C-02E8-49DB-A197-2022AFE2D863@canonical.com>
- <2149AEF5-ABBF-4745-89F9-7FF9719251B5@canonical.com>
- <CAO-hwJLHm8b6X9kX1myz7xx1992VW2tVjdn6xw2n1MVX2dn0=g@mail.gmail.com>
- <1897F291-4EB4-4E4B-87AA-3C16EF321340@canonical.com>
- <CAO-hwJ+OQAsJkJj2YRGOE=8NcXhS=XWwdfGSaLjY9Bdvcfn7BQ@mail.gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ajYMFC2reghOmzcthv0vHrytNzOAbc6ti5YAojE+CZM=;
+        b=Pq3zu4jOQKPQKqx1ZGsNZOwmTpIhjOY62XUx0Xcgch0b8cgxpDWVOY+/37y1HdYBO1
+         aN4Q8fxdR+NI86TvzR3EEfgPVUU07ib6k+cIHGxpUiV6hk1+1BEGr21lHtCOpTVWoDHh
+         sB7irltr82UICcijfvRkioFyIxxT87kH2pkAs6GfhKOYYtHEYANrGFP+oF56Z9hno8Rl
+         J88Xc9sxtCmoNQCuvhGawje4aAL47S/zYPE2rTDAChmXBj7fzua5R6Gur2Z9xcL0DI04
+         XBgH+5NdZvPY0qJDNKE+eHbt/XC2z5PV0vpp4TDM1/Ho9aYk4/ry6JUTUhIVOfrp8FMX
+         yL7w==
+X-Gm-Message-State: AJcUukeg5oKu4pkA2ePIfD99ZeYKq/cQEQ9QgdTBTOwGWip40c9gkwwa
+        Adh2ULE1sUdlYInXVoBQUytEAwu82nf3wrYDmLoNZA==
+X-Google-Smtp-Source: ALg8bN5fYHgYbrTBUaHBE6nY3/l1o8uC2r8ga7peqyyblIzHnRu5CCCUAfGtJ6cwlzbXeF3smuZ7abuw90az88epf3U=
+X-Received: by 2002:a02:4c9:: with SMTP id 192mr16576843jab.2.1548055574176;
+ Sun, 20 Jan 2019 23:26:14 -0800 (PST)
+MIME-Version: 1.0
+References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+In-Reply-To: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 21 Jan 2019 08:26:02 +0100
+Message-ID: <CAKv+Gu8P-5hxZ8+OV_xSZteTvCLw-Sc-=KJM1i=3aWajcS9bUw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] iommu/arm-smmu: Add support to use Last level cache
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, pdaly@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tfiga@chromium.org, jcrouse@codeaurora.org, pratikp@codeaurora.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 21 Jan 2019 at 06:54, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+>
+> Qualcomm SoCs have an additional level of cache called as
+> System cache, aka. Last level cache (LLC). This cache sits right
+> before the DDR, and is tightly coupled with the memory controller.
+> The clients using this cache request their slices from this
+> system cache, make it active, and can then start using it.
+> For these clients with smmu, to start using the system cache for
+> buffers and, related page tables [1], memory attributes need to be
+> set accordingly. This series add the required support.
+>
+
+Does this actually improve performance on reads from a device? The
+non-cache coherent DMA routines perform an unconditional D-cache
+invalidate by VA to the PoC before reading from the buffers filled by
+the device, and I would expect the PoC to be defined as lying beyond
+the LLC to still guarantee the architected behavior.
 
 
-> On Jan 17, 2019, at 20:35, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
-> 
-> On Thu, Jan 17, 2019 at 12:41 PM Kai-Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
->> 
->> 
->> 
->>> On Jan 17, 2019, at 16:06, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
->>> 
->>> On Thu, Jan 17, 2019 at 6:02 AM Kai-Heng Feng
->>> <kai.heng.feng@canonical.com> wrote:
->> [snipped]
->>>> Goodix says the firmware needs at least 60ms to fully respond ON and
->>>> SLEEP command.
->>> 
->>> I was about to say that this is not conformant to the specification.
->>> But looking at 7.2.8 SET_POWER of
->>> https://docs.microsoft.com/en-us/previous-versions/windows/hardware/design/dn642101(v=vs.85)
->>> 
->>> They say:
->>> "The DEVICE must ensure that it transitions to the HOST specified
->>> Power State in under 1 second. "
->>> But in the RESPONSE paragraph: "The DEVICE shall not respond back
->>> after receiving the command. The DEVICE is mandated to enter that
->>> power state imminently."
->>> 
->>> My interpretation was always that the device has to be in a ready
->>> state for new commands "immediately".
->>> However, the first sentence may suggest that the driver would block
->>> any command to the device before the 1 second timestamp.
->>> 
->>>> 
->>>> I’ll see if an 200ms autosuspend can solve all Goodix, LG and Raydium
->>>> touchpanels.
->>> 
->>> We already have a I2C_HID_QUIRK_DELAY_AFTER_SLEEP quirk that delay
->>> operations after sleep by 20ms. Maybe we can keep the runtime PM but
->>> use the same timers to not confuse the hardware.
->> 
->> Yes, but wouldn’t use pm_*_autosuspend() helpers can both solve the issue
->> and make the code more cleaner?
-> 
-> You are probably correct :)
-> 
-> I am not too familiar with the details of the runtime PM API, but if
-> you can make this a barrier to prevent the host to call too many
-> suspends/resumes in a row, that would be nice.
-> And we might be able to ditch I2C_HID_QUIRK_DELAY_AFTER_SLEEP and
-> I2C_HID_QUIRK_NO_RUNTIME_PM.
 
-Ok, using autosuspend helpers doesn’t really solve the issue.
-
-Although it can cover the case like fast ON/SLEEP triggered by
-quick transition of display manager -> desktop session, but once
-it gets runtime suspended, we can never sure when it’ll get 
-runtime resumed again. So a mleep() between each powering
-commands is still needed.
-
-So I think we should stick to I2C_HID_QUIRK_NO_RUNTIME_PM
-for now.
-
-Kai-Heng
-
-> 
-> Adding the involved people in the thread.
-> 
-> Cheers,
-> Benjamin
-
+> This change is a realisation of following changes from downstream msm-4.9:
+> iommu: io-pgtable-arm: Support DOMAIN_ATTRIBUTE_USE_UPSTREAM_HINT[2]
+> iommu: io-pgtable-arm: Implement IOMMU_USE_UPSTREAM_HINT[3]
+>
+> Changes since v2:
+>  - Split the patches into io-pgtable-arm driver and arm-smmu driver.
+>  - Converted smmu domain attributes to a bitmap, so multiple attributes
+>    can be managed easily.
+>  - With addition of non-coherent page table mapping support [4], this
+>    patch series now aligns with the understanding of upgrading the
+>    non-coherent devices to use some level of outer cache.
+>  - Updated the macros and comments to reflect the use of QCOM_SYS_CACHE.
+>  - QCOM_SYS_CACHE can still be used at stage 2, so that doens't depend on
+>    stage-1 mapping.
+>  - Added change to disable the attribute from arm_smmu_domain_set_attr()
+>    when needed.
+>  - Removed the page protection controls for QCOM_SYS_CACHE at the DMA API
+>    level.
+>
+> Goes on top of the non-coherent page tables support patch series [4]
+>
+> [1] https://patchwork.kernel.org/patch/10302791/
+> [2] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=bf762276796e79ca90014992f4d9da5593fa7d51
+> [3] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=d4c72c413ea27c43f60825193d4de9cb8ffd9602
+> [4] https://lore.kernel.org/patchwork/cover/1032938/
+>
+> Vivek Gautam (3):
+>   iommu/arm-smmu: Move to bitmap for arm_smmu_domain atrributes
+>   iommu/io-pgtable-arm: Add support to use system cache
+>   iommu/arm-smmu: Add support to use system cache
+>
+>  drivers/iommu/arm-smmu.c       | 28 ++++++++++++++++++++++++----
+>  drivers/iommu/io-pgtable-arm.c | 15 +++++++++++++--
+>  drivers/iommu/io-pgtable.h     |  4 ++++
+>  include/linux/iommu.h          |  2 ++
+>  4 files changed, 43 insertions(+), 6 deletions(-)
+>
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
