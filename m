@@ -2,150 +2,169 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB20CC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B512FC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7860820861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:20:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FjxGsCqC"
+	by mail.kernel.org (Postfix) with ESMTP id 8001220879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:20:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548080450;
+	bh=kz5HtQG//glOUViits9s55TLR0bBMYf3Zw+ZcpsZ3Fg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=FXx6Kb3j70192u74wsY0dX9blrRzVhEaUxpq/V73kC1qP5SH6Gq2NJBTCN3vZl+cY
+	 aLXU5wSy7g9CmM5tN6+DtziAdWyptdCGBHMEaguUW7gulGjtlf67M2r7vV6YFPjtDb
+	 rv1nm6XmckjHPrItJc+dIWhZdsbgGpEfm9TtCYK0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730117AbfAUOUb (ORCPT
+        id S1729643AbfAUNre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:20:31 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39880 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729693AbfAUOU2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:20:28 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t9-v6so17673249ljh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 06:20:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=blI7pVrta7bFFRIe7g2xgLRIywYAbEGyThO1GFaydko=;
-        b=FjxGsCqCHHvBaJz6FvVpHzw6NHQPVW+GaCV+nyQy9IG3DEYqqw7NYd2pw0YWhTs2qa
-         U2EPsTBj4LYjUWUEHQfmAdfCUP8nPYcsrYZ8L9hNHYNgTR4B/yvDXJVmWFfP+ZqGcnFi
-         J6O7/tkgc2eQBcgdsuZwAH+F9O6Vvx6rkTNwY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=blI7pVrta7bFFRIe7g2xgLRIywYAbEGyThO1GFaydko=;
-        b=ajtFMehqmKsdBBGN15NLX7MJivwS7aekJx3U6pkMmxBtZT2h8tk3WGw9FLuAgfSS71
-         vNc/IV2LbAUnU+i7lqBo7mgce0tmHsLj5/GKq5ReuOOXEobCIndPegKOHR3Eq2cVq0Ty
-         dZHmkvqF902MCHJSSC3JMlq2Y9Y4SosaHFu719yutyggZQ2ZXHC6g6o10cwy65csF3Ul
-         f9GOwrZa0/xwHtqLrnIZpHDFKpF2Ge8HBvq1k7CXW8DP7yncSY7yhXLIHo3zfIjcDBh7
-         JynaHwsJPojs6CJZTUg9LnuBS0AQugsaRQpoNEAlVdU0ktDsQjSuGiWj53IAdsMtQCcC
-         rD4g==
-X-Gm-Message-State: AJcUukf3UyMagIFyfAOYaeJUdKeJCIa9yJ6q/KCLrGvVgZnPEruN7wHr
-        KGgEGdXZafgg+a8RJHhUVLKin2/TfOE6GzybQ6vXJg==
-X-Google-Smtp-Source: ALg8bN7hXaV7mMi9RBuAs8Jp9wJfA0lQDxh5r+cpQV2bK5p2Fdm06EcfrLu8hHJ5/GRZXTUQwIQ4WH1ar9S4FIpv+BM=
-X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr17901121ljg.23.1548080426506;
- Mon, 21 Jan 2019 06:20:26 -0800 (PST)
+        Mon, 21 Jan 2019 08:47:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729059AbfAUNrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:47:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E28320870;
+        Mon, 21 Jan 2019 13:47:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548078450;
+        bh=kz5HtQG//glOUViits9s55TLR0bBMYf3Zw+ZcpsZ3Fg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UK2O8SkNDFnSc93Q/RUB8jP83YYPNdXNgTdQEdjeh9T+waj0BcvyzIgMHSvJNDkCm
+         SWelIx3i42S2u44CzfeG5jrncSgjgwa1rMwgCL4niH3o2j3eSRLdDJC/vfHKbcNg9l
+         sii89Z/qfqbd+daZPfQ1ELiud4w9ntQFwnR7QlwY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.20 035/111] crypto: ccree - convert to use crypto_authenc_extractkeys()
+Date:   Mon, 21 Jan 2019 14:42:29 +0100
+Message-Id: <20190121122459.763343197@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
+References: <20190121122455.819406896@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20190118134244.22253-1-brgl@bgdev.pl> <20190118134244.22253-11-brgl@bgdev.pl>
-In-Reply-To: <20190118134244.22253-11-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 21 Jan 2019 15:20:13 +0100
-Message-ID: <CACRpkdZhy7yBZrGLxhRGaac7v5jZhgUSz9gZAhFXbevJbKjpZw@mail.gmail.com>
-Subject: Re: [PATCH 10/13] gpio: max77650: add GPIO support
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Brian Masney <masneyb@onstation.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz,
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-thanks for the patch!
+------------------
 
-On Fri, Jan 18, 2019 at 2:43 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+From: Eric Biggers <ebiggers@google.com>
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Add GPIO support for max77650 mfd device. This PMIC exposes a single
-> GPIO line.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+commit dc95b5350a8f07d73d6bde3a79ef87289698451d upstream.
 
-Overall you know for sure what you're doing so not much to
-say about the GPIO chip etc. The .set_config() is nice and
-helpful (maybe you will be able to also add pull up/down
-using Thomas Petazzoni's new config interfaces!)
+Convert the ccree crypto driver to use crypto_authenc_extractkeys() so
+that it picks up the fix for broken validation of rtattr::rta_len.
 
-However enlighten me on this:
+Fixes: ff27e85a85bb ("crypto: ccree - add AEAD support")
+Cc: <stable@vger.kernel.org> # v4.17+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> +static int max77650_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct max77650_gpio_chip *chip = gpiochip_get_data(gc);
-> +
-> +       return regmap_irq_get_virq(chip->irq_chip_data, MAX77650_INT_GPI);
-> +}
+---
+ drivers/crypto/ccree/cc_aead.c |   40 +++++++++++++++++++---------------------
+ 1 file changed, 19 insertions(+), 21 deletions(-)
 
-I know this may be opening the gates to a lot of coding, but
-isn't this IRQ hierarchical? I.e. that irqchip is not in the
-node of the GPIO chip but in the node of the MFD top
-device, with a 1:1 mapping between some of the IRQs
-and a certain GPIO line.
+--- a/drivers/crypto/ccree/cc_aead.c
++++ b/drivers/crypto/ccree/cc_aead.c
+@@ -540,13 +540,12 @@ static int cc_aead_setkey(struct crypto_
+ 			  unsigned int keylen)
+ {
+ 	struct cc_aead_ctx *ctx = crypto_aead_ctx(tfm);
+-	struct rtattr *rta = (struct rtattr *)key;
+ 	struct cc_crypto_req cc_req = {};
+-	struct crypto_authenc_key_param *param;
+ 	struct cc_hw_desc desc[MAX_AEAD_SETKEY_SEQ];
+-	int rc = -EINVAL;
+ 	unsigned int seq_len = 0;
+ 	struct device *dev = drvdata_to_dev(ctx->drvdata);
++	const u8 *enckey, *authkey;
++	int rc;
+ 
+ 	dev_dbg(dev, "Setting key in context @%p for %s. key=%p keylen=%u\n",
+ 		ctx, crypto_tfm_alg_name(crypto_aead_tfm(tfm)), key, keylen);
+@@ -554,35 +553,33 @@ static int cc_aead_setkey(struct crypto_
+ 	/* STAT_PHASE_0: Init and sanity checks */
+ 
+ 	if (ctx->auth_mode != DRV_HASH_NULL) { /* authenc() alg. */
+-		if (!RTA_OK(rta, keylen))
+-			goto badkey;
+-		if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
+-			goto badkey;
+-		if (RTA_PAYLOAD(rta) < sizeof(*param))
+-			goto badkey;
+-		param = RTA_DATA(rta);
+-		ctx->enc_keylen = be32_to_cpu(param->enckeylen);
+-		key += RTA_ALIGN(rta->rta_len);
+-		keylen -= RTA_ALIGN(rta->rta_len);
+-		if (keylen < ctx->enc_keylen)
++		struct crypto_authenc_keys keys;
++
++		rc = crypto_authenc_extractkeys(&keys, key, keylen);
++		if (rc)
+ 			goto badkey;
+-		ctx->auth_keylen = keylen - ctx->enc_keylen;
++		enckey = keys.enckey;
++		authkey = keys.authkey;
++		ctx->enc_keylen = keys.enckeylen;
++		ctx->auth_keylen = keys.authkeylen;
+ 
+ 		if (ctx->cipher_mode == DRV_CIPHER_CTR) {
+ 			/* the nonce is stored in bytes at end of key */
++			rc = -EINVAL;
+ 			if (ctx->enc_keylen <
+ 			    (AES_MIN_KEY_SIZE + CTR_RFC3686_NONCE_SIZE))
+ 				goto badkey;
+ 			/* Copy nonce from last 4 bytes in CTR key to
+ 			 *  first 4 bytes in CTR IV
+ 			 */
+-			memcpy(ctx->ctr_nonce, key + ctx->auth_keylen +
+-			       ctx->enc_keylen - CTR_RFC3686_NONCE_SIZE,
+-			       CTR_RFC3686_NONCE_SIZE);
++			memcpy(ctx->ctr_nonce, enckey + ctx->enc_keylen -
++			       CTR_RFC3686_NONCE_SIZE, CTR_RFC3686_NONCE_SIZE);
+ 			/* Set CTR key size */
+ 			ctx->enc_keylen -= CTR_RFC3686_NONCE_SIZE;
+ 		}
+ 	} else { /* non-authenc - has just one key */
++		enckey = key;
++		authkey = NULL;
+ 		ctx->enc_keylen = keylen;
+ 		ctx->auth_keylen = 0;
+ 	}
+@@ -594,13 +591,14 @@ static int cc_aead_setkey(struct crypto_
+ 	/* STAT_PHASE_1: Copy key to ctx */
+ 
+ 	/* Get key material */
+-	memcpy(ctx->enckey, key + ctx->auth_keylen, ctx->enc_keylen);
++	memcpy(ctx->enckey, enckey, ctx->enc_keylen);
+ 	if (ctx->enc_keylen == 24)
+ 		memset(ctx->enckey + 24, 0, CC_AES_KEY_SIZE_MAX - 24);
+ 	if (ctx->auth_mode == DRV_HASH_XCBC_MAC) {
+-		memcpy(ctx->auth_state.xcbc.xcbc_keys, key, ctx->auth_keylen);
++		memcpy(ctx->auth_state.xcbc.xcbc_keys, authkey,
++		       ctx->auth_keylen);
+ 	} else if (ctx->auth_mode != DRV_HASH_NULL) { /* HMAC */
+-		rc = cc_get_plain_hmac_key(tfm, key, ctx->auth_keylen);
++		rc = cc_get_plain_hmac_key(tfm, authkey, ctx->auth_keylen);
+ 		if (rc)
+ 			goto badkey;
+ 	}
 
-Using regmap IRQ makes it confusing for me so I do not
-know for sure if that is the case.
 
-I am worried that you are recreating a problem (present in many
-drivers, including some written by me, mea culpa) that Brian Masney
-has been trying to solve for the gpiochip inside the SPMI
-GPIO (drivers/pinctrl/qcom/pinctrl-spmi-gpio.c).
-
-I have queued Brians refactoring and solution here:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-qcom-spmi
-
-And the overall description on what he's trying to achieve is
-here:
-https://marc.info/?l=linux-gpio&m=154793071511130&w=2
-
-My problem description (which I fear will apply also to this
-driver):
-https://www.spinics.net/lists/linux-gpio/msg34655.html
-
-I plan to merge Brians patches soon-ish to devel and then from
-there try to construct more helpers in the gpiolib core,
-and if possible fix some of the old drivers who rely on
-.to_irq().
-
-We will certainly fix ssbi-gpio as well, and that is a good start
-since the Qualdcomm platforms are so pervasive in the
-market.
-
-But maybe this doesn't apply here? I am not the smartest...
-Just want to make sure that it is possible to refer an
-interrupt directly to this DT node, as it is indeed marked
-as interrupt-controller.
-
-Yours,
-Linus Walleij
