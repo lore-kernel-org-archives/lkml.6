@@ -2,100 +2,91 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7C5C31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E48C31680
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C97021019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:27:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKj99PXE"
+	by mail.kernel.org (Postfix) with ESMTP id 3717E20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727934AbfAUT1y (ORCPT
+        id S1727924AbfAUTaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 14:27:54 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39856 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbfAUT1y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 14:27:54 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t9-v6so18495010ljh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 11:27:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hxIAnT3ybjiiaGufi7mS0hJc0gHIFMhOGaf6933h1y4=;
-        b=GKj99PXEv4t8OCEqc+cBUYAWDQVqf16ItuMI2v8HT5VNbVO/1q+twBm+ElsfTOwM9W
-         J5ynMSVB251FkWto2+TEKFJ9L0Jm65UqbVqHHOp7v6nHZmKDijJtimr1TG/89oX+vyt4
-         NiS0nIFbDCw0PIpBWH3OvdIv2rwLI7Bs4DyMymxec1wafk9J9GvRzBSbeWdmbkR/PQbB
-         pqu5jGyz0ndQ/ayMoOmOQ4F/1DhudRDqfLuQSQMKIL6ZJCdMMOMdwMhijLsXPanas6A3
-         Ly77oZ8jrPxfQVgHJdT7t18pFt9r04UJqJuZUjS/LyATctWwbfrq63XvGI1x5e0kNmqC
-         Gy4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hxIAnT3ybjiiaGufi7mS0hJc0gHIFMhOGaf6933h1y4=;
-        b=Naz44ACgZ26g06rH03vXTgheEUBCKjXU2SMniAZsGhHfY5RdB3pZZj6Nm5zklgR6CX
-         J9Qid82aGaDSBHffhs1z1PG8W9hLMdYbMi57NBEssiQkW+VxBqO74pf/0T/ONu0xNuCk
-         3hu8e/yIlfRWsuwSWbXZTm0Q8TJntmoQFpIdI7e1at6l7o+RDbnr/24tWcxMvM7x4K6F
-         qcj1Yd2SRrRBga+EMBi2dbgCFAKzYp95hB6q3YfzQ+wg+s+CYTLYuKj7wa7nc9whDGSY
-         F4J5NofV5vpawnFZMggDDNSjoeEjbrmuNfQyL6akn5qDE/T3jCB4KyKznxChAbzcgEPf
-         3Osw==
-X-Gm-Message-State: AJcUukc2fVvpzvsn+iMbBGM7xRk24dqmqKjUjnTeZOHyvu+Kj47Mzn6K
-        cXTj2Mzr7l/AHko3O1+I5Tn2nkD5l6OSQh/syng6Vw==
-X-Google-Smtp-Source: ALg8bN7z5pKs0jghB8MJVU1kf76CBP4/0ZpPSePMx3xuQDkd4ss52dLS/w9SN74chGUPm71ArH1+Sza1u0xXJOa84Nw=
-X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr18700961lji.93.1548098871595;
- Mon, 21 Jan 2019 11:27:51 -0800 (PST)
+        Mon, 21 Jan 2019 14:30:46 -0500
+Received: from muru.com ([72.249.23.125]:34524 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727580AbfAUTaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 14:30:46 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 9229480C0;
+        Mon, 21 Jan 2019 19:30:52 +0000 (UTC)
+Date:   Mon, 21 Jan 2019 11:30:42 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Jan Kiszka <jan.kiszka@web.de>, Kalle Valo <kvalo@codeaurora.org>,
+        Eyal Reizer <eyalr@ti.com>, linux-wireless@vger.kernel.org,
+        Ricardo Salveti <rsalveti@rsalveti.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
+Message-ID: <20190121193042.GF5544@atomide.com>
+References: <20190116113723.15668-1-ulf.hansson@linaro.org>
+ <258ecb6b-c2b2-c8b8-9804-4df69002d9f5@web.de>
+ <CAPDyKFoqfyvQRnSBRvPVxrL-nmf1YoSzxRkPfGwr==L3LOwgaw@mail.gmail.com>
+ <5bf8514a-eb15-b098-1857-835b36d4a67c@web.de>
+ <CAPDyKFo=m50jiQ639xzP9tzn+=Bn0CXXwO6p0_jPH0EnSc0UQg@mail.gmail.com>
+ <CAPDyKFrt3+i83x_qyTrVVCSxda_+3HpJPR6RuPBxzRHnZTRVvA@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAA85sZum33M+1NRcfWkua+66CBTxM8ope+hoGASv6mR8NrwPTg@mail.gmail.com>
- <20190121151020.GB4717@kroah.com> <CAA85sZtizu_uvHhevg_B1Ok7K=O_J=agAmG5ic7M=1by5BCurw@mail.gmail.com>
- <20190121.104824.1888946069199769292.davem@davemloft.net>
-In-Reply-To: <20190121.104824.1888946069199769292.davem@davemloft.net>
-From:   Ian Kumlien <ian.kumlien@gmail.com>
-Date:   Mon, 21 Jan 2019 20:27:40 +0100
-Message-ID: <CAA85sZuyL01pfHeQZtTjkmM5BG624eCV_R5FYtiU8j3ex4EUVg@mail.gmail.com>
-Subject: Re: [PATCH 4.20 000/111] 4.20.4-stable review
-To:     David Miller <davem@davemloft.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFrt3+i83x_qyTrVVCSxda_+3HpJPR6RuPBxzRHnZTRVvA@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 7:48 PM David Miller <davem@davemloft.net> wrote:
->
-> From: Ian Kumlien <ian.kumlien@gmail.com>
-> Date: Mon, 21 Jan 2019 16:38:11 +0100
->
-> > Hi David,
-> >
-> > could we have your blessing to add the following patch to -stable for 4.20.4:
-> > commit 41d1c8839e5f8cb781cc635f12791decee8271b7
-> > Author: Paolo Abeni <pabeni@redhat.com>
-> > Date:   Tue Jan 8 18:45:05 2019 +0100
-> >
-> >     net: clear skb->tstamp in bridge forwarding path
->
-> It is already in my -stable queue:
->
-> https://patchwork.ozlabs.org/bundle/davem/stable/?series=&submitter=&state=*&q=&archive=
->
-> I honestly don't know why I bother putting forth such an effort to publish
-> what is in my -stable queue if people don't bother checking it. :-(
+* Ulf Hansson <ulf.hansson@linaro.org> [190121 06:41]:
+> So, I have put together a debug patch, mostly to verify that things
+> seems to be correct in regards to runtime PM. It should produce some
+> prints to the log, particular during power on/off of the SDIO card and
+> during probe of the wifi driver. Please re-run the test on top of the
+> v2 version of the $subject patch.
 
-Sorry, I will check it in the future, the patch from Greg would
-highlight it as well!
+For reference, here's what I'm seeing on omap4 with your v2 fix
+and the debug patch for:
 
-I was really hoping that this was pushed to -stable already,  which is
-why I sent
-my initial mail.
+# ifconfig wlan0 up; ifconfig wlan0 down
 
-I haven't really followed kernel policies that closely since 2.5 or something =/
+Note that this is without pwrseq, so maybe that's the difference.
+
+Regards,
+
+Tony
+
+8< -----------------
+[  148.458282] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_on: STEP1
+[  148.464691] mmc mmc4:0001: mmc_sdio_runtime_resume
+[  148.641021] mmc mmc4:0001: mmc_sdio_runtime_resume - ret=0 DONE
+[  148.647613] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_on: STEP2
+[  148.653961] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_on: STEP3
+[  148.660430] mmc mmc4:0001: mmc_sdio_hw_reset
+[  148.828735] mmc mmc4:0001: mmc_sdio_hw_reset - ret=0 DONE
+[  148.834503] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_on: STEP4
+[  148.840789] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_on: STEP5
+[  149.194671] wlcore: firmware booted (Rev 7.3.10.0.141)
+[  149.200134] wl1271_sdio mmc4:0001:2: sdio_bus_runtime_resume
+[  149.233276] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
+[  149.248352] wlcore: down
+[  149.253082] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_off: STEP1
+[  149.259613] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_off: STEP2
+[  149.265869] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_off: STEP3
+[  149.272155] wl1271_sdio mmc4:0001:2: wl12xx_sdio_power_off: STEP4
+[  149.307952] wl1271_sdio mmc4:0001:2: sdio_bus_runtime_suspend
+[  149.314147] mmc mmc4:0001: mmc_sdio_runtime_suspend
+[  149.321136] mmc mmc4:0001: mmc_sdio_runtime_suspend - DONE
