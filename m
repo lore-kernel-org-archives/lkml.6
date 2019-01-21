@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBCFC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C230C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4114D2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1E82087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079019;
-	bh=GQZLVWYM+WeQ+095zxEWyI1My8t3xEjU0dLcwIBeJD8=;
+	s=default; t=1548079024;
+	bh=Ewe9QbfyG+Lq24Fb9cccT3hHP+2oZJbqCDgErkU0nxw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L+the/TDk5MAQjxRVk7DGsRJo+oMtnCiZzekR2S3DCgZrJNhHhb+jqWBlTInSLUAL
-	 lj/R01b4sLy6M8vl36WWN58Xp6niru9gW7rhHD41cU2YqdFWfYqW0x+mcdmaOcyJYa
-	 ALWdNermION1Kn8ppEU4rsFUe72qvHCCvXF29Me8=
+	b=FiTusrfoC0Lfa40hPNE1c6NOZ5XpMQ/w29dN7yLTtEXQblJ/axCRdQWAHBT8Zjwqb
+	 pNNIxuv/5ASzt0hI8/XBM9qMMelP0j20H5hAVSmtVrvTprlRZ7hJdXAE54JILGTz7J
+	 DYuL1VIBqLmKuEj4hfL0SW233XaMJJN58jPm4BlQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731599AbfAUN45 (ORCPT
+        id S1731770AbfAUN4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:56:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42078 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:56:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731957AbfAUN4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:56:42 -0500
+        id S1731746AbfAUNze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:55:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A6292087F;
-        Mon, 21 Jan 2019 13:56:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E7C92087F;
+        Mon, 21 Jan 2019 13:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079000;
-        bh=GQZLVWYM+WeQ+095zxEWyI1My8t3xEjU0dLcwIBeJD8=;
+        s=default; t=1548078933;
+        bh=Ewe9QbfyG+Lq24Fb9cccT3hHP+2oZJbqCDgErkU0nxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FH/Im6LIACEpTDW4mGvaHyEXd5sd2W4HiQTGDB25DdSaY9doBD9zNg0GwR23IUvnr
-         JY4JFTd77P5+QN3IuNnBRNuQMMP75TWgsynQBJ9GXihuQtJ5eqsNBS04/Pyf3mIodc
-         0hrcVyZUStFJIkbdeXcucxWiQN3uE8Q8FsL2e2MU=
+        b=u7twAyYCtB5DAnXbs3M+1NEbMtXFJ8DpmepXBqo4Vwhqp7iAMRkrThVojahr89zJj
+         rhYHl8usWbtvnFQV1R14qySSLG3mgD/tZJdYpIOzpli6EVvM5Aaxhp2Csmk9bSyWMu
+         Mh6ThcI5iD5rqbcB5/OPLqarGU3dBjQT5PStXO08=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e01d94b5a4c266be6e4c@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
+        stable@vger.kernel.org, Muyu Yu <ieatmuttonchuan@gmail.com>,
+        Marcus Meissner <meissner@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 41/51] tipc: fix uninit-value in tipc_nl_compat_link_reset_stats
-Date:   Mon, 21 Jan 2019 14:44:37 +0100
-Message-Id: <20190121122457.728897723@linuxfoundation.org>
+Subject: [PATCH 4.9 05/51] can: gw: ensure DLC boundaries after CAN frame modification
+Date:   Mon, 21 Jan 2019 14:44:01 +0100
+Message-Id: <20190121122454.024021655@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -67,133 +69,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ying Xue <ying.xue@windriver.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit 8b66fee7f8ee18f9c51260e7a43ab37db5177a05 upstream.
+commit 0aaa81377c5a01f686bcdb8c7a6929a7bf330c68 upstream.
 
-syzbot reports following splat:
+Muyu Yu provided a POC where user root with CAP_NET_ADMIN can create a CAN
+frame modification rule that makes the data length code a higher value than
+the available CAN frame data size. In combination with a configured checksum
+calculation where the result is stored relatively to the end of the data
+(e.g. cgw_csum_xor_rel) the tail of the skb (e.g. frag_list pointer in
+skb_shared_info) can be rewritten which finally can cause a system crash.
 
-BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:486
-CPU: 1 PID: 11057 Comm: syz-executor0 Not tainted 4.20.0-rc7+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x173/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
- __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:295
- strlen+0x3b/0xa0 lib/string.c:486
- nla_put_string include/net/netlink.h:1154 [inline]
- tipc_nl_compat_link_reset_stats+0x1f0/0x360 net/tipc/netlink_compat.c:760
- __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
- tipc_nl_compat_doit+0x3aa/0xaf0 net/tipc/netlink_compat.c:344
- tipc_nl_compat_handle net/tipc/netlink_compat.c:1107 [inline]
- tipc_nl_compat_recv+0x14d7/0x2760 net/tipc/netlink_compat.c:1210
- genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
- genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
- netlink_rcv_skb+0x444/0x640 net/netlink/af_netlink.c:2477
- genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0xf40/0x1020 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x457ec9
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f2557338c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000003
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f25573396d4
-R13: 00000000004cb478 R14: 00000000004d86c8 R15: 00000000ffffffff
+Michael Kubecek suggested to drop frames that have a DLC exceeding the
+available space after the modification process and provided a patch that can
+handle CAN FD frames too. Within this patch we also limit the length for the
+checksum calculations to the maximum of Classic CAN data length (8).
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
- kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
- kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
- kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:185
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2759 [inline]
- __kmalloc_node_track_caller+0xe18/0x1030 mm/slub.c:4383
- __kmalloc_reserve net/core/skbuff.c:137 [inline]
- __alloc_skb+0x309/0xa20 net/core/skbuff.c:205
- alloc_skb include/linux/skbuff.h:998 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
- netlink_sendmsg+0xb82/0x1300 net/netlink/af_netlink.c:1892
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
+CAN frames that are dropped by these additional checks are counted with the
+CGW_DELETED counter which indicates misconfigurations in can-gw rules.
 
-The uninitialised access happened in tipc_nl_compat_link_reset_stats:
-    nla_put_string(skb, TIPC_NLA_LINK_NAME, name)
+This fixes CVE-2019-3701.
 
-This is because name string is not validated before it's used.
-
-Reported-by: syzbot+e01d94b5a4c266be6e4c@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
+Reported-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Reported-by: Marcus Meissner <meissner@suse.de>
+Suggested-by: Michal Kubecek <mkubecek@suse.cz>
+Tested-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # >= v3.2
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ net/can/gw.c |   30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -87,6 +87,11 @@ static int tipc_skb_tailroom(struct sk_b
- 	return limit;
+--- a/net/can/gw.c
++++ b/net/can/gw.c
+@@ -418,13 +418,29 @@ static void can_can_gw_rcv(struct sk_buf
+ 	while (modidx < MAX_MODFUNCTIONS && gwj->mod.modfunc[modidx])
+ 		(*gwj->mod.modfunc[modidx++])(cf, &gwj->mod);
+ 
+-	/* check for checksum updates when the CAN frame has been modified */
++	/* Has the CAN frame been modified? */
+ 	if (modidx) {
+-		if (gwj->mod.csumfunc.crc8)
++		/* get available space for the processed CAN frame type */
++		int max_len = nskb->len - offsetof(struct can_frame, data);
++
++		/* dlc may have changed, make sure it fits to the CAN frame */
++		if (cf->can_dlc > max_len)
++			goto out_delete;
++
++		/* check for checksum updates in classic CAN length only */
++		if (gwj->mod.csumfunc.crc8) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
++
+ 			(*gwj->mod.csumfunc.crc8)(cf, &gwj->mod.csum.crc8);
++		}
++
++		if (gwj->mod.csumfunc.xor) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
+ 
+-		if (gwj->mod.csumfunc.xor)
+ 			(*gwj->mod.csumfunc.xor)(cf, &gwj->mod.csum.xor);
++		}
+ 	}
+ 
+ 	/* clear the skb timestamp if not configured the other way */
+@@ -436,6 +452,14 @@ static void can_can_gw_rcv(struct sk_buf
+ 		gwj->dropped_frames++;
+ 	else
+ 		gwj->handled_frames++;
++
++	return;
++
++ out_delete:
++	/* delete frame due to misconfiguration */
++	gwj->deleted_frames++;
++	kfree_skb(nskb);
++	return;
  }
  
-+static inline int TLV_GET_DATA_LEN(struct tlv_desc *tlv)
-+{
-+	return TLV_GET_LEN(tlv) - TLV_SPACE(0);
-+}
-+
- static int tipc_add_tlv(struct sk_buff *skb, u16 type, void *data, u16 len)
- {
- 	struct tlv_desc *tlv = (struct tlv_desc *)skb_tail_pointer(skb);
-@@ -166,6 +171,11 @@ static struct sk_buff *tipc_get_err_tlv(
- 	return buf;
- }
- 
-+static inline bool string_is_valid(char *s, int len)
-+{
-+	return memchr(s, '\0', len) ? true : false;
-+}
-+
- static int __tipc_nl_compat_dumpit(struct tipc_nl_compat_cmd_dump *cmd,
- 				   struct tipc_nl_compat_msg *msg,
- 				   struct sk_buff *arg)
-@@ -741,6 +751,7 @@ static int tipc_nl_compat_link_reset_sta
- {
- 	char *name;
- 	struct nlattr *link;
-+	int len;
- 
- 	name = (char *)TLV_DATA(msg->req);
- 
-@@ -748,6 +759,10 @@ static int tipc_nl_compat_link_reset_sta
- 	if (!link)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
-+	if (!string_is_valid(name, len))
-+		return -EINVAL;
-+
- 	if (nla_put_string(skb, TIPC_NLA_LINK_NAME, name))
- 		return -EMSGSIZE;
- 
+ static inline int cgw_register_filter(struct cgw_job *gwj)
 
 
