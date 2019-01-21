@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C430C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C2EC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C5162063F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01D6820861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078633;
-	bh=j4P9Zu47LdXRbi4PDnXvLvkazm/puX3WG8IaDaS9LGs=;
+	s=default; t=1548078639;
+	bh=TfWSGYdOuYOQI/uzFHcj3Pjx0VkE1tpwlgaProSCWP0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wTS1zSBX/H3LP7PuXrv+3oBJT/Z+yT8nu+7ckaNih0nX/+QFhTpjq37sQUjvuoNTy
-	 EpMSPMPjXbG6w8laxdtyoBpr2htDEJCmW24jqXs6DQCBrY5aYwAWaT2YLVMGn/aJeH
-	 8nyHpyTGoRYBA4WL+Y7Yu1U7FkJkvlQ1mbXYX1mY=
+	b=oNNlMkGPL2L4J443Oq1JNl49rti9+NQPtQMrmolhuS/eXo35TBNyyystAvxmKzYIf
+	 F/W076PyMvRIxbzaOgNTq/SapJQTMkbo46nYxXNMZYLnBehDRBStQrPXg5nVWRRKv3
+	 DFyvhYGlRJDRUt9ZrrAGGj6QUGbZ/BdKyS58ws+c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730576AbfAUNuc (ORCPT
+        id S1730590AbfAUNuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:50:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33122 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:50:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730555AbfAUNu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:29 -0500
+        id S1730569AbfAUNuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 299AF2063F;
-        Mon, 21 Jan 2019 13:50:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8D242063F;
+        Mon, 21 Jan 2019 13:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078628;
-        bh=j4P9Zu47LdXRbi4PDnXvLvkazm/puX3WG8IaDaS9LGs=;
+        s=default; t=1548078631;
+        bh=TfWSGYdOuYOQI/uzFHcj3Pjx0VkE1tpwlgaProSCWP0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OrOiprrltkUkBo2QyBDkUO9J9blMjiQEyOr2894aX/+7yDpGW7r7MLDzCh/ffMTAq
-         Kw988/bNXGgcVOgSz+9TSSbz0qJhPCyzMY7a/8W+VyKyfBWIGmtEIUJ4YnGC9juTNp
-         /8/txovKKTPWeFPXvZz3a8la773ZobCv3NR/jn4I=
+        b=y4lS/dtil6Ueyx/3tbEYDo76CTKQN9FxMWun4JKN5lbbID7fRjPveu3yl3LRvCkUm
+         Sf/yby1eFXuwPUCQ7VRZAU1KvkTvg3vG1Um7FlD+liATFTcS+F/YIwEpLBrxrmxRvc
+         Y1DmUOKOxIsTJAtKO5eBlRRQxxyiw/w1ZlDNnlRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 099/111] loop: Push loop_ctl_mutex down into loop_clr_fd()
-Date:   Mon, 21 Jan 2019 14:43:33 +0100
-Message-Id: <20190121122506.618605553@linuxfoundation.org>
+Subject: [PATCH 4.20 100/111] loop: Push loop_ctl_mutex down to loop_get_status()
+Date:   Mon, 21 Jan 2019 14:43:34 +0100
+Message-Id: <20190121122506.652884846@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -67,133 +67,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kara <jack@suse.cz>
 
-commit 7ccd0791d98531df7cd59e92d55e4f063d48a070 upstream.
+commit 4a5ce9ba5877e4640200d84a735361306ad1a1b8 upstream.
 
-loop_clr_fd() has a weird locking convention that is expects
-loop_ctl_mutex held, releases it on success and keeps it on failure.
-Untangle the mess by moving locking of loop_ctl_mutex into
-loop_clr_fd().
+Push loop_ctl_mutex down to loop_get_status() to avoid the unusual
+convention that the function gets called with loop_ctl_mutex held and
+releases it.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   49 +++++++++++++++++++++++++++++--------------------
- 1 file changed, 29 insertions(+), 20 deletions(-)
+ drivers/block/loop.c |   37 ++++++++++---------------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
 
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -1027,15 +1027,22 @@ loop_init_xfer(struct loop_device *lo, s
+@@ -1232,6 +1232,9 @@ loop_get_status(struct loop_device *lo,
+ 	struct kstat stat;
+ 	int ret;
  
- static int __loop_clr_fd(struct loop_device *lo)
- {
--	struct file *filp = lo->lo_backing_file;
-+	struct file *filp = NULL;
- 	gfp_t gfp = lo->old_gfp_mask;
- 	struct block_device *bdev = lo->lo_device;
-+	int err = 0;
- 
--	if (WARN_ON_ONCE(lo->lo_state != Lo_rundown))
--		return -ENXIO;
-+	mutex_lock(&loop_ctl_mutex);
-+	if (WARN_ON_ONCE(lo->lo_state != Lo_rundown)) {
-+		err = -ENXIO;
-+		goto out_unlock;
-+	}
- 
--	if (filp == NULL)
--		return -EINVAL;
-+	filp = lo->lo_backing_file;
-+	if (filp == NULL) {
-+		err = -EINVAL;
-+		goto out_unlock;
-+	}
- 
- 	/* freeze request queue during the transition */
- 	blk_mq_freeze_queue(lo->lo_queue);
-@@ -1082,6 +1089,7 @@ static int __loop_clr_fd(struct loop_dev
- 	if (!part_shift)
- 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
- 	loop_unprepare_queue(lo);
-+out_unlock:
- 	mutex_unlock(&loop_ctl_mutex);
- 	/*
- 	 * Need not hold loop_ctl_mutex to fput backing file.
-@@ -1089,14 +1097,22 @@ static int __loop_clr_fd(struct loop_dev
- 	 * lock dependency possibility warning as fput can take
- 	 * bd_mutex which is usually taken before loop_ctl_mutex.
- 	 */
--	fput(filp);
--	return 0;
-+	if (filp)
-+		fput(filp);
-+	return err;
- }
- 
- static int loop_clr_fd(struct loop_device *lo)
- {
--	if (lo->lo_state != Lo_bound)
-+	int err;
-+
-+	err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+	if (err)
-+		return err;
-+	if (lo->lo_state != Lo_bound) {
-+		mutex_unlock(&loop_ctl_mutex);
- 		return -ENXIO;
-+	}
- 	/*
- 	 * If we've explicitly asked to tear down the loop device,
- 	 * and it has an elevated reference count, set it for auto-teardown when
-@@ -1113,6 +1129,7 @@ static int loop_clr_fd(struct loop_devic
- 		return 0;
- 	}
- 	lo->lo_state = Lo_rundown;
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	return __loop_clr_fd(lo);
- }
-@@ -1447,14 +1464,7 @@ static int lo_ioctl(struct block_device
++	ret = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	if (ret)
++		return ret;
+ 	if (lo->lo_state != Lo_bound) {
  		mutex_unlock(&loop_ctl_mutex);
+ 		return -ENXIO;
+@@ -1346,10 +1349,8 @@ loop_get_status_old(struct loop_device *
+ 	struct loop_info64 info64;
+ 	int err;
+ 
+-	if (!arg) {
+-		mutex_unlock(&loop_ctl_mutex);
++	if (!arg)
+ 		return -EINVAL;
+-	}
+ 	err = loop_get_status(lo, &info64);
+ 	if (!err)
+ 		err = loop_info64_to_old(&info64, &info);
+@@ -1364,10 +1365,8 @@ loop_get_status64(struct loop_device *lo
+ 	struct loop_info64 info64;
+ 	int err;
+ 
+-	if (!arg) {
+-		mutex_unlock(&loop_ctl_mutex);
++	if (!arg)
+ 		return -EINVAL;
+-	}
+ 	err = loop_get_status(lo, &info64);
+ 	if (!err && copy_to_user(arg, &info64, sizeof(info64)))
+ 		err = -EFAULT;
+@@ -1477,12 +1476,7 @@ static int lo_ioctl(struct block_device
+ 		}
  		break;
- 	case LOOP_CLR_FD:
+ 	case LOOP_GET_STATUS:
 -		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
 -		if (err)
 -			return err;
--		/* loop_clr_fd would have unlocked loop_ctl_mutex on success */
--		err = loop_clr_fd(lo);
--		if (err)
--			mutex_unlock(&loop_ctl_mutex);
+-		err = loop_get_status_old(lo, (struct loop_info __user *) arg);
+-		/* loop_get_status() unlocks loop_ctl_mutex */
 -		break;
-+		return loop_clr_fd(lo);
- 	case LOOP_SET_STATUS:
++		return loop_get_status_old(lo, (struct loop_info __user *) arg);
+ 	case LOOP_SET_STATUS64:
  		err = -EPERM;
  		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN)) {
-@@ -1690,7 +1700,6 @@ out:
- static void lo_release(struct gendisk *disk, fmode_t mode)
- {
- 	struct loop_device *lo;
--	int err;
+@@ -1495,12 +1489,7 @@ static int lo_ioctl(struct block_device
+ 		}
+ 		break;
+ 	case LOOP_GET_STATUS64:
+-		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
+-		if (err)
+-			return err;
+-		err = loop_get_status64(lo, (struct loop_info64 __user *) arg);
+-		/* loop_get_status() unlocks loop_ctl_mutex */
+-		break;
++		return loop_get_status64(lo, (struct loop_info64 __user *) arg);
+ 	case LOOP_SET_CAPACITY:
+ 	case LOOP_SET_DIRECT_IO:
+ 	case LOOP_SET_BLOCK_SIZE:
+@@ -1625,10 +1614,8 @@ loop_get_status_compat(struct loop_devic
+ 	struct loop_info64 info64;
+ 	int err;
  
- 	mutex_lock(&loop_ctl_mutex);
- 	lo = disk->private_data;
-@@ -1701,13 +1710,13 @@ static void lo_release(struct gendisk *d
- 		if (lo->lo_state != Lo_bound)
- 			goto out_unlock;
- 		lo->lo_state = Lo_rundown;
-+		mutex_unlock(&loop_ctl_mutex);
- 		/*
- 		 * In autoclear mode, stop the loop thread
- 		 * and remove configuration after last close.
- 		 */
--		err = __loop_clr_fd(lo);
--		if (!err)
--			return;
-+		__loop_clr_fd(lo);
-+		return;
- 	} else if (lo->lo_state == Lo_bound) {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
+-	if (!arg) {
+-		mutex_unlock(&loop_ctl_mutex);
++	if (!arg)
+ 		return -EINVAL;
+-	}
+ 	err = loop_get_status(lo, &info64);
+ 	if (!err)
+ 		err = loop_info64_to_compat(&info64, arg);
+@@ -1651,12 +1638,8 @@ static int lo_compat_ioctl(struct block_
+ 		}
+ 		break;
+ 	case LOOP_GET_STATUS:
+-		err = mutex_lock_killable(&loop_ctl_mutex);
+-		if (!err) {
+-			err = loop_get_status_compat(lo,
+-						     (struct compat_loop_info __user *)arg);
+-			/* loop_get_status() unlocks loop_ctl_mutex */
+-		}
++		err = loop_get_status_compat(lo,
++				     (struct compat_loop_info __user *)arg);
+ 		break;
+ 	case LOOP_SET_CAPACITY:
+ 	case LOOP_CLR_FD:
 
 
