@@ -2,53 +2,52 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6CEC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08348C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4026F2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE4472084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079089;
-	bh=U8b9cY9rz4gb5qRGaw64iW/0DxPyeKI2OPKe1PgvVwM=;
+	s=default; t=1548079098;
+	bh=P4VSzLHN2/PoZZijPe72Xz+7m82L7f49bJgALkMfZ/c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hv5Ojgi8hwBDXSqnU5Nd6wFGzwXEws3iSj2GJFhU6ufVUgv2ZMXNSUN6SpIF6BuQj
-	 9C5B19zAwip7xCG0zgoGTyYS8O5pr0VsQ14iFdFAvs3WorHOGCmVDQ2ESVoPMLvKYW
-	 a6jYJlJGODM/5dw6OZxVb7PSWSAwz1a0Fj0MhEKI=
+	b=GDvEbHsF/M4aJ2broF5Pys+c3v5wczmYS7sX9Aj2HRgQDk93W4YVDpObnnlj3begK
+	 u53ZqAZWe+Aj/7Xa5vELMmp92nhopBQqtPzPKLf3wSwUEZzNaclVCur+OxtUx66MXg
+	 SYtRhhO4UObUTRKX/w4P0BdjHDbuAxe9i0Z6LpXo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731604AbfAUN6I (ORCPT
+        id S1731813AbfAUNzt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:58:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40854 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:55:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731368AbfAUNz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:55:57 -0500
+        id S1731750AbfAUNzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:55:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EBE020879;
-        Mon, 21 Jan 2019 13:55:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0087320861;
+        Mon, 21 Jan 2019 13:55:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078956;
-        bh=U8b9cY9rz4gb5qRGaw64iW/0DxPyeKI2OPKe1PgvVwM=;
+        s=default; t=1548078942;
+        bh=P4VSzLHN2/PoZZijPe72Xz+7m82L7f49bJgALkMfZ/c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tr9nUxe1FbBLp/EZnQxeAL5dxoYrEbA5V3u0ch/7Ap9MgcC8HTQ3L+pyq1h9/jhOI
-         0V+BnU+Fgpp/CvQY5MxpPh16QXGQ2/1tns4/XMDMA2iAfurr7dA+mT1H+MGYxvCEJP
-         BwM6qSS7HpBkaaRFGdDlTPIi59kG/nP35fTIhcvU=
+        b=Uq071nEZa8BRl4qRtofkF2AFt76gCUjW0u3hy5aqfEfg7zh9lbMI6MdPew8ddN/4X
+         m5+c8TOSFZAN+y0rOsuEtQZFut9BpWpp9+buHobWSFPeqn8JLJh1t8cAD5gw/ji+FO
+         UqCGhmsog/51uHPpea3+2eo7pR4s8lBm8lKskD/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+d78b8a29241a195aefb8@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 43/51] tipc: fix uninit-value in tipc_nl_compat_link_set
-Date:   Mon, 21 Jan 2019 14:44:39 +0100
-Message-Id: <20190121122457.957000139@linuxfoundation.org>
+        Kees Cook <keescook@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 08/51] proc: Remove empty line in /proc/self/status
+Date:   Mon, 21 Jan 2019 14:44:04 +0100
+Message-Id: <20190121122454.204712750@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -67,76 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ying Xue <ying.xue@windriver.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit edf5ff04a45750ac8ce2435974f001dc9cfbf055 upstream.
+If CONFIG_SECCOMP=n, /proc/self/status includes an empty line. This causes
+the iotop application to bail out with an error message.
 
-syzbot reports following splat:
+File "/usr/local/lib64/python2.7/site-packages/iotop/data.py", line 196,
+	in parse_proc_pid_status
+key, value = line.split(':\t', 1)
+ValueError: need more than 1 value to unpack
 
-BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:486
-CPU: 1 PID: 9306 Comm: syz-executor172 Not tainted 4.20.0-rc7+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x173/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
-  __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:313
-  strlen+0x3b/0xa0 lib/string.c:486
-  nla_put_string include/net/netlink.h:1154 [inline]
-  __tipc_nl_compat_link_set net/tipc/netlink_compat.c:708 [inline]
-  tipc_nl_compat_link_set+0x929/0x1220 net/tipc/netlink_compat.c:744
-  __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
-  tipc_nl_compat_doit+0x3aa/0xaf0 net/tipc/netlink_compat.c:344
-  tipc_nl_compat_handle net/tipc/netlink_compat.c:1107 [inline]
-  tipc_nl_compat_recv+0x14d7/0x2760 net/tipc/netlink_compat.c:1210
-  genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
-  genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
-  netlink_rcv_skb+0x444/0x640 net/netlink/af_netlink.c:2477
-  genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0xf40/0x1020 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg net/socket.c:631 [inline]
-  ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
-  __sys_sendmsg net/socket.c:2154 [inline]
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
-  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+The problem is seen in v4.9.y but not upstream because commit af884cd4a5ae6
+("proc: report no_new_privs state") has not been backported to v4.9.y.
+The backport of commit fae1fa0fc6cc ("proc: Provide details on speculation
+flaw mitigations") tried to address the resulting differences but was
+wrong, introducing the problem.
 
-The uninitialised access happened in
-    nla_put_string(skb, TIPC_NLA_LINK_NAME, lc->name)
-
-This is because lc->name string is not validated before it's used.
-
-Reported-by: syzbot+d78b8a29241a195aefb8@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 51ef9af2a35b ("proc: Provide details on speculation flaw mitigations")
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Gwendal Grignou <gwendal@chromium.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Acked-by: Kees Cook <keescook@chromium.org>
 ---
- net/tipc/netlink_compat.c |    5 +++++
- 1 file changed, 5 insertions(+)
+This patch only applies to v4.9.y. v4.4.y also needs to be fixed (see
+https://www.spinics.net/lists/stable/msg279131.html), but the fix
+is slightly different. v4.14.y and later are not affected.
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -753,9 +753,14 @@ static int tipc_nl_compat_link_set(struc
- 	struct tipc_link_config *lc;
- 	struct tipc_bearer *bearer;
- 	struct tipc_media *media;
-+	int len;
- 
- 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
-+	if (!string_is_valid(lc->name, len))
-+		return -EINVAL;
-+
- 	media = tipc_media_find(lc->name);
- 	if (media) {
- 		cmd->doit = &tipc_nl_media_set;
+ fs/proc/array.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -346,8 +346,9 @@ static inline void task_seccomp(struct s
+ {
+ #ifdef CONFIG_SECCOMP
+ 	seq_put_decimal_ull(m, "Seccomp:\t", p->seccomp.mode);
++	seq_putc(m, '\n');
+ #endif
+-	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
++	seq_printf(m, "Speculation_Store_Bypass:\t");
+ 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
+ 	case -EINVAL:
+ 		seq_printf(m, "unknown");
 
 
