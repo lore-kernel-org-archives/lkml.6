@@ -2,106 +2,227 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A70CC2F3A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B46CC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 514DD2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:22:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bKYauglH"
+	by mail.kernel.org (Postfix) with ESMTP id 55A2D2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbfAUNWa (ORCPT
+        id S1728967AbfAUNYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:22:30 -0500
-Received: from mail-io1-f47.google.com ([209.85.166.47]:38299 "EHLO
-        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728314AbfAUNW3 (ORCPT
+        Mon, 21 Jan 2019 08:24:04 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33739 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728775AbfAUNYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:22:29 -0500
-Received: by mail-io1-f47.google.com with SMTP id l14so16340231ioj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 05:22:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ViIwIisrts8lKS2nOKS8cQq7oIdtxCV2Zau1S1hVUx8=;
-        b=bKYauglH3dvM2f450CRUZQGOfCefu32c+ygSYA5KVSS0UskvWRuixyn/Moj5QTLODl
-         WTTiUVtcPtAjn5fpRt7lZmMRP1byOrxXOJ1UD0CDHO4rIdfX6qxvt7DVEWPThAye823o
-         lyuWKyjb4o+anSBmy47vjjrL7/7r0JD4Abv48=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ViIwIisrts8lKS2nOKS8cQq7oIdtxCV2Zau1S1hVUx8=;
-        b=MmEr5cJeleaJoMCFzZJuoZqxQy5UUYWgxiEnqwIhhO7Wecd+Bc+7FAAhXTXOD+ekuQ
-         BtQ6p7CGmINmwwcDI8mIzqUnA+eH9T0GnusPF4LaAEU0wTyb1SSn8Ml84iL0I0Jk2BvS
-         /MViaeqdQq9UEHuA/XqDEwhGdXNsqfeO7PheHg0iVPEu8/xblBo8PqLLUtmZ1/xW6cxp
-         aLureInswMooLSNg1FAcDzU+ycJCKrFE3Cb+I7p0RVJTo+DmjlSIlxUjxY2x+Jy0U4eO
-         Z2loYdssCIdZw5tUuLxPPX2nw5eUK/oJqA8uWMKiMziQq9MWplUYThkNxjUrdY6rdoYS
-         DBUQ==
-X-Gm-Message-State: AJcUukeLjSUNYJ6J8D6BiCVH/E9H3VsNbZWC8xBpCu9GRnVZRJxdLhpM
-        VorR77KSIWNtPc04x6B1hXOFs+HyPw+Wv74l2lMvfQ==
-X-Google-Smtp-Source: ALg8bN7eBJpcSyu1NlfGq6SkziCeaLHMF/v2jLccuZxfYkPB5fx/f3RDkEE27IxmrZyPWlvGqIIBokhm/4wgatpwiP0=
-X-Received: by 2002:a6b:c8c9:: with SMTP id y192mr15613351iof.183.1548076948669;
- Mon, 21 Jan 2019 05:22:28 -0800 (PST)
+        Mon, 21 Jan 2019 08:24:04 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1glZYS-0005VZ-Lx; Mon, 21 Jan 2019 14:23:56 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1glZYR-0002gt-ER; Mon, 21 Jan 2019 14:23:55 +0100
+Date:   Mon, 21 Jan 2019 14:23:55 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Yash Shah <yash.shah@sifive.com>, palmer@sifive.com,
+        linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sachin.ghadi@sifive.com, paul.walmsley@sifive.com
+Subject: Re: [PATCH 2/2] pwm: sifive: Add a driver for SiFive SoC PWM
+Message-ID: <20190121132355.vqwmwzzcwrqgcxrm@pengutronix.de>
+References: <1547194964-16718-1-git-send-email-yash.shah@sifive.com>
+ <1547194964-16718-3-git-send-email-yash.shah@sifive.com>
+ <20190115220046.etgbno6ymsux75dk@pengutronix.de>
+ <20190121113039.GI16756@ulmo>
 MIME-Version: 1.0
-References: <tip-8d2ef665a9bbee36a2a9d855eb4e97d87953fee5@git.kernel.org> <20190121124752.GA17749@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190121124752.GA17749@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 21 Jan 2019 14:22:17 +0100
-Message-ID: <CAKfTPtCJz2YDRirQ1JhrvtZMju-CkwzzxLk7JfMeGvVMKeScXA@mail.gmail.com>
-Subject: Re: [tip:sched/core] sched/fair: Fix rounding bug for asym packing
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-tip-commits@vger.kernel.org,
-        Valentin Schneider <valentin.schneider@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190121113039.GI16756@ulmo>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 13:47, Peter Zijlstra <peterz@infradead.org> wrote:
->
->
-> Sorry guys, I seem to have messed this up :/
->
-> Valentin pointed me out that I missed v3 and v4 of these patches; v3 got
+On Mon, Jan 21, 2019 at 12:30:39PM +0100, Thierry Reding wrote:
+> On Tue, Jan 15, 2019 at 11:00:46PM +0100, Uwe Kleine-König wrote:
+> > Hello,
+> > 
+> > On Fri, Jan 11, 2019 at 01:52:44PM +0530, Yash Shah wrote:
+> > > Adds a PWM driver for PWM chip present in SiFive's HiFive Unleashed SoC.
+> > > 
+> > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> > > [Atish: Various fixes and code cleanup]
+> > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> > > ---
+> > >  drivers/pwm/Kconfig      |  10 ++
+> > >  drivers/pwm/Makefile     |   1 +
+> > >  drivers/pwm/pwm-sifive.c | 246 +++++++++++++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 257 insertions(+)
+> > >  create mode 100644 drivers/pwm/pwm-sifive.c
+> > > 
+> > > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> > > index a8f47df..3bcaf6a 100644
+> > > --- a/drivers/pwm/Kconfig
+> > > +++ b/drivers/pwm/Kconfig
+> > > @@ -380,6 +380,16 @@ config PWM_SAMSUNG
+> > >  	  To compile this driver as a module, choose M here: the module
+> > >  	  will be called pwm-samsung.
+> > >  
+> > > +config PWM_SIFIVE
+> > > +	tristate "SiFive PWM support"
+> > > +	depends on OF
+> > > +	depends on COMMON_CLK
+> > 
+> > I'd say add:
+> > 
+> > 	depends on MACH_SIFIVE || COMPILE_TEST
+> > 
+> > (I guess "MACH_SIFIVE" is wrong, but I assume you get what I mean.)
+> > 
+> > > +	help
+> > > +	  Generic PWM framework driver for SiFive SoCs.
+> > > +
+> > > +	  To compile this driver as a module, choose M here: the module
+> > > +	  will be called pwm-sifive.
+> > > +
+> > >  config PWM_SPEAR
+> > >  	tristate "STMicroelectronics SPEAr PWM support"
+> > >  	depends on PLAT_SPEAR
+> > > diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> > > index 9c676a0..30089ca 100644
+> > > --- a/drivers/pwm/Makefile
+> > > +++ b/drivers/pwm/Makefile
+> > > @@ -37,6 +37,7 @@ obj-$(CONFIG_PWM_RCAR)		+= pwm-rcar.o
+> > >  obj-$(CONFIG_PWM_RENESAS_TPU)	+= pwm-renesas-tpu.o
+> > >  obj-$(CONFIG_PWM_ROCKCHIP)	+= pwm-rockchip.o
+> > >  obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
+> > > +obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
+> > >  obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
+> > >  obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
+> > >  obj-$(CONFIG_PWM_STM32)		+= pwm-stm32.o
+> > > diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
+> > > new file mode 100644
+> > > index 0000000..7fee809
+> > > --- /dev/null
+> > > +++ b/drivers/pwm/pwm-sifive.c
+> > > @@ -0,0 +1,246 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright (C) 2017-2018 SiFive
+> > > + * For SiFive's PWM IP block documentation please refer Chapter 14 of
+> > > + * Reference Manual : https://static.dev.sifive.com/FU540-C000-v1.0.pdf
+> > 
+> > I wonder if such an instance should be only a single PWM instead of
+> > four. Then you were more flexible with the period lengths (using
+> > pwmcfg.pwmzerocmp) and could do stuff like inverted and uninverted mode.
+> 
+> I thought this IP only allowed a single period for all PWM channels in
+> the IP. If so, splitting this into four different devices is going to
+> complicate things because you'd have to coordinate between all four as
+> to which period is currently set.
 
-I was about to sent an email about that too
+Take a look at the above link, figure 6 is depicting how this IP works
+(page 92 of the pdf). If you have pwmzerocmp=0 (and pwmcmpXgang=0) the
+four outputs (pwmcmpXgpio) are independant and the counter only resets
+on overflow of pwms. Then you have 4 outputs that can have their
+duty_cycle (but not period) set individually. So period is restricted to
+a count of clk cycles that is a power of two.
 
-> lost in the x-mas pile and v4 was actually on my todo list for this
-> week, but I'd forgotten I'd already queued v2.
->
-> I'll go queue delta patches.
+With pwmzerocmp=1, pwmcmp0 resets the counter with the following
+effects:
 
-Thanks
+ - pwmcmp0gpio is always 0 (bad?)
+ - more finegrained control over the period length as the restriction to
+   powers of two is gone (good)
 
->
-> On Mon, Jan 21, 2019 at 03:33:53AM -0800, tip-bot for Vincent Guittot wrote:
-> > index 50aa2aba69bd..2ccd6e093326 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -8190,6 +8190,12 @@ static inline void update_sg_lb_stats(struct lb_env *env,
-> >       /* Adjust by relative CPU capacity of the group */
-> >       sgs->group_capacity = group->sgc->capacity;
-> >       sgs->avg_load = (sgs->group_load*SCHED_CAPACITY_SCALE) / sgs->group_capacity;
-> > +     /*
-> > +      * Prevent division rounding to make the computation of imbalance
-> > +      * slightly less than original value and to prevent the rq to be then
-> > +      * selected as busiest queue:
-> > +      */
-> > +     sgs->avg_load += 1;
-> >
-> >       if (sgs->sum_nr_running)
-> >               sgs->load_per_task = sgs->sum_weighted_load / sgs->sum_nr_running;
->
->
+The other three output can then either be used as 3 PWM outputs with the
+more flexible (but identical) period or only pwmcmp1gpio is used as a
+single output (my favourite) and with pwmcmp2, pwmcmp3 and pwmcmp2gang=1
+the output pwmcmp2gpio can be used as a secondary output to implement
+stuff that was called "complementary mode" or "Push-pull mode" by
+Claudiu Beznea.
+
+> > > +struct sifive_pwm_device {
+> > > +	struct pwm_chip	chip;
+> > > +	struct notifier_block notifier;
+> > > +	struct clk *clk;
+> > > +	void __iomem *regs;
+> > > +	unsigned int approx_period;
+> > > +	unsigned int real_period;
+> > > +};
+> > 
+> > I'd call this pwm_sifive_ddata. The prefix because the driver is called
+> > pwm-sifive and ddata because this is driver data and not a device.
+> 
+> I don't think there's a need to have an extra suffix. Just call this
+> sifive_pwm or pwm_sifive. There's no ambiguity in that name and it's
+> short and crisp.
+
+fine for me if "_device" goes away.
+
+> > > +	if (state->enabled)
+> > > +		sifive_pwm_get_state(chip, dev, state);
+> > 
+> > @Thierry: Should we bless this correction of state?
+> 
+> I'm not sure I understand why this correction is necessary. Is it okay
+> to request a state to be applied and when we're not able to set that
+> state we just set anything as close as possible? Sounds a bit risky to
+> me. What if somebody wants to use this in a case where precision
+> matters?
+
+There is always rounding involved. Where should we draw a line then?
+Consider a parent clk running at 1000000001 Hz. Can you provide a duty
+cycle of 1 ps? Of if the clk runs at 500000000 Hz, I can implement even
+periods, but not the uneven. Should the driver fail if an uneven period
+is requested? What should a user do if setting
+
+	.duty_cycle = 55, .period = 100,
+
+fails? Assume the pwm can set only even duty_cycles? Or maybe duty_cycle
+and period must be dividable by 3? Or maybe only periods that are a
+power of two are possible? To get both, an API that can actually be
+worked with and that provides precision, the driver needs to be allowed
+to round (preferably in some defined way that is used for all devices)
+and we need a function to determine the result without actually
+configuring. That's how it works in the clk_* universe. There is
+clk_round_rate and clk_set_rate and the explicit condition that
+
+	clk_set_rate(clk, somerate)
+
+has the same effect as
+
+	clk_set_rate(clk, clk_round_rate(clk, somerate))
+
+and after one of them we have
+
+	clk_get_rate(clk) = clk_round_rate(clk, somerate))
+
+> Now, if you're saying that there can't be such cases and we should
+> support this, then why restrict the state correction to when the PWM is
+> enabled? What's wrong with correcting it in either case?
+
+Either the correction should be done always or never.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
