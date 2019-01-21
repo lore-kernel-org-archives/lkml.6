@@ -2,188 +2,83 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB9CC41518
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6438CC37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADFA920861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3329120844
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548104482;
-	bh=nIfadnoZjEn3rAN0/XlzhcQBbOzuKLSocbBKNt07FyU=;
+	s=default; t=1548104902;
+	bh=X4ippRdzlMJKRul854Wd6OiVIDhTL6qnIifniw23njQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cPVH6XTEsjjcVO/eDFnnkTyzmDO6PLpgUihKwGo0dFklb95UuX3MZEPhu5o7mcqI+
-	 unmr2vz5aCuDgiw3rB+AswT+0Z9bCF8A22A9zPf4F8OeraM3tPHoXXVur7iZ1WYkkI
-	 kJoay45PGNc6JGMC6tHHSkeDiOoeawi59vTyOQTo=
+	b=F0SBmRNJgod8Y/c+1ILbbGro/SZuV1BFsK5v/75HJA+K5ZqzzrOhLWlPtkoFRc4mv
+	 un0PPqObaezuQoF4COXH3EqVjhX07q5/q5decF1ZzvnWcUK2hVVcGrfienJlbBqhei
+	 Hrv9M9VooCq8Dy4FrmpiEIpZ+IBTyAD3hOK9RofI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbfAUVBU (ORCPT
+        id S1727749AbfAUVIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:01:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33806 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726004AbfAUVBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 16:01:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C6DFFAD6B;
-        Mon, 21 Jan 2019 21:01:17 +0000 (UTC)
-Date:   Mon, 21 Jan 2019 22:01:16 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, osalvador@suse.de,
-        catalin.marinas@arm.com, vbabka@suse.cz, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/hotplug: invalid PFNs from pfn_to_online_page()
-Message-ID: <20190121210116.GZ4087@dhcp22.suse.cz>
-References: <20190121200435.22488-1-cai@lca.pw>
+        Mon, 21 Jan 2019 16:08:20 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45743 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfAUVIT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 16:08:19 -0500
+Received: by mail-oi1-f193.google.com with SMTP id y1so15630686oie.12;
+        Mon, 21 Jan 2019 13:08:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oFPqhi1BSNrHF1r/hqVr80FYHFjvKB0P1PtH+zOaZa4=;
+        b=m5MvbD1m71nhFbjMhWsfAn0yPo/4zJyYILOchpfXpEnyxhMG+1aCzvIXxgeJSjI7xq
+         WB9rVM7qYX4w090F10Qm0hePGFFHlnadFF6PL6sC4Ly3qcGMoVA3P/rgyd/FiWsG9Vl2
+         YFi11cXjdNg7S5fQyF+0yxU2TyQSjys6GMhNw4XJZ/75zeFQ2tq0PlOTgmm41Ucnuf+S
+         ZPWDS/VzVsphQQ2NBGenkXWKGhIATmMHCoJzw12e32ycHg8YlYK5ZjhqgYQgNN/QAAQl
+         mPuFuEw67KAW/+Nf+fpyaxY6AwFnnJlVscKf2mh21hmpLFkDxpwenLie75/ECWiRYg5o
+         JmOA==
+X-Gm-Message-State: AJcUukeeWb/37f+kmzItiT4AJ1tOH6vVI9AO8ruT6YhGPHn0Xo/6s8HQ
+        jZwFyK6kv/boJf4SSQGLrQ==
+X-Google-Smtp-Source: ALg8bN7UU1lZxDDMBtqxW0/2MQmsetQwnUH1MC5LPv0PdHqdm7sgZ68CJyfyx+ouOVGBXTvOgoPY2A==
+X-Received: by 2002:aca:2803:: with SMTP id 3mr3988388oix.85.1548104898477;
+        Mon, 21 Jan 2019 13:08:18 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 187sm7012051oic.12.2019.01.21.13.08.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 13:08:17 -0800 (PST)
+Date:   Mon, 21 Jan 2019 15:08:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Vignesh R <vigneshr@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-serial@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: serial: omap_serial: add clocks entry
+Message-ID: <20190121210817.GA28521@bogus>
+References: <20190109091206.25759-1-vigneshr@ti.com>
+ <20190109091206.25759-3-vigneshr@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121200435.22488-1-cai@lca.pw>
+In-Reply-To: <20190109091206.25759-3-vigneshr@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 21-01-19 15:04:35, Qian Cai wrote:
-> On an arm64 ThunderX2 server, the first kmemleak scan would crash [1]
-> with CONFIG_DEBUG_VM_PGFLAGS=y due to page_to_nid() found a pfn that is
-> not directly mapped (MEMBLOCK_NOMAP). Hence, the page->flags is
-> uninitialized.
+On Wed, 9 Jan 2019 14:42:05 +0530, Vignesh R wrote:
+> Document clocks property used to pass phandle to functional clk.
 > 
-> This is due to the commit 9f1eb38e0e11 ("mm, kmemleak: little
-> optimization while scanning") starts to use pfn_to_online_page() instead
-> of pfn_valid(). However, in the CONFIG_MEMORY_HOTPLUG=y case,
-> pfn_to_online_page() does not call memblock_is_map_memory() while
-> pfn_valid() does.
-> 
-> Historically, the commit 68709f45385a ("arm64: only consider memblocks
-> with NOMAP cleared for linear mapping") causes pages marked as nomap
-> being no long reassigned to the new zone in memmap_init_zone() by
-> calling __init_single_page().
-> 
-> Since the commit 2d070eab2e82 ("mm: consider zone which is not fully
-> populated to have holes") introduced pfn_to_online_page() and was
-> designed to return a valid pfn only, but it is clearly broken on arm64.
-
-I still have some problem with this paragraph because it doesn't really
-reflect the documentation as explained already
-(http://lkml.kernel.org/r/20190121183613.GY4087@dhcp22.suse.cz). Calling
-pfn_to_online_page on an invalid pfn is clearly underdocumented but
-that doesn't make the API broken. Error prone, I do agree with.
-
-> Therefore, let pfn_to_online_page() calls pfn_valid_within(), so it can
-> handle nomap thanks to the commit f52bb98f5ade ("arm64: mm: always
-> enable CONFIG_HOLES_IN_ZONE"), while it will be optimized away on
-> architectures where have no HOLES_IN_ZONE.
-> 
-> [1]
-> [  102.195320] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000006
-> [  102.204113] Mem abort info:
-> [  102.206921]   ESR = 0x96000005
-> [  102.209997]   Exception class = DABT (current EL), IL = 32 bits
-> [  102.215926]   SET = 0, FnV = 0
-> [  102.218993]   EA = 0, S1PTW = 0
-> [  102.222150] Data abort info:
-> [  102.225047]   ISV = 0, ISS = 0x00000005
-> [  102.228887]   CM = 0, WnR = 0
-> [  102.231866] user pgtable: 64k pages, 48-bit VAs, pgdp = (____ptrval____)
-> [  102.238572] [0000000000000006] pgd=0000000000000000, pud=0000000000000000
-> [  102.245448] Internal error: Oops: 96000005 [#1] SMP
-> [  102.264062] CPU: 60 PID: 1408 Comm: kmemleak Not tainted 5.0.0-rc2+ #8
-> [  102.280403] pstate: 60400009 (nZCv daif +PAN -UAO)
-> [  102.280409] pc : page_mapping+0x24/0x144
-> [  102.280415] lr : __dump_page+0x34/0x3dc
-> [  102.292923] sp : ffff00003a5cfd10
-> [  102.296229] x29: ffff00003a5cfd10 x28: 000000000000802f
-> [  102.301533] x27: 0000000000000000 x26: 0000000000277d00
-> [  102.306835] x25: ffff000010791f56 x24: ffff7fe000000000
-> [  102.312138] x23: ffff000010772f8b x22: ffff00001125f670
-> [  102.317442] x21: ffff000011311000 x20: ffff000010772f8b
-> [  102.322747] x19: fffffffffffffffe x18: 0000000000000000
-> [  102.328049] x17: 0000000000000000 x16: 0000000000000000
-> [  102.333352] x15: 0000000000000000 x14: ffff802698b19600
-> [  102.338654] x13: ffff802698b1a200 x12: ffff802698b16f00
-> [  102.343956] x11: ffff802698b1a400 x10: 0000000000001400
-> [  102.349260] x9 : 0000000000000001 x8 : ffff00001121a000
-> [  102.354563] x7 : 0000000000000000 x6 : ffff0000102c53b8
-> [  102.359868] x5 : 0000000000000000 x4 : 0000000000000003
-> [  102.365173] x3 : 0000000000000100 x2 : 0000000000000000
-> [  102.370476] x1 : ffff000010772f8b x0 : ffffffffffffffff
-> [  102.375782] Process kmemleak (pid: 1408, stack limit = 0x(____ptrval____))
-> [  102.382648] Call trace:
-> [  102.385091]  page_mapping+0x24/0x144
-> [  102.388659]  __dump_page+0x34/0x3dc
-> [  102.392140]  dump_page+0x28/0x4c
-> [  102.395363]  kmemleak_scan+0x4ac/0x680
-> [  102.399106]  kmemleak_scan_thread+0xb4/0xdc
-> [  102.403285]  kthread+0x12c/0x13c
-> [  102.406509]  ret_from_fork+0x10/0x18
-> [  102.410080] Code: d503201f f9400660 36000040 d1000413 (f9400661)
-> [  102.416357] ---[ end trace 4d4bd7f573490c8e ]---
-> [  102.420966] Kernel panic - not syncing: Fatal exception
-> [  102.426293] SMP: stopping secondary CPUs
-> [  102.431830] Kernel Offset: disabled
-> [  102.435311] CPU features: 0x002,20000c38
-> [  102.439223] Memory Limit: none
-> [  102.442384] ---[ end Kernel panic - not syncing: Fatal exception ]---
-> 
-> Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to
-> have holes")
-
-And I still maintain that the Fixes tag is misleading at best. I would
-say that the above issue is caused by 9f1eb38e0e11 ("mm, kmemleak:
-little optimization while scanning"). Or do you know of any other bug
-caused by the newly added API before then?
-
-> Signed-off-by: Qian Cai <cai@lca.pw>
-
-Other than that, I do agree with the change
-Acked-by: Michal Hocko <mhocko@suse.com>
-
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
 > ---
-> 
-> v2: update the changelog; keep the bound check; use pfn_valid_within().
-> 
->  include/linux/memory_hotplug.h | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-> index 07da5c6c5ba0..cdeecd9bd87e 100644
-> --- a/include/linux/memory_hotplug.h
-> +++ b/include/linux/memory_hotplug.h
-> @@ -21,14 +21,15 @@ struct vmem_altmap;
->   * walkers which rely on the fully initialized page->flags and others
->   * should use this rather than pfn_valid && pfn_to_page
->   */
-> -#define pfn_to_online_page(pfn)				\
-> -({							\
-> -	struct page *___page = NULL;			\
-> -	unsigned long ___nr = pfn_to_section_nr(pfn);	\
-> -							\
-> -	if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr))\
-> -		___page = pfn_to_page(pfn);		\
-> -	___page;					\
-> +#define pfn_to_online_page(pfn)					   \
-> +({								   \
-> +	struct page *___page = NULL;				   \
-> +	unsigned long ___nr = pfn_to_section_nr(pfn);		   \
-> +								   \
-> +	if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr) && \
-> +	    pfn_valid_within(pfn))				   \
-> +		___page = pfn_to_page(pfn);			   \
-> +	___page;						   \
->  })
->  
->  /*
-> -- 
-> 2.17.2 (Apple Git-113)
+>  Documentation/devicetree/bindings/serial/omap_serial.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
--- 
-Michal Hocko
-SUSE Labs
+Reviewed-by: Rob Herring <robh@kernel.org>
