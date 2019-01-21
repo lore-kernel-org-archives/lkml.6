@@ -2,121 +2,133 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DD7C31D64
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E811C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5160520989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548054859;
-	bh=FG60ojF+jU+XYDrwm0EV5/XurIpqpLASzLIzV6s09lg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CEibW8S2re5OmSy0EXdM8gPLztpU5ICohl7J/kx81pRV81NOJtHCG9cURo+0iv6pM
-	 MXbnEyla4XWg7A9vcGH31QxN6nG9yXZ5TDHowd2ezHy8v4cAaHGEIHNz3iGJHtWqXV
-	 UoS6m0RmYD0aRxx7OZHrbMGh2iVWrWhRIqfKf+C8=
+	by mail.kernel.org (Postfix) with ESMTP id 5516F20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="RhLWDBhL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbfAUHM7 (ORCPT
+        id S1726284AbfAUHOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:12:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727587AbfAUHM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:12:58 -0500
-Received: from earth.universe (unknown [194.136.232.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F07B214C6;
-        Mon, 21 Jan 2019 00:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548029191;
-        bh=FG60ojF+jU+XYDrwm0EV5/XurIpqpLASzLIzV6s09lg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IHPKFzihkThc03aYCPB6QBgqzuxHj0gXSS6FNTjUzjHjPIAf+OU9fTHvn7m4yxCVT
-         daMpriCaoTokc5lbxvjyD2MyxBnEpYxE5Z2q9qwGG6O69evF9pJGYOeglMUAjA0c5v
-         wiW7z6F6getttiS6W05VTzmwaYePh4ZMJB8kWPvc=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 50DFD3C08E9; Sun, 20 Jan 2019 22:39:45 +0100 (CET)
-Date:   Sun, 20 Jan 2019 22:39:45 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: remove some duplicated includes
-Message-ID: <20190120213945.23lf5whwqrcbatg3@earth.universe>
-References: <20181226165357.6426-1-tiny.windzz@gmail.com>
+        Mon, 21 Jan 2019 02:14:21 -0500
+Received: from mail-eopbgr130075.outbound.protection.outlook.com ([40.107.13.75]:43081
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727169AbfAUHOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:14:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S4ig44lkgrOYoYZVbQZjTmmO1VguQShh/EcRwbOa7GM=;
+ b=RhLWDBhLeMKDbnqYzL5CWs5dXd3ddg3knftFjSZnMHGQhF5BrGihYmoOV9G0/bdxgR9nAbaid+joWbJU37Th3nxNPdLzE5w3pklVcG0XoFDy0tEcrki8Y+M2xXMJED80sireNWKDOe7VPf7xb1/9IrJXK2aEzYdjaDV+/tJhKqY=
+Received: from HE1PR05MB4601.eurprd05.prod.outlook.com (20.176.163.138) by
+ HE1PR05MB3130.eurprd05.prod.outlook.com (10.170.242.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.24; Mon, 21 Jan 2019 01:59:04 +0000
+Received: from HE1PR05MB4601.eurprd05.prod.outlook.com
+ ([fe80::75a0:a89d:1227:7ed3]) by HE1PR05MB4601.eurprd05.prod.outlook.com
+ ([fe80::75a0:a89d:1227:7ed3%5]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
+ 01:59:04 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+CC:     Joe Perches <joe@perches.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clang-format: Update .clang-format with the latest
+ for_each macro list
+Thread-Topic: [PATCH] clang-format: Update .clang-format with the latest
+ for_each macro list
+Thread-Index: AQHUr4Eh70TZu0hTXUGviIikMXZ6KaW26v0AgAAKIACAAAdWAIAAA4CAgAAdQgCAAd2DgA==
+Date:   Mon, 21 Jan 2019 01:59:03 +0000
+Message-ID: <20190121015855.GD18031@mellanox.com>
+References: <20190118225658.GA28312@ziepe.ca>
+ <CANiq72=o_7d63MXJJn6dEnt76viF0YV4svp-5VBHk7JKyjXJDw@mail.gmail.com>
+ <a5eab6ca68ee1eb837c8c86b69b4696846af719b.camel@perches.com>
+ <CANiq72nAX=UjAZnmh7zk+0PUnGBfAjTUfZ1YsXmkeVZ+eMJuHQ@mail.gmail.com>
+ <2324fe307d1e077225171e7436ff1a4fc96292f5.camel@perches.com>
+ <CANiq72md_UVj2ZYXhmnqK29CNvCOdwOHU0Gfy-Kr50hNDJ7rXg@mail.gmail.com>
+In-Reply-To: <CANiq72md_UVj2ZYXhmnqK29CNvCOdwOHU0Gfy-Kr50hNDJ7rXg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR03CA0007.namprd03.prod.outlook.com
+ (2603:10b6:300:117::17) To HE1PR05MB4601.eurprd05.prod.outlook.com
+ (2603:10a6:7:99::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR05MB3130;6:hbCwcysPlvQ+Sc78dYR3ALj+wMMpuwEl8T6XQqJu2S8VLywbU7oVJGtwDAajIJdyV3lEgN6Pl49Thkq/SgYgyeMMJxUashfQ9/zyfrgIjMCl9DmgNUw6ZSBhcaRxaiR+mOpliDQgz9Jw86ogxVzeUtbCXtqZI8qFdq7iUjMQKbrg6npJucrR4lkfl9NkASXbeMTX+oNKm3BNQA3USRedyBusQrd3BZDvEytX05s8ecE9GK0WfanmSLrRaUze8UntM4bEOWJqnY67zuvNnekxbIstQrcoD/S7kGEESB8aFnuJBzTMhWhcxBIrRT9fHDizrmSXtbUmlrksuSAIcDU3yL5iK4FLfgWIXdN7HUr6d0csNWrrZENQK0OLQ5kepblFHsWpYMLti8dY+AlM9rVqSDGHSC996Mdt2VfrSWidtqd8HG2CdWq200JupsvG2jHWOtdpx4MUKax8ISWKO2RupQ==;5:fVlIEpPPk1+Pg0ho9tAZD4+/xs5RMNhkYt3PuhoulDPWSp510Km7PB7lgmSVBPWm+0FdCV7m/bM1k/jE1J1Da+eLIENB3QG7iSexDnu72WeSquTbbH+i1hlOfx/45DKzjX3sPxLdydFFPgk5ilRR5qvfpTFItA20AhchLFsUe/YHyg7jYmR2UIIvK2asrtNaJJYEwYl8sCuCZla15TmxgQ==;7:tsBNIxs2imS34cj1sJ4DT6JFFR/4oHIxfnT07gV3f5NX4SzfVD4OEAwxLTMeSYqeRgtBdWwYXIzhWYd7HzP9mW93lh7OlmhabOQAjjzNxnloazJAYSI87i6XwbH5EZ6YcorSK3t/mBKRzDnhp+kWpQ==
+x-ms-office365-filtering-correlation-id: bd2a29bb-d812-46c3-ca50-08d67f4404c2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB3130;
+x-ms-traffictypediagnostic: HE1PR05MB3130:
+x-microsoft-antispam-prvs: <HE1PR05MB3130DBC7E44B33283B8A41CFCF9F0@HE1PR05MB3130.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0924C6A0D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(396003)(346002)(39860400002)(199004)(189003)(39060400002)(14454004)(36756003)(386003)(6506007)(53546011)(1076003)(97736004)(93886005)(76176011)(52116002)(6512007)(66066001)(53936002)(102836004)(2906002)(71190400001)(71200400001)(86362001)(99286004)(106356001)(105586002)(229853002)(6916009)(6246003)(6486002)(81156014)(81166006)(8936002)(256004)(478600001)(33656002)(316002)(25786009)(68736007)(54906003)(7736002)(8676002)(15650500001)(14444005)(4326008)(6116002)(2616005)(476003)(186003)(11346002)(26005)(3846002)(446003)(486006)(6436002)(305945005)(142923001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB3130;H:HE1PR05MB4601.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: AuNREpue2JQqfFHBFeksYLlVcbYJ+6ym3x1MwBaAA7EYSzQ9lM+M6k/TGKqlKLQSIScxttO7XXZyOfR46CLt6Egt1taTtfJoCDe2u7M972pgEG3B7mI1JBCKHUxCgdv6xRQaijqZr4znzvZ77Fefu1FYnnUDmfbcJ+BOsjL4ySEIUoCcUV1uOSRrIav2o4CQTKB7qK3JwnqedGadVUwRE05hnY9P44VP+pWyMLruN8BOrh+jhaFOBEDQBdkYKQJwNcunWWRNt0Oogg9EHfh0JIK3USRaXK8zrHHWtj/b3QirdaX1N66wafjUGZViVRLYwAmH30Qc/RhFmQ2yX/AVoPIEvdqzeHGEXyZN4pE+3trTfiNq0+lEVFphwF3UCh6B4/IQ+J+ed6o1IqVnj02QZXMw0tE3LcglzQip6QE4wLg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <421E6BDEBD98324A8702DEFC09E6FAB7@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fwcs2pxufa3ede2t"
-Content-Disposition: inline
-In-Reply-To: <20181226165357.6426-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd2a29bb-d812-46c3-ca50-08d67f4404c2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 01:59:03.3872
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB3130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---fwcs2pxufa3ede2t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Wed, Dec 26, 2018 at 11:53:57AM -0500, Yangtao Li wrote:
-> We include of.h twice. It's unnecessary,so
-> just remove them.
+On Sat, Jan 19, 2019 at 10:29:50PM +0100, Miguel Ojeda wrote:
+> Hi Joe,
 >=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
-
-Thanks, queued.
-
--- Sebastian
-
->  drivers/power/supply/power_supply_core.c | 2 --
->  1 file changed, 2 deletions(-)
+> On Sat, Jan 19, 2019 at 8:45 PM Joe Perches <joe@perches.com> wrote:
+> >
+> > I suggest clang-format's ForEachMacros statement vector
+> > be expanded to support regexes ala
+> >
+> > ForEachMacros:
+> >   - Regex:           '\b(?:(?:[a-z0-9_]+_)?for_each(?:_[a-z_]+)|[a-z0-9=
+_]+_for_each)\b'
 >=20
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/sup=
-ply/power_supply_core.c
-> index e85361878450..529721660e68 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -156,8 +156,6 @@ static void power_supply_deferred_register_work(struc=
-t work_struct *work)
->  }
-> =20
->  #ifdef CONFIG_OF
-> -#include <linux/of.h>
-> -
->  static int __power_supply_populate_supplied_from(struct device *dev,
->  						 void *data)
->  {
-> --=20
-> 2.17.0
+> Ah, yeah, of course. And it should be easy, because there is already
+> support for regexes in the IncludeCategories option. However, the
+> configuration file was intended for clang-format >=3D 4 (when I added
+> the file, the intention was to make it usable as easily as possible,
+> i.e. taking into account the availability of clang-format in distros).
 >=20
+> Actually, if we were to change clang-format and then require in the
+> kernel the latest release, we could go a bit further and add the
+> missing features needed to match the kernel style almost completely. I
+> have been trying to allocate some time to start that project in my
+> backlog, but... :-)
 
---fwcs2pxufa3ede2t
-Content-Type: application/pgp-signature; name="signature.asc"
+It is unfortunate that clang format does not have a way for old
+versions to parse new .clang-format files.
 
------BEGIN PGP SIGNATURE-----
+Perhaps the best course is to get that ability and then go ahead and
+bump the min required version to there.. Otherwise this is a never
+ending upgrade treadmill.
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxE6qEACgkQ2O7X88g7
-+prp7g/+P9I8U3fsbBWFa/YCdJjqUsDmn/l8K625J+BK21zRwbDTSPqtSVkDWY8s
-5cd8opLYw1UqQgsr5z1oXCJORFm/1cY8C+avHx8kbFiLa07P12iJGGELeFYaX/NM
-zxXWx8YebVVf4blbsLcu/z7VkI/KXW8MhmbIMDPEU9cfBri0/ssNmP+CfPgvhFmb
-M5XbfO6YBqRhcVRAiSSY8yKpk3xg5m2eMjhIv4hdtFtbjotaen3BXDpg0+9IhO4I
-gQjFn9fWOlgiP4fAppwabJ596BDTCAUClYGl+bBW2h3F72U8dao5flkVlrvY7tUD
-LCnBZTSVBGJi0AuI+H9vATtbHjDKXfG0Fc3zErHco9DxUO/7wLnEhQ+3WiO0NvMB
-BFMfONS5tTCASmIVR76PrR2QW0yBV8GuTfQ6toorLhAQWQIzwQdMx9qoaQz5cM9p
-7hp6oe+NwbBvttD9yALfgkGc2iudhs1id9FrJL5wlU772L88SbG3KlC6vX7szIYC
-icg1K2q0lh8WngVf6jGk759vv1o0gX65609N/eQFFX4O11yOZj1E0tixf0qFAANt
-qrmuoNv23jiWk4um6vmhmh+DeChdeBk16+i79nyZKoO3ghxC9lNN5vKTL7FIVZml
-jQ8ndgCTLUKAJA6bQzmZqbl2eK3lkfm2biNQGj6tSSS6WEZNI4g=
-=FTJ/
------END PGP SIGNATURE-----
+ie if clang-format would look for a .clang-format.VERSION first and
+then try for the generic we could at least have a (somewhat painful)
+path.. Or if it would run it through cpp first we could use
+#ifdef/etc.
 
---fwcs2pxufa3ede2t--
+Jason
