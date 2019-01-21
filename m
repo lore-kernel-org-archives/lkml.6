@@ -2,39 +2,39 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A53C31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4D0C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1817120823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 625DA20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:22:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=c0d3.blue header.i=@c0d3.blue header.b="P4KwHcSS"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=c0d3.blue header.i=@c0d3.blue header.b="js944n+W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbfAUHWO (ORCPT
+        id S1728239AbfAUHWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:22:14 -0500
-Received: from mail.aperture-lab.de ([138.201.29.205]:41872 "EHLO
+        Mon, 21 Jan 2019 02:22:33 -0500
+Received: from mail.aperture-lab.de ([138.201.29.205]:41870 "EHLO
         mail.aperture-lab.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbfAUHWO (ORCPT
+        with ESMTP id S1726133AbfAUHWO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 02:22:14 -0500
 From:   =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue; s=2018;
-        t=1548052012; h=from:from:sender:reply-to:subject:subject:date:date:
+        t=1548052011; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+MESqb8y/Ovmq8x7mqvPcI8wCsbQROuFrMoXhprkHf8=;
-        b=P4KwHcSSXig/wm+bKawJU3T1lkMW0Q9Ofn88QsEGE3mk4bdNwXHVb0sdPifoQ1wwki832v
-        PuFqvQP2cMt+8veDX7ECuJPdLQustMX+xjutgXfkJUer1On/NYwb8vfJwgOcuW//VGzTyh
-        fj6oj4Vh30KEKsox3i7/JVIe1G7wnoJxIKnCebMaPybQ0dE/w638YEZfil1B2IeXBpyYzM
-        t9/fTuuF79UsuxaTiCkodRVzi5g8PBKs48QaDEGutzKw5kO7Yy8O692QV6xnLFC1XwBkZp
-        aJL0Qq+2xvXqgGEIc1bYvfhiBkySKtxpTlKzdqBc6KvzOamv4QWx6t/mHLT4RQ==
+        bh=/Ug0rn2mSzhSVcrGieA3FkgIo5XxIlnOYm88mAmvaqM=;
+        b=js944n+WqMhWr/dEynGrcjg1419CNANvn0M5QcxQuV7Kdfh+5wG04dwZf3/C5Pe5z4K6Ua
+        LoKa42tvW9kcYQbq4R0T3Oy10B6u0rsJq2SCt2GAGCf7V20M1927gP46z6iFWNb1a781Ld
+        /uIjcnAzu/EZAmYGuNLVSmSbFd2McDVw8J7skCBiLDvKYd5QKECzI2bS8kiqwf3S7afZ4w
+        11CLpxMJU0jNGjyTpIwrRx/QWDZJAbUZEUIbtLSMSQi0sQZd949e9MhCG3zUs5EyEl714H
+        JgP5D7cCpVnvAlKlLOP5TFnHsQSjBy1DSpoI8DdcdYLjtHg4SiPBbusoceq85A==
 To:     netdev@vger.kernel.org
 Cc:     Roopa Prabhu <roopa@cumulusnetworks.com>,
         Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
@@ -43,32 +43,32 @@ Cc:     Roopa Prabhu <roopa@cumulusnetworks.com>,
         "David S . Miller" <davem@davemloft.net>,
         bridge@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Subject: [PATCH net-next v2 3/4] bridge: join all-snoopers multicast address
-Date:   Mon, 21 Jan 2019 07:26:27 +0100
-Message-Id: <20190121062628.2710-4-linus.luessing@c0d3.blue>
+Subject: [PATCH net-next v2 2/4] bridge: simplify ip_mc_check_igmp() and ipv6_mc_check_mld() internals
+Date:   Mon, 21 Jan 2019 07:26:26 +0100
+Message-Id: <20190121062628.2710-3-linus.luessing@c0d3.blue>
 In-Reply-To: <20190121062628.2710-1-linus.luessing@c0d3.blue>
 References: <20190121062628.2710-1-linus.luessing@c0d3.blue>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue;
-        s=2018; t=1548052012; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=2018; t=1548052011; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+MESqb8y/Ovmq8x7mqvPcI8wCsbQROuFrMoXhprkHf8=;
-        b=L8/uXfKtN6Pws2JY79Sh3fU5t4kKpfxSsaFfgY8bmrNsslUJLwp9pcXhUNdcqfgs3BlxMj
-        i0yEKFUBbnfsU38iCc1+8hIGk/sGBLWpE57+RUoLJQUsQ5y5LYKPpUG+RrTXwL+U4lUPMA
-        wLvn1OJJaXJK3piz55uwq+7kLqAbN+TNkv0niatuCFf/reGkCFXtM+3hjaHzBfbQEpFskM
-        D5WUmO0JcvYMyelLxZl/oAXZiCgtTrrpVmVnBVMm061qjBZHmH1NFL0HujFmOfmazOTbS+
-        N+Dw4SGV7I8KjoIUX7wgUzPGOIMjNqgcUo1lGchUxTj5FTPSXQh8Rj7BV59Kkg==
-ARC-Seal: i=1; s=2018; d=c0d3.blue; t=1548052012; a=rsa-sha256; cv=none;
-        b=bEkzEjuotMyUD8KxLQ0MSNb4OOO81rT7cB7Gt0q8vK8h78KUVGUVItyKZtYMLU3JBDKh3L
-        OV7J4Vm2gvBz3jcUVFCU15i5+ZKErLd2YFHpTJrgBRfVWovNb80X1TC9bW5yzdw0cvBx2/
-        3tyqdzulvuReIHVni3rpIZzSLpS8xw+ZsB+B4BsUWX1LsK2TWKYPZrFASbt3ClRStCd9N8
-        Nsu+fi3KgISLhXBhas4COo2VQGU+2dSHvqK8+2xDhk3hhVDZtOK/o91BTIZktyVqLDdcVA
-        gnwApFe5HKYBgIJ7updXRH8vnOd2ZMe5RvqCB0LqOaSSRcGiOxQHw5KI+Gewgw==
+        bh=/Ug0rn2mSzhSVcrGieA3FkgIo5XxIlnOYm88mAmvaqM=;
+        b=PJ/OgstX7EDqF36fuqchB9RaVHuUOvJZXd1XqLaoiNssxNMTfYPH811oZv//ykf27NAvcU
+        uk8dCvZ3lQ+vuJ9eB61j+XJ6TKk8mrU8taAhlu69uihXqV0o5rZgXObzfGA2BkMkLAcZIm
+        dqn3kJhHgYV+kX/3SmmwI0khC00+I4gF5A+oWljjgj8WpLc+xGvhbCYi56LUuro1G3zoGd
+        Soz7uwfeieKCvZRhjJlt4PMG9DwICAA1QC0vl7hVv7ojpZxv+UJSn/lZCmz82geArwxnPr
+        HjUkL3jgyfvuwPNSopx3ruvWNunS2/iZY8vaw999+fRc8TdllYjCph32I4+zsA==
+ARC-Seal: i=1; s=2018; d=c0d3.blue; t=1548052011; a=rsa-sha256; cv=none;
+        b=rwlzPaHSIRkyfob3LFULwu3MHk2LGUCOPofY24V2WqGk7aYAKGiqN2OssmkU+QTRgGN4+z
+        fEmvVlbzJjHOqEgts5L2+1oBw+/29wn94/RjejqAbNhzaVaA8YtU5FW1ueHPj5uEr1cf/4
+        E3BWHISQb7bTduOUB/kNo1pRUtcNYe4HHfLwoROqDB9B/3ofQQzist1Ldo0qbt5tPWff5q
+        yu8kFennwA/u4z54ZiTwh27p8rQjT8gRJZDGaO63Mc6bR4JJjY0i4IPw93HbJd+TxfmHgp
+        ovsG89fb+aYQollQBt7wYBFnmZMwpn63Yt0Qf/EmCCdnoh670CpqnyQxCn/3Pg==
 ARC-Authentication-Results: i=1;
         ORIGINATING;
         auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
@@ -79,168 +79,227 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next to snooping IGMP/MLD queries RFC4541, section 2.1.1.a) recommends
-to snoop multicast router advertisements to detect multicast routers.
+With this patch the internal use of the skb_trimmed is reduced to
+the ICMPv6/IGMP checksum verification. And for the length checks
+the newly introduced helper functions are used instead of calculating
+and checking with skb->len directly.
 
-Multicast router advertisements are sent to an "all-snoopers"
-multicast address. To be able to receive them reliably, we need to
-join this group.
-
-Otherwise other snooping switches might refrain from forwarding these
-advertisements to us.
+These changes should hopefully make it easier to verify that length
+checks are performed properly.
 
 Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 ---
- include/uapi/linux/in.h   |  9 +++---
- net/bridge/br_multicast.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++-
- net/ipv6/mcast.c          |  2 ++
- 3 files changed, 78 insertions(+), 5 deletions(-)
+ net/ipv4/igmp.c        | 51 ++++++++++++++++++-----------------------
+ net/ipv6/mcast_snoop.c | 62 ++++++++++++++++++++++++--------------------------
+ 2 files changed, 52 insertions(+), 61 deletions(-)
 
-diff --git a/include/uapi/linux/in.h b/include/uapi/linux/in.h
-index f6052e70bf40..7ab685cacb8f 100644
---- a/include/uapi/linux/in.h
-+++ b/include/uapi/linux/in.h
-@@ -292,10 +292,11 @@ struct sockaddr_in {
- #define	IN_LOOPBACK(a)		((((long int) (a)) & 0xff000000) == 0x7f000000)
+diff --git a/net/ipv4/igmp.c b/net/ipv4/igmp.c
+index b1f6d93282d7..a40e48ded10d 100644
+--- a/net/ipv4/igmp.c
++++ b/net/ipv4/igmp.c
+@@ -1493,22 +1493,22 @@ static int ip_mc_check_igmp_reportv3(struct sk_buff *skb)
  
- /* Defines for Multicast INADDR */
--#define INADDR_UNSPEC_GROUP   	0xe0000000U	/* 224.0.0.0   */
--#define INADDR_ALLHOSTS_GROUP 	0xe0000001U	/* 224.0.0.1   */
--#define INADDR_ALLRTRS_GROUP    0xe0000002U	/* 224.0.0.2 */
--#define INADDR_MAX_LOCAL_GROUP  0xe00000ffU	/* 224.0.0.255 */
-+#define INADDR_UNSPEC_GROUP		0xe0000000U	/* 224.0.0.0   */
-+#define INADDR_ALLHOSTS_GROUP		0xe0000001U	/* 224.0.0.1   */
-+#define INADDR_ALLRTRS_GROUP		0xe0000002U	/* 224.0.0.2 */
-+#define INADDR_ALLSNOOPERS_GROUP	0xe000006aU	/* 224.0.0.106 */
-+#define INADDR_MAX_LOCAL_GROUP		0xe00000ffU	/* 224.0.0.255 */
- #endif
+ 	len += sizeof(struct igmpv3_report);
  
- /* <asm/byteorder.h> contains the htonl type stuff.. */
-diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
-index 156c4905639e..2366f4a2780e 100644
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -1780,6 +1780,68 @@ void br_multicast_init(struct net_bridge *br)
- 	INIT_HLIST_HEAD(&br->mdb_list);
+-	return pskb_may_pull(skb, len) ? 0 : -EINVAL;
++	return ip_mc_may_pull(skb, len) ? 0 : -EINVAL;
  }
  
-+static void br_ip4_multicast_join_snoopers(struct net_bridge *br)
-+{
-+	struct in_device *in_dev = in_dev_get(br->dev);
-+
-+	if (!in_dev)
-+		return;
-+
-+	ip_mc_inc_group(in_dev, htonl(INADDR_ALLSNOOPERS_GROUP));
-+	in_dev_put(in_dev);
-+}
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+static void br_ip6_multicast_join_snoopers(struct net_bridge *br)
-+{
-+	struct in6_addr addr;
-+
-+	ipv6_addr_set(&addr, htonl(0xff020000), 0, 0, htonl(0x6a));
-+	ipv6_dev_mc_inc(br->dev, &addr);
-+}
-+#else
-+static inline void br_ip6_multicast_join_snoopers(struct net_bridge *br)
-+{
-+}
-+#endif
-+
-+static void br_multicast_join_snoopers(struct net_bridge *br)
-+{
-+	br_ip4_multicast_join_snoopers(br);
-+	br_ip6_multicast_join_snoopers(br);
-+}
-+
-+static void br_ip4_multicast_leave_snoopers(struct net_bridge *br)
-+{
-+	struct in_device *in_dev = in_dev_get(br->dev);
-+
-+	if (WARN_ON(!in_dev))
-+		return;
-+
-+	ip_mc_dec_group(in_dev, htonl(INADDR_ALLSNOOPERS_GROUP));
-+	in_dev_put(in_dev);
-+}
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+static void br_ip6_multicast_leave_snoopers(struct net_bridge *br)
-+{
-+	struct in6_addr addr;
-+
-+	ipv6_addr_set(&addr, htonl(0xff020000), 0, 0, htonl(0x6a));
-+	ipv6_dev_mc_dec(br->dev, &addr);
-+}
-+#else
-+static inline void br_ip6_multicast_leave_snoopers(struct net_bridge *br)
-+{
-+}
-+#endif
-+
-+static void br_multicast_leave_snoopers(struct net_bridge *br)
-+{
-+	br_ip4_multicast_leave_snoopers(br);
-+	br_ip6_multicast_leave_snoopers(br);
-+}
-+
- static void __br_multicast_open(struct net_bridge *br,
- 				struct bridge_mcast_own_query *query)
+ static int ip_mc_check_igmp_query(struct sk_buff *skb)
  {
-@@ -1793,6 +1855,9 @@ static void __br_multicast_open(struct net_bridge *br,
+-	unsigned int len = skb_transport_offset(skb);
+-
+-	len += sizeof(struct igmphdr);
+-	if (skb->len < len)
+-		return -EINVAL;
++	unsigned int transport_len = ip_transport_len(skb);
++	unsigned int len;
  
- void br_multicast_open(struct net_bridge *br)
- {
-+	if (br_opt_get(br, BROPT_MULTICAST_ENABLED))
-+		br_multicast_join_snoopers(br);
+ 	/* IGMPv{1,2}? */
+-	if (skb->len != len) {
++	if (transport_len != sizeof(struct igmphdr)) {
+ 		/* or IGMPv3? */
+-		len += sizeof(struct igmpv3_query) - sizeof(struct igmphdr);
+-		if (skb->len < len || !pskb_may_pull(skb, len))
++		if (transport_len < sizeof(struct igmpv3_query))
++			return -EINVAL;
 +
- 	__br_multicast_open(br, &br->ip4_own_query);
- #if IS_ENABLED(CONFIG_IPV6)
- 	__br_multicast_open(br, &br->ip6_own_query);
-@@ -1808,6 +1873,9 @@ void br_multicast_stop(struct net_bridge *br)
- 	del_timer_sync(&br->ip6_other_query.timer);
- 	del_timer_sync(&br->ip6_own_query.timer);
- #endif
-+
-+	if (br_opt_get(br, BROPT_MULTICAST_ENABLED))
-+		br_multicast_leave_snoopers(br);
++		len = skb_transport_offset(skb) + sizeof(struct igmpv3_query);
++		if (!ip_mc_may_pull(skb, len))
+ 			return -EINVAL;
+ 	}
+ 
+@@ -1544,35 +1544,24 @@ static inline __sum16 ip_mc_validate_checksum(struct sk_buff *skb)
+ 	return skb_checksum_simple_validate(skb);
  }
  
- void br_multicast_dev_del(struct net_bridge *br)
-@@ -1943,8 +2011,10 @@ int br_multicast_toggle(struct net_bridge *br, unsigned long val)
- 
- 	br_mc_disabled_update(br->dev, val);
- 	br_opt_toggle(br, BROPT_MULTICAST_ENABLED, !!val);
--	if (!br_opt_get(br, BROPT_MULTICAST_ENABLED))
-+	if (!br_opt_get(br, BROPT_MULTICAST_ENABLED)) {
-+		br_multicast_leave_snoopers(br);
- 		goto unlock;
-+	}
- 
- 	if (!netif_running(br->dev))
- 		goto unlock;
-diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
-index 21f6deb2aec9..42f3f5cd349f 100644
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -940,6 +940,7 @@ int ipv6_dev_mc_inc(struct net_device *dev, const struct in6_addr *addr)
+-static int __ip_mc_check_igmp(struct sk_buff *skb)
+-
++static int ip_mc_check_igmp_csum(struct sk_buff *skb)
  {
- 	return __ipv6_dev_mc_inc(dev, addr, MCAST_EXCLUDE);
+-	struct sk_buff *skb_chk;
+-	unsigned int transport_len;
+ 	unsigned int len = skb_transport_offset(skb) + sizeof(struct igmphdr);
+-	int ret = -EINVAL;
++	unsigned int transport_len = ip_transport_len(skb);
++	struct sk_buff *skb_chk;
+ 
+-	transport_len = ntohs(ip_hdr(skb)->tot_len) - ip_hdrlen(skb);
++	if (!ip_mc_may_pull(skb, len))
++		return -EINVAL;
+ 
+ 	skb_chk = skb_checksum_trimmed(skb, transport_len,
+ 				       ip_mc_validate_checksum);
+ 	if (!skb_chk)
+-		goto err;
++		return -EINVAL;
+ 
+-	if (!pskb_may_pull(skb_chk, len))
+-		goto err;
+-
+-	ret = ip_mc_check_igmp_msg(skb_chk);
+-	if (ret)
+-		goto err;
+-
+-	ret = 0;
+-
+-err:
+-	if (skb_chk && skb_chk != skb)
++	if (skb_chk != skb)
+ 		kfree_skb(skb_chk);
+ 
+-	return ret;
++	return 0;
  }
-+EXPORT_SYMBOL(ipv6_dev_mc_inc);
  
- /*
-  *	device multicast group del
-@@ -987,6 +988,7 @@ int ipv6_dev_mc_dec(struct net_device *dev, const struct in6_addr *addr)
+ /**
+@@ -1600,7 +1589,11 @@ int ip_mc_check_igmp(struct sk_buff *skb)
+ 	if (ip_hdr(skb)->protocol != IPPROTO_IGMP)
+ 		return -ENOMSG;
  
- 	return err;
+-	return __ip_mc_check_igmp(skb);
++	ret = ip_mc_check_igmp_csum(skb);
++	if (ret < 0)
++		return ret;
++
++	return ip_mc_check_igmp_msg(skb);
  }
-+EXPORT_SYMBOL(ipv6_dev_mc_dec);
+ EXPORT_SYMBOL(ip_mc_check_igmp);
  
- /*
-  *	check if the interface/address pair is valid
+diff --git a/net/ipv6/mcast_snoop.c b/net/ipv6/mcast_snoop.c
+index 1a917dc80d5e..a72ddfc40eb3 100644
+--- a/net/ipv6/mcast_snoop.c
++++ b/net/ipv6/mcast_snoop.c
+@@ -77,27 +77,27 @@ static int ipv6_mc_check_mld_reportv2(struct sk_buff *skb)
+ 
+ 	len += sizeof(struct mld2_report);
+ 
+-	return pskb_may_pull(skb, len) ? 0 : -EINVAL;
++	return ipv6_mc_may_pull(skb, len) ? 0 : -EINVAL;
+ }
+ 
+ static int ipv6_mc_check_mld_query(struct sk_buff *skb)
+ {
++	unsigned int transport_len = ipv6_transport_len(skb);
+ 	struct mld_msg *mld;
+-	unsigned int len = skb_transport_offset(skb);
++	unsigned int len;
+ 
+ 	/* RFC2710+RFC3810 (MLDv1+MLDv2) require link-local source addresses */
+ 	if (!(ipv6_addr_type(&ipv6_hdr(skb)->saddr) & IPV6_ADDR_LINKLOCAL))
+ 		return -EINVAL;
+ 
+-	len += sizeof(struct mld_msg);
+-	if (skb->len < len)
+-		return -EINVAL;
+-
+ 	/* MLDv1? */
+-	if (skb->len != len) {
++	if (transport_len != sizeof(struct mld_msg)) {
+ 		/* or MLDv2? */
+-		len += sizeof(struct mld2_query) - sizeof(struct mld_msg);
+-		if (skb->len < len || !pskb_may_pull(skb, len))
++		if (transport_len < sizeof(struct mld2_query))
++			return -EINVAL;
++
++		len = skb_transport_offset(skb) + sizeof(struct mld2_query);
++		if (!ipv6_mc_may_pull(skb, len))
+ 			return -EINVAL;
+ 	}
+ 
+@@ -115,7 +115,13 @@ static int ipv6_mc_check_mld_query(struct sk_buff *skb)
+ 
+ static int ipv6_mc_check_mld_msg(struct sk_buff *skb)
+ {
+-	struct mld_msg *mld = (struct mld_msg *)skb_transport_header(skb);
++	unsigned int len = skb_transport_offset(skb) + sizeof(struct mld_msg);
++	struct mld_msg *mld;
++
++	if (!ipv6_mc_may_pull(skb, len))
++		return -EINVAL;
++
++	mld = (struct mld_msg *)skb_transport_header(skb);
+ 
+ 	switch (mld->mld_type) {
+ 	case ICMPV6_MGM_REDUCTION:
+@@ -136,36 +142,24 @@ static inline __sum16 ipv6_mc_validate_checksum(struct sk_buff *skb)
+ 	return skb_checksum_validate(skb, IPPROTO_ICMPV6, ip6_compute_pseudo);
+ }
+ 
+-static int __ipv6_mc_check_mld(struct sk_buff *skb)
+-
++static int ipv6_mc_check_icmpv6(struct sk_buff *skb)
+ {
+-	struct sk_buff *skb_chk = NULL;
+-	unsigned int transport_len;
+-	unsigned int len = skb_transport_offset(skb) + sizeof(struct mld_msg);
+-	int ret = -EINVAL;
++	unsigned int len = skb_transport_offset(skb) + sizeof(struct icmp6hdr);
++	unsigned int transport_len = ipv6_transport_len(skb);
++	struct sk_buff *skb_chk;
+ 
+-	transport_len = ntohs(ipv6_hdr(skb)->payload_len);
+-	transport_len -= skb_transport_offset(skb) - sizeof(struct ipv6hdr);
++	if (!ipv6_mc_may_pull(skb, len))
++		return -EINVAL;
+ 
+ 	skb_chk = skb_checksum_trimmed(skb, transport_len,
+ 				       ipv6_mc_validate_checksum);
+ 	if (!skb_chk)
+-		goto err;
++		return -EINVAL;
+ 
+-	if (!pskb_may_pull(skb_chk, len))
+-		goto err;
+-
+-	ret = ipv6_mc_check_mld_msg(skb_chk);
+-	if (ret)
+-		goto err;
+-
+-	ret = 0;
+-
+-err:
+-	if (skb_chk && skb_chk != skb)
++	if (skb_chk != skb)
+ 		kfree_skb(skb_chk);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ /**
+@@ -195,6 +189,10 @@ int ipv6_mc_check_mld(struct sk_buff *skb)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return __ipv6_mc_check_mld(skb);
++	ret = ipv6_mc_check_icmpv6(skb);
++	if (ret < 0)
++		return ret;
++
++	return ipv6_mc_check_mld_msg(skb);
+ }
+ EXPORT_SYMBOL(ipv6_mc_check_mld);
 -- 
 2.11.0
 
