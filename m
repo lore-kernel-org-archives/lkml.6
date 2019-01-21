@@ -2,135 +2,153 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1097C282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C17F8C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C84392084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EB422084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:03:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="R7n5C9wP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729323AbfAUIC6 (ORCPT
+        id S1729353AbfAUIDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:02:58 -0500
-Received: from mga09.intel.com ([134.134.136.24]:39583 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729202AbfAUIC4 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:02:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 17:40:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,501,1539673200"; 
-   d="scan'208";a="120012112"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.159.76]) ([10.239.159.76])
-  by orsmga003.jf.intel.com with ESMTP; 20 Jan 2019 17:40:46 -0800
-Subject: Re: [PATCH v2] Poll for monitored tasks being alive in fork mode
-To:     Jiri Olsa <jolsa@redhat.com>, acme@kernel.org
-Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-References: <1546822850-30649-1-git-send-email-yao.jin@linux.intel.com>
- <20190107090522.GA3383@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <460f52d2-2061-8fe3-9c9a-1709d3e49343@linux.intel.com>
-Date:   Mon, 21 Jan 2019 09:40:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 21 Jan 2019 03:03:02 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33194 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729183AbfAUIDA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:03:00 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c206so13883690oib.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:02:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vg4RDLLwAO/ZYWTbu5ufyFQvbdsjKMMEhcfj2Et8fZw=;
+        b=R7n5C9wPJqcRHAH58fdUkrMLVF2BQlTrO6/tHDAen3PH27aklixcldVhKCPIuIt3Hv
+         O44AdDiI+usunEUzUfM/KEz6Ewc6iXQadlOUBD0RuMEQ2iO3R6RU/N7qZlGjqmcb3Uzd
+         FvSi0ZgFKt0XW1Z+nsZJ1uq+Lj7LI1IWCOJYA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vg4RDLLwAO/ZYWTbu5ufyFQvbdsjKMMEhcfj2Et8fZw=;
+        b=nxCgjI4FhNYsjikqIM1I3g7vjtzbrgYo03bMbURISgICDNVJhYWGaZ5a7M/3GVtKkQ
+         iluuDkFsKyZSw5T/0ZFpHJWoQvwhi30C9sGPbE5aMKomSy1smoCfyfcue149Ycl4APab
+         K6vD3nO1cx/mBN1h7M/KvJ/bbTneJ/HUU9qsy4qQiHyfkk+AxOXwAh3CqP4Qq+Z2YOfE
+         9qHt7DQjzooMvlEVmLX/lmIW7ZBonYOy314ZGRCoE14uspb4LuT7WjwtQPuou0ILJs6j
+         HwBn/aOL89QDPPADKP9JuwuJH28Uu8lPrB3NHlRrHfVl3ZpBsbgU9j11flm9cbUZp6Ya
+         U4OA==
+X-Gm-Message-State: AJcUukeP6xI24STn1OXBp0Zmhet3rPfJRNOLH8YaRLJJyhPwL/SqWzl5
+        J69f1gPEz4aFFVInmZdryeI1vNJuddjXlFsi6L2NcHSwhPw=
+X-Google-Smtp-Source: ALg8bN4F0pcfbFggIJYSTWnvxuYe2BGog1pCpni1CMPuW/uWqLyLdGrlNPCPje7GYXrCe4zu6FjFeKHz6rxdHfh7KRA=
+X-Received: by 2002:aca:2116:: with SMTP id 22mr4977922oiz.42.1548050785511;
+ Sun, 20 Jan 2019 22:06:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190107090522.GA3383@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1547790380-6276-1-git-send-email-pramod.kumar@broadcom.com>
+ <20190118113242.GA8928@e107155-lin> <CAJ+tv6+6yqT1xkmkY3x6SNQ83K+J6zqKZr7PV5A_ffvyEzceqg@mail.gmail.com>
+ <CAJ+tv6KqynSf5t_VwLqpdM4BF+wLWcJ0wPTD4nWqL4ej1Yih4g@mail.gmail.com>
+In-Reply-To: <CAJ+tv6KqynSf5t_VwLqpdM4BF+wLWcJ0wPTD4nWqL4ej1Yih4g@mail.gmail.com>
+From:   Pramod Kumar <pramod.kumar@broadcom.com>
+Date:   Mon, 21 Jan 2019 11:36:14 +0530
+Message-ID: <CAJ+tv6+q+GzBXyv3DH=vX+bc+62YMUCfH7vYLNssyRzBzx6zFA@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/1] arm64: Use PSCI calls for CPU stop when hotplug
+ is supported
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
-
-Is this patch acceptable?
-
-Thanks
-Jin Yao
-
-On 1/7/2019 5:05 PM, Jiri Olsa wrote:
-> On Mon, Jan 07, 2019 at 09:00:50AM +0800, Jin Yao wrote:
->> Following test shows the stat keeps running even if no longer
->> task to monitor (mgen exits at ~5s).
+On Mon, Jan 21, 2019 at 11:30 AM Pramod Kumar <pramod.kumar@broadcom.com> w=
+rote:
+>
+>
+>
+> On Mon, Jan 21, 2019 at 11:28 AM Pramod Kumar <pramod.kumar@broadcom.com>=
+ wrote:
 >>
->> perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
->>              time             counts unit events
->>       1.000148916      1,308,365,864      cycles
->>       2.000379171      1,297,269,875      cycles
->>       3.000556719      1,297,187,078      cycles
->>       4.000914241        761,261,827      cycles
->>       5.001306091      <not counted>      cycles
->>       6.001676881      <not counted>      cycles
->>       7.002046336      <not counted>      cycles
->>       8.002405651      <not counted>      cycles
->>       9.002766625      <not counted>      cycles
->>      10.001395827      <not counted>      cycles
+>> Hi Sudeep,
 >>
->> We'd better finish stat immediately if there's no longer task to
->> monitor.
+>> Thanks for having a glance on the patch. Please see my reply in line.
 >>
->> After:
+>> Regards,
+>> Pramod
 >>
->> perf stat -e cycles -p `pgrep mgen` -I1000 -- sleep 10
->>              time             counts unit events
->>       1.000180062      1,236,592,661      cycles
->>       2.000421539      1,223,733,572      cycles
->>       3.000609910      1,297,047,663      cycles
->>       4.000807545      1,297,215,816      cycles
->>       5.001001578      1,297,208,032      cycles
->>       6.001390345        582,343,659      cycles
->> sleep: Terminated
+>> On Fri, Jan 18, 2019 at 5:02 PM Sudeep Holla <sudeep.holla@arm.com> wrot=
+e:
+>>>
+>>> On Fri, Jan 18, 2019 at 11:16:20AM +0530, Pramod Kumar wrote:
+>>> > If CPU hotplug is supported, ipi_cpu_stop should use PSCI cpudie
+>>> > call to stop the CPU. This call ensures L1/L2 cache flush,
+>>> > CPUs cache-cohenrecy setting w.r.to interconnect.
+>>> >
+>>>
+>>> Firstly, this is not specific to PSCI and I don't see any PSCI calls as
+>>> $subject claims.
 >>
->> Now the stat exits immediately when the monitored tasks ends.
 >>
->> v2:
->> ---
->> There is a potential race condition window, that is the
->> child_pid set with -1 and kill(-1, SIGTERM) may happen.
->> Jiri provides a simple method which stores the child_pid to
->> a local variable and check the local variable before kill().
->> At least, we can avoid the kill(-1, SIGTERM) case.
+>> I had seen all the other cpu ops methods where only PSCI supports only c=
+pu_die features hence
+>> used PSCI reference in my subject line to be more clear where this die g=
+ets converted in last.
 >>
->> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> 
-> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-> 
-> thanks,
-> jirka
-> 
->> ---
->>   tools/perf/builtin-stat.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
+>>>
+>>> Next, you fail to explain why do you have to ensure
+>>> caches are cleaned and why do you need that in ipi_cpu_stop ?
+>>> What's the use case ?
+>>>
 >>
->> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
->> index 63a3afc..bd5fb8e 100644
->> --- a/tools/perf/builtin-stat.c
->> +++ b/tools/perf/builtin-stat.c
->> @@ -553,6 +553,15 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->>   
->>   		if (interval || timeout) {
->>   			while (!waitpid(child_pid, &status, WNOHANG)) {
->> +				if (!is_target_alive(&target,
->> +					evsel_list->threads)) {
->> +					int pid = child_pid;
->> +
->> +					if (pid != -1)
->> +						kill(pid, SIGTERM);
->> +					break;
->> +				}
->> +
->>   				nanosleep(&ts, NULL);
->>   				if (timeout)
->>   					break;
->> -- 
->> 2.7.4
+>> Need comes from a specific use case where one Accelerator card(SoC) is p=
+lugged in a sever over a PCIe interface.  This Card gets supply from a batt=
+ery, which could provide very less power for a very small time, in case of =
+any power loss. Once Card switches to battery, this has to reduce its power=
+ consumption to its lowest point and back-up the DDR contents asap before b=
+attery gets fully drained off.
 >>
+>> Since battery can provide limited power for a very short time hence need=
+ to transition to lowest power. As per the transition process , CPUs power =
+domain has to be off but before that it needs to flush out its content to s=
+ystem memory(L3) so that content could be backed-up by a MCU, a controller =
+consuming very less power. Since we can not afford plugging-out every indiv=
+idual CPUs in sequence hence uses  ipi_cpu_stop for all other CPUs which ul=
+timately switch to ATF to flush out all the CPUs caches and comes out of co=
+herency domain so that its power rails could be switched-off.
+>>
+>>>
+>>> > Apart from this, this gives control to f/w to reduce power consumptio=
+n
+>>> > by take appropriate decesion on power rails for plugging-out core.
+>>> >
+>>>
+>>> May be, but ipi_cpu_stop is used is machine reboot/poweroff/halt which
+>>> may restart or poweroff the system, powering down individual CPUs is no=
+t
+>>> necessary and may consume lot of time in systems with large number of C=
+PUs.
+>>> It would be good to know the use-case in case I am missing to consider
+>>> that.
+>>
+>>
+>> Use case as explained above.
+>>
+>>>
+>>> --
+>>> Regards,
+>>> Sudeep
